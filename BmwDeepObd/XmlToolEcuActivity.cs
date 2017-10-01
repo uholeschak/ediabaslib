@@ -263,11 +263,6 @@ namespace BmwDeepObd
             _spinnerGridType = FindViewById<Spinner>(Resource.Id.spinnerGridType);
             _spinnerGridTypeAdapter = new StringObjAdapter(this);
             _spinnerGridType.Adapter = _spinnerGridTypeAdapter;
-            _spinnerGridTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_grid_type_hidden), JobReader.DisplayInfo.GridModeType.Hidden));
-            _spinnerGridTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_grid_type_simple_square), JobReader.DisplayInfo.GridModeType.Simple_Gauge_Square));
-            _spinnerGridTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_grid_type_simple_round), JobReader.DisplayInfo.GridModeType.Simple_Gauge_Round));
-            _spinnerGridTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_grid_type_simple_dot), JobReader.DisplayInfo.GridModeType.Simple_Gauge_Dot));
-            _spinnerGridTypeAdapter.NotifyDataSetChanged();
 
             _textViewMinValue = FindViewById<TextView>(Resource.Id.textViewMinValue);
             _editTextMinValue = FindViewById<EditText>(Resource.Id.editTextMinValue);
@@ -492,6 +487,16 @@ namespace BmwDeepObd
             _buttonTestFormat.Enabled = (_selectedJob != null) && (_selectedResult != null);
         }
 
+        private bool IsResultBinary(ResultInfo resultInfo)
+        {
+            return string.Compare(resultInfo.Type, XmlToolActivity.DataTypeBinary, StringComparison.OrdinalIgnoreCase) == 0;
+        }
+
+        private bool IsResultString(ResultInfo resultInfo)
+        {
+            return string.Compare(resultInfo.Type, XmlToolActivity.DataTypeString, StringComparison.OrdinalIgnoreCase) == 0;
+        }
+
         private void UpdateFormatFields(ResultInfo resultInfo, bool userFormat, bool initialCall = false)
         {
             string format = resultInfo.Format;
@@ -542,8 +547,8 @@ namespace BmwDeepObd
 
             _ignoreFormatSelection = true;
 
-            bool resultBinary = string.Compare(resultInfo.Type, XmlToolActivity.DataTypeBinary, StringComparison.OrdinalIgnoreCase) == 0;
-            bool resultString = string.Compare(resultInfo.Type, XmlToolActivity.DataTypeString, StringComparison.OrdinalIgnoreCase) == 0;
+            bool resultBinary = IsResultBinary(resultInfo);
+            bool resultString = IsResultString(resultInfo);
 
             _spinnerFormatTypeAdapter.Items.Clear();
             _spinnerFormatTypeAdapter.Items.Add(new StringObjType("--", FormatType.None));
@@ -929,6 +934,7 @@ namespace BmwDeepObd
 
         private void ResultSelected(int pos)
         {
+            UpdateResultSettings(_selectedResult);  // store old settings
             if (pos >= 0)
             {
                 _selectedResult = _spinnerJobResultsAdapter.Items[pos];
@@ -949,6 +955,19 @@ namespace BmwDeepObd
                 }
                 _textViewResultComments.Text = stringBuilderComments.ToString();
                 _editTextDisplayText.Text = _selectedResult.DisplayText;
+
+                bool resultBinary = IsResultBinary(_selectedResult);
+                bool resultString = IsResultString(_selectedResult);
+
+                _spinnerGridTypeAdapter.Items.Clear();
+                _spinnerGridTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_grid_type_hidden), JobReader.DisplayInfo.GridModeType.Hidden));
+                if (!resultBinary && !resultString)
+                {
+                    _spinnerGridTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_grid_type_simple_square), JobReader.DisplayInfo.GridModeType.Simple_Gauge_Square));
+                    _spinnerGridTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_grid_type_simple_round), JobReader.DisplayInfo.GridModeType.Simple_Gauge_Round));
+                    _spinnerGridTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_grid_type_simple_dot), JobReader.DisplayInfo.GridModeType.Simple_Gauge_Dot));
+                }
+                _spinnerGridTypeAdapter.NotifyDataSetChanged();
 
                 int gridSelection = 0;
                 for (int i = 0; i < _spinnerGridTypeAdapter.Count; i++)
