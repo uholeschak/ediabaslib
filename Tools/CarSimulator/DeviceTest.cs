@@ -82,14 +82,15 @@ namespace CarSimulator
         {
             try
             {
-#if false
-                BluetoothClient cli = new BluetoothClient();
-                BluetoothDeviceInfo[] peers = cli.DiscoverDevices();
-                foreach (BluetoothDeviceInfo device in peers)
+#if true
+                BluetoothSearch dlgSearch = new BluetoothSearch();
+                DialogResult result = dlgSearch.ShowDialog();
+                if (result != DialogResult.OK)
                 {
-                    Debug.WriteLine("{0} : {1}", device.DeviceAddress, device.DeviceName);
+                    return null;
                 }
-#endif
+                return dlgSearch.GetSelectedBtDevice();
+#else
                 SelectBluetoothDeviceDialog dlg = new SelectBluetoothDeviceDialog
                 {
                     ShowAuthenticated = true,
@@ -104,6 +105,7 @@ namespace CarSimulator
                     return null;
                 }
                 return dlg.SelectedDevice;
+#endif
             }
             catch (Exception)
             {

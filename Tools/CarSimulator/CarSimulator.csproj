@@ -45,6 +45,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BluetoothSearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BluetoothSearch.Designer.cs">
+      <DependentUpon>BluetoothSearch.cs</DependentUpon>
+    </Compile>
     <Compile Include="CommThread.cs" />
     <Compile Include="DeviceTest.cs" />
     <Compile Include="MainForm.cs">
@@ -56,6 +62,9 @@
     <Compile Include="PCANBasic.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="BluetoothSearch.resx">
+      <DependentUpon>BluetoothSearch.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
