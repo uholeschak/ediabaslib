@@ -198,6 +198,7 @@ namespace CarSimulator
 #if CAN_DEBUG
         private long _lastCanReceiveTick;
 #endif
+        private long _lastCanStatusTick;
         private readonly List<Tp20Channel> _tp20Channels;
         private TcpListener _tcpServerDiag;
         private TcpClient _tcpClientDiag;
@@ -565,6 +566,7 @@ namespace CarSimulator
 #if CAN_DEBUG
             _lastCanReceiveTick = Stopwatch.GetTimestamp();
 #endif
+            _lastCanStatusTick = 0;
             _tp20Channels = new List<Tp20Channel>();
             _tcpServerDiag = null;
             _tcpClientDiag = null;
@@ -1340,8 +1342,7 @@ namespace CarSimulator
 
                 case ConceptType.ConceptDs2:
                     {
-                        bool kwp2000S;
-                        if (!ReceiveDs2(receiveData, out kwp2000S))
+                        if (!ReceiveDs2(receiveData, out bool kwp2000S))
                         {
                             return false;
                         }
@@ -1402,9 +1403,7 @@ namespace CarSimulator
                         {
                             return ReceiveCanTp20(receiveData);
                         }
-                        TPCANMsg canMsg;
-                        TPCANTimestamp canTimeStamp;
-                        TPCANStatus stsResult = PCANBasic.Read(_pcanHandle, out canMsg, out canTimeStamp);
+                        TPCANStatus stsResult = PCANBasic.Read(_pcanHandle, out TPCANMsg canMsg, out TPCANTimestamp _);
                         if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                         {
                             return false;
@@ -2014,9 +2013,34 @@ namespace CarSimulator
             {
                 for (; ; )
                 {
-                    TPCANMsg canMsg;
-                    TPCANTimestamp canTimeStamp;
-                    TPCANStatus stsResult = PCANBasic.Read(_pcanHandle, out canMsg, out canTimeStamp);
+                    TPCANStatus stsResult;
+                    long currentTime = Stopwatch.GetTimestamp();
+                    if ((currentTime - _lastCanStatusTick) > 100 * TickResolMs)
+                    {
+                        _lastCanStatusTick = currentTime;
+                        TPCANMsg sendMsg = new TPCANMsg
+                        {
+                            DATA = new byte[8],
+                            ID = 0x130,
+                            LEN = 5,
+                            MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD
+                        };
+                        sendMsg.DATA[0] = (byte) (0xC0 | (IgnitionOk ? 0x05 : 0x00));
+                        sendMsg.DATA[1] = 0x40;
+                        sendMsg.DATA[2] = 0xFF;
+                        sendMsg.DATA[3] = 0xFF;
+                        sendMsg.DATA[4] = 0xFF;
+                        stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
+                        if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                        {
+                            break;
+                        }
+#if CAN_DEBUG
+                        Debug.WriteLine("Send Status: {0:X02}", sendMsg.DATA[0]);
+#endif
+                    }
+
+                    stsResult = PCANBasic.Read(_pcanHandle, out TPCANMsg canMsg, out TPCANTimestamp _);
                     if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                     {
                         break;
@@ -2261,7 +2285,6 @@ namespace CarSimulator
         private bool SendCan(byte[] sendData)
         {
             TPCANMsg canMsg;
-            TPCANTimestamp canTimeStamp;
             TPCANStatus stsResult;
             TPCANMsg sendMsg = new TPCANMsg
             {
@@ -2285,7 +2308,7 @@ namespace CarSimulator
                 Thread.Sleep(10);   // required for multiple telegrams
             }
             // clear input buffer
-            while (PCANBasic.Read(_pcanHandle, out canMsg, out canTimeStamp) == TPCANStatus.PCAN_ERROR_OK)
+            while (PCANBasic.Read(_pcanHandle, out canMsg, out TPCANTimestamp _) == TPCANStatus.PCAN_ERROR_OK)
             {
             }
 
@@ -2339,7 +2362,7 @@ namespace CarSimulator
                         _receiveStopWatch.Start();
                         for (; ; )
                         {
-                            stsResult = PCANBasic.Read(_pcanHandle, out canMsg, out canTimeStamp);
+                            stsResult = PCANBasic.Read(_pcanHandle, out canMsg, out TPCANTimestamp _);
                             if (stsResult == TPCANStatus.PCAN_ERROR_OK)
                             {
                                 if ((canMsg.LEN >= 4) && (canMsg.MSGTYPE == TPCANMessageType.PCAN_MESSAGE_STANDARD) &&
@@ -2507,8 +2530,7 @@ namespace CarSimulator
                     }
                     else
                     {
-                        TPCANTimestamp canTimeStamp;
-                        stsResult = PCANBasic.Read(_pcanHandle, out canMsg, out canTimeStamp);
+                        stsResult = PCANBasic.Read(_pcanHandle, out canMsg, out TPCANTimestamp _);
                         if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                         {
                             break;
@@ -2771,7 +2793,6 @@ namespace CarSimulator
         private bool SendCanVw(byte[] sendData)
         {
             TPCANMsg canMsg;
-            TPCANTimestamp canTimeStamp;
             TPCANStatus stsResult;
             TPCANMsg sendMsg = new TPCANMsg
             {
@@ -2814,7 +2835,7 @@ namespace CarSimulator
                 Thread.Sleep(10);   // required for multiple telegrams
             }
             // clear input buffer
-            while (PCANBasic.Read(_pcanHandle, out canMsg, out canTimeStamp) == TPCANStatus.PCAN_ERROR_OK)
+            while (PCANBasic.Read(_pcanHandle, out canMsg, out TPCANTimestamp _) == TPCANStatus.PCAN_ERROR_OK)
             {
             }
 
@@ -2866,7 +2887,7 @@ namespace CarSimulator
                         _receiveStopWatch.Start();
                         for (;;)
                         {
-                            stsResult = PCANBasic.Read(_pcanHandle, out canMsg, out canTimeStamp);
+                            stsResult = PCANBasic.Read(_pcanHandle, out canMsg, out TPCANTimestamp _);
                             if (stsResult == TPCANStatus.PCAN_ERROR_OK)
                             {
                                 if ((canMsg.LEN >= 3) && (canMsg.MSGTYPE == TPCANMessageType.PCAN_MESSAGE_STANDARD) &&
@@ -3139,8 +3160,7 @@ namespace CarSimulator
                 }
                 else
                 {
-                    TPCANTimestamp canTimeStamp;
-                    stsResult = PCANBasic.Read(_pcanHandle, out canMsg, out canTimeStamp);
+                    stsResult = PCANBasic.Read(_pcanHandle, out canMsg, out TPCANTimestamp _);
                     if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                     {
                         break;
