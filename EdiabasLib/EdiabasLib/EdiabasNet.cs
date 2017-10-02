@@ -19,6 +19,8 @@ using System.Xml;
 // ReSharper disable ConvertPropertyToExpressionBody
 // ReSharper disable UseNullPropagation
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
+// ReSharper disable NotAccessedVariable
+// ReSharper disable InlineOutVariableDeclaration
 
 namespace EdiabasLib
 {
