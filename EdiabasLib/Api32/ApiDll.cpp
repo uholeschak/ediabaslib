@@ -447,6 +447,8 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultText(unsigned int handle,
         return APIFALSE;
     }
     marshal_context context;
+    memset(buf, 0x00, APIMAXTEXT);
+    _CrtSetDebugFillThreshold(0);
     strcpy_s(buf, APIMAXTEXT, context.marshal_as<const char*>(buffer));
     return APITRUE;
 }
