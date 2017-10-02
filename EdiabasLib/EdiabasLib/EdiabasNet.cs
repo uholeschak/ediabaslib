@@ -274,7 +274,7 @@ namespace EdiabasLib
                                 index += (EdValueType)OpData3;
                             }
 
-                            EdValueType requiredLength = index + 1;
+                            long requiredLength = (long)index + 1;
                             if (requiredLength > _ediabas.ArrayMaxSize)
                             {
                                 _ediabas.SetError(ErrorCodes.EDIABAS_BIP_0001);
