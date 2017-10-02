@@ -592,7 +592,7 @@ namespace Ediabas
         {
             logFormat(ApiLogLevel.Normal, "apiJob({0}, {1}, {2}, {3})", ecu, job, para, result);
 
-            byte[] paraBytes = Encoding.GetBytes(para);
+            byte[] paraBytes = Encoding.Default.GetBytes(para);
             executeJob(ecu, job, null, 0, paraBytes, paraBytes.Length, result);
         }
 
