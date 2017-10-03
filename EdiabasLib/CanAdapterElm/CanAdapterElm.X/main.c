@@ -1858,7 +1858,7 @@ void can_config()
     uint16_t sid1 = 0x600;
     uint16_t mask1 = 0x700;
     uint16_t sid2 = 0x130;
-    uint16_t mask2 = 0xFFF;
+    uint16_t mask2 = 0x7FF;
 
     can_rec_clamp_valid = false;
 
