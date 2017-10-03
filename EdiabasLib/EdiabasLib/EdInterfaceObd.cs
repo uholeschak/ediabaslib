@@ -912,7 +912,7 @@ namespace EdiabasLib
                 if (!HasIgnitionStatus || EdicSimulation || (ParTransmitFunc != null && ParTransmitFunc != TransBmwFast))
                 {
                     voltage = GetDsrState() ? 12000 : 0;
-                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ignition voltage: {0}", voltage);
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ignition voltage from DSR: {0}", voltage);
                     return voltage;
                 }
 
