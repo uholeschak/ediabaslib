@@ -2036,7 +2036,7 @@ namespace CarSimulator
                             break;
                         }
 #if CAN_DEBUG
-                        Debug.WriteLine("Send Status: {0:X02}", sendMsg.DATA[0]);
+                        //Debug.WriteLine("Send Status: {0:X02}", sendMsg.DATA[0]);
 #endif
                     }
 
