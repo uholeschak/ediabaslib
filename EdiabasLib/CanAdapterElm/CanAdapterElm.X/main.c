@@ -1860,6 +1860,8 @@ void can_config()
     uint16_t sid2 = 0x130;
     uint16_t mask2 = 0xFFF;
 
+    can_rec_clamp_valid = false;
+
     switch (op_mode)
     {
         case op_mode_standard:
@@ -1975,8 +1977,6 @@ void reset_comm_states()
     can_cfg_isotp_rxid = 0x000;
 
     can_tp20_state = tp20_idle;
-
-    can_rec_clamp_valid = false;
 }
 
 void read_eeprom()
