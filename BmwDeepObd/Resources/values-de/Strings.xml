@@ -351,6 +351,7 @@
   <string name="can_adapter_comm_error_std">Es ist ein Kommunikationsfehler aufgetreten.\nDie Adapterkonfiguration ist nur möglich,\nwenn die Adapter LED nach dem Einschalten aktiv ist.</string>
   <string name="can_adapter_ignition_on">Zündung an</string>
   <string name="can_adapter_ignition_off">Zündung aus</string>
+  <string name="can_adapter_ignition_no_status">Kein Status verfügbar</string>
   <string name="can_adapter_text_off">0: Aus (Standard)</string>
   <string name="can_adapter_pin_length">Die Bluetooth Pin muss mindestens 4 Stellen lang sein</string>
   <string name="can_adapter_name_length">Die Länge des UTF-8 Bluetoothnamens ist ungültig</string>
