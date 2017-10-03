@@ -86,7 +86,7 @@
 #define DEBUG_PIN           0   // enable debug pin
 #define ID_LOCATION         0x200000    // location of ID memory
 
-#define ADAPTER_VERSION     0x0009
+#define ADAPTER_VERSION     0x000A
 
 #if ADAPTER_TYPE == 0x02
 #define REQUIRES_BT_REC_TIMOUT
@@ -190,6 +190,7 @@
 #define CAN_CHECK_TIMEOUT   20      // can bus check timeout
 #define CAN_TP20_T1         100     // TP2.0 T1 ACK timeout
 #define CAN_TP20_ALIVE_TO   3000    // TP2.0 keep alive timeout (should be 5000, but is too large)
+#define CAN_CLAMP_TIMEOUT   500     // BMW clamp telegram timeout
 
 #define EEP_ADDR_BAUD       0x00    // eeprom address for baud setting (2 bytes)
 #define EEP_ADDR_BLOCKSIZE  0x02    // eeprom address for FC block size (2 bytes)
@@ -348,6 +349,10 @@ static uint16_t can_rec_time;
 static uint16_t can_rec_rec_len;
 static uint16_t can_rec_data_len;
 static bool can_rec_tel_valid;
+// BMW clamp status
+static bool can_rec_clamp_valid;
+static uint8_t can_rec_clamp_status;
+static uint16_t can_rec_clamp_time;
 
 // CAN TP2.0 variables
 static tp20_states can_tp20_state;
@@ -1852,8 +1857,8 @@ void can_config()
     uint8_t bitrate = 5;
     uint16_t sid1 = 0x600;
     uint16_t mask1 = 0x700;
-    uint16_t sid2 = 0x600;
-    uint16_t mask2 = 0x700;
+    uint16_t sid2 = 0x130;
+    uint16_t mask2 = 0xFFF;
 
     switch (op_mode)
     {
@@ -1970,6 +1975,8 @@ void reset_comm_states()
     can_cfg_isotp_rxid = 0x000;
 
     can_tp20_state = tp20_idle;
+
+    can_rec_clamp_valid = false;
 }
 
 void read_eeprom()
@@ -2196,6 +2203,17 @@ bool internal_telegram(uint8_t *buffer, uint16_t len)
             uart_send(buffer, len);
             return true;
         }
+        if ((len == 6) && (buffer[3] == 0xFA) && (buffer[4] == 0xFA))
+        {      // read clamp status
+            buffer[0] = 0x83;
+            buffer[4] = can_enabled ? 0x01 : 0x00;
+            buffer[4] |= can_rec_clamp_valid ? 0x02 : 0x00;
+            buffer[5] = can_rec_clamp_status;
+            len = 7;
+            buffer[len - 1] = calc_checkum(buffer, len - 1);
+            uart_send(buffer, len);
+            return true;
+        }
         if ((len == 6) && (buffer[3] == 0xFB) && (buffer[4] == 0xFB))
         {      // read id location
             buffer[0] = 0x89;
@@ -2404,9 +2422,23 @@ void can_receiver(bool new_can_msg)
     {
         return;
     }
+    if (can_rec_clamp_valid)
+    {
+        if ((uint16_t) (get_systick() - can_rec_clamp_time) > (CAN_CLAMP_TIMEOUT * TIMER0_RESOL / 1000))
+        {
+            can_rec_clamp_valid = false;
+        }
+    }
     if (new_can_msg)
     {
         idle_counter = 0;
+        if ((can_in_msg.sid == 0x0130) && (can_in_msg.dlc.bits.count >= 5))
+        {   // status message
+            can_rec_clamp_valid = true;
+            can_rec_clamp_time = get_systick();
+            can_rec_clamp_status = can_in_msg.data[0];
+            return;
+        }
         if (((can_in_msg.sid & 0xFF00) == 0x0600) && (can_in_msg.dlc.bits.count >= 2))
         {
             uint8_t frame_type = (can_in_msg.data[1] >> 4) & 0x0F;
