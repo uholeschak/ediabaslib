@@ -985,8 +985,7 @@ namespace BmwDeepObd
 
         private int AdapterCommand(byte command, byte data = 0x00)
         {
-            byte[] response;
-            if (!_ediabas.EdInterfaceClass.TransmitData(new byte[] { 0x82, 0xF1, 0xF1, command, data }, out response))
+            if (!_ediabas.EdInterfaceClass.TransmitData(new byte[] { 0x82, 0xF1, 0xF1, command, data }, out byte[] response))
             {
                 return -1;
             }
@@ -1006,8 +1005,7 @@ namespace BmwDeepObd
             request[3] = command;
             Array.Copy(data, 0, request, 4, data.Length);
 
-            byte[] response;
-            if (!_ediabas.EdInterfaceClass.TransmitData(request, out response))
+            if (!_ediabas.EdInterfaceClass.TransmitData(request, out byte[] response))
             {
                 return null;
             }
@@ -1022,8 +1020,7 @@ namespace BmwDeepObd
 
         private bool AdapterCommandStd(byte command)
         {
-            byte[] response;
-            if (!_ediabas.EdInterfaceClass.TransmitData(new byte[] { 0x81, 0x00, 0x00, command }, out response))
+            if (!_ediabas.EdInterfaceClass.TransmitData(new byte[] { 0x81, 0x00, 0x00, command }, out byte[] response))
             {
                 return false;
             }
