@@ -70,6 +70,7 @@ namespace BmwDeepObd
         private byte[] _serNum;
         private byte[] _btPin;
         private byte[] _btName;
+        private int _clampStatus = -1;
         private bool _fwUpdateShown;
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
@@ -435,12 +436,28 @@ namespace BmwDeepObd
                 }
 
                 string ignitionText = string.Empty;
-                if (_ignitionState >= 0)
+                if (_ignitionState >= 0 || _clampStatus >= 0)
                 {
-                    ignitionText = (_ignitionState & 0x01) != 0x00 ? GetString(Resource.String.can_adapter_ignition_on) : GetString(Resource.String.can_adapter_ignition_off);
-                    if ((_ignitionState & 0x80) != 0)
+                    if (_clampStatus >= 0)
                     {
-                        ignitionText = "(" + ignitionText + ")";
+                        if ((_clampStatus & 0x300) != 0x300)
+                        {
+                            // CAN enabled and status present
+                            ignitionText = GetString(Resource.String.can_adapter_ignition_no_status);
+                        }
+                        else
+                        {
+                            ignitionText = ((_clampStatus & 0x00C) == 0x004) ?
+                                GetString(Resource.String.can_adapter_ignition_on) : GetString(Resource.String.can_adapter_ignition_off);
+                        }
+                    }
+                    else
+                    {
+                        ignitionText = (_ignitionState & 0x01) != 0x00 ? GetString(Resource.String.can_adapter_ignition_on) : GetString(Resource.String.can_adapter_ignition_off);
+                        if ((_ignitionState & 0x80) != 0)
+                        {
+                            ignitionText = "(" + ignitionText + ")";
+                        }
                     }
                 }
                 _textViewIgnitionState.Text = ignitionText;
@@ -614,6 +631,20 @@ namespace BmwDeepObd
                             _btName = result;
                         }
                     }
+                    // clamp status
+                    _clampStatus = -1;
+                    if (!commFailed && _adapterType >= 0x0002 && _fwVersion >= 0x000A)
+                    {
+                        byte[] result = AdapterCommandCustom(0xFA, new byte[] { 0xFA });
+                        if ((result == null) || (result.Length < 2))
+                        {
+                            commFailed = true;
+                        }
+                        else
+                        {
+                            _clampStatus = result[1] + (result[0] << 8);
+                        }
+                    }
                 }
                 catch (Exception)
                 {
@@ -631,6 +662,7 @@ namespace BmwDeepObd
                     _serNum = null;
                     _btPin = null;
                     _btName = null;
+                    _clampStatus = -1;
                 }
 
                 RunOnUiThread(() =>
