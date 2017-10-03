@@ -10,6 +10,8 @@ using System.Threading;
 // ReSharper disable ConvertPropertyToExpressionBody
 // ReSharper disable UseNullPropagation
 // ReSharper disable IntroduceOptionalParameters.Local
+// ReSharper disable NotAccessedVariable
+// ReSharper disable InlineOutVariableDeclaration
 
 namespace EdiabasLib
 {
@@ -84,6 +86,7 @@ namespace EdiabasLib
         public delegate bool InterfaceHasPreciseTimeoutDelegate();
         public delegate bool InterfaceHasAutoBaudRateDelegate();
         public delegate bool InterfaceHasAutoKwp1281Delegate();
+        public delegate bool InterfaceHasIgnitionStatusDelegate();
         public delegate bool InterfaceSendDataDelegate(byte[] sendData, int length, bool setDtr, double dtrTimeCorr);
         public delegate bool InterfaceReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog);
         public delegate bool InterfaceSendPulseDelegate(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines, int autoKeyByteDelay);
@@ -154,6 +157,8 @@ namespace EdiabasLib
         protected InterfaceHasAutoBaudRateDelegate InterfaceHasAutoBaudRateFuncInt;
         protected InterfaceHasAutoKwp1281Delegate InterfaceHasAutoKwp1281FuncProtected;
         protected InterfaceHasAutoKwp1281Delegate InterfaceHasAutoKwp1281FuncInt;
+        protected InterfaceHasIgnitionStatusDelegate InterfaceHasIgnitionStatusFuncProtected;
+        protected InterfaceHasIgnitionStatusDelegate InterfaceHasIgnitionStatusFuncInt;
         protected InterfaceSendDataDelegate InterfaceSendDataFuncProtected;
         protected InterfaceSendDataDelegate InterfaceSendDataFuncInt;
         protected InterfaceReceiveDataDelegate InterfaceReceiveDataFuncProtected;
@@ -881,12 +886,15 @@ namespace EdiabasLib
         {
             get
             {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Read battery voltage");
                 if (!Connected)
                 {
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
                     return Int64.MinValue;
                 }
-                return GetDsrState() ? 12000 : 0;
+                Int64 voltage = GetDsrState() ? 12000 : 0;
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Battery voltage: {0}", voltage);
+                return voltage;
             }
         }
 
@@ -894,12 +902,89 @@ namespace EdiabasLib
         {
             get
             {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Read ignition voltage");
+                Int64 voltage;
                 if (!Connected)
                 {
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
                     return Int64.MinValue;
                 }
-                return GetDsrState() ? 12000 : 0;
+                if (!HasIgnitionStatus || EdicSimulation || (ParTransmitFunc != null && ParTransmitFunc != TransBmwFast))
+                {
+                    voltage = GetDsrState() ? 12000 : 0;
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ignition voltage: {0}", voltage);
+                    return voltage;
+                }
+
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Read ignition status from interface");
+                if (ParTransmitFunc != TransBmwFast)
+                {
+                    ParTransmitFunc = TransBmwFast;
+                    if (UseExtInterfaceFunc)
+                    {
+                        if (InterfaceSetConfigFuncUse(Protocol.Uart, 115200, 8, SerialParity.None, false) != InterfaceErrorResult.NoError)
+                        {
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Set interface func failed");
+                            return 0;
+                        }
+                    }
+                }
+
+                byte[] sendData = { 0x82, 0xF1, 0xF1, 0xFA, 0xFA };
+                StartCommThread();
+                lock (CommThreadLock)
+                {
+                    sendData.CopyTo(SendBuffer, 0);
+                    SendBufferLength = sendData.Length;
+                    CommThreadReqCount++;
+                    CommThreadCommand = CommThreadCommands.SingleTransmit;
+                }
+                CommThreadReqEvent.Set();
+
+                for (; ; )
+                {
+                    lock (CommThreadLock)
+                    {
+                        if (CommThreadResCount == CommThreadReqCount)
+                        {
+                            break;
+                        }
+                    }
+                    CommThreadResEvent.WaitOne(10, false);
+                }
+
+                if (RecErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Read ignition status failed, assume active");
+                    return 12000;
+                }
+                byte[] receiveData;
+                lock (CommThreadLock)
+                {
+                    receiveData = new byte[RecBufferLength];
+                    Array.Copy(RecBuffer, receiveData, RecBufferLength);
+                }
+                bool ignitionOn = false;
+                if (receiveData.Length >= 7 && receiveData[3] == 0xFA)
+                {
+                    if ((receiveData[4] & 0x03) == 0x03)
+                    {   // CAN enabled and status present
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Status present");
+                        if ((receiveData[4] & 0x02) != 0x00)
+                        {   // status valid
+                            ignitionOn = (receiveData[5] & 0x0C) == 0x04;
+                        }
+                    }
+                    else
+                    {   // K-LINE
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Status not present");
+                        ignitionOn = true;
+                    }
+                }
+                voltage = ignitionOn ? 12000 : 0;
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ignition voltage: {0}", voltage);
+
+                return voltage;
             }
         }
 
@@ -998,6 +1083,7 @@ namespace EdiabasLib
                 InterfaceHasPreciseTimeoutFuncInt = null;
                 InterfaceHasAutoBaudRateFuncInt = null;
                 InterfaceHasAutoKwp1281FuncInt = null;
+                InterfaceHasIgnitionStatusFuncInt = null;
                 InterfaceSendDataFuncInt = EdFtdiInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdFtdiInterface.InterfaceReceiveData;
                 InterfaceSendPulseFuncInt = null;
@@ -1020,6 +1106,7 @@ namespace EdiabasLib
                 InterfaceHasPreciseTimeoutFuncInt = EdBluetoothInterface.InterfaceHasPreciseTimeout;
                 InterfaceHasAutoBaudRateFuncInt = EdBluetoothInterface.InterfaceHasAutoBaudRate;
                 InterfaceHasAutoKwp1281FuncInt = EdBluetoothInterface.InterfaceHasAutoKwp1281;
+                InterfaceHasIgnitionStatusFuncInt = EdBluetoothInterface.InterfaceHasIgnitionStatus;
                 InterfaceSendDataFuncInt = EdBluetoothInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdBluetoothInterface.InterfaceReceiveData;
                 InterfaceSendPulseFuncInt = EdBluetoothInterface.InterfaceSendPulse;
@@ -1041,6 +1128,7 @@ namespace EdiabasLib
                 InterfaceHasPreciseTimeoutFuncInt = EdElmWifiInterface.InterfaceHasPreciseTimeout;
                 InterfaceHasAutoBaudRateFuncInt = EdElmWifiInterface.InterfaceHasAutoBaudRate;
                 InterfaceHasAutoKwp1281FuncInt = EdElmWifiInterface.InterfaceHasAutoKwp1281;
+                InterfaceHasIgnitionStatusFuncInt = EdElmWifiInterface.InterfaceHasIgnitionStatus;
                 InterfaceSendDataFuncInt = EdElmWifiInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdElmWifiInterface.InterfaceReceiveData;
                 InterfaceSendPulseFuncInt = EdElmWifiInterface.InterfaceSendPulse;
@@ -1062,6 +1150,7 @@ namespace EdiabasLib
                 InterfaceHasPreciseTimeoutFuncInt = null;
                 InterfaceHasAutoBaudRateFuncInt = null;
                 InterfaceHasAutoKwp1281FuncInt = null;
+                InterfaceHasIgnitionStatusFuncInt = null;
                 InterfaceSendDataFuncInt = null;
                 InterfaceReceiveDataFuncInt = null;
                 InterfaceSendPulseFuncInt = null;
@@ -1882,6 +1971,27 @@ namespace EdiabasLib
             }
         }
 
+        public InterfaceHasIgnitionStatusDelegate InterfaceHasIgnitionStatusFunc
+        {
+            get
+            {
+                return InterfaceHasIgnitionStatusFuncProtected;
+            }
+            set
+            {
+                InterfaceHasIgnitionStatusFuncProtected = value;
+                UpdateUseExtInterfaceFunc();
+            }
+        }
+
+        protected InterfaceHasIgnitionStatusDelegate InterfaceHasIgnitionStatusFuncUse
+        {
+            get
+            {
+                return InterfaceHasIgnitionStatusFuncProtected ?? InterfaceHasIgnitionStatusFuncInt;
+            }
+        }
+
         public InterfaceSendDataDelegate InterfaceSendDataFunc
         {
             get
@@ -2013,13 +2123,27 @@ namespace EdiabasLib
             }
         }
 
+        protected bool HasIgnitionStatus
+        {
+            get
+            {
+                InterfaceHasIgnitionStatusDelegate hasIgnitionStatus = InterfaceHasIgnitionStatusFuncUse;
+                if (hasIgnitionStatus != null)
+                {
+                    return hasIgnitionStatus();
+                }
+                return false;
+            }
+        }
+
         protected void UpdateUseExtInterfaceFunc()
         {
             // these funtions are optional:
             // InterfaceSetInterByteTimeFuncUse, InterfaceSetCanIdsFuncUse,
             // InterfaceAdapterEchoFuncUse,
             // InterfaceHasPreciseTimeoutFuncUse, InterfaceHasAutoBaudRateFuncUse,
-            // InterfaceHasAutoKwp1281FuncUse, InterfaceSendPulseFuncUse
+            // InterfaceHasAutoKwp1281FuncUse, InterfaceHasIgnitionStatusFuncUse,
+            // InterfaceSendPulseFuncUse
             UseExtInterfaceFunc =
                 InterfaceConnectFuncUse != null &&
                 InterfaceDisconnectFuncUse != null &&

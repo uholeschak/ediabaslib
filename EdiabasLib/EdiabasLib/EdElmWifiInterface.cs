@@ -198,6 +198,11 @@ namespace EdiabasLib
             return false;
         }
 
+        public static bool InterfaceHasIgnitionStatus()
+        {
+            return false;
+        }
+
         public static bool InterfaceSendData(byte[] sendData, int length, bool setDtr, double dtrTimeCorr)
         {
             if (TcpElmStream == null)

@@ -258,6 +258,11 @@ namespace EdiabasLib
             return true;
         }
 
+        public static bool InterfaceHasIgnitionStatus()
+        {
+            return true;
+        }
+
         public static bool InterfaceSendData(byte[] sendData, int length, bool setDtr, double dtrTimeCorr)
         {
             ConvertBaudResponse = false;
@@ -304,6 +309,16 @@ namespace EdiabasLib
                 if (CurrentBaudRate == 115200)
                 {
                     // BMW-FAST
+                    if (sendData.Length >= 5 && sendData[1] == 0xF1 && sendData[2] == 0xF1 && sendData[3] == 0xFA && sendData[4] == 0xFA)
+                    {   // read clamp status
+                        UpdateAdapterInfo();
+                        if (AdapterVersion < 0x000A)
+                        {
+                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Read clamp status not supported");
+                            return false;
+                        }
+                    }
+
                     if (BtStream != null)
                     {
                         BtStream.Write(sendData, 0, length);
