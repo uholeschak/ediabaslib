@@ -34,6 +34,8 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:
+\n- Обработка полученных broadcasts
+\n- Добавлено графическое отображение
 \n- улучшена стабильность</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.8.\nНа данный момент поддерживаются только KWP2000, KWP1281 и TP2.0 (Автомобили до 4.2012) протоколы.</string>
@@ -220,9 +222,8 @@
   <string name="settings_caption_storage">Носитель памяти</string>
   <string name="settings_caption_debug">Отладить</string>
   <string name="settings_collect_debug_info">Собрать отладочную информацию для файла трассировки</string>
-  <!--Translate-->
-  <string name="settings_hci_snoop_log">Bluetooth HCI snoop log file:\n{0}</string>
-  <string name="settings_hci_snoop_log_config">Configure snoop log</string>
+  <string name="settings_hci_snoop_log">Файл журнала отслеживания Bluetooth HCI:\n{0}</string>
+  <string name="settings_hci_snoop_log_config">Настроить журнал отслеживания</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>
@@ -312,9 +313,8 @@
   <string name="xml_tool_ecu_format_left">Влево</string>
   <string name="xml_tool_ecu_page_name">Название страницы</string>
   <string name="xml_tool_ecu_ecu_name">Название ECU</string>
-  <!--Translate-->
-  <string name="xml_tool_ecu_display_type">Display type</string>
-  <string name="xml_tool_ecu_display_type_grid">Graphical display</string>
+  <string name="xml_tool_ecu_display_type">Тип отображения</string>
+  <string name="xml_tool_ecu_display_type_grid">Графическое отображение</string>
   <string name="xml_tool_ecu_font_size">Размер шрифта</string>
   <string name="xml_tool_ecu_font_size_small">Мелкий</string>
   <string name="xml_tool_ecu_font_size_medium">Средний</string>
@@ -324,14 +324,13 @@
   <string name="xml_tool_ecu_show_all_results">Показывать все результаты</string>
   <string name="xml_tool_ecu_display_text">Выведенный текст</string>
   <string name="xml_tool_ecu_log_tag">Тег для протоколированных данных</string>
-  <!--Translate-->
-  <string name="xml_tool_ecu_grid_type">Grahical design</string>
-  <string name="xml_tool_ecu_grid_type_hidden">Hidden</string>
-  <string name="xml_tool_ecu_grid_type_simple_square">Simple gauge square</string>
-  <string name="xml_tool_ecu_grid_type_simple_round">Simple gauge round</string>
-  <string name="xml_tool_ecu_grid_type_simple_dot">Simple gauge with dot</string>
-  <string name="xml_tool_ecu_min_value">Min Value</string>
-  <string name="xml_tool_ecu_max_value">Max Value</string>
+  <string name="xml_tool_ecu_grid_type">Графический дизайн</string>
+  <string name="xml_tool_ecu_grid_type_hidden">Скрытый</string>
+  <string name="xml_tool_ecu_grid_type_simple_square">Простое квадратное отображение</string>
+  <string name="xml_tool_ecu_grid_type_simple_round">Простое округлённое отображение</string>
+  <string name="xml_tool_ecu_grid_type_simple_dot">Простое отображение с точкой</string>
+  <string name="xml_tool_ecu_min_value">Мин. значение</string>
+  <string name="xml_tool_ecu_max_value">Макс. значение</string>
   <string name="xml_tool_ecu_test_format">Тестировать формат</string>
   <string name="xml_tool_button_test_format">Считать</string>
   <string name="xml_tool_ecu_add_functions">Дополнительные функции</string>
@@ -355,8 +354,7 @@
   <string name="can_adapter_comm_error_std">Ошибка соединения.\nКонфигурация адаптера возможна только во время, когда светодиод адаптера активен после включения.</string>
   <string name="can_adapter_ignition_on">Зажигание включено</string>
   <string name="can_adapter_ignition_off">Зажигание выключено</string>
-  <!--Translate-->
-  <string name="can_adapter_ignition_no_status">No status available</string>
+  <string name="can_adapter_ignition_no_status">Статус недоступен</string>
   <string name="can_adapter_text_off">0: выкл. (по умолчанию)</string>
   <string name="can_adapter_pin_length">Pin код для Bluetooth должен быть длиной не менее 4 символов.</string>
   <string name="can_adapter_name_length">Неправильная длина имени Bluetooth устройства в UTF-8</string>
@@ -368,8 +366,7 @@
   <string name="can_adapter_fw_update_conn_failed">Не удалось подключиться к адаптеру</string>
   <string name="can_adapter_fw_update_failed">Не удалось обновление прошивки</string>
   <string name="can_adapter_fw_update_ok">Обновление прошивки успешно завершено</string>
-  <!--Translate-->
-  <string name="can_adapter_bt_not_reliable">Your Android device is known to have an unreliable Bluetooth connection.\nPlease use a different device.</string>
+  <string name="can_adapter_bt_not_reliable">Как известно, ваше Android-устройство ненадёжно при работе с Bluetooth.\nПожалуйста, используйте другое устройство.</string>
   <string name="button_can_adapter_read">Считать</string>
   <string name="button_can_adapter_write">Сохранить</string>
   <string name="button_can_adapter_can_auto">Автоматически</string>
