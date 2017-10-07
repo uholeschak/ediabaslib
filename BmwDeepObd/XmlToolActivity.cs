@@ -2883,7 +2883,7 @@ namespace BmwDeepObd
                                     commentList.Add(mwTabEntry.Comment);
                                 }
 
-                                string type = (string.Compare(mwTabEntry.ValueType, "R", StringComparison.OrdinalIgnoreCase) == 0) ? "real" : "integer";
+                                string type = (string.Compare(mwTabEntry.ValueType, "R", StringComparison.OrdinalIgnoreCase) == 0) ? DataTypeReal : DataTypeInteger;
                                 job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, commentList, mwTabEntry));
                             }
                         }
@@ -2921,28 +2921,31 @@ namespace BmwDeepObd
                                 int? indexStore;
                                 string name;
                                 string displayText;
+                                string type;
                                 if (!udsJob)
                                 {
                                     indexStore = index;
                                     name = string.Format(Culture, "{0}/{1}", block, index);
                                     displayText = string.Format(Culture, "{0:000}/{1}", block, index);
+                                    type = ecuMwTabEntry.ValueUnit;
                                 }
                                 else
                                 {
                                     indexStore = null;
                                     name = string.Format(Culture, "{0}", block);
                                     displayText = string.Format(Culture, "{0:000}", block);
+                                    type = DataTypeBinary;
                                 }
                                 ActivityCommon.MwTabEntry mwTabEntry =
                                     new ActivityCommon.MwTabEntry(block, indexStore, string.Empty, string.Empty, string.Empty, string.Empty, null, null, true);
-                                job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, ecuMwTabEntry.ValueUnit, null, mwTabEntry));
+                                job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, null, mwTabEntry));
                             }
                         }
                     }
                     else if (string.Compare(job.Name, "Fahrgestellnr_abfragen", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         job.Comments = new List<string> { GetString(Resource.String.xml_tool_job_read_vin) };
-                        job.Results.Add(new XmlToolEcuActivity.ResultInfo("Fahrgestellnr", GetString(Resource.String.xml_tool_result_vin), "string", null));
+                        job.Results.Add(new XmlToolEcuActivity.ResultInfo("Fahrgestellnr", GetString(Resource.String.xml_tool_result_vin), DataTypeString, null));
                     }
                     continue;
                 }

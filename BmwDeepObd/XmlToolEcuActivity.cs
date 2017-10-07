@@ -821,11 +821,13 @@ namespace BmwDeepObd
             int selection = -1;
             if (jobInfo != null)
             {
+                bool udsJob = false;
                 _layoutJobConfig.Visibility = ViewStates.Visible;
                 IEnumerable<ResultInfo> orderedResults;
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if ((ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) && vagReadJob)
                 {
+                    udsJob = string.Compare(jobInfo.Name, XmlToolActivity.JobReadMwUds, StringComparison.OrdinalIgnoreCase) == 0;
                     List<ResultInfo> showResults = new List<ResultInfo>();
                     if (_checkBoxShowAllResults.Checked && _checkBoxShowAllResults.Visibility == ViewStates.Visible)
                     {
@@ -843,7 +845,7 @@ namespace BmwDeepObd
                 }
                 foreach (ResultInfo result in orderedResults)
                 {
-                    if (string.Compare(result.Type, XmlToolActivity.DataTypeBinary, StringComparison.OrdinalIgnoreCase) == 0)
+                    if (!udsJob && string.Compare(result.Type, XmlToolActivity.DataTypeBinary, StringComparison.OrdinalIgnoreCase) == 0)
                     {   // ignore binary results
                         continue;
                     }
