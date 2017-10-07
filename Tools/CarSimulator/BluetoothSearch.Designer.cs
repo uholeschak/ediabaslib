@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.listViewDevices = new System.Windows.Forms.ListView();
-            this.buttonCancel = new System.Windows.Forms.Button();
-            this.buttonOk = new System.Windows.Forms.Button();
             this.columnHeaderAddress = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.buttonCancel = new System.Windows.Forms.Button();
+            this.buttonOk = new System.Windows.Forms.Button();
             this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.buttonSearch = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -58,6 +58,16 @@
             this.listViewDevices.SelectedIndexChanged += new System.EventHandler(this.listViewDevices_SelectedIndexChanged);
             this.listViewDevices.DoubleClick += new System.EventHandler(this.listViewDevices_DoubleClick);
             // 
+            // columnHeaderAddress
+            // 
+            this.columnHeaderAddress.Text = "Address";
+            this.columnHeaderAddress.Width = 217;
+            // 
+            // columnHeaderName
+            // 
+            this.columnHeaderName.Text = "Name";
+            this.columnHeaderName.Width = 286;
+            // 
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
@@ -78,19 +88,9 @@
             this.buttonOk.Text = "OK";
             this.buttonOk.UseVisualStyleBackColor = true;
             // 
-            // columnHeaderAddress
-            // 
-            this.columnHeaderAddress.Text = "Address";
-            this.columnHeaderAddress.Width = 217;
-            // 
-            // columnHeaderName
-            // 
-            this.columnHeaderName.Text = "Name";
-            this.columnHeaderName.Width = 286;
-            // 
             // textBoxStatus
             // 
-            this.textBoxStatus.Location = new System.Drawing.Point(12, 290);
+            this.textBoxStatus.Location = new System.Drawing.Point(12, 292);
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.Size = new System.Drawing.Size(264, 20);
