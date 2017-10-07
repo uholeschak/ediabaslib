@@ -92,6 +92,7 @@ If only some EDIABAS jobs with fixed arguments are required for one display page
 </fragment>
 ```
 The `page name` property specifies the title of the page and is a reference to the `strings` nodes.  
+With the attribute `display-mode` the type of the display could be specified (`list`: normal text list, `grid`: grid wiew for graphical gauge display).  
 The attribute `fontsize` allows to specify the font size of the display data in three steps (`small`, `medium` and `large`).  
 With `logfile` a log file name could be specified, that allows to log the display data. If the symbol `{D}` is used inside the log file name, it will be replaced by the current date and time.  
 The `strings` nodes contains the all the string used on this display page. If the current language is not matching the `lang` tag, the default language (without tag) is used. The `lang` property could be either the short form e.g. `'de'` or the long one `'de-DE'`.
@@ -104,6 +105,13 @@ Within the `jobs` node multiple `job` nodes specify the EDIABAS jobs to execute.
 * `args_first`: Allows to specify semicolon separated job arguments for the first job call.
 * `args`: Allows to specify semicolon separated job arguments. If this is the first call and `args_first` is present `args_first` will be used instead.
 * `result`: Allows to specify the required results. If omitted, all results will be generated, which may require more processing time.
+* `grid-type`: If the `display-mode` ist switched to `grid`, the type of display element could be specified here:
+    * `hidden`: Nothing will be displayed.
+    * `simple-gauge-square`: A simple gauge with a square border will be displayed.
+    * `simple-gauge-round`: A simple gauge with a round border will be displayed.
+    * `simple-gauge-dot`: A simple gauge with a round border and a dot instead of a bar graph will be displayed.
+* `min-value`: For gauge views the minimum value is specified with this attribute.
+* `max-value`: For gauge views the maximim value is specified with this attribute.
 * `log_tag=<tag name>`: Adding this property allows to log the display data to a log file when activating the _Log data_ menu in the application. The `logfile` property in the `page` node has to be specified as well to activate logging.
 * Each `display` node specifies one line of the display output. `Name` is again a reference to the text translation in the _strings_ nodes. With `result` the EDIABAS job result name is selected, that contains the data. The `format` property allows to format the result with the EDIABAS aspiResultText format specification [EDIABAS result types and formats](EDIABAS_result_types_and_formats.md).
 The `page` node can optionally contain `display` nodes like the `job` node. They will be only used for [User defined code](#user-defined-code).  
