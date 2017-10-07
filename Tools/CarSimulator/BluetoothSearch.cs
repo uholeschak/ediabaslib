@@ -91,7 +91,7 @@ namespace CarSimulator
                 };
                 bco.DiscoverDevicesAsync(1000, true, false, true, IsWinVistaOrHigher(), bco);
                 _searching = true;
-                UpdateStatusText("Searching");
+                UpdateStatusText("Searching ...");
                 UpdateButtonStatus();
             }
             catch (Exception)

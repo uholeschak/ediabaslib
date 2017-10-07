@@ -192,6 +192,7 @@ namespace CarSimulator
         private bool _klineResponder;
         private ResponseType _responseType;
         private ConfigData _configData;
+        private bool _testMode;
         private bool _isoTpMode;
         private byte _pcanHandle;
         private long _lastCanSendTick;
@@ -612,7 +613,7 @@ namespace CarSimulator
             IgnitionOk = false;
         }
 
-        public bool StartThread(string comPort, ConceptType conceptType, bool adsAdapter, bool klineResponder, ResponseType responseType, ConfigData configData)
+        public bool StartThread(string comPort, ConceptType conceptType, bool adsAdapter, bool klineResponder, ResponseType responseType, ConfigData configData, bool testMode = false)
         {
             try
             {
@@ -625,6 +626,7 @@ namespace CarSimulator
                 _klineResponder = klineResponder;
                 _responseType = responseType;
                 _configData = configData;
+                _testMode = testMode;
                 foreach (ResponseEntry responseEntry in _configData.ResponseList)
                 {
                     responseEntry.Reset();
@@ -2014,30 +2016,35 @@ namespace CarSimulator
                 for (; ; )
                 {
                     TPCANStatus stsResult;
-                    long currentTime = Stopwatch.GetTimestamp();
-                    if ((currentTime - _lastCanStatusTick) > 100 * TickResolMs)
+                    if (!_testMode)
                     {
-                        _lastCanStatusTick = currentTime;
-                        TPCANMsg sendMsg = new TPCANMsg
+                        long currentTime = Stopwatch.GetTimestamp();
+                        if ((currentTime - _lastCanStatusTick) > 100 * TickResolMs)
                         {
-                            DATA = new byte[8],
-                            ID = 0x130,
-                            LEN = 5,
-                            MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD
-                        };
-                        sendMsg.DATA[0] = (byte) (0xC0 | (IgnitionOk ? 0x05 : 0x00));
-                        sendMsg.DATA[1] = 0x40;
-                        sendMsg.DATA[2] = 0xFF;
-                        sendMsg.DATA[3] = 0xFF;
-                        sendMsg.DATA[4] = 0xFF;
-                        stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
-                        if (stsResult != TPCANStatus.PCAN_ERROR_OK)
-                        {
-                            break;
-                        }
+                            _lastCanStatusTick = currentTime;
+                            TPCANMsg sendMsg = new TPCANMsg
+                            {
+                                DATA = new byte[8],
+                                ID = 0x130,
+                                LEN = 5,
+                                MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD
+                            };
+                            sendMsg.DATA[0] = (byte)(0xC0 | (IgnitionOk ? 0x05 : 0x00));
+                            sendMsg.DATA[1] = 0x40;
+                            sendMsg.DATA[2] = 0xFF;
+                            sendMsg.DATA[3] = 0xFF;
+                            sendMsg.DATA[4] = 0xFF;
+                            stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
+                            if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                            {
 #if CAN_DEBUG
-                        //Debug.WriteLine("Send Status: {0:X02}", sendMsg.DATA[0]);
+                                Debug.WriteLine("Send Status failed");
 #endif
+                            }
+#if CAN_DEBUG
+                            //Debug.WriteLine("Send Status: {0:X02}", sendMsg.DATA[0]);
+#endif
+                        }
                     }
 
                     stsResult = PCANBasic.Read(_pcanHandle, out TPCANMsg canMsg, out TPCANTimestamp _);
