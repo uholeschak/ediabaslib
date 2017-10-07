@@ -59,7 +59,7 @@ The application has a configuration menu with the following options:
 
 Below are some screenshots from the example E61 configuration:
 
-![Motor page](Deep_OBD_for_BMW_and_VAG_AppMotorSmall.png) ![Motor page](Deep_OBD_for_BMW_and_VAG_AppClimateSmall.png) ![Motor page](Deep_OBD_for_BMW_and_VAG_AppAxisSmall.png) ![Motor page](Deep_OBD_for_BMW_and_VAG_AppReadAllErrorsSmall.png)
+![Motor page](Deep_OBD_for_BMW_and_VAG_AppMotorSmall.png) ![Motor page](Deep_OBD_for_BMW_and_VAG_AppMotorGraphSmall.png) ![Motor page](Deep_OBD_for_BMW_and_VAG_AppClimateSmall.png) ![Motor page](Deep_OBD_for_BMW_and_VAG_AppAxisSmall.png) ![Motor page](Deep_OBD_for_BMW_and_VAG_AppReadAllErrorsSmall.png)
 
 ## Log and trace files location
 The location of the log and trace files depends from the Android version.  

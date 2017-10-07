@@ -40,8 +40,8 @@ _Deep OBD for BMW and VAG_ supports several OBD II adapters:
 * Custom [Bluetooth D-CAN/K-Line adapter](docs/Build_Bluetooth_D-CAN_adapter.md) (BMW-FAST protocol over D-CAN and K-Line)
 * [ENET WiFi adapters](docs/ENET_WiFi_Adapter.md) (for BMW F-models)
 
-![ENET adapter](docs/README_EnetAdapterClosedSmall.png)
-![BMW deep OBD and VAG](docs/README_AppMotorSmall.png)
+![ENET adapter](docs/README_EnetAdapterClosedSmall.png)  
+![BMW deep OBD and VAG](docs/README_AppMotorSmall.png) ![BMW deep OBD and VAG](docs/README_AppMotorGraphSmall.png)
 
 # Hints
 At the moment most BEST/1 commands are implemented, but a few are still missing.  
