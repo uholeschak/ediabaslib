@@ -31,10 +31,18 @@ After selecting an ECU list entry it's Job page will be displayed. This is the m
 The page has the following properties:
 * _Page name_: This is the title (tab) name for the page in the configuration file.
 * _ECU name_: With this field the name of ECU on the _Errors_ page could be changed.
+* _Display type_: With his check box a graphical (gauge) display for the results could be enabled. The result will be only displayed if _Graphical design_ is set to value other than hidden.
 * _Font size_: The font size of the displayed data on the main page could be specifed in 3 steps (_Small_, _Medium_ and _Large_).
 * _Job list_: Here all available jobs are listed. Only if the job has a check mark it will be executed later. In the area _Comments for job_ the comments for the selected job will be shown.
 * _Job result_: Here one ore more job results could be selected (with a check mark) that will be displayed later on the page) For the currently selected result the data type and comment will be shown below.
 * _Display text_: This is the text that will be displayed on the page beside the job result.
+* _Graphical design_: If _Display type_ is set to _Graphical display_ this settings will get visible. The following design types are available:
+    * _Hidden_: The result will not be displayed. If the result value type is not `integer` or `real` this is the only option.
+    * _Simple gauge square_: A simple gauge with square border will be displayed.
+    * _Simple gauge round_: A simple gauge with round border will be displayed.
+    * _Simple gauge with dot_: A simple gauge with round border and a dot instead of bar graph will be displayed.
+
+    For the gauge display the value range _min value_ and _max value_ has to be specified also.
 * _Tag for data logging_: If the _Log data_ option is enabled on the main page the result data will get this tag in the log file. If the entry is empty no data will be logged.
 * _Output format_: Here the output format of the result data could be modified. The format specification is in the form of [Ediabas result types and formats](EDIABAS_result_types_and_formats.md). Depending on the job data type more or less result types will be listed.
 * _Read_: This button executes the selected job and displays the result in the specified format next to the button.
