@@ -82,6 +82,7 @@ namespace BmwDeepObd
                     StartActivity(startIntent);
 
                     SendStopCommBroadcast();
+                    StopEdiabasThread();
                     break;
                 }
 
@@ -91,6 +92,7 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, "OnStartCommand: The service is stopping.");
 #endif
                     SendStopCommBroadcast();
+                    StopEdiabasThread();
 
                     StopForeground(true);
                     StopSelf();
@@ -154,6 +156,22 @@ namespace BmwDeepObd
             Intent broadcastIntent = new Intent(NotificationBroadcastAction);
             broadcastIntent.PutExtra(BroadcastMessageKey, BroadcastStopComm);
             LocalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
+        }
+
+        private void StopEdiabasThread()
+        {
+            lock (ActivityCommon.GlobalLockObject)
+            {
+                if (ActivityCommon.EdiabasThread != null)
+                {
+                    if (!ActivityCommon.EdiabasThread.ThreadStopping())
+                    {
+                        ActivityCommon.EdiabasThread.StopThread(true);
+                        ActivityCommon.EdiabasThread.Dispose();
+                        ActivityCommon.EdiabasThread = null;
+                    }
+                }
+            }
         }
 
         /// <summary>
