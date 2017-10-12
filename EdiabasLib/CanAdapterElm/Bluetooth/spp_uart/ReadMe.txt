@@ -48,3 +48,12 @@ Test connection:
 Programming:
 ------------
 - BlueFlashCmd.exe <filename_without_extension>
+
+Compiling:
+----------
+- Install BlueLab 4.1 to C:\Programs\BlueLab41
+- In C:\Programs\BlueLab41\tools\bin replace usbspi.dll
+- Open command promt in source directory
+- Compile and flash: compile.bat flash
+- Clean: compile.bat clean
+- Build: compile.bat build
