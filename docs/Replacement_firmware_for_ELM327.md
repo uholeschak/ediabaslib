@@ -7,8 +7,8 @@ There is now a replacement firmware available for ELM327 based Bluetooth adapter
 * Firmware updates are possible with _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_.
 * Reduced power consumption due to use of sleep mode.
 * Two firmware versions are available:
-	* Unmodified Bluetooth adapter: Baud rate 38400.
-	* Modified Bluetooth adapter (recommended) with replaced [OpenSource Bluetooth firmware](Custom_Bluetooth_firmware.md): Baud rate 115200 and alterable Bluetooth pin (16 digits) and name (31 chars).
+  * Unmodified Bluetooth adapter: Baud rate 38400.
+  * Modified Bluetooth adapter (recommended) with replaced [OpenSource Bluetooth firmware](Custom_Bluetooth_firmware.md): Baud rate 115200 and alterable Bluetooth pin (16 digits) and name (31 chars).
 
 ![Bluetooth adapter top](Replacement_firmware_for_ELM327_BluetoothAdapterTopSmall.png) ![Bluetooth adapter bottom](Replacement_firmware_for_ELM327_BluetoothAdapterBottomSmall.png)
 
@@ -36,6 +36,9 @@ The source for the firmware could be found in the subdirectory `CanAdapterElm`. 
 * `default`: Unmodified ELM327 Bluetooth chip (Baud rate 38400)
 * `bc04`: BC-04 Bluetooth chip with BK3231 processor
 * `hc04`: HC-04 Bluetooth chip with BC417 processor
+* `spp_uart`: [OpenSource Bluetooth firmware](Custom_Bluetooth_firmware.md) with BC417 processor
+  * `spp_uart.xpv` and `spp_uart.xdv`: Firmware for BC417b processor
+  * `usbspi.dll`: Driver for programming the BC417b processor. For more information see the [`ReadMe.txt`](..\EdiabasLib\CanAdapterElm\Bluetooth\spp_uart\ReadMe.txt) file.
 
 There are two firmware files, the complete file (`CanAdapterElm.X.production.unified.hex`) and the update file (`CanAdapterElm.X.production.hex`) without bootloader, that is only needed by _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_.  
 The latest firmware version will be always included in _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_.
