@@ -52,7 +52,10 @@ Programming:
 Compiling:
 ----------
 - Install BlueLab 4.1 to C:\Programs\BlueLab41
-- In C:\Programs\BlueLab41\tools\bin replace usbspi.dll
+- In the directory C:\Programs\BlueLab41\tools\bin replace usbspi.dll
+- Download "BlueCore4-External Unified 23i firmware for OEMs, 56-bit encryption"
+  (cyt_8unified_fl_bt3.0_23i_0911261257_encr56_oem_prod.zip) from https://www.csrsupport.com
+- Replace the firmware in C:\Programs\BlueLab41\firmware\vm\unified\coyote with the downloaded version (backup old firmware first!)
 - Open command promt in source directory
 - Flash release with BlueFlashCmd.exe first, otherwise the parmeters will be set incorrectly!
 - Compile and flash: compile.bat flash
