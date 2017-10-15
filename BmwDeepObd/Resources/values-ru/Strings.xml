@@ -212,6 +212,11 @@
   <string name="settings_lock_bright">Яркий экран</string> 
   <string name="settings_caption_logfiles">Регистрация данных</string>
   <string name="settings_store_data_log_settings">Сохранять настройки записи данных</string>
+  <!--Translate-->
+  <string name="settings_caption_app_start">App start</string>
+  <string name="settings_start_offline">No connection establishment to vehicle</string>
+  <string name="settings_start_connect">Auto connection establishment to vehicle</string>
+  <string name="settings_start_connect_close">Auto connection establishment to vehicle and close App (only if broadcast is active)</string>
   <string name="settings_caption_app_exit">Выход из приложения</string>
   <string name="settings_double_click_for_app_exit">Для выхода из приложения требуется двойное нажатие</string>
   <!--Translate-->

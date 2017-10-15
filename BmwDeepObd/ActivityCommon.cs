@@ -179,8 +179,15 @@ namespace BmwDeepObd
 
         public enum BtDisableType
         {
-            DisableIfByApp,     // disable if enabled by app
-            Nothing             // no handling
+            DisableIfByApp,         // disable if enabled by app
+            Nothing                 // no handling
+        }
+
+        public enum AutoConnectType
+        {
+            Offline,                // no auto connect
+            Connect,                // auto connect
+            ConnectClose,           // auto connect and close app
         }
 
         public delegate bool ProgressZipDelegate(int percent);
@@ -464,6 +471,8 @@ namespace BmwDeepObd
         public static LockType LockTypeLogging { get; set; }
 
         public static bool StoreDataLogSettings { get; set; }
+
+        public static AutoConnectType AutoConnectHandling { get; set; }
 
         public static bool DoubleClickForAppExit { get; set; }
 
