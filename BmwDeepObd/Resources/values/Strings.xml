@@ -213,6 +213,10 @@
   <string name="settings_lock_bright">Screen bright</string>
   <string name="settings_caption_logfiles">Data logging</string>
   <string name="settings_store_data_log_settings">Store log data settings</string>
+  <string name="settings_caption_app_start">App start</string>
+  <string name="settings_start_offline">No connection establishment to vehicle</string>
+  <string name="settings_start_connect">Auto connection establishment to vehicle</string>
+  <string name="settings_start_connect_close">Auto connection establishment to vehicle and close App (only if broadcast is active)</string>
   <string name="settings_caption_app_exit">App exit</string>
   <string name="settings_double_click_for_app_exit">Double click required for app exit</string>
   <string name="settings_caption_broadcast">Broadcast</string>

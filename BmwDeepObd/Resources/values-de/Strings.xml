@@ -212,6 +212,10 @@
   <string name="settings_lock_bright">Bildschirm bleibt hell</string>
   <string name="settings_caption_logfiles">Datenaufzeichnung</string>
   <string name="settings_store_data_log_settings">Speichern der Logdaten-Einstellungen</string>
+  <string name="settings_caption_app_start">App starten</string>
+  <string name="settings_start_offline">Keine Verbindungsaufbau zum Fahrzeug</string>
+  <string name="settings_start_connect">Automatischer Verbindungsaufbau zum Fahrzeug</string>
+  <string name="settings_start_connect_close">Automatischer Verbindungsaufbau zum Fahrzeug und App beenden (nur wenn der Broadcast aktiv ist)</string>
   <string name="settings_caption_app_exit">App beenden</string>
   <string name="settings_double_click_for_app_exit">Doppelklick notwendig um App zu beenden</string>
   <string name="settings_caption_broadcast">Broadcast</string>

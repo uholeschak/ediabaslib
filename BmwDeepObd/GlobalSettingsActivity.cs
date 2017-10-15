@@ -39,6 +39,9 @@ namespace BmwDeepObd
         private RadioButton _radioButtonLogLockDim;
         private RadioButton _radioButtonLogLockBright;
         private CheckBox _checkBoxStoreDataLogSettings;
+        private RadioButton _radioButtonStartOffline;
+        private RadioButton _radioButtonStartConnect;
+        private RadioButton _radioButtonStartConnectClose;
         private CheckBox _checkBoxDoubleClickForAppExit;
         private CheckBox _checkBoxSendDataBroadcast;
         private TextView _textViewCaptionCpuUsage;
@@ -83,6 +86,11 @@ namespace BmwDeepObd
             _radioButtonLogLockBright = FindViewById<RadioButton>(Resource.Id.radioButtonLogLockBright);
 
             _checkBoxStoreDataLogSettings = FindViewById<CheckBox>(Resource.Id.checkBoxStoreDataLogSettings);
+
+            _radioButtonStartOffline = FindViewById<RadioButton>(Resource.Id.radioButtonStartOffline);
+            _radioButtonStartConnect = FindViewById<RadioButton>(Resource.Id.radioButtonStartConnect);
+            _radioButtonStartConnectClose = FindViewById<RadioButton>(Resource.Id.radioButtonStartConnectClose);
+
             _checkBoxDoubleClickForAppExit = FindViewById<CheckBox>(Resource.Id.checkBoxDoubleClickForAppExit);
             _checkBoxSendDataBroadcast = FindViewById<CheckBox>(Resource.Id.checkBoxSendDataBroadcast);
 
@@ -202,6 +210,22 @@ namespace BmwDeepObd
             }
 
             _checkBoxStoreDataLogSettings.Checked = ActivityCommon.StoreDataLogSettings;
+
+            switch (ActivityCommon.AutoConnectHandling)
+            {
+                case ActivityCommon.AutoConnectType.Offline:
+                    _radioButtonStartOffline.Checked = true;
+                    break;
+
+                case ActivityCommon.AutoConnectType.Connect:
+                    _radioButtonStartConnect.Checked = true;
+                    break;
+
+                case ActivityCommon.AutoConnectType.ConnectClose:
+                    _radioButtonStartConnectClose.Checked = true;
+                    break;
+            }
+
             _checkBoxDoubleClickForAppExit.Checked = ActivityCommon.DoubleClickForAppExit;
             _checkBoxSendDataBroadcast.Checked = ActivityCommon.SendDataBroadcast;
             _checkBoxCheckCpuUsage.Checked = ActivityCommon.CheckCpuUsage;
@@ -267,6 +291,22 @@ namespace BmwDeepObd
             ActivityCommon.LockTypeLogging = lockType;
 
             ActivityCommon.StoreDataLogSettings = _checkBoxStoreDataLogSettings.Checked;
+
+            ActivityCommon.AutoConnectType autoConnectType = ActivityCommon.AutoConnectType.Offline;
+            if (_radioButtonStartOffline.Checked)
+            {
+                autoConnectType = ActivityCommon.AutoConnectType.Offline;
+            }
+            else if (_radioButtonStartConnect.Checked)
+            {
+                autoConnectType = ActivityCommon.AutoConnectType.Connect;
+            }
+            else if (_radioButtonStartConnectClose.Checked)
+            {
+                autoConnectType = ActivityCommon.AutoConnectType.ConnectClose;
+            }
+            ActivityCommon.AutoConnectHandling = autoConnectType;
+
             ActivityCommon.DoubleClickForAppExit = _checkBoxDoubleClickForAppExit.Checked;
             ActivityCommon.SendDataBroadcast = _checkBoxSendDataBroadcast.Checked;
             ActivityCommon.CheckCpuUsage = _checkBoxCheckCpuUsage.Checked;

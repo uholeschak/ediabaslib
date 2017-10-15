@@ -1162,6 +1162,7 @@ namespace BmwDeepObd
                     _dataLogActive = prefs.GetBoolean("DataLogActive", _dataLogActive);
                     _dataLogAppend = prefs.GetBoolean("DataLogAppend", _dataLogAppend);
                 }
+                ActivityCommon.AutoConnectHandling = (ActivityCommon.AutoConnectType)prefs.GetInt("AutoConnect", (int)ActivityCommon.AutoConnectType.Offline);
                 ActivityCommon.DoubleClickForAppExit = prefs.GetBoolean("DoubleClickForExit", ActivityCommon.DoubleClickForAppExit);
                 ActivityCommon.SendDataBroadcast = prefs.GetBoolean("SendDataBroadcast", ActivityCommon.SendDataBroadcast);
                 ActivityCommon.CheckCpuUsage = prefs.GetBoolean("CheckCpuUsage", true);
@@ -1196,6 +1197,7 @@ namespace BmwDeepObd
                 prefsEdit.PutBoolean("StoreDataLogSettings", ActivityCommon.StoreDataLogSettings);
                 prefsEdit.PutBoolean("DataLogActive", _dataLogActive);
                 prefsEdit.PutBoolean("DataLogAppend", _dataLogAppend);
+                prefsEdit.PutInt("AutoConnect", (int)ActivityCommon.AutoConnectHandling);
                 prefsEdit.PutBoolean("DoubleClickForExit", ActivityCommon.DoubleClickForAppExit);
                 prefsEdit.PutBoolean("SendDataBroadcast", ActivityCommon.SendDataBroadcast);
                 prefsEdit.PutBoolean("CheckCpuUsage", ActivityCommon.CheckCpuUsage);
