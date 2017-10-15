@@ -140,6 +140,7 @@ namespace BmwDeepObd
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         private LastAppState _lastAppState = LastAppState.Init;
         private bool _stopCommRequest;
+        private ActivityCommon.AutoConnectType _connectTypeRequest;
         private bool _backPressed;
         private long _lastBackPressesTime;
         private string _deviceName = string.Empty;
@@ -293,6 +294,7 @@ namespace BmwDeepObd
             _webClient.DownloadFileCompleted += DownloadCompleted;
 
             _stopCommRequest = Intent.GetBooleanExtra(ExtraStopComm, false);
+            _connectTypeRequest = ActivityCommon.AutoConnectHandling;
             if (ActivityCommon.CommActive)
             {
                 ConnectEdiabasEvents();
@@ -365,6 +367,25 @@ namespace BmwDeepObd
                 {
                     StopEdiabasThread(false);
                 }
+            }
+            else
+            {
+                switch (_connectTypeRequest)
+                {
+                    case ActivityCommon.AutoConnectType.Connect:
+                    case ActivityCommon.AutoConnectType.ConnectClose:
+                        if (ActivityCommon.JobReader.PageList.Count > 0 &&
+                            !ActivityCommon.CommActive && _activityCommon.IsInterfaceAvailable())
+                        {
+                            ButtonConnectClick(_connectButtonInfo.Button, new EventArgs());
+                            if (ActivityCommon.CommActive && _connectTypeRequest == ActivityCommon.AutoConnectType.ConnectClose)
+                            {
+                                Finish();
+                            }
+                        }
+                        break;
+                }
+                _connectTypeRequest = ActivityCommon.AutoConnectType.Offline;
             }
         }
 
@@ -827,16 +848,19 @@ namespace BmwDeepObd
                     return;
                 }
             }
-            if (_activityCommon.ShowWifiWarning(retry => 
+            if (_connectTypeRequest == ActivityCommon.AutoConnectType.Offline)
             {
-                if (retry)
+                if (_activityCommon.ShowWifiWarning(retry =>
                 {
-                    ButtonConnectClick(sender, e);
+                    if (retry)
+                    {
+                        ButtonConnectClick(sender, e);
+                    }
+                }))
+                {
+                    UpdateDisplay();
+                    return;
                 }
-            }))
-            {
-                UpdateDisplay();
-                return;
             }
 
             if (ActivityCommon.CommActive)
@@ -1497,6 +1521,10 @@ namespace BmwDeepObd
             }
             else
             {
+                if (ActivityCommon.JobReader.PageList.Count == 0)
+                {
+                    _connectButtonInfo.Enabled = false;
+                }
                 if (!_activityCommon.IsInterfaceAvailable())
                 {
                     _connectButtonInfo.Enabled = false;
