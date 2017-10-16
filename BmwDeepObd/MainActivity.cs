@@ -967,14 +967,14 @@ namespace BmwDeepObd
             bool useService = true;
             if (_dataLogActive)
             {
-                if (ActivityCommon.LockTypeCommunication == ActivityCommon.LockType.None)
+                if (ActivityCommon.LockTypeLogging == ActivityCommon.LockType.None)
                 {
                     useService = false;
                 }
             }
             else
             {
-                if (ActivityCommon.LockTypeLogging == ActivityCommon.LockType.None)
+                if (ActivityCommon.LockTypeCommunication == ActivityCommon.LockType.None)
                 {
                     useService = false;
                 }
