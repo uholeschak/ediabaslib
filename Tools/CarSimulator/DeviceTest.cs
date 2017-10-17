@@ -8,7 +8,6 @@ using System.Windows.Forms;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
-using InTheHand.Windows.Forms;
 
 namespace CarSimulator
 {
