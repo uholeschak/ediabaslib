@@ -124,7 +124,7 @@
             this.groupBoxConcepts.Controls.Add(this.radioButtonDs2);
             this.groupBoxConcepts.Controls.Add(this.radioButtonKwp2000S);
             this.groupBoxConcepts.Controls.Add(this.radioButtonBmwFast);
-            this.groupBoxConcepts.Location = new System.Drawing.Point(438, 136);
+            this.groupBoxConcepts.Location = new System.Drawing.Point(438, 162);
             this.groupBoxConcepts.Name = "groupBoxConcepts";
             this.groupBoxConcepts.Size = new System.Drawing.Size(207, 232);
             this.groupBoxConcepts.TabIndex = 6;
@@ -224,7 +224,7 @@
             this.listBoxResponseFiles.FormattingEnabled = true;
             this.listBoxResponseFiles.Location = new System.Drawing.Point(224, 117);
             this.listBoxResponseFiles.Name = "listBoxResponseFiles";
-            this.listBoxResponseFiles.Size = new System.Drawing.Size(207, 251);
+            this.listBoxResponseFiles.Size = new System.Drawing.Size(207, 277);
             this.listBoxResponseFiles.Sorted = true;
             this.listBoxResponseFiles.TabIndex = 10;
             // 
@@ -277,7 +277,7 @@
             // 
             this.treeViewDirectories.Location = new System.Drawing.Point(12, 117);
             this.treeViewDirectories.Name = "treeViewDirectories";
-            this.treeViewDirectories.Size = new System.Drawing.Size(206, 251);
+            this.treeViewDirectories.Size = new System.Drawing.Size(206, 277);
             this.treeViewDirectories.TabIndex = 9;
             this.treeViewDirectories.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewDirectories_AfterSelect);
             // 
@@ -313,14 +313,14 @@
             this.textBoxTestResults.Name = "textBoxTestResults";
             this.textBoxTestResults.ReadOnly = true;
             this.textBoxTestResults.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxTestResults.Size = new System.Drawing.Size(207, 116);
+            this.textBoxTestResults.Size = new System.Drawing.Size(207, 142);
             this.textBoxTestResults.TabIndex = 13;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(657, 378);
+            this.ClientSize = new System.Drawing.Size(657, 408);
             this.Controls.Add(this.textBoxTestResults);
             this.Controls.Add(this.buttonDeviceTest);
             this.Controls.Add(this.buttonRootFolder);
