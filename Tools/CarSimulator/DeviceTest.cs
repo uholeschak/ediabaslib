@@ -187,6 +187,34 @@ namespace CarSimulator
                 _form.UpdateTestStatusText(sr.ToString());
                 return false;
             }
+            int adapterType = firmware[0] << 8 | firmware[1];
+            string adapterName;
+            switch (adapterType)
+            {
+                case 2:
+                    adapterName = "Default";
+                    break;
+
+                case 3:
+                    adapterName = "BC04";
+                    break;
+
+                case 4:
+                    adapterName = "HC04";
+                    break;
+
+                case 5:
+                    adapterName = "SPP-UART";
+                    break;
+
+                default:
+                    sr.Append(string.Format("Invalid adapter type: {0}", adapterType));
+                    _form.UpdateTestStatusText(sr.ToString());
+                    return false;
+            }
+            sr.Append("Type: ");
+            sr.Append(adapterName);
+            sr.Append("\r\n");
             sr.Append("Firmware: ");
             sr.Append(string.Format("{0}.{1}", firmware[2], firmware[3]));
             if ((firmware[2] != 0x00) || (firmware[3] < 0x09))
