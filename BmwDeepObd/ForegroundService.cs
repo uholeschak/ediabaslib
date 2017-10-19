@@ -21,11 +21,11 @@ namespace BmwDeepObd
 
         public const string ActionStartService = "ForegroundService.action.START_SERVICE";
         public const string ActionStopService = "ForegroundService.action.STOP_SERVICE";
-        public const string ActionStopCommunication = "ForegroundService.action.STOP_COMM";
         public const string ActionMainActivity = "ForegroundService.action.MAIN_ACTIVITY";
 
         bool _isStarted;
         private ActivityCommon _activityCommon;
+        private Handler _stopHandler;
 
         public override void OnCreate()
         {
@@ -33,6 +33,7 @@ namespace BmwDeepObd
 #if DEBUG
             Android.Util.Log.Info(Tag, "OnCreate: the service is initializing.");
 #endif
+            _stopHandler = new Handler();
             _activityCommon = new ActivityCommon(this, null, BroadcastReceived);
             _activityCommon.SetLock(ActivityCommon.LockType.Cpu);
             lock (ActivityCommon.GlobalLockObject)
@@ -70,33 +71,23 @@ namespace BmwDeepObd
                     }
                     break;
 
-                case ActionStopCommunication:
-                {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "OnStartCommand: Stop communication");
-#endif
-                    Intent startIntent = new Intent(this, typeof(ActivityMain));
-                    startIntent.SetAction(ActionMainActivity);
-                    startIntent.SetFlags(ActivityFlags.NewTask);
-                    startIntent.PutExtra(ActivityMain.ExtraStopComm, true);
-                    StartActivity(startIntent);
-
-                    SendStopCommBroadcast();
-                    StopEdiabasThread();
-                    break;
-                }
-
                 case ActionStopService:
                 {
 #if DEBUG
                     Android.Util.Log.Info(Tag, "OnStartCommand: The service is stopping.");
 #endif
                     SendStopCommBroadcast();
-                    StopEdiabasThread();
+                    StopEdiabasThread(false);
 
-                    StopForeground(true);
-                    StopSelf();
-                    _isStarted = false;
+                    if (!ActivityCommon.CommActive)
+                    {
+                        if (_isStarted)
+                        {
+                            StopForeground(true);
+                            StopSelf();
+                            _isStarted = false;
+                        }
+                    }
                     break;
                 }
             }
@@ -120,6 +111,7 @@ namespace BmwDeepObd
             NotificationManagerCompat notificationManager = NotificationManagerCompat.From(this);
             notificationManager.Cancel(ServiceRunningNotificationId);
             _activityCommon.SetLock(ActivityCommon.LockType.None);
+            DisconnectEdiabasEvents();
             lock (ActivityCommon.GlobalLockObject)
             {
                 EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
@@ -132,6 +124,12 @@ namespace BmwDeepObd
             _activityCommon.Dispose();
             _activityCommon = null;
             _isStarted = false;
+
+            if (_stopHandler != null)
+            {
+                _stopHandler.Dispose();
+                _stopHandler = null;
+            }
             base.OnDestroy();
         }
 
@@ -143,7 +141,6 @@ namespace BmwDeepObd
                 .SetSmallIcon(Resource.Drawable.ic_stat_obd)
                 .SetContentIntent(BuildIntentToShowMainActivity())
                 .SetOngoing(true)
-                //.AddAction(BuildStopCommAction())
                 .AddAction(BuildStopServiceAction())
                 .Build();
 
@@ -158,7 +155,33 @@ namespace BmwDeepObd
             LocalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
         }
 
+        private void ConnectEdiabasEvents()
+        {
+            if (ActivityCommon.EdiabasThread != null)
+            {
+                ActivityCommon.EdiabasThread.ThreadTerminated += ThreadTerminated;
+            }
+        }
+
+        private void DisconnectEdiabasEvents()
+        {
+            if (ActivityCommon.EdiabasThread != null)
+            {
+                ActivityCommon.EdiabasThread.ThreadTerminated -= ThreadTerminated;
+            }
+        }
+
+        private void ThreadTerminated(object sender, EventArgs e)
+        {
+            _stopHandler?.Post(StopEdiabasThread);
+        }
+
         private void StopEdiabasThread()
+        {
+            StopEdiabasThread(true);
+        }
+
+        private void StopEdiabasThread(bool wait)
         {
             lock (ActivityCommon.GlobalLockObject)
             {
@@ -166,7 +189,24 @@ namespace BmwDeepObd
                 {
                     if (!ActivityCommon.EdiabasThread.ThreadStopping())
                     {
-                        ActivityCommon.EdiabasThread.StopThread(true);
+                        ConnectEdiabasEvents();
+                        ActivityCommon.EdiabasThread.StopThread(wait);
+                    }
+                }
+            }
+            if (wait)
+            {
+                if (_isStarted)
+                {
+                    StopForeground(true);
+                    StopSelf();
+                    _isStarted = false;
+                }
+                lock (ActivityCommon.GlobalLockObject)
+                {
+                    DisconnectEdiabasEvents();
+                    if (ActivityCommon.EdiabasThread != null)
+                    {
                         ActivityCommon.EdiabasThread.Dispose();
                         ActivityCommon.EdiabasThread = null;
                     }
@@ -204,24 +244,6 @@ namespace BmwDeepObd
 
             var builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel,
                 GetText(Resource.String.service_stop_comm),
-                stopServicePendingIntent);
-            return builder.Build();
-        }
-
-        /// <summary>
-        /// Builds the Notification.Action that will allow the user to stop the service via the
-        /// notification in the status bar
-        /// </summary>
-        /// <returns>The stop service action.</returns>
-        // ReSharper disable once UnusedMember.Local
-        private NotificationCompat.Action BuildStopCommAction()
-        {
-            var stopServiceIntent = new Intent(this, GetType());
-            stopServiceIntent.SetAction(ActionStopCommunication);
-            var stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent, 0);
-
-            var builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel,
-                GetText(Resource.String.service_stop_comm_app),
                 stopServicePendingIntent);
             return builder.Build();
         }

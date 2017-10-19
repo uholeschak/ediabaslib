@@ -1070,7 +1070,6 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    _activityCommon?.StopForegroundService();
                     lock (ActivityCommon.GlobalLockObject)
                     {
                         if (ActivityCommon.EdiabasThread != null)
@@ -1080,6 +1079,7 @@ namespace BmwDeepObd
                     }
                     if (wait)
                     {
+                        _activityCommon?.StopForegroundService();
                         DisconnectEdiabasEvents();
                         lock (ActivityCommon.GlobalLockObject)
                         {
