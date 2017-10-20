@@ -276,7 +276,7 @@ namespace BmwDeepObd
             {
                 if (_activityActive)
                 {
-                    SupportInvalidateOptionsMenu();
+                    InvalidateOptionsMenu();
                     UpdateDisplay();
                 }
             }, BroadcastReceived);
@@ -421,7 +421,7 @@ namespace BmwDeepObd
             {
                 HandleStartDialogs(firstStart);
             }
-            SupportInvalidateOptionsMenu();
+            InvalidateOptionsMenu();
             UpdateDisplay();
         }
 
@@ -510,7 +510,7 @@ namespace BmwDeepObd
                         _deviceName = data.Extras.GetString(DeviceListActivity.ExtraDeviceName);
                         _deviceAddress = data.Extras.GetString(DeviceListActivity.ExtraDeviceAddress);
                         bool callAdapterConfig = data.Extras.GetBoolean(DeviceListActivity.ExtraCallAdapterConfig, false);
-                        SupportInvalidateOptionsMenu();
+                        InvalidateOptionsMenu();
                         if (callAdapterConfig)
                         {
                             AdapterConfig();
@@ -532,7 +532,7 @@ namespace BmwDeepObd
                     {
                         _configFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
                         ReadConfigFile();
-                        SupportInvalidateOptionsMenu();
+                        InvalidateOptionsMenu();
                     }
                     break;
 
@@ -543,7 +543,7 @@ namespace BmwDeepObd
                     {
                         _configFileName = data.Extras.GetString(XmlToolActivity.ExtraFileName);
                         ReadConfigFile();
-                        SupportInvalidateOptionsMenu();
+                        InvalidateOptionsMenu();
                     }
                     break;
 
@@ -568,13 +568,13 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestYandexKey:
                     ActivityCommon.EnableTranslation = !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey);
-                    SupportInvalidateOptionsMenu();
+                    InvalidateOptionsMenu();
                     UpdateDisplay();
                     break;
 
                 case ActivityRequest.RequestGlobalSettings:
                     UpdateDirectories();
-                    SupportInvalidateOptionsMenu();
+                    InvalidateOptionsMenu();
                     UpdateDisplay();
                     CheckForEcuFiles();
                     break;
@@ -762,7 +762,7 @@ namespace BmwDeepObd
                         return true;
                     }
                     ActivityCommon.EnableTranslation = !ActivityCommon.EnableTranslation;
-                    SupportInvalidateOptionsMenu();
+                    InvalidateOptionsMenu();
                     UpdateDisplay();
                     return true;
 
@@ -774,7 +774,7 @@ namespace BmwDeepObd
                     _activityCommon.ClearTranslationCache();
                     _translationList = null;
                     _translatedList = null;
-                    SupportInvalidateOptionsMenu();
+                    InvalidateOptionsMenu();
                     UpdateDisplay();
                     return true;
 
@@ -947,7 +947,7 @@ namespace BmwDeepObd
         {
             if (!_activityCommon.RequestInterfaceEnable((sender, args) =>
             {
-                SupportInvalidateOptionsMenu();
+                InvalidateOptionsMenu();
                 UpdateDisplay();
                 if (firstStart)
                 {
@@ -1060,7 +1060,7 @@ namespace BmwDeepObd
                 return false;
             }
             UpdateLockState();
-            SupportInvalidateOptionsMenu();
+            InvalidateOptionsMenu();
             return true;
         }
 
@@ -1097,7 +1097,7 @@ namespace BmwDeepObd
                 }
             }
             UpdateLockState();
-            SupportInvalidateOptionsMenu();
+            InvalidateOptionsMenu();
         }
 
         private void ConnectEdiabasEvents()
@@ -1375,7 +1375,7 @@ namespace BmwDeepObd
                         if (EdFtdiInterface.IsValidUsbDevice(usbDevice))
                         {
                             _activityCommon.RequestUsbPermission(usbDevice);
-                            SupportInvalidateOptionsMenu();
+                            InvalidateOptionsMenu();
                             UpdateDisplay();
                         }
                         break;
@@ -1864,7 +1864,7 @@ namespace BmwDeepObd
                                         {
                                             _translateActive = false;
                                             _translatedList = transList;
-                                            SupportInvalidateOptionsMenu();
+                                            InvalidateOptionsMenu();
                                             _updateHandler?.Post(UpdateDisplay);
                                         });
                                     }))
@@ -3070,7 +3070,7 @@ namespace BmwDeepObd
                 {
                     RequestConfigSelect();
                 }
-                SupportInvalidateOptionsMenu();
+                InvalidateOptionsMenu();
                 UpdateDisplay();
             });
         }
@@ -3175,7 +3175,7 @@ namespace BmwDeepObd
                             break;
                     }
                 }
-                SupportInvalidateOptionsMenu();
+                InvalidateOptionsMenu();
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
             builder.Show();
@@ -3222,7 +3222,7 @@ namespace BmwDeepObd
             }
             _activityCommon.SelectEnetIp((sender, args) =>
             {
-                SupportInvalidateOptionsMenu();
+                InvalidateOptionsMenu();
             });
         }
 

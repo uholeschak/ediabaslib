@@ -330,7 +330,7 @@ namespace BmwDeepObd
             {
                 if (_activityActive)
                 {
-                    SupportInvalidateOptionsMenu();
+                    InvalidateOptionsMenu();
                     UpdateDisplay();
                 }
             }, BroadcastReceived)
@@ -480,7 +480,7 @@ namespace BmwDeepObd
                         };
                         _ecuList.Add(ecuInfoNew);
                         ExecuteUpdateEcuInfo();
-                        SupportInvalidateOptionsMenu();
+                        InvalidateOptionsMenu();
                         UpdateDisplay();
                     }
                     break;
@@ -494,7 +494,7 @@ namespace BmwDeepObd
                         _deviceAddress = data.Extras.GetString(DeviceListActivity.ExtraDeviceAddress);
                         bool callAdapterConfig = data.Extras.GetBoolean(DeviceListActivity.ExtraCallAdapterConfig, false);
                         EdiabasClose();
-                        SupportInvalidateOptionsMenu();
+                        InvalidateOptionsMenu();
                         if (callAdapterConfig)
                         {
                             AdapterConfig();
@@ -530,12 +530,12 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestYandexKey:
                     ActivityCommon.EnableTranslation = !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey);
-                    SupportInvalidateOptionsMenu();
+                    InvalidateOptionsMenu();
                     UpdateDisplay();
                     break;
 
                 case ActivityRequest.RequestEdiabasTool:
-                    SupportInvalidateOptionsMenu();
+                    InvalidateOptionsMenu();
                     UpdateDisplay();
                     break;
             }
@@ -713,7 +713,7 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_xml_tool_add_errors_page:
                     _addErrorsPage = !_addErrorsPage;
-                    SupportInvalidateOptionsMenu();
+                    InvalidateOptionsMenu();
                     UpdateDisplay();
                     return true;
 
@@ -748,7 +748,7 @@ namespace BmwDeepObd
                         return true;
                     }
                     ActivityCommon.EnableTranslation = !ActivityCommon.EnableTranslation;
-                    SupportInvalidateOptionsMenu();
+                    InvalidateOptionsMenu();
                     UpdateDisplay();
                     return true;
 
@@ -760,7 +760,7 @@ namespace BmwDeepObd
                     _activityCommon.ClearTranslationCache();
                     ResetTranslations();
                     _ecuListTranslated = false;
-                    SupportInvalidateOptionsMenu();
+                    InvalidateOptionsMenu();
                     UpdateDisplay();
                     return true;
 
@@ -792,7 +792,7 @@ namespace BmwDeepObd
                 SelectInterface();
             }
             SelectInterfaceEnable();
-            SupportInvalidateOptionsMenu();
+            InvalidateOptionsMenu();
             UpdateDisplay();
         }
 
@@ -826,7 +826,7 @@ namespace BmwDeepObd
                 _ediabas = null;
             }
             UpdateDisplay();
-            SupportInvalidateOptionsMenu();
+            InvalidateOptionsMenu();
             return true;
         }
 
@@ -1186,7 +1186,7 @@ namespace BmwDeepObd
             _activityCommon.SelectInterface((sender, args) =>
             {
                 EdiabasClose();
-                SupportInvalidateOptionsMenu();
+                InvalidateOptionsMenu();
                 SelectInterfaceEnable();
             });
         }
@@ -1195,7 +1195,7 @@ namespace BmwDeepObd
         {
             _activityCommon.RequestInterfaceEnable((sender, args) =>
             {
-                SupportInvalidateOptionsMenu();
+                InvalidateOptionsMenu();
             });
         }
 
@@ -1236,7 +1236,7 @@ namespace BmwDeepObd
                     }
                 }
                 UpdateLogInfo();
-                SupportInvalidateOptionsMenu();
+                InvalidateOptionsMenu();
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
             {
@@ -1318,7 +1318,7 @@ namespace BmwDeepObd
                     ReadAllXml();
                     ExecuteUpdateEcuInfo();
                 }
-                SupportInvalidateOptionsMenu();
+                InvalidateOptionsMenu();
                 UpdateDisplay();
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
@@ -1516,7 +1516,7 @@ namespace BmwDeepObd
             }
             _activityCommon.SelectEnetIp((sender, args) =>
             {
-                SupportInvalidateOptionsMenu();
+                InvalidateOptionsMenu();
             });
         }
 
@@ -1899,7 +1899,7 @@ namespace BmwDeepObd
                     _activityCommon.SetLock(ActivityCommon.LockType.None);
 
                     _translateEnabled = true;
-                    SupportInvalidateOptionsMenu();
+                    InvalidateOptionsMenu();
                     UpdateDisplay();
 
                     if (!_ediabasJobAbort)
@@ -2602,7 +2602,7 @@ namespace BmwDeepObd
                     progress.Dispose();
                     _activityCommon.SetLock(ActivityCommon.LockType.None);
 
-                    SupportInvalidateOptionsMenu();
+                    InvalidateOptionsMenu();
                     UpdateDisplay();
 
                     if (!_ediabasJobAbort && ((_ecuList.Count == 0) || (detectCount == 0)))
@@ -3039,7 +3039,7 @@ namespace BmwDeepObd
             progress.Dispose();
             _activityCommon.SetLock(ActivityCommon.LockType.None);
 
-            SupportInvalidateOptionsMenu();
+            InvalidateOptionsMenu();
             UpdateDisplay();
             if (_ediabasJobAbort || ecuInfo.JobList == null)
             {
@@ -3645,7 +3645,7 @@ namespace BmwDeepObd
 
                     _ecuListTranslated = false;
                     _translateEnabled = true;
-                    SupportInvalidateOptionsMenu();
+                    InvalidateOptionsMenu();
                     UpdateDisplay();
                     if (readFailed)
                     {
