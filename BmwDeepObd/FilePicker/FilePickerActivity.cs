@@ -50,9 +50,7 @@ namespace BmwDeepObd.FilePicker
             {
                 menuSearch.SetActionView(new Android.Support.V7.Widget.SearchView(this));
 
-                View searchView = MenuItemCompat.GetActionView(menuSearch);
-                var searchViewV7 = searchView as Android.Support.V7.Widget.SearchView;
-                if (searchViewV7 != null)
+                if (menuSearch.ActionView is Android.Support.V7.Widget.SearchView searchViewV7)
                 {
                     searchViewV7.QueryTextChange += (sender, e) =>
                     {
