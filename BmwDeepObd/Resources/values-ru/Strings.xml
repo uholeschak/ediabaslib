@@ -34,8 +34,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:
-\n- Обработка полученных broadcasts
-\n- Добавлено графическое отображение
+\n- Добавлена опция автоматического подключения
 \n- улучшена стабильность</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.8.\nНа данный момент поддерживаются только KWP2000, KWP1281 и TP2.0 (Автомобили до 4.2012) протоколы.</string>
@@ -212,18 +211,16 @@
   <string name="settings_lock_bright">Яркий экран</string> 
   <string name="settings_caption_logfiles">Регистрация данных</string>
   <string name="settings_store_data_log_settings">Сохранять настройки записи данных</string>
-  <!--Translate-->
-  <string name="settings_caption_app_start">App start</string>
-  <string name="settings_start_offline">No connection establishment to vehicle</string>
-  <string name="settings_start_connect">Auto connection establishment to vehicle</string>
-  <string name="settings_start_connect_close">Auto connection establishment to vehicle and close App (only if broadcast is active)</string>
+  <string name="settings_caption_app_start">Запустить приложение</string>
+  <string name="settings_start_offline">Нет связи с автомобилем</string>
+  <string name="settings_start_connect">Автоматическое подключение к автомобилю</string>
+  <string name="settings_start_connect_close">Завершить автоматическое подключение к автомобилю и приложение (только при активном Broadcast)</string>
   <string name="settings_caption_app_exit">Выход из приложения</string>
   <string name="settings_double_click_for_app_exit">Для выхода из приложения требуется двойное нажатие</string>
-  <!--Translate-->
   <string name="settings_caption_broadcast">Broadcast</string>
-  <string name="settings_send_data_broadcast">Send data broadcast</string>
-  <string name="settings_caption_cpu_usage">CPU usage</string>
-  <string name="settings_check_cpu_usage">Check CPU usage at start</string>
+  <string name="settings_send_data_broadcast">Послать Broadcasts-данные</string>
+  <string name="settings_caption_cpu_usage">Загрузка процессора</string>
+  <string name="settings_check_cpu_usage">Проверка загрузки процессора при запуске</string>
   <string name="settings_caption_storage">Носитель памяти</string>
   <string name="settings_caption_debug">Отладить</string>
   <string name="settings_collect_debug_info">Собрать отладочную информацию для файла трассировки</string>
