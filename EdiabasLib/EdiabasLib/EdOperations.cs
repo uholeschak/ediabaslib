@@ -1727,11 +1727,14 @@ namespace EdiabasLib
             if (pos < argStrings.Count)
             {
                 string argString = argStrings[(int)pos];
-                bool valid;
-                result = (EdValueType)StringToValue(argString, out valid);
-                if (valid)
+                if (!string.IsNullOrEmpty(argString))
                 {
-                    ediabas._flags.Zero = false;
+                    bool valid;
+                    result = (EdValueType) StringToValue(argString, out valid);
+                    if (valid)
+                    {
+                        ediabas._flags.Zero = false;
+                    }
                 }
             }
             arg0.SetRawData(result);
@@ -1771,11 +1774,14 @@ namespace EdiabasLib
             if (pos < argStrings.Count)
             {
                 string argString = argStrings[(int)pos];
-                bool valid;
-                result = StringToFloat(argString, out valid);
-                if (valid)
+                if (!string.IsNullOrEmpty(argString))
                 {
-                    ediabas._flags.Zero = false;
+                    bool valid;
+                    result = StringToFloat(argString, out valid);
+                    if (valid)
+                    {
+                        ediabas._flags.Zero = false;
+                    }
                 }
             }
             arg0.SetRawData(result);
@@ -1796,8 +1802,12 @@ namespace EdiabasLib
             List<string> argStrings = ediabas.GetActiveArgStrings();
             if (pos < argStrings.Count)
             {
-                result = argStrings[(int)pos];
-                ediabas._flags.Zero = false;
+                string argString = argStrings[(int)pos];
+                if (!string.IsNullOrEmpty(argString))
+                {
+                    result = argString;
+                    ediabas._flags.Zero = false;
+                }
             }
             arg0.SetStringData(result);
         }
