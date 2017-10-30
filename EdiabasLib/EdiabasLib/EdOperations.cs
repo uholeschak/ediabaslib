@@ -9,6 +9,8 @@ using System.Threading;
 // ReSharper disable RedundantCast
 // ReSharper disable LoopCanBeConvertedToQuery
 // ReSharper disable UseNameofExpression
+// ReSharper disable NotAccessedVariable
+// ReSharper disable InlineOutVariableDeclaration
 
 namespace EdiabasLib
 {
