@@ -369,7 +369,7 @@ namespace EdiabasLib
                     case 0x0000:    // Raw (EDIC)
                         if (!EdicSimulation)
                         {
-                            EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
+                            EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
                             return;
                         }
                         if (CommParameterProtected.Length < 5)
