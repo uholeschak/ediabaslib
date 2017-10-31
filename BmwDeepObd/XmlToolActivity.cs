@@ -2980,6 +2980,7 @@ namespace BmwDeepObd
                         {
                             int argIndex = -1;
                             int resultIndex = -1;
+                            int unitIndex = -1;
                             int infoIndex = -1;
                             int dictIndex = 0;
                             foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSetsTab)
@@ -2991,6 +2992,7 @@ namespace BmwDeepObd
                                 }
                                 string args = string.Empty;
                                 string result = string.Empty;
+                                string unit = string.Empty;
                                 string info = string.Empty;
                                 for (int i = 0; ; i++)
                                 {
@@ -3004,6 +3006,10 @@ namespace BmwDeepObd
                                                 if (string.Compare(entry, "ARG", StringComparison.OrdinalIgnoreCase) == 0)
                                                 {
                                                     argIndex = i;
+                                                }
+                                                else if (string.Compare(entry, "EINHEIT", StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    unitIndex = i;
                                                 }
                                                 else if (string.Compare(entry, "RESULTNAME", StringComparison.OrdinalIgnoreCase) == 0)
                                                 {
@@ -3019,6 +3025,13 @@ namespace BmwDeepObd
                                                 if (i == argIndex)
                                                 {
                                                     args = entry;
+                                                }
+                                                else if (i == unitIndex)
+                                                {
+                                                    if (entry != "-")
+                                                    {
+                                                        unit = entry;
+                                                    }
                                                 }
                                                 else if (i == resultIndex)
                                                 {
@@ -3038,7 +3051,12 @@ namespace BmwDeepObd
                                 }
                                 if (!string.IsNullOrEmpty(args) && !string.IsNullOrEmpty(result))
                                 {
-                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, result, DataTypeReal, args, new List <string> { info }));
+                                    string comments = info;
+                                    if (!string.IsNullOrEmpty(unit))
+                                    {
+                                        comments += " [" + unit + "]";
+                                    }
+                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, result, DataTypeReal, args, new List <string> { comments }));
                                 }
                                 dictIndex++;
                             }
