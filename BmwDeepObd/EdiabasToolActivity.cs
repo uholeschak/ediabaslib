@@ -1283,7 +1283,9 @@ namespace BmwDeepObd
 
             UpdateLogInfo();
 
+#pragma warning disable 618
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
+#pragma warning restore 618
             progress.SetCancelable(false);
             progress.SetMessage(GetString(Resource.String.tool_read_sgbd));
             progress.Show();

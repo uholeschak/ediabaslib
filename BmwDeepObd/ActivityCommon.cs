@@ -400,7 +400,9 @@ namespace BmwDeepObd
         private AlertDialog _selectMediaAlertDialog;
         private AlertDialog _selectInterfaceAlertDialog;
         private AlertDialog _selectManufacturerAlertDialog;
+#pragma warning disable 618
         private Android.App.ProgressDialog _translateProgress;
+#pragma warning restore 618
         private WebClient _translateWebClient;
         private bool _translateLockAquired;
         private List<string> _yandexLangList;
@@ -1966,7 +1968,9 @@ namespace BmwDeepObd
 
         public bool SelectEnetIp(EventHandler<DialogClickEventArgs> handler)
         {
+#pragma warning disable 618
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_context);
+#pragma warning restore 618
             progress.SetCancelable(false);
             progress.SetMessage(_context.GetString(Resource.String.select_enet_ip_search));
             progress.Show();
@@ -2456,7 +2460,9 @@ namespace BmwDeepObd
             {
                 return false;
             }
+#pragma warning disable 618
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_context);
+#pragma warning restore 618
             progress.SetCancelable(false);
             progress.SetMessage(_context.GetString(Resource.String.send_trace_file));
             progress.Show();
@@ -3623,7 +3629,9 @@ namespace BmwDeepObd
                     return true;
                 }
 
+#pragma warning disable 618
                 _translateProgress = new Android.App.ProgressDialog(_context);
+#pragma warning restore 618
                 _translateProgress.SetMessage(_context.GetString(Resource.String.translate_text));
                 _translateProgress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
                 _translateProgress.SetButton((int)DialogButtonType.Negative, _context.GetString(Resource.String.button_abort), (sender, args) =>

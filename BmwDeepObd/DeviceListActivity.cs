@@ -224,7 +224,9 @@ namespace BmwDeepObd
         /// <param name="deviceName">Device Bleutooth name</param>
         private void DetectAdapter(string deviceAddress, string deviceName)
         {
+#pragma warning disable 618
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
+#pragma warning restore 618
             progress.SetCancelable(false);
             progress.SetMessage(GetString(Resource.String.detect_adapter));
             progress.Show();
