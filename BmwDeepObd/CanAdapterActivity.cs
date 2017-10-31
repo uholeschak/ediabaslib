@@ -910,7 +910,9 @@ namespace BmwDeepObd
         private void PerformUpdate()
         {
             EdiabasInit();
+#pragma warning disable 618
             Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
+#pragma warning restore 618
             progress.SetCancelable(false);
             progress.SetMessage(GetString(Resource.String.can_adapter_fw_update_active));
             progress.Show();

@@ -175,8 +175,10 @@ namespace BmwDeepObd
         private readonly ConnectButtonInfo _connectButtonInfo = new ConnectButtonInfo();
         private ImageView _imageBackground;
         private WebClient _webClient;
+#pragma warning disable 618
         private Android.App.ProgressDialog _downloadProgress;
         private Android.App.ProgressDialog _compileProgress;
+#pragma warning restore 618
         private bool _extractZipCanceled;
         private long _downloadFileSize;
         private List<DownloadUrlInfo> _downloadUrlInfoList;
@@ -2284,7 +2286,9 @@ namespace BmwDeepObd
                 return;
             }
             StoreLastAppState(LastAppState.Compile);
+#pragma warning disable 618
             _compileProgress = new Android.App.ProgressDialog(this);
+#pragma warning restore 618
             _compileProgress.SetCancelable(false);
             _compileProgress.SetMessage(GetString(_checkCpuUsage ? Resource.String.compile_cpu_usage : Resource.String.compile_start));
             _compileProgress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
@@ -2493,7 +2497,9 @@ namespace BmwDeepObd
 
             if (_downloadProgress == null)
             {
+#pragma warning disable 618
                 _downloadProgress = new Android.App.ProgressDialog(this);
+#pragma warning restore 618
                 _downloadProgress.SetCancelable(false);
                 _downloadProgress.SetButton((int)DialogButtonType.Negative, GetString(Resource.String.button_abort), (sender, args) =>
                     {
@@ -2742,7 +2748,9 @@ namespace BmwDeepObd
             _extractZipCanceled = false;
             if (_downloadProgress == null)
             {
+#pragma warning disable 618
                 _downloadProgress = new Android.App.ProgressDialog(this);
+#pragma warning restore 618
                 _downloadProgress.SetCancelable(false);
                 _downloadProgress.DismissEvent += (sender, args) => { _downloadProgress = null; };
                 UpdateLockState();
