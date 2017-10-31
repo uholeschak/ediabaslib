@@ -24,11 +24,12 @@ namespace BmwDeepObd
     {
         public class ResultInfo
         {
-            public ResultInfo(string name, string displayName, string type, List<string> comments, ActivityCommon.MwTabEntry mwTabEntry = null)
+            public ResultInfo(string name, string displayName, string type, string args, List<string> comments, ActivityCommon.MwTabEntry mwTabEntry = null)
             {
                 Name = name;
                 DisplayName = displayName;
                 Type = type;
+                Args = args;
                 Comments = comments;
                 MwTabEntry = mwTabEntry;
                 Selected = false;
@@ -45,6 +46,8 @@ namespace BmwDeepObd
             public string DisplayName { get; }
 
             public string Type { get; }
+
+            public string Args { get; }
 
             public List<string> Comments { get; }
 
@@ -404,6 +407,10 @@ namespace BmwDeepObd
                 }
                 return false;
             }
+            if (string.Compare(job.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return true;
+            }
             bool validResult = false;
             foreach (ResultInfo result in job.Results)
             {
@@ -434,6 +441,29 @@ namespace BmwDeepObd
                 return string.Format(XmlToolActivity.Culture, "{0}", mwTabEntry.BlockNumber);
             }
             return string.Format(XmlToolActivity.Culture, "{0};{1}", mwTabEntry.BlockNumber, ecuInfo.ReadCommand);
+        }
+
+        public static string GetJobArgs(JobInfo job, List<ResultInfo> resultInfoList, XmlToolActivity.EcuInfo ecuInfo, bool selectAll = false)
+        {
+            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+            {
+                return string.Empty;
+            }
+            if (string.Compare(job.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("JA");
+                foreach (ResultInfo resultInfo in resultInfoList)
+                {
+                    if ((selectAll || resultInfo.Selected) && !string.IsNullOrEmpty(resultInfo.Args))
+                    {
+                        sb.Append(";");
+                        sb.Append(resultInfo.Args);
+                    }
+                }
+                return sb.ToString();
+            }
+            return string.Empty;
         }
 
         public static string FormatResult(EdiabasNet.ResultData resultData, string format)
@@ -858,7 +888,8 @@ namespace BmwDeepObd
                 if (_spinnerJobResultsAdapter.Items.Count > 0 && selection < 0 && jobInfo.Selected)
                 {
                     // no selection
-                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw &&
+                        string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) != 0)
                     {
                         // auto select all value types
                         int index = 0;
@@ -1060,6 +1091,10 @@ namespace BmwDeepObd
                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB Block={0}", _selectedResult.MwTabEntry.BlockNumber);
                         }
                         _ediabas.ArgString = GetJobArgs(_selectedResult.MwTabEntry, _ecuInfo);
+                    }
+                    else
+                    {
+                        _ediabas.ArgString = GetJobArgs(_selectedJob, new List<ResultInfo> {_selectedResult}, _ecuInfo, true);
                     }
                     _ediabas.ArgBinaryStd = null;
                     _ediabas.ResultsRequests = string.Empty;

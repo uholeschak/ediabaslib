@@ -225,6 +225,7 @@ namespace BmwDeepObd
         public const string EmptyMwTab = "-";
         public const string JobReadMwBlock = @"Messwerteblock_lesen";
         public const string JobReadMwUds = @"GenerischS22_abfragen";
+        public const string JobReadStatMwBlock = @"STATUS_MESSWERTBLOCK_LESEN";
         public const string DataTypeString = @"string";
         public const string DataTypeReal = @"real";
         public const string DataTypeInteger = @"integer";
@@ -2898,7 +2899,7 @@ namespace BmwDeepObd
                                 }
 
                                 string type = (string.Compare(mwTabEntry.ValueType, "R", StringComparison.OrdinalIgnoreCase) == 0) ? DataTypeReal : DataTypeInteger;
-                                job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, commentList, mwTabEntry));
+                                job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, null, commentList, mwTabEntry));
                             }
                         }
                         // fill up with virtual entries
@@ -2952,18 +2953,103 @@ namespace BmwDeepObd
                                 }
                                 ActivityCommon.MwTabEntry mwTabEntry =
                                     new ActivityCommon.MwTabEntry(block, indexStore, string.Empty, string.Empty, string.Empty, string.Empty, null, null, true);
-                                job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, null, mwTabEntry));
+                                job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, null, null, mwTabEntry));
                             }
                         }
                     }
                     else if (string.Compare(job.Name, "Fahrgestellnr_abfragen", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         job.Comments = new List<string> { GetString(Resource.String.xml_tool_job_read_vin) };
-                        job.Results.Add(new XmlToolEcuActivity.ResultInfo("Fahrgestellnr", GetString(Resource.String.xml_tool_result_vin), DataTypeString, null));
+                        job.Results.Add(new XmlToolEcuActivity.ResultInfo("Fahrgestellnr", GetString(Resource.String.xml_tool_result_vin), DataTypeString, null, null));
                     }
                     continue;
                 }
 
+                if (string.Compare(job.Name, JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
+                {   // use data from table instead of results
+                    try
+                    {
+                        _ediabas.ArgString = "MESSWERTETAB";
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.NoInitForVJobs = true;
+                        _ediabas.ExecuteJob("_TABLE");
+
+                        List<Dictionary<string, EdiabasNet.ResultData>> resultSetsTab = _ediabas.ResultSets;
+                        if (resultSetsTab != null && resultSetsTab.Count >= 2)
+                        {
+                            int argIndex = -1;
+                            int resultIndex = -1;
+                            int infoIndex = -1;
+                            int dictIndex = 0;
+                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSetsTab)
+                            {
+                                if (dictIndex == 0)
+                                {
+                                    dictIndex++;
+                                    continue;
+                                }
+                                string args = string.Empty;
+                                string result = string.Empty;
+                                string info = string.Empty;
+                                for (int i = 0; ; i++)
+                                {
+                                    if (resultDict.TryGetValue("COLUMN" + i.ToString(Culture), out EdiabasNet.ResultData resultData))
+                                    {
+                                        if (resultData.OpData is string)
+                                        {
+                                            string entry = (string) resultData.OpData;
+                                            if (dictIndex == 1)
+                                            {   // header
+                                                if (string.Compare(entry, "ARG", StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    argIndex = i;
+                                                }
+                                                else if (string.Compare(entry, "RESULTNAME", StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    resultIndex = i;
+                                                }
+                                                else if (string.Compare(entry, "INFO", StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    infoIndex = i;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (i == argIndex)
+                                                {
+                                                    args = entry;
+                                                }
+                                                else if (i == resultIndex)
+                                                {
+                                                    result = entry;
+                                                }
+                                                else if (i == infoIndex)
+                                                {
+                                                    info = entry;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                }
+                                if (!string.IsNullOrEmpty(args) && !string.IsNullOrEmpty(result))
+                                {
+                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, result, DataTypeReal, args, new List <string> { info }));
+                                }
+                                dictIndex++;
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                    continue;
+                }
                 _ediabas.ArgString = job.Name;
                 _ediabas.ArgBinaryStd = null;
                 _ediabas.ResultsRequests = string.Empty;
@@ -3014,7 +3100,7 @@ namespace BmwDeepObd
                                 break;
                             }
                         }
-                        job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, result, resultType, resultCommentList));
+                        job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, result, resultType, null, resultCommentList));
                         dictIndex++;
                     }
                 }
@@ -4111,11 +4197,16 @@ namespace BmwDeepObd
                         jobNodeOld = GetJobNode(job, ns, jobsNodeOld);
                         if (jobNodeOld != null)
                         {
-                            jobNodeNew.ReplaceAttributes(from el in jobNodeOld.Attributes() where el.Name != "name" select new XAttribute(el));
+                            jobNodeNew.ReplaceAttributes(from el in jobNodeOld.Attributes() where (el.Name != "name" && el.Name != "args") select new XAttribute(el));
                         }
                     }
 
                     jobNodeNew.Add(new XAttribute("name", job.Name));
+                    string jobArgs = XmlToolEcuActivity.GetJobArgs(job, job.Results, ecuInfo);
+                    if (!string.IsNullOrEmpty(jobArgs))
+                    {
+                        jobNodeNew.Add(new XAttribute("args", jobArgs));
+                    }
 
                     int jobId = 1;
                     int lastBlockNumber = -1;
