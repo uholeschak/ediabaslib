@@ -752,7 +752,10 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_send_trace:
-                    SendTraceFileAlways(null);
+                    SendTraceFileAlways((sender, args) =>
+                    {
+                        InvalidateOptionsMenu();
+                    });
                     return true;
 
                 case Resource.Id.menu_translation_enable:
@@ -2504,6 +2507,7 @@ namespace BmwDeepObd
                 _downloadUrlInfoList = null;
             }
             _downloadProgress.SetMessage(GetString(Resource.String.downloading_file));
+            _downloadProgress.Indeterminate = false;
             _downloadProgress.Progress = 0;
             _downloadProgress.Max = 100;
             _downloadProgress.Show();
@@ -2740,6 +2744,7 @@ namespace BmwDeepObd
                 UpdateLockState();
             }
             _downloadProgress.SetMessage(GetString(Resource.String.extract_cleanup));
+            _downloadProgress.Indeterminate = false;
             _downloadProgress.Progress = 0;
             _downloadProgress.Max = 100;
             _downloadProgress.AbortClick = sender =>

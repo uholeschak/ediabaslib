@@ -739,7 +739,10 @@ namespace BmwDeepObd
                     {
                         return true;
                     }
-                    SendTraceFileAlways(null);
+                    SendTraceFileAlways((sender, args) =>
+                    {
+                        InvalidateOptionsMenu();
+                    });
                     return true;
 
                 case Resource.Id.menu_translation_enable:
