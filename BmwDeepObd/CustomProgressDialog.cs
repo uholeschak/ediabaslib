@@ -146,7 +146,7 @@ namespace BmwDeepObd
             {
                 return;
             }
-            _layoutProgressText.Visibility = _progressBar.Indeterminate ? ViewStates.Gone : ViewStates.Visible;
+            _layoutProgressText.Visibility = _progressBar.Indeterminate ? ViewStates.Invisible : ViewStates.Visible;
             _textViewProgressLeft.Text = string.Format("{0}%", _progressBar.Progress);
             _textViewProgressRight.Text = string.Format("{0}/{1}", _progressBar.Progress, _progressBar.Max);
         }
@@ -172,14 +172,10 @@ namespace BmwDeepObd
             }
         }
 
-        public void Hide()
-        {
-            _dialog?.Hide();
-        }
-
         public void Dismiss()
         {
             _dialog?.Dismiss();
+            _dialog = null;
         }
     }
 }

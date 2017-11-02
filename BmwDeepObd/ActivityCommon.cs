@@ -402,9 +402,7 @@ namespace BmwDeepObd
         private AlertDialog _selectMediaAlertDialog;
         private AlertDialog _selectInterfaceAlertDialog;
         private AlertDialog _selectManufacturerAlertDialog;
-#pragma warning disable 618
-        private Android.App.ProgressDialog _translateProgress;
-#pragma warning restore 618
+        private CustomProgressDialog _translateProgress;
         private WebClient _translateWebClient;
         private bool _translateLockAquired;
         private List<string> _yandexLangList;
@@ -3627,25 +3625,22 @@ namespace BmwDeepObd
                     return true;
                 }
 
-#pragma warning disable 618
-                _translateProgress = new Android.App.ProgressDialog(_context);
-#pragma warning restore 618
+                _translateProgress = new CustomProgressDialog(_context);
                 _translateProgress.SetMessage(_context.GetString(Resource.String.translate_text));
-                _translateProgress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
-                _translateProgress.SetButton((int)DialogButtonType.Negative, _context.GetString(Resource.String.button_abort), (sender, args) =>
+                _translateProgress.AbortClick = sender =>
                 {
                     if (_translateWebClient != null && _translateWebClient.IsBusy)
                     {
                         _translateWebClient.CancelAsync();
                     }
-                });
-                _translateProgress.SetCancelable(false);
+                };
+                _translateProgress.Indeterminate = false;
                 _translateProgress.Progress = 0;
                 _translateProgress.Max = 100;
                 _translateProgress.Show();
                 _translateLockAquired = SetLock(LockTypeCommunication);
             }
-            _translateProgress.GetButton((int)DialogButtonType.Negative).Enabled = false;
+            _translateProgress.ButtonAbort.Enabled = false;
             _translateProgress.Progress = (_yandexTransList?.Count ?? 0) * 100 / _yandexReducedStringList.Count;
             SetPreferredNetworkInterface();
 
@@ -3744,7 +3739,7 @@ namespace BmwDeepObd
                         {
                             if (_translateProgress != null)
                             {
-                                _translateProgress.Hide();
+                                _translateProgress.Dismiss();
                                 _translateProgress.Dispose();
                                 _translateProgress = null;
                                 if (_translateLockAquired)
@@ -3843,7 +3838,7 @@ namespace BmwDeepObd
                     {
                         if (_translateProgress != null)
                         {
-                            _translateProgress.GetButton((int)DialogButtonType.Negative).Enabled = true;
+                            _translateProgress.ButtonAbort.Enabled = true;
                         }
                     });
                     ServicePointManager.ServerCertificateValidationCallback =
@@ -3856,7 +3851,7 @@ namespace BmwDeepObd
                     {
                         if (_translateProgress != null)
                         {
-                            _translateProgress.Hide();
+                            _translateProgress.Dismiss();
                             _translateProgress.Dispose();
                             _translateProgress = null;
                             if (_translateLockAquired)
