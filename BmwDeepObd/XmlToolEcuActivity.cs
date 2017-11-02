@@ -1063,11 +1063,9 @@ namespace BmwDeepObd
                 return;
             }
 
-#pragma warning disable 618
-            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
-#pragma warning restore 618
-            progress.SetCancelable(false);
+            CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.xml_tool_execute_test_job));
+            progress.ButtonAbort.Visibility = ViewStates.Gone;
             progress.Show();
 
             string resultText = string.Empty;
@@ -1183,7 +1181,7 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
-                    progress.Hide();
+                    progress.Dismiss();
                     progress.Dispose();
                     _textViewTestFormatOutput.Text = resultText;
 
