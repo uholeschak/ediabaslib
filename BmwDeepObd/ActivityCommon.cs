@@ -26,6 +26,8 @@ using System.Xml.Linq;
 using Android.Content.PM;
 using Android.Support.V4.Content;
 using Android.Text.Method;
+using Android.Views;
+
 // ReSharper disable InlineOutVariableDeclaration
 
 namespace BmwDeepObd
@@ -1968,11 +1970,9 @@ namespace BmwDeepObd
 
         public bool SelectEnetIp(EventHandler<DialogClickEventArgs> handler)
         {
-#pragma warning disable 618
-            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_context);
-#pragma warning restore 618
-            progress.SetCancelable(false);
+            CustomProgressDialog progress = new CustomProgressDialog(_context);
             progress.SetMessage(_context.GetString(Resource.String.select_enet_ip_search));
+            progress.ButtonAbort.Visibility = ViewStates.Gone;
             progress.Show();
             SetLock(LockTypeCommunication);
 
@@ -1988,7 +1988,7 @@ namespace BmwDeepObd
                 {
                     if (progress != null)
                     {
-                        progress.Hide();
+                        progress.Dismiss();
                         progress.Dispose();
                         progress = null;
                         SetLock(LockType.None);
@@ -2460,11 +2460,9 @@ namespace BmwDeepObd
             {
                 return false;
             }
-#pragma warning disable 618
-            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(_context);
-#pragma warning restore 618
-            progress.SetCancelable(false);
+            CustomProgressDialog progress = new CustomProgressDialog(_context);
             progress.SetMessage(_context.GetString(Resource.String.send_trace_file));
+            progress.ButtonAbort.Enabled = false;
             progress.Show();
             SetLock(LockTypeCommunication);
             SetPreferredNetworkInterface();
@@ -2604,7 +2602,7 @@ namespace BmwDeepObd
                         {
                             if (progress != null)
                             {
-                                progress.Hide();
+                                progress.Dismiss();
                                 progress.Dispose();
                                 progress = null;
                                 SetLock(LockType.None);
@@ -2648,7 +2646,7 @@ namespace BmwDeepObd
                     };
                     _activity?.RunOnUiThread(() =>
                     {
-                        progress.CancelEvent += (sender, args) =>
+                        progress.AbortClick = sender =>
                         {
                             cancelled = true;   // cancel flag in event seems to be missing
                             try
@@ -2660,7 +2658,7 @@ namespace BmwDeepObd
                                 // ignored
                             }
                         };
-                        progress.SetCancelable(true);
+                        progress.ButtonAbort.Enabled = true;
                     });
                     smtpClient.SendAsync(mail, null);
                 }
@@ -2670,7 +2668,7 @@ namespace BmwDeepObd
                     {
                         if (progress != null)
                         {
-                            progress.Hide();
+                            progress.Dismiss();
                             progress.Dispose();
                             progress = null;
                             SetLock(LockType.None);

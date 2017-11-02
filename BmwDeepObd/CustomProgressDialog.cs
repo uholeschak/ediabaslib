@@ -121,7 +121,7 @@ namespace BmwDeepObd
                 _view = _activity.LayoutInflater.Inflate(Resource.Layout.custom_progress, null);
                 SetView(_view);
                 _progressBar = _view.FindViewById<ProgressBar>(Resource.Id.progressBar);
-                _progressBar.Indeterminate = false;
+                _progressBar.Indeterminate = true;
                 _progressBar.Max = 100;
                 _progressBar.Progress = 0;
 
