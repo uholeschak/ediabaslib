@@ -224,11 +224,9 @@ namespace BmwDeepObd
         /// <param name="deviceName">Device Bleutooth name</param>
         private void DetectAdapter(string deviceAddress, string deviceName)
         {
-#pragma warning disable 618
-            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
-#pragma warning restore 618
-            progress.SetCancelable(false);
+            CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.detect_adapter));
+            progress.ButtonAbort.Visibility = ViewStates.Gone;
             progress.Show();
 
             _sbLog.Clear();
@@ -317,7 +315,7 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
-                    progress.Hide();
+                    progress.Dismiss();
                     progress.Dispose();
                     switch (adapterType)
                     {
@@ -705,8 +703,7 @@ namespace BmwDeepObd
             FindViewById<ProgressBar>(Resource.Id.progress_bar).Visibility = ViewStates.Invisible;
             SetTitle(Resource.String.select_device);
 
-            TextView textView = e.View as TextView;
-            if (textView != null)
+            if (e.View is TextView textView)
             {
                 string info = textView.Text;
                 if (!ExtractDeviceInfo(info, out string name, out string address))
