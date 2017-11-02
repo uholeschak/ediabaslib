@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="10dp">
+    <TextView
+        android:id="@+id/textViewProgressMessage"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp" />
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
+    <LinearLayout
+        android:id="@+id/layoutProgressText"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_gravity="center_vertical">
+        <TextView
+            android:id="@+id/textViewProgressLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10%"
+            android:gravity="left"
+            android:layout_weight="1" />
+        <TextView
+            android:id="@+id/textViewProgressRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10/100"
+            android:gravity="right"
+            android:layout_weight="1" />
+    </LinearLayout>
+    <Button
+        android:id="@+id/buttonAbort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/button_abort"
+        android:padding="10dp" />
+</LinearLayout>

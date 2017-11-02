@@ -133,6 +133,7 @@
   <ItemGroup>
     <Compile Include="ActivityCommon.cs" />
     <Compile Include="CanAdapterActivity.cs" />
+    <Compile Include="CustomProgressDialog.cs" />
     <Compile Include="ForegroundService.cs" />
     <Compile Include="EdiabasThread.cs" />
     <Compile Include="EdiabasToolActivity.cs" />
@@ -233,6 +234,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\result_customgauge_dot.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\custom_progress.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <None Include="Xml\AdapterCustom.ccpage">
