@@ -7,6 +7,8 @@ namespace BmwDeepObd
 {
     public class CustomProgressDialog : AlertDialog.Builder
     {
+        public delegate void AbortClickDelegate(CustomProgressDialog sender);
+
         private Android.App.Activity _activity;
         private AlertDialog _dialog;
         private View _view;
@@ -16,6 +18,8 @@ namespace BmwDeepObd
         private TextView _textViewProgressLeft;
         private TextView _textViewProgressRight;
         private Button _buttonAbort;
+
+        public AbortClickDelegate AbortClick { get; set; }
 
         public string Message
         {
@@ -128,6 +132,10 @@ namespace BmwDeepObd
                 _textViewProgressRight = _view.FindViewById<TextView>(Resource.Id.textViewProgressRight);
 
                 _buttonAbort = _view.FindViewById<Button>(Resource.Id.buttonAbort);
+                _buttonAbort.Click += (sender, args) =>
+                {
+                    AbortClick?.Invoke(this);
+                };
                 UpdateText();
             }
         }
@@ -145,7 +153,10 @@ namespace BmwDeepObd
 
         public new void Show()
         {
-            _dialog = base.Show();
+            if (_dialog == null)
+            {
+                _dialog = base.Show();
+            }
         }
 
         public new void SetMessage(string message)
