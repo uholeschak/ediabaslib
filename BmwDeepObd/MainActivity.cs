@@ -177,8 +177,8 @@ namespace BmwDeepObd
         private WebClient _webClient;
 #pragma warning disable 618
         private Android.App.ProgressDialog _downloadProgress;
-        private Android.App.ProgressDialog _compileProgress;
 #pragma warning restore 618
+        private CustomProgressDialog _compileProgress;
         private bool _extractZipCanceled;
         private long _downloadFileSize;
         private List<DownloadUrlInfo> _downloadUrlInfoList;
@@ -2286,14 +2286,12 @@ namespace BmwDeepObd
                 return;
             }
             StoreLastAppState(LastAppState.Compile);
-#pragma warning disable 618
-            _compileProgress = new Android.App.ProgressDialog(this);
-#pragma warning restore 618
-            _compileProgress.SetCancelable(false);
+            _compileProgress = new CustomProgressDialog(this);
             _compileProgress.SetMessage(GetString(_checkCpuUsage ? Resource.String.compile_cpu_usage : Resource.String.compile_start));
-            _compileProgress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
+            _compileProgress.Indeterminate = false;
             _compileProgress.Progress = 0;
             _compileProgress.Max = 100;
+            _compileProgress.ButtonAbort.Visibility = ViewStates.Gone;
             _compileProgress.Show();
             UpdateLockState();
 
@@ -2350,7 +2348,6 @@ namespace BmwDeepObd
                 bool progressUpdated = false;
                 List<string> compileResultList = new List<string>();
                 List<Thread> threadList = new List<Thread>();
-                int index = 0;
                 foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
                 {
                     if (pageInfo.ClassCode == null) continue;
@@ -2365,7 +2362,6 @@ namespace BmwDeepObd
                         Thread.Sleep(200);
                     }
 
-                    int localIndex = index;
                     RunOnUiThread(() =>
                     {
                         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
@@ -2375,7 +2371,7 @@ namespace BmwDeepObd
                             {
                                 progressUpdated = true;
                                 _compileProgress.SetMessage(GetString(Resource.String.compile_start));
-                                _compileProgress.Progress = 100 * localIndex / ActivityCommon.JobReader.PageList.Count;
+                                _compileProgress.Indeterminate = true;
                             }
                         }
                     });
@@ -2443,7 +2439,6 @@ namespace BmwDeepObd
                     });
                     compileThread.Start();
                     threadList.Add(compileThread);
-                    index++;
                 }
 
                 foreach (Thread compileThread in threadList)

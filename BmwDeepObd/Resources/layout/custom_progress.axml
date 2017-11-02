@@ -6,7 +6,7 @@
     android:padding="10dp">
     <TextView
         android:id="@+id/textViewProgressMessage"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="@android:style/TextAppearance.DialogWindowTitle"
         android:text="Message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

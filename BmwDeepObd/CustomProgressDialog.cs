@@ -110,6 +110,7 @@ namespace BmwDeepObd
 
         protected void LoadView(Context context)
         {
+            SetCancelable(false);
             _activity = context as Android.App.Activity;
             if (_activity != null)
             {
@@ -145,6 +146,19 @@ namespace BmwDeepObd
         public new void Show()
         {
             _dialog = base.Show();
+        }
+
+        public new void SetMessage(string message)
+        {
+            Message = message;
+        }
+
+        public new void SetMessage(int messageId)
+        {
+            if (_activity != null)
+            {
+                Message = _activity.GetString(messageId);
+            }
         }
 
         public void Hide()
