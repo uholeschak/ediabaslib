@@ -1286,11 +1286,9 @@ namespace BmwDeepObd
 
             UpdateLogInfo();
 
-#pragma warning disable 618
-            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
-#pragma warning restore 618
-            progress.SetCancelable(false);
+            CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.tool_read_sgbd));
+            progress.ButtonAbort.Visibility = ViewStates.Gone;
             progress.Show();
 
             _ediabasJobAbort = false;
@@ -1492,7 +1490,7 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
-                    progress.Hide();
+                    progress.Dismiss();
                     progress.Dispose();
 
                     if (IsJobRunning())
