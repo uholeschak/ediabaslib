@@ -1571,24 +1571,17 @@ namespace BmwDeepObd
             ClearEcuList();
             UpdateDisplay();
 
-#pragma warning disable 618
-            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
-#pragma warning restore 618
-            progress.SetCancelable(false);
+            CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.xml_tool_analyze));
-            progress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
+            progress.Indeterminate = false;
             progress.Progress = 0;
             progress.Max = 100;
-            progress.SetButton((int)DialogButtonType.Negative, GetString(Resource.String.button_abort), (sender, args) =>
+            progress.AbortClick = sender => 
             {
                 _ediabasJobAbort = true;
-#pragma warning disable 618
-                progress = new Android.App.ProgressDialog(this);
-#pragma warning restore 618
-                progress.SetCancelable(false);
+                progress.Indeterminate = true;
                 progress.SetMessage(GetString(Resource.String.xml_tool_aborting));
-                progress.Show();
-            });
+            };
             progress.Show();
             _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
 
@@ -1902,7 +1895,7 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
-                    progress.Hide();
+                    progress.Dismiss();
                     progress.Dispose();
                     _activityCommon.SetLock(ActivityCommon.LockType.None);
 
@@ -1958,9 +1951,7 @@ namespace BmwDeepObd
             _jobThread.Start();
         }
 
-#pragma warning disable 618
-        private List<EcuInfo> DetectVehicleByEws(Android.App.ProgressDialog progress, out string detectedVin, out bool pin78ConnRequire)
-#pragma warning restore 618
+        private List<EcuInfo> DetectVehicleByEws(CustomProgressDialog progress, out string detectedVin, out bool pin78ConnRequire)
         {
             _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Try to detect vehicle by EWS");
             detectedVin = null;
