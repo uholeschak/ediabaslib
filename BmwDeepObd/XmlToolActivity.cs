@@ -1580,6 +1580,7 @@ namespace BmwDeepObd
             {
                 _ediabasJobAbort = true;
                 progress.Indeterminate = true;
+                progress.ButtonAbort.Enabled = false;
                 progress.SetMessage(GetString(Resource.String.xml_tool_aborting));
             };
             progress.Show();
@@ -1897,6 +1898,7 @@ namespace BmwDeepObd
                 {
                     progress.Dismiss();
                     progress.Dispose();
+                    progress = null;
                     _activityCommon.SetLock(ActivityCommon.LockType.None);
 
                     _translateEnabled = true;
@@ -2417,24 +2419,18 @@ namespace BmwDeepObd
             _vin = string.Empty;
             _ecuSearchAbortIndex = -1;
 
-#pragma warning disable 618
-            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
-#pragma warning restore 618
-            progress.SetCancelable(false);
+            CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.xml_tool_analyze));
-            progress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
+            progress.Indeterminate = false;
             progress.Progress = 0;
             progress.Max = 100;
-            progress.SetButton((int) DialogButtonType.Negative, GetString(Resource.String.button_abort), (sender, args) =>
+            progress.AbortClick = sender => 
             {
                 _ediabasJobAbort = true;
-#pragma warning disable 618
-                progress = new Android.App.ProgressDialog(this);
-#pragma warning restore 618
-                progress.SetCancelable(false);
+                progress.Indeterminate = true;
+                progress.ButtonAbort.Enabled = false;
                 progress.SetMessage(GetString(Resource.String.xml_tool_aborting));
-                progress.Show();
-            });
+            };
             progress.Show();
             _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
 
@@ -2603,8 +2599,9 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
-                    progress.Hide();
+                    progress.Dismiss();
                     progress.Dispose();
+                    progress = null;
                     _activityCommon.SetLock(ActivityCommon.LockType.None);
 
                     InvalidateOptionsMenu();
@@ -2634,28 +2631,22 @@ namespace BmwDeepObd
             bool mwTabNotPresent = string.IsNullOrEmpty(ecuInfo.MwTabFileName) || (ecuInfo.MwTabEcuDict == null) ||
                     (!IsMwTabEmpty(ecuInfo.MwTabFileName) && !File.Exists(ecuInfo.MwTabFileName));
 
-#pragma warning disable 618
-            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
-#pragma warning restore 618
-            progress.SetCancelable(false);
+            CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.xml_tool_analyze));
             if ((ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) &&
                 mwTabNotPresent)
             {
-                progress.SetProgressStyle(Android.App.ProgressDialogStyle.Horizontal);
+                progress.Indeterminate = false;
                 progress.Progress = 0;
                 progress.Max = 100;
             }
-            progress.SetButton((int)DialogButtonType.Negative, GetString(Resource.String.button_abort), (sender, args) =>
+            progress.AbortClick = sender => 
             {
                 _ediabasJobAbort = true;
-#pragma warning disable 618
-                progress = new Android.App.ProgressDialog(this);
-#pragma warning restore 618
-                progress.SetCancelable(false);
+                progress.Indeterminate = true;
+                progress.ButtonAbort.Enabled = false;
                 progress.SetMessage(GetString(Resource.String.xml_tool_aborting));
-                progress.Show();
-            });
+            };
             progress.Show();
             _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
 
@@ -3145,11 +3136,9 @@ namespace BmwDeepObd
             }
         }
 
-#pragma warning disable 618
-        private void ReadJobThreadDone(EcuInfo ecuInfo, Android.App.ProgressDialog progress, bool readFailed)
-#pragma warning restore 618
+        private void ReadJobThreadDone(EcuInfo ecuInfo, CustomProgressDialog progress, bool readFailed)
         {
-            progress.Hide();
+            progress.Dismiss();
             progress.Dispose();
             _activityCommon.SetLock(ActivityCommon.LockType.None);
 
@@ -3265,9 +3254,7 @@ namespace BmwDeepObd
             };
         }
 
-#pragma warning disable 618
-        private List<string> GetBestMatchingMwTab(EcuInfo ecuInfo, Android.App.ProgressDialog progress)
-#pragma warning restore 618
+        private List<string> GetBestMatchingMwTab(EcuInfo ecuInfo, CustomProgressDialog progress)
         {
             string readCommand = GetReadCommand(ecuInfo);
             if (string.IsNullOrEmpty(readCommand))
@@ -3481,9 +3468,7 @@ namespace BmwDeepObd
                 Select(mwTabFileEntry => mwTabFileEntry.FileName).ToList();
         }
 
-#pragma warning disable 618
-        private List<string> GetBestMatchingMwTabUds(EcuInfo ecuInfo, Android.App.ProgressDialog progress)
-#pragma warning restore 618
+        private List<string> GetBestMatchingMwTabUds(EcuInfo ecuInfo, CustomProgressDialog progress)
         {
 #if false
             List<ActivityCommon.MwTabFileEntry> wmTabList = ActivityCommon.GetMatchingVagMwTabsUds(Path.Combine(_datUkdDir, "mwtabs"), ecuInfo.Address);
@@ -3671,11 +3656,9 @@ namespace BmwDeepObd
                 return;
             }
 
-#pragma warning disable 618
-            Android.App.ProgressDialog progress = new Android.App.ProgressDialog(this);
-#pragma warning restore 618
-            progress.SetCancelable(false);
+            CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.xml_tool_analyze));
+            progress.ButtonAbort.Visibility = ViewStates.Gone;
             progress.Show();
 
             bool readFailed = false;
@@ -3760,8 +3743,9 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
-                    progress.Hide();
+                    progress.Dismiss();
                     progress.Dispose();
+                    progress = null;
 
                     _ecuListTranslated = false;
                     _translateEnabled = true;
