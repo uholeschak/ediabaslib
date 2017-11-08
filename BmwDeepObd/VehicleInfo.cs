@@ -1098,5 +1098,63 @@ namespace BmwDeepObd
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type unknown");
             return null;
         }
+
+        public static string GetGroupSgbdFromVehicleType(string vehicleType, EdiabasNet ediabas)
+        {
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group SGBD from vehicle type: {0}", vehicleType ?? "No type");
+            if (vehicleType == null)
+            {
+                return null;
+            }
+            string typeUpper = vehicleType.ToUpperInvariant();
+            if (typeUpper.StartsWith("F") || typeUpper.StartsWith("I"))
+            {
+                return "f01";
+            }
+            switch (typeUpper)
+            {
+                case "E60":
+                case "E61":
+                case "E62":
+                case "E63":
+                    return "e60";
+
+                case "E65":
+                case "E66":
+                case "E67":
+                case "E68":
+                    return "e65";
+
+                case "E70":
+                case "E71":
+                case "E72": 
+                    return "e70";
+
+                case "M12":
+                case "E89X":
+                case "E81":
+                case "E82":
+                case "E84":
+                case "E87":
+                case "E88":
+                case "E89":
+                case "E90":
+                case "E91":
+                case "E92":
+                case "E93":
+                    return "e89x";
+
+                case "R55":
+                case "R56":
+                case "R57":
+                case "R58":
+                case "R59":
+                case "R60":
+                case "R61":
+                    return "r56";
+            }
+            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type unknown");
+            return null;
+        }
     }
 }
