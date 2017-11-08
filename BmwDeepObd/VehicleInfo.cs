@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using EdiabasLib;
 using ICSharpCode.SharpZipLib.Zip;
 
@@ -1097,6 +1098,48 @@ namespace BmwDeepObd
             }
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type unknown");
             return null;
+        }
+
+        public static string GetVehicleTypeFromBrName(string brName, EdiabasNet ediabas)
+        {
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle type from BR name: {0}", brName ?? "No name");
+            if (brName == null)
+            {
+                return null;
+            }
+            if (string.Compare(brName, "UNBEK", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return null;
+            }
+            if (brName.Length != 4)
+            {
+                return null;
+            }
+            if (brName.EndsWith("_", StringComparison.Ordinal))
+            {
+                string vehicleType = brName.TrimEnd('_');
+                if (Regex.Match(vehicleType, "[ERKHM]\\d\\d").Success)
+                {
+                    return vehicleType;
+                }
+            }
+            if (brName.StartsWith("RR", StringComparison.OrdinalIgnoreCase))
+            {
+                string vehicleType = brName.TrimEnd('_');
+                if (Regex.Match(vehicleType, "^RR\\d$").Success)
+                {
+                    return vehicleType;
+                }
+                if (Regex.Match(vehicleType, "^RR0\\d$").Success)
+                {
+                    return "RR" + brName.Substring(3, 1);
+                }
+                if (Regex.Match(vehicleType, "^RR1\\d$").Success)
+                {
+                    return vehicleType;
+                }
+            }
+            return brName.Substring(0, 1) + brName.Substring(2, 2);
         }
 
         public static string GetGroupSgbdFromVehicleType(string vehicleType, EdiabasNet ediabas)
