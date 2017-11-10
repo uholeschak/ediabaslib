@@ -2137,7 +2137,7 @@ namespace BmwDeepObd
                     }
                     catch (Exception)
                     {
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No VIN response");
+                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No VIN response");
                         // ignored
                     }
                     index++;
@@ -2150,9 +2150,10 @@ namespace BmwDeepObd
                 string groupSgbd = VehicleInfo.GetGroupSgbdFromVehicleType(vehicleType, _ediabas);
                 if (string.IsNullOrEmpty(groupSgbd))
                 {
-                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No group SGBD found");
+                    _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No group SGBD found");
                     return null;
                 }
+                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group SGBD: {0}", groupSgbd);
                 return groupSgbd;
             }
             catch (Exception)
@@ -2299,7 +2300,7 @@ namespace BmwDeepObd
                         }
                         catch (Exception)
                         {
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No VIN response");
+                            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No VIN response");
                             // ignored
                         }
                         index++;
@@ -2393,7 +2394,7 @@ namespace BmwDeepObd
                         }
                         catch (Exception)
                         {
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No vehicle type response");
+                            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No vehicle type response");
                             // ignored
                         }
                     }
