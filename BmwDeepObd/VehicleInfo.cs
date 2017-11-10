@@ -1043,7 +1043,6 @@ namespace BmwDeepObd
             {
                 return null;
             }
-            string vehicleType;
             if (_typeKeyDict == null)
             {
                 _typeKeyDict = GetTypeKeyDict(ediabas);
@@ -1053,7 +1052,7 @@ namespace BmwDeepObd
                 ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No type key dict present");
                 return null;
             }
-            if (!_typeKeyDict.TryGetValue(typeKey.ToUpperInvariant(), out vehicleType))
+            if (!_typeKeyDict.TryGetValue(typeKey.ToUpperInvariant(), out string vehicleType))
             {
                 ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type not found");
                 return null;
