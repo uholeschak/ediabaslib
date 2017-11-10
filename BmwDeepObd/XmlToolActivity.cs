@@ -1618,7 +1618,7 @@ namespace BmwDeepObd
                 {
                     ecuFileNameList = EcuFileNames.ToList();
                 }
-                if (!string.IsNullOrEmpty(detectedVin))
+                if (detectedVin != null && !_ediabasJobAbort)
                 {
                     _ediabas.EdInterfaceClass.EnableTransmitCache = true;
                     int index = 0;
@@ -1635,7 +1635,7 @@ namespace BmwDeepObd
                             int localIndex = index;
                             RunOnUiThread(() =>
                             {
-                                if (progress != null)
+                                if (progress != null && ecuFileNameList.Count > 1)
                                 {
                                     progress.Progress = 100 * localIndex / ecuFileNameList.Count;
                                 }
@@ -2014,21 +2014,25 @@ namespace BmwDeepObd
                     }
                 });
 
+                int jobCount = ReadVinJobsDs2.Length + ReadIdentJobsBmwFast.Length;
                 int index = 0;
                 foreach (Tuple<string, string, string> job in ReadVinJobsBmwFast)
                 {
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read VIN job: {0}", job.Item1);
                     try
                     {
+                        if (_ediabasJobAbort)
+                        {
+                            break;
+                        }
                         int localIndex = index;
                         RunOnUiThread(() =>
                         {
                             if (progress != null)
                             {
-                                progress.Progress = 100 * localIndex / ReadVinJobsDs2.Length;
+                                progress.Progress = 100 * localIndex / jobCount;
                             }
                         });
-
                         _ediabas.ResolveSgbdFile(job.Item1);
 
                         _ediabas.ArgString = string.Empty;
@@ -2039,6 +2043,10 @@ namespace BmwDeepObd
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
+                            if (detectedVin == null)
+                            {
+                                detectedVin = string.Empty;
+                            }
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
                             if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
                             {
@@ -2061,13 +2069,12 @@ namespace BmwDeepObd
                     index++;
                 }
 
-                if (string.IsNullOrEmpty(detectedVin))
+                if (_ediabasJobAbort || string.IsNullOrEmpty(detectedVin))
                 {
                     return null;
                 }
                 string vehicleType = null;
 
-                index = 0;
                 foreach (Tuple<string, string, string> job in ReadIdentJobsBmwFast)
                 {
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read BR job: {0}", job.Item1);
@@ -2079,12 +2086,16 @@ namespace BmwDeepObd
                     }
                     try
                     {
+                        if (_ediabasJobAbort)
+                        {
+                            break;
+                        }
                         int localIndex = index;
                         RunOnUiThread(() =>
                         {
                             if (progress != null)
                             {
-                                progress.Progress = 100 * localIndex / ReadVinJobsDs2.Length;
+                                progress.Progress = 100 * localIndex / jobCount;
                             }
                         });
 
@@ -2142,6 +2153,14 @@ namespace BmwDeepObd
                     }
                     index++;
                 }
+
+                RunOnUiThread(() =>
+                {
+                    if (progress != null)
+                    {
+                        progress.Progress = 100;
+                    }
+                });
 
                 if (string.IsNullOrEmpty(vehicleType))
                 {
