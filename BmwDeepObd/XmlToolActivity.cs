@@ -280,6 +280,7 @@ namespace BmwDeepObd
         private string _traceDir;
         private Thread _jobThread;
         private string _vin = string.Empty;
+        private string _vehicleType = string.Empty;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
         private bool _translateEnabled;
         private bool _translateActive;
@@ -847,9 +848,15 @@ namespace BmwDeepObd
             return true;
         }
 
-        private void ClearEcuList()
+        private void ClearVehicleInfo()
         {
             _vin = string.Empty;
+            _vehicleType = string.Empty;
+        }
+
+        private void ClearEcuList()
+        {
+            ClearVehicleInfo();
             _ecuList.Clear();
             _ecuListTranslated = false;
             _ecuSearchAbortIndex = -1;
@@ -937,11 +944,22 @@ namespace BmwDeepObd
             string statusText = string.Empty;
             if (_ecuList.Count > 0)
             {
-                statusText = GetString(Resource.String.xml_tool_ecu_list);
+                StringBuilder sb = new StringBuilder();
+                sb.Append(GetString(Resource.String.xml_tool_ecu_list));
                 if (!string.IsNullOrEmpty(_vin))
                 {
-                    statusText += " (" + GetString(Resource.String.xml_tool_info_vin) + ": " + _vin + ")";
+                    sb.Append(" (");
+                    sb.Append(GetString(Resource.String.xml_tool_info_vin));
+                    sb.Append(": ");
+                    sb.Append(_vin);
+                    if (!string.IsNullOrEmpty(_vehicleType))
+                    {
+                        sb.Append("/");
+                        sb.Append(_vehicleType);
+                    }
+                    sb.Append(")");
                 }
+                statusText = sb.ToString();
             }
             _textViewCarInfo.Text = statusText;
         }
@@ -1608,7 +1626,7 @@ namespace BmwDeepObd
                 string ecuFileNameBest = null;
                 List<string> ecuFileNameList;
 
-                string groupSgbd = DetectVehicleBmwFast(progress, out string detectedVin);
+                string groupSgbd = DetectVehicleBmwFast(progress, out string detectedVin, out _vehicleType);
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if (!string.IsNullOrEmpty(groupSgbd))
                 {
@@ -1920,7 +1938,7 @@ namespace BmwDeepObd
                 bool pin78ConnRequire = false;
                 if (!_ediabasJobAbort && ecuListBest == null)
                 {
-                    ecuListBest = DetectVehicleDs2(progress, out detectedVin, out pin78ConnRequire);
+                    ecuListBest = DetectVehicleDs2(progress, out detectedVin, out _vehicleType, out pin78ConnRequire);
                     if (ecuListBest != null)
                     {
                         _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
@@ -1996,10 +2014,11 @@ namespace BmwDeepObd
             _jobThread.Start();
         }
 
-        private string DetectVehicleBmwFast(CustomProgressDialog progress, out string detectedVin)
+        private string DetectVehicleBmwFast(CustomProgressDialog progress, out string detectedVin, out string detectedVehicleType)
         {
             _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Try to detect vehicle BMW fast");
             detectedVin = null;
+            detectedVehicleType = null;
             HashSet<string> invalidSgbdSet = new HashSet<string>();
 
             try
@@ -2166,6 +2185,7 @@ namespace BmwDeepObd
                 {
                     vehicleType = VehicleInfo.GetVehicleTypeFromVin(detectedVin, _ediabas);
                 }
+                detectedVehicleType = vehicleType;
                 string groupSgbd = VehicleInfo.GetGroupSgbdFromVehicleType(vehicleType, _ediabas);
                 if (string.IsNullOrEmpty(groupSgbd))
                 {
@@ -2181,10 +2201,11 @@ namespace BmwDeepObd
             }
         }
 
-        private List<EcuInfo> DetectVehicleDs2(CustomProgressDialog progress, out string detectedVin, out bool pin78ConnRequire)
+        private List<EcuInfo> DetectVehicleDs2(CustomProgressDialog progress, out string detectedVin, out string detectedVehicleType, out bool pin78ConnRequire)
         {
             _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Try to detect DS2 vehicle");
             detectedVin = null;
+            detectedVehicleType = null;
             pin78ConnRequire = false;
             try
             {
@@ -2486,6 +2507,7 @@ namespace BmwDeepObd
                     {
                         vehicleType = VehicleInfo.GetVehicleTypeFromVin(detectedVin, _ediabas);
                     }
+                    detectedVehicleType = vehicleType;
                     ReadOnlyCollection<VehicleInfo.IEcuLogisticsEntry> ecuLogistics = VehicleInfo.GetEcuLogisticsFromVehicleType(vehicleType, _ediabas);
                     string[] groupArray = groupFiles.Split(',');
                     List<string> groupList;
@@ -2644,7 +2666,7 @@ namespace BmwDeepObd
             }
 
             EdiabasOpen();
-            _vin = string.Empty;
+            ClearVehicleInfo();
             _ecuSearchAbortIndex = -1;
 
             CustomProgressDialog progress = new CustomProgressDialog(this);
