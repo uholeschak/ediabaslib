@@ -1636,6 +1636,7 @@ namespace BmwDeepObd
                 }
                 else
                 {
+                    _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Fallback to statistic approach");
                     ecuFileNameList = EcuFileNames.ToList();
                 }
                 if (detectedVin != null && !_ediabasJobAbort)
