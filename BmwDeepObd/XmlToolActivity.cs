@@ -280,6 +280,7 @@ namespace BmwDeepObd
         private string _traceDir;
         private Thread _jobThread;
         private string _vin = string.Empty;
+        private string _vinFull = string.Empty;
         private string _vehicleType = string.Empty;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
         private bool _translateEnabled;
@@ -851,6 +852,7 @@ namespace BmwDeepObd
         private void ClearVehicleInfo()
         {
             _vin = string.Empty;
+            _vinFull = string.Empty;
             _vehicleType = string.Empty;
         }
 
@@ -946,12 +948,12 @@ namespace BmwDeepObd
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append(GetString(Resource.String.xml_tool_ecu_list));
-                if (!string.IsNullOrEmpty(_vin))
+                if (!string.IsNullOrEmpty(_vinFull))
                 {
                     sb.Append(" (");
                     sb.Append(GetString(Resource.String.xml_tool_info_vin));
                     sb.Append(": ");
-                    sb.Append(_vin);
+                    sb.Append(_vinFull);
                     if (!string.IsNullOrEmpty(_vehicleType))
                     {
                         sb.Append("/");
@@ -1926,10 +1928,12 @@ namespace BmwDeepObd
                         {
                             _vin = detectedVin.Substring(10, 7);
                         }
+                        _vinFull = detectedVin;
                     }
                     if (string.IsNullOrEmpty(_vin))
                     {
                         _vin = GetBestVin(_ecuList);
+                        _vinFull = _vin;
                     }
                     ReadAllXml();
                 }
@@ -1951,6 +1955,7 @@ namespace BmwDeepObd
                         {
                             _vin = GetBestVin(_ecuList);
                         }
+                        _vinFull = _vin;
                         ReadAllXml();
                     }
                 }
@@ -2445,6 +2450,7 @@ namespace BmwDeepObd
                     if (!string.IsNullOrEmpty(detectedVin))
                     {
                         _vin = detectedVin;
+                        _vinFull = detectedVin;
                         ReadAllXml(true);
                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECUs found for VIN: {0}", _ecuList.Count);
                         bool readEcus = true;
