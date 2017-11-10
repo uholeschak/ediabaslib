@@ -2152,8 +2152,7 @@ namespace BmwDeepObd
                                         _ediabas.ResultsRequests = string.Empty;
                                         _ediabas.ExecuteJob("FA_STREAM2STRUCT");
 
-                                        List<Dictionary<string, EdiabasNet.ResultData>> resultSetsFa =
-                                            _ediabas.ResultSets;
+                                        List<Dictionary<string, EdiabasNet.ResultData>> resultSetsFa = _ediabas.ResultSets;
                                         if (resultSetsFa != null && resultSetsFa.Count >= 2)
                                         {
                                             Dictionary<string, EdiabasNet.ResultData> resultDictFa = resultSetsFa[1];
