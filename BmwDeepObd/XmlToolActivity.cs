@@ -161,6 +161,8 @@ namespace BmwDeepObd
         };
         private static readonly Tuple<string, string, string>[] ReadIdentJobsBmwFast =
         {
+            new Tuple<string, string, string>("G_ZGW", "STATUS_VCM_GET_FA", "STAT_BAUREIHE"),
+            new Tuple<string, string, string>("ZGW_01", "STATUS_VCM_GET_FA", "STAT_BAUREIHE"),
             new Tuple<string, string, string>("D_CAS", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
             new Tuple<string, string, string>("D_LM", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
             new Tuple<string, string, string>("D_KBM", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
@@ -2102,7 +2104,7 @@ namespace BmwDeepObd
 
                 foreach (Tuple<string, string, string> job in ReadIdentJobsBmwFast)
                 {
-                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read BR job: {0}", job.Item1);
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read BR job: {0},{1}", job.Item1, job.Item2);
                     if (invalidSgbdSet.Contains(job.Item1))
                     {
                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job ignored: {0}", job.Item1);
@@ -2115,6 +2117,7 @@ namespace BmwDeepObd
                         {
                             break;
                         }
+                        bool readFa = string.Compare(job.Item2, "C_FA_LESEN", StringComparison.OrdinalIgnoreCase) == 0;
                         int localIndex = index;
                         RunOnUiThread(() =>
                         {
@@ -2137,34 +2140,53 @@ namespace BmwDeepObd
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
                             if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
                             {
-                                string fa = resultData.OpData as string;
-                                if (!string.IsNullOrEmpty(fa))
+                                if (readFa)
                                 {
-                                    _ediabas.ResolveSgbdFile("FA");
-
-                                    _ediabas.ArgString = "1;"+fa;
-                                    _ediabas.ArgBinaryStd = null;
-                                    _ediabas.ResultsRequests = string.Empty;
-                                    _ediabas.ExecuteJob("FA_STREAM2STRUCT");
-
-                                    List<Dictionary<string, EdiabasNet.ResultData>> resultSetsFa = _ediabas.ResultSets;
-                                    if (resultSetsFa != null && resultSetsFa.Count >= 2)
+                                    string fa = resultData.OpData as string;
+                                    if (!string.IsNullOrEmpty(fa))
                                     {
-                                        Dictionary<string, EdiabasNet.ResultData> resultDictFa = resultSetsFa[1];
-                                        if (resultDictFa.TryGetValue("BR", out EdiabasNet.ResultData resultDataBa))
+                                        _ediabas.ResolveSgbdFile("FA");
+
+                                        _ediabas.ArgString = "1;" + fa;
+                                        _ediabas.ArgBinaryStd = null;
+                                        _ediabas.ResultsRequests = string.Empty;
+                                        _ediabas.ExecuteJob("FA_STREAM2STRUCT");
+
+                                        List<Dictionary<string, EdiabasNet.ResultData>> resultSetsFa =
+                                            _ediabas.ResultSets;
+                                        if (resultSetsFa != null && resultSetsFa.Count >= 2)
                                         {
-                                            string br = resultDataBa.OpData as string;
-                                            if (!string.IsNullOrEmpty(br))
+                                            Dictionary<string, EdiabasNet.ResultData> resultDictFa = resultSetsFa[1];
+                                            if (resultDictFa.TryGetValue("BR", out EdiabasNet.ResultData resultDataBa))
                                             {
-                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected BR: {0}", br);
-                                                string vtype = VehicleInfo.GetVehicleTypeFromBrName(br, _ediabas);
-                                                if (!string.IsNullOrEmpty(vtype))
+                                                string br = resultDataBa.OpData as string;
+                                                if (!string.IsNullOrEmpty(br))
                                                 {
-                                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle type: {0}", vtype);
-                                                    vehicleType = vtype;
-                                                    break;
+                                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected BR: {0}", br);
+                                                    string vtype = VehicleInfo.GetVehicleTypeFromBrName(br, _ediabas);
+                                                    if (!string.IsNullOrEmpty(vtype))
+                                                    {
+                                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle type: {0}", vtype);
+                                                        vehicleType = vtype;
+                                                        break;
+                                                    }
                                                 }
                                             }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    string br = resultData.OpData as string;
+                                    if (!string.IsNullOrEmpty(br))
+                                    {
+                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected BR: {0}", br);
+                                        string vtype = VehicleInfo.GetVehicleTypeFromBrName(br, _ediabas);
+                                        if (!string.IsNullOrEmpty(vtype))
+                                        {
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle type: {0}", vtype);
+                                            vehicleType = vtype;
+                                            break;
                                         }
                                     }
                                 }
@@ -2173,7 +2195,7 @@ namespace BmwDeepObd
                     }
                     catch (Exception)
                     {
-                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No FA response");
+                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No BR response");
                         // ignored
                     }
                     index++;
