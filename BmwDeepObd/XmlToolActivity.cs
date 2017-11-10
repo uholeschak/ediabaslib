@@ -152,6 +152,19 @@ namespace BmwDeepObd
         {
             "C_FG_LESEN_FUNKTIONAL", "PROG_FG_NR_LESEN_FUNKTIONAL", "AIF_LESEN_FUNKTIONAL"
         };
+        private static readonly Tuple<string, string, string>[] ReadVinJobsBmwFast =
+        {
+            new Tuple<string, string, string>("G_ZGW", "STATUS_VIN_LESEN", "STAT_VIN"),
+            new Tuple<string, string, string>("ZGW_01", "STATUS_VIN_LESEN", "STAT_VIN"),
+            new Tuple<string, string, string>("G_CAS", "STATUS_FAHRGESTELLNUMMER", "STAT_FGNR17_WERT"),
+            new Tuple<string, string, string>("D_CAS", "STATUS_FAHRGESTELLNUMMER", "FGNUMMER"),
+        };
+        private static readonly Tuple<string, string, string>[] ReadIdentJobsBmwFast =
+        {
+            new Tuple<string, string, string>("D_CAS", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
+            new Tuple<string, string, string>("D_LM", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
+            new Tuple<string, string, string>("D_KBM", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
+        };
         private static readonly Tuple<string, string, string>[] ReadVinJobsDs2 =
         {
             new Tuple<string, string, string>("ZCS_ALL", "FGNR_LESEN", "FG_NR"),
@@ -1593,9 +1606,21 @@ namespace BmwDeepObd
                 int bestInvalidVinCount = 0;
                 List<EcuInfo> ecuListBest = null;
                 string ecuFileNameBest = null;
+                List<string> ecuFileNameList;
+
+                string groupSgbd = DetectVehicleBmwFast(progress, out string detectedVin);
+                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                if (!string.IsNullOrEmpty(groupSgbd))
+                {
+                    ecuFileNameList = new List<string> { groupSgbd };
+                }
+                else
+                {
+                    ecuFileNameList = EcuFileNames.ToList();
+                }
                 _ediabas.EdInterfaceClass.EnableTransmitCache = true;
                 int index = 0;
-                foreach (string fileName in EcuFileNames)
+                foreach (string fileName in ecuFileNameList)
                 {
                     try
                     {
@@ -1610,7 +1635,7 @@ namespace BmwDeepObd
                         {
                             if (progress != null)
                             {
-                                progress.Progress = 100 * localIndex / EcuFileNames.Length;
+                                progress.Progress = 100 * localIndex / ecuFileNameList.Count;
                             }
                         });
 
@@ -1869,7 +1894,22 @@ namespace BmwDeepObd
                     }
 
                     // get vin
-                    _vin = GetBestVin(_ecuList);
+                    _vin = null;
+                    if (!string.IsNullOrEmpty(detectedVin))
+                    {
+                        if (detectedVin.Length == 7)
+                        {
+                            _vin = detectedVin;
+                        }
+                        else if (detectedVin.Length == 17)
+                        {
+                            _vin = detectedVin.Substring(10, 7);
+                        }
+                    }
+                    if (string.IsNullOrEmpty(_vin))
+                    {
+                        _vin = GetBestVin(_ecuList);
+                    }
                     ReadAllXml();
                 }
                 _ediabas.EdInterfaceClass.EnableTransmitCache = false;
@@ -1877,7 +1917,7 @@ namespace BmwDeepObd
                 bool pin78ConnRequire = false;
                 if (!_ediabasJobAbort && ecuListBest == null)
                 {
-                    ecuListBest = DetectVehicleByEws(progress, out string detectedVin, out pin78ConnRequire);
+                    ecuListBest = DetectVehicleDs2(progress, out detectedVin, out pin78ConnRequire);
                     if (ecuListBest != null)
                     {
                         _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
@@ -1953,9 +1993,174 @@ namespace BmwDeepObd
             _jobThread.Start();
         }
 
-        private List<EcuInfo> DetectVehicleByEws(CustomProgressDialog progress, out string detectedVin, out bool pin78ConnRequire)
+        private string DetectVehicleBmwFast(CustomProgressDialog progress, out string detectedVin)
         {
-            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Try to detect vehicle by EWS");
+            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Try to detect vehicle BMW fast");
+            detectedVin = null;
+            HashSet<string> invalidSgbdSet = new HashSet<string>();
+
+            try
+            {
+                List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
+
+                RunOnUiThread(() =>
+                {
+                    if (progress != null)
+                    {
+                        progress.Progress = 0;
+                    }
+                });
+
+                int index = 0;
+                foreach (Tuple<string, string, string> job in ReadVinJobsBmwFast)
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read VIN job: {0}", job.Item1);
+                    try
+                    {
+                        int localIndex = index;
+                        RunOnUiThread(() =>
+                        {
+                            if (progress != null)
+                            {
+                                progress.Progress = 100 * localIndex / ReadVinJobsDs2.Length;
+                            }
+                        });
+
+                        _ediabas.ResolveSgbdFile(job.Item1);
+
+                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob(job.Item2);
+
+                        resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                            if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
+                            {
+                                string vin = resultData.OpData as string;
+                                if (!string.IsNullOrEmpty(vin) && _vinRegex.IsMatch(vin))
+                                {
+                                    detectedVin = vin;
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected VIN: {0}", detectedVin);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        invalidSgbdSet.Add(job.Item1);
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No VIN response");
+                        // ignored
+                    }
+                    index++;
+                }
+
+                if (string.IsNullOrEmpty(detectedVin))
+                {
+                    return null;
+                }
+                string vehicleType = null;
+
+                index = 0;
+                foreach (Tuple<string, string, string> job in ReadIdentJobsBmwFast)
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read BR job: {0}", job.Item1);
+                    if (invalidSgbdSet.Contains(job.Item1))
+                    {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job ignored: {0}", job.Item1);
+                        index++;
+                        continue;
+                    }
+                    try
+                    {
+                        int localIndex = index;
+                        RunOnUiThread(() =>
+                        {
+                            if (progress != null)
+                            {
+                                progress.Progress = 100 * localIndex / ReadVinJobsDs2.Length;
+                            }
+                        });
+
+                        _ediabas.ResolveSgbdFile(job.Item1);
+
+                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob(job.Item2);
+
+                        resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                            if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
+                            {
+                                string fa = resultData.OpData as string;
+                                if (!string.IsNullOrEmpty(fa))
+                                {
+                                    _ediabas.ResolveSgbdFile("FA");
+
+                                    _ediabas.ArgString = "1;"+fa;
+                                    _ediabas.ArgBinaryStd = null;
+                                    _ediabas.ResultsRequests = string.Empty;
+                                    _ediabas.ExecuteJob("FA_STREAM2STRUCT");
+
+                                    List<Dictionary<string, EdiabasNet.ResultData>> resultSetsFa = _ediabas.ResultSets;
+                                    if (resultSetsFa != null && resultSetsFa.Count >= 2)
+                                    {
+                                        Dictionary<string, EdiabasNet.ResultData> resultDictFa = resultSetsFa[1];
+                                        if (resultDictFa.TryGetValue("BR", out EdiabasNet.ResultData resultDataBa))
+                                        {
+                                            string br = resultDataBa.OpData as string;
+                                            if (!string.IsNullOrEmpty(br))
+                                            {
+                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected BR: {0}", br);
+                                                string vtype = VehicleInfo.GetVehicleTypeFromBrName(br, _ediabas);
+                                                if (!string.IsNullOrEmpty(vtype))
+                                                {
+                                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle type: {0}", vtype);
+                                                    vehicleType = vtype;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No VIN response");
+                        // ignored
+                    }
+                    index++;
+                }
+
+                if (string.IsNullOrEmpty(vehicleType))
+                {
+                    vehicleType = VehicleInfo.GetVehicleTypeFromVin(detectedVin, _ediabas);
+                }
+                string groupSgbd = VehicleInfo.GetGroupSgbdFromVehicleType(vehicleType, _ediabas);
+                if (string.IsNullOrEmpty(groupSgbd))
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No group SGBD found");
+                    return null;
+                }
+                return groupSgbd;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private List<EcuInfo> DetectVehicleDs2(CustomProgressDialog progress, out string detectedVin, out bool pin78ConnRequire)
+        {
+            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Try to detect DS2 vehicle");
             detectedVin = null;
             pin78ConnRequire = false;
             try
