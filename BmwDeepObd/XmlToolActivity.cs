@@ -2172,7 +2172,7 @@ namespace BmwDeepObd
                     }
                     catch (Exception)
                     {
-                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No VIN response");
+                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No FA response");
                         // ignored
                     }
                     index++;
