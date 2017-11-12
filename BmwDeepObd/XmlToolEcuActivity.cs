@@ -411,6 +411,12 @@ namespace BmwDeepObd
             {
                 return true;
             }
+            if (string.Compare(job.Name, "FS_LESEN", StringComparison.OrdinalIgnoreCase) == 0 ||
+                string.Compare(job.Name, "IS_LESEN", StringComparison.OrdinalIgnoreCase) == 0 ||
+                string.Compare(job.Name, "AIF_LESEN", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return true;
+            }
             bool validResult = false;
             foreach (ResultInfo result in job.Results)
             {
@@ -424,10 +430,7 @@ namespace BmwDeepObd
                 }
             }
             if (job.Name.StartsWith("STAT_", StringComparison.OrdinalIgnoreCase) ||
-                job.Name.StartsWith("STATUS_", StringComparison.OrdinalIgnoreCase) ||
-                job.Name.StartsWith("FS_", StringComparison.OrdinalIgnoreCase) ||
-                job.Name.StartsWith("IS_", StringComparison.OrdinalIgnoreCase) ||
-                job.Name.StartsWith("AIF_", StringComparison.OrdinalIgnoreCase))
+                job.Name.StartsWith("STATUS_", StringComparison.OrdinalIgnoreCase))
             {
                 validResult = true;
             }
