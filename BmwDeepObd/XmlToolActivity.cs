@@ -282,7 +282,6 @@ namespace BmwDeepObd
         private string _traceDir;
         private Thread _jobThread;
         private string _vin = string.Empty;
-        private string _vinFull = string.Empty;
         private string _vehicleType = string.Empty;
         private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
         private bool _translateEnabled;
@@ -854,7 +853,6 @@ namespace BmwDeepObd
         private void ClearVehicleInfo()
         {
             _vin = string.Empty;
-            _vinFull = string.Empty;
             _vehicleType = string.Empty;
         }
 
@@ -950,12 +948,12 @@ namespace BmwDeepObd
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append(GetString(Resource.String.xml_tool_ecu_list));
-                if (!string.IsNullOrEmpty(_vinFull))
+                if (!string.IsNullOrEmpty(_vin))
                 {
                     sb.Append(" (");
                     sb.Append(GetString(Resource.String.xml_tool_info_vin));
                     sb.Append(": ");
-                    sb.Append(_vinFull);
+                    sb.Append(_vin);
                     if (!string.IsNullOrEmpty(_vehicleType))
                     {
                         sb.Append("/");
@@ -1920,23 +1918,14 @@ namespace BmwDeepObd
                     }
 
                     // get vin
-                    _vin = null;
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (!string.IsNullOrEmpty(detectedVin))
                     {
-                        if (detectedVin.Length == 7)
-                        {
-                            _vin = detectedVin;
-                        }
-                        else if (detectedVin.Length == 17)
-                        {
-                            _vin = detectedVin.Substring(10, 7);
-                        }
-                        _vinFull = detectedVin;
+                        _vin = detectedVin;
                     }
-                    if (string.IsNullOrEmpty(_vin))
+                    else
                     {
                         _vin = GetBestVin(_ecuList);
-                        _vinFull = _vin;
                     }
                     ReadAllXml();
                 }
@@ -1958,7 +1947,6 @@ namespace BmwDeepObd
                         {
                             _vin = GetBestVin(_ecuList);
                         }
-                        _vinFull = _vin;
                         ReadAllXml();
                     }
                 }
@@ -2472,7 +2460,6 @@ namespace BmwDeepObd
                     if (!string.IsNullOrEmpty(detectedVin))
                     {
                         _vin = detectedVin;
-                        _vinFull = detectedVin;
                         ReadAllXml(true);
                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECUs found for VIN: {0}", _ecuList.Count);
                         bool readEcus = true;
@@ -5446,6 +5433,19 @@ namespace BmwDeepObd
             {
                 vin = UnknownVinConfigName;
             }
+            else
+            {
+                if (vin.Length == 17)
+                {
+                    vin = vin.Substring(10, 7);
+                    string dirShort = Path.Combine(configBaseDir, ActivityCommon.CreateValidFileName(vin));
+                    string dirLong = Path.Combine(configBaseDir, ActivityCommon.CreateValidFileName(_vin));
+                    if (Directory.Exists(dirLong) && !Directory.Exists(dirShort))
+                    {   // use long VIN if present for compatibility
+                        vin = _vin;
+                    }
+                }
+            }
             try
             {
                 return Path.Combine(configBaseDir, ActivityCommon.CreateValidFileName(vin));
@@ -5485,7 +5485,25 @@ namespace BmwDeepObd
             }
             else
             {
-                prefix = string.IsNullOrEmpty(_vin) ? UnknownVinConfigName : ActivityCommon.CreateValidFileName(_vin);
+                string vin = _vin;
+                if (!string.IsNullOrEmpty(vin))
+                {
+                    if (vin.Length == 17)
+                    {
+                        vin = vin.Substring(10, 7);
+                        string fileShort = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(vin) + "_" + interfaceType + ConfigFileExtension);
+                        string fileLong = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(_vin) + "_" + interfaceType + ConfigFileExtension);
+                        if (File.Exists(fileLong) && !File.Exists(fileShort))
+                        {   // use long VIN if present for compatibility
+                            vin = _vin;
+                        }
+                    }
+                }
+                else
+                {
+                    vin = UnknownVinConfigName;
+                }
+                prefix = ActivityCommon.CreateValidFileName(vin);
             }
             return Path.Combine(xmlFileDir, prefix + "_" + interfaceType + ConfigFileExtension);
         }
