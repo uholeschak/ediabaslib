@@ -58,6 +58,9 @@ Compiling:
 - Replace the firmware in C:\Programs\BlueLab41\firmware\vm\unified\coyote with the downloaded version (backup old firmware first!)
 - Open command promt in source directory
 - Flash release with BlueFlashCmd.exe first, otherwise the parmeters will be set incorrectly!
+- Special setting in original file:
+  Bootmode none: Host interface(PSKEY_HOST_INTERFACE)=UART link running BCSP
+  Bootmode 1: Host interface(PSKEY_HOST_INTERFACE)=VM access to UART
 - Compile and flash: compile.bat flash
 - Clean: compile.bat clean
 - Build: compile.bat build
