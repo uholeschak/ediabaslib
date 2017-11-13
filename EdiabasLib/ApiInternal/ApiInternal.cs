@@ -590,9 +590,9 @@ namespace Ediabas
 
         public void apiJob(string ecu, string job, string para, string result)
         {
-            logFormat(ApiLogLevel.Normal, "apiJob({0}, {1}, {2}, {3})", ecu, job, para, result);
-
             byte[] paraBytes = Encoding.Default.GetBytes(para);
+            logFormat(ApiLogLevel.Normal, "apiJob({0}, {1}, {2}, {3})", ecu, job, Encoding.GetString(paraBytes), result);
+
             executeJob(ecu, job, null, 0, paraBytes, paraBytes.Length, result);
         }
 
