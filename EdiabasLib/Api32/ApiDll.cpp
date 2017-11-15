@@ -187,7 +187,6 @@ DLLEXPORT void FAR PASCAL __apiJob(unsigned int handle,
 #if true
     String^ ecuString = (ecu == NULL) ? nullptr : gcnew String(ecu);
     String^ jobString = (job == NULL) ? nullptr : gcnew String(job);
-    String^ paraString = (para == NULL) ? nullptr : gcnew String(para);
     String^ resultString = (result == NULL) ? nullptr : gcnew String(result);
     // convert to binary to prevent encoding problems
     int paralen = (para == NULL) ? 0 : strlen(para);
