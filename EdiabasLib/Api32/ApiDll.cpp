@@ -183,11 +183,31 @@ DLLEXPORT void FAR PASCAL __apiJob(unsigned int handle,
     {
         return;
     }
+
+#if true
+    String^ ecuString = (ecu == NULL) ? nullptr : gcnew String(ecu);
+    String^ jobString = (job == NULL) ? nullptr : gcnew String(job);
+    String^ paraString = (para == NULL) ? nullptr : gcnew String(para);
+    String^ resultString = (result == NULL) ? nullptr : gcnew String(result);
+    // convert to binary to prevent encoding problems
+    int paralen = (para == NULL) ? 0 : strlen(para);
+    array<byte>^ paraBuffer = gcnew array<byte>(paralen);
+    for (int i = 0; i < paralen; i++)
+    {
+        paraBuffer[i] = para[i];
+    }
+    apiInternal->logFormat(ApiInternal::ApiLogLevel::Normal, "apiJob({0}, {1}, {2}={3}, {4})",
+        ecuString, jobString,
+        ApiInternal::Encoding->GetString(paraBuffer),
+        paraBuffer, resultString);
+    apiInternal->executeJob(ecuString, jobString, nullptr, 0, paraBuffer, paraBuffer->Length, resultString);
+#else
     apiInternal->apiJob(
         (ecu == NULL) ? nullptr : gcnew String(ecu),
         (job == NULL) ? nullptr : gcnew String(job),
         (para == NULL) ? nullptr : gcnew String(para),
         (result == NULL) ? nullptr : gcnew String(result));
+#endif
 }
 
 DLLEXPORT void FAR PASCAL __apiJobData(unsigned int handle,

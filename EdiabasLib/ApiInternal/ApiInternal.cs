@@ -10,6 +10,8 @@ using EdiabasLib;
 // ReSharper disable InconsistentNaming
 // ReSharper disable UseNullPropagation
 // ReSharper disable once CheckNamespace
+// ReSharper disable InlineOutVariableDeclaration
+// ReSharper disable MergeCastWithTypeCheck
 
 namespace Ediabas
 {
@@ -25,8 +27,8 @@ namespace Ediabas
             }
         }
 
-        private static readonly Encoding Encoding = Encoding.GetEncoding(1252);
-        private static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
+        public static readonly Encoding Encoding = Encoding.GetEncoding(1252);
+        public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         protected static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private static bool _firstLog = true;
 
@@ -43,7 +45,7 @@ namespace Ediabas
         private volatile bool _abortJob;
         private volatile List<Dictionary<string, EdiabasNet.ResultData>> _resultSets;
 
-        private enum ApiLogLevel
+        public enum ApiLogLevel
         {
             // ReSharper disable UnusedMember.Local
             Off = 0,
@@ -590,9 +592,9 @@ namespace Ediabas
 
         public void apiJob(string ecu, string job, string para, string result)
         {
-            byte[] paraBytes = Encoding.Default.GetBytes(para);
-            logFormat(ApiLogLevel.Normal, "apiJob({0}, {1}, {2}, {3})", ecu, job, Encoding.GetString(paraBytes), result);
+            logFormat(ApiLogLevel.Normal, "apiJob({0}, {1}, {2}, {3})", ecu, job, para, result);
 
+            byte[] paraBytes = (para == null) ? new byte[0] : Encoding.Default.GetBytes(para);
             executeJob(ecu, job, null, 0, paraBytes, paraBytes.Length, result);
         }
 
@@ -1420,7 +1422,7 @@ namespace Ediabas
             return true;
         }
 
-        private void executeJob(string ecu, string job, byte[] stdpara, int stdparalen, byte[] para, int paralen, string result)
+        public void executeJob(string ecu, string job, byte[] stdpara, int stdparalen, byte[] para, int paralen, string result)
         {
             if (_ediabas == null)
             {
@@ -1546,7 +1548,7 @@ namespace Ediabas
             return _abortJob;
         }
 
-        private void logFormat(ApiLogLevel logLevel, string format, params object[] args)
+        public void logFormat(ApiLogLevel logLevel, string format, params object[] args)
         {
             updateLogLevel();
             if ((int)logLevel > _logLevelApi)
