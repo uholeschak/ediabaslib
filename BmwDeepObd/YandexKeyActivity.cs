@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using Android.Content;
@@ -98,7 +98,7 @@ namespace BmwDeepObd
             {
                 _textViewYandexApiKeyTestResult.Text = string.Empty;
                 ActivityCommon.YandexApiKey = _editTextYandexApiKey.Text.Trim();
-                if (!_activityCommon.TranslateStrings(new List<string> {@"Dieser Text wurde erfolgreich �bersetzt"}, list =>
+                if (!_activityCommon.TranslateStrings(new List<string> {@"Dieser Text wurde erfolgreich übersetzt"}, list =>
                 {
                     if (list != null && list.Count > 0)
                     {
