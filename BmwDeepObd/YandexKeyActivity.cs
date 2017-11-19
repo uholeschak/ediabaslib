@@ -219,7 +219,10 @@ namespace BmwDeepObd
                     ActivityCommon.YandexApiKey = _oldYandexApiKey;
                     handler?.Invoke(sender, args);
                 })
-                .SetCancelable(true)
+                .SetNeutralButton(Resource.String.button_abort, (sender, args) =>
+                {
+                })
+                .SetCancelable(false)
                 .SetMessage(Resource.String.translate_store_key)
                 .SetTitle(Resource.String.alert_title_question)
                 .Show();
