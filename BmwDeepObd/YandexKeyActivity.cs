@@ -98,7 +98,7 @@ namespace BmwDeepObd
             {
                 _textViewYandexApiKeyTestResult.Text = string.Empty;
                 ActivityCommon.YandexApiKey = _editTextYandexApiKey.Text.Trim();
-                if (!_activityCommon.TranslateStrings(new List<string> {@"Dieser Text wurde erfolgreich übersetzt"}, list =>
+                if (!_activityCommon.TranslateStrings(new List<string> {"Dieser Text wurde erfolgreich \x00fcbersetzt"}, list =>
                 {
                     if (list != null && list.Count > 0)
                     {
