@@ -74,6 +74,45 @@ ref class GlobalObjects
         }
 };
 
+static String ^ ConvertCString(const char far *string)
+{
+    if (string == NULL)
+    {
+        return nullptr;
+    }
+    int length = strlen(string);
+    if (length <= 0)
+    {
+        return String::Empty;
+    }
+    array<byte>^ bytes = gcnew array<byte>(length);
+    pin_ptr<byte> p = &bytes[0];
+    memcpy(p, string, length);
+    return ApiInternal::Encoding->GetString(bytes);
+}
+
+static array<byte> ^ ConvertNetString(String ^string, char far *buf, int bufsize)
+{
+    if (bufsize <= 0)
+    {
+        return nullptr;
+    }
+    if (string == nullptr)
+    {
+        buf[0] = 0;
+        return nullptr;
+    }
+    array<byte> ^ bytes = ApiInternal::Encoding->GetBytes(string);
+    int length = min(bytes->Length, bufsize);
+    if (length > 0)
+    {
+        pin_ptr<byte> p = &bytes[0];
+        memcpy_s(buf, bufsize, p, length);
+    }
+    buf[length] = 0;
+    return bytes;
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif 
@@ -86,8 +125,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiCheckVersion(int versionCompatibility,char far
     {
         return APIFALSE;
     }
-    marshal_context context;
-    strcpy_s(versionInfo, APIMAXRESULT, context.marshal_as<const char*>(verInfo));
+    ConvertNetString(verInfo, versionInfo, APIMAXRESULT);
     return APITRUE;
 }
 
@@ -132,10 +170,10 @@ DLLEXPORT APIBOOL FAR PASCAL __apiInitExt(unsigned int far *handle,
         return APIFALSE;
     }
     if (!apiInternal->apiInitExt(
-        (device == NULL) ? nullptr : gcnew String(device),
-        (devConnection == NULL) ? nullptr : gcnew String(devConnection),
-        (devApplication == NULL) ? nullptr : gcnew String(devApplication),
-        (reserved == NULL) ? nullptr : gcnew String(reserved)))
+        ConvertCString(device),
+        ConvertCString(devConnection),
+        ConvertCString(devApplication),
+        ConvertCString(reserved)))
     {
         return APIFALSE;
     }
@@ -165,8 +203,8 @@ DLLEXPORT APIBOOL FAR PASCAL __apiSwitchDevice(unsigned int handle,
         return APIFALSE;
     }
     if (!apiInternal->apiSwitchDevice(
-        (deviceConnection == NULL) ? nullptr : gcnew String(deviceConnection),
-        (deviceApplication == NULL) ? nullptr : gcnew String(deviceApplication)))
+        ConvertCString(deviceConnection),
+        ConvertCString(deviceApplication)))
     {
         return APIFALSE;
     }
@@ -185,9 +223,9 @@ DLLEXPORT void FAR PASCAL __apiJob(unsigned int handle,
     }
 
 #if true
-    String^ ecuString = (ecu == NULL) ? nullptr : gcnew String(ecu);
-    String^ jobString = (job == NULL) ? nullptr : gcnew String(job);
-    String^ resultString = (result == NULL) ? nullptr : gcnew String(result);
+    String^ ecuString = ConvertCString(ecu);
+    String^ jobString = ConvertCString(job);
+    String^ resultString = ConvertCString(result);
     // convert to binary to prevent encoding problems
     int paralen = (para == NULL) ? 0 : strlen(para);
     array<byte>^ paraBuffer = gcnew array<byte>(paralen);
@@ -202,10 +240,10 @@ DLLEXPORT void FAR PASCAL __apiJob(unsigned int handle,
     apiInternal->executeJob(ecuString, jobString, nullptr, 0, paraBuffer, paraBuffer->Length, resultString);
 #else
     apiInternal->apiJob(
-        (ecu == NULL) ? nullptr : gcnew String(ecu),
-        (job == NULL) ? nullptr : gcnew String(job),
-        (para == NULL) ? nullptr : gcnew String(para),
-        (result == NULL) ? nullptr : gcnew String(result));
+        ConvertCString(ecu),
+        ConvertCString(job),
+        ConvertCString(para),
+        ConvertCString(result));
 #endif
 }
 
@@ -228,10 +266,10 @@ DLLEXPORT void FAR PASCAL __apiJobData(unsigned int handle,
     }
 
     apiInternal->apiJobData(
-        (ecu == NULL) ? nullptr : gcnew String(ecu),
-        (job == NULL) ? nullptr : gcnew String(job),
+        ConvertCString(ecu),
+        ConvertCString(job),
         paraBuffer, paralen,
-        (result == NULL) ? nullptr : gcnew String(result));
+        ConvertCString(result));
 }
 
 DLLEXPORT void FAR PASCAL __apiJobExt(unsigned int handle,
@@ -260,11 +298,11 @@ DLLEXPORT void FAR PASCAL __apiJobExt(unsigned int handle,
     }
 
     apiInternal->apiJobExt(
-        (ecu == NULL) ? nullptr : gcnew String(ecu),
-        (job == NULL) ? nullptr : gcnew String(job),
+        ConvertCString(ecu),
+        ConvertCString(job),
         stdParaBuffer, stdparalen,
         paraBuffer, paralen,
-        (result == NULL) ? nullptr : gcnew String(result),
+        ConvertCString(result),
         reserved);
 }
 
@@ -278,9 +316,7 @@ DLLEXPORT int FAR PASCAL __apiJobInfo(unsigned int handle,char far *infoText)
     }
     String ^ text;
     int percent = apiInternal->apiJobInfo(text);
-
-    marshal_context context;
-    strcpy_s(infoText, APIMAXTEXT, context.marshal_as<const char*>(text));
+    ConvertNetString(text, infoText, APIMAXTEXT);
     return percent;
 }
 
@@ -298,7 +334,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultChar(unsigned int handle,
     wchar_t buffer;
     if (!apiInternal->apiResultChar(
         buffer,
-        (result == NULL) ? nullptr : gcnew String(result),
+        ConvertCString(result),
         set))
     {
         return APIFALSE;
@@ -321,7 +357,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultByte(unsigned int handle,
     byte buffer;
     if (!apiInternal->apiResultByte(
         buffer,
-        (result == NULL) ? nullptr : gcnew String(result),
+        ConvertCString(result),
         set))
     {
         return APIFALSE;
@@ -344,7 +380,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultInt(unsigned int handle,
     short buffer;
     if (!apiInternal->apiResultInt(
         buffer,
-        (result == NULL) ? nullptr : gcnew String(result),
+        ConvertCString(result),
         set))
     {
         return APIFALSE;
@@ -367,7 +403,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultWord(unsigned int handle,
     unsigned short buffer;
     if (!apiInternal->apiResultWord(
         buffer,
-        (result == NULL) ? nullptr : gcnew String(result),
+        ConvertCString(result),
         set))
     {
         return APIFALSE;
@@ -390,7 +426,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultLong(unsigned int handle,
     int buffer;
     if (!apiInternal->apiResultLong(
         buffer,
-        (result == NULL) ? nullptr : gcnew String(result),
+        ConvertCString(result),
         set))
     {
         return APIFALSE;
@@ -413,7 +449,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultDWord(unsigned int handle,
     unsigned int buffer;
     if (!apiInternal->apiResultDWord(
         buffer,
-        (result == NULL) ? nullptr : gcnew String(result),
+        ConvertCString(result),
         set))
     {
         return APIFALSE;
@@ -436,7 +472,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultReal(unsigned int handle,
     double buffer;
     if (!apiInternal->apiResultReal(
         buffer,
-        (result == NULL) ? nullptr : gcnew String(result),
+        ConvertCString(result),
         set))
     {
         return APIFALSE;
@@ -459,16 +495,15 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultText(unsigned int handle,
     String ^ buffer;
     if (!apiInternal->apiResultText(
         buffer,
-        (result == NULL) ? nullptr : gcnew String(result),
+        ConvertCString(result),
         set,
-        (format == NULL) ? nullptr : gcnew String(format)))
+        ConvertCString(format)))
     {
         return APIFALSE;
     }
-    marshal_context context;
-    memset(buf, 0x00, APIMAXTEXT);
-    _CrtSetDebugFillThreshold(0);
-    strcpy_s(buf, APIMAXTEXT, context.marshal_as<const char*>(buffer));
+    array<byte> ^ bytes = ConvertNetString(buffer, buf, APIMAXTEXT);
+
+    apiInternal->logFormat(ApiInternal::ApiLogLevel::Normal, "=({0})", bytes);
     return APITRUE;
 }
 
@@ -487,15 +522,18 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultBinary(unsigned int handle,
     unsigned short len;
     if (!apiInternal->apiResultBinary(
         buffer, len,
-        (result == NULL) ? nullptr : gcnew String(result),
+        ConvertCString(result),
         set))
     {
         return APIFALSE;
     }
 
     *buflen = len;
-    pin_ptr<byte> p = &buffer[0];
-    memcpy(buf, p, len);
+    if (len > 0)
+    {
+        pin_ptr<byte> p = &buffer[0];
+        memcpy(buf, p, len);
+    }
     return APITRUE;
 }
 
@@ -515,15 +553,18 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultBinaryExt(unsigned int handle,
     if (!apiInternal->apiResultBinaryExt(
         buffer, len,
         bufSize,
-        (result == NULL) ? nullptr : gcnew String(result),
+        ConvertCString(result),
         set))
     {
         return APIFALSE;
     }
 
     *buflen = len;
-    pin_ptr<byte> p = &buffer[0];
-    memcpy(buf, p, len);
+    if (len > 0)
+    {
+        pin_ptr<byte> p = &buffer[0];
+        memcpy(buf, p, len);
+    }
     return APITRUE;
 }
 
@@ -541,7 +582,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultFormat(unsigned int handle,
     int buffer;
     if (!apiInternal->apiResultFormat(
         buffer,
-        (result == NULL) ? nullptr : gcnew String(result),
+        ConvertCString(result),
         set))
     {
         return APIFALSE;
@@ -589,8 +630,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultName(unsigned int handle,char far *buf,
     {
         return APIFALSE;
     }
-    marshal_context context;
-    strcpy_s(buf, APIMAXNAME, context.marshal_as<const char*>(buffer));
+    ConvertNetString(buffer, buf, APIMAXNAME);
     return APITRUE;
 }
 
@@ -623,13 +663,11 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultVar(unsigned int handle,APITEXT far *ecu
     }
 
     String ^ ecuBuffer;
-    if (!apiInternal->apiResultVar(
-        ecuBuffer))
+    if (!apiInternal->apiResultVar(ecuBuffer))
     {
         return APIFALSE;
     }
-    marshal_context context;
-    strcpy_s(ecu, APIMAXNAME, context.marshal_as<const char*>(ecuBuffer));
+    ConvertNetString(ecuBuffer, ecu, APIMAXNAME);
     return APITRUE;
 }
 
@@ -740,8 +778,7 @@ DLLEXPORT void FAR PASCAL __apiErrorText(unsigned int handle,
         return;
     }
     String ^ buffer = apiInternal->apiErrorText();
-    marshal_context context;
-    strcpy_s(buf, bufsize, context.marshal_as<const char*>(buffer));
+    ConvertNetString(buffer, buf, bufsize);
 }
 
 DLLEXPORT APIBOOL FAR PASCAL __apiSetConfig(unsigned int handle,
@@ -755,8 +792,8 @@ DLLEXPORT APIBOOL FAR PASCAL __apiSetConfig(unsigned int handle,
         return APIFALSE;
     }
     if (!apiInternal->apiSetConfig(
-        (configName == NULL) ? nullptr : gcnew String(configName),
-        (configValue == NULL) ? nullptr : gcnew String(configValue)))
+        ConvertCString(configName),
+        ConvertCString(configValue)))
     {
         return APIFALSE;
     }
@@ -775,13 +812,13 @@ DLLEXPORT APIBOOL FAR PASCAL __apiGetConfig(unsigned int handle,
     }
     String ^ buffer;
     if (!apiInternal->apiGetConfig(
-        (configName == NULL) ? nullptr : gcnew String(configName),
+        ConvertCString(configName),
         buffer))
     {
         return APIFALSE;
     }
-    marshal_context context;
-    strcpy_s(configValue, APIMAXRESULT, context.marshal_as<const char*>(buffer));
+    array<byte> ^ bytes = ApiInternal::Encoding->GetBytes(buffer);
+    ConvertNetString(buffer, configValue, APIMAXRESULT);
     return APITRUE;
 }
 
@@ -793,16 +830,15 @@ DLLEXPORT void FAR PASCAL __apiTrace(unsigned int handle,const char far *msg)
     {
         return;
     }
-    apiInternal->apiTrace(
-        (msg == NULL) ? nullptr : gcnew String(msg));
+    apiInternal->apiTrace(ConvertCString(msg));
 }
 
 DLLEXPORT APIBOOL FAR PASCAL __apiXSysSetConfig(const char far *cfgName, const char far *cfgValue)
 {
 #pragma comment(linker, "/EXPORT:___apiXSysSetConfig=___apiXSysSetConfig@8")
     if (!ApiInternal::apiXSysSetConfig(
-        (cfgName == NULL) ? nullptr : gcnew String(cfgName),
-        (cfgValue == NULL) ? nullptr : gcnew String(cfgValue)))
+        ConvertCString(cfgName),
+        ConvertCString(cfgValue)))
     {
         return APIFALSE;
     }
