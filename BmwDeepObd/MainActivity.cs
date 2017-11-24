@@ -117,6 +117,18 @@ namespace BmwDeepObd
             public bool Checked { get; set; }
         }
 
+        private class InstanceData
+        {
+            public InstanceData()
+            {
+                TraceActive = true;
+            }
+            public bool TraceActive { get; set; }
+            public bool TraceAppend { get; set; }
+            public bool DataLogActive { get; set; }
+            public bool DataLogAppend { get; set; }
+        }
+
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const string SharedAppName = ActivityCommon.AppNameSpace;
         private const string AppFolderName = ActivityCommon.AppNameSpace;
@@ -138,11 +150,13 @@ namespace BmwDeepObd
 
         public const string ExtraStopComm = "stop_communication";
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
+        private readonly InstanceData _instanceData = new InstanceData();
+        private bool _activityRecreated;
         private LastAppState _lastAppState = LastAppState.Init;
         private bool _stopCommRequest;
         private ActivityCommon.AutoConnectType _connectTypeRequest;
         private bool _backPressed;
-        private long _lastBackPressesTime;
+        private long _lastBackPressedTime;
         private string _deviceName = string.Empty;
         private string _deviceAddress = string.Empty;
         private string _configFileName = string.Empty;
@@ -151,10 +165,6 @@ namespace BmwDeepObd
         private string _appDataPath = String.Empty;
         private string _ecuPath = String.Empty;
         private bool _userEcuFiles;
-        private bool _traceActive = true;
-        private bool _traceAppend;
-        private bool _dataLogActive;
-        private bool _dataLogAppend;
         private bool _commErrorsOccured;
         private bool _checkCpuUsage = true;
         private bool _activityActive;
@@ -260,6 +270,7 @@ namespace BmwDeepObd
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            GetInstanceState(savedInstanceState);
 
             SetContentView(Resource.Layout.main);
 
@@ -390,6 +401,12 @@ namespace BmwDeepObd
             }
         }
 
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            StoreInstanceState(outState);
+            base.OnSaveInstanceState(outState);
+        }
+
         protected override void OnStop()
         {
             base.OnStop();
@@ -483,7 +500,7 @@ namespace BmwDeepObd
             if (_backPressed)
             {
                 _backPressed = false;
-                if (Stopwatch.GetTimestamp() - _lastBackPressesTime < 2000 * TickResolMs)
+                if (Stopwatch.GetTimestamp() - _lastBackPressedTime < 2000 * TickResolMs)
                 {
                     _checkCpuUsage = true;
                     base.OnBackPressed();
@@ -493,7 +510,7 @@ namespace BmwDeepObd
             if (!_backPressed)
             {
                 _backPressed = true;
-                _lastBackPressesTime = Stopwatch.GetTimestamp();
+                _lastBackPressedTime = Stopwatch.GetTimestamp();
                 Toast.MakeText(this, GetString(Resource.String.back_button_twice_for_exit), ToastLength.Short).Show();
             }
         }
@@ -659,7 +676,7 @@ namespace BmwDeepObd
             logSubMenu?.SetEnabled(interfaceAvailable && !commActive);
 
             IMenuItem sendTraceMenu = menu.FindItem(Resource.Id.menu_send_trace);
-            sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _traceActive && ActivityCommon.IsTraceFilePresent(_traceDir));
+            sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && ActivityCommon.IsTraceFilePresent(_traceDir));
 
             IMenuItem translationSubmenu = menu.FindItem(Resource.Id.menu_translation_submenu);
             if (translationSubmenu != null)
@@ -968,7 +985,7 @@ namespace BmwDeepObd
         private bool UseCommService()
         {
             bool useService = true;
-            if (_dataLogActive)
+            if (_instanceData.DataLogActive)
             {
                 if (ActivityCommon.LockTypeLogging == ActivityCommon.LockType.None)
                 {
@@ -997,7 +1014,7 @@ namespace BmwDeepObd
                     ConnectEdiabasEvents();
                 }
                 string logDir = string.Empty;
-                if (_dataLogActive && !string.IsNullOrEmpty(ActivityCommon.JobReader.LogPath))
+                if (_instanceData.DataLogActive && !string.IsNullOrEmpty(ActivityCommon.JobReader.LogPath))
                 {
                     logDir = Path.IsPathRooted(ActivityCommon.JobReader.LogPath) ? ActivityCommon.JobReader.LogPath : Path.Combine(_appDataPath, ActivityCommon.JobReader.LogPath);
                     try
@@ -1012,7 +1029,7 @@ namespace BmwDeepObd
                 _dataLogDir = logDir;
 
                 _traceDir = null;
-                if (_traceActive && !string.IsNullOrEmpty(_configFileName))
+                if (_instanceData.TraceActive && !string.IsNullOrEmpty(_configFileName))
                 {
                     _traceDir = Path.Combine(_appDataPath, "Log");
                 }
@@ -1051,7 +1068,7 @@ namespace BmwDeepObd
                             connectParameter = new EdFtdiInterface.ConnectParameterType(this, _activityCommon.UsbManager);
                             break;
                     }
-                    ActivityCommon.EdiabasThread.StartThread(portName, connectParameter, pageInfo, true, _traceDir, _traceAppend, _dataLogDir, _dataLogAppend);
+                    ActivityCommon.EdiabasThread.StartThread(portName, connectParameter, pageInfo, true, _traceDir, _instanceData.TraceAppend, _dataLogDir, _instanceData.DataLogAppend);
                     if (UseCommService())
                     {
                         _activityCommon.StartForegroundService();
@@ -1140,7 +1157,7 @@ namespace BmwDeepObd
             }
             else
             {
-                ActivityCommon.LockType lockType = _dataLogActive ? ActivityCommon.LockTypeLogging : ActivityCommon.LockTypeCommunication;
+                ActivityCommon.LockType lockType = _instanceData.DataLogActive ? ActivityCommon.LockTypeLogging : ActivityCommon.LockTypeCommunication;
                 if (!_activityActive)
                 {
                     switch (lockType)
@@ -1176,25 +1193,28 @@ namespace BmwDeepObd
                 _configFileName = prefs.GetString("ConfigFile", string.Empty);
                 _activityCommon.CustomStorageMedia = prefs.GetString("StorageMedia", string.Empty);
                 _lastVersionCode = prefs.GetInt("VersionCode", -1);
-                ActivityCommon.EnableTranslation = prefs.GetBoolean("EnableTranslation", false);
-                ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", string.Empty);
-                ActivityCommon.AppId = prefs.GetString("AppId", string.Empty);
-                ActivityCommon.SelectedManufacturer = (ActivityCommon.ManufacturerType) prefs.GetInt("Manufacturer", (int)ActivityCommon.ManufacturerType.Bmw);
-                ActivityCommon.BtEnbaleHandling = (ActivityCommon.BtEnableType)prefs.GetInt("BtEnable", (int)ActivityCommon.BtEnableType.Ask);
-                ActivityCommon.BtDisableHandling = (ActivityCommon.BtDisableType)prefs.GetInt("BtDisable", (int)ActivityCommon.BtDisableType.DisableIfByApp);
-                ActivityCommon.LockTypeCommunication = (ActivityCommon.LockType)prefs.GetInt("LockComm", (int)ActivityCommon.LockType.ScreenDim);
-                ActivityCommon.LockTypeLogging = (ActivityCommon.LockType)prefs.GetInt("LockLog", (int)ActivityCommon.LockType.Cpu);
-                ActivityCommon.StoreDataLogSettings = prefs.GetBoolean("StoreDataLogSettings", ActivityCommon.StoreDataLogSettings);
-                if (ActivityCommon.StoreDataLogSettings)
+                if (!_activityRecreated)
                 {
-                    _dataLogActive = prefs.GetBoolean("DataLogActive", _dataLogActive);
-                    _dataLogAppend = prefs.GetBoolean("DataLogAppend", _dataLogAppend);
+                    ActivityCommon.EnableTranslation = prefs.GetBoolean("EnableTranslation", false);
+                    ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", string.Empty);
+                    ActivityCommon.AppId = prefs.GetString("AppId", string.Empty);
+                    ActivityCommon.SelectedManufacturer = (ActivityCommon.ManufacturerType)prefs.GetInt("Manufacturer", (int)ActivityCommon.ManufacturerType.Bmw);
+                    ActivityCommon.BtEnbaleHandling = (ActivityCommon.BtEnableType)prefs.GetInt("BtEnable", (int)ActivityCommon.BtEnableType.Ask);
+                    ActivityCommon.BtDisableHandling = (ActivityCommon.BtDisableType)prefs.GetInt("BtDisable", (int)ActivityCommon.BtDisableType.DisableIfByApp);
+                    ActivityCommon.LockTypeCommunication = (ActivityCommon.LockType)prefs.GetInt("LockComm", (int)ActivityCommon.LockType.ScreenDim);
+                    ActivityCommon.LockTypeLogging = (ActivityCommon.LockType)prefs.GetInt("LockLog", (int)ActivityCommon.LockType.Cpu);
+                    ActivityCommon.StoreDataLogSettings = prefs.GetBoolean("StoreDataLogSettings", ActivityCommon.StoreDataLogSettings);
+                    if (ActivityCommon.StoreDataLogSettings)
+                    {
+                        _instanceData.DataLogActive = prefs.GetBoolean("DataLogActive", _instanceData.DataLogActive);
+                        _instanceData.DataLogAppend = prefs.GetBoolean("DataLogAppend", _instanceData.DataLogAppend);
+                    }
+                    ActivityCommon.AutoConnectHandling = (ActivityCommon.AutoConnectType)prefs.GetInt("AutoConnect", (int)ActivityCommon.AutoConnectType.Offline);
+                    ActivityCommon.DoubleClickForAppExit = prefs.GetBoolean("DoubleClickForExit", ActivityCommon.DoubleClickForAppExit);
+                    ActivityCommon.SendDataBroadcast = prefs.GetBoolean("SendDataBroadcast", ActivityCommon.SendDataBroadcast);
+                    ActivityCommon.CheckCpuUsage = prefs.GetBoolean("CheckCpuUsage", true);
+                    ActivityCommon.CollectDebugInfo = prefs.GetBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
                 }
-                ActivityCommon.AutoConnectHandling = (ActivityCommon.AutoConnectType)prefs.GetInt("AutoConnect", (int)ActivityCommon.AutoConnectType.Offline);
-                ActivityCommon.DoubleClickForAppExit = prefs.GetBoolean("DoubleClickForExit", ActivityCommon.DoubleClickForAppExit);
-                ActivityCommon.SendDataBroadcast = prefs.GetBoolean("SendDataBroadcast", ActivityCommon.SendDataBroadcast);
-                ActivityCommon.CheckCpuUsage = prefs.GetBoolean("CheckCpuUsage", true);
-                ActivityCommon.CollectDebugInfo = prefs.GetBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
             }
             catch (Exception)
             {
@@ -1223,8 +1243,8 @@ namespace BmwDeepObd
                 prefsEdit.PutInt("LockComm", (int)ActivityCommon.LockTypeCommunication);
                 prefsEdit.PutInt("LockLog", (int)ActivityCommon.LockTypeLogging);
                 prefsEdit.PutBoolean("StoreDataLogSettings", ActivityCommon.StoreDataLogSettings);
-                prefsEdit.PutBoolean("DataLogActive", _dataLogActive);
-                prefsEdit.PutBoolean("DataLogAppend", _dataLogAppend);
+                prefsEdit.PutBoolean("DataLogActive", _instanceData.DataLogActive);
+                prefsEdit.PutBoolean("DataLogAppend", _instanceData.DataLogAppend);
                 prefsEdit.PutInt("AutoConnect", (int)ActivityCommon.AutoConnectHandling);
                 prefsEdit.PutBoolean("DoubleClickForExit", ActivityCommon.DoubleClickForAppExit);
                 prefsEdit.PutBoolean("SendDataBroadcast", ActivityCommon.SendDataBroadcast);
@@ -1235,6 +1255,59 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 // ignored
+            }
+        }
+
+        private void GetInstanceState(Bundle savedInstanceState)
+        {
+            if (savedInstanceState != null)
+            {
+                _activityRecreated = true;
+
+                PropertyInfo[] properties = _instanceData.GetType().GetProperties();
+                foreach (PropertyInfo property in properties)
+                {
+                    if (property.CanRead && property.CanWrite)
+                    {
+                        try
+                        {
+                            object value = property.GetValue(_instanceData);
+                            bool? boolValue = value as bool?;
+                            if (boolValue != null)
+                            {
+                                property.SetValue(_instanceData, savedInstanceState.GetBoolean(property.Name, boolValue.Value));
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                }
+            }
+        }
+
+        private void StoreInstanceState(Bundle outState)
+        {
+            PropertyInfo[] properties = _instanceData.GetType().GetProperties();
+            foreach (PropertyInfo property in properties)
+            {
+                if (property.CanRead && property.CanWrite)
+                {
+                    try
+                    {
+                        object value = property.GetValue(_instanceData);
+                        bool? boolValue = value as bool?;
+                        if (boolValue != null)
+                        {
+                            outState.PutBoolean(property.Name, boolValue.Value);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
             }
         }
 
@@ -1432,7 +1505,7 @@ namespace BmwDeepObd
             _translationList = null;
             _translatedList = null;
 
-            if (_commErrorsOccured && _traceActive && !string.IsNullOrEmpty(_traceDir))
+            if (_commErrorsOccured && _instanceData.TraceActive && !string.IsNullOrEmpty(_traceDir))
             {
                 _activityCommon.RequestSendTraceFile(_appDataPath, _traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType());
             }
@@ -1445,7 +1518,7 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            if (_traceActive && !string.IsNullOrEmpty(_traceDir))
+            if (_instanceData.TraceActive && !string.IsNullOrEmpty(_traceDir))
             {
                 return _activityCommon.SendTraceFile(_appDataPath, _traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType(), handler);
             }
@@ -3142,10 +3215,10 @@ namespace BmwDeepObd
                 Android.Resource.Layout.SimpleListItemMultipleChoice, logNames.ToArray());
             listView.Adapter = adapter;
             listView.ChoiceMode = ChoiceMode.Multiple;
-            listView.SetItemChecked(0, _traceActive);
-            listView.SetItemChecked(1, _traceAppend);
-            listView.SetItemChecked(2, _dataLogActive);
-            listView.SetItemChecked(3, _dataLogAppend);
+            listView.SetItemChecked(0, _instanceData.TraceActive);
+            listView.SetItemChecked(1, _instanceData.TraceAppend);
+            listView.SetItemChecked(2, _instanceData.DataLogActive);
+            listView.SetItemChecked(3, _instanceData.DataLogAppend);
 
             builder.SetView(listView);
             builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
@@ -3157,19 +3230,19 @@ namespace BmwDeepObd
                     switch (sparseArray.KeyAt(i))
                     {
                         case 0:
-                            _traceActive = value;
+                            _instanceData.TraceActive = value;
                             break;
 
                         case 1:
-                            _traceAppend = value;
+                            _instanceData.TraceAppend = value;
                             break;
 
                         case 2:
-                            _dataLogActive = value;
+                            _instanceData.DataLogActive = value;
                             break;
 
                         case 3:
-                            _dataLogAppend = value;
+                            _instanceData.DataLogAppend = value;
                             break;
                     }
                 }
