@@ -27,6 +27,7 @@ using Android.Content.PM;
 using Android.Support.V4.Content;
 using Android.Text.Method;
 using Android.Views;
+using System.Xml.Serialization;
 
 // ReSharper disable InlineOutVariableDeclaration
 
@@ -945,6 +946,57 @@ namespace BmwDeepObd
                 return false;
             }
             return true;
+        }
+
+        public static object GetInstanceState(Bundle savedInstanceState, object lastInstanceData)
+        {
+            if (savedInstanceState != null)
+            {
+                try
+                {
+                    string xml = savedInstanceState.GetString("InstanceData", string.Empty);
+                    if (!string.IsNullOrEmpty(xml))
+                    {
+                        XmlSerializer xmlSerializer = new XmlSerializer(lastInstanceData.GetType());
+                        using (StringReader sr = new StringReader(xml))
+                        {
+                            object instanceData = xmlSerializer.Deserialize(sr);
+                            if (instanceData.GetType() == lastInstanceData.GetType())
+                            {
+                                return instanceData;
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+            return lastInstanceData;
+        }
+
+        public static bool StoreInstanceState(Bundle outState, object instanceData)
+        {
+            try
+            {
+                XmlSerializer xmlSerializer = new XmlSerializer(instanceData.GetType());
+                using (StringWriter sw = new StringWriter())
+                {
+                    using (XmlWriter writer = XmlWriter.Create(sw))
+                    {
+                        xmlSerializer.Serialize(writer, instanceData);
+                        string xml = sw.ToString();
+                        outState.PutString("InstanceData", xml);
+                        return true;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            return false;
         }
 
         public static bool IsBtReliable()

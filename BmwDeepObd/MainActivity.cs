@@ -117,7 +117,7 @@ namespace BmwDeepObd
             public bool Checked { get; set; }
         }
 
-        private class InstanceData
+        public class InstanceData
         {
             public InstanceData()
             {
@@ -150,7 +150,7 @@ namespace BmwDeepObd
 
         public const string ExtraStopComm = "stop_communication";
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
-        private readonly InstanceData _instanceData = new InstanceData();
+        private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
         private LastAppState _lastAppState = LastAppState.Init;
         private bool _stopCommRequest;
@@ -270,7 +270,11 @@ namespace BmwDeepObd
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            GetInstanceState(savedInstanceState);
+            if (savedInstanceState != null)
+            {
+                _activityRecreated = true;
+                _instanceData = ActivityCommon.GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
+            }
 
             SetContentView(Resource.Layout.main);
 
@@ -403,7 +407,7 @@ namespace BmwDeepObd
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
-            StoreInstanceState(outState);
+            ActivityCommon.StoreInstanceState(outState, _instanceData);
             base.OnSaveInstanceState(outState);
         }
 
@@ -1255,59 +1259,6 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 // ignored
-            }
-        }
-
-        private void GetInstanceState(Bundle savedInstanceState)
-        {
-            if (savedInstanceState != null)
-            {
-                _activityRecreated = true;
-
-                PropertyInfo[] properties = _instanceData.GetType().GetProperties();
-                foreach (PropertyInfo property in properties)
-                {
-                    if (property.CanRead && property.CanWrite)
-                    {
-                        try
-                        {
-                            object value = property.GetValue(_instanceData);
-                            bool? boolValue = value as bool?;
-                            if (boolValue != null)
-                            {
-                                property.SetValue(_instanceData, savedInstanceState.GetBoolean(property.Name, boolValue.Value));
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                    }
-                }
-            }
-        }
-
-        private void StoreInstanceState(Bundle outState)
-        {
-            PropertyInfo[] properties = _instanceData.GetType().GetProperties();
-            foreach (PropertyInfo property in properties)
-            {
-                if (property.CanRead && property.CanWrite)
-                {
-                    try
-                    {
-                        object value = property.GetValue(_instanceData);
-                        bool? boolValue = value as bool?;
-                        if (boolValue != null)
-                        {
-                            outState.PutBoolean(property.Name, boolValue.Value);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                }
             }
         }
 
