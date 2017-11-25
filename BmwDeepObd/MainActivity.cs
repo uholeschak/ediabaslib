@@ -64,7 +64,7 @@ namespace BmwDeepObd
             RequestGlobalSettings,
         }
 
-        private enum LastAppState
+        public enum LastAppState
         {
             Init,
             Compile,
@@ -121,12 +121,35 @@ namespace BmwDeepObd
         {
             public InstanceData()
             {
+                LastAppState = LastAppState.Init;
+                AppDataPath = string.Empty;
+                EcuPath = string.Empty;
                 TraceActive = true;
+                DeviceName = string.Empty;
+                DeviceAddress = string.Empty;
+                ConfigFileName = string.Empty;
+                CheckCpuUsage = true;
             }
+
+            public LastAppState LastAppState { get; set; }
+            public string AppDataPath { get; set; }
+            public string EcuPath { get; set; }
+            public bool UserEcuFiles { get; set; }
             public bool TraceActive { get; set; }
             public bool TraceAppend { get; set; }
             public bool DataLogActive { get; set; }
             public bool DataLogAppend { get; set; }
+            public string DeviceName { get; set; }
+            public string DeviceAddress { get; set; }
+            public string ConfigFileName { get; set; }
+            public int LastVersionCode { get; set; }
+            public bool CheckCpuUsage { get; set; }
+            public bool CommErrorsOccured { get; set; }
+            public bool StorageAccessGranted { get; set; }
+            public bool AutoStart { get; set; }
+            public bool VagInfoShown { get; set; }
+            public string DataLogDir { get; set; }
+            public string TraceDir { get; set; }
         }
 
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
@@ -152,33 +175,18 @@ namespace BmwDeepObd
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
-        private LastAppState _lastAppState = LastAppState.Init;
         private bool _stopCommRequest;
         private ActivityCommon.AutoConnectType _connectTypeRequest;
         private bool _backPressed;
         private long _lastBackPressedTime;
-        private string _deviceName = string.Empty;
-        private string _deviceAddress = string.Empty;
-        private string _configFileName = string.Empty;
         private int _currentVersionCode;
-        private int _lastVersionCode;
-        private string _appDataPath = String.Empty;
-        private string _ecuPath = String.Empty;
-        private bool _userEcuFiles;
-        private bool _commErrorsOccured;
-        private bool _checkCpuUsage = true;
         private bool _activityActive;
         private bool _onResumeExecuted;
-        private bool _storageAccessGranted;
         private bool _createTabsPending;
         private bool _ignoreTabsChange;
         private bool _compileCodePending;
-        private bool _autoStart;
-        private bool _vagInfoShown;
         private ActivityCommon _activityCommon;
         private Handler _updateHandler;
-        private string _dataLogDir;
-        private string _traceDir;
         private TabLayout _tabLayout;
         private ViewPager _viewPager;
         private TabsFragmentPagerAdapter _fragmentPagerAdapter;
@@ -497,7 +505,7 @@ namespace BmwDeepObd
             if (!ActivityCommon.DoubleClickForAppExit)
             {
                 _backPressed = false;
-                _checkCpuUsage = true;
+                _instanceData.CheckCpuUsage = true;
                 base.OnBackPressed();
                 return;
             }
@@ -506,7 +514,7 @@ namespace BmwDeepObd
                 _backPressed = false;
                 if (Stopwatch.GetTimestamp() - _lastBackPressedTime < 2000 * TickResolMs)
                 {
-                    _checkCpuUsage = true;
+                    _instanceData.CheckCpuUsage = true;
                     base.OnBackPressed();
                     return;
                 }
@@ -528,20 +536,20 @@ namespace BmwDeepObd
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
                         // Get the device MAC address
-                        _deviceName = data.Extras.GetString(DeviceListActivity.ExtraDeviceName);
-                        _deviceAddress = data.Extras.GetString(DeviceListActivity.ExtraDeviceAddress);
+                        _instanceData.DeviceName = data.Extras.GetString(DeviceListActivity.ExtraDeviceName);
+                        _instanceData.DeviceAddress = data.Extras.GetString(DeviceListActivity.ExtraDeviceAddress);
                         bool callAdapterConfig = data.Extras.GetBoolean(DeviceListActivity.ExtraCallAdapterConfig, false);
                         InvalidateOptionsMenu();
                         if (callAdapterConfig)
                         {
                             AdapterConfig();
                         }
-                        else if (_autoStart)
+                        else if (_instanceData.AutoStart)
                         {
                             ButtonConnectClick(_connectButtonInfo.Button, new EventArgs());
                         }
                     }
-                    _autoStart = false;
+                    _instanceData.AutoStart = false;
                     break;
 
                 case ActivityRequest.RequestAdapterConfig:
@@ -551,7 +559,7 @@ namespace BmwDeepObd
                     // When FilePickerActivity returns with a file
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
-                        _configFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
+                        _instanceData.ConfigFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
                         ReadConfigFile();
                         InvalidateOptionsMenu();
                     }
@@ -562,7 +570,7 @@ namespace BmwDeepObd
                     _activityCommon.SetPreferredNetworkInterface();
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
-                        _configFileName = data.Extras.GetString(XmlToolActivity.ExtraFileName);
+                        _instanceData.ConfigFileName = data.Extras.GetString(XmlToolActivity.ExtraFileName);
                         ReadConfigFile();
                         InvalidateOptionsMenu();
                     }
@@ -577,7 +585,7 @@ namespace BmwDeepObd
                     {
                         string zipFile = data.Extras.GetString(XmlToolActivity.ExtraFileName);
                         string fileName = Path.GetFileName(zipFile) ?? string.Empty;
-                        string ecuPath = Path.Combine(_appDataPath, ManufacturerEcuDirName);
+                        string ecuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
 
                         XElement xmlInfo = new XElement("Info");
                         xmlInfo.Add(new XAttribute("Url", zipFile));
@@ -634,7 +642,7 @@ namespace BmwDeepObd
             IMenuItem scanMenu = menu.FindItem(Resource.Id.menu_scan);
             if (scanMenu != null)
             {
-                scanMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_adapter), _deviceName));
+                scanMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_adapter), _instanceData.DeviceName));
                 scanMenu.SetEnabled(interfaceAvailable && !commActive);
                 scanMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth);
             }
@@ -643,7 +651,7 @@ namespace BmwDeepObd
             if (adapterConfigMenu != null)
             {
                 adapterConfigMenu.SetEnabled(interfaceAvailable && !commActive);
-                adapterConfigMenu.SetVisible(_activityCommon.AllowAdapterConfig(_deviceAddress));
+                adapterConfigMenu.SetVisible(_activityCommon.AllowAdapterConfig(_instanceData.DeviceAddress));
             }
 
             IMenuItem enetIpMenu = menu.FindItem(Resource.Id.menu_enet_ip);
@@ -659,9 +667,9 @@ namespace BmwDeepObd
             if (selCfgMenu != null)
             {
                 string fileName = string.Empty;
-                if (!string.IsNullOrEmpty(_configFileName))
+                if (!string.IsNullOrEmpty(_instanceData.ConfigFileName))
                 {
-                    fileName = Path.GetFileNameWithoutExtension(_configFileName);
+                    fileName = Path.GetFileNameWithoutExtension(_instanceData.ConfigFileName);
                 }
                 selCfgMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_sel_cfg), fileName));
                 selCfgMenu.SetEnabled(!commActive);
@@ -680,7 +688,7 @@ namespace BmwDeepObd
             logSubMenu?.SetEnabled(interfaceAvailable && !commActive);
 
             IMenuItem sendTraceMenu = menu.FindItem(Resource.Id.menu_send_trace);
-            sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && ActivityCommon.IsTraceFilePresent(_traceDir));
+            sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && ActivityCommon.IsTraceFilePresent(_instanceData.TraceDir));
 
             IMenuItem translationSubmenu = menu.FindItem(Resource.Id.menu_translation_submenu);
             if (translationSubmenu != null)
@@ -740,8 +748,8 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_scan:
-                    _autoStart = false;
-                    _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice, _appDataPath);
+                    _instanceData.AutoStart = false;
+                    _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice, _instanceData.AppDataPath);
                     return true;
 
                 case Resource.Id.menu_adapter_config:
@@ -861,12 +869,12 @@ namespace BmwDeepObd
                 UpdateDisplay();
                 return;
             }
-            _autoStart = false;
-            if (string.IsNullOrEmpty(_deviceAddress))
+            _instanceData.AutoStart = false;
+            if (string.IsNullOrEmpty(_instanceData.DeviceAddress))
             {
-                if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, _appDataPath, (s, args) =>
+                if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, _instanceData.AppDataPath, (s, args) =>
                     {
-                        _autoStart = true;
+                        _instanceData.AutoStart = true;
                     }))
                 {
                     UpdateDisplay();
@@ -1008,19 +1016,19 @@ namespace BmwDeepObd
 
         private bool StartEdiabasThread()
         {
-            _autoStart = false;
-            _commErrorsOccured = false;
+            _instanceData.AutoStart = false;
+            _instanceData.CommErrorsOccured = false;
             try
             {
                 if (ActivityCommon.EdiabasThread == null)
                 {
-                    ActivityCommon.EdiabasThread = new EdiabasThread(string.IsNullOrEmpty(ActivityCommon.JobReader.EcuPath) ? _ecuPath : ActivityCommon.JobReader.EcuPath, _activityCommon, this);
+                    ActivityCommon.EdiabasThread = new EdiabasThread(string.IsNullOrEmpty(ActivityCommon.JobReader.EcuPath) ? _instanceData.EcuPath : ActivityCommon.JobReader.EcuPath, _activityCommon, this);
                     ConnectEdiabasEvents();
                 }
                 string logDir = string.Empty;
                 if (_instanceData.DataLogActive && !string.IsNullOrEmpty(ActivityCommon.JobReader.LogPath))
                 {
-                    logDir = Path.IsPathRooted(ActivityCommon.JobReader.LogPath) ? ActivityCommon.JobReader.LogPath : Path.Combine(_appDataPath, ActivityCommon.JobReader.LogPath);
+                    logDir = Path.IsPathRooted(ActivityCommon.JobReader.LogPath) ? ActivityCommon.JobReader.LogPath : Path.Combine(_instanceData.AppDataPath, ActivityCommon.JobReader.LogPath);
                     try
                     {
                         Directory.CreateDirectory(logDir);
@@ -1030,12 +1038,12 @@ namespace BmwDeepObd
                         logDir = string.Empty;
                     }
                 }
-                _dataLogDir = logDir;
+                _instanceData.DataLogDir = logDir;
 
-                _traceDir = null;
-                if (_instanceData.TraceActive && !string.IsNullOrEmpty(_configFileName))
+                _instanceData.TraceDir = null;
+                if (_instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
                 {
-                    _traceDir = Path.Combine(_appDataPath, "Log");
+                    _instanceData.TraceDir = Path.Combine(_instanceData.AppDataPath, "Log");
                 }
                 _translationList = null;
                 _translatedList = null;
@@ -1048,7 +1056,7 @@ namespace BmwDeepObd
                     switch (_activityCommon.SelectedInterface)
                     {
                         case ActivityCommon.InterfaceType.Bluetooth:
-                            portName = "BLUETOOTH:" + _deviceAddress;
+                            portName = "BLUETOOTH:" + _instanceData.DeviceAddress;
                             break;
 
                         case ActivityCommon.InterfaceType.Enet:
@@ -1072,7 +1080,7 @@ namespace BmwDeepObd
                             connectParameter = new EdFtdiInterface.ConnectParameterType(this, _activityCommon.UsbManager);
                             break;
                     }
-                    ActivityCommon.EdiabasThread.StartThread(portName, connectParameter, pageInfo, true, _traceDir, _instanceData.TraceAppend, _dataLogDir, _instanceData.DataLogAppend);
+                    ActivityCommon.EdiabasThread.StartThread(portName, connectParameter, pageInfo, true, _instanceData.TraceDir, _instanceData.TraceAppend, _instanceData.DataLogDir, _instanceData.DataLogAppend);
                     if (UseCommService())
                     {
                         _activityCommon.StartForegroundService();
@@ -1186,19 +1194,17 @@ namespace BmwDeepObd
             {
                 _currentVersionCode = PackageManager.GetPackageInfo(PackageName, 0).VersionCode;
                 ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
-                string stateString = prefs.GetString("LastAppState", string.Empty);
-                if (!System.Enum.TryParse(stateString, true, out _lastAppState))
-                {
-                    _lastAppState = LastAppState.Init;
-                }
-                _deviceName = prefs.GetString("DeviceName", string.Empty);
-                _deviceAddress = prefs.GetString("DeviceAddress", string.Empty);
                 _activityCommon.SelectedEnetIp = prefs.GetString("EnetIp", string.Empty);
-                _configFileName = prefs.GetString("ConfigFile", string.Empty);
                 _activityCommon.CustomStorageMedia = prefs.GetString("StorageMedia", string.Empty);
-                _lastVersionCode = prefs.GetInt("VersionCode", -1);
                 if (!_activityRecreated)
                 {
+                    string stateString = prefs.GetString("LastAppState", string.Empty);
+                    _instanceData.LastAppState = System.Enum.TryParse(stateString, true, out LastAppState lastAppState) ? lastAppState : LastAppState.Init;
+                    _instanceData.DeviceName = prefs.GetString("DeviceName", string.Empty);
+                    _instanceData.DeviceAddress = prefs.GetString("DeviceAddress", string.Empty);
+                    _instanceData.ConfigFileName = prefs.GetString("ConfigFile", string.Empty);
+                    _instanceData.LastVersionCode = prefs.GetInt("VersionCode", -1);
+
                     ActivityCommon.EnableTranslation = prefs.GetBoolean("EnableTranslation", false);
                     ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", string.Empty);
                     ActivityCommon.AppId = prefs.GetString("AppId", string.Empty);
@@ -1232,10 +1238,10 @@ namespace BmwDeepObd
             {
                 ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
                 ISharedPreferencesEditor prefsEdit = prefs.Edit();
-                prefsEdit.PutString("DeviceName", _deviceName);
-                prefsEdit.PutString("DeviceAddress", _deviceAddress);
+                prefsEdit.PutString("DeviceName", _instanceData.DeviceName);
+                prefsEdit.PutString("DeviceAddress", _instanceData.DeviceAddress);
                 prefsEdit.PutString("EnetIp", _activityCommon.SelectedEnetIp);
-                prefsEdit.PutString("ConfigFile", _configFileName);
+                prefsEdit.PutString("ConfigFile", _instanceData.ConfigFileName);
                 prefsEdit.PutString("StorageMedia", _activityCommon.CustomStorageMedia ?? string.Empty);
                 prefsEdit.PutInt("VersionCode", _currentVersionCode);
                 prefsEdit.PutBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
@@ -1289,12 +1295,12 @@ namespace BmwDeepObd
 
         private void StoragePermissonGranted()
         {
-            _storageAccessGranted = true;
+            _instanceData.StorageAccessGranted = true;
             ActivityCommon.SetStoragePath();
             UpdateDirectories();
             _activityCommon.RequestUsbPermission(null);
             ReadConfigFile();
-            if (_startAlertDialog == null && _currentVersionCode != _lastVersionCode)
+            if (_startAlertDialog == null && _currentVersionCode != _instanceData.LastVersionCode)
             {
                 _startAlertDialog = new AlertDialog.Builder(this)
                     .SetNeutralButton(Resource.String.button_donate, (sender, args) =>
@@ -1323,9 +1329,9 @@ namespace BmwDeepObd
 
         private void UpdateDirectories()
         {
-            _appDataPath = string.Empty;
-            _ecuPath = string.Empty;
-            _userEcuFiles = false;
+            _instanceData.AppDataPath = string.Empty;
+            _instanceData.EcuPath = string.Empty;
+            _instanceData.UserEcuFiles = false;
             if (string.IsNullOrEmpty(_activityCommon.CustomStorageMedia))
             {
                 if (string.IsNullOrEmpty(_activityCommon.ExternalWritePath))
@@ -1337,32 +1343,32 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        _appDataPath = Path.Combine(_activityCommon.ExternalPath, AppFolderName);
-                        _ecuPath = Path.Combine(_appDataPath, ManufacturerEcuDirName);
+                        _instanceData.AppDataPath = Path.Combine(_activityCommon.ExternalPath, AppFolderName);
+                        _instanceData.EcuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
                     }
                 }
                 else
                 {
-                    _appDataPath = _activityCommon.ExternalWritePath;
-                    _ecuPath = Path.Combine(_appDataPath, ManufacturerEcuDirName);
-                    if (!ValidEcuFiles(_ecuPath))
+                    _instanceData.AppDataPath = _activityCommon.ExternalWritePath;
+                    _instanceData.EcuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
+                    if (!ValidEcuFiles(_instanceData.EcuPath))
                     {
-                        string userEcuPath = Path.Combine(_appDataPath, "../../../..", AppFolderName, ManufacturerEcuDirName);
+                        string userEcuPath = Path.Combine(_instanceData.AppDataPath, "../../../..", AppFolderName, ManufacturerEcuDirName);
                         if (ValidEcuFiles(userEcuPath))
                         {
-                            _ecuPath = userEcuPath;
-                            _userEcuFiles = true;
+                            _instanceData.EcuPath = userEcuPath;
+                            _instanceData.UserEcuFiles = true;
                         }
                     }
                 }
             }
             else
             {
-                _appDataPath = Path.Combine(_activityCommon.CustomStorageMedia, AppFolderName);
-                _ecuPath = Path.Combine(_appDataPath, ManufacturerEcuDirName);
+                _instanceData.AppDataPath = Path.Combine(_activityCommon.CustomStorageMedia, AppFolderName);
+                _instanceData.EcuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
             }
 
-            string backgroundImageFile = Path.Combine(_appDataPath, "Images", "Background.jpg");
+            string backgroundImageFile = Path.Combine(_instanceData.AppDataPath, "Images", "Background.jpg");
             if (File.Exists(backgroundImageFile))
             {
                 try
@@ -1456,9 +1462,9 @@ namespace BmwDeepObd
             _translationList = null;
             _translatedList = null;
 
-            if (_commErrorsOccured && _instanceData.TraceActive && !string.IsNullOrEmpty(_traceDir))
+            if (_instanceData.CommErrorsOccured && _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
             {
-                _activityCommon.RequestSendTraceFile(_appDataPath, _traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType());
+                _activityCommon.RequestSendTraceFile(_instanceData.AppDataPath, _instanceData.TraceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType());
             }
         }
 
@@ -1469,9 +1475,9 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            if (_instanceData.TraceActive && !string.IsNullOrEmpty(_traceDir))
+            if (_instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
             {
-                return _activityCommon.SendTraceFile(_appDataPath, _traceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType(), handler);
+                return _activityCommon.SendTraceFile(_instanceData.AppDataPath, _instanceData.TraceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType(), handler);
             }
             return false;
         }
@@ -1634,7 +1640,7 @@ namespace BmwDeepObd
                     }
                     if (ActivityCommon.IsCommunicationError(errorMessage))
                     {
-                        _commErrorsOccured = true;
+                        _instanceData.CommErrorsOccured = true;
                     }
 
                     MethodInfo formatErrorResult = null;
@@ -1674,7 +1680,7 @@ namespace BmwDeepObd
                             {
                                 if (ActivityCommon.IsCommunicationError(errorReport.ExecptionText))
                                 {
-                                    _commErrorsOccured = true;
+                                    _instanceData.CommErrorsOccured = true;
                                 }
                                 StringBuilder srMessage = new StringBuilder();
                                 srMessage.Append(string.Format(Culture, "{0}: ", GetPageString(pageInfo, errorReport.EcuName)));
@@ -1737,7 +1743,7 @@ namespace BmwDeepObd
                                                 }
                                             }
                                         }
-                                        List<string> textList = _activityCommon.ConvertVagDtcCode(_ecuPath, errorCode, errorTypeList, kwp1281, saeMode);
+                                        List<string> textList = _activityCommon.ConvertVagDtcCode(_instanceData.EcuPath, errorCode, errorTypeList, kwp1281, saeMode);
 
                                         srMessage.Append("\r\n");
                                         srMessage.Append(GetString(Resource.String.error_code));
@@ -2267,9 +2273,9 @@ namespace BmwDeepObd
                 return;
             }
             ActivityCommon.JobReader.Clear();
-            if (_lastAppState != LastAppState.Compile)
+            if (_instanceData.LastAppState != LastAppState.Compile)
             {
-                ActivityCommon.JobReader.ReadXml(_configFileName);
+                ActivityCommon.JobReader.ReadXml(_instanceData.ConfigFileName);
             }
             UpdateJobReaderSettings();
             _activityCommon.ClearTranslationCache();
@@ -2303,16 +2309,16 @@ namespace BmwDeepObd
             _compileCodePending = false;
             if (!ActivityCommon.IsCpuStatisticsSupported() || !ActivityCommon.CheckCpuUsage)
             {
-                _checkCpuUsage = false;
+                _instanceData.CheckCpuUsage = false;
             }
-            if (ActivityCommon.JobReader.PageList.Count == 0 && !_checkCpuUsage)
+            if (ActivityCommon.JobReader.PageList.Count == 0 && !_instanceData.CheckCpuUsage)
             {
                 _updateHandler.Post(CreateActionBarTabs);
                 return;
             }
             StoreLastAppState(LastAppState.Compile);
             _compileProgress = new CustomProgressDialog(this);
-            _compileProgress.SetMessage(GetString(_checkCpuUsage ? Resource.String.compile_cpu_usage : Resource.String.compile_start));
+            _compileProgress.SetMessage(GetString(_instanceData.CheckCpuUsage ? Resource.String.compile_cpu_usage : Resource.String.compile_start));
             _compileProgress.Indeterminate = false;
             _compileProgress.Progress = 0;
             _compileProgress.Max = 100;
@@ -2324,10 +2330,10 @@ namespace BmwDeepObd
             {
                 int cpuUsage = -1;
                 long startTime = Stopwatch.GetTimestamp();
-                if (_checkCpuUsage)
+                if (_instanceData.CheckCpuUsage)
                 {
                     // check CPU idle usage
-                    _checkCpuUsage = false;
+                    _instanceData.CheckCpuUsage = false;
                     GC.Collect();
                     int count = 0;
                     int maxCount = 5;
@@ -2875,10 +2881,10 @@ namespace BmwDeepObd
 
         private void DownloadEcuFiles(bool manualRequest = false)
         {
-            string ecuPath = Path.Combine(_appDataPath, ManufacturerEcuDirName);
+            string ecuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
             try
             {
-                ActivityCommon.FileSystemBlockInfo blockInfo = ActivityCommon.GetFileSystemBlockInfo(_appDataPath);
+                ActivityCommon.FileSystemBlockInfo blockInfo = ActivityCommon.GetFileSystemBlockInfo(_instanceData.AppDataPath);
                 long ecuDirSize = ActivityCommon.GetDirectorySize(ecuPath);
                 double freeSpace = blockInfo.AvailableSizeBytes + ecuDirSize;
                 long requiredSize = ManufacturerEcuExtractSize + ManufacturerEcuZipSize;
@@ -2915,7 +2921,7 @@ namespace BmwDeepObd
                     })
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
-                        DownloadFile(ManufacturerEcuDownloadUrl, Path.Combine(_appDataPath, ActivityCommon.DownloadDir), ecuPath);
+                        DownloadFile(ManufacturerEcuDownloadUrl, Path.Combine(_instanceData.AppDataPath, ActivityCommon.DownloadDir), ecuPath);
                     })
                     .SetMessage(ActivityCommon.FromHtml(message))
                     .SetTitle(Resource.String.alert_title_question)
@@ -2928,13 +2934,13 @@ namespace BmwDeepObd
             }
             else
             {
-                DownloadFile(ManufacturerEcuDownloadUrl, Path.Combine(_appDataPath, ActivityCommon.DownloadDir), ecuPath);
+                DownloadFile(ManufacturerEcuDownloadUrl, Path.Combine(_instanceData.AppDataPath, ActivityCommon.DownloadDir), ecuPath);
             }
         }
 
         private void ManualEcuFilesInstall()
         {
-            string downloadsDir = _appDataPath;
+            string downloadsDir = _instanceData.AppDataPath;
             Java.IO.File directoryDownloads = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads);
             if (!string.IsNullOrEmpty(directoryDownloads?.AbsolutePath))
             {
@@ -2950,12 +2956,12 @@ namespace BmwDeepObd
 
         private bool CheckForEcuFiles(bool checkPackage = false)
         {
-            if (!_storageAccessGranted || (_downloadEcuAlertDialog != null))
+            if (!_instanceData.StorageAccessGranted || (_downloadEcuAlertDialog != null))
             {
                 return true;
             }
 
-            if (!ValidEcuFiles(_ecuPath))
+            if (!ValidEcuFiles(_instanceData.EcuPath))
             {
                 string message = GetString(Resource.String.ecu_not_found) + "\n" +
                     string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_download), ManufacturerEcuZipSize) + "\n" +
@@ -2980,9 +2986,9 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (checkPackage && !_userEcuFiles)
+            if (checkPackage && !_instanceData.UserEcuFiles)
             {
-                if (!ValidEcuPackage(_ecuPath))
+                if (!ValidEcuPackage(_instanceData.EcuPath))
                 {
                     string message = GetString(Resource.String.ecu_package) + "\n" +
                         string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_download), ManufacturerEcuZipSize);
@@ -3053,7 +3059,7 @@ namespace BmwDeepObd
 
         private void SelectManufacturerInfo()
         {
-            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !_vagInfoShown)
+            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !_instanceData.VagInfoShown)
             {
                 AlertDialog alertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
@@ -3070,7 +3076,7 @@ namespace BmwDeepObd
                 {
                     messageView.MovementMethod = new LinkMovementMethod();
                 }
-                _vagInfoShown = true;
+                _instanceData.VagInfoShown = true;
                 return;
             }
             SelectManufacturer();
@@ -3085,7 +3091,7 @@ namespace BmwDeepObd
                     _activityCommon.SelectedInterface = ActivityCommon.InterfaceType.Bluetooth;
                 }
                 ActivityCommon.JobReader.Clear();
-                _configFileName = null;
+                _instanceData.ConfigFileName = string.Empty;
                 CreateActionBarTabs();
                 UpdateDirectories();
                 if (CheckForEcuFiles())
@@ -3103,10 +3109,10 @@ namespace BmwDeepObd
             {
                 return;
             }
-            if (_lastAppState == LastAppState.Compile)
+            if (_instanceData.LastAppState == LastAppState.Compile)
             {
-                _lastAppState = LastAppState.Init;
-                _configFileName = string.Empty;
+                _instanceData.LastAppState = LastAppState.Init;
+                _instanceData.ConfigFileName = string.Empty;
                 _configSelectAlertDialog = new AlertDialog.Builder(this)
                     .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                     .SetCancelable(true)
@@ -3231,7 +3237,7 @@ namespace BmwDeepObd
                 return;
             }
             Intent serverIntent = new Intent(this, typeof(CanAdapterActivity));
-            serverIntent.PutExtra(CanAdapterActivity.ExtraDeviceAddress, _deviceAddress);
+            serverIntent.PutExtra(CanAdapterActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
             serverIntent.PutExtra(CanAdapterActivity.ExtraInterfaceType, (int)_activityCommon.SelectedInterface);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestAdapterConfig);
         }
@@ -3256,12 +3262,12 @@ namespace BmwDeepObd
             }
             // Launch the FilePickerActivity to select a configuration
             Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
-            string initDir = _appDataPath;
+            string initDir = _instanceData.AppDataPath;
             try
             {
-                if (!string.IsNullOrEmpty(_configFileName))
+                if (!string.IsNullOrEmpty(_instanceData.ConfigFileName))
                 {
-                    initDir = Path.GetDirectoryName(_configFileName);
+                    initDir = Path.GetDirectoryName(_instanceData.ConfigFileName);
                 }
             }
             catch (Exception)
@@ -3280,13 +3286,13 @@ namespace BmwDeepObd
                 return;
             }
             Intent serverIntent = new Intent(this, typeof(XmlToolActivity));
-            serverIntent.PutExtra(XmlToolActivity.ExtraInitDir, _ecuPath);
-            serverIntent.PutExtra(XmlToolActivity.ExtraAppDataDir, _appDataPath);
+            serverIntent.PutExtra(XmlToolActivity.ExtraInitDir, _instanceData.EcuPath);
+            serverIntent.PutExtra(XmlToolActivity.ExtraAppDataDir, _instanceData.AppDataPath);
             serverIntent.PutExtra(XmlToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
-            serverIntent.PutExtra(XmlToolActivity.ExtraDeviceName, _deviceName);
-            serverIntent.PutExtra(XmlToolActivity.ExtraDeviceAddress, _deviceAddress);
+            serverIntent.PutExtra(XmlToolActivity.ExtraDeviceName, _instanceData.DeviceName);
+            serverIntent.PutExtra(XmlToolActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
             serverIntent.PutExtra(XmlToolActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
-            serverIntent.PutExtra(XmlToolActivity.ExtraFileName, _configFileName);
+            serverIntent.PutExtra(XmlToolActivity.ExtraFileName, _instanceData.ConfigFileName);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestXmlTool);
         }
 
@@ -3298,11 +3304,11 @@ namespace BmwDeepObd
             }
             Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
             EdiabasToolActivity.IntentTranslateActivty = _activityCommon;
-            serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _ecuPath);
-            serverIntent.PutExtra(EdiabasToolActivity.ExtraAppDataDir, _appDataPath);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _instanceData.EcuPath);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraAppDataDir, _instanceData.AppDataPath);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
-            serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _deviceName);
-            serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _deviceAddress);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _instanceData.DeviceName);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestEdiabasTool);
         }
