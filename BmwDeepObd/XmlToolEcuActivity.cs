@@ -104,6 +104,11 @@ namespace BmwDeepObd
             Text,
         }
 
+        public class InstanceData
+        {
+            public bool IgnoreFormatSelection { get; set; }
+        }
+
         // Intent extra
         public const string ExtraEcuName = "ecu_name";
         public const string ExtraCallEdiabasTool = "ediabas_tool";
@@ -111,6 +116,8 @@ namespace BmwDeepObd
 
         public static XmlToolActivity.EcuInfo IntentEcuInfo { get; set; }
         public static EdiabasNet IntentEdiabas { get; set; }
+
+        private InstanceData _instanceData = new InstanceData();
         private InputMethodManager _imm;
         private View _contentView;
         private EditText _editTextPageName;
@@ -155,11 +162,14 @@ namespace BmwDeepObd
         private EdiabasNet _ediabas;
         private JobInfo _selectedJob;
         private ResultInfo _selectedResult;
-        private bool _ignoreFormatSelection;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            if (savedInstanceState != null)
+            {
+                _instanceData = ActivityCommon.GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
+            }
 
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
@@ -336,6 +346,12 @@ namespace BmwDeepObd
             UpdateDisplay();
             DisplayTypeSelected();
             ResetTestResult();
+        }
+
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            ActivityCommon.StoreInstanceState(outState, _instanceData);
+            base.OnSaveInstanceState(outState);
         }
 
         protected override void OnDestroy()
@@ -578,7 +594,7 @@ namespace BmwDeepObd
                 }
             }
 
-            _ignoreFormatSelection = true;
+            _instanceData.IgnoreFormatSelection = true;
 
             bool resultBinary = IsResultBinary(resultInfo);
             bool resultString = IsResultString(resultInfo);
@@ -684,7 +700,7 @@ namespace BmwDeepObd
                 }
             }
             _editTextFormat.Text = format;
-            _ignoreFormatSelection = false;
+            _instanceData.IgnoreFormatSelection = false;
 
             ViewStates viewState;
             if (selection == 1)
@@ -789,7 +805,7 @@ namespace BmwDeepObd
 
         private void UpdateFormatString(ResultInfo resultInfo)
         {
-            if ((resultInfo == null) || _ignoreFormatSelection)
+            if ((resultInfo == null) || _instanceData.IgnoreFormatSelection)
             {
                 return;
             }
