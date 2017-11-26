@@ -17,10 +17,16 @@ namespace BmwDeepObd
                                Android.Content.PM.ConfigChanges.ScreenSize)]
     public class YandexKeyActivity : AppCompatActivity, View.IOnTouchListener
     {
+        public class InstanceData
+        {
+            public string OldYandexApiKey { get; set; }
+        }
+
+        private InstanceData _instanceData = new InstanceData();
+        private bool _activityRecreated;
         private InputMethodManager _imm;
         private Timer _clipboardCheckTimer;
         private ActivityCommon _activityCommon;
-        private string _oldYandexApiKey;
         private View _contentView;
         private LinearLayout _layoutYandexKey;
         private Button _buttonYandexApiKeyCreate;
@@ -33,6 +39,11 @@ namespace BmwDeepObd
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            if (savedInstanceState != null)
+            {
+                _activityRecreated = true;
+                _instanceData = ActivityCommon.GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
+            }
 
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
@@ -44,7 +55,10 @@ namespace BmwDeepObd
 
             SetResult(Android.App.Result.Canceled);
 
-            _oldYandexApiKey = ActivityCommon.YandexApiKey ?? string.Empty;
+            if (!_activityRecreated)
+            {
+                _instanceData.OldYandexApiKey = ActivityCommon.YandexApiKey ?? string.Empty;
+            }
 
             _activityCommon = new ActivityCommon(this);
 
@@ -52,7 +66,7 @@ namespace BmwDeepObd
             _layoutYandexKey.SetOnTouchListener(this);
 
             _editTextYandexApiKey = FindViewById<EditText>(Resource.Id.editTextYandexApiKey);
-            _editTextYandexApiKey.Text = _oldYandexApiKey;
+            _editTextYandexApiKey.Text = _instanceData.OldYandexApiKey;
 
             _buttonYandexApiKeyCreate = FindViewById<Button>(Resource.Id.buttonYandexKeyCreate);
             _buttonYandexApiKeyCreate.SetOnTouchListener(this);
@@ -115,6 +129,12 @@ namespace BmwDeepObd
             };
 
             UpdateDisplay();
+        }
+
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            ActivityCommon.StoreInstanceState(outState, _instanceData);
+            base.OnSaveInstanceState(outState);
         }
 
         protected override void OnDestroy()
@@ -203,7 +223,7 @@ namespace BmwDeepObd
         private bool StoreYandexKey(EventHandler handler)
         {
             string newYandexApiKey = _editTextYandexApiKey.Text.Trim();
-            if (string.Compare(_oldYandexApiKey, newYandexApiKey, StringComparison.Ordinal) == 0)
+            if (string.Compare(_instanceData.OldYandexApiKey, newYandexApiKey, StringComparison.Ordinal) == 0)
             {
                 return true;
             }
@@ -216,7 +236,7 @@ namespace BmwDeepObd
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                 {
-                    ActivityCommon.YandexApiKey = _oldYandexApiKey;
+                    ActivityCommon.YandexApiKey = _instanceData.OldYandexApiKey;
                     handler?.Invoke(sender, args);
                 })
                 .SetNeutralButton(Resource.String.button_abort, (sender, args) =>
