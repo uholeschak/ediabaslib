@@ -111,6 +111,7 @@
   <string name="select_device">Select adapter</string>
   <string name="none_paired">No devices have been paired</string>
   <string name="none_found">No devices found</string>
+  <string name="bt_not_enabled">Bluetooth is not enabled</string>
   <string name="title_paired_devices">Paired devices</string>
   <string name="title_other_devices">Other available devices</string>
   <string name="button_scan">Scan for devices</string>
