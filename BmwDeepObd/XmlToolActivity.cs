@@ -301,7 +301,7 @@ namespace BmwDeepObd
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
         private Thread _jobThread;
-        private readonly List<EcuInfo> _ecuList = new List<EcuInfo>();
+        private static List<EcuInfo> _ecuList = new List<EcuInfo>();
         private bool _translateEnabled;
         private bool _translateActive;
         private bool _ecuListTranslated;
@@ -313,6 +313,10 @@ namespace BmwDeepObd
             {
                 _activityRecreated = true;
                 _instanceData = ActivityCommon.GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
+            }
+            else
+            {
+                _ecuList = new List<EcuInfo>();
             }
 
             SupportActionBar.SetHomeButtonEnabled(true);
@@ -406,7 +410,7 @@ namespace BmwDeepObd
             }
 
             EdiabasClose();
-            if (_instanceData.ManualConfigIdx > 0)
+            if (!_activityRecreated && _instanceData.ManualConfigIdx > 0)
             {
                 EdiabasOpen();
                 ReadAllXml();
