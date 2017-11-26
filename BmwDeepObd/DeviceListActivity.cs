@@ -164,8 +164,14 @@ namespace BmwDeepObd
             }
             else
             {
-                String noDevices = Resources.GetText (Resource.String.none_paired);
-                _pairedDevicesArrayAdapter.Add (noDevices);
+                if (_btAdapter.IsEnabled)
+                {
+                    _pairedDevicesArrayAdapter.Add(Resources.GetText(Resource.String.none_paired));
+                }
+                else
+                {
+                    _pairedDevicesArrayAdapter.Add(Resources.GetText(Resource.String.bt_not_enabled));
+                }
             }
         }
 

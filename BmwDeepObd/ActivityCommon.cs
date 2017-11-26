@@ -461,6 +461,8 @@ namespace BmwDeepObd
             set => _appId = value;
         }
 
+        public static bool ActivityStartedFromMain { get; set; }
+
         public static bool BtInitiallyEnabled { get; set; }
 
         public static ManufacturerType SelectedManufacturer { get; set; }
@@ -1965,7 +1967,7 @@ namespace BmwDeepObd
 
         public bool BluetoothDisableAtExit()
         {
-            if (!BtInitiallyEnabled && BtDisableHandling == BtDisableType.DisableIfByApp &&
+            if (!ActivityStartedFromMain && !BtInitiallyEnabled && BtDisableHandling == BtDisableType.DisableIfByApp &&
                 IsBluetoothEnabledByApp() && !IsBluetoothConnected() &&
                 !CommActive)
             {

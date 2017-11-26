@@ -108,6 +108,7 @@
   <string name="select_device">Выбор устройства</string>
   <string name="none_paired">Отсутствуют авторизированные устойства.</string>
   <string name="none_found">Устройство не найдено</string>
+  <string name="bt_not_enabled">Bluetooth не активирован</string>
   <string name="title_paired_devices">Авторизированные устройства</string>
   <string name="title_other_devices">Другие доступные устройства</string>
   <string name="button_scan">Поиск устройств</string>
