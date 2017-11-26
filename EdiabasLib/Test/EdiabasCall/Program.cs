@@ -28,7 +28,6 @@ namespace EdiabasCall
         private static string _lastJobInfo = string.Empty;
         private static int _lastJobProgress = -1;
         private static bool _api6;
-        private static string _fa = string.Empty;
 
         static int Main(string[] args)
         {
@@ -272,22 +271,6 @@ namespace EdiabasCall
                     {
                         PrintResults(formatList, printAllTypes);
                     }
-                    if (!string.IsNullOrEmpty(_fa))
-                    {
-                        API.apiJob("FA", "FA_STREAM2STRUCT", "1;" + _fa, "");
-                        while (API.apiState() == API.APIBUSY)
-                        {
-                            PrintProgress();
-                            Thread.Sleep(10);
-                        }
-                        if (API.apiState() == API.APIERROR)
-                        {
-                            _outputWriter.WriteLine(string.Format(Culture, "Error occured: 0x{0:X08} {1}", API.apiErrorCode(), API.apiErrorText()));
-                            API.apiEnd();
-                            return 1;
-                        }
-                        PrintResults(formatList, printAllTypes);
-                    }
 
                     //Console.WriteLine("Press Key to continue");
                     //Console.ReadKey(true);
@@ -457,7 +440,7 @@ namespace EdiabasCall
                                             }
 
                                         case API.APIFORMAT_TEXT:
-                                        {
+                                            {
                                                 if (_apiHandle == 0)
                                                 {
                                                     string resultString;
@@ -477,10 +460,6 @@ namespace EdiabasCall
                                                             length = API.APIMAXTEXT;
                                                         }
                                                         resultText = Encoding.GetString(dataBuffer, 0, length);
-                                                        if (string.Compare(resultName, "FAHRZEUGAUFTRAG", StringComparison.OrdinalIgnoreCase) == 0)
-                                                        {
-                                                            _fa = Encoding.Default.GetString(dataBuffer, 0, length);
-                                                        }
                                                     }
                                                 }
                                                 break;
