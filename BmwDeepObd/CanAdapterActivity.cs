@@ -31,6 +31,12 @@ namespace BmwDeepObd
             CanAuto = 0xFF,
         }
 
+        public class InstanceData
+        {
+            public bool FwUpdateShown { get; set; }
+        }
+
+        private InstanceData _instanceData = new InstanceData();
         private InputMethodManager _imm;
         private View _contentView;
         private View _barView;
@@ -71,14 +77,17 @@ namespace BmwDeepObd
         private byte[] _btPin;
         private byte[] _btName;
         private int _clampStatus = -1;
-        private bool _fwUpdateShown;
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
         private Thread _adapterThread;
 
-        protected override void OnCreate(Bundle bundle)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate(bundle);
+            base.OnCreate(savedInstanceState);
+            if (savedInstanceState != null)
+            {
+                _instanceData = ActivityCommon.GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
+            }
 
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
@@ -221,6 +230,12 @@ namespace BmwDeepObd
 
             UpdateDisplay();
             PerformRead();
+        }
+
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            ActivityCommon.StoreInstanceState(outState, _instanceData);
+            base.OnSaveInstanceState(outState);
         }
 
         protected override void OnDestroy()
@@ -476,7 +491,7 @@ namespace BmwDeepObd
                     int fwUpdateVersion = PicBootloader.GetFirmwareVersion((uint)_adapterType);
                     if (fwUpdateVersion >= 0)
                     {
-                        if (!_fwUpdateShown && _fwVersion < fwUpdateVersion)
+                        if (!_instanceData.FwUpdateShown && _fwVersion < fwUpdateVersion)
                         {
                             requestFwUpdate = true;
                         }
@@ -503,7 +518,7 @@ namespace BmwDeepObd
             _checkBoxExpert.Checked = expertMode;
             if (requestFwUpdate)
             {
-                _fwUpdateShown = true;
+                _instanceData.FwUpdateShown = true;
                 new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {

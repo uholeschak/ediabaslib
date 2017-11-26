@@ -150,6 +150,8 @@ namespace BmwDeepObd
             public bool VagInfoShown { get; set; }
             public string DataLogDir { get; set; }
             public string TraceDir { get; set; }
+
+            public ActivityCommon.InterfaceType SelectedInterface { get; set; }
         }
 
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
@@ -304,6 +306,10 @@ namespace BmwDeepObd
                 }
             }, BroadcastReceived);
             _activityCommon.RegisterInternetCellular();
+            if (_activityRecreated && _instanceData != null)
+            {
+                _activityCommon.SelectedInterface = _instanceData.SelectedInterface;
+            }
 
             GetSettings();
             StoreLastAppState(LastAppState.Init);
@@ -418,6 +424,7 @@ namespace BmwDeepObd
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
+            _instanceData.SelectedInterface = _activityCommon.SelectedInterface;
             ActivityCommon.StoreInstanceState(outState, _instanceData);
             base.OnSaveInstanceState(outState);
         }
