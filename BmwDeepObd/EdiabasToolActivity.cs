@@ -115,9 +115,10 @@ namespace BmwDeepObd
         public const string ExtraEnetIp = "enet_ip";
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
 
+        public static ActivityCommon IntentTranslateActivty { get; set; }
+
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
-        public static ActivityCommon IntentTranslateActivty { get; set; }
         private InputMethodManager _imm;
         private View _contentView;
         private View _barView;
