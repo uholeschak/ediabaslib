@@ -22,7 +22,17 @@ namespace BmwDeepObd.FilePicker
     /// </remarks>
     public class FileListFragment : ListFragment
     {
-        public string DefaultInitialDirectory = "/";
+        public class InstanceData
+        {
+            public InstanceData()
+            {
+                DefaultInitialDirectory = "/";
+            }
+            public string DefaultInitialDirectory { get; set; }
+        }
+
+        private InstanceData _instanceData = new InstanceData();
+        private bool _activityRecreated;
         private FileListAdapter _adapter;
         private List<string> _extensionList;
         private Regex _fileNameRegex;
@@ -34,6 +44,12 @@ namespace BmwDeepObd.FilePicker
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            if (savedInstanceState != null)
+            {
+                _activityRecreated = true;
+                _instanceData = ActivityCommon.GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
+            }
+
             string initDir = Activity.Intent.GetStringExtra(FilePickerActivity.ExtraInitDir) ?? "/";
             if (Directory.Exists(initDir))
             {
@@ -41,7 +57,10 @@ namespace BmwDeepObd.FilePicker
                 {
                     DirectoryInfo dir = new DirectoryInfo(initDir);
                     dir.GetFileSystemInfos();
-                    DefaultInitialDirectory = initDir;
+                    if (!_activityRecreated && _instanceData != null)
+                    {
+                        _instanceData.DefaultInitialDirectory = initDir;
+                    }
                 }
                 catch
                 {
@@ -80,6 +99,7 @@ namespace BmwDeepObd.FilePicker
 
             if (fileSystemInfo.RootDir != null)
             {
+                _instanceData.DefaultInitialDirectory = fileSystemInfo.RootDir;
                 RefreshFilesList(fileSystemInfo.RootDir);
             }
             else
@@ -97,6 +117,7 @@ namespace BmwDeepObd.FilePicker
                 else
                 {
                     // Dig into this directory, and display it's contents
+                    _instanceData.DefaultInitialDirectory = fileSystemInfo.FileSysInfo.FullName;
                     RefreshFilesList(fileSystemInfo.FileSysInfo.FullName);
                 }
             }
@@ -104,13 +125,18 @@ namespace BmwDeepObd.FilePicker
             base.OnListItemClick(l, v, position, id);
         }
 
+        public override void OnSaveInstanceState(Bundle outState)
+        {
+            ActivityCommon.StoreInstanceState(outState, _instanceData);
+            base.OnSaveInstanceState(outState);
+        }
+
         public override void OnStart()
         {
             base.OnStart();
 
             _fileNameFilter = null;
-            FilePickerActivity filePicker = Activity as FilePickerActivity;
-            if (filePicker != null)
+            if (Activity is FilePickerActivity filePicker)
             {
                 filePicker.FilterEvent += NewFileFilter;
             }
@@ -120,8 +146,7 @@ namespace BmwDeepObd.FilePicker
         {
             base.OnStop();
 
-            FilePickerActivity filePicker = Activity as FilePickerActivity;
-            if (filePicker != null)
+            if (Activity is FilePickerActivity filePicker)
             {
                 filePicker.FilterEvent -= NewFileFilter;
             }
@@ -130,7 +155,7 @@ namespace BmwDeepObd.FilePicker
         public override void OnResume()
         {
             base.OnResume();
-            RefreshFilesList(DefaultInitialDirectory);
+            RefreshFilesList(_instanceData.DefaultInitialDirectory);
         }
 
         public void RefreshFilesList(string directory)
