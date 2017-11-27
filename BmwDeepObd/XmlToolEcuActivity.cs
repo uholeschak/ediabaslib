@@ -535,6 +535,7 @@ namespace BmwDeepObd
             _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private bool EdiabasClose()
         {
             if (IsJobRunning())
