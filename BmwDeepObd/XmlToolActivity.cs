@@ -138,6 +138,7 @@ namespace BmwDeepObd
                 VehicleType = string.Empty;
             }
 
+            public bool ForceAppend { get; set; }
             public bool AutoStart { get; set; }
             public bool AddErrorsPage { get; set; }
             public int ManualConfigIdx { get; set; }
@@ -443,6 +444,7 @@ namespace BmwDeepObd
         {
             base.OnPause();
 
+            _instanceData.ForceAppend = true;   // OnSaveInstanceState is called before OnStop
             _activityActive = false;
         }
 
@@ -455,7 +457,7 @@ namespace BmwDeepObd
             {
                 _jobThread.Join();
             }
-            EdiabasClose();
+            EdiabasClose(true);
             _activityCommon.Dispose();
         }
 
@@ -869,7 +871,7 @@ namespace BmwDeepObd
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool EdiabasClose()
+        private bool EdiabasClose(bool forceAppend = false)
         {
             if (IsJobRunning())
             {
@@ -880,6 +882,7 @@ namespace BmwDeepObd
                 _ediabas.Dispose();
                 _ediabas = null;
             }
+            _instanceData.ForceAppend = forceAppend;
             UpdateDisplay();
             InvalidateOptionsMenu();
             return true;
@@ -1187,7 +1190,7 @@ namespace BmwDeepObd
             {
                 _ediabas.SetConfigProperty("TracePath", _instanceData.TraceDir);
                 _ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
-                _ediabas.SetConfigProperty("AppendTrace", _instanceData.TraceAppend ? "1" : "0");
+                _ediabas.SetConfigProperty("AppendTrace", _instanceData.TraceAppend || _instanceData.ForceAppend ? "1" : "0");
                 _ediabas.SetConfigProperty("CompressTrace", "1");
             }
             else
@@ -1215,9 +1218,12 @@ namespace BmwDeepObd
                 return;
             }
             XmlToolEcuActivity.IntentEcuInfo = ecuInfo;
-            XmlToolEcuActivity.IntentEdiabas = _ediabas;
             Intent serverIntent = new Intent(this, typeof(XmlToolEcuActivity));
             serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuInfo.Name);
+            serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuDir, _ecuDir);
+            serverIntent.PutExtra(XmlToolEcuActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
+            serverIntent.PutExtra(XmlToolEcuActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
+            serverIntent.PutExtra(XmlToolEcuActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectJobs);
         }
 

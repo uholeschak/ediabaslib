@@ -111,11 +111,15 @@ namespace BmwDeepObd
 
         // Intent extra
         public const string ExtraEcuName = "ecu_name";
+        public const string ExtraEcuDir = "ecu_dir";
+        public const string ExtraInterface = "interface";
+        public const string ExtraDeviceAddress = "device_address";
+        public const string ExtraEnetIp = "enet_ip";
+        // Intent results
         public const string ExtraCallEdiabasTool = "ediabas_tool";
         private static readonly int[] LengthValues = {0, 1, 2, 3, 4, 5, 6, 8, 10, 15, 20, 25, 30, 35, 40};
 
         public static XmlToolActivity.EcuInfo IntentEcuInfo { get; set; }
-        public static EdiabasNet IntentEdiabas { get; set; }
 
         private InstanceData _instanceData = new InstanceData();
         private InputMethodManager _imm;
@@ -159,9 +163,13 @@ namespace BmwDeepObd
         private Button _buttonEdiabasTool;
         private ActivityCommon _activityCommon;
         private XmlToolActivity.EcuInfo _ecuInfo;
-        private EdiabasNet _ediabas;
         private JobInfo _selectedJob;
         private ResultInfo _selectedResult;
+        private EdiabasNet _ediabas;
+        private Thread _jobThread;
+        private bool _ediabasJobAbort;
+        private string _ecuDir;
+        private string _deviceAddress;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -184,8 +192,14 @@ namespace BmwDeepObd
             SetResult(Android.App.Result.Canceled);
 
             _activityCommon = new ActivityCommon(this);
+
+            _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
+            _activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)
+                Intent.GetIntExtra(ExtraInterface, (int) ActivityCommon.InterfaceType.None);
+            _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
+            _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEcuDir);
+
             _ecuInfo = IntentEcuInfo;
-            _ediabas = IntentEdiabas;
 
             _editTextPageName = FindViewById<EditText>(Resource.Id.editTextPageName);
             _editTextPageName.Text = _ecuInfo.PageName;
@@ -325,7 +339,6 @@ namespace BmwDeepObd
             _spinnerFormatType.ItemSelected += FormatItemSelected;
 
             _buttonTestFormat = FindViewById<Button>(Resource.Id.buttonTestFormat);
-            _buttonTestFormat.Enabled = _ediabas != null;
             _buttonTestFormat.Click += (sender, args) =>
             {
                 ExecuteTestFormat();
@@ -357,6 +370,12 @@ namespace BmwDeepObd
         protected override void OnDestroy()
         {
             base.OnDestroy();
+            _ediabasJobAbort = true;
+            if (IsJobRunning())
+            {
+                _jobThread.Join();
+            }
+            EdiabasClose();
             _activityCommon.Dispose();
         }
 
@@ -498,6 +517,59 @@ namespace BmwDeepObd
                 return sb.ToString();
             }
             return EdiabasNet.FormatResult(resultData, format) ?? string.Empty;
+        }
+
+        private void EdiabasOpen()
+        {
+            if (_ediabas == null)
+            {
+                _ediabas = new EdiabasNet
+                {
+                    EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
+                    AbortJobFunc = AbortEdiabasJob
+                };
+                _ediabas.SetConfigProperty("EcuPath", _ecuDir);
+                //UpdateLogInfo();
+            }
+
+            _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
+        }
+
+        private bool EdiabasClose()
+        {
+            if (IsJobRunning())
+            {
+                return false;
+            }
+            if (_ediabas != null)
+            {
+                _ediabas.Dispose();
+                _ediabas = null;
+            }
+            return true;
+        }
+
+        private bool IsJobRunning()
+        {
+            if (_jobThread == null)
+            {
+                return false;
+            }
+            if (_jobThread.IsAlive)
+            {
+                return true;
+            }
+            _jobThread = null;
+            return false;
+        }
+
+        private bool AbortEdiabasJob()
+        {
+            if (_ediabasJobAbort)
+            {
+                return true;
+            }
+            return false;
         }
 
         private void UpdateDisplay()
@@ -1081,6 +1153,7 @@ namespace BmwDeepObd
             {
                 return;
             }
+            EdiabasOpen();
 
             CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.xml_tool_execute_test_job));
@@ -1089,7 +1162,7 @@ namespace BmwDeepObd
 
             string resultText = string.Empty;
             bool executeFailed = false;
-            Thread jobThread = new Thread(() =>
+            _jobThread = new Thread(() =>
             {
                 try
                 {
@@ -1210,7 +1283,7 @@ namespace BmwDeepObd
                     }
                 });
             });
-            jobThread.Start();
+            _jobThread.Start();
         }
 
         private class JobListAdapter : BaseAdapter<JobInfo>
