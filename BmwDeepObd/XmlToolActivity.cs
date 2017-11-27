@@ -1217,6 +1217,10 @@ namespace BmwDeepObd
             {
                 return;
             }
+            if (!EdiabasClose(true))
+            {
+                return;
+            }
             XmlToolEcuActivity.IntentEcuInfo = ecuInfo;
             Intent serverIntent = new Intent(this, typeof(XmlToolEcuActivity));
             serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuInfo.Name);
@@ -1239,7 +1243,7 @@ namespace BmwDeepObd
             {
                 return;
             }
-            if (!EdiabasClose())
+            if (!EdiabasClose(true))
             {
                 return;
             }
