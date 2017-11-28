@@ -112,6 +112,8 @@ namespace BmwDeepObd
         // Intent extra
         public const string ExtraEcuName = "ecu_name";
         public const string ExtraEcuDir = "ecu_dir";
+        public const string ExtraTraceDir = "trace_dir";
+        public const string ExtraTraceAppend = "trace_append";
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
@@ -169,6 +171,8 @@ namespace BmwDeepObd
         private Thread _jobThread;
         private bool _ediabasJobAbort;
         private string _ecuDir;
+        private string _traceDir;
+        private bool _traceAppend;
         private string _deviceAddress;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -194,6 +198,8 @@ namespace BmwDeepObd
             _activityCommon = new ActivityCommon(this);
 
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
+            _traceDir = Intent.GetStringExtra(ExtraTraceDir);
+            _traceAppend = Intent.GetBooleanExtra(ExtraTraceAppend, true);
             _activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)
                 Intent.GetIntExtra(ExtraInterface, (int) ActivityCommon.InterfaceType.None);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
@@ -529,7 +535,17 @@ namespace BmwDeepObd
                     AbortJobFunc = AbortEdiabasJob
                 };
                 _ediabas.SetConfigProperty("EcuPath", _ecuDir);
-                //UpdateLogInfo();
+                if (!string.IsNullOrEmpty(_traceDir))
+                {
+                    _ediabas.SetConfigProperty("TracePath", _traceDir);
+                    _ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
+                    _ediabas.SetConfigProperty("AppendTrace", _traceAppend ? "1" : "0");
+                    _ediabas.SetConfigProperty("CompressTrace", "1");
+                }
+                else
+                {
+                    _ediabas.SetConfigProperty("IfhTrace", "0");
+                }
             }
 
             _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
