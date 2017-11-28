@@ -91,6 +91,7 @@ namespace BmwDeepObd
                 TraceActive = true;
             }
 
+            public bool ForceAppend { get; set; }
             public bool AutoStart { get; set; }
             public int AutoStartItemId { get; set; }
             public string SgbdFileName { get; set; }
@@ -253,7 +254,7 @@ namespace BmwDeepObd
             }
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
 
-            EdiabasClose();
+            EdiabasClose(_instanceData.ForceAppend);
             UpdateDisplay();
 
             if (!_activityRecreated && !string.IsNullOrEmpty(_sgbdFileNameInitial))
@@ -287,6 +288,7 @@ namespace BmwDeepObd
         {
             base.OnPause();
 
+            _instanceData.ForceAppend = true;   // OnSaveInstanceState is called before OnStop
             _activityActive = false;
         }
 
@@ -300,7 +302,7 @@ namespace BmwDeepObd
             {
                 _jobThread.Join();
             }
-            EdiabasClose();
+            EdiabasClose(true);
             _activityCommon.Dispose();
         }
 
@@ -674,7 +676,7 @@ namespace BmwDeepObd
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool EdiabasClose()
+        private bool EdiabasClose(bool forceAppend = false)
         {
             if (IsJobRunning())
             {
@@ -685,6 +687,7 @@ namespace BmwDeepObd
                 _ediabas.Dispose();
                 _ediabas = null;
             }
+            _instanceData.ForceAppend = forceAppend;
             _jobList.Clear();
             CloseDataLog();
             UpdateDisplay();
@@ -1282,7 +1285,7 @@ namespace BmwDeepObd
             {
                 _ediabas.SetConfigProperty("TracePath", _instanceData.TraceDir);
                 _ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
-                _ediabas.SetConfigProperty("AppendTrace", _instanceData.TraceAppend ? "1" : "0");
+                _ediabas.SetConfigProperty("AppendTrace", _instanceData.TraceAppend | _instanceData.ForceAppend ? "1" : "0");
                 _ediabas.SetConfigProperty("CompressTrace", "1");
             }
             else
