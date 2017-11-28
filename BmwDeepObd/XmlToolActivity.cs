@@ -1225,6 +1225,8 @@ namespace BmwDeepObd
             Intent serverIntent = new Intent(this, typeof(XmlToolEcuActivity));
             serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuInfo.Name);
             serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuDir, _ecuDir);
+            serverIntent.PutExtra(XmlToolEcuActivity.ExtraTraceDir, _instanceData.TraceDir);
+            serverIntent.PutExtra(XmlToolEcuActivity.ExtraTraceAppend, _instanceData.TraceAppend || _instanceData.ForceAppend);
             serverIntent.PutExtra(XmlToolEcuActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
             serverIntent.PutExtra(XmlToolEcuActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
             serverIntent.PutExtra(XmlToolEcuActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
