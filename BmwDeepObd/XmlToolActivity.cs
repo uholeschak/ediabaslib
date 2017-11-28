@@ -410,7 +410,7 @@ namespace BmwDeepObd
                 _instanceData.ManualConfigIdx = 1;
             }
 
-            EdiabasClose();
+            EdiabasClose(_instanceData.ForceAppend);
             if (!_activityRecreated && _instanceData.ManualConfigIdx > 0)
             {
                 EdiabasOpen();
