@@ -303,7 +303,7 @@ namespace BmwDeepObd
         private EdiabasNet _ediabas;
         private Thread _jobThread;
         private static List<EcuInfo> _ecuList = new List<EcuInfo>();
-        private bool _translateEnabled;
+        private bool _translateEnabled = true;
         private bool _translateActive;
         private bool _ecuListTranslated;
 
