@@ -127,6 +127,7 @@ namespace BmwDeepObd
 
             if (_stopHandler != null)
             {
+                _stopHandler.RemoveCallbacksAndMessages(null);
                 _stopHandler.Dispose();
                 _stopHandler = null;
             }
@@ -178,6 +179,10 @@ namespace BmwDeepObd
 
         private void StopEdiabasThread()
         {
+            if (_stopHandler == null)
+            {
+                return;
+            }
             StopEdiabasThread(true);
         }
 
