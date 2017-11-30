@@ -393,6 +393,7 @@ namespace BmwDeepObd
         private readonly Tuple<LockType, PowerManager.WakeLock>[] _lockArray;
         private CellularCallback _cellularCallback;
         private Network _mobileNetwork;
+        private Handler _btUpdateHandler;
         private Timer _usbCheckTimer;
         private Timer _networkTimer;
         private int _usbDeviceDetectCount;
@@ -554,6 +555,7 @@ namespace BmwDeepObd
             Emulator = IsEmulator();
             _clipboardManager = context?.GetSystemService(Context.ClipboardService);
             _btAdapter = BluetoothAdapter.DefaultAdapter;
+            _btUpdateHandler = new Handler();
             _maWifi = (WifiManager)context?.GetSystemService(Context.WifiService);
             _maConnectivity = (ConnectivityManager)context?.GetSystemService(Context.ConnectivityService);
             _usbManager = context?.GetSystemService(Context.UsbService) as UsbManager;
@@ -618,6 +620,12 @@ namespace BmwDeepObd
                 // and unmanaged resources.
                 if (disposing)
                 {
+                    if (_btUpdateHandler != null)
+                    {
+                        _btUpdateHandler.RemoveCallbacksAndMessages(null);
+                        _btUpdateHandler.Dispose();
+                        _btUpdateHandler = null;
+                    }
                     if (_usbCheckTimer != null)
                     {
                         _usbCheckTimer.Dispose();
@@ -1791,6 +1799,17 @@ namespace BmwDeepObd
                             _btAdapter.Enable();
 #pragma warning restore 0618
                             _btEnableCounter = 2;
+                            if (_bcReceiverUpdateDisplayHandler != null)
+                            {   // some device don't send the update event
+                                _btUpdateHandler.PostDelayed(() =>
+                                {
+                                    if (_btUpdateHandler == null)
+                                    {
+                                        return;
+                                    }
+                                    _bcReceiverUpdateDisplayHandler?.Invoke();
+                                }, 1000);
+                            }
                         }
                         catch (Exception)
                         {

@@ -504,6 +504,7 @@ namespace BmwDeepObd
             }
             if (_updateHandler != null)
             {
+                _updateHandler.RemoveCallbacksAndMessages(null);
                 _updateHandler.Dispose();
                 _updateHandler = null;
             }
