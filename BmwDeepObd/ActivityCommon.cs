@@ -2335,6 +2335,7 @@ namespace BmwDeepObd
                 else
                 {
                     ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "BLUETOOTH:" + btDeviceAddress;
+                    connectParameter = new EdBluetoothInterface.ConnectParameterType(_context, _maConnectivity);
                 }
             }
             else if (ediabas.EdInterfaceClass is EdInterfaceEnet)

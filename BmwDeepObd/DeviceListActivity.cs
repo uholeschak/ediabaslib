@@ -129,7 +129,6 @@ namespace BmwDeepObd
             RegisterReceiver (_receiver, filter);
 
             // Register for broadcasts when a device name changed
-            _receiver = new Receiver(this);
             filter = new IntentFilter(BluetoothDevice.ActionNameChanged);
             RegisterReceiver(_receiver, filter);
 
@@ -314,7 +313,7 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                LogString("Connect with GetMethodID");
+                                LogString("Connect with createRfcommSocket");
                                 // this socket sometimes looses data for long telegrams
                                 IntPtr createRfcommSocket = Android.Runtime.JNIEnv.GetMethodID(device.Class.Handle,
                                     "createRfcommSocket", "(I)Landroid/bluetooth/BluetoothSocket;");
