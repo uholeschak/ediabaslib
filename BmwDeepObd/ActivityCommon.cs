@@ -622,8 +622,15 @@ namespace BmwDeepObd
                 {
                     if (_btUpdateHandler != null)
                     {
-                        _btUpdateHandler.RemoveCallbacksAndMessages(null);
-                        _btUpdateHandler.Dispose();
+                        try
+                        {
+                            _btUpdateHandler.RemoveCallbacksAndMessages(null);
+                            _btUpdateHandler.Dispose();
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                         _btUpdateHandler = null;
                     }
                     if (_usbCheckTimer != null)
