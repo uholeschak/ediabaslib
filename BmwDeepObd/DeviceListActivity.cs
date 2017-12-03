@@ -78,6 +78,10 @@ namespace BmwDeepObd
         private ActivityCommon _activityCommon;
         private string _appDataDir;
         private readonly StringBuilder _sbLog = new StringBuilder();
+        private readonly AutoResetEvent _connectedEvent = new AutoResetEvent(false);
+        private volatile string _connectDeviceAddress = string.Empty;
+        private volatile bool _deviceConnected;
+        private volatile bool _androidRadio;
 
         protected override void OnCreate (Bundle savedInstanceState)
         {
@@ -133,6 +137,12 @@ namespace BmwDeepObd
             filter = new IntentFilter (BluetoothAdapter.ActionDiscoveryFinished);
             RegisterReceiver (_receiver, filter);
 
+            // register device changes
+            filter = new IntentFilter();
+            filter.AddAction(BluetoothDevice.ActionAclConnected);
+            filter.AddAction(BluetoothDevice.ActionAclDisconnected);
+            RegisterReceiver(_receiver, filter);
+
             // Get the local Bluetooth adapter
             _btAdapter = BluetoothAdapter.DefaultAdapter;
 
@@ -164,6 +174,7 @@ namespace BmwDeepObd
             }
             else
             {
+                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if (_btAdapter.IsEnabled)
                 {
                     _pairedDevicesArrayAdapter.Add(Resources.GetText(Resource.String.none_paired));
@@ -236,6 +247,7 @@ namespace BmwDeepObd
             progress.Show();
 
             _sbLog.Clear();
+            _deviceConnected = false;
 
             Thread detectThread = new Thread(() =>
             {
@@ -245,6 +257,7 @@ namespace BmwDeepObd
                     BluetoothDevice device = _btAdapter.GetRemoteDevice(deviceAddress);
                     if (device != null)
                     {
+                        _connectDeviceAddress = device.Address;
                         BluetoothSocket bluetoothSocket = null;
 
                         adapterType = AdapterType.ConnectionFailed;
@@ -252,6 +265,7 @@ namespace BmwDeepObd
                         {
                             try
                             {
+                                LogString("Connect with CreateRfcommSocketToServiceRecord");
                                 bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
                                 if (bluetoothSocket != null)
                                 {
@@ -264,12 +278,30 @@ namespace BmwDeepObd
                                         // sometimes the second connect is working
                                         bluetoothSocket.Connect();
                                     }
-                                    Thread.Sleep(500);
+                                    _connectedEvent.WaitOne(1000, false);
+                                    LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
+                                    _androidRadio = !_deviceConnected;
                                     adapterType = AdapterTypeDetection(bluetoothSocket);
+                                    if (_androidRadio && adapterType == AdapterType.Unknown)
+                                    {
+                                        for (int retry = 0; retry < 10; retry++)
+                                        {
+                                            LogString("Retry connect");
+                                            bluetoothSocket.Close();
+                                            bluetoothSocket.Connect();
+                                            adapterType = AdapterTypeDetection(bluetoothSocket);
+                                            if (adapterType != AdapterType.Unknown &&
+                                                adapterType != AdapterType.ConnectionFailed)
+                                            {
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
+                                LogString("*** Connect exception: " + ex.Message);
                                 adapterType = AdapterType.ConnectionFailed;
                             }
                             finally
@@ -278,10 +310,11 @@ namespace BmwDeepObd
                             }
                         }
 
-                        if (adapterType == AdapterType.ConnectionFailed)
+                        if (adapterType == AdapterType.ConnectionFailed && !_androidRadio)
                         {
                             try
                             {
+                                LogString("Connect with GetMethodID");
                                 // this socket sometimes looses data for long telegrams
                                 IntPtr createRfcommSocket = Android.Runtime.JNIEnv.GetMethodID(device.Class.Handle,
                                     "createRfcommSocket", "(I)Landroid/bluetooth/BluetoothSocket;");
@@ -295,16 +328,20 @@ namespace BmwDeepObd
                                 {
                                     throw new Exception("No rfCommSocket");
                                 }
-                                bluetoothSocket = GetObject<BluetoothSocket>(rfCommSocket, Android.Runtime.JniHandleOwnership.TransferLocalRef);
+                                bluetoothSocket = GetObject<BluetoothSocket>(rfCommSocket,
+                                    Android.Runtime.JniHandleOwnership.TransferLocalRef);
                                 if (bluetoothSocket != null)
                                 {
                                     bluetoothSocket.Connect();
-                                    Thread.Sleep(500);
+                                    _connectedEvent.WaitOne(1000, false);
+                                    LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
+                                    _androidRadio = !_deviceConnected;
                                     adapterType = AdapterTypeDetection(bluetoothSocket);
                                 }
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
+                                LogString("*** Connect exception: " + ex.Message);
                                 adapterType = AdapterType.ConnectionFailed;
                             }
                             finally
@@ -348,7 +385,18 @@ namespace BmwDeepObd
                         {
                             if (!ActivityCommon.IsBtReliable())
                             {
-                                _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_not_reliable), Resource.String.alert_title_error);
+                                _altertInfoDialog = new AlertDialog.Builder(this)
+                                    .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
+                                    .SetCancelable(true)
+                                    .SetMessage(Resource.String.can_adapter_bt_not_reliable)
+                                    .SetTitle(Resource.String.alert_title_error)
+                                    .Show();
+                                _altertInfoDialog.DismissEvent += (sender, args) =>
+                                {
+                                    _altertInfoDialog = null;
+                                    _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(),
+                                        PackageManager.GetPackageInfo(PackageName, 0), GetType(), (o, eventArgs) => { });
+                                };
                                 break;
                             }
 
@@ -434,6 +482,33 @@ namespace BmwDeepObd
 
                         case AdapterType.Custom:
                         case AdapterType.CustomUpdate:
+#if false
+                            if (!ActivityCommon.IsBtReliable() && _androidRadio)
+                            {
+                                _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(),
+                                    PackageManager.GetPackageInfo(PackageName, 0), GetType(), (o, eventArgs) =>
+                                    {
+                                        _altertInfoDialog = new AlertDialog.Builder(this)
+                                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                            {
+                                                ReturnDeviceType(deviceAddress, deviceName, true);
+                                            })
+                                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                            {
+                                                ReturnDeviceType(deviceAddress, deviceName);
+                                            })
+                                            .SetCancelable(true)
+                                            .SetMessage(adapterType == AdapterType.CustomUpdate ? Resource.String.adapter_fw_update : Resource.String.adapter_cfg_required)
+                                            .SetTitle(Resource.String.alert_title_info)
+                                            .Show();
+                                        _altertInfoDialog.DismissEvent += (sender, args) =>
+                                        {
+                                            _altertInfoDialog = null;
+                                        };
+                                    });
+                                break;
+                            }
+#endif
                             _altertInfoDialog = new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
@@ -572,6 +647,7 @@ namespace BmwDeepObd
                         break;
                     }
                 }
+                LogString("No custom adapter found");
 
                 // ELM327
                 bool elmReports21 = false;
@@ -635,10 +711,12 @@ namespace BmwDeepObd
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return AdapterType.Unknown;
+                LogString("*** Exception: " + ex.Message);
+                return AdapterType.ConnectionFailed;
             }
+            LogString("Adapter type: " + adapterType);
             return adapterType;
         }
 
@@ -846,6 +924,22 @@ namespace BmwDeepObd
                                 _newDevicesArrayAdapter.Add(noDevices);
                             }
                             break;
+
+                        case BluetoothDevice.ActionAclConnected:
+                        case BluetoothDevice.ActionAclDisconnected:
+                        {
+                            BluetoothDevice device = (BluetoothDevice)intent.GetParcelableExtra(BluetoothDevice.ExtraDevice);
+                            if (device != null)
+                            {
+                                if (!string.IsNullOrEmpty(_chat._connectDeviceAddress) &&
+                                        string.Compare(device.Address, _chat._connectDeviceAddress, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    _chat._deviceConnected = action == BluetoothDevice.ActionAclConnected;
+                                    _chat._connectedEvent.Set();
+                                }
+                            }
+                            break;
+                        }
                     }
                 }
                 catch (Exception)
