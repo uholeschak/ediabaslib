@@ -11,6 +11,19 @@ namespace EdiabasLib
 {
     public class EdBluetoothInterface : EdBluetoothInterfaceBase
     {
+        public class ConnectParameterType
+        {
+            public ConnectParameterType(Android.Content.Context parentContext, Android.Net.ConnectivityManager connectivityManager)
+            {
+                ParentContext = parentContext;
+                ConnectivityManager = connectivityManager;
+            }
+
+            public Android.Content.Context ParentContext { get; }
+
+            public Android.Net.ConnectivityManager ConnectivityManager { get; }
+        }
+
         public static readonly string[] Elm327InitCommands = EdElmInterface.Elm327InitCommands;
         public const string PortId = "BLUETOOTH";
         public const string Elm327Tag = "ELM327";
@@ -27,7 +40,13 @@ namespace EdiabasLib
         private static bool _elm327Device;
         private static bool _reconnectRequired;
         private static string _connectPort;
+        private static ConnectParameterType _connectParameter;
         private static EdElmInterface _edElmInterface;
+        private static Receiver _receiver;
+        private static readonly AutoResetEvent ConnectedEvent = new AutoResetEvent(false);
+        private static string _connectDeviceAddress = string.Empty;
+        private static bool _deviceConnected;
+        private static bool _androidRadio;
 
         static EdBluetoothInterface()
         {
@@ -61,6 +80,7 @@ namespace EdiabasLib
             _rawMode = false;
             _elm327Device = false;
             _connectPort = port;
+            _connectParameter = parameter as ConnectParameterType;
             _reconnectRequired = false;
             try
             {
@@ -100,6 +120,17 @@ namespace EdiabasLib
                 }
                 bluetoothAdapter.CancelDiscovery();
 
+                if (_connectParameter != null)
+                {
+                    _receiver = new Receiver();
+                    Android.Content.IntentFilter filter = new Android.Content.IntentFilter();
+                    filter.AddAction(BluetoothDevice.ActionAclConnected);
+                    filter.AddAction(BluetoothDevice.ActionAclDisconnected);
+                    _connectParameter.ParentContext.RegisterReceiver(_receiver, filter);
+                }
+                _connectDeviceAddress = device.Address;
+                _androidRadio = false;
+
                 _bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
                 try
                 {
@@ -119,6 +150,7 @@ namespace EdiabasLib
                     }
                 }
 
+                bool usedRfCommSocket = false;
                 if (_bluetoothSocket == null)
                 {
                     // this socket sometimes looses data for long telegrams
@@ -136,8 +168,12 @@ namespace EdiabasLib
                     }
                     _bluetoothSocket = Java.Lang.Object.GetObject<BluetoothSocket>(rfCommSocket, Android.Runtime.JniHandleOwnership.TransferLocalRef);
                     _bluetoothSocket.Connect();
+                    usedRfCommSocket = true;
                 }
-                Thread.Sleep(500);
+
+                ConnectedEvent.WaitOne(1000, false);
+                _androidRadio = !_deviceConnected;
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
 
                 _bluetoothInStream = _bluetoothSocket.InputStream;
                 _bluetoothOutStream = _bluetoothSocket.OutputStream;
@@ -149,6 +185,37 @@ namespace EdiabasLib
                     {
                         InterfaceDisconnect();
                         return false;
+                    }
+                }
+                if (_androidRadio && !usedRfCommSocket)
+                {
+                    if (!_elm327Device)
+                    {
+                        bool connected = false;
+                        for (int retry = 0; retry < 20; retry++)
+                        {
+                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Test connection");
+                            if (retry > 0)
+                            {
+                                _bluetoothSocket.Close();
+                                _bluetoothSocket.Connect();
+                                _bluetoothInStream = _bluetoothSocket.InputStream;
+                                _bluetoothOutStream = _bluetoothSocket.OutputStream;
+                            }
+                            if (UpdateAdapterInfo(true))
+                            {
+                                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Connected");
+                                connected = true;
+                                break;
+                            }
+                        }
+                        _reconnectRequired = false;     // is set by UpdateAdapterInfo()
+                        if (!connected)
+                        {
+                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No response from adapter");
+                            InterfaceDisconnect();
+                            return false;
+                        }
                     }
                 }
             }
@@ -203,6 +270,11 @@ namespace EdiabasLib
             catch (Exception)
             {
                 result = false;
+            }
+            if (_connectParameter != null && _receiver != null)
+            {
+                _connectParameter.ParentContext.UnregisterReceiver(_receiver);
+                _receiver = null;
             }
             return result;
         }
@@ -669,6 +741,40 @@ namespace EdiabasLib
             }
 
             return true;
+        }
+
+        private class Receiver : Android.Content.BroadcastReceiver
+        {
+            public override void OnReceive(Android.Content.Context context, Android.Content.Intent intent)
+            {
+                try
+                {
+                    string action = intent.Action;
+
+                    switch (action)
+                    {
+                        case BluetoothDevice.ActionAclConnected:
+                        case BluetoothDevice.ActionAclDisconnected:
+                            {
+                                BluetoothDevice device = (BluetoothDevice)intent.GetParcelableExtra(BluetoothDevice.ExtraDevice);
+                                if (device != null)
+                                {
+                                    if (!string.IsNullOrEmpty(_connectDeviceAddress) &&
+                                            string.Compare(device.Address, _connectDeviceAddress, StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        _deviceConnected = action == BluetoothDevice.ActionAclConnected;
+                                        ConnectedEvent.Set();
+                                    }
+                                }
+                                break;
+                            }
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
         }
     }
 }
