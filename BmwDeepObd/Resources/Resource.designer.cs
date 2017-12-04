@@ -4172,26 +4172,26 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f09008b
 			public const int button_active = 2131296395;
 			
+			// aapt resource value: 0x7f09015e
+			public const int button_can_adapter_can_100 = 2131296606;
+			
 			// aapt resource value: 0x7f09015d
-			public const int button_can_adapter_can_100 = 2131296605;
+			public const int button_can_adapter_can_500 = 2131296605;
 			
 			// aapt resource value: 0x7f09015c
-			public const int button_can_adapter_can_500 = 2131296604;
-			
-			// aapt resource value: 0x7f09015b
-			public const int button_can_adapter_can_auto = 2131296603;
-			
-			// aapt resource value: 0x7f09015e
-			public const int button_can_adapter_can_off = 2131296606;
+			public const int button_can_adapter_can_auto = 2131296604;
 			
 			// aapt resource value: 0x7f09015f
-			public const int button_can_adapter_fw_update = 2131296607;
+			public const int button_can_adapter_can_off = 2131296607;
 			
-			// aapt resource value: 0x7f090159
-			public const int button_can_adapter_read = 2131296601;
+			// aapt resource value: 0x7f090160
+			public const int button_can_adapter_fw_update = 2131296608;
 			
 			// aapt resource value: 0x7f09015a
-			public const int button_can_adapter_write = 2131296602;
+			public const int button_can_adapter_read = 2131296602;
+			
+			// aapt resource value: 0x7f09015b
+			public const int button_can_adapter_write = 2131296603;
 			
 			// aapt resource value: 0x7f09002b
 			public const int button_connected = 2131296299;
@@ -4258,6 +4258,9 @@ namespace BmwDeepObd
 			
 			// aapt resource value: 0x7f090140
 			public const int can_adapter_block_size = 2131296576;
+			
+			// aapt resource value: 0x7f090159
+			public const int can_adapter_bt_android_radio = 2131296601;
 			
 			// aapt resource value: 0x7f090142
 			public const int can_adapter_bt_name = 2131296578;

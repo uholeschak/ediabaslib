@@ -369,6 +369,13 @@
   <string name="can_adapter_fw_update_failed">Не удалось обновление прошивки</string>
   <string name="can_adapter_fw_update_ok">Обновление прошивки успешно завершено</string>
   <string name="can_adapter_bt_not_reliable">Как известно, ваше Android-устройство ненадёжно при работе с Bluetooth.\nПожалуйста, используйте другое устройство.</string>
+  <!--Translate-->
+  <string name="can_adapter_bt_android_radio">Your Android device uses a non standard Bluetooth stack. If the device is a car radio consider the following points:
+\n- Important: Always pair an additional smartphone with the radio when using a OBD Bluetooth adapter!
+\n- Always enable auto connect in the Bluetooth menu.
+\n- Pair the OBD adapter in the phone menu and not in the Android Bluetooth menu.
+\n- Searching the OBD adapter is working best in the Android Bluetooth menu.
+\n- If the OBD adapter was paired in the meantime with a different device or is not responding, disconnect and pair it again the phone menu.</string>
   <string name="button_can_adapter_read">Считать</string>
   <string name="button_can_adapter_write">Сохранить</string>
   <string name="button_can_adapter_can_auto">Автоматически</string>

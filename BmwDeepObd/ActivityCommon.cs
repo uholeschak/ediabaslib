@@ -466,6 +466,8 @@ namespace BmwDeepObd
 
         public static bool BtInitiallyEnabled { get; set; }
 
+        public static bool BtNoEvents { get; set; }
+
         public static ManufacturerType SelectedManufacturer { get; set; }
 
         public static BtEnableType BtEnbaleHandling { get; set; }
@@ -1024,6 +1026,11 @@ namespace BmwDeepObd
                 return false;
             }
             return true;
+        }
+
+        public static bool IsBtAbnormal()
+        {
+            return BtNoEvents;
         }
 
         public static bool IsCpuStatisticsSupported()
@@ -1813,6 +1820,10 @@ namespace BmwDeepObd
                                     if (_btUpdateHandler == null)
                                     {
                                         return;
+                                    }
+                                    if (_btEnableCounter == 2)
+                                    {   // update event not received
+                                        BtNoEvents = true;
                                     }
                                     _bcReceiverUpdateDisplayHandler?.Invoke();
                                 }, 1000);
@@ -4696,18 +4707,22 @@ namespace BmwDeepObd
                     case BluetoothAdapter.ActionStateChanged:
                     case ConnectivityManager.ConnectivityAction:
                         _activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
-                        if (action == BluetoothAdapter.ActionStateChanged && _activityCommon._activity is ActivityMain)
+                        if (action == BluetoothAdapter.ActionStateChanged)
                         {
-                            State extraState = (State) intent.GetIntExtra(BluetoothAdapter.ExtraState, (int) State.Disconnected);
-                            switch (extraState)
+                            BtNoEvents = false;
+                            if (_activityCommon._activity is ActivityMain)
                             {
-                                case State.TurningOn:
-                                    _btEnableCounter--;
-                                    break;
+                                State extraState = (State)intent.GetIntExtra(BluetoothAdapter.ExtraState, (int)State.Disconnected);
+                                switch (extraState)
+                                {
+                                    case State.TurningOn:
+                                        _btEnableCounter--;
+                                        break;
 
-                                case State.TurningOff:
-                                    _btEnableCounter = 0;
-                                    break;
+                                    case State.TurningOff:
+                                        _btEnableCounter = 0;
+                                        break;
+                                }
                             }
                         }
                         if (action == ConnectivityManager.ConnectivityAction)

@@ -1229,6 +1229,7 @@ namespace BmwDeepObd
                     _instanceData.ConfigFileName = prefs.GetString("ConfigFile", string.Empty);
                     _instanceData.LastVersionCode = prefs.GetInt("VersionCode", -1);
 
+                    ActivityCommon.BtNoEvents = prefs.GetBoolean("BtNoEvents", false);
                     ActivityCommon.EnableTranslation = prefs.GetBoolean("EnableTranslation", false);
                     ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", string.Empty);
                     ActivityCommon.AppId = prefs.GetString("AppId", string.Empty);
@@ -1268,6 +1269,7 @@ namespace BmwDeepObd
                 prefsEdit.PutString("ConfigFile", _instanceData.ConfigFileName);
                 prefsEdit.PutString("StorageMedia", _activityCommon.CustomStorageMedia ?? string.Empty);
                 prefsEdit.PutInt("VersionCode", _currentVersionCode);
+                prefsEdit.PutBoolean("BtNoEvents", ActivityCommon.BtNoEvents);
                 prefsEdit.PutBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
                 prefsEdit.PutString("YandexApiKey", ActivityCommon.YandexApiKey ?? string.Empty);
                 prefsEdit.PutString("AppId", ActivityCommon.AppId);

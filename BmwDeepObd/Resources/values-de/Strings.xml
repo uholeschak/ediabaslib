@@ -370,6 +370,12 @@
   <string name="can_adapter_fw_update_failed">Firmware Aktualisierung fehlgeschlagen</string>
   <string name="can_adapter_fw_update_ok">Firmware Aktualisierung erfolgreich</string>
   <string name="can_adapter_bt_not_reliable">Ihr Android Gerät ist dafür bekannt, dass die Bluetooth-Verbindung nicht zuverlässig ist.\nBitte verwenden Sie ein anderes Gerät.</string>
+  <string name="can_adapter_bt_android_radio">Ihr Android Gerät verwendet ein Bluetooth-Stack der nicht dem Standard entspricht. Wenn das Gerät ein Autoradio ist, beachten Sie folgende Punkte:
+\n- Wichtig: Koppeln Sie immer zuätzliches Smartphone mit dem Radio, wenn Sie mit einen OBD Bluetooth-Adapter verwenden!
+\n- Aktivieren Sie die automatische Verbindung im Bluetooth Menü.
+\n- Koppeln Sie den OBD Adapter im Telefonmenü und nicht im Android Bluetooth Menü.
+\n- Das Suchen des OBD Adapters funktioniert am Besten im Android Bluetooth Menü.
+\n- Wenn der OBD Adapter in der Zwischenzeit mit einem anderen Gerät gekoppelt wurde oder nicht antwortet, trennen und verbinden Sie Ihn erneut im Telefonmenü.</string>
   <string name="button_can_adapter_read">Lesen</string>
   <string name="button_can_adapter_write">Schreiben</string>
   <string name="button_can_adapter_can_auto">Automatisch</string>

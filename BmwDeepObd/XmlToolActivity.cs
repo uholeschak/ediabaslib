@@ -2016,9 +2016,9 @@ namespace BmwDeepObd
                         if (ecuListBest == null)
                         {
                             _instanceData.CommErrorsOccured = true;
-                            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth && !ActivityCommon.IsBtReliable())
+                            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth && ActivityCommon.IsBtAbnormal())
                             {
-                                _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_not_reliable), Resource.String.alert_title_error);
+                                _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_android_radio), Resource.String.alert_title_error);
                             }
                             else
                             {
