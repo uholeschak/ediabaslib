@@ -183,6 +183,11 @@ namespace BmwDeepObd
                     _pairedDevicesArrayAdapter.Add(Resources.GetText(Resource.String.bt_not_enabled));
                 }
             }
+
+            if (ActivityCommon.IsBtAbnormal())
+            {
+                _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_android_radio), Resource.String.alert_title_info);
+            }
         }
 
         protected override void OnDestroy ()
@@ -359,6 +364,10 @@ namespace BmwDeepObd
                 {
                     progress.Dismiss();
                     progress.Dispose();
+                    if (_androidRadio)
+                    {
+                        ActivityCommon.BtNoEvents = true;
+                    }
                     switch (adapterType)
                     {
                         case AdapterType.ConnectionFailed:
@@ -382,12 +391,12 @@ namespace BmwDeepObd
 
                         case AdapterType.Unknown:
                         {
-                            if (!ActivityCommon.IsBtReliable())
+                            if (ActivityCommon.IsBtAbnormal())
                             {
                                 _altertInfoDialog = new AlertDialog.Builder(this)
                                     .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                                     .SetCancelable(true)
-                                    .SetMessage(Resource.String.can_adapter_bt_not_reliable)
+                                    .SetMessage(Resource.String.can_adapter_bt_android_radio)
                                     .SetTitle(Resource.String.alert_title_error)
                                     .Show();
                                 _altertInfoDialog.DismissEvent += (sender, args) =>
