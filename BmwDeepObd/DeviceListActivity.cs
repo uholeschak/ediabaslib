@@ -184,8 +184,9 @@ namespace BmwDeepObd
                 }
             }
 
-            if (ActivityCommon.IsBtAbnormal())
+            if (!ActivityCommon.BtAndroidRadioInfoShown && ActivityCommon.IsBtAbnormal())
             {
+                ActivityCommon.BtAndroidRadioInfoShown = true;
                 _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_android_radio), Resource.String.alert_title_info);
             }
         }
