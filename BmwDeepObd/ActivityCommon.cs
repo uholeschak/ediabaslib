@@ -464,6 +464,8 @@ namespace BmwDeepObd
 
         public static bool ActivityStartedFromMain { get; set; }
 
+        public static bool BtAndroidRadioInfoShown { get; set; }
+
         public static bool BtInitiallyEnabled { get; set; }
 
         public static bool BtNoEvents { get; set; }
