@@ -181,15 +181,44 @@ namespace EdiabasLib
                 if (_elm327Device)
                 {
                     _edElmInterface = new EdElmInterface(Ediabas, _bluetoothInStream, _bluetoothOutStream);
-                    if (!_edElmInterface.Elm327Init())
+                    if (_androidRadio && !usedRfCommSocket)
                     {
-                        InterfaceDisconnect();
-                        return false;
+                        bool connected = false;
+                        for (int retry = 0; retry < 20; retry++)
+                        {
+                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Test connection");
+                            if (_edElmInterface.Elm327Init())
+                            {
+                                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Connected");
+                                connected = true;
+                                break;
+                            }
+                            _edElmInterface.Dispose();
+                            _bluetoothSocket.Close();
+                            _bluetoothSocket.Connect();
+                            _bluetoothInStream = _bluetoothSocket.InputStream;
+                            _bluetoothOutStream = _bluetoothSocket.OutputStream;
+                            _edElmInterface = new EdElmInterface(Ediabas, _bluetoothInStream, _bluetoothOutStream);
+                        }
+                        if (!connected)
+                        {
+                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No response from adapter");
+                            InterfaceDisconnect();
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (!_edElmInterface.Elm327Init())
+                        {
+                            InterfaceDisconnect();
+                            return false;
+                        }
                     }
                 }
-                if (_androidRadio && !usedRfCommSocket)
-                {
-                    if (!_elm327Device)
+                else
+                {   // not ELM327
+                    if (_androidRadio && !usedRfCommSocket)
                     {
                         bool connected = false;
                         for (int retry = 0; retry < 20; retry++)
