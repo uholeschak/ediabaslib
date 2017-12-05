@@ -2018,7 +2018,19 @@ namespace BmwDeepObd
                             _instanceData.CommErrorsOccured = true;
                             if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth && ActivityCommon.IsBtAbnormal())
                             {
-                                _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_android_radio), Resource.String.alert_title_error);
+                                new AlertDialog.Builder(this)
+                                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                    {
+                                        _instanceData.AutoStart = false;
+                                        _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice, _appDataDir);
+                                    })
+                                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                    {
+                                    })
+                                    .SetCancelable(true)
+                                    .SetMessage(Resource.String.xml_tool_no_response_adapter)
+                                    .SetTitle(Resource.String.alert_title_warning)
+                                    .Show();
                             }
                             else
                             {
