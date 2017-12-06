@@ -373,7 +373,7 @@
   <string name="can_adapter_fw_update_ok">Firmware update successful</string>
   <string name="can_adapter_bt_not_reliable">Your Android device is known to have an unreliable Bluetooth connection.\nPlease use a different device.</string>
   <string name="can_adapter_bt_android_radio">Your Android device uses a non standard Bluetooth stack. If the device is a car radio consider the following points:
-\n- Important: Always pair an additional smartphone with the radio when using a OBD Bluetooth adapter!
+\n- Important: Always pair any additional smartphone with the radio when using a OBD Bluetooth adapter!
 \n- Always enable auto connect in the Bluetooth menu.
 \n- Pair the OBD adapter in the phone menu and not in the Android Bluetooth menu.
 \n- Searching the OBD adapter is working best in the Android Bluetooth menu.
