@@ -283,7 +283,7 @@ namespace BmwDeepObd
                                         // sometimes the second connect is working
                                         bluetoothSocket.Connect();
                                     }
-                                    _connectedEvent.WaitOne(1000, false);
+                                    _connectedEvent.WaitOne(2000, false);
                                     LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
                                     _androidRadio = !_deviceConnected;
                                     adapterType = AdapterTypeDetection(bluetoothSocket);
@@ -338,9 +338,8 @@ namespace BmwDeepObd
                                 if (bluetoothSocket != null)
                                 {
                                     bluetoothSocket.Connect();
-                                    _connectedEvent.WaitOne(1000, false);
+                                    _connectedEvent.WaitOne(2000, false);
                                     LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
-                                    _androidRadio = !_deviceConnected;
                                     adapterType = AdapterTypeDetection(bluetoothSocket);
                                 }
                             }

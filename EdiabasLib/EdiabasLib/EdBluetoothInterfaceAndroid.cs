@@ -171,7 +171,7 @@ namespace EdiabasLib
                     usedRfCommSocket = true;
                 }
 
-                ConnectedEvent.WaitOne(1000, false);
+                ConnectedEvent.WaitOne(2000, false);
                 _androidRadio = !_deviceConnected;
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
 
@@ -218,7 +218,7 @@ namespace EdiabasLib
                 }
                 else
                 {   // not ELM327
-                    if (_androidRadio && !usedRfCommSocket)
+                    if (!_rawMode && _androidRadio && !usedRfCommSocket)
                     {
                         bool connected = false;
                         for (int retry = 0; retry < 20; retry++)
