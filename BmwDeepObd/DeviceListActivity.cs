@@ -152,9 +152,51 @@ namespace BmwDeepObd
             _btAdapter = BluetoothAdapter.DefaultAdapter;
 
             // Get a set of currently paired devices
+            UpdatePairedDevices();
+
+            if (!ActivityCommon.BtAndroidRadioInfoShown && _activityCommon.MicrontekBt)
+            {
+                ActivityCommon.BtAndroidRadioInfoShown = true;
+                _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_android_radio), Resource.String.alert_title_info);
+            }
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            UpdatePairedDevices();
+        }
+
+        protected override void OnDestroy ()
+        {
+            base.OnDestroy ();
+
+            // Make sure we're not doing discovery anymore
+            _btAdapter?.CancelDiscovery ();
+
+            // Unregister broadcast listeners
+            UnregisterReceiver (_receiver);
+            _activityCommon.Dispose();
+        }
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case Android.Resource.Id.Home:
+                    Finish();
+                    return true;
+            }
+            return base.OnOptionsItemSelected(item);
+        }
+
+        private void UpdatePairedDevices()
+        {
+            // Get a set of currently paired devices
             var pairedDevices = _btAdapter.BondedDevices;
 
             // If there are paired devices, add each one to the ArrayAdapter
+            _pairedDevicesArrayAdapter.Clear();
             if (pairedDevices.Count > 0)
             {
                 foreach (var device in pairedDevices)
@@ -189,35 +231,6 @@ namespace BmwDeepObd
                     _pairedDevicesArrayAdapter.Add(Resources.GetText(Resource.String.bt_not_enabled));
                 }
             }
-
-            if (!ActivityCommon.BtAndroidRadioInfoShown && _activityCommon.MicrontekBt)
-            {
-                ActivityCommon.BtAndroidRadioInfoShown = true;
-                _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_android_radio), Resource.String.alert_title_info);
-            }
-        }
-
-        protected override void OnDestroy ()
-        {
-            base.OnDestroy ();
-
-            // Make sure we're not doing discovery anymore
-            _btAdapter?.CancelDiscovery ();
-
-            // Unregister broadcast listeners
-            UnregisterReceiver (_receiver);
-            _activityCommon.Dispose();
-        }
-
-        public override bool OnOptionsItemSelected(IMenuItem item)
-        {
-            switch (item.ItemId)
-            {
-                case Android.Resource.Id.Home:
-                    Finish();
-                    return true;
-            }
-            return base.OnOptionsItemSelected(item);
         }
 
         /// <summary>
