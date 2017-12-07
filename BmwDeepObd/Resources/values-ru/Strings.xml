@@ -34,6 +34,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:
+\n- Добавлена поддержка радиоприёмника XTRONS.
 \n- улучшена стабильность</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.8.\nНа данный момент поддерживаются только KWP2000, KWP1281 и TP2.0 (Автомобили до 4.2012) протоколы.</string>
@@ -266,8 +267,7 @@
   <string name="xml_tool_select_sgbd">Выбрать тип автомобиля</string>
   <string name="xml_tool_no_response">Автомобиль не отвечает</string>
   <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nЕсли у вашего автомобиля используется К-LINE коммуникация, то необходимо использовать USB или Deep ОDB устройство.\nУ более старших моделей возможна только ручная настройка конфигурации.\nДля этого вам необходимо в INPA на информационной странице для каждого ECU найти необходимые .GRP и .PRG файлы.\nПерейти к <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>ручной настройке</a>?</string>
-<!--Translate-->
-  <string name="xml_tool_no_response_adapter">Автомобиль не отвечает.\nDo you want to check the adapter connection?</string>
+  <string name="xml_tool_no_response_adapter">Автомобиль не отвечает.\nХотите проверить соединение адаптера?</string>
   <string name="xml_tool_read_jobs_failed">Не удалось считать Jobs</string>
   <string name="xml_tool_aborting">Отмена операции</string>
   <string name="xml_tool_read_ecu_info_failed">Не удалось считать ECU информацию</string>
@@ -371,13 +371,13 @@
   <string name="can_adapter_fw_update_failed">Не удалось обновление прошивки</string>
   <string name="can_adapter_fw_update_ok">Обновление прошивки успешно завершено</string>
   <string name="can_adapter_bt_not_reliable">Как известно, ваше Android-устройство ненадёжно при работе с Bluetooth.\nПожалуйста, используйте другое устройство.</string>
-  <!--Translate-->
-  <string name="can_adapter_bt_android_radio">Your Android device uses a non standard Bluetooth stack. If the device is a car radio consider the following points:
-\n- Important: Always pair an additional smartphone with the radio when using a OBD Bluetooth adapter!
-\n- Always enable auto connect in the Bluetooth menu.
-\n- Pair the OBD adapter in the phone menu and not in the Android Bluetooth menu.
-\n- Searching the OBD adapter is working best in the Android Bluetooth menu.
-\n- If the OBD adapter was paired in the meantime with a different device or is not responding, disconnect and pair it again the phone menu.</string>
+  <string name="can_adapter_bt_android_radio">Ваше Android-устройство
+использует нестандартный стек Bluetooth. Если ваше устройство является автомобильным радиоприёмником, обратите внимание на следующие моменты:
+\n- Внимание: всегда подключайте к радио любой имеющийся смартфон!
+\n- Активируйте автоматическое соединение в меню Bluetooth.
+\n- Соединяйте OBD адаптер в меню телефона, а не в Android Bluetooth меню.
+\n- Поиск OBD адаптера работает лучше в Android Bluetooth меню.
+\n- Если OBD адаптер уже был соединён с другим устройством или не отвечает -  отключите и соедините его снова в меню телефона.</string>
   <string name="button_can_adapter_read">Считать</string>
   <string name="button_can_adapter_write">Сохранить</string>
   <string name="button_can_adapter_can_auto">Автоматически</string>
