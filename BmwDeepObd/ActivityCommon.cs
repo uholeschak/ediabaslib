@@ -200,6 +200,7 @@ namespace BmwDeepObd
         public delegate void EnetSsidWarnDelegate(bool retry);
         public delegate void WifiConnectedWarnDelegate();
         public const int UdsDtcStatusOverride = 0x2C;
+        public const string MicrontekBtAppName = @"com.microntek.bluetooth";
         public const string TraceFileName = "ifh.trc.zip";
         public const string EmulatorEnetIp = "192.168.10.244";
         public const string AdapterSsid = "Deep OBD BMW";
@@ -374,6 +375,8 @@ namespace BmwDeepObd
         private readonly BcReceiverUpdateDisplayDelegate _bcReceiverUpdateDisplayHandler;
         private readonly BcReceiverReceivedDelegate _bcReceiverReceivedHandler;
         private bool? _usbSupport;
+        private bool? _microntekBtService;
+        private bool? _microntekBtManager;
         private static readonly object LockObject = new object();
         private static int _instanceCount;
         private static string _externalPath;
@@ -387,6 +390,8 @@ namespace BmwDeepObd
         private readonly ConnectivityManager _maConnectivity;
         private readonly UsbManager _usbManager;
         private readonly PowerManager _powerManager;
+        private readonly PackageManager _packageManager;
+        private readonly Android.App.ActivityManager _activityManager;
         private PowerManager.WakeLock _wakeLockScreenBright;
         private PowerManager.WakeLock _wakeLockScreenDim;
         private PowerManager.WakeLock _wakeLockCpu;
@@ -436,6 +441,57 @@ namespace BmwDeepObd
                 return _usbSupport??false;
             }
         }
+
+        public bool MicrontekBtService
+        {
+            get
+            {
+                if (_microntekBtService == null)
+                {
+                    try
+                    {
+#pragma warning disable 618
+                        IList<Android.App.ActivityManager.RunningServiceInfo> runningServices = _activityManager.GetRunningServices(int.MaxValue);
+#pragma warning restore 618
+                        foreach (Android.App.ActivityManager.RunningServiceInfo service in runningServices)
+                        {
+                            // Android.Util.Log.Debug("Service", service.Service.ClassName);
+                            if (string.Compare(service.Service.ClassName, "android.microntek.mtcser.BlueToothService", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                _microntekBtService = true;
+                                break;
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        _microntekBtService = false;
+                    }
+                }
+                return _microntekBtService ?? false;
+            }
+        }
+
+        public bool MicrontekBtManager
+        {
+            get
+            {
+                if (_microntekBtManager == null)
+                {
+                    try
+                    {
+                        _microntekBtManager = _packageManager?.GetLaunchIntentForPackage(MicrontekBtAppName) != null;
+                    }
+                    catch (Exception)
+                    {
+                        _microntekBtManager = false;
+                    }
+                }
+                return _microntekBtManager ?? false;
+            }
+        }
+
+        public bool MicrontekBt => MicrontekBtService || MicrontekBtManager;
 
         public static object GlobalLockObject => LockObject;
 
@@ -536,6 +592,10 @@ namespace BmwDeepObd
 
         public PowerManager PowerManager => _powerManager;
 
+        public PackageManager PackageManager => _packageManager;
+
+        public Android.App.ActivityManager ActivityManager => _activityManager;
+
         public Receiver BcReceiver => _bcReceiver;
 
         public XDocument XmlDocDtcCodes { get; set; }
@@ -581,6 +641,8 @@ namespace BmwDeepObd
                         new Tuple<LockType, PowerManager.WakeLock>(LockType.ScreenBright, _wakeLockScreenBright)
                     };
             }
+            _packageManager = context?.PackageManager;
+            _activityManager = context?.GetSystemService(Context.ActivityService) as Android.App.ActivityManager;
             _selectedInterface = InterfaceType.None;
             _yandexTransDict = cacheActivity?._yandexTransDict ?? new Dictionary<string, Dictionary<string, string>>();
 
@@ -969,6 +1031,27 @@ namespace BmwDeepObd
             return true;
         }
 
+        public bool StartApp(String packageName)
+        {
+            try
+            {
+                Intent intent = _packageManager?.GetLaunchIntentForPackage(MicrontekBtAppName);
+                if (intent == null)
+                {
+                    return false;
+                }
+                intent.AddCategory(Intent.CategoryLauncher);
+                intent.SetFlags(ActivityFlags.NewTask);
+                _context.StartActivity(intent);
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            return false;
+        }
+
         public static object GetInstanceState(Bundle savedInstanceState, object lastInstanceData)
         {
             if (savedInstanceState != null)
@@ -1028,11 +1111,6 @@ namespace BmwDeepObd
                 return false;
             }
             return true;
-        }
-
-        public static bool IsBtAbnormal()
-        {
-            return BtNoEvents;
         }
 
         public static bool IsCpuStatisticsSupported()
