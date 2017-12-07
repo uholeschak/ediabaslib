@@ -81,7 +81,6 @@ namespace BmwDeepObd
         private readonly AutoResetEvent _connectedEvent = new AutoResetEvent(false);
         private volatile string _connectDeviceAddress = string.Empty;
         private volatile bool _deviceConnected;
-        private volatile bool _androidRadio;
 
         protected override void OnCreate (Bundle savedInstanceState)
         {
@@ -104,8 +103,15 @@ namespace BmwDeepObd
             _scanButton = FindViewById<Button>(Resource.Id.button_scan);
             _scanButton.Click += (sender, e) =>
             {
-                DoDiscovery ();
-                _scanButton.Enabled = false;
+                if (_activityCommon.MicrontekBtManager)
+                {
+                    _activityCommon.StartApp(ActivityCommon.MicrontekBtAppName);
+                }
+                else
+                {
+                    DoDiscovery();
+                    _scanButton.Enabled = false;
+                }
             };
 
             // Initialize array adapters. One for already paired devices and
@@ -184,7 +190,7 @@ namespace BmwDeepObd
                 }
             }
 
-            if (!ActivityCommon.BtAndroidRadioInfoShown && ActivityCommon.IsBtAbnormal())
+            if (!ActivityCommon.BtAndroidRadioInfoShown && _activityCommon.MicrontekBt)
             {
                 ActivityCommon.BtAndroidRadioInfoShown = true;
                 _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_android_radio), Resource.String.alert_title_info);
@@ -253,7 +259,35 @@ namespace BmwDeepObd
 
             _sbLog.Clear();
             _deviceConnected = false;
+#if false
+            try
+            {
+#pragma warning disable 618
+                IList<Android.App.ActivityManager.RunningServiceInfo> runningServices = _activityCommon.ActivityManager.GetRunningServices(int.MaxValue);
+#pragma warning restore 618
+                foreach (Android.App.ActivityManager.RunningServiceInfo service in runningServices)
+                {
+                    LogString("Service: " + service.Service.ClassName);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
 
+            try
+            {
+                IList<Android.Content.PM.ApplicationInfo> apps = _activityCommon.PackageManager.GetInstalledApplications(Android.Content.PM.PackageInfoFlags.MatchAll);
+                foreach (Android.Content.PM.ApplicationInfo app in apps)
+                {
+                    LogString("Package: " + app.PackageName + " Launch: " + _activityCommon.PackageManager.GetLaunchIntentForPackage(app.PackageName));
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+#endif
             Thread detectThread = new Thread(() =>
             {
                 AdapterType adapterType = AdapterType.Unknown;
@@ -285,9 +319,8 @@ namespace BmwDeepObd
                                     }
                                     _connectedEvent.WaitOne(2000, false);
                                     LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
-                                    _androidRadio = !_deviceConnected;
                                     adapterType = AdapterTypeDetection(bluetoothSocket);
-                                    if (_androidRadio && adapterType == AdapterType.Unknown)
+                                    if (_activityCommon.MicrontekBt && adapterType == AdapterType.Unknown)
                                     {
                                         for (int retry = 0; retry < 10; retry++)
                                         {
@@ -315,7 +348,7 @@ namespace BmwDeepObd
                             }
                         }
 
-                        if (adapterType == AdapterType.ConnectionFailed && !_androidRadio)
+                        if (adapterType == AdapterType.ConnectionFailed && !_activityCommon.MicrontekBt)
                         {
                             try
                             {
@@ -364,10 +397,7 @@ namespace BmwDeepObd
                 {
                     progress.Dismiss();
                     progress.Dispose();
-                    if (_androidRadio)
-                    {
-                        ActivityCommon.BtNoEvents = true;
-                    }
+
                     switch (adapterType)
                     {
                         case AdapterType.ConnectionFailed:
@@ -391,7 +421,7 @@ namespace BmwDeepObd
 
                         case AdapterType.Unknown:
                         {
-                            if (ActivityCommon.IsBtAbnormal())
+                            if (_activityCommon.MicrontekBt)
                             {
                                 _altertInfoDialog = new AlertDialog.Builder(this)
                                     .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
