@@ -13,15 +13,18 @@ namespace EdiabasLib
     {
         public class ConnectParameterType
         {
-            public ConnectParameterType(Android.Content.Context parentContext, Android.Net.ConnectivityManager connectivityManager)
+            public ConnectParameterType(Android.Content.Context parentContext, Android.Net.ConnectivityManager connectivityManager, bool microntekBt)
             {
                 ParentContext = parentContext;
                 ConnectivityManager = connectivityManager;
+                MicrontekBt = microntekBt;
             }
 
             public Android.Content.Context ParentContext { get; }
 
             public Android.Net.ConnectivityManager ConnectivityManager { get; }
+
+            public bool MicrontekBt { get; }
         }
 
         public static readonly string[] Elm327InitCommands = EdElmInterface.Elm327InitCommands;
@@ -46,7 +49,6 @@ namespace EdiabasLib
         private static readonly AutoResetEvent ConnectedEvent = new AutoResetEvent(false);
         private static string _connectDeviceAddress = string.Empty;
         private static bool _deviceConnected;
-        private static bool _androidRadio;
 
         static EdBluetoothInterface()
         {
@@ -81,6 +83,7 @@ namespace EdiabasLib
             _elm327Device = false;
             _connectPort = port;
             _connectParameter = parameter as ConnectParameterType;
+            bool microntekBt = _connectParameter != null && _connectParameter.MicrontekBt;
             _reconnectRequired = false;
             try
             {
@@ -129,7 +132,6 @@ namespace EdiabasLib
                     _connectParameter.ParentContext.RegisterReceiver(_receiver, filter);
                 }
                 _connectDeviceAddress = device.Address;
-                _androidRadio = false;
 
                 _bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
                 try
@@ -172,7 +174,6 @@ namespace EdiabasLib
                 }
 
                 ConnectedEvent.WaitOne(2000, false);
-                _androidRadio = !_deviceConnected;
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
 
                 _bluetoothInStream = _bluetoothSocket.InputStream;
@@ -181,7 +182,7 @@ namespace EdiabasLib
                 if (_elm327Device)
                 {
                     _edElmInterface = new EdElmInterface(Ediabas, _bluetoothInStream, _bluetoothOutStream);
-                    if (_androidRadio && !usedRfCommSocket)
+                    if (microntekBt && !usedRfCommSocket)
                     {
                         bool connected = false;
                         for (int retry = 0; retry < 20; retry++)
@@ -218,7 +219,7 @@ namespace EdiabasLib
                 }
                 else
                 {   // not ELM327
-                    if (!_rawMode && _androidRadio && !usedRfCommSocket)
+                    if (!_rawMode && microntekBt && !usedRfCommSocket)
                     {
                         bool connected = false;
                         for (int retry = 0; retry < 20; retry++)
