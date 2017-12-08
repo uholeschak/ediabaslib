@@ -309,6 +309,7 @@ namespace BmwDeepObd
                     BluetoothDevice device = _btAdapter.GetRemoteDevice(deviceAddress);
                     if (device != null)
                     {
+                        int connectTimeout = _activityCommon.MicrontekBt ? 1000 : 2000;
                         _connectDeviceAddress = device.Address;
                         BluetoothSocket bluetoothSocket = null;
 
@@ -330,7 +331,7 @@ namespace BmwDeepObd
                                         // sometimes the second connect is working
                                         bluetoothSocket.Connect();
                                     }
-                                    _connectedEvent.WaitOne(2000, false);
+                                    _connectedEvent.WaitOne(connectTimeout, false);
                                     LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
                                     adapterType = AdapterTypeDetection(bluetoothSocket);
                                     if (_activityCommon.MicrontekBt && adapterType == AdapterType.Unknown)
@@ -384,7 +385,7 @@ namespace BmwDeepObd
                                 if (bluetoothSocket != null)
                                 {
                                     bluetoothSocket.Connect();
-                                    _connectedEvent.WaitOne(2000, false);
+                                    _connectedEvent.WaitOne(connectTimeout, false);
                                     LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
                                     adapterType = AdapterTypeDetection(bluetoothSocket);
                                 }

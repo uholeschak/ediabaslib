@@ -173,7 +173,8 @@ namespace EdiabasLib
                     usedRfCommSocket = true;
                 }
 
-                ConnectedEvent.WaitOne(2000, false);
+                int connectTimeout = microntekBt ? 1000 : 2000;
+                ConnectedEvent.WaitOne(connectTimeout, false);
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
 
                 _bluetoothInStream = _bluetoothSocket.InputStream;
