@@ -450,13 +450,10 @@ namespace BmwDeepObd
                 {
                     try
                     {
-#pragma warning disable 618
-                        IList<Android.App.ActivityManager.RunningServiceInfo> runningServices = _activityManager.GetRunningServices(int.MaxValue);
-#pragma warning restore 618
-                        foreach (Android.App.ActivityManager.RunningServiceInfo service in runningServices)
+                        IList<ApplicationInfo> appList = _packageManager.GetInstalledApplications(PackageInfoFlags.MatchAll);
+                        foreach (ApplicationInfo appInfo in appList)
                         {
-                            // Android.Util.Log.Debug("Service", service.Service.ClassName);
-                            if (string.Compare(service.Service.ClassName, "android.microntek.mtcser.BlueToothService", StringComparison.OrdinalIgnoreCase) == 0)
+                            if (string.Compare(appInfo.PackageName, "android.microntek.mtcser", StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 _microntekBtService = true;
                                 break;
