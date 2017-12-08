@@ -1957,6 +1957,11 @@ namespace BmwDeepObd
             switch (_selectedInterface)
             {
                 case InterfaceType.Bluetooth:
+                    if (MicrontekBt)
+                    {
+                        EnableInterface();
+                        return false;
+                    }
                     switch (BtEnbaleHandling)
                     {
                         case BtEnableType.Ask:
@@ -2085,7 +2090,7 @@ namespace BmwDeepObd
         public bool BluetoothDisableAtExit()
         {
             if (!ActivityStartedFromMain && !BtInitiallyEnabled && BtDisableHandling == BtDisableType.DisableIfByApp &&
-                IsBluetoothEnabledByApp() && !IsBluetoothConnected() &&
+                IsBluetoothEnabledByApp() && !IsBluetoothConnected() && !MicrontekBt &&
                 !CommActive)
             {
                 return BluetoothDisable();
