@@ -450,13 +450,16 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        IList<ApplicationInfo> appList = _packageManager.GetInstalledApplications(PackageInfoFlags.MatchAll);
-                        foreach (ApplicationInfo appInfo in appList)
+                        IList<ApplicationInfo> appList = _packageManager?.GetInstalledApplications(PackageInfoFlags.MatchAll);
+                        if (appList != null)
                         {
-                            if (string.Compare(appInfo.PackageName, "android.microntek.mtcser", StringComparison.OrdinalIgnoreCase) == 0)
+                            foreach (ApplicationInfo appInfo in appList)
                             {
-                                _microntekBtService = true;
-                                break;
+                                if (string.Compare(appInfo.PackageName, "android.microntek.mtcser", StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    _microntekBtService = true;
+                                    break;
+                                }
                             }
                         }
                     }
