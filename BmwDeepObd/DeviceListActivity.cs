@@ -272,35 +272,7 @@ namespace BmwDeepObd
 
             _sbLog.Clear();
             _deviceConnected = false;
-#if false
-            try
-            {
-#pragma warning disable 618
-                IList<Android.App.ActivityManager.RunningServiceInfo> runningServices = _activityCommon.ActivityManager.GetRunningServices(int.MaxValue);
-#pragma warning restore 618
-                foreach (Android.App.ActivityManager.RunningServiceInfo service in runningServices)
-                {
-                    LogString("Service: " + service.Service.ClassName);
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
 
-            try
-            {
-                IList<Android.Content.PM.ApplicationInfo> apps = _activityCommon.PackageManager.GetInstalledApplications(Android.Content.PM.PackageInfoFlags.MatchAll);
-                foreach (Android.Content.PM.ApplicationInfo app in apps)
-                {
-                    LogString("Package: " + app.PackageName + " Launch: " + _activityCommon.PackageManager.GetLaunchIntentForPackage(app.PackageName));
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-#endif
             Thread detectThread = new Thread(() =>
             {
                 AdapterType adapterType = AdapterType.Unknown;
@@ -415,6 +387,22 @@ namespace BmwDeepObd
                     switch (adapterType)
                     {
                         case AdapterType.ConnectionFailed:
+                        {
+                            if (_activityCommon.MicrontekBt)
+                            {
+                                _altertInfoDialog = new AlertDialog.Builder(this)
+                                    .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
+                                    .SetCancelable(true)
+                                    .SetMessage(Resource.String.can_adapter_bt_android_radio)
+                                    .SetTitle(Resource.String.alert_title_error)
+                                    .Show();
+                                _altertInfoDialog.DismissEvent += (sender, args) =>
+                                {
+                                    _altertInfoDialog = null;
+                                };
+                                break;
+                            }
+
                             _altertInfoDialog = new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
@@ -432,6 +420,7 @@ namespace BmwDeepObd
                                 _altertInfoDialog = null;
                             };
                             break;
+                        }
 
                         case AdapterType.Unknown:
                         {
