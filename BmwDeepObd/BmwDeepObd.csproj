@@ -143,6 +143,7 @@
     <Compile Include="FilePicker\FilePickerActivity.cs" />
     <Compile Include="FilePicker\Helpers.cs" />
     <Compile Include="FileSizeFormatProvider.cs" />
+    <Compile Include="GlobalBroadcastReceiver.cs" />
     <Compile Include="GlobalSettingsActivity.cs" />
     <Compile Include="JobReader.cs" />
     <Compile Include="MultiMap.cs" />
