@@ -1,9 +1,6 @@
 ﻿using System;
 using Android.Content;
-using Android.Support.V4.App;
 using Android.Support.V4.Content;
-using Android.Support.V4.View;
-using Android.Support.V7.App;
 using Android.Util;
 
 namespace BmwDeepObd
@@ -24,6 +21,7 @@ namespace BmwDeepObd
         public const string MicrontekBtReport = @"com.microntek.bt.report";
         public const string StateBtSmallOn = @"MicrontectBtSmallOn";
         public const string StateBtConnected = @"MicrontectBtConnected";
+        public const string NotificationBroadcastAction = ActivityCommon.AppNameSpace + ".Notification.Action";
 
         public override void OnReceive(Context context, Intent intent)
         {
@@ -45,6 +43,10 @@ namespace BmwDeepObd
                         ISharedPreferencesEditor prefsEdit = prefs.Edit();
                         prefsEdit.PutBoolean(StateBtSmallOn, smallOn);
                         prefsEdit.Commit();
+
+                        Intent broadcastIntent = new Intent(NotificationBroadcastAction);
+                        broadcastIntent.PutExtra(StateBtSmallOn, smallOn);
+                        LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
                     }
                     catch (Exception)
                     {
@@ -66,6 +68,10 @@ namespace BmwDeepObd
                             ISharedPreferencesEditor prefsEdit = prefs.Edit();
                             prefsEdit.PutBoolean(StateBtConnected, connected);
                             prefsEdit.Commit();
+
+                            Intent broadcastIntent = new Intent(NotificationBroadcastAction);
+                            broadcastIntent.PutExtra(StateBtConnected, connected);
+                            LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
                         }
                         catch (Exception)
                         {
