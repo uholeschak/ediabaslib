@@ -1429,9 +1429,10 @@ namespace Ediabas
                 setJobError(EDIABAS_API_0006);
                 return;
             }
-            if (_jobThread != null)
+            // wait for last job to finish
+            while (_jobThread != null)
             {
-                return;
+                Thread.Sleep(10);
             }
 
             setJobError(EDIABAS_ERR_NONE);
