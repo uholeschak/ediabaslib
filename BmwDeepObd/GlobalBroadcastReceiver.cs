@@ -39,11 +39,6 @@ namespace BmwDeepObd
 #if DEBUG
                         Log.Info(Tag, string.Format("BT small on: {0}", smallOn));
 #endif
-                        ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(ActivityCommon.AppNameSpace, FileCreationMode.Private);
-                        ISharedPreferencesEditor prefsEdit = prefs.Edit();
-                        prefsEdit.PutBoolean(StateBtSmallOn, smallOn);
-                        prefsEdit.Commit();
-
                         Intent broadcastIntent = new Intent(NotificationBroadcastAction);
                         broadcastIntent.PutExtra(StateBtSmallOn, smallOn);
                         LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
@@ -63,14 +58,10 @@ namespace BmwDeepObd
 #if DEBUG
                             Log.Info(Tag, string.Format("BT connect_state: {0}", connectState));
 #endif
-                            bool connected = connectState != 0;
-                            ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(ActivityCommon.AppNameSpace, FileCreationMode.Private);
-                            ISharedPreferencesEditor prefsEdit = prefs.Edit();
-                            prefsEdit.PutBoolean(StateBtConnected, connected);
-                            prefsEdit.Commit();
+                            ActivityCommon.BtMicrontekConnectState = connectState != 0;
 
                             Intent broadcastIntent = new Intent(NotificationBroadcastAction);
-                            broadcastIntent.PutExtra(StateBtConnected, connected);
+                            broadcastIntent.PutExtra(StateBtConnected, ActivityCommon.BtMicrontekConnectState);
                             LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
                         }
                         catch (Exception)
