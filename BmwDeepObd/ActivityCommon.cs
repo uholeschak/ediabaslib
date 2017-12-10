@@ -515,6 +515,8 @@ namespace BmwDeepObd
 
         public bool MicrontekBt => MicrontekBtService || MicrontekBtManager;
 
+        public bool BtMicrontekDisconnectWarnShown { get; set; }
+
         public static object GlobalLockObject => LockObject;
 
         public string ExternalPath => _externalPath;
@@ -542,7 +544,7 @@ namespace BmwDeepObd
 
         public static bool ActivityStartedFromMain { get; set; }
 
-        public static bool BtAndroidRadioInfoShown { get; set; }
+        public static bool BtMicrontekInfoShown { get; set; }
 
         public static bool BtInitiallyEnabled { get; set; }
 
@@ -873,10 +875,12 @@ namespace BmwDeepObd
                     {
                         return false;
                     }
+#if false
                     if (MicrontekBt)
                     {
                         return MicrontekBtConnected;
                     }
+#endif
                     return _btAdapter.IsEnabled;
 
                 case InterfaceType.Enet:
@@ -1534,8 +1538,44 @@ namespace BmwDeepObd
             return false;
         }
 
-        public bool ShowWifiWarning(EnetSsidWarnDelegate handler)
+        public bool ShowConnectWarning(EnetSsidWarnDelegate handler)
         {
+            if (_selectedInterface == InterfaceType.Bluetooth)
+            {
+                if (!MicrontekBt)
+                {
+                    return false;
+                }
+                if (MicrontekBtConnected)
+                {
+                    return false;
+                }
+                if (BtMicrontekDisconnectWarnShown)
+                {
+                    return false;
+                }
+                bool ignoreDismiss = false;
+                AlertDialog alertDialog = new AlertDialog.Builder(_context)
+                    .SetMessage(Resource.String.microntek_disconnect_warn)
+                    .SetTitle(Resource.String.alert_title_warning)
+                    .SetPositiveButton(Resource.String.button_yes, (s, e) =>
+                    {
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (s, e) =>
+                    {
+                        ignoreDismiss = true;
+                    })
+                    .Show();
+                alertDialog.DismissEvent += (sender, args) =>
+                {
+                    if (!ignoreDismiss)
+                    {
+                        handler(true);
+                    }
+                };
+                BtMicrontekDisconnectWarnShown = true;
+                return true;
+            }
             if (_selectedInterface == InterfaceType.ElmWifi)
             {
                 if (ElmWifiAdapterValid())

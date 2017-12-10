@@ -447,6 +447,7 @@ namespace BmwDeepObd
                 RequestStoragePermissions();
             }
             _activityActive = true;
+            _activityCommon.BtMicrontekDisconnectWarnShown = false;
             UpdateLockState();
             if (_compileCodePending)
             {
@@ -906,7 +907,7 @@ namespace BmwDeepObd
             }
             if (_connectTypeRequest == ActivityCommon.AutoConnectType.Offline)
             {
-                if (_activityCommon.ShowWifiWarning(retry =>
+                if (_activityCommon.ShowConnectWarning(retry =>
                 {
                     if (retry)
                     {

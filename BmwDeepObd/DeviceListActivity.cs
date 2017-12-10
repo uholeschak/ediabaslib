@@ -154,9 +154,9 @@ namespace BmwDeepObd
             // Get a set of currently paired devices
             UpdatePairedDevices();
 
-            if (!ActivityCommon.BtAndroidRadioInfoShown && _activityCommon.MicrontekBt)
+            if (!ActivityCommon.BtMicrontekInfoShown && _activityCommon.MicrontekBt)
             {
-                ActivityCommon.BtAndroidRadioInfoShown = true;
+                ActivityCommon.BtMicrontekInfoShown = true;
                 _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_android_radio), Resource.String.alert_title_info);
             }
         }
