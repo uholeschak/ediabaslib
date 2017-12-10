@@ -905,7 +905,7 @@ namespace BmwDeepObd
                 }
                 ActivityCommon.ActivityStartedFromMain = true;
             }
-            if (_connectTypeRequest == ActivityCommon.AutoConnectType.Offline)
+            if (!ActivityCommon.CommActive && _connectTypeRequest == ActivityCommon.AutoConnectType.Offline)
             {
                 if (_activityCommon.ShowConnectWarning(retry =>
                 {
