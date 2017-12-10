@@ -547,7 +547,7 @@ namespace BmwDeepObd
                                 return true;
                             }
                         }
-                        if (_activityCommon.ShowWifiWarning(retry =>
+                        if (_activityCommon.ShowConnectWarning(retry =>
                         {
                             if (retry)
                             {

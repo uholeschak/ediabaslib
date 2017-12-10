@@ -180,6 +180,9 @@
   <string name="select_manufacturer_skoda">Skoda</string>
   <string name="select_manufacturer_vw">VW</string>
 
+  <!-- Bluetooth -->
+  <string name="microntek_disconnect_warn">Für eine stabile Kommunikation mit dem Adapter wird empfolen, irgendein zuätzliches Smartphone mit dem Radio zu koppeln.\nWollen Sie trotzdem fortfahren?</string>
+
   <!-- Wi-Fi-->
   <string name="connected_with_wifi_adapter">Sie sind im Moment mit einem Wi-Fi Adapter verbunden.\nFür den Internetzugriff muss der Adapter getrennt werden.\nWollen Sie Wi-Fi jetzt ausschalten?</string>
 
