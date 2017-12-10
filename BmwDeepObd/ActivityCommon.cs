@@ -472,6 +472,28 @@ namespace BmwDeepObd
             }
         }
 
+        public bool MicrontekBtConnected
+        {
+            get
+            {
+                if (!MicrontekBt)
+                {
+                    return false;
+                }
+                try
+                {
+                    ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(AppNameSpace, FileCreationMode.Private);
+                    // default is true, after app installation the state is not available
+                    bool connected = prefs.GetBoolean(GlobalBroadcastReceiver.StateBtConnected, true);
+                    return connected;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+        }
+
         public bool MicrontekBtManager
         {
             get
@@ -594,6 +616,7 @@ namespace BmwDeepObd
 
         public PackageManager PackageManager => _packageManager;
 
+        // ReSharper disable once ConvertToAutoProperty
         public Android.App.ActivityManager ActivityManager => _activityManager;
 
         public Receiver BcReceiver => _bcReceiver;
@@ -653,6 +676,7 @@ namespace BmwDeepObd
                 context.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.ActionBroadcastCommand));
                 context.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
                 context.RegisterReceiver(_bcReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
+                context.RegisterReceiver(_bcReceiver, new IntentFilter(GlobalBroadcastReceiver.NotificationBroadcastAction));
                 if (UsbSupport)
                 {   // usb handling
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
@@ -849,6 +873,10 @@ namespace BmwDeepObd
                     {
                         return false;
                     }
+                    if (MicrontekBt)
+                    {
+                        return MicrontekBtConnected;
+                    }
                     return _btAdapter.IsEnabled;
 
                 case InterfaceType.Enet:
@@ -1035,7 +1063,7 @@ namespace BmwDeepObd
         {
             try
             {
-                Intent intent = _packageManager?.GetLaunchIntentForPackage(MicrontekBtAppName);
+                Intent intent = _packageManager?.GetLaunchIntentForPackage(packageName);
                 if (intent == null)
                 {
                     return false;
@@ -4832,6 +4860,10 @@ namespace BmwDeepObd
                         {
                             _activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
                         }
+                        break;
+
+                    case GlobalBroadcastReceiver.NotificationBroadcastAction:
+                        _activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
                         break;
                 }
             }

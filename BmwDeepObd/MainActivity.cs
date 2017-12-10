@@ -1421,7 +1421,7 @@ namespace BmwDeepObd
                 case ForegroundService.NotificationBroadcastAction:
                 {
                     string request = intent.GetStringExtra(ForegroundService.BroadcastMessageKey);
-                    if (request.Equals(ForegroundService.BroadcastStopComm))
+                    if (request != null && request.Equals(ForegroundService.BroadcastStopComm))
                     {
                         StopEdiabasThread(false);
                     }
