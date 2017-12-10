@@ -5,7 +5,7 @@ using Android.Util;
 
 namespace BmwDeepObd
 {
-    [BroadcastReceiver(Enabled = true)]
+    [BroadcastReceiver(Enabled = true, Exported = true, Name = ActivityCommon.AppNameSpace + ".GlobalBroadcastReceiver")]
     [Android.App.IntentFilter(new[] {
         MicrontekBtSmallon,
         MicrontekBtSmalloff,

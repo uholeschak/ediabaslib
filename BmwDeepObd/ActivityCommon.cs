@@ -378,6 +378,7 @@ namespace BmwDeepObd
         private bool? _microntekBtService;
         private bool? _microntekBtManager;
         private static readonly object LockObject = new object();
+        private static bool _firstStart = true;
         private static int _instanceCount;
         private static string _externalPath;
         private static string _externalWritePath;
@@ -688,6 +689,22 @@ namespace BmwDeepObd
                     {   // attached event fails
                         _usbCheckTimer = new Timer(UsbCheckEvent, null, 1000, 1000);
                     }
+                }
+            }
+            if (_firstStart)
+            {
+                _firstStart = false;
+                try
+                {
+                    // remove connected state, because broadcast are not available before app start
+                    ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(AppNameSpace, FileCreationMode.Private);
+                    ISharedPreferencesEditor prefsEdit = prefs.Edit();
+                    prefsEdit.Remove(GlobalBroadcastReceiver.StateBtConnected);
+                    prefsEdit.Commit();
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
             }
         }
