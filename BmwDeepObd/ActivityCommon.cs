@@ -378,7 +378,6 @@ namespace BmwDeepObd
         private bool? _microntekBtService;
         private bool? _microntekBtManager;
         private static readonly object LockObject = new object();
-        private static bool _firstStart = true;
         private static int _instanceCount;
         private static string _externalPath;
         private static string _externalWritePath;
@@ -481,17 +480,7 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-                try
-                {
-                    ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(AppNameSpace, FileCreationMode.Private);
-                    // default is true, after app installation the state is not available
-                    bool connected = prefs.GetBoolean(GlobalBroadcastReceiver.StateBtConnected, true);
-                    return connected;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
+                return BtMicrontekConnectState;
             }
         }
 
@@ -546,6 +535,9 @@ namespace BmwDeepObd
         public static bool ActivityStartedFromMain { get; set; }
 
         public static bool BtMicrontekInfoShown { get; set; }
+
+        // default is true, to disable warning at startup
+        public static bool BtMicrontekConnectState { get; set; } = true;
 
         public static bool BtInitiallyEnabled { get; set; }
 
@@ -689,22 +681,6 @@ namespace BmwDeepObd
                     {   // attached event fails
                         _usbCheckTimer = new Timer(UsbCheckEvent, null, 1000, 1000);
                     }
-                }
-            }
-            if (_firstStart)
-            {
-                _firstStart = false;
-                try
-                {
-                    // remove connected state, because broadcast are not available before app start
-                    ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(AppNameSpace, FileCreationMode.Private);
-                    ISharedPreferencesEditor prefsEdit = prefs.Edit();
-                    prefsEdit.Remove(GlobalBroadcastReceiver.StateBtConnected);
-                    prefsEdit.Commit();
-                }
-                catch (Exception)
-                {
-                    // ignored
                 }
             }
         }
