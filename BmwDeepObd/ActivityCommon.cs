@@ -392,6 +392,7 @@ namespace BmwDeepObd
         private readonly PowerManager _powerManager;
         private readonly PackageManager _packageManager;
         private readonly Android.App.ActivityManager _activityManager;
+        private MtcServiceConnection _mtcServiceConnection;
         private PowerManager.WakeLock _wakeLockScreenBright;
         private PowerManager.WakeLock _wakeLockScreenDim;
         private PowerManager.WakeLock _wakeLockCpu;
@@ -683,6 +684,10 @@ namespace BmwDeepObd
                     }
                 }
             }
+            if (context != null && MicrontekBt)
+            {
+                _mtcServiceConnection = new MtcServiceConnection(_context);
+            }
         }
 
         public void Dispose()
@@ -705,6 +710,7 @@ namespace BmwDeepObd
                 // and unmanaged resources.
                 if (disposing)
                 {
+                    StopMtcService();
                     if (_btUpdateHandler != null)
                     {
                         try
@@ -915,6 +921,54 @@ namespace BmwDeepObd
             Intent stopServiceIntent = new Intent(_context, typeof(ForegroundService));
             stopServiceIntent.SetAction(ForegroundService.ActionStopService);
             _context.StopService(stopServiceIntent);
+            return true;
+        }
+
+        public bool StartMtcService()
+        {
+            if (_mtcServiceConnection == null)
+            {
+                return false;
+            }
+            if (_mtcServiceConnection.Bound)
+            {
+                return true;
+            }
+            try
+            {
+                Intent startServiceIntent = new Intent();
+                startServiceIntent.SetComponent(new ComponentName("android.microntek.mtcser", "android.microntek.mtcser.BlueToothService"));
+                if (!_context.BindService(startServiceIntent, _mtcServiceConnection, Bind.AutoCreate))
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool StopMtcService()
+        {
+            if (_mtcServiceConnection == null)
+            {
+                return false;
+            }
+            if (!_mtcServiceConnection.Bound)
+            {
+                return true;
+            }
+            try
+            {
+                _context.UnbindService(_mtcServiceConnection);
+                _mtcServiceConnection.Bound = false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
             return true;
         }
 
