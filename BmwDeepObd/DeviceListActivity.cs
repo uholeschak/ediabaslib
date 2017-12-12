@@ -161,10 +161,28 @@ namespace BmwDeepObd
             }
         }
 
+        protected override void OnStart()
+        {
+            base.OnStart();
+            if (_activityCommon.MicrontekBt)
+            {
+                _activityCommon.StartMtcService();
+            }
+        }
+
         protected override void OnResume()
         {
             base.OnResume();
             UpdatePairedDevices();
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            if (_activityCommon.MicrontekBt)
+            {
+                _activityCommon.StopMtcService();
+            }
         }
 
         protected override void OnDestroy ()

@@ -146,6 +146,7 @@
     <Compile Include="GlobalBroadcastReceiver.cs" />
     <Compile Include="GlobalSettingsActivity.cs" />
     <Compile Include="JobReader.cs" />
+    <Compile Include="MtcServiceConnection.cs" />
     <Compile Include="MultiMap.cs" />
     <Compile Include="PicBootloader.cs" />
     <Compile Include="ResultGridAdapter.cs" />
