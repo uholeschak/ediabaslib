@@ -392,7 +392,7 @@ namespace BmwDeepObd
         private readonly PowerManager _powerManager;
         private readonly PackageManager _packageManager;
         private readonly Android.App.ActivityManager _activityManager;
-        private MtcServiceConnection _mtcServiceConnection;
+        private readonly MtcServiceConnection _mtcServiceConnection;
         private PowerManager.WakeLock _wakeLockScreenBright;
         private PowerManager.WakeLock _wakeLockScreenDim;
         private PowerManager.WakeLock _wakeLockCpu;
@@ -505,6 +505,8 @@ namespace BmwDeepObd
         }
 
         public bool MicrontekBt => MicrontekBtService || MicrontekBtManager;
+
+        private MtcServiceConnection MtcServiceConnection => _mtcServiceConnection;
 
         public bool BtMicrontekDisconnectWarnShown { get; set; }
 
@@ -686,7 +688,21 @@ namespace BmwDeepObd
             }
             if (context != null && MicrontekBt)
             {
-                _mtcServiceConnection = new MtcServiceConnection(_context);
+                _mtcServiceConnection = new MtcServiceConnection(_context, connected =>
+                {
+                    try
+                    {
+                        if (connected)
+                        {
+                            sbyte state = _mtcServiceConnection.GetBtState();
+                            BtMicrontekConnectState = state != 0;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                });
             }
         }
 
@@ -956,7 +972,7 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            if (!_mtcServiceConnection.Bound)
+            if (!_mtcServiceConnection.Connected)
             {
                 return true;
             }
