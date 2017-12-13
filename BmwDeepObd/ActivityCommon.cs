@@ -504,7 +504,7 @@ namespace BmwDeepObd
             }
         }
 
-        private MtcServiceConnection MtcServiceConnection => _mtcServiceConnection;
+        public MtcServiceConnection MtcServiceConnection => _mtcServiceConnection;
 
         public bool MtcBtDisconnectWarnShown { get; set; }
 
@@ -694,6 +694,14 @@ namespace BmwDeepObd
                         {
                             sbyte state = _mtcServiceConnection.GetBtState();
                             MtcBtConnectState = state != 0;
+                        }
+
+                        if (_bcReceiverUpdateDisplayHandler != null)
+                        {
+                            _activity?.RunOnUiThread(() =>
+                            {
+                                _bcReceiverUpdateDisplayHandler?.Invoke();
+                            });
                         }
                     }
                     catch (Exception)

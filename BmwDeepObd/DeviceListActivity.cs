@@ -95,7 +95,13 @@ namespace BmwDeepObd
             // Set result CANCELED incase the user backs out
             SetResult (Android.App.Result.Canceled);
 
-            _activityCommon = new ActivityCommon(this);
+            _activityCommon = new ActivityCommon(this, () =>
+            {
+                if (_activityCommon.MtcBtService)
+                {
+                    UpdateMtcDevices();
+                }
+            });
 
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
 
@@ -152,7 +158,10 @@ namespace BmwDeepObd
             _btAdapter = BluetoothAdapter.DefaultAdapter;
 
             // Get a set of currently paired devices
-            UpdatePairedDevices();
+            if (!_activityCommon.MtcBtService)
+            {
+                UpdatePairedDevices();
+            }
 
             if (!ActivityCommon.MtcBtInfoShown && _activityCommon.MtcBtService)
             {
@@ -249,6 +258,78 @@ namespace BmwDeepObd
                     _pairedDevicesArrayAdapter.Add(Resources.GetText(Resource.String.bt_not_enabled));
                 }
             }
+        }
+
+        private void UpdateMtcDevices()
+        {
+            _pairedDevicesArrayAdapter.Clear();
+            _newDevicesArrayAdapter.Clear();
+            MtcServiceConnection mtcServiceConnection = _activityCommon.MtcServiceConnection;
+            if (mtcServiceConnection == null || !mtcServiceConnection.Bound)
+            {
+                return;
+            }
+            try
+            {
+                FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
+
+                IList<string> deviceList = mtcServiceConnection.GetDeviceList();
+                IList<string> matchList = mtcServiceConnection.GetMatchList();
+                foreach (string device in matchList)
+                {
+                    if (ExtractMtcDeviceInfo(device, out string name, out string address))
+                    {
+                        _pairedDevicesArrayAdapter.Add(name + "\n" + address);
+                    }
+                }
+                foreach (string device in deviceList)
+                {
+                    if (ExtractMtcDeviceInfo(device, out string name, out string address))
+                    {
+                        _newDevicesArrayAdapter.Add(name + "\n" + address);
+                    }
+                }
+                if (_newDevicesArrayAdapter.Count == 0)
+                {
+                    _newDevicesArrayAdapter.Add(Resources.GetText(Resource.String.none_found));
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        /// <summary>
+        /// Extract device info for MTC devices
+        /// </summary>
+        /// <param name="device">Complete device info text</param>
+        /// <param name="name">Device name</param>
+        /// <param name="address">Device address</param>
+        /// <returns>True: Success</returns>
+        private static bool ExtractMtcDeviceInfo(string device, out string name, out string address)
+        {
+            int offset = 1;
+            name = string.Empty;
+            address = string.Empty;
+            if (device.Length < offset + 12)
+            {
+                return false;
+            }
+            string mac = device.Substring(offset, 12);
+            StringBuilder sb = new StringBuilder();
+            address = string.Empty;
+            for (int i = 0; i < 12; i += 2)
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append(":");
+                }
+                sb.Append(mac.Substring(i, 2));
+            }
+            address = sb.ToString();
+            name = device.Substring(offset + 12);
+            return true;
         }
 
         /// <summary>
@@ -979,8 +1060,7 @@ namespace BmwDeepObd
                             _chat.SetTitle(Resource.String.select_device);
                             if (_newDevicesArrayAdapter.Count == 0)
                             {
-                                var noDevices = _chat.Resources.GetText(Resource.String.none_found);
-                                _newDevicesArrayAdapter.Add(noDevices);
+                                _newDevicesArrayAdapter.Add(_chat.Resources.GetText(Resource.String.none_found));
                             }
                             break;
 
