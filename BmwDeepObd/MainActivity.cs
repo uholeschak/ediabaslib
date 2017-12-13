@@ -455,7 +455,7 @@ namespace BmwDeepObd
                 RequestStoragePermissions();
             }
             _activityActive = true;
-            _activityCommon.BtMicrontekDisconnectWarnShown = false;
+            _activityCommon.MtcBtDisconnectWarnShown = false;
             UpdateLockState();
             if (_compileCodePending)
             {
@@ -1089,7 +1089,7 @@ namespace BmwDeepObd
                     {
                         case ActivityCommon.InterfaceType.Bluetooth:
                             portName = "BLUETOOTH:" + _instanceData.DeviceAddress;
-                            connectParameter = new EdBluetoothInterface.ConnectParameterType(this, _activityCommon.MaConnectivity, _activityCommon.MicrontekBt);
+                            connectParameter = new EdBluetoothInterface.ConnectParameterType(this, _activityCommon.MaConnectivity, _activityCommon.MtcBtService);
                             break;
 
                         case ActivityCommon.InterfaceType.Enet:

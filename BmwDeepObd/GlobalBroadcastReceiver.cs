@@ -7,18 +7,18 @@ namespace BmwDeepObd
 {
     [BroadcastReceiver(Enabled = true, Exported = true, Name = ActivityCommon.AppNameSpace + ".GlobalBroadcastReceiver")]
     [Android.App.IntentFilter(new[] {
-        MicrontekBtSmallon,
-        MicrontekBtSmalloff,
-        MicrontekBtReport
+        MtcBtSmallon,
+        MtcBtSmalloff,
+        MicBtReport
     }, Categories = new []{ Intent.CategoryDefault } )]
     public class GlobalBroadcastReceiver : BroadcastReceiver
     {
 #if DEBUG
         static readonly string Tag = typeof(GlobalBroadcastReceiver).FullName;
 #endif
-        public const string MicrontekBtSmallon = @"com.microntek.bt.smallon";
-        public const string MicrontekBtSmalloff = @"com.microntek.bt.smalloff";
-        public const string MicrontekBtReport = @"com.microntek.bt.report";
+        public const string MtcBtSmallon = @"com.microntek.bt.smallon";
+        public const string MtcBtSmalloff = @"com.microntek.bt.smalloff";
+        public const string MicBtReport = @"com.microntek.bt.report";
         public const string StateBtSmallOn = @"MicrontectBtSmallOn";
         public const string StateBtConnected = @"MicrontectBtConnected";
         public const string NotificationBroadcastAction = ActivityCommon.AppNameSpace + ".Notification.Action";
@@ -31,11 +31,11 @@ namespace BmwDeepObd
             }
             switch (intent.Action)
             {
-                case MicrontekBtSmallon:
-                case MicrontekBtSmalloff:
+                case MtcBtSmallon:
+                case MtcBtSmalloff:
                     try
                     {
-                        bool smallOn = intent.Action == MicrontekBtSmallon;
+                        bool smallOn = intent.Action == MtcBtSmallon;
 #if DEBUG
                         Log.Info(Tag, string.Format("BT small on: {0}", smallOn));
 #endif
@@ -49,7 +49,7 @@ namespace BmwDeepObd
                     }
                     break;
 
-                case MicrontekBtReport:
+                case MicBtReport:
                     if (intent.HasExtra("connect_state"))
                     {
                         try
@@ -58,10 +58,10 @@ namespace BmwDeepObd
 #if DEBUG
                             Log.Info(Tag, string.Format("BT connect_state: {0}", connectState));
 #endif
-                            ActivityCommon.BtMicrontekConnectState = connectState != 0;
+                            ActivityCommon.MtcBtConnectState = connectState != 0;
 
                             Intent broadcastIntent = new Intent(NotificationBroadcastAction);
-                            broadcastIntent.PutExtra(StateBtConnected, ActivityCommon.BtMicrontekConnectState);
+                            broadcastIntent.PutExtra(StateBtConnected, ActivityCommon.MtcBtConnectState);
                             LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
                         }
                         catch (Exception)
