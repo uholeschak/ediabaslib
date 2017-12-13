@@ -103,9 +103,9 @@ namespace BmwDeepObd
             _scanButton = FindViewById<Button>(Resource.Id.button_scan);
             _scanButton.Click += (sender, e) =>
             {
-                if (_activityCommon.MicrontekBtManager)
+                if (_activityCommon.MtcBtManager)
                 {
-                    _activityCommon.StartApp(ActivityCommon.MicrontekBtAppName);
+                    _activityCommon.StartApp(ActivityCommon.MtcBtAppName);
                 }
                 else
                 {
@@ -154,9 +154,9 @@ namespace BmwDeepObd
             // Get a set of currently paired devices
             UpdatePairedDevices();
 
-            if (!ActivityCommon.BtMicrontekInfoShown && _activityCommon.MicrontekBt)
+            if (!ActivityCommon.MtcBtInfoShown && _activityCommon.MtcBtService)
             {
-                ActivityCommon.BtMicrontekInfoShown = true;
+                ActivityCommon.MtcBtInfoShown = true;
                 _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_android_radio), Resource.String.alert_title_info);
             }
         }
@@ -164,7 +164,7 @@ namespace BmwDeepObd
         protected override void OnStart()
         {
             base.OnStart();
-            if (_activityCommon.MicrontekBt)
+            if (_activityCommon.MtcBtService)
             {
                 _activityCommon.StartMtcService();
             }
@@ -179,7 +179,7 @@ namespace BmwDeepObd
         protected override void OnStop()
         {
             base.OnStop();
-            if (_activityCommon.MicrontekBt)
+            if (_activityCommon.MtcBtService)
             {
                 _activityCommon.StopMtcService();
             }
@@ -299,7 +299,7 @@ namespace BmwDeepObd
                     BluetoothDevice device = _btAdapter.GetRemoteDevice(deviceAddress);
                     if (device != null)
                     {
-                        int connectTimeout = _activityCommon.MicrontekBt ? 1000 : 2000;
+                        int connectTimeout = _activityCommon.MtcBtService ? 1000 : 2000;
                         _connectDeviceAddress = device.Address;
                         BluetoothSocket bluetoothSocket = null;
 
@@ -324,7 +324,7 @@ namespace BmwDeepObd
                                     _connectedEvent.WaitOne(connectTimeout, false);
                                     LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
                                     adapterType = AdapterTypeDetection(bluetoothSocket);
-                                    if (_activityCommon.MicrontekBt && adapterType == AdapterType.Unknown)
+                                    if (_activityCommon.MtcBtService && adapterType == AdapterType.Unknown)
                                     {
                                         for (int retry = 0; retry < 10; retry++)
                                         {
@@ -352,7 +352,7 @@ namespace BmwDeepObd
                             }
                         }
 
-                        if (adapterType == AdapterType.ConnectionFailed && !_activityCommon.MicrontekBt)
+                        if (adapterType == AdapterType.ConnectionFailed && !_activityCommon.MtcBtService)
                         {
                             try
                             {
@@ -406,7 +406,7 @@ namespace BmwDeepObd
                     {
                         case AdapterType.ConnectionFailed:
                         {
-                            if (_activityCommon.MicrontekBt)
+                            if (_activityCommon.MtcBtService)
                             {
                                 _altertInfoDialog = new AlertDialog.Builder(this)
                                     .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
@@ -442,7 +442,7 @@ namespace BmwDeepObd
 
                         case AdapterType.Unknown:
                         {
-                            if (_activityCommon.MicrontekBt)
+                            if (_activityCommon.MtcBtService)
                             {
                                 _altertInfoDialog = new AlertDialog.Builder(this)
                                     .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })

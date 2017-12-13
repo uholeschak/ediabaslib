@@ -903,7 +903,7 @@ namespace BmwDeepObd
 
         private void PerformUpdateMessage()
         {
-            if (!ActivityCommon.IsBtReliable() || _activityCommon.MicrontekBt)
+            if (!ActivityCommon.IsBtReliable() || _activityCommon.MtcBtService)
             {
                 _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_not_reliable), Resource.String.alert_title_error);
                 return;

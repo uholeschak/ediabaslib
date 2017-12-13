@@ -13,18 +13,18 @@ namespace EdiabasLib
     {
         public class ConnectParameterType
         {
-            public ConnectParameterType(Android.Content.Context parentContext, Android.Net.ConnectivityManager connectivityManager, bool microntekBt)
+            public ConnectParameterType(Android.Content.Context parentContext, Android.Net.ConnectivityManager connectivityManager, bool mtcBtService)
             {
                 ParentContext = parentContext;
                 ConnectivityManager = connectivityManager;
-                MicrontekBt = microntekBt;
+                MtcBtService = mtcBtService;
             }
 
             public Android.Content.Context ParentContext { get; }
 
             public Android.Net.ConnectivityManager ConnectivityManager { get; }
 
-            public bool MicrontekBt { get; }
+            public bool MtcBtService { get; }
         }
 
         public static readonly string[] Elm327InitCommands = EdElmInterface.Elm327InitCommands;
@@ -83,7 +83,7 @@ namespace EdiabasLib
             _elm327Device = false;
             _connectPort = port;
             _connectParameter = parameter as ConnectParameterType;
-            bool microntekBt = _connectParameter != null && _connectParameter.MicrontekBt;
+            bool mtcBtService = _connectParameter != null && _connectParameter.MtcBtService;
             _reconnectRequired = false;
             try
             {
@@ -173,7 +173,7 @@ namespace EdiabasLib
                     usedRfCommSocket = true;
                 }
 
-                int connectTimeout = microntekBt ? 1000 : 2000;
+                int connectTimeout = mtcBtService ? 1000 : 2000;
                 ConnectedEvent.WaitOne(connectTimeout, false);
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
 
@@ -183,7 +183,7 @@ namespace EdiabasLib
                 if (_elm327Device)
                 {
                     _edElmInterface = new EdElmInterface(Ediabas, _bluetoothInStream, _bluetoothOutStream);
-                    if (microntekBt && !usedRfCommSocket)
+                    if (mtcBtService && !usedRfCommSocket)
                     {
                         bool connected = false;
                         for (int retry = 0; retry < 20; retry++)
@@ -220,7 +220,7 @@ namespace EdiabasLib
                 }
                 else
                 {   // not ELM327
-                    if (!_rawMode && microntekBt && !usedRfCommSocket)
+                    if (!_rawMode && mtcBtService && !usedRfCommSocket)
                     {
                         bool connected = false;
                         for (int retry = 0; retry < 20; retry++)

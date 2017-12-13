@@ -200,7 +200,7 @@ namespace BmwDeepObd
         public delegate void EnetSsidWarnDelegate(bool retry);
         public delegate void WifiConnectedWarnDelegate();
         public const int UdsDtcStatusOverride = 0x2C;
-        public const string MicrontekBtAppName = @"com.microntek.bluetooth";
+        public const string MtcBtAppName = @"com.microntek.bluetooth";
         public const string TraceFileName = "ifh.trc.zip";
         public const string EmulatorEnetIp = "192.168.10.244";
         public const string AdapterSsid = "Deep OBD BMW";
@@ -375,8 +375,8 @@ namespace BmwDeepObd
         private readonly BcReceiverUpdateDisplayDelegate _bcReceiverUpdateDisplayHandler;
         private readonly BcReceiverReceivedDelegate _bcReceiverReceivedHandler;
         private bool? _usbSupport;
-        private bool? _microntekBtService;
-        private bool? _microntekBtManager;
+        private bool? _mtcBtService;
+        private bool? _mtcBtManager;
         private static readonly object LockObject = new object();
         private static int _instanceCount;
         private static string _externalPath;
@@ -443,11 +443,11 @@ namespace BmwDeepObd
             }
         }
 
-        public bool MicrontekBtService
+        public bool MtcBtService
         {
             get
             {
-                if (_microntekBtService == null)
+                if (_mtcBtService == null)
                 {
                     try
                     {
@@ -458,7 +458,7 @@ namespace BmwDeepObd
                             {
                                 if (string.Compare(appInfo.PackageName, "android.microntek.mtcser", StringComparison.OrdinalIgnoreCase) == 0)
                                 {
-                                    _microntekBtService = true;
+                                    _mtcBtService = true;
                                     break;
                                 }
                             }
@@ -466,49 +466,47 @@ namespace BmwDeepObd
                     }
                     catch (Exception)
                     {
-                        _microntekBtService = false;
+                        _mtcBtService = false;
                     }
                 }
-                return _microntekBtService ?? false;
+                return _mtcBtService ?? false;
             }
         }
 
-        public bool MicrontekBtConnected
+        public bool MtcBtConnected
         {
             get
             {
-                if (!MicrontekBt)
+                if (!MtcBtService)
                 {
                     return false;
                 }
-                return BtMicrontekConnectState;
+                return MtcBtConnectState;
             }
         }
 
-        public bool MicrontekBtManager
+        public bool MtcBtManager
         {
             get
             {
-                if (_microntekBtManager == null)
+                if (_mtcBtManager == null)
                 {
                     try
                     {
-                        _microntekBtManager = _packageManager?.GetLaunchIntentForPackage(MicrontekBtAppName) != null;
+                        _mtcBtManager = _packageManager?.GetLaunchIntentForPackage(MtcBtAppName) != null;
                     }
                     catch (Exception)
                     {
-                        _microntekBtManager = false;
+                        _mtcBtManager = false;
                     }
                 }
-                return _microntekBtManager ?? false;
+                return _mtcBtManager ?? false;
             }
         }
 
-        public bool MicrontekBt => MicrontekBtService || MicrontekBtManager;
-
         private MtcServiceConnection MtcServiceConnection => _mtcServiceConnection;
 
-        public bool BtMicrontekDisconnectWarnShown { get; set; }
+        public bool MtcBtDisconnectWarnShown { get; set; }
 
         public static object GlobalLockObject => LockObject;
 
@@ -537,10 +535,10 @@ namespace BmwDeepObd
 
         public static bool ActivityStartedFromMain { get; set; }
 
-        public static bool BtMicrontekInfoShown { get; set; }
+        public static bool MtcBtInfoShown { get; set; }
 
         // default is true, to disable warning at startup
-        public static bool BtMicrontekConnectState { get; set; } = true;
+        public static bool MtcBtConnectState { get; set; } = true;
 
         public static bool BtInitiallyEnabled { get; set; }
 
@@ -686,7 +684,7 @@ namespace BmwDeepObd
                     }
                 }
             }
-            if (context != null && MicrontekBt)
+            if (context != null && MtcBtService)
             {
                 _mtcServiceConnection = new MtcServiceConnection(_context, connected =>
                 {
@@ -695,7 +693,7 @@ namespace BmwDeepObd
                         if (connected)
                         {
                             sbyte state = _mtcServiceConnection.GetBtState();
-                            BtMicrontekConnectState = state != 0;
+                            MtcBtConnectState = state != 0;
                         }
                     }
                     catch (Exception)
@@ -1605,15 +1603,15 @@ namespace BmwDeepObd
         {
             if (_selectedInterface == InterfaceType.Bluetooth)
             {
-                if (!MicrontekBt)
+                if (!MtcBtService)
                 {
                     return false;
                 }
-                if (MicrontekBtConnected)
+                if (MtcBtConnected)
                 {
                     return false;
                 }
-                if (BtMicrontekDisconnectWarnShown)
+                if (MtcBtDisconnectWarnShown)
                 {
                     return false;
                 }
@@ -1636,7 +1634,7 @@ namespace BmwDeepObd
                         handler(true);
                     }
                 };
-                BtMicrontekDisconnectWarnShown = true;
+                MtcBtDisconnectWarnShown = true;
                 return true;
             }
             if (_selectedInterface == InterfaceType.ElmWifi)
@@ -2088,7 +2086,7 @@ namespace BmwDeepObd
             switch (_selectedInterface)
             {
                 case InterfaceType.Bluetooth:
-                    if (MicrontekBt)
+                    if (MtcBtService)
                     {
                         EnableInterface();
                         return false;
@@ -2221,7 +2219,7 @@ namespace BmwDeepObd
         public bool BluetoothDisableAtExit()
         {
             if (!ActivityStartedFromMain && !BtInitiallyEnabled && BtDisableHandling == BtDisableType.DisableIfByApp &&
-                IsBluetoothEnabledByApp() && !IsBluetoothConnected() && !MicrontekBt &&
+                IsBluetoothEnabledByApp() && !IsBluetoothConnected() && !MtcBtService &&
                 !CommActive)
             {
                 return BluetoothDisable();
@@ -2562,7 +2560,7 @@ namespace BmwDeepObd
                 else
                 {
                     ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "BLUETOOTH:" + btDeviceAddress;
-                    connectParameter = new EdBluetoothInterface.ConnectParameterType(_context, _maConnectivity, MicrontekBt);
+                    connectParameter = new EdBluetoothInterface.ConnectParameterType(_context, _maConnectivity, MtcBtService);
                 }
             }
             else if (ediabas.EdInterfaceClass is EdInterfaceEnet)

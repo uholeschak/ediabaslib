@@ -2016,7 +2016,7 @@ namespace BmwDeepObd
                         if (ecuListBest == null)
                         {
                             _instanceData.CommErrorsOccured = true;
-                            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth && _activityCommon.MicrontekBt)
+                            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth && _activityCommon.MtcBtService)
                             {
                                 new AlertDialog.Builder(this)
                                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
