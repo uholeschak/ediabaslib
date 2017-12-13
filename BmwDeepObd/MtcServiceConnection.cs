@@ -132,6 +132,16 @@ namespace BmwDeepObd
             return CommandGetList(34);
         }
 
+        public void ScanStart()
+        {
+            CommandVoid(42);
+        }
+
+        public void ScanStop()
+        {
+            CommandVoid(43);
+        }
+
         private void CommandVoid(int code)
         {
             if (_binder == null)
