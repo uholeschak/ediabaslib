@@ -92,6 +92,26 @@ namespace BmwDeepObd
             return result;
         }
 
+        public void SetAutoConnect(bool auto)
+        {
+            CommandSetInt(22, auto ? 1 : 0);
+        }
+
+        public bool GetAutoConnect()
+        {
+            return CommandGetInt(23) != 0;
+        }
+
+        public void SetAutoAnswer(bool auto)
+        {
+            CommandSetInt(24, auto ? 1 : 0);
+        }
+
+        public bool GetAutoAnswer()
+        {
+            return CommandGetInt(25) != 0;
+        }
+
         public void ConnectBt(string mac)
         {
             CommandMac(26, mac);
@@ -142,6 +162,11 @@ namespace BmwDeepObd
             CommandVoid(43);
         }
 
+        public int GetObdState()
+        {
+            return CommandGetInt(48);
+        }
+
         private void CommandVoid(int code)
         {
             if (_binder == null)
@@ -181,6 +206,54 @@ namespace BmwDeepObd
                 Log.Info(Tag, string.Format("GetByte({0}): {1}", code, result));
 #endif
                 return result;
+            }
+            finally
+            {
+                data.Recycle();
+                reply.Recycle();
+            }
+        }
+
+        private int CommandGetInt(int code)
+        {
+            if (_binder == null)
+            {
+                throw new RemoteException("Not bound");
+            }
+            Parcel data = Parcel.Obtain();
+            Parcel reply = Parcel.Obtain();
+            try
+            {
+                data.WriteInterfaceToken(InterfaceToken);
+                _binder.Transact(code, data, reply, 0);
+                reply.ReadException();
+                int result = reply.ReadInt();
+#if DEBUG
+                Log.Info(Tag, string.Format("GetInt({0}): {1}", code, result));
+#endif
+                return result;
+            }
+            finally
+            {
+                data.Recycle();
+                reply.Recycle();
+            }
+        }
+
+        private void CommandSetInt(int code, int value)
+        {
+            if (_binder == null)
+            {
+                throw new RemoteException("Not bound");
+            }
+            Parcel data = Parcel.Obtain();
+            Parcel reply = Parcel.Obtain();
+            try
+            {
+                data.WriteInterfaceToken(InterfaceToken);
+                data.WriteInt(value);
+                _binder.Transact(code, data, reply, 0);
+                reply.ReadException();
             }
             finally
             {
