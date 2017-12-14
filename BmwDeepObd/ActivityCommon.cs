@@ -694,6 +694,10 @@ namespace BmwDeepObd
                         {
                             sbyte state = _mtcServiceConnection.GetBtState();
                             MtcBtConnectState = state != 0;
+                            if (!_mtcServiceConnection.GetAutoConnect())
+                            {
+                                _mtcServiceConnection.SetAutoConnect(true);
+                            }
                         }
 
                         if (_bcReceiverUpdateDisplayHandler != null)
