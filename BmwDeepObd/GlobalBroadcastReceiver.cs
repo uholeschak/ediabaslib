@@ -19,8 +19,11 @@ namespace BmwDeepObd
         public const string MtcBtSmallon = @"com.microntek.bt.smallon";
         public const string MtcBtSmalloff = @"com.microntek.bt.smalloff";
         public const string MicBtReport = @"com.microntek.bt.report";
-        public const string StateBtSmallOn = @"MicrontectBtSmallOn";
-        public const string StateBtConnected = @"MicrontectBtConnected";
+        public const string StateBtSmallOn = @"MtcBtSmallOn";
+        public const string StateBtConnected = @"MtcBtConnected";
+        public const string BtNewMac = @"MtcBtMac";
+        public const string BtUpdateList = @"MtcBtUpdateList";
+        public const string BtScanFinished = @"MtcBtScanFinished";
         public const string NotificationBroadcastAction = ActivityCommon.AppNameSpace + ".Notification.Action";
 
         public override void OnReceive(Context context, Intent intent)
@@ -50,6 +53,78 @@ namespace BmwDeepObd
                     break;
 
                 case MicBtReport:
+                {
+#if DEBUG
+                    Log.Info(Tag, "Bt report:");
+                    Android.OS.Bundle bundle = intent.Extras;
+                    if (bundle != null)
+                    {
+                        foreach (string key in bundle.KeySet())
+                        {
+                            Object value = bundle.Get(key);
+                            string valueString = string.Empty;
+                            if (value != null)
+                            {
+                                valueString = value.ToString();
+                            }
+                            Log.Info(Tag, string.Format("Key: {0}={1}", key, valueString));
+                        }
+                    }
+#endif
+                    if (intent.HasExtra("bt_state"))
+                    {
+                        try
+                        {
+                            int btState = intent.GetIntExtra("bt_state", 0);
+#if DEBUG
+                            Log.Info(Tag, string.Format("BT bt_state: {0}", btState));
+#endif
+                            switch (btState)
+                            {
+                                case 87:
+                                case 88:
+                                case 89:
+                                    break;
+
+                                case 90:
+                                {
+                                    Intent broadcastIntent = new Intent(NotificationBroadcastAction);
+                                    broadcastIntent.PutExtra(BtUpdateList, btState);
+                                    LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                                    break;
+                                }
+
+                                default:
+                                {
+                                    Intent broadcastIntent = new Intent(NotificationBroadcastAction);
+                                    broadcastIntent.PutExtra(BtScanFinished, btState);
+                                    LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                                    break;
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                    if (intent.HasExtra("connected_mac"))
+                    {
+                        try
+                        {
+                            string mac = intent.GetStringExtra("connected_mac");
+#if DEBUG
+                            Log.Info(Tag, string.Format("BT connected_mac: {0}", mac));
+#endif
+                            Intent broadcastIntent = new Intent(NotificationBroadcastAction);
+                            broadcastIntent.PutExtra(BtNewMac, mac);
+                            LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
                     if (intent.HasExtra("connect_state"))
                     {
                         try
@@ -70,6 +145,7 @@ namespace BmwDeepObd
                         }
                     }
                     break;
+                }
             }
         }
     }
