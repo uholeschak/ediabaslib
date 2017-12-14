@@ -535,8 +535,6 @@ namespace BmwDeepObd
 
         public static bool ActivityStartedFromMain { get; set; }
 
-        public static bool MtcBtInfoShown { get; set; }
-
         // default is true, to disable warning at startup
         public static bool MtcBtConnectState { get; set; } = true;
 

@@ -137,12 +137,18 @@ namespace BmwDeepObd
             // Find and set up the ListView for paired devices
             var pairedListView = FindViewById<ListView> (Resource.Id.paired_devices);
             pairedListView.Adapter = _pairedDevicesArrayAdapter;
-            pairedListView.ItemClick += DeviceListClick;
+            pairedListView.ItemClick += (sender, args) =>
+            {
+                DeviceListClick(sender, args, true);
+            };
 
             // Find and set up the ListView for newly discovered devices
             var newDevicesListView = FindViewById<ListView> (Resource.Id.new_devices);
             newDevicesListView.Adapter = _newDevicesArrayAdapter;
-            newDevicesListView.ItemClick += DeviceListClick;
+            newDevicesListView.ItemClick += (sender, args) =>
+            {
+                DeviceListClick(sender, args, false);
+            };
 
             // Register for broadcasts when a device is discovered
             _receiver = new Receiver (this);
@@ -171,12 +177,6 @@ namespace BmwDeepObd
             {
                 UpdatePairedDevices();
             }
-
-            if (!ActivityCommon.MtcBtInfoShown && _activityCommon.MtcBtService)
-            {
-                ActivityCommon.MtcBtInfoShown = true;
-                _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_android_radio), Resource.String.alert_title_info);
-            }
         }
 
         protected override void OnStart()
@@ -199,6 +199,7 @@ namespace BmwDeepObd
             base.OnStop();
             if (_activityCommon.MtcBtService)
             {
+                MtcStopScan();
                 _activityCommon.StopMtcService();
             }
         }
@@ -286,14 +287,14 @@ namespace BmwDeepObd
                 IList<string> matchList = mtcServiceConnection.GetMatchList();
                 foreach (string device in matchList)
                 {
-                    if (ExtractMtcDeviceInfo(device, out string name, out string address))
+                    if (ExtractMtcDeviceInfo(device, out string name, out string address, out string _))
                     {
                         _pairedDevicesArrayAdapter.Add(name + "\n" + address);
                     }
                 }
                 foreach (string device in deviceList)
                 {
-                    if (ExtractMtcDeviceInfo(device, out string name, out string address))
+                    if (ExtractMtcDeviceInfo(device, out string name, out string address, out string _))
                     {
                         _newDevicesArrayAdapter.Add(name + "\n" + address);
                     }
@@ -315,12 +316,14 @@ namespace BmwDeepObd
         /// <param name="device">Complete device info text</param>
         /// <param name="name">Device name</param>
         /// <param name="address">Device address</param>
+        /// <param name="typeCode">Device type code</param>
         /// <returns>True: Success</returns>
-        private static bool ExtractMtcDeviceInfo(string device, out string name, out string address)
+        private static bool ExtractMtcDeviceInfo(string device, out string name, out string address, out string typeCode)
         {
             int offset = 1;
             name = string.Empty;
             address = string.Empty;
+            typeCode = string.Empty;
             if (device.Length < offset + 12)
             {
                 return false;
@@ -338,7 +341,30 @@ namespace BmwDeepObd
             }
             address = sb.ToString();
             name = device.Substring(offset + 12);
+            typeCode = device.Substring(0, 1);
             return true;
+        }
+
+        /// <summary>
+        /// MTC stop BT scan
+        /// </summary>
+        /// <returns>True if successful</returns>
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool MtcStopScan()
+        {
+            if (_activityCommon.MtcServiceConnection != null && _activityCommon.MtcServiceConnection.Bound)
+            {
+                try
+                {
+                    _activityCommon.MtcServiceConnection.ScanStop();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -969,21 +995,12 @@ namespace BmwDeepObd
         /// <summary>
         /// The on-click listener for all devices in the ListViews
         /// </summary>
-        private void DeviceListClick(object sender, AdapterView.ItemClickEventArgs e)
+        // ReSharper disable once UnusedParameter.Local
+        private void DeviceListClick(object sender, AdapterView.ItemClickEventArgs e, bool paired)
         {
             if (_activityCommon.MtcBtService)
             {
-                if (_activityCommon.MtcServiceConnection != null && _activityCommon.MtcServiceConnection.Bound)
-                {
-                    try
-                    {
-                        _activityCommon.MtcServiceConnection.ScanStop();
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                }
+                MtcStopScan();
             }
             else
             {
@@ -1003,7 +1020,25 @@ namespace BmwDeepObd
                     return;
                 }
 
-                DetectAdapter(address, name);
+                if (_activityCommon.MtcBtService && !paired)
+                {
+                    if (_activityCommon.MtcServiceConnection != null && _activityCommon.MtcServiceConnection.Bound)
+                    {
+                        try
+                        {
+                            string mac = address.Replace(":", string.Empty);
+                            _activityCommon.MtcServiceConnection.ConnectObd(mac);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                }
+                else
+                {
+                    DetectAdapter(address, name);
+                }
             }
         }
 
