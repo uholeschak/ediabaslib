@@ -1020,7 +1020,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (_activityCommon.MtcBtService && !paired)
+                if (_activityCommon.MtcBtService)
                 {
                     if (_activityCommon.MtcServiceConnection != null && _activityCommon.MtcServiceConnection.Bound)
                     {
@@ -1033,6 +1033,10 @@ namespace BmwDeepObd
                         {
                             // ignored
                         }
+                    }
+                    if (paired)
+                    {
+                        DetectAdapter(address, name);
                     }
                 }
                 else
