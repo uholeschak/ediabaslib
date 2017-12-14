@@ -101,6 +101,16 @@ namespace BmwDeepObd
                 {
                     UpdateMtcDevices();
                 }
+            },
+            (context, intent) =>
+            {
+                if (intent != null && intent.Action == GlobalBroadcastReceiver.NotificationBroadcastAction)
+                {
+                    if (intent.HasExtra(GlobalBroadcastReceiver.BtScanFinished))
+                    {
+                        ShowScanState(false);
+                    }
+                }
             });
 
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
@@ -109,14 +119,13 @@ namespace BmwDeepObd
             _scanButton = FindViewById<Button>(Resource.Id.button_scan);
             _scanButton.Click += (sender, e) =>
             {
-                if (_activityCommon.MtcBtManager)
+                if (_activityCommon.MtcBtService)
                 {
-                    _activityCommon.StartApp(ActivityCommon.MtcBtAppName);
+                    DoMtcDiscovery();
                 }
                 else
                 {
                     DoDiscovery();
-                    _scanButton.Enabled = false;
                 }
             };
 
@@ -333,18 +342,31 @@ namespace BmwDeepObd
         }
 
         /// <summary>
+        /// Show scan state
+        /// </summary>
+        /// <param name="enabled">True if scanning is enabled</param>
+        private void ShowScanState(bool enabled)
+        {
+            if (enabled)
+            {
+                FindViewById<ProgressBar>(Resource.Id.progress_bar).Visibility = ViewStates.Visible;
+                SetTitle(Resource.String.scanning);
+                _scanButton.Enabled = false;
+            }
+            else
+            {
+                FindViewById<ProgressBar>(Resource.Id.progress_bar).Visibility = ViewStates.Invisible;
+                SetTitle(Resource.String.select_device);
+                _scanButton.Enabled = true;
+            }
+        }
+
+        /// <summary>
         /// Start device discover with the BluetoothAdapter
         /// </summary>
         private void DoDiscovery ()
         {
             // Log.Debug (Tag, "doDiscovery()");
-
-            // Indicate scanning in the title
-            FindViewById<ProgressBar>(Resource.Id.progress_bar).Visibility = ViewStates.Visible;
-            SetTitle (Resource.String.scanning);
-
-            // Turn on area for new devices
-            FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
 
             // If we're already discovering, stop it
             if (_btAdapter.IsDiscovering)
@@ -354,7 +376,39 @@ namespace BmwDeepObd
             _newDevicesArrayAdapter.Clear();
 
             // Request discover from BluetoothAdapter
-            _btAdapter.StartDiscovery ();
+            if (_btAdapter.StartDiscovery())
+            {
+                // Indicate scanning in the title
+                ShowScanState(true);
+
+                // Turn on area for new devices
+                FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
+            }
+        }
+
+        /// <summary>
+        /// Start MTC device discovery
+        /// </summary>
+        private void DoMtcDiscovery()
+        {
+            // Log.Debug (Tag, "doDiscovery()");
+
+            if (_activityCommon.MtcServiceConnection != null && _activityCommon.MtcServiceConnection.Bound)
+            {
+                try
+                {
+                    _activityCommon.MtcServiceConnection.ScanStart();
+                    // Indicate scanning in the title
+                    ShowScanState(true);
+
+                    // Turn on area for new devices
+                    FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
         }
 
         /// <summary>
@@ -917,15 +971,29 @@ namespace BmwDeepObd
         /// </summary>
         private void DeviceListClick(object sender, AdapterView.ItemClickEventArgs e)
         {
-            // Cancel discovery because it's costly and we're about to connect
-            if (_btAdapter.IsDiscovering)
+            if (_activityCommon.MtcBtService)
             {
-                _btAdapter.CancelDiscovery();
+                if (_activityCommon.MtcServiceConnection != null && _activityCommon.MtcServiceConnection.Bound)
+                {
+                    try
+                    {
+                        _activityCommon.MtcServiceConnection.ScanStop();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
             }
-            _scanButton.Enabled = true;
-            //_chat.SetProgressBarIndeterminateVisibility (false);
-            FindViewById<ProgressBar>(Resource.Id.progress_bar).Visibility = ViewStates.Invisible;
-            SetTitle(Resource.String.select_device);
+            else
+            {
+                // Cancel discovery because it's costly and we're about to connect
+                if (_btAdapter.IsDiscovering)
+                {
+                    _btAdapter.CancelDiscovery();
+                }
+            }
+            ShowScanState(false);
 
             if (e.View is TextView textView)
             {
@@ -1054,10 +1122,7 @@ namespace BmwDeepObd
 
                         case BluetoothAdapter.ActionDiscoveryFinished:
                             // When discovery is finished, change the Activity title
-                            _chat._scanButton.Enabled = true;
-                            //_chat.SetProgressBarIndeterminateVisibility (false);
-                            _chat.FindViewById<ProgressBar>(Resource.Id.progress_bar).Visibility = ViewStates.Invisible;
-                            _chat.SetTitle(Resource.String.select_device);
+                            _chat.ShowScanState(false);
                             if (_newDevicesArrayAdapter.Count == 0)
                             {
                                 _newDevicesArrayAdapter.Add(_chat.Resources.GetText(Resource.String.none_found));
