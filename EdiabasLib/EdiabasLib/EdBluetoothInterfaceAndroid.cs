@@ -45,7 +45,6 @@ namespace EdiabasLib
         private static string _connectPort;
         private static ConnectParameterType _connectParameter;
         private static EdElmInterface _edElmInterface;
-        private static Receiver _receiver;
         private static readonly AutoResetEvent ConnectedEvent = new AutoResetEvent(false);
         private static string _connectDeviceAddress = string.Empty;
         private static bool _deviceConnected;
@@ -123,59 +122,70 @@ namespace EdiabasLib
                 }
                 bluetoothAdapter.CancelDiscovery();
 
-                if (_connectParameter != null)
-                {
-                    _receiver = new Receiver();
-                    Android.Content.IntentFilter filter = new Android.Content.IntentFilter();
-                    filter.AddAction(BluetoothDevice.ActionAclConnected);
-                    filter.AddAction(BluetoothDevice.ActionAclDisconnected);
-                    _connectParameter.ParentContext.RegisterReceiver(_receiver, filter);
-                }
-                _connectDeviceAddress = device.Address;
-
-                _bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
+                bool usedRfCommSocket = false;
+                Receiver receiver = null;
                 try
                 {
-                    _bluetoothSocket.Connect();
-                }
-                catch (Exception)
-                {
+                    if (_connectParameter != null)
+                    {
+                        receiver = new Receiver();
+                        Android.Content.IntentFilter filter = new Android.Content.IntentFilter();
+                        filter.AddAction(BluetoothDevice.ActionAclConnected);
+                        filter.AddAction(BluetoothDevice.ActionAclDisconnected);
+                        _connectParameter.ParentContext.RegisterReceiver(receiver, filter);
+                    }
+                    _connectDeviceAddress = device.Address;
+
+                    _bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
                     try
                     {
-                        // sometimes the second connect is working
                         _bluetoothSocket.Connect();
                     }
                     catch (Exception)
                     {
-                        _bluetoothSocket.Close();
-                        _bluetoothSocket = null;
+                        try
+                        {
+                            // sometimes the second connect is working
+                            _bluetoothSocket.Connect();
+                        }
+                        catch (Exception)
+                        {
+                            _bluetoothSocket.Close();
+                            _bluetoothSocket = null;
+                        }
                     }
-                }
 
-                bool usedRfCommSocket = false;
-                if (_bluetoothSocket == null)
+                    if (_bluetoothSocket == null)
+                    {
+                        // this socket sometimes looses data for long telegrams
+                        IntPtr createRfcommSocket = Android.Runtime.JNIEnv.GetMethodID(device.Class.Handle,
+                            "createRfcommSocket", "(I)Landroid/bluetooth/BluetoothSocket;");
+                        if (createRfcommSocket == IntPtr.Zero)
+                        {
+                            throw new Exception("No createRfcommSocket");
+                        }
+                        IntPtr rfCommSocket = Android.Runtime.JNIEnv.CallObjectMethod(device.Handle,
+                            createRfcommSocket, new Android.Runtime.JValue(1));
+                        if (rfCommSocket == IntPtr.Zero)
+                        {
+                            throw new Exception("No rfCommSocket");
+                        }
+                        _bluetoothSocket = Java.Lang.Object.GetObject<BluetoothSocket>(rfCommSocket, Android.Runtime.JniHandleOwnership.TransferLocalRef);
+                        _bluetoothSocket.Connect();
+                        usedRfCommSocket = true;
+                    }
+
+                    int connectTimeout = mtcBtService ? 1000 : 2000;
+                    ConnectedEvent.WaitOne(connectTimeout, false);
+                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
+                }
+                finally
                 {
-                    // this socket sometimes looses data for long telegrams
-                    IntPtr createRfcommSocket = Android.Runtime.JNIEnv.GetMethodID(device.Class.Handle,
-                        "createRfcommSocket", "(I)Landroid/bluetooth/BluetoothSocket;");
-                    if (createRfcommSocket == IntPtr.Zero)
+                    if (receiver != null)
                     {
-                        throw new Exception("No createRfcommSocket");
+                        _connectParameter.ParentContext.UnregisterReceiver(receiver);
                     }
-                    IntPtr rfCommSocket = Android.Runtime.JNIEnv.CallObjectMethod(device.Handle,
-                        createRfcommSocket, new Android.Runtime.JValue(1));
-                    if (rfCommSocket == IntPtr.Zero)
-                    {
-                        throw new Exception("No rfCommSocket");
-                    }
-                    _bluetoothSocket = Java.Lang.Object.GetObject<BluetoothSocket>(rfCommSocket, Android.Runtime.JniHandleOwnership.TransferLocalRef);
-                    _bluetoothSocket.Connect();
-                    usedRfCommSocket = true;
                 }
-
-                int connectTimeout = mtcBtService ? 1000 : 2000;
-                ConnectedEvent.WaitOne(connectTimeout, false);
-                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
 
                 _bluetoothInStream = _bluetoothSocket.InputStream;
                 _bluetoothOutStream = _bluetoothSocket.OutputStream;
@@ -301,11 +311,6 @@ namespace EdiabasLib
             catch (Exception)
             {
                 result = false;
-            }
-            if (_connectParameter != null && _receiver != null)
-            {
-                _connectParameter.ParentContext.UnregisterReceiver(_receiver);
-                _receiver = null;
             }
             return result;
         }
