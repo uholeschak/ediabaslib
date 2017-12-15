@@ -13,14 +13,16 @@ namespace EdiabasLib
     {
         public class ConnectParameterType
         {
-            public ConnectParameterType(Android.Content.Context parentContext, Android.Net.ConnectivityManager connectivityManager, bool mtcBtService)
+            public delegate Android.Content.Context GetContextDelegate();
+
+            public ConnectParameterType(Android.Net.ConnectivityManager connectivityManager, bool mtcBtService, GetContextDelegate getContextHandler)
             {
-                ParentContext = parentContext;
+                GetContextHandler = getContextHandler;
                 ConnectivityManager = connectivityManager;
                 MtcBtService = mtcBtService;
             }
 
-            public Android.Content.Context ParentContext { get; }
+            public GetContextDelegate GetContextHandler { get; }
 
             public Android.Net.ConnectivityManager ConnectivityManager { get; }
 
@@ -124,15 +126,20 @@ namespace EdiabasLib
 
                 bool usedRfCommSocket = false;
                 Receiver receiver = null;
+                Android.Content.Context context = null;
                 try
                 {
-                    if (_connectParameter != null)
+                    if (_connectParameter?.GetContextHandler != null)
                     {
-                        receiver = new Receiver();
-                        Android.Content.IntentFilter filter = new Android.Content.IntentFilter();
-                        filter.AddAction(BluetoothDevice.ActionAclConnected);
-                        filter.AddAction(BluetoothDevice.ActionAclDisconnected);
-                        _connectParameter.ParentContext.RegisterReceiver(receiver, filter);
+                        context = _connectParameter.GetContextHandler();
+                        if (context != null)
+                        {
+                            receiver = new Receiver();
+                            Android.Content.IntentFilter filter = new Android.Content.IntentFilter();
+                            filter.AddAction(BluetoothDevice.ActionAclConnected);
+                            filter.AddAction(BluetoothDevice.ActionAclDisconnected);
+                            context.RegisterReceiver(receiver, filter);
+                        }
                     }
                     _connectDeviceAddress = device.Address;
 
@@ -183,7 +190,7 @@ namespace EdiabasLib
                 {
                     if (receiver != null)
                     {
-                        _connectParameter.ParentContext.UnregisterReceiver(receiver);
+                        context.UnregisterReceiver(receiver);
                     }
                 }
 

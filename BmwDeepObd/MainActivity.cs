@@ -1089,11 +1089,12 @@ namespace BmwDeepObd
                     {
                         case ActivityCommon.InterfaceType.Bluetooth:
                             portName = "BLUETOOTH:" + _instanceData.DeviceAddress;
-                            connectParameter = new EdBluetoothInterface.ConnectParameterType(this, _activityCommon.MaConnectivity, _activityCommon.MtcBtService);
+                            connectParameter = new EdBluetoothInterface.ConnectParameterType(_activityCommon.MaConnectivity, _activityCommon.MtcBtService,
+                                () => ActivityCommon.EdiabasThread.ActiveContext);
                             break;
 
                         case ActivityCommon.InterfaceType.Enet:
-                            connectParameter = new EdInterfaceEnet.ConnectParameterType(this, _activityCommon.MaConnectivity);
+                            connectParameter = new EdInterfaceEnet.ConnectParameterType(_activityCommon.MaConnectivity);
                             if (_activityCommon.Emulator)
                             {
                                 // broadcast is not working with emulator
@@ -1105,12 +1106,12 @@ namespace BmwDeepObd
 
                         case ActivityCommon.InterfaceType.ElmWifi:
                             portName = "ELM327WIFI";
-                            connectParameter = new EdElmWifiInterface.ConnectParameterType(this, _activityCommon.MaConnectivity);
+                            connectParameter = new EdElmWifiInterface.ConnectParameterType(_activityCommon.MaConnectivity);
                             break;
 
                         case ActivityCommon.InterfaceType.Ftdi:
                             portName = "FTDI0";
-                            connectParameter = new EdFtdiInterface.ConnectParameterType(this, _activityCommon.UsbManager);
+                            connectParameter = new EdFtdiInterface.ConnectParameterType(_activityCommon.UsbManager);
                             break;
                     }
                     ActivityCommon.EdiabasThread.StartThread(portName, connectParameter, pageInfo, true, _instanceData.TraceDir, _instanceData.TraceAppend, _instanceData.DataLogDir, _instanceData.DataLogAppend);

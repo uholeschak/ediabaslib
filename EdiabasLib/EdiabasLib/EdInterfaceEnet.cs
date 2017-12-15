@@ -17,13 +17,10 @@ namespace EdiabasLib
 #if Android
         public class ConnectParameterType
         {
-            public ConnectParameterType(Android.Content.Context parentContext, Android.Net.ConnectivityManager connectivityManager)
+            public ConnectParameterType(Android.Net.ConnectivityManager connectivityManager)
             {
-                ParentContext = parentContext;
                 ConnectivityManager = connectivityManager;
             }
-
-            public Android.Content.Context ParentContext { get; private set; }
 
             public Android.Net.ConnectivityManager ConnectivityManager { get; }
         }

@@ -17,13 +17,10 @@ namespace EdiabasLib
     {
         public class ConnectParameterType
         {
-            public ConnectParameterType(Android.Content.Context parentContext, UsbManager usbManager)
+            public ConnectParameterType(UsbManager usbManager)
             {
-                ParentContext = parentContext;
                 UsbManager = usbManager;
             }
-
-            public Android.Content.Context ParentContext { get; private set; }
 
             public UsbManager UsbManager { get; private set; }
         }
