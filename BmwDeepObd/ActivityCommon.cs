@@ -2293,7 +2293,7 @@ namespace BmwDeepObd
             {
                 EdInterfaceEnet edInterface = new EdInterfaceEnet
                 {
-                    ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_context, _maConnectivity)
+                    ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_maConnectivity)
                 };
                 List<IPAddress> detectedVehicles = edInterface.DetectedVehicles("auto:all");
                 edInterface.Dispose();
@@ -2560,17 +2560,17 @@ namespace BmwDeepObd
                 if (SelectedInterface == InterfaceType.Ftdi)
                 {
                     ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "FTDI0";
-                    connectParameter = new EdFtdiInterface.ConnectParameterType(_context, _usbManager);
+                    connectParameter = new EdFtdiInterface.ConnectParameterType(_usbManager);
                 }
                 else if (SelectedInterface == InterfaceType.ElmWifi)
                 {
                     ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "ELM327WIFI";
-                    connectParameter = new EdElmWifiInterface.ConnectParameterType(_context, _maConnectivity);
+                    connectParameter = new EdElmWifiInterface.ConnectParameterType(_maConnectivity);
                 }
                 else
                 {
                     ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "BLUETOOTH:" + btDeviceAddress;
-                    connectParameter = new EdBluetoothInterface.ConnectParameterType(_context, _maConnectivity, MtcBtService);
+                    connectParameter = new EdBluetoothInterface.ConnectParameterType(_maConnectivity, MtcBtService, () => _context);
                 }
             }
             else if (ediabas.EdInterfaceClass is EdInterfaceEnet)
@@ -2581,7 +2581,7 @@ namespace BmwDeepObd
                     remoteHost = EmulatorEnetIp;
                 }
                 ((EdInterfaceEnet)ediabas.EdInterfaceClass).RemoteHost = remoteHost;
-                connectParameter = new EdInterfaceEnet.ConnectParameterType(_context, _maConnectivity);
+                connectParameter = new EdInterfaceEnet.ConnectParameterType(_maConnectivity);
             }
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
         }
