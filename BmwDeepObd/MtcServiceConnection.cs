@@ -92,6 +92,16 @@ namespace BmwDeepObd
             return result;
         }
 
+        public long GetNowDevAddr()
+        {
+            return CommandGetLong(7);
+        }
+
+        public string GetNowDevName()
+        {
+            return CommandGetString(8);
+        }
+
         public void SetAutoConnect(bool auto)
         {
             CommandSetInt(22, auto ? 1 : 0);
@@ -203,7 +213,7 @@ namespace BmwDeepObd
                 reply.ReadException();
                 sbyte result = reply.ReadByte();
 #if DEBUG
-                Log.Info(Tag, string.Format("GetByte({0}): {1}", code, result));
+                Log.Info(Tag, string.Format("GetByte({0}): 0x{1:X02}", code, result));
 #endif
                 return result;
             }
@@ -229,7 +239,59 @@ namespace BmwDeepObd
                 reply.ReadException();
                 int result = reply.ReadInt();
 #if DEBUG
-                Log.Info(Tag, string.Format("GetInt({0}): {1}", code, result));
+                Log.Info(Tag, string.Format("GetInt({0}): 0x{1:X08}", code, result));
+#endif
+                return result;
+            }
+            finally
+            {
+                data.Recycle();
+                reply.Recycle();
+            }
+        }
+
+        private long CommandGetLong(int code)
+        {
+            if (_binder == null)
+            {
+                throw new RemoteException("Not bound");
+            }
+            Parcel data = Parcel.Obtain();
+            Parcel reply = Parcel.Obtain();
+            try
+            {
+                data.WriteInterfaceToken(InterfaceToken);
+                _binder.Transact(code, data, reply, 0);
+                reply.ReadException();
+                long result = reply.ReadLong();
+#if DEBUG
+                Log.Info(Tag, string.Format("GetLong({0}): 0x{1:X016}", code, result));
+#endif
+                return result;
+            }
+            finally
+            {
+                data.Recycle();
+                reply.Recycle();
+            }
+        }
+
+        private string CommandGetString(int code)
+        {
+            if (_binder == null)
+            {
+                throw new RemoteException("Not bound");
+            }
+            Parcel data = Parcel.Obtain();
+            Parcel reply = Parcel.Obtain();
+            try
+            {
+                data.WriteInterfaceToken(InterfaceToken);
+                _binder.Transact(code, data, reply, 0);
+                reply.ReadException();
+                string result = reply.ReadString();
+#if DEBUG
+                Log.Info(Tag, string.Format("GetString({0}): {1}", code, result));
 #endif
                 return result;
             }

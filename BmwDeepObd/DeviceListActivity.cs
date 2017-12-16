@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -283,12 +284,19 @@ namespace BmwDeepObd
             {
                 FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
 
+                long nowDevAddr = mtcServiceConnection.GetNowDevAddr();
+                string newDevAddrString = string.Format(CultureInfo.InvariantCulture, "{0:X012}", nowDevAddr);
                 IList<string> deviceList = mtcServiceConnection.GetDeviceList();
                 IList<string> matchList = mtcServiceConnection.GetMatchList();
                 foreach (string device in matchList)
                 {
                     if (ExtractMtcDeviceInfo(device, out string name, out string address, out string _))
                     {
+                        string mac = address.Replace(":", string.Empty);
+                        if (string.Compare(mac, newDevAddrString, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            name = "(" + name + ")";
+                        }
                         _pairedDevicesArrayAdapter.Add(name + "\n" + address);
                     }
                 }
