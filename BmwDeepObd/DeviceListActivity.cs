@@ -122,6 +122,7 @@ namespace BmwDeepObd
                     }
                 }
             });
+            _activityCommon.SelectedInterface = ActivityCommon.InterfaceType.Bluetooth;
 
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
 
@@ -469,11 +470,7 @@ namespace BmwDeepObd
             _sbLog.Clear();
             _deviceConnected = false;
 
-            if (_activityCommon.MtcServiceConnection != null && _activityCommon.MtcServiceConnection.Bound)
-            {
-                string mac = deviceAddress.Replace(":", string.Empty);
-                _activityCommon.MtcServiceConnection.ConnectObd(mac);
-            }
+            _activityCommon.ConnectMtcBtDevice(deviceAddress);
 
             Thread detectThread = new Thread(() =>
             {
