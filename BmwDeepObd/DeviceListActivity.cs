@@ -469,6 +469,12 @@ namespace BmwDeepObd
             _sbLog.Clear();
             _deviceConnected = false;
 
+            if (_activityCommon.MtcServiceConnection != null && _activityCommon.MtcServiceConnection.Bound)
+            {
+                string mac = deviceAddress.Replace(":", string.Empty);
+                _activityCommon.MtcServiceConnection.ConnectObd(mac);
+            }
+
             Thread detectThread = new Thread(() =>
             {
                 AdapterType adapterType = AdapterType.Unknown;
@@ -719,33 +725,6 @@ namespace BmwDeepObd
 
                         case AdapterType.Custom:
                         case AdapterType.CustomUpdate:
-#if false
-                            if (!ActivityCommon.IsBtReliable() && _androidRadio)
-                            {
-                                _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(),
-                                    PackageManager.GetPackageInfo(PackageName, 0), GetType(), (o, eventArgs) =>
-                                    {
-                                        _altertInfoDialog = new AlertDialog.Builder(this)
-                                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                                            {
-                                                ReturnDeviceType(deviceAddress, deviceName, true);
-                                            })
-                                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                                            {
-                                                ReturnDeviceType(deviceAddress, deviceName);
-                                            })
-                                            .SetCancelable(true)
-                                            .SetMessage(adapterType == AdapterType.CustomUpdate ? Resource.String.adapter_fw_update : Resource.String.adapter_cfg_required)
-                                            .SetTitle(Resource.String.alert_title_info)
-                                            .Show();
-                                        _altertInfoDialog.DismissEvent += (sender, args) =>
-                                        {
-                                            _altertInfoDialog = null;
-                                        };
-                                    });
-                                break;
-                            }
-#endif
                             _altertInfoDialog = new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
