@@ -373,6 +373,24 @@ namespace BmwDeepObd
             base.OnSaveInstanceState(outState);
         }
 
+        protected override void OnStart()
+        {
+            base.OnStart();
+            if (_activityCommon.MtcBtService)
+            {
+                _activityCommon.StartMtcService();
+            }
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            if (_activityCommon.MtcBtService)
+            {
+                _activityCommon.StopMtcService();
+            }
+        }
+
         protected override void OnDestroy()
         {
             base.OnDestroy();
