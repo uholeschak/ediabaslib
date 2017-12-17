@@ -114,6 +114,7 @@
   <string name="title_other_devices">Andere verfügbare Geräte</string>
   <string name="button_scan">Nach Geräten suchen</string>
   <string name="detect_adapter">Adaptertyp erkennen</string>
+  <string name="adapter_connection_mtc_failed">Es konnte keine Bluetooth-Verbindung zum Adapter hergestellt werden.\nVersuchen Sie den Adapter zu löschen und neu zu verbinden um das Problem zu lösen.</string>
   <string name="adapter_connection_failed">Es konnte keine Bluetooth-Verbindung zum Adapter hergestellt werden.\nWenn eine andere App diese Verbindung verwendet beenden Sie diese App oder starten Sie das Android Gerät neu.\nWollen Sie trotzdem diesen Adapter verwenden (die Telegramme werden unverändert gesendet)?</string>
   <string name="unknown_adapter_type">Der Adaptertyp wurde nicht erkannt.\nWollen Sie trotzdem diesen Adapter verwenden (die Telegramme werden unverändert gesendet)?</string>
   <string name="invalid_adapter_type">Der ELM327 Adapter unterstützt nicht all notwendigen Kommandos und ist inkompatibel mit dieser Software.</string>
@@ -381,12 +382,6 @@
   <string name="can_adapter_fw_update_failed">Firmware Aktualisierung fehlgeschlagen</string>
   <string name="can_adapter_fw_update_ok">Firmware Aktualisierung erfolgreich</string>
   <string name="can_adapter_bt_not_reliable">Ihr Android Gerät ist dafür bekannt, dass die Bluetooth-Verbindung nicht zuverlässig ist.\nBitte verwenden Sie ein anderes Gerät.</string>
-  <string name="can_adapter_bt_android_radio">Ihr Android Gerät verwendet ein Bluetooth-Stack der nicht dem Standard entspricht. Wenn das Gerät ein Autoradio ist, beachten Sie folgende Punkte:
-\n- Wichtig: Koppeln Sie irgend ein zusätzliches Smartphone mit dem Radio, wenn Sie mit einen OBD Bluetooth-Adapter verwenden!
-\n- Aktivieren Sie die automatische Verbindung im Bluetooth Menü.
-\n- Koppeln Sie den OBD Adapter im Telefonmenü und nicht im Android Bluetooth Menü.
-\n- Das Suchen des OBD Adapters funktioniert am Besten im Android Bluetooth Menü.
-\n- Wenn der OBD Adapter in der Zwischenzeit mit einem anderen Gerät gekoppelt wurde oder nicht antwortet, trennen und verbinden Sie Ihn erneut im Telefonmenü.</string>
   <string name="button_can_adapter_read">Lesen</string>
   <string name="button_can_adapter_write">Schreiben</string>
   <string name="button_can_adapter_can_auto">Automatisch</string>

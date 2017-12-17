@@ -115,6 +115,7 @@
   <string name="title_other_devices">Other available devices</string>
   <string name="button_scan">Scan for devices</string>
   <string name="detect_adapter">Detecting adapter type</string>
+  <string name="adapter_connection_mtc_failed">Bluetooth connection to the adapter failed.\nPlease try to delete the adapter and connect it again to fix this problem.</string>
   <string name="adapter_connection_failed">Bluetooth connection to the adapter failed.\nIf another app uses the connection terminate the app or reboot the android device.\nDo you still want to use this adapter (the telegrams will be send unmodified)?</string>
   <string name="unknown_adapter_type">Adapter type detection failed.\nDo you still want to use this adapter (the telegrams will be send unmodified)?</string>
   <string name="invalid_adapter_type">The ELM327 adapter is not supporting all required commands and is incompatible with this software.</string>
@@ -382,12 +383,6 @@
   <string name="can_adapter_fw_update_failed">Firmware update failed</string>
   <string name="can_adapter_fw_update_ok">Firmware update successful</string>
   <string name="can_adapter_bt_not_reliable">Your Android device is known to have an unreliable Bluetooth connection.\nPlease use a different device.</string>
-  <string name="can_adapter_bt_android_radio">Your Android device uses a non standard Bluetooth stack. If the device is a car radio consider the following points:
-\n- Important: Always pair any additional smartphone with the radio when using a OBD Bluetooth adapter!
-\n- Always enable auto connect in the Bluetooth menu.
-\n- Pair the OBD adapter in the phone menu and not in the Android Bluetooth menu.
-\n- Searching the OBD adapter is working best in the Android Bluetooth menu.
-\n- If the OBD adapter was paired in the meantime with a different device or is not responding, disconnect and pair it again the phone menu.</string>
   <string name="button_can_adapter_read">Read</string>
   <string name="button_can_adapter_write">Write</string>
   <string name="button_can_adapter_can_auto">Automatic</string>
