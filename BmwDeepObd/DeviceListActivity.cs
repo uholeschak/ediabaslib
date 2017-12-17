@@ -59,6 +59,15 @@ namespace BmwDeepObd
             EchoOnly,           // only echo response
         }
 
+        enum BtOperation
+        {
+            SelectAdapter,      // select the adapter
+            ConnectObd,         // connect device as OBD
+            ConnectPhone,       // connect device as phone
+            DisconnectPhone,    // dosconnect phone
+            DeleteDevice,       // delete device
+        }
+
         private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const int ResponseTimeout = 1000;
@@ -285,7 +294,7 @@ namespace BmwDeepObd
                 FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
 
                 long nowDevAddr = mtcServiceConnection.GetNowDevAddr();
-                string newDevAddrString = string.Format(CultureInfo.InvariantCulture, "{0:X012}", nowDevAddr);
+                string nowDevAddrString = string.Format(CultureInfo.InvariantCulture, "{0:X012}", nowDevAddr);
                 IList<string> deviceList = mtcServiceConnection.GetDeviceList();
                 IList<string> matchList = mtcServiceConnection.GetMatchList();
                 foreach (string device in matchList)
@@ -293,9 +302,9 @@ namespace BmwDeepObd
                     if (ExtractMtcDeviceInfo(device, out string name, out string address, out string _))
                     {
                         string mac = address.Replace(":", string.Empty);
-                        if (string.Compare(mac, newDevAddrString, StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.Compare(mac, nowDevAddrString, StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            name = "(" + name + ")";
+                            name += " " + GetString(Resource.String.bt_device_connected);
                         }
                         _pairedDevicesArrayAdapter.Add(name + "\n" + address);
                     }
@@ -1030,28 +1039,103 @@ namespace BmwDeepObd
 
                 if (_activityCommon.MtcBtService)
                 {
-                    if (_activityCommon.MtcServiceConnection != null && _activityCommon.MtcServiceConnection.Bound)
-                    {
-                        try
-                        {
-                            string mac = address.Replace(":", string.Empty);
-                            _activityCommon.MtcServiceConnection.ConnectObd(mac);
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                    }
-                    if (paired)
-                    {
-                        DetectAdapter(address, name);
-                    }
+                    SelectMtcDeviceAction(name, address, paired);
                 }
                 else
                 {
                     DetectAdapter(address, name);
                 }
             }
+        }
+
+        /// <summary>
+        /// Select action for device in MTC mode
+        /// </summary>
+        private void SelectMtcDeviceAction(string name, string address, bool paired)
+        {
+            if (_activityCommon.MtcServiceConnection == null || !_activityCommon.MtcServiceConnection.Bound)
+            {
+                return;
+            }
+            string mac = address.Replace(":", string.Empty);
+            long nowDevAddr = _activityCommon.MtcServiceConnection.GetNowDevAddr();
+            string nowDevAddrString = string.Format(CultureInfo.InvariantCulture, "{0:X012}", nowDevAddr);
+            bool connectedPhone = string.Compare(nowDevAddrString, mac, StringComparison.OrdinalIgnoreCase) == 0;
+
+            List<BtOperation> operationList = new List<BtOperation>();
+            List<string> itemList = new List<string>();
+            if (paired && !connectedPhone)
+            {
+                itemList.Add(GetString(Resource.String.bt_device_select));
+                operationList.Add(BtOperation.SelectAdapter);
+            }
+            if (!paired)
+            {
+                itemList.Add(GetString(Resource.String.bt_device_connect_obd));
+                operationList.Add(BtOperation.ConnectObd);
+            }
+            if (!connectedPhone)
+            {
+                itemList.Add(GetString(Resource.String.bt_device_connect_phone));
+                operationList.Add(BtOperation.ConnectPhone);
+            }
+            if (paired && connectedPhone)
+            {
+                itemList.Add(GetString(Resource.String.bt_device_disconnect_phone));
+                operationList.Add(BtOperation.DisconnectPhone);
+            }
+            itemList.Add(GetString(Resource.String.bt_device_delete));
+            operationList.Add(BtOperation.DeleteDevice);
+
+            Java.Lang.ICharSequence[] items = new Java.Lang.ICharSequence[itemList.Count];
+            for (int i = 0; i < itemList.Count; i++)
+            {
+                items[i] = new Java.Lang.String(itemList[i]);
+            }
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.SetTitle(Resource.String.bt_device_menu_tite);
+            builder.SetItems(items, (sender, args) =>
+                {
+                    if (_activityCommon.MtcServiceConnection == null || !_activityCommon.MtcServiceConnection.Bound)
+                    {
+                        return;
+                    }
+                    if (args.Which < 0 || args.Which >= operationList.Count)
+                    {
+                        return;
+                    }
+                    try
+                    {
+                        switch (operationList[args.Which])
+                        {
+                            case BtOperation.SelectAdapter:
+                                DetectAdapter(address, name);
+                                break;
+
+                            case BtOperation.ConnectObd:
+                                _activityCommon.MtcServiceConnection.ConnectObd(mac);
+                                break;
+
+                            case BtOperation.ConnectPhone:
+                                _activityCommon.MtcServiceConnection.ConnectBt(mac);
+                                break;
+
+                            case BtOperation.DisconnectPhone:
+                                _activityCommon.MtcServiceConnection.DisconnectBt(mac);
+                                break;
+
+                            case BtOperation.DeleteDevice:
+                                _activityCommon.MtcServiceConnection.DeleteBt(mac);
+                                break;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                });
+            builder.Show();
         }
 
         /// <summary>
@@ -1197,6 +1281,38 @@ namespace BmwDeepObd
                 {
                     // ignored
                 }
+            }
+        }
+    }
+
+    public class SelectListener : Java.Lang.Object, IDialogInterfaceOnClickListener
+    {
+        private readonly Context _context;
+
+        public SelectListener(Context context)
+        {
+            _context = context;
+        }
+
+        public void OnClick(IDialogInterface dialog, Int32 which)
+        {
+            switch (which)
+            {
+                case 1:
+                    Toast.MakeText(_context, "Button1", ToastLength.Long);
+                    break;
+
+                case 2:
+                    Toast.MakeText(_context, "Button2", ToastLength.Long);
+                    break;
+
+                case 3:
+                    Toast.MakeText(_context, "Button3", ToastLength.Long);
+                    break;
+
+                case 4:
+                    Toast.MakeText(_context, "Button4", ToastLength.Long);
+                    break;
             }
         }
     }

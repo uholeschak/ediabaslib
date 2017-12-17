@@ -123,6 +123,13 @@
   <string name="adapter_elm_replacement">ELM327 adapters are slow and only support D-CAN (vehicles starting from 3/2007).\nYou could now buy adapters with a replacement firmware at\n<a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>github.com/uholeschak/ediabaslib</a>\nthat has many improvements.</string>
   <string name="adapter_cfg_required">The adapter may require configuration.\nDo you want to open the adapter configuration page?</string>
   <string name="adapter_fw_update">There is a firmware update available for this adapter.\nDo you want to open the adapter configuration page for update installation?</string>
+  <string name="bt_device_connected">(Connected)</string>
+  <string name="bt_device_menu_tite">Choose an operation for this device</string>
+  <string name="bt_device_select">Select OBD adapter</string>
+  <string name="bt_device_connect_obd">Connect as OBD adapter</string>
+  <string name="bt_device_connect_phone">Connect as phone</string>
+  <string name="bt_device_disconnect_phone">Disconnect phone</string>
+  <string name="bt_device_delete">Delete device</string>
 
   <!-- tabs_activate -->
   <string name="button_active">Active</string>
