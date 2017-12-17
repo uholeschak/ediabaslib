@@ -114,6 +114,8 @@
   <string name="title_other_devices">Другие доступные устройства</string>
   <string name="button_scan">Поиск устройств</string>
   <string name="detect_adapter">Определение типа устройства</string>
+  <!--Translate-->
+  <string name="adapter_connection_mtc_failed">Не удалось установить Bloetooth соединение с устройством.\nPlease try to delete the adapter and connect it again to fix this problem.</string>
   <string name="adapter_connection_failed">Не удалось установить Bloetooth соединение с устройством.\nЗакройте другие приложения, если они используют это соединение или перезагрузите ваше Android устройство.\nХотите все равно использовать это устройство (Пакеты данных будут посланы без изменений)?</string>
   <string name="unknown_adapter_type">Не установлен тип устройства.\nХотите все равно использовать это устройство (Пакеты данных будут посланы без изменений)?</string>
   <string name="invalid_adapter_type">ELM327 устройство поддерживает не все необходимые команды и несовместимо с этим приложением.</string>
@@ -383,13 +385,6 @@
   <string name="can_adapter_fw_update_failed">Не удалось обновление прошивки</string>
   <string name="can_adapter_fw_update_ok">Обновление прошивки успешно завершено</string>
   <string name="can_adapter_bt_not_reliable">Как известно, ваше Android-устройство ненадёжно при работе с Bluetooth.\nПожалуйста, используйте другое устройство.</string>
-  <string name="can_adapter_bt_android_radio">Ваше Android-устройство
-использует нестандартный стек Bluetooth. Если ваше устройство является автомобильным радиоприёмником, обратите внимание на следующие моменты:
-\n- Внимание: всегда подключайте к радио любой имеющийся смартфон!
-\n- Активируйте автоматическое соединение в меню Bluetooth.
-\n- Соединяйте OBD адаптер в меню телефона, а не в Android Bluetooth меню.
-\n- Поиск OBD адаптера работает лучше в Android Bluetooth меню.
-\n- Если OBD адаптер уже был соединён с другим устройством или не отвечает -  отключите и соедините его снова в меню телефона.</string>
   <string name="button_can_adapter_read">Считать</string>
   <string name="button_can_adapter_write">Сохранить</string>
   <string name="button_can_adapter_can_auto">Автоматически</string>

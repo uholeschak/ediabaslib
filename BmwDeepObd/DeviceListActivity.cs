@@ -595,7 +595,7 @@ namespace BmwDeepObd
                                 _altertInfoDialog = new AlertDialog.Builder(this)
                                     .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                                     .SetCancelable(true)
-                                    .SetMessage(Resource.String.can_adapter_bt_android_radio)
+                                    .SetMessage(Resource.String.adapter_connection_mtc_failed)
                                     .SetTitle(Resource.String.alert_title_error)
                                     .Show();
                                 _altertInfoDialog.DismissEvent += (sender, args) =>
@@ -631,7 +631,7 @@ namespace BmwDeepObd
                                 _altertInfoDialog = new AlertDialog.Builder(this)
                                     .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                                     .SetCancelable(true)
-                                    .SetMessage(Resource.String.can_adapter_bt_android_radio)
+                                    .SetMessage(Resource.String.adapter_connection_mtc_failed)
                                     .SetTitle(Resource.String.alert_title_error)
                                     .Show();
                                 _altertInfoDialog.DismissEvent += (sender, args) =>
