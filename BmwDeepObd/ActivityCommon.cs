@@ -996,6 +996,27 @@ namespace BmwDeepObd
             return true;
         }
 
+        public bool ConnectMtcBtDevice(string deviceAddress)
+        {
+            if (SelectedInterface == InterfaceType.Bluetooth)
+            {
+                try
+                {
+                    if (MtcServiceConnection != null && MtcServiceConnection.Bound)
+                    {
+                        string mac = deviceAddress.Replace(":", string.Empty);
+                        MtcServiceConnection.ConnectObd(mac);
+                        return true;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+            return false;
+        }
+
         public static bool ReadHciSnoopLogSettings(out bool enabled, out string logFileName)
         {
             enabled = false;
@@ -2571,6 +2592,7 @@ namespace BmwDeepObd
                 {
                     ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "BLUETOOTH:" + btDeviceAddress;
                     connectParameter = new EdBluetoothInterface.ConnectParameterType(_maConnectivity, MtcBtService, () => _context);
+                    ConnectMtcBtDevice(btDeviceAddress);
                 }
             }
             else if (ediabas.EdInterfaceClass is EdInterfaceEnet)
