@@ -55,7 +55,9 @@ namespace BmwDeepObd
                 Init();
                 _bound = true;
             }
+#pragma warning disable 168
             catch (Exception ex)
+#pragma warning restore 168
             {
 #if DEBUG
                 Log.Info(Tag, string.Format("MTC init exception: {0}", ex.Message));
