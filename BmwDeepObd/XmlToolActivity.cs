@@ -426,6 +426,15 @@ namespace BmwDeepObd
             base.OnSaveInstanceState(outState);
         }
 
+        protected override void OnStart()
+        {
+            base.OnStart();
+            if (_activityCommon.MtcBtService)
+            {
+                _activityCommon.StartMtcService();
+            }
+        }
+
         protected override void OnResume()
         {
             base.OnResume();
@@ -446,6 +455,15 @@ namespace BmwDeepObd
 
             _instanceData.ForceAppend = true;   // OnSaveInstanceState is called before OnStop
             _activityActive = false;
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            if (_activityCommon.MtcBtService)
+            {
+                _activityCommon.StopMtcService();
+            }
         }
 
         protected override void OnDestroy()
