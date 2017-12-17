@@ -105,9 +105,10 @@ namespace BmwDeepObd
             // Set result CANCELED incase the user backs out
             SetResult (Android.App.Result.Canceled);
 
+            // ReSharper disable once UseObjectOrCollectionInitializer
             _activityCommon = new ActivityCommon(this, () =>
             {
-                if (_activityCommon.MtcBtService)
+                if (_activityCommon.MtcBtServiceBound)
                 {
                     UpdateMtcDevices();
                 }
@@ -130,7 +131,7 @@ namespace BmwDeepObd
             _scanButton = FindViewById<Button>(Resource.Id.button_scan);
             _scanButton.Click += (sender, e) =>
             {
-                if (_activityCommon.MtcBtService)
+                if (_activityCommon.MtcBtServiceBound)
                 {
                     DoMtcDiscovery();
                 }
@@ -285,11 +286,11 @@ namespace BmwDeepObd
         {
             _pairedDevicesArrayAdapter.Clear();
             _newDevicesArrayAdapter.Clear();
-            MtcServiceConnection mtcServiceConnection = _activityCommon.MtcServiceConnection;
-            if (mtcServiceConnection == null || !mtcServiceConnection.Bound)
+            if (!_activityCommon.MtcBtServiceBound)
             {
                 return;
             }
+            MtcServiceConnection mtcServiceConnection = _activityCommon.MtcServiceConnection;
             try
             {
                 FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
@@ -370,7 +371,7 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool MtcStopScan()
         {
-            if (_activityCommon.MtcServiceConnection != null && _activityCommon.MtcServiceConnection.Bound)
+            if (_activityCommon.MtcBtServiceBound)
             {
                 try
                 {
@@ -437,7 +438,7 @@ namespace BmwDeepObd
         {
             // Log.Debug (Tag, "doDiscovery()");
 
-            if (_activityCommon.MtcServiceConnection != null && _activityCommon.MtcServiceConnection.Bound)
+            if (_activityCommon.MtcBtServiceBound)
             {
                 try
                 {
@@ -991,7 +992,7 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedParameter.Local
         private void DeviceListClick(object sender, AdapterView.ItemClickEventArgs e, bool paired)
         {
-            if (_activityCommon.MtcBtService)
+            if (_activityCommon.MtcBtServiceBound)
             {
                 MtcStopScan();
             }
@@ -1013,7 +1014,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (_activityCommon.MtcBtService)
+                if (_activityCommon.MtcBtServiceBound)
                 {
                     SelectMtcDeviceAction(name, address, paired);
                 }
@@ -1029,7 +1030,7 @@ namespace BmwDeepObd
         /// </summary>
         private void SelectMtcDeviceAction(string name, string address, bool paired)
         {
-            if (_activityCommon.MtcServiceConnection == null || !_activityCommon.MtcServiceConnection.Bound)
+            if (!_activityCommon.MtcBtServiceBound)
             {
                 return;
             }
@@ -1073,7 +1074,7 @@ namespace BmwDeepObd
             builder.SetTitle(Resource.String.bt_device_menu_tite);
             builder.SetItems(items, (sender, args) =>
                 {
-                    if (_activityCommon.MtcServiceConnection == null || !_activityCommon.MtcServiceConnection.Bound)
+                    if (!_activityCommon.MtcBtServiceBound)
                     {
                         return;
                     }

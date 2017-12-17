@@ -473,6 +473,18 @@ namespace BmwDeepObd
             }
         }
 
+        public bool MtcBtServiceBound
+        {
+            get
+            {
+                if (!MtcBtService)
+                {
+                    return false;
+                }
+                return _mtcServiceConnection != null && _mtcServiceConnection.Bound;
+            }
+        }
+
         public bool MtcBtConnected
         {
             get
@@ -1002,7 +1014,7 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    if (MtcServiceConnection != null && MtcServiceConnection.Bound)
+                    if (MtcBtServiceBound)
                     {
                         string mac = deviceAddress.Replace(":", string.Empty);
                         MtcServiceConnection.ConnectObd(mac);
