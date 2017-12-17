@@ -4599,7 +4599,7 @@ namespace BmwDeepObd
 			public const int menu_xml_tool_move_up = 2131296543;
 			
 			// aapt resource value: 0x7f0900ba
-			public const int microntek_disconnect_warn = 2131296442;
+			public const int mtc_disconnect_warn = 2131296442;
 			
 			// aapt resource value: 0x7f090036
 			public const int no_ext_storage = 2131296310;
