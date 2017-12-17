@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Android.Content;
 using Android.OS;
-using Android.Util;
 
 namespace BmwDeepObd
 {
@@ -45,7 +43,7 @@ namespace BmwDeepObd
             if (_binder == null)
             {
 #if DEBUG
-                Log.Info(Tag, "MTC Service no binder");
+                Android.Util.Log.Info(Tag, "MTC Service no binder");
 #endif
                 _bound = false;
                 return;
@@ -60,13 +58,13 @@ namespace BmwDeepObd
 #pragma warning restore 168
             {
 #if DEBUG
-                Log.Info(Tag, string.Format("MTC init exception: {0}", ex.Message));
+                Android.Util.Log.Info(Tag, string.Format("MTC init exception: {0}", ex.Message));
 #endif
                 _bound = false;
             }
             _connectedHandler?.Invoke(Bound);
 #if DEBUG
-            Log.Info(Tag, string.Format("MTC Service connected: {0}", Bound));
+            Android.Util.Log.Info(Tag, string.Format("MTC Service connected: {0}", Bound));
 #endif
         }
 
@@ -76,7 +74,7 @@ namespace BmwDeepObd
             Bound = false;
             _connectedHandler?.Invoke(Bound);
 #if DEBUG
-            Log.Info(Tag, "MTC Service disconnected");
+            Android.Util.Log.Info(Tag, "MTC Service disconnected");
 #endif
         }
 
@@ -89,7 +87,7 @@ namespace BmwDeepObd
         {
             sbyte result = CommandGetByte(2);
 #if DEBUG
-            Log.Info(Tag, string.Format("MTC Bt state: {0}", result));
+            Android.Util.Log.Info(Tag, string.Format("MTC Bt state: {0}", result));
 #endif
             return result;
         }
@@ -215,7 +213,7 @@ namespace BmwDeepObd
                 reply.ReadException();
                 sbyte result = reply.ReadByte();
 #if DEBUG
-                Log.Info(Tag, string.Format("GetByte({0}): 0x{1:X02}", code, result));
+                Android.Util.Log.Info(Tag, string.Format("GetByte({0}): 0x{1:X02}", code, result));
 #endif
                 return result;
             }
@@ -241,7 +239,7 @@ namespace BmwDeepObd
                 reply.ReadException();
                 int result = reply.ReadInt();
 #if DEBUG
-                Log.Info(Tag, string.Format("GetInt({0}): 0x{1:X08}", code, result));
+                Android.Util.Log.Info(Tag, string.Format("GetInt({0}): 0x{1:X08}", code, result));
 #endif
                 return result;
             }
@@ -267,7 +265,7 @@ namespace BmwDeepObd
                 reply.ReadException();
                 long result = reply.ReadLong();
 #if DEBUG
-                Log.Info(Tag, string.Format("GetLong({0}): 0x{1:X016}", code, result));
+                Android.Util.Log.Info(Tag, string.Format("GetLong({0}): 0x{1:X016}", code, result));
 #endif
                 return result;
             }
@@ -293,7 +291,7 @@ namespace BmwDeepObd
                 reply.ReadException();
                 string result = reply.ReadString();
 #if DEBUG
-                Log.Info(Tag, string.Format("GetString({0}): {1}", code, result));
+                Android.Util.Log.Info(Tag, string.Format("GetString({0}): {1}", code, result));
 #endif
                 return result;
             }
@@ -363,7 +361,7 @@ namespace BmwDeepObd
                 reply.ReadException();
                 IList<string> result = reply.CreateStringArrayList();
 #if DEBUG
-                StringBuilder sb = new StringBuilder();
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
                 sb.Append(string.Format("GetList({0}): ", code));
                 foreach (string text in result)
                 {
@@ -371,7 +369,7 @@ namespace BmwDeepObd
                     sb.Append(text);
                     sb.Append("\" ");
                 }
-                Log.Info(Tag, sb.ToString());
+                Android.Util.Log.Info(Tag, sb.ToString());
 #endif
                 return result;
             }
