@@ -190,7 +190,7 @@
 
   <!-- Bluetooth -->
   <!--Translate-->
-  <string name="microntek_disconnect_warn">For a stable communication with the adapter it is recommended to pair any additional smartphone with the radio.\nDo you want to continue anyway?</string>
+  <string name="mtc_disconnect_warn">For a stable communication with the adapter it is recommended to pair any additional smartphone with the radio.\nDo you want to continue anyway?</string>
 
   <!-- Wi-Fi-->
   <string name="connected_with_wifi_adapter">В настоящее время вы подключены к Wi-Fi адаптеру.\nДля получения доступа в интернет необходимо отключить адаптер.\nОтключить Wi-Fi?</string>

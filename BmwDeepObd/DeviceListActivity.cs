@@ -1110,6 +1110,21 @@ namespace BmwDeepObd
                         switch (operationList[args.Which])
                         {
                             case BtOperation.SelectAdapter:
+                                if (!_activityCommon.MtcBtConnected)
+                                {
+                                    new AlertDialog.Builder(this)
+                                        .SetMessage(Resource.String.mtc_disconnect_warn)
+                                        .SetTitle(Resource.String.alert_title_warning)
+                                        .SetPositiveButton(Resource.String.button_yes, (s, e) =>
+                                        {
+                                            DetectAdapter(address, name);
+                                        })
+                                        .SetNegativeButton(Resource.String.button_no, (s, e) =>
+                                        {
+                                        })
+                                        .Show();
+                                    break;
+                                }
                                 DetectAdapter(address, name);
                                 break;
 

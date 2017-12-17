@@ -1627,7 +1627,7 @@ namespace BmwDeepObd
                 }
                 bool ignoreDismiss = false;
                 AlertDialog alertDialog = new AlertDialog.Builder(_context)
-                    .SetMessage(Resource.String.microntek_disconnect_warn)
+                    .SetMessage(Resource.String.mtc_disconnect_warn)
                     .SetTitle(Resource.String.alert_title_warning)
                     .SetPositiveButton(Resource.String.button_yes, (s, e) =>
                     {
