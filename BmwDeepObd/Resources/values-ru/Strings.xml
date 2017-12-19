@@ -114,8 +114,7 @@
   <string name="title_other_devices">Другие доступные устройства</string>
   <string name="button_scan">Поиск устройств</string>
   <string name="detect_adapter">Определение типа устройства</string>
-  <!--Translate-->
-  <string name="adapter_connection_mtc_failed">Не удалось установить Bloetooth соединение с устройством.\nPlease try to delete the adapter and connect it again to fix this problem.\nReconnecting the smartphone may also help to improve the communication.\nUse OBD adapters with BC417 Bluetooth chip.</string>
+  <string name="adapter_connection_mtc_failed">Не удалось установить соединение с Bluetooth адаптером.\nПопробуйте устранить эту проблему путём удаления и нового подключения адаптера.\nПовторное подключение смартфона также может улучшить качество связи.\nИспользуйте OBD адаптер с BC417 Bluetooth чипом.</string>
   <string name="adapter_connection_failed">Не удалось установить Bloetooth соединение с устройством.\nЗакройте другие приложения, если они используют это соединение или перезагрузите ваше Android устройство.\nХотите все равно использовать это устройство (Пакеты данных будут посланы без изменений)?</string>
   <string name="unknown_adapter_type">Не установлен тип устройства.\nХотите все равно использовать это устройство (Пакеты данных будут посланы без изменений)?</string>
   <string name="invalid_adapter_type">ELM327 устройство поддерживает не все необходимые команды и несовместимо с этим приложением.</string>
@@ -124,14 +123,13 @@
   <string name="adapter_elm_replacement">ELM327 устройства медленные и поддерживают только D-CAN (автомобили начиная с 3/2007).\nВы можете купить улучшенную прошивку\n<a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>github.com/uholeschak/ediabaslib</a>.</string>
   <string name="adapter_cfg_required">Устройство, возможно, требуется настроить.\nХотите получить доступ к конфигурации устройства?</string>
   <string name="adapter_fw_update">Доступно обновление для этого устройства.\nХотите получить доступ к конфигурации устройства, чтобы установить обновление?</string>
-  <!--Translate-->
-  <string name="bt_device_connected">(Connected)</string>
-  <string name="bt_device_menu_tite">Choose an operation for this device</string>
-  <string name="bt_device_select">Select OBD adapter</string>
-  <string name="bt_device_connect_obd">Connect as OBD adapter</string>
-  <string name="bt_device_connect_phone">Connect as phone</string>
-  <string name="bt_device_disconnect_phone">Disconnect phone</string>
-  <string name="bt_device_delete">Delete device</string>
+  <string name="bt_device_connected">(Подключено)</string>
+  <string name="bt_device_menu_tite">Выберите одну из нижеперечисленных опций для этого устройства</string>
+  <string name="bt_device_select">Выбрать OBD адаптер</string>
+  <string name="bt_device_connect_obd">Подключить как OBD адаптер</string>
+  <string name="bt_device_connect_phone">Подключить как телефон</string>
+  <string name="bt_device_disconnect_phone">Отсоединить телефон</string>
+  <string name="bt_device_delete">Удалить устройство</string> 
 
   <!-- tabs_activate -->
   <string name="button_active">Активна</string>
@@ -191,8 +189,7 @@
   <string name="select_manufacturer_vw">VW</string>
 
   <!-- Bluetooth -->
-  <!--Translate-->
-  <string name="mtc_disconnect_warn">For a stable communication with the adapter it is recommended to pair any additional smartphone with the radio.\nDo you want to continue anyway?</string>
+  <string name="mtc_disconnect_warn">Для стабильной связи с адаптером, соедините радио с любым имеющимся смартфоном.\nХотите продолжить без подключения смартфона?</string>
 
   <!-- Wi-Fi-->
   <string name="connected_with_wifi_adapter">В настоящее время вы подключены к Wi-Fi адаптеру.\nДля получения доступа в интернет необходимо отключить адаптер.\nОтключить Wi-Fi?</string>
