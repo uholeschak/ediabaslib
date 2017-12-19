@@ -2890,6 +2890,28 @@ namespace BmwDeepObd
                     sb.Append(string.Format("\nManufacturer: {0}", ManufacturerName()));
                     sb.Append(string.Format("\nClass name: {0}", classType.FullName));
 
+                    if (MtcBtServiceBound)
+                    {
+                        sb.Append(string.Format("\nMTC API Version: {0}", _mtcServiceConnection.ApiVersion));
+                        try
+                        {
+                            IList<string> matchList = _mtcServiceConnection.GetMatchList();
+                            foreach (string device in matchList)
+                            {
+                                sb.Append(string.Format("\nMTC match device: {0}", device));
+                            }
+                            IList<string> deviceList = _mtcServiceConnection.GetDeviceList();
+                            foreach (string device in deviceList)
+                            {
+                                sb.Append(string.Format("\nMTC found device: {0}", device));
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+
                     if (!string.IsNullOrEmpty(message))
                     {
                         sb.Append("\nInformation:\n");
