@@ -973,10 +973,14 @@ namespace BmwDeepObd
             try
             {
                 Intent startServiceIntent = new Intent();
-                startServiceIntent.SetComponent(new ComponentName("android.microntek.mtcser", "android.microntek.mtcser.BlueToothService"));
+                startServiceIntent.SetComponent(new ComponentName(MtcServiceConnection.ServicePkg, MtcServiceConnection.ServiceClsV1));
                 if (!_context.BindService(startServiceIntent, _mtcServiceConnection, Bind.AutoCreate))
                 {
-                    return false;
+                    startServiceIntent.SetComponent(new ComponentName(MtcServiceConnection.ServicePkg, MtcServiceConnection.ServiceClsV2));
+                    if (!_context.BindService(startServiceIntent, _mtcServiceConnection, Bind.AutoCreate))
+                    {
+                        return false;
+                    }
                 }
             }
             catch (Exception)
