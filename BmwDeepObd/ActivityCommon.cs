@@ -2890,25 +2890,32 @@ namespace BmwDeepObd
                     sb.Append(string.Format("\nManufacturer: {0}", ManufacturerName()));
                     sb.Append(string.Format("\nClass name: {0}", classType.FullName));
 
-                    if (MtcBtServiceBound)
+                    if (MtcBtService)
                     {
-                        sb.Append(string.Format("\nMTC API Version: {0}", _mtcServiceConnection.ApiVersion));
-                        try
+                        if (MtcBtServiceBound)
                         {
-                            IList<string> matchList = _mtcServiceConnection.GetMatchList();
-                            foreach (string device in matchList)
+                            sb.Append(string.Format("\nMTC API Version: {0}", _mtcServiceConnection.ApiVersion));
+                            try
                             {
-                                sb.Append(string.Format("\nMTC match device: {0}", device));
+                                IList<string> matchList = _mtcServiceConnection.GetMatchList();
+                                foreach (string device in matchList)
+                                {
+                                    sb.Append(string.Format("\nMTC match device: {0}", device));
+                                }
+                                IList<string> deviceList = _mtcServiceConnection.GetDeviceList();
+                                foreach (string device in deviceList)
+                                {
+                                    sb.Append(string.Format("\nMTC found device: {0}", device));
+                                }
                             }
-                            IList<string> deviceList = _mtcServiceConnection.GetDeviceList();
-                            foreach (string device in deviceList)
+                            catch (Exception)
                             {
-                                sb.Append(string.Format("\nMTC found device: {0}", device));
+                                // ignored
                             }
                         }
-                        catch (Exception)
+                        else
                         {
-                            // ignored
+                            sb.Append("\nMTC service not bound");
                         }
                     }
 
