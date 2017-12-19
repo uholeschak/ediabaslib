@@ -301,7 +301,7 @@ namespace BmwDeepObd
                 IList<string> matchList = mtcServiceConnection.GetMatchList();
                 foreach (string device in matchList)
                 {
-                    if (ExtractMtcDeviceInfo(mtcServiceConnection.ApiVersion, device, out string name, out string address))
+                    if (ExtractMtcDeviceInfo(1, device, out string name, out string address))
                     {
                         string mac = address.Replace(":", string.Empty);
                         if (string.Compare(mac, nowDevAddrString, StringComparison.OrdinalIgnoreCase) == 0)
@@ -313,7 +313,7 @@ namespace BmwDeepObd
                 }
                 foreach (string device in deviceList)
                 {
-                    if (ExtractMtcDeviceInfo(mtcServiceConnection.ApiVersion, device, out string name, out string address))
+                    if (ExtractMtcDeviceInfo(1, device, out string name, out string address))
                     {
                         _newDevicesArrayAdapter.Add(name + "\n" + address);
                     }
@@ -332,14 +332,13 @@ namespace BmwDeepObd
         /// <summary>
         /// Extract device info for MTC devices
         /// </summary>
-        /// <param name="apiVersion">API version: 1,2</param>
+        /// <param name="offset">MAC offset: 0, 1</param>
         /// <param name="device">Complete device info text</param>
         /// <param name="name">Device name</param>
         /// <param name="address">Device address</param>
         /// <returns>True: Success</returns>
-        private static bool ExtractMtcDeviceInfo(int apiVersion, string device, out string name, out string address)
+        private static bool ExtractMtcDeviceInfo(int offset, string device, out string name, out string address)
         {
-            int offset = apiVersion >= 2 ? 1 : 0;
             name = string.Empty;
             address = string.Empty;
             if (device.Length < offset + 12)
