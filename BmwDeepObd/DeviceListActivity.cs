@@ -301,7 +301,7 @@ namespace BmwDeepObd
                 IList<string> matchList = mtcServiceConnection.GetMatchList();
                 foreach (string device in matchList)
                 {
-                    if (ExtractMtcDeviceInfo(device, out string name, out string address, out string _))
+                    if (ExtractMtcDeviceInfo(mtcServiceConnection.ApiVersion, device, out string name, out string address))
                     {
                         string mac = address.Replace(":", string.Empty);
                         if (string.Compare(mac, nowDevAddrString, StringComparison.OrdinalIgnoreCase) == 0)
@@ -313,7 +313,7 @@ namespace BmwDeepObd
                 }
                 foreach (string device in deviceList)
                 {
-                    if (ExtractMtcDeviceInfo(device, out string name, out string address, out string _))
+                    if (ExtractMtcDeviceInfo(mtcServiceConnection.ApiVersion, device, out string name, out string address))
                     {
                         _newDevicesArrayAdapter.Add(name + "\n" + address);
                     }
@@ -332,17 +332,16 @@ namespace BmwDeepObd
         /// <summary>
         /// Extract device info for MTC devices
         /// </summary>
+        /// <param name="apiVersion">API version: 1,2</param>
         /// <param name="device">Complete device info text</param>
         /// <param name="name">Device name</param>
         /// <param name="address">Device address</param>
-        /// <param name="typeCode">Device type code</param>
         /// <returns>True: Success</returns>
-        private static bool ExtractMtcDeviceInfo(string device, out string name, out string address, out string typeCode)
+        private static bool ExtractMtcDeviceInfo(int apiVersion, string device, out string name, out string address)
         {
-            int offset = 1;
+            int offset = apiVersion >= 2 ? 1 : 0;
             name = string.Empty;
             address = string.Empty;
-            typeCode = string.Empty;
             if (device.Length < offset + 12)
             {
                 return false;
@@ -360,7 +359,6 @@ namespace BmwDeepObd
             }
             address = sb.ToString();
             name = device.Substring(offset + 12);
-            typeCode = device.Substring(0, 1);
             return true;
         }
 

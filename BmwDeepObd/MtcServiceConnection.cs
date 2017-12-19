@@ -11,6 +11,9 @@ namespace BmwDeepObd
         static readonly string Tag = typeof(MtcServiceConnection).FullName;
 #endif
         public const string InterfaceToken = @"android.microntek.mtcser.BTServiceInf";
+        public const string ServicePkg = @"android.microntek.mtcser";
+        public const string ServiceClsV1 = @"android.microntek.mtcser.BTSerialService";
+        public const string ServiceClsV2 = @"android.microntek.mtcser.BlueToothService";
         public delegate void ServiceConnectedDelegate(bool connected);
         // ReSharper disable once NotAccessedField.Local
         private readonly Context _context;
@@ -31,6 +34,8 @@ namespace BmwDeepObd
         }
         public bool Connected => _binder != null;
 
+        public int ApiVersion { get; private set; }
+
         public MtcServiceConnection(Context context, ServiceConnectedDelegate connectedHandler = null)
         {
             _context = context;
@@ -39,6 +44,9 @@ namespace BmwDeepObd
 
         public void OnServiceConnected(ComponentName name, IBinder service)
         {
+#if DEBUG
+            Android.Util.Log.Info(Tag, string.Format("MTC Service connected: {0}", name));
+#endif
             _binder = service;
             if (_binder == null)
             {
@@ -62,9 +70,17 @@ namespace BmwDeepObd
 #endif
                 _bound = false;
             }
+            if (name?.ClassName != null && String.Compare(name.ClassName, ServiceClsV1, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                ApiVersion = 1;
+            }
+            else
+            {
+                ApiVersion = 2;
+            }
             _connectedHandler?.Invoke(Bound);
 #if DEBUG
-            Android.Util.Log.Info(Tag, string.Format("MTC Service connected: {0}", Bound));
+            Android.Util.Log.Info(Tag, string.Format("MTC Service connected: {0}, Version: {1}", Bound, ApiVersion));
 #endif
         }
 
@@ -72,6 +88,7 @@ namespace BmwDeepObd
         {
             _binder = null;
             Bound = false;
+            ApiVersion = 0;
             _connectedHandler?.Invoke(Bound);
 #if DEBUG
             Android.Util.Log.Info(Tag, "MTC Service disconnected");
