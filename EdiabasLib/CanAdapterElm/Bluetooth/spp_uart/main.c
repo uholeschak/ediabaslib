@@ -65,7 +65,7 @@ void initAppData(void)
     theSppApp.name_length = PsRetrieve(PSKEY_USR_NAME, theSppApp.name, sizeof(theSppApp.name));
     if ((theSppApp.name_length < 1) || (theSppApp.name_length > sizeof(theSppApp.name)))
     {
-        const uint8 name[] = {'D','e','e','p',' ','O','B','D',' ','B','M','W'};
+        const uint8 name[] = {'D','e','e','p',' ','O','B','D'};
 
         memcpy(theSppApp.name, name, sizeof(name));
         theSppApp.name_length = sizeof(name);
@@ -136,6 +136,10 @@ static void app_handler(Task task, MessageId id, Message message)
         {
             ConnectionChangeLocalName(theSppApp.name_length, theSppApp.name);
             ConnectionReadLocalAddr(task);
+            /* Configure Mode4 Security Settings */
+            ConnectionSmSecModeConfig(task, cl_sm_wae_acl_owner_none, FALSE, TRUE);
+            /* Turn off all SDP security */
+            ConnectionSmSetSecurityLevel(protocol_l2cap, 1, ssp_secl4_l0, TRUE, FALSE, FALSE);
             /* Connection Library initialisation was a success */
             sppDevInit();
         }
