@@ -373,14 +373,14 @@ namespace BmwDeepObd
             bool expertMode = _checkBoxExpert.Checked;
             _buttonRead.Enabled = bEnabled;
             _buttonWrite.Enabled = bEnabled;
-            _editTextBtPin.Enabled = bEnabled && _btPin != null && _btPin.Length >= 4;
+            _editTextBtPin.Enabled = bEnabled && !_activityCommon.MtcBtService && _btPin != null && _btPin.Length >= 4;
             int maxPinLength = (_btPin != null && _btPin.Length > 0) ? _btPin.Length : 4;
             _editTextBtPin.SetFilters(new Android.Text.IInputFilter[] { new Android.Text.InputFilterLengthFilter(maxPinLength) });
             if (!_editTextBtPin.Enabled)
             {
                 _editTextBtPin.Text = string.Empty;
             }
-            _editTextBtName.Enabled = bEnabled && _btName != null && _btName.Length > 0;
+            _editTextBtName.Enabled = bEnabled && !_activityCommon.MtcBtService && _btName != null && _btName.Length > 0;
             int maxTextLength = (_btName != null && _btName.Length > 0) ? _btName.Length : 16;
             _editTextBtName.SetFilters(new Android.Text.IInputFilter[] { new Android.Text.InputFilterLengthFilter(maxTextLength) });
             if (!_editTextBtName.Enabled)
