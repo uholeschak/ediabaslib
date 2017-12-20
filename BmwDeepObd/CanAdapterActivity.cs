@@ -371,19 +371,20 @@ namespace BmwDeepObd
             bool bEnabled = !IsJobRunning();
             bool fwUpdateEnabled = bEnabled;
             bool expertMode = _checkBoxExpert.Checked;
+            bool mtcService = _activityCommon.MtcBtService;
             _buttonRead.Enabled = bEnabled;
             _buttonWrite.Enabled = bEnabled;
-            _editTextBtPin.Enabled = bEnabled && !_activityCommon.MtcBtService && _btPin != null && _btPin.Length >= 4;
+            _editTextBtPin.Enabled = bEnabled && !mtcService && _btPin != null && _btPin.Length >= 4;
             int maxPinLength = (_btPin != null && _btPin.Length > 0) ? _btPin.Length : 4;
             _editTextBtPin.SetFilters(new Android.Text.IInputFilter[] { new Android.Text.InputFilterLengthFilter(maxPinLength) });
-            if (!_editTextBtPin.Enabled)
+            if (!_editTextBtPin.Enabled && !mtcService)
             {
                 _editTextBtPin.Text = string.Empty;
             }
-            _editTextBtName.Enabled = bEnabled && !_activityCommon.MtcBtService && _btName != null && _btName.Length > 0;
+            _editTextBtName.Enabled = bEnabled && !mtcService && _btName != null && _btName.Length > 0;
             int maxTextLength = (_btName != null && _btName.Length > 0) ? _btName.Length : 16;
             _editTextBtName.SetFilters(new Android.Text.IInputFilter[] { new Android.Text.InputFilterLengthFilter(maxTextLength) });
-            if (!_editTextBtName.Enabled)
+            if (!_editTextBtName.Enabled && !mtcService)
             {
                 _editTextBtName.Text = string.Empty;
             }
@@ -449,13 +450,13 @@ namespace BmwDeepObd
                     _spinnerCanAdapterMode.SetSelection(indexMode);
                 }
 
-                if (_editTextBtPin.Enabled && _btPin != null)
+                if ((_editTextBtPin.Enabled || mtcService) && _btPin != null)
                 {
                     string btPin = PinDataToString(_btPin);
                     _editTextBtPin.Text = btPin.Length >= 4 ? btPin : "1234";
                 }
 
-                if (_editTextBtName.Enabled && _btName != null)
+                if ((_editTextBtName.Enabled || mtcService) && _btName != null)
                 {
                     try
                     {
