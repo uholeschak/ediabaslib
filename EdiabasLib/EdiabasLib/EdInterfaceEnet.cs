@@ -395,7 +395,10 @@ namespace EdiabasLib
                 TcpDiagStream = TcpDiagClient.GetStream();
                 TcpDiagRecLen = 0;
                 LastTcpDiagRecTime = DateTime.MinValue.Ticks;
-                TcpDiagRecQueue.Clear();
+                lock (TcpDiagStreamRecLock)
+                {
+                    TcpDiagRecQueue.Clear();
+                }
                 StartReadTcpDiag(6);
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Connected");
                 ReconnectRequired = false;
@@ -479,9 +482,7 @@ namespace EdiabasLib
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                 return false;
             }
-            EdiabasNet.ErrorCodes cachedErrorCode;
-            byte[] cachedResponse;
-            if (ReadCachedTransmission(sendData, out cachedResponse, out cachedErrorCode))
+            if (ReadCachedTransmission(sendData, out byte[] cachedResponse, out EdiabasNet.ErrorCodes cachedErrorCode))
             {
                 if (cachedErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
@@ -501,8 +502,7 @@ namespace EdiabasLib
                     return false;
                 }
             }
-            int recLength;
-            EdiabasNet.ErrorCodes errorCode = ObdTrans(sendData, sendData.Length, ref RecBuffer, out recLength);
+            EdiabasNet.ErrorCodes errorCode = ObdTrans(sendData, sendData.Length, ref RecBuffer, out int recLength);
             if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
                 if (errorCode == EdiabasNet.ErrorCodes.EDIABAS_IFH_0003)
@@ -788,15 +788,27 @@ namespace EdiabasLib
 #pragma warning restore 618
                 return;
             }
+            // ReSharper disable once UsePatternMatching
             ConnectParameterType connectParameter = ConnectParameterProtected as ConnectParameterType;
             if (connectParameter == null)
             {
                 throw new Exception("No connect parameter");
             }
             Android.Net.Network boundNetwork = connectParameter.ConnectivityManager.BoundNetworkForProcess;
+            Android.Net.Network bindNetwork = null;
+            Android.Net.Network[] networks = connectParameter.ConnectivityManager.GetAllNetworks();
+            foreach (Android.Net.Network network in networks)
+            {
+                Android.Net.NetworkInfo networkInfo = connectParameter.ConnectivityManager.GetNetworkInfo(network);
+                if (networkInfo != null && networkInfo.IsConnected && networkInfo.Type == Android.Net.ConnectivityType.Wifi)
+                {
+                    bindNetwork = network;
+                    break;
+                }
+            }
             try
             {
-                connectParameter.ConnectivityManager.BindProcessToNetwork(null);
+                connectParameter.ConnectivityManager.BindProcessToNetwork(bindNetwork);
                 command();
             }
             finally
@@ -1311,8 +1323,7 @@ namespace EdiabasLib
 
         private void Nr78DictAdd(byte deviceAddr, bool enableLogging)
         {
-            int retries;
-            if (Nr78Dict.TryGetValue(deviceAddr, out retries))
+            if (Nr78Dict.TryGetValue(deviceAddr, out int retries))
             {
                 Nr78Dict.Remove(deviceAddr);
                 retries++;
