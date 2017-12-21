@@ -505,7 +505,7 @@ namespace BmwDeepObd
                                     adapterType = AdapterTypeDetection(bluetoothSocket);
                                     if (_activityCommon.MtcBtService && adapterType == AdapterType.Unknown)
                                     {
-                                        for (int retry = 0; retry < 10; retry++)
+                                        for (int retry = 0; retry < 20; retry++)
                                         {
                                             LogString("Retry connect");
                                             bluetoothSocket.Close();
