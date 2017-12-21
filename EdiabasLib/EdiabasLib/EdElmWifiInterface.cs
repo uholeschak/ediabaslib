@@ -272,15 +272,27 @@ namespace EdiabasLib
 #pragma warning restore 618
                 return;
             }
+            // ReSharper disable once UsePatternMatching
             ConnectParameterType connectParameter = ConnectParameter as ConnectParameterType;
             if (connectParameter == null)
             {
                 throw new Exception("No connect parameter");
             }
             Android.Net.Network boundNetwork = connectParameter.ConnectivityManager.BoundNetworkForProcess;
+            Android.Net.Network bindNetwork = null;
+            Android.Net.Network[] networks = connectParameter.ConnectivityManager.GetAllNetworks();
+            foreach (Android.Net.Network network in networks)
+            {
+                Android.Net.NetworkInfo networkInfo = connectParameter.ConnectivityManager.GetNetworkInfo(network);
+                if (networkInfo != null && networkInfo.IsConnected && networkInfo.Type == Android.Net.ConnectivityType.Wifi)
+                {
+                    bindNetwork = network;
+                    break;
+                }
+            }
             try
             {
-                connectParameter.ConnectivityManager.BindProcessToNetwork(null);
+                connectParameter.ConnectivityManager.BindProcessToNetwork(bindNetwork);
                 command();
             }
             finally
