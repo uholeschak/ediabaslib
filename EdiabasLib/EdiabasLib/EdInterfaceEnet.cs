@@ -794,26 +794,29 @@ namespace EdiabasLib
             {
                 throw new Exception("No connect parameter");
             }
-            Android.Net.Network boundNetwork = connectParameter.ConnectivityManager.BoundNetworkForProcess;
-            Android.Net.Network bindNetwork = null;
-            Android.Net.Network[] networks = connectParameter.ConnectivityManager.GetAllNetworks();
-            foreach (Android.Net.Network network in networks)
+            if (connectParameter.ConnectivityManager != null)
             {
-                Android.Net.NetworkInfo networkInfo = connectParameter.ConnectivityManager.GetNetworkInfo(network);
-                if (networkInfo != null && networkInfo.IsConnected && networkInfo.Type == Android.Net.ConnectivityType.Wifi)
+                Android.Net.Network boundNetwork = connectParameter.ConnectivityManager.BoundNetworkForProcess;
+                Android.Net.Network bindNetwork = null;
+                Android.Net.Network[] networks = connectParameter.ConnectivityManager.GetAllNetworks();
+                foreach (Android.Net.Network network in networks)
                 {
-                    bindNetwork = network;
-                    break;
+                    Android.Net.NetworkInfo networkInfo = connectParameter.ConnectivityManager.GetNetworkInfo(network);
+                    if (networkInfo != null && networkInfo.IsConnected && networkInfo.Type == Android.Net.ConnectivityType.Wifi)
+                    {
+                        bindNetwork = network;
+                        break;
+                    }
                 }
-            }
-            try
-            {
-                connectParameter.ConnectivityManager.BindProcessToNetwork(bindNetwork);
-                command();
-            }
-            finally
-            {
-                connectParameter.ConnectivityManager.BindProcessToNetwork(boundNetwork);
+                try
+                {
+                    connectParameter.ConnectivityManager.BindProcessToNetwork(bindNetwork);
+                    command();
+                }
+                finally
+                {
+                    connectParameter.ConnectivityManager.BindProcessToNetwork(boundNetwork);
+                }
             }
 #else
             command();
