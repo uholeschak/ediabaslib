@@ -240,7 +240,7 @@ namespace CarSimulator
                 string nameText = Encoding.UTF8.GetString(btName, 0, nameLength);
                 sr.Append(nameText);
                 _form.UpdateTestStatusText(sr.ToString());
-                if (string.Compare(nameText, DefaultBtName, StringComparison.Ordinal) != 0)
+                if (adapterType == 5 || string.Compare(nameText, DefaultBtName, StringComparison.Ordinal) != 0)
                 {
                     sr.Append("\r\n");
                     sr.Append("Setting default name!");
