@@ -778,7 +778,7 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        Ediabas.ResolveSgbdFile(pageInfo.JobsInfo.Sgbd);
+                        Ediabas.ResolveSgbdFile(pageInfo.JobsInfo?.Sgbd);
                     }
                     catch (Exception ex)
                     {
