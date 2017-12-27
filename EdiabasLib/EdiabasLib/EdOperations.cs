@@ -2080,14 +2080,17 @@ namespace EdiabasLib
 
             string key = arg1.GetStringData().ToUpper(Culture);
             byte[] data;
-            if (ediabas._sharedDataDict.TryGetValue(key, out data))
+            lock (SharedDataLock)
             {
-                ediabas._flags.Carry = false;
-            }
-            else
-            {
-                ediabas._flags.Carry = true;
-                data = ByteArray0;
+                if (SharedDataDict.TryGetValue(key, out data))
+                {
+                    ediabas._flags.Carry = false;
+                }
+                else
+                {
+                    ediabas._flags.Carry = true;
+                    data = ByteArray0;
+                }
             }
             arg0.SetArrayData(data);
         }
@@ -2096,13 +2099,16 @@ namespace EdiabasLib
         private static void OpShmset(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             string key = arg0.GetStringData().ToUpper(Culture);
-            if (ediabas._sharedDataDict.ContainsKey(key))
+            lock (SharedDataLock)
             {
-                ediabas._sharedDataDict[key] = arg1.GetArrayData();
-            }
-            else
-            {
-                ediabas._sharedDataDict.Add(key, arg1.GetArrayData());
+                if (SharedDataDict.ContainsKey(key))
+                {
+                    SharedDataDict[key] = arg1.GetArrayData();
+                }
+                else
+                {
+                    SharedDataDict.Add(key, arg1.GetArrayData());
+                }
             }
         }
 
