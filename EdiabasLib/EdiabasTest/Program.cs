@@ -319,11 +319,9 @@ namespace EdiabasTest
             {
                 if (resultSets.Count > 0)
                 {
-                    EdiabasNet.ResultData resultData;
-                    if (resultSets[0].TryGetValue("VARIANTE", out resultData))
+                    if (resultSets[0].TryGetValue("VARIANTE", out EdiabasNet.ResultData resultData))
                     {
-                        string data = resultData.OpData as string;
-                        if (data != null)
+                        if (resultData.OpData is string data)
                         {
                             _outputWriter.WriteLine("Variant: " + data);
                         }
