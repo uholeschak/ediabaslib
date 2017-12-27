@@ -104,9 +104,8 @@ namespace EdiabasCall
                     return 1;
                 }
 
-                string apiVersion;
                 _api6 = false;
-                if (!API.apiCheckVersion(API.APICOMPATIBILITYVERSION, out apiVersion))
+                if (!API.apiCheckVersion(API.APICOMPATIBILITYVERSION, out string apiVersion))
                 {
                     apiVersion = "6.0.0";
                     _api6 = true;
@@ -147,9 +146,9 @@ namespace EdiabasCall
                 Type type = typeof(API);
                 FieldInfo info = type.GetField("a", BindingFlags.NonPublic | BindingFlags.Static);
                 object value = info?.GetValue(null);
-                if (value is uint)
+                if (value is uint handle)
                 {
-                    _apiHandle = (uint)value;
+                    _apiHandle = handle;
                 }
 
                 if (storeResults)
@@ -298,8 +297,7 @@ namespace EdiabasCall
 
         static void PrintProgress()
         {
-            string jobInfo;
-            int jobProgress = API.apiJobInfo(out jobInfo);
+            int jobProgress = API.apiJobInfo(out string jobInfo);
             if ((jobProgress != _lastJobProgress) || (jobInfo != _lastJobInfo))
             {
                 string message = string.Empty;
@@ -322,14 +320,12 @@ namespace EdiabasCall
 
         static void PrintResults(List<string> formatList, bool printAllTypes)
         {
-            string variantString;
-            if (API.apiResultVar(out variantString))
+            if (API.apiResultVar(out string variantString))
             {
                 _outputWriter.WriteLine("Variant: "+ variantString);
             }
 
-            ushort resultSets;
-            if (API.apiResultSets(out resultSets))
+            if (API.apiResultSets(out ushort resultSets))
             {
                 for (ushort set = 0; set <= resultSets; set++)
                 {
@@ -338,8 +334,7 @@ namespace EdiabasCall
                         break;
                     }
                     _outputWriter.WriteLine(string.Format(Culture, "DATASET: {0}", set));
-                    ushort results;
-                    if (API.apiResultNumber(out results, set))
+                    if (API.apiResultNumber(out ushort results, set))
                     {
                         Dictionary<string, string> resultDict = new Dictionary<string,string>();
                         for (ushort result = 1; result <= results; result++)
@@ -348,13 +343,11 @@ namespace EdiabasCall
                             {
                                 break;
                             }
-                            string resultName;
-                            if (API.apiResultName(out resultName, result, set))
+                            if (API.apiResultName(out string resultName, result, set))
                             {
                                 string resultText = string.Empty;
-                                int resultFormat;
 
-                                if (API.apiResultFormat(out resultFormat, resultName, set))
+                                if (API.apiResultFormat(out int resultFormat, resultName, set))
                                 {
                                     switch (resultFormat)
                                     {
@@ -362,16 +355,14 @@ namespace EdiabasCall
                                             {
                                                 if (_apiHandle == 0)
                                                 {
-                                                    char resultChar;
-                                                    if (API.apiResultChar(out resultChar, resultName, set))
+                                                    if (API.apiResultChar(out char resultChar, resultName, set))
                                                     {
                                                         resultText = string.Format(Culture, "C: {0} 0x{0:X02}", (sbyte)resultChar);
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    byte resultByte;
-                                                    if (__api32ResultChar(_apiHandle, out resultByte, resultName, set))
+                                                    if (__api32ResultChar(_apiHandle, out byte resultByte, resultName, set))
                                                     {
                                                         resultText = string.Format(Culture, "C: {0} 0x{0:X02}", (sbyte)resultByte);
                                                     }
@@ -381,8 +372,7 @@ namespace EdiabasCall
 
                                         case API.APIFORMAT_BYTE:
                                             {
-                                                byte resultByte;
-                                                if (API.apiResultByte(out resultByte, resultName, set))
+                                                if (API.apiResultByte(out byte resultByte, resultName, set))
                                                 {
                                                     resultText = string.Format(Culture, "B: {0} 0x{0:X02}", resultByte);
                                                 }
@@ -391,8 +381,7 @@ namespace EdiabasCall
 
                                         case API.APIFORMAT_INTEGER:
                                             {
-                                                short resultShort;
-                                                if (API.apiResultInt(out resultShort, resultName, set))
+                                                if (API.apiResultInt(out short resultShort, resultName, set))
                                                 {
                                                     resultText = string.Format(Culture, "I: {0} 0x{0:X04}", resultShort);
                                                 }
@@ -401,8 +390,7 @@ namespace EdiabasCall
 
                                         case API.APIFORMAT_WORD:
                                             {
-                                                ushort resultWord;
-                                                if (API.apiResultWord(out resultWord, resultName, set))
+                                                if (API.apiResultWord(out ushort resultWord, resultName, set))
                                                 {
                                                     resultText = string.Format(Culture, "W: {0} 0x{0:X04}", resultWord);
                                                 }
@@ -411,8 +399,7 @@ namespace EdiabasCall
 
                                         case API.APIFORMAT_LONG:
                                             {
-                                                int resultInt;
-                                                if (API.apiResultLong(out resultInt, resultName, set))
+                                                if (API.apiResultLong(out int resultInt, resultName, set))
                                                 {
                                                     resultText = string.Format(Culture, "L: {0} 0x{0:X08}", resultInt);
                                                 }
@@ -421,8 +408,7 @@ namespace EdiabasCall
 
                                         case API.APIFORMAT_DWORD:
                                             {
-                                                uint resultUint;
-                                                if (API.apiResultDWord(out resultUint, resultName, set))
+                                                if (API.apiResultDWord(out uint resultUint, resultName, set))
                                                 {
                                                     resultText = string.Format(Culture, "D: {0} 0x{0:X08}", resultUint);
                                                 }
@@ -431,8 +417,7 @@ namespace EdiabasCall
 
                                         case API.APIFORMAT_REAL:
                                             {
-                                                double resultDouble;
-                                                if (API.apiResultReal(out resultDouble, resultName, set))
+                                                if (API.apiResultReal(out double resultDouble, resultName, set))
                                                 {
                                                     resultText = string.Format(Culture, "R: {0}", resultDouble);
                                                 }
@@ -443,8 +428,7 @@ namespace EdiabasCall
                                             {
                                                 if (_apiHandle == 0)
                                                 {
-                                                    string resultString;
-                                                    if (API.apiResultText(out resultString, resultName, set, ""))
+                                                    if (API.apiResultText(out string resultString, resultName, set, ""))
                                                     {
                                                         resultText = resultString;
                                                     }
@@ -470,8 +454,7 @@ namespace EdiabasCall
                                                 byte[] resultByteArray;
                                                 if (_api6)
                                                 {
-                                                    ushort resultLengthShort;
-                                                    if (API.apiResultBinary(out resultByteArray, out resultLengthShort, resultName, set))
+                                                    if (API.apiResultBinary(out resultByteArray, out ushort resultLengthShort, resultName, set))
                                                     {
                                                         for (int i = 0; i < resultLengthShort; i++)
                                                         {
@@ -480,8 +463,7 @@ namespace EdiabasCall
                                                     }
                                                     break;
                                                 }
-                                                uint resultLength;
-                                                if (API.apiResultBinaryExt(out resultByteArray, out resultLength, API.APIMAXBINARYEXT, resultName, set))
+                                                if (API.apiResultBinaryExt(out resultByteArray, out uint resultLength, API.APIMAXBINARYEXT, resultName, set))
                                                 {
                                                     for (int i = 0; i < resultLength; i++)
                                                     {
@@ -505,59 +487,41 @@ namespace EdiabasCall
                                                 {
                                                     if (_apiHandle == 0)
                                                     {
-                                                        char resultChar;
-                                                        if (API.apiResultChar(out resultChar, resultName, set))
+                                                        if (API.apiResultChar(out char resultChar, resultName, set))
                                                         {
-                                                            resultText += string.Format(Culture, " {0}", (sbyte)resultChar);
+                                                            resultText += string.Format(Culture, " {0}", (sbyte) resultChar);
                                                         }
                                                     }
                                                     else
                                                     {
-                                                        byte resultByte;
-                                                        if (__api32ResultChar(_apiHandle, out resultByte, resultName, set))
+                                                        if (__api32ResultChar(_apiHandle, out byte resultByte, resultName, set))
                                                         {
-                                                            resultText += string.Format(Culture, " {0}", (sbyte)resultByte);
+                                                            resultText += string.Format(Culture, " {0}", (sbyte) resultByte);
                                                         }
                                                     }
                                                 }
                                                 {
-                                                    byte resultByte;
-                                                    if (API.apiResultByte(out resultByte, resultName, set))
+                                                    if (API.apiResultByte(out byte resultByte, resultName, set))
                                                     {
                                                         resultText += string.Format(Culture, " {0}", resultByte);
                                                     }
-                                                }
-                                                {
-                                                    short resultShort;
-                                                    if (API.apiResultInt(out resultShort, resultName, set))
+                                                    if (API.apiResultInt(out short resultShort, resultName, set))
                                                     {
                                                         resultText += string.Format(Culture, " {0}", resultShort);
                                                     }
-                                                }
-                                                {
-                                                    ushort resultWord;
-                                                    if (API.apiResultWord(out resultWord, resultName, set))
+                                                    if (API.apiResultWord(out ushort resultWord, resultName, set))
                                                     {
                                                         resultText += string.Format(Culture, " {0}", resultWord);
                                                     }
-                                                }
-                                                {
-                                                    int resultInt;
-                                                    if (API.apiResultLong(out resultInt, resultName, set))
+                                                    if (API.apiResultLong(out int resultInt, resultName, set))
                                                     {
                                                         resultText += string.Format(Culture, " {0}", resultInt);
                                                     }
-                                                }
-                                                {
-                                                    uint resultUint;
-                                                    if (API.apiResultDWord(out resultUint, resultName, set))
+                                                    if (API.apiResultDWord(out uint resultUint, resultName, set))
                                                     {
                                                         resultText += string.Format(Culture, " {0}", resultUint);
                                                     }
-                                                }
-                                                {
-                                                    double resultDouble;
-                                                    if (API.apiResultReal(out resultDouble, resultName, set))
+                                                    if (API.apiResultReal(out double resultDouble, resultName, set))
                                                     {
                                                         resultText += string.Format(Culture, " {0}", resultDouble);
                                                     }
@@ -576,8 +540,7 @@ namespace EdiabasCall
                                         {
                                             if (_apiHandle == 0)
                                             {
-                                                string resultString;
-                                                if (API.apiResultText(out resultString, resultName, set, words[1]))
+                                                if (API.apiResultText(out string resultString, resultName, set, words[1]))
                                                 {
                                                     resultText += " F: '" + resultString + "'";
                                                 }
