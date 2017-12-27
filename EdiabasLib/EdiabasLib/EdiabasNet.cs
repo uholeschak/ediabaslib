@@ -2211,6 +2211,9 @@ namespace EdiabasLib
         private static readonly byte[] ByteArray0 = new byte[0];
         private static Dictionary<ErrorCodes, UInt32> _trapBitDict;
         private static bool _firstLog = true;
+        private static readonly object SharedDataLock = new object();
+        private static readonly Dictionary<string, byte[]> SharedDataDict = new Dictionary<string, byte[]>();
+        private static int _instanceCount;
 
         private const string JobNameInit = "INITIALISIERUNG";
         private const string JobNameExit = "ENDE";
@@ -2240,7 +2243,6 @@ namespace EdiabasLib
         private List<Dictionary<string, ResultData>> _resultSetsTemp;
         private readonly Dictionary<string, string> _configDict = new Dictionary<string, string>();
         private readonly Dictionary<string, string> _groupMappingDict = new Dictionary<string, string>();
-        private readonly Dictionary<string, byte[]> _sharedDataDict = new Dictionary<string, byte[]>();
         private long _infoProgressRange;
         private long _infoProgressPos;
         private string _infoProgressText = string.Empty;
@@ -2730,6 +2732,10 @@ namespace EdiabasLib
 
         public EdiabasNet(string config)
         {
+            lock (SharedDataLock)
+            {
+                _instanceCount++;
+            }
             if (_trapBitDict == null)
             {
                 _trapBitDict = new Dictionary<ErrorCodes, UInt32>
@@ -2898,6 +2904,14 @@ namespace EdiabasLib
                         _edInterfaceClass = null;
                     }
                     CloseLog(); // must be closed after interface class
+                    lock (SharedDataLock)
+                    {
+                        _instanceCount--;
+                        if (_instanceCount == 0)
+                        {
+                            SharedDataDict.Clear();
+                        }
+                    }
                 }
 
                 // Note disposing has been done.
