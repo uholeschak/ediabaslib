@@ -51,8 +51,8 @@
     <Compile Include="..\EdiabasLib\EdBluetoothInterfaceAndroid.cs">
       <Link>EdBluetoothInterfaceAndroid.cs</Link>
     </Compile>
-    <Compile Include="..\EdiabasLib\EdBluetoothInterfaceBase.cs">
-      <Link>EdBluetoothInterfaceBase.cs</Link>
+    <Compile Include="..\EdiabasLib\EdCustomAdapterCommon.cs">
+      <Link>EdCustomAdapterCommon.cs</Link>
     </Compile>
     <Compile Include="..\EdiabasLib\EdElmInterface.cs">
       <Link>EdElmInterface.cs</Link>

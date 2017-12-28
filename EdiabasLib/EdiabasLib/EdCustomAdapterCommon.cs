@@ -3,7 +3,7 @@ using System;
 
 namespace EdiabasLib
 {
-    public class EdBluetoothInterfaceBase
+    public class EdCustomAdapterCommon
     {
         // flags
         // ReSharper disable InconsistentNaming
@@ -34,45 +34,45 @@ namespace EdiabasLib
         public const byte KWP1281_TIMEOUT = 60;
         // ReSharper restore InconsistentNaming
 
-        public static EdiabasNet Ediabas { get; set; }
+        public EdiabasNet Ediabas { get; set; }
 
-        public static EdInterfaceObd.Protocol CurrentProtocol { get; protected set; }
+        public EdInterfaceObd.Protocol CurrentProtocol { get; set; }
 
-        public static EdInterfaceObd.Protocol ActiveProtocol { get; protected set; }
+        public EdInterfaceObd.Protocol ActiveProtocol { get; set; }
 
-        public static int CurrentBaudRate { get; protected set; }
+        public int CurrentBaudRate { get; set; }
 
-        public static int ActiveBaudRate { get; protected set; }
+        public int ActiveBaudRate { get; set; }
 
-        public static int CurrentWordLength { get; protected set; }
+        public int CurrentWordLength { get; set; }
 
-        public static int ActiveWordLength { get; protected set; }
+        public int ActiveWordLength { get; set; }
 
-        public static EdInterfaceObd.SerialParity CurrentParity { get; protected set; }
+        public EdInterfaceObd.SerialParity CurrentParity { get; set; }
 
-        public static EdInterfaceObd.SerialParity ActiveParity { get; protected set; }
+        public EdInterfaceObd.SerialParity ActiveParity { get; set; }
 
-        public static int InterByteTime { get; protected set; }
+        public int InterByteTime { get; set; }
 
-        public static bool FastInit { get; protected set; }
+        public bool FastInit { get; set; }
 
-        public static int CanTxId { get; protected set; }
+        public int CanTxId { get; set; }
 
-        public static int CanRxId { get; protected set; }
+        public int CanRxId { get; set; }
 
-        public static EdInterfaceObd.CanFlags CanFlags { get; protected set; }
+        public EdInterfaceObd.CanFlags CanFlags { get; set; }
 
-        public static bool ConvertBaudResponse { get; protected set; }
+        public bool ConvertBaudResponse { get; set; }
 
-        public static bool AutoKeyByteResponse { get; protected set; }
+        public bool AutoKeyByteResponse { get; set; }
 
-        public static int AdapterType { get; protected set; }
+        public int AdapterType { get; set; }
 
-        public static int AdapterVersion { get; protected set; }
+        public int AdapterVersion { get; set; }
 
-        public static long LastCommTick { get; protected set; }
+        public long LastCommTick { get; set; }
 
-        static EdBluetoothInterfaceBase()
+        public EdCustomAdapterCommon()
         {
             CurrentProtocol = EdInterfaceObd.Protocol.Uart;
             ActiveProtocol = EdInterfaceObd.Protocol.Uart;
@@ -90,7 +90,7 @@ namespace EdiabasLib
             AdapterVersion = -1;
         }
 
-        public static byte[] CreateAdapterTelegram(byte[] sendData, int length, bool setDtr)
+        public byte[] CreateAdapterTelegram(byte[] sendData, int length, bool setDtr)
         {
             ConvertBaudResponse = false;
             if ((AdapterType < 0x0002) || (AdapterVersion < 0x0003))
@@ -174,7 +174,7 @@ namespace EdiabasLib
             return resultArray;
         }
 
-        public static byte[] CreatePulseTelegram(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines, int autoKeyByteDelay)
+        public byte[] CreatePulseTelegram(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines, int autoKeyByteDelay)
         {
             ConvertBaudResponse = false;
             AutoKeyByteResponse = false;
@@ -270,7 +270,7 @@ namespace EdiabasLib
             return resultArray;
         }
 
-        public static byte[] CreateCanTelegram(byte[] sendData, int length)
+        public byte[] CreateCanTelegram(byte[] sendData, int length)
         {
             ConvertBaudResponse = false;
             AutoKeyByteResponse = false;
@@ -375,7 +375,7 @@ namespace EdiabasLib
             return resultArray;
         }
 
-        public static bool IsFastInit(UInt64 dataBits, int length, int pulseWidth)
+        public bool IsFastInit(UInt64 dataBits, int length, int pulseWidth)
         {
             return (dataBits == 0x02) && (length == 2) && (pulseWidth == 25);
         }
@@ -406,7 +406,7 @@ namespace EdiabasLib
             return sum;
         }
 
-        public static byte CalcParityFlags()
+        public byte CalcParityFlags()
         {
             byte flags = 0x00;
             switch (CurrentParity)
@@ -434,7 +434,7 @@ namespace EdiabasLib
             return flags;
         }
 
-        public static void UpdateActiveSettings()
+        public void UpdateActiveSettings()
         {
             ActiveProtocol = CurrentProtocol;
             ActiveBaudRate = CurrentBaudRate;
@@ -442,7 +442,7 @@ namespace EdiabasLib
             ActiveParity = CurrentParity;
         }
 
-        public static bool SettingsUpdateRequired()
+        public bool SettingsUpdateRequired()
         {
             switch (CurrentProtocol)
             {

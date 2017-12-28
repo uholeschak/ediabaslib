@@ -1065,6 +1065,7 @@ namespace BmwDeepObd
                     return false;
                 }
                 bool? enabledLocal = null;
+                // ReSharper disable once AssignNullToNotNullAttribute
                 using (StreamReader file = new StreamReader(confFileName))
                 {
                     string line;

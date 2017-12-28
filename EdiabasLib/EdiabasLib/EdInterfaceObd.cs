@@ -1091,7 +1091,7 @@ namespace EdiabasLib
 #if !WindowsCE
             else if (ComPortProtected.ToUpper(Culture).StartsWith(EdBluetoothInterface.PortId))
             {   // automtatic hook of bluetooth functions
-                EdBluetoothInterfaceBase.Ediabas = Ediabas;
+                EdBluetoothInterface.Ediabas = Ediabas;
                 InterfaceConnectFuncInt = EdBluetoothInterface.InterfaceConnect;
                 InterfaceDisconnectFuncInt = EdBluetoothInterface.InterfaceDisconnect;
                 InterfaceSetConfigFuncInt = EdBluetoothInterface.InterfaceSetConfig;

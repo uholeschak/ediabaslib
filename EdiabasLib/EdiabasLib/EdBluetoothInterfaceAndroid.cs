@@ -9,7 +9,7 @@ using Java.Util;
 
 namespace EdiabasLib
 {
-    public class EdBluetoothInterface : EdBluetoothInterfaceBase
+    public class EdBluetoothInterface
     {
         public class ConnectParameterType
         {
@@ -38,6 +38,7 @@ namespace EdiabasLib
         private const int ReadTimeoutOffsetLong = 1000;
         private const int ReadTimeoutOffsetShort = 100;
         protected const int EchoTimeout = 500;
+        private static readonly EdCustomAdapterCommon CustomAdapter = new EdCustomAdapterCommon();
         private static BluetoothSocket _bluetoothSocket;
         private static Stream _bluetoothInStream;
         private static Stream _bluetoothOutStream;
@@ -51,6 +52,12 @@ namespace EdiabasLib
         private static string _connectDeviceAddress = string.Empty;
         private static bool _deviceConnected;
 
+        public static EdiabasNet Ediabas
+        {
+            get => CustomAdapter.Ediabas;
+            set => CustomAdapter.Ediabas = value;
+        }
+
         static EdBluetoothInterface()
         {
         }
@@ -63,12 +70,12 @@ namespace EdiabasLib
             {
                 return true;
             }
-            FastInit = false;
-            ConvertBaudResponse = false;
-            AutoKeyByteResponse = false;
-            AdapterType = -1;
-            AdapterVersion = -1;
-            LastCommTick = DateTime.MinValue.Ticks;
+            CustomAdapter.FastInit = false;
+            CustomAdapter.ConvertBaudResponse = false;
+            CustomAdapter.AutoKeyByteResponse = false;
+            CustomAdapter.AdapterType = -1;
+            CustomAdapter.AdapterVersion = -1;
+            CustomAdapter.LastCommTick = DateTime.MinValue.Ticks;
 
             if (!port.StartsWith(PortId, StringComparison.OrdinalIgnoreCase))
             {
@@ -184,7 +191,7 @@ namespace EdiabasLib
 
                     int connectTimeout = mtcBtService ? 1000 : 2000;
                     ConnectedEvent.WaitOne(connectTimeout, false);
-                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
+                    CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
                 }
                 finally
                 {
@@ -199,16 +206,16 @@ namespace EdiabasLib
 
                 if (_elm327Device)
                 {
-                    _edElmInterface = new EdElmInterface(Ediabas, _bluetoothInStream, _bluetoothOutStream);
+                    _edElmInterface = new EdElmInterface(CustomAdapter.Ediabas, _bluetoothInStream, _bluetoothOutStream);
                     if (mtcBtService && !usedRfCommSocket)
                     {
                         bool connected = false;
                         for (int retry = 0; retry < 20; retry++)
                         {
-                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Test connection");
+                            CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Test connection");
                             if (_edElmInterface.Elm327Init())
                             {
-                                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Connected");
+                                CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Connected");
                                 connected = true;
                                 break;
                             }
@@ -217,11 +224,11 @@ namespace EdiabasLib
                             _bluetoothSocket.Connect();
                             _bluetoothInStream = _bluetoothSocket.InputStream;
                             _bluetoothOutStream = _bluetoothSocket.OutputStream;
-                            _edElmInterface = new EdElmInterface(Ediabas, _bluetoothInStream, _bluetoothOutStream);
+                            _edElmInterface = new EdElmInterface(CustomAdapter.Ediabas, _bluetoothInStream, _bluetoothOutStream);
                         }
                         if (!connected)
                         {
-                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No response from adapter");
+                            CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No response from adapter");
                             InterfaceDisconnect();
                             return false;
                         }
@@ -242,7 +249,7 @@ namespace EdiabasLib
                         bool connected = false;
                         for (int retry = 0; retry < 20; retry++)
                         {
-                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Test connection");
+                            CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Test connection");
                             if (retry > 0)
                             {
                                 _bluetoothSocket.Close();
@@ -252,7 +259,7 @@ namespace EdiabasLib
                             }
                             if (UpdateAdapterInfo(true))
                             {
-                                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Connected");
+                                CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Connected");
                                 connected = true;
                                 break;
                             }
@@ -260,7 +267,7 @@ namespace EdiabasLib
                         _reconnectRequired = false;     // is set by UpdateAdapterInfo()
                         if (!connected)
                         {
-                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No response from adapter");
+                            CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No response from adapter");
                             InterfaceDisconnect();
                             return false;
                         }
@@ -328,12 +335,12 @@ namespace EdiabasLib
             {
                 return EdInterfaceObd.InterfaceErrorResult.ConfigError;
             }
-            CurrentProtocol = protocol;
-            CurrentBaudRate = baudRate;
-            CurrentWordLength = dataBits;
-            CurrentParity = parity;
-            FastInit = false;
-            ConvertBaudResponse = false;
+            CustomAdapter.CurrentProtocol = protocol;
+            CustomAdapter.CurrentBaudRate = baudRate;
+            CustomAdapter.CurrentWordLength = dataBits;
+            CustomAdapter.CurrentParity = parity;
+            CustomAdapter.FastInit = false;
+            CustomAdapter.ConvertBaudResponse = false;
             return EdInterfaceObd.InterfaceErrorResult.NoError;
         }
 
@@ -372,15 +379,15 @@ namespace EdiabasLib
 
         public static bool InterfaceSetInterByteTime(int time)
         {
-            InterByteTime = time;
+            CustomAdapter.InterByteTime = time;
             return true;
         }
 
         public static bool InterfaceSetCanIds(int canTxId, int canRxId, EdInterfaceObd.CanFlags canFlags)
         {
-            CanTxId = canTxId;
-            CanRxId = canRxId;
-            CanFlags = canFlags;
+            CustomAdapter.CanTxId = canTxId;
+            CustomAdapter.CanRxId = canRxId;
+            CustomAdapter.CanFlags = canFlags;
             return true;
         }
 
@@ -430,7 +437,7 @@ namespace EdiabasLib
             {
                 return false;
             }
-            if (AdapterVersion < 0x0008)
+            if (CustomAdapter.AdapterVersion < 0x0008)
             {
                 return false;
             }
@@ -444,16 +451,16 @@ namespace EdiabasLib
 
         public static bool InterfaceSendData(byte[] sendData, int length, bool setDtr, double dtrTimeCorr)
         {
-            ConvertBaudResponse = false;
-            AutoKeyByteResponse = false;
+            CustomAdapter.ConvertBaudResponse = false;
+            CustomAdapter.AutoKeyByteResponse = false;
             if ((_bluetoothSocket == null) || (_bluetoothOutStream == null))
             {
                 return false;
             }
             if (_elm327Device)
             {
-                if ((CurrentProtocol != EdInterfaceObd.Protocol.Uart) ||
-                    (CurrentBaudRate != 115200) || (CurrentWordLength != 8) || (CurrentParity != EdInterfaceObd.SerialParity.None))
+                if ((CustomAdapter.CurrentProtocol != EdInterfaceObd.Protocol.Uart) ||
+                    (CustomAdapter.CurrentBaudRate != 115200) || (CustomAdapter.CurrentWordLength != 8) || (CustomAdapter.CurrentParity != EdInterfaceObd.SerialParity.None))
                 {
                     return false;
                 }
@@ -463,7 +470,7 @@ namespace EdiabasLib
                 }
                 if (_edElmInterface.StreamFailure)
                 {
-                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
+                    CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
                     InterfaceDisconnect();
                     if (!InterfaceConnect(_connectPort, null))
                     {
@@ -475,7 +482,7 @@ namespace EdiabasLib
             }
             if (_reconnectRequired)
             {
-                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
+                CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
                 InterfaceDisconnect();
                 if (!InterfaceConnect(_connectPort, null))
                 {
@@ -486,35 +493,35 @@ namespace EdiabasLib
             }
             try
             {
-                if ((CurrentProtocol == EdInterfaceObd.Protocol.Tp20) ||
-                    (CurrentProtocol == EdInterfaceObd.Protocol.IsoTp))
+                if ((CustomAdapter.CurrentProtocol == EdInterfaceObd.Protocol.Tp20) ||
+                    (CustomAdapter.CurrentProtocol == EdInterfaceObd.Protocol.IsoTp))
                 {
                     UpdateAdapterInfo();
-                    byte[] adapterTel = CreateCanTelegram(sendData, length);
+                    byte[] adapterTel = CustomAdapter.CreateCanTelegram(sendData, length);
                     if (adapterTel == null)
                     {
                         return false;
                     }
                     _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
-                    LastCommTick = Stopwatch.GetTimestamp();
-                    UpdateActiveSettings();
+                    CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
+                    CustomAdapter.UpdateActiveSettings();
                     return true;
                 }
-                if (_rawMode || (CurrentBaudRate == 115200))
+                if (_rawMode || (CustomAdapter.CurrentBaudRate == 115200))
                 {
                     // BMW-FAST
                     if (sendData.Length >= 5 && sendData[1] == 0xF1 && sendData[2] == 0xF1 && sendData[3] == 0xFA && sendData[4] == 0xFA)
                     {   // read clamp status
                         UpdateAdapterInfo();
-                        if (AdapterVersion < 0x000A)
+                        if (CustomAdapter.AdapterVersion < 0x000A)
                         {
-                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Read clamp status not supported");
+                            CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Read clamp status not supported");
                             return false;
                         }
                     }
 
                     _bluetoothOutStream.Write(sendData, 0, length);
-                    LastCommTick = Stopwatch.GetTimestamp();
+                    CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
                     // remove echo
                     byte[] receiveData = new byte[length];
                     if (!InterfaceReceiveData(receiveData, 0, length, EchoTimeout, EchoTimeout, null))
@@ -532,20 +539,20 @@ namespace EdiabasLib
                 else
                 {
                     UpdateAdapterInfo();
-                    byte[] adapterTel = CreateAdapterTelegram(sendData, length, setDtr);
-                    FastInit = false;
+                    byte[] adapterTel = CustomAdapter.CreateAdapterTelegram(sendData, length, setDtr);
+                    CustomAdapter.FastInit = false;
                     if (adapterTel == null)
                     {
                         return false;
                     }
                     _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
-                    LastCommTick = Stopwatch.GetTimestamp();
-                    UpdateActiveSettings();
+                    CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
+                    CustomAdapter.UpdateActiveSettings();
                 }
             }
             catch (Exception ex)
             {
-                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
                 _reconnectRequired = true;
                 return false;
             }
@@ -554,10 +561,10 @@ namespace EdiabasLib
 
         public static bool InterfaceReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog)
         {
-            bool convertBaudResponse = ConvertBaudResponse;
-            bool autoKeyByteResponse = AutoKeyByteResponse;
-            ConvertBaudResponse = false;
-            AutoKeyByteResponse = false;
+            bool convertBaudResponse = CustomAdapter.ConvertBaudResponse;
+            bool autoKeyByteResponse = CustomAdapter.AutoKeyByteResponse;
+            CustomAdapter.ConvertBaudResponse = false;
+            CustomAdapter.AutoKeyByteResponse = false;
 
             if ((_bluetoothSocket == null) || (_bluetoothInStream == null))
             {
@@ -572,7 +579,7 @@ namespace EdiabasLib
                 return _edElmInterface.InterfaceReceiveData(receiveData, offset, length, timeout, timeoutTelEnd, ediabasLog);
             }
             int timeoutOffset = ReadTimeoutOffsetLong;
-            if (((Stopwatch.GetTimestamp() - LastCommTick) < 100 * TickResolMs) && (timeout < 100))
+            if (((Stopwatch.GetTimestamp() - CustomAdapter.LastCommTick) < 100 * TickResolMs) && (timeout < 100))
             {
                 timeoutOffset = ReadTimeoutOffsetShort;
             }
@@ -581,24 +588,24 @@ namespace EdiabasLib
             timeoutTelEnd += timeoutOffset;
             try
             {
-                if (!_rawMode && SettingsUpdateRequired())
+                if (!_rawMode && CustomAdapter.SettingsUpdateRequired())
                 {
-                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "InterfaceReceiveData, update settings");
+                    CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "InterfaceReceiveData, update settings");
                     UpdateAdapterInfo();
-                    byte[] adapterTel = CreatePulseTelegram(0, 0, 0, false, false, 0);
+                    byte[] adapterTel = CustomAdapter.CreatePulseTelegram(0, 0, 0, false, false, 0);
                     if (adapterTel == null)
                     {
                         return false;
                     }
                     _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
-                    LastCommTick = Stopwatch.GetTimestamp();
-                    UpdateActiveSettings();
+                    CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
+                    CustomAdapter.UpdateActiveSettings();
                 }
                 if (convertBaudResponse && length == 2)
                 {
-                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Convert baud response");
+                    CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Convert baud response");
                     length = 1;
-                    AutoKeyByteResponse = true;
+                    CustomAdapter.AutoKeyByteResponse = true;
                 }
                 int recLen = 0;
                 long startTime = Stopwatch.GetTimestamp();
@@ -610,7 +617,7 @@ namespace EdiabasLib
                         int bytesRead = _bluetoothInStream.Read (receiveData, offset + recLen, length - recLen);
                         if (bytesRead > 0)
                         {
-                            LastCommTick = Stopwatch.GetTimestamp();
+                            CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
                         }
                         recLen += bytesRead;
                     }
@@ -627,24 +634,24 @@ namespace EdiabasLib
                 }
                 if (convertBaudResponse)
                 {
-                    ConvertStdBaudResponse(receiveData, offset);
+                    EdCustomAdapterCommon.ConvertStdBaudResponse(receiveData, offset);
                 }
                 if (autoKeyByteResponse && length == 2)
                 {   // auto key byte response for old adapter
-                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Auto key byte response");
+                    CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Auto key byte response");
                     byte[] keyByteResponse = { (byte)~receiveData[offset + 1] };
-                    byte[] adapterTel = CreateAdapterTelegram(keyByteResponse, keyByteResponse.Length, true);
+                    byte[] adapterTel = CustomAdapter.CreateAdapterTelegram(keyByteResponse, keyByteResponse.Length, true);
                     if (adapterTel == null)
                     {
                         return false;
                     }
                     _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
-                    LastCommTick = Stopwatch.GetTimestamp();
+                    CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
                 }
             }
             catch (Exception ex)
             {
-                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
                 _reconnectRequired = true;
                 return false;
             }
@@ -653,7 +660,7 @@ namespace EdiabasLib
 
         public static bool InterfaceSendPulse(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines, int autoKeyByteDelay)
         {
-            ConvertBaudResponse = false;
+            CustomAdapter.ConvertBaudResponse = false;
             if ((_bluetoothSocket == null) || (_bluetoothOutStream == null))
             {
                 return false;
@@ -664,7 +671,7 @@ namespace EdiabasLib
             }
             if (_reconnectRequired)
             {
-                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
+                CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
                 InterfaceDisconnect();
                 if (!InterfaceConnect(_connectPort, null))
                 {
@@ -676,24 +683,24 @@ namespace EdiabasLib
             try
             {
                 UpdateAdapterInfo();
-                FastInit = IsFastInit(dataBits, length, pulseWidth);
-                if (FastInit)
+                CustomAdapter.FastInit = CustomAdapter.IsFastInit(dataBits, length, pulseWidth);
+                if (CustomAdapter.FastInit)
                 {   // send next telegram with fast init
                     return true;
                 }
-                byte[] adapterTel = CreatePulseTelegram(dataBits, length, pulseWidth, setDtr, bothLines, autoKeyByteDelay);
+                byte[] adapterTel = CustomAdapter.CreatePulseTelegram(dataBits, length, pulseWidth, setDtr, bothLines, autoKeyByteDelay);
                 if (adapterTel == null)
                 {
                     return false;
                 }
                 _bluetoothOutStream.Write(adapterTel, 0, adapterTel.Length);
-                LastCommTick = Stopwatch.GetTimestamp();
-                UpdateActiveSettings();
+                CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
+                CustomAdapter.UpdateActiveSettings();
                 Thread.Sleep(pulseWidth * length);
             }
             catch (Exception ex)
             {
-                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
                 _reconnectRequired = true;
                 return false;
             }
@@ -720,18 +727,18 @@ namespace EdiabasLib
             {
                 return false;
             }
-            if (!forceUpdate && AdapterType >= 0)
+            if (!forceUpdate && CustomAdapter.AdapterType >= 0)
             {   // only read once
                 return true;
             }
-            AdapterType = -1;
+            CustomAdapter.AdapterType = -1;
             try
             {
                 const int versionRespLen = 9;
                 byte[] identTel = { 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E };
                 FlushReceiveBuffer();
                 _bluetoothOutStream.Write(identTel, 0, identTel.Length);
-                LastCommTick = Stopwatch.GetTimestamp();
+                CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
 
                 List<byte> responseList = new List<byte>();
                 long startTime = Stopwatch.GetTimestamp();
@@ -742,7 +749,7 @@ namespace EdiabasLib
                         int data = _bluetoothInStream.ReadByte();
                         if (data >= 0)
                         {
-                            LastCommTick = Stopwatch.GetTimestamp();
+                            CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
                             responseList.Add((byte)data);
                             startTime = Stopwatch.GetTimestamp();
                         }
@@ -754,12 +761,12 @@ namespace EdiabasLib
                         {
                             return false;
                         }
-                        if (CalcChecksumBmwFast(responseList.ToArray(), identTel.Length, versionRespLen - 1) != responseList[identTel.Length + versionRespLen - 1])
+                        if (EdCustomAdapterCommon.CalcChecksumBmwFast(responseList.ToArray(), identTel.Length, versionRespLen - 1) != responseList[identTel.Length + versionRespLen - 1])
                         {
                             return false;
                         }
-                        AdapterType = responseList[identTel.Length + 5] + (responseList[identTel.Length + 4] << 8);
-                        AdapterVersion = responseList[identTel.Length + 7] + (responseList[identTel.Length + 6] << 8);
+                        CustomAdapter.AdapterType = responseList[identTel.Length + 5] + (responseList[identTel.Length + 4] << 8);
+                        CustomAdapter.AdapterVersion = responseList[identTel.Length + 7] + (responseList[identTel.Length + 6] << 8);
                         break;
                     }
                     if (Stopwatch.GetTimestamp() - startTime > ReadTimeoutOffsetLong * TickResolMs)
@@ -769,7 +776,7 @@ namespace EdiabasLib
                             bool validEcho = !identTel.Where((t, i) => responseList[i] != t).Any();
                             if (validEcho)
                             {
-                                AdapterType = 0;
+                                CustomAdapter.AdapterType = 0;
                             }
                         }
                         return false;
@@ -778,7 +785,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
                 _reconnectRequired = true;
                 return false;
             }
