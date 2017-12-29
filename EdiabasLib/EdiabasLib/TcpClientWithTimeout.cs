@@ -13,6 +13,8 @@ namespace EdiabasLib
     /// </summary>
     public class TcpClientWithTimeout
     {
+        public delegate void ExecuteNetworkDelegate();
+
         private readonly IPAddress _host;
         private readonly int _port;
         private readonly int _timeoutMilliseconds;
@@ -79,5 +81,64 @@ namespace EdiabasLib
                 _exception = ex;
             }
         }
+
+        public static void ExecuteNetworkCommand(ExecuteNetworkDelegate command, object connManager)
+        {
+#if Android
+            if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Lollipop)
+            {
+                command();
+                return;
+            }
+            Android.Net.Network bindNetwork = null;
+            Android.Net.ConnectivityManager connectivityManager = connManager as Android.Net.ConnectivityManager;
+            // ReSharper disable once UseNullPropagation
+            if (connectivityManager != null)
+            {
+                Android.Net.Network[] networks = connectivityManager.GetAllNetworks();
+                if (networks != null)
+                {
+                    foreach (Android.Net.Network network in networks)
+                    {
+                        Android.Net.NetworkInfo networkInfo = connectivityManager.GetNetworkInfo(network);
+                        if (networkInfo != null && networkInfo.IsConnected && networkInfo.Type == Android.Net.ConnectivityType.Wifi)
+                        {
+                            bindNetwork = network;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.M)
+            {
+#pragma warning disable 618
+                Android.Net.Network defaultNetwork = Android.Net.ConnectivityManager.ProcessDefaultNetwork;
+                try
+                {
+                    Android.Net.ConnectivityManager.SetProcessDefaultNetwork(bindNetwork);
+                    command();
+                }
+                finally
+                {
+                    Android.Net.ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
+                }
+#pragma warning restore 618
+                return;
+            }
+            Android.Net.Network boundNetwork = connectivityManager?.BoundNetworkForProcess;
+            try
+            {
+                connectivityManager?.BindProcessToNetwork(bindNetwork);
+                command();
+            }
+            finally
+            {
+                connectivityManager?.BindProcessToNetwork(boundNetwork);
+            }
+#else
+            command();
+#endif
+        }
+
     }
 }

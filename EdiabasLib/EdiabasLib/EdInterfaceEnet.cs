@@ -40,6 +40,7 @@ namespace EdiabasLib
         protected static readonly byte[] TcpControlIgnitReq = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x10 };
         protected static readonly long TickResolMs = Stopwatch.Frequency / 1000;
 
+        protected static object ConnManager;
         protected static IPAddress TcpHostIp;
         protected static TcpClient TcpDiagClient;
         protected static NetworkStream TcpDiagStream;
@@ -371,6 +372,12 @@ namespace EdiabasLib
             try
             {
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Connect");
+#if Android
+                if (ConnectParameter is ConnectParameterType connectParameter)
+                {
+                    ConnManager = connectParameter.ConnectivityManager;
+                }
+#endif
                 TcpHostIp = null;
                 if (RemoteHostProtected.StartsWith(AutoIp, StringComparison.OrdinalIgnoreCase))
                 {
@@ -387,10 +394,10 @@ namespace EdiabasLib
                 {
                     TcpHostIp = IPAddress.Parse(RemoteHostProtected);
                 }
-                ExecuteNetworkCommand(() =>
+                TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     TcpDiagClient = new TcpClientWithTimeout(TcpHostIp, DiagnosticPort, ConnectTimeout).Connect();
-                });
+                }, ConnManager);
                 TcpDiagStream = TcpDiagClient.GetStream();
                 TcpDiagRecLen = 0;
                 LastTcpDiagRecTime = DateTime.MinValue.Ticks;
@@ -628,10 +635,10 @@ namespace EdiabasLib
                                                     netInterface.Name, broadcastAddress));
                                                 IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, ControlPort);
 
-                                                ExecuteNetworkCommand(() =>
+                                                TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                                                 {
                                                     UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
-                                                });
+                                                }, ConnManager);
                                                 broadcastSend = true;
                                             }
                                             catch (Exception)
@@ -700,10 +707,10 @@ namespace EdiabasLib
                         {
                             EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending to: {0}", ipUdpIdent.Address));
                         }
-                        ExecuteNetworkCommand(() =>
+                        TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                         {
                             UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
-                        });
+                        }, ConnManager);
                         broadcastSend = true;
                     }
                     catch (Exception)
@@ -761,68 +768,6 @@ namespace EdiabasLib
             IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
             EndPoint tempRemoteEp = ip;
             udpSocketLocal.BeginReceiveFrom(UdpBuffer, 0, UdpBuffer.Length, SocketFlags.None, ref tempRemoteEp, UdpReceiver, udpSocketLocal);
-        }
-
-        protected void ExecuteNetworkCommand(ExecuteNetworkDelegate command)
-        {
-#if Android
-            if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Lollipop)
-            {
-                command();
-                return;
-            }
-            // ReSharper disable once UsePatternMatching
-            ConnectParameterType connectParameter = ConnectParameterProtected as ConnectParameterType;
-            if (connectParameter == null)
-            {
-                throw new Exception("No connect parameter");
-            }
-            Android.Net.Network bindNetwork = null;
-            if (connectParameter.ConnectivityManager != null)
-            {
-                Android.Net.Network[] networks = connectParameter.ConnectivityManager.GetAllNetworks();
-                if (networks != null)
-                {
-                    foreach (Android.Net.Network network in networks)
-                    {
-                        Android.Net.NetworkInfo networkInfo = connectParameter.ConnectivityManager.GetNetworkInfo(network);
-                        if (networkInfo != null && networkInfo.IsConnected && networkInfo.Type == Android.Net.ConnectivityType.Wifi)
-                        {
-                            bindNetwork = network;
-                            break;
-                        }
-                    }
-                }
-            }
-            if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.M)
-            {
-#pragma warning disable 618
-                Android.Net.Network defaultNetwork = Android.Net.ConnectivityManager.ProcessDefaultNetwork;
-                try
-                {
-                    Android.Net.ConnectivityManager.SetProcessDefaultNetwork(bindNetwork);
-                    command();
-                }
-                finally
-                {
-                    Android.Net.ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
-                }
-#pragma warning restore 618
-                return;
-            }
-            Android.Net.Network boundNetwork = connectParameter.ConnectivityManager?.BoundNetworkForProcess;
-            try
-            {
-                connectParameter.ConnectivityManager?.BindProcessToNetwork(bindNetwork);
-                command();
-            }
-            finally
-            {
-                connectParameter.ConnectivityManager?.BindProcessToNetwork(boundNetwork);
-            }
-#else
-            command();
-#endif
         }
 
         protected void UdpReceiver(IAsyncResult ar)
@@ -916,10 +861,10 @@ namespace EdiabasLib
                 {
                     TcpControlTimerStop();
                 }
-                ExecuteNetworkCommand(() =>
+                TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     TcpControlClient = TcpDiagClient = new TcpClientWithTimeout(TcpHostIp, ControlPort, ConnectTimeout).Connect();
-                });
+                }, ConnManager);
                 TcpControlStream = TcpControlClient.GetStream();
             }
             catch (Exception)
