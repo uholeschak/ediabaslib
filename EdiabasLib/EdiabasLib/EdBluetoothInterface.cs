@@ -48,7 +48,6 @@ namespace EdiabasLib
                 return false;
             }
             _connectPort = port;
-            CustomAdapter.ReconnectRequired = false;
             try
             {
                 string portData = port.Remove(0, PortId.Length);
