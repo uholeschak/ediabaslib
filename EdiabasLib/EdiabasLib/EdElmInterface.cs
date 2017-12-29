@@ -924,8 +924,7 @@ namespace EdiabasLib
 #if Android
             return _inStream.IsDataAvailable();
 #else
-            System.Net.Sockets.NetworkStream networkStream = _inStream as System.Net.Sockets.NetworkStream;
-            if (networkStream == null)
+            if (!(_inStream is System.Net.Sockets.NetworkStream networkStream))
             {
                 return false;
             }
