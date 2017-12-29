@@ -29,6 +29,7 @@ namespace EdiabasLib
         protected static int ConnectTimeout = 5000;
         protected static string ConnectPort;
         protected static object ConnectParameter;
+        protected static object ConnManager;
         private static EdElmInterface _edElmInterface;
 
         static EdElmWifiInterface()
@@ -47,10 +48,16 @@ namespace EdiabasLib
             {
                 ConnectPort = port;
                 ConnectParameter = parameter;
-                ExecuteNetworkCommand(() =>
+#if Android
+                if (ConnectParameter is ConnectParameterType connectParameter)
+                {
+                    ConnManager = connectParameter.ConnectivityManager;
+                }
+#endif
+                TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     TcpElmClient = new TcpClientWithTimeout(IPAddress.Parse(ElmIp), ElmPort, ConnectTimeout).Connect();
-                });
+                }, ConnManager);
                 TcpElmStream = TcpElmClient.GetStream();
                 _edElmInterface = new EdElmInterface(Ediabas, TcpElmStream, TcpElmStream);
                 if (!_edElmInterface.Elm327Init())
