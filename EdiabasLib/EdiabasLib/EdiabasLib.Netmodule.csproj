@@ -57,6 +57,7 @@
     <Compile Include="Ftd2xx.cs" />
     <Compile Include="MemoryStreamReader.cs" />
     <Compile Include="IniFile.cs" />
+    <Compile Include="TcpClientWithTimeout.cs" />
   </ItemGroup>
   <ItemGroup>
     <AddModules Include="..\32feetNET\InTheHand.Net.Personal\ITH.Net.Personal.FX4\bin\$(Configuration)Module\InTheHand.Net.Personal.netmodule" />
