@@ -640,9 +640,9 @@ namespace BmwDeepObd
 
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
-            var inflater = MenuInflater;
+            MenuInflater inflater = MenuInflater;
             inflater.Inflate(Resource.Menu.option_menu, menu);
-            return true;
+            return base.OnCreateOptionsMenu(menu);
         }
 
         public override bool OnPrepareOptionsMenu(IMenu menu)
@@ -2771,6 +2771,7 @@ namespace BmwDeepObd
                     XAttribute urlAttr = fileNode.Attribute("url");
                     if (!string.IsNullOrEmpty(urlAttr?.Value))
                     {
+                        // ReSharper disable once PossibleNullReferenceException
                         string url = urlAttr.Value;
                         string name = null;
                         string password = null;
@@ -2981,6 +2982,7 @@ namespace BmwDeepObd
             Java.IO.File directoryDownloads = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads);
             if (!string.IsNullOrEmpty(directoryDownloads?.AbsolutePath))
             {
+                // ReSharper disable once PossibleNullReferenceException
                 downloadsDir = directoryDownloads.AbsolutePath;
             }
 
