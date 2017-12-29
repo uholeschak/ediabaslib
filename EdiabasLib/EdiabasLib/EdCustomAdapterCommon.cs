@@ -1,4 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
+
 // ReSharper disable UseNullPropagation
 
 namespace EdiabasLib
@@ -34,7 +39,24 @@ namespace EdiabasLib
         public const byte KWP1281_TIMEOUT = 60;
         // ReSharper restore InconsistentNaming
 
+        public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
+
+        public delegate void SendDataDelegate(byte[] buffer, int length);
+        public delegate bool ReceiveDataDelegate(byte[] buffer, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog);
+        public delegate void DiscardInBufferDelegate();
+        public delegate List<byte> ReadInBufferDelegate();
+
+        private readonly int _readTimeoutOffsetLong;
+        private readonly int _readTimeoutOffsetShort;
+        private readonly int _echoTimeout;
+        private readonly SendDataDelegate _sendDataFunc;
+        private readonly ReceiveDataDelegate _receiveDataFunc;
+        private readonly DiscardInBufferDelegate _discardInBufferFunc;
+        private readonly ReadInBufferDelegate _readInBufferFunc;
+
         public EdiabasNet Ediabas { get; set; }
+
+        public bool RawMode { get; set; }
 
         public EdInterfaceObd.Protocol CurrentProtocol { get; set; }
 
@@ -72,8 +94,20 @@ namespace EdiabasLib
 
         public long LastCommTick { get; set; }
 
-        public EdCustomAdapterCommon()
+        public bool ReconnectRequired { get; set; }
+
+        public EdCustomAdapterCommon(SendDataDelegate sendDataFunc, ReceiveDataDelegate receiveDataFunc,
+            DiscardInBufferDelegate discardInBufferFunc, ReadInBufferDelegate readInBufferFunc, int readTimeoutOffsetLong, int readTimeoutOffsetShort, int echoTimeout)
         {
+            _readTimeoutOffsetLong = readTimeoutOffsetLong;
+            _readTimeoutOffsetShort = readTimeoutOffsetShort;
+            _echoTimeout = echoTimeout;
+            _sendDataFunc = sendDataFunc;
+            _receiveDataFunc = receiveDataFunc;
+            _discardInBufferFunc = discardInBufferFunc;
+            _readInBufferFunc = readInBufferFunc;
+
+            RawMode = false;
             CurrentProtocol = EdInterfaceObd.Protocol.Uart;
             ActiveProtocol = EdInterfaceObd.Protocol.Uart;
             CurrentBaudRate = 0;
@@ -88,6 +122,17 @@ namespace EdiabasLib
             CanFlags = EdInterfaceObd.CanFlags.Empty;
             AdapterType = -1;
             AdapterVersion = -1;
+        }
+
+        public void Init()
+        {
+            RawMode = false;
+            FastInit = false;
+            ConvertBaudResponse = false;
+            AutoKeyByteResponse = false;
+            AdapterType = -1;
+            AdapterVersion = -1;
+            LastCommTick = DateTime.MinValue.Ticks;
         }
 
         public byte[] CreateAdapterTelegram(byte[] sendData, int length, bool setDtr)
@@ -462,6 +507,283 @@ namespace EdiabasLib
                 CurrentWordLength == ActiveWordLength &&
                 CurrentParity == ActiveParity)
             {
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateAdapterInfo(bool forceUpdate = false)
+        {
+            if (!forceUpdate && AdapterType >= 0)
+            {
+                // only read once
+                return true;
+            }
+            AdapterType = -1;
+            try
+            {
+                const int versionRespLen = 9;
+                byte[] identTel = { 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E };
+                _discardInBufferFunc();
+                _sendDataFunc(identTel, identTel.Length);
+                LastCommTick = Stopwatch.GetTimestamp();
+
+                long startTime = Stopwatch.GetTimestamp();
+                for (; ; )
+                {
+                    List<byte> responseList = _readInBufferFunc();
+                    if (responseList.Count > 0)
+                    {
+                        startTime = Stopwatch.GetTimestamp();
+                    }
+                    if (responseList.Count >= identTel.Length + versionRespLen)
+                    {
+                        bool validEcho = !identTel.Where((t, i) => responseList[i] != t).Any();
+                        if (!validEcho)
+                        {
+                            return false;
+                        }
+                        if (CalcChecksumBmwFast(responseList.ToArray(), identTel.Length, versionRespLen - 1) !=
+                            responseList[identTel.Length + versionRespLen - 1])
+                        {
+                            return false;
+                        }
+                        AdapterType = responseList[identTel.Length + 5] + (responseList[identTel.Length + 4] << 8);
+                        AdapterVersion = responseList[identTel.Length + 7] + (responseList[identTel.Length + 6] << 8);
+                        break;
+                    }
+                    if (Stopwatch.GetTimestamp() - startTime > _readTimeoutOffsetLong * TickResolMs)
+                    {
+                        if (responseList.Count >= identTel.Length)
+                        {
+                            bool validEcho = !identTel.Where((t, i) => responseList[i] != t).Any();
+                            if (validEcho)
+                            {
+                                AdapterType = 0;
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                ReconnectRequired = true;
+                return false;
+            }
+
+            return true;
+        }
+
+        public EdInterfaceObd.InterfaceErrorResult InterfaceSetConfig(EdInterfaceObd.Protocol protocol, int baudRate, int dataBits, EdInterfaceObd.SerialParity parity, bool allowBitBang)
+        {
+            CurrentProtocol = protocol;
+            CurrentBaudRate = baudRate;
+            CurrentWordLength = dataBits;
+            CurrentParity = parity;
+            FastInit = false;
+            ConvertBaudResponse = false;
+            return EdInterfaceObd.InterfaceErrorResult.NoError;
+        }
+
+        public bool InterfaceSetInterByteTime(int time)
+        {
+            InterByteTime = time;
+            return true;
+        }
+
+        public bool InterfaceSetCanIds(int canTxId, int canRxId, EdInterfaceObd.CanFlags canFlags)
+        {
+            CanTxId = canTxId;
+            CanRxId = canRxId;
+            CanFlags = canFlags;
+            return true;
+        }
+
+        public bool InterfaceHasAutoKwp1281()
+        {
+            if (!UpdateAdapterInfo())
+            {
+                return false;
+            }
+            if (AdapterVersion < 0x0008)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool InterfaceSendData(byte[] sendData, int length, bool setDtr, double dtrTimeCorr)
+        {
+            ConvertBaudResponse = false;
+            AutoKeyByteResponse = false;
+
+            try
+            {
+                if ((CurrentProtocol == EdInterfaceObd.Protocol.Tp20) ||
+                    (CurrentProtocol == EdInterfaceObd.Protocol.IsoTp))
+                {
+                    UpdateAdapterInfo();
+                    byte[] adapterTel = CreateCanTelegram(sendData, length);
+                    if (adapterTel == null)
+                    {
+                        return false;
+                    }
+                    _sendDataFunc(adapterTel, adapterTel.Length);
+                    LastCommTick = Stopwatch.GetTimestamp();
+                    UpdateActiveSettings();
+                    return true;
+                }
+                if (RawMode || CurrentBaudRate == 115200)
+                {
+                    // BMW-FAST
+                    if (sendData.Length >= 5 && sendData[1] == 0xF1 && sendData[2] == 0xF1 && sendData[3] == 0xFA && sendData[4] == 0xFA)
+                    {   // read clamp status
+                        UpdateAdapterInfo();
+                        if (AdapterVersion < 0x000A)
+                        {
+                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Read clamp status not supported");
+                            return false;
+                        }
+                    }
+
+                    _sendDataFunc(sendData, length);
+                    LastCommTick = Stopwatch.GetTimestamp();
+                    // remove echo
+                    byte[] receiveData = new byte[length];
+                    if (!InterfaceReceiveData(receiveData, 0, length, _echoTimeout, _echoTimeout, null))
+                    {
+                        return false;
+                    }
+                    for (int i = 0; i < length; i++)
+                    {
+                        if (receiveData[i] != sendData[i])
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    UpdateAdapterInfo();
+                    byte[] adapterTel = CreateAdapterTelegram(sendData, length, setDtr);
+                    FastInit = false;
+                    if (adapterTel == null)
+                    {
+                        return false;
+                    }
+                    _sendDataFunc(adapterTel, adapterTel.Length);
+                    LastCommTick = Stopwatch.GetTimestamp();
+                    UpdateActiveSettings();
+                }
+            }
+            catch (Exception ex)
+            {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                ReconnectRequired = true;
+                return false;
+            }
+            return true;
+        }
+
+        public bool InterfaceReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog)
+        {
+            int timeoutOffset = _readTimeoutOffsetLong;
+            if (((Stopwatch.GetTimestamp() - LastCommTick) < 100 * TickResolMs) && (timeout < 100))
+            {
+                timeoutOffset = _readTimeoutOffsetShort;
+            }
+            //Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout offset {0}", timeoutOffset);
+            timeout += timeoutOffset;
+            timeoutTelEnd += timeoutOffset;
+
+            bool convertBaudResponse = ConvertBaudResponse;
+            bool autoKeyByteResponse = AutoKeyByteResponse;
+            ConvertBaudResponse = false;
+            AutoKeyByteResponse = false;
+
+            try
+            {
+                if (!RawMode && SettingsUpdateRequired())
+                {
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "InterfaceReceiveData, update settings");
+                    UpdateAdapterInfo();
+                    byte[] adapterTel = CreatePulseTelegram(0, 0, 0, false, false, 0);
+                    if (adapterTel == null)
+                    {
+                        return false;
+                    }
+                    _sendDataFunc(adapterTel, adapterTel.Length);
+                    LastCommTick = Stopwatch.GetTimestamp();
+                    UpdateActiveSettings();
+                }
+
+                if (convertBaudResponse && length == 2)
+                {
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Convert baud response");
+                    length = 1;
+                    AutoKeyByteResponse = true;
+                }
+
+                if (!_receiveDataFunc(receiveData, offset, length, timeout, timeoutTelEnd, ediabasLog))
+                {
+                    return false;
+                }
+
+                if (convertBaudResponse)
+                {
+                    ConvertStdBaudResponse(receiveData, offset);
+                }
+
+                if (autoKeyByteResponse && length == 2)
+                {   // auto key byte response for old adapter
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Auto key byte response");
+                    byte[] keyByteResponse = { (byte)~receiveData[offset + 1] };
+                    byte[] adapterTel = CreateAdapterTelegram(keyByteResponse, keyByteResponse.Length, true);
+                    if (adapterTel == null)
+                    {
+                        return false;
+                    }
+                    _sendDataFunc(adapterTel, adapterTel.Length);
+                    LastCommTick = Stopwatch.GetTimestamp();
+                }
+            }
+            catch (Exception ex)
+            {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                ReconnectRequired = true;
+                return false;
+            }
+            return true;
+        }
+
+        public bool InterfaceSendPulse(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines, int autoKeyByteDelay)
+        {
+            ConvertBaudResponse = false;
+            try
+            {
+                UpdateAdapterInfo();
+                FastInit = IsFastInit(dataBits, length, pulseWidth);
+                if (FastInit)
+                {
+                    // send next telegram with fast init
+                    return true;
+                }
+                byte[] adapterTel = CreatePulseTelegram(dataBits, length, pulseWidth, setDtr, bothLines, autoKeyByteDelay);
+                if (adapterTel == null)
+                {
+                    return false;
+                }
+                _sendDataFunc(adapterTel, adapterTel.Length);
+                LastCommTick = Stopwatch.GetTimestamp();
+                UpdateActiveSettings();
+                Thread.Sleep(pulseWidth * length);
+            }
+            catch (Exception ex)
+            {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                ReconnectRequired = true;
                 return false;
             }
             return true;
