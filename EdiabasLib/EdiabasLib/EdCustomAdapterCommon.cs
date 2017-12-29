@@ -132,6 +132,7 @@ namespace EdiabasLib
             AutoKeyByteResponse = false;
             AdapterType = -1;
             AdapterVersion = -1;
+            ReconnectRequired = false;
             LastCommTick = DateTime.MinValue.Ticks;
         }
 

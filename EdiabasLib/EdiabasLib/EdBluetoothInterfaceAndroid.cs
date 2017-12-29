@@ -83,7 +83,6 @@ namespace EdiabasLib
             _connectPort = port;
             _connectParameter = parameter as ConnectParameterType;
             bool mtcBtService = _connectParameter != null && _connectParameter.MtcBtService;
-            CustomAdapter.ReconnectRequired = false;
             try
             {
                 BluetoothDevice device;
