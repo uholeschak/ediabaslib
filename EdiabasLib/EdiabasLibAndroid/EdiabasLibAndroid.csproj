@@ -54,6 +54,9 @@
     <Compile Include="..\EdiabasLib\EdCustomAdapterCommon.cs">
       <Link>EdCustomAdapterCommon.cs</Link>
     </Compile>
+    <Compile Include="..\EdiabasLib\EdCustomWiFiInterface.cs">
+      <Link>EdCustomWiFiInterface.cs</Link>
+    </Compile>
     <Compile Include="..\EdiabasLib\EdElmInterface.cs">
       <Link>EdElmInterface.cs</Link>
     </Compile>

@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="EdBluetoothInterface.cs" />
     <Compile Include="EdCustomAdapterCommon.cs" />
+    <Compile Include="EdCustomWiFiInterface.cs" />
     <Compile Include="EdElmInterface.cs" />
     <Compile Include="EdElmWifiInterface.cs" />
     <Compile Include="EdFtdiInterface.cs" />
