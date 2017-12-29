@@ -1133,6 +1133,28 @@ namespace EdiabasLib
                 InterfaceReceiveDataFuncInt = EdElmWifiInterface.InterfaceReceiveData;
                 InterfaceSendPulseFuncInt = EdElmWifiInterface.InterfaceSendPulse;
             }
+            else if (ComPortProtected.ToUpper(Culture).StartsWith(EdCustomWiFiInterface.PortId))
+            {   // automtatic hook of custom wifi adapter functions
+                EdCustomWiFiInterface.Ediabas = Ediabas;
+                InterfaceConnectFuncInt = EdCustomWiFiInterface.InterfaceConnect;
+                InterfaceDisconnectFuncInt = EdCustomWiFiInterface.InterfaceDisconnect;
+                InterfaceSetConfigFuncInt = EdCustomWiFiInterface.InterfaceSetConfig;
+                InterfaceSetDtrFuncInt = EdCustomWiFiInterface.InterfaceSetDtr;
+                InterfaceSetRtsFuncInt = EdCustomWiFiInterface.InterfaceSetRts;
+                InterfaceGetDsrFuncInt = EdCustomWiFiInterface.InterfaceGetDsr;
+                InterfaceSetBreakFuncInt = EdCustomWiFiInterface.InterfaceSetBreak;
+                InterfaceSetInterByteTimeFuncInt = EdCustomWiFiInterface.InterfaceSetInterByteTime;
+                InterfaceSetCanIdsFuncInt = EdCustomWiFiInterface.InterfaceSetCanIds;
+                InterfacePurgeInBufferFuncInt = EdCustomWiFiInterface.InterfacePurgeInBuffer;
+                InterfaceAdapterEchoFuncInt = EdCustomWiFiInterface.InterfaceAdapterEcho;
+                InterfaceHasPreciseTimeoutFuncInt = EdCustomWiFiInterface.InterfaceHasPreciseTimeout;
+                InterfaceHasAutoBaudRateFuncInt = EdCustomWiFiInterface.InterfaceHasAutoBaudRate;
+                InterfaceHasAutoKwp1281FuncInt = EdCustomWiFiInterface.InterfaceHasAutoKwp1281;
+                InterfaceHasIgnitionStatusFuncInt = EdCustomWiFiInterface.InterfaceHasIgnitionStatus;
+                InterfaceSendDataFuncInt = EdCustomWiFiInterface.InterfaceSendData;
+                InterfaceReceiveDataFuncInt = EdCustomWiFiInterface.InterfaceReceiveData;
+                InterfaceSendPulseFuncInt = EdCustomWiFiInterface.InterfaceSendPulse;
+            }
 #endif
             else
             {
