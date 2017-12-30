@@ -35,6 +35,8 @@ namespace EdiabasLib
         protected static object ConnectParameter;
         protected static object ConnManager;
 
+        public static NetworkStream NetworkStream => TcpStream;
+
         public static EdiabasNet Ediabas
         {
             get => CustomAdapter.Ediabas;

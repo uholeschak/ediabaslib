@@ -9,6 +9,8 @@ using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
 using EdiabasLib;
+using System.IO;
+using System.Net.Sockets;
 
 namespace BmwDeepObd
 {
@@ -922,10 +924,13 @@ namespace BmwDeepObd
 
         private void PerformUpdateMessage()
         {
-            if (!ActivityCommon.IsBtReliable() || _activityCommon.MtcBtService)
+            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
             {
-                _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_not_reliable), Resource.String.alert_title_error);
-                return;
+                if (!ActivityCommon.IsBtReliable() || _activityCommon.MtcBtService)
+                {
+                    _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_not_reliable), Resource.String.alert_title_error);
+                    return;
+                }
             }
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
@@ -955,16 +960,48 @@ namespace BmwDeepObd
                 bool connectOk = false;
                 try
                 {
-                    connectOk = !InterfacePrepare();
-                    BluetoothSocket bluetoothSocket = EdBluetoothInterface.BluetoothSocket;
-                    if (bluetoothSocket == null)
+                    connectOk = InterfacePrepare();
+                    Stream inStream = null;
+                    Stream outStream = null;
+                    if (connectOk)
+                    {
+                        switch (_activityCommon.SelectedInterface)
+                        {
+                            case ActivityCommon.InterfaceType.Bluetooth:
+                            {
+                                BluetoothSocket bluetoothSocket = EdBluetoothInterface.BluetoothSocket;
+                                if (bluetoothSocket == null)
+                                {
+                                    connectOk = false;
+                                    break;
+                                }
+                                inStream = bluetoothSocket.InputStream;
+                                outStream = bluetoothSocket.OutputStream;
+                                break;
+                            }
+
+                            case ActivityCommon.InterfaceType.DeepObdWifi:
+                            {
+                                NetworkStream networkStream = EdCustomWiFiInterface.NetworkStream;
+                                if (networkStream == null)
+                                {
+                                    connectOk = false;
+                                    break;
+                                }
+                                inStream = networkStream;
+                                outStream = networkStream;
+                                break;
+                            }
+                        }
+                    }
+                    if (inStream == null || outStream == null)
                     {
                         connectOk = false;
                     }
-                    else
+
+                    if (connectOk)
                     {
-                        connectOk = true;
-                        updateOk = PicBootloader.FwUpdate(bluetoothSocket);
+                        updateOk = PicBootloader.FwUpdate(inStream, outStream);
                     }
                 }
                 catch (Exception)
