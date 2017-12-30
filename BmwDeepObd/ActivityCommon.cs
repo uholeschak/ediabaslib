@@ -153,6 +153,7 @@ namespace BmwDeepObd
             Bluetooth,
             Enet,
             ElmWifi,
+            DeepObdWifi,
             Ftdi,
         }
 
@@ -847,6 +848,9 @@ namespace BmwDeepObd
                 case InterfaceType.ElmWifi:
                     return _context.GetString(Resource.String.select_interface_elmwifi);
 
+                case InterfaceType.DeepObdWifi:
+                    return _context.GetString(Resource.String.select_interface_deepobdwifi);
+
                 case InterfaceType.Ftdi:
                     return _context.GetString(Resource.String.select_interface_ftdi);
             }
@@ -889,6 +893,7 @@ namespace BmwDeepObd
 
                 case InterfaceType.Enet:
                 case InterfaceType.ElmWifi:
+                case InterfaceType.DeepObdWifi:
                     if (_maWifi == null)
                     {
                         return false;
@@ -920,6 +925,7 @@ namespace BmwDeepObd
 
                 case InterfaceType.Enet:
                 case InterfaceType.ElmWifi:
+                case InterfaceType.DeepObdWifi:
                     NetworkInfo networkInfo = _maConnectivity?.ActiveNetworkInfo;
                     if (networkInfo == null)
                     {
@@ -1427,6 +1433,7 @@ namespace BmwDeepObd
             {
                 case InterfaceType.Enet:
                 case InterfaceType.ElmWifi:
+                case InterfaceType.DeepObdWifi:
                     forceMobile = true;
                     break;
             }
@@ -1507,6 +1514,9 @@ namespace BmwDeepObd
 
                 case InterfaceType.ElmWifi:
                     return false;
+
+                case InterfaceType.DeepObdWifi:
+                    return true;
 
                 case InterfaceType.Ftdi:
                     return true;
@@ -1685,15 +1695,18 @@ namespace BmwDeepObd
                 MtcBtDisconnectWarnShown = true;
                 return true;
             }
-            if (_selectedInterface == InterfaceType.ElmWifi)
+            if (_selectedInterface == InterfaceType.ElmWifi || _selectedInterface == InterfaceType.DeepObdWifi)
             {
                 if (ElmWifiAdapterValid())
                 {
                     return false;
                 }
                 bool ignoreDismiss = false;
+                int resourceId = _selectedInterface == InterfaceType.ElmWifi
+                    ? Resource.String.elmwifi_adapter_warn
+                    : Resource.String.deepobdwifi_adapter_warn;
                 AlertDialog alertDialog = new AlertDialog.Builder(_context)
-                .SetMessage(Resource.String.elmwifi_adapter_warn)
+                .SetMessage(resourceId)
                 .SetTitle(Resource.String.alert_title_warning)
                 .SetPositiveButton(Resource.String.button_yes, (s, e) =>
                 {
@@ -1902,67 +1915,48 @@ namespace BmwDeepObd
             builder.SetTitle(Resource.String.select_interface);
             ListView listView = new ListView(_context);
 
-            List<string> interfaceNames = new List<string>
-            {
-                _context.GetString(Resource.String.select_interface_bt),
-            };
+            List<InterfaceType> interfaceTypes = new List<InterfaceType>();
+            // ReSharper disable once UseObjectOrCollectionInitializer
+            List<string> interfaceNames = new List<string>();
+            interfaceNames.Add(_context.GetString(Resource.String.select_interface_bt));
+            interfaceTypes.Add(InterfaceType.Bluetooth);
+
             if (SelectedManufacturer == ManufacturerType.Bmw)
             {
                 interfaceNames.Add(_context.GetString(Resource.String.select_interface_enet));
+                interfaceTypes.Add(InterfaceType.Enet);
+
                 interfaceNames.Add(_context.GetString(Resource.String.select_interface_elmwifi));
-                if (UsbSupport)
-                {
-                    interfaceNames.Add(_context.GetString(Resource.String.select_interface_ftdi));
-                }
+                interfaceTypes.Add(InterfaceType.ElmWifi);
+            }
+
+            interfaceNames.Add(_context.GetString(Resource.String.select_interface_deepobdwifi));
+            interfaceTypes.Add(InterfaceType.DeepObdWifi);
+
+            if (SelectedManufacturer == ManufacturerType.Bmw && UsbSupport)
+            {
+                interfaceNames.Add(_context.GetString(Resource.String.select_interface_ftdi));
+                interfaceTypes.Add(InterfaceType.Ftdi);
             }
             ArrayAdapter<string> adapter = new ArrayAdapter<string>(_context,
                 Android.Resource.Layout.SimpleListItemSingleChoice, interfaceNames.ToArray());
             listView.Adapter = adapter;
             listView.ChoiceMode = ChoiceMode.Single;
-            switch (_selectedInterface)
+            int index = interfaceTypes.IndexOf(_selectedInterface);
+            if (index >= 0)
             {
-                case InterfaceType.Bluetooth:
-                    listView.SetItemChecked(0, true);
-                    break;
-
-                case InterfaceType.Enet:
-                    listView.SetItemChecked(1, true);
-                    break;
-
-                case InterfaceType.ElmWifi:
-                    listView.SetItemChecked(2, true);
-                    break;
-
-                case InterfaceType.Ftdi:
-                    listView.SetItemChecked(3, true);
-                    break;
+                listView.SetItemChecked(index, true);
             }
             builder.SetView(listView);
             builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+            {
+                int pos = listView.CheckedItemPosition;
+                if (pos >= 0 && pos < interfaceTypes.Count)
                 {
-                    switch (listView.CheckedItemPosition)
-                    {
-                        case 0:
-                            SelectedInterface = InterfaceType.Bluetooth;
-                            handler(sender, args);
-                            break;
-
-                        case 1:
-                            SelectedInterface = InterfaceType.Enet;
-                            handler(sender, args);
-                            break;
-
-                        case 2:
-                            SelectedInterface = InterfaceType.ElmWifi;
-                            handler(sender, args);
-                            break;
-
-                        case 3:
-                            SelectedInterface = InterfaceType.Ftdi;
-                            handler(sender, args);
-                            break;
-                    }
-                });
+                    SelectedInterface = interfaceTypes[pos];
+                    handler(sender, args);
+                }
+            });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
                 {
                 });
@@ -2095,6 +2089,7 @@ namespace BmwDeepObd
 
                 case InterfaceType.Enet:
                 case InterfaceType.ElmWifi:
+                case InterfaceType.DeepObdWifi:
                     if (_maWifi == null)
                     {
                         Toast.MakeText(_context, Resource.String.wifi_not_available, ToastLength.Long).Show();
@@ -2167,6 +2162,7 @@ namespace BmwDeepObd
 
                 case InterfaceType.Enet:
                 case InterfaceType.ElmWifi:
+                case InterfaceType.DeepObdWifi:
                     _activateAlertDialog = new AlertDialog.Builder(_context)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
@@ -2604,6 +2600,11 @@ namespace BmwDeepObd
                 {
                     ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "ELM327WIFI";
                     connectParameter = new EdElmWifiInterface.ConnectParameterType(_maConnectivity);
+                }
+                else if (SelectedInterface == InterfaceType.DeepObdWifi)
+                {
+                    ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "DEEPOBDWIFI";
+                    connectParameter = new EdCustomWiFiInterface.ConnectParameterType(_maConnectivity);
                 }
                 else
                 {
@@ -3798,6 +3799,7 @@ namespace BmwDeepObd
                     string existingName;
                     if (ecuNamesDict.TryGetValue(address, out existingName))
                     {
+                        // ReSharper disable once PossibleNullReferenceException
                         if (existingName.Length > ecuName.Length)
                         {   // use shortest name
                             ecuNamesDict[address] = ecuName;
@@ -4478,6 +4480,7 @@ namespace BmwDeepObd
                     string directoryName = Path.GetDirectoryName(fullZipToPath);
                     if (!string.IsNullOrEmpty(directoryName))
                     {
+                        // ReSharper disable once AssignNullToNotNullAttribute
                         Directory.CreateDirectory(directoryName);
                     }
 

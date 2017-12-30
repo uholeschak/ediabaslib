@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="library_name">DeepObd</string>
   <string name="app_name">Deep OBD for BMW and VAG</string>
   <string name="button_connected">Connected</string>
   <string name="button_disconnected">Disconnected</string>
@@ -179,6 +180,7 @@
   <string name="select_interface_bt">Bluetooth</string>
   <string name="select_interface_enet">ENET</string>
   <string name="select_interface_elmwifi">ELM327 WIFI</string>
+  <string name="select_interface_deepobdwifi">Deep OBD WIFI</string>
   <string name="select_interface_ftdi">USB (FTDI)</string>
 
   <!-- Manufacturer selection -->
@@ -207,6 +209,9 @@
 
   <!-- ELM327 Wi-Fi -->
   <string name="elmwifi_adapter_warn">You are not connected with an ELM327 Wi-Fi adapter.\nDo you want to select a different access point?</string>
+
+  <!-- Deep OBD Wi-Fi -->
+  <string name="deepobdwifi_adapter_warn">You are not connected with a Deep OBD Wi-Fi adapter.\nDo you want to select a different access point?</string>
 
   <!--  GlobalSettingsActivity -->
   <string name="settings_title">Global Settings</string>

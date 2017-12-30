@@ -91,6 +91,13 @@
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>
+      <xs:enumeration value="DEEPOBDWIFI">
+        <xs:annotation>
+          <xs:documentation>
+            Deep OBD WIFI device
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
       <xs:enumeration value="FTDI">
         <xs:annotation>
           <xs:documentation>

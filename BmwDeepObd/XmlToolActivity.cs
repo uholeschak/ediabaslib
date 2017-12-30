@@ -5137,6 +5137,10 @@ namespace BmwDeepObd
                         interfaceName = "ELMWIFI";
                         break;
 
+                    case ActivityCommon.InterfaceType.DeepObdWifi:
+                        interfaceName = "DEEPOBDWIFI";
+                        break;
+
                     case ActivityCommon.InterfaceType.Ftdi:
                         interfaceName = "FTDI";
                         break;
@@ -5550,6 +5554,10 @@ namespace BmwDeepObd
 
                 case ActivityCommon.InterfaceType.ElmWifi:
                     interfaceType = "ElmWifi";
+                    break;
+
+                case ActivityCommon.InterfaceType.DeepObdWifi:
+                    interfaceType = "DeepObdWifi";
                     break;
 
                 case ActivityCommon.InterfaceType.Ftdi:
