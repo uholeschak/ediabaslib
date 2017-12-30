@@ -24,7 +24,7 @@ namespace EdiabasLib
         public static string AdapterIp = "192.168.0.10";
         public static int AdapterPort = 35000;
         protected const int TcpReadTimeoutOffset = 1000;
-        protected const int EchoTimeout = 500;
+        protected const int EchoTimeout = 1000;
         protected static int ConnectTimeout = 5000;
         private static readonly EdCustomAdapterCommon CustomAdapter =
             new EdCustomAdapterCommon(SendData, ReceiveData, DiscardInBuffer, ReadInBuffer, TcpReadTimeoutOffset, -1, EchoTimeout);

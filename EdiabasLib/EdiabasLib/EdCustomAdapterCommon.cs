@@ -655,12 +655,14 @@ namespace EdiabasLib
                     byte[] receiveData = new byte[length];
                     if (!InterfaceReceiveData(receiveData, 0, length, _echoTimeout, _echoTimeout, null))
                     {
+                        Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Echo not received");
                         return false;
                     }
                     for (int i = 0; i < length; i++)
                     {
                         if (receiveData[i] != sendData[i])
                         {
+                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Echo incorrect");
                             return false;
                         }
                     }
