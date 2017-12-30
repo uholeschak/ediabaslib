@@ -18,8 +18,10 @@ namespace EdiabasLibConfigTool
 {
     public class Test : IDisposable
     {
+        private const string ElmIp = @"192.168.0.10";
+        private const int ElmPort = 35000;
         private readonly FormMain _form;
-        private NetworkStream _btStream;
+        private NetworkStream _dataStream;
         private volatile Thread _testThread;
         private bool _disposed;
         public bool TestOk { get; set; }
@@ -121,7 +123,8 @@ namespace EdiabasLibConfigTool
                         _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
                         return false;
                     }
-                    if (configure)
+                    bool isElm = string.Compare(ipAddr, ElmIp, StringComparison.OrdinalIgnoreCase) == 0;
+                    if (configure && !isElm)
                     {
                         Process.Start(string.Format("http://{0}", ipAddr));
                         _form.UpdateStatusText(Resources.Strings.WifiUrlOk);
@@ -135,11 +138,23 @@ namespace EdiabasLibConfigTool
                         {
                             Thread.CurrentThread.CurrentCulture = cultureInfo;
                             Thread.CurrentThread.CurrentUICulture = cultureInfo;
-                            TestOk = RunWifiTestRetry(ipAddr);
-                            if (TestOk)
+                            if (isElm)
                             {
-                                ConfigPossible = true;
+                                TestOk = RunWifiTestElm(ipAddr, configure, out bool configRequired);
+                                if (TestOk && configRequired)
+                                {
+                                    ConfigPossible = true;
+                                }
                             }
+                            else
+                            {
+                                TestOk = RunWifiTestEnetRetry(ipAddr);
+                                if (TestOk)
+                                {
+                                    ConfigPossible = true;
+                                }
+                            }
+
                         }
                         finally
                         {
@@ -175,8 +190,7 @@ namespace EdiabasLibConfigTool
                         _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
                         return;
                     }
-                    bool configRequired;
-                    TestOk = RunBtTest(configure, out configRequired);
+                    TestOk = RunBtTest(configure, out bool configRequired);
                     if (TestOk && configRequired)
                     {
                         ConfigPossible = true;
@@ -193,11 +207,11 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        private bool RunWifiTestRetry(string ipAddr)
+        private bool RunWifiTestEnetRetry(string ipAddr)
         {
             for (int i = 0; i < 2; i++)
             {
-                if (RunWifiTest(ipAddr))
+                if (RunWifiTestEnet(ipAddr))
                 {
                     return true;
                 }
@@ -205,7 +219,7 @@ namespace EdiabasLibConfigTool
             return false;
         }
 
-        private bool RunWifiTest(string ipAddr)
+        private bool RunWifiTestEnet(string ipAddr)
         {
             _form.UpdateStatusText(Resources.Strings.Connecting);
 
@@ -250,6 +264,32 @@ namespace EdiabasLibConfigTool
             sr.Append(Resources.Strings.TestOk);
             _form.UpdateStatusText(sr.ToString());
             return true;
+        }
+
+        private bool RunWifiTestElm(string ipAddr, bool configure, out bool configRequired)
+        {
+            configRequired = false;
+            _form.UpdateStatusText(Resources.Strings.Connecting);
+
+            try
+            {
+                using (TcpClient tcpClient = new TcpClient())
+                {
+                    IPEndPoint ipTcp = new IPEndPoint(IPAddress.Parse(ipAddr), ElmPort);
+                    tcpClient.Connect(ipTcp);
+                    _dataStream = tcpClient.GetStream();
+                    return RunBtTest(configure, out configRequired);
+                }
+            }
+            catch (Exception)
+            {
+                _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
+                return false;
+            }
+            finally
+            {
+                DisconnectBtDevice();
+            }
         }
 
         private bool RunBtTest(bool configure, out bool configRequired)
@@ -343,7 +383,7 @@ namespace EdiabasLibConfigTool
                 BluetoothClient cli = new BluetoothClient();
                 cli.SetPin(pin);
                 cli.Connect(ep);
-                _btStream = cli.GetStream();
+                _dataStream = cli.GetStream();
             }
             catch (Exception)
             {
@@ -354,17 +394,17 @@ namespace EdiabasLibConfigTool
 
         private void DisconnectBtDevice()
         {
-            if (_btStream != null)
+            if (_dataStream != null)
             {
-                _btStream.Close();
-                _btStream.Dispose();
-                _btStream = null;
+                _dataStream.Close();
+                _dataStream.Dispose();
+                _dataStream = null;
             }
         }
 
         private byte[] AdapterCommandCustom(byte command, byte[] data)
         {
-            if (_btStream == null)
+            if (_dataStream == null)
             {
                 return null;
             }
@@ -398,7 +438,7 @@ namespace EdiabasLibConfigTool
 
         private bool SendBmwfast(byte[] sendData)
         {
-            if (_btStream == null)
+            if (_dataStream == null)
             {
                 return false;
             }
@@ -418,7 +458,7 @@ namespace EdiabasLibConfigTool
             sendLength++;
             try
             {
-                _btStream.Write(telBuffer, 0, sendLength);
+                _dataStream.Write(telBuffer, 0, sendLength);
             }
             catch (Exception)
             {
@@ -429,20 +469,20 @@ namespace EdiabasLibConfigTool
 
         private int ReceiveBmwFast(byte[] receiveData)
         {
-            if (_btStream == null)
+            if (_dataStream == null)
             {
                 return 0;
             }
             try
             {
                 // header byte
-                _btStream.ReadTimeout = 1000;
+                _dataStream.ReadTimeout = 1000;
                 for (int i = 0; i < 4; i++)
                 {
                     int data;
                     try
                     {
-                        data = _btStream.ReadByte();
+                        data = _dataStream.ReadByte();
                     }
                     catch (Exception)
                     {
@@ -450,11 +490,11 @@ namespace EdiabasLibConfigTool
                     }
                     if (data < 0)
                     {
-                        while (_btStream.DataAvailable)
+                        while (_dataStream.DataAvailable)
                         {
                             try
                             {
-                                _btStream.ReadByte();
+                                _dataStream.ReadByte();
                             }
                             catch (Exception)
                             {
@@ -468,11 +508,11 @@ namespace EdiabasLibConfigTool
 
                 if ((receiveData[0] & 0x80) != 0x80)
                 {   // 0xC0: Broadcast
-                    while (_btStream.DataAvailable)
+                    while (_dataStream.DataAvailable)
                     {
                         try
                         {
-                            _btStream.ReadByte();
+                            _dataStream.ReadByte();
                         }
                         catch (Exception)
                         {
@@ -496,7 +536,7 @@ namespace EdiabasLibConfigTool
                     int data;
                     try
                     {
-                        data = _btStream.ReadByte();
+                        data = _dataStream.ReadByte();
                     }
                     catch (Exception)
                     {
@@ -504,11 +544,11 @@ namespace EdiabasLibConfigTool
                     }
                     if (data < 0)
                     {
-                        while (_btStream.DataAvailable)
+                        while (_dataStream.DataAvailable)
                         {
                             try
                             {
-                                _btStream.ReadByte();
+                                _dataStream.ReadByte();
                             }
                             catch (Exception)
                             {
@@ -522,11 +562,11 @@ namespace EdiabasLibConfigTool
 
                 if (CalcChecksumBmwFast(receiveData, recLength) != receiveData[recLength])
                 {
-                    while (_btStream.DataAvailable)
+                    while (_dataStream.DataAvailable)
                     {
                         try
                         {
-                            _btStream.ReadByte();
+                            _dataStream.ReadByte();
                         }
                         catch (Exception)
                         {

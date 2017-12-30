@@ -9,11 +9,14 @@ using System.Text;
 using System.Xml.Linq;
 using InTheHand.Net.Sockets;
 using SimpleWifi.Win32;
+using SimpleWifi.Win32.Interop;
 
 namespace EdiabasLibConfigTool
 {
     public static class Patch
     {
+        public const string AdapterSsidEnet = @"Deep OBD BMW";
+        public const string AdapterSsidElm = @"WiFi_OBDII";
         private const string ApiDirName = @"Api32";
         private const string ApiDllName = @"api32.dll";
         private const string ApiDllBackupName = @"api32.backup.dll";
@@ -198,18 +201,29 @@ namespace EdiabasLibConfigTool
                 {
                     return false;
                 }
+                string interfaceValue = @"STD:OBD";
+                if (fileName.ToLowerInvariant().Contains(@"\SIDIS\home\DBaseSys2\".ToLowerInvariant()))
+                {   // VAS-PC instalation
+                    interfaceValue = @"EDIC";
+                }
+
                 if (wlanIface != null)
                 {
-                    UpdateConfigNode(settingsNode, @"EnetRemoteHost", @"auto:all");
-                    UpdateConfigNode(settingsNode, @"Interface", @"ENET");
+                    WlanConnectionAttributes conn = wlanIface.CurrentConnection;
+                    string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
+                    if (string.Compare(ssidString, AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        UpdateConfigNode(settingsNode, @"EnetRemoteHost", @"auto:all");
+                        UpdateConfigNode(settingsNode, @"Interface", @"ENET");
+                    }
+                    else
+                    {
+                        UpdateConfigNode(settingsNode, @"ObdComPort", "DEEPOBDWIFI");
+                        UpdateConfigNode(settingsNode, @"Interface", interfaceValue);
+                    }
                 }
                 else if (devInfo != null)
                 {
-                    string interfaceValue = @"STD:OBD";
-                    if (fileName.ToLowerInvariant().Contains(@"\SIDIS\home\DBaseSys2\".ToLowerInvariant()))
-                    {   // VAS-PC instalation
-                        interfaceValue = @"EDIC";
-                    }
                     string portValue = string.Format("BLUETOOTH:{0}#{1}", devInfo.DeviceAddress, pin);
 
                     UpdateConfigNode(settingsNode, @"ObdComPort", portValue);
