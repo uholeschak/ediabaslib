@@ -20,7 +20,7 @@ namespace EdiabasLib
         }
 #endif
 
-        public const string PortId = "WIFI";
+        public const string PortId = "DEEPOBDWIFI";
         public static string AdapterIp = "192.168.0.10";
         public static int AdapterPort = 35000;
         protected const int TcpReadTimeoutOffset = 1000;
