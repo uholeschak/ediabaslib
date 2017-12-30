@@ -112,7 +112,7 @@ namespace BmwDeepObd
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
             ActivityCommon.InterfaceType interfaceType = (ActivityCommon.InterfaceType) Intent.GetIntExtra(ExtraInterfaceType,
                 (int) ActivityCommon.InterfaceType.Bluetooth);
-            ViewStates visibility = interfaceType == ActivityCommon.InterfaceType.Bluetooth ? ViewStates.Visible : ViewStates.Gone;
+            ViewStates visibility = IsCustomAdapter(interfaceType) ? ViewStates.Visible : ViewStates.Gone;
 
             _buttonRead = _barView.FindViewById<Button>(Resource.Id.buttonAdapterRead);
             _buttonRead.SetOnTouchListener(this);
@@ -420,7 +420,7 @@ namespace BmwDeepObd
                 }
 
                 // moved down because of expert mode setting
-                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
+                if (IsCustomAdapter(_activityCommon.SelectedInterface))
                 {
                     if (_canMode == (int)AdapterMode.Can100)
                     {
@@ -557,7 +557,7 @@ namespace BmwDeepObd
 
         private void PerformRead()
         {
-            if (_activityCommon.SelectedInterface != ActivityCommon.InterfaceType.Bluetooth)
+            if (!IsCustomAdapter(_activityCommon.SelectedInterface))
             {
                 UpdateDisplay();
                 return;
@@ -823,7 +823,7 @@ namespace BmwDeepObd
                 try
                 {
                     commFailed = !InterfacePrepare();
-                    if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
+                    if (IsCustomAdapter(_activityCommon.SelectedInterface))
                     {
                         // block size
                         if (!commFailed)
@@ -893,7 +893,7 @@ namespace BmwDeepObd
                     }
                     if (commFailed)
                     {
-                        _activityCommon.ShowAlert(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth
+                        _activityCommon.ShowAlert(IsCustomAdapter(_activityCommon.SelectedInterface)
                             ? GetString(Resource.String.can_adapter_comm_error)
                             : GetString(Resource.String.can_adapter_comm_error_std), Resource.String.alert_title_error);
                         EdiabasClose();
@@ -1000,6 +1000,18 @@ namespace BmwDeepObd
             });
             _adapterThread.Start();
             UpdateDisplay();
+        }
+
+        private static bool IsCustomAdapter(ActivityCommon.InterfaceType interfaceType)
+        {
+            switch (interfaceType)
+            {
+                case ActivityCommon.InterfaceType.Bluetooth:
+                case ActivityCommon.InterfaceType.DeepObdWifi:
+                    return true;
+            }
+
+            return false;
         }
 
         private string PinDataToString(byte[] pinData)

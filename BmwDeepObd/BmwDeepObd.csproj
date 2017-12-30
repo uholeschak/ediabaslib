@@ -248,6 +248,7 @@
     <EmbeddedResource Include="Xml\BmwDeepObd.xsd">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="Xml\E61\E61DeepObdWifi.cccfg" />
     <None Include="Xml\E61\E61ElmWifi.cccfg" />
     <None Include="Xml\E61\E61Ftdi.cccfg" />
     <None Include="Xml\E61\MotorGrid.ccpage" />
@@ -255,6 +256,7 @@
     <None Include="Xml\E90\E90Bt.cccfg">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Xml\E90\E90DeepObdWifi.cccfg" />
     <None Include="Xml\E90\E90ElmWifi.cccfg">
       <SubType>Designer</SubType>
     </None>
