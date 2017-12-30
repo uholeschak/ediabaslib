@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using Android.Bluetooth;
 using System;
 using System.Linq;
 using System.Threading;
@@ -1864,17 +1863,17 @@ namespace BmwDeepObd
 
             private const int SyncWaitTime = 100;
 
-            private readonly Stream _bluetoothInStream;
-            private readonly Stream _bluetoothOutStream;
+            private readonly Stream _inStream;
+            private readonly Stream _outStream;
 
-            public Stream BluetoothInStream => _bluetoothInStream;
+            public Stream InStream => _inStream;
 
-            public Stream BluetoothOutStream => _bluetoothOutStream;
+            public Stream OutStream => _outStream;
 
-            public Comm(Stream bluetoothInStream, Stream bluetoothOutStream)
+            public Comm(Stream inStream, Stream outStream)
             {
-                _bluetoothInStream = bluetoothInStream;
-                _bluetoothOutStream = bluetoothOutStream;
+                _inStream = inStream;
+                _outStream = outStream;
             }
 
             public int XferMilliseconds(int bytes)
@@ -1887,7 +1886,7 @@ namespace BmwDeepObd
             public void ActivateBootloader()
             {
                 byte[] bootCmd = { 0x82, 0xF1, 0xF1, 0xFF, 0xFF, 0x62 };
-                _bluetoothOutStream.Write(bootCmd, 0, bootCmd.Length);
+                _outStream.Write(bootCmd, 0, bootCmd.Length);
             }
 
             public ErrorCode GetPacket(ref List<byte> receivePacket, int timeout = 1000)
@@ -1902,7 +1901,7 @@ namespace BmwDeepObd
                     long startTime = Stopwatch.GetTimestamp();
                     for (; ; )
                     {
-                        if (!_bluetoothInStream.IsDataAvailable())
+                        if (!_inStream.IsDataAvailable())
                         {
                             if (Stopwatch.GetTimestamp() - startTime > timeout * TickResolMs)
                             {
@@ -1912,7 +1911,7 @@ namespace BmwDeepObd
                             continue;
                         }
 
-                        int value = _bluetoothInStream.ReadByte();
+                        int value = _inStream.ReadByte();
                         if (value == STX)
                         {
                             break;
@@ -1930,7 +1929,7 @@ namespace BmwDeepObd
                     startTime = Stopwatch.GetTimestamp();
                     for (; ; )
                     {
-                        if (!_bluetoothInStream.IsDataAvailable())
+                        if (!_inStream.IsDataAvailable())
                         {
                             if (Stopwatch.GetTimestamp() - startTime > timeout * TickResolMs)
                             {
@@ -1940,10 +1939,10 @@ namespace BmwDeepObd
                             continue;
                         }
 
-                        int value = _bluetoothInStream.ReadByte();
+                        int value = _inStream.ReadByte();
                         if (value == DLE)
                         {
-                            while (!_bluetoothInStream.IsDataAvailable())
+                            while (!_inStream.IsDataAvailable())
                             {
                                 if (Stopwatch.GetTimestamp() - startTime > timeout * TickResolMs)
                                 {
@@ -1951,7 +1950,7 @@ namespace BmwDeepObd
                                 }
                                 Thread.Sleep(10);
                             }
-                            value = _bluetoothInStream.ReadByte();
+                            value = _inStream.ReadByte();
                         }
                         else
                         {
@@ -2014,7 +2013,7 @@ namespace BmwDeepObd
                 long startTime = Stopwatch.GetTimestamp();
                 for (;;)
                 {
-                    if (!_bluetoothInStream.IsDataAvailable())
+                    if (!_inStream.IsDataAvailable())
                     {
                         if (Stopwatch.GetTimestamp() - startTime > timeout*TickResolMs)
                         {
@@ -2024,7 +2023,7 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    int value = _bluetoothInStream.ReadByte();
+                    int value = _inStream.ReadByte();
                     if (value == STX)
                     {
                         break;
@@ -2042,7 +2041,7 @@ namespace BmwDeepObd
                 startTime = Stopwatch.GetTimestamp();
                 for (;;)
                 {
-                    if (!_bluetoothInStream.IsDataAvailable())
+                    if (!_inStream.IsDataAvailable())
                     {
                         if (Stopwatch.GetTimestamp() - startTime > timeout*TickResolMs)
                         {
@@ -2051,13 +2050,13 @@ namespace BmwDeepObd
                         Thread.Sleep(10);
                         continue;
                     }
-                    int value = _bluetoothInStream.ReadByte();
+                    int value = _inStream.ReadByte();
                     // we got some data, don't timeout
                     startTime = Stopwatch.GetTimestamp();
 
                     if (value == DLE)
                     {
-                        while (!_bluetoothInStream.IsDataAvailable())
+                        while (!_inStream.IsDataAvailable())
                         {
                             if (Stopwatch.GetTimestamp() - startTime > timeout*TickResolMs)
                             {
@@ -2065,7 +2064,7 @@ namespace BmwDeepObd
                             }
                             Thread.Sleep(10);
                         }
-                        value = _bluetoothInStream.ReadByte();
+                        value = _inStream.ReadByte();
                     }
                     else
                     {
@@ -2095,11 +2094,11 @@ namespace BmwDeepObd
                 try
                 {
                     // send the STX
-                    _bluetoothOutStream.WriteByte(sendPacket[0]);
+                    _outStream.WriteByte(sendPacket[0]);
 
                     // wait for the responding STX echoed back
                     long startTime = Stopwatch.GetTimestamp();
-                    while (!_bluetoothInStream.IsDataAvailable())
+                    while (!_inStream.IsDataAvailable())
                     {
                         if (Stopwatch.GetTimestamp() - startTime > SyncWaitTime * 100 * TickResolMs)
                         {
@@ -2111,7 +2110,7 @@ namespace BmwDeepObd
                     // now we are free to send the rest of the packet
                     List<byte> tempPacket = new List<byte>(sendPacket);
                     tempPacket.RemoveAt(0);
-                    _bluetoothOutStream.Write(tempPacket.ToArray(), 0, tempPacket.Count);
+                    _outStream.Write(tempPacket.ToArray(), 0, tempPacket.Count);
 
                     return ErrorCode.Success;
                 }
@@ -2128,11 +2127,11 @@ namespace BmwDeepObd
                     int txTime = XferMilliseconds(sendPacket.Count);
 
                     // send the STX
-                    _bluetoothOutStream.WriteByte(sendPacket[0]);
+                    _outStream.WriteByte(sendPacket[0]);
 
                     // wait for the responding STX echoed back
                     long startTime = Stopwatch.GetTimestamp();
-                    while (!_bluetoothInStream.IsDataAvailable())
+                    while (!_inStream.IsDataAvailable())
                     {
                         if (Stopwatch.GetTimestamp() - startTime > SyncWaitTime * 100 * TickResolMs)
                         {
@@ -2146,7 +2145,7 @@ namespace BmwDeepObd
                     tempPacket.RemoveAt(0);
                     while (retryLimit-- >= 0)
                     {
-                        _bluetoothOutStream.Write(tempPacket.ToArray(), 0, tempPacket.Count);
+                        _outStream.Write(tempPacket.ToArray(), 0, tempPacket.Count);
 
                         ErrorCode retStatus = GetPacket(ref receivePacket, txTime + timeOut);
                         switch (retStatus)
@@ -2174,11 +2173,11 @@ namespace BmwDeepObd
 
                 try
                 {
-                    while (_bluetoothInStream.IsDataAvailable())
+                    while (_inStream.IsDataAvailable())
                     {
-                        _bluetoothInStream.ReadByte();
+                        _inStream.ReadByte();
                     }
-                    _bluetoothOutStream.WriteByte(STX);
+                    _outStream.WriteByte(STX);
 
                     BootloaderInfoPacket cmd = new BootloaderInfoPacket();
                     List<byte> sendPacket = cmd.FramePacket();
@@ -2186,7 +2185,7 @@ namespace BmwDeepObd
                     long startTime = Stopwatch.GetTimestamp();
                     for (; ; )
                     {
-                        while (!_bluetoothInStream.IsDataAvailable())
+                        while (!_inStream.IsDataAvailable())
                         {
                             if (timeout <= 0)
                             {
@@ -2195,14 +2194,14 @@ namespace BmwDeepObd
 
                             if (Stopwatch.GetTimestamp() - startTime > SyncWaitTime * TickResolMs)
                             {
-                                _bluetoothOutStream.WriteByte(STX);
+                                _outStream.WriteByte(STX);
                                 startTime = Stopwatch.GetTimestamp();
                                 timeout--;
                             }
                             Thread.Sleep(10);
                         }
 
-                        int value = _bluetoothInStream.ReadByte();
+                        int value = _inStream.ReadByte();
                         if (value == STX)
                         {
                             SendPacket(sendPacket);
@@ -2260,11 +2259,11 @@ namespace BmwDeepObd
                         return result;
                     }
 
-                    if (!_bluetoothInStream.IsDataAvailable())
+                    if (!_inStream.IsDataAvailable())
                     {
                         return ErrorCode.NoAcknowledgement;
                     }
-                    int response = _bluetoothInStream.ReadByte();
+                    int response = _inStream.ReadByte();
                     if (response != STX)
                     {
                         return ErrorCode.NoAcknowledgement;
@@ -2469,8 +2468,7 @@ namespace BmwDeepObd
                                     };
                                     Rawimport.Add(rawRange);
 
-                                    bool error;
-                                    uint deviceAddress = device.FromHexAddress(lineAddress, out error);
+                                    uint deviceAddress = device.FromHexAddress(lineAddress, out bool error);
                                     if (error)
                                     {
                                         // don't do anything here, this address is outside of device memory space.
@@ -2942,10 +2940,10 @@ namespace BmwDeepObd
             return -1;
         }
 
-        public static bool FwUpdate(BluetoothSocket bluetoothSocket)
+        public static bool FwUpdate(Stream inStream, Stream outStream)
         {
             CreateFirmwareList();
-            Comm comm = new Comm(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
+            Comm comm = new Comm(inStream, outStream);
             Device device = new Device();
             if (!EnterBootloaderMode(device, comm))
             {
