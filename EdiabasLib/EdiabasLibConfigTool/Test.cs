@@ -13,6 +13,7 @@ using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
 using SimpleWifi;
 using SimpleWifi.Win32;
+using SimpleWifi.Win32.Interop;
 
 namespace EdiabasLibConfigTool
 {
@@ -111,26 +112,32 @@ namespace EdiabasLibConfigTool
             {
                 try
                 {
-                    IPInterfaceProperties ipProp = wlanIface.NetworkInterface.GetIPProperties();
-                    if (ipProp == null)
+                    WlanConnectionAttributes conn = wlanIface.CurrentConnection;
+                    string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
+                    string ipAddr = string.Empty;
+                    bool isElm = string.Compare(ssidString, Patch.AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) != 0;
+                    if (!isElm)
                     {
-                        _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
-                        return false;
-                    }
-                    string ipAddr = (from addr in ipProp.DhcpServerAddresses where addr.AddressFamily == AddressFamily.InterNetwork select addr.ToString()).FirstOrDefault();
-                    if (string.IsNullOrEmpty(ipAddr))
-                    {
-                        _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
-                        return false;
-                    }
-                    bool isElm = string.Compare(ipAddr, ElmIp, StringComparison.OrdinalIgnoreCase) == 0;
-                    if (configure && !isElm)
-                    {
-                        Process.Start(string.Format("http://{0}", ipAddr));
-                        _form.UpdateStatusText(Resources.Strings.WifiUrlOk);
-                        TestOk = true;
-                        ConfigPossible = true;
-                        return true;
+                        IPInterfaceProperties ipProp = wlanIface.NetworkInterface.GetIPProperties();
+                        if (ipProp == null)
+                        {
+                            _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
+                            return false;
+                        }
+                        ipAddr = (from addr in ipProp.DhcpServerAddresses where addr.AddressFamily == AddressFamily.InterNetwork select addr.ToString()).FirstOrDefault();
+                        if (string.IsNullOrEmpty(ipAddr))
+                        {
+                            _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
+                            return false;
+                        }
+                        if (configure)
+                        {
+                            Process.Start(string.Format("http://{0}", ipAddr));
+                            _form.UpdateStatusText(Resources.Strings.WifiUrlOk);
+                            TestOk = true;
+                            ConfigPossible = true;
+                            return true;
+                        }
                     }
                     _testThread = new Thread(() =>
                     {
@@ -140,7 +147,7 @@ namespace EdiabasLibConfigTool
                             Thread.CurrentThread.CurrentUICulture = cultureInfo;
                             if (isElm)
                             {
-                                TestOk = RunWifiTestElm(ipAddr, configure, out bool configRequired);
+                                TestOk = RunWifiTestElm(configure, out bool configRequired);
                                 if (TestOk && configRequired)
                                 {
                                     ConfigPossible = true;
@@ -266,7 +273,7 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        private bool RunWifiTestElm(string ipAddr, bool configure, out bool configRequired)
+        private bool RunWifiTestElm(bool configure, out bool configRequired)
         {
             configRequired = false;
             _form.UpdateStatusText(Resources.Strings.Connecting);
@@ -275,7 +282,7 @@ namespace EdiabasLibConfigTool
             {
                 using (TcpClient tcpClient = new TcpClient())
                 {
-                    IPEndPoint ipTcp = new IPEndPoint(IPAddress.Parse(ipAddr), ElmPort);
+                    IPEndPoint ipTcp = new IPEndPoint(IPAddress.Parse(ElmIp), ElmPort);
                     tcpClient.Connect(ipTcp);
                     _dataStream = tcpClient.GetStream();
                     return RunBtTest(configure, out configRequired);
