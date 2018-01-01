@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -8,17 +9,25 @@ using System.Windows.Forms;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
+using SimpleWifi;
+using SimpleWifi.Win32;
+using SimpleWifi.Win32.Interop;
 
 namespace CarSimulator
 {
     public class DeviceTest : IDisposable
     {
+        private readonly Wifi _wifi;
+        private readonly WlanClient _wlanClient;
         private readonly MainForm _form;
-        private NetworkStream _btStream;
+        private NetworkStream _dataStream;
         private bool _disposed;
 
         private const string DefaultBtName = "Deep OBD";
         private const string DefaultBtPin = "1234";
+        public const string AdapterSsidElm = @"WiFi_OBDII";
+        private const string ElmIp = @"192.168.0.10";
+        private const int ElmPort = 35000;
 
         // ReSharper disable InconsistentNaming
         // ReSharper disable UnusedMember.Global
@@ -44,6 +53,9 @@ namespace CarSimulator
 
         public DeviceTest(MainForm form)
         {
+            _wifi = new Wifi();
+            _wlanClient = new WlanClient();
+
             _form = form;
             _form.UpdateTestStatusText(string.Empty);
         }
@@ -69,7 +81,7 @@ namespace CarSimulator
                 if (disposing)
                 {
                     // Dispose managed resources.
-                    DisconnectBtDevice();
+                    DisconnectStream();
                 }
 
                 // Note disposing has been done.
@@ -120,7 +132,7 @@ namespace CarSimulator
                 BluetoothClient cli = new BluetoothClient();
                 cli.SetPin("1234");
                 cli.Connect(ep);
-                _btStream = cli.GetStream();
+                _dataStream = cli.GetStream();
             }
             catch (Exception)
             {
@@ -129,46 +141,136 @@ namespace CarSimulator
             return true;
         }
 
-        private void DisconnectBtDevice()
+        private bool ConnectWifiDevice(string comPort)
         {
-            if (_btStream != null)
+            try
             {
-                _btStream.Close();
-                _btStream.Dispose();
-                _btStream = null;
+                foreach (WlanInterface wlanIface in _wlanClient.Interfaces)
+                {
+                    if (wlanIface.InterfaceState == WlanInterfaceState.Connected)
+                    {
+                        WlanConnectionAttributes conn = wlanIface.CurrentConnection;
+                        string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
+                        if (string.Compare(ssidString, AdapterSsidElm, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            try
+            {
+                foreach (AccessPoint ap in _wifi.GetAccessPoints())
+                {
+                    if (!ap.IsConnected)
+                    {
+                        if (string.Compare(ap.Name, AdapterSsidElm, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            AuthRequest authRequest = new AuthRequest(ap);
+                            ap.ConnectAsync(authRequest, true, success =>
+                            {
+                                _form.BeginInvoke((Action)(() =>
+                                {
+                                    if (!success)
+                                    {
+                                        _form.UpdateTestStatusText("Connection faild");
+                                    }
+                                    else
+                                    {
+                                        _form.UpdateTestStatusText("Wifi connected");
+                                        Thread.Sleep(1000);
+                                        ExecuteTest(true, comPort);
+                                    }
+                                }));
+                            });
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
+        }
+
+        private void DisconnectStream()
+        {
+            if (_dataStream != null)
+            {
+                _dataStream.Close();
+                _dataStream.Dispose();
+                _dataStream = null;
             }
         }
 
-        public bool ExecuteTest(string comPort)
+        public bool ExecuteTest(bool wifi, string comPort)
         {
             if (!comPort.StartsWith("COM"))
             {
                 _form.UpdateTestStatusText("No COM port selected");
                 return false;
             }
-            _form.UpdateTestStatusText("Discovering devices ...");
-            BluetoothDeviceInfo device = DiscoverBtDevice();
-            if (device == null)
-            {
-                _form.UpdateTestStatusText("No device selected");
-                return false;
-            }
-            _form.UpdateTestStatusText("Connecting ...");
+
             try
             {
-                if (!ConnectBtDevice(device))
+                if (wifi)
                 {
-                    _form.UpdateTestStatusText("Connection faild");
-                    return false;
+                    _form.UpdateTestStatusText("Connecting ...");
+                    if (!ConnectWifiDevice(comPort))
+                    {
+                        return false;
+                    }
+                    try
+                    {
+                        using (TcpClient tcpClient = new TcpClient())
+                        {
+                            IPEndPoint ipTcp = new IPEndPoint(IPAddress.Parse(ElmIp), ElmPort);
+                            tcpClient.Connect(ipTcp);
+                            _dataStream = tcpClient.GetStream();
+                            if (!RunTest(comPort))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        _form.UpdateTestStatusText("Connection faild");
+                        return false;
+                    }
                 }
-                if (!RunTest(comPort))
+                else
                 {
-                    return false;
+                    _form.UpdateTestStatusText("Discovering devices ...");
+                    BluetoothDeviceInfo device = DiscoverBtDevice();
+                    if (device == null)
+                    {
+                        _form.UpdateTestStatusText("No device selected");
+                        return false;
+                    }
+                    _form.UpdateTestStatusText("Connecting ...");
+                    if (!ConnectBtDevice(device))
+                    {
+                        _form.UpdateTestStatusText("Connection faild");
+                        return false;
+                    }
+                    if (!RunTest(comPort))
+                    {
+                        return false;
+                    }
                 }
             }
             finally
             {
-                DisconnectBtDevice();
+                DisconnectStream();
             }
             return true;
         }
@@ -240,7 +342,7 @@ namespace CarSimulator
                 string nameText = Encoding.UTF8.GetString(btName, 0, nameLength);
                 sr.Append(nameText);
                 _form.UpdateTestStatusText(sr.ToString());
-                if (adapterType == 5 || string.Compare(nameText, DefaultBtName, StringComparison.Ordinal) != 0)
+                if (/*adapterType == 5 ||*/ string.Compare(nameText, DefaultBtName, StringComparison.Ordinal) != 0)
                 {
                     sr.Append("\r\n");
                     sr.Append("Setting default name!");
@@ -454,7 +556,7 @@ namespace CarSimulator
 
         private byte[] AdapterCommandCustom(byte command, byte[] data)
         {
-            if (_btStream == null)
+            if (_dataStream == null)
             {
                 return null;
             }
@@ -556,7 +658,7 @@ namespace CarSimulator
                 byte[] adapterTel = CreateAdapterTelegram(sendTel, sendTel.Length, 10400, KLINEF1_PARITY_NONE, true);
                 try
                 {
-                    _btStream.Write(adapterTel, 0, adapterTel.Length);
+                    _dataStream.Write(adapterTel, 0, adapterTel.Length);
                 }
                 catch (Exception)
                 {
@@ -591,7 +693,7 @@ namespace CarSimulator
 
         private bool SendBmwfast(byte[] sendData)
         {
-            if (_btStream == null)
+            if (_dataStream == null)
             {
                 return false;
             }
@@ -611,7 +713,7 @@ namespace CarSimulator
             sendLength++;
             try
             {
-                _btStream.Write(telBuffer, 0, sendLength);
+                _dataStream.Write(telBuffer, 0, sendLength);
             }
             catch (Exception)
             {
@@ -622,20 +724,20 @@ namespace CarSimulator
 
         private int ReceiveBmwFast(byte[] receiveData)
         {
-            if (_btStream == null)
+            if (_dataStream == null)
             {
                 return 0;
             }
             try
             {
                 // header byte
-                _btStream.ReadTimeout = 1000;
+                _dataStream.ReadTimeout = 2000;
                 for (int i = 0; i < 4; i++)
                 {
                     int data;
                     try
                     {
-                        data = _btStream.ReadByte();
+                        data = _dataStream.ReadByte();
                     }
                     catch (Exception)
                     {
@@ -643,11 +745,11 @@ namespace CarSimulator
                     }
                     if (data < 0)
                     {
-                        while (_btStream.DataAvailable)
+                        while (_dataStream.DataAvailable)
                         {
                             try
                             {
-                                _btStream.ReadByte();
+                                _dataStream.ReadByte();
                             }
                             catch (Exception)
                             {
@@ -661,11 +763,11 @@ namespace CarSimulator
 
                 if ((receiveData[0] & 0x80) != 0x80)
                 {   // 0xC0: Broadcast
-                    while (_btStream.DataAvailable)
+                    while (_dataStream.DataAvailable)
                     {
                         try
                         {
-                            _btStream.ReadByte();
+                            _dataStream.ReadByte();
                         }
                         catch (Exception)
                         {
@@ -689,7 +791,7 @@ namespace CarSimulator
                     int data;
                     try
                     {
-                        data = _btStream.ReadByte();
+                        data = _dataStream.ReadByte();
                     }
                     catch (Exception)
                     {
@@ -697,11 +799,11 @@ namespace CarSimulator
                     }
                     if (data < 0)
                     {
-                        while (_btStream.DataAvailable)
+                        while (_dataStream.DataAvailable)
                         {
                             try
                             {
-                                _btStream.ReadByte();
+                                _dataStream.ReadByte();
                             }
                             catch (Exception)
                             {
@@ -715,11 +817,11 @@ namespace CarSimulator
 
                 if (CommThread.CalcChecksumBmwFast(receiveData, recLength) != receiveData[recLength])
                 {
-                    while (_btStream.DataAvailable)
+                    while (_dataStream.DataAvailable)
                     {
                         try
                         {
-                            _btStream.ReadByte();
+                            _dataStream.ReadByte();
                         }
                         catch (Exception)
                         {

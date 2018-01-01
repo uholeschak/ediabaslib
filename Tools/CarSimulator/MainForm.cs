@@ -478,7 +478,8 @@ namespace CarSimulator
         {
             bool connected = _commThread.ThreadRunning();
             buttonConnect.Text = connected ? "Disconnect" : "Connect";
-            buttonDeviceTest.Enabled = !connected;
+            buttonDeviceTestBt.Enabled = !connected;
+            buttonDeviceTestWifi.Enabled = !connected;
             if (connected)
             {
                 _commThread.Moving = checkBoxMoving.Checked;
@@ -596,7 +597,7 @@ namespace CarSimulator
         {
             DeviceTest deviceTest = new DeviceTest(this);
             string selectedPort = listPorts.SelectedItem.ToString();
-            deviceTest.ExecuteTest(selectedPort);
+            deviceTest.ExecuteTest(sender == buttonDeviceTestWifi, selectedPort);
             deviceTest.Dispose();
         }
     }

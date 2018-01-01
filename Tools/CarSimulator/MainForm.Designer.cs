@@ -52,8 +52,9 @@
             this.treeViewDirectories = new System.Windows.Forms.TreeView();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.buttonRootFolder = new System.Windows.Forms.Button();
-            this.buttonDeviceTest = new System.Windows.Forms.Button();
+            this.buttonDeviceTestBt = new System.Windows.Forms.Button();
             this.textBoxTestResults = new System.Windows.Forms.TextBox();
+            this.buttonDeviceTestWifi = new System.Windows.Forms.Button();
             this.groupBoxConcepts.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -233,7 +234,7 @@
             this.checkBoxIgnitionOk.AutoSize = true;
             this.checkBoxIgnitionOk.Checked = true;
             this.checkBoxIgnitionOk.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxIgnitionOk.Location = new System.Drawing.Point(224, 42);
+            this.checkBoxIgnitionOk.Location = new System.Drawing.Point(224, 71);
             this.checkBoxIgnitionOk.Name = "checkBoxIgnitionOk";
             this.checkBoxIgnitionOk.Size = new System.Drawing.Size(78, 17);
             this.checkBoxIgnitionOk.TabIndex = 4;
@@ -244,7 +245,7 @@
             // checkBoxAdsAdapter
             // 
             this.checkBoxAdsAdapter.AutoSize = true;
-            this.checkBoxAdsAdapter.Location = new System.Drawing.Point(224, 65);
+            this.checkBoxAdsAdapter.Location = new System.Drawing.Point(224, 94);
             this.checkBoxAdsAdapter.Name = "checkBoxAdsAdapter";
             this.checkBoxAdsAdapter.Size = new System.Drawing.Size(87, 17);
             this.checkBoxAdsAdapter.TabIndex = 5;
@@ -256,7 +257,7 @@
             this.checkBoxKLineResponder.AutoSize = true;
             this.checkBoxKLineResponder.Checked = true;
             this.checkBoxKLineResponder.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxKLineResponder.Location = new System.Drawing.Point(344, 65);
+            this.checkBoxKLineResponder.Location = new System.Drawing.Point(336, 94);
             this.checkBoxKLineResponder.Name = "checkBoxKLineResponder";
             this.checkBoxKLineResponder.Size = new System.Drawing.Size(87, 17);
             this.checkBoxKLineResponder.TabIndex = 6;
@@ -296,15 +297,15 @@
             this.buttonRootFolder.UseVisualStyleBackColor = true;
             this.buttonRootFolder.Click += new System.EventHandler(this.buttonRootFolder_Click);
             // 
-            // buttonDeviceTest
+            // buttonDeviceTestBt
             // 
-            this.buttonDeviceTest.Location = new System.Drawing.Point(356, 12);
-            this.buttonDeviceTest.Name = "buttonDeviceTest";
-            this.buttonDeviceTest.Size = new System.Drawing.Size(75, 23);
-            this.buttonDeviceTest.TabIndex = 11;
-            this.buttonDeviceTest.Text = "Device Test";
-            this.buttonDeviceTest.UseVisualStyleBackColor = true;
-            this.buttonDeviceTest.Click += new System.EventHandler(this.buttonDeviceTest_Click);
+            this.buttonDeviceTestBt.Location = new System.Drawing.Point(336, 12);
+            this.buttonDeviceTestBt.Name = "buttonDeviceTestBt";
+            this.buttonDeviceTestBt.Size = new System.Drawing.Size(95, 23);
+            this.buttonDeviceTestBt.TabIndex = 11;
+            this.buttonDeviceTestBt.Text = "Device Test Bt";
+            this.buttonDeviceTestBt.UseVisualStyleBackColor = true;
+            this.buttonDeviceTestBt.Click += new System.EventHandler(this.buttonDeviceTest_Click);
             // 
             // textBoxTestResults
             // 
@@ -316,13 +317,24 @@
             this.textBoxTestResults.Size = new System.Drawing.Size(207, 142);
             this.textBoxTestResults.TabIndex = 13;
             // 
+            // buttonDeviceTestWifi
+            // 
+            this.buttonDeviceTestWifi.Location = new System.Drawing.Point(336, 41);
+            this.buttonDeviceTestWifi.Name = "buttonDeviceTestWifi";
+            this.buttonDeviceTestWifi.Size = new System.Drawing.Size(95, 23);
+            this.buttonDeviceTestWifi.TabIndex = 14;
+            this.buttonDeviceTestWifi.Text = "Device Test Wifi";
+            this.buttonDeviceTestWifi.UseVisualStyleBackColor = true;
+            this.buttonDeviceTestWifi.Click += new System.EventHandler(this.buttonDeviceTest_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(657, 408);
+            this.Controls.Add(this.buttonDeviceTestWifi);
             this.Controls.Add(this.textBoxTestResults);
-            this.Controls.Add(this.buttonDeviceTest);
+            this.Controls.Add(this.buttonDeviceTestBt);
             this.Controls.Add(this.buttonRootFolder);
             this.Controls.Add(this.treeViewDirectories);
             this.Controls.Add(this.buttonErrorDefault);
@@ -370,8 +382,9 @@
         private System.Windows.Forms.Button buttonRootFolder;
         private System.Windows.Forms.RadioButton radioButtonKwp2000;
         private System.Windows.Forms.RadioButton radioButtonTp20;
-        private System.Windows.Forms.Button buttonDeviceTest;
+        private System.Windows.Forms.Button buttonDeviceTestBt;
         private System.Windows.Forms.TextBox textBoxTestResults;
+        private System.Windows.Forms.Button buttonDeviceTestWifi;
     }
 }
 
