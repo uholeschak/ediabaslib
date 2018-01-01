@@ -197,6 +197,7 @@ namespace CarSimulator
             {
                 // ignored
             }
+            _form.UpdateTestStatusText("No WiFi device found");
 
             return false;
         }
