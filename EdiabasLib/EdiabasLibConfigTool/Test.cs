@@ -64,7 +64,7 @@ namespace EdiabasLibConfigTool
                 if (disposing)
                 {
                     // Dispose managed resources.
-                    DisconnectBtDevice();
+                    DisconnectStream();
                 }
 
                 // Note disposing has been done.
@@ -205,7 +205,7 @@ namespace EdiabasLibConfigTool
                 }
                 finally
                 {
-                    DisconnectBtDevice();
+                    DisconnectStream();
                     _testThread = null;
                     _form.UpdateButtonStatus();
                 }
@@ -295,7 +295,7 @@ namespace EdiabasLibConfigTool
             }
             finally
             {
-                DisconnectBtDevice();
+                DisconnectStream();
             }
         }
 
@@ -399,7 +399,7 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        private void DisconnectBtDevice()
+        private void DisconnectStream()
         {
             if (_dataStream != null)
             {
