@@ -422,6 +422,7 @@ namespace BmwDeepObd
         private Dictionary<string, string> _yandexCurrentLangDict;
         private Dictionary<string, List<string>> _vagDtcCodeDict;
         private string _lastEnetSsid = string.Empty;
+        private bool? _lastInvertfaceAvailable;
 
         public bool Emulator { get; }
 
@@ -597,6 +598,7 @@ namespace BmwDeepObd
                 if (_selectedInterface != value)
                 {
                     _lastEnetSsid = CommActive ? null : string.Empty;
+                    _lastInvertfaceAvailable = null;
                 }
                 _selectedInterface = value;
                 SetPreferredNetworkInterface();
@@ -915,12 +917,6 @@ namespace BmwDeepObd
                     {
                         return false;
                     }
-#if false
-                    if (MicrontekBt)
-                    {
-                        return MicrontekBtConnected;
-                    }
-#endif
                     return _btAdapter.IsEnabled;
 
                 case InterfaceType.Enet:
@@ -5001,7 +4997,23 @@ namespace BmwDeepObd
                 {
                     case BluetoothAdapter.ActionStateChanged:
                     case ConnectivityManager.ConnectivityAction:
-                        _activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
+                        switch (_activityCommon._selectedInterface)
+                        {
+                            case InterfaceType.Bluetooth:
+                            case InterfaceType.Enet:
+                            case InterfaceType.ElmWifi:
+                            case InterfaceType.DeepObdWifi:
+                            {
+                                bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
+                                if (!_activityCommon._lastInvertfaceAvailable.HasValue ||
+                                    _activityCommon._lastInvertfaceAvailable.Value != interfaceAvailable)
+                                {
+                                    _activityCommon._lastInvertfaceAvailable = interfaceAvailable;
+                                    _activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
+                                }
+                                break;
+                            }
+                        }
                         if (action == BluetoothAdapter.ActionStateChanged)
                         {
                             BtNoEvents = false;
@@ -5045,7 +5057,7 @@ namespace BmwDeepObd
                         break;
 
                     case GlobalBroadcastReceiver.NotificationBroadcastAction:
-                        _activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
+                        //_activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
                         break;
                 }
             }
