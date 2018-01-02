@@ -120,6 +120,7 @@ namespace BmwDeepObd
 
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
+        private bool _updateOptionsMenu;
         private InputMethodManager _imm;
         private View _contentView;
         private View _barView;
@@ -235,7 +236,7 @@ namespace BmwDeepObd
             {
                 if (_activityActive)
                 {
-                    InvalidateOptionsMenu();
+                    UpdateOptionsMenu();
                     UpdateDisplay();
                 }
             }, BroadcastReceived, IntentTranslateActivty)
@@ -347,7 +348,7 @@ namespace BmwDeepObd
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
                         _instanceData.SgbdFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
-                        InvalidateOptionsMenu();
+                        UpdateOptionsMenu();
                         ReadSgbd();
                     }
                     break;
@@ -361,7 +362,7 @@ namespace BmwDeepObd
                         _instanceData.DeviceAddress = data.Extras.GetString(DeviceListActivity.ExtraDeviceAddress);
                         bool callAdapterConfig = data.Extras.GetBoolean(DeviceListActivity.ExtraCallAdapterConfig, false);
                         EdiabasClose();
-                        InvalidateOptionsMenu();
+                        UpdateOptionsMenu();
                         if (callAdapterConfig)
                         {
                             AdapterConfig();
@@ -379,7 +380,7 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestYandexKey:
                     ActivityCommon.EnableTranslation = !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey);
-                    InvalidateOptionsMenu();
+                    UpdateOptionsMenu();
                     UpdateDisplay();
                     break;
             }
@@ -390,6 +391,16 @@ namespace BmwDeepObd
             var inflater = MenuInflater;
             inflater.Inflate(Resource.Menu.ediabas_tool_menu, menu);
             return true;
+        }
+
+        public override bool OnMenuOpened(int featureId, IMenu menu)
+        {
+            if (_updateOptionsMenu)
+            {
+                _updateOptionsMenu = false;
+                OnPrepareOptionsMenu(menu);
+            }
+            return base.OnMenuOpened(featureId, menu);
         }
 
         public override bool OnPrepareOptionsMenu(IMenu menu)
@@ -436,6 +447,7 @@ namespace BmwDeepObd
                 {
                     if (!string.IsNullOrEmpty(_ediabas?.SgbdFileName))
                     {
+                        // ReSharper disable once PossibleNullReferenceException
                         fileName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
                     }
                 }
@@ -532,7 +544,7 @@ namespace BmwDeepObd
                     if (EdiabasClose())
                     {
                         _instanceData.Offline = !_instanceData.Offline;
-                        InvalidateOptionsMenu();
+                        UpdateOptionsMenu();
                         UpdateDisplay();
                     }
                     return true;
@@ -619,7 +631,7 @@ namespace BmwDeepObd
                     }
                     SendTraceFileAlways((sender, args) =>
                     {
-                        InvalidateOptionsMenu();
+                        UpdateOptionsMenu();
                     });
                     return true;
 
@@ -630,7 +642,7 @@ namespace BmwDeepObd
                         return true;
                     }
                     ActivityCommon.EnableTranslation = !ActivityCommon.EnableTranslation;
-                    InvalidateOptionsMenu();
+                    UpdateOptionsMenu();
                     UpdateDisplay();
                     UpdateTranslationText();
                     return true;
@@ -643,7 +655,7 @@ namespace BmwDeepObd
                     _activityCommon.ClearTranslationCache();
                     ResetTranslations();
                     _jobListTranslated = false;
-                    InvalidateOptionsMenu();
+                    UpdateOptionsMenu();
                     UpdateDisplay();
                     UpdateTranslationText();
                     return true;
@@ -682,6 +694,11 @@ namespace BmwDeepObd
             return false;
         }
 
+        private void UpdateOptionsMenu()
+        {
+            _updateOptionsMenu = true;
+        }
+
         private void HandleStartDialogs()
         {
             if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.None)
@@ -689,7 +706,7 @@ namespace BmwDeepObd
                 SelectInterface();
             }
             SelectInterfaceEnable();
-            InvalidateOptionsMenu();
+            UpdateOptionsMenu();
             UpdateDisplay();
         }
 
@@ -709,7 +726,7 @@ namespace BmwDeepObd
             _jobList.Clear();
             CloseDataLog();
             UpdateDisplay();
-            InvalidateOptionsMenu();
+            UpdateOptionsMenu();
             return true;
         }
 
@@ -874,7 +891,7 @@ namespace BmwDeepObd
             {
                 EdiabasClose();
                 _instanceData.SgbdFileName = string.Empty;
-                InvalidateOptionsMenu();
+                UpdateOptionsMenu();
                 SelectInterfaceEnable();
             });
         }
@@ -883,7 +900,7 @@ namespace BmwDeepObd
         {
             _activityCommon.RequestInterfaceEnable((sender, args) =>
             {
-                InvalidateOptionsMenu();
+                UpdateOptionsMenu();
             });
         }
 
@@ -934,7 +951,7 @@ namespace BmwDeepObd
                     CloseDataLog();
                 }
                 UpdateLogInfo();
-                InvalidateOptionsMenu();
+                UpdateOptionsMenu();
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
             {
@@ -973,7 +990,7 @@ namespace BmwDeepObd
             }
             _activityCommon.SelectEnetIp((sender, args) =>
             {
-                InvalidateOptionsMenu();
+                UpdateOptionsMenu();
             });
         }
 
@@ -1563,7 +1580,7 @@ namespace BmwDeepObd
 
                     _jobListTranslated = false;
                     _translateEnabled = true;
-                    InvalidateOptionsMenu();
+                    UpdateOptionsMenu();
                     UpdateDisplay();
                 });
             });
@@ -1772,12 +1789,12 @@ namespace BmwDeepObd
                         _jobThread.Join();
                     }
                     _activityCommon.SetLock(ActivityCommon.LockType.None);
-                    InvalidateOptionsMenu();
+                    UpdateOptionsMenu();
                     UpdateDisplay();
                 });
             });
             _jobThread.Start();
-            InvalidateOptionsMenu();
+            UpdateOptionsMenu();
             UpdateDisplay();
         }
 
