@@ -288,6 +288,7 @@ namespace BmwDeepObd
 
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
+        private bool _updateOptionsMenu;
         private View _barView;
         private Button _buttonRead;
         private Button _buttonSafe;
@@ -374,7 +375,7 @@ namespace BmwDeepObd
             {
                 if (_activityActive)
                 {
-                    InvalidateOptionsMenu();
+                    UpdateOptionsMenu();
                     UpdateDisplay();
                 }
             }, BroadcastReceived)
@@ -552,7 +553,7 @@ namespace BmwDeepObd
                         };
                         _ecuList.Add(ecuInfoNew);
                         ExecuteUpdateEcuInfo();
-                        InvalidateOptionsMenu();
+                        UpdateOptionsMenu();
                         UpdateDisplay();
                     }
                     break;
@@ -566,7 +567,7 @@ namespace BmwDeepObd
                         _instanceData.DeviceAddress = data.Extras.GetString(DeviceListActivity.ExtraDeviceAddress);
                         bool callAdapterConfig = data.Extras.GetBoolean(DeviceListActivity.ExtraCallAdapterConfig, false);
                         EdiabasClose();
-                        InvalidateOptionsMenu();
+                        UpdateOptionsMenu();
                         if (callAdapterConfig)
                         {
                             AdapterConfig();
@@ -602,12 +603,12 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestYandexKey:
                     ActivityCommon.EnableTranslation = !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey);
-                    InvalidateOptionsMenu();
+                    UpdateOptionsMenu();
                     UpdateDisplay();
                     break;
 
                 case ActivityRequest.RequestEdiabasTool:
-                    InvalidateOptionsMenu();
+                    UpdateOptionsMenu();
                     UpdateDisplay();
                     break;
             }
@@ -618,6 +619,16 @@ namespace BmwDeepObd
             var inflater = MenuInflater;
             inflater.Inflate(Resource.Menu.xml_tool_menu, menu);
             return true;
+        }
+
+        public override bool OnMenuOpened(int featureId, IMenu menu)
+        {
+            if (_updateOptionsMenu)
+            {
+                _updateOptionsMenu = false;
+                OnPrepareOptionsMenu(menu);
+            }
+            return base.OnMenuOpened(featureId, menu);
         }
 
         public override bool OnPrepareOptionsMenu(IMenu menu)
@@ -785,7 +796,7 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_xml_tool_add_errors_page:
                     _instanceData.AddErrorsPage = !_instanceData.AddErrorsPage;
-                    InvalidateOptionsMenu();
+                    UpdateOptionsMenu();
                     UpdateDisplay();
                     return true;
 
@@ -812,7 +823,7 @@ namespace BmwDeepObd
                     }
                     SendTraceFileAlways((sender, args) =>
                     {
-                        InvalidateOptionsMenu();
+                        UpdateOptionsMenu();
                     });
                     return true;
 
@@ -823,7 +834,7 @@ namespace BmwDeepObd
                         return true;
                     }
                     ActivityCommon.EnableTranslation = !ActivityCommon.EnableTranslation;
-                    InvalidateOptionsMenu();
+                    UpdateOptionsMenu();
                     UpdateDisplay();
                     return true;
 
@@ -835,7 +846,7 @@ namespace BmwDeepObd
                     _activityCommon.ClearTranslationCache();
                     ResetTranslations();
                     _ecuListTranslated = false;
-                    InvalidateOptionsMenu();
+                    UpdateOptionsMenu();
                     UpdateDisplay();
                     return true;
 
@@ -860,6 +871,11 @@ namespace BmwDeepObd
             }
         }
 
+        private void UpdateOptionsMenu()
+        {
+            _updateOptionsMenu = true;
+        }
+
         private void HandleStartDialogs()
         {
             if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.None)
@@ -867,7 +883,7 @@ namespace BmwDeepObd
                 SelectInterface();
             }
             SelectInterfaceEnable();
-            InvalidateOptionsMenu();
+            UpdateOptionsMenu();
             UpdateDisplay();
         }
 
@@ -902,7 +918,7 @@ namespace BmwDeepObd
             }
             _instanceData.ForceAppend = forceAppend;
             UpdateDisplay();
-            InvalidateOptionsMenu();
+            UpdateOptionsMenu();
             return true;
         }
 
@@ -1288,7 +1304,7 @@ namespace BmwDeepObd
             _activityCommon.SelectInterface((sender, args) =>
             {
                 EdiabasClose();
-                InvalidateOptionsMenu();
+                UpdateOptionsMenu();
                 SelectInterfaceEnable();
             });
         }
@@ -1297,7 +1313,7 @@ namespace BmwDeepObd
         {
             _activityCommon.RequestInterfaceEnable((sender, args) =>
             {
-                InvalidateOptionsMenu();
+                UpdateOptionsMenu();
             });
         }
 
@@ -1338,7 +1354,7 @@ namespace BmwDeepObd
                     }
                 }
                 UpdateLogInfo();
-                InvalidateOptionsMenu();
+                UpdateOptionsMenu();
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
             {
@@ -1420,7 +1436,7 @@ namespace BmwDeepObd
                     ReadAllXml();
                     ExecuteUpdateEcuInfo();
                 }
-                InvalidateOptionsMenu();
+                UpdateOptionsMenu();
                 UpdateDisplay();
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
@@ -1618,7 +1634,7 @@ namespace BmwDeepObd
             }
             _activityCommon.SelectEnetIp((sender, args) =>
             {
-                InvalidateOptionsMenu();
+                UpdateOptionsMenu();
             });
         }
 
@@ -2026,7 +2042,7 @@ namespace BmwDeepObd
                     _activityCommon.SetLock(ActivityCommon.LockType.None);
 
                     _translateEnabled = true;
-                    InvalidateOptionsMenu();
+                    UpdateOptionsMenu();
                     UpdateDisplay();
 
                     if (!_ediabasJobAbort)
@@ -2145,6 +2161,7 @@ namespace BmwDeepObd
                             if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
                             {
                                 string vin = resultData.OpData as string;
+                                // ReSharper disable once AssignNullToNotNullAttribute
                                 if (!string.IsNullOrEmpty(vin) && _vinRegex.IsMatch(vin))
                                 {
                                     detectedVin = vin;
@@ -2423,6 +2440,7 @@ namespace BmwDeepObd
                                 if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
                                 {
                                     string vin = resultData.OpData as string;
+                                    // ReSharper disable once AssignNullToNotNullAttribute
                                     if (!string.IsNullOrEmpty(vin) && _vinRegex.IsMatch(vin))
                                     {
                                         detectedVin = vin;
@@ -2948,7 +2966,7 @@ namespace BmwDeepObd
                     progress = null;
                     _activityCommon.SetLock(ActivityCommon.LockType.None);
 
-                    InvalidateOptionsMenu();
+                    UpdateOptionsMenu();
                     UpdateDisplay();
 
                     if (!_ediabasJobAbort && ((_ecuList.Count == 0) || (detectCount == 0)))
@@ -3486,7 +3504,7 @@ namespace BmwDeepObd
             progress.Dispose();
             _activityCommon.SetLock(ActivityCommon.LockType.None);
 
-            InvalidateOptionsMenu();
+            UpdateOptionsMenu();
             UpdateDisplay();
             if (_ediabasJobAbort || ecuInfo.JobList == null)
             {
@@ -4093,7 +4111,7 @@ namespace BmwDeepObd
 
                     _ecuListTranslated = false;
                     _translateEnabled = true;
-                    InvalidateOptionsMenu();
+                    UpdateOptionsMenu();
                     UpdateDisplay();
                     if (readFailed)
                     {
@@ -4700,6 +4718,7 @@ namespace BmwDeepObd
                     bool ecuFound = _ecuList.Any(ecuInfo => string.Compare(sgbdName, ecuInfo.Sgbd, StringComparison.OrdinalIgnoreCase) == 0);
                     if (!ecuFound)
                     {
+                        // ReSharper disable once PossibleNullReferenceException
                         EcuInfo ecuInfo = new EcuInfo(sgbdName.ToUpperInvariant(), -1, string.Empty, sgbdName, string.Empty,
                             JobReader.PageInfo.DisplayModeType.List, DisplayFontSize.Small, string.Empty)
                         {
