@@ -1438,9 +1438,12 @@ namespace BmwDeepObd
             {
                 try
                 {
+                    if (forceMobile)
+                    {
 #pragma warning disable 618
-                    _maConnectivity.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
+                        _maConnectivity.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
 #pragma warning restore 618
+                    }
                 }
                 catch (Exception)
                 {
@@ -5034,7 +5037,12 @@ namespace BmwDeepObd
                         }
                         if (action == ConnectivityManager.ConnectivityAction)
                         {
-                            _activityCommon.SetPreferredNetworkInterface();
+                            bool noConnectivity = intent.GetBooleanExtra(ConnectivityManager.ExtraNoConnectivity, false);
+                            //Android.Util.Log.Debug("Deep OBD", string.Format("ConnectivityAction: NoConn={0}", noConnectivity));
+                            if (!noConnectivity)
+                            {
+                                _activityCommon.SetPreferredNetworkInterface();
+                            }
                         }
                         break;
 
@@ -5057,7 +5065,7 @@ namespace BmwDeepObd
                         break;
 
                     case GlobalBroadcastReceiver.NotificationBroadcastAction:
-                        //_activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
+                        _activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
                         break;
                 }
             }
