@@ -1422,7 +1422,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool SetPreferredNetworkInterface()
+        public bool SetPreferredNetworkInterface(bool hipri = true)
         {
             bool forceMobile = false;
             switch (_selectedInterface)
@@ -1436,18 +1436,21 @@ namespace BmwDeepObd
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
-                try
+                if (hipri)
                 {
-                    if (forceMobile)
+                    try
                     {
 #pragma warning disable 618
-                        _maConnectivity.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
+                        if (_maConnectivity.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI") < 0)
+                        {
+                            return false;
+                        }
 #pragma warning restore 618
                     }
-                }
-                catch (Exception)
-                {
-                    return false;
+                    catch (Exception)
+                    {
+                        return false;
+                    }
                 }
                 return true;
             }
@@ -4969,15 +4972,22 @@ namespace BmwDeepObd
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
-                try
+                switch (_selectedInterface)
                 {
+                    case InterfaceType.Enet:
+                    case InterfaceType.ElmWifi:
+                    case InterfaceType.DeepObdWifi:
+                        try
+                        {
 #pragma warning disable 618
-                    _maConnectivity?.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
+                            _maConnectivity?.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
 #pragma warning restore 618
-                }
-                catch (Exception)
-                {
-                    // ignored
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                        break;
                 }
             }
         }
@@ -5037,12 +5047,25 @@ namespace BmwDeepObd
                         }
                         if (action == ConnectivityManager.ConnectivityAction)
                         {
-                            bool noConnectivity = intent.GetBooleanExtra(ConnectivityManager.ExtraNoConnectivity, false);
-                            //Android.Util.Log.Debug("Deep OBD", string.Format("ConnectivityAction: NoConn={0}", noConnectivity));
-                            if (!noConnectivity)
+#if true
+                            Android.Util.Log.Debug("Deep OBD", "ConnectivityAction");
+                            Bundle bundle = intent.Extras;
+                            if (bundle != null)
                             {
-                                _activityCommon.SetPreferredNetworkInterface();
+                                foreach (string key in bundle.KeySet())
+                                {
+                                    Object value = bundle.Get(key);
+                                    string valueString = string.Empty;
+                                    if (value != null)
+                                    {
+                                        valueString = value.ToString();
+                                    }
+                                    Android.Util.Log.Debug("Deep OBD", string.Format("Key: {0}={1}", key, valueString));
+                                }
                             }
+#endif
+                            // using hipri here could create endless loop (and is set by timer anyway)
+                            _activityCommon.SetPreferredNetworkInterface(false);
                         }
                         break;
 
