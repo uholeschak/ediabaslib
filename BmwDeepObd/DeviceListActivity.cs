@@ -295,13 +295,14 @@ namespace BmwDeepObd
             {
                 FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
 
+                int offset = mtcServiceConnection.ApiVersion < 2 ? 0 : 1;
                 long nowDevAddr = mtcServiceConnection.GetNowDevAddr();
                 string nowDevAddrString = string.Format(CultureInfo.InvariantCulture, "{0:X012}", nowDevAddr);
                 IList<string> deviceList = mtcServiceConnection.GetDeviceList();
                 IList<string> matchList = mtcServiceConnection.GetMatchList();
                 foreach (string device in matchList)
                 {
-                    if (ExtractMtcDeviceInfo(1, device, out string name, out string address))
+                    if (ExtractMtcDeviceInfo(offset, device, out string name, out string address))
                     {
                         string mac = address.Replace(":", string.Empty);
                         if (string.Compare(mac, nowDevAddrString, StringComparison.OrdinalIgnoreCase) == 0)
@@ -313,7 +314,7 @@ namespace BmwDeepObd
                 }
                 foreach (string device in deviceList)
                 {
-                    if (ExtractMtcDeviceInfo(1, device, out string name, out string address))
+                    if (ExtractMtcDeviceInfo(offset, device, out string name, out string address))
                     {
                         _newDevicesArrayAdapter.Add(name + "\n" + address);
                     }
