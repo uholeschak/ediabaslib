@@ -529,12 +529,14 @@ namespace EdiabasLib
                 _sendDataFunc(identTel, identTel.Length);
                 LastCommTick = Stopwatch.GetTimestamp();
 
+                List<byte> responseList = new List<byte>();
                 long startTime = Stopwatch.GetTimestamp();
                 for (; ; )
                 {
-                    List<byte> responseList = _readInBufferFunc();
-                    if (responseList.Count > 0)
+                    List<byte> newList = _readInBufferFunc();
+                    if (newList.Count > 0)
                     {
+                        responseList.AddRange(newList);
                         startTime = Stopwatch.GetTimestamp();
                     }
                     if (responseList.Count >= identTel.Length + versionRespLen)
