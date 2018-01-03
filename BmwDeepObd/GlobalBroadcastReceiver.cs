@@ -1,7 +1,6 @@
 ﻿using System;
 using Android.Content;
 using Android.Support.V4.Content;
-using Android.Util;
 
 namespace BmwDeepObd
 {
@@ -40,7 +39,7 @@ namespace BmwDeepObd
                     {
                         bool smallOn = intent.Action == MtcBtSmallon;
 #if DEBUG
-                        Log.Info(Tag, string.Format("BT small on: {0}", smallOn));
+                        Android.Util.Log.Info(Tag, string.Format("BT small on: {0}", smallOn));
 #endif
                         Intent broadcastIntent = new Intent(NotificationBroadcastAction);
                         broadcastIntent.PutExtra(StateBtSmallOn, smallOn);
@@ -55,7 +54,7 @@ namespace BmwDeepObd
                 case MicBtReport:
                 {
 #if DEBUG
-                    Log.Info(Tag, "Bt report:");
+                    Android.Util.Log.Info(Tag, "Bt report:");
                     Android.OS.Bundle bundle = intent.Extras;
                     if (bundle != null)
                     {
@@ -67,7 +66,7 @@ namespace BmwDeepObd
                             {
                                 valueString = value.ToString();
                             }
-                            Log.Info(Tag, string.Format("Key: {0}={1}", key, valueString));
+                            Android.Util.Log.Info(Tag, string.Format("Key: {0}={1}", key, valueString));
                         }
                     }
 #endif
@@ -77,7 +76,7 @@ namespace BmwDeepObd
                         {
                             int btState = intent.GetIntExtra("bt_state", 0);
 #if DEBUG
-                            Log.Info(Tag, string.Format("BT bt_state: {0}", btState));
+                            Android.Util.Log.Info(Tag, string.Format("BT bt_state: {0}", btState));
 #endif
                             switch (btState)
                             {
@@ -114,7 +113,7 @@ namespace BmwDeepObd
                         {
                             string mac = intent.GetStringExtra("connected_mac");
 #if DEBUG
-                            Log.Info(Tag, string.Format("BT connected_mac: {0}", mac));
+                            Android.Util.Log.Info(Tag, string.Format("BT connected_mac: {0}", mac));
 #endif
                             Intent broadcastIntent = new Intent(NotificationBroadcastAction);
                             broadcastIntent.PutExtra(BtNewMac, mac);
@@ -131,7 +130,7 @@ namespace BmwDeepObd
                         {
                             int connectState = intent.GetIntExtra("connect_state", 0);
 #if DEBUG
-                            Log.Info(Tag, string.Format("BT connect_state: {0}", connectState));
+                            Android.Util.Log.Info(Tag, string.Format("BT connect_state: {0}", connectState));
 #endif
                             ActivityCommon.MtcBtConnectState = connectState != 0;
 
