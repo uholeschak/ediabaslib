@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarSimulator", "CarSimulator.csproj", "{652D8621-4078-4437-A0BC-3B90C8114EE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InTheHand.Net.Personal.FX4.Mod", "..\..\EdiabasLib\32feetNET\InTheHand.Net.Personal\ITH.Net.Personal.FX4\InTheHand.Net.Personal.FX4.Mod.csproj", "{40EA20B4-9CAF-486D-9952-1ABB3D414E92}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InTheHand.Net.Personal.FX4.Mod", "..\..\EdiabasLib\32feet\ITH.Net.Personal.FX4\InTheHand.Net.Personal.FX4.Mod.csproj", "{40EA20B4-9CAF-486D-9952-1ABB3D414E92}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,5 +57,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A99034EF-652F-445B-8077-560A5CBCAEC4}
 	EndGlobalSection
 EndGlobal

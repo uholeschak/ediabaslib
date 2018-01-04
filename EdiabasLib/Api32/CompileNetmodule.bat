@@ -16,7 +16,7 @@ set BT_BIN_PATH=ReleaseModule
 )
 
 echo "Building: InTheHand.Net.Personal.Netmodule"
-msbuild "!BATPATH!..\32feetNET\InTheHand.Net.Personal\ITH.Net.Personal.FX4\InTheHand.Net.Personal.FX4.Netmodule.csproj" /t:Rebuild /p:Configuration=%2
+msbuild "!BATPATH!..\32feet\ITH.Net.Personal.FX4\InTheHand.Net.Personal.FX4.Netmodule.csproj" /t:Rebuild /p:Configuration=%2
 
 echo "Building: EdiabasLib.Netmodule"
 msbuild "!BATPATH!..\EdiabasLib\EdiabasLib.Netmodule.csproj" /t:Rebuild /p:Configuration=%2
