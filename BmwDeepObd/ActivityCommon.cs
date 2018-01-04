@@ -5047,23 +5047,6 @@ namespace BmwDeepObd
                         }
                         if (action == ConnectivityManager.ConnectivityAction)
                         {
-#if true
-                            Android.Util.Log.Debug("Deep OBD", "ConnectivityAction");
-                            Bundle bundle = intent.Extras;
-                            if (bundle != null)
-                            {
-                                foreach (string key in bundle.KeySet())
-                                {
-                                    Object value = bundle.Get(key);
-                                    string valueString = string.Empty;
-                                    if (value != null)
-                                    {
-                                        valueString = value.ToString();
-                                    }
-                                    Android.Util.Log.Debug("Deep OBD", string.Format("Key: {0}={1}", key, valueString));
-                                }
-                            }
-#endif
                             // using hipri here could create endless loop (and is set by timer anyway)
                             _activityCommon.SetPreferredNetworkInterface(false);
                         }
