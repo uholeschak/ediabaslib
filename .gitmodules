@@ -1,3 +1,4 @@
 [submodule "EdiabasLib/32feet"]
 	path = EdiabasLib/32feet
 	url = ../../inthehand/32feet.git
+	ignore = dirty
