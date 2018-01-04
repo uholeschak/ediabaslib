@@ -15,6 +15,9 @@ set CS_FLAGS=/optimize
 set BT_BIN_PATH=ReleaseModule
 )
 
+echo "Copy updated source files"
+xcopy /q /s /d "!BATPATH!..\32feetPatches\*.*" "!BATPATH!..\32feet\"
+
 echo "Building: InTheHand.Net.Personal.Netmodule"
 msbuild "!BATPATH!..\32feet\ITH.Net.Personal.FX4\InTheHand.Net.Personal.FX4.Netmodule.csproj" /t:Rebuild /p:Configuration=%2
 
