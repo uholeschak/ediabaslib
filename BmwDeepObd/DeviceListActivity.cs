@@ -226,6 +226,7 @@ namespace BmwDeepObd
             // Unregister broadcast listeners
             UnregisterReceiver (_receiver);
             _activityCommon.Dispose();
+            _activityCommon = null;
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
