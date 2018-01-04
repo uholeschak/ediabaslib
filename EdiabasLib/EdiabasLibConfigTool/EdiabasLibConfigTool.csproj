@@ -138,16 +138,16 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\32feetNET\InTheHand.Net.Personal\ITH.Net.Personal.FX4\InTheHand.Net.Personal.FX4.Mod.csproj">
-      <Project>{40ea20b4-9caf-486d-9952-1abb3d414e92}</Project>
-      <Name>InTheHand.Net.Personal.FX4.Mod</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\AppIcon.ico" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AppIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\32feet\ITH.Net.Personal.FX4\InTheHand.Net.Personal.FX4.Mod.csproj">
+      <Project>{29cc8d24-1564-4236-a237-e953274805d6}</Project>
+      <Name>InTheHand.Net.Personal.FX4.Mod</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
