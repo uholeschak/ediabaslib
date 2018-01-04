@@ -478,6 +478,7 @@ namespace BmwDeepObd
             }
             EdiabasClose(true);
             _activityCommon.Dispose();
+            _activityCommon = null;
         }
 
         public override void OnBackPressed()

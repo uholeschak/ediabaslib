@@ -130,6 +130,7 @@ namespace BmwDeepObd
 
             base.OnDestroy();
             _activityCommon.Dispose();
+            _activityCommon = null;
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
