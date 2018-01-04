@@ -263,6 +263,7 @@ namespace BmwDeepObd
                         }
                         else
                         {
+                            // ReSharper disable once AssignNullToNotNullAttribute
                             _ecuPath = string.IsNullOrEmpty(xmlDir) ? attrib.Value : Path.Combine(xmlDir, attrib.Value);
                         }
                     }
@@ -312,16 +313,13 @@ namespace BmwDeepObd
                 {
                     _manufacturerType = ActivityCommon.ManufacturerType.Bmw;
                 }
-                if (_manufacturerType != ActivityCommon.ManufacturerType.Bmw)
-                {
-                    _interfaceName = "BLUETOOTH";
-                }
 
-                if (string.Compare(_interfaceName, "ENET", StringComparison.OrdinalIgnoreCase) == 0)
+                bool isBmw = _manufacturerType == ActivityCommon.ManufacturerType.Bmw;
+                if (isBmw && string.Compare(_interfaceName, "ENET", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     _interfaceType = ActivityCommon.InterfaceType.Enet;
                 }
-                else if (string.Compare(_interfaceName, "ELMWIFI", StringComparison.OrdinalIgnoreCase) == 0)
+                else if (isBmw && string.Compare(_interfaceName, "ELMWIFI", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     _interfaceType = ActivityCommon.InterfaceType.ElmWifi;
                 }
@@ -329,7 +327,7 @@ namespace BmwDeepObd
                 {
                     _interfaceType = ActivityCommon.InterfaceType.DeepObdWifi;
                 }
-                else if (string.Compare(_interfaceName, "FTDI", StringComparison.OrdinalIgnoreCase) == 0)
+                else if (isBmw && string.Compare(_interfaceName, "FTDI", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     _interfaceType = ActivityCommon.InterfaceType.Ftdi;
                 }
