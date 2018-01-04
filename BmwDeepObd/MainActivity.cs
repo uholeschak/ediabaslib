@@ -1483,6 +1483,10 @@ namespace BmwDeepObd
         {
             RunOnUiThread(() =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 try
                 {
                     JobReader.PageInfo pageInfo = ActivityCommon.EdiabasThread?.JobPageInfo;
@@ -1953,6 +1957,10 @@ namespace BmwDeepObd
                                     {
                                         RunOnUiThread(() =>
                                         {
+                                            if (_activityCommon == null)
+                                            {
+                                                return;
+                                            }
                                             _translateActive = false;
                                             _translatedList = transList;
                                             UpdateOptionsMenu();
@@ -2411,6 +2419,10 @@ namespace BmwDeepObd
                             int localCount = count;
                             RunOnUiThread(() =>
                             {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
                                 if (_compileProgress != null)
                                 {
                                     string message = string.Format(GetString(Resource.String.compile_cpu_usage_value), usage);
@@ -2427,6 +2439,10 @@ namespace BmwDeepObd
                     }
                     RunOnUiThread(() =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
                         if (_compileProgress != null)
                         {
                             _compileProgress.Progress = 100;
@@ -2453,6 +2469,10 @@ namespace BmwDeepObd
 
                     RunOnUiThread(() =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
                         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                         if (_compileProgress != null)
                         {
@@ -2543,11 +2563,22 @@ namespace BmwDeepObd
                 foreach (string compileResult in compileResultList)
                 {
                     string result = compileResult;
-                    RunOnUiThread(() => _activityCommon.ShowAlert(result, Resource.String.alert_title_error));
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        _activityCommon.ShowAlert(result, Resource.String.alert_title_error);
+                    });
                 }
 
                 RunOnUiThread(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     CreateActionBarTabs();
                     _compileProgress.Dismiss();
                     _compileProgress.Dispose();
@@ -2630,6 +2661,10 @@ namespace BmwDeepObd
                 {
                     RunOnUiThread(() =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
                         if (_downloadProgress != null)
                         {
                             _downloadProgress.Dismiss();
@@ -2648,6 +2683,10 @@ namespace BmwDeepObd
         {
             RunOnUiThread(() =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 DownloadInfo downloadInfo = e.UserState as DownloadInfo;
                 if (_downloadProgress != null)
                 {
@@ -2755,6 +2794,10 @@ namespace BmwDeepObd
         {
             RunOnUiThread(() =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 if (_downloadProgress != null && e != null)
                 {
                     if (e.TotalBytesToReceive < 0 && _downloadFileSize > 0)
@@ -2873,6 +2916,10 @@ namespace BmwDeepObd
                     }
                     RunOnUiThread(() =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
                         if (_downloadProgress != null)
                         {
                             _downloadProgress.SetMessage(GetString(Resource.String.extract_file));
@@ -2885,6 +2932,10 @@ namespace BmwDeepObd
                         {
                             RunOnUiThread(() =>
                             {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
                                 if (_downloadProgress != null)
                                 {
                                     _downloadProgress.Progress = percent;
@@ -2918,6 +2969,10 @@ namespace BmwDeepObd
                 }
                 RunOnUiThread(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     if (_downloadProgress != null)
                     {
                         _downloadProgress.Dismiss();
@@ -3017,7 +3072,7 @@ namespace BmwDeepObd
 
         private bool CheckForEcuFiles(bool checkPackage = false)
         {
-            if (!_instanceData.StorageAccessGranted || (_downloadEcuAlertDialog != null))
+            if (!_activityActive || !_instanceData.StorageAccessGranted || (_downloadEcuAlertDialog != null))
             {
                 return true;
             }

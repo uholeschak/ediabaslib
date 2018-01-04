@@ -579,6 +579,10 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     progress.Dismiss();
                     progress.Dispose();
 
