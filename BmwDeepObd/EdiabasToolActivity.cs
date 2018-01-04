@@ -1178,6 +1178,10 @@ namespace BmwDeepObd
                     {
                         RunOnUiThread(() =>
                         {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
                             _translateActive = false;
                             try
                             {
@@ -1557,6 +1561,10 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     progress.Dismiss();
                     progress.Dispose();
 
@@ -1767,6 +1775,10 @@ namespace BmwDeepObd
 
                     RunOnUiThread(() =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
                         _infoListAdapter.Items.Clear();
                         foreach (string message in messageList)
                         {
@@ -1784,6 +1796,10 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     if (IsJobRunning())
                     {
                         _jobThread.Join();

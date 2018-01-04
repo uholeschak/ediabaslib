@@ -703,6 +703,10 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     if (IsJobRunning())
                     {
                         _adapterThread.Join();
@@ -889,6 +893,10 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     if (IsJobRunning())
                     {
                         _adapterThread.Join();
@@ -1010,6 +1018,10 @@ namespace BmwDeepObd
                 }
                 RunOnUiThread(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     if (IsJobRunning())
                     {
                         _adapterThread.Join();

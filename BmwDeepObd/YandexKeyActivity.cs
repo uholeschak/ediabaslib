@@ -152,6 +152,10 @@ namespace BmwDeepObd
             {
                 _clipboardCheckTimer = new Timer(state =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     RunOnUiThread(UpdateDisplay);
                 }, null, 1000, 1000);
             }

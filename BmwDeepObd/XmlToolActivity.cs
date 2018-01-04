@@ -1097,6 +1097,10 @@ namespace BmwDeepObd
                     {
                         RunOnUiThread(() =>
                         {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
                             _translateActive = false;
                             try
                             {
@@ -1738,6 +1742,10 @@ namespace BmwDeepObd
                             int localIndex = index;
                             RunOnUiThread(() =>
                             {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
                                 if (progress != null && ecuFileNameList.Count > 1)
                                 {
                                     progress.Progress = 100 * localIndex / ecuFileNameList.Count;
@@ -2036,6 +2044,10 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     progress.Dismiss();
                     progress.Dispose();
                     progress = null;
@@ -2118,6 +2130,10 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     if (progress != null)
                     {
                         progress.Progress = 0;
@@ -2138,6 +2154,10 @@ namespace BmwDeepObd
                         int localIndex = index;
                         RunOnUiThread(() =>
                         {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
                             if (progress != null)
                             {
                                 progress.Progress = 100 * localIndex / jobCount;
@@ -2205,6 +2225,10 @@ namespace BmwDeepObd
                         int localIndex = index;
                         RunOnUiThread(() =>
                         {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
                             if (progress != null)
                             {
                                 progress.Progress = 100 * localIndex / jobCount;
@@ -2286,6 +2310,10 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     if (progress != null)
                     {
                         progress.Progress = 100;
@@ -2325,6 +2353,10 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     if (progress != null)
                     {
                         progress.Progress = 0;
@@ -2420,6 +2452,10 @@ namespace BmwDeepObd
                             int localIndex = index;
                             RunOnUiThread(() =>
                             {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
                                 if (progress != null)
                                 {
                                     progress.Progress = 100 * localIndex / ReadVinJobsDs2.Length;
@@ -2469,6 +2505,10 @@ namespace BmwDeepObd
                             int localIndex = index;
                             RunOnUiThread(() =>
                             {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
                                 if (progress != null)
                                 {
                                     progress.Progress = 100 * localIndex / ReadMotorJobsDs2.Length;
@@ -2566,6 +2606,10 @@ namespace BmwDeepObd
                             Semaphore waitSem = new Semaphore(0, 1);
                             RunOnUiThread(() =>
                             {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
                                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                                 builder.SetMessage(Resource.String.xml_tool_read_ecu_again);
                                 builder.SetTitle(Resource.String.alert_title_question);
@@ -2657,6 +2701,10 @@ namespace BmwDeepObd
                             int localIndex = index;
                             RunOnUiThread(() =>
                             {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
                                 if (progress != null)
                                 {
                                     progress.Progress = 100 * localIndex / groupList.Count;
@@ -2836,6 +2884,10 @@ namespace BmwDeepObd
                     int localEcuCount = ecuCount;
                     RunOnUiThread(() =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
                         if (!_ediabasJobAbort && progress != null)
                         {
                             progress.Progress = 100 * localIndex / localEcuCount;
@@ -2961,6 +3013,10 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     progress.Dismiss();
                     progress.Dispose();
                     progress = null;
@@ -3131,6 +3187,10 @@ namespace BmwDeepObd
                             {
                                 RunOnUiThread(() =>
                                 {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
                                     SelectMwTabFromListInfo(mwTabFileNames, name =>
                                     {
                                         if (string.IsNullOrEmpty(name))
@@ -3155,6 +3215,10 @@ namespace BmwDeepObd
                                                 }
                                                 RunOnUiThread(() =>
                                                 {
+                                                    if (_activityCommon == null)
+                                                    {
+                                                        return;
+                                                    }
                                                     ReadJobThreadDone(ecuInfo, progress, readFailed);
                                                 });
                                             });
@@ -3179,6 +3243,10 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     ReadJobThreadDone(ecuInfo, progress, readFailed);
                 });
             });
@@ -3662,6 +3730,10 @@ namespace BmwDeepObd
                     int localBlockIndex = blockIndex;
                     RunOnUiThread(() =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
                         if (progress != null)
                         {
                             progress.Progress = 100 * localBlockIndex / mwBlocks.Count;
@@ -3864,6 +3936,10 @@ namespace BmwDeepObd
                     int localIdIndex = idIndex;
                     RunOnUiThread(() =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
                         if (progress != null)
                         {
                             progress.Progress = 100 * localIdIndex / mwIds.Count;
@@ -4105,6 +4181,10 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     progress.Dismiss();
                     progress.Dispose();
                     progress = null;
