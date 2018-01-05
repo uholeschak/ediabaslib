@@ -72,17 +72,19 @@ namespace EdiabasLib
 #if BLUETOOTH
                     else if (stringList.Length == 2)
                     {
+                        InTheHand.Net.BluetoothAddress btAddress = InTheHand.Net.BluetoothAddress.Parse(stringList[0]);
+                        string pin = stringList[1];
                         InTheHand.Net.BluetoothEndPoint ep =
-                            new InTheHand.Net.BluetoothEndPoint(InTheHand.Net.BluetoothAddress.Parse(stringList[0]), InTheHand.Net.Bluetooth.BluetoothService.SerialPort);
+                            new InTheHand.Net.BluetoothEndPoint(btAddress, InTheHand.Net.Bluetooth.BluetoothService.SerialPort);
                         InTheHand.Net.Sockets.BluetoothClient cli = new InTheHand.Net.Sockets.BluetoothClient();
-                        cli.SetPin(stringList[1]);
+                        cli.SetPin(pin);
                         try
                         {
                             cli.Connect(ep);
                         }
                         catch (Exception)
                         {
-                            if (!InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(InTheHand.Net.BluetoothAddress.Parse(stringList[0]), stringList[1]))
+                            if (!InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(btAddress, pin))
                             {
                                 return false;
                             }
