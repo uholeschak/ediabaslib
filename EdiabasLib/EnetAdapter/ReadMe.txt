@@ -47,10 +47,16 @@ Start tftp server
 Update QualComm factory firmware:
 ---------------------------------
 Copy uboot.img and mini.bin to USB stick
-Set network adapter to 192.168.100.10/255.255.255.0
+Set network adapter to 192.168.100.10/255.255.255.0 or 192.168.169.10/255.255.255.0
+------------------------------
+as admin:
+netsh interface ip set address "Ethernet 2" static 192.168.100.10 255.255.255.0 192.168.100.10
+or
+netsh interface ip set address "Ethernet 2" static 192.168.169.10 255.255.255.0 192.168.169.10
+------------------------------
 insert USB stick into the router
 
-telnet 192.168.100.1
+telnet 192.168.100.1 or 192.168.169.1
 login: admin/admin
 mount /dev/sda1 /mnt
 ls /mnt
@@ -59,6 +65,11 @@ mtd_write write /mnt/uboot.img Bootloader
 mtd_write write /mnt/mini.bin Kernel
 reboot
 remove USB stick
+
+------------------------------
+as admin:
+netsh interface ip set address "Ethernet 2" static 192.168.100.10 255.255.255.0 192.168.100.10
+------------------------------
 
 start miniweb.exe
 telnet 192.168.100.1
