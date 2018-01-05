@@ -20,6 +20,7 @@ namespace CarSimulator
         private readonly Wifi _wifi;
         private readonly WlanClient _wlanClient;
         private readonly MainForm _form;
+        private BluetoothClient _btClient;
         private NetworkStream _dataStream;
         private bool _disposed;
 
@@ -129,10 +130,21 @@ namespace CarSimulator
             try
             {
                 BluetoothEndPoint ep = new BluetoothEndPoint(device.DeviceAddress, BluetoothService.SerialPort);
-                BluetoothClient cli = new BluetoothClient();
-                cli.SetPin("1234");
-                cli.Connect(ep);
-                _dataStream = cli.GetStream();
+                _btClient = new BluetoothClient();
+                _btClient.SetPin(DefaultBtPin);
+                try
+                {
+                    _btClient.Connect(ep);
+                }
+                catch (Exception)
+                {
+                    if (!BluetoothSecurity.PairRequest(device.DeviceAddress, DefaultBtPin))
+                    {
+                        return false;
+                    }
+                    _btClient.Connect(ep);
+                }
+                _dataStream = _btClient.GetStream();
             }
             catch (Exception)
             {
@@ -209,6 +221,12 @@ namespace CarSimulator
                 _dataStream.Close();
                 _dataStream.Dispose();
                 _dataStream = null;
+            }
+
+            if (_btClient != null)
+            {
+                _btClient.Dispose();
+                _btClient = null;
             }
         }
 
