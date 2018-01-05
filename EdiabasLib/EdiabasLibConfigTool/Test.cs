@@ -397,10 +397,8 @@ namespace EdiabasLibConfigTool
                 }
                 catch (Exception)
                 {
-                    if (!BluetoothSecurity.PairRequest(device.DeviceAddress, pin))
-                    {
-                        return false;
-                    }
+                    BluetoothSecurity.RemoveDevice(device.DeviceAddress);
+                    Thread.Sleep(1000);
                     _btClient.Connect(ep);
                 }
                 _dataStream = _btClient.GetStream();

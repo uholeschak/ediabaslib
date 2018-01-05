@@ -139,10 +139,8 @@ namespace CarSimulator
                 }
                 catch (Exception)
                 {
-                    if (!BluetoothSecurity.PairRequest(device.DeviceAddress, DefaultBtPin))
-                    {
-                        return false;
-                    }
+                    BluetoothSecurity.RemoveDevice(device.DeviceAddress);
+                    Thread.Sleep(1000);
                     _btClient.Connect(ep);
                 }
                 _dataStream = _btClient.GetStream();

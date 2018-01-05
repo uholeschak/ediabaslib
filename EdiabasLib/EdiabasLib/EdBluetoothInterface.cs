@@ -88,10 +88,8 @@ namespace EdiabasLib
                         }
                         catch (Exception)
                         {
-                            if (!InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(btAddress, pin))
-                            {
-                                return false;
-                            }
+                            InTheHand.Net.Bluetooth.BluetoothSecurity.RemoveDevice(btAddress);
+                            Thread.Sleep(1000);
                             BtClient.Connect(ep);
                         }
                         BtStream = BtClient.GetStream();
