@@ -225,6 +225,7 @@ namespace CarSimulator
 
             if (_btClient != null)
             {
+                _btClient.Close();
                 _btClient.Dispose();
                 _btClient = null;
             }

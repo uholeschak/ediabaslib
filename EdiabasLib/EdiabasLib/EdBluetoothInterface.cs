@@ -16,6 +16,9 @@ namespace EdiabasLib
         private static readonly EdCustomAdapterCommon CustomAdapter =
             new EdCustomAdapterCommon(SendData, ReceiveData, DiscardInBuffer, ReadInBuffer, ReadTimeoutOffsetLong, ReadTimeoutOffsetShort, EchoTimeout);
         protected static System.IO.Ports.SerialPort SerialPort;
+#if BLUETOOTH
+        protected static InTheHand.Net.Sockets.BluetoothClient BtClient;
+#endif
         protected static NetworkStream BtStream;
         protected static AutoResetEvent CommReceiveEvent;
         protected static Stopwatch StopWatch = new Stopwatch();
@@ -76,11 +79,11 @@ namespace EdiabasLib
                         string pin = stringList[1];
                         InTheHand.Net.BluetoothEndPoint ep =
                             new InTheHand.Net.BluetoothEndPoint(btAddress, InTheHand.Net.Bluetooth.BluetoothService.SerialPort);
-                        InTheHand.Net.Sockets.BluetoothClient cli = new InTheHand.Net.Sockets.BluetoothClient();
-                        cli.SetPin(pin);
+                        BtClient = new InTheHand.Net.Sockets.BluetoothClient();
+                        BtClient.SetPin(pin);
                         try
                         {
-                            cli.Connect(ep);
+                            BtClient.Connect(ep);
                         }
                         catch (Exception)
                         {
@@ -88,9 +91,9 @@ namespace EdiabasLib
                             {
                                 return false;
                             }
-                            cli.Connect(ep);
+                            BtClient.Connect(ep);
                         }
-                        BtStream = cli.GetStream();
+                        BtStream = BtClient.GetStream();
                         BtStream.ReadTimeout = 1;
                     }
 #endif
@@ -129,6 +132,7 @@ namespace EdiabasLib
             {
                 result = false;
             }
+
             try
             {
                 if (BtStream != null)
@@ -142,6 +146,21 @@ namespace EdiabasLib
             {
                 result = false;
             }
+#if BLUETOOTH
+            try
+            {
+                if (BtClient != null)
+                {
+                    BtClient.Close();
+                    BtClient.Dispose();
+                    BtClient = null;
+                }
+            }
+            catch (Exception)
+            {
+                result = false;
+            }
+#endif
             return result;
         }
 
