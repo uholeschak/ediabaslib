@@ -76,7 +76,18 @@ namespace EdiabasLib
                             new InTheHand.Net.BluetoothEndPoint(InTheHand.Net.BluetoothAddress.Parse(stringList[0]), InTheHand.Net.Bluetooth.BluetoothService.SerialPort);
                         InTheHand.Net.Sockets.BluetoothClient cli = new InTheHand.Net.Sockets.BluetoothClient();
                         cli.SetPin(stringList[1]);
-                        cli.Connect(ep);
+                        try
+                        {
+                            cli.Connect(ep);
+                        }
+                        catch (Exception)
+                        {
+                            if (!InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(InTheHand.Net.BluetoothAddress.Parse(stringList[0]), stringList[1]))
+                            {
+                                return false;
+                            }
+                            cli.Connect(ep);
+                        }
                         BtStream = cli.GetStream();
                         BtStream.ReadTimeout = 1;
                     }
