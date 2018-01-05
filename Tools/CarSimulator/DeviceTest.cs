@@ -129,6 +129,7 @@ namespace CarSimulator
         {
             try
             {
+                BluetoothSecurity.SetPin(device.DeviceAddress, DefaultBtPin);
                 BluetoothEndPoint ep = new BluetoothEndPoint(device.DeviceAddress, BluetoothService.SerialPort);
                 _btClient = new BluetoothClient();
                 _btClient.SetPin(DefaultBtPin);
