@@ -22,6 +22,7 @@ namespace EdiabasLibConfigTool
         private const string ElmIp = @"192.168.0.10";
         private const int ElmPort = 35000;
         private readonly FormMain _form;
+        private BluetoothClient _btClient;
         private NetworkStream _dataStream;
         private volatile Thread _testThread;
         private bool _disposed;
@@ -387,10 +388,21 @@ namespace EdiabasLibConfigTool
             try
             {
                 BluetoothEndPoint ep = new BluetoothEndPoint(device.DeviceAddress, BluetoothService.SerialPort);
-                BluetoothClient cli = new BluetoothClient();
-                cli.SetPin(pin);
-                cli.Connect(ep);
-                _dataStream = cli.GetStream();
+                _btClient = new BluetoothClient();
+                _btClient.SetPin(pin);
+                try
+                {
+                    _btClient.Connect(ep);
+                }
+                catch (Exception)
+                {
+                    if (!BluetoothSecurity.PairRequest(device.DeviceAddress, pin))
+                    {
+                        return false;
+                    }
+                    _btClient.Connect(ep);
+                }
+                _dataStream = _btClient.GetStream();
             }
             catch (Exception)
             {
@@ -406,6 +418,12 @@ namespace EdiabasLibConfigTool
                 _dataStream.Close();
                 _dataStream.Dispose();
                 _dataStream = null;
+            }
+
+            if (_btClient != null)
+            {
+                _btClient.Dispose();
+                _btClient = null;
             }
         }
 
