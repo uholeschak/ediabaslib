@@ -5292,7 +5292,7 @@ namespace EdiabasLib
                     args[i] = "[" + stringBuilder + "]";
                 }
             }
-            LogString(logLevel, string.Format(format, args));
+            LogString(logLevel, string.Format(Culture, format, args));
         }
 
         public void LogString(EdLogLevel logLevel, string info)
