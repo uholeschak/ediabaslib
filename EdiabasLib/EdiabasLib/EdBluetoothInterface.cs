@@ -140,6 +140,7 @@ namespace EdiabasLib
                 if (SerialPort.IsOpen)
                 {
                     SerialPort.Close();
+                    LastDisconnectTime = Stopwatch.GetTimestamp();
                 }
             }
             catch (Exception)
