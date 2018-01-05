@@ -77,6 +77,7 @@ namespace EdiabasLib
                     {
                         InTheHand.Net.BluetoothAddress btAddress = InTheHand.Net.BluetoothAddress.Parse(stringList[0]);
                         string pin = stringList[1];
+                        InTheHand.Net.Bluetooth.BluetoothSecurity.SetPin(btAddress, pin);
                         InTheHand.Net.BluetoothEndPoint ep =
                             new InTheHand.Net.BluetoothEndPoint(btAddress, InTheHand.Net.Bluetooth.BluetoothService.SerialPort);
                         BtClient = new InTheHand.Net.Sockets.BluetoothClient();
