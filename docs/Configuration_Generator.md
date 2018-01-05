@@ -3,7 +3,7 @@ The configuration generator is a tool that simplifies generation of [XML configu
 The generator options menu has the following entries:
 * _Interface_: If a configuration has been loaded on the main page, the same communication interface is also used by the generator as default. With this menu entry a different communication interface could be selected.
 * _Adapter_: With this menu the [Bluetooth adapter](Deep_OBD_for_BMW_and_VAG.md#supported-adapters) could be selected. If the device is not coupled already, searching for new devices is possible. This menu is only enabled if interface type _BLUETOOTH_ has been selected.
-* _Adapter configuration_: When using a FTDI USB or Bluetooth (non ELM327) adapter with this menu the adapter could be configured. Depending on the adapter type only the CAN baudrate/K-Line interface or more specific parameters could be specified.
+* _Adapter configuration_: When using a FTDI USB, Bluetooth or WiFi (with the [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md)) adapter this menu allows the adapter configuration. Depending on the adapter type only the CAN baudrate/K-Line interface or more specific parameters could be specified.
 * _Add errors page_: When this checkbox is selected (which is the default) and _Errors_ page will be generated when writing the configuration file. This page will read the error memory of all detected ECUs.
 * _Configuration_: With this submenu you could select if the configuration is created automatically or manually:
 	* _Automatic_: The ECU configuration will be read from the vehicle with the _Read_ button. This option is only available in BMW mode.

@@ -34,13 +34,15 @@ To get the device location information you could use FT Prog from the FTDI web s
 
 ## Bluetooth (Android)
 Since Android devices normally have no COM ports, it's possible to connect via Bluetooth using the Bluetooth Serial Port Protocol (SPP).
-To select a specific Bluetooth device use `BLUETOOTH:<device address>` instead of `COMx`.
+To select a specific Bluetooth device use `BLUETOOTH:<device address>`.  
 When using ELM327 adapters append `;ELM327` after the Bluetooth address to specify ELM327 mode.
+For adapters that simply send data without modification append `;RAW`.
 
 ## Bluetooth (PC)
 It's possible to use the [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md) also with a PC. When connecting the adapter with the PC two serial COM ports are created (incoming and outgoing).
-To use the adapter specify `STD:OBD` for the `interface` and `BLUETOOTH:<outgoing COM port>` for `ObdComPort`.  
+To use the adapter specify `STD:OBD` for the `interface` and `BLUETOOTH:<outgoing COM port>` or `BLUETOOTH:<device address>` for `ObdComPort`.  
 The recommended way for setting up the configuration is to use the [EdiabasLibConfigTool](Replacement_firmware_for_ELM327.md#use-the-adapter-with-inpa-tool32-or-ista-d).
 
-## ELM327 WiFi
-It's possible to use an ELM327 WiFi adapter. You have to specify _STD:OBD_ for the _interface_ and _ELM327WIFI_ for _ObdComPort_.
+## WiFi
+For WiFi based ELM327 adapters you have to specify `STD:OBD` for the `interface` and `ELM327WIFI` for `ObdComPort`.  
+When using the [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md) with WiFi devices specify `DEEPOBDWIFI` for `ObdComPort`.

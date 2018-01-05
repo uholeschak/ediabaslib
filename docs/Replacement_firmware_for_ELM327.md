@@ -1,5 +1,5 @@
 # Replacement firmware for ELM327
-There is now a replacement firmware available for ELM327 based Bluetooth adapters, that has the following advantages over the standard firmware:
+There is now a replacement firmware available for ELM327 based Bluetooth and WiFi adapters, that has the following advantages over the standard firmware:
 * Faster and more stable CAN communication.
 * K-Line support (all protocols).
 * New: Support for the VAG protocols KWP2000, KWP1281, TP2.0 (cars until 4.2012).
@@ -7,14 +7,14 @@ There is now a replacement firmware available for ELM327 based Bluetooth adapter
 * Firmware updates are possible with _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_.
 * Reduced power consumption due to use of sleep mode.
 * Two firmware versions are available:
-  * Unmodified Bluetooth adapter: Baud rate 38400.
+  * Unmodified Bluetooth and WiFi adapter: Baud rate 38400.
   * Modified Bluetooth adapter (recommended) with replaced [OpenSource Bluetooth firmware](Custom_Bluetooth_firmware.md): Baud rate 115200 and alterable Bluetooth pin (16 digits) and name (31 chars).
 
 ![Bluetooth adapter top](Replacement_firmware_for_ELM327_BluetoothAdapterTopSmall.png) ![Bluetooth adapter bottom](Replacement_firmware_for_ELM327_BluetoothAdapterBottomSmall.png)
 
 ## Buy an adapter
 New adapters are available.  
-You could buy the [Bluetooth adapter](http://www.ebay.de/itm/http://www.ebay.de/itm/http://www.ebay.de/itm/253343800408) from EBAY.  
+You could buy the [Bluetooth and WiFi adapter](http://www.ebay.de/itm/http://www.ebay.de/itm/http://www.ebay.de/itm/253343800408) from EBAY.  
 For BMW F-models use the [ENET WiFi Adapter](ENET_WiFi_Adapter.md).
 
 ## Factory reset
