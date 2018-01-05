@@ -10,8 +10,9 @@ namespace EdiabasLib
     public class EdBluetoothInterface
     {
         public const string PortId = "BLUETOOTH";
-        private const int ReadTimeoutOffsetLong = 1000;
-        private const int ReadTimeoutOffsetShort = 100;
+        protected const int DisconnectWait = 2000;
+        protected const int ReadTimeoutOffsetLong = 1000;
+        protected const int ReadTimeoutOffsetShort = 100;
         protected const int EchoTimeout = 500;
         private static readonly EdCustomAdapterCommon CustomAdapter =
             new EdCustomAdapterCommon(SendData, ReceiveData, DiscardInBuffer, ReadInBuffer, ReadTimeoutOffsetLong, ReadTimeoutOffsetShort, EchoTimeout);
@@ -21,6 +22,7 @@ namespace EdiabasLib
 #endif
         protected static NetworkStream BtStream;
         protected static AutoResetEvent CommReceiveEvent;
+        protected static long LastDisconnectTime = DateTime.MinValue.Ticks;
         protected static Stopwatch StopWatch = new Stopwatch();
         private static string _connectPort;
 
@@ -51,6 +53,15 @@ namespace EdiabasLib
                 return false;
             }
             _connectPort = port;
+            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Bluetooth connect: {0}", port);
+            long disconnectDiff = (Stopwatch.GetTimestamp() - LastDisconnectTime) / EdCustomAdapterCommon.TickResolMs;
+            if (disconnectDiff < DisconnectWait)
+            {
+                long delay = DisconnectWait - disconnectDiff;
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Disconnect delay: {0}", delay);
+                Thread.Sleep((int)delay);
+            }
+            long startTime = Stopwatch.GetTimestamp();
             try
             {
                 string portData = port.Remove(0, PortId.Length);
@@ -88,6 +99,7 @@ namespace EdiabasLib
                         }
                         catch (Exception)
                         {
+                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Connect failed, removing device");
                             InTheHand.Net.Bluetooth.BluetoothSecurity.RemoveDevice(btAddress);
                             Thread.Sleep(1000);
                             BtClient.Connect(ep);
@@ -114,6 +126,9 @@ namespace EdiabasLib
                 InterfaceDisconnect();
                 return false;
             }
+
+            long timeDiff = (Stopwatch.GetTimestamp() - startTime) / EdCustomAdapterCommon.TickResolMs;
+            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connect time: {0}ms", timeDiff);
             return true;
         }
 
@@ -139,6 +154,7 @@ namespace EdiabasLib
                     BtStream.Close();
                     BtStream.Dispose();
                     BtStream = null;
+                    LastDisconnectTime = Stopwatch.GetTimestamp();
                 }
             }
             catch (Exception)
