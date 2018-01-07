@@ -1,5 +1,5 @@
 # Replacement firmware for ELM327
-There is now a replacement firmware available for ELM327 based Bluetooth and WiFi adapters, that has the following advantages over the standard firmware:
+There is now a replacement firmware available for ELM327L based Bluetooth and WiFi adapters, that has the following advantages over the standard firmware:
 * Faster and more stable CAN communication.
 * K-Line support (all protocols).
 * New: Support for the VAG protocols KWP2000, KWP1281, TP2.0 (cars until 4.2012).
@@ -14,7 +14,7 @@ There is now a replacement firmware available for ELM327 based Bluetooth and WiF
 
 ## Buy an adapter
 New adapters are available.  
-You could buy the [Bluetooth and WiFi adapter](http://www.ebay.de/itm/http://www.ebay.de/itm/http://www.ebay.de/itm/253343800408) from EBAY.  
+You could buy the [Bluetooth and WiFi adapter](http://www.ebay.de/itm/http://www.ebay.de/itm/http://www.ebay.de/itm/253352759289) from EBAY.  
 For BMW F-models use the [ENET WiFi Adapter](ENET_WiFi_Adapter.md).
 
 ## Factory reset
@@ -33,7 +33,7 @@ You could use the Bluetooth adapter on a windows PC with INPA, Tool32 or ISTA-D 
 ## Programming of the processor
 For the first programming of the processor simply attach a PICKit 3 programmer to the corresponding test points of the circuit board.  
 The source for the firmware could be found in the subdirectory `CanAdapterElm`. The subdirectory names below are the Bluetooth chip types:
-* `default`: Unmodified ELM327 Bluetooth chip (Baud rate 38400)
+* `default`: Unmodified ELM327L Bluetooth chip (Baud rate 38400)
 * `bc04`: BC-04 Bluetooth chip with BK3231 processor
 * `hc04`: HC-04 Bluetooth chip with BC417 processor
 * `spp_uart`: [OpenSource Bluetooth firmware](Custom_Bluetooth_firmware.md) with BC417 processor (recommended for Android car radios with Rockchip platform)
