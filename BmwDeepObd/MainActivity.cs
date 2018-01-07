@@ -33,14 +33,13 @@ using Mono.CSharp;
 // ReSharper disable MergeCastWithTypeCheck
 // ReSharper disable UsePatternMatching
 
-[assembly: Android.App.UsesPermission("com.android.vending.CHECK_LICENSE")]
 #if APP_USB_FILTER
 [assembly: Android.App.UsesFeature("android.hardware.usb.host")]
 #endif
 
 namespace BmwDeepObd
 {
-    [Android.App.Activity(Label = "@string/app_name", MainLauncher = true,
+    [Android.App.Activity(Label = "@string/app_name", MainLauncher = false,
             LaunchMode = LaunchMode.SingleTask,
             UiOptions=UiOptions.SplitActionBarWhenNarrow,
             ConfigurationChanges = ConfigChanges.KeyboardHidden |

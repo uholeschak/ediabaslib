@@ -40,6 +40,19 @@
   <string name="app_info_message">Deep OBD für BMW und VAG\nVersion: {0}\nId: {1}</string>
   <string name="vag_mode_info">Der VAG Modus ist noch experimentell.\nEs wird ein <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD Adapter</a> mit mindestens Firmwareversion 0.8 benötigt.\nIm Moment werden nur die Protokolle KWP2000, KWP1281 und TP2.0 (Fahrzeuge bis 4.2012) unterstützt.</string>
 
+  <!-- Expansion downloader -->
+  <string name="exp_down_paused_cellular">Wollen Sie den Download über eine Mobilfunkverbindung aktivieren? Dies kann zuätzlich Kosten verursachen.</string>
+  <string name="exp_down_paused_cellular_2">Wenn Sie den Download nicht über Mobilfunk aktivieren, wird er automatisch fortgesetzt, wenn eine Wi-Fi Verbindung verfügbar ist.</string>
+  <string name="exp_down_button_resume_cellular">Download fortsetzen</string>
+  <string name="exp_down_button_wifi_settings">Wi-Fi Einstellungen</string>
+  <string name="exp_down_verifying_download">Download überprüfen</string>
+  <string name="exp_down_validation_complete">XAPK Dateiüberprüfung abgeschlossen.</string>
+  <string name="exp_down_validation_failed">XAPK Dateiüberprüfung fehlgeschlagen.</string>
+  <string name="exp_down_button_pause">Download anhalten</string>
+  <string name="exp_down_button_resume">Download fortsetzen</string>
+  <string name="exp_down_button_cancel">Abbrechen</string>
+  <string name="exp_down_button_cancel_verify">Überprüfung abbrechen</string>
+
   <!-- Error codes -->
   <string name="error_code_error_temporary">Fehler temporär</string>
   <string name="error_code_error_present">Fehler vorhanden</string>
