@@ -33,6 +33,7 @@ using Mono.CSharp;
 // ReSharper disable MergeCastWithTypeCheck
 // ReSharper disable UsePatternMatching
 
+[assembly: Android.App.UsesPermission("com.android.vending.CHECK_LICENSE")]
 #if APP_USB_FILTER
 [assembly: Android.App.UsesFeature("android.hardware.usb.host")]
 #endif
