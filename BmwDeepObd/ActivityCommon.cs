@@ -717,6 +717,10 @@ namespace BmwDeepObd
                         {
                             _activity?.RunOnUiThread(() =>
                             {
+                                if (_disposed)
+                                {
+                                    return;
+                                }
                                 _bcReceiverUpdateDisplayHandler?.Invoke();
                             });
                         }
@@ -1689,6 +1693,10 @@ namespace BmwDeepObd
                     .Show();
                 alertDialog.DismissEvent += (sender, args) =>
                 {
+                    if (_disposed)
+                    {
+                        return;
+                    }
                     if (!ignoreDismiss)
                     {
                         handler(true);
@@ -1722,6 +1730,10 @@ namespace BmwDeepObd
                 .Show();
                 alertDialog.DismissEvent += (sender, args) =>
                 {
+                    if (_disposed)
+                    {
+                        return;
+                    }
                     if (!ignoreDismiss)
                     {
                         handler(false);
@@ -1767,6 +1779,10 @@ namespace BmwDeepObd
                         .Show();
                         alertDialog.DismissEvent += (sender, args) =>
                         {
+                            if (_disposed)
+                            {
+                                return;
+                            }
                             if (!ignoreDismiss)
                             {
                                 handler(true);
@@ -1804,7 +1820,14 @@ namespace BmwDeepObd
                     }
                 })
                 .Show();
-                alterDialog.DismissEvent += handler;
+                alterDialog.DismissEvent += (sender, args) =>
+                {
+                    if (_disposed)
+                    {
+                        return;
+                    }
+                    handler(sender, args);
+                };
                 return true;
             }
             try
@@ -2194,6 +2217,10 @@ namespace BmwDeepObd
             }
             _activateAlertDialog.DismissEvent += (sender, args) =>
             {
+                if (_disposed)
+                {
+                    return;
+                }
                 if (!ignoreDismiss)
                 {
                     _activateAlertDialog = null;
@@ -2335,6 +2362,10 @@ namespace BmwDeepObd
                 edInterface.Dispose();
                 _activity?.RunOnUiThread(() =>
                 {
+                    if (_disposed)
+                    {
+                        return;
+                    }
                     if (progress != null)
                     {
                         progress.Dismiss();
@@ -2985,6 +3016,10 @@ namespace BmwDeepObd
                     {
                         _activity?.RunOnUiThread(() =>
                         {
+                            if (_disposed)
+                            {
+                                return;
+                            }
                             if (progress != null)
                             {
                                 progress.Dismiss();
@@ -3031,6 +3066,10 @@ namespace BmwDeepObd
                     };
                     _activity?.RunOnUiThread(() =>
                     {
+                        if (_disposed)
+                        {
+                            return;
+                        }
                         progress.AbortClick = sender =>
                         {
                             cancelled = true;   // cancel flag in event seems to be missing
@@ -3051,6 +3090,10 @@ namespace BmwDeepObd
                 {
                     _activity?.RunOnUiThread(() =>
                     {
+                        if (_disposed)
+                        {
+                            return;
+                        }
                         if (progress != null)
                         {
                             progress.Dismiss();
@@ -3957,6 +4000,10 @@ namespace BmwDeepObd
                     .Show();
                 alertDialog.DismissEvent += (sender, args) =>
                 {
+                    if (_disposed)
+                    {
+                        return;
+                    }
                     handler?.Invoke(sender, args);
                 };
                 TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
@@ -4084,6 +4131,10 @@ namespace BmwDeepObd
                                 {
                                     _activity?.RunOnUiThread(() =>
                                     {
+                                        if (_disposed)
+                                        {
+                                            return;
+                                        }
                                         TranslateStrings(stringList, handler, disableCache);
                                     });
                                     return;
@@ -4106,6 +4157,10 @@ namespace BmwDeepObd
                                     {
                                         _activity?.RunOnUiThread(() =>
                                         {
+                                            if (_disposed)
+                                            {
+                                                return;
+                                            }
                                             TranslateStrings(stringList, handler, disableCache);
                                         });
                                         return;
@@ -4125,6 +4180,10 @@ namespace BmwDeepObd
                         }
                         _activity?.RunOnUiThread(() =>
                         {
+                            if (_disposed)
+                            {
+                                return;
+                            }
                             if (_translateProgress != null)
                             {
                                 _translateProgress.Dismiss();
@@ -4174,6 +4233,10 @@ namespace BmwDeepObd
                                     .Show();
                                 altertDialog.DismissEvent += (o, eventArgs) =>
                                 {
+                                    if (_disposed)
+                                    {
+                                        return;
+                                    }
                                     if (!yesSelected)
                                     {
                                         handler(null);
@@ -4224,6 +4287,10 @@ namespace BmwDeepObd
                     };
                     _activity?.RunOnUiThread(() =>
                     {
+                        if (_disposed)
+                        {
+                            return;
+                        }
                         if (_translateProgress != null)
                         {
                             _translateProgress.ButtonAbort.Enabled = true;
@@ -4237,6 +4304,10 @@ namespace BmwDeepObd
                 {
                     _activity?.RunOnUiThread(() =>
                     {
+                        if (_disposed)
+                        {
+                            return;
+                        }
                         if (_translateProgress != null)
                         {
                             _translateProgress.Dismiss();
@@ -4264,6 +4335,10 @@ namespace BmwDeepObd
                             .Show();
                         altertDialog.DismissEvent += (o, eventArgs) =>
                         {
+                            if (_disposed)
+                            {
+                                return;
+                            }
                             if (!yesSelected)
                             {
                                 handler(null);
@@ -4958,6 +5033,10 @@ namespace BmwDeepObd
             }
             _activity?.RunOnUiThread(() =>
             {
+                if (_disposed)
+                {
+                    return;
+                }
                 List<IUsbSerialDriver> availableDrivers = EdFtdiInterface.GetDriverList(_usbManager);
                 if (availableDrivers.Count > _usbDeviceDetectCount)
                 {   // device attached

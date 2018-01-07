@@ -637,6 +637,10 @@ namespace BmwDeepObd
                                     .Show();
                                 _altertInfoDialog.DismissEvent += (sender, args) =>
                                 {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
                                     _altertInfoDialog = null;
                                     _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(),
                                         PackageManager.GetPackageInfo(PackageName, 0), GetType(), (o, eventArgs) => { });
@@ -659,6 +663,10 @@ namespace BmwDeepObd
                                 .Show();
                             _altertInfoDialog.DismissEvent += (sender, args) =>
                             {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
                                 _altertInfoDialog = null;
                                 _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(),
                                     PackageManager.GetPackageInfo(PackageName, 0), GetType(), (o, eventArgs) =>
@@ -713,6 +721,10 @@ namespace BmwDeepObd
                                 .Show();
                             _altertInfoDialog.DismissEvent += (sender, args) =>
                             {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
                                 _altertInfoDialog = null;
                                 _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), PackageManager.GetPackageInfo(PackageName, 0), GetType());
                             };

@@ -2625,6 +2625,10 @@ namespace BmwDeepObd
                                 AlertDialog alertDialog = builder.Show();
                                 alertDialog.DismissEvent += (sender, args) =>
                                 {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
                                     waitSem.Release();
                                 };
                             });
@@ -3643,6 +3647,10 @@ namespace BmwDeepObd
             AlertDialog alertDialog = builder.Show();
             alertDialog.DismissEvent += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 if (!handlerCalled)
                 {
                     handler(null);
@@ -3678,6 +3686,10 @@ namespace BmwDeepObd
             AlertDialog alertDialog = builder.Show();
             alertDialog.DismissEvent += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 if (!handlerCalled)
                 {
                     handler(null);

@@ -1374,6 +1374,10 @@ namespace BmwDeepObd
                     .Show();
                 _startAlertDialog.DismissEvent += (sender, args) =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     _startAlertDialog = null;
                     HandleStartDialogs(true);
                 };
