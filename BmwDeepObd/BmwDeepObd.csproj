@@ -67,6 +67,15 @@
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Google.Android.Vending.Expansion.Downloader, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Xamarin.Google.Android.Vending.Expansion.Downloader.2.0.0\lib\MonoAndroid\Google.Android.Vending.Expansion.Downloader.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Android.Vending.Expansion.ZipFile, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Xamarin.Google.Android.Vending.Expansion.ZipFile.2.0.0\lib\MonoAndroid\Google.Android.Vending.Expansion.ZipFile.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Android.Vending.Licensing, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Xamarin.Google.Android.Vending.Licensing.2.0.0\lib\MonoAndroid\Google.Android.Vending.Licensing.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib.Portable, Version=0.86.0.51803, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\SharpZipLib.Portable.0.86.0.0003\lib\portable-net45+netcore45+wp8+win8+wpa81+MonoTouch+MonoAndroid+Xamarin.iOS10\ICSharpCode.SharpZipLib.Portable.dll</HintPath>
       <Private>True</Private>
@@ -134,6 +143,8 @@
     <Compile Include="ActivityCommon.cs" />
     <Compile Include="CanAdapterActivity.cs" />
     <Compile Include="CustomProgressDialog.cs" />
+    <Compile Include="ExpansionAlarmReceiver.cs" />
+    <Compile Include="ExpansionDownloaderService.cs" />
     <Compile Include="ForegroundService.cs" />
     <Compile Include="EdiabasThread.cs" />
     <Compile Include="EdiabasToolActivity.cs" />
