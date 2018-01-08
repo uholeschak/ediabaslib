@@ -266,6 +266,27 @@ namespace BmwDeepObd
             base.OnStop();
         }
 
+        private void InitializeControls()
+        {
+            SetContentView(Resource.Layout.downloader);
+
+            _progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar);
+            _statusTextView = FindViewById<TextView>(Resource.Id.statusText);
+            _progressFractionTextView = FindViewById<TextView>(Resource.Id.progressAsFraction);
+            _progressPercentTextView = FindViewById<TextView>(Resource.Id.progressAsPercentage);
+            _averageSpeedTextView = FindViewById<TextView>(Resource.Id.progressAverageSpeed);
+            _timeRemainingTextView = FindViewById<TextView>(Resource.Id.progressTimeRemaining);
+            _dashboardView = FindViewById(Resource.Id.downloaderDashboard);
+            _useCellDataView = FindViewById(Resource.Id.approveCellular);
+            _pauseButton = FindViewById<Button>(Resource.Id.pauseButton);
+            _openWiFiSettingsButton = FindViewById<Button>(Resource.Id.wifiSettingsButton);
+            _resumeOnCellDataButton = FindViewById<Button>(Resource.Id.resumeOverCellular);
+
+            _pauseButton.Click += OnButtonOnClick;
+            _openWiFiSettingsButton.Click += OnOpenWiFiSettingsButtonOnClick;
+            _resumeOnCellDataButton.Click += OnEventHandler;
+        }
+
         /// <summary>
         /// Is package downloaded form google play
         /// </summary>
@@ -286,26 +307,6 @@ namespace BmwDeepObd
             }
 
             return false;
-        }
-        private void InitializeControls()
-        {
-            SetContentView(Resource.Layout.downloader);
-
-            _progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar);
-            _statusTextView = FindViewById<TextView>(Resource.Id.statusText);
-            _progressFractionTextView = FindViewById<TextView>(Resource.Id.progressAsFraction);
-            _progressPercentTextView = FindViewById<TextView>(Resource.Id.progressAsPercentage);
-            _averageSpeedTextView = FindViewById<TextView>(Resource.Id.progressAverageSpeed);
-            _timeRemainingTextView = FindViewById<TextView>(Resource.Id.progressTimeRemaining);
-            _dashboardView = FindViewById(Resource.Id.downloaderDashboard);
-            _useCellDataView = FindViewById(Resource.Id.approveCellular);
-            _pauseButton = FindViewById<Button>(Resource.Id.pauseButton);
-            _openWiFiSettingsButton = FindViewById<Button>(Resource.Id.wifiSettingsButton);
-            _resumeOnCellDataButton = FindViewById<Button>(Resource.Id.resumeOverCellular);
-
-            _pauseButton.Click += OnButtonOnClick;
-            _openWiFiSettingsButton.Click += OnOpenWiFiSettingsButtonOnClick;
-            _resumeOnCellDataButton.Click += OnEventHandler;
         }
 
         /// <summary>
