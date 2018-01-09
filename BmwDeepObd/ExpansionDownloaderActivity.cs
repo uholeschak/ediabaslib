@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Android.Content;
 using Android.Content.PM;
@@ -27,6 +29,7 @@ namespace BmwDeepObd
 #if DEBUG
         static readonly string Tag = typeof(ExpansionDownloaderActivity).FullName;
 #endif
+        private const int ObbFileSize = 178680275;
         private const int RequestPermissionExternalStorage = 0;
         private readonly string[] _permissionsExternalStorage =
         {
@@ -339,8 +342,45 @@ namespace BmwDeepObd
         /// </returns>
         private bool AreExpansionFilesDelivered()
         {
+            Regex regex = new Regex(@"^main\.[0-9]+\." + ActivityCommon.AppNameSpace + @"\.obb$", RegexOptions.IgnoreCase);
+            string obbFile = null;
+            Java.IO.File[] obbDirs = GetObbDirs();
+            foreach (Java.IO.File dir in obbDirs)
+            {
+                try
+                {
+                    if (dir != null && Directory.Exists(dir.AbsolutePath))
+                    {
+                        string[] files = Directory.GetFiles(dir.AbsolutePath);
+                        foreach (string file in files)
+                        {
+                            if (regex.IsMatch(Path.GetFileName(file)))
+                            {
+                                FileInfo fileInfo = new FileInfo(file);
+                                if (fileInfo.Exists && fileInfo.Length == ObbFileSize)
+                                {
+                                    obbFile = file;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+            if (obbFile != null)
+            {
+                return true;
+            }
+#if false
             var downloads = DownloadsDB.GetDownloadsList();
             return downloads.Any() && downloads.All(x => Helpers.DoesFileExist(this, x.FileName, x.TotalBytes, false));
+#else
+            return false;
+#endif
         }
 
         /// <summary>
@@ -358,7 +398,18 @@ namespace BmwDeepObd
             foreach (var file in downloads)
             {
                 progress--;
-                result = result && IsValidZipFile(file);
+                if (!IsValidZipFile(file))
+                {
+                    result = false;
+                    try
+                    {
+                        File.Delete(file);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
                 int progressLocal = progress;
                 RunOnUiThread(() => 
                 {
@@ -366,12 +417,20 @@ namespace BmwDeepObd
                 });
             }
 
+            if (!AreExpansionFilesDelivered())
+            {
+                result = false;
+            }
+
             RunOnUiThread(() => 
             {
-                _pauseButton.Click += delegate
+                _pauseButton.Click += (sender, args) => 
                 {
                     Finish();
-                    StartActivity(typeof(ActivityMain));
+                    if (result)
+                    {
+                        StartActivity(typeof(ActivityMain));
+                    }
                 };
 
                 _dashboardView.Visibility = ViewStates.Visible;
@@ -571,10 +630,24 @@ namespace BmwDeepObd
                 // request is necessary)
                 bool delivered = AreExpansionFilesDelivered();
 
-                if (delivered || !IsFromGooglePlay())
+                if (delivered)
                 {
                     StartActivity(typeof(ActivityMain));
                     Finish();
+                    return;
+                }
+
+                if (!IsFromGooglePlay())
+                {
+                    AlertDialog alertDialog = new AlertDialog.Builder(this)
+                        .SetMessage(Resource.String.exp_down_obb_missing)
+                        .SetTitle(Resource.String.alert_title_error)
+                        .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
+                        .Show();
+                    alertDialog.DismissEvent += (sender, args) =>
+                    {
+                        Finish();
+                    };
                     return;
                 }
 

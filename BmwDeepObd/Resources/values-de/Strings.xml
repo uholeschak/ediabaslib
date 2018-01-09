@@ -52,6 +52,7 @@
   <string name="exp_down_button_resume">Download fortsetzen</string>
   <string name="exp_down_button_cancel">Abbrechen</string>
   <string name="exp_down_button_cancel_verify">Überprüfung abbrechen</string>
+  <string name="exp_down_obb_missing">Die App wurde nicht von Google Play heruntergeladen und die Erweiterungsdatei fehlt.</string>
 
   <!-- Downloader library -->
   <string name="notification_download_complete">Download abgeschlossen</string>
