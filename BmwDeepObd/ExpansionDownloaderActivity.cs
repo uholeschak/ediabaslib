@@ -4,6 +4,8 @@ using System.Threading;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Android.Support.V4.App;
+using Android.Support.V4.Content;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
@@ -25,6 +27,14 @@ namespace BmwDeepObd
 #if DEBUG
         static readonly string Tag = typeof(ExpansionDownloaderActivity).FullName;
 #endif
+        private const int RequestPermissionExternalStorage = 0;
+        private readonly string[] _permissionsExternalStorage =
+        {
+            Android.Manifest.Permission.WriteExternalStorage
+        };
+
+        private bool _downloadStarted;
+        private bool _activityActive;
 
         /// <summary>
         /// The downloader service.
@@ -227,23 +237,7 @@ namespace BmwDeepObd
         {
             base.OnCreate(savedInstanceState);
 
-            // Before we do anything, are the files we expect already here and 
-            // delivered (presumably by Market) 
-            // For free titles, this is probably worth doing. (so no Market 
-            // request is necessary)
-            bool delivered = AreExpansionFilesDelivered();
-
-            if (delivered || !IsFromGooglePlay())
-            {
-                StartActivity(typeof(ActivityMain));
-                Finish();
-                return;
-            }
-
-            if (!GetExpansionFiles())
-            {
-                InitializeDownloadUi();
-            }
+            _downloadStarted = false;
         }
 
         /// <summary>
@@ -251,7 +245,9 @@ namespace BmwDeepObd
         /// </summary>
         protected override void OnResume()
         {
+            _activityActive = true;
             _downloaderServiceConnection?.Connect(this);
+            RequestStoragePermissions();
 
             base.OnResume();
         }
@@ -262,8 +258,25 @@ namespace BmwDeepObd
         protected override void OnStop()
         {
             _downloaderServiceConnection?.Disconnect(this);
+            _activityActive = false;
 
             base.OnStop();
+        }
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
+        {
+            switch (requestCode)
+            {
+                case RequestPermissionExternalStorage:
+                    if (grantResults.Length > 0 && grantResults[0] == Permission.Granted)
+                    {
+                        StoragePermissonGranted();
+                        break;
+                    }
+                    Toast.MakeText(this, GetString(Resource.String.access_denied_ext_storage), ToastLength.Long).Show();
+                    Finish();
+                    break;
+            }
         }
 
         private void InitializeControls()
@@ -470,11 +483,11 @@ namespace BmwDeepObd
         {
             if (_isPaused)
             {
-                _downloaderService.RequestContinueDownload();
+                _downloaderService?.RequestContinueDownload();
             }
             else
             {
-                _downloaderService.RequestPauseDownload();
+                _downloaderService?.RequestPauseDownload();
             }
 
             UpdatePauseButton(!_isPaused);
@@ -491,8 +504,8 @@ namespace BmwDeepObd
         /// </param>
         private void OnEventHandler(object sender, EventArgs args)
         {
-            _downloaderService.SetDownloadFlags(DownloaderServiceFlags.DownloadOverCellular);
-            _downloaderService.RequestContinueDownload();
+            _downloaderService?.SetDownloadFlags(DownloaderServiceFlags.DownloadOverCellular);
+            _downloaderService?.RequestContinueDownload();
             _useCellDataView.Visibility = ViewStates.Gone;
         }
 
@@ -535,6 +548,46 @@ namespace BmwDeepObd
             _pauseButton.SetText(Resource.String.exp_down_button_cancel_verify);
 
             ThreadPool.QueueUserWorkItem(DoValidateZipFiles);
+        }
+
+        private void RequestStoragePermissions()
+        {
+            if (_permissionsExternalStorage.All(permisson => ContextCompat.CheckSelfPermission(this, permisson) == Permission.Granted))
+            {
+                StoragePermissonGranted();
+                return;
+            }
+            ActivityCompat.RequestPermissions(this, _permissionsExternalStorage, RequestPermissionExternalStorage);
+        }
+
+        private void StoragePermissonGranted()
+        {
+            if (!_downloadStarted)
+            {
+                _downloadStarted = true;
+                // Before we do anything, are the files we expect already here and 
+                // delivered (presumably by Market) 
+                // For free titles, this is probably worth doing. (so no Market 
+                // request is necessary)
+                bool delivered = AreExpansionFilesDelivered();
+
+                if (delivered || !IsFromGooglePlay())
+                {
+                    StartActivity(typeof(ActivityMain));
+                    Finish();
+                    return;
+                }
+
+                if (!GetExpansionFiles())
+                {
+                    InitializeDownloadUi();
+                }
+
+                if (_activityActive)
+                {
+                    _downloaderServiceConnection?.Connect(this);
+                }
+            }
         }
     }
 }
