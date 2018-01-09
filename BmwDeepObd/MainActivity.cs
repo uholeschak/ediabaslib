@@ -166,8 +166,8 @@ namespace BmwDeepObd
         private const long EcuExtractSizeBmw = 1200000000;      // BMW extracted ecu files size
         private const long EcuZipSizeVag = 53000000;            // VAG ecu zip file size
         private const long EcuExtractSizeVag = 910000000;       // VAG extracted ecu files size
-        private const int RequestPermissionExternalStorage = 0;
         private const int CpuLoadCritical = 70;
+        private const int RequestPermissionExternalStorage = 0;
         private readonly string[] _permissionsExternalStorage =
         {
             Android.Manifest.Permission.WriteExternalStorage
