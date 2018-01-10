@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Android.Content;
@@ -22,14 +23,15 @@ namespace BmwDeepObd
         Icon = "@drawable/icon",
         LaunchMode = LaunchMode.SingleTask,
         ConfigurationChanges = ConfigChanges.KeyboardHidden |
-                                ConfigChanges.Orientation |
-                                ConfigChanges.ScreenSize)]
+                               ConfigChanges.Orientation |
+                               ConfigChanges.ScreenSize)]
     public class ExpansionDownloaderActivity : AppCompatActivity, IDownloaderClient
     {
 #if DEBUG
         static readonly string Tag = typeof(ExpansionDownloaderActivity).FullName;
 #endif
         private const int ObbFileSize = 178680275;
+        private static readonly byte[] ObbMd5 = { 0x3d, 0x35, 0xbd, 0x0d, 0x4e, 0xd8, 0xd1, 0x03, 0x18, 0xe6, 0x60, 0xb8, 0x37, 0xce, 0x3b, 0xeb };
         private const int RequestPermissionExternalStorage = 0;
         private readonly string[] _permissionsExternalStorage =
         {
@@ -340,11 +342,45 @@ namespace BmwDeepObd
         /// <returns>
         /// True if they are present, otherwise False;
         /// </returns>
-        private bool AreExpansionFilesDelivered()
+        private bool AreExpansionFilesDelivered(bool checkMd5 = false)
+        {
+            string obbFile = GetObbFilename(this);
+            if (obbFile == null)
+            {
+                return false;
+            }
+
+            if (!checkMd5)
+            {
+                return true;
+            }
+
+            byte[] md5 = CalculateMd5(obbFile);
+            if (md5 != null)
+            {
+                if (md5.SequenceEqual(ObbMd5))
+                {
+                    return true;
+                }
+            }
+
+            try
+            {
+                File.Delete(obbFile);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
+        }
+
+        public static string GetObbFilename(Context context)
         {
             Regex regex = new Regex(@"^main\.[0-9]+\." + ActivityCommon.AppNameSpace + @"\.obb$", RegexOptions.IgnoreCase);
             string obbFile = null;
-            Java.IO.File[] obbDirs = GetObbDirs();
+            Java.IO.File[] obbDirs = context.GetObbDirs();
             foreach (Java.IO.File dir in obbDirs)
             {
                 try
@@ -371,16 +407,30 @@ namespace BmwDeepObd
                     // ignored
                 }
             }
-            if (obbFile != null)
+            return obbFile;
+        }
+
+        /// <summary>
+        /// Calculate MD5 of file
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public static byte[] CalculateMd5(string fileName)
+        {
+            try
             {
-                return true;
+                using (var md5 = MD5.Create())
+                {
+                    using (var stream = File.OpenRead(fileName))
+                    {
+                        return md5.ComputeHash(stream);
+                    }
+                }
             }
-#if false
-            var downloads = DownloadsDB.GetDownloadsList();
-            return downloads.Any() && downloads.All(x => Helpers.DoesFileExist(this, x.FileName, x.TotalBytes, false));
-#else
-            return false;
-#endif
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -391,39 +441,14 @@ namespace BmwDeepObd
         /// </param>
         private void DoValidateZipFiles(object state)
         {
-            var downloads = DownloadsDB.GetDownloadsList().Select(x => Helpers.GenerateSaveFileName(this, x.FileName)).ToArray();
-
-            bool result = downloads.Any();
-            int progress = downloads.Length;
-            foreach (var file in downloads)
-            {
-                progress--;
-                if (!IsValidZipFile(file))
-                {
-                    result = false;
-                    try
-                    {
-                        File.Delete(file);
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                }
-                int progressLocal = progress;
-                RunOnUiThread(() => 
-                {
-                    OnDownloadProgress(new DownloadProgressInfo(downloads.Length, downloads.Length - progressLocal, 0, 0));
-                });
-            }
-
-            if (!AreExpansionFilesDelivered())
-            {
-                result = false;
-            }
+            bool result = AreExpansionFilesDelivered(true);
 
             RunOnUiThread(() => 
             {
+                _progressBar.Indeterminate = false;
+                OnDownloadProgress(new DownloadProgressInfo(ObbFileSize, ObbFileSize, 0, 0));
+                _pauseButton.Visibility = ViewStates.Visible;
+                _pauseButton.Click -= OnButtonOnClick;
                 _pauseButton.Click += (sender, args) => 
                 {
                     Finish();
@@ -516,20 +541,6 @@ namespace BmwDeepObd
         }
 
         /// <summary>
-        /// The is valid zip file.
-        /// </summary>
-        /// <param name="filename">
-        /// The filename.
-        /// </param>
-        /// <returns>
-        /// The is valid zip file.
-        /// </returns>
-        private bool IsValidZipFile(string filename)
-        {
-            return ActivityCommon.CheckZipFile(filename);
-        }
-
-        /// <summary>
         /// The on button on click.
         /// </summary>
         /// <param name="sender">
@@ -604,7 +615,9 @@ namespace BmwDeepObd
             _dashboardView.Visibility = ViewStates.Visible;
             _useCellDataView.Visibility = ViewStates.Gone;
             _statusTextView.SetText(Resource.String.exp_down_verifying_download);
+            _progressBar.Indeterminate = true;
             _pauseButton.SetText(Resource.String.exp_down_button_cancel_verify);
+            _pauseButton.Visibility = ViewStates.Invisible;
 
             ThreadPool.QueueUserWorkItem(DoValidateZipFiles);
         }

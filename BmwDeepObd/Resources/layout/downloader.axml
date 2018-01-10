@@ -72,6 +72,7 @@
                 android:id="@+id/downloaderDashboard"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="horizontal">
                 <Button
                     android:id="@+id/pauseButton"
@@ -86,20 +87,6 @@
                     android:minHeight="40dp"
                     android:minWidth="94dp"
                     android:text="@string/exp_down_button_pause" />
-                <Button
-                    android:id="@+id/cancelButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="0"
-                    android:minHeight="40dp"
-                    android:minWidth="94dp"
-                    android:text="@string/exp_down_button_cancel"
-                    android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
