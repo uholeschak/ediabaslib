@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using Android.Bluetooth;
@@ -4524,13 +4525,41 @@ namespace BmwDeepObd
             }
         }
 
-        public static void ExtractZipFile(string archiveFilenameIn, string outFolder, ProgressZipDelegate progressHandler)
+        public static void ExtractZipFile(string archiveFilenameIn, string outFolder, string key, ProgressZipDelegate progressHandler)
         {
+            TripleDESCryptoServiceProvider crypto = null;
+            FileStream fs = null;
             ZipFile zf = null;
             try
             {
-                FileStream fs = File.OpenRead(archiveFilenameIn);
-                zf = new ZipFile(fs);
+                if (!string.IsNullOrEmpty(key))
+                {
+                    crypto = new TripleDESCryptoServiceProvider
+                    {
+                        Mode = CipherMode.CBC,
+                        Padding = PaddingMode.PKCS7,
+                        KeySize = 192
+                    };
+                    using (SHA256Managed sha256 = new SHA256Managed())
+                    {
+                        byte[] data = sha256.ComputeHash(Encoding.ASCII.GetBytes(key));
+                        Array.Copy(data, 0, crypto.Key, 0, 24);
+                        Array.Copy(data, 24, crypto.IV, 0, 8);
+                    }
+                }
+
+                fs = File.OpenRead(archiveFilenameIn);
+                if (crypto != null)
+                {
+                    CryptoStream crStream = new CryptoStream(fs,
+                        crypto.CreateDecryptor(), CryptoStreamMode.Read);
+                    zf = new ZipFile(crStream);
+                }
+                else
+                {
+                    zf = new ZipFile(fs);
+                }
+
                 long index = 0;
                 foreach (ZipEntry zipEntry in zf)
                 {
@@ -4579,6 +4608,8 @@ namespace BmwDeepObd
                     zf.IsStreamOwner = true; // Makes close also shut the underlying stream
                     zf.Close(); // Ensure we release resources
                 }
+                fs?.Close();
+                crypto?.Dispose();
             }
         }
 

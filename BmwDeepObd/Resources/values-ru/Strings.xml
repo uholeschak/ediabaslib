@@ -152,6 +152,8 @@
   <string name="menu_xml_tool">Генератор конфигураций</string>
   <string name="menu_ediabas_tool">Ediabas утилита</string>
   <string name="menu_download_ecu">Скачать ECU файл.</string>
+  <!--Translate-->
+  <string name="menu_extract_ecu">Extract ECU files</string>
   <string name="menu_submenu_log">Протокол данных</string>
   <string name="menu_send_trace">Отправить журнал данных</string>
   <string name="menu_global_settings">Глобальные настройки</string>

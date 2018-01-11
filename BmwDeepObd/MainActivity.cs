@@ -11,7 +11,6 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using System.Xml;
 using System.Xml.Linq;
 using Android.Content;
 using Android.Content.PM;
@@ -88,6 +87,8 @@ namespace BmwDeepObd
 
             public string TargetDir { get; }
 
+            // ReSharper disable once UnusedAutoPropertyAccessor.Local
+            // ReSharper disable once MemberCanBePrivate.Local
             public string DownloadDir { get; }
 
             public XElement InfoXml { get; }
@@ -645,7 +646,7 @@ namespace BmwDeepObd
                         xmlInfo.Add(new XAttribute("Url", zipFile));
                         xmlInfo.Add(new XAttribute("Name", fileName));
 
-                        ExtractZipFile(zipFile, ecuPath, xmlInfo);
+                        ExtractZipFile(zipFile, ecuPath, xmlInfo, null);
                     }
                     break;
 #endif
@@ -746,7 +747,15 @@ namespace BmwDeepObd
             ediabasToolMenu?.SetEnabled(!commActive);
 
             IMenuItem downloadEcu = menu.FindItem(Resource.Id.menu_download_ecu);
-            downloadEcu?.SetEnabled(!commActive);
+            if (downloadEcu != null)
+            {
+#if OBB_MODE
+                downloadEcu.SetTitle(Resource.String.menu_extract_ecu);
+#else
+                downloadEcu.SetTitle(Resource.String.menu_download_ecu);
+#endif
+                downloadEcu.SetEnabled(!commActive);
+            }
 
             IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
             logSubMenu?.SetEnabled(interfaceAvailable && !commActive);
@@ -2754,7 +2763,7 @@ namespace BmwDeepObd
                             }
                             if (key != null)
                             {
-                                ExtractZipFile(_obbFileName, downloadInfo.TargetDir, downloadInfo.InfoXml, false,
+                                ExtractZipFile(_obbFileName, downloadInfo.TargetDir, downloadInfo.InfoXml, key, false,
                                     new List<string> { Path.Combine(_instanceData.AppDataPath, "EcuVag") });
                                 return;
                             }
@@ -2801,7 +2810,7 @@ namespace BmwDeepObd
                                     }
                                 }
                                 _downloadProgress.ButtonAbort.Enabled = false;
-                                ExtractZipFile(downloadInfo.FileName, downloadInfo.TargetDir, downloadInfo.InfoXml, true);
+                                ExtractZipFile(downloadInfo.FileName, downloadInfo.TargetDir, downloadInfo.InfoXml, null, true);
                                 return;
                             }
                         }
@@ -2963,7 +2972,7 @@ namespace BmwDeepObd
                         XAttribute sizeAttr = fileNode.Attribute("file_size");
                         if (sizeAttr != null)
                         {
-                            fileSize = XmlConvert.ToInt64(sizeAttr.Value);
+                            fileSize = System.Xml.XmlConvert.ToInt64(sizeAttr.Value);
                         }
                         XAttribute usernameAttr = fileNode.Attribute("username");
                         if (usernameAttr != null)
@@ -2987,7 +2996,7 @@ namespace BmwDeepObd
         }
 #endif
 
-        private void ExtractZipFile(string fileName, string targetDirectory, XElement infoXml, bool removeFile = false, List<string> removeDirs = null)
+        private void ExtractZipFile(string fileName, string targetDirectory, XElement infoXml, string key, bool removeFile = false, List<string> removeDirs = null)
         {
             _extractZipCanceled = false;
             if (_downloadProgress == null)
@@ -3066,7 +3075,7 @@ namespace BmwDeepObd
                         }
                     });
 
-                    ActivityCommon.ExtractZipFile(fileName, targetDirectory,
+                    ActivityCommon.ExtractZipFile(fileName, targetDirectory, key,
                         percent =>
                         {
                             RunOnUiThread(() =>
@@ -3132,6 +3141,7 @@ namespace BmwDeepObd
             extractThread.Start();
         }
 
+        // ReSharper disable once UnusedParameter.Local
         private void DownloadEcuFiles(bool manualRequest = false)
         {
             string ecuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
@@ -3219,6 +3229,7 @@ namespace BmwDeepObd
         }
 #endif
 
+        // ReSharper disable once UnusedParameter.Local
         private bool CheckForEcuFiles(bool checkPackage = false)
         {
             if (!_activityActive || !_instanceData.StorageAccessGranted || (_downloadEcuAlertDialog != null))
