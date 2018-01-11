@@ -25,6 +25,8 @@
   <string name="ecu_not_found">ECU файлы не найдены.</string>
   <string name="ecu_package">Для этого приложения доступны обновлённые ECU файлы.</string>
   <string name="ecu_download">Хотите загрузить ECU файлы (размер файла примерно {0:fs0})?</string>
+  <!--Translate-->
+  <string name="ecu_extract">The ECU files have to be extracted (Size approx. {0:fs0}),\nthis requires the download of update information.\nDo you want to continue?</string>
   <string name="manufacturer_select">Выбранный производитель {0}. Для выбора другого нажмите \'Отменить\'.</string>
   <string name="error_no_error">Ошибки отсутствуют</string>
   <string name="error_reading_errors">Считывание ошибок: {0}%</string>
