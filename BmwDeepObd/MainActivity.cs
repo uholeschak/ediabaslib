@@ -2741,21 +2741,21 @@ namespace BmwDeepObd
                         if (e.Error == null)
                         {
                             string key = GetObbKey(downloadInfo.FileName);
+                            try
+                            {
+                                if (File.Exists(downloadInfo.FileName))
+                                {
+                                    File.Delete(downloadInfo.FileName);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                             if (key != null)
                             {
                                 ExtractZipFile(_obbFileName, downloadInfo.TargetDir, downloadInfo.InfoXml, false,
                                     new List<string> { Path.Combine(_instanceData.AppDataPath, "EcuVag") });
-                                try
-                                {
-                                    if (File.Exists(downloadInfo.FileName))
-                                    {
-                                        File.Delete(downloadInfo.FileName);
-                                    }
-                                }
-                                catch (Exception)
-                                {
-                                    // ignored
-                                }
                                 return;
                             }
                             error = true;
