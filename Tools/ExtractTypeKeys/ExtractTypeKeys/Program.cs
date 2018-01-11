@@ -7,7 +7,7 @@ using ICSharpCode.SharpZipLib.Zip;
 
 namespace ExtractTypeKeys
 {
-    class Program
+    static class Program
     {
         static int Main(string[] args)
         {
@@ -24,7 +24,7 @@ namespace ExtractTypeKeys
             string outDir = args[1];
             if (string.IsNullOrEmpty(outDir))
             {
-                Console.WriteLine("No output directory empty");
+                Console.WriteLine("Output directory empty");
                 return 1;
             }
 
