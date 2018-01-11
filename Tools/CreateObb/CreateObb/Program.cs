@@ -97,7 +97,7 @@ namespace CreateObb
                     }
 
 
-                    zipStream.SetLevel(3); //0-9, 9 being the highest level of compression
+                    zipStream.SetLevel(9); //0-9, 9 being the highest level of compression
 
                     // This setting will strip the leading part of the folder path in the entries, to
                     // make the entries relative to the starting folder.
