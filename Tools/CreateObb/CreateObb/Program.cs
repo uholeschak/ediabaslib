@@ -45,7 +45,7 @@ namespace CreateObb
             string key = string.Empty;
             if (args.Length >= 3)
             {
-                key = args[1];
+                key = args[2];
             }
 
             if (!CreateZipFile(inDir, outFile, key))
@@ -53,7 +53,7 @@ namespace CreateObb
                 Console.WriteLine("Creating Zip file failed");
                 return 1;
             }
-            Console.WriteLine("Creating Zip file failed");
+            Console.WriteLine("Creating Zip file done");
 
             return 0;
         }
@@ -62,13 +62,19 @@ namespace CreateObb
         {
             try
             {
-                using (TripleDESCryptoServiceProvider crypto = new TripleDESCryptoServiceProvider())
+                TripleDESCryptoServiceProvider crypto = null;
+                FileStream fsOut = null;
+                ZipOutputStream zipStream = null;
+                try
                 {
                     if (!string.IsNullOrEmpty(key))
                     {
-                        crypto.Mode = CipherMode.CBC;
-                        crypto.Padding = PaddingMode.PKCS7;
-                        crypto.KeySize = 192;
+                        crypto = new TripleDESCryptoServiceProvider
+                        {
+                            Mode = CipherMode.CBC,
+                            Padding = PaddingMode.PKCS7,
+                            KeySize = 192
+                        };
                         using (SHA256Managed sha256 = new SHA256Managed())
                         {
                             byte[] data = sha256.ComputeHash(Encoding.ASCII.GetBytes(key));
@@ -77,10 +83,9 @@ namespace CreateObb
                         }
                     }
 
-                    FileStream fsOut = File.Create(outFile);
-                    ZipOutputStream zipStream;
+                    fsOut = File.Create(outFile);
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                    if (!string.IsNullOrEmpty(key))
+                    if (crypto != null)
                     {
                         CryptoStream crStream = new CryptoStream(fsOut,
                             crypto.CreateEncryptor(), CryptoStreamMode.Write);
@@ -94,21 +99,22 @@ namespace CreateObb
 
                     zipStream.SetLevel(3); //0-9, 9 being the highest level of compression
 
-                    try
-                    {
-                        // This setting will strip the leading part of the folder path in the entries, to
-                        // make the entries relative to the starting folder.
-                        // To include the full path for each entry up to the drive root, assign folderOffset = 0.
-                        int folderOffset = inDir.Length + (inDir.EndsWith("\\") ? 0 : 1);
+                    // This setting will strip the leading part of the folder path in the entries, to
+                    // make the entries relative to the starting folder.
+                    // To include the full path for each entry up to the drive root, assign folderOffset = 0.
+                    int folderOffset = inDir.Length + (inDir.EndsWith("\\") ? 0 : 1);
 
-                        CompressFolder(inDir, zipStream, folderOffset);
-                    }
-                    finally
+                    CompressFolder(inDir, zipStream, folderOffset);
+                }
+                finally
+                {
+                    if (zipStream != null)
                     {
                         zipStream.IsStreamOwner = true; // Makes the Close also Close the underlying stream
                         zipStream.Close();
-                        fsOut.Close();
                     }
+                    fsOut?.Close();
+                    crypto?.Dispose();
                 }
             }
             catch (Exception)
