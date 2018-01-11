@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 
@@ -19,6 +21,7 @@ namespace CreateObb
                 Console.WriteLine("No output file name specified");
                 return 1;
             }
+
             string inDir = args[0];
             string outFile = args[1];
             if (string.IsNullOrEmpty(inDir))
@@ -39,37 +42,73 @@ namespace CreateObb
                 return 1;
             }
 
-            if (!CreateZipFile(inDir, outFile))
+            string key = string.Empty;
+            if (args.Length >= 3)
+            {
+                key = args[1];
+            }
+
+            if (!CreateZipFile(inDir, outFile, key))
             {
                 Console.WriteLine("Creating Zip file failed");
                 return 1;
             }
+            Console.WriteLine("Creating Zip file failed");
 
             return 0;
         }
 
-        private static bool CreateZipFile(string inDir, string outFile)
+        private static bool CreateZipFile(string inDir, string outFile, string key)
         {
             try
             {
-                FileStream fsOut = File.Create(outFile);
-                ZipOutputStream zipStream = new ZipOutputStream(fsOut);
-
-                zipStream.SetLevel(3); //0-9, 9 being the highest level of compression
-
-                try
+                using (TripleDESCryptoServiceProvider crypto = new TripleDESCryptoServiceProvider())
                 {
-                    // This setting will strip the leading part of the folder path in the entries, to
-                    // make the entries relative to the starting folder.
-                    // To include the full path for each entry up to the drive root, assign folderOffset = 0.
-                    int folderOffset = inDir.Length + (inDir.EndsWith("\\") ? 0 : 1);
+                    if (!string.IsNullOrEmpty(key))
+                    {
+                        crypto.Mode = CipherMode.CBC;
+                        crypto.Padding = PaddingMode.PKCS7;
+                        crypto.KeySize = 192;
+                        using (SHA256Managed sha256 = new SHA256Managed())
+                        {
+                            byte[] data = sha256.ComputeHash(Encoding.ASCII.GetBytes(key));
+                            Array.Copy(data, 0, crypto.Key, 0, 24);
+                            Array.Copy(data, 24, crypto.IV, 0, 8);
+                        }
+                    }
 
-                    CompressFolder(inDir, zipStream, folderOffset);
-                }
-                finally
-                {
-                    zipStream.IsStreamOwner = true; // Makes the Close also Close the underlying stream
-                    zipStream.Close();
+                    FileStream fsOut = File.Create(outFile);
+                    ZipOutputStream zipStream;
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                    if (!string.IsNullOrEmpty(key))
+                    {
+                        CryptoStream crStream = new CryptoStream(fsOut,
+                            crypto.CreateEncryptor(), CryptoStreamMode.Write);
+                        zipStream = new ZipOutputStream(crStream);
+                    }
+                    else
+                    {
+                        zipStream = new ZipOutputStream(fsOut);
+                    }
+
+
+                    zipStream.SetLevel(3); //0-9, 9 being the highest level of compression
+
+                    try
+                    {
+                        // This setting will strip the leading part of the folder path in the entries, to
+                        // make the entries relative to the starting folder.
+                        // To include the full path for each entry up to the drive root, assign folderOffset = 0.
+                        int folderOffset = inDir.Length + (inDir.EndsWith("\\") ? 0 : 1);
+
+                        CompressFolder(inDir, zipStream, folderOffset);
+                    }
+                    finally
+                    {
+                        zipStream.IsStreamOwner = true; // Makes the Close also Close the underlying stream
+                        zipStream.Close();
+                        fsOut.Close();
+                    }
                 }
             }
             catch (Exception)
