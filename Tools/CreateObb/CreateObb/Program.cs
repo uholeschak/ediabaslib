@@ -78,8 +78,12 @@ namespace CreateObb
                         using (SHA256Managed sha256 = new SHA256Managed())
                         {
                             byte[] data = sha256.ComputeHash(Encoding.ASCII.GetBytes(key));
-                            Array.Copy(data, 0, crypto.Key, 0, 24);
-                            Array.Copy(data, 24, crypto.IV, 0, 8);
+                            byte[] dataKey = new byte[24];
+                            byte[] dataIv = new byte[8];
+                            Array.Copy(data, 0, dataKey, 0, 24);
+                            Array.Copy(data, 24, dataIv, 0, 8);
+                            crypto.Key = dataKey;
+                            crypto.IV = dataIv;
                         }
                     }
 
