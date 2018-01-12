@@ -4534,21 +4534,19 @@ namespace BmwDeepObd
             {
                 if (!string.IsNullOrEmpty(key))
                 {
-                    using (TripleDESCryptoServiceProvider crypto = new TripleDESCryptoServiceProvider())
+                    using (AesCryptoServiceProvider crypto = new AesCryptoServiceProvider())
                     {
                         crypto.Mode = CipherMode.CBC;
                         crypto.Padding = PaddingMode.PKCS7;
-                        crypto.KeySize = 192;
+                        crypto.KeySize = 256;
 
                         using (SHA256Managed sha256 = new SHA256Managed())
                         {
-                            byte[] data = sha256.ComputeHash(Encoding.ASCII.GetBytes(key));
-                            byte[] dataKey = new byte[24];
-                            byte[] dataIv = new byte[8];
-                            Array.Copy(data, 0, dataKey, 0, 24);
-                            Array.Copy(data, 24, dataIv, 0, 8);
-                            crypto.Key = dataKey;
-                            crypto.IV = dataIv;
+                            crypto.Key = sha256.ComputeHash(Encoding.ASCII.GetBytes(key));
+                        }
+                        using (var md5 = MD5.Create())
+                        {
+                            crypto.IV = md5.ComputeHash(Encoding.ASCII.GetBytes(key));
                         }
 
                         using (FileStream fsRead = File.OpenRead(archiveFilenameIn))

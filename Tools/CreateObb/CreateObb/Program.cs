@@ -62,28 +62,26 @@ namespace CreateObb
         {
             try
             {
-                TripleDESCryptoServiceProvider crypto = null;
+                AesCryptoServiceProvider crypto = null;
                 FileStream fsOut = null;
                 ZipOutputStream zipStream = null;
                 try
                 {
                     if (!string.IsNullOrEmpty(key))
                     {
-                        crypto = new TripleDESCryptoServiceProvider
+                        crypto = new AesCryptoServiceProvider
                         {
                             Mode = CipherMode.CBC,
                             Padding = PaddingMode.PKCS7,
-                            KeySize = 192
+                            KeySize = 256
                         };
                         using (SHA256Managed sha256 = new SHA256Managed())
                         {
-                            byte[] data = sha256.ComputeHash(Encoding.ASCII.GetBytes(key));
-                            byte[] dataKey = new byte[24];
-                            byte[] dataIv = new byte[8];
-                            Array.Copy(data, 0, dataKey, 0, 24);
-                            Array.Copy(data, 24, dataIv, 0, 8);
-                            crypto.Key = dataKey;
-                            crypto.IV = dataIv;
+                            crypto.Key = sha256.ComputeHash(Encoding.ASCII.GetBytes(key));
+                        }
+                        using (var md5 = MD5.Create())
+                        {
+                            crypto.IV = md5.ComputeHash(Encoding.ASCII.GetBytes(key));
                         }
                     }
 
