@@ -4527,38 +4527,49 @@ namespace BmwDeepObd
 
         public static void ExtractZipFile(string archiveFilenameIn, string outFolder, string key, ProgressZipDelegate progressHandler)
         {
-            TripleDESCryptoServiceProvider crypto = null;
             FileStream fs = null;
             ZipFile zf = null;
+            string tempFile = Path.Combine(outFolder, "temp.zip");
             try
             {
                 if (!string.IsNullOrEmpty(key))
                 {
-                    crypto = new TripleDESCryptoServiceProvider
+                    using (TripleDESCryptoServiceProvider crypto = new TripleDESCryptoServiceProvider())
                     {
-                        Mode = CipherMode.CBC,
-                        Padding = PaddingMode.PKCS7,
-                        KeySize = 192
-                    };
-                    using (SHA256Managed sha256 = new SHA256Managed())
-                    {
-                        byte[] data = sha256.ComputeHash(Encoding.ASCII.GetBytes(key));
-                        Array.Copy(data, 0, crypto.Key, 0, 24);
-                        Array.Copy(data, 24, crypto.IV, 0, 8);
-                    }
-                }
+                        crypto.Mode = CipherMode.CBC;
+                        crypto.Padding = PaddingMode.PKCS7;
+                        crypto.KeySize = 192;
 
-                fs = File.OpenRead(archiveFilenameIn);
-                if (crypto != null)
-                {
-                    CryptoStream crStream = new CryptoStream(fs,
-                        crypto.CreateDecryptor(), CryptoStreamMode.Read);
-                    zf = new ZipFile(crStream);
+                        using (SHA256Managed sha256 = new SHA256Managed())
+                        {
+                            byte[] data = sha256.ComputeHash(Encoding.ASCII.GetBytes(key));
+                            byte[] dataKey = new byte[24];
+                            byte[] dataIv = new byte[8];
+                            Array.Copy(data, 0, dataKey, 0, 24);
+                            Array.Copy(data, 24, dataIv, 0, 8);
+                            crypto.Key = dataKey;
+                            crypto.IV = dataIv;
+                        }
+
+                        using (FileStream fsRead = File.OpenRead(archiveFilenameIn))
+                        {
+                            using (CryptoStream crStream = new CryptoStream(fsRead, crypto.CreateDecryptor(), CryptoStreamMode.Read))
+                            {
+                                using (FileStream fsWrite = File.Create(tempFile))
+                                {
+                                    crStream.CopyTo(fsWrite);
+                                }
+                            }
+                        }
+                    }
+                    fs = File.OpenRead(tempFile);
                 }
                 else
                 {
-                    zf = new ZipFile(fs);
+                    fs = File.OpenRead(archiveFilenameIn);
                 }
+
+                zf = new ZipFile(fs);
 
                 long index = 0;
                 foreach (ZipEntry zipEntry in zf)
@@ -4603,13 +4614,12 @@ namespace BmwDeepObd
             }
             finally
             {
-                if (zf != null)
-                {
-                    zf.IsStreamOwner = true; // Makes close also shut the underlying stream
-                    zf.Close(); // Ensure we release resources
-                }
+                zf?.Close(); // Ensure we release resources
                 fs?.Close();
-                crypto?.Dispose();
+                if (File.Exists(tempFile))
+                {
+                    File.Delete(tempFile);
+                }
             }
         }
 
