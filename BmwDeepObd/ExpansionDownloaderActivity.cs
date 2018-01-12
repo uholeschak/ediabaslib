@@ -31,7 +31,7 @@ namespace BmwDeepObd
         static readonly string Tag = typeof(ExpansionDownloaderActivity).FullName;
 #endif
         private const int ObbFileSize = 176132384;
-        private static readonly byte[] ObbMd5 = { 0x66, 0xda, 0xd1, 0xa7, 0x87, 0x4b, 0x8d, 0x00, 0x6b, 0x17, 0xed, 0x35, 0xb8, 0x40, 0x39, 0xa3};
+        private static readonly byte[] ObbMd5 = { 0xE9, 0xF2, 0x2B, 0x73, 0x22, 0x25, 0xBB, 0x62, 0xC6, 0x78, 0x2F, 0x68, 0x37, 0x41, 0xA4, 0x39};
         private const int RequestPermissionExternalStorage = 0;
         private readonly string[] _permissionsExternalStorage =
         {
@@ -358,6 +358,22 @@ namespace BmwDeepObd
             byte[] md5 = CalculateMd5(obbFile);
             if (md5 != null)
             {
+#if DEBUG
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                sb.Append("MD5: {");
+                int index = 0;
+                foreach (byte value in md5)
+                {
+                    if (index > 0)
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append(string.Format("0x{0:X02}", value));
+                    index++;
+                }
+                sb.Append("};");
+                Android.Util.Log.Debug(Tag, sb.ToString());
+#endif
                 if (md5.SequenceEqual(ObbMd5))
                 {
                     return true;
