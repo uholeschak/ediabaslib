@@ -195,7 +195,7 @@ namespace BmwDeepObd
             ConnectClose,           // auto connect and close app
         }
 
-        public delegate bool ProgressZipDelegate(int percent);
+        public delegate bool ProgressZipDelegate(int percent, bool decrypt = false);
         public delegate void BcReceiverUpdateDisplayDelegate();
         public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
         public delegate void TranslateDelegate(List<string> transList);
@@ -4561,7 +4561,7 @@ namespace BmwDeepObd
                                     {
                                         if (progressHandler != null)
                                         {
-                                            if (progressHandler((int)args.PercentComplete))
+                                            if (progressHandler((int)args.PercentComplete, true))
                                             {
                                                 args.ContinueRunning = false;
                                                 aborted = true;
