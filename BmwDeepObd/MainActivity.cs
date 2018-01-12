@@ -3070,13 +3070,12 @@ namespace BmwDeepObd
                         }
                         if (_downloadProgress != null)
                         {
-                            _downloadProgress.SetMessage(GetString(Resource.String.extract_file));
                             _downloadProgress.ButtonAbort.Enabled = true;
                         }
                     });
 
                     ActivityCommon.ExtractZipFile(fileName, targetDirectory, key,
-                        percent =>
+                        (percent, decrypt) =>
                         {
                             RunOnUiThread(() =>
                             {
@@ -3086,6 +3085,7 @@ namespace BmwDeepObd
                                 }
                                 if (_downloadProgress != null)
                                 {
+                                    _downloadProgress.SetMessage(decrypt ? GetString(Resource.String.decrypt_file) : GetString(Resource.String.extract_file));
                                     _downloadProgress.Progress = percent;
                                 }
                             });
