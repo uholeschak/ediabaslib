@@ -4555,9 +4555,25 @@ namespace BmwDeepObd
                         {
                             using (CryptoStream crStream = new CryptoStream(fsRead, crypto.CreateDecryptor(), CryptoStreamMode.Read))
                             {
+                                byte[] buffer = new byte[4096];     // 4K is optimum
                                 using (FileStream fsWrite = File.Create(tempFile))
                                 {
-                                    crStream.CopyTo(fsWrite);
+                                    bool aborted = false;
+                                    StreamUtils.Copy(crStream, fsWrite, buffer, (sender, args) =>
+                                    {
+                                        if (progressHandler != null)
+                                        {
+                                            if (progressHandler((int)args.PercentComplete))
+                                            {
+                                                args.ContinueRunning = false;
+                                                aborted = true;
+                                            }
+                                        }
+                                    }, TimeSpan.FromSeconds(1), null, null, fsRead.Length);
+                                    if (aborted)
+                                    {
+                                        return;
+                                    }
                                 }
                             }
                         }
