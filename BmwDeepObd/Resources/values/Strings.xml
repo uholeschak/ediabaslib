@@ -54,6 +54,7 @@
   <string name="exp_down_button_cancel">Cancel</string>
   <string name="exp_down_button_cancel_verify">Cancel Verification</string>
   <string name="exp_down_obb_missing">The app has not been downloaded from Google Play and the extension file is missing.</string>
+  <string name="exp_down_time_remaining">Time remaining: {0}</string>
 
   <!-- Downloader library (modfications) -->
   <string name="state_failed_unlicensed">Download failed because the app may not be downloaded from Google Play</string>
