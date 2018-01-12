@@ -126,7 +126,7 @@ namespace BmwDeepObd
         public void OnDownloadProgress(DownloadProgressInfo progress)
         {
             _averageSpeedTextView.Text = string.Format("{0} Kb/s", Helpers.GetSpeedString(progress.CurrentSpeed));
-            _timeRemainingTextView.Text = string.Format("Time remaining: {0}", Helpers.GetTimeRemaining(progress.TimeRemaining));
+            _timeRemainingTextView.Text = string.Format(Resources.GetString(Resource.String.exp_down_time_remaining), Helpers.GetTimeRemaining(progress.TimeRemaining));
             _progressBar.Max = (int)(progress.OverallTotal >> 8);
             _progressBar.Progress = (int)(progress.OverallProgress >> 8);
             _progressPercentTextView.Text = string.Format("{0}%", progress.OverallProgress * 100 / progress.OverallTotal);
