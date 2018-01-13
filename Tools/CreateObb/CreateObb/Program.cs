@@ -2,6 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Xml.Linq;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 
@@ -48,6 +49,12 @@ namespace CreateObb
                 key = args[2];
             }
 
+            if (!CreateContentFile(inDir, Path.Combine(inDir, "Content.xml")))
+            {
+                Console.WriteLine("Creating content file failed");
+                return 1;
+            }
+
             if (!CreateZipFile(inDir, outFile, key))
             {
                 Console.WriteLine("Creating Zip file failed");
@@ -56,6 +63,60 @@ namespace CreateObb
             Console.WriteLine("Creating Zip file done");
 
             return 0;
+        }
+
+        private static bool CreateContentFile(string inDir, string outFile)
+        {
+            try
+            {
+                if (File.Exists(outFile))
+                {
+                    File.Delete(outFile);
+                }
+                Uri uriIn = new Uri(inDir + Path.DirectorySeparatorChar);
+                XElement xmlContentNodes = new XElement("Content");
+                string[] files = Directory.GetFiles(inDir, "*.*", SearchOption.AllDirectories);
+                foreach (string file in files)
+                {
+                    XElement xmlFileNode = new XElement("File");
+
+                    Uri uriFile = new Uri(file);
+                    Uri uriRel = uriIn.MakeRelativeUri(uriFile);
+                    string relPath = Uri.UnescapeDataString(uriRel.OriginalString);
+
+                    xmlFileNode.Add(new XAttribute("Name", relPath));
+
+                    FileInfo fileInfo = new FileInfo(file);
+                    if (fileInfo.Exists)
+                    {
+                        xmlFileNode.Add(new XAttribute("size", fileInfo.Length));
+
+                        using (var md5 = MD5.Create())
+                        {
+                            using (var stream = File.OpenRead(file))
+                            {
+                                byte[] md5Data = md5.ComputeHash(stream);
+                                StringBuilder sb = new StringBuilder();
+                                foreach (byte value in md5Data)
+                                {
+                                    sb.Append($"{value:X02}");
+                                }
+                                xmlFileNode.Add(new XAttribute("md5", sb.ToString()));
+                            }
+                        }
+
+                    }
+                    xmlContentNodes.Add(xmlFileNode);
+                }
+                XDocument document = new XDocument(xmlContentNodes);
+                document.Save(outFile);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private static bool CreateZipFile(string inDir, string outFile, string key)
