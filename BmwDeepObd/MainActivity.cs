@@ -3170,6 +3170,7 @@ namespace BmwDeepObd
                         extractFailed = true;
                     }
 #endif
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                     if (!extractFailed)
                     {
                         infoXml?.Save(Path.Combine(targetDirectory, InfoXmlName));
