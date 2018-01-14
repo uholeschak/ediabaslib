@@ -71,9 +71,11 @@
   <string name="downloading_file">Скачать файлы</string>
   <string name="download_failed">Не удалось скачать файлы.\nПожалуйста, проверьте подключение к сети.</string>
   <string name="extract_cleanup">Удалить старые файлы</string>
-  <string name="extract_file">Разархивировать файлы</string>
   <!--Translate-->
   <string name="decrypt_file">Preparing archive</string>
+  <string name="extract_file">Разархивировать файлы</string>
+  <!--Translate-->
+  <string name="verify_files">Verify files</string>
   <string name="extract_failed">Не удалось разархивировать файлы.\nВозможно поврежден Zip-файл.</string>
   <string name="extract_failed_io">Не удалось сохранить разархивированные файлы.\nНа данном устройстве недостаточно свободаной памяти?</string>
 
