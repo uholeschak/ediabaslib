@@ -3091,7 +3091,32 @@ namespace BmwDeepObd
                             });
                             return _extractZipCanceled;
                         });
-                    infoXml?.Save(Path.Combine(targetDirectory, InfoXmlName));
+
+                    if (!ActivityCommon.VerifyContent(Path.Combine(targetDirectory, "Content.xml"), true, percent =>
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            if (_downloadProgress != null)
+                            {
+                                _downloadProgress.SetMessage(GetString(Resource.String.verify_files));
+                                _downloadProgress.Progress = percent;
+                            }
+                        });
+                        return _extractZipCanceled;
+                    }))
+                    {
+                        extractFailed = true;
+                    }
+
+                    if (!extractFailed)
+                    {
+                        infoXml?.Save(Path.Combine(targetDirectory, InfoXmlName));
+                    }
                 }
                 catch (Exception ex)
                 {

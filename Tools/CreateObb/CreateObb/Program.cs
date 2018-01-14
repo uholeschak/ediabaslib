@@ -74,17 +74,17 @@ namespace CreateObb
                     File.Delete(outFile);
                 }
                 Uri uriIn = new Uri(inDir + Path.DirectorySeparatorChar);
-                XElement xmlContentNodes = new XElement("Content");
+                XElement xmlContentNodes = new XElement("content");
                 string[] files = Directory.GetFiles(inDir, "*.*", SearchOption.AllDirectories);
                 foreach (string file in files)
                 {
-                    XElement xmlFileNode = new XElement("File");
+                    XElement xmlFileNode = new XElement("file");
 
                     Uri uriFile = new Uri(file);
                     Uri uriRel = uriIn.MakeRelativeUri(uriFile);
                     string relPath = Uri.UnescapeDataString(uriRel.OriginalString);
 
-                    xmlFileNode.Add(new XAttribute("Name", relPath));
+                    xmlFileNode.Add(new XAttribute("name", relPath));
 
                     FileInfo fileInfo = new FileInfo(file);
                     if (fileInfo.Exists)
@@ -104,7 +104,6 @@ namespace CreateObb
                                 xmlFileNode.Add(new XAttribute("md5", sb.ToString()));
                             }
                         }
-
                     }
                     xmlContentNodes.Add(xmlFileNode);
                 }

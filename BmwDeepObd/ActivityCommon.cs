@@ -196,6 +196,7 @@ namespace BmwDeepObd
         }
 
         public delegate bool ProgressZipDelegate(int percent, bool decrypt = false);
+        public delegate bool ProgressVerifyDelegate(int percent);
         public delegate void BcReceiverUpdateDisplayDelegate();
         public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
         public delegate void TranslateDelegate(List<string> transList);
@@ -4637,8 +4638,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool CreateZipFile(string[] inputFiles, string archiveFilenameOut,
-            ProgressZipDelegate progressHandler)
+        public static bool CreateZipFile(string[] inputFiles, string archiveFilenameOut, ProgressZipDelegate progressHandler)
         {
             try
             {
@@ -4752,6 +4752,98 @@ namespace BmwDeepObd
                 {
                     zipStream.IsStreamOwner = true;
                     zipStream.Close();
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static bool VerifyContent(string contentFile, bool checkMd5, ProgressVerifyDelegate progressHandler)
+        {
+            try
+            {
+                string baseDir = Path.GetDirectoryName(contentFile);
+                if (string.IsNullOrEmpty(baseDir))
+                {
+                    return false;
+                }
+
+                XDocument xmlDoc = XDocument.Load(contentFile);
+                if (xmlDoc.Root == null)
+                {
+                    return false;
+                }
+
+                XElement[] fileNodes = xmlDoc.Root.Elements("file").ToArray();
+                int nodeCount = fileNodes.Length;
+                int index = 0;
+                foreach (XElement fileNode in fileNodes)
+                {
+                    progressHandler?.Invoke(100 * index / nodeCount);
+
+                    XAttribute nameAttr = fileNode.Attribute("name");
+                    if (nameAttr == null)
+                    {
+                        return false;
+                    }
+                    string fileName = nameAttr.Value;
+                    if (string.IsNullOrEmpty(fileName))
+                    {
+                        return false;
+                    }
+
+                    XAttribute sizeAttr = fileNode.Attribute("size");
+                    if (sizeAttr == null)
+                    {
+                        return false;
+                    }
+                    long fileSize = XmlConvert.ToInt64(sizeAttr.Value);
+
+                    // ReSharper disable once AssignNullToNotNullAttribute
+                    string filePath = Path.Combine(baseDir, fileName);
+                    FileInfo fileInfo = new FileInfo(filePath);
+                    if (!fileInfo.Exists)
+                    {
+                        return false;
+                    }
+
+                    if (fileInfo.Length != fileSize)
+                    {
+                        return false;
+                    }
+
+                    if (checkMd5)
+                    {
+                        XAttribute md5Attr = fileNode.Attribute("md5");
+                        if (md5Attr == null)
+                        {
+                            return false;
+                        }
+
+                        string md5String = md5Attr.Value;
+                        using (var md5 = MD5.Create())
+                        {
+                            using (var stream = File.OpenRead(filePath))
+                            {
+                                byte[] md5Data = md5.ComputeHash(stream);
+                                StringBuilder sb = new StringBuilder();
+                                foreach (byte value in md5Data)
+                                {
+                                    sb.Append($"{value:X02}");
+                                }
+
+                                if (string.Compare(sb.ToString(), md5String, StringComparison.OrdinalIgnoreCase) != 0)
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+
+                    index++;
                 }
             }
             catch (Exception)

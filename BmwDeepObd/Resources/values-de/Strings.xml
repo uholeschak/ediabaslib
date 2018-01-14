@@ -112,8 +112,9 @@
   <string name="downloading_file">Dateien herunterladen</string>
   <string name="download_failed">Herunterladen der Dateien fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.</string>
   <string name="extract_cleanup">Alte Dateien löschen</string>
-  <string name="extract_file">Dateien entpacken</string>
   <string name="decrypt_file">Archiv vorbereiten</string>
+  <string name="extract_file">Dateien entpacken</string>
+  <string name="verify_files">Dateien überprüfen</string>
   <string name="extract_failed">Das Entpacken der Dateien ist fehlgeschlagen.\nDie Zip-Datei scheint beschädigt zu sein.</string>
   <string name="extract_failed_io">Das Speichern der extrahierten Dateien ist fehlgeschlagen.\nIst kein Speicher mehr auf dem Gerät verfügbar?</string>
 

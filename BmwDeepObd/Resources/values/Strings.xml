@@ -88,8 +88,9 @@
   <string name="downloading_file">Downloading files</string>
   <string name="download_failed">Download files failed.\nPlease check your network connection.</string>
   <string name="extract_cleanup">Removing old files</string>
-  <string name="extract_file">Extracting files</string>
   <string name="decrypt_file">Preparing archive</string>
+  <string name="extract_file">Extracting files</string>
+  <string name="verify_files">Verify files</string>
   <string name="extract_failed">Extracting files failed.\nThe zip file seems to be corrupted.</string>
   <string name="extract_failed_io">Writing extracted files failed.\nIs there no space left on the device?</string>
 
