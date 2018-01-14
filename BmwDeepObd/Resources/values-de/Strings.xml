@@ -284,6 +284,8 @@
   <string name="settings_send_data_broadcast">Daten-Broadcasts senden</string>
   <string name="settings_caption_cpu_usage">CPU Auslastung</string>
   <string name="settings_check_cpu_usage">CPU Auslastung am Start prüfen</string>
+  <string name="settings_caption_check_ecu_files">ECU Dateien überprüfen</string>
+  <string name="settings_check_ecu_files">ECU Dateien beim Start überprüfen</string>
   <string name="settings_caption_storage">Speichermedium</string>
   <string name="settings_caption_debug">Debuggen</string>
   <string name="settings_collect_debug_info">Debug-Informationen für Trace-Datei sammeln</string>

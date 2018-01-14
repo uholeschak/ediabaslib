@@ -46,6 +46,7 @@ namespace BmwDeepObd
         private CheckBox _checkBoxSendDataBroadcast;
         private TextView _textViewCaptionCpuUsage;
         private CheckBox _checkBoxCheckCpuUsage;
+        private CheckBox _checkBoxCheckEcuFiles;
         private Button _buttonStorageLocation;
         private CheckBox _checkBoxCollectDebugInfo;
         private CheckBox _checkBoxHciSnoopLog;
@@ -99,6 +100,8 @@ namespace BmwDeepObd
             ViewStates viewStateCpuUsage = ActivityCommon.IsCpuStatisticsSupported() ? ViewStates.Visible : ViewStates.Gone;
             _textViewCaptionCpuUsage.Visibility = viewStateCpuUsage;
             _checkBoxCheckCpuUsage.Visibility = viewStateCpuUsage;
+
+            _checkBoxCheckEcuFiles = FindViewById<CheckBox>(Resource.Id.checkBoxCheckEcuFiles);
 
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);
             _buttonStorageLocation.Click += (sender, args) =>
@@ -230,6 +233,7 @@ namespace BmwDeepObd
             _checkBoxDoubleClickForAppExit.Checked = ActivityCommon.DoubleClickForAppExit;
             _checkBoxSendDataBroadcast.Checked = ActivityCommon.SendDataBroadcast;
             _checkBoxCheckCpuUsage.Checked = ActivityCommon.CheckCpuUsage;
+            _checkBoxCheckEcuFiles.Checked = ActivityCommon.CheckEcuFiles;
             _checkBoxCollectDebugInfo.Checked = ActivityCommon.CollectDebugInfo;
             UpdateDisplay();
         }
@@ -311,6 +315,7 @@ namespace BmwDeepObd
             ActivityCommon.DoubleClickForAppExit = _checkBoxDoubleClickForAppExit.Checked;
             ActivityCommon.SendDataBroadcast = _checkBoxSendDataBroadcast.Checked;
             ActivityCommon.CheckCpuUsage = _checkBoxCheckCpuUsage.Checked;
+            ActivityCommon.CheckEcuFiles = _checkBoxCheckEcuFiles.Checked;
             ActivityCommon.CollectDebugInfo = _checkBoxCollectDebugInfo.Checked;
         }
 
