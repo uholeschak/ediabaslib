@@ -394,7 +394,13 @@ namespace BmwDeepObd
 
         public static string GetObbFilename(Context context)
         {
-            Regex regex = new Regex(@"^main\.[0-9]+\." + ActivityCommon.AppNameSpace + @"\.obb$", RegexOptions.IgnoreCase);
+            Regex regex = new Regex(@"^main\.([0-9]+)\." + ActivityCommon.AppNameSpace + @"\.obb$", RegexOptions.IgnoreCase);
+            PackageInfo packageInfo = context.PackageManager.GetPackageInfo(context.PackageName, 0);
+            int packageVersion = -1;
+            if (packageInfo != null)
+            {
+                packageVersion = packageInfo.VersionCode;
+            }
             string obbFile = null;
             Java.IO.File[] obbDirs = context.GetObbDirs();
             foreach (Java.IO.File dir in obbDirs)
@@ -406,13 +412,18 @@ namespace BmwDeepObd
                         string[] files = Directory.GetFiles(dir.AbsolutePath);
                         foreach (string file in files)
                         {
-                            if (regex.IsMatch(Path.GetFileName(file)))
+                            MatchCollection matchesFile = regex.Matches(Path.GetFileName(file));
+                            if ((matchesFile.Count == 1) && (matchesFile[0].Groups.Count == 2))
                             {
-                                FileInfo fileInfo = new FileInfo(file);
-                                if (fileInfo.Exists && fileInfo.Length == ObbFileSize)
+                                string fileVersion = matchesFile[0].Groups[1].Value;
+                                if ((packageVersion < 0) || (Int32.TryParse(fileVersion, out int version) && version <= packageVersion))
                                 {
-                                    obbFile = file;
-                                    break;
+                                    FileInfo fileInfo = new FileInfo(file);
+                                    if (fileInfo.Exists && fileInfo.Length == ObbFileSize)
+                                    {
+                                        obbFile = file;
+                                        break;
+                                    }
                                 }
                             }
                         }
