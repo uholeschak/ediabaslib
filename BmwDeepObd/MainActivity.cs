@@ -134,6 +134,7 @@ namespace BmwDeepObd
                 DeviceAddress = string.Empty;
                 ConfigFileName = string.Empty;
                 CheckCpuUsage = true;
+                VerifyEcuFiles = true;
             }
 
             public LastAppState LastAppState { get; set; }
@@ -149,6 +150,7 @@ namespace BmwDeepObd
             public string ConfigFileName { get; set; }
             public int LastVersionCode { get; set; }
             public bool CheckCpuUsage { get; set; }
+            public bool VerifyEcuFiles { get; set; }
             public bool CommErrorsOccured { get; set; }
             public bool StorageAccessGranted { get; set; }
             public bool AutoStart { get; set; }
@@ -168,6 +170,7 @@ namespace BmwDeepObd
         private const string EcuDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Obb1.xml";
         private const long EcuExtractSize = 2500000000;         // extracted ecu files size
         private const string InfoXmlName = "ObbInfo.xml";
+        private const string ContentFileName = "Content.xml";
 #else
         private const string EcuDirNameBmw = "Ecu";
         private const string EcuDirNameVag = "EcuVag";
@@ -1315,6 +1318,7 @@ namespace BmwDeepObd
                     ActivityCommon.DoubleClickForAppExit = prefs.GetBoolean("DoubleClickForExit", ActivityCommon.DoubleClickForAppExit);
                     ActivityCommon.SendDataBroadcast = prefs.GetBoolean("SendDataBroadcast", ActivityCommon.SendDataBroadcast);
                     ActivityCommon.CheckCpuUsage = prefs.GetBoolean("CheckCpuUsage", true);
+                    ActivityCommon.CheckEcuFiles = prefs.GetBoolean("CheckEcuFiles", true);
                     ActivityCommon.CollectDebugInfo = prefs.GetBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
                 }
             }
@@ -1352,6 +1356,7 @@ namespace BmwDeepObd
                 prefsEdit.PutBoolean("DoubleClickForExit", ActivityCommon.DoubleClickForAppExit);
                 prefsEdit.PutBoolean("SendDataBroadcast", ActivityCommon.SendDataBroadcast);
                 prefsEdit.PutBoolean("CheckCpuUsage", ActivityCommon.CheckCpuUsage);
+                prefsEdit.PutBoolean("CheckEcuFiles", ActivityCommon.CheckEcuFiles);
                 prefsEdit.PutBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
                 prefsEdit.Commit();
             }
@@ -2418,6 +2423,10 @@ namespace BmwDeepObd
             {
                 _instanceData.CheckCpuUsage = false;
             }
+            if (!ActivityCommon.CheckEcuFiles)
+            {
+                _instanceData.VerifyEcuFiles = false;
+            }
             if (ActivityCommon.JobReader.PageList.Count == 0 && !_instanceData.CheckCpuUsage)
             {
                 _updateHandler.Post(CreateActionBarTabs);
@@ -2490,6 +2499,54 @@ namespace BmwDeepObd
                         }
                     });
                 }
+#if OBB_MODE
+                if (_instanceData.VerifyEcuFiles)
+                {
+                    _instanceData.VerifyEcuFiles = false;
+                    string ecuBaseDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir);
+                    if (ValidEcuPackage(ecuBaseDir))
+                    {
+                        if (!ActivityCommon.VerifyContent(Path.Combine(ecuBaseDir, ContentFileName), false, percent =>
+                        {
+                            RunOnUiThread(() =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+                                if (_compileProgress != null)
+                                {
+                                    _compileProgress.SetMessage(GetString(Resource.String.verify_files));
+                                    _compileProgress.Progress = percent;
+                                }
+                            });
+                            return false;
+                        }))
+                        {
+                            try
+                            {
+                                File.Delete(Path.Combine(ecuBaseDir, InfoXmlName));
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+                    }
+                }
+#endif
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    if (_compileProgress != null)
+                    {
+                        _compileProgress.SetMessage(GetString(Resource.String.compile_start));
+                        _compileProgress.Progress = 0;
+                    }
+                });
 
                 bool progressUpdated = false;
                 List<string> compileResultList = new List<string>();
@@ -3091,8 +3148,8 @@ namespace BmwDeepObd
                             });
                             return _extractZipCanceled;
                         });
-
-                    if (!ActivityCommon.VerifyContent(Path.Combine(targetDirectory, "Content.xml"), true, percent =>
+#if OBB_MODE
+                    if (!ActivityCommon.VerifyContent(Path.Combine(targetDirectory, ContentFileName), true, percent =>
                     {
                         RunOnUiThread(() =>
                         {
@@ -3112,7 +3169,7 @@ namespace BmwDeepObd
                     {
                         extractFailed = true;
                     }
-
+#endif
                     if (!extractFailed)
                     {
                         infoXml?.Save(Path.Combine(targetDirectory, InfoXmlName));

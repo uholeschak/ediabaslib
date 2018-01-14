@@ -246,6 +246,9 @@
   <string name="settings_send_data_broadcast">Послать Broadcasts-данные</string>
   <string name="settings_caption_cpu_usage">Загрузка процессора</string>
   <string name="settings_check_cpu_usage">Проверка загрузки процессора при запуске</string>
+  <!--Translate-->
+  <string name="settings_caption_check_ecu_files">Check ECU files</string>
+  <string name="settings_check_ecu_files">Check ECU files at startup</string>
   <string name="settings_caption_storage">Носитель памяти</string>
   <string name="settings_caption_debug">Отладить</string>
   <string name="settings_collect_debug_info">Собрать отладочную информацию для файла трассировки</string>

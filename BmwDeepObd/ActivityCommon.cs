@@ -579,6 +579,8 @@ namespace BmwDeepObd
 
         public static bool CheckCpuUsage { get; set; }
 
+        public static bool CheckEcuFiles { get; set; }
+
         public static bool CollectDebugInfo { get; set; }
 
         public static string YandexApiKey { get; set; }
@@ -4782,7 +4784,13 @@ namespace BmwDeepObd
                 int index = 0;
                 foreach (XElement fileNode in fileNodes)
                 {
-                    progressHandler?.Invoke(100 * index / nodeCount);
+                    if (progressHandler != null)
+                    {
+                        if (progressHandler.Invoke(100 * index / nodeCount))
+                        {
+                            return false;
+                        }
+                    }
 
                     XAttribute nameAttr = fileNode.Attribute("name");
                     if (nameAttr == null)
