@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Google.Apis.AndroidPublisher;
 using Google.Apis.AndroidPublisher.v2;
 using Google.Apis.AndroidPublisher.v2.Data;
 using Google.Apis.Auth.OAuth2;
@@ -23,12 +15,12 @@ namespace ApkUploader
     {
         private const string PackageName = @"de.holeschak.bmw_deep_obd";
         private volatile Thread _serviceThread;
-        private string _assemblyPath;
+        private readonly string _apkPath;
 
         public FormMain()
         {
             InitializeComponent();
-            _assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            _apkPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), @".apk");
         }
 
         private void UpdateStatus(string message)
@@ -60,12 +52,12 @@ namespace ApkUploader
                         UpdateStatus(sb.ToString());
 
                         UserCredential credential;
-                        using (var stream = new FileStream(Path.Combine(_assemblyPath, "client_secrets.json"), FileMode.Open, FileAccess.Read))
+                        using (var stream = new FileStream(Path.Combine(_apkPath, "client_secrets.json"), FileMode.Open, FileAccess.Read))
                         {
                             credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                                 GoogleClientSecrets.Load(stream).Secrets,
                                 new[] { AndroidPublisherService.Scope.Androidpublisher },
-                                "user", CancellationToken.None, new FileDataStore("ApkUploader"));
+                                "ApkUploader", CancellationToken.None, new FileDataStore("ApkUploader"));
                         }
 
                         BaseClientService.Initializer initializer =
