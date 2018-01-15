@@ -259,6 +259,7 @@
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.buttonSearch);
             this.Controls.Add(this.listViewDevices);
+            this.MaximizeBox = false;
             this.Name = "FormMain";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
