@@ -16,6 +16,7 @@ namespace ApkUploader
         private const string PackageName = @"de.holeschak.bmw_deep_obd";
         private volatile Thread _serviceThread;
         private readonly string _apkPath;
+        private CancellationTokenSource _cts;
 
         public FormMain()
         {
@@ -33,8 +34,9 @@ namespace ApkUploader
 
             textBoxStatus.Text = message;
             bool enable = _serviceThread == null;
-            buttonClose.Enabled = enable;
             buttonListApks.Enabled = enable;
+            buttonAbort.Enabled = !enable;
+            buttonClose.Enabled = enable;
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
@@ -44,6 +46,7 @@ namespace ApkUploader
             {
                 return false;
             }
+            _cts = new CancellationTokenSource();
             _serviceThread = new Thread(async () =>
                 {
                     StringBuilder sb = new StringBuilder();
@@ -57,7 +60,7 @@ namespace ApkUploader
                             credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                                 GoogleClientSecrets.Load(stream).Secrets,
                                 new[] { AndroidPublisherService.Scope.Androidpublisher },
-                                "ApkUploader", CancellationToken.None, new FileDataStore("ApkUploader"));
+                                "ApkUploader", _cts.Token, new FileDataStore("ApkUploader"));
                         }
 
                         BaseClientService.Initializer initializer =
@@ -70,8 +73,8 @@ namespace ApkUploader
                         {
                             EditsResource edits = service.Edits;
                             EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
-                            AppEdit appEdit = editRequest.Execute();
-                            ApksListResponse apksResponse = edits.Apks.List(PackageName, appEdit.Id).Execute();
+                            AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
+                            ApksListResponse apksResponse = await edits.Apks.List(PackageName, appEdit.Id).ExecuteAsync(_cts.Token);
 
                             sb.AppendLine("Apks:");
                             foreach (Apk apk in apksResponse.Apks)
@@ -87,6 +90,7 @@ namespace ApkUploader
                     finally
                     {
                         _serviceThread = null;
+                        _cts.Dispose();
                         UpdateStatus(sb.ToString());
                     }
                 });
@@ -116,6 +120,16 @@ namespace ApkUploader
         private void buttonListApks_Click(object sender, EventArgs e)
         {
             ListApks();
+        }
+
+        private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            _cts?.Dispose();
+        }
+
+        private void buttonAbort_Click(object sender, EventArgs e)
+        {
+            _cts.Cancel();
         }
     }
 }

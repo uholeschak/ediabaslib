@@ -32,6 +32,7 @@
             this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.buttonListApks = new System.Windows.Forms.Button();
             this.buttonClose = new System.Windows.Forms.Button();
+            this.buttonAbort = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxStatus
@@ -69,12 +70,24 @@
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
             // 
+            // buttonAbort
+            // 
+            this.buttonAbort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAbort.Location = new System.Drawing.Point(356, 238);
+            this.buttonAbort.Name = "buttonAbort";
+            this.buttonAbort.Size = new System.Drawing.Size(75, 23);
+            this.buttonAbort.TabIndex = 4;
+            this.buttonAbort.Text = "Abort";
+            this.buttonAbort.UseVisualStyleBackColor = true;
+            this.buttonAbort.Click += new System.EventHandler(this.buttonAbort_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonClose;
             this.ClientSize = new System.Drawing.Size(524, 273);
+            this.Controls.Add(this.buttonAbort);
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.buttonListApks);
             this.Controls.Add(this.textBoxStatus);
@@ -83,6 +96,7 @@
             this.Name = "FormMain";
             this.Text = "Apk Uploader";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
             this.Shown += new System.EventHandler(this.FormMain_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -94,6 +108,7 @@
         private System.Windows.Forms.TextBox textBoxStatus;
         private System.Windows.Forms.Button buttonListApks;
         private System.Windows.Forms.Button buttonClose;
+        private System.Windows.Forms.Button buttonAbort;
     }
 }
 
