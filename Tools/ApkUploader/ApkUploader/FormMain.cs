@@ -57,8 +57,11 @@ namespace ApkUploader
             buttonListApks.Enabled = enable;
             buttonListTracks.Enabled = enable;
             buttonUploadApk.Enabled = enable;
-            buttonAbort.Enabled = !enable;
             buttonClose.Enabled = enable;
+            textBoxApkFile.Enabled = enable;
+            buttonSelectApk.Enabled = enable;
+
+            buttonAbort.Enabled = !enable;
         }
 
         private async Task<UserCredential> GetCredatials()
@@ -164,6 +167,7 @@ namespace ApkUploader
             _cts = new CancellationTokenSource();
             _serviceThread = new Thread(async () =>
                 {
+                    UpdateStatus(string.Empty);
                     StringBuilder sb = new StringBuilder();
                     try
                     {
@@ -213,6 +217,7 @@ namespace ApkUploader
             _cts = new CancellationTokenSource();
             _serviceThread = new Thread(async () =>
             {
+                UpdateStatus(string.Empty);
                 StringBuilder sb = new StringBuilder();
                 try
                 {
@@ -290,6 +295,7 @@ namespace ApkUploader
             _cts = new CancellationTokenSource();
             _serviceThread = new Thread(async () =>
             {
+                UpdateStatus(string.Empty);
                 StringBuilder sb = new StringBuilder();
                 try
                 {
@@ -424,6 +430,7 @@ namespace ApkUploader
         private void FormMain_Load(object sender, EventArgs e)
         {
             checkBoxAlpha.Checked = Properties.Settings.Default.Alpha;
+            textBoxApkFile.Text = Properties.Settings.Default.ApkFileName;
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -456,18 +463,28 @@ namespace ApkUploader
 
         private void buttonUploadApk_Click(object sender, EventArgs e)
         {
-            if (openFileDialogApk.ShowDialog() != DialogResult.OK)
-            {
-                return;
-            }
-
             List<Tuple<string, string>> apkChanges = new List<Tuple<string, string>>
             {
                 new Tuple<string, string>("en-US", "- ECU files updated\n- Using expansion files\n- Fixed minor problems"),
                 new Tuple<string, string>("de-DE", "- ECU Dateien aktualisiert\n- Erweiterungsdateien werden verwendet\n- Kleinere Probleme behoben")
             };
 
-            UploadApk(openFileDialogApk.FileName, null, checkBoxAlpha.Checked ? "alpha" : "beta", apkChanges);
+            UploadApk(textBoxApkFile.Text, null, checkBoxAlpha.Checked ? "alpha" : "beta", apkChanges);
+        }
+
+        private void buttonSelectApk_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(textBoxApkFile.Text))
+            {
+                openFileDialogApk.FileName = textBoxApkFile.Text;
+                openFileDialogApk.InitialDirectory = Path.GetDirectoryName(textBoxApkFile.Text);
+            }
+            if (openFileDialogApk.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            textBoxApkFile.Text = openFileDialogApk.FileName;
         }
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
@@ -475,6 +492,7 @@ namespace ApkUploader
             try
             {
                 Properties.Settings.Default.Alpha = checkBoxAlpha.Checked;
+                Properties.Settings.Default.ApkFileName = textBoxApkFile.Text;
                 Properties.Settings.Default.Save();
             }
             catch (Exception)

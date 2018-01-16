@@ -37,18 +37,21 @@
             this.openFileDialogApk = new System.Windows.Forms.OpenFileDialog();
             this.buttonListTracks = new System.Windows.Forms.Button();
             this.checkBoxAlpha = new System.Windows.Forms.CheckBox();
+            this.buttonSelectApk = new System.Windows.Forms.Button();
+            this.labelApkFile = new System.Windows.Forms.Label();
+            this.textBoxApkFile = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // textBoxStatus
             // 
             this.textBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxStatus.Location = new System.Drawing.Point(12, 41);
+            this.textBoxStatus.Location = new System.Drawing.Point(12, 81);
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(500, 284);
+            this.textBoxStatus.Size = new System.Drawing.Size(500, 323);
             this.textBoxStatus.TabIndex = 0;
             this.textBoxStatus.TabStop = false;
             // 
@@ -66,7 +69,7 @@
             // 
             this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonClose.Location = new System.Drawing.Point(437, 331);
+            this.buttonClose.Location = new System.Drawing.Point(437, 410);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
             this.buttonClose.TabIndex = 1;
@@ -77,7 +80,7 @@
             // buttonAbort
             // 
             this.buttonAbort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonAbort.Location = new System.Drawing.Point(356, 331);
+            this.buttonAbort.Location = new System.Drawing.Point(356, 410);
             this.buttonAbort.Name = "buttonAbort";
             this.buttonAbort.Size = new System.Drawing.Size(75, 23);
             this.buttonAbort.TabIndex = 2;
@@ -97,6 +100,7 @@
             // 
             // openFileDialogApk
             // 
+            this.openFileDialogApk.DefaultExt = "*.apk";
             this.openFileDialogApk.Filter = "Apk Files|*.apk";
             // 
             // buttonListTracks
@@ -119,12 +123,41 @@
             this.checkBoxAlpha.Text = "Alpha";
             this.checkBoxAlpha.UseVisualStyleBackColor = true;
             // 
+            // buttonSelectApk
+            // 
+            this.buttonSelectApk.Location = new System.Drawing.Point(482, 53);
+            this.buttonSelectApk.Name = "buttonSelectApk";
+            this.buttonSelectApk.Size = new System.Drawing.Size(30, 23);
+            this.buttonSelectApk.TabIndex = 8;
+            this.buttonSelectApk.Text = "...";
+            this.buttonSelectApk.UseVisualStyleBackColor = true;
+            this.buttonSelectApk.Click += new System.EventHandler(this.buttonSelectApk_Click);
+            // 
+            // labelApkFile
+            // 
+            this.labelApkFile.AutoSize = true;
+            this.labelApkFile.Location = new System.Drawing.Point(12, 38);
+            this.labelApkFile.Name = "labelApkFile";
+            this.labelApkFile.Size = new System.Drawing.Size(74, 13);
+            this.labelApkFile.TabIndex = 9;
+            this.labelApkFile.Text = "Apk file name:";
+            // 
+            // textBoxApkFile
+            // 
+            this.textBoxApkFile.Location = new System.Drawing.Point(12, 55);
+            this.textBoxApkFile.Name = "textBoxApkFile";
+            this.textBoxApkFile.Size = new System.Drawing.Size(464, 20);
+            this.textBoxApkFile.TabIndex = 7;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonClose;
-            this.ClientSize = new System.Drawing.Size(524, 366);
+            this.ClientSize = new System.Drawing.Size(524, 445);
+            this.Controls.Add(this.textBoxApkFile);
+            this.Controls.Add(this.labelApkFile);
+            this.Controls.Add(this.buttonSelectApk);
             this.Controls.Add(this.checkBoxAlpha);
             this.Controls.Add(this.buttonListTracks);
             this.Controls.Add(this.buttonUploadApk);
@@ -155,6 +188,9 @@
         private System.Windows.Forms.OpenFileDialog openFileDialogApk;
         private System.Windows.Forms.Button buttonListTracks;
         private System.Windows.Forms.CheckBox checkBoxAlpha;
+        private System.Windows.Forms.Button buttonSelectApk;
+        private System.Windows.Forms.Label labelApkFile;
+        private System.Windows.Forms.TextBox textBoxApkFile;
     }
 }
 

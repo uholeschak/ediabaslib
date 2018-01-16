@@ -34,5 +34,29 @@ namespace ApkUploader.Properties {
                 this["Alpha"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ApkFileName {
+            get {
+                return ((string)(this["ApkFileName"]));
+            }
+            set {
+                this["ApkFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ObbFileName {
+            get {
+                return ((string)(this["ObbFileName"]));
+            }
+            set {
+                this["ObbFileName"] = value;
+            }
+        }
     }
 }
