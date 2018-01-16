@@ -40,18 +40,22 @@
             this.buttonSelectApk = new System.Windows.Forms.Button();
             this.labelApkFile = new System.Windows.Forms.Label();
             this.textBoxApkFile = new System.Windows.Forms.TextBox();
+            this.labelObbFile = new System.Windows.Forms.Label();
+            this.textBoxObbFile = new System.Windows.Forms.TextBox();
+            this.buttonSelectObb = new System.Windows.Forms.Button();
+            this.openFileDialogObb = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // textBoxStatus
             // 
             this.textBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxStatus.Location = new System.Drawing.Point(12, 81);
+            this.textBoxStatus.Location = new System.Drawing.Point(12, 121);
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(500, 323);
+            this.textBoxStatus.Size = new System.Drawing.Size(500, 331);
             this.textBoxStatus.TabIndex = 0;
             this.textBoxStatus.TabStop = false;
             // 
@@ -69,7 +73,7 @@
             // 
             this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonClose.Location = new System.Drawing.Point(437, 410);
+            this.buttonClose.Location = new System.Drawing.Point(437, 458);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
             this.buttonClose.TabIndex = 1;
@@ -80,7 +84,8 @@
             // buttonAbort
             // 
             this.buttonAbort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonAbort.Location = new System.Drawing.Point(356, 410);
+            this.buttonAbort.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.buttonAbort.Location = new System.Drawing.Point(356, 458);
             this.buttonAbort.Name = "buttonAbort";
             this.buttonAbort.Size = new System.Drawing.Size(75, 23);
             this.buttonAbort.TabIndex = 2;
@@ -149,12 +154,47 @@
             this.textBoxApkFile.Size = new System.Drawing.Size(464, 20);
             this.textBoxApkFile.TabIndex = 7;
             // 
+            // labelObbFile
+            // 
+            this.labelObbFile.AutoSize = true;
+            this.labelObbFile.Location = new System.Drawing.Point(12, 78);
+            this.labelObbFile.Name = "labelObbFile";
+            this.labelObbFile.Size = new System.Drawing.Size(75, 13);
+            this.labelObbFile.TabIndex = 10;
+            this.labelObbFile.Text = "Obb file name:";
+            // 
+            // textBoxObbFile
+            // 
+            this.textBoxObbFile.Location = new System.Drawing.Point(12, 94);
+            this.textBoxObbFile.Name = "textBoxObbFile";
+            this.textBoxObbFile.Size = new System.Drawing.Size(464, 20);
+            this.textBoxObbFile.TabIndex = 9;
+            // 
+            // buttonSelectObb
+            // 
+            this.buttonSelectObb.Location = new System.Drawing.Point(482, 92);
+            this.buttonSelectObb.Name = "buttonSelectObb";
+            this.buttonSelectObb.Size = new System.Drawing.Size(30, 23);
+            this.buttonSelectObb.TabIndex = 10;
+            this.buttonSelectObb.Text = "...";
+            this.buttonSelectObb.UseVisualStyleBackColor = true;
+            this.buttonSelectObb.Click += new System.EventHandler(this.buttonSelectObb_Click);
+            // 
+            // openFileDialogObb
+            // 
+            this.openFileDialogObb.DefaultExt = "*.obb";
+            this.openFileDialogObb.Filter = "Obb Files|*.obb";
+            // 
             // FormMain
             // 
+            this.AcceptButton = this.buttonClose;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.buttonClose;
-            this.ClientSize = new System.Drawing.Size(524, 445);
+            this.CancelButton = this.buttonAbort;
+            this.ClientSize = new System.Drawing.Size(524, 493);
+            this.Controls.Add(this.buttonSelectObb);
+            this.Controls.Add(this.textBoxObbFile);
+            this.Controls.Add(this.labelObbFile);
             this.Controls.Add(this.textBoxApkFile);
             this.Controls.Add(this.labelApkFile);
             this.Controls.Add(this.buttonSelectApk);
@@ -191,6 +231,10 @@
         private System.Windows.Forms.Button buttonSelectApk;
         private System.Windows.Forms.Label labelApkFile;
         private System.Windows.Forms.TextBox textBoxApkFile;
+        private System.Windows.Forms.Label labelObbFile;
+        private System.Windows.Forms.TextBox textBoxObbFile;
+        private System.Windows.Forms.Button buttonSelectObb;
+        private System.Windows.Forms.OpenFileDialog openFileDialogObb;
     }
 }
 

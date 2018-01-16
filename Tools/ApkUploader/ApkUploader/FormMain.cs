@@ -58,8 +58,11 @@ namespace ApkUploader
             buttonListTracks.Enabled = enable;
             buttonUploadApk.Enabled = enable;
             buttonClose.Enabled = enable;
+            checkBoxAlpha.Enabled = enable;
             textBoxApkFile.Enabled = enable;
+            textBoxObbFile.Enabled = enable;
             buttonSelectApk.Enabled = enable;
+            buttonSelectObb.Enabled = enable;
 
             buttonAbort.Enabled = !enable;
         }
@@ -431,6 +434,7 @@ namespace ApkUploader
         {
             checkBoxAlpha.Checked = Properties.Settings.Default.Alpha;
             textBoxApkFile.Text = Properties.Settings.Default.ApkFileName;
+            textBoxObbFile.Text = Properties.Settings.Default.ObbFileName;
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -469,7 +473,7 @@ namespace ApkUploader
                 new Tuple<string, string>("de-DE", "- ECU Dateien aktualisiert\n- Erweiterungsdateien werden verwendet\n- Kleinere Probleme behoben")
             };
 
-            UploadApk(textBoxApkFile.Text, null, checkBoxAlpha.Checked ? "alpha" : "beta", apkChanges);
+            UploadApk(textBoxApkFile.Text, textBoxObbFile.Text, checkBoxAlpha.Checked ? "alpha" : "beta", apkChanges);
         }
 
         private void buttonSelectApk_Click(object sender, EventArgs e)
@@ -487,12 +491,28 @@ namespace ApkUploader
             textBoxApkFile.Text = openFileDialogApk.FileName;
         }
 
+        private void buttonSelectObb_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(textBoxObbFile.Text))
+            {
+                openFileDialogObb.FileName = textBoxObbFile.Text;
+                openFileDialogObb.InitialDirectory = Path.GetDirectoryName(textBoxObbFile.Text);
+            }
+            if (openFileDialogObb.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            textBoxObbFile.Text = openFileDialogObb.FileName;
+        }
+
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
             try
             {
                 Properties.Settings.Default.Alpha = checkBoxAlpha.Checked;
                 Properties.Settings.Default.ApkFileName = textBoxApkFile.Text;
+                Properties.Settings.Default.ObbFileName = textBoxObbFile.Text;
                 Properties.Settings.Default.Save();
             }
             catch (Exception)
