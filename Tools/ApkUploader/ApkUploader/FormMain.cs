@@ -423,7 +423,7 @@ namespace ApkUploader
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            checkBoxAlpha.Checked = true;
+            checkBoxAlpha.Checked = Properties.Settings.Default.Alpha;
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -472,6 +472,16 @@ namespace ApkUploader
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
+            try
+            {
+                Properties.Settings.Default.Alpha = checkBoxAlpha.Checked;
+                Properties.Settings.Default.Save();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
             _cts?.Dispose();
         }
 
