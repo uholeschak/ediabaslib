@@ -267,7 +267,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UploadApk(string apkFileName, string track, List<Tuple<string, string>> listings)
+        private bool UploadApk(string apkFileName, string expansionFileName, string track, List<Tuple<string, string>> listings)
         {
             if (_serviceThread != null)
             {
@@ -279,6 +279,13 @@ namespace ApkUploader
                 UpdateStatus("Apk file not existing");
                 return false;
             }
+
+            if (!string.IsNullOrEmpty(expansionFileName) && !File.Exists(expansionFileName))
+            {
+                UpdateStatus("Expansion file not existing");
+                return false;
+            }
+
             UpdateStatus(string.Empty);
             _cts = new CancellationTokenSource();
             _serviceThread = new Thread(async () =>
@@ -293,10 +300,14 @@ namespace ApkUploader
                         EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
                         AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
 
-                        ExpansionInfo expansionInfo = await GetNewestExpansionFile(edits, appEdit);
-                        if (expansionInfo != null)
+                        ExpansionInfo expansionInfo = null;
+                        if (string.IsNullOrEmpty(expansionFileName))
                         {
-                            sb.AppendLine($"Latest expansion: apk version={expansionInfo.ApkVersion}, expansion version={expansionInfo.ExpansionVersion}");
+                            expansionInfo = await GetNewestExpansionFile(edits, appEdit);
+                            if (expansionInfo != null)
+                            {
+                                sb.AppendLine($"Latest expansion: apk version={expansionInfo.ApkVersion}, expansion version={expansionInfo.ExpansionVersion}");
+                            }
                         }
 
                         Apk apkUploaded = null;
@@ -307,7 +318,7 @@ namespace ApkUploader
                             upload.ChunkSize = ResumableUpload.MinimumChunkSize;
                             upload.ProgressChanged += progress =>
                             {
-                                UpdateStatus(sb.ToString() + $"Progress: {100 * progress.BytesSent / fileLength}%");
+                                UpdateStatus(sb.ToString() + $"Apk progress: {100 * progress.BytesSent / fileLength}%");
                             };
                             upload.ResponseReceived += apk =>
                             {
@@ -330,11 +341,40 @@ namespace ApkUploader
                         sb.AppendLine($"Version code uploaded: {versionCode.Value}");
                         UpdateStatus(sb.ToString());
 
-                        if (expansionInfo != null)
+                        if (!string.IsNullOrEmpty(expansionFileName))
                         {
-                            ExpansionFile expansionRef = new ExpansionFile { ReferencesVersion = expansionInfo.ExpansionVersion };
-                            await edits.Expansionfiles.Update(expansionRef, PackageName, appEdit.Id, versionCode.Value, EditsResource.ExpansionfilesResource.UpdateRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
-                            sb.AppendLine($"Expansion version {expansionInfo.ExpansionVersion} assigned");
+                            using (FileStream expansionStream = new FileStream(expansionFileName, FileMode.Open, FileAccess.Read))
+                            {
+                                long fileLength = (expansionStream.Length > 0) ? expansionStream.Length : 1;
+                                EditsResource.ExpansionfilesResource.UploadMediaUpload upload = edits.Expansionfiles.Upload(PackageName, appEdit.Id, versionCode.Value,
+                                     EditsResource.ExpansionfilesResource.UploadMediaUpload.ExpansionFileTypeEnum.Main, expansionStream, "application/octet-stream");
+                                upload.ChunkSize = ResumableUpload.MinimumChunkSize;
+                                upload.ProgressChanged += progress =>
+                                {
+                                    UpdateStatus(sb.ToString() + $"Expansion progress: {100 * progress.BytesSent / fileLength}%");
+                                };
+                                IUploadProgress uploadProgress = await upload.UploadAsync(_cts.Token);
+                                sb.AppendLine($"Upload status: {uploadProgress.Status.ToString()}");
+                                UpdateStatus(sb.ToString());
+                                if (uploadProgress.Exception != null)
+                                {
+                                    throw uploadProgress.Exception;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (expansionInfo != null)
+                            {
+                                ExpansionFile expansionRef = new ExpansionFile { ReferencesVersion = expansionInfo.ExpansionVersion };
+                                await edits.Expansionfiles.Update(expansionRef, PackageName, appEdit.Id, versionCode.Value,
+                                    EditsResource.ExpansionfilesResource.UpdateRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
+                                sb.AppendLine($"Expansion version {expansionInfo.ExpansionVersion} assigned");
+                            }
+                            else
+                            {
+                                sb.AppendLine("No existing expansion found!");
+                            }
                         }
 
                         Track updateTrack = new Track { VersionCodes = new List<int?> { versionCode.Value } };
@@ -427,7 +467,7 @@ namespace ApkUploader
                 new Tuple<string, string>("de-DE", "- ECU Dateien aktualisiert\n- Erweiterungsdateien werden verwendet\n- Kleinere Probleme behoben")
             };
 
-            UploadApk(openFileDialogApk.FileName, checkBoxAlpha.Checked ? "alpha" : "beta", apkChanges);
+            UploadApk(openFileDialogApk.FileName, null, checkBoxAlpha.Checked ? "alpha" : "beta", apkChanges);
         }
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
