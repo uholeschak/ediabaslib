@@ -355,6 +355,7 @@ namespace ApkUploader
                                 };
                                 await edits.Apklistings.Update(apkListing, PackageName, appEdit.Id, versionCode.Value, language).ExecuteAsync(_cts.Token);
                                 sb.AppendLine($"Changes for language {language} updated");
+                                UpdateStatus(sb.ToString());
                             }
                         }
 
@@ -419,7 +420,14 @@ namespace ApkUploader
             {
                 return;
             }
-            UploadApk(openFileDialogApk.FileName, checkBoxAlpha.Checked ? "alpha" : "beta", null);
+
+            List<Tuple<string, string>> apkChanges = new List<Tuple<string, string>>
+            {
+                new Tuple<string, string>("en-US", "- ECU files updated\n- Using expansion files\n- Fixed minor problems"),
+                new Tuple<string, string>("de-DE", "- ECU Dateien aktualisiert\n- Erweiterungsdateien werden verwendet\n- Kleinere Probleme behoben")
+            };
+
+            UploadApk(openFileDialogApk.FileName, checkBoxAlpha.Checked ? "alpha" : "beta", apkChanges);
         }
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
