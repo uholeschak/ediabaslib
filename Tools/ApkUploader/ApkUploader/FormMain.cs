@@ -267,7 +267,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UploadApk(string apkFileName, string track)
+        private bool UploadApk(string apkFileName, string track, List<Tuple<string, string>> listings)
         {
             if (_serviceThread != null)
             {
@@ -343,6 +343,21 @@ namespace ApkUploader
                         sb.AppendLine($"Track updated: {updatedTrack.TrackValue}");
                         UpdateStatus(sb.ToString());
 
+                        if (listings != null)
+                        {
+                            foreach (Tuple<string, string> listing in listings)
+                            {
+                                string language = listing.Item1;
+                                string changes = listing.Item1;
+                                ApkListing apkListing = new ApkListing
+                                {
+                                    RecentChanges = changes
+                                };
+                                await edits.Apklistings.Update(apkListing, PackageName, appEdit.Id, versionCode.Value, language).ExecuteAsync(_cts.Token);
+                                sb.AppendLine($"Changes for language {language} updated");
+                            }
+                        }
+
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
                         AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
@@ -404,7 +419,7 @@ namespace ApkUploader
             {
                 return;
             }
-            UploadApk(openFileDialogApk.FileName, checkBoxAlpha.Checked ? "alpha" : "beta");
+            UploadApk(openFileDialogApk.FileName, checkBoxAlpha.Checked ? "alpha" : "beta", null);
         }
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
