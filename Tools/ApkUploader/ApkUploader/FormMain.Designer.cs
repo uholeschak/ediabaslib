@@ -36,6 +36,7 @@
             this.buttonUploadApk = new System.Windows.Forms.Button();
             this.openFileDialogApk = new System.Windows.Forms.OpenFileDialog();
             this.buttonListTracks = new System.Windows.Forms.Button();
+            this.checkBoxAlpha = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // textBoxStatus
@@ -108,12 +109,23 @@
             this.buttonListTracks.UseVisualStyleBackColor = true;
             this.buttonListTracks.Click += new System.EventHandler(this.buttonListTracks_Click);
             // 
+            // checkBoxAlpha
+            // 
+            this.checkBoxAlpha.AutoSize = true;
+            this.checkBoxAlpha.Location = new System.Drawing.Point(375, 16);
+            this.checkBoxAlpha.Name = "checkBoxAlpha";
+            this.checkBoxAlpha.Size = new System.Drawing.Size(53, 17);
+            this.checkBoxAlpha.TabIndex = 6;
+            this.checkBoxAlpha.Text = "Alpha";
+            this.checkBoxAlpha.UseVisualStyleBackColor = true;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonClose;
             this.ClientSize = new System.Drawing.Size(524, 366);
+            this.Controls.Add(this.checkBoxAlpha);
             this.Controls.Add(this.buttonListTracks);
             this.Controls.Add(this.buttonUploadApk);
             this.Controls.Add(this.buttonAbort);
@@ -126,6 +138,7 @@
             this.Text = "Apk Uploader";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
+            this.Load += new System.EventHandler(this.FormMain_Load);
             this.Shown += new System.EventHandler(this.FormMain_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -141,6 +154,7 @@
         private System.Windows.Forms.Button buttonUploadApk;
         private System.Windows.Forms.OpenFileDialog openFileDialogApk;
         private System.Windows.Forms.Button buttonListTracks;
+        private System.Windows.Forms.CheckBox checkBoxAlpha;
     }
 }
 

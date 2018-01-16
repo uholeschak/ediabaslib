@@ -17,9 +17,22 @@ namespace ApkUploader
     public partial class FormMain : Form
     {
         private const string PackageName = @"de.holeschak.bmw_deep_obd";
+        private static readonly string[] Tracks = { "alpha", "beta", "production", "rollout" };
         private volatile Thread _serviceThread;
         private readonly string _apkPath;
         private CancellationTokenSource _cts;
+
+        private class ExpansionInfo
+        {
+            public ExpansionInfo(int apkVersion, int expansionVersion)
+            {
+                ApkVersion = apkVersion;
+                ExpansionVersion = expansionVersion;
+            }
+
+            public int ApkVersion { get;}
+            public int ExpansionVersion { get; }
+        }
 
         public FormMain()
         {
@@ -92,6 +105,54 @@ namespace ApkUploader
             }
         }
 
+        private async Task<ExpansionInfo> GetNewestExpansionFile(EditsResource edits, AppEdit appEdit)
+        {
+            try
+            {
+                ApksListResponse apksResponse = await edits.Apks.List(PackageName, appEdit.Id).ExecuteAsync(_cts.Token);
+                int apkVersion = -1;
+                int expansionVersion = -1;
+                foreach (Apk apk in apksResponse.Apks)
+                {
+                    // ReSharper disable once UseNullPropagation
+                    if (apk.VersionCode != null)
+                    {
+                        if (apk.VersionCode.Value > apkVersion)
+                        {
+                            try
+                            {
+                                ExpansionFile expansionResponse = await edits.Expansionfiles.Get(PackageName, appEdit.Id, apk.VersionCode.Value, EditsResource.ExpansionfilesResource.GetRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
+                                if (expansionResponse.FileSize != null)
+                                {
+                                    apkVersion = apk.VersionCode.Value;
+                                    expansionVersion = apkVersion;
+                                    if (expansionResponse.ReferencesVersion != null)
+                                    {
+                                        expansionVersion = expansionResponse.ReferencesVersion.Value;
+                                    }
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+                    }
+                }
+                if (apkVersion < 0)
+                {
+                    return null;
+                }
+                return new ExpansionInfo(apkVersion, expansionVersion);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return null;
+        }
+
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool ListApks()
         {
@@ -161,9 +222,9 @@ namespace ApkUploader
                         EditsResource edits = service.Edits;
                         EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
                         AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
-                        foreach (EditsResource.TracksResource.GetRequest.TrackEnum track in Enum.GetValues(typeof(EditsResource.TracksResource.GetRequest.TrackEnum)))
+                        foreach (string track in Tracks)
                         {
-                            sb.AppendLine($"Track: {track.ToString()}");
+                            sb.AppendLine($"Track: {track}");
                             try
                             {
                                 EditsResource.TracksResource.GetRequest getRequest = edits.Tracks.Get(PackageName, appEdit.Id, track);
@@ -206,7 +267,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UploadApk(string apkFileName, EditsResource.TracksResource.UpdateRequest.TrackEnum track)
+        private bool UploadApk(string apkFileName, string track)
         {
             if (_serviceThread != null)
             {
@@ -232,6 +293,12 @@ namespace ApkUploader
                         EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
                         AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
 
+                        ExpansionInfo expansionInfo = await GetNewestExpansionFile(edits, appEdit);
+                        if (expansionInfo != null)
+                        {
+                            sb.AppendLine($"Latest expansion: apk version={expansionInfo.ApkVersion}, expansion version={expansionInfo.ExpansionVersion}");
+                        }
+
                         Apk apkUploaded = null;
                         using (FileStream apkStream = new FileStream(apkFileName, FileMode.Open, FileAccess.Read))
                         {
@@ -240,7 +307,7 @@ namespace ApkUploader
                             upload.ChunkSize = ResumableUpload.MinimumChunkSize;
                             upload.ProgressChanged += progress =>
                             {
-                                UpdateStatus($"Progress: {100 * progress.BytesSent / fileLength}%");
+                                UpdateStatus(sb.ToString() + $"Progress: {100 * progress.BytesSent / fileLength}%");
                             };
                             upload.ResponseReceived += apk =>
                             {
@@ -263,8 +330,12 @@ namespace ApkUploader
                         sb.AppendLine($"Version code uploaded: {versionCode.Value}");
                         UpdateStatus(sb.ToString());
 
-                        //ExpansionFile expansionUpdate = new ExpansionFile {ReferencesVersion = 129};
-                        //edits.Expansionfiles.Update(expansionUpdate, PackageName, appEdit.Id, 130, EditsResource.ExpansionfilesResource.UpdateRequest.ExpansionFileTypeEnum.Main);
+                        if (expansionInfo != null)
+                        {
+                            ExpansionFile expansionRef = new ExpansionFile { ReferencesVersion = expansionInfo.ExpansionVersion };
+                            await edits.Expansionfiles.Update(expansionRef, PackageName, appEdit.Id, versionCode.Value, EditsResource.ExpansionfilesResource.UpdateRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
+                            sb.AppendLine($"Expansion version {expansionInfo.ExpansionVersion} assigned");
+                        }
 
                         Track updateTrack = new Track { VersionCodes = new List<int?> { versionCode.Value } };
                         EditsResource.TracksResource.UpdateRequest updateRequest = edits.Tracks.Update(updateTrack, PackageName, appEdit.Id, track);
@@ -292,6 +363,11 @@ namespace ApkUploader
             _serviceThread.Start();
 
             return true;
+        }
+
+        private void FormMain_Load(object sender, EventArgs e)
+        {
+            checkBoxAlpha.Checked = true;
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -328,7 +404,7 @@ namespace ApkUploader
             {
                 return;
             }
-            UploadApk(openFileDialogApk.FileName, EditsResource.TracksResource.UpdateRequest.TrackEnum.Alpha);
+            UploadApk(openFileDialogApk.FileName, checkBoxAlpha.Checked ? "alpha" : "beta");
         }
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
