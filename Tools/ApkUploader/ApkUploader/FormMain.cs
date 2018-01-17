@@ -197,14 +197,18 @@ namespace ApkUploader
             try
             {
                 ExpansionFile expansionResponse = await edits.Expansionfiles.Get(PackageName, appEdit.Id, version, EditsResource.ExpansionfilesResource.GetRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
-                if ((expansionResponse.FileSize ?? 0) > 0)
+                if (expansionResponse.ReferencesVersion != null)
                 {
-                    sb.Append($"Expansion size: {expansionResponse.FileSize}");
-                    if (expansionResponse.ReferencesVersion != null)
+                    sb.AppendLine($"Expansion ref ver: {expansionResponse.ReferencesVersion.Value}");
+                    ExpansionFile expansionRefResponse = await edits.Expansionfiles.Get(PackageName, appEdit.Id, expansionResponse.ReferencesVersion.Value, EditsResource.ExpansionfilesResource.GetRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
+                    if (expansionRefResponse.FileSize != null && expansionRefResponse.FileSize.Value > 0)
                     {
-                        sb.AppendLine($"ref ver: {expansionResponse.ReferencesVersion}");
+                        sb.AppendLine($"Expansion size: {expansionRefResponse.FileSize.Value}");
                     }
-                    sb.AppendLine();
+                }
+                else if ((expansionResponse.FileSize != null && expansionResponse.FileSize.Value > 0))
+                {
+                    sb.AppendLine($"Expansion size: {expansionResponse.FileSize.Value}");
                 }
             }
             catch (Exception)
@@ -231,15 +235,22 @@ namespace ApkUploader
                             try
                             {
                                 ExpansionFile expansionResponse = await edits.Expansionfiles.Get(PackageName, appEdit.Id, apk.VersionCode.Value, EditsResource.ExpansionfilesResource.GetRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
-                                if (expansionResponse.FileSize != null)
+                                if (expansionResponse.ReferencesVersion != null)
+                                {
+                                    expansionVersion = expansionResponse.ReferencesVersion.Value;
+                                    ExpansionFile expansionRefResponse = await edits.Expansionfiles.Get(PackageName, appEdit.Id, expansionResponse.ReferencesVersion.Value, EditsResource.ExpansionfilesResource.GetRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
+                                    if (expansionRefResponse.FileSize != null && expansionRefResponse.FileSize.Value > 0)
+                                    {
+                                        apkVersion = apk.VersionCode.Value;
+                                        expansionVersion = expansionResponse.ReferencesVersion.Value;
+                                        fileSize = expansionRefResponse.FileSize.Value;
+                                    }
+                                }
+                                else if (expansionResponse.FileSize != null && expansionResponse.FileSize.Value > 0)
                                 {
                                     apkVersion = apk.VersionCode.Value;
                                     expansionVersion = apkVersion;
                                     fileSize = expansionResponse.FileSize.Value;
-                                    if (expansionResponse.ReferencesVersion != null)
-                                    {
-                                        expansionVersion = expansionResponse.ReferencesVersion.Value;
-                                    }
                                 }
                             }
                             catch (Exception)
