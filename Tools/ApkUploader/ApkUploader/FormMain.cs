@@ -302,7 +302,7 @@ namespace ApkUploader
                             {
                                 if (apk.VersionCode != null)
                                 {
-                                    sb.AppendLine($"Version: {apk.VersionCode}, SHA1: {apk.Binary.Sha1}");
+                                    sb.AppendLine($"Version: {apk.VersionCode.Value}, SHA1: {apk.Binary.Sha1}");
                                     await PrintExpansion(sb, edits, appEdit, apk.VersionCode.Value);
                                 }
                             }
