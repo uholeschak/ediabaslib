@@ -21,12 +21,11 @@
   <string name="wifi_not_available">Wi-Fi недоступен.</string>
   <string name="config_select">Отсутствует правильная конфигурация.\nХотите создать или выбрать конфигурацию?</string>
   <string name="bt_device_select">Bluetooth устройство не выбрано.\nХотите выбрать устройство?</string>
-  <string name="ecu_download_free_space">На этом устройстве недостаточно свободной памяти ({0:fs0}) для сохранения ECU файла.\nХотите выбрать другой носитель памяти?</string>
+  <string name="ecu_download_free_space">На этом устройстве недостаточно свободной памяти ({0:fs1}) для сохранения ECU файла.\nХотите выбрать другой носитель памяти?</string>
   <string name="ecu_not_found">ECU файлы не найдены.</string>
   <string name="ecu_package">Для этого приложения доступны обновлённые ECU файлы.</string>
-  <string name="ecu_download">Хотите загрузить ECU файлы (размер файла примерно {0:fs0})?</string>
-  <!--Translate-->
-  <string name="ecu_extract">The ECU files have to be extracted (Size approx. {0:fs0}),\nthis requires the download of update information.\nDo you want to continue?</string>
+  <string name="ecu_download">Хотите загрузить ECU файлы (размер файла примерно {0:fs1})?</string>
+  <string name="ecu_extract">Необходимо распаковать файлы ECU (приблизительный размер {0:fs1}),\nдля этого требуется загрузить информацию об обновлении.\nПродолжить?</string>
   <string name="manufacturer_select">Выбранный производитель {0}. Для выбора другого нажмите \'Отменить\'.</string>
   <string name="error_no_error">Ошибки отсутствуют</string>
   <string name="error_reading_errors">Считывание ошибок: {0}%</string>
@@ -37,11 +36,52 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <!--Translate-->
-  <string name="version_last_changes">- улучшена стабильность</string>
+  <string name="version_last_changes">- Обновлены файлы ECU\n- Используются файлы расширения\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.8.\nНа данный момент поддерживаются только KWP2000, KWP1281 и TP2.0 (Автомобили до 4.2012) протоколы.</string>
 
+  <!-- Expansion downloader -->
+  <string name="exp_down_paused_cellular">Хотите активировать загрузку через мобильное соединение? Это может привести к дополнительным расходам.</string>
+  <string name="exp_down_paused_cellular_2">Если вы не активировали мобильное соединение, то загрузка возобновится автоматически, когда будет доступно соединение Wi-Fi.</string>
+  <string name="exp_down_button_resume_cellular">Продолжить загрузку</string>
+  <string name="exp_down_button_wifi_settings">Настройки Wi-Fi</string>
+  <string name="exp_down_verifying_download">Проверить загрузку</string>
+  <string name="exp_down_validation_complete">Проверка XAPK файла завершена.</string>
+  <string name="exp_down_validation_failed">Ошибка проверки XAPK файла.</string>
+  <string name="exp_down_button_pause">Остановить загрузку</string>
+  <string name="exp_down_button_resume">Продолжить загрузку</string>
+  <string name="exp_down_button_cancel">Отменить</string>
+  <string name="exp_down_button_cancel_verify">Отменить проверку</string>
+  <string name="exp_down_obb_missing">Приложение не было загружено из Google Play и файл расширения отсутствует.</string>
+  <string name="exp_down_time_remaining">Необходимое время: {0}</string>   
+
+  <!-- Downloader library -->
+  <string name="notification_download_complete">Загрузка завершена</string>
+  <string name="notification_download_failed">Ошибка загрузки</string>
+
+  <string name="state_unknown">Старт..."</string>
+  <string name="state_idle">Ожидание начала загрузки</string>
+  <string name="state_fetching_url">Поиск ресурсов для загрузки</string>
+  <string name="state_connecting">Подключение к серверу загрузки</string>
+  <string name="state_downloading">Загрузка ресурсов</string>
+  <string name="state_completed">Загрузка завершена</string>
+  <string name="state_paused_network_unavailable">Загрузка приостановлена, поскольку отсутствует сеть</string>
+  <string name="state_paused_network_setup_failure">Загрузка приостановлена. Протестируйте любую веб-страницу в браузере</string>
+  <string name="state_paused_by_request">Загрузка приостановлена</string>
+  <string name="state_paused_wifi_unavailable">Загрузка приостановлена, поскольку отсутствует WiFi</string>
+  <string name="state_paused_wifi_disabled">Загрузка приостановлена, поскольку отключен WiFi</string>
+  <string name="state_paused_roaming">Загрузка приостановлена, поскольку активный роуминг</string>
+  <string name="state_paused_sdcard_unavailable">Загрузка приостановлена, поскольку внешняя память недоступна</string>
+  <string name="state_failed_unlicensed">Ошибка загрузки. Возможно приложение не было загружено из Google Play</string>
+  <string name="state_failed_fetching_url">Ошибка загрузки, поскольку ресурсы не найдены</string>
+  <string name="state_failed_sdcard_full">Ошибка загрузки из-за нехватки внешней памяти.</string>
+  <string name="state_failed_cancelled">Загрузка прервана</string>
+  <string name="state_failed">Ошибка загрузки</string>
+
+  <string name="kilobytes_per_second">%1$s кб/с</string>
+  <string name="time_remaining">Необходимое время: %1$s</string>
+  <string name="time_remaining_notification">%1$s осталось</string> 
+  
   <!-- Error codes -->
   <string name="error_code_error_temporary">Временная ошибка</string>
   <string name="error_code_error_present">Ошибка в наличии</string>
@@ -71,11 +111,9 @@
   <string name="downloading_file">Скачать файлы</string>
   <string name="download_failed">Не удалось скачать файлы.\nПожалуйста, проверьте подключение к сети.</string>
   <string name="extract_cleanup">Удалить старые файлы</string>
-  <!--Translate-->
-  <string name="decrypt_file">Preparing archive</string>
+  <string name="decrypt_file">Подготовка архива</string>
   <string name="extract_file">Разархивировать файлы</string>
-  <!--Translate-->
-  <string name="verify_files">Verify files</string>
+  <string name="verify_files">Проверка файлов</string>
   <string name="extract_failed">Не удалось разархивировать файлы.\nВозможно поврежден Zip-файл.</string>
   <string name="extract_failed_io">Не удалось сохранить разархивированные файлы.\nНа данном устройстве недостаточно свободаной памяти?</string>
 
@@ -156,8 +194,7 @@
   <string name="menu_xml_tool">Генератор конфигураций</string>
   <string name="menu_ediabas_tool">Ediabas утилита</string>
   <string name="menu_download_ecu">Скачать ECU файл.</string>
-  <!--Translate-->
-  <string name="menu_extract_ecu">Extract ECU files</string>
+  <string name="verify_files">Проверка файлов</string>
   <string name="menu_submenu_log">Протокол данных</string>
   <string name="menu_send_trace">Отправить журнал данных</string>
   <string name="menu_global_settings">Глобальные настройки</string>
@@ -246,9 +283,8 @@
   <string name="settings_send_data_broadcast">Послать Broadcasts-данные</string>
   <string name="settings_caption_cpu_usage">Загрузка процессора</string>
   <string name="settings_check_cpu_usage">Проверка загрузки процессора при запуске</string>
-  <!--Translate-->
-  <string name="settings_caption_check_ecu_files">Check ECU files</string>
-  <string name="settings_check_ecu_files">Check ECU files at startup</string>
+  <string name="settings_caption_check_ecu_files">Проверка ECU файлов</string>
+  <string name="settings_check_ecu_files">Проверка ECU файлов при запуске</string>
   <string name="settings_caption_storage">Носитель памяти</string>
   <string name="settings_caption_debug">Отладить</string>
   <string name="settings_collect_debug_info">Собрать отладочную информацию для файла трассировки</string>
