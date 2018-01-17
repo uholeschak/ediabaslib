@@ -347,6 +347,10 @@ namespace ApkUploader
                         AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
                         foreach (string track in Tracks)
                         {
+                            if (sb.Length > 0)
+                            {
+                                sb.AppendLine();
+                            }
                             sb.AppendLine($"Track: {track}");
                             try
                             {
@@ -360,6 +364,7 @@ namespace ApkUploader
                                         try
                                         {
                                             Testers testers = await edits.Testers.Get(PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
+                                            sb.AppendLine("Test active");
                                             if (testers.GoogleGroups != null)
                                             {
                                                 foreach (string group in testers.GoogleGroups)
