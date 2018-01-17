@@ -1400,6 +1400,8 @@ namespace BmwDeepObd
             ReadConfigFile();
             if (_startAlertDialog == null && _currentVersionCode != _instanceData.LastVersionCode)
             {
+                string message = (GetString(Resource.String.version_change_info_message) +
+                                 GetString(Resource.String.version_last_changes)).Replace("\n", "<br>");
                 _startAlertDialog = new AlertDialog.Builder(this)
                     .SetNeutralButton(Resource.String.button_donate, (sender, args) =>
                     {
@@ -1409,7 +1411,7 @@ namespace BmwDeepObd
                     {
                     })
                     .SetCancelable(false)
-                    .SetMessage(Resource.String.version_change_info_message)
+                    .SetMessage(ActivityCommon.FromHtml(message))
                     .SetTitle(Resource.String.alert_title_info)
                     .Show();
                 _startAlertDialog.DismissEvent += (sender, args) =>

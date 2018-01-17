@@ -31,14 +31,12 @@
   <string name="error_reading_errors">Fehlerspeicher lesen: {0}%</string>
   <string name="error_no_response">Keine Antwort</string>
   <string name="error_code">Fehlercode</string>
-  <string name="version_change_info_message">Dieses Open Source Projekt wird gehostet auf:
-\n<a href='https://github.com/uholeschak/ediabaslib'>github.com/uholeschak/ediabaslib</a>
+  <string formatted="false" name="version_change_info_message">Dieses Open Source Projekt wird gehostet auf:
+\n&lt;a href=\'https://github.com/uholeschak/ediabaslib\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt;
 \nSie können gerne mitwirken oder Probleme melden.
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
-\n\nÄnderungen in dieser Version:
-\n- ECU Dateien aktualisiert
-\n- Erweiterungsdateien werden verwendet
-\n- Kleinere Probleme behoben</string>
+\n\nÄnderungen in dieser Version:\n</string>
+  <string name="version_last_changes">- ECU Dateien aktualisiert\n- Erweiterungsdateien werden verwendet\n- Kleinere Probleme behoben</string>
   <string name="app_info_message">Deep OBD für BMW und VAG\nVersion: {0}\nId: {1}</string>
   <string name="vag_mode_info">Der VAG Modus ist noch experimentell.\nEs wird ein <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD Adapter</a> mit mindestens Firmwareversion 0.8 benötigt.\nIm Moment werden nur die Protokolle KWP2000, KWP1281 und TP2.0 (Fahrzeuge bis 4.2012) unterstützt.</string>
 
