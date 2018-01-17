@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Linq;
 using Google.Apis.AndroidPublisher.v2;
 using Google.Apis.AndroidPublisher.v2.Data;
 using Google.Apis.Auth.OAuth2;
@@ -34,6 +38,18 @@ namespace ApkUploader
             public int ApkVersion { get;}
             public int ExpansionVersion { get; }
             public long FileSize { get; }
+        }
+
+        private class UpdateInfo
+        {
+            public UpdateInfo(string language, string changes)
+            {
+                Language = language;
+                Changes = changes;
+            }
+
+            public string Language { get; }
+            public string Changes { get; }
         }
 
         public FormMain()
@@ -67,6 +83,87 @@ namespace ApkUploader
             buttonSelectObb.Enabled = enable;
 
             buttonAbort.Enabled = !enable;
+        }
+
+        private List<UpdateInfo> ReadUpdateInfo(string resourceDir)
+        {
+            try
+            {
+                Regex regex = new Regex(@"^values(|-[a-z]{0,2})$", RegexOptions.IgnoreCase);
+                List<UpdateInfo> updateInfos = new List<UpdateInfo>();
+
+                string[] files = Directory.GetFiles(resourceDir, "Strings.xml", SearchOption.AllDirectories);
+                foreach (string file in files)
+                {
+                    string parentName = Directory.GetParent(file).Name;
+                    MatchCollection matchesFile = regex.Matches(parentName);
+                    if ((matchesFile.Count == 1) && (matchesFile[0].Groups.Count == 2))
+                    {
+                        string language = matchesFile[0].Groups[1].Value;
+                        if (language.Length > 1)
+                        {
+                            language = language.Substring(1);
+                            language = language.ToLowerInvariant() + "-" + language.ToUpperInvariant();
+
+                        }
+                        else
+                        {
+                            language = @"en-US";
+                        }
+
+                        string changes = string.Empty;
+                        try
+                        {
+                            XDocument xmlDoc = XDocument.Load(file);
+                            if (xmlDoc.Root == null)
+                            {
+                                continue;
+                            }
+
+                            XElement[] stringNodes = xmlDoc.Root.Elements("string").ToArray();
+                            foreach (XElement stringNode in stringNodes)
+                            {
+                                XAttribute nameAttr = stringNode.Attribute("name");
+                                if (nameAttr == null)
+                                {
+                                    continue;
+                                }
+
+                                if (string.Compare(nameAttr.Value, "version_last_changes", StringComparison.OrdinalIgnoreCase) != 0)
+                                {
+                                    continue;
+                                }
+
+                                using (XmlReader reader = stringNode.CreateReader())
+                                {
+                                    reader.MoveToContent();
+                                    changes = reader.ReadInnerXml();
+                                }
+                                break;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            continue;
+                        }
+
+                        if (string.IsNullOrWhiteSpace(changes))
+                        {
+                            continue;
+                        }
+
+                        updateInfos.Add(new UpdateInfo(language, changes));
+                    }
+                }
+
+                return updateInfos;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return null;
         }
 
         private async Task<UserCredential> GetCredatials()
@@ -279,7 +376,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UploadApk(string apkFileName, string expansionFileName, string track, List<Tuple<string, string>> listings)
+        private bool UploadApk(string apkFileName, string expansionFileName, string track, List<UpdateInfo> apkChanges)
         {
             if (_serviceThread != null)
             {
@@ -306,6 +403,17 @@ namespace ApkUploader
                 StringBuilder sb = new StringBuilder();
                 try
                 {
+                    if (apkChanges != null)
+                    {
+                        sb.Append("Changes info for languages: ");
+                        foreach (UpdateInfo updateInfo in apkChanges)
+                        {
+                            sb.Append($"{updateInfo.Language} ");
+                        }
+                        sb.AppendLine();
+                        UpdateStatus(sb.ToString());
+                    }
+
                     UserCredential credential = await GetCredatials();
                     using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(credential)))
                     {
@@ -402,18 +510,16 @@ namespace ApkUploader
                         sb.AppendLine($"Track updated: {updatedTrack.TrackValue}");
                         UpdateStatus(sb.ToString());
 
-                        if (listings != null)
+                        if (apkChanges != null)
                         {
-                            foreach (Tuple<string, string> listing in listings)
+                            foreach (UpdateInfo updateInfo in apkChanges)
                             {
-                                string language = listing.Item1;
-                                string changes = listing.Item1;
                                 ApkListing apkListing = new ApkListing
                                 {
-                                    RecentChanges = changes
+                                    RecentChanges = updateInfo.Changes
                                 };
-                                await edits.Apklistings.Update(apkListing, PackageName, appEdit.Id, versionCode.Value, language).ExecuteAsync(_cts.Token);
-                                sb.AppendLine($"Changes for language {language} updated");
+                                await edits.Apklistings.Update(apkListing, PackageName, appEdit.Id, versionCode.Value, updateInfo.Language).ExecuteAsync(_cts.Token);
+                                sb.AppendLine($"Changes for language {updateInfo.Language} updated");
                                 UpdateStatus(sb.ToString());
                             }
                         }
@@ -477,11 +583,7 @@ namespace ApkUploader
 
         private void buttonUploadApk_Click(object sender, EventArgs e)
         {
-            List<Tuple<string, string>> apkChanges = new List<Tuple<string, string>>
-            {
-                new Tuple<string, string>("en-US", "- ECU files updated\n- Using expansion files\n- Fixed minor problems"),
-                new Tuple<string, string>("de-DE", "- ECU Dateien aktualisiert\n- Erweiterungsdateien werden verwendet\n- Kleinere Probleme behoben")
-            };
+            List<UpdateInfo> apkChanges = ReadUpdateInfo(@"D:\Projects\EdiabasLib\BmwDeepObd\Resources");
 
             UploadApk(textBoxApkFile.Text, textBoxObbFile.Text, checkBoxAlpha.Checked ? "alpha" : "beta", apkChanges);
         }
