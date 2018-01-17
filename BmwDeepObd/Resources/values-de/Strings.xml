@@ -118,7 +118,7 @@
   <string name="extract_failed_io">Das Speichern der extrahierten Dateien ist fehlgeschlagen.\nIst kein Speicher mehr auf dem Gerät verfügbar?</string>
 
   <!-- Send trace file -->
-  <string name="send_trace_file_request">Es sind Kommunikationsfehler aufgetreten.\nWollen Sie eine komprimierte und anonyme Trace-Datei (Größe {0:fs0}) senden um Produktverbesserungen zu ermöglichen?</string>
+  <string name="send_trace_file_request">Es sind Kommunikationsfehler aufgetreten.\nWollen Sie eine komprimierte und anonyme Trace-Datei (Größe {0:fs1}) senden um Produktverbesserungen zu ermöglichen?</string>
   <string name="send_message_request">Es sind Kommunikationsfehler aufgetreten.\nWollen Sie anonyme Daten senden um Produktverbesserungen zu ermöglichen?</string>
   <string name="send_trace_file">Trace-Datei senden</string>
   <string name="compress_trace_file_failed">Trace-Datei komprimieren fehlgeschlagen.</string>
