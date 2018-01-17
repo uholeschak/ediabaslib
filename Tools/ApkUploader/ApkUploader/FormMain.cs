@@ -79,8 +79,10 @@ namespace ApkUploader
             checkBoxAlpha.Enabled = enable;
             textBoxApkFile.Enabled = enable;
             textBoxObbFile.Enabled = enable;
+            textBoxResourceFolder.Enabled = enable;
             buttonSelectApk.Enabled = enable;
             buttonSelectObb.Enabled = enable;
+            buttonSelectResourceFolder.Enabled = enable;
 
             buttonAbort.Enabled = !enable;
         }
@@ -551,6 +553,7 @@ namespace ApkUploader
             checkBoxAlpha.Checked = Properties.Settings.Default.Alpha;
             textBoxApkFile.Text = Properties.Settings.Default.ApkFileName;
             textBoxObbFile.Text = Properties.Settings.Default.ObbFileName;
+            textBoxResourceFolder.Text = Properties.Settings.Default.ResourceFolder;
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -583,7 +586,16 @@ namespace ApkUploader
 
         private void buttonUploadApk_Click(object sender, EventArgs e)
         {
-            List<UpdateInfo> apkChanges = ReadUpdateInfo(@"D:\Projects\EdiabasLib\BmwDeepObd\Resources");
+            List<UpdateInfo> apkChanges = null;
+            if (!string.IsNullOrWhiteSpace(textBoxResourceFolder.Text))
+            {
+                apkChanges = ReadUpdateInfo(textBoxResourceFolder.Text);
+                if (apkChanges == null)
+                {
+                    UpdateStatus("Reading resources failed!");
+                    return;
+                }
+            }
 
             UploadApk(textBoxApkFile.Text, textBoxObbFile.Text, checkBoxAlpha.Checked ? "alpha" : "beta", apkChanges);
         }
@@ -618,6 +630,17 @@ namespace ApkUploader
             textBoxObbFile.Text = openFileDialogObb.FileName;
         }
 
+        private void buttonSelectResourceFolder_Click(object sender, EventArgs e)
+        {
+            folderBrowserDialogResource.SelectedPath = textBoxResourceFolder.Text;
+            if (folderBrowserDialogResource.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            textBoxResourceFolder.Text = folderBrowserDialogResource.SelectedPath;
+        }
+
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
             try
@@ -625,6 +648,7 @@ namespace ApkUploader
                 Properties.Settings.Default.Alpha = checkBoxAlpha.Checked;
                 Properties.Settings.Default.ApkFileName = textBoxApkFile.Text;
                 Properties.Settings.Default.ObbFileName = textBoxObbFile.Text;
+                Properties.Settings.Default.ResourceFolder = textBoxResourceFolder.Text;
                 Properties.Settings.Default.Save();
             }
             catch (Exception)

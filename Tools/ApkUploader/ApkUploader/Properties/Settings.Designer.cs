@@ -58,5 +58,17 @@ namespace ApkUploader.Properties {
                 this["ObbFileName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ResourceFolder {
+            get {
+                return ((string)(this["ResourceFolder"]));
+            }
+            set {
+                this["ResourceFolder"] = value;
+            }
+        }
     }
 }

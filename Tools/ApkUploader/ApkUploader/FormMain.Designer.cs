@@ -44,18 +44,22 @@
             this.textBoxObbFile = new System.Windows.Forms.TextBox();
             this.buttonSelectObb = new System.Windows.Forms.Button();
             this.openFileDialogObb = new System.Windows.Forms.OpenFileDialog();
+            this.folderBrowserDialogResource = new System.Windows.Forms.FolderBrowserDialog();
+            this.labelRescourceFolder = new System.Windows.Forms.Label();
+            this.textBoxResourceFolder = new System.Windows.Forms.TextBox();
+            this.buttonSelectResourceFolder = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxStatus
             // 
             this.textBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxStatus.Location = new System.Drawing.Point(12, 121);
+            this.textBoxStatus.Location = new System.Drawing.Point(12, 159);
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(500, 331);
+            this.textBoxStatus.Size = new System.Drawing.Size(500, 339);
             this.textBoxStatus.TabIndex = 0;
             this.textBoxStatus.TabStop = false;
             // 
@@ -73,7 +77,7 @@
             // 
             this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonClose.Location = new System.Drawing.Point(437, 458);
+            this.buttonClose.Location = new System.Drawing.Point(437, 504);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
             this.buttonClose.TabIndex = 1;
@@ -85,7 +89,7 @@
             // 
             this.buttonAbort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAbort.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonAbort.Location = new System.Drawing.Point(356, 458);
+            this.buttonAbort.Location = new System.Drawing.Point(356, 504);
             this.buttonAbort.Name = "buttonAbort";
             this.buttonAbort.Size = new System.Drawing.Size(75, 23);
             this.buttonAbort.TabIndex = 2;
@@ -185,13 +189,46 @@
             this.openFileDialogObb.DefaultExt = "*.obb";
             this.openFileDialogObb.Filter = "Obb Files|*.obb";
             // 
+            // folderBrowserDialogResource
+            // 
+            this.folderBrowserDialogResource.ShowNewFolderButton = false;
+            // 
+            // labelRescourceFolder
+            // 
+            this.labelRescourceFolder.AutoSize = true;
+            this.labelRescourceFolder.Location = new System.Drawing.Point(12, 117);
+            this.labelRescourceFolder.Name = "labelRescourceFolder";
+            this.labelRescourceFolder.Size = new System.Drawing.Size(85, 13);
+            this.labelRescourceFolder.TabIndex = 11;
+            this.labelRescourceFolder.Text = "Resource folder:";
+            // 
+            // textBoxResourceFolder
+            // 
+            this.textBoxResourceFolder.Location = new System.Drawing.Point(12, 133);
+            this.textBoxResourceFolder.Name = "textBoxResourceFolder";
+            this.textBoxResourceFolder.Size = new System.Drawing.Size(464, 20);
+            this.textBoxResourceFolder.TabIndex = 11;
+            // 
+            // buttonSelectResourceFolder
+            // 
+            this.buttonSelectResourceFolder.Location = new System.Drawing.Point(482, 131);
+            this.buttonSelectResourceFolder.Name = "buttonSelectResourceFolder";
+            this.buttonSelectResourceFolder.Size = new System.Drawing.Size(30, 23);
+            this.buttonSelectResourceFolder.TabIndex = 12;
+            this.buttonSelectResourceFolder.Text = "...";
+            this.buttonSelectResourceFolder.UseVisualStyleBackColor = true;
+            this.buttonSelectResourceFolder.Click += new System.EventHandler(this.buttonSelectResourceFolder_Click);
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
-            this.ClientSize = new System.Drawing.Size(524, 493);
+            this.ClientSize = new System.Drawing.Size(524, 539);
+            this.Controls.Add(this.buttonSelectResourceFolder);
+            this.Controls.Add(this.textBoxResourceFolder);
+            this.Controls.Add(this.labelRescourceFolder);
             this.Controls.Add(this.buttonSelectObb);
             this.Controls.Add(this.textBoxObbFile);
             this.Controls.Add(this.labelObbFile);
@@ -235,6 +272,10 @@
         private System.Windows.Forms.TextBox textBoxObbFile;
         private System.Windows.Forms.Button buttonSelectObb;
         private System.Windows.Forms.OpenFileDialog openFileDialogObb;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogResource;
+        private System.Windows.Forms.Label labelRescourceFolder;
+        private System.Windows.Forms.TextBox textBoxResourceFolder;
+        private System.Windows.Forms.Button buttonSelectResourceFolder;
     }
 }
 
