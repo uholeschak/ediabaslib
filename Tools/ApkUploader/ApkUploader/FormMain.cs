@@ -24,14 +24,16 @@ namespace ApkUploader
 
         private class ExpansionInfo
         {
-            public ExpansionInfo(int apkVersion, int expansionVersion)
+            public ExpansionInfo(int apkVersion, int expansionVersion, long fileSize)
             {
                 ApkVersion = apkVersion;
                 ExpansionVersion = expansionVersion;
+                FileSize = fileSize;
             }
 
             public int ApkVersion { get;}
             public int ExpansionVersion { get; }
+            public long FileSize { get; }
         }
 
         public FormMain()
@@ -118,6 +120,7 @@ namespace ApkUploader
                 ApksListResponse apksResponse = await edits.Apks.List(PackageName, appEdit.Id).ExecuteAsync(_cts.Token);
                 int apkVersion = -1;
                 int expansionVersion = -1;
+                long fileSize = 0;
                 foreach (Apk apk in apksResponse.Apks)
                 {
                     // ReSharper disable once UseNullPropagation
@@ -132,6 +135,7 @@ namespace ApkUploader
                                 {
                                     apkVersion = apk.VersionCode.Value;
                                     expansionVersion = apkVersion;
+                                    fileSize = expansionResponse.FileSize.Value;
                                     if (expansionResponse.ReferencesVersion != null)
                                     {
                                         expansionVersion = expansionResponse.ReferencesVersion.Value;
@@ -149,7 +153,7 @@ namespace ApkUploader
                 {
                     return null;
                 }
-                return new ExpansionInfo(apkVersion, expansionVersion);
+                return new ExpansionInfo(apkVersion, expansionVersion, fileSize);
             }
             catch (Exception)
             {
@@ -309,13 +313,19 @@ namespace ApkUploader
                         EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
                         AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
 
-                        ExpansionInfo expansionInfo = null;
-                        if (string.IsNullOrEmpty(expansionFileName))
+                        bool reuseExpansion = false;
+                        ExpansionInfo expansionInfo = await GetNewestExpansionFile(edits, appEdit);
+                        if (expansionInfo != null)
                         {
-                            expansionInfo = await GetNewestExpansionFile(edits, appEdit);
-                            if (expansionInfo != null)
+                            sb.AppendLine($"Latest expansion: apk version={expansionInfo.ApkVersion}, expansion version={expansionInfo.ExpansionVersion}, size={expansionInfo.FileSize}");
+                            if (!string.IsNullOrEmpty(expansionFileName))
                             {
-                                sb.AppendLine($"Latest expansion: apk version={expansionInfo.ApkVersion}, expansion version={expansionInfo.ExpansionVersion}");
+                                FileInfo fileInfo = new FileInfo(expansionFileName);
+                                if (fileInfo.Exists && fileInfo.Length == expansionInfo.FileSize)
+                                {
+                                    sb.AppendLine("Size unchanged, reusing old expansion file");
+                                    reuseExpansion = true;
+                                }
                             }
                         }
 
@@ -350,7 +360,7 @@ namespace ApkUploader
                         sb.AppendLine($"Version code uploaded: {versionCode.Value}");
                         UpdateStatus(sb.ToString());
 
-                        if (!string.IsNullOrEmpty(expansionFileName))
+                        if (!string.IsNullOrEmpty(expansionFileName) && !reuseExpansion)
                         {
                             using (FileStream expansionStream = new FileStream(expansionFileName, FileMode.Open, FileAccess.Read))
                             {
