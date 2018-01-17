@@ -2,9 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ApkUploader.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="Alpha" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="ApkFileName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
@@ -12,6 +9,12 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="ResourceFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="TrackUnassign" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="TrackAssign" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

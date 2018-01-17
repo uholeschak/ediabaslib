@@ -25,18 +25,6 @@ namespace ApkUploader.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool Alpha {
-            get {
-                return ((bool)(this["Alpha"]));
-            }
-            set {
-                this["Alpha"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string ApkFileName {
             get {
@@ -68,6 +56,30 @@ namespace ApkUploader.Properties {
             }
             set {
                 this["ResourceFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TrackUnassign {
+            get {
+                return ((string)(this["TrackUnassign"]));
+            }
+            set {
+                this["TrackUnassign"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TrackAssign {
+            get {
+                return ((string)(this["TrackAssign"]));
+            }
+            set {
+                this["TrackAssign"] = value;
             }
         }
     }

@@ -21,7 +21,8 @@ namespace ApkUploader
     public partial class FormMain : Form
     {
         private const string PackageName = @"de.holeschak.bmw_deep_obd";
-        private static readonly string[] Tracks = { "alpha", "beta", "production", "rollout" };
+        private static readonly string[] TracksAll = { "alpha", "beta", "production", "rollout" };
+        private static readonly string[] TracksEdit = { "alpha", "beta", "production" };
         private volatile Thread _serviceThread;
         private readonly string _apkPath;
         private CancellationTokenSource _cts;
@@ -77,7 +78,8 @@ namespace ApkUploader
             buttonUploadApk.Enabled = enable;
             buttonChangeTrack.Enabled = enable;
             buttonClose.Enabled = enable;
-            checkBoxAlpha.Enabled = enable;
+            comboBoxTrackUnassign.Enabled = enable;
+            comboBoxTrackAssign.Enabled = enable;
             textBoxApkFile.Enabled = enable;
             textBoxObbFile.Enabled = enable;
             textBoxResourceFolder.Enabled = enable;
@@ -346,7 +348,7 @@ namespace ApkUploader
                         EditsResource edits = service.Edits;
                         EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
                         AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
-                        foreach (string track in Tracks)
+                        foreach (string track in TracksAll)
                         {
                             if (sb.Length > 0)
                             {
@@ -423,6 +425,11 @@ namespace ApkUploader
                 return false;
             }
             UpdateStatus(string.Empty);
+            if (string.Compare(fromTrack, toTrack, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                UpdateStatus("Both tracks identical");
+                return false;
+            }
             _cts = new CancellationTokenSource();
             _serviceThread = new Thread(async () =>
             {
@@ -654,10 +661,35 @@ namespace ApkUploader
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            checkBoxAlpha.Checked = Properties.Settings.Default.Alpha;
             textBoxApkFile.Text = Properties.Settings.Default.ApkFileName;
             textBoxObbFile.Text = Properties.Settings.Default.ObbFileName;
             textBoxResourceFolder.Text = Properties.Settings.Default.ResourceFolder;
+
+            comboBoxTrackUnassign.BeginUpdate();
+            comboBoxTrackUnassign.Items.Clear();
+            foreach (string track in TracksEdit)
+            {
+                comboBoxTrackUnassign.Items.Add(track);
+            }
+            comboBoxTrackUnassign.SelectedItem = Properties.Settings.Default.TrackUnassign;
+            if (comboBoxTrackUnassign.SelectedIndex < 0)
+            {
+                comboBoxTrackUnassign.SelectedIndex = 0;
+            }
+            comboBoxTrackUnassign.EndUpdate();
+
+            comboBoxTrackAssign.BeginUpdate();
+            comboBoxTrackAssign.Items.Clear();
+            foreach (string track in TracksEdit)
+            {
+                comboBoxTrackAssign.Items.Add(track);
+            }
+            comboBoxTrackAssign.SelectedItem = Properties.Settings.Default.TrackAssign;
+            if (comboBoxTrackAssign.SelectedIndex < 0)
+            {
+                comboBoxTrackAssign.SelectedIndex = 0;
+            }
+            comboBoxTrackAssign.EndUpdate();
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -690,7 +722,7 @@ namespace ApkUploader
 
         private void buttonChangeTrack_Click(object sender, EventArgs e)
         {
-            ChangeTrack("alpha", "beta");
+            ChangeTrack(comboBoxTrackUnassign.Text, comboBoxTrackAssign.Text);
         }
 
         private void buttonUploadApk_Click(object sender, EventArgs e)
@@ -706,7 +738,7 @@ namespace ApkUploader
                 }
             }
 
-            UploadApk(textBoxApkFile.Text, textBoxObbFile.Text, checkBoxAlpha.Checked ? "alpha" : "beta", apkChanges);
+            UploadApk(textBoxApkFile.Text, textBoxObbFile.Text, comboBoxTrackAssign.Text, apkChanges);
         }
 
         private void buttonSelectApk_Click(object sender, EventArgs e)
@@ -754,9 +786,10 @@ namespace ApkUploader
         {
             try
             {
-                Properties.Settings.Default.Alpha = checkBoxAlpha.Checked;
                 Properties.Settings.Default.ApkFileName = textBoxApkFile.Text;
                 Properties.Settings.Default.ObbFileName = textBoxObbFile.Text;
+                Properties.Settings.Default.TrackUnassign = comboBoxTrackUnassign.Text;
+                Properties.Settings.Default.TrackAssign = comboBoxTrackAssign.Text;
                 Properties.Settings.Default.ResourceFolder = textBoxResourceFolder.Text;
                 Properties.Settings.Default.Save();
             }

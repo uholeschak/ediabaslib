@@ -36,7 +36,6 @@
             this.buttonUploadApk = new System.Windows.Forms.Button();
             this.openFileDialogApk = new System.Windows.Forms.OpenFileDialog();
             this.buttonListTracks = new System.Windows.Forms.Button();
-            this.checkBoxAlpha = new System.Windows.Forms.CheckBox();
             this.buttonSelectApk = new System.Windows.Forms.Button();
             this.labelApkFile = new System.Windows.Forms.Label();
             this.textBoxApkFile = new System.Windows.Forms.TextBox();
@@ -49,6 +48,10 @@
             this.textBoxResourceFolder = new System.Windows.Forms.TextBox();
             this.buttonSelectResourceFolder = new System.Windows.Forms.Button();
             this.buttonChangeTrack = new System.Windows.Forms.Button();
+            this.comboBoxTrackUnassign = new System.Windows.Forms.ComboBox();
+            this.comboBoxTrackAssign = new System.Windows.Forms.ComboBox();
+            this.labelTrackUnassign = new System.Windows.Forms.Label();
+            this.labelTrackAssign = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // textBoxStatus
@@ -122,16 +125,6 @@
             this.buttonListTracks.Text = "List Tracks";
             this.buttonListTracks.UseVisualStyleBackColor = true;
             this.buttonListTracks.Click += new System.EventHandler(this.buttonListTracks_Click);
-            // 
-            // checkBoxAlpha
-            // 
-            this.checkBoxAlpha.AutoSize = true;
-            this.checkBoxAlpha.Location = new System.Drawing.Point(254, 45);
-            this.checkBoxAlpha.Name = "checkBoxAlpha";
-            this.checkBoxAlpha.Size = new System.Drawing.Size(53, 17);
-            this.checkBoxAlpha.TabIndex = 6;
-            this.checkBoxAlpha.Text = "Alpha";
-            this.checkBoxAlpha.UseVisualStyleBackColor = true;
             // 
             // buttonSelectApk
             // 
@@ -230,6 +223,42 @@
             this.buttonChangeTrack.UseVisualStyleBackColor = true;
             this.buttonChangeTrack.Click += new System.EventHandler(this.buttonChangeTrack_Click);
             // 
+            // comboBoxTrackUnassign
+            // 
+            this.comboBoxTrackUnassign.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxTrackUnassign.FormattingEnabled = true;
+            this.comboBoxTrackUnassign.Location = new System.Drawing.Point(376, 14);
+            this.comboBoxTrackUnassign.Name = "comboBoxTrackUnassign";
+            this.comboBoxTrackUnassign.Size = new System.Drawing.Size(100, 21);
+            this.comboBoxTrackUnassign.TabIndex = 12;
+            // 
+            // comboBoxTrackAssign
+            // 
+            this.comboBoxTrackAssign.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxTrackAssign.FormattingEnabled = true;
+            this.comboBoxTrackAssign.Location = new System.Drawing.Point(376, 43);
+            this.comboBoxTrackAssign.Name = "comboBoxTrackAssign";
+            this.comboBoxTrackAssign.Size = new System.Drawing.Size(100, 21);
+            this.comboBoxTrackAssign.TabIndex = 13;
+            // 
+            // labelTrackUnassign
+            // 
+            this.labelTrackUnassign.AutoSize = true;
+            this.labelTrackUnassign.Location = new System.Drawing.Point(254, 17);
+            this.labelTrackUnassign.Name = "labelTrackUnassign";
+            this.labelTrackUnassign.Size = new System.Drawing.Size(83, 13);
+            this.labelTrackUnassign.TabIndex = 16;
+            this.labelTrackUnassign.Text = "Track unassign:";
+            // 
+            // labelTrackAssign
+            // 
+            this.labelTrackAssign.AutoSize = true;
+            this.labelTrackAssign.Location = new System.Drawing.Point(254, 46);
+            this.labelTrackAssign.Name = "labelTrackAssign";
+            this.labelTrackAssign.Size = new System.Drawing.Size(71, 13);
+            this.labelTrackAssign.TabIndex = 17;
+            this.labelTrackAssign.Text = "Track assign:";
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -237,6 +266,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(524, 569);
+            this.Controls.Add(this.labelTrackAssign);
+            this.Controls.Add(this.labelTrackUnassign);
+            this.Controls.Add(this.comboBoxTrackAssign);
+            this.Controls.Add(this.comboBoxTrackUnassign);
             this.Controls.Add(this.buttonChangeTrack);
             this.Controls.Add(this.buttonSelectResourceFolder);
             this.Controls.Add(this.textBoxResourceFolder);
@@ -247,7 +280,6 @@
             this.Controls.Add(this.textBoxApkFile);
             this.Controls.Add(this.labelApkFile);
             this.Controls.Add(this.buttonSelectApk);
-            this.Controls.Add(this.checkBoxAlpha);
             this.Controls.Add(this.buttonListTracks);
             this.Controls.Add(this.buttonUploadApk);
             this.Controls.Add(this.buttonAbort);
@@ -276,7 +308,6 @@
         private System.Windows.Forms.Button buttonUploadApk;
         private System.Windows.Forms.OpenFileDialog openFileDialogApk;
         private System.Windows.Forms.Button buttonListTracks;
-        private System.Windows.Forms.CheckBox checkBoxAlpha;
         private System.Windows.Forms.Button buttonSelectApk;
         private System.Windows.Forms.Label labelApkFile;
         private System.Windows.Forms.TextBox textBoxApkFile;
@@ -289,6 +320,10 @@
         private System.Windows.Forms.TextBox textBoxResourceFolder;
         private System.Windows.Forms.Button buttonSelectResourceFolder;
         private System.Windows.Forms.Button buttonChangeTrack;
+        private System.Windows.Forms.ComboBox comboBoxTrackUnassign;
+        private System.Windows.Forms.ComboBox comboBoxTrackAssign;
+        private System.Windows.Forms.Label labelTrackUnassign;
+        private System.Windows.Forms.Label labelTrackAssign;
     }
 }
 
