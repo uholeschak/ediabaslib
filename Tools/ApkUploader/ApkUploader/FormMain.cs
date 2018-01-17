@@ -77,6 +77,7 @@ namespace ApkUploader
             buttonListTracks.Enabled = enable;
             buttonUploadApk.Enabled = enable;
             buttonChangeTrack.Enabled = enable;
+            buttonUnassignTrack.Enabled = enable;
             buttonClose.Enabled = enable;
             comboBoxTrackUnassign.Enabled = enable;
             comboBoxTrackAssign.Enabled = enable;
@@ -464,12 +465,69 @@ namespace ApkUploader
                         await edits.Tracks.Update(unassignTrack, PackageName, appEdit.Id, fromTrack).ExecuteAsync();
                         sb.AppendLine($"Unassigned from track: {fromTrack}");
                         UpdateStatus(sb.ToString());
-#if false
+
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
                         AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
-#endif
+                    }
+                }
+                catch (Exception e)
+                {
+                    sb.AppendLine($"Exception: {e.Message}");
+                }
+                finally
+                {
+                    _serviceThread = null;
+                    _cts.Dispose();
+                    UpdateStatus(sb.ToString());
+                }
+            });
+            _serviceThread.Start();
+
+            return true;
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool UnassignTrack(string track)
+        {
+            if (_serviceThread != null)
+            {
+                return false;
+            }
+            UpdateStatus(string.Empty);
+            _cts = new CancellationTokenSource();
+            _serviceThread = new Thread(async () =>
+            {
+                UpdateStatus(string.Empty);
+                StringBuilder sb = new StringBuilder();
+                try
+                {
+                    UserCredential credential = await GetCredatials();
+                    using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(credential)))
+                    {
+                        EditsResource edits = service.Edits;
+                        EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
+                        AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
+                        Track trackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
+                        sb.AppendLine($"Track: {track}");
+                        foreach (int? version in trackResponse.VersionCodes)
+                        {
+                            if (version != null)
+                            {
+                                sb.AppendLine($"Version: {version.Value}");
+                            }
+                        }
+
+                        Track unassignTrack = new Track { VersionCodes = new List<int?>() };
+                        await edits.Tracks.Update(unassignTrack, PackageName, appEdit.Id, track).ExecuteAsync();
+                        sb.AppendLine($"Unassigned from track: {track}");
+                        UpdateStatus(sb.ToString());
+
+                        EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
+                        AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
+                        sb.AppendLine($"App edit committed: {appEditCommit.Id}");
+                        UpdateStatus(sb.ToString());
                     }
                 }
                 catch (Exception e)
@@ -723,6 +781,11 @@ namespace ApkUploader
         private void buttonChangeTrack_Click(object sender, EventArgs e)
         {
             ChangeTrack(comboBoxTrackUnassign.Text, comboBoxTrackAssign.Text);
+        }
+
+        private void buttonUnassignTrack_Click(object sender, EventArgs e)
+        {
+            UnassignTrack(comboBoxTrackUnassign.Text);
         }
 
         private void buttonUploadApk_Click(object sender, EventArgs e)
