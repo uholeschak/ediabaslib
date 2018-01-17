@@ -75,6 +75,7 @@ namespace ApkUploader
             buttonListApks.Enabled = enable;
             buttonListTracks.Enabled = enable;
             buttonUploadApk.Enabled = enable;
+            buttonChangeTrack.Enabled = enable;
             buttonClose.Enabled = enable;
             checkBoxAlpha.Enabled = enable;
             textBoxApkFile.Enabled = enable;
@@ -415,6 +416,72 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool ChangeTrack(string fromTrack, string toTrack)
+        {
+            if (_serviceThread != null)
+            {
+                return false;
+            }
+            UpdateStatus(string.Empty);
+            _cts = new CancellationTokenSource();
+            _serviceThread = new Thread(async () =>
+            {
+                UpdateStatus(string.Empty);
+                StringBuilder sb = new StringBuilder();
+                try
+                {
+                    UserCredential credential = await GetCredatials();
+                    using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(credential)))
+                    {
+                        EditsResource edits = service.Edits;
+                        EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
+                        AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
+                        Track trackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, fromTrack).ExecuteAsync(_cts.Token);
+                        sb.AppendLine($"From track: {fromTrack}");
+                        if (trackResponse.VersionCodes.Count != 1 || !trackResponse.VersionCodes[0].HasValue)
+                        {
+                            sb.AppendLine($"Invalid version count: {trackResponse.VersionCodes.Count}");
+                            UpdateStatus(sb.ToString());
+                            throw new Exception("Invalid version count");
+                        }
+                        int currentVersion = trackResponse.VersionCodes[0].Value;
+                        sb.AppendLine($"Version: {currentVersion}");
+                        UpdateStatus(sb.ToString());
+
+                        Track assignTrack = new Track { VersionCodes = new List<int?> { currentVersion } };
+                        await edits.Tracks.Update(assignTrack, PackageName, appEdit.Id, toTrack).ExecuteAsync();
+                        sb.AppendLine($"Assigned to track: {toTrack}");
+                        UpdateStatus(sb.ToString());
+
+                        Track unassignTrack = new Track { VersionCodes = new List<int?>() };
+                        await edits.Tracks.Update(unassignTrack, PackageName, appEdit.Id, fromTrack).ExecuteAsync();
+                        sb.AppendLine($"Unassigned from track: {fromTrack}");
+                        UpdateStatus(sb.ToString());
+#if false
+                        EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
+                        AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
+                        sb.AppendLine($"App edit committed: {appEditCommit.Id}");
+                        UpdateStatus(sb.ToString());
+#endif
+                    }
+                }
+                catch (Exception e)
+                {
+                    sb.AppendLine($"Exception: {e.Message}");
+                }
+                finally
+                {
+                    _serviceThread = null;
+                    _cts.Dispose();
+                    UpdateStatus(sb.ToString());
+                }
+            });
+            _serviceThread.Start();
+
+            return true;
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private bool UploadApk(string apkFileName, string expansionFileName, string track, List<UpdateInfo> apkChanges)
         {
             if (_serviceThread != null)
@@ -619,6 +686,11 @@ namespace ApkUploader
         private void buttonListTracks_Click(object sender, EventArgs e)
         {
             ListTracks();
+        }
+
+        private void buttonChangeTrack_Click(object sender, EventArgs e)
+        {
+            ChangeTrack("alpha", "beta");
         }
 
         private void buttonUploadApk_Click(object sender, EventArgs e)

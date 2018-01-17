@@ -48,18 +48,19 @@
             this.labelRescourceFolder = new System.Windows.Forms.Label();
             this.textBoxResourceFolder = new System.Windows.Forms.TextBox();
             this.buttonSelectResourceFolder = new System.Windows.Forms.Button();
+            this.buttonChangeTrack = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxStatus
             // 
             this.textBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxStatus.Location = new System.Drawing.Point(12, 159);
+            this.textBoxStatus.Location = new System.Drawing.Point(12, 187);
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(500, 339);
+            this.textBoxStatus.Size = new System.Drawing.Size(500, 341);
             this.textBoxStatus.TabIndex = 0;
             this.textBoxStatus.TabStop = false;
             // 
@@ -77,7 +78,7 @@
             // 
             this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonClose.Location = new System.Drawing.Point(437, 504);
+            this.buttonClose.Location = new System.Drawing.Point(437, 534);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
             this.buttonClose.TabIndex = 1;
@@ -89,7 +90,7 @@
             // 
             this.buttonAbort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAbort.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonAbort.Location = new System.Drawing.Point(356, 504);
+            this.buttonAbort.Location = new System.Drawing.Point(356, 534);
             this.buttonAbort.Name = "buttonAbort";
             this.buttonAbort.Size = new System.Drawing.Size(75, 23);
             this.buttonAbort.TabIndex = 2;
@@ -99,7 +100,7 @@
             // 
             // buttonUploadApk
             // 
-            this.buttonUploadApk.Location = new System.Drawing.Point(254, 12);
+            this.buttonUploadApk.Location = new System.Drawing.Point(133, 41);
             this.buttonUploadApk.Name = "buttonUploadApk";
             this.buttonUploadApk.Size = new System.Drawing.Size(115, 23);
             this.buttonUploadApk.TabIndex = 5;
@@ -125,7 +126,7 @@
             // checkBoxAlpha
             // 
             this.checkBoxAlpha.AutoSize = true;
-            this.checkBoxAlpha.Location = new System.Drawing.Point(375, 16);
+            this.checkBoxAlpha.Location = new System.Drawing.Point(254, 45);
             this.checkBoxAlpha.Name = "checkBoxAlpha";
             this.checkBoxAlpha.Size = new System.Drawing.Size(53, 17);
             this.checkBoxAlpha.TabIndex = 6;
@@ -134,7 +135,7 @@
             // 
             // buttonSelectApk
             // 
-            this.buttonSelectApk.Location = new System.Drawing.Point(482, 53);
+            this.buttonSelectApk.Location = new System.Drawing.Point(482, 81);
             this.buttonSelectApk.Name = "buttonSelectApk";
             this.buttonSelectApk.Size = new System.Drawing.Size(30, 23);
             this.buttonSelectApk.TabIndex = 8;
@@ -145,7 +146,7 @@
             // labelApkFile
             // 
             this.labelApkFile.AutoSize = true;
-            this.labelApkFile.Location = new System.Drawing.Point(12, 38);
+            this.labelApkFile.Location = new System.Drawing.Point(12, 67);
             this.labelApkFile.Name = "labelApkFile";
             this.labelApkFile.Size = new System.Drawing.Size(74, 13);
             this.labelApkFile.TabIndex = 9;
@@ -153,7 +154,7 @@
             // 
             // textBoxApkFile
             // 
-            this.textBoxApkFile.Location = new System.Drawing.Point(12, 55);
+            this.textBoxApkFile.Location = new System.Drawing.Point(12, 83);
             this.textBoxApkFile.Name = "textBoxApkFile";
             this.textBoxApkFile.Size = new System.Drawing.Size(464, 20);
             this.textBoxApkFile.TabIndex = 7;
@@ -161,7 +162,7 @@
             // labelObbFile
             // 
             this.labelObbFile.AutoSize = true;
-            this.labelObbFile.Location = new System.Drawing.Point(12, 78);
+            this.labelObbFile.Location = new System.Drawing.Point(12, 106);
             this.labelObbFile.Name = "labelObbFile";
             this.labelObbFile.Size = new System.Drawing.Size(75, 13);
             this.labelObbFile.TabIndex = 10;
@@ -169,14 +170,14 @@
             // 
             // textBoxObbFile
             // 
-            this.textBoxObbFile.Location = new System.Drawing.Point(12, 94);
+            this.textBoxObbFile.Location = new System.Drawing.Point(12, 122);
             this.textBoxObbFile.Name = "textBoxObbFile";
             this.textBoxObbFile.Size = new System.Drawing.Size(464, 20);
             this.textBoxObbFile.TabIndex = 9;
             // 
             // buttonSelectObb
             // 
-            this.buttonSelectObb.Location = new System.Drawing.Point(482, 92);
+            this.buttonSelectObb.Location = new System.Drawing.Point(482, 120);
             this.buttonSelectObb.Name = "buttonSelectObb";
             this.buttonSelectObb.Size = new System.Drawing.Size(30, 23);
             this.buttonSelectObb.TabIndex = 10;
@@ -196,7 +197,7 @@
             // labelRescourceFolder
             // 
             this.labelRescourceFolder.AutoSize = true;
-            this.labelRescourceFolder.Location = new System.Drawing.Point(12, 117);
+            this.labelRescourceFolder.Location = new System.Drawing.Point(12, 145);
             this.labelRescourceFolder.Name = "labelRescourceFolder";
             this.labelRescourceFolder.Size = new System.Drawing.Size(85, 13);
             this.labelRescourceFolder.TabIndex = 11;
@@ -204,14 +205,14 @@
             // 
             // textBoxResourceFolder
             // 
-            this.textBoxResourceFolder.Location = new System.Drawing.Point(12, 133);
+            this.textBoxResourceFolder.Location = new System.Drawing.Point(12, 161);
             this.textBoxResourceFolder.Name = "textBoxResourceFolder";
             this.textBoxResourceFolder.Size = new System.Drawing.Size(464, 20);
             this.textBoxResourceFolder.TabIndex = 11;
             // 
             // buttonSelectResourceFolder
             // 
-            this.buttonSelectResourceFolder.Location = new System.Drawing.Point(482, 131);
+            this.buttonSelectResourceFolder.Location = new System.Drawing.Point(482, 159);
             this.buttonSelectResourceFolder.Name = "buttonSelectResourceFolder";
             this.buttonSelectResourceFolder.Size = new System.Drawing.Size(30, 23);
             this.buttonSelectResourceFolder.TabIndex = 12;
@@ -219,13 +220,24 @@
             this.buttonSelectResourceFolder.UseVisualStyleBackColor = true;
             this.buttonSelectResourceFolder.Click += new System.EventHandler(this.buttonSelectResourceFolder_Click);
             // 
+            // buttonChangeTrack
+            // 
+            this.buttonChangeTrack.Location = new System.Drawing.Point(12, 41);
+            this.buttonChangeTrack.Name = "buttonChangeTrack";
+            this.buttonChangeTrack.Size = new System.Drawing.Size(115, 23);
+            this.buttonChangeTrack.TabIndex = 13;
+            this.buttonChangeTrack.Text = "Change Track";
+            this.buttonChangeTrack.UseVisualStyleBackColor = true;
+            this.buttonChangeTrack.Click += new System.EventHandler(this.buttonChangeTrack_Click);
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
-            this.ClientSize = new System.Drawing.Size(524, 539);
+            this.ClientSize = new System.Drawing.Size(524, 569);
+            this.Controls.Add(this.buttonChangeTrack);
             this.Controls.Add(this.buttonSelectResourceFolder);
             this.Controls.Add(this.textBoxResourceFolder);
             this.Controls.Add(this.labelRescourceFolder);
@@ -276,6 +288,7 @@
         private System.Windows.Forms.Label labelRescourceFolder;
         private System.Windows.Forms.TextBox textBoxResourceFolder;
         private System.Windows.Forms.Button buttonSelectResourceFolder;
+        private System.Windows.Forms.Button buttonChangeTrack;
     }
 }
 
