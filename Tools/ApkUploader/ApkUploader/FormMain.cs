@@ -350,15 +350,35 @@ namespace ApkUploader
                             sb.AppendLine($"Track: {track}");
                             try
                             {
-                                EditsResource.TracksResource.GetRequest getRequest = edits.Tracks.Get(PackageName, appEdit.Id, track);
-                                Track trackResponse = await getRequest.ExecuteAsync(_cts.Token);
-
+                                Track trackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
                                 foreach (int? version in trackResponse.VersionCodes)
                                 {
                                     if (version != null)
                                     {
                                         sb.AppendLine($"Version: {version.Value}");
                                         await PrintExpansion(sb, edits, appEdit, version.Value);
+                                        try
+                                        {
+                                            Testers testers = await edits.Testers.Get(PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
+                                            if (testers.GoogleGroups != null)
+                                            {
+                                                foreach (string group in testers.GoogleGroups)
+                                                {
+                                                    sb.AppendLine($"Tester group: {group}");
+                                                }
+                                            }
+                                            if (testers.GooglePlusCommunities != null)
+                                            {
+                                                foreach (string community in testers.GooglePlusCommunities)
+                                                {
+                                                    sb.AppendLine($"Tester community: {community}");
+                                                }
+                                            }
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // ignored
+                                        }
                                     }
                                     else
                                     {
