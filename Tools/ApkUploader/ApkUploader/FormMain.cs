@@ -141,6 +141,7 @@ namespace ApkUploader
                                     reader.MoveToContent();
                                     changes = reader.ReadInnerXml();
                                 }
+                                changes = changes.Replace("\\n", "\n");
                                 break;
                             }
                         }
