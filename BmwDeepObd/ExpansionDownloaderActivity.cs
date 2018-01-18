@@ -532,6 +532,8 @@ namespace BmwDeepObd
                 Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetActivity(
                     this, 0, intent, Android.App.PendingIntentFlags.UpdateCurrent);
 
+                // Always force download of LVL
+                DownloadsDB.GetDB(this).UpdateMetadata(0, 0);
                 // Request to start the download
                 DownloaderServiceRequirement startResult = DownloaderService.StartDownloadServiceIfRequired(
                     this, pendingIntent, typeof(ExpansionDownloaderService));
