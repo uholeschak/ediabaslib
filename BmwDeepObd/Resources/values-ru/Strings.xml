@@ -118,7 +118,7 @@
   <string name="extract_failed_io">Не удалось сохранить разархивированные файлы.\nНа данном устройстве недостаточно свободаной памяти?</string>
 
   <!-- Send trace file -->
-  <string name="send_trace_file_request">Ошибка соединения.\nХотите отправить анонимный и сжатый Trace-файл (размер {0:fs1}) для улучшения качества продукта?</string>
+  <string name="send_trace_file_request">Ошибка соединения.\nХотите отправить анонимный и сжатый Trace-файл (размер {0:fs0}) для улучшения качества продукта?</string>
   <string name="send_message_request">Ошибка соединения.\nХотите отправить анонимный файл для улучшения качества продукта?</string>
   <string name="send_trace_file">Послать Trace-файл</string>
   <string name="compress_trace_file_failed">Не удалось сжать Trace-файл.</string>
