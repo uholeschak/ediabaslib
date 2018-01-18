@@ -82,5 +82,17 @@ namespace ApkUploader.Properties {
                 this["TrackAssign"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string VersionAssign {
+            get {
+                return ((string)(this["VersionAssign"]));
+            }
+            set {
+                this["VersionAssign"] = value;
+            }
+        }
     }
 }

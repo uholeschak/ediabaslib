@@ -77,10 +77,11 @@ namespace ApkUploader
             buttonListTracks.Enabled = enable;
             buttonUploadApk.Enabled = enable;
             buttonChangeTrack.Enabled = enable;
-            buttonUnassignTrack.Enabled = enable;
+            buttonAssignTrack.Enabled = enable;
             buttonClose.Enabled = enable;
-            comboBoxTrackUnassign.Enabled = enable;
             comboBoxTrackAssign.Enabled = enable;
+            comboBoxTrackUnassign.Enabled = enable;
+            textBoxVersion.Enabled = enable;
             textBoxApkFile.Enabled = enable;
             textBoxObbFile.Enabled = enable;
             textBoxResourceFolder.Enabled = enable;
@@ -489,7 +490,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UnassignTrack(string track)
+        private bool AssignTrack(string track, int? versionAssign)
         {
             if (_serviceThread != null)
             {
@@ -519,9 +520,19 @@ namespace ApkUploader
                             }
                         }
 
-                        Track unassignTrack = new Track { VersionCodes = new List<int?>() };
-                        await edits.Tracks.Update(unassignTrack, PackageName, appEdit.Id, track).ExecuteAsync();
-                        sb.AppendLine($"Unassigned from track: {track}");
+                        Track assignTrack = new Track { VersionCodes = new List<int?>() };
+                        if (versionAssign.HasValue)
+                        {
+                            assignTrack.VersionCodes.Add(versionAssign);
+                            sb.AppendLine($"Assign version: {versionAssign}");
+                        }
+                        else
+                        {
+                            sb.AppendLine("Unassign version");
+                        }
+                        UpdateStatus(sb.ToString());
+                        await edits.Tracks.Update(assignTrack, PackageName, appEdit.Id, track).ExecuteAsync();
+                        sb.AppendLine("Track updated");
                         UpdateStatus(sb.ToString());
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
@@ -719,22 +730,10 @@ namespace ApkUploader
 
         private void FormMain_Load(object sender, EventArgs e)
         {
+            textBoxVersion.Text = Properties.Settings.Default.VersionAssign;
             textBoxApkFile.Text = Properties.Settings.Default.ApkFileName;
             textBoxObbFile.Text = Properties.Settings.Default.ObbFileName;
             textBoxResourceFolder.Text = Properties.Settings.Default.ResourceFolder;
-
-            comboBoxTrackUnassign.BeginUpdate();
-            comboBoxTrackUnassign.Items.Clear();
-            foreach (string track in TracksEdit)
-            {
-                comboBoxTrackUnassign.Items.Add(track);
-            }
-            comboBoxTrackUnassign.SelectedItem = Properties.Settings.Default.TrackUnassign;
-            if (comboBoxTrackUnassign.SelectedIndex < 0)
-            {
-                comboBoxTrackUnassign.SelectedIndex = 0;
-            }
-            comboBoxTrackUnassign.EndUpdate();
 
             comboBoxTrackAssign.BeginUpdate();
             comboBoxTrackAssign.Items.Clear();
@@ -748,6 +747,19 @@ namespace ApkUploader
                 comboBoxTrackAssign.SelectedIndex = 0;
             }
             comboBoxTrackAssign.EndUpdate();
+
+            comboBoxTrackUnassign.BeginUpdate();
+            comboBoxTrackUnassign.Items.Clear();
+            foreach (string track in TracksEdit)
+            {
+                comboBoxTrackUnassign.Items.Add(track);
+            }
+            comboBoxTrackUnassign.SelectedItem = Properties.Settings.Default.TrackUnassign;
+            if (comboBoxTrackUnassign.SelectedIndex < 0)
+            {
+                comboBoxTrackUnassign.SelectedIndex = 0;
+            }
+            comboBoxTrackUnassign.EndUpdate();
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -783,9 +795,19 @@ namespace ApkUploader
             ChangeTrack(comboBoxTrackUnassign.Text, comboBoxTrackAssign.Text);
         }
 
-        private void buttonUnassignTrack_Click(object sender, EventArgs e)
+        private void buttonAssignTrack_Click(object sender, EventArgs e)
         {
-            UnassignTrack(comboBoxTrackUnassign.Text);
+            int? versionAssign = null;
+            if (!string.IsNullOrWhiteSpace(textBoxVersion.Text))
+            {
+                if (!Int32.TryParse(textBoxVersion.Text, out int value))
+                {
+                    UpdateStatus("Invalid version!");
+                    return;
+                }
+                versionAssign = value;
+            }
+            AssignTrack(comboBoxTrackAssign.Text, versionAssign);
         }
 
         private void buttonUploadApk_Click(object sender, EventArgs e)
@@ -849,10 +871,11 @@ namespace ApkUploader
         {
             try
             {
+                Properties.Settings.Default.VersionAssign = textBoxVersion.Text;
                 Properties.Settings.Default.ApkFileName = textBoxApkFile.Text;
                 Properties.Settings.Default.ObbFileName = textBoxObbFile.Text;
-                Properties.Settings.Default.TrackUnassign = comboBoxTrackUnassign.Text;
                 Properties.Settings.Default.TrackAssign = comboBoxTrackAssign.Text;
+                Properties.Settings.Default.TrackUnassign = comboBoxTrackUnassign.Text;
                 Properties.Settings.Default.ResourceFolder = textBoxResourceFolder.Text;
                 Properties.Settings.Default.Save();
             }

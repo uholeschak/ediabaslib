@@ -52,7 +52,9 @@
             this.comboBoxTrackAssign = new System.Windows.Forms.ComboBox();
             this.labelTrackUnassign = new System.Windows.Forms.Label();
             this.labelTrackAssign = new System.Windows.Forms.Label();
-            this.buttonUnassignTrack = new System.Windows.Forms.Button();
+            this.buttonAssignTrack = new System.Windows.Forms.Button();
+            this.textBoxVersion = new System.Windows.Forms.TextBox();
+            this.labelVersion = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // textBoxStatus
@@ -238,17 +240,17 @@
             this.comboBoxTrackUnassign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxTrackUnassign.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxTrackUnassign.FormattingEnabled = true;
-            this.comboBoxTrackUnassign.Location = new System.Drawing.Point(557, 14);
+            this.comboBoxTrackUnassign.Location = new System.Drawing.Point(557, 43);
             this.comboBoxTrackUnassign.Name = "comboBoxTrackUnassign";
             this.comboBoxTrackUnassign.Size = new System.Drawing.Size(100, 21);
-            this.comboBoxTrackUnassign.TabIndex = 14;
+            this.comboBoxTrackUnassign.TabIndex = 16;
             // 
             // comboBoxTrackAssign
             // 
             this.comboBoxTrackAssign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxTrackAssign.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxTrackAssign.FormattingEnabled = true;
-            this.comboBoxTrackAssign.Location = new System.Drawing.Point(557, 43);
+            this.comboBoxTrackAssign.Location = new System.Drawing.Point(557, 14);
             this.comboBoxTrackAssign.Name = "comboBoxTrackAssign";
             this.comboBoxTrackAssign.Size = new System.Drawing.Size(100, 21);
             this.comboBoxTrackAssign.TabIndex = 15;
@@ -257,7 +259,7 @@
             // 
             this.labelTrackUnassign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelTrackUnassign.AutoSize = true;
-            this.labelTrackUnassign.Location = new System.Drawing.Point(468, 17);
+            this.labelTrackUnassign.Location = new System.Drawing.Point(468, 46);
             this.labelTrackUnassign.Name = "labelTrackUnassign";
             this.labelTrackUnassign.Size = new System.Drawing.Size(83, 13);
             this.labelTrackUnassign.TabIndex = 16;
@@ -267,21 +269,38 @@
             // 
             this.labelTrackAssign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelTrackAssign.AutoSize = true;
-            this.labelTrackAssign.Location = new System.Drawing.Point(468, 46);
+            this.labelTrackAssign.Location = new System.Drawing.Point(480, 17);
             this.labelTrackAssign.Name = "labelTrackAssign";
             this.labelTrackAssign.Size = new System.Drawing.Size(71, 13);
             this.labelTrackAssign.TabIndex = 17;
             this.labelTrackAssign.Text = "Track assign:";
             // 
-            // buttonUnassignTrack
+            // buttonAssignTrack
             // 
-            this.buttonUnassignTrack.Location = new System.Drawing.Point(133, 41);
-            this.buttonUnassignTrack.Name = "buttonUnassignTrack";
-            this.buttonUnassignTrack.Size = new System.Drawing.Size(115, 23);
-            this.buttonUnassignTrack.TabIndex = 6;
-            this.buttonUnassignTrack.Text = "Unassign Track";
-            this.buttonUnassignTrack.UseVisualStyleBackColor = true;
-            this.buttonUnassignTrack.Click += new System.EventHandler(this.buttonUnassignTrack_Click);
+            this.buttonAssignTrack.Location = new System.Drawing.Point(133, 41);
+            this.buttonAssignTrack.Name = "buttonAssignTrack";
+            this.buttonAssignTrack.Size = new System.Drawing.Size(115, 23);
+            this.buttonAssignTrack.TabIndex = 6;
+            this.buttonAssignTrack.Text = "Assign Track";
+            this.buttonAssignTrack.UseVisualStyleBackColor = true;
+            this.buttonAssignTrack.Click += new System.EventHandler(this.buttonAssignTrack_Click);
+            // 
+            // textBoxVersion
+            // 
+            this.textBoxVersion.Location = new System.Drawing.Point(369, 14);
+            this.textBoxVersion.Name = "textBoxVersion";
+            this.textBoxVersion.Size = new System.Drawing.Size(49, 20);
+            this.textBoxVersion.TabIndex = 14;
+            // 
+            // labelVersion
+            // 
+            this.labelVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelVersion.AutoSize = true;
+            this.labelVersion.Location = new System.Drawing.Point(285, 17);
+            this.labelVersion.Name = "labelVersion";
+            this.labelVersion.Size = new System.Drawing.Size(78, 13);
+            this.labelVersion.TabIndex = 19;
+            this.labelVersion.Text = "Version assign:";
             // 
             // FormMain
             // 
@@ -290,7 +309,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(705, 569);
-            this.Controls.Add(this.buttonUnassignTrack);
+            this.Controls.Add(this.labelVersion);
+            this.Controls.Add(this.textBoxVersion);
+            this.Controls.Add(this.buttonAssignTrack);
             this.Controls.Add(this.labelTrackAssign);
             this.Controls.Add(this.labelTrackUnassign);
             this.Controls.Add(this.comboBoxTrackAssign);
@@ -349,7 +370,9 @@
         private System.Windows.Forms.ComboBox comboBoxTrackAssign;
         private System.Windows.Forms.Label labelTrackUnassign;
         private System.Windows.Forms.Label labelTrackAssign;
-        private System.Windows.Forms.Button buttonUnassignTrack;
+        private System.Windows.Forms.Button buttonAssignTrack;
+        private System.Windows.Forms.TextBox textBoxVersion;
+        private System.Windows.Forms.Label labelVersion;
     }
 }
 
