@@ -510,14 +510,21 @@ namespace ApkUploader
                         EditsResource edits = service.Edits;
                         EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
                         AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
-                        Track trackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
-                        sb.AppendLine($"Track: {track}");
-                        foreach (int? version in trackResponse.VersionCodes)
+                        try
                         {
-                            if (version != null)
+                            Track trackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
+                            sb.AppendLine($"Track: {track}");
+                            foreach (int? version in trackResponse.VersionCodes)
                             {
-                                sb.AppendLine($"Version: {version.Value}");
+                                if (version != null)
+                                {
+                                    sb.AppendLine($"Version: {version.Value}");
+                                }
                             }
+                        }
+                        catch (Exception)
+                        {
+                            sb.AppendLine($"No version for track: {track}");
                         }
 
                         Track assignTrack = new Track { VersionCodes = new List<int?>() };
