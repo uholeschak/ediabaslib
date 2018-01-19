@@ -389,6 +389,25 @@ namespace ApkUploader
                                         {
                                             // ignored
                                         }
+
+                                        try
+                                        {
+                                            ApkListingsListResponse listingsResponse = await edits.Apklistings.List(PackageName, appEdit.Id, version.Value).ExecuteAsync(_cts.Token);
+                                            if (listingsResponse.Listings != null)
+                                            {
+                                                foreach (ApkListing listing in listingsResponse.Listings)
+                                                {
+                                                    string changes = listing.RecentChanges ?? string.Empty;
+                                                    changes = changes.Replace("\n", "\\n");
+                                                    sb.AppendLine($"Changes ({listing.Language}): {changes}");
+                                                }
+                                            }
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            Console.WriteLine(e);
+                                            throw;
+                                        }
                                     }
                                     else
                                     {
