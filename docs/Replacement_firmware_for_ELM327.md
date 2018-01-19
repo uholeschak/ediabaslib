@@ -14,7 +14,7 @@ There is now a replacement firmware available for ELM327L based Bluetooth and Wi
 
 ## Buy an adapter
 New adapters are available.  
-You could buy the [Bluetooth and WiFi adapter](http://www.ebay.de/itm/http://www.ebay.de/itm/http://www.ebay.de/itm/253352759289) from EBAY.  
+You could buy the [Bluetooth and WiFi adapter](http://www.ebay.de/itm/http://www.ebay.de/itm/http://www.ebay.de/itm/253378498679) from EBAY.  
 For BMW F-models use the [ENET WiFi Adapter](ENET_WiFi_Adapter.md).
 
 ## Factory reset
