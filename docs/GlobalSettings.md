@@ -23,10 +23,15 @@ This page allows to change some global app settings.
   * _Double click required for app exit_: A double click on the back button is required to exit the app.
 * _Broadcast_ options:
   * _Send data broadcasts_: Data is broadcasted to other apps (see [Broadcasts](Page_specification.md#broadcasts)).
+* _CPU usage_ options:
+  * _Check cpu usage at start_: Check CPU usage at program startup. This requires some time. I high CPU use could cause communication problems.
+* _Check ECU files_ options:
+  * _Check ECU files at startup_: Check if all ECU files are present and have the correct size. This is time consuming. If you are are sure the ECU files will not get damaged you could disable this option.
 * _Storage media_ options:
   * _Default or storage location_: If the default storage media for the ECU files is not appropriate, a different media could be selected here.  
   The application storage directory on the media will be always fixed to _de.holeschak.bmw_deep_obd_.
 * _Debug_ options:
   * _Collect debug information for trace files_: More data is collected while reading vehicle information to improve trace files.
+  * _Bluetooth HCI snoop log file_: Current Bluetooth HCI snoop log file name. You could enable HCI snoop logging with the button _Configure snoop log_.
 
 ![Global settings](GlobalSettings_AppGlobalSettingsSmall.png)
