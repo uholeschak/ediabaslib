@@ -75,6 +75,7 @@ namespace ApkUploader
             bool enable = _serviceThread == null;
             buttonListApks.Enabled = enable;
             buttonListTracks.Enabled = enable;
+            buttonUpdateChanges.Enabled = enable;
             buttonUploadApk.Enabled = enable;
             buttonChangeTrack.Enabled = enable;
             buttonAssignTrack.Enabled = enable;
@@ -584,6 +585,79 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool UpdateChanges(string track, List<UpdateInfo> apkChanges)
+        {
+            if (_serviceThread != null)
+            {
+                return false;
+            }
+
+            if (apkChanges == null)
+            {
+                UpdateStatus("No language changes info");
+                return false;
+            }
+
+            UpdateStatus(string.Empty);
+            _cts = new CancellationTokenSource();
+            _serviceThread = new Thread(async () =>
+            {
+                UpdateStatus(string.Empty);
+                StringBuilder sb = new StringBuilder();
+                try
+                {
+                    UserCredential credential = await GetCredatials();
+                    using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(credential)))
+                    {
+                        EditsResource edits = service.Edits;
+                        EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
+                        AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
+                        Track trackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
+                        sb.AppendLine($"Track: {track}");
+                        if (trackResponse.VersionCodes.Count != 1 || !trackResponse.VersionCodes[0].HasValue)
+                        {
+                            sb.AppendLine($"Invalid version count: {trackResponse.VersionCodes.Count}");
+                            UpdateStatus(sb.ToString());
+                            throw new Exception("Invalid version count");
+                        }
+                        int currentVersion = trackResponse.VersionCodes[0].Value;
+                        sb.AppendLine($"Version: {currentVersion}");
+                        UpdateStatus(sb.ToString());
+
+                        foreach (UpdateInfo updateInfo in apkChanges)
+                        {
+                            ApkListing apkListing = new ApkListing
+                            {
+                                RecentChanges = updateInfo.Changes
+                            };
+                            await edits.Apklistings.Update(apkListing, PackageName, appEdit.Id, currentVersion, updateInfo.Language).ExecuteAsync(_cts.Token);
+                            sb.AppendLine($"Changes for language {updateInfo.Language} updated");
+                            UpdateStatus(sb.ToString());
+                        }
+
+                        EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
+                        AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
+                        sb.AppendLine($"App edit committed: {appEditCommit.Id}");
+                        UpdateStatus(sb.ToString());
+                    }
+                }
+                catch (Exception e)
+                {
+                    sb.AppendLine($"Exception: {e.Message}");
+                }
+                finally
+                {
+                    _serviceThread = null;
+                    _cts.Dispose();
+                    UpdateStatus(sb.ToString());
+                }
+            });
+            _serviceThread.Start();
+
+            return true;
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private bool UploadApk(string apkFileName, string expansionFileName, string track, List<UpdateInfo> apkChanges)
         {
             if (_serviceThread != null)
@@ -814,6 +888,21 @@ namespace ApkUploader
         private void buttonListTracks_Click(object sender, EventArgs e)
         {
             ListTracks();
+        }
+
+        private void buttonUpdateChanges_Click(object sender, EventArgs e)
+        {
+            List<UpdateInfo> apkChanges = null;
+            if (!string.IsNullOrWhiteSpace(textBoxResourceFolder.Text))
+            {
+                apkChanges = ReadUpdateInfo(textBoxResourceFolder.Text);
+                if (apkChanges == null)
+                {
+                    UpdateStatus("Reading resources failed!");
+                    return;
+                }
+            }
+            UpdateChanges(comboBoxTrackAssign.Text, apkChanges);
         }
 
         private void buttonChangeTrack_Click(object sender, EventArgs e)

@@ -55,6 +55,7 @@
             this.buttonAssignTrack = new System.Windows.Forms.Button();
             this.textBoxVersion = new System.Windows.Forms.TextBox();
             this.labelVersion = new System.Windows.Forms.Label();
+            this.buttonUpdateChanges = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxStatus
@@ -66,7 +67,7 @@
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(681, 341);
+            this.textBoxStatus.Size = new System.Drawing.Size(888, 341);
             this.textBoxStatus.TabIndex = 0;
             this.textBoxStatus.TabStop = false;
             // 
@@ -84,7 +85,7 @@
             // 
             this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonClose.Location = new System.Drawing.Point(618, 534);
+            this.buttonClose.Location = new System.Drawing.Point(825, 534);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
             this.buttonClose.TabIndex = 1;
@@ -96,7 +97,7 @@
             // 
             this.buttonAbort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAbort.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonAbort.Location = new System.Drawing.Point(537, 534);
+            this.buttonAbort.Location = new System.Drawing.Point(744, 534);
             this.buttonAbort.Name = "buttonAbort";
             this.buttonAbort.Size = new System.Drawing.Size(75, 23);
             this.buttonAbort.TabIndex = 2;
@@ -109,7 +110,7 @@
             this.buttonUploadApk.Location = new System.Drawing.Point(254, 41);
             this.buttonUploadApk.Name = "buttonUploadApk";
             this.buttonUploadApk.Size = new System.Drawing.Size(115, 23);
-            this.buttonUploadApk.TabIndex = 7;
+            this.buttonUploadApk.TabIndex = 8;
             this.buttonUploadApk.Text = "Upload Apk";
             this.buttonUploadApk.UseVisualStyleBackColor = true;
             this.buttonUploadApk.Click += new System.EventHandler(this.buttonUploadApk_Click);
@@ -132,10 +133,10 @@
             // buttonSelectApk
             // 
             this.buttonSelectApk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSelectApk.Location = new System.Drawing.Point(663, 81);
+            this.buttonSelectApk.Location = new System.Drawing.Point(870, 81);
             this.buttonSelectApk.Name = "buttonSelectApk";
             this.buttonSelectApk.Size = new System.Drawing.Size(30, 23);
-            this.buttonSelectApk.TabIndex = 9;
+            this.buttonSelectApk.TabIndex = 10;
             this.buttonSelectApk.Text = "...";
             this.buttonSelectApk.UseVisualStyleBackColor = true;
             this.buttonSelectApk.Click += new System.EventHandler(this.buttonSelectApk_Click);
@@ -155,8 +156,8 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxApkFile.Location = new System.Drawing.Point(12, 83);
             this.textBoxApkFile.Name = "textBoxApkFile";
-            this.textBoxApkFile.Size = new System.Drawing.Size(645, 20);
-            this.textBoxApkFile.TabIndex = 8;
+            this.textBoxApkFile.Size = new System.Drawing.Size(852, 20);
+            this.textBoxApkFile.TabIndex = 9;
             // 
             // labelObbFile
             // 
@@ -173,16 +174,16 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxObbFile.Location = new System.Drawing.Point(12, 122);
             this.textBoxObbFile.Name = "textBoxObbFile";
-            this.textBoxObbFile.Size = new System.Drawing.Size(645, 20);
-            this.textBoxObbFile.TabIndex = 10;
+            this.textBoxObbFile.Size = new System.Drawing.Size(852, 20);
+            this.textBoxObbFile.TabIndex = 11;
             // 
             // buttonSelectObb
             // 
             this.buttonSelectObb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSelectObb.Location = new System.Drawing.Point(663, 120);
+            this.buttonSelectObb.Location = new System.Drawing.Point(870, 120);
             this.buttonSelectObb.Name = "buttonSelectObb";
             this.buttonSelectObb.Size = new System.Drawing.Size(30, 23);
-            this.buttonSelectObb.TabIndex = 11;
+            this.buttonSelectObb.TabIndex = 12;
             this.buttonSelectObb.Text = "...";
             this.buttonSelectObb.UseVisualStyleBackColor = true;
             this.buttonSelectObb.Click += new System.EventHandler(this.buttonSelectObb_Click);
@@ -211,16 +212,16 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxResourceFolder.Location = new System.Drawing.Point(12, 161);
             this.textBoxResourceFolder.Name = "textBoxResourceFolder";
-            this.textBoxResourceFolder.Size = new System.Drawing.Size(645, 20);
-            this.textBoxResourceFolder.TabIndex = 12;
+            this.textBoxResourceFolder.Size = new System.Drawing.Size(852, 20);
+            this.textBoxResourceFolder.TabIndex = 13;
             // 
             // buttonSelectResourceFolder
             // 
             this.buttonSelectResourceFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSelectResourceFolder.Location = new System.Drawing.Point(663, 159);
+            this.buttonSelectResourceFolder.Location = new System.Drawing.Point(870, 159);
             this.buttonSelectResourceFolder.Name = "buttonSelectResourceFolder";
             this.buttonSelectResourceFolder.Size = new System.Drawing.Size(30, 23);
-            this.buttonSelectResourceFolder.TabIndex = 13;
+            this.buttonSelectResourceFolder.TabIndex = 14;
             this.buttonSelectResourceFolder.Text = "...";
             this.buttonSelectResourceFolder.UseVisualStyleBackColor = true;
             this.buttonSelectResourceFolder.Click += new System.EventHandler(this.buttonSelectResourceFolder_Click);
@@ -230,7 +231,7 @@
             this.buttonChangeTrack.Location = new System.Drawing.Point(12, 41);
             this.buttonChangeTrack.Name = "buttonChangeTrack";
             this.buttonChangeTrack.Size = new System.Drawing.Size(115, 23);
-            this.buttonChangeTrack.TabIndex = 5;
+            this.buttonChangeTrack.TabIndex = 6;
             this.buttonChangeTrack.Text = "Change Track";
             this.buttonChangeTrack.UseVisualStyleBackColor = true;
             this.buttonChangeTrack.Click += new System.EventHandler(this.buttonChangeTrack_Click);
@@ -240,26 +241,26 @@
             this.comboBoxTrackUnassign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxTrackUnassign.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxTrackUnassign.FormattingEnabled = true;
-            this.comboBoxTrackUnassign.Location = new System.Drawing.Point(557, 43);
+            this.comboBoxTrackUnassign.Location = new System.Drawing.Point(764, 43);
             this.comboBoxTrackUnassign.Name = "comboBoxTrackUnassign";
             this.comboBoxTrackUnassign.Size = new System.Drawing.Size(100, 21);
-            this.comboBoxTrackUnassign.TabIndex = 16;
+            this.comboBoxTrackUnassign.TabIndex = 17;
             // 
             // comboBoxTrackAssign
             // 
             this.comboBoxTrackAssign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxTrackAssign.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxTrackAssign.FormattingEnabled = true;
-            this.comboBoxTrackAssign.Location = new System.Drawing.Point(557, 14);
+            this.comboBoxTrackAssign.Location = new System.Drawing.Point(764, 14);
             this.comboBoxTrackAssign.Name = "comboBoxTrackAssign";
             this.comboBoxTrackAssign.Size = new System.Drawing.Size(100, 21);
-            this.comboBoxTrackAssign.TabIndex = 15;
+            this.comboBoxTrackAssign.TabIndex = 16;
             // 
             // labelTrackUnassign
             // 
             this.labelTrackUnassign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelTrackUnassign.AutoSize = true;
-            this.labelTrackUnassign.Location = new System.Drawing.Point(468, 46);
+            this.labelTrackUnassign.Location = new System.Drawing.Point(675, 46);
             this.labelTrackUnassign.Name = "labelTrackUnassign";
             this.labelTrackUnassign.Size = new System.Drawing.Size(83, 13);
             this.labelTrackUnassign.TabIndex = 16;
@@ -269,7 +270,7 @@
             // 
             this.labelTrackAssign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelTrackAssign.AutoSize = true;
-            this.labelTrackAssign.Location = new System.Drawing.Point(480, 17);
+            this.labelTrackAssign.Location = new System.Drawing.Point(687, 17);
             this.labelTrackAssign.Name = "labelTrackAssign";
             this.labelTrackAssign.Size = new System.Drawing.Size(71, 13);
             this.labelTrackAssign.TabIndex = 17;
@@ -280,27 +281,37 @@
             this.buttonAssignTrack.Location = new System.Drawing.Point(133, 41);
             this.buttonAssignTrack.Name = "buttonAssignTrack";
             this.buttonAssignTrack.Size = new System.Drawing.Size(115, 23);
-            this.buttonAssignTrack.TabIndex = 6;
+            this.buttonAssignTrack.TabIndex = 7;
             this.buttonAssignTrack.Text = "Assign Track";
             this.buttonAssignTrack.UseVisualStyleBackColor = true;
             this.buttonAssignTrack.Click += new System.EventHandler(this.buttonAssignTrack_Click);
             // 
             // textBoxVersion
             // 
-            this.textBoxVersion.Location = new System.Drawing.Point(369, 14);
+            this.textBoxVersion.Location = new System.Drawing.Point(604, 14);
             this.textBoxVersion.Name = "textBoxVersion";
             this.textBoxVersion.Size = new System.Drawing.Size(49, 20);
-            this.textBoxVersion.TabIndex = 14;
+            this.textBoxVersion.TabIndex = 15;
             // 
             // labelVersion
             // 
             this.labelVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelVersion.AutoSize = true;
-            this.labelVersion.Location = new System.Drawing.Point(285, 17);
+            this.labelVersion.Location = new System.Drawing.Point(520, 17);
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(78, 13);
             this.labelVersion.TabIndex = 19;
             this.labelVersion.Text = "Version assign:";
+            // 
+            // buttonUpdateChanges
+            // 
+            this.buttonUpdateChanges.Location = new System.Drawing.Point(254, 12);
+            this.buttonUpdateChanges.Name = "buttonUpdateChanges";
+            this.buttonUpdateChanges.Size = new System.Drawing.Size(115, 23);
+            this.buttonUpdateChanges.TabIndex = 5;
+            this.buttonUpdateChanges.Text = "Update Translations";
+            this.buttonUpdateChanges.UseVisualStyleBackColor = true;
+            this.buttonUpdateChanges.Click += new System.EventHandler(this.buttonUpdateChanges_Click);
             // 
             // FormMain
             // 
@@ -308,7 +319,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
-            this.ClientSize = new System.Drawing.Size(705, 569);
+            this.ClientSize = new System.Drawing.Size(912, 569);
+            this.Controls.Add(this.buttonUpdateChanges);
             this.Controls.Add(this.labelVersion);
             this.Controls.Add(this.textBoxVersion);
             this.Controls.Add(this.buttonAssignTrack);
@@ -373,6 +385,7 @@
         private System.Windows.Forms.Button buttonAssignTrack;
         private System.Windows.Forms.TextBox textBoxVersion;
         private System.Windows.Forms.Label labelVersion;
+        private System.Windows.Forms.Button buttonUpdateChanges;
     }
 }
 
