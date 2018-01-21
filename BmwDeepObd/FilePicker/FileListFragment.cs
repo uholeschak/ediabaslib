@@ -27,6 +27,14 @@ namespace BmwDeepObd.FilePicker
             public InstanceData()
             {
                 DefaultInitialDirectory = ActivityCommon.ExternalWritePath;
+                if (string.IsNullOrEmpty(DefaultInitialDirectory))
+                {
+                    DefaultInitialDirectory = ActivityCommon.ExternalPath;
+                }
+                if (string.IsNullOrEmpty(DefaultInitialDirectory))
+                {
+                    DefaultInitialDirectory = @"/";
+                }
             }
             public string DefaultInitialDirectory { get; set; }
         }
@@ -50,7 +58,7 @@ namespace BmwDeepObd.FilePicker
                 _instanceData = ActivityCommon.GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
             }
 
-            string initDir = Activity.Intent.GetStringExtra(FilePickerActivity.ExtraInitDir) ?? ActivityCommon.ExternalWritePath;
+            string initDir = Activity.Intent.GetStringExtra(FilePickerActivity.ExtraInitDir) ?? string.Empty;
             if (Directory.Exists(initDir))
             {
                 try
