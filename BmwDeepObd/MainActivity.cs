@@ -1438,22 +1438,22 @@ namespace BmwDeepObd
             _instanceData.UserEcuFiles = false;
             if (string.IsNullOrEmpty(_activityCommon.CustomStorageMedia))
             {
-                if (string.IsNullOrEmpty(_activityCommon.ExternalWritePath))
+                if (string.IsNullOrEmpty(ActivityCommon.ExternalWritePath))
                 {
-                    if (string.IsNullOrEmpty(_activityCommon.ExternalPath))
+                    if (string.IsNullOrEmpty(ActivityCommon.ExternalPath))
                     {
                         Toast.MakeText(this, GetString(Resource.String.no_ext_storage), ToastLength.Long).Show();
                         Finish();
                     }
                     else
                     {
-                        _instanceData.AppDataPath = Path.Combine(_activityCommon.ExternalPath, AppFolderName);
+                        _instanceData.AppDataPath = Path.Combine(ActivityCommon.ExternalPath, AppFolderName);
                         _instanceData.EcuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
                     }
                 }
                 else
                 {
-                    _instanceData.AppDataPath = _activityCommon.ExternalWritePath;
+                    _instanceData.AppDataPath = ActivityCommon.ExternalWritePath;
                     _instanceData.EcuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
 #if !OBB_MODE
                     if (!ValidEcuFiles(_instanceData.EcuPath))
