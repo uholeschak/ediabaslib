@@ -393,6 +393,7 @@ namespace BmwDeepObd
         private readonly WifiManager _maWifi;
         private readonly ConnectivityManager _maConnectivity;
         private readonly UsbManager _usbManager;
+        private readonly Android.App.NotificationManager _notificationManager;
         private readonly PowerManager _powerManager;
         private readonly PackageManager _packageManager;
         private readonly Android.App.ActivityManager _activityManager;
@@ -626,6 +627,9 @@ namespace BmwDeepObd
 
         public UsbManager UsbManager => _usbManager;
 
+        // ReSharper disable once ConvertToAutoProperty
+        public Android.App.NotificationManager NotificationManager => _notificationManager;
+
         public PowerManager PowerManager => _powerManager;
 
         public PackageManager PackageManager => _packageManager;
@@ -660,6 +664,7 @@ namespace BmwDeepObd
             _maWifi = (WifiManager)context?.GetSystemService(Context.WifiService);
             _maConnectivity = (ConnectivityManager)context?.GetSystemService(Context.ConnectivityService);
             _usbManager = context?.GetSystemService(Context.UsbService) as UsbManager;
+            _notificationManager = context?.GetSystemService(Context.NotificationService) as Android.App.NotificationManager;
             _powerManager = context?.GetSystemService(Context.PowerService) as PowerManager;
             if (_powerManager != null)
             {
