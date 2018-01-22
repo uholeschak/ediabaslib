@@ -624,6 +624,9 @@ namespace ApkUploader
                         sb.AppendLine($"Version: {currentVersion}");
                         UpdateStatus(sb.ToString());
 
+                        await edits.Apklistings.Deleteall(PackageName, appEdit.Id, currentVersion).ExecuteAsync(_cts.Token);
+                        sb.AppendLine("All changes cleared");
+                        UpdateStatus(sb.ToString());
                         foreach (UpdateInfo updateInfo in apkChanges)
                         {
                             ApkListing apkListing = new ApkListing
