@@ -26,8 +26,19 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpA2fix: Invalid type");
             }
 
-            arg0.SetRawData((EdValueType)StringToValue(arg1.GetStringData()));
-            ediabas._flags.UpdateFlags(arg0.GetValueData(), arg0.GetDataLen());
+            Int64 value = StringToValue(arg1.GetStringData());
+            if (value < Int32.MinValue)
+            {
+                value = Int32.MinValue;
+            }
+            if (value > Int32.MaxValue)
+            {
+                value = 0xFFFFFFFF;
+            }
+            arg0.SetRawData((EdValueType)value);
+            ediabas._flags.Zero = false;
+            ediabas._flags.Sign = false;
+            ediabas._flags.Overflow = false;
         }
 
         // BEST2: ator
