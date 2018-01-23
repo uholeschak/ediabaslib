@@ -5914,7 +5914,13 @@ namespace EdiabasLib
                     {
                         if (!Char.IsLetter(numberLower[0]))
                         {
-                            value = Convert.ToInt64(numberLocal.TrimStart(), 10);
+                            string numberConv = numberLocal.TrimStart();
+                            int index = numberConv.IndexOfAny(new [] {'.', ','});
+                            if (index >= 0)
+                            {
+                                numberConv = numberConv.Substring(0, index);
+                            }
+                            value = Convert.ToInt64(numberConv, 10);
                         }
                     }
                 }
