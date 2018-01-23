@@ -83,6 +83,9 @@
     <Compile Include="..\EdiabasLib\MemoryStreamReaderCe.cs">
       <Link>MemoryStreamReaderCe.cs</Link>
     </Compile>
+    <Compile Include="..\EdiabasLib\TcpClientWithTimeout.cs">
+      <Link>TcpClientWithTimeout.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

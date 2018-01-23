@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Collections.Generic;
-
+// ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
 // ReSharper disable UseNullPropagation
 
@@ -488,7 +488,9 @@ namespace EdiabasLib
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                 return false;
             }
-            if (ReadCachedTransmission(sendData, out byte[] cachedResponse, out EdiabasNet.ErrorCodes cachedErrorCode))
+            byte[] cachedResponse;
+            EdiabasNet.ErrorCodes cachedErrorCode;
+            if (ReadCachedTransmission(sendData, out cachedResponse, out cachedErrorCode))
             {
                 if (cachedErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
@@ -508,7 +510,8 @@ namespace EdiabasLib
                     return false;
                 }
             }
-            EdiabasNet.ErrorCodes errorCode = ObdTrans(sendData, sendData.Length, ref RecBuffer, out int recLength);
+            int recLength;
+            EdiabasNet.ErrorCodes errorCode = ObdTrans(sendData, sendData.Length, ref RecBuffer, out recLength);
             if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
                 if (errorCode == EdiabasNet.ErrorCodes.EDIABAS_IFH_0003)
@@ -1273,7 +1276,8 @@ namespace EdiabasLib
 
         private void Nr78DictAdd(byte deviceAddr, bool enableLogging)
         {
-            if (Nr78Dict.TryGetValue(deviceAddr, out int retries))
+            int retries;
+            if (Nr78Dict.TryGetValue(deviceAddr, out retries))
             {
                 Nr78Dict.Remove(deviceAddr);
                 retries++;
