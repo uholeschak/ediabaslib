@@ -5584,6 +5584,42 @@ waitex_ok2:
 
 ////////////////////////////////////////////////////////////////////////
 
+job(  name      : TEST_A2FIX_FLAGS;
+      comment   : Test a2fix flags;
+   ) 
+{
+#asm
+					pars		S0, #1
+					move		L4, #17
+					clrc
+					a2fix		L4, S0
+#endasm
+	calc_flags();
+#asm
+					ergl		"VALUE", L4
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"PAR_S", S0
+#endasm
+
+#asm
+					enewset
+					pars		S0, #1
+					move		L4, #18
+					setc
+					a2fix		L4, S0
+#endasm
+	calc_flags();
+#asm
+					ergl		"VALUE", L4
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"PAR_S", S0
+#endasm
+}
+
+////////////////////////////////////////////////////////////////////////
+
 job(  name      : TEST_ERGSYI_FLAGS;
       comment   : Test ergsysi;
    ) 
