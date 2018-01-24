@@ -3803,7 +3803,7 @@ namespace EdiabasLib
                 objectName = jobInfo.UsesInfo.Name;
             }
 
-            Int64 sysResults = 0; 
+            Int64 sysResults = 0;
             string sysResultStr = GetConfigProperty("SystemResults");
             if (sysResultStr != null)
             {
