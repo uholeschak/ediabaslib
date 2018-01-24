@@ -250,11 +250,11 @@ namespace BmwDeepObd
         /// </summary>
         protected override void OnResume()
         {
+            base.OnResume();
+
             _activityActive = true;
             _downloaderServiceConnection?.Connect(this);
             RequestStoragePermissions();
-
-            base.OnResume();
         }
 
         /// <summary>
@@ -262,10 +262,10 @@ namespace BmwDeepObd
         /// </summary>
         protected override void OnStop()
         {
+            base.OnStop();
+
             _downloaderServiceConnection?.Disconnect(this);
             _activityActive = false;
-
-            base.OnStop();
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
