@@ -404,10 +404,9 @@ namespace ApkUploader
                                                 }
                                             }
                                         }
-                                        catch (Exception e)
+                                        catch (Exception)
                                         {
-                                            Console.WriteLine(e);
-                                            throw;
+                                            // ignored
                                         }
                                     }
                                     else
@@ -486,6 +485,20 @@ namespace ApkUploader
                         await edits.Tracks.Update(unassignTrack, PackageName, appEdit.Id, fromTrack).ExecuteAsync();
                         sb.AppendLine($"Unassigned from track: {fromTrack}");
                         UpdateStatus(sb.ToString());
+
+                        ApkListingsListResponse listingsResponse = await edits.Apklistings.List(PackageName, appEdit.Id, currentVersion).ExecuteAsync(_cts.Token);
+                        if (listingsResponse.Listings != null)
+                        {
+                            foreach (ApkListing listing in listingsResponse.Listings)
+                            {
+                                if (listing.RecentChanges != null)
+                                {
+                                    await edits.Apklistings.Update(listing, PackageName, appEdit.Id, currentVersion, listing.Language).ExecuteAsync(_cts.Token);
+                                    sb.AppendLine($"Changes for language {listing.Language} updated");
+                                    UpdateStatus(sb.ToString());
+                                }
+                            }
+                        }
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
                         AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
