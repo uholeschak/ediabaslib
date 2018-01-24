@@ -402,7 +402,16 @@ namespace BmwDeepObd
                 packageVersion = packageInfo.VersionCode;
             }
             string obbFile = null;
-            Java.IO.File[] obbDirs = context.GetObbDirs();
+            Java.IO.File[] obbDirs;
+            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+            {
+                obbDirs = context.GetObbDirs();
+            }
+            else
+            {
+                obbDirs = new [] { context.ObbDir };
+            }
             foreach (Java.IO.File dir in obbDirs)
             {
                 try
