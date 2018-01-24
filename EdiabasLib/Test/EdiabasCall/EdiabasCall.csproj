@@ -35,9 +35,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="apiNET32">
-      <HintPath>$(EDIABAS_PATH)\Bin\apiNET32.dll</HintPath>
-    </Reference>
     <Reference Include="NDesk.Options">
       <HintPath>.\NDesk.Options.dll</HintPath>
     </Reference>
@@ -55,6 +52,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\apiNET32\apiNET32.csproj">
+      <Project>{a210da60-5efe-4373-a553-7c7f746bdd81}</Project>
+      <Name>apiNET32</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
