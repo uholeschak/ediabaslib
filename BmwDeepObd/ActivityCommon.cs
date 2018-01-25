@@ -415,6 +415,7 @@ namespace BmwDeepObd
         private AlertDialog _selectMediaAlertDialog;
         private AlertDialog _selectInterfaceAlertDialog;
         private AlertDialog _selectManufacturerAlertDialog;
+        private AlertDialog _ftdiWarningAlertDialog;
         private CustomProgressDialog _translateProgress;
         private WebClient _translateWebClient;
         private bool _translateLockAquired;
@@ -2461,14 +2462,35 @@ namespace BmwDeepObd
             }
             if (usbDevice != null)
             {
-                Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_context, 0, new Intent(ActionUsbPermission), 0);
-                try
+                if (EdFtdiInterface.IsValidUsbDevice(usbDevice, out bool fakeDevice))
                 {
-                    _usbManager.RequestPermission(usbDevice, intent);
-                }
-                catch (Exception)
-                {
-                    // seems to crash on Samsung 5.1.1 with android.permission.sec.MDM_APP_MGMT
+                    if (fakeDevice)
+                    {
+                        if (_ftdiWarningAlertDialog == null)
+                        {
+                            _ftdiWarningAlertDialog = new AlertDialog.Builder(_context)
+                                .SetNeutralButton(Resource.String.button_ok, (sender, args) =>
+                                {
+                                })
+                                .SetCancelable(true)
+                                .SetMessage(Resource.String.ftdi_fake_device)
+                                .SetTitle(Resource.String.alert_title_warning)
+                                .Show();
+                            _ftdiWarningAlertDialog.DismissEvent += (sender, args) =>
+                            {
+                                _ftdiWarningAlertDialog = null;
+                            };
+                        }
+                    }
+                    Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_context, 0, new Intent(ActionUsbPermission), 0);
+                    try
+                    {
+                        _usbManager.RequestPermission(usbDevice, intent);
+                    }
+                    catch (Exception)
+                    {
+                        // seems to crash on Samsung 5.1.1 with android.permission.sec.MDM_APP_MGMT
+                    }
                 }
             }
         }

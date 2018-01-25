@@ -69,8 +69,7 @@ namespace EdiabasLib
             }
             try
             {
-                ConnectParameterType connectParameter = parameter as ConnectParameterType;
-                if (connectParameter == null)
+                if (!(parameter is ConnectParameterType connectParameter))
                 {
                     return false;
                 }
@@ -132,8 +131,7 @@ namespace EdiabasLib
                 _usbPort = driver.Ports[0];
                 _usbPort.Open(connection);
                 _usbPort.SetParameters(9600, 8, StopBits.One, Parity.None);
-                FtdiSerialDriver.FtdiSerialPort ftdiPort = _usbPort as FtdiSerialDriver.FtdiSerialPort;
-                if (ftdiPort != null)
+                if (_usbPort is FtdiSerialDriver.FtdiSerialPort ftdiPort)
                 {
                     ftdiPort.LatencyTimer = LatencyTime;
                     if (ftdiPort.LatencyTimer != LatencyTime)
@@ -509,11 +507,25 @@ namespace EdiabasLib
 
         public static bool IsValidUsbDevice(UsbDevice usbDevice)
         {
+            return IsValidUsbDevice(usbDevice, out bool _);
+        }
+
+        public static bool IsValidUsbDevice(UsbDevice usbDevice, out bool fakeDevice)
+        {
+            fakeDevice = false;
             if (usbDevice != null)
             {
-                if (usbDevice.VendorId == 0x0403 && usbDevice.ProductId == 0x6001)
+                if (usbDevice.VendorId == 0x0403)
                 {
-                    return true;
+                    switch (usbDevice.ProductId)
+                    {
+                        case 0x6001:
+                            return true;
+
+                        case 0x0000:
+                            fakeDevice = true;
+                            return true;
+                    }
                 }
             }
             return false;
