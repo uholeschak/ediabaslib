@@ -30,7 +30,6 @@ using EdiabasLib;
 using Java.Interop;
 using Mono.CSharp;
 // ReSharper disable MergeCastWithTypeCheck
-// ReSharper disable UsePatternMatching
 
 #if APP_USB_FILTER
 [assembly: Android.App.UsesFeature("android.hardware.usb.host")]
@@ -1509,16 +1508,23 @@ namespace BmwDeepObd
                 }
 
                 case UsbManager.ActionUsbDeviceAttached:
+                    if (_activityActive)
                     {
-                        UsbDevice usbDevice = intent.GetParcelableExtra(UsbManager.ExtraDevice) as UsbDevice;
-                        if (EdFtdiInterface.IsValidUsbDevice(usbDevice))
+                        if (intent.GetParcelableExtra(UsbManager.ExtraDevice) is UsbDevice usbDevice)
                         {
                             _activityCommon.RequestUsbPermission(usbDevice);
                             UpdateOptionsMenu();
                             UpdateDisplay();
                         }
-                        break;
                     }
+                    break;
+
+                case UsbManager.ActionUsbDeviceDetached:
+                    if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Ftdi)
+                    {
+                        StopEdiabasThread(false);
+                    }
+                    break;
             }
         }
 
@@ -3797,8 +3803,7 @@ namespace BmwDeepObd
             public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
             {
                 View view = inflater.Inflate(_resourceId, null);
-                ActivityMain activityMain = Activity as ActivityMain;
-                if (activityMain != null && activityMain == ActivityCommon.ActivityMainCurrent)
+                if (Activity is ActivityMain activityMain && activityMain == ActivityCommon.ActivityMainCurrent)
                 {
                     if (_pageInfoIndex >= 0 && _pageInfoIndex < ActivityCommon.JobReader.PageList.Count)
                     {
@@ -3836,8 +3841,7 @@ namespace BmwDeepObd
             {
                 base.OnDestroyView();
 
-                ActivityMain activityMain = Activity as ActivityMain;
-                if (activityMain != null && activityMain == ActivityCommon.ActivityMainCurrent &&
+                if (Activity is ActivityMain activityMain && activityMain == ActivityCommon.ActivityMainCurrent &&
                     _pageInfoIndex >= 0 && _pageInfoIndex < ActivityCommon.JobReader.PageList.Count)
                 {
                     JobReader.PageInfo pageInfo = ActivityCommon.JobReader.PageList[_pageInfoIndex];

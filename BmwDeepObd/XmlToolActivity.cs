@@ -4304,8 +4304,23 @@ namespace BmwDeepObd
             string action = intent.Action;
             switch (action)
             {
+                case UsbManager.ActionUsbDeviceAttached:
+                    if (_activityActive)
+                    {
+                        if (intent.GetParcelableExtra(UsbManager.ExtraDevice) is UsbDevice usbDevice)
+                        {
+                            _activityCommon.RequestUsbPermission(usbDevice);
+                            UpdateOptionsMenu();
+                            UpdateDisplay();
+                        }
+                    }
+                    break;
+
                 case UsbManager.ActionUsbDeviceDetached:
-                    EdiabasClose();
+                    if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Ftdi)
+                    {
+                        EdiabasClose();
+                    }
                     break;
             }
         }

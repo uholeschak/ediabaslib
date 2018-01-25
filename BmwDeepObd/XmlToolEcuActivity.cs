@@ -6,6 +6,7 @@ using System.Threading;
 using System.Text;
 using Android.Content;
 using Android.Content.Res;
+using Android.Hardware.Usb;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
@@ -169,6 +170,7 @@ namespace BmwDeepObd
         private ResultInfo _selectedResult;
         private EdiabasNet _ediabas;
         private Thread _jobThread;
+        private bool _activityActive;
         private bool _ediabasJobAbort;
         private string _ecuDir;
         private string _traceDir;
@@ -195,7 +197,10 @@ namespace BmwDeepObd
 
             SetResult(Android.App.Result.Canceled);
 
-            _activityCommon = new ActivityCommon(this);
+            _activityCommon = new ActivityCommon(this, () =>
+            {
+
+            }, BroadcastReceived);
 
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _traceDir = Intent.GetStringExtra(ExtraTraceDir);
@@ -380,6 +385,18 @@ namespace BmwDeepObd
             {
                 _activityCommon.StartMtcService();
             }
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            _activityActive = true;
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+            _activityActive = false;
         }
 
         protected override void OnStop()
@@ -606,6 +623,34 @@ namespace BmwDeepObd
                 return true;
             }
             return false;
+        }
+
+        private void BroadcastReceived(Context context, Intent intent)
+        {
+            if (intent == null)
+            {   // from usb check timer
+                return;
+            }
+            string action = intent.Action;
+            switch (action)
+            {
+                case UsbManager.ActionUsbDeviceAttached:
+                    if (_activityActive)
+                    {
+                        if (intent.GetParcelableExtra(UsbManager.ExtraDevice) is UsbDevice usbDevice)
+                        {
+                            _activityCommon.RequestUsbPermission(usbDevice);
+                        }
+                    }
+                    break;
+
+                case UsbManager.ActionUsbDeviceDetached:
+                    if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Ftdi)
+                    {
+                        EdiabasClose();
+                    }
+                    break;
+            }
         }
 
         private void UpdateDisplay()
