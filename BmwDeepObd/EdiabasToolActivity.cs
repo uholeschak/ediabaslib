@@ -1773,6 +1773,7 @@ namespace BmwDeepObd
                         {
                             _instanceData.CommErrorsOccured = true;
                         }
+                        _runContinuous = false;
                     }
 
                     RunOnUiThread(() =>
@@ -1805,6 +1806,10 @@ namespace BmwDeepObd
                     if (IsJobRunning())
                     {
                         _jobThread.Join();
+                    }
+                    if (!_activityCommon.IsInterfaceAvailable())
+                    {
+                        EdiabasClose();
                     }
                     _activityCommon.SetLock(ActivityCommon.LockType.None);
                     UpdateOptionsMenu();
