@@ -448,6 +448,7 @@ namespace BmwDeepObd
             {
                 HandleStartDialogs();
             }
+            _activityCommon.RequestUsbPermission(null);
         }
 
         protected override void OnPause()

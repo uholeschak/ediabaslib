@@ -242,7 +242,7 @@
   <string name="connected_with_wifi_adapter">Sie sind im Moment mit einem Wi-Fi Adapter verbunden.\nFür den Internetzugriff muss der Adapter getrennt werden.\nWollen Sie Wi-Fi jetzt ausschalten?</string>
 
   <!-- USB -->
-  <string name="ftdi_fake_device">Der angeschlossene USB Adapter verwendet ein deaktivierten gefälschten FT232R Chip,\nfür eine stabile Verbindung werden nur original FTDI Chips empfohlen.</string>
+  <string name="ftdi_fake_device">Der angeschlossene USB Adapter verwendet ein deaktivierten gefälschten FT232R Chip.\nFür eine stabile Verbindung werden nur original FTDI Chips empfohlen.</string>
 
   <!-- ENET ip selection -->
   <string name="select_enet_ip_search">Fahrzeuge suchen</string>

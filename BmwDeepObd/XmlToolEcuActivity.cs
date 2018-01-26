@@ -391,6 +391,7 @@ namespace BmwDeepObd
         {
             base.OnResume();
             _activityActive = true;
+            _activityCommon.RequestUsbPermission(null);
         }
 
         protected override void OnPause()

@@ -243,7 +243,7 @@
 
   <!-- USB -->
   <!--Tranlate-->
-  <string name="ftdi_fake_device">The connected USB adapter uses a disabled fake FT232R chip,\nfor a stable connection it is recommended to use only original FTDI chips.</string>
+  <string name="ftdi_fake_device">The connected USB adapter uses a disabled fake FT232R chip.\nFor a stable connection it is recommended to use only original FTDI chips.</string>
 
   <!-- ENET ip selection -->
   <string name="select_enet_ip_search">Поиск автомобиля</string>

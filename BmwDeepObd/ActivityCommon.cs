@@ -428,6 +428,7 @@ namespace BmwDeepObd
         private Dictionary<string, List<string>> _vagDtcCodeDict;
         private string _lastEnetSsid = string.Empty;
         private bool? _lastInvertfaceAvailable;
+        private bool _usbPermissionRequested;
 
         public bool Emulator { get; }
 
@@ -2448,6 +2449,10 @@ namespace BmwDeepObd
             {
                 return;
             }
+            if (_usbPermissionRequested)
+            {
+                return;
+            }
             if (usbDevice == null)
             {
                 List<IUsbSerialDriver> availableDrivers = EdFtdiInterface.GetDriverList(_usbManager);
@@ -2486,6 +2491,7 @@ namespace BmwDeepObd
                     try
                     {
                         _usbManager.RequestPermission(usbDevice, intent);
+                        _usbPermissionRequested = true;
                     }
                     catch (Exception)
                     {
@@ -5326,6 +5332,7 @@ namespace BmwDeepObd
                         }
 
                     case ActionUsbPermission:
+                        _activityCommon._usbPermissionRequested = false;
                         if (intent.GetBooleanExtra(UsbManager.ExtraPermissionGranted, false))
                         {
                             _activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
