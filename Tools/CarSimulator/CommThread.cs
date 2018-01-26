@@ -4038,8 +4038,7 @@ namespace CarSimulator
                     standardResponse = true;
                 }
             }
-#if true
-            else if (
+            else if (!_klineResponder &&
                 _receiveData[0] == 0x81 &&
                 _receiveData[1] == 0x00 &&
                 _receiveData[2] == 0x00)
@@ -4054,7 +4053,7 @@ namespace CarSimulator
                 Debug.WriteLine("Program CAN adapter");
                 standardResponse = true;
             }
-#endif
+
             bool useResponseList = false;
             if (standardResponse)
             {
