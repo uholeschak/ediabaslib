@@ -11,6 +11,8 @@ using Android.Widget;
 using EdiabasLib;
 using System.IO;
 using System.Net.Sockets;
+using Android.Content;
+using Android.Hardware.Usb;
 
 namespace BmwDeepObd
 {
@@ -67,6 +69,7 @@ namespace BmwDeepObd
         private TextView _textViewSerNum;
         private Button _buttonFwUpdate;
         private CheckBox _checkBoxExpert;
+        private bool _activityActive;
         private string _deviceAddress = string.Empty;
         private int _blockSize = -1;
         private int _separationTime = -1;
@@ -225,7 +228,9 @@ namespace BmwDeepObd
                 UpdateDisplay();
             };
 
-            _activityCommon = new ActivityCommon(this)
+            _activityCommon = new ActivityCommon(this, () =>
+            {
+            }, BroadcastReceived)
             {
                 SelectedInterface = interfaceType
             };
@@ -247,6 +252,19 @@ namespace BmwDeepObd
             {
                 _activityCommon.StartMtcService();
             }
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            _activityActive = true;
+            _activityCommon.RequestUsbPermission(null);
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+            _activityActive = false;
         }
 
         protected override void OnStop()
@@ -361,6 +379,35 @@ namespace BmwDeepObd
             }
             _adapterThread = null;
             return false;
+        }
+
+        private void BroadcastReceived(Context context, Intent intent)
+        {
+            if (intent == null)
+            {   // from usb check timer
+                return;
+            }
+            string action = intent.Action;
+            switch (action)
+            {
+                case UsbManager.ActionUsbDeviceAttached:
+                    if (_activityActive)
+                    {
+                        if (intent.GetParcelableExtra(UsbManager.ExtraDevice) is UsbDevice usbDevice)
+                        {
+                            _activityCommon.RequestUsbPermission(usbDevice);
+                            UpdateDisplay();
+                        }
+                    }
+                    break;
+
+                case UsbManager.ActionUsbDeviceDetached:
+                    if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Ftdi)
+                    {
+                        EdiabasClose();
+                    }
+                    break;
+            }
         }
 
         private void HideKeyboard()

@@ -219,7 +219,7 @@
   <string name="connected_with_wifi_adapter">You are currently connected to a Wi-Fi adapter.\nFor internet access disconnection of the adapter is required.\nDo you want to disable Wi-Fi now?</string>
 
   <!-- USB -->
-  <string name="ftdi_fake_device">The connected USB adapter uses a disabled fake FT232R chip,\nfor a stable connection it is recommended to use only original FTDI chips.</string>
+  <string name="ftdi_fake_device">The connected USB adapter uses a disabled fake FT232R chip.\nFor a stable connection it is recommended to use only original FTDI chips.</string>
 
   <!-- ENET ip selection -->
   <string name="select_enet_ip_search">Searching vehicles</string>

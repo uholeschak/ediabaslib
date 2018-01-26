@@ -500,6 +500,10 @@ namespace BmwDeepObd
             }
             UpdateOptionsMenu();
             UpdateDisplay();
+            if (_instanceData.StorageAccessGranted)
+            {
+                _activityCommon.RequestUsbPermission(null);
+            }
         }
 
         protected override void OnPause()
@@ -926,6 +930,10 @@ namespace BmwDeepObd
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {
+            if (_activityCommon == null)
+            {
+                return;
+            }
             switch (requestCode)
             {
                 case RequestPermissionExternalStorage:

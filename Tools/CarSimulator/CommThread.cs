@@ -4038,7 +4038,7 @@ namespace CarSimulator
                     standardResponse = true;
                 }
             }
-#if false
+#if true
             else if (
                 _receiveData[0] == 0x81 &&
                 _receiveData[1] == 0x00 &&
