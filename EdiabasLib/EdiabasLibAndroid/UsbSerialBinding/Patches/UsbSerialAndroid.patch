@@ -1,14 +1,5 @@
-From 00c36a65c3069340763c1fa1ea5464e779041d43 Mon Sep 17 00:00:00 2001
-From: uholeschak <ulrich@holeschak.de>
-Date: Sat, 19 Sep 2015 09:45:55 +0200
-Subject: [PATCH 1/2] Added missing functions: - latency timer - modem lines
-
----
- .../android/usbserial/driver/FtdiSerialDriver.java | 97 ++++++++++++++++++----
- 1 file changed, 83 insertions(+), 14 deletions(-)
-
 diff --git a/usbSerialForAndroid/src/main/java/com/hoho/android/usbserial/driver/FtdiSerialDriver.java b/usbSerialForAndroid/src/main/java/com/hoho/android/usbserial/driver/FtdiSerialDriver.java
-index 1a9a66b..eb064b5 100644
+index 1a9a66b..61155a2 100644
 --- a/usbSerialForAndroid/src/main/java/com/hoho/android/usbserial/driver/FtdiSerialDriver.java
 +++ b/usbSerialForAndroid/src/main/java/com/hoho/android/usbserial/driver/FtdiSerialDriver.java
 @@ -152,6 +152,11 @@ public class FtdiSerialDriver implements UsbSerialDriver {
@@ -89,7 +80,7 @@ index 1a9a66b..eb064b5 100644
 +
 +        public int getModemStatus() throws IOException {
 +            byte[] data = new byte[2];
-+            int result = mConnection.controlTransfer(FTDI_DEVICE_IN_REQTYPE, SIO_GET_LATENCY_TIMER_REQUEST,
++            int result = mConnection.controlTransfer(FTDI_DEVICE_IN_REQTYPE, SIO_GET_MODEM_STATUS_REQUEST,
 +                    0, 0 /* index */, data, data.length, USB_WRITE_TIMEOUT_MILLIS);
 +            if (result != 2) {
 +                throw new IOException("Get modem statusfailed: result=" + result);
@@ -187,32 +178,3 @@ index 1a9a66b..eb064b5 100644
          }
  
          @Override
--- 
-2.7.0.windows.1
-
-
-From 975e545354a8f844d47fe5172ea3ba1a04895432 Mon Sep 17 00:00:00 2001
-From: uholeschak <ulrich@holeschak.de>
-Date: Sat, 19 Sep 2015 11:05:42 +0200
-Subject: [PATCH 2/2] Fixed modem status
-
----
- .../main/java/com/hoho/android/usbserial/driver/FtdiSerialDriver.java   | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/usbSerialForAndroid/src/main/java/com/hoho/android/usbserial/driver/FtdiSerialDriver.java b/usbSerialForAndroid/src/main/java/com/hoho/android/usbserial/driver/FtdiSerialDriver.java
-index eb064b5..61155a2 100644
---- a/usbSerialForAndroid/src/main/java/com/hoho/android/usbserial/driver/FtdiSerialDriver.java
-+++ b/usbSerialForAndroid/src/main/java/com/hoho/android/usbserial/driver/FtdiSerialDriver.java
-@@ -287,7 +287,7 @@ public class FtdiSerialDriver implements UsbSerialDriver {
- 
-         public int getModemStatus() throws IOException {
-             byte[] data = new byte[2];
--            int result = mConnection.controlTransfer(FTDI_DEVICE_IN_REQTYPE, SIO_GET_LATENCY_TIMER_REQUEST,
-+            int result = mConnection.controlTransfer(FTDI_DEVICE_IN_REQTYPE, SIO_GET_MODEM_STATUS_REQUEST,
-                     0, 0 /* index */, data, data.length, USB_WRITE_TIMEOUT_MILLIS);
-             if (result != 2) {
-                 throw new IOException("Get modem statusfailed: result=" + result);
--- 
-2.7.0.windows.1
-
