@@ -10,7 +10,7 @@
     <RootNamespace>UsbSerialBinding</RootNamespace>
     <AssemblyName>UsbSerialBinding</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
+    <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
     <TargetFrameworkVersion>v8.0</TargetFrameworkVersion>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>UsbSerialBinding.snk</AssemblyOriginatorKeyFile>
