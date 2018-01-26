@@ -648,7 +648,11 @@ namespace BmwDeepObd
                 case UsbManager.ActionUsbDeviceDetached:
                     if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Ftdi)
                     {
-                        EdiabasClose();
+                        if (intent.GetParcelableExtra(UsbManager.ExtraDevice) is UsbDevice usbDevice &&
+                            EdFtdiInterface.IsValidUsbDevice(usbDevice))
+                        {
+                            EdiabasClose();
+                        }
                     }
                     break;
             }
