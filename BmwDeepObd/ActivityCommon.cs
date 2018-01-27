@@ -2458,16 +2458,12 @@ namespace BmwDeepObd
                 List<IUsbSerialDriver> availableDrivers = EdFtdiInterface.GetDriverList(_usbManager);
                 if (availableDrivers.Count > 0)
                 {
-                    UsbDevice device = availableDrivers[0].Device;
-                    if (!_usbManager.HasPermission(device))
-                    {
-                        usbDevice = device;
-                    }
+                    usbDevice = availableDrivers[0].Device;
                 }
             }
             if (usbDevice != null)
             {
-                if (EdFtdiInterface.IsValidUsbDevice(usbDevice, out bool fakeDevice))
+                if (!_usbManager.HasPermission(usbDevice) && EdFtdiInterface.IsValidUsbDevice(usbDevice, out bool fakeDevice))
                 {
                     if (fakeDevice)
                     {
