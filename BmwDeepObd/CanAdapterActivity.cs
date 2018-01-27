@@ -252,13 +252,13 @@ namespace BmwDeepObd
             {
                 _activityCommon.StartMtcService();
             }
+            _activityCommon.RequestUsbPermission(null);
         }
 
         protected override void OnResume()
         {
             base.OnResume();
             _activityActive = true;
-            _activityCommon.RequestUsbPermission(null);
         }
 
         protected override void OnPause()
