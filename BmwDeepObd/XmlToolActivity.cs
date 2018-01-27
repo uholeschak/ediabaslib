@@ -3603,6 +3603,11 @@ namespace BmwDeepObd
                     .Show();
                     return;
                 }
+                // wait for thread to finish
+                if (IsJobRunning())
+                {
+                    _jobThread.Join();
+                }
                 TranslateAndSelectJobs(ecuInfo);
             }
         }
