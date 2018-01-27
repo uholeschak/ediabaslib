@@ -1807,10 +1807,6 @@ namespace BmwDeepObd
                     {
                         _jobThread.Join();
                     }
-                    if (!_activityCommon.IsInterfaceAvailable())
-                    {
-                        EdiabasClose();
-                    }
                     _activityCommon.SetLock(ActivityCommon.LockType.None);
                     UpdateOptionsMenu();
                     UpdateDisplay();
@@ -1941,23 +1937,8 @@ namespace BmwDeepObd
                         if (intent.GetParcelableExtra(UsbManager.ExtraDevice) is UsbDevice usbDevice)
                         {
                             _activityCommon.RequestUsbPermission(usbDevice);
-                            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Ftdi)
-                            {
-                                ReadSgbd();
-                            }
                             UpdateOptionsMenu();
                             UpdateDisplay();
-                        }
-                    }
-                    break;
-
-                case UsbManager.ActionUsbDeviceDetached:
-                    if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Ftdi)
-                    {
-                        if (intent.GetParcelableExtra(UsbManager.ExtraDevice) is UsbDevice usbDevice &&
-                            EdFtdiInterface.IsValidUsbDevice(usbDevice))
-                        {
-                            EdiabasClose();
                         }
                     }
                     break;
