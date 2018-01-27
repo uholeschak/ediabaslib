@@ -434,6 +434,7 @@ namespace BmwDeepObd
             {
                 _activityCommon.StartMtcService();
             }
+            _activityCommon.RequestUsbPermission(null);
         }
 
         protected override void OnResume()
@@ -448,7 +449,6 @@ namespace BmwDeepObd
             {
                 HandleStartDialogs();
             }
-            _activityCommon.RequestUsbPermission(null);
         }
 
         protected override void OnPause()

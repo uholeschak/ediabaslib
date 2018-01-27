@@ -463,6 +463,10 @@ namespace BmwDeepObd
             base.OnStart();
 
             _activityCommon?.StartMtcService();
+            if (_instanceData.StorageAccessGranted)
+            {
+                _activityCommon?.RequestUsbPermission(null);
+            }
         }
 
         protected override void OnStop()
@@ -500,10 +504,6 @@ namespace BmwDeepObd
             }
             UpdateOptionsMenu();
             UpdateDisplay();
-            if (_instanceData.StorageAccessGranted)
-            {
-                _activityCommon.RequestUsbPermission(null);
-            }
         }
 
         protected override void OnPause()
