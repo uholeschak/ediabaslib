@@ -39,6 +39,11 @@ namespace EdiabasLib
         private static int _currentBaudRate;
         private static int _currentWordLength;
         private static EdInterfaceObd.SerialParity _currentParity = EdInterfaceObd.SerialParity.None;
+        private static bool _currentDtr;
+        private static bool _currentRts;
+        private static bool _reconnectRequired;
+        private static string _connectPort;
+        private static object _connectParameter;
 
         static EdFtdiInterface()
         {
@@ -69,6 +74,9 @@ namespace EdiabasLib
             }
             try
             {
+                _connectPort = port;
+                _connectParameter = parameter;
+
                 if (!(parameter is ConnectParameterType connectParameter))
                 {
                     return false;
@@ -163,6 +171,18 @@ namespace EdiabasLib
                     }
                 };
                 _serialIoManager.Start(UsbBlockSize);
+                if (_currentBaudRate != 0 && _currentWordLength != 0)
+                {
+                    if (InterfaceSetConfig(EdInterfaceObd.Protocol.Uart, _currentBaudRate, _currentWordLength, _currentParity, false) != EdInterfaceObd.InterfaceErrorResult.NoError)
+                    {
+                        InterfaceDisconnect();
+                        return false;
+                    }
+                    InterfaceSetDtr(_currentDtr);
+                    InterfaceSetRts(_currentRts);
+                }
+                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Connected");
+                _reconnectRequired = false;
             }
             catch (Exception)
             {
@@ -212,10 +232,6 @@ namespace EdiabasLib
             }
             try
             {
-                _currentBaudRate = baudRate;
-                _currentWordLength = dataBits;
-                _currentParity = parity;
-
                 Parity parityLocal;
                 switch (parity)
                 {
@@ -244,6 +260,10 @@ namespace EdiabasLib
                 }
 
                 _usbPort.SetParameters(baudRate, dataBits, StopBits.One, parityLocal);
+                _currentBaudRate = baudRate;
+                _currentWordLength = dataBits;
+                _currentParity = parity;
+
                 if (!_usbPort.PurgeHwBuffers(true, true))
                 {
                     return EdInterfaceObd.InterfaceErrorResult.ConfigError;
@@ -269,6 +289,7 @@ namespace EdiabasLib
             try
             {
                 _usbPort.DTR = dtr;
+                _currentDtr = dtr;
             }
             catch (Exception)
             {
@@ -286,6 +307,7 @@ namespace EdiabasLib
             try
             {
                 _usbPort.RTS = rts;
+                _currentRts = rts;
             }
             catch (Exception)
             {
@@ -333,6 +355,16 @@ namespace EdiabasLib
             }
             try
             {
+                if (_reconnectRequired)
+                {
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
+                    InterfaceDisconnect();
+                    if (!InterfaceConnect(_connectPort, _connectParameter))
+                    {
+                        _reconnectRequired = true;
+                        return false;
+                    }
+                }
                 if (!_usbPort.PurgeHwBuffers(true, false))
                 {
                     return false;
@@ -342,8 +374,10 @@ namespace EdiabasLib
                     ReadQueue.Clear();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                _reconnectRequired = true;
                 return false;
             }
 
@@ -362,6 +396,16 @@ namespace EdiabasLib
             }
             try
             {
+                if (_reconnectRequired)
+                {
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
+                    InterfaceDisconnect();
+                    if (!InterfaceConnect(_connectPort, _connectParameter))
+                    {
+                        _reconnectRequired = true;
+                        return false;
+                    }
+                }
                 int bytesWritten;
                 byte[] sendBuffer = new byte[length];
                 Array.Copy(sendData, sendBuffer, sendBuffer.Length);
@@ -401,8 +445,10 @@ namespace EdiabasLib
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                _reconnectRequired = true;
                 return false;
             }
 
@@ -441,13 +487,12 @@ namespace EdiabasLib
                         return false;
                     }
                 }
-                if (ediabasLog != null)
-                {
-                    ediabasLog.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, offset, recLen, "Rec ");
-                }
+                ediabasLog?.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, offset, recLen, "Rec ");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ediabasLog?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                _reconnectRequired = true;
                 return false;
             }
             return true;
@@ -499,8 +544,10 @@ namespace EdiabasLib
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                _reconnectRequired = true;
                 return false;
             }
         }
