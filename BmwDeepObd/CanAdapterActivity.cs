@@ -385,6 +385,10 @@ namespace BmwDeepObd
         {
             if (intent == null)
             {   // from usb check timer
+                if (_activityActive)
+                {
+                    _activityCommon.RequestUsbPermission(null);
+                }
                 return;
             }
             string action = intent.Action;
