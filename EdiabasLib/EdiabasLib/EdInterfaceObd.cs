@@ -2815,6 +2815,10 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
 #endif
             }
+            if (ParTransmitFunc == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0006;
+            }
 
             EdiabasNet.ErrorCodes errorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
             UInt32 retries = CommRepeatsProtected;
