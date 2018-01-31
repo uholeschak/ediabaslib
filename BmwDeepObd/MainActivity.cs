@@ -181,6 +181,7 @@ namespace BmwDeepObd
         private const long EcuZipSizeVag = 53000000;            // VAG ecu zip file size
         private const long EcuExtractSizeVag = 910000000;       // VAG extracted ecu files size
 #endif
+        private const int GaugeSize = 200;
         private const int CpuLoadCritical = 70;
         private const int RequestPermissionExternalStorage = 0;
         private readonly string[] _permissionsExternalStorage =
@@ -1730,7 +1731,8 @@ namespace BmwDeepObd
                 {
                     if (gridViewResult.Adapter == null)
                     {
-                        gridViewResult.Adapter = new ResultGridAdapter(this, 200);
+                        gridViewResult.Adapter = new ResultGridAdapter(this, GaugeSize);
+                        gridViewResult.SetColumnWidth(GaugeSize);
                     }
                     resultGridAdapter = gridViewResult.Adapter as ResultGridAdapter;
                 }
