@@ -20,8 +20,8 @@ namespace BmwDeepObd
         public ResultGridAdapter(Activity context, int gaugeSize)
         {
             _context = context;
-            _gaugePadding = 20 * _gaugeInnerSize / GaugeBaseSize;
-            _gaugeInnerSize = gaugeSize - 2 * _gaugePadding;
+            _gaugePadding = 20 * gaugeSize / GaugeBaseSize;
+            _gaugeInnerSize = gaugeSize - (2 * _gaugePadding);
             _items = new List<GridResultItem>();
         }
 
@@ -80,6 +80,7 @@ namespace BmwDeepObd
                         }
                     }
                     customGauge.Value = gaugeValue;
+                    customGauge.Init();
                 }
                 catch (Exception)
                 {
