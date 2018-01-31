@@ -14,12 +14,14 @@ namespace BmwDeepObd
         private readonly List<GridResultItem> _items;
         public List<GridResultItem> Items => _items;
         private readonly Activity _context;
-        private readonly int _gaugeSize;
+        private readonly int _gaugePadding;
+        private readonly int _gaugeInnerSize;
 
         public ResultGridAdapter(Activity context, int gaugeSize)
         {
             _context = context;
-            _gaugeSize = gaugeSize;
+            _gaugePadding = 20 * _gaugeInnerSize / GaugeBaseSize;
+            _gaugeInnerSize = gaugeSize - 2 * _gaugePadding;
             _items = new List<GridResultItem>();
         }
 
@@ -54,12 +56,14 @@ namespace BmwDeepObd
                 try
                 {
                     ViewGroup.LayoutParams layoutParams = customGauge.LayoutParameters;
-                    layoutParams.Width = _gaugeSize;
-                    layoutParams.Height = _gaugeSize;
+                    layoutParams.Width = _gaugeInnerSize;
+                    layoutParams.Height = _gaugeInnerSize;
                     customGauge.LayoutParameters = layoutParams;
 
+                    customGauge.SetPadding(_gaugePadding, _gaugePadding, _gaugePadding, _gaugePadding);
+
                     int strokeWidth = item.ResourceId == Resource.Layout.result_customgauge_square ? 20 : 10;
-                    customGauge.StrokeWidth = (float)strokeWidth * _gaugeSize / GaugeBaseSize;
+                    customGauge.StrokeWidth = (float)strokeWidth * _gaugeInnerSize / GaugeBaseSize;
                     int gaugeScale = customGauge.EndValue;
                     double range = item.MaxValue - item.MinValue;
                     int gaugeValue = 0;
@@ -89,9 +93,9 @@ namespace BmwDeepObd
                 try
                 {
                     RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) textViewGaugeValue.LayoutParameters;
-                    layoutParams.BottomMargin = 80 * _gaugeSize / GaugeBaseSize;
+                    layoutParams.BottomMargin = 80 * _gaugeInnerSize / GaugeBaseSize;
                     textViewGaugeValue.LayoutParameters = layoutParams;
-                    textViewGaugeValue.SetTextSize(ComplexUnitType.Dip, (float)30 * _gaugeSize / GaugeBaseSize);
+                    textViewGaugeValue.SetTextSize(ComplexUnitType.Dip, (float)30 * _gaugeInnerSize / GaugeBaseSize);
                     textViewGaugeValue.Text = item.ValueText;
                 }
                 catch (Exception)
@@ -106,9 +110,9 @@ namespace BmwDeepObd
                 try
                 {
                     RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)textViewGaugeName.LayoutParameters;
-                    layoutParams.TopMargin = -30 * _gaugeSize / GaugeBaseSize;
+                    layoutParams.TopMargin = -30 * _gaugeInnerSize / GaugeBaseSize;
                     textViewGaugeName.LayoutParameters = layoutParams;
-                    textViewGaugeName.SetTextSize(ComplexUnitType.Dip, (float)20 * _gaugeSize / GaugeBaseSize);
+                    textViewGaugeName.SetTextSize(ComplexUnitType.Dip, (float)20 * _gaugeInnerSize / GaugeBaseSize);
                     textViewGaugeName.Text = item.Name;
                 }
                 catch (Exception)
