@@ -1730,7 +1730,7 @@ namespace BmwDeepObd
                 {
                     if (gridViewResult.Adapter == null)
                     {
-                        gridViewResult.Adapter = new ResultGridAdapter(this);
+                        gridViewResult.Adapter = new ResultGridAdapter(this, 200);
                     }
                     resultGridAdapter = gridViewResult.Adapter as ResultGridAdapter;
                 }

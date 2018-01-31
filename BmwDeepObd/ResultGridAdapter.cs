@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Android.App;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Pl.Pawelkleczkowski.CGauge;
@@ -9,13 +10,16 @@ namespace BmwDeepObd
 {
     public class ResultGridAdapter : BaseAdapter<GridResultItem>
     {
+        private const int GaugeBaseSize = 200;
         private readonly List<GridResultItem> _items;
         public List<GridResultItem> Items => _items;
         private readonly Activity _context;
+        private readonly int _gaugeSize;
 
-        public ResultGridAdapter(Activity context)
+        public ResultGridAdapter(Activity context, int gaugeSize)
         {
             _context = context;
+            _gaugeSize = gaugeSize;
             _items = new List<GridResultItem>();
         }
 
@@ -49,6 +53,13 @@ namespace BmwDeepObd
             {
                 try
                 {
+                    ViewGroup.LayoutParams layoutParams = customGauge.LayoutParameters;
+                    layoutParams.Width = _gaugeSize;
+                    layoutParams.Height = _gaugeSize;
+                    customGauge.LayoutParameters = layoutParams;
+
+                    int strokeWidth = item.ResourceId == Resource.Layout.result_customgauge_square ? 20 : 10;
+                    customGauge.StrokeWidth = (float)strokeWidth * _gaugeSize / GaugeBaseSize;
                     int gaugeScale = customGauge.EndValue;
                     double range = item.MaxValue - item.MinValue;
                     int gaugeValue = 0;
@@ -77,6 +88,10 @@ namespace BmwDeepObd
             {
                 try
                 {
+                    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) textViewGaugeValue.LayoutParameters;
+                    layoutParams.BottomMargin = 80 * _gaugeSize / GaugeBaseSize;
+                    textViewGaugeValue.LayoutParameters = layoutParams;
+                    textViewGaugeValue.SetTextSize(ComplexUnitType.Dip, (float)30 * _gaugeSize / GaugeBaseSize);
                     textViewGaugeValue.Text = item.ValueText;
                 }
                 catch (Exception)
@@ -90,6 +105,10 @@ namespace BmwDeepObd
             {
                 try
                 {
+                    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)textViewGaugeName.LayoutParameters;
+                    layoutParams.TopMargin = -30 * _gaugeSize / GaugeBaseSize;
+                    textViewGaugeName.LayoutParameters = layoutParams;
+                    textViewGaugeName.SetTextSize(ComplexUnitType.Dip, (float)20 * _gaugeSize / GaugeBaseSize);
                     textViewGaugeName.Text = item.Name;
                 }
                 catch (Exception)
