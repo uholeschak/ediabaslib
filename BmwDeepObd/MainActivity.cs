@@ -2109,7 +2109,7 @@ namespace BmwDeepObd
                                                 resourceId = Resource.Layout.result_customgauge_dot;
                                                 break;
                                         }
-                                        tempResultGrid.Add(new GridResultItem(resourceId, GetPageString(pageInfo, displayInfo.Name), result, displayInfo.MinValue, displayInfo.MaxValue, value, gaugeSize));
+                                        tempResultGrid.Add(new GridResultItem(resourceId, GetPageString(pageInfo, displayInfo.Name), result, displayInfo.MinValue, displayInfo.MaxValue, value, gaugeSize, textColor));
                                     }
                                 }
                                 else
@@ -2145,6 +2145,11 @@ namespace BmwDeepObd
                                     break;
                                 }
                                 if (resultNew.GaugeSize != resultOld.GaugeSize)
+                                {
+                                    resultChanged = true;
+                                    break;
+                                }
+                                if (resultNew.GaugeColor != resultOld.GaugeColor)
                                 {
                                     resultChanged = true;
                                     break;
@@ -2195,6 +2200,11 @@ namespace BmwDeepObd
                                     break;
                                 }
                                 if (string.CompareOrdinal(resultNew.Text2 ?? string.Empty, resultOld.Text2 ?? string.Empty) != 0)
+                                {
+                                    resultChanged = true;
+                                    break;
+                                }
+                                if (resultNew.TextColor != resultOld.TextColor)
                                 {
                                     resultChanged = true;
                                     break;
