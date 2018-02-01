@@ -61,7 +61,7 @@ namespace BmwDeepObd
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
-            var item = _items[position];
+            TableResultItem item = _items[position];
 
             View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.result_list, null);
             CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxResultSelect);

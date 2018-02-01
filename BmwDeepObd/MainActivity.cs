@@ -14,6 +14,7 @@ using System.Threading;
 using System.Xml.Linq;
 using Android.Content;
 using Android.Content.PM;
+using Android.Content.Res;
 using Android.Hardware.Usb;
 using Android.OS;
 using Android.Support.Design.Widget;
@@ -586,6 +587,13 @@ namespace BmwDeepObd
                 _lastBackPressedTime = Stopwatch.GetTimestamp();
                 Toast.MakeText(this, GetString(Resource.String.back_button_twice_for_exit), ToastLength.Short).Show();
             }
+        }
+
+        public override void OnConfigurationChanged(Configuration newConfig)
+        {
+            base.OnConfigurationChanged(newConfig);
+
+            UpdateDisplay();
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
@@ -1731,8 +1739,7 @@ namespace BmwDeepObd
                 {
                     if (gridViewResult.Adapter == null)
                     {
-                        gridViewResult.Adapter = new ResultGridAdapter(this, GaugeSize);
-                        gridViewResult.SetColumnWidth(GaugeSize);
+                        gridViewResult.Adapter = new ResultGridAdapter(this);
                     }
                     resultGridAdapter = gridViewResult.Adapter as ResultGridAdapter;
                 }
@@ -1757,6 +1764,18 @@ namespace BmwDeepObd
                 {
                     buttonErrorReset = dynamicFragment.View.FindViewById<Button>(Resource.Id.button_error_reset);
                     buttonErrorCopy = dynamicFragment.View.FindViewById<Button>(Resource.Id.button_copy);
+                }
+
+                int gaugeSize;
+                switch (Resources.Configuration.Orientation)
+                {
+                    case Android.Content.Res.Orientation.Landscape:
+                        gaugeSize = GaugeSize * 2;
+                        break;
+
+                    default:
+                        gaugeSize = GaugeSize;
+                        break;
                 }
 
                 if (dynamicValid && resultListAdapter != null)
@@ -2086,7 +2105,7 @@ namespace BmwDeepObd
                                                 resourceId = Resource.Layout.result_customgauge_dot;
                                                 break;
                                         }
-                                        tempResultGrid.Add(new GridResultItem(resourceId, GetPageString(pageInfo, displayInfo.Name), result, displayInfo.MinValue, displayInfo.MaxValue, value));
+                                        tempResultGrid.Add(new GridResultItem(resourceId, GetPageString(pageInfo, displayInfo.Name), result, displayInfo.MinValue, displayInfo.MaxValue, value, gaugeSize));
                                     }
                                 }
                                 else
@@ -2121,6 +2140,11 @@ namespace BmwDeepObd
                                     resultChanged = true;
                                     break;
                                 }
+                                if (resultNew.GaugeSize != resultOld.GaugeSize)
+                                {
+                                    resultChanged = true;
+                                    break;
+                                }
                             }
                         }
                         if (resultChanged)
@@ -2131,6 +2155,7 @@ namespace BmwDeepObd
                                 resultGridAdapter.Items.Add(resultItem);
                             }
                             resultGridAdapter.NotifyDataSetChanged();
+                            gridViewResult.SetColumnWidth(gaugeSize);
                         }
                     }
                     else
