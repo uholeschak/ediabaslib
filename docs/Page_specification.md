@@ -94,6 +94,7 @@ If only some EDIABAS jobs with fixed arguments are required for one display page
 The `page name` property specifies the title of the page and is a reference to the `strings` nodes.  
 With the attribute `display-mode` the type of the display could be specified (`list`: normal text list, `grid`: grid wiew for graphical gauge display).  
 The attribute `fontsize` allows to specify the font size of the display data in three steps (`small`, `medium` and `large`).  
+The attributes `gauges_portrait` and `gauges_landscape` specify the number of gauges per line in the corresponding display mode.  
 With `logfile` a log file name could be specified, that allows to log the display data. If the symbol `{D}` is used inside the log file name, it will be replaced by the current date and time.  
 The `strings` nodes contains the all the string used on this display page. If the current language is not matching the `lang` tag, the default language (without tag) is used. The `lang` property could be either the short form e.g. `'de'` or the long one `'de-DE'`.
 
