@@ -403,7 +403,11 @@ namespace BmwDeepObd
                             {
                                 try
                                 {
-                                    gaugesPortrait = XmlConvert.ToInt32(attrib.Value);
+                                    int gauges = XmlConvert.ToInt32(attrib.Value);
+                                    if (gauges >= 1)
+                                    {
+                                        gaugesPortrait = gauges;
+                                    }
                                 }
                                 catch
                                 {
@@ -415,7 +419,11 @@ namespace BmwDeepObd
                             {
                                 try
                                 {
-                                    gaugesLandscape = XmlConvert.ToInt32(attrib.Value);
+                                    int gauges = XmlConvert.ToInt32(attrib.Value);
+                                    if (gauges >= 1)
+                                    {
+                                        gaugesLandscape = gauges;
+                                    }
                                 }
                                 catch
                                 {
