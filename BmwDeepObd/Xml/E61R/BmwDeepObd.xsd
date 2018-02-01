@@ -547,6 +547,22 @@
       </xs:annotation>
     </xs:attribute>
 
+    <xs:attribute name="gauges_portrait" type="xs:integer" default="2" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Number of gauges per line in portrait mode, default is 2.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="gauges_landscape" type="xs:integer" default="4" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Number of gauges per line in landscape mode, default is 4.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
     <xs:attribute name="logfile" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>

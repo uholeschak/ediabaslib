@@ -2,7 +2,7 @@
 <fragment xmlns="http://www.holeschak.de/BmwDeepObd"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
-  <page name ="tab_motor_grid" display-mode="grid" fontsize="small" logfile="motor-{D}.log">
+  <page name ="tab_motor_grid" display-mode="grid" fontsize="small" gauges_portrait="2" gauges_landscape="3" logfile="motor-{D}.log">
     <strings>
       <string name="tab_motor_grid">Motor graph</string>
       <string name="label_motor_air_mass">Air mass [kg/h]</string>
