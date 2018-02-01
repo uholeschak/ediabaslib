@@ -1766,16 +1766,17 @@ namespace BmwDeepObd
                     buttonErrorCopy = dynamicFragment.View.FindViewById<Button>(Resource.Id.button_copy);
                 }
 
-                int gaugeSize;
-                switch (Resources.Configuration.Orientation)
+                int gaugeSize = 200;
+                if (gridViewResult != null && gridViewResult.Visibility == ViewStates.Visible)
                 {
-                    case Android.Content.Res.Orientation.Landscape:
-                        gaugeSize = GaugeSize * 2;
-                        break;
-
-                    default:
-                        gaugeSize = GaugeSize;
-                        break;
+                    int gaugeCount = 2;
+                    switch (Resources.Configuration.Orientation)
+                    {
+                        case Android.Content.Res.Orientation.Landscape:
+                            gaugeCount = 3;
+                            break;
+                    }
+                    gaugeSize = (gridViewResult.Width / gaugeCount) - gridViewResult.HorizontalSpacing - 1;
                 }
 
                 if (dynamicValid && resultListAdapter != null)
