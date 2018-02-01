@@ -62,6 +62,15 @@ namespace BmwDeepObd
 
                     int strokeWidth = string.Compare(customGauge.StrokeCap, "BUTT", StringComparison.OrdinalIgnoreCase) == 0 ? 20 : 10;
                     customGauge.StrokeWidth = (float)strokeWidth * gaugeInnerSize / GaugeBaseSize;
+                    customGauge.Init();
+                    Android.Graphics.Color gaugeColor = Android.Graphics.Color.White;
+                    if (item.GaugeColor.HasValue)
+                    {
+                        gaugeColor = item.GaugeColor.Value;
+                    }
+                    customGauge.PointStartColor = gaugeColor;
+                    customGauge.PointEndColor = gaugeColor;
+
                     int gaugeScale = customGauge.EndValue;
                     double range = item.MaxValue - item.MinValue;
                     int gaugeValue = 0;
@@ -78,7 +87,6 @@ namespace BmwDeepObd
                         }
                     }
                     customGauge.Value = gaugeValue;
-                    customGauge.Init();
                 }
                 catch (Exception)
                 {
@@ -126,7 +134,7 @@ namespace BmwDeepObd
 
     public class GridResultItem
     {
-        public GridResultItem(int resourceId, string name, string valueText, double minValue, double maxValue, double value, int gaugeSize)
+        public GridResultItem(int resourceId, string name, string valueText, double minValue, double maxValue, double value, int gaugeSize, Android.Graphics.Color? gaugeColor)
         {
             ResourceId = resourceId;
             Name = name;
@@ -135,6 +143,7 @@ namespace BmwDeepObd
             MaxValue = maxValue;
             Value = value;
             GaugeSize = gaugeSize;
+            GaugeColor = gaugeColor;
         }
 
         public int ResourceId { get; }
@@ -150,5 +159,7 @@ namespace BmwDeepObd
         public double Value { get; set; }
 
         public int GaugeSize { get; set; }
+
+        public Android.Graphics.Color? GaugeColor { get; set; }
     }
 }
