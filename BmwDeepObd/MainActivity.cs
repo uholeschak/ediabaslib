@@ -182,7 +182,6 @@ namespace BmwDeepObd
         private const long EcuZipSizeVag = 53000000;            // VAG ecu zip file size
         private const long EcuExtractSizeVag = 910000000;       // VAG extracted ecu files size
 #endif
-        private const int GaugeSize = 200;
         private const int CpuLoadCritical = 70;
         private const int RequestPermissionExternalStorage = 0;
         private readonly string[] _permissionsExternalStorage =
@@ -1769,11 +1768,11 @@ namespace BmwDeepObd
                 int gaugeSize = 200;
                 if (gridViewResult != null && gridViewResult.Visibility == ViewStates.Visible)
                 {
-                    int gaugeCount = 2;
+                    int gaugeCount = pageInfo.GaugesPortrait;
                     switch (Resources.Configuration.Orientation)
                     {
                         case Android.Content.Res.Orientation.Landscape:
-                            gaugeCount = 3;
+                            gaugeCount = pageInfo.GaugesLandscape;
                             break;
                     }
                     gaugeSize = (gridViewResult.Width / gaugeCount) - gridViewResult.HorizontalSpacing - 1;
