@@ -1776,6 +1776,10 @@ namespace BmwDeepObd
                             break;
                     }
                     gaugeSize = (gridViewResult.Width / gaugeCount) - gridViewResult.HorizontalSpacing - 1;
+                    if (gaugeSize < 10)
+                    {
+                        gaugeSize = 10;
+                    }
                 }
 
                 if (dynamicValid && resultListAdapter != null)
