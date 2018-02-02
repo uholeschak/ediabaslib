@@ -366,6 +366,9 @@
   <string name="xml_tool_ecu_font_size_small">Small</string>
   <string name="xml_tool_ecu_font_size_medium">Medium</string>
   <string name="xml_tool_ecu_font_size_large">Large</string>
+  <string name="xml_tool_ecu_grid_count">Graphical items per line</string>
+  <string name="xml_tool_ecu_grid_count_portrait_value">Portrait</string>
+  <string name="xml_tool_ecu_grid_count_landscape_value">Landscape</string>
   <string name="xml_tool_ecu_jobs_name">Job list</string>
   <string name="xml_tool_ecu_results">Job result</string>
   <string name="xml_tool_ecu_show_all_results">Show all results</string>
