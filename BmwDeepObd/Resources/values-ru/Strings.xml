@@ -389,6 +389,10 @@
   <string name="xml_tool_ecu_font_size_small">Мелкий</string>
   <string name="xml_tool_ecu_font_size_medium">Средний</string>
   <string name="xml_tool_ecu_font_size_large">Большой</string>
+  <!--Translate-->
+  <string name="xml_tool_ecu_grid_count">Graphische Elemente der Zeile</string>
+  <string name="xml_tool_ecu_grid_count_portrait_value">Hochformat</string>
+  <string name="xml_tool_ecu_grid_count_landscape_value">Querformat</string>
   <string name="xml_tool_ecu_jobs_name">Job список</string>
   <string name="xml_tool_ecu_results">Job результат</string>
   <string name="xml_tool_ecu_show_all_results">Показывать все результаты</string>
