@@ -130,6 +130,7 @@ namespace BmwDeepObd
         private EditText _editTextPageName;
         private EditText _editTextEcuName;
         private CheckBox _checkBoxDisplayTypeGrid;
+        private TextView _textViewFontSizeTitle;
         private Spinner _spinnerFontSize;
         private StringObjAdapter _spinnerFontSizeAdapter;
         private Spinner _spinnerJobs;
@@ -225,6 +226,7 @@ namespace BmwDeepObd
                 DisplayTypeSelected();
             };
 
+            _textViewFontSizeTitle  = FindViewById<TextView>(Resource.Id.textViewFontSizeTitle);
             _spinnerFontSize = FindViewById<Spinner>(Resource.Id.spinnerFontSize);
             _spinnerFontSizeAdapter = new StringObjAdapter(this);
             _spinnerFontSize.Adapter = _spinnerFontSizeAdapter;
@@ -1000,6 +1002,9 @@ namespace BmwDeepObd
         {
             HideKeyboard();
             ViewStates viewState = _checkBoxDisplayTypeGrid.Checked ? ViewStates.Visible : ViewStates.Gone;
+            ViewStates viewStateInv = _checkBoxDisplayTypeGrid.Checked ? ViewStates.Gone : ViewStates.Visible;
+            _textViewFontSizeTitle.Visibility = viewStateInv;
+            _spinnerFontSize.Visibility = viewStateInv;
             _textViewGridType.Visibility = viewState;
             _spinnerGridType.Visibility = viewState;
             _textViewMinValue.Visibility = viewState;
