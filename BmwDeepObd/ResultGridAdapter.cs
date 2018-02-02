@@ -102,7 +102,7 @@ namespace BmwDeepObd
                     RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) textViewGaugeValue.LayoutParameters;
                     layoutParams.BottomMargin = 80 * gaugeInnerSize / GaugeBaseSize;
                     textViewGaugeValue.LayoutParameters = layoutParams;
-                    textViewGaugeValue.SetTextSize(ComplexUnitType.Dip, (float)30 * gaugeInnerSize / GaugeBaseSize);
+                    textViewGaugeValue.SetTextSize(ComplexUnitType.Px, (float)30 * gaugeInnerSize / GaugeBaseSize);
                     textViewGaugeValue.Text = item.ValueText;
                 }
                 catch (Exception)
@@ -119,7 +119,7 @@ namespace BmwDeepObd
                     RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)textViewGaugeName.LayoutParameters;
                     layoutParams.TopMargin = -30 * gaugeInnerSize / GaugeBaseSize;
                     textViewGaugeName.LayoutParameters = layoutParams;
-                    textViewGaugeName.SetTextSize(ComplexUnitType.Dip, (float)20 * gaugeInnerSize / GaugeBaseSize);
+                    textViewGaugeName.SetTextSize(ComplexUnitType.Px, (float)20 * gaugeInnerSize / GaugeBaseSize);
                     textViewGaugeName.Text = item.Name;
                 }
                 catch (Exception)

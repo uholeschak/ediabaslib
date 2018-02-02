@@ -109,6 +109,10 @@
                     {
                         textColor = Android.Graphics.Color.Red;
                     }
+                    else
+                    {
+                        textColor = Android.Graphics.Color.Green;
+                    }
                     if (!found) result = string.Empty;
                     break;
 
