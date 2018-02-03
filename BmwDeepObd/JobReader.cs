@@ -184,6 +184,8 @@ namespace BmwDeepObd
             public object ClassObject { get; set; }
         }
 
+        public const int GaugesPortraitDefault = 2;
+        public const int GaugesLandscapeDefault = 4;
         private readonly List<PageInfo> _pageList = new List<PageInfo>();
         private string _ecuPath = string.Empty;
         private string _logPath = string.Empty;
@@ -350,8 +352,8 @@ namespace BmwDeepObd
                         string pageName = string.Empty;
                         float pageWeight = -1;
                         int textResId = 0;
-                        int gaugesLandscape = 4;
-                        int gaugesPortrait = 2;
+                        int gaugesPortrait = GaugesPortraitDefault;
+                        int gaugesLandscape = GaugesLandscapeDefault;
                         PageInfo.DisplayModeType displayMode = PageInfo.DisplayModeType.List;
                         string logFile = string.Empty;
                         bool jobActivate = false;
@@ -398,7 +400,7 @@ namespace BmwDeepObd
                                         break;
                                 }
                             }
-                            attrib = xnodePage.Attributes["gauges_portrait"];
+                            attrib = xnodePage.Attributes["gauges-portrait"];
                             if (attrib != null)
                             {
                                 try
@@ -414,7 +416,7 @@ namespace BmwDeepObd
                                     // ignored
                                 }
                             }
-                            attrib = xnodePage.Attributes["gauges_landscape"];
+                            attrib = xnodePage.Attributes["gauges-landscape"];
                             if (attrib != null)
                             {
                                 try

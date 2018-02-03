@@ -51,7 +51,8 @@ namespace BmwDeepObd
         {
             public EcuInfo(string name, Int64 address, string description, string sgbd, string grp,
                 JobReader.PageInfo.DisplayModeType displayMode = JobReader.PageInfo.DisplayModeType.List,
-                DisplayFontSize fontSize = DisplayFontSize.Small, string mwTabFileName = null, Dictionary<long, EcuMwTabEntry> mwTabEcuDict = null)
+                DisplayFontSize fontSize = DisplayFontSize.Small, int gaugesPortrait = JobReader.GaugesPortraitDefault, int gaugesLandscape = JobReader.GaugesLandscapeDefault,
+                string mwTabFileName = null, Dictionary<long, EcuMwTabEntry> mwTabEcuDict = null)
             {
                 Name = name;
                 Address = address;
@@ -65,6 +66,8 @@ namespace BmwDeepObd
                 EcuName = name;
                 DisplayMode = displayMode;
                 FontSize = fontSize;
+                GaugesPortrait = gaugesPortrait;
+                GaugesLandscape = gaugesLandscape;
                 JobList = null;
                 MwTabFileName = mwTabFileName;
                 MwTabList = null;
@@ -95,6 +98,10 @@ namespace BmwDeepObd
             public JobReader.PageInfo.DisplayModeType DisplayMode { get; set; }
 
             public DisplayFontSize FontSize { get; set; }
+
+            public int GaugesPortrait { get; set; }
+
+            public int GaugesLandscape { get; set; }
 
             public List<XmlToolEcuActivity.JobInfo> JobList { get; set; }
 
@@ -4370,6 +4377,32 @@ namespace BmwDeepObd
                 }
             }
 
+            XAttribute gaugesPortraitAttr = pageNode.Attribute("gauges-portrait");
+            if (gaugesPortraitAttr != null)
+            {
+                try
+                {
+                    ecuInfo.GaugesPortrait = XmlConvert.ToInt32(gaugesPortraitAttr.Value);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            XAttribute gaugesLandscapeAttr = pageNode.Attribute("gauges-landscape");
+            if (gaugesLandscapeAttr != null)
+            {
+                try
+                {
+                    ecuInfo.GaugesLandscape = XmlConvert.ToInt32(gaugesLandscapeAttr.Value);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
             XElement stringsNode = GetDefaultStringsNode(ns, pageNode);
             XElement jobsNode = pageNode.Element(ns + "jobs");
             if (jobsNode == null)
@@ -4468,10 +4501,13 @@ namespace BmwDeepObd
         }
 
         private string ReadPageSgbd(XDocument document, out JobReader.PageInfo.DisplayModeType displayMode, out DisplayFontSize fontSize,
+            out int gaugesPortrait, out int gaugesLandscape,
             out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict)
         {
             displayMode = JobReader.PageInfo.DisplayModeType.List;
             fontSize = DisplayFontSize.Small;
+            gaugesPortrait = JobReader.GaugesPortraitDefault;
+            gaugesLandscape = JobReader.GaugesLandscapeDefault;
             mwTabFileName = null;
             mwTabEcuDict = null;
             if (document.Root == null)
@@ -4498,6 +4534,32 @@ namespace BmwDeepObd
                 if (!Enum.TryParse(fontSizeAttr.Value, true, out fontSize))
                 {
                     fontSize = DisplayFontSize.Small;
+                }
+            }
+
+            XAttribute gaugesPortraitAttr = pageNode.Attribute("gauges-portrait");
+            if (gaugesPortraitAttr != null)
+            {
+                try
+                {
+                    gaugesPortrait = XmlConvert.ToInt32(gaugesPortraitAttr.Value);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            XAttribute gaugesLandscapeAttr = pageNode.Attribute("gauges-landscape");
+            if (gaugesLandscapeAttr != null)
+            {
+                try
+                {
+                    gaugesLandscape = XmlConvert.ToInt32(gaugesLandscapeAttr.Value);
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
             }
 
@@ -4589,6 +4651,26 @@ namespace BmwDeepObd
                 else
                 {
                     pageFontSizeAttr.Value = fontSizeName;
+                }
+
+                XAttribute pageGaugesPortraitAttr = pageNode.Attribute("gauges-portrait");
+                if (pageGaugesPortraitAttr == null)
+                {
+                    pageNode.Add(new XAttribute("gauges-portrait", ecuInfo.GaugesPortrait));
+                }
+                else
+                {
+                    pageGaugesPortraitAttr.Value = ecuInfo.GaugesPortrait.ToString();
+                }
+
+                XAttribute pageGaugesLandscapeAttr = pageNode.Attribute("gauges-landscape");
+                if (pageGaugesLandscapeAttr == null)
+                {
+                    pageNode.Add(new XAttribute("gauges-landscape", ecuInfo.GaugesLandscape));
+                }
+                else
+                {
+                    pageGaugesLandscapeAttr.Value = ecuInfo.GaugesLandscape.ToString();
                 }
 
                 XAttribute pageLogFileAttr = pageNode.Attribute("logfile");
@@ -4842,7 +4924,7 @@ namespace BmwDeepObd
                     {
                         // ReSharper disable once PossibleNullReferenceException
                         EcuInfo ecuInfo = new EcuInfo(sgbdName.ToUpperInvariant(), -1, string.Empty, sgbdName, string.Empty,
-                            JobReader.PageInfo.DisplayModeType.List, DisplayFontSize.Small, string.Empty)
+                            JobReader.PageInfo.DisplayModeType.List, DisplayFontSize.Small, JobReader.GaugesPortraitDefault, JobReader.GaugesLandscapeDefault, string.Empty)
                         {
                             PageName = string.Empty,
                             EcuName = string.Empty
@@ -4989,10 +5071,11 @@ namespace BmwDeepObd
                     try
                     {
                         string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out JobReader.PageInfo.DisplayModeType displayMode, out DisplayFontSize fontSize,
+                            out int gaugesPortrait, out int gaugesLandscape,
                             out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict);
                         if (!string.IsNullOrEmpty(sgbdName))
                         {
-                            _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, displayMode, fontSize, mwTabFileName, mwTabEcuDict)
+                            _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, displayMode, fontSize, gaugesPortrait, gaugesLandscape, mwTabFileName, mwTabEcuDict)
                             {
                                 Selected = true
                             });
@@ -5045,10 +5128,11 @@ namespace BmwDeepObd
                             try
                             {
                                 string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out JobReader.PageInfo.DisplayModeType displayMode, out DisplayFontSize fontSize,
+                                    out int gaugesPortrait, out int gaugesLandscape,
                                     out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict);
                                 if (!string.IsNullOrEmpty(sgbdName))
                                 {
-                                    _ecuList.Insert(0, new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, displayMode, fontSize, mwTabFileName, mwTabEcuDict)
+                                    _ecuList.Insert(0, new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, displayMode, fontSize, gaugesPortrait, gaugesLandscape, mwTabFileName, mwTabEcuDict)
                                     {
                                         Selected = true
                                     });
