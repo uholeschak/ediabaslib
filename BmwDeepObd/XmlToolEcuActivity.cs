@@ -132,12 +132,12 @@ namespace BmwDeepObd
         private CheckBox _checkBoxDisplayTypeGrid;
         private TextView _textViewFontSizeTitle;
         private Spinner _spinnerFontSize;
+        private StringObjAdapter _spinnerFontSizeAdapter;
         private TextView _textViewGridCount;
         private TextView _textViewGridCountPortraitValue;
         private EditText _editTextGridCountPortraitValue;
         private TextView _textViewGridCountLandscapeValue;
         private EditText _editTextGridCountLandscapeValue;
-        private StringObjAdapter _spinnerFontSizeAdapter;
         private Spinner _spinnerJobs;
         private JobListAdapter _spinnerJobsAdapter;
         private TextView _textViewJobCommentsTitle;
