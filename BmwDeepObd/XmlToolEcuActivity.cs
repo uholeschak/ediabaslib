@@ -257,6 +257,9 @@ namespace BmwDeepObd
             _textViewGridCountLandscapeValue = FindViewById<TextView>(Resource.Id.textViewGridCountLandscapeValue);
             _editTextGridCountLandscapeValue = FindViewById<EditText>(Resource.Id.editTextGridCountLandscapeValue);
 
+            _editTextGridCountPortraitValue.Text = _ecuInfo.GaugesPortrait.ToString(CultureInfo.InvariantCulture);
+            _editTextGridCountLandscapeValue.Text = _ecuInfo.GaugesLandscape.ToString(CultureInfo.InvariantCulture);
+
             _spinnerJobs = FindViewById<Spinner>(Resource.Id.spinnerJobs);
             _spinnerJobsAdapter = new JobListAdapter(this);
             _spinnerJobs.Adapter = _spinnerJobsAdapter;
@@ -1007,6 +1010,22 @@ namespace BmwDeepObd
                 fontSize = (XmlToolActivity.DisplayFontSize)_spinnerFontSizeAdapter.Items[_spinnerFontSize.SelectedItemPosition].Data;
             }
             _ecuInfo.FontSize = fontSize;
+
+            if (Int32.TryParse(_editTextGridCountPortraitValue.Text, NumberStyles.AllowTrailingWhite, CultureInfo.InvariantCulture, out Int32 gaugesPortrait))
+            {
+                if (gaugesPortrait >= 1)
+                {
+                    _ecuInfo.GaugesPortrait = gaugesPortrait;
+                }
+            }
+
+            if (Int32.TryParse(_editTextGridCountLandscapeValue.Text, NumberStyles.AllowTrailingWhite, CultureInfo.InvariantCulture, out Int32 gaugesLandscape))
+            {
+                if (gaugesLandscape >= 1)
+                {
+                    _ecuInfo.GaugesLandscape = gaugesLandscape;
+                }
+            }
         }
 
         private void DisplayTypeSelected()

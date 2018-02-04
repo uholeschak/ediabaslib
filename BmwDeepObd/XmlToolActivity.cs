@@ -4660,7 +4660,7 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    pageGaugesPortraitAttr.Value = ecuInfo.GaugesPortrait.ToString();
+                    pageGaugesPortraitAttr.Value = ecuInfo.GaugesPortrait.ToString(CultureInfo.InvariantCulture);
                 }
 
                 XAttribute pageGaugesLandscapeAttr = pageNode.Attribute("gauges-landscape");
@@ -4670,7 +4670,7 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    pageGaugesLandscapeAttr.Value = ecuInfo.GaugesLandscape.ToString();
+                    pageGaugesLandscapeAttr.Value = ecuInfo.GaugesLandscape.ToString(CultureInfo.InvariantCulture);
                 }
 
                 XAttribute pageLogFileAttr = pageNode.Attribute("logfile");
