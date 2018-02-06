@@ -21,6 +21,7 @@ namespace ApkUploader
     public partial class FormMain : Form
     {
         private const string PackageName = @"de.holeschak.bmw_deep_obd";
+        private const string ExpansionKeep = @"*";
         private static readonly string[] TracksAll = { "alpha", "beta", "production", "rollout" };
         private static readonly string[] TracksEdit = { "alpha", "beta", "production" };
         private volatile Thread _serviceThread;
@@ -244,12 +245,21 @@ namespace ApkUploader
                                 if (expansionResponse.ReferencesVersion != null)
                                 {
                                     expansionVersion = expansionResponse.ReferencesVersion.Value;
-                                    ExpansionFile expansionRefResponse = await edits.Expansionfiles.Get(PackageName, appEdit.Id, expansionResponse.ReferencesVersion.Value, EditsResource.ExpansionfilesResource.GetRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
-                                    if (expansionRefResponse.FileSize != null && expansionRefResponse.FileSize.Value > 0)
+                                    try
+                                    {
+                                        ExpansionFile expansionRefResponse = await edits.Expansionfiles.Get(PackageName, appEdit.Id, expansionResponse.ReferencesVersion.Value, EditsResource.ExpansionfilesResource.GetRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
+                                        if (expansionRefResponse.FileSize != null && expansionRefResponse.FileSize.Value > 0)
+                                        {
+                                            apkVersion = apk.VersionCode.Value;
+                                            expansionVersion = expansionResponse.ReferencesVersion.Value;
+                                            fileSize = expansionRefResponse.FileSize.Value;
+                                        }
+                                    }
+                                    catch (Exception)
                                     {
                                         apkVersion = apk.VersionCode.Value;
                                         expansionVersion = expansionResponse.ReferencesVersion.Value;
-                                        fileSize = expansionRefResponse.FileSize.Value;
+                                        fileSize = 0;
                                     }
                                 }
                                 else if (expansionResponse.FileSize != null && expansionResponse.FileSize.Value > 0)
@@ -687,10 +697,16 @@ namespace ApkUploader
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(expansionFileName) && !File.Exists(expansionFileName))
+            if (!string.IsNullOrEmpty(expansionFileName))
             {
-                UpdateStatus("Expansion file not existing");
-                return false;
+                if (expansionFileName != ExpansionKeep)
+                {
+                    if (!File.Exists(expansionFileName))
+                    {
+                        UpdateStatus("Expansion file not existing");
+                        return false;
+                    }
+                }
             }
 
             UpdateStatus(string.Empty);
@@ -726,11 +742,19 @@ namespace ApkUploader
                             sb.AppendLine($"Latest expansion: apk version={expansionInfo.ApkVersion}, expansion version={expansionInfo.ExpansionVersion}, size={expansionInfo.FileSize}");
                             if (!string.IsNullOrEmpty(expansionFileName))
                             {
-                                FileInfo fileInfo = new FileInfo(expansionFileName);
-                                if (fileInfo.Exists && fileInfo.Length == expansionInfo.FileSize)
+                                if (expansionFileName == ExpansionKeep)
                                 {
-                                    sb.AppendLine("Size unchanged, reusing old expansion file");
+                                    sb.AppendLine("Reusing old expansion file");
                                     reuseExpansion = true;
+                                }
+                                else
+                                {
+                                    FileInfo fileInfo = new FileInfo(expansionFileName);
+                                    if (fileInfo.Exists && fileInfo.Length == expansionInfo.FileSize)
+                                    {
+                                        sb.AppendLine("Size unchanged, reusing old expansion file");
+                                        reuseExpansion = true;
+                                    }
                                 }
                             }
                         }
