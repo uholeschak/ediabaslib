@@ -250,7 +250,8 @@ If the jobs and display output is getting more complex, user defined code will b
     </code>
 ```
 ## Formatting results (FormatResult)
-For special formatting of the result data, the callback `FormatResult` could be used. For each result of the EDIABAS results this function will be called with `resultName` set to the current result name. If the `display` node is a subnode of a `job` node the job name is prefixed with # as separator to the result name. If the `job` node contains an `id` attribute, the job name is `<id>#<result name>`. The function will be only called if there is **no** `format` property in the `display` node. Here is an example from the motor page:
+For special formatting of the result data, the callback `FormatResult` could be used. For each result of the EDIABAS results this function will be called with `resultName` set to the current result name. If the `display` node is a subnode of a `job` node the job name is prefixed with # as separator to the result name. If the `job` node contains an `id` attribute, the job name is `<id>#<result name>`. The function will be only called if there is **no** `format` property in the `display` node.  
+The `textColor` output could be also used for the gauge color. Here is an example from the motor page:
 ``` cs
         public string FormatResult(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor)
         {
