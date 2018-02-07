@@ -3,6 +3,7 @@
 #define CAN_DEBUG
 #endif
 #define CAN_DYN_LEN
+#define VCDS
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -246,7 +247,12 @@ namespace CarSimulator
         private const int IsoTimeout = 2000;
         private const int IsoAckTimeout = 100;
         private const int Tp20T1 = 100;
-        private const int Tp20T3 = 10;
+        private const int Tp20T3 =
+#if VCDS
+                                    10;
+#else
+                                    0;
+#endif
 
         // ReSharper disable InconsistentNaming
         // 0x38 EHC
@@ -3033,7 +3039,7 @@ namespace CarSimulator
                 // check for send data
                 foreach (Tp20Channel channel in _tp20Channels)
                 {
-#if false
+#if !VCDS
                     // VCDS is not able to handle keep alives from ECU correctly
                     if (!channel.WaitForKeepAliveResp && ((Stopwatch.GetTimestamp() - channel.LastKeepAliveTick) > 1000 * TickResolMs))
                     {
@@ -3362,7 +3368,11 @@ namespace CarSimulator
                             case 0xA3: // channel test
                                 if (canMsg.DATA[0] == 0xA0 && canMsg.LEN == 6)
                                 {
+#if VCDS
+                                    currChannel.BlockSize = 1;
+#else
                                     currChannel.BlockSize = canMsg.DATA[1];
+#endif
                                     currChannel.T1 = canMsg.DATA[2];
                                     currChannel.T3 = canMsg.DATA[4];
 #if CAN_DEBUG
