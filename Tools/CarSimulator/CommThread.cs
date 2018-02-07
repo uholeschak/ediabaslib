@@ -246,6 +246,7 @@ namespace CarSimulator
         private const int IsoTimeout = 2000;
         private const int IsoAckTimeout = 100;
         private const int Tp20T1 = 100;
+        private const int Tp20T3 = 10;
 
         // ReSharper disable InconsistentNaming
         // 0x38 EHC
@@ -3032,6 +3033,8 @@ namespace CarSimulator
                 // check for send data
                 foreach (Tp20Channel channel in _tp20Channels)
                 {
+#if false
+                    // VCDS is not able to handle keep alives from ECU correctly
                     if (!channel.WaitForKeepAliveResp && ((Stopwatch.GetTimestamp() - channel.LastKeepAliveTick) > 1000 * TickResolMs))
                     {
 #if CAN_DEBUG
@@ -3050,6 +3053,7 @@ namespace CarSimulator
                         channel.LastKeepAliveTick = Stopwatch.GetTimestamp();
                         channel.WaitForKeepAliveResp = true;
                     }
+#endif
                     if (channel.WaitForAck)
                     {
                         if ((Stopwatch.GetTimestamp() - channel.AckWaitStartTick) > Tp20T1 * TickResolMs)
@@ -3378,7 +3382,7 @@ namespace CarSimulator
                                 sendMsg.DATA[1] = 0x0F; // block size
                                 sendMsg.DATA[2] = 0x80 | (Tp20T1 / 10); // T1 100ms
                                 sendMsg.DATA[3] = 0xFF;
-                                sendMsg.DATA[4] = 0x00; // T3 0ms
+                                sendMsg.DATA[4] = 0x40 | Tp20T3;        // T3 10ms
                                 sendMsg.DATA[5] = 0xFF;
                                 stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
                                 if (stsResult != TPCANStatus.PCAN_ERROR_OK)
