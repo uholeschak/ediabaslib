@@ -6929,6 +6929,13 @@ namespace CarSimulator
                                         0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x00 };
                                     ObdSend(dummyResponse);
                                 }
+                                else if (_receiveData.Length >= 6 && _receiveData[0] == 0x83 && _receiveData[3] == 0x22)
+                                {   // service 22
+                                    found = true;
+                                    Debug.WriteLine("Dummy service22: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
+                                    byte[] dummyResponse = { 0x83, _receiveData[2], _receiveData[1], 0x7F, _receiveData[3], 0x31, 0x00 };   // request out of range
+                                    ObdSend(dummyResponse);
+                                }
                             }
                         }
                     }
