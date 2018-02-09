@@ -154,6 +154,10 @@ CFG: 01 EF 8F
 ; Fehlerspeicher_loeschen
 83 10 F1 14 FF 00 00 : 83 F1 10 54 FF 00 00
 
+; Fake for VCDS
+82 10 F1 10 89 1C : 83 F1 10 7F 10 12 00
+82 10 F1 10 81 14 : 83 F1 10 7F 10 12 00
+
 ; zus_05.grp
 CFG: 85 6B 8F
 ; Steuergeraeteversion_abfragen2
