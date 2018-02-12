@@ -23,6 +23,8 @@ _Deep OBD for BMW and VAG_ supports several OBD II adapters:
 * ELM327 based adapters with [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md) D-CAN and K-Line (all protocols!). When VAG has been selected as manufacturer, only this adapter could be used.
 * [ENET WiFi adapters](ENET_WiFi_Adapter.md) (for BMW F-models)
 
+More details could be found here: [Supported adapter types](AdapterTypes.md)
+
 ## First start
 At the first start of Deep OBD for BMW and VAG you will be asked to extract the ECU files. The extracted files are very large and requires approximately 2.5GB on the external SDCard. An internet connection is required for this to check for update information.  
 In the next step a configuration _(*.cccfg file)_ must be created. The easiest way to do so is to use the [configuration generator](#ConfigurationGenerator). For complex scenarios you could manually create configuration files (see [HowTo create Deep OBD pages](Page_specification.md)). After loading and compiling the configuration file, all tabs included in the file will be visible on the main page.  
