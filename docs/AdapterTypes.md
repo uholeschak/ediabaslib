@@ -11,14 +11,15 @@ The following table shows which adapter and vehicle combination is supported:
 | _Deep OBD ENET_ | No | No | Yes | No |
 
 ## Vehicle legend:
-* _BMW-DS2_: BMW models: E36, E38, E39, E46, E52, E53, E83, E85 and E86.  
+* _BMW-DS2_: BMW models (with DS2 protocol): E36, E38, E39, E46, E52, E53, E83, E85 and E86.  
 An OBD II Pin 7+8 connection in the adapter is required!
-* _BMW-FAST_: BMW E-models newer than _BMW-DS2_.
+* _BMW-FAST_: BMW E-models newer than _BMW-DS2_ (with BMW-FAST protocol).
 * _BMW-FAST-F_: BMW F-models.
 * _VAG_: All VAG models. This mode is still experimental!
 
 ## Adapter legend:
-* _FTDI USB_: Standard FTDI based USB "INPA compatible" D-CAN/K-Line adapters.
+* _FTDI USB_: Standard FTDI based USB "INPA compatible" D-CAN/K-Line adapters.  
+Do not use adapters with fake FT232R chip, there are communication problems!
 * _ELM327_: ELM327 based Bluetooth and WiFi adapters. Recommended ELM327 versions are 1.4b, 1.5 and origin 2.1, which are based on PIC18F25K80 processor (no MCP2515 chip).  
 Only D-CAN is supported (BMW vehicles starting from 3/2007).  
 There are fake PIC18F25K80 processors with version 1.5, these will not work!
