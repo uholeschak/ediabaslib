@@ -7,7 +7,7 @@ The following table shows which adapter and vehicle combination is supported:
 | _FTDI USB_ | Yes | Yes | No | No |
 | _ELM327_ | No | D-CAN only | No | No |
 | _Custom_ | Yes | Yes | No | No |
-| _Deep OBD_ | With Pin 7+8 | Yes | No | Yes |
+| _Deep OBD_ | Yes | Yes | No | Yes |
 | _Deep OBD ENET_ | No | No | Yes | No |
 
 ## Vehicle legend:
