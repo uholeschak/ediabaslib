@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLib", "EdiabasLib\EdiabasLib.csproj", "{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}"
 EndProject
@@ -26,6 +26,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLibConfigTool", "Edi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{7B9636BF-0907-48A9-99D4-28DBAEA781F7}"
 	ProjectSection(SolutionItems) = preProject
+		..\docs\AdapterTypes.md = ..\docs\AdapterTypes.md
 		..\docs\Build_Bluetooth_D-CAN_adapter.md = ..\docs\Build_Bluetooth_D-CAN_adapter.md
 		..\docs\Build_Bluetooth_D-CAN_adapter_AdapterSmall.png = ..\docs\Build_Bluetooth_D-CAN_adapter_AdapterSmall.png
 		..\docs\Build_Bluetooth_D-CAN_adapter_BluetoothConnectionSmall.png = ..\docs\Build_Bluetooth_D-CAN_adapter_BluetoothConnectionSmall.png
@@ -89,7 +90,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InTheHand.Net.Personal.FX4.Mod", "32feet\ITH.Net.Personal.FX4\InTheHand.Net.Personal.FX4.Mod.csproj", "{29CC8D24-1564-4236-A237-E953274805D6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InTheHand.Net.Personal.FX4.Mod", "32feet\ITH.Net.Personal.FX4\InTheHand.Net.Personal.FX4.Mod.csproj", "{40EA20B4-9CAF-486D-9952-1ABB3D414E92}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -342,36 +343,36 @@ Global
 		{7D7FA80F-4C35-4AF4-8E6E-44C32E4DBD32}.Release|x64.Build.0 = Release|Any CPU
 		{7D7FA80F-4C35-4AF4-8E6E-44C32E4DBD32}.Release|x86.ActiveCfg = Release|Any CPU
 		{7D7FA80F-4C35-4AF4-8E6E-44C32E4DBD32}.Release|x86.Build.0 = Release|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.CodeAnalysis|Any CPU.ActiveCfg = CodeAnalysis|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.CodeAnalysis|Any CPU.Build.0 = CodeAnalysis|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.CodeAnalysis|Mixed Platforms.ActiveCfg = CodeAnalysis|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.CodeAnalysis|Mixed Platforms.Build.0 = CodeAnalysis|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.CodeAnalysis|Win32.ActiveCfg = CodeAnalysis|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.CodeAnalysis|Win32.Build.0 = CodeAnalysis|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.CodeAnalysis|x64.ActiveCfg = CodeAnalysis|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.CodeAnalysis|x64.Build.0 = CodeAnalysis|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.CodeAnalysis|x86.ActiveCfg = CodeAnalysis|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.CodeAnalysis|x86.Build.0 = CodeAnalysis|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Debug|Win32.Build.0 = Debug|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Debug|x64.Build.0 = Debug|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Debug|x86.Build.0 = Debug|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Release|Win32.ActiveCfg = Release|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Release|Win32.Build.0 = Release|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Release|x64.ActiveCfg = Release|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Release|x64.Build.0 = Release|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Release|x86.ActiveCfg = Release|Any CPU
-		{29CC8D24-1564-4236-A237-E953274805D6}.Release|x86.Build.0 = Release|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.CodeAnalysis|Any CPU.ActiveCfg = CodeAnalysis|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.CodeAnalysis|Any CPU.Build.0 = CodeAnalysis|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.CodeAnalysis|Mixed Platforms.ActiveCfg = CodeAnalysis|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.CodeAnalysis|Mixed Platforms.Build.0 = CodeAnalysis|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.CodeAnalysis|Win32.ActiveCfg = CodeAnalysis|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.CodeAnalysis|Win32.Build.0 = CodeAnalysis|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.CodeAnalysis|x64.ActiveCfg = CodeAnalysis|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.CodeAnalysis|x64.Build.0 = CodeAnalysis|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.CodeAnalysis|x86.ActiveCfg = CodeAnalysis|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.CodeAnalysis|x86.Build.0 = CodeAnalysis|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Debug|Win32.Build.0 = Debug|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Debug|x64.Build.0 = Debug|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Debug|x86.Build.0 = Debug|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Release|Win32.ActiveCfg = Release|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Release|Win32.Build.0 = Release|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Release|x64.ActiveCfg = Release|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Release|x64.Build.0 = Release|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Release|x86.ActiveCfg = Release|Any CPU
+		{40EA20B4-9CAF-486D-9952-1ABB3D414E92}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
