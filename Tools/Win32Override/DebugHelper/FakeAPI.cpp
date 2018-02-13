@@ -12,6 +12,8 @@
 // "Using a Microsoft modifier such as __cdecl on a data declaration is an outdated practice"
 ///////////////////////////////////////////////////////////////////////////////
 
+#define LOGFILE _T("C:\\Users\\Ulrich\\Documents\\DebugHelper.txt")
+
 #define STATUS_SUCCESS                   ((NTSTATUS)0x00000000L)    // ntsubauth
 
 typedef enum _THREADINFOCLASS
@@ -114,26 +116,25 @@ ULONG WINAPI mNtSetInformationThread(
     __in ULONG ThreadInformationLength
 )
 {
-    FILE *fw = fopen("C:\\Users\\Ulrich\\Documents\\DebugHelper.txt", "at");
+    FILE *fw = _tfopen(LOGFILE, _T("at"));
     if (fw != NULL)
     {
-        fprintf(fw, "NtSetInformationThread: %08p %08X %08p %u\n", ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
+        _ftprintf(fw, _T("NtSetInformationThread: %08p %08X %08p %u\n"), ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
     }
     if (ThreadInformationClass != ThreadHideFromDebugger)
     {
         if (pNtSetInformationThread == NULL)
         {
-            return STATUS_SUCCESS;
+            if (fw != NULL)
+            {
+                _ftprintf(fw, _T("Redirect to NtSetInformationThread\n"));
+            }
+            return pNtSetInformationThread(ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
         }
-        if (fw != NULL)
-        {
-            fprintf(fw, "Redirect to NtSetInformationThread\n");
-        }
-        return pNtSetInformationThread(ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
     }
     if (fw != NULL)
     {
-        fprintf(fw, "Override return: STATUS_SUCCESS\n");
+        _ftprintf(fw, _T("Override return: STATUS_SUCCESS\n"));
         fclose(fw);
     }
     return STATUS_SUCCESS;
