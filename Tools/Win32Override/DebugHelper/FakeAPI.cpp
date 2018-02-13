@@ -14,20 +14,29 @@
 
 #define STATUS_SUCCESS                   ((NTSTATUS)0x00000000L)    // ntsubauth
 
-typedef enum _THREADINFOCLASS {
-
+typedef enum _THREADINFOCLASS
+{
     ThreadHideFromDebugger=17
-
 } THREADINFOCLASS;
 
-BOOL WINAPI mIsDebuggerPresent(void);
-
-ULONG __stdcall mNtSetInformationThread(
+typedef ULONG (WINAPI *ptrNtSetInformationThread)
+(
     __in HANDLE ThreadHandle,
     __in THREADINFOCLASS ThreadInformationClass,
     __in_bcount(ThreadInformationLength) PVOID ThreadInformation,
     __in ULONG ThreadInformationLength
 );
+
+BOOL WINAPI mIsDebuggerPresent(void);
+
+ULONG WINAPI mNtSetInformationThread(
+    __in HANDLE ThreadHandle,
+    __in THREADINFOCLASS ThreadInformationClass,
+    __in_bcount(ThreadInformationLength) PVOID ThreadInformation,
+    __in ULONG ThreadInformationLength
+);
+
+ptrNtSetInformationThread pNtSetInformationThread = NULL;
 
 ///////////////////////////////////////////////////////////////////////////////
 // fake API array. Redirection are defined here
@@ -61,6 +70,34 @@ STRUCT_FAKE_API_WITH_USERPARAM pArrayAfterAPICall[]=
     {_T(""),_T(""),NULL,0,0,0}// last element for ending loops
 };
 
+BOOL WINAPI DllMain(HINSTANCE hInstDLL, DWORD dwReason, PVOID pvReserved)
+{
+	UNREFERENCED_PARAMETER(hInstDLL);
+    UNREFERENCED_PARAMETER(pvReserved);
+    switch (dwReason)
+    {
+        case DLL_PROCESS_ATTACH:
+            {
+                // get func address
+                HMODULE hNtdll=GetModuleHandle(_T("ntdll.dll"));
+                if (hNtdll != NULL)
+                {
+                    pNtSetInformationThread=(ptrNtSetInformationThread)GetProcAddress(hNtdll,"NtSetInformationThread");
+                }
+                if (pNtSetInformationThread == NULL)
+                {
+                    return FALSE;
+                }
+            }
+            break;
+
+        case DLL_PROCESS_DETACH:
+            break;
+    }
+
+    return TRUE;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////// NEW API DEFINITION //////////////////////////////
 /////////////////////// You don't need to export these functions //////////////
@@ -70,7 +107,7 @@ BOOL WINAPI mIsDebuggerPresent(void)
     return FALSE;
 }
 
-ULONG __stdcall mNtSetInformationThread(
+ULONG WINAPI mNtSetInformationThread(
     __in HANDLE ThreadHandle,
     __in THREADINFOCLASS ThreadInformationClass,
     __in_bcount(ThreadInformationLength) PVOID ThreadInformation,
@@ -81,6 +118,22 @@ ULONG __stdcall mNtSetInformationThread(
     if (fw != NULL)
     {
         fprintf(fw, "NtSetInformationThread: %08p %08X %08p %u\n", ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
+    }
+    if (ThreadInformationClass != ThreadHideFromDebugger)
+    {
+        if (pNtSetInformationThread == NULL)
+        {
+            return STATUS_SUCCESS;
+        }
+        if (fw != NULL)
+        {
+            fprintf(fw, "Redirect to NtSetInformationThread\n");
+        }
+        return pNtSetInformationThread(ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
+    }
+    if (fw != NULL)
+    {
+        fprintf(fw, "Override return: STATUS_SUCCESS\n");
         fclose(fw);
     }
     return STATUS_SUCCESS;
