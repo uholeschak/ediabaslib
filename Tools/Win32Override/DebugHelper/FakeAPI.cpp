@@ -176,7 +176,7 @@ NTSTATUS WINAPI mNtSetInformationThread(
         BYTE value = 0;
         if (pNtQueryInformationThread(ThreadHandle, ThreadInformationClass, &value, sizeof(value), 0) == STATUS_SUCCESS)
         {
-            LogPrintf(_T("NtQueryInformationThread: %u\n", (unsigned int) value));
+            LogPrintf(_T("NtQueryInformationThread: %u\n"), (unsigned int) value);
         }
         else
         {
