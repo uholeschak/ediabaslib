@@ -106,7 +106,22 @@ BOOL WINAPI DllMain(HINSTANCE hInstDLL, DWORD dwReason, PVOID pvReserved)
 ///////////////////////////////////////////////////////////////////////////////
 BOOL WINAPI mIsDebuggerPresent(void)
 {
-    return FALSE;
+    FILE *fw = _tfopen(LOGFILE, _T("at"));
+    __try
+    {
+        if (fw != NULL)
+        {
+            _ftprintf(fw, _T("IsDebuggerPresent\n"));
+        }
+        return FALSE;
+    }
+    __finally
+    {
+        if (fw != NULL)
+        {
+            fclose(fw);
+        }
+    }
 }
 
 ULONG WINAPI mNtSetInformationThread(
@@ -117,25 +132,34 @@ ULONG WINAPI mNtSetInformationThread(
 )
 {
     FILE *fw = _tfopen(LOGFILE, _T("at"));
-    if (fw != NULL)
+    __try
     {
-        _ftprintf(fw, _T("NtSetInformationThread: %08p %08X %08p %u\n"), ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
-    }
-    if (ThreadInformationClass != ThreadHideFromDebugger)
-    {
-        if (pNtSetInformationThread == NULL)
+        if (fw != NULL)
         {
-            if (fw != NULL)
+            _ftprintf(fw, _T("NtSetInformationThread: %08p %08X %08p %u\n"), ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
+        }
+        if (ThreadInformationClass != ThreadHideFromDebugger)
+        {
+            if (pNtSetInformationThread == NULL)
             {
-                _ftprintf(fw, _T("Redirect to NtSetInformationThread\n"));
+                if (fw != NULL)
+                {
+                    _ftprintf(fw, _T("Redirect to NtSetInformationThread\n"));
+                }
+                return pNtSetInformationThread(ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
             }
-            return pNtSetInformationThread(ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
+        }
+        if (fw != NULL)
+        {
+            _ftprintf(fw, _T("Override return: STATUS_SUCCESS\n"));
+        }
+        return STATUS_SUCCESS;
+    }
+    __finally
+    {
+        if (fw != NULL)
+        {
+            fclose(fw);
         }
     }
-    if (fw != NULL)
-    {
-        _ftprintf(fw, _T("Override return: STATUS_SUCCESS\n"));
-        fclose(fw);
-    }
-    return STATUS_SUCCESS;
 }
