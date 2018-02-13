@@ -4,3 +4,5 @@
 *.sdf
 *.suo
 /Debug/
+/ipch/
+/ReleaseUnicode/
