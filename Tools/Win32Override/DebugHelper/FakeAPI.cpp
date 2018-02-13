@@ -23,7 +23,7 @@ typedef enum _THREADINFOCLASS
     ThreadHideFromDebugger=17
 } THREADINFOCLASS;
 
-typedef ULONG (WINAPI *ptrNtSetInformationThread)
+typedef NTSTATUS (WINAPI *ptrNtSetInformationThread)
 (
     __in HANDLE ThreadHandle,
     __in THREADINFOCLASS ThreadInformationClass,
@@ -31,11 +31,19 @@ typedef ULONG (WINAPI *ptrNtSetInformationThread)
     __in ULONG ThreadInformationLength
 );
 
+typedef NTSTATUS (WINAPI *ptrNtQueryInformationThread)(
+    _In_      HANDLE          ThreadHandle,
+    _In_      THREADINFOCLASS ThreadInformationClass,
+    _Inout_   PVOID           ThreadInformation,
+    _In_      ULONG           ThreadInformationLength,
+    _Out_opt_ PULONG          ReturnLength
+);
+
 static FILE* OpenLogFile();
 
 static BOOL WINAPI mIsDebuggerPresent(void);
 
-static ULONG WINAPI mNtSetInformationThread(
+static NTSTATUS WINAPI mNtSetInformationThread(
     __in HANDLE ThreadHandle,
     __in THREADINFOCLASS ThreadInformationClass,
     __in_bcount(ThreadInformationLength) PVOID ThreadInformation,
@@ -43,6 +51,7 @@ static ULONG WINAPI mNtSetInformationThread(
 );
 
 static ptrNtSetInformationThread pNtSetInformationThread = NULL;
+static ptrNtQueryInformationThread pNtQueryInformationThread = NULL;
 static FILE *fLog = NULL;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -90,8 +99,9 @@ BOOL WINAPI DllMain(HINSTANCE hInstDLL, DWORD dwReason, PVOID pvReserved)
                 if (hNtdll != NULL)
                 {
                     pNtSetInformationThread=(ptrNtSetInformationThread)GetProcAddress(hNtdll,"NtSetInformationThread");
+                    pNtQueryInformationThread=(ptrNtQueryInformationThread)GetProcAddress(hNtdll, "NtQueryInformationThread");
                 }
-                if (pNtSetInformationThread == NULL)
+                if (pNtSetInformationThread == NULL || pNtQueryInformationThread == NULL)
                 {
                     return FALSE;
                 }
@@ -152,7 +162,7 @@ BOOL WINAPI mIsDebuggerPresent(void)
     return FALSE;
 }
 
-ULONG WINAPI mNtSetInformationThread(
+NTSTATUS WINAPI mNtSetInformationThread(
     __in HANDLE ThreadHandle,
     __in THREADINFOCLASS ThreadInformationClass,
     __in_bcount(ThreadInformationLength) PVOID ThreadInformation,
@@ -163,6 +173,15 @@ ULONG WINAPI mNtSetInformationThread(
 
     if (ThreadInformationClass == ThreadHideFromDebugger && ThreadInformation == NULL && ThreadInformationLength == 0)
     {
+        BYTE value = 0;
+        if (pNtQueryInformationThread(ThreadHandle, ThreadInformationClass, &value, sizeof(value), 0) == STATUS_SUCCESS)
+        {
+            LogPrintf(_T("NtQueryInformationThread: %u\n", (unsigned int) value));
+        }
+        else
+        {
+            LogPrintf(_T("NtQueryInformationThread failed!\n"));
+        }
         LogPrintf(_T("Override NtSetInformationThread: STATUS_SUCCESS\n"));
         return STATUS_SUCCESS;
     }
