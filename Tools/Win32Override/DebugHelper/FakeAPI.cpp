@@ -31,7 +31,7 @@ typedef ULONG (WINAPI *ptrNtSetInformationThread)
     __in ULONG ThreadInformationLength
 );
 
-static FILE* mOpenLogFile();
+static FILE* OpenLogFile();
 
 static BOOL WINAPI mIsDebuggerPresent(void);
 
@@ -42,7 +42,8 @@ static ULONG WINAPI mNtSetInformationThread(
     __in ULONG ThreadInformationLength
 );
 
-ptrNtSetInformationThread pNtSetInformationThread = NULL;
+static ptrNtSetInformationThread pNtSetInformationThread = NULL;
+static FILE *fLog = NULL;
 
 ///////////////////////////////////////////////////////////////////////////////
 // fake API array. Redirection are defined here
@@ -94,10 +95,16 @@ BOOL WINAPI DllMain(HINSTANCE hInstDLL, DWORD dwReason, PVOID pvReserved)
                 {
                     return FALSE;
                 }
+                fLog = OpenLogFile();
             }
             break;
 
         case DLL_PROCESS_DETACH:
+            if (fLog != NULL)
+            {
+                fclose(fLog);
+                fLog = NULL;
+            }
             break;
     }
 
@@ -109,7 +116,7 @@ BOOL WINAPI DllMain(HINSTANCE hInstDLL, DWORD dwReason, PVOID pvReserved)
 /////////////////////// You don't need to export these functions //////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-FILE* mOpenLogFile()
+FILE* OpenLogFile()
 {
     TCHAR szPath[MAX_PATH];
 
@@ -121,30 +128,28 @@ FILE* mOpenLogFile()
     {
         if (PathAppend(szPath, LOGFILE))
         {
-            return _tfopen(szPath, _T("at"));
+            return _tfopen(szPath, _T("wt"));
         }
     }
     return NULL;
 }
 
+void LogPrintf(TCHAR *format, ...)
+{
+    va_list args;
+
+    if (fLog != NULL)
+    {
+        va_start(args, format);
+        _vftprintf(fLog, format, args);
+        va_end(args);
+    }
+}
+
 BOOL WINAPI mIsDebuggerPresent(void)
 {
-    FILE *fw = mOpenLogFile();
-    __try
-    {
-        if (fw != NULL)
-        {
-            _ftprintf(fw, _T("IsDebuggerPresent\n"));
-        }
-        return FALSE;
-    }
-    __finally
-    {
-        if (fw != NULL)
-        {
-            fclose(fw);
-        }
-    }
+    LogPrintf(_T("IsDebuggerPresent\n"));
+    return FALSE;
 }
 
 ULONG WINAPI mNtSetInformationThread(
@@ -154,35 +159,14 @@ ULONG WINAPI mNtSetInformationThread(
     __in ULONG ThreadInformationLength
 )
 {
-    FILE *fw = mOpenLogFile();
-    __try
+    LogPrintf(_T("NtSetInformationThread: %08p %08X %08p %u\n"), ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
+
+    if (ThreadInformationClass != ThreadHideFromDebugger)
     {
-        if (fw != NULL)
-        {
-            _ftprintf(fw, _T("NtSetInformationThread: %08p %08X %08p %u\n"), ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
-        }
-        if (ThreadInformationClass != ThreadHideFromDebugger)
-        {
-            if (pNtSetInformationThread == NULL)
-            {
-                if (fw != NULL)
-                {
-                    _ftprintf(fw, _T("Redirect to NtSetInformationThread\n"));
-                }
-                return pNtSetInformationThread(ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
-            }
-        }
-        if (fw != NULL)
-        {
-            _ftprintf(fw, _T("Override return: STATUS_SUCCESS\n"));
-        }
-        return STATUS_SUCCESS;
+        LogPrintf(_T("Redirect to NtSetInformationThread\n"));
+        return pNtSetInformationThread(ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
     }
-    __finally
-    {
-        if (fw != NULL)
-        {
-            fclose(fw);
-        }
-    }
+
+    LogPrintf(_T("Override NtSetInformationThread: STATUS_SUCCESS\n"));
+    return STATUS_SUCCESS;
 }
