@@ -161,12 +161,12 @@ ULONG WINAPI mNtSetInformationThread(
 {
     LogPrintf(_T("NtSetInformationThread: %08p %08X %08p %u\n"), ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
 
-    if (ThreadInformationClass != ThreadHideFromDebugger)
+    if (ThreadInformationClass == ThreadHideFromDebugger && ThreadInformation == NULL && ThreadInformationLength == 0)
     {
-        LogPrintf(_T("Redirect to NtSetInformationThread\n"));
-        return pNtSetInformationThread(ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
+        LogPrintf(_T("Override NtSetInformationThread: STATUS_SUCCESS\n"));
+        return STATUS_SUCCESS;
     }
 
-    LogPrintf(_T("Override NtSetInformationThread: STATUS_SUCCESS\n"));
-    return STATUS_SUCCESS;
+    LogPrintf(_T("Redirect to NtSetInformationThread\n"));
+    return pNtSetInformationThread(ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
 }
