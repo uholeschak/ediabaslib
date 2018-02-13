@@ -1,6 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <windows.h>
 #include <stdio.h>
+#include <Shlobj.h>
+#include <Shlwapi.h>
 #include "../_Common_Files/GenericFakeAPI.h"
 // You just need to edit this file to add new fake api 
 // WARNING YOUR FAKE API MUST HAVE THE SAME PARAMETERS AND CALLING CONVENTION AS THE REAL ONE,
@@ -12,7 +14,7 @@
 // "Using a Microsoft modifier such as __cdecl on a data declaration is an outdated practice"
 ///////////////////////////////////////////////////////////////////////////////
 
-#define LOGFILE _T("C:\\Users\\Ulrich\\Documents\\DebugHelper.txt")
+#define LOGFILE _T("DebugHelper.txt")
 
 #define STATUS_SUCCESS                   ((NTSTATUS)0x00000000L)    // ntsubauth
 
@@ -29,9 +31,11 @@ typedef ULONG (WINAPI *ptrNtSetInformationThread)
     __in ULONG ThreadInformationLength
 );
 
-BOOL WINAPI mIsDebuggerPresent(void);
+static FILE* mOpenLogFile();
 
-ULONG WINAPI mNtSetInformationThread(
+static BOOL WINAPI mIsDebuggerPresent(void);
+
+static ULONG WINAPI mNtSetInformationThread(
     __in HANDLE ThreadHandle,
     __in THREADINFOCLASS ThreadInformationClass,
     __in_bcount(ThreadInformationLength) PVOID ThreadInformation,
@@ -104,9 +108,28 @@ BOOL WINAPI DllMain(HINSTANCE hInstDLL, DWORD dwReason, PVOID pvReserved)
 ///////////////////////////// NEW API DEFINITION //////////////////////////////
 /////////////////////// You don't need to export these functions //////////////
 ///////////////////////////////////////////////////////////////////////////////
+
+FILE* mOpenLogFile()
+{
+    TCHAR szPath[MAX_PATH];
+
+    if (SUCCEEDED(SHGetFolderPath(NULL,
+        CSIDL_PERSONAL | CSIDL_FLAG_CREATE,
+        NULL,
+        0,
+        szPath)))
+    {
+        if (PathAppend(szPath, LOGFILE))
+        {
+            return _tfopen(szPath, _T("at"));
+        }
+    }
+    return NULL;
+}
+
 BOOL WINAPI mIsDebuggerPresent(void)
 {
-    FILE *fw = _tfopen(LOGFILE, _T("at"));
+    FILE *fw = mOpenLogFile();
     __try
     {
         if (fw != NULL)
@@ -131,7 +154,7 @@ ULONG WINAPI mNtSetInformationThread(
     __in ULONG ThreadInformationLength
 )
 {
-    FILE *fw = _tfopen(LOGFILE, _T("at"));
+    FILE *fw = mOpenLogFile();
     __try
     {
         if (fw != NULL)
