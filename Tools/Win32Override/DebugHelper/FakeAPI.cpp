@@ -60,6 +60,8 @@ static NTSTATUS WINAPI mNtSetInformationThread(
     __in ULONG ThreadInformationLength
 );
 
+static void mDbgUiRemoteBreakin(void);
+
 static ptrNtSetInformationThread pNtSetInformationThread = NULL;
 static ptrNtQueryInformationThread pNtQueryInformationThread = NULL;
 static FILE *fLog = NULL;
@@ -74,6 +76,7 @@ STRUCT_FAKE_API pArrayFakeAPI[]=
     {_T("Kernel32.dll"),_T("IsDebuggerPresent"),(FARPROC)mIsDebuggerPresent,0,0},
     {_T("Kernel32.dll"),_T("CreateFileA"),(FARPROC)mCreateFileA,StackSizeOf(LPCSTR)+StackSizeOf(DWORD)+StackSizeOf(DWORD)+StackSizeOf(LPSECURITY_ATTRIBUTES)+StackSizeOf(DWORD)+StackSizeOf(DWORD)+StackSizeOf(HANDLE),0 },
     {_T("Ntdll.dll"),_T("NtSetInformationThread"),(FARPROC)mNtSetInformationThread,StackSizeOf(HANDLE)+StackSizeOf(THREADINFOCLASS)+StackSizeOf(PVOID)+StackSizeOf(ULONG),0 },
+    {_T("Ntdll.dll"),_T("DbgUiRemoteBreakin"),(FARPROC)mDbgUiRemoteBreakin,0,0 },
     {_T(""),_T(""),NULL,0,0}// last element for ending loops
 };
 
@@ -223,4 +226,13 @@ NTSTATUS WINAPI mNtSetInformationThread(
 
     LogPrintf(_T("Redirect to NtSetInformationThread\n"));
     return pNtSetInformationThread(ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
+}
+
+void __declspec(naked) mDbgUiRemoteBreakin(void)
+{
+    __asm
+    {
+        int 3
+        ret
+    }
 }
