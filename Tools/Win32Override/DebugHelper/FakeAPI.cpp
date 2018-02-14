@@ -43,6 +43,16 @@ static FILE* OpenLogFile();
 
 static BOOL WINAPI mIsDebuggerPresent(void);
 
+static HANDLE WINAPI mCreateFileA(
+    _In_     LPCSTR                lpFileName,
+    _In_     DWORD                 dwDesiredAccess,
+    _In_     DWORD                 dwShareMode,
+    _In_opt_ LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+    _In_     DWORD                 dwCreationDisposition,
+    _In_     DWORD                 dwFlagsAndAttributes,
+    _In_opt_ HANDLE                hTemplateFile
+);
+
 static NTSTATUS WINAPI mNtSetInformationThread(
     __in HANDLE ThreadHandle,
     __in THREADINFOCLASS ThreadInformationClass,
@@ -62,7 +72,8 @@ STRUCT_FAKE_API pArrayFakeAPI[]=
     // library name ,function name, function handler, stack size (required to allocate enough stack space), FirstBytesCanExecuteAnywhereSize (optional put to 0 if you don't know it's meaning)
     //                                                stack size= sum(StackSizeOf(ParameterType))           Same as monitoring file keyword (see monitoring file advanced syntax)
     {_T("Kernel32.dll"),_T("IsDebuggerPresent"),(FARPROC)mIsDebuggerPresent,0,0},
-    {_T("Ntdll.dll"),_T("NtSetInformationThread"),(FARPROC)mNtSetInformationThread,StackSizeOf(HANDLE)+StackSizeOf(THREADINFOCLASS)+StackSizeOf(PVOID)+StackSizeOf(ULONG),0},
+    {_T("Kernel32.dll"),_T("CreateFileA"),(FARPROC)mCreateFileA,StackSizeOf(LPCSTR)+StackSizeOf(DWORD)+StackSizeOf(DWORD)+StackSizeOf(LPSECURITY_ATTRIBUTES)+StackSizeOf(DWORD)+StackSizeOf(DWORD)+StackSizeOf(HANDLE),0 },
+    {_T("Ntdll.dll"),_T("NtSetInformationThread"),(FARPROC)mNtSetInformationThread,StackSizeOf(HANDLE)+StackSizeOf(THREADINFOCLASS)+StackSizeOf(PVOID)+StackSizeOf(ULONG),0 },
     {_T(""),_T(""),NULL,0,0}// last element for ending loops
 };
 
@@ -138,7 +149,7 @@ FILE* OpenLogFile()
     {
         if (PathAppend(szPath, LOGFILE))
         {
-            return _tfopen(szPath, _T("wt"));
+            return _tfopen(szPath, _T("wtc"));
         }
     }
     return NULL;
@@ -153,6 +164,7 @@ void LogPrintf(TCHAR *format, ...)
         va_start(args, format);
         _vftprintf(fLog, format, args);
         va_end(args);
+        fflush(fLog);
     }
 }
 
@@ -160,6 +172,29 @@ BOOL WINAPI mIsDebuggerPresent(void)
 {
     LogPrintf(_T("IsDebuggerPresent\n"));
     return FALSE;
+}
+
+HANDLE WINAPI mCreateFileA(
+    _In_     LPCSTR                lpFileName,
+    _In_     DWORD                 dwDesiredAccess,
+    _In_     DWORD                 dwShareMode,
+    _In_opt_ LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+    _In_     DWORD                 dwCreationDisposition,
+    _In_     DWORD                 dwFlagsAndAttributes,
+    _In_opt_ HANDLE                hTemplateFile
+)
+{
+    HANDLE hFile = CreateFileA(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
+    BOOL bEnableLog = FALSE;
+    if ((dwDesiredAccess & GENERIC_READ) != 0 && hFile != INVALID_HANDLE_VALUE)
+    {
+        bEnableLog = TRUE;
+    }
+    if (bEnableLog)
+    {
+        LogPrintf(_T("CreateFileA (Open Read): %S\n"), lpFileName);
+    }
+    return hFile;
 }
 
 NTSTATUS WINAPI mNtSetInformationThread(
@@ -173,10 +208,10 @@ NTSTATUS WINAPI mNtSetInformationThread(
 
     if (ThreadInformationClass == ThreadHideFromDebugger && ThreadInformation == NULL && ThreadInformationLength == 0)
     {
-        BYTE value = 0;
+        BOOLEAN value = FALSE;
         if (pNtQueryInformationThread(ThreadHandle, ThreadInformationClass, &value, sizeof(value), 0) == STATUS_SUCCESS)
         {
-            LogPrintf(_T("NtQueryInformationThread: %u\n"), (unsigned int) value);
+            LogPrintf(_T("NtQueryInformationThread: %u\n"), (unsigned int)value);
         }
         else
         {
