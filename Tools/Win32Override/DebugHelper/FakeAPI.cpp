@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <Shlobj.h>
 #include <Shlwapi.h>
+#include <list>
 #include "../_Common_Files/GenericFakeAPI.h"
 // You just need to edit this file to add new fake api 
 // WARNING YOUR FAKE API MUST HAVE THE SAME PARAMETERS AND CALLING CONVENTION AS THE REAL ONE,
@@ -40,6 +41,9 @@ typedef NTSTATUS (WINAPI *ptrNtQueryInformationThread)(
 );
 
 static FILE* OpenLogFile();
+static void LogPrintf(TCHAR *format, ...);
+static void LogFlush();
+static void LogData(BYTE *data, unsigned int length);
 
 static BOOL WINAPI mIsDebuggerPresent(void);
 
@@ -51,6 +55,26 @@ static HANDLE WINAPI mCreateFileA(
     _In_     DWORD                 dwCreationDisposition,
     _In_     DWORD                 dwFlagsAndAttributes,
     _In_opt_ HANDLE                hTemplateFile
+);
+
+static BOOL WINAPI mReadFile(
+    _In_        HANDLE       hFile,
+    _Out_       LPVOID       lpBuffer,
+    _In_        DWORD        nNumberOfBytesToRead,
+    _Out_opt_   LPDWORD      lpNumberOfBytesRead,
+    _Inout_opt_ LPOVERLAPPED lpOverlapped
+);
+
+static BOOL WINAPI mWriteFile(
+    _In_        HANDLE       hFile,
+    _In_        LPCVOID      lpBuffer,
+    _In_        DWORD        nNumberOfBytesToWrite,
+    _Out_opt_   LPDWORD      lpNumberOfBytesWritten,
+    _Inout_opt_ LPOVERLAPPED lpOverlapped
+);
+
+static BOOL WINAPI mCloseHandle(
+    _In_ HANDLE hObject
 );
 
 static NTSTATUS WINAPI mNtSetInformationThread(
@@ -65,6 +89,9 @@ static void mDbgUiRemoteBreakin(void);
 static ptrNtSetInformationThread pNtSetInformationThread = NULL;
 static ptrNtQueryInformationThread pNtQueryInformationThread = NULL;
 static FILE *fLog = NULL;
+static std::list<HANDLE> FileWatchList;
+static HANDLE hLastLogRFile = INVALID_HANDLE_VALUE;
+static HANDLE hLastLogWFile = INVALID_HANDLE_VALUE;
 
 ///////////////////////////////////////////////////////////////////////////////
 // fake API array. Redirection are defined here
@@ -75,6 +102,9 @@ STRUCT_FAKE_API pArrayFakeAPI[]=
     //                                                stack size= sum(StackSizeOf(ParameterType))           Same as monitoring file keyword (see monitoring file advanced syntax)
     {_T("Kernel32.dll"),_T("IsDebuggerPresent"),(FARPROC)mIsDebuggerPresent,0,0},
     {_T("Kernel32.dll"),_T("CreateFileA"),(FARPROC)mCreateFileA,StackSizeOf(LPCSTR)+StackSizeOf(DWORD)+StackSizeOf(DWORD)+StackSizeOf(LPSECURITY_ATTRIBUTES)+StackSizeOf(DWORD)+StackSizeOf(DWORD)+StackSizeOf(HANDLE),0 },
+    {_T("Kernel32.dll"),_T("ReadFile"),(FARPROC)mReadFile,StackSizeOf(HANDLE)+StackSizeOf(LPVOID)+StackSizeOf(DWORD)+StackSizeOf(LPDWORD)+StackSizeOf(LPOVERLAPPED),0 },
+    {_T("Kernel32.dll"),_T("WriteFile"),(FARPROC)mWriteFile,StackSizeOf(HANDLE)+StackSizeOf(LPCVOID)+StackSizeOf(DWORD)+StackSizeOf(LPDWORD)+StackSizeOf(LPOVERLAPPED),0 },
+    {_T("Kernel32.dll"),_T("CloseHandle"),(FARPROC)mCloseHandle,StackSizeOf(HANDLE),0 },
     {_T("Ntdll.dll"),_T("NtSetInformationThread"),(FARPROC)mNtSetInformationThread,StackSizeOf(HANDLE)+StackSizeOf(THREADINFOCLASS)+StackSizeOf(PVOID)+StackSizeOf(ULONG),0 },
     {_T("Ntdll.dll"),_T("DbgUiRemoteBreakin"),(FARPROC)mDbgUiRemoteBreakin,0,0 },
     {_T(""),_T(""),NULL,0,0}// last element for ending loops
@@ -164,16 +194,47 @@ void LogPrintf(TCHAR *format, ...)
 
     if (fLog != NULL)
     {
+        if (hLastLogRFile != INVALID_HANDLE_VALUE || hLastLogWFile != INVALID_HANDLE_VALUE)
+        {
+            hLastLogRFile = INVALID_HANDLE_VALUE;
+            hLastLogWFile = INVALID_HANDLE_VALUE;
+            _fputts(_T("\n"), fLog);
+        }
         va_start(args, format);
         _vftprintf(fLog, format, args);
         va_end(args);
+    }
+}
+
+void LogFlush()
+{
+    if (fLog != NULL)
+    {
         fflush(fLog);
+    }
+}
+
+void LogData(BYTE *data, unsigned int length)
+{
+    if (fLog == NULL || data == NULL || length == 0 || length > 0x100)
+    {
+        return;
+    }
+
+    for (unsigned int i = 0; i < length; i++)
+    {
+        if ((i > 0) && (i % 64 == 0))
+        {
+            _fputts(_T("\n"), fLog);
+        }
+        _ftprintf(fLog, _T("%02X "), (unsigned int)data[i]);
     }
 }
 
 BOOL WINAPI mIsDebuggerPresent(void)
 {
     LogPrintf(_T("IsDebuggerPresent\n"));
+    LogFlush();
     return FALSE;
 }
 
@@ -195,9 +256,71 @@ HANDLE WINAPI mCreateFileA(
     }
     if (bEnableLog)
     {
-        LogPrintf(_T("CreateFileA (Open Read): %S\n"), lpFileName);
+        LogPrintf(_T("CreateFileA OK: %S %08p\n"), lpFileName, hFile);
+        LogFlush();
+        FileWatchList.push_back(hFile);
     }
     return hFile;
+}
+
+BOOL WINAPI mReadFile(
+    _In_        HANDLE       hFile,
+    _Out_       LPVOID       lpBuffer,
+    _In_        DWORD        nNumberOfBytesToRead,
+    _Out_opt_   LPDWORD      lpNumberOfBytesRead,
+    _Inout_opt_ LPOVERLAPPED lpOverlapped
+)
+{
+    BOOL bResult = ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+    bool found = std::find(FileWatchList.begin(), FileWatchList.end(), hFile) != FileWatchList.end();
+    if (bResult && found)
+    {
+        if (hLastLogRFile != hFile)
+        {
+            LogPrintf(_T("ReadFile: %08p (%u)="), hFile, nNumberOfBytesToRead);
+            hLastLogRFile = hFile;
+        }
+        LogData((BYTE *)lpBuffer, nNumberOfBytesToRead);
+    }
+
+    return bResult;
+}
+
+BOOL WINAPI mWriteFile(
+    _In_        HANDLE       hFile,
+    _In_        LPCVOID      lpBuffer,
+    _In_        DWORD        nNumberOfBytesToWrite,
+    _Out_opt_   LPDWORD      lpNumberOfBytesWritten,
+    _Inout_opt_ LPOVERLAPPED lpOverlapped
+)
+{
+    BOOL bResult = WriteFile(hFile, lpBuffer, nNumberOfBytesToWrite, lpNumberOfBytesWritten, lpOverlapped);
+    bool found = std::find(FileWatchList.begin(), FileWatchList.end(), hFile) != FileWatchList.end();
+    if (bResult && found)
+    {
+        if (hLastLogWFile != hFile)
+        {
+            LogPrintf(_T("WriteFile: %08p (%u)="), hFile, nNumberOfBytesToWrite);
+            hLastLogWFile = hFile;
+        }
+        LogData((BYTE *) lpBuffer, nNumberOfBytesToWrite);
+    }
+
+    return bResult;
+}
+
+BOOL WINAPI mCloseHandle(
+    _In_ HANDLE hObject
+)
+{
+    bool found = std::find(FileWatchList.begin(), FileWatchList.end(), hObject) != FileWatchList.end();
+    if (found)
+    {
+        FileWatchList.remove(hObject);
+        LogPrintf(_T("CloseHandle: %08p\n"), hObject);
+        LogFlush();
+    }
+    return CloseHandle(hObject);
 }
 
 NTSTATUS WINAPI mNtSetInformationThread(
@@ -221,6 +344,7 @@ NTSTATUS WINAPI mNtSetInformationThread(
             LogPrintf(_T("NtQueryInformationThread failed!\n"));
         }
         LogPrintf(_T("Override NtSetInformationThread: STATUS_SUCCESS\n"));
+        LogFlush();
         return STATUS_SUCCESS;
     }
 
