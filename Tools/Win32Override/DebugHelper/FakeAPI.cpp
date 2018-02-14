@@ -77,6 +77,25 @@ static BOOL WINAPI mCloseHandle(
     _In_ HANDLE hObject
 );
 
+static LPVOID WINAPI mHeapAlloc(
+    _In_ HANDLE hHeap,
+    _In_ DWORD  dwFlags,
+    _In_ SIZE_T dwBytes
+);
+
+static LPVOID WINAPI mHeapReAlloc(
+    _In_ HANDLE hHeap,
+    _In_ DWORD  dwFlags,
+    _In_ LPVOID lpMem,
+    _In_ SIZE_T dwBytes
+);
+
+static BOOL WINAPI mHeapFree(
+    _In_ HANDLE hHeap,
+    _In_ DWORD  dwFlags,
+    _In_ LPVOID lpMem
+);
+
 static NTSTATUS WINAPI mNtSetInformationThread(
     __in HANDLE ThreadHandle,
     __in THREADINFOCLASS ThreadInformationClass,
@@ -90,6 +109,7 @@ static ptrNtSetInformationThread pNtSetInformationThread = NULL;
 static ptrNtQueryInformationThread pNtQueryInformationThread = NULL;
 static FILE *fLog = NULL;
 static std::list<HANDLE> FileWatchList;
+static std::list<LPVOID> MemWatchList;
 static HANDLE hLastLogRFile = INVALID_HANDLE_VALUE;
 static HANDLE hLastLogWFile = INVALID_HANDLE_VALUE;
 
@@ -105,6 +125,9 @@ STRUCT_FAKE_API pArrayFakeAPI[]=
     {_T("Kernel32.dll"),_T("ReadFile"),(FARPROC)mReadFile,StackSizeOf(HANDLE)+StackSizeOf(LPVOID)+StackSizeOf(DWORD)+StackSizeOf(LPDWORD)+StackSizeOf(LPOVERLAPPED),0 },
     {_T("Kernel32.dll"),_T("WriteFile"),(FARPROC)mWriteFile,StackSizeOf(HANDLE)+StackSizeOf(LPCVOID)+StackSizeOf(DWORD)+StackSizeOf(LPDWORD)+StackSizeOf(LPOVERLAPPED),0 },
     {_T("Kernel32.dll"),_T("CloseHandle"),(FARPROC)mCloseHandle,StackSizeOf(HANDLE),0 },
+    {_T("Kernel32.dll"),_T("HeapAlloc"),(FARPROC)mHeapAlloc,StackSizeOf(HANDLE)+StackSizeOf(DWORD)+StackSizeOf(SIZE_T),0 },
+    {_T("Kernel32.dll"),_T("HeapReAlloc"),(FARPROC)mHeapReAlloc,StackSizeOf(HANDLE) + StackSizeOf(DWORD)+StackSizeOf(LPVOID)+StackSizeOf(SIZE_T),0 },
+    {_T("Kernel32.dll"),_T("HeapFree"),(FARPROC)mHeapFree,StackSizeOf(HANDLE)+StackSizeOf(DWORD)+StackSizeOf(LPVOID),0 },
     {_T("Ntdll.dll"),_T("NtSetInformationThread"),(FARPROC)mNtSetInformationThread,StackSizeOf(HANDLE)+StackSizeOf(THREADINFOCLASS)+StackSizeOf(PVOID)+StackSizeOf(ULONG),0 },
     {_T("Ntdll.dll"),_T("DbgUiRemoteBreakin"),(FARPROC)mDbgUiRemoteBreakin,0,0 },
     {_T(""),_T(""),NULL,0,0}// last element for ending loops
@@ -321,6 +344,73 @@ BOOL WINAPI mCloseHandle(
         LogFlush();
     }
     return CloseHandle(hObject);
+}
+
+LPVOID WINAPI mHeapAlloc(
+    _In_ HANDLE hHeap,
+    _In_ DWORD  dwFlags,
+    _In_ SIZE_T dwBytes
+)
+{
+    LPVOID pMem = HeapAlloc(hHeap, dwFlags, dwBytes);
+    if (pMem != NULL && dwBytes > 0x100)
+    {
+        LogPrintf(_T("HeapAlloc: %u=%08p\n"), dwBytes, pMem);
+        bool found = std::find(MemWatchList.begin(), MemWatchList.end(), pMem) != MemWatchList.end();
+        if (!found)
+        {
+            MemWatchList.push_back(pMem);
+        }
+        else
+        {
+            LogPrintf(_T("HeapAlloc: Existing!\n"));
+        }
+    }
+    return pMem;
+}
+
+LPVOID WINAPI mHeapReAlloc(
+    _In_ HANDLE hHeap,
+    _In_ DWORD  dwFlags,
+    _In_ LPVOID lpMem,
+    _In_ SIZE_T dwBytes
+)
+{
+    LPVOID pMem = HeapReAlloc(hHeap, dwFlags, lpMem, dwBytes);
+    if (pMem != NULL)
+    {
+        bool found = std::find(MemWatchList.begin(), MemWatchList.end(), lpMem) != MemWatchList.end();
+        if (!found)
+        {
+            if (dwBytes > 100)
+            {
+                LogPrintf(_T("HeapReAlloc: New %08p %u=%08p\n"), lpMem, dwBytes, pMem);
+            }
+        }
+        else
+        {
+            LogPrintf(_T("HeapReAlloc: Replace %08p %u=%08p\n"), lpMem, dwBytes, pMem);
+            MemWatchList.remove(lpMem);
+        }
+        MemWatchList.push_back(pMem);
+    }
+    return pMem;
+}
+
+BOOL WINAPI mHeapFree(
+    _In_ HANDLE hHeap,
+    _In_ DWORD  dwFlags,
+    _In_ LPVOID lpMem
+)
+{
+    bool found = std::find(MemWatchList.begin(), MemWatchList.end(), lpMem) != MemWatchList.end();
+    if (found)
+    {
+        SIZE_T size = HeapSize(hHeap, dwFlags, lpMem);
+        LogPrintf(_T("HeapFree: %08p=%u\n"), lpMem, size);
+        MemWatchList.remove(lpMem);
+    }
+    return HeapFree(hHeap, dwFlags, lpMem);
 }
 
 NTSTATUS WINAPI mNtSetInformationThread(
