@@ -4,6 +4,6 @@ Goal : make believe that target is not debugged
 
 --------------------------------------------------------------------
 How to use :
-1) Hook target with WinApiOverride
-2) load the overriding dll with WinApiOverride
-That's all
+1) Load HookedOnlyDebugHelper.txt as inclusion list
+2) Load the overriding dll with WinApiOverride
+3) Hook target with WinApiOverride with attach to all new processes (with corresponding filter).

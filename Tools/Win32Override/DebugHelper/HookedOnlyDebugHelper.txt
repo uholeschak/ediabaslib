@@ -1,0 +1,22 @@
+;--------------------------------------------------------------------------
+;
+; use ; for comments
+; You can use * and ? as joker
+;
+; Special path shortcuts :
+;   - no path for winapioverride.exe path
+;   - <TargetDir> for hooked application path
+;   - <windir> for windows directory (typicaly c:\windows)
+;   - <system> for windows system directory (typicaly c:\windows\System32)
+;   - <ProgramFiles> for program files directory (typicaly C:\Program Files)
+;   - <ProgramFilesCommon> for program files common directory (typicaly C:\Program Files\Common)
+;
+; example 
+;       apioverride.dll
+;       <system>\kernel32.dll
+;       <TargetDir>\*
+;
+;--------------------------------------------------------------------------
+
+<TargetDir>\*
+<system>\kernel32.dll
