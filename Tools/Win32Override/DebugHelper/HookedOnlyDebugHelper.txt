@@ -19,4 +19,5 @@
 ;--------------------------------------------------------------------------
 
 <TargetDir>\*
-<system>\kernel32.dll
+;<system>\kernel32.dll
+<system>\ntdll.dll
