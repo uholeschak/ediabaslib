@@ -45,6 +45,7 @@ static void LogPrintf(TCHAR *format, ...);
 static void LogFlush();
 static void LogData(BYTE *data, unsigned int length, unsigned int max_length = 0x100);
 static void LogAsc(BYTE *data, unsigned int length, unsigned int max_length = 0x100);
+static BOOL FixDbgUiRemoteBreakin();
 
 static BOOL WINAPI mIsDebuggerPresent(void);
 
@@ -131,7 +132,7 @@ STRUCT_FAKE_API pArrayFakeAPI[]=
     {_T("Kernel32.dll"),_T("HeapReAlloc"),(FARPROC)mHeapReAlloc,StackSizeOf(HANDLE) + StackSizeOf(DWORD)+StackSizeOf(LPVOID)+StackSizeOf(SIZE_T),0 },
     {_T("Kernel32.dll"),_T("HeapFree"),(FARPROC)mHeapFree,StackSizeOf(HANDLE)+StackSizeOf(DWORD)+StackSizeOf(LPVOID),0 },
     {_T("Ntdll.dll"),_T("NtSetInformationThread"),(FARPROC)mNtSetInformationThread,StackSizeOf(HANDLE)+StackSizeOf(THREADINFOCLASS)+StackSizeOf(PVOID)+StackSizeOf(ULONG),0 },
-    {_T("Ntdll.dll"),_T("DbgUiRemoteBreakin"),(FARPROC)mDbgUiRemoteBreakin,0,0 },
+    //{_T("Ntdll.dll"),_T("DbgUiRemoteBreakin"),(FARPROC)mDbgUiRemoteBreakin,0,0 },
     {_T(""),_T(""),NULL,0,0}// last element for ending loops
 };
 
@@ -303,6 +304,19 @@ void LogAsc(BYTE *data, unsigned int length, unsigned int max_length)
         }
     }
     _fputts(_T("\n"), fLog);
+}
+
+BOOL FixDbgUiRemoteBreakin()
+{
+    FARPROC ntdll = GetProcAddress(LoadLibrary(_T("Ntdll.dll")), "DbgUiRemoteBreakin");
+    if (ntdll == NULL)
+    {
+        return FALSE;
+    }
+    BYTE code[] = { 0x6A, 0x08, 0x68, 0x30 };   // int 3, ret
+    SIZE_T written = 0;
+
+    return WriteProcessMemory(GetCurrentProcess(), ntdll, &code, sizeof(code), &written);
 }
 
 BOOL WINAPI mIsDebuggerPresent(void)
@@ -525,6 +539,10 @@ NTSTATUS WINAPI mNtSetInformationThread(
         else
         {
             LogPrintf(_T("NtQueryInformationThread failed!\n"));
+        }
+        if (!FixDbgUiRemoteBreakin())
+        {
+            LogPrintf(_T("FixDbgUiRemoteBreakin failed!\n"));
         }
         LogPrintf(_T("Override NtSetInformationThread: STATUS_SUCCESS\n"));
         //LogFlush();
