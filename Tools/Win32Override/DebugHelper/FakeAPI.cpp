@@ -43,7 +43,8 @@ typedef NTSTATUS (WINAPI *ptrNtQueryInformationThread)(
 static FILE* OpenLogFile();
 static void LogPrintf(TCHAR *format, ...);
 static void LogFlush();
-static void LogData(BYTE *data, unsigned int length);
+static void LogData(BYTE *data, unsigned int length, unsigned int max_length = 0x100);
+static void LogAsc(BYTE *data, unsigned int length, unsigned int max_length = 0x100);
 
 static BOOL WINAPI mIsDebuggerPresent(void);
 
@@ -109,6 +110,7 @@ static ptrNtSetInformationThread pNtSetInformationThread = NULL;
 static ptrNtQueryInformationThread pNtQueryInformationThread = NULL;
 static FILE *fLog = NULL;
 static std::list<HANDLE> FileWatchList;
+static std::list<HANDLE> FileMemWatchList;
 static std::list<LPVOID> MemWatchList;
 static HANDLE hLastLogRFile = INVALID_HANDLE_VALUE;
 static HANDLE hLastLogWFile = INVALID_HANDLE_VALUE;
@@ -205,7 +207,7 @@ FILE* OpenLogFile()
     {
         if (PathAppend(szPath, LOGFILE))
         {
-            return _tfopen(szPath, _T("wtc"));
+            return _tfopen(szPath, _T("wt"));
         }
     }
     return NULL;
@@ -237,9 +239,9 @@ void LogFlush()
     }
 }
 
-void LogData(BYTE *data, unsigned int length)
+void LogData(BYTE *data, unsigned int length, unsigned int max_length)
 {
-    if (fLog == NULL || data == NULL || length == 0 || length > 0x100)
+    if (fLog == NULL || data == NULL || length == 0 || length > max_length)
     {
         return;
     }
@@ -254,10 +256,37 @@ void LogData(BYTE *data, unsigned int length)
     }
 }
 
+void LogAsc(BYTE *data, unsigned int length, unsigned int max_length)
+{
+    if (fLog == NULL || data == NULL || length == 0 || length > max_length)
+    {
+        return;
+    }
+
+    BOOL bDot = FALSE;
+    for (unsigned int i = 0; i < length; i++)
+    {
+        if (isprint(data[i]))
+        {
+            _fputtc(data[i], fLog);
+            bDot = FALSE;
+        }
+        else
+        {
+            if (!bDot)
+            {
+                _fputtc(_T('.'), fLog);
+            }
+            bDot = TRUE;
+        }
+    }
+    _fputts(_T("\n"), fLog);
+}
+
 BOOL WINAPI mIsDebuggerPresent(void)
 {
     LogPrintf(_T("IsDebuggerPresent\n"));
-    LogFlush();
+    //LogFlush();
     return FALSE;
 }
 
@@ -280,8 +309,26 @@ HANDLE WINAPI mCreateFileA(
     if (bEnableLog)
     {
         LogPrintf(_T("CreateFileA OK: %S %08p\n"), lpFileName, hFile);
-        LogFlush();
+        bool bWatchMem = false;
+        LPSTR ext = PathFindExtensionA(lpFileName);
+        if (ext != NULL)
+        {
+            if (_stricmp(ext, ".clb") == 0)
+            {
+                bWatchMem = true;
+            }
+            if (_stricmp(ext, ".rod") == 0)
+            {
+                bWatchMem = true;
+            }
+        }
         FileWatchList.push_back(hFile);
+        if (bWatchMem)
+        {
+            LogPrintf(_T("CreateFileA: Start Memwatch\n"));
+            FileMemWatchList.push_back(hFile);
+        }
+        //LogFlush();
     }
     return hFile;
 }
@@ -300,7 +347,12 @@ BOOL WINAPI mReadFile(
     {
         if (hLastLogRFile != hFile)
         {
-            LogPrintf(_T("ReadFile: %08p (%u)="), hFile, nNumberOfBytesToRead);
+            DWORD readCount = 0;
+            if (lpNumberOfBytesRead != NULL)
+            {
+                readCount = *lpNumberOfBytesRead;
+            }
+            LogPrintf(_T("ReadFile: %08p (%08p, %u, %u)="), hFile, lpBuffer, nNumberOfBytesToRead, readCount);
             hLastLogRFile = hFile;
         }
         LogData((BYTE *)lpBuffer, nNumberOfBytesToRead);
@@ -323,7 +375,12 @@ BOOL WINAPI mWriteFile(
     {
         if (hLastLogWFile != hFile)
         {
-            LogPrintf(_T("WriteFile: %08p (%u)="), hFile, nNumberOfBytesToWrite);
+            DWORD writeCount = 0;
+            if (lpNumberOfBytesWritten != NULL)
+            {
+                writeCount = *lpNumberOfBytesWritten;
+            }
+            LogPrintf(_T("WriteFile: %08p (%08p, %u, %u)="), hFile, lpBuffer, nNumberOfBytesToWrite, writeCount);
             hLastLogWFile = hFile;
         }
         LogData((BYTE *) lpBuffer, nNumberOfBytesToWrite);
@@ -339,9 +396,15 @@ BOOL WINAPI mCloseHandle(
     bool found = std::find(FileWatchList.begin(), FileWatchList.end(), hObject) != FileWatchList.end();
     if (found)
     {
-        FileWatchList.remove(hObject);
         LogPrintf(_T("CloseHandle: %08p\n"), hObject);
-        LogFlush();
+        FileWatchList.remove(hObject);
+        bool foundMem = std::find(FileMemWatchList.begin(), FileMemWatchList.end(), hObject) != FileMemWatchList.end();
+        if (foundMem)
+        {
+            LogPrintf(_T("CloseHandle: Stop Memwatch\n"));
+            FileMemWatchList.remove(hObject);
+        }
+        //LogFlush();
     }
     return CloseHandle(hObject);
 }
@@ -353,17 +416,28 @@ LPVOID WINAPI mHeapAlloc(
 )
 {
     LPVOID pMem = HeapAlloc(hHeap, dwFlags, dwBytes);
-    if (pMem != NULL && dwBytes > 0x100)
+    if (pMem != NULL && FileMemWatchList.size() > 0)
     {
-        LogPrintf(_T("HeapAlloc: %u=%08p\n"), dwBytes, pMem);
-        bool found = std::find(MemWatchList.begin(), MemWatchList.end(), pMem) != MemWatchList.end();
+        BOOL bLog = FALSE;
+        if (dwBytes >= 1000)
+        {
+            bLog = TRUE;
+        }
+        if (bLog)
+        {
+            LogPrintf(_T("HeapAlloc: %u=%08p\n"), dwBytes, pMem);
+        }
+        bool found = (std::find(MemWatchList.begin(), MemWatchList.end(), pMem) != MemWatchList.end());
         if (!found)
         {
             MemWatchList.push_back(pMem);
         }
         else
         {
-            LogPrintf(_T("HeapAlloc: Existing!\n"));
+            if (bLog)
+            {
+                LogPrintf(_T("HeapAlloc: Existing!\n"));
+            }
         }
     }
     return pMem;
@@ -379,20 +453,13 @@ LPVOID WINAPI mHeapReAlloc(
     LPVOID pMem = HeapReAlloc(hHeap, dwFlags, lpMem, dwBytes);
     if (pMem != NULL)
     {
-        bool found = std::find(MemWatchList.begin(), MemWatchList.end(), lpMem) != MemWatchList.end();
-        if (!found)
+        bool found = (std::find(MemWatchList.begin(), MemWatchList.end(), lpMem) != MemWatchList.end());
+        if (found)
         {
-            if (dwBytes > 100)
-            {
-                LogPrintf(_T("HeapReAlloc: New %08p %u=%08p\n"), lpMem, dwBytes, pMem);
-            }
-        }
-        else
-        {
-            LogPrintf(_T("HeapReAlloc: Replace %08p %u=%08p\n"), lpMem, dwBytes, pMem);
+            LogPrintf(_T("HeapReAlloc: %08p %u=%08p\n"), lpMem, dwBytes, pMem);
             MemWatchList.remove(lpMem);
+            MemWatchList.push_back(pMem);
         }
-        MemWatchList.push_back(pMem);
     }
     return pMem;
 }
@@ -403,11 +470,15 @@ BOOL WINAPI mHeapFree(
     _In_ LPVOID lpMem
 )
 {
-    bool found = std::find(MemWatchList.begin(), MemWatchList.end(), lpMem) != MemWatchList.end();
+    bool found = (std::find(MemWatchList.begin(), MemWatchList.end(), lpMem) != MemWatchList.end());
     if (found)
     {
         SIZE_T size = HeapSize(hHeap, dwFlags, lpMem);
         LogPrintf(_T("HeapFree: %08p=%u\n"), lpMem, size);
+        if (size <= 0x10000)
+        {
+            LogAsc((BYTE *)lpMem, size, 0x10000);
+        }
         MemWatchList.remove(lpMem);
     }
     return HeapFree(hHeap, dwFlags, lpMem);
@@ -434,7 +505,7 @@ NTSTATUS WINAPI mNtSetInformationThread(
             LogPrintf(_T("NtQueryInformationThread failed!\n"));
         }
         LogPrintf(_T("Override NtSetInformationThread: STATUS_SUCCESS\n"));
-        LogFlush();
+        //LogFlush();
         return STATUS_SUCCESS;
     }
 
