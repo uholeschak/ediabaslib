@@ -263,21 +263,15 @@ void LogAsc(BYTE *data, unsigned int length, unsigned int max_length)
         return;
     }
 
-    BOOL bDot = FALSE;
     for (unsigned int i = 0; i < length; i++)
     {
-        if (isprint(data[i]))
+        if (i >= 16 && isprint(data[i]))
         {
             _fputtc(data[i], fLog);
-            bDot = FALSE;
         }
         else
         {
-            if (!bDot)
-            {
-                _fputtc(_T('.'), fLog);
-            }
-            bDot = TRUE;
+            _ftprintf(fLog, _T("<%02X>"), (unsigned int)data[i]);
         }
     }
     _fputts(_T("\n"), fLog);
