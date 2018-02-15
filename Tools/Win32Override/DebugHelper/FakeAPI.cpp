@@ -165,7 +165,7 @@ BOOL WINAPI DllMain(HINSTANCE hInstDLL, DWORD dwReason, PVOID pvReserved)
         case DLL_PROCESS_ATTACH:
             {
                 // get func address
-                HMODULE hNtdll=GetModuleHandle(_T("ntdll.dll"));
+                HMODULE hNtdll = GetModuleHandle(_T("Ntdll.dll"));
                 if (hNtdll != NULL)
                 {
                     pNtSetInformationThread=(ptrNtSetInformationThread)GetProcAddress(hNtdll,"NtSetInformationThread");
@@ -309,7 +309,13 @@ void LogAsc(BYTE *data, unsigned int length, unsigned int max_length)
 
 BOOL PatchDbgUiRemoteBreakin()
 {
-    FARPROC ntdll = GetProcAddress(LoadLibrary(_T("Ntdll.dll")), "DbgUiRemoteBreakin");
+    HMODULE hNtdll = GetModuleHandle(_T("Ntdll.dll"));
+    if (hNtdll == NULL)
+    {
+        LogPrintf(_T("PatchDbgUiRemoteBreakin: GetModuleHandle failed\n"));
+        return FALSE;
+    }
+    FARPROC ntdll = GetProcAddress(hNtdll, "DbgUiRemoteBreakin");
     if (ntdll == NULL)
     {
         LogPrintf(_T("PatchDbgUiRemoteBreakin: GetProcAddress failed\n"));
