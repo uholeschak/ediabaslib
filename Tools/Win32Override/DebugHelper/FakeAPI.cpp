@@ -333,7 +333,7 @@ BOOL PatchDbgUiRemoteBreakin()
 
     if (!WriteProcessMemory(hProcess, ntdll, &code, sizeof(code), &count))
     {
-        LogPrintf(_T("PatchDbgUiRemoteBreakin: ReadProcessMemory failed\n"));
+        LogPrintf(_T("PatchDbgUiRemoteBreakin: WriteProcessMemory failed\n"));
         return FALSE;
     }
     LogPrintf(_T("PatchDbgUiRemoteBreakin: Patched\n"));
