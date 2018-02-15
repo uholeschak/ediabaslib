@@ -263,15 +263,43 @@ void LogAsc(BYTE *data, unsigned int length, unsigned int max_length)
         return;
     }
 
+    if (length >= 4)
+    {
+        DWORD dwType = *(DWORD *)(data + 0);
+        if (length >= 0x10 && dwType == 0x0053DF24)
+        {   // CString type
+            DWORD dwStrLen = *(DWORD *)(data + 4);
+            if ((dwStrLen + 0x10) <= length)
+            {
+                _fputts(_T("CString: "), fLog);
+                for (unsigned int i = 0; i < dwStrLen; i++)
+                {
+                    BYTE value = data[i + 0x10];
+                    if (isprint(value))
+                    {
+                        _fputtc(value, fLog);
+                    }
+                    else
+                    {
+                        _ftprintf(fLog, _T("<%02X>"), (unsigned int)value);
+                    }
+                }
+                _fputts(_T("\n"), fLog);
+                return;
+            }
+        }
+    }
+
     for (unsigned int i = 0; i < length; i++)
     {
-        if (i >= 16 && isprint(data[i]))
+        BYTE value = data[i];
+        if (isprint(value))
         {
-            _fputtc(data[i], fLog);
+            _fputtc(value, fLog);
         }
         else
         {
-            _ftprintf(fLog, _T("<%02X>"), (unsigned int)data[i]);
+            _ftprintf(fLog, _T("<%02X>"), (unsigned int)value);
         }
     }
     _fputts(_T("\n"), fLog);
