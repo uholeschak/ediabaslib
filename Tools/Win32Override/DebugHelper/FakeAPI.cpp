@@ -45,7 +45,7 @@ static void LogPrintf(TCHAR *format, ...);
 static void LogFlush();
 static void LogData(BYTE *data, unsigned int length, unsigned int max_length = 0x100);
 static void LogAsc(BYTE *data, unsigned int length, unsigned int max_length = 0x100);
-static BOOL FixDbgUiRemoteBreakin();
+static BOOL PatchDbgUiRemoteBreakin();
 
 static BOOL WINAPI mIsDebuggerPresent(void);
 
@@ -176,6 +176,7 @@ BOOL WINAPI DllMain(HINSTANCE hInstDLL, DWORD dwReason, PVOID pvReserved)
                     return FALSE;
                 }
                 fLog = OpenLogFile();
+                PatchDbgUiRemoteBreakin();
             }
             break;
 
@@ -306,17 +307,37 @@ void LogAsc(BYTE *data, unsigned int length, unsigned int max_length)
     _fputts(_T("\n"), fLog);
 }
 
-BOOL FixDbgUiRemoteBreakin()
+BOOL PatchDbgUiRemoteBreakin()
 {
     FARPROC ntdll = GetProcAddress(LoadLibrary(_T("Ntdll.dll")), "DbgUiRemoteBreakin");
     if (ntdll == NULL)
     {
+        LogPrintf(_T("PatchDbgUiRemoteBreakin: GetProcAddress failed\n"));
         return FALSE;
     }
+    BYTE buffer[] = { 0x00, 0x00, 0x00, 0x00 };
     BYTE code[] = { 0x6A, 0x08, 0x68, 0x30 };   // int 3, ret
-    SIZE_T written = 0;
+    SIZE_T count = 0;
 
-    return WriteProcessMemory(GetCurrentProcess(), ntdll, &code, sizeof(code), &written);
+    HANDLE hProcess = GetCurrentProcess();
+    if (!ReadProcessMemory(hProcess, ntdll, &buffer, sizeof(buffer), &count))
+    {
+        LogPrintf(_T("PatchDbgUiRemoteBreakin: ReadProcessMemory failed\n"));
+        return FALSE;
+    }
+
+    if (memcmp(code, buffer, sizeof(code)) == 0)
+    {   // already patched
+        return TRUE;
+    }
+
+    if (!WriteProcessMemory(hProcess, ntdll, &code, sizeof(code), &count))
+    {
+        LogPrintf(_T("PatchDbgUiRemoteBreakin: ReadProcessMemory failed\n"));
+        return FALSE;
+    }
+    LogPrintf(_T("PatchDbgUiRemoteBreakin: Patched\n"));
+    return TRUE;
 }
 
 BOOL WINAPI mIsDebuggerPresent(void)
@@ -540,10 +561,7 @@ NTSTATUS WINAPI mNtSetInformationThread(
         {
             LogPrintf(_T("NtQueryInformationThread failed!\n"));
         }
-        if (!FixDbgUiRemoteBreakin())
-        {
-            LogPrintf(_T("FixDbgUiRemoteBreakin failed!\n"));
-        }
+        PatchDbgUiRemoteBreakin();
         LogPrintf(_T("Override NtSetInformationThread: STATUS_SUCCESS\n"));
         //LogFlush();
         return STATUS_SUCCESS;
