@@ -371,8 +371,10 @@ HANDLE WINAPI mCreateFileA(
         LogPrintf(_T("CreateFileA OK: %S %08p\n"), lpFileName, hFile);
         bool bWatchMem = false;
         LPSTR ext = PathFindExtensionA(lpFileName);
-        if (ext != NULL)
+        LPSTR name = PathFindFileNameA(lpFileName);
+        if (ext != NULL && name != NULL)
         {
+#if false
             if (_stricmp(ext, ".clb") == 0)
             {
                 bWatchMem = true;
@@ -381,6 +383,15 @@ HANDLE WINAPI mCreateFileA(
             {
                 bWatchMem = true;
             }
+#else
+            if (_stricmp(ext, ".clb") == 0)
+            {
+                if (strlen(name) >= 19)
+                {
+                    bWatchMem = true;
+                }
+            }
+#endif
         }
         FileWatchList.push_back(hFile);
         if (bWatchMem)
