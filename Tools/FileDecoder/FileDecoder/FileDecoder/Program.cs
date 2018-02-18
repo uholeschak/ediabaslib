@@ -176,11 +176,11 @@ namespace FileDecoder
                 mask2 += tempVal2;
                 if (mask1 < 0xFFFF)
                 {
-                    mask1 = (code1 + 2) * tempVal1 * (code2 + 3) * (code1 + 4) + (mask1 << 16);
+                    mask1 = (mask1 << 16) + (code1 + 2) * (code2 + 1) * (code2 + 3) * (code1 + 4);
                 }
                 if (mask2 < 0xFFFF)
                 {
-                    mask2 = (mask2 << 16) + (code1 + 3) * (code1 + 1) * (code1 + 2);
+                    mask2 = (mask2 << 16) + (code1 + 1) * (code1 + 2) * (code1 + 3);
                 }
 
                 UInt32[] mask = new UInt32[2];
