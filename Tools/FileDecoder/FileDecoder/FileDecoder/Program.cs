@@ -12,10 +12,13 @@ namespace FileDecoder
                 Console.WriteLine("No input file specified");
                 return 1;
             }
-            string inFile = args[0];
-            if (!File.Exists(inFile))
+
+            string fileSpec = args[0];
+            string dir = Path.GetDirectoryName(fileSpec);
+            string searchPattern = Path.GetFileName(fileSpec);
+            if (dir == null || searchPattern == null)
             {
-                Console.WriteLine("Input file not existing");
+                Console.WriteLine("Invalid file name");
                 return 1;
             }
 
@@ -31,12 +34,26 @@ namespace FileDecoder
                 return 1;
             }
 
-            string outFile = Path.ChangeExtension(inFile, ".lbl");
-            if (!DecryptFile(inFile, outFile, typeCode))
+            try
             {
-                Console.WriteLine("Decryption failed");
-                return 1;
+                string[] files = Directory.GetFiles(dir, searchPattern, SearchOption.AllDirectories);
+                foreach (string file in files)
+                {
+                    string outFile = Path.ChangeExtension(file, ".lbl");
+                    Console.WriteLine("Decrypting: {0}", file);
+                    if (!DecryptFile(file, outFile, typeCode))
+                    {
+                        Console.WriteLine("Decryption failed");
+                        return 1;
+                    }
+                }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
             return 0;
         }
 
