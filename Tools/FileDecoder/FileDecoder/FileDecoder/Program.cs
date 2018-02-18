@@ -35,9 +35,9 @@ namespace FileDecoder
                 {
                     using (FileStream fsWrite = new FileStream(outFile, FileMode.Create))
                     {
-                        for (; ; )
+                        for (int line = 0; ; line++)
                         {
-                            byte[] data = DecryptLine(fsRead);
+                            byte[] data = DecryptLine(fsRead, line);
                             if (data == null)
                             {
                                 break;
@@ -64,7 +64,7 @@ namespace FileDecoder
             }
         }
 
-        static byte[] DecryptLine(FileStream fs)
+        static byte[] DecryptLine(FileStream fs, int line)
         {
             try
             {
@@ -95,9 +95,29 @@ namespace FileDecoder
                     buffer[i >> 2] = BitConverter.ToUInt32(data, i);
                 }
 
+                UInt32 code1 = (UInt32)line;
+                UInt32 code2 = 0xE9;
+                UInt32 mask1 = (code1 + 2) * (code2 + 1) + (code1 + 3) * (code1 + 1) * (code2 + 2);
+                UInt32 mask2 = (code1 + 2) * (code2 + 1) * (code2 + 3);
+                UInt32 tempVal1 = code2 + 1;
+                UInt32 tempVal2 = code2 % (code1 + 1);
+                if (tempVal2 == 0)
+                {
+                    tempVal2 = code1 % tempVal1;
+                }
+                mask2 += tempVal2;
+                if (mask1 < 0xFFFF)
+                {
+                    mask1 = (code1 + 2) * tempVal1 * (code2 + 3) * (code1 + 4) + (mask1 << 16);
+                }
+                if (mask2 < 0xFFFF)
+                {
+                    mask2 = (mask2 << 16) + (code1 + 3) * (code1 + 1) * (code1 + 2);
+                }
+
                 UInt32[] mask = new UInt32[2];
-                mask[0] = 0x49BBDC0;
-                mask[1] = 0x1AF70;
+                mask[0] = mask1;
+                mask[1] = mask2;
                 if (!DecryptBlock(mask, buffer, 2))
                 {
                     return null;
