@@ -122,9 +122,11 @@ namespace FileDecoder
 
         static bool IsValidText(byte[] data)
         {
-            for (int i = 0; i < data.Length; i++)
+            for (int i = 0; i < 6; i++)
             {
-                if (data[i] > 0x7F)
+                byte value = data[i];
+                if (!((value >= 0x30 && value <= 0x39) || (value >= 0x41 && value <= 0x5A) || (value >= 0x61 && value <= 0x7A) ||
+                      (value == 0x20) || (value == 0x2C) || (value == 0x3A)))
                 {
                     return false;
                 }
