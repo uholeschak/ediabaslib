@@ -43,8 +43,7 @@ namespace FileDecoder
                     Console.WriteLine("Decrypting: {0}", file);
                     if (!DecryptFile(file, outFile, typeCode))
                     {
-                        Console.WriteLine("Decryption failed");
-                        return 1;
+                        Console.WriteLine("Decryption failed: {0}", file);
                     }
                 }
             }
@@ -57,8 +56,9 @@ namespace FileDecoder
             return 0;
         }
 
-        static bool DecryptFile(string inFile, string outFile, string typeCode)
+        static bool DecryptFile(string inFile, string outFile, string typeCodeString)
         {
+            byte typeCode = (byte) (typeCodeString[0] + typeCodeString[1] + typeCodeString[2]);
             try
             {
                 using (FileStream fsRead = new FileStream(inFile, FileMode.Open))
@@ -71,6 +71,32 @@ namespace FileDecoder
                             if (data == null)
                             {
                                 break;
+                            }
+                            if (line == 0)
+                            {
+                                if (!IsValidText(data))
+                                {
+                                    Console.WriteLine("Type code invalid, trying all values");
+                                    bool found = false;
+                                    for (int code = 0; code < 0x100; code++)
+                                    {
+                                        fsRead.Seek(0, SeekOrigin.Begin);
+                                        data = DecryptLine(fsRead, line, (byte) code);
+                                        if (IsValidText(data))
+                                        {
+                                            typeCode = (byte) code;
+                                            Console.WriteLine("Code found: {0:X02}", typeCode);
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (!found)
+                                    {
+                                        Console.WriteLine("Type code not found");
+                                        return false;
+                                    }
+                                }
                             }
 
                             for (int i = 0; i < data.Length; i++)
@@ -94,7 +120,19 @@ namespace FileDecoder
             }
         }
 
-        static byte[] DecryptLine(FileStream fs, int line, string typeCode)
+        static bool IsValidText(byte[] data)
+        {
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (data[i] > 0x7F)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        static byte[] DecryptLine(FileStream fs, int line, byte typeCode)
         {
             try
             {
@@ -126,7 +164,7 @@ namespace FileDecoder
                 }
 
                 UInt32 code1 = (UInt32)line;
-                UInt32 code2 = (byte) (typeCode[0] + typeCode[1] + typeCode[2]);
+                UInt32 code2 = typeCode;
                 UInt32 mask1 = (code1 + 2) * (code2 + 1) + (code1 + 3) * (code1 + 1) * (code2 + 2);
                 UInt32 mask2 = (code1 + 2) * (code2 + 1) * (code2 + 3);
                 UInt32 tempVal1 = code2 + 1;
