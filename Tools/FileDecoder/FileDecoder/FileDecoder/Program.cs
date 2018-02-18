@@ -18,8 +18,21 @@ namespace FileDecoder
                 Console.WriteLine("Input file not existing");
                 return 1;
             }
+
+            string typeCode = "USA";
+            if (args.Length >= 2)
+            {
+                typeCode = args[1];
+            }
+
+            if (typeCode.Length != 3)
+            {
+                Console.WriteLine("Type code length must be 3");
+                return 1;
+            }
+
             string outFile = Path.ChangeExtension(inFile, ".lbl");
-            if (!DecryptFile(inFile, outFile))
+            if (!DecryptFile(inFile, outFile, typeCode))
             {
                 Console.WriteLine("Decryption failed");
                 return 1;
@@ -27,7 +40,7 @@ namespace FileDecoder
             return 0;
         }
 
-        static bool DecryptFile(string inFile, string outFile)
+        static bool DecryptFile(string inFile, string outFile, string typeCode)
         {
             try
             {
@@ -37,7 +50,7 @@ namespace FileDecoder
                     {
                         for (int line = 0; ; line++)
                         {
-                            byte[] data = DecryptLine(fsRead, line);
+                            byte[] data = DecryptLine(fsRead, line, typeCode);
                             if (data == null)
                             {
                                 break;
@@ -64,7 +77,7 @@ namespace FileDecoder
             }
         }
 
-        static byte[] DecryptLine(FileStream fs, int line)
+        static byte[] DecryptLine(FileStream fs, int line, string typeCode)
         {
             try
             {
@@ -96,7 +109,7 @@ namespace FileDecoder
                 }
 
                 UInt32 code1 = (UInt32)line;
-                UInt32 code2 = 0xE9;
+                UInt32 code2 = (byte) (typeCode[0] + typeCode[1] + typeCode[2]);
                 UInt32 mask1 = (code1 + 2) * (code2 + 1) + (code1 + 3) * (code1 + 1) * (code2 + 2);
                 UInt32 mask2 = (code1 + 2) * (code2 + 1) * (code2 + 3);
                 UInt32 tempVal1 = code2 + 1;
