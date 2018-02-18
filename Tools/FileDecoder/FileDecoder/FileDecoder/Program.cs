@@ -122,13 +122,23 @@ namespace FileDecoder
 
         static bool IsValidText(byte[] data)
         {
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 7; i++)
             {
                 byte value = data[i];
-                if (!((value >= 0x30 && value <= 0x39) || (value >= 0x41 && value <= 0x5A) || (value >= 0x61 && value <= 0x7A) ||
-                      (value == 0x20) || (value == 0x2C) || (value == 0x3A)))
+                if (i == 0)
                 {
-                    return false;
+                    if (!((value >= 0x30 && value <= 0x39) || (value >= 0x41 && value <= 0x5A) || (value == 0x3A)))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (!((value >= 0x30 && value <= 0x39) || (value >= 0x41 && value <= 0x5A) || (value >= 0x61 && value <= 0x7A) ||
+                          (value == 0x20) || (value == 0x28) || (value == 0x2C) || (value == 0x3A) || (value == 0x00)))
+                    {
+                        return false;
+                    }
                 }
             }
             return true;
