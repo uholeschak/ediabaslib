@@ -22,15 +22,15 @@ namespace FileDecoder
                 return 1;
             }
 
-            string typeCode = "USA";
+            string typeCodeString = "USA";
             if (args.Length >= 2)
             {
-                typeCode = args[1];
+                typeCodeString = args[1];
             }
 
-            if (typeCode.Length != 3)
+            if (typeCodeString.Length != 3)
             {
-                Console.WriteLine("Type code length must be 3");
+                Console.WriteLine("Type code string length must be 3");
                 return 1;
             }
 
@@ -41,7 +41,7 @@ namespace FileDecoder
                 {
                     string outFile = Path.ChangeExtension(file, ".lbl");
                     Console.WriteLine("Decrypting: {0}", file);
-                    if (!DecryptFile(file, outFile, typeCode))
+                    if (!DecryptFile(file, outFile, typeCodeString))
                     {
                         Console.WriteLine("Decryption failed: {0}", file);
                     }
