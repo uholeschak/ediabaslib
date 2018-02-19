@@ -108,6 +108,7 @@ namespace FileDecoder
                                             Console.WriteLine("Code found: {0:X02}", typeCode);
                                             fsRead.Seek(0, SeekOrigin.Begin);
                                             data = DecryptLine(fsRead, line, typeCode);
+                                            break;
                                         }
                                     }
 
