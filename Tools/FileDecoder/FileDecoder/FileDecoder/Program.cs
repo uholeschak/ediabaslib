@@ -43,7 +43,7 @@ namespace FileDecoder
                     Console.WriteLine("Decrypting: {0}", file);
                     if (!DecryptFile(file, outFile, typeCodeString))
                     {
-                        Console.WriteLine("Decryption failed: {0}", file);
+                        Console.WriteLine("*** Decryption failed: {0}", file);
                     }
                 }
             }
@@ -81,13 +81,33 @@ namespace FileDecoder
                                     for (int code = 0; code < 0x100; code++)
                                     {
                                         fsRead.Seek(0, SeekOrigin.Begin);
-                                        data = DecryptLine(fsRead, line, (byte) code);
-                                        if (IsValidText(data))
+                                        bool bValid = true;
+                                        for (int j = 0; j < 4; j++)
                                         {
-                                            typeCode = (byte) code;
-                                            Console.WriteLine("Code found: {0:X02}", typeCode);
+                                            data = DecryptLine(fsRead, j, (byte)code);
+                                            if (data == null)
+                                            {
+                                                break;
+                                            }
+                                            if (!IsValidText(data))
+                                            {
+#if false
+                                                System.Text.ASCIIEncoding ascii = new System.Text.ASCIIEncoding();
+                                                string asc = ascii.GetString(data);
+                                                Console.WriteLine("Invalid: {0}", asc);
+#endif
+                                                bValid = false;
+                                                break;
+                                            }
+                                        }
+
+                                        if (bValid)
+                                        {
                                             found = true;
-                                            break;
+                                            typeCode = (byte)code;
+                                            Console.WriteLine("Code found: {0:X02}", typeCode);
+                                            fsRead.Seek(0, SeekOrigin.Begin);
+                                            data = DecryptLine(fsRead, line, typeCode);
                                         }
                                     }
 
@@ -99,13 +119,13 @@ namespace FileDecoder
                                 }
                             }
 
-                            for (int i = 0; i < data.Length; i++)
+                            foreach (var value in data)
                             {
-                                if (data[i] == 0)
+                                if (value == 0)
                                 {
                                     break;
                                 }
-                                fsWrite.WriteByte(data[i]);
+                                fsWrite.WriteByte(value);
                             }
                             fsWrite.WriteByte((byte)'\r');
                             fsWrite.WriteByte((byte)'\n');
@@ -122,7 +142,7 @@ namespace FileDecoder
 
         static bool IsValidText(byte[] data)
         {
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 6; i++)
             {
                 byte value = data[i];
                 if (i == 0)
