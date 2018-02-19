@@ -195,12 +195,12 @@ namespace FileDecoder
                     buffer[i >> 2] = BitConverter.ToUInt32(data, i);
                 }
 
-                UInt32 code1 = (UInt32)line;
-                UInt32 code2 = typeCode;
-                UInt32 mask1 = (code1 + 2) * (code2 + 1) + (code1 + 3) * (code1 + 1) * (code2 + 2);
-                UInt32 mask2 = (code1 + 2) * (code2 + 1) * (code2 + 3);
-                UInt32 tempVal1 = code2 + 1;
-                UInt32 tempVal2 = code2 % (code1 + 1);
+                Int32 code1 = line;
+                Int32 code2 = typeCode;
+                Int32 mask1 = (code1 + 2) * (code2 + 1) + (code1 + 3) * (code1 + 1) * (code2 + 2);
+                Int32 mask2 = (code1 + 2) * (code2 + 1) * (code2 + 3);
+                Int32 tempVal1 = code2 + 1;
+                Int32 tempVal2 = code2 % (code1 + 1);
                 if (tempVal2 == 0)
                 {
                     tempVal2 = code1 % tempVal1;
@@ -216,8 +216,8 @@ namespace FileDecoder
                 }
 
                 UInt32[] mask = new UInt32[2];
-                mask[0] = mask1;
-                mask[1] = mask2;
+                mask[0] = (UInt32)mask1;
+                mask[1] = (UInt32)mask2;
                 if (!DecryptBlock(mask, buffer, 2))
                 {
                     return null;
