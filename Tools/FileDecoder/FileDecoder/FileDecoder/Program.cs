@@ -156,7 +156,7 @@ namespace FileDecoder
                 else
                 {
                     if (!((value >= 0x30 && value <= 0x39) || (value >= 0x41 && value <= 0x5A) || (value >= 0x61 && value <= 0x7A) ||
-                          (value == 0x20) || (value == 0x28) || (value == 0x2C) || (value == 0x3A) || (value == 0x00)))
+                          (value == 0x20) || (value == 0x28) || (value == 0x2C) || (value == 0x3A) || (value == 0x0D) || (value == 0x00)))
                     {
                         return false;
                     }
