@@ -520,7 +520,7 @@ namespace EdiabasLib
 
                     case 0x0005:    // DS1
                     case 0x0006:    // DS2
-                        if (CommParameterProtected.Length < 7)
+                        if (CommParameterProtected.Length < 8)
                         {
                             EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
@@ -541,7 +541,10 @@ namespace EdiabasLib
                         ParTimeoutStd = (int)CommParameterProtected[5];
                         ParRegenTime = (int)CommParameterProtected[6];
                         ParTimeoutTelEnd = (int)CommParameterProtected[7];
-                        ParInterbyteTime = (int)CommParameterProtected[8];
+                        if (CommParameterProtected.Length >= 9)
+                        {
+                            ParInterbyteTime = (int) CommParameterProtected[8];
+                        }
                         ParSendSetDtr = false;
                         if (concept == 6)
                         {   // DS2 uses DTR
