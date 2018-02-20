@@ -40,6 +40,8 @@ typedef NTSTATUS (WINAPI *ptrNtQueryInformationThread)(
     _Out_opt_ PULONG          ReturnLength
 );
 
+typedef NTSTATUS(NTAPI *ptrNtSuspendProcess)(IN HANDLE ProcessHandle);
+
 static FILE* OpenLogFile();
 static void LogPrintf(TCHAR *format, ...);
 static void LogFlush();
@@ -107,12 +109,14 @@ static NTSTATUS WINAPI mNtSetInformationThread(
 
 static ptrNtSetInformationThread pNtSetInformationThread = NULL;
 static ptrNtQueryInformationThread pNtQueryInformationThread = NULL;
+static ptrNtSuspendProcess pNtSuspendProcess = NULL;
 static FILE *fLog = NULL;
 static std::list<HANDLE> FileWatchList;
 static std::list<HANDLE> FileMemWatchList;
 static std::list<LPVOID> MemWatchList;
 static HANDLE hLastLogRFile = INVALID_HANDLE_VALUE;
 static HANDLE hLastLogWFile = INVALID_HANDLE_VALUE;
+static BOOL bHalted = FALSE;
 
 ///////////////////////////////////////////////////////////////////////////////
 // fake API array. Redirection are defined here
@@ -167,8 +171,9 @@ BOOL WINAPI DllMain(HINSTANCE hInstDLL, DWORD dwReason, PVOID pvReserved)
                 {
                     pNtSetInformationThread=(ptrNtSetInformationThread)GetProcAddress(hNtdll,"NtSetInformationThread");
                     pNtQueryInformationThread=(ptrNtQueryInformationThread)GetProcAddress(hNtdll, "NtQueryInformationThread");
+                    pNtSuspendProcess = (ptrNtSuspendProcess)GetProcAddress(hNtdll, "NtSuspendProcess");
                 }
-                if (pNtSetInformationThread == NULL || pNtQueryInformationThread == NULL)
+                if (pNtSetInformationThread == NULL || pNtQueryInformationThread == NULL || pNtSuspendProcess == NULL)
                 {
                     return FALSE;
                 }
@@ -374,13 +379,25 @@ HANDLE WINAPI mCreateFileA(
         LPSTR name = PathFindFileNameA(lpFileName);
         if (ext != NULL && name != NULL)
         {
+#if true
 #if false
             if (_stricmp(ext, ".clb") == 0)
             {
                 bWatchMem = true;
             }
+#endif
             if (_stricmp(ext, ".rod") == 0)
             {
+#if false
+                if (!bHalted)
+                {
+                    bHalted = true;
+                    LogPrintf(_T("Suspending process\n"));
+                    LogPrintf(_T("Resume it with PSSuspend -r <Process ID>\n"));
+                    LogFlush();
+                    pNtSuspendProcess(GetCurrentProcess());
+                }
+#endif
                 bWatchMem = true;
             }
 #else
