@@ -4,10 +4,10 @@ The following table shows which adapter and vehicle combination is supported:
 
 | Adapter | BMW-DS2 | BMW-FAST | BMW-FAST-F |VAG |
 | ------- | ------- | -------- | ----------- | --- |
-| _FTDI USB_ | Yes | Yes | No | No |
-| _ELM327_ | No | D-CAN only | D-CAN only | No |
-| _Custom_ | Yes | Yes | No | No |
-| _Deep OBD_ | Yes | Yes | No | Yes |
+| _FTDI USB_ | Yes | Yes | D-CAN | No |
+| _ELM327_ | No | D-CAN only | D-CAN | No |
+| _Custom_ | Yes | Yes | D-CAN | No |
+| _Deep OBD_ | Yes | Yes | D-CAN | Yes |
 | _Deep OBD ENET_ | No | No | Yes | No |
 
 ## Vehicle legend:
