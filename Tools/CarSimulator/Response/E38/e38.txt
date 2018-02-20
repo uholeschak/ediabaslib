@@ -1,5 +1,5 @@
 ;for e38 (DS2)
-;all enries are in BWM-FAST format!
+;all entries are in BWM-FAST format!
 
 ; d_0044: IDENT
 ; 44 04 00 40 : 44 10 A0 86 90 56 68 03 81 81 07 01 00 02 08 D3
