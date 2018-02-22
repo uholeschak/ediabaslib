@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 
 namespace FileDecoder
 {
@@ -39,11 +40,23 @@ namespace FileDecoder
                 string[] files = Directory.GetFiles(dir, searchPattern, SearchOption.AllDirectories);
                 foreach (string file in files)
                 {
-                    string outFile = Path.ChangeExtension(file, ".lbl");
                     Console.WriteLine("Decrypting: {0}", file);
-                    if (!DecryptFile(file, outFile, typeCodeString))
+                    string ext = Path.GetExtension(file);
+                    if (string.Compare(ext, @".rod", StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        Console.WriteLine("*** Decryption failed: {0}", file);
+                        string outFile = Path.ChangeExtension(file, @".rodtxt");
+                        if (!DecryptSegmentFile(file, outFile))
+                        {
+                            Console.WriteLine("*** Decryption failed: {0}", file);
+                        }
+                    }
+                    else
+                    {
+                        string outFile = Path.ChangeExtension(file, @".lbl");
+                        if (!DecryptFile(file, outFile, typeCodeString))
+                        {
+                            Console.WriteLine("*** Decryption failed: {0}", file);
+                        }
                     }
                 }
             }
@@ -70,6 +83,10 @@ namespace FileDecoder
                             byte[] data = DecryptLine(fsRead, line, typeCode);
                             if (data == null)
                             {
+                                if (line == 0)
+                                {
+                                    return false;
+                                }
                                 break;
                             }
                             if (line == 0)
@@ -120,7 +137,7 @@ namespace FileDecoder
                                 }
                             }
 
-                            foreach (var value in data)
+                            foreach (byte value in data)
                             {
                                 if (value == 0)
                                 {
@@ -231,6 +248,157 @@ namespace FileDecoder
                     Array.Copy(conf, 0, result, i, conf.Length);
                 }
 
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        static bool DecryptSegmentFile(string inFile, string outFile)
+        {
+            try
+            {
+                using (FileStream fsRead = new FileStream(inFile, FileMode.Open))
+                {
+                    using (FileStream fsWrite = new FileStream(outFile, FileMode.Create))
+                    {
+                        for (int seg = 0; ; seg++)
+                        {
+                            byte[] data = DecryptSegment(fsRead, out string segmentName);
+                            if (data == null)
+                            {
+                                if (seg == 0)
+                                {
+                                    return false;
+                                }
+                                break;
+                            }
+                            ASCIIEncoding ascii = new ASCIIEncoding();
+                            byte[] segmentData = ascii.GetBytes(segmentName);
+                            fsWrite.Write(segmentData, 0, segmentData.Length);
+                            fsWrite.WriteByte((byte)'\r');
+                            fsWrite.WriteByte((byte)'\n');
+
+                            foreach (byte value in data)
+                            {
+                                if (value == 0)
+                                {
+                                    break;
+                                }
+                                fsWrite.WriteByte(value);
+                            }
+                        }
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        static byte[] DecryptSegment(FileStream fs, out string segmentName)
+        {
+            segmentName = string.Empty;
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                for (;;)
+                {
+                    int value = fs.ReadByte();
+                    if (value < 0)
+                    {
+                        return null;
+                    }
+                    if (value == 0x0A && sb.Length > 0)
+                    {
+                        break;
+                    }
+                    if (value != 0x0A && value != 0x0D)
+                    {
+                        sb.Append((char)value);
+                    }
+                }
+                segmentName = sb.ToString();
+
+                int frameLen = 0;
+                for (int i = 0; i < 3; i++)
+                {
+                    int value = fs.ReadByte();
+                    if (value < 0)
+                    {
+                        return null;
+                    }
+
+                    frameLen <<= 8;
+                    frameLen |= value;
+                }
+
+                int contentLen = 0;
+                for (int i = 0; i < 3; i++)
+                {
+                    int value = fs.ReadByte();
+                    if (value < 0)
+                    {
+                        return null;
+                    }
+
+                    contentLen <<= 8;
+                    contentLen |= value;
+                }
+
+                bool compressed = (frameLen & 0x800000) == 0;
+                int dataLength = frameLen & 0x7FFFFF;
+                int readLength = dataLength + 8;
+                byte[] data = new byte[readLength];
+
+                int count = fs.Read(data, 0, data.Length);
+                if (count < data.Length)
+                {
+                    return null;
+                }
+
+                UInt32[] buffer = new uint[(data.Length / sizeof(UInt32))];
+                for (int i = 0; i < data.Length; i += sizeof(UInt32))
+                {
+                    buffer[i >> 2] = BitConverter.ToUInt32(data, i);
+                }
+
+                UInt32 mask1;
+                UInt32 mask2;
+                if (compressed)
+                {
+                    mask1 = 0x8638C6B9;
+                    mask2 = 0xB57820BC;
+                }
+                else
+                {
+                    mask1 = 0x4C50936B;
+                    mask2 = 0x38B8B856;
+                }
+                UInt32[] mask = new UInt32[2];
+                mask[0] = mask1;
+                mask[1] = mask2;
+                if (!DecryptBlock(mask, buffer, 0))
+                {
+                    return null;
+                }
+
+                byte[] result = new byte[readLength];
+                for (int i = 0; i < readLength; i += sizeof(UInt32))
+                {
+                    byte[] conf = BitConverter.GetBytes(buffer[i >> 2]);
+                    Array.Copy(conf, 0, result, i, conf.Length);
+                }
+
+                if (contentLen < readLength)
+                {
+                    Array.Resize(ref result, contentLen);
+                }
                 return result;
             }
             catch (Exception)
