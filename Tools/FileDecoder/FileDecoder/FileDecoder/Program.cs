@@ -2,10 +2,11 @@
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using zlib;
 
 namespace FileDecoder
 {
-    class Program
+    static class Program
     {
         static int Main(string[] args)
         {
@@ -398,7 +399,12 @@ namespace FileDecoder
                     fsWrite.Write(result, 0, writeLen);
                     return true;
                 }
-
+#if true
+                using (BinaryWriter bw = new BinaryWriter(fsWrite))
+                {
+                    bw.Write(DecompressData(result));
+                }
+#else
                 using (MemoryStream msIn = new MemoryStream(result))
                 {
                     using (DeflateStream decompStream = new DeflateStream(msIn, CompressionMode.Decompress))
@@ -406,6 +412,7 @@ namespace FileDecoder
                         decompStream.CopyTo(fsWrite, contentLen);
                     }
                 }
+#endif
 
                 return true;
             }
@@ -481,6 +488,18 @@ namespace FileDecoder
             }
 
             return true;
+        }
+
+        static byte[] DecompressData(byte[] inData)
+        {
+            using (MemoryStream outMemoryStream = new MemoryStream())
+            using (ZOutputStream outZStream = new ZOutputStream(outMemoryStream))
+            using (Stream inMemoryStream = new MemoryStream(inData))
+            {
+                inMemoryStream.CopyTo(outZStream);
+                outZStream.finish();
+                return outMemoryStream.ToArray();
+            }
         }
     }
 }
