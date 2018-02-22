@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 
 namespace FileDecoder
@@ -266,28 +267,14 @@ namespace FileDecoder
                     {
                         for (int seg = 0; ; seg++)
                         {
-                            byte[] data = DecryptSegment(fsRead, out string segmentName);
-                            if (data == null)
+                            bool result = DecryptSegment(fsRead, fsWrite, out string segmentName);
+                            if (!result)
                             {
                                 if (seg == 0)
                                 {
                                     return false;
                                 }
                                 break;
-                            }
-                            ASCIIEncoding ascii = new ASCIIEncoding();
-                            byte[] segmentData = ascii.GetBytes(segmentName);
-                            fsWrite.Write(segmentData, 0, segmentData.Length);
-                            fsWrite.WriteByte((byte)'\r');
-                            fsWrite.WriteByte((byte)'\n');
-
-                            foreach (byte value in data)
-                            {
-                                if (value == 0)
-                                {
-                                    break;
-                                }
-                                fsWrite.WriteByte(value);
                             }
                         }
                     }
@@ -301,7 +288,7 @@ namespace FileDecoder
             }
         }
 
-        static byte[] DecryptSegment(FileStream fs, out string segmentName)
+        static bool DecryptSegment(FileStream fsRead, FileStream fsWrite, out string segmentName)
         {
             segmentName = string.Empty;
             try
@@ -309,10 +296,10 @@ namespace FileDecoder
                 StringBuilder sb = new StringBuilder();
                 for (;;)
                 {
-                    int value = fs.ReadByte();
+                    int value = fsRead.ReadByte();
                     if (value < 0)
                     {
-                        return null;
+                        return false;
                     }
                     if (value == 0x0A && sb.Length > 0)
                     {
@@ -328,10 +315,10 @@ namespace FileDecoder
                 int frameLen = 0;
                 for (int i = 0; i < 3; i++)
                 {
-                    int value = fs.ReadByte();
+                    int value = fsRead.ReadByte();
                     if (value < 0)
                     {
-                        return null;
+                        return false;
                     }
 
                     frameLen <<= 8;
@@ -341,10 +328,10 @@ namespace FileDecoder
                 int contentLen = 0;
                 for (int i = 0; i < 3; i++)
                 {
-                    int value = fs.ReadByte();
+                    int value = fsRead.ReadByte();
                     if (value < 0)
                     {
-                        return null;
+                        return false;
                     }
 
                     contentLen <<= 8;
@@ -353,13 +340,17 @@ namespace FileDecoder
 
                 bool compressed = (frameLen & 0x800000) == 0;
                 int dataLength = frameLen & 0x7FFFFF;
+                if ((dataLength & 0x07) != 0)
+                {
+                    return false;
+                }
                 int readLength = dataLength + 8;
                 byte[] data = new byte[readLength];
 
-                int count = fs.Read(data, 0, data.Length);
+                int count = fsRead.Read(data, 0, data.Length);
                 if (count < data.Length)
                 {
-                    return null;
+                    return false;
                 }
 
                 UInt32[] buffer = new uint[(data.Length / sizeof(UInt32))];
@@ -385,25 +376,42 @@ namespace FileDecoder
                 mask[1] = mask2;
                 if (!DecryptBlock(mask, buffer, 0))
                 {
-                    return null;
+                    return false;
                 }
 
-                byte[] result = new byte[readLength];
-                for (int i = 0; i < readLength; i += sizeof(UInt32))
+                byte[] result = new byte[dataLength];
+                for (int i = 0; i < dataLength; i += sizeof(UInt32))
                 {
                     byte[] conf = BitConverter.GetBytes(buffer[i >> 2]);
                     Array.Copy(conf, 0, result, i, conf.Length);
                 }
 
-                if (contentLen < readLength)
+                ASCIIEncoding ascii = new ASCIIEncoding();
+                byte[] segmentData = ascii.GetBytes(segmentName);
+                fsWrite.Write(segmentData, 0, segmentData.Length);
+                fsWrite.WriteByte((byte)'\r');
+                fsWrite.WriteByte((byte)'\n');
+
+                if (true /*!compressed*/)
                 {
-                    Array.Resize(ref result, contentLen);
+                    int writeLen = contentLen < result.Length ? contentLen : result.Length;
+                    fsWrite.Write(result, 0, writeLen);
+                    return true;
                 }
-                return result;
+
+                using (MemoryStream msIn = new MemoryStream(result))
+                {
+                    using (DeflateStream decompStream = new DeflateStream(msIn, CompressionMode.Decompress))
+                    {
+                        decompStream.CopyTo(fsWrite, contentLen);
+                    }
+                }
+
+                return true;
             }
             catch (Exception)
             {
-                return null;
+                return false;
             }
         }
 
