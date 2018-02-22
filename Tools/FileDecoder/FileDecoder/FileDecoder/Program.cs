@@ -268,7 +268,7 @@ namespace FileDecoder
                     {
                         for (int seg = 0; ; seg++)
                         {
-                            bool result = DecryptSegment(fsRead, fsWrite, out string segmentName);
+                            bool result = DecryptSegment(fsRead, fsWrite);
                             if (!result)
                             {
                                 if (seg == 0)
@@ -289,9 +289,8 @@ namespace FileDecoder
             }
         }
 
-        static bool DecryptSegment(FileStream fsRead, FileStream fsWrite, out string segmentName)
+        static bool DecryptSegment(FileStream fsRead, FileStream fsWrite)
         {
-            segmentName = string.Empty;
             try
             {
                 StringBuilder sb = new StringBuilder();
@@ -311,7 +310,7 @@ namespace FileDecoder
                         sb.Append((char)value);
                     }
                 }
-                segmentName = sb.ToString();
+                string segmentName = sb.ToString();
 
                 int frameLen = 0;
                 for (int i = 0; i < 3; i++)
@@ -400,10 +399,7 @@ namespace FileDecoder
                     return true;
                 }
 #if true
-                using (BinaryWriter bw = new BinaryWriter(fsWrite))
-                {
-                    bw.Write(DecompressData(result));
-                }
+                DecompressData(result, fsWrite);
 #else
                 using (MemoryStream msIn = new MemoryStream(result))
                 {
@@ -490,15 +486,13 @@ namespace FileDecoder
             return true;
         }
 
-        static byte[] DecompressData(byte[] inData)
+        static void DecompressData(byte[] inData, Stream fsout)
         {
-            using (MemoryStream outMemoryStream = new MemoryStream())
-            using (ZOutputStream outZStream = new ZOutputStream(outMemoryStream))
+            using (ZOutputStream outZStream = new ZOutputStream(fsout))
             using (Stream inMemoryStream = new MemoryStream(inData))
             {
                 inMemoryStream.CopyTo(outZStream);
                 outZStream.finish();
-                return outMemoryStream.ToArray();
             }
         }
     }
