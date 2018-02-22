@@ -399,7 +399,7 @@ namespace FileDecoder
                     return true;
                 }
 #if true
-                DecompressData(result, fsWrite);
+                DecompressData(result, fsWrite, contentLen);
 #else
                 using (MemoryStream msIn = new MemoryStream(result))
                 {
@@ -486,14 +486,26 @@ namespace FileDecoder
             return true;
         }
 
-        static void DecompressData(byte[] inData, Stream fsout)
+        static void DecompressData(byte[] inData, Stream fsout, int bytes)
         {
             using (ZOutputStream outZStream = new ZOutputStream(fsout))
             using (Stream inMemoryStream = new MemoryStream(inData))
             {
-                inMemoryStream.CopyTo(outZStream);
+                CopyStream(inMemoryStream, fsout, bytes);
                 outZStream.finish();
             }
+        }
+
+        static void CopyStream(Stream input, Stream output, int bytes)
+        {
+            byte[] buffer = new byte[0x8000];
+            int len;
+            while (bytes > 0 && (len = input.Read(buffer, 0, Math.Min(buffer.Length, bytes))) > 0)
+            {
+                output.Write(buffer, 0, len);
+                bytes -= len;
+            }
+            output.Flush();
         }
     }
 }
