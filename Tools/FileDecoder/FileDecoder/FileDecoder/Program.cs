@@ -91,10 +91,10 @@ namespace FileDecoder
                             byte[] data = DecryptLine(fsRead, line, typeCode);
                             if (data == null)
                             {
-                                if (line == 0)
-                                {
-                                    return false;
-                                }
+                                return false;
+                            }
+                            if (data.Length == 0)
+                            {   // end of file
                                 break;
                             }
                             if (line == 0)
@@ -112,6 +112,11 @@ namespace FileDecoder
                                             data = DecryptLine(fsRead, j, (byte)code);
                                             if (data == null)
                                             {
+                                                bValid = false;
+                                                break;
+                                            }
+                                            if (data.Length == 0)
+                                            {   // end of file
                                                 break;
                                             }
                                             if (!IsValidText(data))
@@ -168,6 +173,10 @@ namespace FileDecoder
 
         static bool IsValidText(byte[] data)
         {
+            if (data.Length < 6)
+            {
+                return false;
+            }
             for (int i = 0; i < 6; i++)
             {
                 byte value = data[i];
@@ -198,7 +207,7 @@ namespace FileDecoder
                 int lenL = fs.ReadByte();
                 if (lenH < 0 || lenL < 0)
                 {
-                    return null;
+                    return new byte[0];
                 }
 
                 int dataLen = (lenH << 8) + lenL;
