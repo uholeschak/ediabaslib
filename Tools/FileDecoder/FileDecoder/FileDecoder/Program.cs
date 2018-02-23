@@ -7,6 +7,13 @@ namespace FileDecoder
 {
     static class Program
     {
+        enum ResultCode
+        {
+            Ok,
+            Error,
+            Done,
+        }
+
         static int Main(string[] args)
         {
             if (args.Length < 1)
@@ -265,15 +272,15 @@ namespace FileDecoder
                 {
                     using (FileStream fsWrite = new FileStream(outFile, FileMode.Create))
                     {
-                        for (int seg = 0; ; seg++)
+                        for (;;)
                         {
-                            bool result = DecryptSegment(fsRead, fsWrite);
-                            if (!result)
+                            ResultCode resultCode = DecryptSegment(fsRead, fsWrite);
+                            if (resultCode == ResultCode.Error)
                             {
-                                if (seg == 0)
-                                {
-                                    return false;
-                                }
+                                return false;
+                            }
+                            if (resultCode == ResultCode.Done)
+                            {
                                 break;
                             }
                         }
@@ -288,7 +295,7 @@ namespace FileDecoder
             }
         }
 
-        static bool DecryptSegment(FileStream fsRead, FileStream fsWrite)
+        static ResultCode DecryptSegment(FileStream fsRead, FileStream fsWrite)
         {
             try
             {
@@ -298,7 +305,7 @@ namespace FileDecoder
                     int value = fsRead.ReadByte();
                     if (value < 0)
                     {
-                        return false;
+                        return ResultCode.Done;
                     }
                     if (value == 0x0A && sb.Length > 0)
                     {
@@ -317,7 +324,7 @@ namespace FileDecoder
                     int value = fsRead.ReadByte();
                     if (value < 0)
                     {
-                        return false;
+                        return ResultCode.Error;
                     }
 
                     frameLen <<= 8;
@@ -330,7 +337,7 @@ namespace FileDecoder
                     int value = fsRead.ReadByte();
                     if (value < 0)
                     {
-                        return false;
+                        return ResultCode.Error;
                     }
 
                     contentLen <<= 8;
@@ -341,7 +348,7 @@ namespace FileDecoder
                 int dataLength = frameLen & 0x7FFFFF;
                 if ((dataLength & 0x07) != 0)
                 {
-                    return false;
+                    return ResultCode.Error;
                 }
                 int readLength = dataLength + 8;
                 byte[] data = new byte[readLength];
@@ -349,7 +356,7 @@ namespace FileDecoder
                 int count = fsRead.Read(data, 0, data.Length);
                 if (count < data.Length)
                 {
-                    return false;
+                    return ResultCode.Error;
                 }
 
                 UInt32[] buffer = new uint[(data.Length / sizeof(UInt32))];
@@ -375,7 +382,7 @@ namespace FileDecoder
                 mask[1] = mask2;
                 if (!DecryptBlock(mask, buffer, 0))
                 {
-                    return false;
+                    return ResultCode.Error;
                 }
 
                 byte[] result = new byte[dataLength];
@@ -395,15 +402,15 @@ namespace FileDecoder
                 {
                     int writeLen = contentLen < result.Length ? contentLen : result.Length;
                     fsWrite.Write(result, 0, writeLen);
-                    return true;
+                    return ResultCode.Ok;
                 }
                 DecompressData(result, fsWrite, contentLen);
 
-                return true;
+                return ResultCode.Ok;
             }
             catch (Exception)
             {
-                return false;
+                return ResultCode.Error;
             }
         }
 
