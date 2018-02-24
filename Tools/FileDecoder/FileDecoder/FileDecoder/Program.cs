@@ -16,8 +16,8 @@ namespace FileDecoder
 
         const int VersionCode = 0xC1F;
         // values from code table index: 0x76, 0xC3, 0x88, 0x3E, 0x99, 0x22, 0xCA, 0x07
-        static readonly byte[] KeyMultTab = { 0x8F, 0x97, 0x98, 0x29, 0xFA, 0x74, 0x9C, 0x7D };
-        static readonly byte[] KeyLookupTab =
+        static readonly byte[] MaskMultTab = { 0x8F, 0x97, 0x98, 0x29, 0xFA, 0x74, 0x9C, 0x7D };
+        static readonly byte[] MaskLookupTab =
         {
             0x9D, 0xEF, 0x69, 0xD9, 0x63, 0xE2, 0xFF, 0x0E, 0x21, 0xD3, 0xEA, 0x50, 0x8F, 0x29, 0x47, 0x57,
             0x59, 0x70, 0xC3, 0x31, 0x22, 0x4F, 0xB9, 0xDA, 0xC9, 0xBA, 0x9B, 0x0C, 0xEB, 0x68, 0x93, 0x58,
@@ -446,18 +446,18 @@ namespace FileDecoder
             }
         }
 
-        static byte[] CalcSegmentKeys(string fileName, string segmentName)
+        static byte[] CalcSegmentMask(string fileName, string segmentName)
         {
             if (segmentName.Length < 3)
             {
                 return null;
             }
 
-            byte[] keys = new byte[8];
+            byte[] mask = new byte[8];
 
             for (int i = 0; i < 3; i++)
             {
-                keys[i] = (byte)segmentName[i];
+                mask[i] = (byte)segmentName[i];
             }
 
             string baseName = Path.GetFileNameWithoutExtension(fileName);
@@ -474,7 +474,7 @@ namespace FileDecoder
 
             for (int i = 0; i < 5; i++)
             {
-                keys[i + 3] = (byte)(multVal >> (i *8));
+                mask[i + 3] = (byte)(multVal >> (i *8));
             }
 
             int offset = 0;
@@ -485,18 +485,18 @@ namespace FileDecoder
             }
 
             int factor = (byte)segmentName.ToUpperInvariant()[1];
-            for (int i = 0; i < keys.Length; i++)
+            for (int i = 0; i < mask.Length; i++)
             {
-                keys[i] += KeyLookupTab[(byte) (factor * (i + 2))];
-                keys[i] += (byte)offset;
+                mask[i] += MaskLookupTab[(byte) (factor * (i + 2))];
+                mask[i] += (byte)offset;
             }
 
-            for (int i = 0; i < keys.Length; i++)
+            for (int i = 0; i < mask.Length; i++)
             {
-                keys[i] *= KeyMultTab[i];
+                mask[i] *= MaskMultTab[i];
             }
 
-            return keys;
+            return mask;
         }
 
         static bool DecryptBlock(UInt32[] mask, UInt32[] buffer, int codeTable)
