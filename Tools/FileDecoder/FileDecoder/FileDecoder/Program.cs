@@ -455,9 +455,10 @@ namespace FileDecoder
 
             byte[] keys = new byte[8];
 
-            keys[0] = 0x43;
-            keys[1] = 0x4D;
-            keys[2] = 0x50;
+            for (int i = 0; i < 3; i++)
+            {
+                keys[i] = (byte)segmentName[i];
+            }
 
             string baseName = Path.GetFileNameWithoutExtension(fileName);
             if (baseName == null)
