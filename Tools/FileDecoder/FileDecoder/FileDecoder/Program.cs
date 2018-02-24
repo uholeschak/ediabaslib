@@ -14,6 +14,9 @@ namespace FileDecoder
             Done,
         }
 
+        // values from code table index: 0x76, 0xC3, 0x88, 0x3E, 0x99, 0x22, 0xCA, 0x07
+        private static byte[] maskMult = { 0x8F, 0x97, 0x98, 0x29, 0xFA, 0x74, 0x9C, 0x7D };
+
         static int Main(string[] args)
         {
             if (args.Length < 1)
