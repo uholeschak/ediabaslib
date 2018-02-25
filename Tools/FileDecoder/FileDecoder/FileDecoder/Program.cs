@@ -306,7 +306,7 @@ namespace FileDecoder
                     {
                         for (;;)
                         {
-                            ResultCode resultCode = DecryptSegment(fsRead, fsWrite);
+                            ResultCode resultCode = DecryptSegment(fsRead, fsWrite, inFile);
                             if (resultCode == ResultCode.Error)
                             {
                                 return false;
@@ -327,7 +327,7 @@ namespace FileDecoder
             }
         }
 
-        static ResultCode DecryptSegment(FileStream fsRead, FileStream fsWrite)
+        static ResultCode DecryptSegment(FileStream fsRead, FileStream fsWrite, string fileName)
         {
             try
             {
@@ -402,21 +402,13 @@ namespace FileDecoder
                     buffer[i >> 2] = BitConverter.ToUInt32(data, i);
                 }
 
-                UInt32 mask1;
-                UInt32 mask2;
-                if (compressed)
-                {
-                    mask1 = 0x8638C6B9;
-                    mask2 = 0xB57820BC;
-                }
-                else
-                {
-                    mask1 = 0x4C50936B;
-                    mask2 = 0x38B8B856;
-                }
+                byte[] segmentMask = CalcSegmentMask(fileName, segmentName);
                 UInt32[] mask = new UInt32[2];
-                mask[0] = mask1;
-                mask[1] = mask2;
+                for (int i = 0; i < segmentMask.Length; i += sizeof(UInt32))
+                {
+                    mask[i >> 2] = BitConverter.ToUInt32(segmentMask, i);
+                }
+
                 if (!DecryptBlock(mask, buffer, 0))
                 {
                     return ResultCode.Error;
@@ -500,7 +492,7 @@ namespace FileDecoder
                 offset = VersionCode;
             }
 
-            int factor = (byte)segmentName.ToUpperInvariant()[1];
+            int factor = (byte)segmentName[1];
             for (int i = 0; i < mask.Length; i++)
             {
                 mask[i] += MaskLookupTab[(byte) (factor * (i + 2))];
