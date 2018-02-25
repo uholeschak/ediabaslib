@@ -448,8 +448,21 @@ namespace FileDecoder
                     DecompressData(result, fsWrite, contentLen);
                 }
 
-                fsWrite.WriteByte((byte)'\r');
-                fsWrite.WriteByte((byte)'\n');
+                long oldPos = fsWrite.Position;
+                if (oldPos >= 2)
+                {
+                    fsWrite.Position = oldPos - 2;
+                    if (fsWrite.ReadByte() == '\r' && fsWrite.ReadByte() == '\n')
+                    {
+                        fsWrite.Position = oldPos;
+                    }
+                    else
+                    {
+                        fsWrite.Position = oldPos;
+                        fsWrite.WriteByte((byte)'\r');
+                        fsWrite.WriteByte((byte)'\n');
+                    }
+                }
                 fsWrite.WriteByte((byte)'[');
                 fsWrite.WriteByte((byte)'/');
                 fsWrite.Write(segmentData, 0, segmentData.Length);
