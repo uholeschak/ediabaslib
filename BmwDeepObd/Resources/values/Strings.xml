@@ -36,7 +36,7 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:\n</string>
-  <string name="version_last_changes">- Allow scaling of graphical gauges\n- Fixed minor problems</string>
+  <string name="version_last_changes">- Fixed minor problems</string>
   <string name="app_info_message">Deep OBD for BMW and VAG\nVersion: {0}\nId: {1}</string>
   <string name="vag_mode_info">The VAG mode ist still experimental.\nA <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD Adapter</a> with al least firmware version 0.8 is required.\nAt the moment only the protocols KWP2000, KWP1281 and TP2.0 (vehicles until 4.2012) are supported.</string>
 
@@ -387,6 +387,7 @@
   <string name="xml_tool_button_ediabas_tool">Ediabas tool</string>
   <string name="xml_tool_execute_test_job">Executing job</string>
   <string name="xml_tool_read_test_job_failed">Executing job failed</string>
+  <string name="xml_tool_ecu_msg_no_selection">You have selected no data to display.\nFor this select the desired jobs and results first from the list.\nDo you want to abort anyway?</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">CAN adapter</string>

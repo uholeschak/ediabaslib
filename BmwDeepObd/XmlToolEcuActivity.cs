@@ -110,6 +110,8 @@ namespace BmwDeepObd
             public bool IgnoreFormatSelection { get; set; }
         }
 
+        public delegate void AcceptDelegate(bool accepted);
+
         // Intent extra
         public const string ExtraEcuName = "ecu_name";
         public const string ExtraEcuDir = "ecu_dir";
@@ -440,8 +442,14 @@ namespace BmwDeepObd
 
         public override void OnBackPressed()
         {
-            StoreResults();
-            base.OnBackPressed();
+            NoSelectionWarn(accepted =>
+            {
+                if (accepted)
+                {
+                    StoreResults();
+                    base.OnBackPressed();
+                }
+            });
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
@@ -451,8 +459,14 @@ namespace BmwDeepObd
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
-                    StoreResults();
-                    Finish();
+                    NoSelectionWarn(accepted =>
+                    {
+                        if (accepted)
+                        {
+                            StoreResults();
+                            Finish();
+                        }
+                    });
                     return true;
             }
             return base.OnOptionsItemSelected(item);
@@ -995,6 +1009,43 @@ namespace BmwDeepObd
                 formatType = (FormatType)_spinnerFormatTypeAdapter.Items[_spinnerFormatType.SelectedItemPosition].Data;
             }
             UpdateFormatFields(resultInfo, formatType == FormatType.User);
+        }
+
+        private bool AnyResultsSelected()
+        {
+            foreach (JobInfo jobInfo in _ecuInfo.JobList)
+            {
+                if (jobInfo.Selected)
+                {
+                    if (jobInfo.Results.Any(resultInfo => resultInfo.Selected))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private void NoSelectionWarn(AcceptDelegate handler)
+        {
+            if (AnyResultsSelected())
+            {
+                handler(true);
+                return;
+            }
+            new AlertDialog.Builder(this)
+                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                {
+                    handler(true);
+                })
+                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                {
+                    handler(false);
+                })
+                .SetMessage(Resource.String.xml_tool_ecu_msg_no_selection)
+                .SetTitle(Resource.String.alert_title_question)
+                .Show();
         }
 
         private void StoreResults()

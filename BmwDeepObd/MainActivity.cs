@@ -3046,7 +3046,7 @@ namespace BmwDeepObd
                     XAttribute urlAttr = fileNode.Attribute("name");
                     if (!string.IsNullOrEmpty(urlAttr?.Value))
                     {
-                        if (string.Compare(baseName, urlAttr?.Value, StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.Compare(baseName, urlAttr.Value, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             XAttribute keyAttr = fileNode.Attribute("key");
                             if (keyAttr != null)
