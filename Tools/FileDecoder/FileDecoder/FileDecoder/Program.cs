@@ -348,7 +348,12 @@ namespace FileDecoder
                         sb.Append((char)value);
                     }
                 }
-                string segmentName = sb.ToString();
+                string segmentNameLine = sb.ToString();
+                if (segmentNameLine.Length < 5 || segmentNameLine[0] != '[' || segmentNameLine[4] != ']')
+                {
+                    return ResultCode.Error;
+                }
+                string segmentName = segmentNameLine.Substring(1, 3);
 
                 int frameLen = 0;
                 for (int i = 0; i < 3; i++)
@@ -426,7 +431,9 @@ namespace FileDecoder
 
                 ASCIIEncoding ascii = new ASCIIEncoding();
                 byte[] segmentData = ascii.GetBytes(segmentName);
+                fsWrite.WriteByte((byte)'[');
                 fsWrite.Write(segmentData, 0, segmentData.Length);
+                fsWrite.WriteByte((byte)']');
                 fsWrite.WriteByte((byte)'\r');
                 fsWrite.WriteByte((byte)'\n');
 
@@ -434,9 +441,18 @@ namespace FileDecoder
                 {
                     int writeLen = contentLen < result.Length ? contentLen : result.Length;
                     fsWrite.Write(result, 0, writeLen);
-                    return ResultCode.Ok;
                 }
-                DecompressData(result, fsWrite, contentLen);
+                else
+                {
+                    DecompressData(result, fsWrite, contentLen);
+                }
+
+                fsWrite.WriteByte((byte)'[');
+                fsWrite.WriteByte((byte)'/');
+                fsWrite.Write(segmentData, 0, segmentData.Length);
+                fsWrite.WriteByte((byte)']');
+                fsWrite.WriteByte((byte)'\r');
+                fsWrite.WriteByte((byte)'\n');
 
                 return ResultCode.Ok;
             }
@@ -569,11 +585,14 @@ namespace FileDecoder
 
         static void DecompressData(byte[] inData, Stream fsout, int bytes)
         {
-            using (ZOutputStream outZStream = new ZOutputStream(fsout))
+            using (MemoryStream outMemoryStream = new MemoryStream())
+            using (ZOutputStream outZStream = new ZOutputStream(outMemoryStream))
             using (Stream inMemoryStream = new MemoryStream(inData))
             {
                 CopyStream(inMemoryStream, outZStream, bytes);
                 outZStream.finish();
+                outMemoryStream.Position = 0;
+                outMemoryStream.CopyTo(fsout);
             }
         }
 
