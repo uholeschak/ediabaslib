@@ -448,6 +448,8 @@ namespace FileDecoder
                     DecompressData(result, fsWrite, contentLen);
                 }
 
+                fsWrite.WriteByte((byte)'\r');
+                fsWrite.WriteByte((byte)'\n');
                 fsWrite.WriteByte((byte)'[');
                 fsWrite.WriteByte((byte)'/');
                 fsWrite.Write(segmentData, 0, segmentData.Length);
@@ -495,8 +497,7 @@ namespace FileDecoder
             }
 
             int offset = 0;
-            if ((string.Compare(baseName, "TTTEXT", StringComparison.Ordinal) == 0) ||
-                (string.Compare(baseName, "UNIT", StringComparison.Ordinal) == 0))
+            if (baseName.StartsWith("TTTEXT") || baseName.StartsWith("UNIT"))
             {
                 offset = VersionCode;
             }
@@ -587,7 +588,7 @@ namespace FileDecoder
         static void DecompressData(byte[] inData, Stream fsout, int bytes)
         {
             using (MemoryStream outMemoryStream = new MemoryStream())
-            using (ZOutputStream outZStream = new ZOutputStream(outMemoryStream))
+            using (ZOutputStreamMod outZStream = new ZOutputStreamMod(outMemoryStream))
             using (Stream inMemoryStream = new MemoryStream(inData))
             {
                 CopyStream(inMemoryStream, outZStream, inData.Length);
