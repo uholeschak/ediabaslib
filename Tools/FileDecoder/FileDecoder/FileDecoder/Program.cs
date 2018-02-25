@@ -81,7 +81,7 @@ namespace FileDecoder
                             Console.WriteLine("*** Decryption failed: {0}", file);
                         }
                     }
-                    else
+                    else if (string.Compare(ext, @".clb", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         string outFile = Path.ChangeExtension(file, @".lbl");
                         if (!DecryptFile(file, outFile, typeCodeString))
@@ -581,10 +581,10 @@ namespace FileDecoder
             using (ZOutputStream outZStream = new ZOutputStream(outMemoryStream))
             using (Stream inMemoryStream = new MemoryStream(inData))
             {
-                CopyStream(inMemoryStream, outZStream, bytes);
+                CopyStream(inMemoryStream, outZStream, inData.Length);
                 outZStream.finish();
                 outMemoryStream.Position = 0;
-                outMemoryStream.CopyTo(fsout);
+                CopyStream(outMemoryStream, fsout, bytes);
             }
         }
 
