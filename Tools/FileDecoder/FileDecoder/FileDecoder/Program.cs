@@ -332,12 +332,21 @@ namespace FileDecoder
             try
             {
                 StringBuilder sb = new StringBuilder();
+                bool startFound = false;
                 for (;;)
                 {
                     int value = fsRead.ReadByte();
                     if (value < 0)
                     {
                         return ResultCode.Done;
+                    }
+                    if (value == '[')
+                    {
+                        startFound = true;
+                    }
+                    if (!startFound)
+                    {
+                        continue;
                     }
                     if (value == 0x0A && sb.Length > 0)
                     {
@@ -349,11 +358,11 @@ namespace FileDecoder
                     }
                 }
                 string segmentNameLine = sb.ToString();
-                if (segmentNameLine.Length < 5 || segmentNameLine[0] != '[' || segmentNameLine[4] != ']')
+                if (segmentNameLine.Length < 5 || segmentNameLine[0] != '[' || segmentNameLine[segmentNameLine.Length -1] != ']')
                 {
                     return ResultCode.Error;
                 }
-                string segmentName = segmentNameLine.Substring(1, 3);
+                string segmentName = segmentNameLine.Substring(1, segmentNameLine.Length - 2);
 
                 int frameLen = 0;
                 for (int i = 0; i < 3; i++)
