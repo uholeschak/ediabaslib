@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -623,7 +624,7 @@ namespace FileDecoder
             }
         }
 
-        static void CreateLookupTables(UInt32 code)
+        static Dictionary<byte, byte> CreateCharMap(UInt32 code)
         {
             byte[] charList = new byte[26];
             for (int i = 0; i < charList.Length; i++)
@@ -641,7 +642,23 @@ namespace FileDecoder
             numList[12] = (byte)'-';
             numList[13] = (byte)'_';
 
-            ReorderLookupTables(charList, numList, code);
+            byte[] charListMod = (byte[])charList.Clone();
+            byte[] numListMod = (byte[])numList.Clone();
+            ReorderLookupTables(charListMod, numListMod, code);
+
+            Dictionary<byte, byte> mapDict = new Dictionary<byte, byte>();
+            for (int i = 0; i < charList.Length; i++)
+            {
+                mapDict.Add(charListMod[i], charList[i]);   // lower chars
+                mapDict.Add((byte)(charListMod[i] - 32), (byte)(charList[i] - 32)); // upper chars
+            }
+
+            for (int i = 0; i < numList.Length; i++)
+            {
+                mapDict.Add(numListMod[i], numList[i]);
+            }
+
+            return mapDict;
         }
 
         static void ReorderLookupTables(byte[] charList, byte[] numList, UInt32 code)
