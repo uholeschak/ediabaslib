@@ -623,6 +623,50 @@ namespace FileDecoder
             }
         }
 
+        static void CreateLookupTables(UInt32 code)
+        {
+            byte[] charList = new byte[26];
+            for (int i = 0; i < charList.Length; i++)
+            {
+                charList[i] = (byte) ('a' + i);
+            }
+
+            byte[] numList = new byte[14];
+            for (int i = 0; i < 10; i++)
+            {
+                numList[i] = (byte)('0' + i);
+            }
+            numList[10] = (byte)',';
+            numList[11] = (byte)'.';
+            numList[12] = (byte)'-';
+            numList[13] = (byte)'_';
+
+            ReorderLookupTables(charList, numList, code);
+        }
+
+        static void ReorderLookupTables(byte[] charList, byte[] numList, UInt32 code)
+        {
+            Srand(code);
+
+            int charLen = charList.Length;
+            for (int i = 0; i < charLen; i++)
+            {
+                long newPos = Rand() % charLen;
+                byte newVal = charList[newPos];
+                charList[newPos] = charList[i];
+                charList[i] = newVal;
+            }
+
+            int numLen = numList.Length;
+            for (int i = 0; i < numLen; i++)
+            {
+                long newPos = Rand() % numLen;
+                byte newVal = numList[newPos];
+                numList[newPos] = numList[i];
+                numList[i] = newVal;
+            }
+        }
+
         // C-style rand function
         static void Srand(UInt32 seed)
         {
