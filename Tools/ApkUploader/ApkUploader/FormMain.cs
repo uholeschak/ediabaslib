@@ -719,7 +719,7 @@ namespace ApkUploader
                 {
                     if (apkChanges != null)
                     {
-                        sb.Append("Changes info for languages: ");
+                        sb.Append("Changes info for languages present: ");
                         foreach (UpdateInfo updateInfo in apkChanges)
                         {
                             sb.Append($"{updateInfo.Language} ");
