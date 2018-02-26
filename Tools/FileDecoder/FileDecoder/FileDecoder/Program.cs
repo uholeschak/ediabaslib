@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using zlib;
 
 namespace FileDecoder
 {
@@ -36,6 +35,8 @@ namespace FileDecoder
             0x9F, 0x4F, 0x14, 0x7B, 0x94, 0x0F, 0x3A, 0x18, 0xD1, 0x5B, 0x8D, 0xBB, 0x55, 0xC7, 0xA0, 0xB9,
             0xF2, 0x6D, 0x75, 0x1E, 0x51, 0xE3, 0x9F, 0x45, 0x36, 0x6A, 0xA4, 0xA5, 0x05, 0x68, 0xA5, 0xEE
         };
+
+        private static UInt32 _holdrand;
 
         static int Main(string[] args)
         {
@@ -620,6 +621,19 @@ namespace FileDecoder
                 output.Write(buffer, 0, len);
                 bytes -= len;
             }
+        }
+
+        // C-style rand function
+        static void Srand(UInt32 seed)
+        {
+            _holdrand = seed;
+        }
+
+        static UInt32 Rand()
+        {
+            _holdrand = _holdrand * 214013u + 2531011u;
+
+            return (_holdrand >> 16) & 0x7FFF;
         }
     }
 }
