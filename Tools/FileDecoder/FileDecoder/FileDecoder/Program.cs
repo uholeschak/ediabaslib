@@ -624,6 +624,38 @@ namespace FileDecoder
             }
         }
 
+        static string DecryptTextLine(string line)
+        {
+            int colonIdx = line.IndexOf(',');
+            if (colonIdx < 1 || colonIdx > 6 || line.Length < colonIdx + 1)
+            {
+                return null;
+            }
+
+            string codeText = line.Substring(0, colonIdx);
+            string text = line.Substring(colonIdx + 1);
+            if (!UInt32.TryParse(codeText, out UInt32 code))
+            {
+                return null;
+            }
+
+            Dictionary<byte, byte> mapDict = CreateCharMap(code);
+            StringBuilder sb = new StringBuilder();
+            foreach (char orgChar in text)
+            {
+                if (mapDict.TryGetValue((byte)orgChar, out byte mappedChar))
+                {
+                    sb.Append((char)mappedChar);
+                }
+                else
+                {
+                    sb.Append(orgChar);
+                }
+            }
+
+            return sb.ToString();
+        }
+
         static Dictionary<byte, byte> CreateCharMap(UInt32 code)
         {
             byte[] charList = new byte[26];
