@@ -624,36 +624,49 @@ namespace FileDecoder
             }
         }
 
-        static string DecryptTextLine(string line)
+        static byte[] DecryptTextLine(byte[] line)
         {
-            int colonIdx = line.IndexOf(',');
+            StringBuilder sbNumber = new StringBuilder();
+            int colonIdx = 0;
+            foreach (byte value in line)
+            {
+                if (value == ',')
+                {
+                    break;
+                }
+                sbNumber.Append((char)value);
+                colonIdx++;
+            }
             if (colonIdx < 1 || colonIdx > 6 || line.Length < colonIdx + 1)
             {
                 return null;
             }
 
-            string codeText = line.Substring(0, colonIdx);
-            string text = line.Substring(colonIdx + 1);
-            if (!UInt32.TryParse(codeText, out UInt32 code))
+            if (!UInt32.TryParse(sbNumber.ToString(), out UInt32 code))
             {
                 return null;
             }
+            byte[] text = new byte[line.Length - colonIdx - 1];
+            Array.Copy(line, colonIdx + 1, text, 0, text.Length);
+            byte[] result = new byte[text.Length];
 
             Dictionary<byte, byte> mapDict = CreateCharMap(code);
-            StringBuilder sb = new StringBuilder();
-            foreach (char orgChar in text)
+            int index = 0;
+            foreach (byte orgChar in text)
             {
-                if (mapDict.TryGetValue((byte)orgChar, out byte mappedChar))
+                if (mapDict.TryGetValue(orgChar, out byte mappedChar))
                 {
-                    sb.Append((char)mappedChar);
+                    result[index] = mappedChar;
                 }
                 else
                 {
-                    sb.Append(orgChar);
+                    result[index] = orgChar;
                 }
+
+                index++;
             }
 
-            return sb.ToString();
+            return result;
         }
 
         static Dictionary<byte, byte> CreateCharMap(UInt32 code)
