@@ -73,10 +73,10 @@ namespace FileDecoder
                 string[] files = Directory.GetFiles(dir, searchPattern, SearchOption.AllDirectories);
                 foreach (string file in files)
                 {
-                    Console.WriteLine("Decrypting: {0}", file);
                     string ext = Path.GetExtension(file);
                     if (string.Compare(ext, @".rod", StringComparison.OrdinalIgnoreCase) == 0)
                     {
+                        Console.WriteLine("Decrypting: {0}", file);
                         string outFile = Path.ChangeExtension(file, @".rodtxt");
                         if (!DecryptSegmentFile(file, outFile))
                         {
@@ -85,6 +85,7 @@ namespace FileDecoder
                     }
                     else if (string.Compare(ext, @".clb", StringComparison.OrdinalIgnoreCase) == 0)
                     {
+                        Console.WriteLine("Decrypting: {0}", file);
                         string outFile = Path.ChangeExtension(file, @".lbl");
                         if (!DecryptFile(file, outFile, typeCodeString))
                         {
