@@ -443,11 +443,33 @@ namespace FileDecoder
                 if (!compressed)
                 {
                     int writeLen = contentLen < result.Length ? contentLen : result.Length;
+#if true
+                    using (MemoryStream inStream = new MemoryStream(result, 0, writeLen))
+                    {
+                        if (!DecryptTextStream(inStream, fsWrite))
+                        {
+                            return ResultCode.Error;
+                        }
+                    }
+#else
                     fsWrite.Write(result, 0, writeLen);
+#endif
                 }
                 else
                 {
-                    DecompressData(result, fsWrite, contentLen);
+                    using (MemoryStream memStream = new MemoryStream())
+                    {
+                        DecompressData(result, memStream, contentLen);
+                        memStream.Position = 0;
+#if true
+                        if (!DecryptTextStream(memStream, fsWrite))
+                        {
+                            return ResultCode.Error;
+                        }
+#else
+                        memStream.CopyTo(fsWrite);
+#endif
+                    }
                 }
 
                 long oldPos = fsWrite.Position;
@@ -624,6 +646,48 @@ namespace FileDecoder
             }
         }
 
+        static bool DecryptTextStream(Stream inStream, Stream outStream)
+        {
+            try
+            {
+                for (;;)
+                {
+                    List<byte> lineList = new List<byte>();
+                    int lastValue = 0;
+                    for (; ; )
+                    {
+                        int value = inStream.ReadByte();
+                        if (value < 0)
+                        {
+                            break;
+                        }
+                        lineList.Add((byte)value);
+                        if (lastValue == 0x0D && value == 0x0A)
+                        {   // end of line
+                            break;
+                        }
+                        lastValue = value;
+                    }
+
+                    if (lineList.Count == 0)
+                    {
+                        return true;
+                    }
+
+                    byte[] result = DecryptTextLine(lineList.ToArray());
+                    if (result == null)
+                    {
+                        return false;
+                    }
+                    outStream.Write(result, 0, result.Length);
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         static byte[] DecryptTextLine(byte[] line)
         {
             StringBuilder sbNumber = new StringBuilder();
@@ -637,7 +701,7 @@ namespace FileDecoder
                 sbNumber.Append((char)value);
                 colonIdx++;
             }
-            if (colonIdx < 1 || colonIdx > 6 || line.Length < colonIdx + 1)
+            if (colonIdx < 1 || colonIdx > 8 || line.Length < colonIdx + 1)
             {
                 return null;
             }
