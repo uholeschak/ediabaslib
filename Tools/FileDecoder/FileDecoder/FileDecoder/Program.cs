@@ -105,7 +105,31 @@ namespace FileDecoder
 
         static bool DecryptFile(string inFile, string outFile, string typeCodeString)
         {
-            byte typeCode = (byte) (typeCodeString[0] + typeCodeString[1] + typeCodeString[2]);
+            bool extendedCode = false;
+            DirectoryInfo dirInfo = Directory.GetParent(inFile);
+            if (dirInfo != null)
+            {
+                string parentDir = dirInfo.Name;
+                if (string.Compare(parentDir, "DRV", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    extendedCode = true;
+                    typeCodeString = parentDir.ToUpperInvariant();
+                }
+            }
+
+            byte typeCode = (byte)(typeCodeString[0] + typeCodeString[1] + typeCodeString[2]);
+            if (extendedCode)
+            {
+                int dotIdx = inFile.LastIndexOf('.');
+                if (dotIdx < 2)
+                {
+                    return false;
+                }
+
+                int codeOffset = VersionCode * inFile[dotIdx] * inFile[dotIdx - 1] * inFile[dotIdx - 2];
+                typeCode += (byte) codeOffset;
+            }
+
             try
             {
                 using (FileStream fsRead = new FileStream(inFile, FileMode.Open))
