@@ -396,11 +396,11 @@ BOOL GetCryptTables()
         LogPrintf(_T("Exe size: %08X\n"), me32.modBaseSize);
 
         BYTE *pSig1Addr = NULL;
-        const char *pSignature1 = "Copyright(c) 2004, Ross - Tech LLC";
+        const char *pSignature1 = "Copyright(c) 2004, Ross-Tech LLC";
         for (DWORD dwOffset = 0; dwOffset < me32.modBaseSize; dwOffset += 16)
         {
             BYTE *pAddr = me32.modBaseAddr + dwOffset;
-            if (memcmp(pAddr, pSignature1, 10/*strlen(pSignature1) - 1*/) == 0)
+            if (memcmp(pAddr, pSignature1, strlen(pSignature1) - 1) == 0)
             {
                 pSig1Addr = pAddr;
                 break;
