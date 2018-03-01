@@ -17,6 +17,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #define LOGFILE _T("DebugHelper.txt")
+#define CRYPTFILE1 _T("CryptTable1.bin")
 
 #define STATUS_SUCCESS                   ((NTSTATUS)0x00000000L)    // ntsubauth
 
@@ -372,10 +373,10 @@ BOOL GetCryptTables()
         BOOL bFound = FALSE;
         do
         {
-            LPWSTR ext = PathFindExtensionW(me32.szExePath);
+            LPTSTR ext = PathFindExtension(me32.szExePath);
             if (ext != NULL)
             {
-                if (_wcsicmp(ext, L".exe") == 0)
+                if (_tcsicmp(ext, _T(".exe")) == 0)
                 {
                     bFound = TRUE;
                     break;
@@ -413,6 +414,26 @@ BOOL GetCryptTables()
         {
             BYTE *pTab1Addr = pSig1Addr - 0x00E0;
             LogPrintf(_T("Table1 signature at: %08p, table at: %08p\n"), pSig1Addr, pTab1Addr);
+
+            TCHAR szPath[MAX_PATH];
+
+            if (SUCCEEDED(SHGetFolderPath(NULL,
+                CSIDL_PERSONAL | CSIDL_FLAG_CREATE,
+                NULL,
+                0,
+                szPath)))
+            {
+                if (PathAppend(szPath, CRYPTFILE1))
+                {
+                    FILE *fw = _tfopen(szPath, _T("wb"));
+                    if (fw != NULL)
+                    {
+                        fwrite(pTab1Addr, 1, 0x0100, fw);
+                        fclose(fw);
+                        LogPrintf(_T("Table1 stored\n"));
+                    }
+                }
+            }
         }
     }
     __finally
