@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <Shlobj.h>
 #include <Shlwapi.h>
+#include <tlhelp32.h>
 #include <list>
 #include "../_Common_Files/GenericFakeAPI.h"
 // You just need to edit this file to add new fake api 
@@ -48,6 +49,7 @@ static void LogFlush();
 static void LogData(BYTE *data, unsigned int length, unsigned int max_length = 0x100);
 static void LogAsc(BYTE *data, unsigned int length, unsigned int max_length = 0x100);
 static BOOL PatchDbgUiRemoteBreakin();
+static BOOL GetCryptTables();
 
 static BOOL WINAPI mIsDebuggerPresent(void);
 
@@ -117,6 +119,7 @@ static std::list<LPVOID> MemWatchList;
 static HANDLE hLastLogRFile = INVALID_HANDLE_VALUE;
 static HANDLE hLastLogWFile = INVALID_HANDLE_VALUE;
 static BOOL bHalted = FALSE;
+static BOOL bTablesStored = FALSE;
 
 ///////////////////////////////////////////////////////////////////////////////
 // fake API array. Redirection are defined here
@@ -348,6 +351,81 @@ BOOL PatchDbgUiRemoteBreakin()
     return TRUE;
 }
 
+BOOL GetCryptTables()
+{
+    HANDLE hModuleSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, NULL);
+    if (hModuleSnap == INVALID_HANDLE_VALUE)
+    {
+        LogPrintf(_T("CreateToolhelp32Snapshot failed\n"));
+        return FALSE;
+    }
+    __try
+    {
+        MODULEENTRY32 me32;
+        me32.dwSize = sizeof(MODULEENTRY32);
+
+        if (!Module32First(hModuleSnap, &me32))
+        {
+            LogPrintf(_T("Module32First failed\n"));
+            return FALSE;
+        }
+        BOOL bFound = FALSE;
+        do
+        {
+            LPWSTR ext = PathFindExtensionW(me32.szExePath);
+            if (ext != NULL)
+            {
+                if (_wcsicmp(ext, L".exe") == 0)
+                {
+                    bFound = TRUE;
+                    break;
+                }
+            }
+        } while (Module32Next(hModuleSnap, &me32));
+
+        if (!bFound)
+        {
+            LogPrintf(_T("Executable not found.\n"));
+            return FALSE;
+        }
+
+        LogPrintf(_T("Exe name: %s\n"), me32.szModule);
+        LogPrintf(_T("Exe path: %s\n"), me32.szExePath);
+        LogPrintf(_T("Exe base: %08p\n"), me32.modBaseAddr);
+        LogPrintf(_T("Exe size: %08X\n"), me32.modBaseSize);
+
+        BYTE *pSig1Addr = NULL;
+        const char *pSignature1 = "Copyright(c) 2004, Ross - Tech LLC";
+        for (DWORD dwOffset = 0; dwOffset < me32.modBaseSize; dwOffset += 16)
+        {
+            BYTE *pAddr = me32.modBaseAddr + dwOffset;
+            if (memcmp(pAddr, pSignature1, 10/*strlen(pSignature1) - 1*/) == 0)
+            {
+                pSig1Addr = pAddr;
+                break;
+            }
+        }
+        if (pSig1Addr == NULL)
+        {
+            LogPrintf(_T("Table1 signature not found\n"));
+        }
+        else
+        {
+            BYTE *pTab1Addr = pSig1Addr - 0x00E0;
+            LogPrintf(_T("Table1 signature at: %08p, table at: %08p\n"), pSig1Addr, pTab1Addr);
+        }
+    }
+    __finally
+    {
+        if (hModuleSnap != INVALID_HANDLE_VALUE)
+        {
+            CloseHandle(hModuleSnap);
+        }
+    }
+
+    return TRUE;
+}
+
 BOOL WINAPI mIsDebuggerPresent(void)
 {
     LogPrintf(_T("IsDebuggerPresent\n"));
@@ -379,7 +457,15 @@ HANDLE WINAPI mCreateFileA(
         LPSTR name = PathFindFileNameA(lpFileName);
         if (ext != NULL && name != NULL)
         {
-#if true
+            if (_stricmp(ext, ".rod") == 0)
+            {
+                if (!bTablesStored)
+                {
+                    bTablesStored = TRUE;
+                    GetCryptTables();
+                }
+            }
+#if false
 #if false
             if (_stricmp(ext, ".clb") == 0)
             {
