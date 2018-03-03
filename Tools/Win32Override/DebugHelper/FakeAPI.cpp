@@ -257,6 +257,7 @@ BOOL SuspendProcess()
     LogPrintf(_T("Resume it with PSSuspend -r %u\n"), GetCurrentProcessId());
     LogFlush();
     pNtSuspendProcess(GetCurrentProcess());
+    LogPrintf(_T("Resumeed ...\n"));
     return TRUE;
 }
 
