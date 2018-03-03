@@ -548,36 +548,51 @@ HRSRC WINAPI mFindResourceA(
 )
 {
     HRSRC hRes = FindResourceA(hModule, lpName, lpType);
-    if (hRes != NULL)
+
+    BOOL bEnableLog = FALSE;
+    BOOL bResWatch = FALSE;
+    std::string name;
+    if (IS_INTRESOURCE(lpName))
     {
-        bool bResWatch = false;
-        std::string name;
-        if (IS_INTRESOURCE(lpName))
+        name = string_format("NameID=%u", (DWORD)lpName);
+    }
+    else
+    {
+        bEnableLog = TRUE;
+        bResWatch = TRUE;
+        name = lpName;
+    }
+
+    std::string type;
+    if (IS_INTRESOURCE(lpType))
+    {
+        type = string_format("TypeID=%u", (DWORD)lpType);
+    }
+    else
+    {
+        bEnableLog = TRUE;
+        type = lpName;
+    }
+    if (hRes == NULL)
+    {
+        bEnableLog = TRUE;
+    }
+
+    if (bEnableLog)
+    {
+        if (hRes != NULL)
         {
-            name = string_format("ID=%u", (DWORD) lpName);
+            LogPrintf(_T("FindResourceA OK: %S %S (%08p)\n"), name.c_str(), type.c_str(), hRes);
         }
         else
         {
-            bResWatch = true;
-            name = lpName;
+            LogPrintf(_T("FindResourceA Fail: %S %S\n"), name.c_str(), type.c_str());
         }
-
-        std::string type;
-        if (IS_INTRESOURCE(lpType))
-        {
-            type = string_format("ID=%u", (DWORD)lpType);
-        }
-        else
-        {
-            type = lpName;
-        }
-        LogPrintf(_T("FindResourceA OK: %S %S (%08p)\n"), name.c_str(), type.c_str(), hRes);
-
-        if (bResWatch)
-        {
-            LogPrintf(_T("FindResourceA: Start Reswatch\n"));
-            ResWatchList.push_back(hRes);
-        }
+    }
+    if (bResWatch)
+    {
+        LogPrintf(_T("FindResourceA: Start Reswatch\n"));
+        ResWatchList.push_back(hRes);
     }
     return hRes;
 }
