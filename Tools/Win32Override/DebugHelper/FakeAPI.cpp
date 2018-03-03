@@ -607,6 +607,12 @@ HGLOBAL WINAPI mLoadResource(
                 {
                     LogData((BYTE *)pMem, dwSize, 0x200);
                     LogPrintf(_T("\n"));
+                    DWORD dwSum = 0;
+                    for (DWORD i = 0; i < dwSize; i++)
+                    {
+                        dwSum += ((BYTE*)pMem)[i];
+                    }
+                    LogPrintf(_T("Sum: %04X\n"), dwSum);
                 }
             }
         }
