@@ -50,6 +50,7 @@ typedef NTSTATUS (WINAPI *ptrNtQueryInformationThread)(
 typedef NTSTATUS(NTAPI *ptrNtSuspendProcess)(IN HANDLE ProcessHandle);
 
 static std::string string_format(const char *fmt, ...);
+static BOOL SuspendProcess();
 static FILE* OpenLogFile();
 static void LogPrintf(TCHAR *format, ...);
 static void LogFlush();
@@ -242,6 +243,21 @@ std::string string_format(const char *fmt, ...)
     std::string str(buffer);
 
     return str;
+}
+
+BOOL SuspendProcess()
+{
+    if (bHalted)
+    {
+        return FALSE;
+    }
+    bHalted = true;
+
+    LogPrintf(_T("Suspending process\n"));
+    LogPrintf(_T("Resume it with PSSuspend -r %u\n"), GetCurrentProcessId());
+    LogFlush();
+    pNtSuspendProcess(GetCurrentProcess());
+    return TRUE;
 }
 
 FILE* OpenLogFile()
@@ -696,16 +712,7 @@ HANDLE WINAPI mCreateFileA(
 #endif
             if (_stricmp(ext, ".rod") == 0)
             {
-#if false
-                if (!bHalted)
-                {
-                    bHalted = true;
-                    LogPrintf(_T("Suspending process\n"));
-                    LogPrintf(_T("Resume it with PSSuspend -r %u\n"), GetCurrentProcessId());
-                    LogFlush();
-                    pNtSuspendProcess(GetCurrentProcess());
-                }
-#endif
+                //SuspendProcess();
                 bWatchMem = true;
             }
 #else
