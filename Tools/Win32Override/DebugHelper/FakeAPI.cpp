@@ -5,6 +5,8 @@
 #include <Shlwapi.h>
 #include <tlhelp32.h>
 #include <list>
+#include <map>
+#include <string>
 #include "../_Common_Files/GenericFakeAPI.h"
 // You just need to edit this file to add new fake api 
 // WARNING YOUR FAKE API MUST HAVE THE SAME PARAMETERS AND CALLING CONVENTION AS THE REAL ONE,
@@ -21,6 +23,8 @@
 #define CRYPTFILE2 _T("CryptTable2.bin")
 
 #define STATUS_SUCCESS                   ((NTSTATUS)0x00000000L)    // ntsubauth
+
+typedef std::basic_string<TCHAR> tstring;
 
 typedef enum _THREADINFOCLASS
 {
@@ -45,6 +49,7 @@ typedef NTSTATUS (WINAPI *ptrNtQueryInformationThread)(
 
 typedef NTSTATUS(NTAPI *ptrNtSuspendProcess)(IN HANDLE ProcessHandle);
 
+static std::string string_format(const char *fmt, ...);
 static FILE* OpenLogFile();
 static void LogPrintf(TCHAR *format, ...);
 static void LogFlush();
@@ -54,6 +59,22 @@ static BOOL PatchDbgUiRemoteBreakin();
 static BOOL GetCryptTables();
 
 static BOOL WINAPI mIsDebuggerPresent(void);
+
+static HRSRC WINAPI mFindResourceA(
+    _In_opt_ HMODULE hModule,
+    _In_     LPCSTR lpName,
+    _In_     LPCSTR lpType
+);
+
+static HGLOBAL WINAPI mLoadResource(
+    _In_opt_ HMODULE hModule,
+    _In_     HRSRC   hResInfo
+);
+
+static DWORD WINAPI mSizeofResource(
+    _In_opt_ HMODULE hModule,
+    _In_     HRSRC   hResInfo
+);
 
 static HANDLE WINAPI mCreateFileA(
     _In_     LPCSTR                lpFileName,
@@ -118,6 +139,8 @@ static FILE *fLog = NULL;
 static std::list<HANDLE> FileWatchList;
 static std::list<HANDLE> FileMemWatchList;
 static std::list<LPVOID> MemWatchList;
+static std::list<HRSRC> ResWatchList;
+static std::map<HRSRC, DWORD>ResSizeMap;
 static HANDLE hLastLogRFile = INVALID_HANDLE_VALUE;
 static HANDLE hLastLogWFile = INVALID_HANDLE_VALUE;
 static BOOL bHalted = FALSE;
@@ -131,6 +154,9 @@ STRUCT_FAKE_API pArrayFakeAPI[]=
     // library name ,function name, function handler, stack size (required to allocate enough stack space), FirstBytesCanExecuteAnywhereSize (optional put to 0 if you don't know it's meaning)
     //                                                stack size= sum(StackSizeOf(ParameterType))           Same as monitoring file keyword (see monitoring file advanced syntax)
     {_T("Kernel32.dll"),_T("IsDebuggerPresent"),(FARPROC)mIsDebuggerPresent,0,0},
+    {_T("Kernel32.dll"),_T("FindResourceA"),(FARPROC)mFindResourceA,StackSizeOf(HMODULE)+StackSizeOf(LPCSTR)+StackSizeOf(LPCSTR),0 },
+    {_T("Kernel32.dll"),_T("LoadResource"),(FARPROC)mLoadResource,StackSizeOf(HMODULE)+StackSizeOf(HRSRC),0 },
+    {_T("Kernel32.dll"),_T("SizeofResource"),(FARPROC)mSizeofResource,StackSizeOf(HMODULE)+StackSizeOf(HRSRC),0 },
     {_T("Kernel32.dll"),_T("CreateFileA"),(FARPROC)mCreateFileA,StackSizeOf(LPCSTR)+StackSizeOf(DWORD)+StackSizeOf(DWORD)+StackSizeOf(LPSECURITY_ATTRIBUTES)+StackSizeOf(DWORD)+StackSizeOf(DWORD)+StackSizeOf(HANDLE),0 },
     {_T("Kernel32.dll"),_T("ReadFile"),(FARPROC)mReadFile,StackSizeOf(HANDLE)+StackSizeOf(LPVOID)+StackSizeOf(DWORD)+StackSizeOf(LPDWORD)+StackSizeOf(LPOVERLAPPED),0 },
     {_T("Kernel32.dll"),_T("WriteFile"),(FARPROC)mWriteFile,StackSizeOf(HANDLE)+StackSizeOf(LPCVOID)+StackSizeOf(DWORD)+StackSizeOf(LPDWORD)+StackSizeOf(LPOVERLAPPED),0 },
@@ -203,6 +229,20 @@ BOOL WINAPI DllMain(HINSTANCE hInstDLL, DWORD dwReason, PVOID pvReserved)
 ///////////////////////////// NEW API DEFINITION //////////////////////////////
 /////////////////////// You don't need to export these functions //////////////
 ///////////////////////////////////////////////////////////////////////////////
+
+std::string string_format(const char *fmt, ...)
+{
+    char buffer[1000];
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsprintf_s(buffer, fmt, ap);
+    va_end(ap);
+
+    std::string str(buffer);
+
+    return str;
+}
 
 FILE* OpenLogFile()
 {
@@ -501,6 +541,99 @@ BOOL WINAPI mIsDebuggerPresent(void)
     return FALSE;
 }
 
+HRSRC WINAPI mFindResourceA(
+    _In_opt_ HMODULE hModule,
+    _In_     LPCSTR lpName,
+    _In_     LPCSTR lpType
+)
+{
+    HRSRC hRes = FindResourceA(hModule, lpName, lpType);
+    if (hRes != NULL)
+    {
+        bool bResWatch = false;
+        std::string name;
+        if (IS_INTRESOURCE(lpName))
+        {
+            name = string_format("ID=%u", (DWORD) lpName);
+        }
+        else
+        {
+            bResWatch = true;
+            name = lpName;
+        }
+
+        std::string type;
+        if (IS_INTRESOURCE(lpType))
+        {
+            type = string_format("ID=%u", (DWORD)lpType);
+        }
+        else
+        {
+            type = lpName;
+        }
+        LogPrintf(_T("FindResourceA OK: %S %S (%08p)\n"), name.c_str(), type.c_str(), hRes);
+
+        if (bResWatch)
+        {
+            LogPrintf(_T("FindResourceA: Start Reswatch\n"));
+            ResWatchList.push_back(hRes);
+        }
+    }
+    return hRes;
+}
+
+HGLOBAL WINAPI mLoadResource(
+    _In_opt_ HMODULE hModule,
+    _In_     HRSRC   hResInfo
+)
+{
+    HGLOBAL hMem = LoadResource(hModule, hResInfo);
+    if (hMem != NULL)
+    {
+        bool found = (std::find(ResWatchList.begin(), ResWatchList.end(), hResInfo) != ResWatchList.end());
+        if (found)
+        {
+            DWORD dwSize = 0;
+            std::map<HRSRC, DWORD>::iterator it = ResSizeMap.find(hResInfo);
+            if (it != ResSizeMap.end())
+            {	// found
+                dwSize = it->second;
+            }
+            LogPrintf(_T("LoadResource OK: %08p (%08p, %u)=\n"), hResInfo, hMem, dwSize);
+            if (dwSize > 0)
+            {
+                LPVOID pMem = LockResource(hMem);
+                if (pMem != NULL)
+                {
+                    LogData((BYTE *)pMem, dwSize, 0x200);
+                    LogPrintf(_T("\n"));
+                }
+            }
+        }
+    }
+
+    return hMem;
+}
+
+DWORD WINAPI mSizeofResource(
+    _In_opt_ HMODULE hModule,
+    _In_     HRSRC   hResInfo
+)
+{
+    DWORD dwSize = SizeofResource(hModule, hResInfo);
+    if (dwSize != 0)
+    {
+        bool found = (std::find(ResWatchList.begin(), ResWatchList.end(), hResInfo) != ResWatchList.end());
+        if (found)
+        {
+            LogPrintf(_T("SizeofResource OK: %08p (%u)\n"), hResInfo, dwSize);
+            ResSizeMap[hResInfo] = dwSize;
+        }
+    }
+
+    return dwSize;
+}
+
 HANDLE WINAPI mCreateFileA(
     _In_     LPCSTR                lpFileName,
     _In_     DWORD                 dwDesiredAccess,
@@ -547,7 +680,7 @@ HANDLE WINAPI mCreateFileA(
                 {
                     bHalted = true;
                     LogPrintf(_T("Suspending process\n"));
-                    LogPrintf(_T("Resume it with PSSuspend -r <Process ID>\n"));
+                    LogPrintf(_T("Resume it with PSSuspend -r %u\n"), GetCurrentProcessId());
                     LogFlush();
                     pNtSuspendProcess(GetCurrentProcess());
                 }
