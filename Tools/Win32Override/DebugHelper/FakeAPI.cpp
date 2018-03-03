@@ -257,7 +257,7 @@ BOOL SuspendProcess()
     LogPrintf(_T("Resume it with PSSuspend -r %u\n"), GetCurrentProcessId());
     LogFlush();
     pNtSuspendProcess(GetCurrentProcess());
-    LogPrintf(_T("Resumeed ...\n"));
+    LogPrintf(_T("Resumed ...\n"));
     return TRUE;
 }
 
@@ -604,6 +604,7 @@ HRSRC WINAPI mFindResourceA(
         else
         {
             LogPrintf(_T("FindResourceA Fail: %S %S\n"), name.c_str(), type.c_str());
+            //SuspendProcess();
         }
     }
     if (bResWatch)
