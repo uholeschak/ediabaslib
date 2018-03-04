@@ -35,8 +35,8 @@
     <Reference Include="Google.Apis, Version=1.32.2.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Apis.1.32.2\lib\net45\Google.Apis.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Apis.AndroidPublisher.v2, Version=1.32.2.1137, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Apis.AndroidPublisher.v2.1.32.2.1137\lib\net45\Google.Apis.AndroidPublisher.v2.dll</HintPath>
+    <Reference Include="Google.Apis.AndroidPublisher.v2, Version=1.32.2.1145, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.AndroidPublisher.v2.1.32.2.1145\lib\net45\Google.Apis.AndroidPublisher.v2.dll</HintPath>
     </Reference>
     <Reference Include="Google.Apis.Auth, Version=1.32.2.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Apis.Auth.1.32.2\lib\net45\Google.Apis.Auth.dll</HintPath>
