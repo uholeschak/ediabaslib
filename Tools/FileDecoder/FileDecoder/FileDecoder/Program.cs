@@ -89,6 +89,7 @@ namespace FileDecoder
         };
 
         private static int _versionCode;
+        private static string _versionCodeString;
         private static UInt32 _holdrand;
 
         static int Main(string[] args)
@@ -129,8 +130,8 @@ namespace FileDecoder
                     return 1;
                 }
 
-                string verString = VersionCodeToString(_versionCode);
-                Console.WriteLine("Version code: {0:X04} {1}", _versionCode, verString);
+                _versionCodeString = VersionCodeToString(_versionCode);
+                Console.WriteLine("Version code: {0:X04} {1}", _versionCode, _versionCodeString);
 
                 string[] files = Directory.GetFiles(dir, searchPattern, SearchOption.AllDirectories);
                 foreach (string file in files)
@@ -172,10 +173,10 @@ namespace FileDecoder
             if (dirInfo != null)
             {
                 string parentDir = dirInfo.Name;
-                if (string.Compare(parentDir, "DRV", StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(parentDir, _versionCodeString, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     extendedCode = true;
-                    typeCodeString = parentDir.ToUpperInvariant();
+                    typeCodeString = _versionCodeString;
                 }
             }
 
