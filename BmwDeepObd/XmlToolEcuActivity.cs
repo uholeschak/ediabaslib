@@ -216,7 +216,7 @@ namespace BmwDeepObd
             _activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)
                 Intent.GetIntExtra(ExtraInterface, (int) ActivityCommon.InterfaceType.None);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
-            _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEcuDir);
+            _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
 
             _ecuInfo = IntentEcuInfo;
 
