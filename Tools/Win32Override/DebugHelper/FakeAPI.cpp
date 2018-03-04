@@ -538,7 +538,11 @@ BOOL GetCryptTables()
                 }
             }
         }
-
+        TCHAR szBuffer[100];
+        if (LoadString(GetModuleHandle(NULL), 383, szBuffer, sizeof(szBuffer) / sizeof(szBuffer[0])) > 0)
+        {
+            LogPrintf(_T("Version code: %s\n"), szBuffer);
+        }
     }
     __finally
     {
@@ -572,6 +576,10 @@ HRSRC WINAPI mFindResourceA(
     if (IS_INTRESOURCE(lpName))
     {
         name = string_format("NameID=%u", (DWORD)lpName);
+        if ((DWORD)lpName == 24 && (DWORD)lpType == 6)
+        {
+            bEnableLog = TRUE;
+        }
     }
     else
     {
@@ -592,7 +600,7 @@ HRSRC WINAPI mFindResourceA(
     }
     if (hRes == NULL)
     {
-        bEnableLog = TRUE;
+        //SuspendProcess();
     }
 
     if (bEnableLog)
@@ -604,7 +612,6 @@ HRSRC WINAPI mFindResourceA(
         else
         {
             LogPrintf(_T("FindResourceA Fail: %S %S\n"), name.c_str(), type.c_str());
-            //SuspendProcess();
         }
     }
     if (bResWatch)
