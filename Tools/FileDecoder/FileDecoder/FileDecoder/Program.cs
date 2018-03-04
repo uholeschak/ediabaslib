@@ -128,7 +128,9 @@ namespace FileDecoder
                     Console.WriteLine("Decryption of version code failed");
                     return 1;
                 }
-                Console.WriteLine("Version code: {0:X04}", _versionCode);
+
+                string verString = VersionCodeToString(_versionCode);
+                Console.WriteLine("Version code: {0:X04} {1}", _versionCode, verString);
 
                 string[] files = Directory.GetFiles(dir, searchPattern, SearchOption.AllDirectories);
                 foreach (string file in files)
@@ -918,6 +920,87 @@ namespace FileDecoder
             }
 
             return (int) code;
+        }
+
+        static string VersionCodeToString(int versionCode)
+        {
+            byte versionLow = (byte)versionCode;
+            if (versionLow <= 0x48)
+            {
+                if (versionLow <= 0x30)
+                {
+                    switch (versionLow)
+                    {
+                        case 0x30:
+                            return "NEZ";
+                        case 0x19:
+                            return "PRI";
+                        case 0x1C:
+                            return "PCI";
+                        case 0x1F:
+                            return "DRV";
+                        case 0x20:
+                            return "EST";
+                        case 0x22:
+                            return "PTT";
+                        case 0x24:
+                            return "ITT";
+                    }
+
+                    return "INVALID";
+                }
+
+                switch (versionLow)
+                {
+                    case 0x34:
+                        return "AER";
+                    case 0x38:
+                        return "HZH";
+                    case 0x3C:
+                        return "BLD";
+                    case 0x3E:
+                        return "VLF";
+                    case 0x40:
+                        return "SEF";
+                    default:
+                        return "INVALID";
+                }
+            }
+
+            if (versionLow <= 0xA0)
+            {
+                switch (versionLow)
+                {
+                    case 0xA0:
+                        return "HGJ";
+                    case 0x50:
+                        return "BPA";
+                    case 0x51:
+                        return "ZGC";
+                    case 0x70:
+                        return "SVO";
+                    case 0x80:
+                        return "FRM";
+                    case 0x91:
+                        return "PTS";
+                }
+                return "INVALID";
+            }
+
+            switch (versionLow)
+            {
+                case 0xA1:
+                    return "ROJ";
+                case 0xA8:
+                    return "AKP";
+                case 0xB0:
+                    return "ZHS";
+                case 0xC0:
+                    return "ARB";
+                case 0xD0:
+                    return "RUS";
+            }
+            return "INVALID";
         }
     }
 }
