@@ -26,6 +26,12 @@
 
 typedef std::basic_string<TCHAR> tstring;
 
+typedef struct
+{
+    WNDENUMPROC lpEnumFunc;
+    LPARAM      lParam;
+} ENUMWINDOWS_INFO;
+
 typedef enum _THREADINFOCLASS
 {
     ThreadHideFromDebugger=17
@@ -51,6 +57,7 @@ typedef NTSTATUS(NTAPI *ptrNtSuspendProcess)(IN HANDLE ProcessHandle);
 
 static std::string string_format(const char *fmt, ...);
 static BOOL SuspendProcess();
+static BOOL IsOwnWindowHandle(HWND hWnd);
 static FILE* OpenLogFile();
 static void LogPrintf(TCHAR *format, ...);
 static void LogFlush();
@@ -58,6 +65,21 @@ static void LogData(BYTE *data, unsigned int length, unsigned int max_length = 0
 static void LogAsc(BYTE *data, unsigned int length, unsigned int max_length = 0x100);
 static BOOL PatchDbgUiRemoteBreakin();
 static BOOL GetCryptTables();
+
+static HWND WINAPI mFindWindowA(
+    _In_opt_ LPCSTR lpClassName,
+    _In_opt_ LPCSTR lpWindowName
+);
+
+static BOOL CALLBACK EnumWindowsProc(
+    __in  HWND hWnd,
+    __in  LPARAM lParam
+);
+
+static BOOL WINAPI mEnumWindows(
+    _In_ WNDENUMPROC lpEnumFunc,
+    _In_ LPARAM      lParam
+);
 
 static BOOL WINAPI mIsDebuggerPresent(void);
 
@@ -154,6 +176,8 @@ STRUCT_FAKE_API pArrayFakeAPI[]=
 {
     // library name ,function name, function handler, stack size (required to allocate enough stack space), FirstBytesCanExecuteAnywhereSize (optional put to 0 if you don't know it's meaning)
     //                                                stack size= sum(StackSizeOf(ParameterType))           Same as monitoring file keyword (see monitoring file advanced syntax)
+    {_T("User32.dll"),_T("FindWindowA"),(FARPROC)mFindWindowA,StackSizeOf(LPCSTR)+StackSizeOf(LPCSTR),0 },
+    {_T("User32.dll"),_T("EnumWindows"),(FARPROC)mEnumWindows,StackSizeOf(WNDENUMPROC)+StackSizeOf(LPARAM),0 },
     {_T("Kernel32.dll"),_T("IsDebuggerPresent"),(FARPROC)mIsDebuggerPresent,0,0},
     {_T("Kernel32.dll"),_T("FindResourceA"),(FARPROC)mFindResourceA,StackSizeOf(HMODULE)+StackSizeOf(LPCSTR)+StackSizeOf(LPCSTR),0 },
     {_T("Kernel32.dll"),_T("LoadResource"),(FARPROC)mLoadResource,StackSizeOf(HMODULE)+StackSizeOf(HRSRC),0 },
@@ -259,6 +283,17 @@ BOOL SuspendProcess()
     pNtSuspendProcess(GetCurrentProcess());
     LogPrintf(_T("Resumed ...\n"));
     return TRUE;
+}
+
+BOOL IsOwnWindowHandle(HWND hWnd)
+{
+    DWORD dwProcessId = 0;
+    DWORD dwThreadId = GetWindowThreadProcessId(hWnd, &dwProcessId);
+    if (dwThreadId == 0)
+    {
+        return FALSE;
+    }
+    return dwProcessId == GetCurrentProcessId();
 }
 
 FILE* OpenLogFile()
@@ -555,6 +590,64 @@ BOOL GetCryptTables()
     return TRUE;
 }
 
+HWND WINAPI mFindWindowA(
+    _In_opt_ LPCSTR lpClassName,
+    _In_opt_ LPCSTR lpWindowName
+)
+{
+    HWND hWnd = FindWindowA(lpClassName, lpWindowName);
+    LPCSTR pClassName = lpClassName;
+    if (HIWORD(pClassName) == 0)
+    {
+        pClassName = "-";
+    }
+    LPCSTR pWindowName = lpWindowName;
+    if (pWindowName == NULL)
+    {
+        pWindowName = "-";
+    }
+    LogPrintf(_T("FindWindowA %S %S (%08p)\n"), pClassName, pWindowName, hWnd);
+    if (hWnd != NULL)
+    {
+        if (!IsOwnWindowHandle(hWnd))
+        {
+            LogPrintf(_T("Window suppressed\n"));
+            return NULL;
+        }
+    }
+    return hWnd;
+}
+
+BOOL CALLBACK EnumWindowsProc(
+    __in  HWND hWnd,
+    __in  LPARAM lParam
+)
+{
+    ENUMWINDOWS_INFO *pEnumWindowsInfo = (ENUMWINDOWS_INFO *)lParam;
+    if (IsOwnWindowHandle(hWnd))
+    {
+        LogPrintf(_T("HWND accepted: %08p\n"), hWnd);
+        return pEnumWindowsInfo->lpEnumFunc(hWnd, pEnumWindowsInfo->lParam);
+    }
+    return TRUE;
+}
+
+BOOL WINAPI mEnumWindows(
+    _In_ WNDENUMPROC lpEnumFunc,
+    _In_ LPARAM      lParam
+)
+{
+    ENUMWINDOWS_INFO EnumWindowsInfo;
+    EnumWindowsInfo.lpEnumFunc = lpEnumFunc;
+    EnumWindowsInfo.lParam = lParam;
+
+    LogPrintf(_T("EnumWindows Start %08X\n"), lParam);
+    BOOL bResult = EnumWindows(EnumWindowsProc, (LPARAM)&EnumWindowsInfo);
+    LogPrintf(_T("EnumWindows End %08X (%u)\n"), lParam, bResult);
+
+    return bResult;
+}
+
 BOOL WINAPI mIsDebuggerPresent(void)
 {
     LogPrintf(_T("IsDebuggerPresent\n"));
@@ -712,7 +805,7 @@ HANDLE WINAPI mCreateFileA(
                     GetCryptTables();
                 }
             }
-#if false
+#if true
 #if false
             if (_stricmp(ext, ".clb") == 0)
             {
@@ -721,8 +814,10 @@ HANDLE WINAPI mCreateFileA(
 #endif
             if (_stricmp(ext, ".rod") == 0)
             {
-                //SuspendProcess();
-                bWatchMem = true;
+                if (strlen(name) >= 19)
+                {
+                    bWatchMem = true;
+                }
             }
 #else
             if (_stricmp(ext, ".clb") == 0)
