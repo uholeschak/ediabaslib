@@ -819,7 +819,28 @@ namespace FileDecoder
                 index++;
             }
 
-            if (line.Length - colonIdx - 1 > 4)
+            bool keepNumber = false;
+            if (result.Length >= 2 && result.Length <= 4)
+            {
+                keepNumber = true;
+                for (int i = 0; i < 2; i++)
+                {
+                    if (!((result[i] >= '0' && result[i] <= '9') || (result[i] >= 'A' && result[i] <= 'F')))
+                    {
+                        keepNumber = false;
+                        break;
+                    }
+                }
+
+                if (result.Length == 4)
+                {
+                    if (result[2] != '\r' || result[3] != '\n')
+                    {
+                        keepNumber = false;
+                    }
+                }
+            }
+            if (!keepNumber)
             {
                 return result;
             }
