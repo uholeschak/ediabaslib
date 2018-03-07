@@ -819,31 +819,6 @@ namespace FileDecoder
                 index++;
             }
 
-            bool keepNumber = false;
-            if (result.Length >= 2 && result.Length <= 4)
-            {
-                keepNumber = true;
-                for (int i = 0; i < 2; i++)
-                {
-                    if (!((result[i] >= '0' && result[i] <= '9') || (result[i] >= 'A' && result[i] <= 'F')))
-                    {
-                        keepNumber = false;
-                        break;
-                    }
-                }
-
-                if (result.Length == 4)
-                {
-                    if (result[2] != '\r' || result[3] != '\n')
-                    {
-                        keepNumber = false;
-                    }
-                }
-            }
-            if (!keepNumber)
-            {
-                return result;
-            }
             byte[] combinedResult = new byte[colonIdx + 1 + result.Length];
             Array.Copy(line, 0, combinedResult, 0, colonIdx + 1);
             Array.Copy(result, 0, combinedResult, colonIdx + 1, result.Length);
