@@ -819,7 +819,14 @@ namespace FileDecoder
                 index++;
             }
 
-            return result;
+            if (line.Length - colonIdx - 1 > 4)
+            {
+                return result;
+            }
+            byte[] combinedResult = new byte[colonIdx + 1 + result.Length];
+            Array.Copy(line, 0, combinedResult, 0, colonIdx + 1);
+            Array.Copy(result, 0, combinedResult, colonIdx + 1, result.Length);
+            return combinedResult;
         }
 
         static Dictionary<byte, byte> CreateCharMap(UInt32 code)
