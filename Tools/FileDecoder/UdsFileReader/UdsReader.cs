@@ -67,6 +67,11 @@ namespace UdsFileReader
         {
             try
             {
+                if (!File.Exists(fileName))
+                {
+                    return false;
+                }
+
                 string dir = Path.GetDirectoryName(fileName);
                 if (dir == null)
                 {
@@ -86,8 +91,8 @@ namespace UdsFileReader
                         string file = line[1];
                         if (!string.IsNullOrWhiteSpace(file))
                         {
-                            string fileNameInc = Path.Combine(dir, file);
-                            if (!includeFiles.Contains(fileNameInc))
+                            string fileNameInc = Path.Combine(dir, Path.ChangeExtension(file, ".rodtxt"));
+                            if (File.Exists(fileNameInc) && !includeFiles.Contains(fileNameInc))
                             {
                                 includeFiles.Add(fileNameInc);
                                 if (!GetIncludeFiles(fileNameInc, includeFiles))

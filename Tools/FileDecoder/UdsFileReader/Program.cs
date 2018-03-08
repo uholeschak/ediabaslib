@@ -15,10 +15,12 @@ namespace UdsFileReader
                 return 1;
             }
 
-            List<string> fileList = args.ToList();
-
-            List<string> includeFiles = new List<string>();
-            if (UdsReader.GetIncludeFiles(fileList[0], includeFiles))
+            string fileName = args[0];
+            List<string> includeFiles = new List<string>
+            {
+                fileName
+            };
+            if (UdsReader.GetIncludeFiles(fileName, includeFiles))
             {
                 Console.WriteLine("Includes:");
                 foreach (string includeFile in includeFiles)
@@ -27,7 +29,7 @@ namespace UdsFileReader
                 }
             }
 
-            List<string[]> lineList = UdsReader.ExtractFileSegment(fileList, "MWB");
+            List<string[]> lineList = UdsReader.ExtractFileSegment(includeFiles, "MWB");
 
             Console.WriteLine("MWB:");
             foreach (string[] line in lineList)
