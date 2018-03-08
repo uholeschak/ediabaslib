@@ -1,2 +1,3 @@
-/.vs/
-/packages/
+/bin/
+/obj/
+*.csproj.user
