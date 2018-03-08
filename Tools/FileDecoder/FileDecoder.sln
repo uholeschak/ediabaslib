@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileDecoder", "FileDecoder\FileDecoder.csproj", "{EC85AD3B-5B06-483F-B102-080D929A645A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UdsFileReader", "UdsFileReader\UdsFileReader.csproj", "{53A95466-4297-4DB1-896E-703CCDF64E37}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{EC85AD3B-5B06-483F-B102-080D929A645A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC85AD3B-5B06-483F-B102-080D929A645A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC85AD3B-5B06-483F-B102-080D929A645A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53A95466-4297-4DB1-896E-703CCDF64E37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53A95466-4297-4DB1-896E-703CCDF64E37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53A95466-4297-4DB1-896E-703CCDF64E37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53A95466-4297-4DB1-896E-703CCDF64E37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
