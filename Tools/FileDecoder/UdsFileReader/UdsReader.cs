@@ -106,11 +106,11 @@ namespace UdsFileReader
                     return null;
                 }
 
-                if (value >= segmentInfoSel.LineList.Count)
+                if (value < 1 || value > segmentInfoSel.LineList.Count)
                 {
                     return null;
                 }
-                resultList.Add(segmentInfoSel.LineList[(int)value]);
+                resultList.Add(segmentInfoSel.LineList[(int)value - 1]);
             }
 
             return resultList;
