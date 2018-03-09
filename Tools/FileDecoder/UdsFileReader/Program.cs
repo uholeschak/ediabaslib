@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -64,8 +65,6 @@ namespace UdsFileReader
 
                     if (parseInfo is UdsReader.ParseInfoMwb parseInfoMwb)
                     {
-                        Console.WriteLine("Service ID: {0:X04}", parseInfoMwb.ServiceId);
-
                         sb.Clear();
                         foreach (string entry in parseInfoMwb.NameArray)
                         {
@@ -97,6 +96,20 @@ namespace UdsFileReader
                             sb.Insert(0, "Name Detail: ");
                             Console.WriteLine(sb.ToString());
                         }
+
+                        sb.Clear();
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, "Service ID: {0:X04}", parseInfoMwb.ServiceId));
+
+                        if (parseInfoMwb.ScaleOffset.HasValue)
+                        {
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Offset: {0}", parseInfoMwb.ScaleOffset.Value));
+                        }
+
+                        if (parseInfoMwb.ScaleMult.HasValue)
+                        {
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Mult: {0}", parseInfoMwb.ScaleMult.Value));
+                        }
+                        Console.WriteLine(sb.ToString());
                     }
                 }
 

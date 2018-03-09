@@ -35,16 +35,20 @@ namespace UdsFileReader
 
         public class ParseInfoMwb : ParseInfoBase
         {
-            public ParseInfoMwb(UInt32 serviceId, string[] lineArray, string[] nameArray, string[] nameDetailArray) : base(lineArray)
+            public ParseInfoMwb(UInt32 serviceId, string[] lineArray, string[] nameArray, string[] nameDetailArray, double? scaleOffset, double? scaleMult) : base(lineArray)
             {
                 ServiceId = serviceId;
                 NameArray = nameArray;
                 NameDetailArray = nameDetailArray;
+                ScaleOffset = scaleOffset;
+                ScaleMult = scaleMult;
             }
 
             public UInt32 ServiceId { get; }
             public string[] NameArray { get; }
             public string[] NameDetailArray { get; }
+            public double? ScaleOffset { get; }
+            public double? ScaleMult { get; }
         }
 
         private class SegmentInfo
@@ -208,6 +212,18 @@ namespace UdsFileReader
                             return null;
                         }
 
+                        double? scaleOffset = null;
+                        if (double.TryParse(lineArray[4], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleO))
+                        {
+                            scaleOffset = scaleO;
+                        }
+
+                            double? scaleMult = null;
+                        if (double.TryParse(lineArray[5], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleM))
+                        {
+                            scaleMult = scaleM;
+                        }
+
                         string[] nameDetailArray = null;
                         if (UInt32.TryParse(lineArray[11], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 nameDetailKey))
                         {
@@ -217,7 +233,7 @@ namespace UdsFileReader
                             }
                         }
 
-                        parseInfo = new ParseInfoMwb(serviceId, lineArray, nameArray, nameDetailArray);
+                        parseInfo = new ParseInfoMwb(serviceId, lineArray, nameArray, nameDetailArray, scaleOffset, scaleMult);
                         break;
                     }
 
