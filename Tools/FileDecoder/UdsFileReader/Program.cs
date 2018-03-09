@@ -38,13 +38,13 @@ namespace UdsFileReader
                     }
                 }
 
-                List<string[]> lineList = udsReader.ExtractFileSegment(includeFiles, UdsReader.SegmentType.Mwb);
+                List<UdsReader.ParseInfoBase> resultList = udsReader.ExtractFileSegment(includeFiles, UdsReader.SegmentType.Mwb);
 
                 Console.WriteLine("MWB:");
-                foreach (string[] line in lineList)
+                foreach (UdsReader.ParseInfoBase parseInfo in resultList)
                 {
                     StringBuilder sb = new StringBuilder();
-                    foreach (string entry in line)
+                    foreach (string entry in parseInfo.LineArray)
                     {
                         if (sb.Length > 0)
                         {
@@ -55,6 +55,24 @@ namespace UdsFileReader
                         sb.Append("\"");
                     }
                     Console.WriteLine(sb.ToString());
+
+                    if (parseInfo is UdsReader.ParseInfoMwb parseInfoMwb)
+                    {
+                        sb.Clear();
+                        foreach (string entry in parseInfoMwb.NameArray)
+                        {
+                            if (sb.Length > 0)
+                            {
+                                sb.Append("; ");
+                            }
+                            sb.Append("\"");
+                            sb.Append(entry);
+                            sb.Append("\"");
+                        }
+
+                        sb.Insert(0, "Name: ");
+                        Console.WriteLine(sb.ToString());
+                    }
                 }
 
                 return 0;

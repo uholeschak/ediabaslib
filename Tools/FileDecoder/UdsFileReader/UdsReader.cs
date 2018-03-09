@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace UdsFileReader
@@ -21,7 +22,27 @@ namespace UdsFileReader
             Xpl,
         }
 
-        public class SegmentInfo
+        public class ParseInfoBase
+        {
+            public ParseInfoBase(string[] lineArray)
+            {
+                LineArray = lineArray;
+            }
+
+            public string[] LineArray { get; }
+        }
+
+        public class ParseInfoMwb : ParseInfoBase
+        {
+            public ParseInfoMwb(string[] lineArray, string[] nameArray) : base(lineArray)
+            {
+                NameArray = nameArray;
+            }
+
+            public string[] NameArray { get; }
+        }
+
+        private class SegmentInfo
         {
             public SegmentInfo(SegmentType segmentType, string segmentName, string fileName)
             {
@@ -36,7 +57,7 @@ namespace UdsFileReader
             public List<string[]> LineList { set; get; }
         }
 
-        public SegmentInfo[] SegmentInfos =
+        private readonly SegmentInfo[] _segmentInfos =
         {
             new SegmentInfo(SegmentType.Adp, "ADP", "RA"),
             new SegmentInfo(SegmentType.Dtc, "DTC", "RD"),
@@ -47,11 +68,39 @@ namespace UdsFileReader
             new SegmentInfo(SegmentType.Xpl, "XPL", "RX"),
         };
 
+        private Dictionary<UInt32, string[]> _textMap;
+
         public bool Init(string dirName)
         {
             try
             {
-                foreach (SegmentInfo segmentInfo in SegmentInfos)
+                string[] textFiles = Directory.GetFiles(dirName, "TTText*" + FileExtension, SearchOption.TopDirectoryOnly);
+                if (textFiles.Length != 1)
+                {
+                    return false;
+                }
+                List<string[]> textList = ExtractFileSegment(textFiles.ToList(), "TXT");
+                if (textList == null)
+                {
+                    return false;
+                }
+
+                _textMap = new Dictionary<uint, string[]>();
+                foreach (string[] textArray in textList)
+                {
+                    if (textArray.Length < 2)
+                    {
+                        return false;
+                    }
+                    if (!UInt32.TryParse(textArray[0], out UInt32 key))
+                    {
+                        return false;
+                    }
+
+                    _textMap.Add(key, textArray.Skip(1).ToArray());
+                }
+
+                foreach (SegmentInfo segmentInfo in _segmentInfos)
                 {
                     string fileName = Path.Combine(dirName, Path.ChangeExtension(segmentInfo.FileName, FileExtension));
                     List<string[]> lineList = ExtractFileSegment(new List<string> {fileName}, segmentInfo.SegmentName);
@@ -70,10 +119,10 @@ namespace UdsFileReader
             }
         }
 
-        public List<string[]> ExtractFileSegment(List<string> fileList, SegmentType segmentType)
+        public List<ParseInfoBase> ExtractFileSegment(List<string> fileList, SegmentType segmentType)
         {
             SegmentInfo segmentInfoSel = null;
-            foreach (SegmentInfo segmentInfo in SegmentInfos)
+            foreach (SegmentInfo segmentInfo in _segmentInfos)
             {
                 if (segmentInfo.SegmentType == segmentType)
                 {
@@ -93,7 +142,7 @@ namespace UdsFileReader
                 return null;
             }
 
-            List<string[]> resultList = new List<string[]>();
+            List<ParseInfoBase> resultList = new List<ParseInfoBase>();
             foreach (string[] line in lineList)
             {
                 if (line.Length != 2)
@@ -110,7 +159,37 @@ namespace UdsFileReader
                 {
                     return null;
                 }
-                resultList.Add(segmentInfoSel.LineList[(int)value - 1]);
+
+                string[] lineArray = segmentInfoSel.LineList[(int) value - 1];
+
+                ParseInfoBase parseInfo;
+                switch (segmentType)
+                {
+                    case SegmentType.Mwb:
+                    {
+                        if (lineArray.Length < 14)
+                        {
+                            return null;
+                        }
+                        if (!UInt32.TryParse(lineArray[0], out UInt32 nameKey))
+                        {
+                            return null;
+                        }
+
+                        if (!_textMap.TryGetValue(nameKey, out string[] nameArray))
+                        {
+                            return null;
+                        }
+
+                        parseInfo = new ParseInfoMwb(lineArray, nameArray);
+                        break;
+                    }
+
+                    default:
+                        parseInfo = new ParseInfoBase(lineArray);
+                        break;
+                }
+                resultList.Add(parseInfo);
             }
 
             return resultList;
