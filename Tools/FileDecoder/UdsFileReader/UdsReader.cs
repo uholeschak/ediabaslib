@@ -306,6 +306,11 @@ namespace UdsFileReader
                     return null;
                 }
 
+                if (string.Compare(mappedName, "EMPTY", StringComparison.OrdinalIgnoreCase) == 0)
+                {   // no entry
+                    return null;
+                }
+
                 fullName = Path.ChangeExtension(mappedName, FileExtension);
                 if (fullName == null)
                 {
