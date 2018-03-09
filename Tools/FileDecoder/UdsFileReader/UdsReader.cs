@@ -5,9 +5,70 @@ using System.Text;
 
 namespace UdsFileReader
 {
-    public static class UdsReader
+    public class UdsReader
     {
         private static readonly Encoding Encoding = Encoding.GetEncoding(1252);
+        public const string FileExtension = ".rodtxt";
+
+        public enum SegmentType
+        {
+            Adp,
+            Dtc,
+            Ffmux,
+            Ges,
+            Mbw,
+            Sot,
+            Xpl,
+        }
+
+        public class SegmentInfo
+        {
+            public SegmentInfo(SegmentType segmentType, string segmentName, string fileName)
+            {
+                SegmentType = segmentType;
+                SegmentName = segmentName;
+                FileName = fileName;
+            }
+
+            public SegmentType SegmentType { get; }
+            public string SegmentName { get; }
+            public string FileName { get; }
+            public List<string[]> LineList { set; get; }
+        }
+
+        public SegmentInfo[] SegmentInfos =
+        {
+            new SegmentInfo(SegmentType.Adp, "ADP", "RA"),
+            new SegmentInfo(SegmentType.Dtc, "DTC", "RD"),
+            new SegmentInfo(SegmentType.Ffmux, "FFMUX", "RF"),
+            new SegmentInfo(SegmentType.Ges, "GES", "RG"),
+            new SegmentInfo(SegmentType.Mbw, "MBW", "RM"),
+            new SegmentInfo(SegmentType.Sot, "SOT", "RS"),
+            new SegmentInfo(SegmentType.Xpl, "XPL", "RX"),
+        };
+
+        public bool Init(string dirName)
+        {
+            try
+            {
+                foreach (SegmentInfo segmentInfo in SegmentInfos)
+                {
+                    string fileName = Path.Combine(dirName, Path.ChangeExtension(segmentInfo.FileName, FileExtension));
+                    List<string[]> lineList = ExtractFileSegment(new List<string> {fileName}, segmentInfo.SegmentName);
+                    if (lineList == null)
+                    {
+                        return false;
+                    }
+
+                    segmentInfo.LineList = lineList;
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
         public static List<string[]> ExtractFileSegment(List<string> fileList, string segmentName)
         {
@@ -91,7 +152,7 @@ namespace UdsFileReader
                         string file = line[1];
                         if (!string.IsNullOrWhiteSpace(file))
                         {
-                            string fileNameInc = Path.Combine(dir, Path.ChangeExtension(file, ".rodtxt"));
+                            string fileNameInc = Path.Combine(dir, Path.ChangeExtension(file, FileExtension));
                             if (File.Exists(fileNameInc) && !includeFiles.Contains(fileNameInc))
                             {
                                 includeFiles.Add(fileNameInc);
