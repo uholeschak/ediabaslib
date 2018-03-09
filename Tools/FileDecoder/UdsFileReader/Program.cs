@@ -59,10 +59,13 @@ namespace UdsFileReader
                         sb.Append(entry);
                         sb.Append("\"");
                     }
+                    sb.Insert(0, "Raw: ");
                     Console.WriteLine(sb.ToString());
 
                     if (parseInfo is UdsReader.ParseInfoMwb parseInfoMwb)
                     {
+                        Console.WriteLine("Service ID: {0:X04}", parseInfoMwb.ServiceId);
+
                         sb.Clear();
                         foreach (string entry in parseInfoMwb.NameArray)
                         {

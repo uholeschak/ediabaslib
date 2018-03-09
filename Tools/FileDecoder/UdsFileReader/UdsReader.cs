@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -34,12 +35,14 @@ namespace UdsFileReader
 
         public class ParseInfoMwb : ParseInfoBase
         {
-            public ParseInfoMwb(string[] lineArray, string[] nameArray, string[] nameDetailArray) : base(lineArray)
+            public ParseInfoMwb(UInt32 serviceId, string[] lineArray, string[] nameArray, string[] nameDetailArray) : base(lineArray)
             {
+                ServiceId = serviceId;
                 NameArray = nameArray;
                 NameDetailArray = nameDetailArray;
             }
 
+            public UInt32 ServiceId { get; }
             public string[] NameArray { get; }
             public string[] NameDetailArray { get; }
         }
@@ -94,7 +97,7 @@ namespace UdsFileReader
                     {
                         return false;
                     }
-                    if (!UInt32.TryParse(textArray[0], out UInt32 key))
+                    if (!UInt32.TryParse(textArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 key))
                     {
                         return false;
                     }
@@ -152,7 +155,7 @@ namespace UdsFileReader
                     return null;
                 }
 
-                if (!UInt32.TryParse(line[0], out UInt32 value))
+                if (!UInt32.TryParse(line[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 value))
                 {
                     return null;
                 }
@@ -173,7 +176,7 @@ namespace UdsFileReader
                         {
                             return null;
                         }
-                        if (!UInt32.TryParse(lineArray[0], out UInt32 nameKey))
+                        if (!UInt32.TryParse(lineArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 nameKey))
                         {
                             return null;
                         }
@@ -183,8 +186,13 @@ namespace UdsFileReader
                             return null;
                         }
 
+                        if (!UInt32.TryParse(lineArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 serviceId))
+                        {
+                            return null;
+                        }
+
                         string[] nameDetailArray = null;
-                        if (UInt32.TryParse(lineArray[11], out UInt32 nameDetailKey))
+                        if (UInt32.TryParse(lineArray[11], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 nameDetailKey))
                         {
                             if (!_textMap.TryGetValue(nameDetailKey, out nameDetailArray))
                             {
@@ -192,7 +200,7 @@ namespace UdsFileReader
                             }
                         }
 
-                        parseInfo = new ParseInfoMwb(lineArray, nameArray, nameDetailArray);
+                        parseInfo = new ParseInfoMwb(serviceId, lineArray, nameArray, nameDetailArray);
                         break;
                     }
 
