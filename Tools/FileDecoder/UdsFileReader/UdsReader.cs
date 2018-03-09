@@ -16,7 +16,7 @@ namespace UdsFileReader
             Dtc,
             Ffmux,
             Ges,
-            Mbw,
+            Mwb,
             Sot,
             Xpl,
         }
@@ -42,7 +42,7 @@ namespace UdsFileReader
             new SegmentInfo(SegmentType.Dtc, "DTC", "RD"),
             new SegmentInfo(SegmentType.Ffmux, "FFMUX", "RF"),
             new SegmentInfo(SegmentType.Ges, "GES", "RG"),
-            new SegmentInfo(SegmentType.Mbw, "MBW", "RM"),
+            new SegmentInfo(SegmentType.Mwb, "MWB", "RM"),
             new SegmentInfo(SegmentType.Sot, "SOT", "RS"),
             new SegmentInfo(SegmentType.Xpl, "XPL", "RX"),
         };
@@ -68,6 +68,52 @@ namespace UdsFileReader
             {
                 return false;
             }
+        }
+
+        public List<string[]> ExtractFileSegment(List<string> fileList, SegmentType segmentType)
+        {
+            SegmentInfo segmentInfoSel = null;
+            foreach (SegmentInfo segmentInfo in SegmentInfos)
+            {
+                if (segmentInfo.SegmentType == segmentType)
+                {
+                    segmentInfoSel = segmentInfo;
+                    break;
+                }
+            }
+
+            if (segmentInfoSel?.LineList == null)
+            {
+                return null;
+            }
+
+            List<string[]> lineList = ExtractFileSegment(fileList, segmentInfoSel.SegmentName);
+            if (lineList == null)
+            {
+                return null;
+            }
+
+            List<string[]> resultList = new List<string[]>();
+            foreach (string[] line in lineList)
+            {
+                if (line.Length != 2)
+                {
+                    return null;
+                }
+
+                if (!UInt32.TryParse(line[0], out UInt32 value))
+                {
+                    return null;
+                }
+
+                if (value >= segmentInfoSel.LineList.Count)
+                {
+                    return null;
+                }
+                resultList.Add(segmentInfoSel.LineList[(int)value]);
+            }
+
+            return resultList;
         }
 
         public static List<string[]> ExtractFileSegment(List<string> fileList, string segmentName)

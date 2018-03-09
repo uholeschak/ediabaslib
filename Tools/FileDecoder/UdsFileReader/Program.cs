@@ -38,7 +38,7 @@ namespace UdsFileReader
                     }
                 }
 
-                List<string[]> lineList = UdsReader.ExtractFileSegment(includeFiles, "MWB");
+                List<string[]> lineList = udsReader.ExtractFileSegment(includeFiles, UdsReader.SegmentType.Mwb);
 
                 Console.WriteLine("MWB:");
                 foreach (string[] line in lineList)
