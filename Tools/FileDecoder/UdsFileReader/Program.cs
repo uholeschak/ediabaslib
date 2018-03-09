@@ -25,17 +25,17 @@ namespace UdsFileReader
                     Console.WriteLine("Init failed");
                     return 1;
                 }
-                List<string> includeFiles = new List<string>
+                List<string> includeFiles = udsReader.GetFileList(fileName);
+                if (includeFiles == null)
                 {
-                    fileName
-                };
-                if (UdsReader.GetIncludeFiles(fileName, includeFiles))
+                    Console.WriteLine("Get file list failed");
+                    return 1;
+                }
+
+                Console.WriteLine("Includes:");
+                foreach (string includeFile in includeFiles)
                 {
-                    Console.WriteLine("Includes:");
-                    foreach (string includeFile in includeFiles)
-                    {
-                        Console.WriteLine(includeFile);
-                    }
+                    Console.WriteLine(includeFile);
                 }
 
                 List<UdsReader.ParseInfoBase> resultList = udsReader.ExtractFileSegment(includeFiles, UdsReader.SegmentType.Mwb);

@@ -73,12 +73,29 @@ namespace UdsFileReader
             new SegmentInfo(SegmentType.Xpl, "XPL", "RX"),
         };
 
+        private Dictionary<string, string> _redirMap;
         private Dictionary<UInt32, string[]> _textMap;
 
         public bool Init(string dirName)
         {
             try
             {
+                List<string[]> redirList = ExtractFileSegment(new List<string> {Path.Combine(dirName, "ReDir" + FileExtension)}, "DIR");
+                if (redirList == null)
+                {
+                    return false;
+                }
+
+                _redirMap = new Dictionary<string, string>();
+                foreach (string[] redirArray in redirList)
+                {
+                    if (redirArray.Length != 3)
+                    {
+                        return false;
+                    }
+                    _redirMap.Add(redirArray[1].ToUpperInvariant(), redirArray[2]);
+                }
+
                 string[] textFiles = Directory.GetFiles(dirName, "TTText*" + FileExtension, SearchOption.TopDirectoryOnly);
                 if (textFiles.Length != 1)
                 {
@@ -266,6 +283,49 @@ namespace UdsFileReader
                 }
             }
             return lineList;
+        }
+
+        public List<string> GetFileList(string fileName)
+        {
+            string dirName = Path.GetDirectoryName(fileName);
+            if (dirName == null)
+            {
+                return null;
+            }
+            string fullName = Path.ChangeExtension(fileName, FileExtension);
+            if (!File.Exists(fullName))
+            {
+                string key = Path.GetFileNameWithoutExtension(fileName)?.ToUpperInvariant();
+                if (key == null)
+                {
+                    return null;
+                }
+
+                if (!_redirMap.TryGetValue(key, out string mappedName))
+                {
+                    return null;
+                }
+
+                fullName = Path.ChangeExtension(mappedName, FileExtension);
+                if (fullName == null)
+                {
+                    return null;
+                }
+                fullName = Path.Combine(dirName, fullName);
+
+                if (!File.Exists(fullName))
+                {
+                    return null;
+                }
+            }
+
+            List<string> includeFiles = new List<string> {fullName};
+            if (!GetIncludeFiles(fullName, includeFiles))
+            {
+                return null;
+            }
+
+            return includeFiles;
         }
 
         public static bool GetIncludeFiles(string fileName, List<string> includeFiles)
