@@ -34,12 +34,14 @@ namespace UdsFileReader
 
         public class ParseInfoMwb : ParseInfoBase
         {
-            public ParseInfoMwb(string[] lineArray, string[] nameArray) : base(lineArray)
+            public ParseInfoMwb(string[] lineArray, string[] nameArray, string[] nameDetailArray) : base(lineArray)
             {
                 NameArray = nameArray;
+                NameDetailArray = nameDetailArray;
             }
 
             public string[] NameArray { get; }
+            public string[] NameDetailArray { get; }
         }
 
         private class SegmentInfo
@@ -181,7 +183,16 @@ namespace UdsFileReader
                             return null;
                         }
 
-                        parseInfo = new ParseInfoMwb(lineArray, nameArray);
+                        string[] nameDetailArray = null;
+                        if (UInt32.TryParse(lineArray[11], out UInt32 nameDetailKey))
+                        {
+                            if (!_textMap.TryGetValue(nameDetailKey, out nameDetailArray))
+                            {
+                                return null;
+                            }
+                        }
+
+                        parseInfo = new ParseInfoMwb(lineArray, nameArray, nameDetailArray);
                         break;
                     }
 

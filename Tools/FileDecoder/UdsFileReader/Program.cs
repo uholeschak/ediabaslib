@@ -39,6 +39,11 @@ namespace UdsFileReader
                 }
 
                 List<UdsReader.ParseInfoBase> resultList = udsReader.ExtractFileSegment(includeFiles, UdsReader.SegmentType.Mwb);
+                if (resultList == null)
+                {
+                    Console.WriteLine("Parsing failed");
+                    return 1;
+                }
 
                 Console.WriteLine("MWB:");
                 foreach (UdsReader.ParseInfoBase parseInfo in resultList)
@@ -69,9 +74,26 @@ namespace UdsFileReader
                             sb.Append(entry);
                             sb.Append("\"");
                         }
-
                         sb.Insert(0, "Name: ");
                         Console.WriteLine(sb.ToString());
+
+                        if (parseInfoMwb.NameDetailArray != null)
+                        {
+                            sb.Clear();
+                            foreach (string entry in parseInfoMwb.NameDetailArray)
+                            {
+                                if (sb.Length > 0)
+                                {
+                                    sb.Append("; ");
+                                }
+                                sb.Append("\"");
+                                sb.Append(entry);
+                                sb.Append("\"");
+                            }
+
+                            sb.Insert(0, "Name Detail: ");
+                            Console.WriteLine(sb.ToString());
+                        }
                     }
                 }
 
