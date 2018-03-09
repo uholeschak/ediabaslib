@@ -60,7 +60,7 @@ namespace UdsFileReader
                         sb.Append(entry);
                         sb.Append("\"");
                     }
-                    sb.Insert(0, "Raw: ");
+                    sb.Insert(0, "*** ");
                     Console.WriteLine(sb.ToString());
 
                     if (parseInfo is UdsReader.ParseInfoMwb parseInfoMwb)
@@ -108,6 +108,21 @@ namespace UdsFileReader
                         if (parseInfoMwb.ScaleMult.HasValue)
                         {
                             sb.Append(string.Format(CultureInfo.InvariantCulture, "; Mult: {0}", parseInfoMwb.ScaleMult.Value));
+                        }
+
+                        if (parseInfoMwb.ByteOffset.HasValue)
+                        {
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Byte: {0}", parseInfoMwb.ByteOffset.Value));
+                        }
+
+                        if (parseInfoMwb.BitOffset.HasValue)
+                        {
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Bit: {0}", parseInfoMwb.BitOffset.Value));
+                        }
+
+                        if (parseInfoMwb.BitLength.HasValue)
+                        {
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Len: {0}", parseInfoMwb.BitLength.Value));
                         }
                         Console.WriteLine(sb.ToString());
                     }

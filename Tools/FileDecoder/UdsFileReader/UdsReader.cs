@@ -35,13 +35,17 @@ namespace UdsFileReader
 
         public class ParseInfoMwb : ParseInfoBase
         {
-            public ParseInfoMwb(UInt32 serviceId, string[] lineArray, string[] nameArray, string[] nameDetailArray, double? scaleOffset, double? scaleMult) : base(lineArray)
+            public ParseInfoMwb(UInt32 serviceId, string[] lineArray, string[] nameArray, string[] nameDetailArray,
+                double? scaleOffset, double? scaleMult, UInt32? byteOffset, UInt32? bitOffset, UInt32? bitLength) : base(lineArray)
             {
                 ServiceId = serviceId;
                 NameArray = nameArray;
                 NameDetailArray = nameDetailArray;
                 ScaleOffset = scaleOffset;
                 ScaleMult = scaleMult;
+                ByteOffset = byteOffset;
+                BitOffset = bitOffset;
+                BitLength = bitLength;
             }
 
             public UInt32 ServiceId { get; }
@@ -49,6 +53,9 @@ namespace UdsFileReader
             public string[] NameDetailArray { get; }
             public double? ScaleOffset { get; }
             public double? ScaleMult { get; }
+            public UInt32? ByteOffset { get; }
+            public UInt32? BitOffset { get; }
+            public UInt32? BitLength { get; }
         }
 
         private class SegmentInfo
@@ -218,10 +225,28 @@ namespace UdsFileReader
                             scaleOffset = scaleO;
                         }
 
-                            double? scaleMult = null;
+                        double? scaleMult = null;
                         if (double.TryParse(lineArray[5], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleM))
                         {
                             scaleMult = scaleM;
+                        }
+
+                        UInt32? byteOffset = null;
+                        if (UInt32.TryParse(lineArray[8], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 byteO))
+                        {
+                            byteOffset = byteO;
+                        }
+
+                        UInt32? bitOffset = null;
+                        if (UInt32.TryParse(lineArray[9], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 bitO))
+                        {
+                            bitOffset = bitO;
+                        }
+
+                        UInt32? bitCount = null;
+                        if (UInt32.TryParse(lineArray[10], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 bitC))
+                        {
+                            bitCount = bitC;
                         }
 
                         string[] nameDetailArray = null;
@@ -233,7 +258,7 @@ namespace UdsFileReader
                             }
                         }
 
-                        parseInfo = new ParseInfoMwb(serviceId, lineArray, nameArray, nameDetailArray, scaleOffset, scaleMult);
+                        parseInfo = new ParseInfoMwb(serviceId, lineArray, nameArray, nameDetailArray, scaleOffset, scaleMult, byteOffset, bitOffset, bitCount);
                         break;
                     }
 
