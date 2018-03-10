@@ -86,6 +86,7 @@ namespace UdsFileReader
 
         private Dictionary<string, string> _redirMap;
         private Dictionary<UInt32, string[]> _textMap;
+        private Dictionary<UInt32, string[]> _unitMap;
 
         public bool Init(string dirName)
         {
@@ -107,30 +108,16 @@ namespace UdsFileReader
                     _redirMap.Add(redirArray[1].ToUpperInvariant(), redirArray[2]);
                 }
 
-                string[] textFiles = Directory.GetFiles(dirName, "TTText*" + FileExtension, SearchOption.TopDirectoryOnly);
-                if (textFiles.Length != 1)
-                {
-                    return false;
-                }
-                List<string[]> textList = ExtractFileSegment(textFiles.ToList(), "TXT");
-                if (textList == null)
+                _textMap = CreateTextDict(dirName, "TTText*" + FileExtension, "TXT");
+                if (_textMap == null)
                 {
                     return false;
                 }
 
-                _textMap = new Dictionary<uint, string[]>();
-                foreach (string[] textArray in textList)
+                _unitMap = CreateTextDict(dirName, "Unit*" + FileExtension, "UNT");
+                if (_unitMap == null)
                 {
-                    if (textArray.Length < 2)
-                    {
-                        return false;
-                    }
-                    if (!UInt32.TryParse(textArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 key))
-                    {
-                        return false;
-                    }
-
-                    _textMap.Add(key, textArray.Skip(1).ToArray());
+                    return false;
                 }
 
                 foreach (SegmentInfo segmentInfo in _segmentInfos)
@@ -270,6 +257,44 @@ namespace UdsFileReader
             }
 
             return resultList;
+        }
+
+        public static Dictionary<uint, string[]> CreateTextDict(string dirName, string fileSpec, string segmentName)
+        {
+            try
+            {
+                string[] files = Directory.GetFiles(dirName, fileSpec, SearchOption.TopDirectoryOnly);
+                if (files.Length != 1)
+                {
+                    return null;
+                }
+                List<string[]> textList = ExtractFileSegment(files.ToList(), segmentName);
+                if (textList == null)
+                {
+                    return null;
+                }
+
+                Dictionary<uint, string[]> dict = new Dictionary<uint, string[]>();
+                foreach (string[] textArray in textList)
+                {
+                    if (textArray.Length < 2)
+                    {
+                        return null;
+                    }
+                    if (!UInt32.TryParse(textArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 key))
+                    {
+                        return null;
+                    }
+
+                    dict.Add(key, textArray.Skip(1).ToArray());
+                }
+
+                return dict;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public static List<string[]> ExtractFileSegment(List<string> fileList, string segmentName)
