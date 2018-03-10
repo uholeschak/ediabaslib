@@ -23,6 +23,15 @@ namespace UdsFileReader
             Xpl,
         }
 
+        public enum DataType
+        {
+            BitName = 3,
+            Integer = 4,
+            Binary = 5,
+            String = 8,
+            Float = 128,
+        }
+
         public class ParseInfoBase
         {
             public ParseInfoBase(string[] lineArray)
@@ -35,10 +44,11 @@ namespace UdsFileReader
 
         public class ParseInfoMwb : ParseInfoBase
         {
-            public ParseInfoMwb(UInt32 serviceId, string[] lineArray, string[] nameArray, string[] nameDetailArray,
+            public ParseInfoMwb(UInt32 serviceId, UInt32 dataTypeId, string[] lineArray, string[] nameArray, string[] nameDetailArray,
                 double? scaleOffset, double? scaleMult, UInt32? byteOffset, UInt32? bitOffset, UInt32? bitLength) : base(lineArray)
             {
                 ServiceId = serviceId;
+                DataTypeId = dataTypeId;
                 NameArray = nameArray;
                 NameDetailArray = nameDetailArray;
                 ScaleOffset = scaleOffset;
@@ -49,6 +59,7 @@ namespace UdsFileReader
             }
 
             public UInt32 ServiceId { get; }
+            public UInt32 DataTypeId { get; }
             public string[] NameArray { get; }
             public string[] NameDetailArray { get; }
             public double? ScaleOffset { get; }
@@ -206,6 +217,11 @@ namespace UdsFileReader
                             return null;
                         }
 
+                        if (!UInt32.TryParse(lineArray[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 dataTypeId))
+                        {
+                            return null;
+                        }
+
                         double? scaleOffset = null;
                         if (double.TryParse(lineArray[4], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleO))
                         {
@@ -245,7 +261,7 @@ namespace UdsFileReader
                             }
                         }
 
-                        parseInfo = new ParseInfoMwb(serviceId, lineArray, nameArray, nameDetailArray, scaleOffset, scaleMult, byteOffset, bitOffset, bitCount);
+                        parseInfo = new ParseInfoMwb(serviceId, dataTypeId, lineArray, nameArray, nameDetailArray, scaleOffset, scaleMult, byteOffset, bitOffset, bitCount);
                         break;
                     }
 

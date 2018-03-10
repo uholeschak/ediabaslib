@@ -99,6 +99,7 @@ namespace UdsFileReader
 
                         sb.Clear();
                         sb.Append(string.Format(CultureInfo.InvariantCulture, "Service ID: {0:X04}", parseInfoMwb.ServiceId));
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, "; Data type: {0}", parseInfoMwb.DataTypeId));
 
                         if (parseInfoMwb.ScaleOffset.HasValue)
                         {
