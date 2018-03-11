@@ -27,10 +27,10 @@ namespace UdsFileReader
         public enum DataType
         {
             ValueName = 3,
-            Integer = 4,
+            FloatTable = 4,
             Binary = 5,
             String = 8,
-            Float = 128,
+            FloatScale = 128,
         }
 
         public class ValueName
@@ -82,7 +82,7 @@ namespace UdsFileReader
         public class ParseInfoMwb : ParseInfoBase
         {
             public ParseInfoMwb(UInt32 serviceId, UInt32 dataTypeId, string[] lineArray, string[] nameArray, string[] nameDetailArray,
-                double? scaleOffset, double? scaleMult, UInt32? byteOffset, UInt32? bitOffset, UInt32? bitLength, List<ValueName> nameValueList) : base(lineArray)
+                double? scaleOffset, double? scaleMult, double? scaleDiv, UInt32? byteOffset, UInt32? bitOffset, UInt32? bitLength, List<ValueName> nameValueList) : base(lineArray)
             {
                 ServiceId = serviceId;
                 DataTypeId = dataTypeId;
@@ -90,6 +90,7 @@ namespace UdsFileReader
                 NameDetailArray = nameDetailArray;
                 ScaleOffset = scaleOffset;
                 ScaleMult = scaleMult;
+                ScaleDiv = scaleDiv;
                 ByteOffset = byteOffset;
                 BitOffset = bitOffset;
                 BitLength = bitLength;
@@ -102,6 +103,7 @@ namespace UdsFileReader
             public string[] NameDetailArray { get; }
             public double? ScaleOffset { get; }
             public double? ScaleMult { get; }
+            public double? ScaleDiv { get; }
             public UInt32? ByteOffset { get; }
             public UInt32? BitOffset { get; }
             public UInt32? BitLength { get; }
@@ -288,6 +290,12 @@ namespace UdsFileReader
                             scaleMult = scaleM;
                         }
 
+                        double? scaleDiv = null;
+                        if (double.TryParse(lineArray[6], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleD))
+                        {
+                            scaleDiv = scaleD;
+                        }
+
                         UInt32? byteOffset = null;
                         if (UInt32.TryParse(lineArray[8], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 byteO))
                         {
@@ -332,7 +340,7 @@ namespace UdsFileReader
                             }
                         }
 
-                        parseInfo = new ParseInfoMwb(serviceId, dataTypeId, lineArray, nameArray, nameDetailArray, scaleOffset, scaleMult, byteOffset, bitOffset, bitCount, nameValueList);
+                        parseInfo = new ParseInfoMwb(serviceId, dataTypeId, lineArray, nameArray, nameDetailArray, scaleOffset, scaleMult, scaleDiv, byteOffset, bitOffset, bitCount, nameValueList);
                         break;
                     }
 

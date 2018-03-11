@@ -111,6 +111,11 @@ namespace UdsFileReader
                             sb.Append(string.Format(CultureInfo.InvariantCulture, "; Mult: {0}", parseInfoMwb.ScaleMult.Value));
                         }
 
+                        if (parseInfoMwb.ScaleDiv.HasValue)
+                        {
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Div: {0}", parseInfoMwb.ScaleDiv.Value));
+                        }
+
                         if (parseInfoMwb.ByteOffset.HasValue)
                         {
                             sb.Append(string.Format(CultureInfo.InvariantCulture, "; Byte: {0}", parseInfoMwb.ByteOffset.Value));
