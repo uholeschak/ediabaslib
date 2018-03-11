@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -40,14 +41,16 @@ namespace UdsFileReader
 
                 if (lineArray.Length >= 5)
                 {
-                    if (Int32.TryParse(lineArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 minValue))
+                    object valueObjMin = new Int32Converter().ConvertFromInvariantString(lineArray[1]);
+                    if (valueObjMin != null)
                     {
-                        MinValue = minValue;
+                        MinValue = (Int32)valueObjMin;
                     }
 
-                    if (Int32.TryParse(lineArray[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 maxValue))
+                    object valueObjMax = new Int32Converter().ConvertFromInvariantString(lineArray[2]);
+                    if (valueObjMax != null)
                     {
-                        MaxValue = maxValue;
+                        MaxValue = (Int32)valueObjMax;
                     }
 
                     if (UInt32.TryParse(lineArray[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 valueNameKey))
