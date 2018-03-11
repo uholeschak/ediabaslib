@@ -82,7 +82,7 @@ namespace UdsFileReader
         public class ParseInfoMwb : ParseInfoBase
         {
             public ParseInfoMwb(UInt32 serviceId, UInt32 dataTypeId, string[] lineArray, string[] nameArray, string[] nameDetailArray,
-                double? scaleOffset, double? scaleMult, double? scaleDiv, UInt32? byteOffset, UInt32? bitOffset, UInt32? bitLength, List<ValueName> nameValueList) : base(lineArray)
+                double? scaleOffset, double? scaleMult, double? scaleDiv, string unitText, UInt32? byteOffset, UInt32? bitOffset, UInt32? bitLength, List<ValueName> nameValueList) : base(lineArray)
             {
                 ServiceId = serviceId;
                 DataTypeId = dataTypeId;
@@ -91,6 +91,7 @@ namespace UdsFileReader
                 ScaleOffset = scaleOffset;
                 ScaleMult = scaleMult;
                 ScaleDiv = scaleDiv;
+                UnitText = unitText;
                 ByteOffset = byteOffset;
                 BitOffset = bitOffset;
                 BitLength = bitLength;
@@ -104,6 +105,7 @@ namespace UdsFileReader
             public double? ScaleOffset { get; }
             public double? ScaleMult { get; }
             public double? ScaleDiv { get; }
+            public string UnitText { get; }
             public UInt32? ByteOffset { get; }
             public UInt32? BitOffset { get; }
             public UInt32? BitLength { get; }
@@ -278,24 +280,6 @@ namespace UdsFileReader
                             dataTypeExtra = dataTypeE;
                         }
 
-                        double? scaleOffset = null;
-                        if (double.TryParse(lineArray[4], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleO))
-                        {
-                            scaleOffset = scaleO;
-                        }
-
-                        double? scaleMult = null;
-                        if (double.TryParse(lineArray[5], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleM))
-                        {
-                            scaleMult = scaleM;
-                        }
-
-                        double? scaleDiv = null;
-                        if (double.TryParse(lineArray[6], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleD))
-                        {
-                            scaleDiv = scaleD;
-                        }
-
                         UInt32? byteOffset = null;
                         if (UInt32.TryParse(lineArray[8], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 byteO))
                         {
@@ -323,24 +307,65 @@ namespace UdsFileReader
                             }
                         }
 
+                        double? scaleOffset = null;
+                        double? scaleMult = null;
+                        double? scaleDiv = null;
+                        string unitText = null;
                         List<ValueName> nameValueList = null;
-                        if ((DataType) dataTypeId == DataType.ValueName && dataTypeExtra.HasValue)
+                        switch ((DataType)dataTypeId)
                         {
-                            nameValueList = new List<ValueName>();
-                            IEnumerable<string[]> bitList = _ttdopLookup[dataTypeExtra.Value];
-                            if (bitList != null)
+                            case DataType.ValueName:
                             {
-                                foreach (string[] ttdopArray in bitList)
+                                nameValueList = new List<ValueName>();
+                                IEnumerable<string[]> bitList = _ttdopLookup[dataTypeExtra.Value];
+                                if (bitList != null)
                                 {
-                                    if (ttdopArray.Length >= 5)
+                                    foreach (string[] ttdopArray in bitList)
                                     {
-                                        nameValueList.Add(new ValueName(this, ttdopArray));
+                                        if (ttdopArray.Length >= 5)
+                                        {
+                                            nameValueList.Add(new ValueName(this, ttdopArray));
+                                        }
                                     }
                                 }
+                                break;
+                            }
+
+                            case DataType.FloatScale:
+                            {
+                                if (double.TryParse(lineArray[4], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleO))
+                                {
+                                    scaleOffset = scaleO;
+                                }
+
+                                if (double.TryParse(lineArray[5], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleM))
+                                {
+                                    scaleMult = scaleM;
+                                }
+
+                                if (double.TryParse(lineArray[6], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleD))
+                                {
+                                    scaleDiv = scaleD;
+                                }
+
+                                if (UInt32.TryParse(lineArray[7], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 unitKey))
+                                {
+                                    if (!_unitMap.TryGetValue(unitKey, out string[] unitArray))
+                                    {
+                                        return null;
+                                    }
+                                    if (unitArray.Length < 1)
+                                    {
+                                        return null;
+                                    }
+                                    unitText = unitArray[0];
+                                }
+                                break;
                             }
                         }
 
-                        parseInfo = new ParseInfoMwb(serviceId, dataTypeId, lineArray, nameArray, nameDetailArray, scaleOffset, scaleMult, scaleDiv, byteOffset, bitOffset, bitCount, nameValueList);
+                        parseInfo = new ParseInfoMwb(serviceId, dataTypeId, lineArray, nameArray, nameDetailArray, scaleOffset, scaleMult, scaleDiv, unitText,
+                            byteOffset, bitOffset, bitCount, nameValueList);
                         break;
                     }
 
