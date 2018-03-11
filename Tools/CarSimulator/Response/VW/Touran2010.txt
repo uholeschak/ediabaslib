@@ -162,6 +162,12 @@ CFG: 01 07 E0 07 E8
 83 07 E0 22 F4 1F 00 : 85 07 E0 62 F4 1F 27 10 00
 ;Drosselklappenstellung absolut (100 %, 100 / 255)
 83 07 E0 22 F4 11 00 : 84 07 E0 62 F4 11 FF 00
+;Normierter Lastwert (100 %, 100 / 255)
+83 07 E0 22 F4 04 00 : 84 07 E0 62 F4 04 FF 00
+;Gaspedalstellung (100 %, 100 / 255)
+83 07 E0 22 F4 49 00 : 84 07 E0 62 F4 49 FF 00
+;Eingelegeter Gang (2)
+83 07 E0 22 10 0D 00 : 84 07 E0 62 10 0D 02 00
 ;VIN (17 Byte)
 83 07 E0 22 F8 02 00 : 94 07 E0 62 F8 02 41 42 43 44 45 46 47 48 49 4A 4B 4C 4D 4E 4F 50 51 00
 
