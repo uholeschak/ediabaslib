@@ -40,12 +40,12 @@ namespace UdsFileReader
 
                 if (lineArray.Length >= 5)
                 {
-                    if (UInt32.TryParse(lineArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 minValue))
+                    if (Int32.TryParse(lineArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 minValue))
                     {
                         MinValue = minValue;
                     }
 
-                    if (UInt32.TryParse(lineArray[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 maxValue))
+                    if (Int32.TryParse(lineArray[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 maxValue))
                     {
                         MaxValue = maxValue;
                     }
@@ -62,8 +62,8 @@ namespace UdsFileReader
 
             public string[] LineArray { get; }
             public string[] NameArray { get; }
-            public UInt32? MinValue { get; }
-            public UInt32? MaxValue { get; }
+            public Int32? MinValue { get; }
+            public Int32? MaxValue { get; }
         }
 
         public class ParseInfoBase
