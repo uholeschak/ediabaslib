@@ -45,7 +45,7 @@ namespace UdsFileReader
         public class ParseInfoMwb : ParseInfoBase
         {
             public ParseInfoMwb(UInt32 serviceId, UInt32 dataTypeId, string[] lineArray, string[] nameArray, string[] nameDetailArray,
-                double? scaleOffset, double? scaleMult, UInt32? byteOffset, UInt32? bitOffset, UInt32? bitLength) : base(lineArray)
+                double? scaleOffset, double? scaleMult, UInt32? byteOffset, UInt32? bitOffset, UInt32? bitLength, List<string[]> nameBitList) : base(lineArray)
             {
                 ServiceId = serviceId;
                 DataTypeId = dataTypeId;
@@ -56,6 +56,7 @@ namespace UdsFileReader
                 ByteOffset = byteOffset;
                 BitOffset = bitOffset;
                 BitLength = bitLength;
+                NameBitList = nameBitList;
             }
 
             public UInt32 ServiceId { get; }
@@ -67,6 +68,7 @@ namespace UdsFileReader
             public UInt32? ByteOffset { get; }
             public UInt32? BitOffset { get; }
             public UInt32? BitLength { get; }
+            public List<string[]> NameBitList { get; }
         }
 
         private class SegmentInfo
@@ -98,6 +100,7 @@ namespace UdsFileReader
         private Dictionary<string, string> _redirMap;
         private Dictionary<UInt32, string[]> _textMap;
         private Dictionary<UInt32, string[]> _unitMap;
+        private ILookup<UInt32, string[]> _ttdopLookup;
 
         public bool Init(string dirName)
         {
@@ -130,6 +133,14 @@ namespace UdsFileReader
                 {
                     return false;
                 }
+
+                List<string[]> ttdopList = ExtractFileSegment(new List<string> { Path.Combine(dirName, "TTDOP" + FileExtension) }, "DOP");
+                if (ttdopList == null)
+                {
+                    return false;
+                }
+
+                _ttdopLookup = ttdopList.ToLookup(item => UInt32.Parse(item[0]));
 
                 foreach (SegmentInfo segmentInfo in _segmentInfos)
                 {
@@ -261,7 +272,31 @@ namespace UdsFileReader
                             }
                         }
 
-                        parseInfo = new ParseInfoMwb(serviceId, dataTypeId, lineArray, nameArray, nameDetailArray, scaleOffset, scaleMult, byteOffset, bitOffset, bitCount);
+                        List<string[]> nameBitList = null;
+                        if ((DataType) dataTypeId == DataType.BitName)
+                        {
+                            nameBitList = new List<string[]>();
+                            IEnumerable<string[]> bitList = _ttdopLookup[dataTypeId];
+                            if (bitList != null)
+                            {
+                                foreach (string[] ttdopArray in bitList)
+                                {
+                                    if (ttdopArray.Length >= 5)
+                                    {
+                                        if (UInt32.TryParse(ttdopArray[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 bitNameKey))
+                                        {
+                                            if (!_textMap.TryGetValue(bitNameKey, out string[] nameBitArray))
+                                            {
+                                                return null;
+                                            }
+                                            nameBitList.Add(nameBitArray);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        parseInfo = new ParseInfoMwb(serviceId, dataTypeId, lineArray, nameArray, nameDetailArray, scaleOffset, scaleMult, byteOffset, bitOffset, bitCount, nameBitList);
                         break;
                     }
 

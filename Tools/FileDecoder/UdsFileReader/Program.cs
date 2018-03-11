@@ -125,7 +125,24 @@ namespace UdsFileReader
                         {
                             sb.Append(string.Format(CultureInfo.InvariantCulture, "; Len: {0}", parseInfoMwb.BitLength.Value));
                         }
+
                         Console.WriteLine(sb.ToString());
+
+                        if (parseInfoMwb.NameBitList != null)
+                        {
+                            foreach (string[] bitNames in parseInfoMwb.NameBitList)
+                            {
+                                sb.Clear();
+                                sb.Append("Bit Name: ");
+                                foreach (string bitName in bitNames)
+                                {
+                                    sb.Append("\"");
+                                    sb.Append(bitName);
+                                    sb.Append("\" ");
+                                }
+                                Console.WriteLine(sb.ToString());
+                            }
+                        }
                     }
                 }
 
