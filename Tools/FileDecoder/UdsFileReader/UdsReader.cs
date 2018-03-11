@@ -25,11 +25,45 @@ namespace UdsFileReader
 
         public enum DataType
         {
-            BitName = 3,
+            ValueName = 3,
             Integer = 4,
             Binary = 5,
             String = 8,
             Float = 128,
+        }
+
+        public class ValueName
+        {
+            public ValueName(UdsReader udsReader, string[] lineArray)
+            {
+                LineArray = lineArray;
+
+                if (lineArray.Length >= 5)
+                {
+                    if (UInt32.TryParse(lineArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 minValue))
+                    {
+                        MinValue = minValue;
+                    }
+
+                    if (UInt32.TryParse(lineArray[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 maxValue))
+                    {
+                        MaxValue = maxValue;
+                    }
+
+                    if (UInt32.TryParse(lineArray[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 valueNameKey))
+                    {
+                        if (udsReader._textMap.TryGetValue(valueNameKey, out string[] nameValueArray))
+                        {
+                            NameArray = nameValueArray;
+                        }
+                    }
+                }
+            }
+
+            public string[] LineArray { get; }
+            public string[] NameArray { get; }
+            public UInt32? MinValue { get; }
+            public UInt32? MaxValue { get; }
         }
 
         public class ParseInfoBase
@@ -45,7 +79,7 @@ namespace UdsFileReader
         public class ParseInfoMwb : ParseInfoBase
         {
             public ParseInfoMwb(UInt32 serviceId, UInt32 dataTypeId, string[] lineArray, string[] nameArray, string[] nameDetailArray,
-                double? scaleOffset, double? scaleMult, UInt32? byteOffset, UInt32? bitOffset, UInt32? bitLength, List<string[]> nameBitList) : base(lineArray)
+                double? scaleOffset, double? scaleMult, UInt32? byteOffset, UInt32? bitOffset, UInt32? bitLength, List<ValueName> nameValueList) : base(lineArray)
             {
                 ServiceId = serviceId;
                 DataTypeId = dataTypeId;
@@ -56,7 +90,7 @@ namespace UdsFileReader
                 ByteOffset = byteOffset;
                 BitOffset = bitOffset;
                 BitLength = bitLength;
-                NameBitList = nameBitList;
+                NameValueList = nameValueList;
             }
 
             public UInt32 ServiceId { get; }
@@ -68,7 +102,7 @@ namespace UdsFileReader
             public UInt32? ByteOffset { get; }
             public UInt32? BitOffset { get; }
             public UInt32? BitLength { get; }
-            public List<string[]> NameBitList { get; }
+            public List<ValueName> NameValueList { get; }
         }
 
         private class SegmentInfo
@@ -278,10 +312,10 @@ namespace UdsFileReader
                             }
                         }
 
-                        List<string[]> nameBitList = null;
-                        if ((DataType) dataTypeId == DataType.BitName && dataTypeExtra.HasValue)
+                        List<ValueName> nameValueList = null;
+                        if ((DataType) dataTypeId == DataType.ValueName && dataTypeExtra.HasValue)
                         {
-                            nameBitList = new List<string[]>();
+                            nameValueList = new List<ValueName>();
                             IEnumerable<string[]> bitList = _ttdopLookup[dataTypeExtra.Value];
                             if (bitList != null)
                             {
@@ -289,20 +323,13 @@ namespace UdsFileReader
                                 {
                                     if (ttdopArray.Length >= 5)
                                     {
-                                        if (UInt32.TryParse(ttdopArray[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 bitNameKey))
-                                        {
-                                            if (!_textMap.TryGetValue(bitNameKey, out string[] nameBitArray))
-                                            {
-                                                return null;
-                                            }
-                                            nameBitList.Add(nameBitArray);
-                                        }
+                                        nameValueList.Add(new ValueName(this, ttdopArray));
                                     }
                                 }
                             }
                         }
 
-                        parseInfo = new ParseInfoMwb(serviceId, dataTypeId, lineArray, nameArray, nameDetailArray, scaleOffset, scaleMult, byteOffset, bitOffset, bitCount, nameBitList);
+                        parseInfo = new ParseInfoMwb(serviceId, dataTypeId, lineArray, nameArray, nameDetailArray, scaleOffset, scaleMult, byteOffset, bitOffset, bitCount, nameValueList);
                         break;
                     }
 

@@ -128,18 +128,35 @@ namespace UdsFileReader
 
                         Console.WriteLine(sb.ToString());
 
-                        if (parseInfoMwb.NameBitList != null)
+                        if (parseInfoMwb.NameValueList != null)
                         {
-                            foreach (string[] bitNames in parseInfoMwb.NameBitList)
+                            foreach (UdsReader.ValueName valueName in parseInfoMwb.NameValueList)
                             {
                                 sb.Clear();
-                                sb.Append("Bit Name: ");
-                                foreach (string bitName in bitNames)
+
+                                foreach (string entry in valueName.LineArray)
                                 {
+                                    if (sb.Length > 0)
+                                    {
+                                        sb.Append("; ");
+                                    }
                                     sb.Append("\"");
-                                    sb.Append(bitName);
-                                    sb.Append("\" ");
+                                    sb.Append(entry);
+                                    sb.Append("\"");
                                 }
+
+                                if (valueName.NameArray != null)
+                                {
+                                    sb.Append(": ");
+                                    foreach (string nameEntry in valueName.NameArray)
+                                    {
+                                        sb.Append("\"");
+                                        sb.Append(nameEntry);
+                                        sb.Append("\" ");
+                                    }
+                                }
+
+                                sb.Insert(0, "Value Name: ");
                                 Console.WriteLine(sb.ToString());
                             }
                         }
