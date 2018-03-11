@@ -140,11 +140,19 @@ CFG: 01 07 E0 07 E8
 ;MesswerteS22_Lesen#0xF401
 83 07 E0 22 F4 01 00 : 87 07 E0 62 F4 01 00 0E E8 00 00
 ;MesswerteS22_Lesen#0xF442
+;Status Klemme 30 (12.1, Mult 1000)
 83 07 E0 22 F4 42 00 : 85 07 E0 62 F4 42 2F 44 00
 ; dummy values for test
-83 07 E0 22 11 75 00 : 85 07 E0 62 11 75 2F 44 00
-83 07 E0 22 F4 0C 00 : 85 07 E0 62 F4 0C 2F 44 00
-83 07 E0 22 11 F1 00 : 85 07 E0 62 11 F1 2F 44 00
+;Status Klemme 15 (Binary)
+83 07 E0 22 11 75 00 : 85 07 E0 62 11 75 AA 00 00
+;Motordrehzahl (Mult 1/4)
+83 07 E0 22 F4 0C 00 : 85 07 E0 62 F4 0C 0F A0 00
+;Getriebeeingangsdrehzahl (Mult 1/2)
+83 07 E0 22 11 F1 00 : 85 07 E0 62 11 F1 07 D0 00
+;Kühlmitteltemperatur (10, Off 40)
+83 07 E0 22 F4 05 00 : 85 07 E0 62 F4 05 32 00 00
+;Status des Stellgliedtests (beendet)
+83 07 E0 22 01 00 00 : 84 07 E0 62 01 00 80 00
 
 ; for testing only
 ;GenerischS2E_schreiben#0x1000;01020304
