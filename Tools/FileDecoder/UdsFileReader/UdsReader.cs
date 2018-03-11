@@ -233,6 +233,12 @@ namespace UdsFileReader
                             return null;
                         }
 
+                        UInt32? dataTypeExtra = null;
+                        if (UInt32.TryParse(lineArray[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 dataTypeE))
+                        {
+                            dataTypeExtra = dataTypeE;
+                        }
+
                         double? scaleOffset = null;
                         if (double.TryParse(lineArray[4], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleO))
                         {
@@ -273,10 +279,10 @@ namespace UdsFileReader
                         }
 
                         List<string[]> nameBitList = null;
-                        if ((DataType) dataTypeId == DataType.BitName)
+                        if ((DataType) dataTypeId == DataType.BitName && dataTypeExtra.HasValue)
                         {
                             nameBitList = new List<string[]>();
-                            IEnumerable<string[]> bitList = _ttdopLookup[dataTypeId];
+                            IEnumerable<string[]> bitList = _ttdopLookup[dataTypeExtra.Value];
                             if (bitList != null)
                             {
                                 foreach (string[] ttdopArray in bitList)
