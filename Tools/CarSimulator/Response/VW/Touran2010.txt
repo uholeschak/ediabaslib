@@ -168,6 +168,16 @@ CFG: 01 07 E0 07 E8
 83 07 E0 22 F4 49 00 : 84 07 E0 62 F4 49 FF 00
 ;Eingelegeter Gang (2)
 83 07 E0 22 10 0D 00 : 84 07 E0 62 10 0D 02 00
+;Motordrehmoment (1000 Nm, Mult 1/10)
+83 07 E0 22 10 47 00 : 85 07 E0 62 10 47 27 10 00
+;Steuergerätetemp. (10 °C, Off -2731.4, Mult 1/10)
+83 07 E0 22 12 FB 00 : 85 07 E0 62 12 FB 0B 0F 00
+;Ladedruck: Sollwert (1000 hPa, no scaling)
+83 07 E0 22 11 49 00 : 85 07 E0 62 11 49 03 E8 00
+;Ladedruck: Istwert (2000 hPa, no scaling)
+83 07 E0 22 10 57 00 : 85 07 E0 62 10 57 07 D0 00
+;Partikelfilter: Zeit seit letzter Regeneration (1000000 s, no scaling)
+83 07 E0 22 11 5E 00 : 87 07 E0 62 11 5E 00 0F 42 40 00
 ;VIN (17 Byte)
 83 07 E0 22 F8 02 00 : 94 07 E0 62 F8 02 41 42 43 44 45 46 47 48 49 4A 4B 4C 4D 4E 4F 50 51 00
 
