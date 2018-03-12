@@ -31,6 +31,7 @@ namespace UdsFileReader
             Binary = 5,
             String = 8,
             FloatScale = 128,
+            FloatNoScale = 130,
         }
 
         public class ValueName
@@ -332,6 +333,7 @@ namespace UdsFileReader
                             }
 
                             case DataType.FloatScale:
+                            case DataType.FloatNoScale:
                             {
                                 if (double.TryParse(lineArray[4], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleO))
                                 {
