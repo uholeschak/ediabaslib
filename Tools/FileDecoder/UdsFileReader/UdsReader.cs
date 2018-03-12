@@ -26,6 +26,7 @@ namespace UdsFileReader
 
         public enum DataType
         {
+            Integer = 2,
             ValueName = 3,
             FloatTable = 4,
             Binary = 5,
@@ -82,11 +83,11 @@ namespace UdsFileReader
 
         public class ParseInfoMwb : ParseInfoBase
         {
-            public ParseInfoMwb(UInt32 serviceId, UInt32 dataTypeId, string[] lineArray, string[] nameArray, string[] nameDetailArray,
+            public ParseInfoMwb(UInt32 serviceId, DataType dataType, string[] lineArray, string[] nameArray, string[] nameDetailArray,
                 double? scaleOffset, double? scaleMult, double? scaleDiv, string unitText, UInt32? byteOffset, UInt32? bitOffset, UInt32? bitLength, List<ValueName> nameValueList) : base(lineArray)
             {
                 ServiceId = serviceId;
-                DataTypeId = dataTypeId;
+                DataType = dataType;
                 NameArray = nameArray;
                 NameDetailArray = nameDetailArray;
                 ScaleOffset = scaleOffset;
@@ -100,7 +101,7 @@ namespace UdsFileReader
             }
 
             public UInt32 ServiceId { get; }
-            public UInt32 DataTypeId { get; }
+            public DataType DataType { get; }
             public string[] NameArray { get; }
             public string[] NameDetailArray { get; }
             public double? ScaleOffset { get; }
@@ -274,6 +275,7 @@ namespace UdsFileReader
                         {
                             return null;
                         }
+                        DataType dataType = (DataType) dataTypeId;
 
                         UInt32? dataTypeExtra = null;
                         if (UInt32.TryParse(lineArray[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 dataTypeE))
@@ -313,7 +315,7 @@ namespace UdsFileReader
                         double? scaleDiv = null;
                         string unitText = null;
                         List<ValueName> nameValueList = null;
-                        switch ((DataType)dataTypeId)
+                        switch (dataType)
                         {
                             case DataType.ValueName:
                             {
@@ -366,7 +368,7 @@ namespace UdsFileReader
                             }
                         }
 
-                        parseInfo = new ParseInfoMwb(serviceId, dataTypeId, lineArray, nameArray, nameDetailArray, scaleOffset, scaleMult, scaleDiv, unitText,
+                        parseInfo = new ParseInfoMwb(serviceId, dataType, lineArray, nameArray, nameDetailArray, scaleOffset, scaleMult, scaleDiv, unitText,
                             byteOffset, bitOffset, bitCount, nameValueList);
                         break;
                     }
