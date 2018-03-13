@@ -255,7 +255,7 @@ namespace UdsFileReader
             List<ParseInfoBase> resultList = new List<ParseInfoBase>();
             foreach (string[] line in lineList)
             {
-                if (line.Length != 2)
+                if (line.Length < 2)
                 {
                     return null;
                 }

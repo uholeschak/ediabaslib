@@ -18,39 +18,95 @@ namespace UdsFileReader
                 return 1;
             }
 
+            string fileSpec = args[0];
+            string dir = Path.GetDirectoryName(fileSpec);
+            string searchPattern = Path.GetFileName(fileSpec);
+            if (dir == null || searchPattern == null)
+            {
+                Console.WriteLine("Invalid file name");
+                return 1;
+            }
+
             try
             {
-                string fileName = args[0];
-
                 UdsReader udsReader = new UdsReader();
-                if (!udsReader.Init(Path.GetDirectoryName(fileName)))
+                if (!udsReader.Init(dir))
                 {
                     Console.WriteLine("Init failed");
                     return 1;
                 }
+
+                string[] files = Directory.GetFiles(dir, searchPattern, SearchOption.AllDirectories);
+                foreach (string file in files)
+                {
+                    try
+                    {
+                        string fileExt = Path.GetExtension(file);
+                        if (string.Compare(fileExt, UdsReader.FileExtension, StringComparison.OrdinalIgnoreCase) != 0)
+                        {
+                            continue;
+                        }
+                        Console.WriteLine("Parsing: {0}", file);
+                        string outFile = Path.ChangeExtension(file, ".txt");
+                        if (outFile == null)
+                        {
+                            Console.WriteLine("*** Invalid output file");
+                        }
+                        else
+                        {
+                            using (StreamWriter outputStream = new StreamWriter(outFile, false, new UTF8Encoding(true)))
+                            {
+                                if (!ParseFile(udsReader, file, outputStream))
+                                {
+                                    Console.WriteLine("*** Parsing failed: {0}", file);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("*** Exception {0}", e.Message);
+                    }
+                }
+
+                return 0;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return 1;
+            }
+        }
+
+        static bool ParseFile(UdsReader udsReader, string fileName, StreamWriter outStream)
+        {
+            try
+            {
                 List<string> includeFiles = udsReader.GetFileList(fileName);
                 if (includeFiles == null)
                 {
-                    Console.WriteLine("Get file list failed");
-                    return 1;
+                    outStream.WriteLine("Get file list failed");
+                    return false;
                 }
 
-                Console.WriteLine("Includes:");
+                outStream.WriteLine("Includes:");
                 foreach (string includeFile in includeFiles)
                 {
-                    Console.WriteLine(includeFile);
+                    outStream.WriteLine(includeFile);
                 }
 
                 List<UdsReader.ParseInfoBase> resultList = udsReader.ExtractFileSegment(includeFiles, UdsReader.SegmentType.Mwb);
                 if (resultList == null)
                 {
-                    Console.WriteLine("Parsing failed");
-                    return 1;
+                    outStream.WriteLine("Parsing failed");
+                    return false;
                 }
 
-                Console.WriteLine("MWB:");
+                outStream.WriteLine("MWB:");
                 foreach (UdsReader.ParseInfoBase parseInfo in resultList)
                 {
+                    outStream.WriteLine("");
+
                     StringBuilder sb = new StringBuilder();
                     foreach (string entry in parseInfo.LineArray)
                     {
@@ -62,8 +118,9 @@ namespace UdsFileReader
                         sb.Append(entry);
                         sb.Append("\"");
                     }
-                    sb.Insert(0, "*** ");
-                    Console.WriteLine(sb.ToString());
+
+                    sb.Insert(0, "Raw: ");
+                    outStream.WriteLine(sb.ToString());
 
                     if (parseInfo is UdsReader.ParseInfoMwb parseInfoMwb)
                     {
@@ -79,7 +136,7 @@ namespace UdsFileReader
                             sb.Append("\"");
                         }
                         sb.Insert(0, "Name: ");
-                        Console.WriteLine(sb.ToString());
+                        outStream.WriteLine(sb.ToString());
 
                         if (parseInfoMwb.NameDetailArray != null)
                         {
@@ -96,7 +153,7 @@ namespace UdsFileReader
                             }
 
                             sb.Insert(0, "Name Detail: ");
-                            Console.WriteLine(sb.ToString());
+                            outStream.WriteLine(sb.ToString());
                         }
 
                         sb.Clear();
@@ -138,7 +195,7 @@ namespace UdsFileReader
                             sb.Append(string.Format(CultureInfo.InvariantCulture, "; Len: {0}", parseInfoMwb.BitLength.Value));
                         }
 
-                        Console.WriteLine(sb.ToString());
+                        outStream.WriteLine(sb.ToString());
 
                         if (parseInfoMwb.NameValueList != null)
                         {
@@ -169,18 +226,17 @@ namespace UdsFileReader
                                 }
 
                                 sb.Insert(0, "Value Name: ");
-                                Console.WriteLine(sb.ToString());
+                                outStream.WriteLine(sb.ToString());
                             }
                         }
                     }
                 }
 
-                return 0;
+                return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e);
-                return 1;
+                return false;
             }
         }
     }
