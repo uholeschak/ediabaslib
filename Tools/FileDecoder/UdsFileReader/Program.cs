@@ -99,13 +99,7 @@ namespace UdsFileReader
 
                         sb.Clear();
                         sb.Append(string.Format(CultureInfo.InvariantCulture, "Service ID: {0:X04}", parseInfoMwb.ServiceId));
-                        string dataTypeName = Enum.GetName(typeof(UdsReader.DataType), parseInfoMwb.DataType);
-                        // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
-                        if (dataTypeName == null)
-                        {
-                            dataTypeName = string.Format(CultureInfo.InvariantCulture, "{0}", (UInt32) parseInfoMwb.DataType);
-                        }
-                        sb.Append(string.Format(CultureInfo.InvariantCulture, "; Data type: {0}", dataTypeName));
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, "; Data type: {0}", UdsReader.ParseInfoMwb.DataTypeIdToString(parseInfoMwb.DataTypeId)));
 
                         if (parseInfoMwb.ScaleOffset.HasValue)
                         {
