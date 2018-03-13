@@ -31,6 +31,7 @@ namespace UdsFileReader
             ValueName = 3,
             ExtTable = 4,
             Binary = 5,
+            HexBytes = 7,
             String = 8,
         }
 
