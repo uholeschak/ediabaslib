@@ -10,6 +10,8 @@ namespace UdsFileReader
     {
         static int Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
+
             if (args.Length < 1)
             {
                 Console.WriteLine("No input file specified");
