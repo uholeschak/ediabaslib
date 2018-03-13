@@ -29,14 +29,15 @@ namespace UdsFileReader
             Float = 0,
             Integer = 2,
             ValueName = 3,
-            ExtTable = 4,
+            FloatExtTable = 4,
             Binary = 5,
+            IntExtTable = 6,
             HexBytes = 7,
             String = 8,
         }
 
         public const int DataTypeMaskSwapped = 0x40;
-        public const int DataTypeMaskUnit = 0x80;
+        public const int DataTypeMaskUnsigned = 0x80;
         public const int DataTypeMaskEnum = 0x3F;
 
         public class ValueName
@@ -121,6 +122,7 @@ namespace UdsFileReader
             {
                 UInt32 dataTypeEnum = dataTypeId & DataTypeMaskEnum;
                 string dataTypeName = Enum.GetName(typeof(DataType), dataTypeEnum);
+                // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
                 if (dataTypeName == null)
                 {
                     dataTypeName = string.Format(CultureInfo.InvariantCulture, "{0}", dataTypeEnum);
@@ -130,9 +132,9 @@ namespace UdsFileReader
                 {
                     dataTypeName += " (Swapped)";
                 }
-                if ((dataTypeId & DataTypeMaskUnit) != 0x00)
+                if ((dataTypeId & DataTypeMaskUnsigned) != 0x00)
                 {
-                    dataTypeName += " (Unit)";
+                    dataTypeName += " (Unsigned)";
                 }
 
                 return dataTypeName;
@@ -342,6 +344,39 @@ namespace UdsFileReader
                         List<ValueName> nameValueList = null;
                         switch (dataType)
                         {
+                            case DataType.Float:
+                            case DataType.Integer:
+                            {
+                                if (double.TryParse(lineArray[4], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleO))
+                                {
+                                    scaleOffset = scaleO;
+                                }
+
+                                if (double.TryParse(lineArray[5], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleM))
+                                {
+                                    scaleMult = scaleM;
+                                }
+
+                                if (double.TryParse(lineArray[6], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleD))
+                                {
+                                    scaleDiv = scaleD;
+                                }
+
+                                if (UInt32.TryParse(lineArray[7], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 unitKey))
+                                {
+                                    if (!_unitMap.TryGetValue(unitKey, out string[] unitArray))
+                                    {
+                                        return null;
+                                    }
+                                    if (unitArray.Length < 1)
+                                    {
+                                        return null;
+                                    }
+                                    unitText = unitArray[0];
+                                }
+                                break;
+                            }
+
                             case DataType.ValueName:
                             {
                                 nameValueList = new List<ValueName>();
@@ -357,37 +392,6 @@ namespace UdsFileReader
                                     }
                                 }
                                 break;
-                            }
-                        }
-
-                        if (double.TryParse(lineArray[4], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleO))
-                        {
-                            scaleOffset = scaleO;
-                        }
-
-                        if (double.TryParse(lineArray[5], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleM))
-                        {
-                            scaleMult = scaleM;
-                        }
-
-                        if (double.TryParse(lineArray[6], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleD))
-                        {
-                            scaleDiv = scaleD;
-                        }
-
-                        if ((dataTypeId & DataTypeMaskUnit) != 0x00)
-                        {
-                            if (UInt32.TryParse(lineArray[7], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 unitKey))
-                            {
-                                if (!_unitMap.TryGetValue(unitKey, out string[] unitArray))
-                                {
-                                    return null;
-                                }
-                                if (unitArray.Length < 1)
-                                {
-                                    return null;
-                                }
-                                unitText = unitArray[0];
                             }
                         }
 
