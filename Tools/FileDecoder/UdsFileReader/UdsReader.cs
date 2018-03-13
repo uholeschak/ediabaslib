@@ -360,23 +360,23 @@ namespace UdsFileReader
                             }
                         }
 
+                        if (double.TryParse(lineArray[4], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleO))
+                        {
+                            scaleOffset = scaleO;
+                        }
+
+                        if (double.TryParse(lineArray[5], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleM))
+                        {
+                            scaleMult = scaleM;
+                        }
+
+                        if (double.TryParse(lineArray[6], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleD))
+                        {
+                            scaleDiv = scaleD;
+                        }
+
                         if ((dataTypeId & DataTypeMaskUnit) != 0x00)
                         {
-                            if (double.TryParse(lineArray[4], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleO))
-                            {
-                                scaleOffset = scaleO;
-                            }
-
-                            if (double.TryParse(lineArray[5], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleM))
-                            {
-                                scaleMult = scaleM;
-                            }
-
-                            if (double.TryParse(lineArray[6], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleD))
-                            {
-                                scaleDiv = scaleD;
-                            }
-
                             if (UInt32.TryParse(lineArray[7], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 unitKey))
                             {
                                 if (!_unitMap.TryGetValue(unitKey, out string[] unitArray))
