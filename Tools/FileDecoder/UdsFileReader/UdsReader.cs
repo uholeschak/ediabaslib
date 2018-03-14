@@ -81,9 +81,24 @@ namespace UdsFileReader
             public MuxEntry(UdsReader udsReader, string[] lineArray)
             {
                 LineArray = lineArray;
+
+                if (lineArray.Length >= 11)
+                {
+                    if (Int32.TryParse(lineArray[5], NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 minValue))
+                    {
+                        MinValue = minValue;
+                    }
+
+                    if (Int32.TryParse(lineArray[6], NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 maxValue))
+                    {
+                        MaxValue = maxValue;
+                    }
+                }
             }
 
             public string[] LineArray { get; }
+            public Int32? MinValue { get; }
+            public Int32? MaxValue { get; }
         }
 
         public class ParseInfoBase
