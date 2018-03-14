@@ -37,7 +37,7 @@ namespace UdsFileReader
         }
 
         public const int DataTypeMaskSwapped = 0x40;
-        public const int DataTypeMaskUnsigned = 0x80;
+        public const int DataTypeMaskSigned = 0x80;
         public const int DataTypeMaskEnum = 0x3F;
 
         public class ValueName
@@ -132,9 +132,9 @@ namespace UdsFileReader
                 {
                     dataTypeName += " (Swapped)";
                 }
-                if ((dataTypeId & DataTypeMaskUnsigned) != 0x00)
+                if ((dataTypeId & DataTypeMaskSigned) != 0x00)
                 {
-                    dataTypeName += " (Unsigned)";
+                    dataTypeName += " (Signed)";
                 }
 
                 return dataTypeName;
