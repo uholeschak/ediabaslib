@@ -31,7 +31,7 @@ namespace UdsFileReader
             ValueName = 3,
             FloatExtTable = 4,
             Binary = 5,
-            IntExtTable = 6,
+            MuxTable = 6,
             HexBytes = 7,
             String = 8,
         }
@@ -74,6 +74,16 @@ namespace UdsFileReader
             public string[] NameArray { get; }
             public Int32? MinValue { get; }
             public Int32? MaxValue { get; }
+        }
+
+        public class MuxEntry
+        {
+            public MuxEntry(UdsReader udsReader, string[] lineArray)
+            {
+                LineArray = lineArray;
+            }
+
+            public string[] LineArray { get; }
         }
 
         public class ParseInfoBase
@@ -352,6 +362,7 @@ namespace UdsFileReader
                         double? scaleDiv = null;
                         string unitText = null;
                         List<ValueName> nameValueList = null;
+                        List<MuxEntry> muxEntryList = null;
                         switch (dataType)
                         {
                             case DataType.Float:
@@ -400,6 +411,23 @@ namespace UdsFileReader
                                         if (ttdopArray.Length >= 5)
                                         {
                                             nameValueList.Add(new ValueName(this, ttdopArray));
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+
+                            case DataType.MuxTable:
+                            {
+                                muxEntryList = new List<MuxEntry>();
+                                IEnumerable<string[]> muxList = _muxLookup[dataTypeExtra.Value];
+                                if (muxList != null)
+                                {
+                                    foreach (string[] muxArray in muxList)
+                                    {
+                                        if (muxArray.Length >= 17)
+                                        {
+                                            muxEntryList.Add(new MuxEntry(this, muxArray));
                                         }
                                     }
                                 }
