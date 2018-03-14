@@ -171,6 +171,7 @@ namespace UdsFileReader
         private Dictionary<UInt32, string[]> _textMap;
         private Dictionary<UInt32, string[]> _unitMap;
         private ILookup<UInt32, string[]> _ttdopLookup;
+        private ILookup<UInt32, string[]> _muxLookup;
 
         public bool Init(string dirName)
         {
@@ -209,8 +210,14 @@ namespace UdsFileReader
                 {
                     return false;
                 }
-
                 _ttdopLookup = ttdopList.ToLookup(item => UInt32.Parse(item[0]));
+
+                List<string[]> muxList = ExtractFileSegment(new List<string> { Path.Combine(dirName, "MUX" + FileExtension) }, "MUX");
+                if (muxList == null)
+                {
+                    return false;
+                }
+                _muxLookup = muxList.ToLookup(item => UInt32.Parse(item[0]));
 
                 foreach (SegmentInfo segmentInfo in _segmentInfos)
                 {
