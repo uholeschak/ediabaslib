@@ -68,7 +68,8 @@ CFG: 01 07 E0 07 E8
 ;MesswerteS22_Lesen#258
 83 07 E0 22 01 02 00 : 84 07 E0 62 01 02 00 00
 ;MesswerteS22_Lesen#259
-83 07 E0 22 01 03 00 : 84 07 E0 62 01 03 00 00
+;Security Access: Anzahl ungültiger Schlüssel
+;83 07 E0 22 01 03 00 : 84 07 E0 62 01 03 00 00
 ;MesswerteS22_Lesen#260
 83 07 E0 22 01 04 00 : 85 07 E0 62 01 04 00 00 00
 ;MesswerteS22_Lesen#261
@@ -144,6 +145,7 @@ CFG: 01 07 E0 07 E8
 ;MesswerteS22_Lesen#0xF442
 ;Status Klemme 30 (12.1 V, Mult 1000)
 83 07 E0 22 F4 42 00 : 85 07 E0 62 F4 42 2F 44 00
+
 ; dummy values for test
 ;Status Klemme 15 (Binary)
 83 07 E0 22 11 75 00 : 85 07 E0 62 11 75 AA 00 00
@@ -185,6 +187,8 @@ CFG: 01 07 E0 07 E8
 83 07 E0 22 14 B1 00 : 86 07 E0 62 14 B1 AB CD EF 00
 ;Wegfahrsperre Snapshot B ()
 83 07 E0 22 14 B2 00 : 86 07 E0 62 14 B2 12 34 56 00
+;Security Access: Anzahl ungültiger Schlüssel
+83 07 E0 22 01 03 00 : 84 07 E0 62 01 03 81 00
 ;VIN (17 Byte)
 83 07 E0 22 F8 02 00 : 94 07 E0 62 F8 02 41 42 43 44 45 46 47 48 49 4A 4B 4C 4D 4E 4F 50 51 00
 
@@ -276,6 +280,10 @@ CFG: 17 07 14 07 7E
 83 07 14 22 F4 0C C0 : 85 07 14 62 F4 0C 0C 36 44
 83 07 14 22 F4 0D C1 : 84 07 14 62 F4 0D 00 02
 83 07 14 22 F4 42 F6 : 84 07 14 62 F4 42 8E C5
+
+; dummy values for test
+;Wegstrecke (10000, Mult 10)
+83 07 14 22 22 03 00 : 85 07 14 62 22 03 03 E8 C5
 
 ;bre_03.grp
 CFG: 03 28
