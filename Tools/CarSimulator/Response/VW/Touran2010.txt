@@ -175,6 +175,8 @@ CFG: 01 07 E0 07 E8
 83 07 E0 22 10 47 00 : 85 07 E0 62 10 47 27 10 00
 ;Steuergerätetemp. (10 °C, Off -2731.4, Mult 1/10)
 83 07 E0 22 12 FB 00 : 85 07 E0 62 12 FB 0B 0F 00
+;Ölfüllstand (100, Mult 1/250 )
+83 07 E0 22 11 BC 00 : 85 07 E0 62 11 BC 61 A8 00
 ;Ladedruck: Sollwert (1000 hPa, no scaling)
 83 07 E0 22 11 49 00 : 85 07 E0 62 11 49 03 E8 00
 ;Ladedruck: Istwert (2000 hPa, no scaling)
