@@ -89,12 +89,13 @@ namespace UdsFileReader
         public class ParseInfoMwb : ParseInfoBase
         {
             public ParseInfoMwb(UInt32 serviceId, UInt32 dataTypeId, string[] lineArray, string[] nameArray, string[] nameDetailArray,
-                double? scaleOffset, double? scaleMult, double? scaleDiv, string unitText, UInt32? byteOffset, UInt32? bitOffset, UInt32? bitLength, List<ValueName> nameValueList) : base(lineArray)
+                UInt32? numberOfDigits, double? scaleOffset, double? scaleMult, double? scaleDiv, string unitText, UInt32? byteOffset, UInt32? bitOffset, UInt32? bitLength, List<ValueName> nameValueList) : base(lineArray)
             {
                 ServiceId = serviceId;
                 DataTypeId = dataTypeId;
                 NameArray = nameArray;
                 NameDetailArray = nameDetailArray;
+                NumberOfDigits = numberOfDigits;
                 ScaleOffset = scaleOffset;
                 ScaleMult = scaleMult;
                 ScaleDiv = scaleDiv;
@@ -109,6 +110,7 @@ namespace UdsFileReader
             public UInt32 DataTypeId { get; }
             public string[] NameArray { get; }
             public string[] NameDetailArray { get; }
+            public UInt32? NumberOfDigits { get; }
             public double? ScaleOffset { get; }
             public double? ScaleMult { get; }
             public double? ScaleDiv { get; }
@@ -344,6 +346,7 @@ namespace UdsFileReader
                             }
                         }
 
+                        UInt32? numberOfDigits = null;
                         double? scaleOffset = null;
                         double? scaleMult = null;
                         double? scaleDiv = null;
@@ -381,6 +384,8 @@ namespace UdsFileReader
                                     }
                                     unitText = unitArray[0];
                                 }
+
+                                numberOfDigits = dataTypeExtra;
                                 break;
                             }
 
@@ -402,7 +407,7 @@ namespace UdsFileReader
                             }
                         }
 
-                        parseInfo = new ParseInfoMwb(serviceId, dataTypeId, lineArray, nameArray, nameDetailArray, scaleOffset, scaleMult, scaleDiv, unitText,
+                        parseInfo = new ParseInfoMwb(serviceId, dataTypeId, lineArray, nameArray, nameDetailArray, numberOfDigits, scaleOffset, scaleMult, scaleDiv, unitText,
                             byteOffset, bitOffset, bitCount, nameValueList);
                         break;
                     }

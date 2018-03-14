@@ -160,6 +160,11 @@ namespace UdsFileReader
                         sb.Append(string.Format(CultureInfo.InvariantCulture, "Service ID: {0:X04}", parseInfoMwb.ServiceId));
                         sb.Append(string.Format(CultureInfo.InvariantCulture, "; Data type: {0}", UdsReader.ParseInfoMwb.DataTypeIdToString(parseInfoMwb.DataTypeId)));
 
+                        if (parseInfoMwb.NumberOfDigits.HasValue)
+                        {
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Digits: {0}", parseInfoMwb.NumberOfDigits.Value));
+                        }
+
                         if (parseInfoMwb.ScaleOffset.HasValue)
                         {
                             sb.Append(string.Format(CultureInfo.InvariantCulture, "; Offset: {0}", parseInfoMwb.ScaleOffset.Value));
