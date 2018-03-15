@@ -143,7 +143,7 @@ CFG: 01 07 E0 07 E8
 ;MesswerteS22_Lesen#0xF401
 83 07 E0 22 F4 01 00 : 87 07 E0 62 F4 01 00 0E E8 00 00
 ;MesswerteS22_Lesen#0xF442
-;Status Klemme 30 (12.1 V, Mult 1000)
+;Spannung Klemme 30 (12.1 V, Mult 1000)
 83 07 E0 22 F4 42 00 : 85 07 E0 62 F4 42 2F 44 00
 
 ; dummy values for test
