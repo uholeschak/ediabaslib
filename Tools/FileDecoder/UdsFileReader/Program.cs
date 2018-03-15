@@ -137,103 +137,11 @@ namespace UdsFileReader
                         }
                         sb.Insert(0, "Name: ");
                         outStream.WriteLine(sb.ToString());
+                        outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Service ID: {0:X04}", parseInfoMwb.ServiceId));
 
-                        UdsReader.DataTypeEntry dataTypeEntry = parseInfoMwb.DataTypeEntry;
-                        if (dataTypeEntry.NameDetailArray != null)
+                        if (!PrintDataTypeEntry(outStream, parseInfoMwb.DataTypeEntry))
                         {
-                            sb.Clear();
-                            foreach (string entry in dataTypeEntry.NameDetailArray)
-                            {
-                                if (sb.Length > 0)
-                                {
-                                    sb.Append("; ");
-                                }
-                                sb.Append("\"");
-                                sb.Append(entry);
-                                sb.Append("\"");
-                            }
-
-                            sb.Insert(0, "Name Detail: ");
-                            outStream.WriteLine(sb.ToString());
-                        }
-
-                        sb.Clear();
-                        sb.Append(string.Format(CultureInfo.InvariantCulture, "Service ID: {0:X04}", parseInfoMwb.ServiceId));
-                        sb.Append(string.Format(CultureInfo.InvariantCulture, "; Data type: {0}", UdsReader.DataTypeEntry.DataTypeIdToString(dataTypeEntry.DataTypeId)));
-
-                        if (dataTypeEntry.NumberOfDigits.HasValue)
-                        {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Digits: {0}", dataTypeEntry.NumberOfDigits.Value));
-                        }
-
-                        if (dataTypeEntry.ScaleOffset.HasValue)
-                        {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Offset: {0}", dataTypeEntry.ScaleOffset.Value));
-                        }
-
-                        if (dataTypeEntry.ScaleMult.HasValue)
-                        {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Mult: {0}", dataTypeEntry.ScaleMult.Value));
-                        }
-
-                        if (dataTypeEntry.ScaleDiv.HasValue)
-                        {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Div: {0}", dataTypeEntry.ScaleDiv.Value));
-                        }
-
-                        if (dataTypeEntry.UnitText != null)
-                        {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Unit: \"{0}\"", dataTypeEntry.UnitText));
-                        }
-
-                        if (dataTypeEntry.ByteOffset.HasValue)
-                        {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Byte: {0}", dataTypeEntry.ByteOffset.Value));
-                        }
-
-                        if (dataTypeEntry.BitOffset.HasValue)
-                        {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Bit: {0}", dataTypeEntry.BitOffset.Value));
-                        }
-
-                        if (dataTypeEntry.BitLength.HasValue)
-                        {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Len: {0}", dataTypeEntry.BitLength.Value));
-                        }
-
-                        outStream.WriteLine(sb.ToString());
-
-                        if (dataTypeEntry.NameValueList != null)
-                        {
-                            foreach (UdsReader.ValueName valueName in dataTypeEntry.NameValueList)
-                            {
-                                sb.Clear();
-
-                                foreach (string entry in valueName.LineArray)
-                                {
-                                    if (sb.Length > 0)
-                                    {
-                                        sb.Append("; ");
-                                    }
-                                    sb.Append("\"");
-                                    sb.Append(entry);
-                                    sb.Append("\"");
-                                }
-
-                                if (valueName.NameArray != null)
-                                {
-                                    sb.Append(": ");
-                                    foreach (string nameEntry in valueName.NameArray)
-                                    {
-                                        sb.Append("\"");
-                                        sb.Append(nameEntry);
-                                        sb.Append("\" ");
-                                    }
-                                }
-
-                                sb.Insert(0, "Value Name: ");
-                                outStream.WriteLine(sb.ToString());
-                            }
+                            return false;
                         }
                     }
                 }
@@ -244,6 +152,153 @@ namespace UdsFileReader
             {
                 return false;
             }
+        }
+
+        static bool PrintDataTypeEntry(StreamWriter outStream, UdsReader.DataTypeEntry dataTypeEntry)
+        {
+            StringBuilder sb = new StringBuilder();
+            if (dataTypeEntry.NameDetailArray != null)
+            {
+                sb.Clear();
+                foreach (string entry in dataTypeEntry.NameDetailArray)
+                {
+                    if (sb.Length > 0)
+                    {
+                        sb.Append("; ");
+                    }
+                    sb.Append("\"");
+                    sb.Append(entry);
+                    sb.Append("\"");
+                }
+
+                sb.Insert(0, "Name Detail: ");
+                outStream.WriteLine(sb.ToString());
+            }
+
+            sb.Clear();
+            sb.Append(string.Format(CultureInfo.InvariantCulture, "Data type: {0}", UdsReader.DataTypeEntry.DataTypeIdToString(dataTypeEntry.DataTypeId)));
+
+            if (dataTypeEntry.NumberOfDigits.HasValue)
+            {
+                sb.Append(string.Format(CultureInfo.InvariantCulture, "; Digits: {0}", dataTypeEntry.NumberOfDigits.Value));
+            }
+
+            if (dataTypeEntry.ScaleOffset.HasValue)
+            {
+                sb.Append(string.Format(CultureInfo.InvariantCulture, "; Offset: {0}", dataTypeEntry.ScaleOffset.Value));
+            }
+
+            if (dataTypeEntry.ScaleMult.HasValue)
+            {
+                sb.Append(string.Format(CultureInfo.InvariantCulture, "; Mult: {0}", dataTypeEntry.ScaleMult.Value));
+            }
+
+            if (dataTypeEntry.ScaleDiv.HasValue)
+            {
+                sb.Append(string.Format(CultureInfo.InvariantCulture, "; Div: {0}", dataTypeEntry.ScaleDiv.Value));
+            }
+
+            if (dataTypeEntry.UnitText != null)
+            {
+                sb.Append(string.Format(CultureInfo.InvariantCulture, "; Unit: \"{0}\"", dataTypeEntry.UnitText));
+            }
+
+            if (dataTypeEntry.ByteOffset.HasValue)
+            {
+                sb.Append(string.Format(CultureInfo.InvariantCulture, "; Byte: {0}", dataTypeEntry.ByteOffset.Value));
+            }
+
+            if (dataTypeEntry.BitOffset.HasValue)
+            {
+                sb.Append(string.Format(CultureInfo.InvariantCulture, "; Bit: {0}", dataTypeEntry.BitOffset.Value));
+            }
+
+            if (dataTypeEntry.BitLength.HasValue)
+            {
+                sb.Append(string.Format(CultureInfo.InvariantCulture, "; Len: {0}", dataTypeEntry.BitLength.Value));
+            }
+
+            outStream.WriteLine(sb.ToString());
+
+            if (dataTypeEntry.NameValueList != null)
+            {
+                foreach (UdsReader.ValueName valueName in dataTypeEntry.NameValueList)
+                {
+                    sb.Clear();
+
+                    foreach (string entry in valueName.LineArray)
+                    {
+                        if (sb.Length > 0)
+                        {
+                            sb.Append("; ");
+                        }
+                        sb.Append("\"");
+                        sb.Append(entry);
+                        sb.Append("\"");
+                    }
+
+                    if (valueName.NameArray != null)
+                    {
+                        sb.Append(": ");
+                        foreach (string nameEntry in valueName.NameArray)
+                        {
+                            sb.Append("\"");
+                            sb.Append(nameEntry);
+                            sb.Append("\" ");
+                        }
+                    }
+
+                    sb.Insert(0, "Value Name: ");
+                    outStream.WriteLine(sb.ToString());
+                }
+            }
+
+            if (dataTypeEntry.MuxEntryList != null)
+            {
+                foreach (UdsReader.MuxEntry muxEntry in dataTypeEntry.MuxEntryList)
+                {
+                    sb.Clear();
+
+                    foreach (string entry in muxEntry.LineArray)
+                    {
+                        if (sb.Length > 0)
+                        {
+                            sb.Append("; ");
+                        }
+                        sb.Append("\"");
+                        sb.Append(entry);
+                        sb.Append("\"");
+                    }
+                    sb.Insert(0, "Mux: ");
+                    outStream.WriteLine(sb.ToString());
+
+                    sb.Clear();
+                    if (muxEntry.MinValue != null)
+                    {
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, "Min: {0}", muxEntry.MinValue));
+                    }
+
+                    if (muxEntry.MaxValue != null)
+                    {
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, " Max: {0}", muxEntry.MaxValue));
+                    }
+
+                    if (sb.Length > 0)
+                    {
+                        outStream.WriteLine(sb.ToString());
+                    }
+
+                    if (muxEntry.DataTypeEntry != null)
+                    {
+                        if (!PrintDataTypeEntry(outStream, muxEntry.DataTypeEntry))
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }
