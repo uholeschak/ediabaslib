@@ -273,6 +273,11 @@ namespace UdsFileReader
                     outStream.WriteLine(sb.ToString());
 
                     sb.Clear();
+                    if (muxEntry.Default)
+                    {
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, "Default"));
+                    }
+
                     if (muxEntry.MinValue != null)
                     {
                         sb.Append(string.Format(CultureInfo.InvariantCulture, "Min: {0}", muxEntry.MinValue));

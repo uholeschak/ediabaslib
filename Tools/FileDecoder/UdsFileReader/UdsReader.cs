@@ -84,20 +84,35 @@ namespace UdsFileReader
 
                 if (lineArray.Length >= 8)
                 {
-                    if (Int32.TryParse(lineArray[5], NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 minValue))
+                    if (string.Compare(lineArray[5], "D", StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        MinValue = minValue;
+                        Default = true;
+                    }
+                    else
+                    {
+                        if (Int32.TryParse(lineArray[5], NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 minValue))
+                        {
+                            MinValue = minValue;
+                        }
                     }
 
-                    if (Int32.TryParse(lineArray[6], NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 maxValue))
+                    if (string.Compare(lineArray[6], "D", StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        MaxValue = maxValue;
+                        Default = true;
+                    }
+                    else
+                    {
+                        if (Int32.TryParse(lineArray[6], NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 maxValue))
+                        {
+                            MaxValue = maxValue;
+                        }
                     }
                     DataTypeEntry = new DataTypeEntry(udsReader, lineArray, 7);
                 }
             }
 
             public string[] LineArray { get; }
+            public bool Default { get; }
             public Int32? MinValue { get; }
             public Int32? MaxValue { get; }
             public DataTypeEntry DataTypeEntry { get; }
