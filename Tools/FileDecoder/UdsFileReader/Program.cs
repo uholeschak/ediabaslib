@@ -138,10 +138,11 @@ namespace UdsFileReader
                         sb.Insert(0, "Name: ");
                         outStream.WriteLine(sb.ToString());
 
-                        if (parseInfoMwb.NameDetailArray != null)
+                        UdsReader.DataTypeEntry dataTypeEntry = parseInfoMwb.DataTypeEntry;
+                        if (dataTypeEntry.NameDetailArray != null)
                         {
                             sb.Clear();
-                            foreach (string entry in parseInfoMwb.NameDetailArray)
+                            foreach (string entry in dataTypeEntry.NameDetailArray)
                             {
                                 if (sb.Length > 0)
                                 {
@@ -158,53 +159,53 @@ namespace UdsFileReader
 
                         sb.Clear();
                         sb.Append(string.Format(CultureInfo.InvariantCulture, "Service ID: {0:X04}", parseInfoMwb.ServiceId));
-                        sb.Append(string.Format(CultureInfo.InvariantCulture, "; Data type: {0}", UdsReader.ParseInfoMwb.DataTypeIdToString(parseInfoMwb.DataTypeId)));
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, "; Data type: {0}", UdsReader.DataTypeEntry.DataTypeIdToString(dataTypeEntry.DataTypeId)));
 
-                        if (parseInfoMwb.NumberOfDigits.HasValue)
+                        if (dataTypeEntry.NumberOfDigits.HasValue)
                         {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Digits: {0}", parseInfoMwb.NumberOfDigits.Value));
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Digits: {0}", dataTypeEntry.NumberOfDigits.Value));
                         }
 
-                        if (parseInfoMwb.ScaleOffset.HasValue)
+                        if (dataTypeEntry.ScaleOffset.HasValue)
                         {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Offset: {0}", parseInfoMwb.ScaleOffset.Value));
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Offset: {0}", dataTypeEntry.ScaleOffset.Value));
                         }
 
-                        if (parseInfoMwb.ScaleMult.HasValue)
+                        if (dataTypeEntry.ScaleMult.HasValue)
                         {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Mult: {0}", parseInfoMwb.ScaleMult.Value));
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Mult: {0}", dataTypeEntry.ScaleMult.Value));
                         }
 
-                        if (parseInfoMwb.ScaleDiv.HasValue)
+                        if (dataTypeEntry.ScaleDiv.HasValue)
                         {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Div: {0}", parseInfoMwb.ScaleDiv.Value));
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Div: {0}", dataTypeEntry.ScaleDiv.Value));
                         }
 
-                        if (parseInfoMwb.UnitText != null)
+                        if (dataTypeEntry.UnitText != null)
                         {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Unit: \"{0}\"", parseInfoMwb.UnitText));
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Unit: \"{0}\"", dataTypeEntry.UnitText));
                         }
 
-                        if (parseInfoMwb.ByteOffset.HasValue)
+                        if (dataTypeEntry.ByteOffset.HasValue)
                         {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Byte: {0}", parseInfoMwb.ByteOffset.Value));
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Byte: {0}", dataTypeEntry.ByteOffset.Value));
                         }
 
-                        if (parseInfoMwb.BitOffset.HasValue)
+                        if (dataTypeEntry.BitOffset.HasValue)
                         {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Bit: {0}", parseInfoMwb.BitOffset.Value));
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Bit: {0}", dataTypeEntry.BitOffset.Value));
                         }
 
-                        if (parseInfoMwb.BitLength.HasValue)
+                        if (dataTypeEntry.BitLength.HasValue)
                         {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Len: {0}", parseInfoMwb.BitLength.Value));
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "; Len: {0}", dataTypeEntry.BitLength.Value));
                         }
 
                         outStream.WriteLine(sb.ToString());
 
-                        if (parseInfoMwb.NameValueList != null)
+                        if (dataTypeEntry.NameValueList != null)
                         {
-                            foreach (UdsReader.ValueName valueName in parseInfoMwb.NameValueList)
+                            foreach (UdsReader.ValueName valueName in dataTypeEntry.NameValueList)
                             {
                                 sb.Clear();
 

@@ -101,39 +101,131 @@ namespace UdsFileReader
             public Int32? MaxValue { get; }
         }
 
-        public class ParseInfoBase
+        public class DataTypeEntry
         {
-            public ParseInfoBase(string[] lineArray)
+            public DataTypeEntry(UdsReader udsReader, string[] lineArray, int offset)
             {
                 LineArray = lineArray;
+
+                if (lineArray.Length >= offset + 10)
+                {
+                    if (!UInt32.TryParse(lineArray[offset + 1], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 dataTypeId))
+                    {
+                        throw new Exception("No data type id");
+                    }
+                    DataTypeId = dataTypeId;
+                    DataType dataType = (DataType)(dataTypeId & DataTypeMaskEnum);
+
+                    UInt32? dataTypeExtra = null;
+                    if (UInt32.TryParse(lineArray[offset], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 dataTypeE))
+                    {
+                        dataTypeExtra = dataTypeE;
+                    }
+
+                    if (UInt32.TryParse(lineArray[offset + 6], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 byteOffset))
+                    {
+                        ByteOffset = byteOffset;
+                    }
+
+                    if (UInt32.TryParse(lineArray[offset + 7], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 bitOffset))
+                    {
+                        BitOffset = bitOffset;
+                    }
+
+                    if (UInt32.TryParse(lineArray[offset + 8], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 bitLength))
+                    {
+                        BitLength = bitLength;
+                    }
+
+                    if (UInt32.TryParse(lineArray[offset + 9], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 nameDetailKey))
+                    {
+                        if (!udsReader._textMap.TryGetValue(nameDetailKey, out string[] nameDetailArray))
+                        {
+                            throw new Exception("No name detail found");
+                        }
+                        NameDetailArray = nameDetailArray;
+                    }
+
+                    switch (dataType)
+                    {
+                        case DataType.Float:
+                        case DataType.Integer:
+                        {
+                            if (double.TryParse(lineArray[offset + 2], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleOffset))
+                            {
+                                ScaleOffset = scaleOffset;
+                            }
+
+                            if (double.TryParse(lineArray[offset + 3], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleMult))
+                            {
+                                ScaleMult = scaleMult;
+                            }
+
+                            if (double.TryParse(lineArray[offset + 4], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleDiv))
+                            {
+                                ScaleDiv = scaleDiv;
+                            }
+
+                            if (UInt32.TryParse(lineArray[offset + 5], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 unitKey))
+                            {
+                                if (!udsReader._unitMap.TryGetValue(unitKey, out string[] unitArray))
+                                {
+                                    throw new Exception("No unit text found");
+                                }
+                                if (unitArray.Length < 1)
+                                {
+                                    throw new Exception("No unit array too short");
+                                }
+                                UnitText = unitArray[0];
+                            }
+
+                            NumberOfDigits = dataTypeExtra;
+                            break;
+                        }
+
+                        case DataType.ValueName:
+                        {
+                            if (dataTypeExtra == null)
+                            {
+                                throw new Exception("No key for name value");
+                            }
+
+                            NameValueList = new List<ValueName>();
+                            IEnumerable<string[]> bitList = udsReader._ttdopLookup[dataTypeExtra.Value];
+                            foreach (string[] ttdopArray in bitList)
+                            {
+                                if (ttdopArray.Length >= 5)
+                                {
+                                    NameValueList.Add(new ValueName(udsReader, ttdopArray));
+                                }
+                            }
+                            break;
+                        }
+
+                        case DataType.MuxTable:
+                        {
+                            if (dataTypeExtra == null)
+                            {
+                                throw new Exception("No key for mux table");
+                            }
+
+                            MuxEntryList = new List<MuxEntry>();
+                            IEnumerable<string[]> muxList = udsReader._muxLookup[dataTypeExtra.Value];
+                            foreach (string[] muxArray in muxList)
+                            {
+                                if (muxArray.Length >= 17)
+                                {
+                                    MuxEntryList.Add(new MuxEntry(udsReader, muxArray));
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
             }
 
             public string[] LineArray { get; }
-        }
-
-        public class ParseInfoMwb : ParseInfoBase
-        {
-            public ParseInfoMwb(UInt32 serviceId, UInt32 dataTypeId, string[] lineArray, string[] nameArray, string[] nameDetailArray,
-                UInt32? numberOfDigits, double? scaleOffset, double? scaleMult, double? scaleDiv, string unitText, UInt32? byteOffset, UInt32? bitOffset, UInt32? bitLength, List<ValueName> nameValueList) : base(lineArray)
-            {
-                ServiceId = serviceId;
-                DataTypeId = dataTypeId;
-                NameArray = nameArray;
-                NameDetailArray = nameDetailArray;
-                NumberOfDigits = numberOfDigits;
-                ScaleOffset = scaleOffset;
-                ScaleMult = scaleMult;
-                ScaleDiv = scaleDiv;
-                UnitText = unitText;
-                ByteOffset = byteOffset;
-                BitOffset = bitOffset;
-                BitLength = bitLength;
-                NameValueList = nameValueList;
-            }
-
-            public UInt32 ServiceId { get; }
             public UInt32 DataTypeId { get; }
-            public string[] NameArray { get; }
             public string[] NameDetailArray { get; }
             public UInt32? NumberOfDigits { get; }
             public double? ScaleOffset { get; }
@@ -144,6 +236,7 @@ namespace UdsFileReader
             public UInt32? BitOffset { get; }
             public UInt32? BitLength { get; }
             public List<ValueName> NameValueList { get; }
+            public List<MuxEntry> MuxEntryList { get; }
 
             public static string DataTypeIdToString(UInt32 dataTypeId)
             {
@@ -166,6 +259,30 @@ namespace UdsFileReader
 
                 return dataTypeName;
             }
+        }
+
+        public class ParseInfoBase
+        {
+            public ParseInfoBase(string[] lineArray)
+            {
+                LineArray = lineArray;
+            }
+
+            public string[] LineArray { get; }
+        }
+
+        public class ParseInfoMwb : ParseInfoBase
+        {
+            public ParseInfoMwb(UInt32 serviceId, string[] lineArray, string[] nameArray, DataTypeEntry dataTypeEntry) : base(lineArray)
+            {
+                ServiceId = serviceId;
+                NameArray = nameArray;
+                DataTypeEntry = dataTypeEntry;
+            }
+
+            public UInt32 ServiceId { get; }
+            public string[] NameArray { get; }
+            public DataTypeEntry DataTypeEntry { get; }
         }
 
         private class SegmentInfo
@@ -332,126 +449,17 @@ namespace UdsFileReader
                             return null;
                         }
 
-                        if (!UInt32.TryParse(lineArray[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 dataTypeId))
+                        DataTypeEntry dataTypeEntry;
+                        try
+                        {
+                            dataTypeEntry = new DataTypeEntry(this, lineArray, 2);
+                        }
+                        catch (Exception)
                         {
                             return null;
                         }
-                        DataType dataType = (DataType) (dataTypeId & DataTypeMaskEnum);
 
-                        UInt32? dataTypeExtra = null;
-                        if (UInt32.TryParse(lineArray[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 dataTypeE))
-                        {
-                            dataTypeExtra = dataTypeE;
-                        }
-
-                        UInt32? byteOffset = null;
-                        if (UInt32.TryParse(lineArray[8], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 byteO))
-                        {
-                            byteOffset = byteO;
-                        }
-
-                        UInt32? bitOffset = null;
-                        if (UInt32.TryParse(lineArray[9], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 bitO))
-                        {
-                            bitOffset = bitO;
-                        }
-
-                        UInt32? bitCount = null;
-                        if (UInt32.TryParse(lineArray[10], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 bitC))
-                        {
-                            bitCount = bitC;
-                        }
-
-                        string[] nameDetailArray = null;
-                        if (UInt32.TryParse(lineArray[11], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 nameDetailKey))
-                        {
-                            if (!_textMap.TryGetValue(nameDetailKey, out nameDetailArray))
-                            {
-                                return null;
-                            }
-                        }
-
-                        UInt32? numberOfDigits = null;
-                        double? scaleOffset = null;
-                        double? scaleMult = null;
-                        double? scaleDiv = null;
-                        string unitText = null;
-                        List<ValueName> nameValueList = null;
-                        List<MuxEntry> muxEntryList = null;
-                        switch (dataType)
-                        {
-                            case DataType.Float:
-                            case DataType.Integer:
-                            {
-                                if (double.TryParse(lineArray[4], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleO))
-                                {
-                                    scaleOffset = scaleO;
-                                }
-
-                                if (double.TryParse(lineArray[5], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleM))
-                                {
-                                    scaleMult = scaleM;
-                                }
-
-                                if (double.TryParse(lineArray[6], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleD))
-                                {
-                                    scaleDiv = scaleD;
-                                }
-
-                                if (UInt32.TryParse(lineArray[7], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 unitKey))
-                                {
-                                    if (!_unitMap.TryGetValue(unitKey, out string[] unitArray))
-                                    {
-                                        return null;
-                                    }
-                                    if (unitArray.Length < 1)
-                                    {
-                                        return null;
-                                    }
-                                    unitText = unitArray[0];
-                                }
-
-                                numberOfDigits = dataTypeExtra;
-                                break;
-                            }
-
-                            case DataType.ValueName:
-                            {
-                                nameValueList = new List<ValueName>();
-                                IEnumerable<string[]> bitList = _ttdopLookup[dataTypeExtra.Value];
-                                if (bitList != null)
-                                {
-                                    foreach (string[] ttdopArray in bitList)
-                                    {
-                                        if (ttdopArray.Length >= 5)
-                                        {
-                                            nameValueList.Add(new ValueName(this, ttdopArray));
-                                        }
-                                    }
-                                }
-                                break;
-                            }
-
-                            case DataType.MuxTable:
-                            {
-                                muxEntryList = new List<MuxEntry>();
-                                IEnumerable<string[]> muxList = _muxLookup[dataTypeExtra.Value];
-                                if (muxList != null)
-                                {
-                                    foreach (string[] muxArray in muxList)
-                                    {
-                                        if (muxArray.Length >= 17)
-                                        {
-                                            muxEntryList.Add(new MuxEntry(this, muxArray));
-                                        }
-                                    }
-                                }
-                                break;
-                            }
-                        }
-
-                        parseInfo = new ParseInfoMwb(serviceId, dataTypeId, lineArray, nameArray, nameDetailArray, numberOfDigits, scaleOffset, scaleMult, scaleDiv, unitText,
-                            byteOffset, bitOffset, bitCount, nameValueList);
+                        parseInfo = new ParseInfoMwb(serviceId, lineArray, nameArray, dataTypeEntry);
                         break;
                     }
 
