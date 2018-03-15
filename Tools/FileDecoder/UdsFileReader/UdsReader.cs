@@ -82,7 +82,7 @@ namespace UdsFileReader
             {
                 LineArray = lineArray;
 
-                if (lineArray.Length >= 11)
+                if (lineArray.Length >= 8)
                 {
                     if (Int32.TryParse(lineArray[5], NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 minValue))
                     {
@@ -93,12 +93,14 @@ namespace UdsFileReader
                     {
                         MaxValue = maxValue;
                     }
+                    DataTypeEntry = new DataTypeEntry(udsReader, lineArray, 7);
                 }
             }
 
             public string[] LineArray { get; }
             public Int32? MinValue { get; }
             public Int32? MaxValue { get; }
+            public DataTypeEntry DataTypeEntry { get; }
         }
 
         public class DataTypeEntry
