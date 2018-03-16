@@ -8,6 +8,8 @@
 #include <map>
 #include <string>
 #include "../_Common_Files/GenericFakeAPI.h"
+#include "HotPatch.hpp"
+using namespace HotPatch;
 // You just need to edit this file to add new fake api 
 // WARNING YOUR FAKE API MUST HAVE THE SAME PARAMETERS AND CALLING CONVENTION AS THE REAL ONE,
 //                  ELSE YOU WILL GET STACK ERRORS
@@ -65,6 +67,9 @@ static void LogData(BYTE *data, unsigned int length, unsigned int max_length = 0
 static void LogAsc(BYTE *data, unsigned int length, unsigned int max_length = 0x100);
 static BOOL PatchDbgUiRemoteBreakin();
 static BOOL GetCryptTables();
+
+typedef void(__cdecl *pDecryptTextLine)(void *pthis, void *p1, char *pline, int numlen);
+static void __cdecl mDecryptTextLine(void *pthis, void *p1, char *pline, int numlen);
 
 static HWND WINAPI mFindWindowA(
     _In_opt_ LPCSTR lpClassName,
@@ -164,10 +169,12 @@ static std::list<HANDLE> FileMemWatchList;
 static std::list<LPVOID> MemWatchList;
 static std::list<HRSRC> ResWatchList;
 static std::map<HRSRC, DWORD>ResSizeMap;
+static function<void __cdecl (void *pthis, void *p1, char *pline, int numlen)> DecryptTextLinePatch;
 static HANDLE hLastLogRFile = INVALID_HANDLE_VALUE;
 static HANDLE hLastLogWFile = INVALID_HANDLE_VALUE;
 static BOOL bHalted = FALSE;
 static BOOL bTablesStored = FALSE;
+static BOOL bDecryptPatched = FALSE;
 
 ///////////////////////////////////////////////////////////////////////////////
 // fake API array. Redirection are defined here
@@ -590,6 +597,16 @@ BOOL GetCryptTables()
     return TRUE;
 }
 
+void __cdecl mDecryptTextLine(void *pthis, void *p1, char *pline, int numlen)
+{
+    LogPrintf(_T("DecryptTextLine\n"));
+    LogFlush();
+    if (DecryptTextLinePatch.IsPatched())
+    {
+        DecryptTextLinePatch(pthis, p1, pline, numlen);
+    }
+}
+
 HWND WINAPI mFindWindowA(
     _In_opt_ LPCSTR lpClassName,
     _In_opt_ LPCSTR lpWindowName
@@ -804,6 +821,15 @@ HANDLE WINAPI mCreateFileA(
                     bTablesStored = TRUE;
                     GetCryptTables();
                 }
+                if (!bDecryptPatched)
+                {
+                    bDecryptPatched = true;
+                    DecryptTextLinePatch = (pDecryptTextLine)0x49D091;
+                    DecryptTextLinePatch.SetPatch(&mDecryptTextLine);
+                    //DecryptTextLinePatch.ApplyPatch();
+                    LogPrintf(_T("DecryptTextLine patched\n"));
+                    LogFlush();
+                }
             }
 #if true
 #if false
@@ -819,6 +845,10 @@ HANDLE WINAPI mCreateFileA(
                     bWatchMem = true;
                 }
             }
+//            if (_stricmp(name, "IV_EV_ECM20TDI01103L906018DQ_M12.rod") == 0)
+//            {
+//                bWatchMem = true;
+//            }
 #else
             if (_stricmp(ext, ".clb") == 0)
             {
@@ -934,6 +964,10 @@ LPVOID WINAPI mHeapAlloc(
         {
             LogPrintf(_T("HeapAlloc: %u=%08p\n"), dwBytes, pMem);
         }
+//        if (FileMemWatchList.size() > 0 && dwBytes == 7120)
+//        {
+//            LogPrintf(_T("Start trace here\n"));
+//        }
         bool found = (std::find(MemWatchList.begin(), MemWatchList.end(), pMem) != MemWatchList.end());
         if (!found)
         {
