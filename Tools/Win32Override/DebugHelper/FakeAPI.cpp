@@ -8,8 +8,7 @@
 #include <map>
 #include <string>
 #include "../_Common_Files/GenericFakeAPI.h"
-#include "HotPatch.hpp"
-using namespace HotPatch;
+#include "HotPatch.h"
 // You just need to edit this file to add new fake api 
 // WARNING YOUR FAKE API MUST HAVE THE SAME PARAMETERS AND CALLING CONVENTION AS THE REAL ONE,
 //                  ELSE YOU WILL GET STACK ERRORS
@@ -25,6 +24,8 @@ using namespace HotPatch;
 #define CRYPTFILE2 _T("CryptTable2.bin")
 
 #define STATUS_SUCCESS                   ((NTSTATUS)0x00000000L)    // ntsubauth
+
+#define DECRYPT_TEXT_LINE_ADDR            0x49D091
 
 typedef std::basic_string<TCHAR> tstring;
 
@@ -67,9 +68,7 @@ static void LogData(BYTE *data, unsigned int length, unsigned int max_length = 0
 static void LogAsc(BYTE *data, unsigned int length, unsigned int max_length = 0x100);
 static BOOL PatchDbgUiRemoteBreakin();
 static BOOL GetCryptTables();
-
-typedef void(__cdecl *pDecryptTextLine)(void *pthis, void *p1, char *pline, int numlen);
-static void __cdecl mDecryptTextLine(void *pthis, void *p1, char *pline, int numlen);
+static void *DisMember(size_t size, ...);
 
 static HWND WINAPI mFindWindowA(
     _In_opt_ LPCSTR lpClassName,
@@ -169,7 +168,7 @@ static std::list<HANDLE> FileMemWatchList;
 static std::list<LPVOID> MemWatchList;
 static std::list<HRSRC> ResWatchList;
 static std::map<HRSRC, DWORD>ResSizeMap;
-static function<void __cdecl (void *pthis, void *p1, char *pline, int numlen)> DecryptTextLinePatch;
+static HotPatch PatchDecryptTextLine;
 static HANDLE hLastLogRFile = INVALID_HANDLE_VALUE;
 static HANDLE hLastLogWFile = INVALID_HANDLE_VALUE;
 static BOOL bHalted = FALSE;
@@ -597,15 +596,35 @@ BOOL GetCryptTables()
     return TRUE;
 }
 
-void __cdecl mDecryptTextLine(void *pthis, void *p1, char *pline, int numlen)
+void *DisMember(size_t size, ...)
 {
-    LogPrintf(_T("DecryptTextLine\n"));
-    LogFlush();
-    if (DecryptTextLinePatch.IsPatched())
-    {
-        DecryptTextLinePatch(pthis, p1, pline, numlen);
-    }
+    // the pointer can be more complicated than a plain data pointer
+    // think of virtual member functions, multiple inheritance, etc
+    if (size < sizeof(void *)) return NULL;
+    va_list args;
+    va_start(args, size);
+    void *res = va_arg(args, void *);
+    va_end(args);
+    return res;
 }
+
+class CDecryptTextLine
+{
+    public:
+        typedef void(__thiscall *ptrDecryptTextLine)(void *pthis, void *p1, char *pline, int numlen);
+
+        void mDecryptTextLine(void *p1, char *pline, int numlen)
+        {
+            LogPrintf(_T("DecryptTextLine start: %08p, %08p, %u\n"), p1, pline, numlen);
+            PatchDecryptTextLine.RestoreOpcodes();
+
+            ptrDecryptTextLine pDecryptTextLine = (ptrDecryptTextLine) DECRYPT_TEXT_LINE_ADDR;
+            pDecryptTextLine(this, p1, pline, numlen);
+
+            PatchDecryptTextLine.WriteOpcodes();
+            LogPrintf(_T("DecryptTextLine end\n"));
+        }
+};
 
 HWND WINAPI mFindWindowA(
     _In_opt_ LPCSTR lpClassName,
@@ -824,9 +843,11 @@ HANDLE WINAPI mCreateFileA(
                 if (!bDecryptPatched)
                 {
                     bDecryptPatched = true;
-                    DecryptTextLinePatch = (pDecryptTextLine)0x49D091;
-                    DecryptTextLinePatch.SetPatch(&mDecryptTextLine);
-                    //DecryptTextLinePatch.ApplyPatch();
+                    PVOID pDecrypt = DisMember(sizeof(&CDecryptTextLine::mDecryptTextLine), &CDecryptTextLine::mDecryptTextLine);
+                    PatchDecryptTextLine.SetDetour((PVOID)DECRYPT_TEXT_LINE_ADDR, pDecrypt);
+                    PatchDecryptTextLine.SetWriteProtection();
+                    PatchDecryptTextLine.SaveOpcodes();
+                    PatchDecryptTextLine.WriteOpcodes();
                     LogPrintf(_T("DecryptTextLine patched\n"));
                     LogFlush();
                 }

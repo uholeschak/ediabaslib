@@ -247,10 +247,11 @@
   <ItemGroup>
     <ClCompile Include="FakeAPI.cpp" />
     <ClCompile Include="..\_Common_Files\GenericFakeAPI.cpp" />
+    <ClCompile Include="HotPatch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\_Common_Files\GenericFakeAPI.h" />
-    <ClInclude Include="HotPatch.hpp" />
+    <ClInclude Include="HotPatch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
