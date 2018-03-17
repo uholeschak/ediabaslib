@@ -615,14 +615,14 @@ class CDecryptTextLine
 
         void mDecryptTextLine(void *p1, char *pline, int numlen)
         {
-            LogPrintf(_T("DecryptTextLine start: %08p, %08p, %u\n"), p1, pline, numlen);
+            LogPrintf(_T("DecryptTextLine start: \"%S\"\n"), pline);
             PatchDecryptTextLine.RestoreOpcodes();
 
             ptrDecryptTextLine pDecryptTextLine = (ptrDecryptTextLine) DECRYPT_TEXT_LINE_ADDR;
             pDecryptTextLine(this, p1, pline, numlen);
 
             PatchDecryptTextLine.WriteOpcodes();
-            LogPrintf(_T("DecryptTextLine end\n"));
+            LogPrintf(_T("DecryptTextLine end: \"%S\"\n"), pline);
         }
 };
 
