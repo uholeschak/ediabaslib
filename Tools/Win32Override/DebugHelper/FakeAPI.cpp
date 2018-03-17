@@ -25,7 +25,7 @@
 
 #define STATUS_SUCCESS                   ((NTSTATUS)0x00000000L)    // ntsubauth
 
-#define DECRYPT_TEXT_LINE_ADDR            0x49D091
+#define DECRYPT_TEXT_LINE_ADDR_REL      0x09D091
 
 typedef std::basic_string<TCHAR> tstring;
 
@@ -67,6 +67,7 @@ static void LogFlush();
 static void LogData(BYTE *data, unsigned int length, unsigned int max_length = 0x100);
 static void LogAsc(BYTE *data, unsigned int length, unsigned int max_length = 0x100);
 static BOOL PatchDbgUiRemoteBreakin();
+static BOOL GetModuleBaseAddress();
 static BOOL GetCryptTables();
 static void *DisMember(size_t size, ...);
 
@@ -163,6 +164,8 @@ static ptrNtSetInformationThread pNtSetInformationThread = NULL;
 static ptrNtQueryInformationThread pNtQueryInformationThread = NULL;
 static ptrNtSuspendProcess pNtSuspendProcess = NULL;
 static FILE *fLog = NULL;
+static BYTE* pModuleBaseAddr = 0;
+static DWORD dwModuleBaseSize = 0;
 static std::list<HANDLE> FileWatchList;
 static std::list<HANDLE> FileMemWatchList;
 static std::list<LPVOID> MemWatchList;
@@ -240,6 +243,7 @@ BOOL WINAPI DllMain(HINSTANCE hInstDLL, DWORD dwReason, PVOID pvReserved)
                     return FALSE;
                 }
                 fLog = OpenLogFile();
+                GetModuleBaseAddress();
                 PatchDbgUiRemoteBreakin();
             }
             break;
@@ -451,8 +455,9 @@ BOOL PatchDbgUiRemoteBreakin()
     return TRUE;
 }
 
-BOOL GetCryptTables()
+BOOL GetModuleBaseAddress()
 {
+    LogPrintf(_T("GetModuleBaseAddress\n"));
     HANDLE hModuleSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, NULL);
     if (hModuleSnap == INVALID_HANDLE_VALUE)
     {
@@ -494,96 +499,8 @@ BOOL GetCryptTables()
         LogPrintf(_T("Exe base: %08p\n"), me32.modBaseAddr);
         LogPrintf(_T("Exe size: %08X\n"), me32.modBaseSize);
 
-        const char *pSignature1 = "Copyright(c) 2004, Ross-Tech LLC";
-        BYTE *pSig1Addr = NULL;
-        for (DWORD dwOffset = 0; dwOffset < me32.modBaseSize; dwOffset += 16)
-        {
-            BYTE *pAddr = me32.modBaseAddr + dwOffset;
-            if (memcmp(pAddr, pSignature1, strlen(pSignature1) - 1) == 0)
-            {
-                pSig1Addr = pAddr;
-                break;
-            }
-        }
-        if (pSig1Addr == NULL)
-        {
-            LogPrintf(_T("Table1 signature not found\n"));
-        }
-        else
-        {
-            BYTE *pTab1Addr = pSig1Addr - 0x00E0;
-            LogPrintf(_T("Table1 signature at: %08p, table at: %08p\n"), pSig1Addr, pTab1Addr);
-
-            TCHAR szPath[MAX_PATH];
-
-            if (SUCCEEDED(SHGetFolderPath(NULL,
-                CSIDL_PERSONAL | CSIDL_FLAG_CREATE,
-                NULL,
-                0,
-                szPath)))
-            {
-                if (PathAppend(szPath, CRYPTFILE1))
-                {
-                    FILE *fw = _tfopen(szPath, _T("wb"));
-                    if (fw != NULL)
-                    {
-                        fwrite(pTab1Addr, 1, 0x0100, fw);
-                        fclose(fw);
-                        LogPrintf(_T("Table1 stored\n"));
-                    }
-                }
-            }
-        }
-
-        const DWORD pSignature2[] =
-        {
-             2,  3,  5,  7, 11, 13, 17, 19,
-            23, 29, 31, 37, 41, 43, 47, 53
-        };
-        BYTE *pSig2Addr = NULL;
-        for (DWORD dwOffset = 0; dwOffset < me32.modBaseSize; dwOffset += 16)
-        {
-            BYTE *pAddr = me32.modBaseAddr + dwOffset;
-            if (memcmp(pAddr, pSignature2, sizeof(pSignature2)) == 0)
-            {
-                pSig2Addr = pAddr;
-                break;
-            }
-        }
-        if (pSig2Addr == NULL)
-        {
-            LogPrintf(_T("Table2 signature not found\n"));
-        }
-        else
-        {
-            BYTE *pTab2Addr = pSig2Addr - 0x0300;
-            LogPrintf(_T("Table2 signature at: %08p, table at: %08p\n"), pSig2Addr, pTab2Addr);
-
-            TCHAR szPath[MAX_PATH];
-
-            if (SUCCEEDED(SHGetFolderPath(NULL,
-                CSIDL_PERSONAL | CSIDL_FLAG_CREATE,
-                NULL,
-                0,
-                szPath)))
-            {
-                if (PathAppend(szPath, CRYPTFILE2))
-                {
-                    FILE *fw = _tfopen(szPath, _T("wb"));
-                    if (fw != NULL)
-                    {
-                        fwrite(pTab2Addr, 1, 0x0300, fw);
-                        fclose(fw);
-                        LogPrintf(_T("Table2 stored\n"));
-                    }
-                }
-            }
-        }
-        TCHAR szBuffer[100];
-        if (LoadString(GetModuleHandle(NULL), 383, szBuffer, sizeof(szBuffer) / sizeof(szBuffer[0])) > 0)
-        {
-            LogPrintf(_T("Version code: %s\n"), szBuffer);
-        }
+        pModuleBaseAddr = me32.modBaseAddr;
+        dwModuleBaseSize = me32.modBaseSize;
     }
     __finally
     {
@@ -591,6 +508,108 @@ BOOL GetCryptTables()
         {
             CloseHandle(hModuleSnap);
         }
+    }
+
+    return TRUE;
+}
+
+BOOL GetCryptTables()
+{
+    if (pModuleBaseAddr == NULL)
+    {
+        LogPrintf(_T("GetCryptTables: No module base address\n"));
+        return FALSE;
+    }
+
+    const char *pSignature1 = "Copyright(c) 2004, Ross-Tech LLC";
+    BYTE *pSig1Addr = NULL;
+    for (DWORD dwOffset = 0; dwOffset < dwModuleBaseSize; dwOffset += 16)
+    {
+        BYTE *pAddr = pModuleBaseAddr + dwOffset;
+        if (memcmp(pAddr, pSignature1, strlen(pSignature1) - 1) == 0)
+        {
+            pSig1Addr = pAddr;
+            break;
+        }
+    }
+    if (pSig1Addr == NULL)
+    {
+        LogPrintf(_T("Table1 signature not found\n"));
+    }
+    else
+    {
+        BYTE *pTab1Addr = pSig1Addr - 0x00E0;
+        LogPrintf(_T("Table1 signature at: %08p, table at: %08p\n"), pSig1Addr, pTab1Addr);
+
+        TCHAR szPath[MAX_PATH];
+
+        if (SUCCEEDED(SHGetFolderPath(NULL,
+            CSIDL_PERSONAL | CSIDL_FLAG_CREATE,
+            NULL,
+            0,
+            szPath)))
+        {
+            if (PathAppend(szPath, CRYPTFILE1))
+            {
+                FILE *fw = _tfopen(szPath, _T("wb"));
+                if (fw != NULL)
+                {
+                    fwrite(pTab1Addr, 1, 0x0100, fw);
+                    fclose(fw);
+                    LogPrintf(_T("Table1 stored\n"));
+                }
+            }
+        }
+    }
+
+    const DWORD pSignature2[] =
+    {
+            2,  3,  5,  7, 11, 13, 17, 19,
+        23, 29, 31, 37, 41, 43, 47, 53
+    };
+    BYTE *pSig2Addr = NULL;
+    for (DWORD dwOffset = 0; dwOffset < dwModuleBaseSize; dwOffset += 16)
+    {
+        BYTE *pAddr = pModuleBaseAddr + dwOffset;
+        if (memcmp(pAddr, pSignature2, sizeof(pSignature2)) == 0)
+        {
+            pSig2Addr = pAddr;
+            break;
+        }
+    }
+    if (pSig2Addr == NULL)
+    {
+        LogPrintf(_T("Table2 signature not found\n"));
+    }
+    else
+    {
+        BYTE *pTab2Addr = pSig2Addr - 0x0300;
+        LogPrintf(_T("Table2 signature at: %08p, table at: %08p\n"), pSig2Addr, pTab2Addr);
+
+        TCHAR szPath[MAX_PATH];
+
+        if (SUCCEEDED(SHGetFolderPath(NULL,
+            CSIDL_PERSONAL | CSIDL_FLAG_CREATE,
+            NULL,
+            0,
+            szPath)))
+        {
+            if (PathAppend(szPath, CRYPTFILE2))
+            {
+                FILE *fw = _tfopen(szPath, _T("wb"));
+                if (fw != NULL)
+                {
+                    fwrite(pTab2Addr, 1, 0x0300, fw);
+                    fclose(fw);
+                    LogPrintf(_T("Table2 stored\n"));
+                }
+            }
+        }
+    }
+    TCHAR szBuffer[100];
+    if (LoadString(GetModuleHandle(NULL), 383, szBuffer, sizeof(szBuffer) / sizeof(szBuffer[0])) > 0)
+    {
+        LogPrintf(_T("Version code: %s\n"), szBuffer);
     }
 
     return TRUE;
@@ -618,7 +637,7 @@ class CDecryptTextLine
             LogPrintf(_T("DecryptTextLine start: \"%S\"\n"), pline);
             PatchDecryptTextLine.RestoreOpcodes();
 
-            ptrDecryptTextLine pDecryptTextLine = (ptrDecryptTextLine) DECRYPT_TEXT_LINE_ADDR;
+            ptrDecryptTextLine pDecryptTextLine = (ptrDecryptTextLine) (pModuleBaseAddr + DECRYPT_TEXT_LINE_ADDR_REL);
             pDecryptTextLine(this, p1, pline, numlen);
 
             PatchDecryptTextLine.WriteOpcodes();
@@ -840,11 +859,11 @@ HANDLE WINAPI mCreateFileA(
                     bTablesStored = TRUE;
                     GetCryptTables();
                 }
-                if (!bDecryptPatched)
+                if (!bDecryptPatched && pModuleBaseAddr != NULL)
                 {
                     bDecryptPatched = true;
                     PVOID pDecrypt = DisMember(sizeof(&CDecryptTextLine::mDecryptTextLine), &CDecryptTextLine::mDecryptTextLine);
-                    PatchDecryptTextLine.SetDetour((PVOID)DECRYPT_TEXT_LINE_ADDR, pDecrypt);
+                    PatchDecryptTextLine.SetDetour((PVOID)(pModuleBaseAddr + DECRYPT_TEXT_LINE_ADDR_REL), pDecrypt);
                     PatchDecryptTextLine.SetWriteProtection();
                     PatchDecryptTextLine.SaveOpcodes();
                     PatchDecryptTextLine.WriteOpcodes();
