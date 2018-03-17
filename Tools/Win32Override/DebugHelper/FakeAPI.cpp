@@ -634,7 +634,7 @@ class CDecryptTextLine
 
         void mDecryptTextLine(void *p1, char *pline, int numlen)
         {
-            LogPrintf(_T("DecryptTextLine start: \"%S\"\n"), pline);
+            LogPrintf(_T("DecryptTextLine start: \"%S\", %u\n"), pline, numlen);
             PatchDecryptTextLine.RestoreOpcodes();
 
             ptrDecryptTextLine pDecryptTextLine = (ptrDecryptTextLine) (pModuleBaseAddr + DECRYPT_TEXT_LINE_ADDR_REL);
