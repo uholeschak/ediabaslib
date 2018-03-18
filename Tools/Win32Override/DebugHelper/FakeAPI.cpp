@@ -70,6 +70,7 @@ static BOOL PatchDbgUiRemoteBreakin();
 static BOOL GetModuleBaseAddress();
 static BOOL GetCryptTables();
 static void *DisMember(size_t size, ...);
+static BOOL RedirectDecryptTextLine();
 
 static HWND WINAPI mFindWindowA(
     _In_opt_ LPCSTR lpClassName,
@@ -630,19 +631,40 @@ void *DisMember(size_t size, ...)
 class CDecryptTextLine
 {
     public:
-        typedef void(__thiscall *ptrDecryptTextLine)(void *pthis, void *p1, char *pline, int numlen);
+        typedef void(__thiscall *ptrDecryptTextLine)(void *pthis, void *p1, char *pline, int source);
 
-        void mDecryptTextLine(void *p1, char *pline, int numlen)
+        void mDecryptTextLine(void *p1, char *pline, int source)
         {
+            if (source == 5)
+            {
+                LogPrintf(_T("DecryptTextLine in: \"%S\"\n"), pline);
+            }
             PatchDecryptTextLine.RestoreOpcodes();
 
             ptrDecryptTextLine pDecryptTextLine = (ptrDecryptTextLine) (pModuleBaseAddr + DECRYPT_TEXT_LINE_ADDR_REL);
-            pDecryptTextLine(this, p1, pline, numlen);
+            pDecryptTextLine(this, p1, pline, source);
 
             PatchDecryptTextLine.WriteOpcodes();
-            LogPrintf(_T("DecryptTextLine (%u): \"%S\"\n"), numlen, pline);
+            LogPrintf(_T("DecryptTextLine out (%u): \"%S\"\n"), source, pline);
         }
 };
+
+BOOL RedirectDecryptTextLine()
+{
+    if (pModuleBaseAddr == NULL)
+    {
+        LogPrintf(_T("RedirectDecryptTextLine: No module base address\n"));
+        return FALSE;
+    }
+    PVOID pDecrypt = DisMember(sizeof(&CDecryptTextLine::mDecryptTextLine), &CDecryptTextLine::mDecryptTextLine);
+    PatchDecryptTextLine.SetDetour((PVOID)(pModuleBaseAddr + DECRYPT_TEXT_LINE_ADDR_REL), pDecrypt);
+    PatchDecryptTextLine.SetWriteProtection();
+    PatchDecryptTextLine.SaveOpcodes();
+    PatchDecryptTextLine.WriteOpcodes();
+    LogPrintf(_T("DecryptTextLine patched\n"));
+
+    return TRUE;
+}
 
 HWND WINAPI mFindWindowA(
     _In_opt_ LPCSTR lpClassName,
@@ -858,16 +880,10 @@ HANDLE WINAPI mCreateFileA(
                     bTablesStored = TRUE;
                     GetCryptTables();
                 }
-                if (!bDecryptPatched && pModuleBaseAddr != NULL)
+                if (!bDecryptPatched)
                 {
                     bDecryptPatched = true;
-                    PVOID pDecrypt = DisMember(sizeof(&CDecryptTextLine::mDecryptTextLine), &CDecryptTextLine::mDecryptTextLine);
-                    PatchDecryptTextLine.SetDetour((PVOID)(pModuleBaseAddr + DECRYPT_TEXT_LINE_ADDR_REL), pDecrypt);
-                    PatchDecryptTextLine.SetWriteProtection();
-                    PatchDecryptTextLine.SaveOpcodes();
-                    PatchDecryptTextLine.WriteOpcodes();
-                    LogPrintf(_T("DecryptTextLine patched\n"));
-                    LogFlush();
+                    RedirectDecryptTextLine();
                 }
             }
 #if true
