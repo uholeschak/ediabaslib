@@ -87,6 +87,13 @@ static BOOL WINAPI mEnumWindows(
     _In_ LPARAM      lParam
 );
 
+static LRESULT WINAPI mSendMessageA(
+    _In_ HWND   hWnd,
+    _In_ UINT   Msg,
+    _In_ WPARAM wParam,
+    _In_ LPARAM lParam
+);
+
 static BOOL WINAPI mIsDebuggerPresent(void);
 
 static HRSRC WINAPI mFindResourceA(
@@ -188,6 +195,7 @@ STRUCT_FAKE_API pArrayFakeAPI[]=
     //                                                stack size= sum(StackSizeOf(ParameterType))           Same as monitoring file keyword (see monitoring file advanced syntax)
     {_T("User32.dll"),_T("FindWindowA"),(FARPROC)mFindWindowA,StackSizeOf(LPCSTR)+StackSizeOf(LPCSTR),0 },
     {_T("User32.dll"),_T("EnumWindows"),(FARPROC)mEnumWindows,StackSizeOf(WNDENUMPROC)+StackSizeOf(LPARAM),0 },
+    {_T("User32.dll"),_T("SendMessageA"),(FARPROC)mSendMessageA,StackSizeOf(HWND)+StackSizeOf(UINT)+StackSizeOf(WPARAM)+StackSizeOf(LPARAM),0 },
     {_T("Kernel32.dll"),_T("IsDebuggerPresent"),(FARPROC)mIsDebuggerPresent,0,0},
     {_T("Kernel32.dll"),_T("FindResourceA"),(FARPROC)mFindResourceA,StackSizeOf(HMODULE)+StackSizeOf(LPCSTR)+StackSizeOf(LPCSTR),0 },
     {_T("Kernel32.dll"),_T("LoadResource"),(FARPROC)mLoadResource,StackSizeOf(HMODULE)+StackSizeOf(HRSRC),0 },
@@ -637,7 +645,7 @@ class CDecryptTextLine
         {
             if (source == 5)
             {
-                LogPrintf(_T("DecryptTextLine in: \"%S\"\n"), pline);
+                //LogPrintf(_T("DecryptTextLine in: \"%S\"\n"), pline);
             }
             PatchDecryptTextLine.RestoreOpcodes();
 
@@ -721,6 +729,30 @@ BOOL WINAPI mEnumWindows(
     BOOL bResult = EnumWindows(EnumWindowsProc, (LPARAM)&EnumWindowsInfo);
     LogPrintf(_T("EnumWindows End %08X (%u)\n"), lParam, bResult);
 
+    return bResult;
+}
+
+LRESULT WINAPI mSendMessageA(
+    _In_ HWND   hWnd,
+    _In_ UINT   Msg,
+    _In_ WPARAM wParam,
+    _In_ LPARAM lParam
+)
+{
+    //LogPrintf(_T("SendMessageA %08X, %08X, %08X, %08X\n"), hWnd, Msg, wParam, lParam);
+    switch (Msg)
+    {
+        case LVM_SETITEMTEXTA:
+        {
+            LPLVITEM plvItem = (LPLVITEM)lParam;
+            if (plvItem->pszText != NULL)
+            {
+                LogPrintf(_T("SetItemTextA (%u, %u): \"%S\"\n"), wParam, plvItem->iSubItem, plvItem->pszText);
+            }
+            break;
+        }
+    }
+    BOOL bResult = SendMessageA(hWnd, Msg, wParam, lParam);
     return bResult;
 }
 
