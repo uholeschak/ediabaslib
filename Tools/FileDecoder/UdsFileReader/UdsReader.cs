@@ -133,10 +133,21 @@ namespace UdsFileReader
                     DataTypeId = dataTypeId;
                     DataType dataType = (DataType)(dataTypeId & DataTypeMaskEnum);
 
-                    UInt32? dataTypeExtra = null;
-                    if (UInt32.TryParse(lineArray[offset], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 dataTypeE))
+                    Int64? dataTypeExtra = null;
+                    try
                     {
-                        dataTypeExtra = dataTypeE;
+                        if (lineArray[offset].Length > 0)
+                        {
+                            object valueObjExtra = new Int64Converter().ConvertFromInvariantString(lineArray[offset]);
+                            if (valueObjExtra != null)
+                            {
+                                dataTypeExtra = (Int64)valueObjExtra;
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
                     }
 
                     if (UInt32.TryParse(lineArray[offset + 6], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 byteOffset))
@@ -208,7 +219,7 @@ namespace UdsFileReader
                             }
 
                             NameValueList = new List<ValueName>();
-                            IEnumerable<string[]> bitList = udsReader._ttdopLookup[dataTypeExtra.Value];
+                            IEnumerable<string[]> bitList = udsReader._ttdopLookup[(uint)dataTypeExtra.Value];
                             foreach (string[] ttdopArray in bitList)
                             {
                                 if (ttdopArray.Length >= 5)
@@ -227,7 +238,7 @@ namespace UdsFileReader
                             }
 
                             MuxEntryList = new List<MuxEntry>();
-                            IEnumerable<string[]> muxList = udsReader._muxLookup[dataTypeExtra.Value];
+                            IEnumerable<string[]> muxList = udsReader._muxLookup[(uint)dataTypeExtra.Value];
                             foreach (string[] muxArray in muxList)
                             {
                                 if (muxArray.Length >= 17)
@@ -244,7 +255,7 @@ namespace UdsFileReader
             public string[] LineArray { get; }
             public UInt32 DataTypeId { get; }
             public string[] NameDetailArray { get; }
-            public UInt32? NumberOfDigits { get; }
+            public Int64? NumberOfDigits { get; }
             public double? ScaleOffset { get; }
             public double? ScaleMult { get; }
             public double? ScaleDiv { get; }
