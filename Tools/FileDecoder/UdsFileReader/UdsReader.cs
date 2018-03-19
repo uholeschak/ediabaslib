@@ -462,6 +462,27 @@ namespace UdsFileReader
             return null;
         }
 
+        private static string Type19Convert(UdsReader udsReader, byte[] data)
+        {
+            if (data.Length < 1)
+            {
+                return string.Empty;
+            }
+
+            byte value = data[0];
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 8; i++)
+            {
+                if ((value & (1 << i)) != 0)
+                {
+                    sb.Append($"B{(i >> 2) + 1}D{(i & 0x3) + 1} ");
+                }
+            }
+
+            return sb.ToString();
+        }
+
         private static string Type28Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 1)
@@ -506,16 +527,21 @@ namespace UdsFileReader
         {
             new FixedEncodingEntry(new UInt32[]{4, 17, 44, 46, 47, 91}, (UInt32)DataType.Float, 1, 1, 0, 100.0 / 255), // Unit %
             new FixedEncodingEntry(new UInt32[]{5, 15, 70}, (UInt32)DataType.Float, 3, 0, -40, 1.0), // Unit °C
-            new FixedEncodingEntry(new UInt32[]{6, 7, 8, 9}, (UInt32)DataType.Float, 1, 0, -128, 100 / 128), // Unit %
+            new FixedEncodingEntry(new UInt32[]{6, 7, 8, 9, 45}, (UInt32)DataType.Float, 1, 1, -128, 100 / 128), // Unit %
+            new FixedEncodingEntry(new UInt32[]{11, 51}, (UInt32)DataType.Float, 103, 0), // Unit kPa abs
             new FixedEncodingEntry(new UInt32[]{12}, (UInt32)DataType.Float, 21, 0, 0, 0.25), // Unit /min
-            new FixedEncodingEntry(new UInt32[]{13}, (UInt32)DataType.Float, 109, 0), // Unit km/h
+            new FixedEncodingEntry(new UInt32[]{13, 33, 49}, (UInt32)DataType.Float, 109, 0), // Unit km/h
+            new FixedEncodingEntry(new UInt32[]{14}, (UInt32)DataType.Float, 1, 1, -128, 1 / 2.0), // Unit %
             new FixedEncodingEntry(new UInt32[]{16}, (UInt32)DataType.Float, 26, 2, 0, 0.01), // Unit g/s
+            new FixedEncodingEntry(new UInt32[]{19}, Type19Convert),
             new FixedEncodingEntry(new UInt32[]{28}, Type28Convert),
             new FixedEncodingEntry(new UInt32[]{31}, (UInt32)DataType.Float, 8, 0), // Unit s
+            new FixedEncodingEntry(new UInt32[]{35}, (UInt32)DataType.Float, 103, 0, 0, 10.0), // Unit kPa rel
             new FixedEncodingEntry(new UInt32[]{36, 37, 38, 39, 40, 41, 42, 43}, Type37_43Convert),
-            new FixedEncodingEntry(new UInt32[]{51}, (UInt32)DataType.Float, 103, 0), // Unit kPa abs
+            new FixedEncodingEntry(new UInt32[]{48}, (UInt32)DataType.Float, null, 0),
             new FixedEncodingEntry(new UInt32[]{66}, (UInt32)DataType.Float, 9, 3, 0, 0.001), // Unit V
             new FixedEncodingEntry(new UInt32[]{69, 71, 72, 73, 74, 75, 76}, (UInt32)DataType.Float, 1, 0, 0, 100 / 255), // Unit %
+            new FixedEncodingEntry(new UInt32[]{83}, (UInt32)DataType.Float, 103, 0, 0, 5.0), // Unit kPa abs
         };
 
         public bool Init(string dirName)
