@@ -37,6 +37,7 @@ namespace UdsFileReader
             String = 8,
             IntHex = 9,
             IntUnscaled = 10,
+            Invalid = 0x3F,
         }
 
         public const int DataTypeMaskSwapped = 0x40;
@@ -525,6 +526,7 @@ namespace UdsFileReader
 
         private static readonly FixedEncodingEntry[] FixedEncodingArray = new FixedEncodingEntry[]
         {
+            new FixedEncodingEntry(new UInt32[]{1, 65, 79 }, (UInt32)DataType.Invalid), // not existing
             new FixedEncodingEntry(new UInt32[]{4, 17, 44, 46, 47, 91}, (UInt32)DataType.Float, 1, 1, 0, 100.0 / 255), // Unit %
             new FixedEncodingEntry(new UInt32[]{5, 15, 70}, (UInt32)DataType.Float, 3, 0, -40, 1.0), // Unit °C
             new FixedEncodingEntry(new UInt32[]{6, 7, 8, 9, 45}, (UInt32)DataType.Float, 1, 1, -128, 100 / 128), // Unit %
