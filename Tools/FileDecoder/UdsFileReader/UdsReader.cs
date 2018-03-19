@@ -255,6 +255,26 @@ namespace UdsFileReader
                 }
             }
 
+            public DataTypeEntry(UdsReader udsReader, UInt32 dataTypeId, UInt32? unitKey, Int64? numberOfDigits, double? scaleOffset, double? scaleMult)
+            {
+                DataTypeId = dataTypeId;
+                NumberOfDigits = numberOfDigits;
+                ScaleOffset = scaleOffset;
+                ScaleMult = scaleMult;
+                if (unitKey != null)
+                {
+                    if (!udsReader._unitMap.TryGetValue(unitKey.Value, out string[] unitArray))
+                    {
+                        throw new Exception("No unit text found");
+                    }
+                    if (unitArray.Length < 1)
+                    {
+                        throw new Exception("No unit array too short");
+                    }
+                    UnitText = unitArray[0];
+                }
+            }
+
             public string[] LineArray { get; }
             public UInt32 DataTypeId { get; }
             public string[] NameDetailArray { get; }
