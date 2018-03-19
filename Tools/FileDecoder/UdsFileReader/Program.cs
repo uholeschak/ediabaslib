@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace UdsFileReader
 {
     static class Program
     {
+        static Regex invalidFileRegex = new Regex("^(R.|ReDir|TTDOP|MUX|TTText.*|Unit.*)$", RegexOptions.IgnoreCase);
+
         static int Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
@@ -44,6 +47,13 @@ namespace UdsFileReader
                         string fileExt = Path.GetExtension(file);
                         if (string.Compare(fileExt, UdsReader.FileExtension, StringComparison.OrdinalIgnoreCase) != 0)
                         {
+                            continue;
+                        }
+
+                        string baseFile = Path.GetFileNameWithoutExtension(file);
+                        if (baseFile == null || invalidFileRegex.IsMatch(baseFile))
+                        {
+                            Console.WriteLine("Ignoring: {0}", file);
                             continue;
                         }
                         Console.WriteLine("Parsing: {0}", file);
