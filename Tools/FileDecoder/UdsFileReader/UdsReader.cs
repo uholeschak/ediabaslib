@@ -123,6 +123,8 @@ namespace UdsFileReader
 
         public class FixedEncodingEntry
         {
+            public delegate string ConvertDelegate(UdsReader udsReader, byte[] data);
+
             public FixedEncodingEntry(UInt32[] keyArray, UInt32 dataTypeId, UInt32? unitKey = null, Int64? numberOfDigits = null, double? scaleOffset = null, double? scaleMult = null)
             {
                 KeyArray = keyArray;
@@ -133,12 +135,19 @@ namespace UdsFileReader
                 ScaleMult = scaleMult;
             }
 
+            public FixedEncodingEntry(UInt32[] keyArray, ConvertDelegate convertFunc)
+            {
+                KeyArray = keyArray;
+                ConvertFunc = convertFunc;
+            }
+
             public UInt32[] KeyArray { get; }
             public UInt32 DataTypeId { get; }
             public UInt32? UnitKey { get; }
             public Int64? NumberOfDigits { get; }
             public double? ScaleOffset { get; }
             public double? ScaleMult { get; }
+            public ConvertDelegate ConvertFunc { get; }
         }
 
         public class DataTypeEntry
@@ -403,6 +412,77 @@ namespace UdsFileReader
         private ILookup<UInt32, string[]> _ttdopLookup;
         private ILookup<UInt32, string[]> _muxLookup;
 
+        private static readonly Dictionary<byte, string> Type28Dict = new Dictionary<byte, string>()
+        {
+            {1, "OBD II (CARB)"},
+            {2, "OBD (EPA)"},
+            {3, "OBD + OBD II"},
+            {4, "OBD I"},
+            {5, ""},
+            {6, "Euro-OBD"},
+            {7, "EOBD + OBD II"},
+            {8, "OBD + EOBD"},
+            {9, "OBD+OBD II+EOBD"},
+            {10, "JOBD"},
+            {11, "JOBD + OBD II"},
+            {12, "JOBD + EOBD"},
+            {13, "JOBD+EOBD+OBD II"},
+            {14, "HD Euro IV/B1"},
+            {15, "HD Euro V/B2"},
+            {16, "HD EURO EEC/C"},
+            {17, "Eng. Manuf. Diag"},
+            {18, "Eng. Manuf. Diag +"},
+            {19, "HD OBD-C"},
+            {20, "HD OBD"},
+            {21, "WWH OBD"},
+            {23, "HD EOBD-I"},
+            {24, "HD EOBD-I M"},
+            {25, "HD EOBD-II"},
+            {26, "HD EOBD-II N"},
+            {28, "OBDBr-1"},
+            {29, "OBDBr-2"},
+            {30, "KOBD"},
+            {31, "IOBD I"},
+            {32, "IOBD II"},
+            {33, "HD EOBD-VI"},
+            {34, "OBD+OBDII+HDOBD"},
+            {35, "OBDBr-3"},
+        };
+
+        private static string GetTextMapText(UdsReader udsReader, UInt32 key)
+        {
+            if (udsReader._textMap.TryGetValue(key, out string[] nameArray1)) // Keine
+            {
+                if (nameArray1.Length > 0)
+                {
+                    return nameArray1[0];
+                }
+            }
+
+            return null;
+        }
+
+        private static string Type28Convert(UdsReader udsReader, byte[] data)
+        {
+            if (data.Length < 1)
+            {
+                return string.Empty;
+            }
+
+            byte value = data[0];
+            if (Type28Dict.TryGetValue(value, out string text))
+            {
+                return text;
+            }
+
+            if (value == 5)
+            {
+                return GetTextMapText(udsReader, 098661) ?? string.Empty; // Keine
+            }
+
+            return GetTextMapText(udsReader, 099014) ?? string.Empty; // Unbekannt
+        }
+
         private static readonly FixedEncodingEntry[] FixedEncodingArray = new FixedEncodingEntry[]
         {
             new FixedEncodingEntry(new UInt32[]{4, 17, 44, 46, 47, 91}, (UInt32)DataType.Float, 1, 1, 0, 100.0 / 255), // Unit %
@@ -410,8 +490,10 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{6, 7, 8, 9}, (UInt32)DataType.Float, 1, 0, -128, 100 / 128), // Unit %
             new FixedEncodingEntry(new UInt32[]{12}, (UInt32)DataType.Float, 21, 0, 0, 0.25), // Unit /min
             new FixedEncodingEntry(new UInt32[]{13}, (UInt32)DataType.Float, 109, 0), // Unit km/h
+            new FixedEncodingEntry(new UInt32[]{28}, Type28Convert),
             new FixedEncodingEntry(new UInt32[]{31}, (UInt32)DataType.Float, 8, 0), // Unit s
             new FixedEncodingEntry(new UInt32[]{66}, (UInt32)DataType.Float, 9, 3, 0, 0.001), // Unit V
+            new FixedEncodingEntry(new UInt32[]{69, 71, 72, 73, 74, 75, 76}, (UInt32)DataType.Float, 1, 0, 0, 100 / 255), // Unit %
         };
 
         public bool Init(string dirName)

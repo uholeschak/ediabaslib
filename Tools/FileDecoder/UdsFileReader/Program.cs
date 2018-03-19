@@ -180,7 +180,7 @@ namespace UdsFileReader
 
             if (dataTypeEntry.FixedEncoding != null)
             {
-                sb.Append(" (Fixed)");
+                sb.Append(dataTypeEntry.FixedEncoding.ConvertFunc != null ? " (Fixed, Function)" : " (Fixed)");
             }
 
             if (dataTypeEntry.NumberOfDigits.HasValue)
