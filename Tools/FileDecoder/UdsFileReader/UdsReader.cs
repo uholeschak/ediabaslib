@@ -121,6 +121,24 @@ namespace UdsFileReader
             public DataTypeEntry DataTypeEntry { get; }
         }
 
+        public class FixedEncodingEntry
+        {
+            public FixedEncodingEntry(UInt32 dataTypeId, UInt32? unitKey = null, Int64? numberOfDigits = null, double? scaleOffset = null, double? scaleMult = null)
+            {
+                DataTypeId = dataTypeId;
+                UnitKey = unitKey;
+                NumberOfDigits = numberOfDigits;
+                ScaleOffset = scaleOffset;
+                ScaleMult = scaleMult;
+            }
+
+            public UInt32 DataTypeId { get; }
+            public UInt32? UnitKey { get; }
+            public Int64? NumberOfDigits { get; }
+            public double? ScaleOffset { get; }
+            public double? ScaleMult { get; }
+        }
+
         public class DataTypeEntry
         {
             public DataTypeEntry(UdsReader udsReader, string[] lineArray, int offset)
@@ -233,6 +251,37 @@ namespace UdsFileReader
                             break;
                         }
 
+                        case DataType.FixedEncoding:
+                        {
+                            if (!UInt32.TryParse(lineArray[offset + 2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 fixedDataTypeId))
+                            {
+                                throw new Exception("No fixed data type id");
+                            }
+
+                            if (!_fixedEncodingMap.TryGetValue(fixedDataTypeId, out FixedEncodingEntry fixedEncodingEntry))
+                            {
+                                break;
+                            }
+                            DataTypeId = fixedEncodingEntry.DataTypeId;
+                            NumberOfDigits = fixedEncodingEntry.NumberOfDigits;
+                            ScaleOffset = fixedEncodingEntry.ScaleOffset;
+                            ScaleMult = fixedEncodingEntry.ScaleMult;
+
+                            if (fixedEncodingEntry.UnitKey != null)
+                            {
+                                if (!udsReader._unitMap.TryGetValue(fixedEncodingEntry.UnitKey.Value, out string[] unitArray))
+                                {
+                                    throw new Exception("No unit text found");
+                                }
+                                if (unitArray.Length < 1)
+                                {
+                                    throw new Exception("No unit array too short");
+                                }
+                                UnitText = unitArray[0];
+                            }
+                            break;
+                        }
+
                         case DataType.MuxTable:
                         {
                             if (dataTypeExtra == null)
@@ -252,26 +301,6 @@ namespace UdsFileReader
                             break;
                         }
                     }
-                }
-            }
-
-            public DataTypeEntry(UdsReader udsReader, UInt32 dataTypeId, UInt32? unitKey, Int64? numberOfDigits, double? scaleOffset, double? scaleMult)
-            {
-                DataTypeId = dataTypeId;
-                NumberOfDigits = numberOfDigits;
-                ScaleOffset = scaleOffset;
-                ScaleMult = scaleMult;
-                if (unitKey != null)
-                {
-                    if (!udsReader._unitMap.TryGetValue(unitKey.Value, out string[] unitArray))
-                    {
-                        throw new Exception("No unit text found");
-                    }
-                    if (unitArray.Length < 1)
-                    {
-                        throw new Exception("No unit array too short");
-                    }
-                    UnitText = unitArray[0];
                 }
             }
 
@@ -367,6 +396,16 @@ namespace UdsFileReader
         private Dictionary<UInt32, string[]> _unitMap;
         private ILookup<UInt32, string[]> _ttdopLookup;
         private ILookup<UInt32, string[]> _muxLookup;
+
+        private static Dictionary<UInt32, FixedEncodingEntry> _fixedEncodingMap = new Dictionary<uint, FixedEncodingEntry>
+        {
+            { 5, new FixedEncodingEntry((UInt32)DataType.Float, 3, 0, -40, 1.0)}, // Unit °C
+            { 12, new FixedEncodingEntry((UInt32)DataType.Float, 21, 0, 0, 0.25)}, // Unit /min
+            { 13, new FixedEncodingEntry((UInt32)DataType.Float, 109, 0)}, // Unit km/h
+            { 17, new FixedEncodingEntry((UInt32)DataType.Float, 1, 1, 0, 100.0 / 255)}, // Unit %
+            { 31, new FixedEncodingEntry((UInt32)DataType.Float, 8, 0)}, // Unit s
+            { 66, new FixedEncodingEntry((UInt32)DataType.Float, 9, 3, 0, 0.001)}, // Unit V
+        };
 
         public bool Init(string dirName)
         {
