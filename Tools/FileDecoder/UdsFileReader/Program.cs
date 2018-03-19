@@ -178,6 +178,11 @@ namespace UdsFileReader
             sb.Clear();
             sb.Append(string.Format(CultureInfo.InvariantCulture, "Data type: {0}", UdsReader.DataTypeEntry.DataTypeIdToString(dataTypeEntry.DataTypeId)));
 
+            if (dataTypeEntry.FixedEncoding != null)
+            {
+                sb.Append(" (Fixed)");
+            }
+
             if (dataTypeEntry.NumberOfDigits.HasValue)
             {
                 sb.Append(string.Format(CultureInfo.InvariantCulture, "; Digits: {0}", dataTypeEntry.NumberOfDigits.Value));

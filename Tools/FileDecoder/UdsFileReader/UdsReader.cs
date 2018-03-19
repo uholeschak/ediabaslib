@@ -123,8 +123,9 @@ namespace UdsFileReader
 
         public class FixedEncodingEntry
         {
-            public FixedEncodingEntry(UInt32 dataTypeId, UInt32? unitKey = null, Int64? numberOfDigits = null, double? scaleOffset = null, double? scaleMult = null)
+            public FixedEncodingEntry(UInt32[] keyArray, UInt32 dataTypeId, UInt32? unitKey = null, Int64? numberOfDigits = null, double? scaleOffset = null, double? scaleMult = null)
             {
+                KeyArray = keyArray;
                 DataTypeId = dataTypeId;
                 UnitKey = unitKey;
                 NumberOfDigits = numberOfDigits;
@@ -132,6 +133,7 @@ namespace UdsFileReader
                 ScaleMult = scaleMult;
             }
 
+            public UInt32[] KeyArray { get; }
             public UInt32 DataTypeId { get; }
             public UInt32? UnitKey { get; }
             public Int64? NumberOfDigits { get; }
@@ -258,10 +260,12 @@ namespace UdsFileReader
                                 throw new Exception("No fixed data type id");
                             }
 
-                            if (!_fixedEncodingMap.TryGetValue(fixedDataTypeId, out FixedEncodingEntry fixedEncodingEntry))
+                            if (!udsReader._fixedEncodingMap.TryGetValue(fixedDataTypeId, out FixedEncodingEntry fixedEncodingEntry))
                             {
                                 break;
                             }
+
+                            FixedEncoding = fixedEncodingEntry;
                             DataTypeId = fixedEncodingEntry.DataTypeId;
                             NumberOfDigits = fixedEncodingEntry.NumberOfDigits;
                             ScaleOffset = fixedEncodingEntry.ScaleOffset;
@@ -317,6 +321,7 @@ namespace UdsFileReader
             public UInt32? BitLength { get; }
             public List<ValueName> NameValueList { get; }
             public List<MuxEntry> MuxEntryList { get; }
+            public FixedEncodingEntry FixedEncoding { get; }
 
             public static string DataTypeIdToString(UInt32 dataTypeId)
             {
@@ -394,17 +399,19 @@ namespace UdsFileReader
         private Dictionary<string, string> _redirMap;
         private Dictionary<UInt32, string[]> _textMap;
         private Dictionary<UInt32, string[]> _unitMap;
+        private Dictionary<UInt32, FixedEncodingEntry> _fixedEncodingMap;
         private ILookup<UInt32, string[]> _ttdopLookup;
         private ILookup<UInt32, string[]> _muxLookup;
 
-        private static Dictionary<UInt32, FixedEncodingEntry> _fixedEncodingMap = new Dictionary<uint, FixedEncodingEntry>
+        private static readonly FixedEncodingEntry[] FixedEncodingArray = new FixedEncodingEntry[]
         {
-            { 5, new FixedEncodingEntry((UInt32)DataType.Float, 3, 0, -40, 1.0)}, // Unit °C
-            { 12, new FixedEncodingEntry((UInt32)DataType.Float, 21, 0, 0, 0.25)}, // Unit /min
-            { 13, new FixedEncodingEntry((UInt32)DataType.Float, 109, 0)}, // Unit km/h
-            { 17, new FixedEncodingEntry((UInt32)DataType.Float, 1, 1, 0, 100.0 / 255)}, // Unit %
-            { 31, new FixedEncodingEntry((UInt32)DataType.Float, 8, 0)}, // Unit s
-            { 66, new FixedEncodingEntry((UInt32)DataType.Float, 9, 3, 0, 0.001)}, // Unit V
+            new FixedEncodingEntry(new UInt32[]{4, 17, 44, 46, 47, 91}, (UInt32)DataType.Float, 1, 1, 0, 100.0 / 255), // Unit %
+            new FixedEncodingEntry(new UInt32[]{5}, (UInt32)DataType.Float, 3, 0, -40, 1.0), // Unit °C
+            new FixedEncodingEntry(new UInt32[]{6, 7, 8, 9}, (UInt32)DataType.Float, 1, 0, -128, 100 / 128), // Unit %
+            new FixedEncodingEntry(new UInt32[]{12}, (UInt32)DataType.Float, 21, 0, 0, 0.25), // Unit /min
+            new FixedEncodingEntry(new UInt32[]{13}, (UInt32)DataType.Float, 109, 0), // Unit km/h
+            new FixedEncodingEntry(new UInt32[]{31}, (UInt32)DataType.Float, 8, 0), // Unit s
+            new FixedEncodingEntry(new UInt32[]{66}, (UInt32)DataType.Float, 9, 3, 0, 0.001), // Unit V
         };
 
         public bool Init(string dirName)
@@ -437,6 +444,15 @@ namespace UdsFileReader
                 if (_unitMap == null)
                 {
                     return false;
+                }
+
+                _fixedEncodingMap = new Dictionary<uint, FixedEncodingEntry>();
+                foreach (FixedEncodingEntry fixedEncoding in FixedEncodingArray)
+                {
+                    foreach (UInt32 key in fixedEncoding.KeyArray)
+                    {
+                        _fixedEncodingMap[key] = fixedEncoding;
+                    }
                 }
 
                 List<string[]> ttdopList = ExtractFileSegment(new List<string> { Path.Combine(dirName, "TTDOP" + FileExtension) }, "DOP");
