@@ -419,7 +419,6 @@ namespace UdsFileReader
             {2, "OBD (EPA)"},
             {3, "OBD + OBD II"},
             {4, "OBD I"},
-            {5, ""},
             {6, "Euro-OBD"},
             {7, "EOBD + OBD II"},
             {8, "OBD + EOBD"},
