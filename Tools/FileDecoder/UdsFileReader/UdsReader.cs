@@ -477,10 +477,29 @@ namespace UdsFileReader
 
             if (value == 5)
             {
-                return GetTextMapText(udsReader, 098661) ?? string.Empty; // Keine
+                return GetTextMapText(udsReader, 98661) ?? string.Empty; // Keine
             }
 
-            return GetTextMapText(udsReader, 099014) ?? string.Empty; // Unbekannt
+            return GetTextMapText(udsReader, 99014) ?? string.Empty; // Unbekannt
+        }
+
+        private static string Type37_43Convert(UdsReader udsReader, byte[] data)
+        {
+            if (data.Length < 4)
+            {
+                return string.Empty;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            double value1 = (data[1] | (data[0] << 8)) / 32783.0;
+            sb.Append($"{value1:0:000} ");
+            sb.Append(GetTextMapText(udsReader, 113) ?? string.Empty);  // Lambda
+
+            double value2 = ((data[3] | (data[2] << 8)) - 32768.0) / 256.0;
+            sb.Append($"{value2:0:000} ");
+            sb.Append(GetTextMapText(udsReader, 123) ?? string.Empty);  // mA
+
+            return sb.ToString();
         }
 
         private static readonly FixedEncodingEntry[] FixedEncodingArray = new FixedEncodingEntry[]
@@ -493,7 +512,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{16}, (UInt32)DataType.Float, 26, 2, 0, 0.01), // Unit g/s
             new FixedEncodingEntry(new UInt32[]{28}, Type28Convert),
             new FixedEncodingEntry(new UInt32[]{31}, (UInt32)DataType.Float, 8, 0), // Unit s
-            new FixedEncodingEntry(new UInt32[]{36, 37, 38, 39, 40, 41, 42, 43}, (UInt32)DataType.Float, 113, 3, 0, 1.0 / 32783), // Unit Lambda
+            new FixedEncodingEntry(new UInt32[]{36, 37, 38, 39, 40, 41, 42, 43}, Type37_43Convert),
             new FixedEncodingEntry(new UInt32[]{51}, (UInt32)DataType.Float, 103, 0), // Unit kPa abs
             new FixedEncodingEntry(new UInt32[]{66}, (UInt32)DataType.Float, 9, 3, 0, 0.001), // Unit V
             new FixedEncodingEntry(new UInt32[]{69, 71, 72, 73, 74, 75, 76}, (UInt32)DataType.Float, 1, 0, 0, 100 / 255), // Unit %
