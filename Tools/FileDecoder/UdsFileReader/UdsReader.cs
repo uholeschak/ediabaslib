@@ -27,13 +27,16 @@ namespace UdsFileReader
         public enum DataType
         {
             Float = 0,
+            Binary1 = 1,
             Integer = 2,
             ValueName = 3,
-            FloatExtTable = 4,
-            Binary = 5,
+            FixedEncoding = 4,
+            Binary2 = 5,
             MuxTable = 6,
             HexBytes = 7,
             String = 8,
+            IntHex = 9,
+            IntUnscaled = 10,
         }
 
         public const int DataTypeMaskSwapped = 0x40;
