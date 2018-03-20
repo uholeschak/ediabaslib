@@ -527,6 +527,29 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type2Convert(UdsReader udsReader, byte[] data)
+        {
+            if (data.Length < 2)
+            {
+                return string.Empty;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            byte value0 = data[0];
+            if ((value0 & 0xC0) != 0)
+            {
+                sb.Append(((value0 & 0xC0) == 0x40) ? "C" : "U");
+            }
+            else
+            {
+                sb.Append("P");
+            }
+
+            sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:X02}{1:X02}", value0 & 0x3F, data[1]));
+
+            return sb.ToString();
+        }
+
         private static string Type28Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 1)
@@ -567,8 +590,9 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static readonly FixedEncodingEntry[] FixedEncodingArray = new FixedEncodingEntry[]
+        private static readonly FixedEncodingEntry[] FixedEncodingArray =
         {
+            new FixedEncodingEntry(new UInt32[]{2}, Type2Convert),
             new FixedEncodingEntry(new UInt32[]{1, 65, 79 }, (UInt32)DataType.Invalid), // not existing
             new FixedEncodingEntry(new UInt32[]{4, 17, 44, 46, 47, 91}, (UInt32)DataType.Float, 1, 1, 0, 100.0 / 255), // Unit %
             new FixedEncodingEntry(new UInt32[]{5, 15, 70}, (UInt32)DataType.Float, 3, 0, -40, 1.0), // Unit °C
@@ -585,7 +609,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{36, 37, 38, 39, 40, 41, 42, 43}, Type37_43Convert),
             new FixedEncodingEntry(new UInt32[]{48}, (UInt32)DataType.Float, null, 0),
             new FixedEncodingEntry(new UInt32[]{66}, (UInt32)DataType.Float, 9, 3, 0, 0.001), // Unit V
-            new FixedEncodingEntry(new UInt32[]{69, 71, 72, 73, 74, 75, 76}, (UInt32)DataType.Float, 1, 0, 0, 100 / 255), // Unit %
+            new FixedEncodingEntry(new UInt32[]{67, 69, 71, 72, 73, 74, 75, 76}, (UInt32)DataType.Float, 1, 0, 0, 100 / 255), // Unit %
             new FixedEncodingEntry(new UInt32[]{83}, (UInt32)DataType.Float, 103, 0, 0, 5.0), // Unit kPa abs
         };
 
