@@ -196,9 +196,21 @@ namespace UdsFileReader
             sb.Clear();
             sb.Append(string.Format(CultureInfo.InvariantCulture, "Data type: {0}", UdsReader.DataTypeEntry.DataTypeIdToString(dataTypeEntry.DataTypeId)));
 
-            if (dataTypeEntry.FixedEncoding != null)
+            if (dataTypeEntry.FixedEncodingId != null)
             {
-                sb.Append(dataTypeEntry.FixedEncoding.ConvertFunc != null ? " (Fixed, Function)" : " (Fixed)");
+                sb.Append($" (Fixed {dataTypeEntry.FixedEncodingId}");
+                if (dataTypeEntry.FixedEncoding == null)
+                {
+                    sb.Append(" ,Unknown ID");
+                }
+                else
+                {
+                    if (dataTypeEntry.FixedEncoding.ConvertFunc != null)
+                    {
+                        sb.Append(" ,Function");
+                    }
+                }
+                sb.Append(")");
             }
 
             if (dataTypeEntry.NumberOfDigits.HasValue)

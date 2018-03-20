@@ -307,12 +307,13 @@ namespace UdsFileReader
 
                         case DataType.FixedEncoding:
                         {
-                            if (!UInt32.TryParse(lineArray[offset + 2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 fixedDataTypeId))
+                            if (!UInt32.TryParse(lineArray[offset + 2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 fixedEncodingId))
                             {
                                 throw new Exception("No fixed data type id");
                             }
+                            FixedEncodingId = fixedEncodingId;
 
-                            if (!udsReader._fixedEncodingMap.TryGetValue(fixedDataTypeId, out FixedEncodingEntry fixedEncodingEntry))
+                            if (!udsReader._fixedEncodingMap.TryGetValue(fixedEncodingId, out FixedEncodingEntry fixedEncodingEntry))
                             {
                                 break;
                             }
@@ -364,6 +365,7 @@ namespace UdsFileReader
             public UInt32 DataTypeId { get; }
             public string[] NameDetailArray { get; }
             public Int64? NumberOfDigits { get; }
+            public UInt32? FixedEncodingId { get; }
             public double? ScaleOffset { get; }
             public double? ScaleMult { get; }
             public double? ScaleDiv { get; }
