@@ -52,16 +52,58 @@ namespace UdsFileReader
 
                 if (lineArray.Length >= 5)
                 {
-                    object valueObjMin = new Int32Converter().ConvertFromInvariantString(lineArray[1]);
-                    if (valueObjMin != null)
+                    try
                     {
-                        MinValue = (Int32)valueObjMin;
+                        string textMin = lineArray[1];
+                        if (textMin.Length >= 2 && textMin.Length % 2 == 0 && !textMin.StartsWith("0x") && textMin.StartsWith("0"))
+                        {
+                            if (Int64.TryParse(textMin, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out Int64 minValue))
+                            {
+                                MinValue = minValue;
+                            }
+                        }
+                        else
+                        {
+                            if (textMin.Length < 34)
+                            {
+                                object valueObjMin = new Int64Converter().ConvertFromInvariantString(textMin);
+                                if (valueObjMin != null)
+                                {
+                                    MinValue = (Int64)valueObjMin;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
                     }
 
-                    object valueObjMax = new Int32Converter().ConvertFromInvariantString(lineArray[2]);
-                    if (valueObjMax != null)
+                    try
                     {
-                        MaxValue = (Int32)valueObjMax;
+                        string textMax = lineArray[2];
+                        if (textMax.Length >= 2 && textMax.Length % 2 == 0 && !textMax.StartsWith("0x") && textMax.StartsWith("0"))
+                        {
+                            if (Int64.TryParse(textMax, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out Int64 maxValue))
+                            {
+                                MaxValue = maxValue;
+                            }
+                        }
+                        else
+                        {
+                            if (textMax.Length < 34)
+                            {
+                                object valueObjMax = new Int64Converter().ConvertFromInvariantString(textMax);
+                                if (valueObjMax != null)
+                                {
+                                    MaxValue = (Int64) valueObjMax;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
                     }
 
                     if (UInt32.TryParse(lineArray[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 valueNameKey))
@@ -76,8 +118,8 @@ namespace UdsFileReader
 
             public string[] LineArray { get; }
             public string[] NameArray { get; }
-            public Int32? MinValue { get; }
-            public Int32? MaxValue { get; }
+            public Int64? MinValue { get; }
+            public Int64? MaxValue { get; }
         }
 
         public class MuxEntry
@@ -207,6 +249,19 @@ namespace UdsFileReader
                         NameDetailArray = nameDetailArray;
                     }
 
+                    if (UInt32.TryParse(lineArray[offset + 5], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 unitKey) && unitKey > 0)
+                    {
+                        if (!udsReader._unitMap.TryGetValue(unitKey, out string[] unitArray))
+                        {
+                            throw new Exception("No unit text found");
+                        }
+                        if (unitArray.Length < 1)
+                        {
+                            throw new Exception("No unit array too short");
+                        }
+                        UnitText = unitArray[0];
+                    }
+
                     switch (dataType)
                     {
                         case DataType.Float:
@@ -227,19 +282,6 @@ namespace UdsFileReader
                                 ScaleDiv = scaleDiv;
                             }
 
-                            if (UInt32.TryParse(lineArray[offset + 5], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 unitKey))
-                            {
-                                if (!udsReader._unitMap.TryGetValue(unitKey, out string[] unitArray))
-                                {
-                                    throw new Exception("No unit text found");
-                                }
-                                if (unitArray.Length < 1)
-                                {
-                                    throw new Exception("No unit array too short");
-                                }
-                                UnitText = unitArray[0];
-                            }
-
                             NumberOfDigits = dataTypeExtra;
                             break;
                         }
@@ -248,7 +290,7 @@ namespace UdsFileReader
                         {
                             if (dataTypeExtra == null)
                             {
-                                throw new Exception("No key for name value");
+                                break;
                             }
 
                             NameValueList = new List<ValueName>();
@@ -299,8 +341,8 @@ namespace UdsFileReader
                         case DataType.MuxTable:
                         {
                             if (dataTypeExtra == null)
-                            {
-                                throw new Exception("No key for mux table");
+                            {   // possible for lines with data length 0
+                                break;
                             }
 
                             MuxEntryList = new List<MuxEntry>();

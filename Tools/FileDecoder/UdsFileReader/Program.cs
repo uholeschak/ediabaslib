@@ -158,8 +158,16 @@ namespace UdsFileReader
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                try
+                {
+                    outStream.WriteLine("Exception: {0}", ex.Message);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
                 return false;
             }
         }
