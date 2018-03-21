@@ -105,7 +105,7 @@ for /l %%x in (0, 1, 32) do (
  -f \"ERGS=10.4T\" -f \"ERGS=-10.4T\" -f \"ERGS=10.8T\" -f \"ERGS=0.8T\" -f \"ERGS= 0 . 8 T\" -f \"ERGS=T\" -f \"Ergs=T\" -f \"ERGS= \" -f \"ERGS=  \" !"^"=!^
  -j \"TEST_MULTIARG#-30;40;-12345;12345;-123456;123456;-13.45;Ulrich Test;Erwin\""
 
-"%OPEN_COVER%" "-output:results20.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! --alltypes -s \"!ECU_TEST_PATH!\cmd_test1.prg\" !"^"=!^
+"%OPEN_COVER%" "-output:results22.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! --alltypes -s \"!ECU_TEST_PATH!\cmd_test1.prg\" !"^"=!^
  -f \"ERGB=W\" -f \"ERGB=6.4W\" -f \"ERGB=-6.4W\" -f \"ERGB=-.4W\" -f \"ERGB=8.W\" -f \"ERGB=-.W\" !"^"=!^
  -f \"ERGC=I\" -f \"ERGC=6.4I\" -f \"ERGC=-6.4I\" !"^"=!^
  -f \"ERGW=D\" -f \"ERGW=6.4D\" -f \"ERGW=-6.4D\" -f \"ERGI=6.4L\" -f \"ERGI=-6.4L\" !"^"=!^
@@ -113,6 +113,11 @@ for /l %%x in (0, 1, 32) do (
  -f \"ERGR=R\" -f \"ERGR=10.5R\" -f \"ERGR=-10.5R\" -f \"ERGR=10.5ER\" -f \"ERGR=-10.5eR\" -f \"ERGR=-.5R\" -f \"ERGR=-8.R\" -f \"ERGR=8.ER\" -f \"ERGR=0.3R\" -f \"ERGR=3.0R\" !"^"=!^
  -f \"ERGS=10.4T\" -f \"ERGS=-10.4T\" -f \"ERGS=10.8T\" -f \"ERGS=0.8T\" -f \"ERGS= 0 . 8 T\" -f \"ERGS=T\" -f \"Ergs=T\" -f \"ERGS= \" -f \"ERGS=  \" !"^"=!^
  -j \"TEST_MULTIARG#3;-4;10000;-10000;100000;-100000;12.3456789123;Ulrich;Erwin\""
+
+"%OPEN_COVER%" "-output:results23.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! --alltypes -s \"!ECU_TEST_PATH!\cmd_test1.prg\" !"^"=!^
+ -f \"ERGS=W\" -f \"ERGS=I\" -f \"ERGS=D\" -f \"ERGS=R\" -f \"ERGS=T\" !"^"=!^
+ -j \"TEST_MULTIARG#-15;-15;-15;-15;-15;-15;-15;-15;-15\" -j \"TEST_MULTIARG#14;14;14;14;14;14;14;14;14\" -j \"TEST_MULTIARG#0xABCD;0xABCD;0xABCD;0xABCD;0xABCD;0xABCD;0xABCD;0xABCD;0xABCD\" !"^"=!^
+ -j \"TEST_MULTIARG#14.7;14.7;14.7;14.7;14.7;14.7;14.7;14.7;14.7\" -j \"TEST_MULTIARG#-13.6;-13.6;-13.6;-13.6;-13.6;-13.6;-13.6;-13.6;-13.6\""
 
 "%OPEN_COVER%" "-output:results30.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"MISSING\""
 "%OPEN_COVER%" "-output:results31.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_BIP1\""
