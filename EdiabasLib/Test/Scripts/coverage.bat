@@ -99,7 +99,7 @@ for /l %%x in (0, 1, 32) do (
 "%OPEN_COVER%" "-output:results21.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" !"^"=!^
  -f \"ERGB=W\" -f \"ERGB=6.4W\" -f \"ERGB=-6.4W\" -f \"ERGB=-.4W\" -f \"ERGB=8.W\" -f \"ERGB=-.W\" !"^"=!^
  -f \"ERGC=I\" -f \"ERGC=6.4I\" -f \"ERGC=-6.4I\" !"^"=!^
- -f \"ERGW=D\" -f \"ERGW=6.4D\" -f \"ERGW=-6.4D\" -f \"ERGW=06X\" -f \"ERGW=-6X\" -f \"ERGW=6X\" -f \"ERGW=3.2X\" -f \"ERGW=\" -f \"ERGW=T\" -f \"ERGI=6.4L\" -f \"ERGI=-6.4L\" !"^"=!^
+ -f \"ERGW=D\" -f \"ERGW=6.4D\" -f \"ERGW=-6.4D\" -f \"ERGW=X\" -f \"ERGW=-X\" -f \"ERGW=0X\" -f \"ERGW=06X\" -f \"ERGW=-6X\" -f \"ERGW=6X\" -f \"ERGW=3.2X\" -f \"ERGW=\" -f \"ERGW=T\" -f \"ERGI=6.4L\" -f \"ERGI=-6.4L\" !"^"=!^
  -f \"ERGD=D\" -f \"ERGD=6.4D\" -f \"ERGD=-6.4D\" -f \"ERGD=6.4B\" -f \"ERGD=6.4C\" -f \"ERGL=6.4L\" -f \"ERGL=-6.4L\" -f \"ERGL=-6.4B\" -f \"ERGL=-6.4C\" -f \"ERGL= - 6 . 4 C \" !"^"=!^
  -f \"ERGR=R\" -f \"ERGR=10.5R\" -f \"ERGR=-10.5R\" -f \"ERGR=10.5ER\" -f \"ERGR=-10.5eR\" -f \"ERGR=-.5R\" -f \"ERGR=-8.R\" -f \"ERGR=8.ER\" -f \"ERGR=0.3R\" -f \"ERGR=3.0R\" -f \"ERGR=08X\" -f \"ERGR=\" -f \"ERGR=T\" !"^"=!^
  -f \"ERGS=10.4T\" -f \"ERGS=-10.4T\" -f \"ERGS=10.8T\" -f \"ERGS=0.8T\" -f \"ERGS= 0 . 8 T\" -f \"ERGS=T\" -f \"Ergs=T\" -f \"ERGS= \" -f \"ERGS=  \" !"^"=!^
