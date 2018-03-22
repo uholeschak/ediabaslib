@@ -5900,12 +5900,14 @@ namespace EdiabasLib
                         if (Char.IsDigit(firstChar) || (firstChar >= 'a' && firstChar <= 'f'))
                         {
                             value = Convert.ToInt64(numberLocal.Substring(2, numberLocal.Length - 2), 16);
+                            valid = true;
                         }
                     }
                 }
                 else if (numberLower.StartsWith("0y", StringComparison.Ordinal))
                 {   // binary
                     value = Convert.ToInt64(numberLocal.Substring(2, numberLocal.Length - 2), 2);
+                    valid = true;
                 }
                 else
                 {   // dec
@@ -5921,10 +5923,10 @@ namespace EdiabasLib
                                 numberConv = numberConv.Substring(0, index);
                             }
                             value = Convert.ToInt64(numberConv, 10);
+                            valid = true;
                         }
                     }
                 }
-                valid = true;
             }
             catch (Exception)
             {

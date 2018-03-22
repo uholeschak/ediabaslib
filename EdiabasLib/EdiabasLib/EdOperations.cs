@@ -1740,12 +1740,8 @@ namespace EdiabasLib
                 string argString = argStrings[(int)pos];
                 if (!string.IsNullOrEmpty(argString))
                 {
-                    bool valid;
-                    result = (EdValueType) StringToValue(argString, out valid);
-                    if (valid)
-                    {
-                        ediabas._flags.Zero = false;
-                    }
+                    result = (EdValueType) StringToValue(argString);
+                    ediabas._flags.Zero = false;
                 }
             }
             arg0.SetRawData(result);
