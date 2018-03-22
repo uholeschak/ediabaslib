@@ -799,13 +799,7 @@ namespace Ediabas
             }
             else if ((resultData.OpData is string))
             {
-                buffer = EdiabasNet.StringToFloat((string) resultData.OpData, out bool valid);
-                if (!valid)
-                {
-                    setLocalError(EDIABAS_API_0005);
-                    logFormat(ApiLogLevel.Normal, "={0}", false);
-                    return false;
-                }
+                buffer = EdiabasNet.StringToFloat((string) resultData.OpData);
             }
             else
             {
@@ -1425,13 +1419,7 @@ namespace Ediabas
             }
             else if ((resultData.OpData is string))
             {
-                buffer = EdiabasNet.StringToValue((string)resultData.OpData, out bool valid);
-                if (!valid)
-                {
-                    setLocalError(EDIABAS_API_0005);
-                    logFormat(ApiLogLevel.Normal, "={0}", false);
-                    return false;
-                }
+                buffer = EdiabasNet.StringToValue((string)resultData.OpData);
             }
             else
             {
