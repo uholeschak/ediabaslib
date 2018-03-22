@@ -3495,7 +3495,7 @@ namespace EdiabasLib
                 case 'C':
                     if (valueString != null)
                     {
-                        return null;
+                        valueInt64 = StringToValue(valueString);
                     }
                     if (valueIsDouble)
                     {
@@ -3510,7 +3510,7 @@ namespace EdiabasLib
                 case 'B':
                     if (valueString != null)
                     {
-                        return null;
+                        valueInt64 = StringToValue(valueString);
                     }
                     if (valueIsDouble)
                     {
@@ -3525,7 +3525,7 @@ namespace EdiabasLib
                 case 'I':
                     if (valueString != null)
                     {
-                        return null;
+                        valueInt64 = StringToValue(valueString);
                     }
                     if (valueIsDouble)
                     {
@@ -3540,7 +3540,7 @@ namespace EdiabasLib
                 case 'W':
                     if (valueString != null)
                     {
-                        return null;
+                        valueInt64 = StringToValue(valueString);
                     }
                     if (valueIsDouble)
                     {
@@ -3555,7 +3555,7 @@ namespace EdiabasLib
                 case 'L':
                     if (valueString != null)
                     {
-                        return null;
+                        valueInt64 = StringToValue(valueString);
                     }
                     if (valueIsDouble)
                     {
@@ -3570,7 +3570,7 @@ namespace EdiabasLib
                 case 'D':
                     if (valueString != null)
                     {
-                        return null;
+                        valueInt64 = StringToValue(valueString);
                     }
                     if (valueIsDouble)
                     {
@@ -3585,7 +3585,8 @@ namespace EdiabasLib
                 case 'R':
                     if (valueString != null)
                     {
-                        return null;
+                        valueDouble = StringToFloat(valueString);
+                        valueIsDouble = true;
                     }
                     convDouble = valueIsDouble ? valueDouble : valueInt64;
                     convIsDouble = true;
@@ -3612,7 +3613,7 @@ namespace EdiabasLib
                 case 'X':
                     if (valueString != null)
                     {
-                        return null;
+                        valueInt64 = StringToValue(valueString);
                     }
                     hexValue = true;
                     if (valueIsDouble)
