@@ -3490,13 +3490,15 @@ namespace EdiabasLib
             Double convDouble = 0;
             string convString = null;
 
+            if (valueString != null)
+            {
+                valueDouble = StringToFloat(valueString);
+                valueIsDouble = true;
+            }
+
             switch (convertType)
             {
                 case 'C':
-                    if (valueString != null)
-                    {
-                        valueInt64 = StringToValue(valueString);
-                    }
                     if (valueIsDouble)
                     {
                         convInt64 = (SByte)valueDouble;
@@ -3508,10 +3510,6 @@ namespace EdiabasLib
                     break;
 
                 case 'B':
-                    if (valueString != null)
-                    {
-                        valueInt64 = StringToValue(valueString);
-                    }
                     if (valueIsDouble)
                     {
                         convInt64 = (Byte)valueDouble;
@@ -3523,10 +3521,6 @@ namespace EdiabasLib
                     break;
 
                 case 'I':
-                    if (valueString != null)
-                    {
-                        valueInt64 = StringToValue(valueString);
-                    }
                     if (valueIsDouble)
                     {
                         convInt64 = (Int16)valueDouble;
@@ -3538,10 +3532,6 @@ namespace EdiabasLib
                     break;
 
                 case 'W':
-                    if (valueString != null)
-                    {
-                        valueInt64 = StringToValue(valueString);
-                    }
                     if (valueIsDouble)
                     {
                         convInt64 = (UInt16)valueDouble;
@@ -3553,10 +3543,6 @@ namespace EdiabasLib
                     break;
 
                 case 'L':
-                    if (valueString != null)
-                    {
-                        valueInt64 = StringToValue(valueString);
-                    }
                     if (valueIsDouble)
                     {
                         convInt64 = (Int32)valueDouble;
@@ -3568,10 +3554,6 @@ namespace EdiabasLib
                     break;
 
                 case 'D':
-                    if (valueString != null)
-                    {
-                        valueInt64 = StringToValue(valueString);
-                    }
                     if (valueIsDouble)
                     {
                         convInt64 = (UInt32)valueDouble;
@@ -3583,11 +3565,6 @@ namespace EdiabasLib
                     break;
 
                 case 'R':
-                    if (valueString != null)
-                    {
-                        valueDouble = StringToFloat(valueString);
-                        valueIsDouble = true;
-                    }
                     convDouble = valueIsDouble ? valueDouble : valueInt64;
                     convIsDouble = true;
                     break;
@@ -3611,10 +3588,6 @@ namespace EdiabasLib
                     break;
 
                 case 'X':
-                    if (valueString != null)
-                    {
-                        valueInt64 = StringToValue(valueString);
-                    }
                     hexValue = true;
                     if (valueIsDouble)
                     {
