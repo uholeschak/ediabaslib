@@ -3677,7 +3677,7 @@ namespace EdiabasLib
                         string formatString = sb.ToString();
                         return string.Format(Culture, formatString, convInt64);
                     }
-
+                    // hex value
                     {
                         StringBuilder sb = new StringBuilder();
 
@@ -3693,6 +3693,10 @@ namespace EdiabasLib
                             {
                                 sb.Append(string.Format(Culture, "0{0}", length1));
                             }
+                        }
+                        else
+                        {
+                            sb.Append(":X");
                         }
                         sb.Insert(0, "{0");
                         sb.Append("}");
