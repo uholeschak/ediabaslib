@@ -1787,12 +1787,8 @@ namespace EdiabasLib
                 string argString = argStrings[(int)pos];
                 if (!string.IsNullOrEmpty(argString))
                 {
-                    bool valid;
-                    result = StringToFloat(argString, out valid);
-                    if (valid)
-                    {
-                        ediabas._flags.Zero = false;
-                    }
+                    result = StringToFloat(argString);
+                    ediabas._flags.Zero = false;
                 }
             }
             arg0.SetRawData(result);
