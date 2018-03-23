@@ -538,24 +538,25 @@ namespace EdiabasCall
                                     {
                                         if (string.Compare(words[0], resultName, StringComparison.OrdinalIgnoreCase) == 0)
                                         {
+                                            string formatString = words[1];
                                             if (_apiHandle == 0)
                                             {
-                                                if (API.apiResultText(out string resultString, resultName, set, words[1]))
+                                                if (API.apiResultText(out string resultString, resultName, set, formatString))
                                                 {
-                                                    resultText += " F: '" + resultString + "'";
+                                                    resultText += string.Format(" F({0}): '{1}'", formatString, resultString);
                                                 }
                                             }
                                             else
                                             {
                                                 byte[] dataBuffer = new byte[API.APIMAXTEXT];
-                                                if (__api32ResultText(_apiHandle, dataBuffer, resultName, set, words[1]))
+                                                if (__api32ResultText(_apiHandle, dataBuffer, resultName, set, formatString))
                                                 {
                                                     int length = Array.IndexOf(dataBuffer, (byte)0);
                                                     if (length < 0)
                                                     {
                                                         length = API.APIMAXTEXT;
                                                     }
-                                                    resultText += " F: '" + Encoding.GetString(dataBuffer, 0, length) + "'";
+                                                    resultText += string.Format(" F({0}): '{1}'", formatString, Encoding.GetString(dataBuffer, 0, length));
                                                 }
                                             }
                                         }

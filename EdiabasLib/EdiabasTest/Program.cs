@@ -424,10 +424,11 @@ namespace EdiabasTest
                             {
                                 if (string.Compare(words[0], resultData.Name, StringComparison.OrdinalIgnoreCase) == 0)
                                 {
-                                    string resultString = EdiabasNet.FormatResult(resultData, words[1]);
+                                    string formatString = words[1];
+                                    string resultString = EdiabasNet.FormatResult(resultData, formatString);
                                     if (resultString != null)
                                     {
-                                        resultText += " F: '" + resultString + "'";
+                                        resultText += string.Format(" F({0}): '{1}'", formatString, resultString);
                                     }
                                     else
                                     {
