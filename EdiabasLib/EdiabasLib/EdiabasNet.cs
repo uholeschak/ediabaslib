@@ -3489,16 +3489,22 @@ namespace EdiabasLib
             Int64 convInt64 = 0;
             Double convDouble = 0;
             string convString = null;
+            bool validInt = true;
 
             if (valueString != null && convertType != 'T')
             {
                 valueDouble = StringToFloat(valueString);
                 valueIsDouble = true;
+                StringToValue(valueString, out validInt);
             }
 
             switch (convertType)
             {
                 case 'C':
+                    if (!validInt)
+                    {
+                        return null;
+                    }
                     if (valueIsDouble)
                     {
                         convInt64 = (SByte)valueDouble;
@@ -3510,6 +3516,10 @@ namespace EdiabasLib
                     break;
 
                 case 'B':
+                    if (!validInt)
+                    {
+                        return null;
+                    }
                     if (valueIsDouble)
                     {
                         convInt64 = (Byte)valueDouble;
@@ -3521,6 +3531,10 @@ namespace EdiabasLib
                     break;
 
                 case 'I':
+                    if (!validInt)
+                    {
+                        return null;
+                    }
                     if (valueIsDouble)
                     {
                         convInt64 = (Int16)valueDouble;
@@ -3532,6 +3546,10 @@ namespace EdiabasLib
                     break;
 
                 case 'W':
+                    if (!validInt)
+                    {
+                        return null;
+                    }
                     if (valueIsDouble)
                     {
                         convInt64 = (UInt16)valueDouble;
@@ -3543,6 +3561,10 @@ namespace EdiabasLib
                     break;
 
                 case 'L':
+                    if (!validInt)
+                    {
+                        return null;
+                    }
                     if (valueIsDouble)
                     {
                         convInt64 = (Int32)valueDouble;
@@ -3554,6 +3576,10 @@ namespace EdiabasLib
                     break;
 
                 case 'D':
+                    if (!validInt)
+                    {
+                        return null;
+                    }
                     if (valueIsDouble)
                     {
                         convInt64 = (UInt32)valueDouble;
@@ -3588,6 +3614,10 @@ namespace EdiabasLib
                     break;
 
                 case 'X':
+                    if (!validInt)
+                    {
+                        return null;
+                    }
                     hexValue = true;
                     if (valueIsDouble)
                     {
