@@ -117,7 +117,7 @@ for /l %%x in (0, 1, 32) do (
 "%OPEN_COVER%" "-output:results23.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! --alltypes -s \"!ECU_TEST_PATH!\cmd_test1.prg\" !"^"=!^
  -f \"ERGS=C\" -f \"ERGS=B\" -f \"ERGS=I\" -f \"ERGS=W\" -f \"ERGS=L\" -f \"ERGS=D\" -f \"ERGS=R\" -f \"ERGS=T\" -f \"ERGS=X\" !"^"=!^
  -j \"TEST_MULTIARG#-15;-15;-15;-15;-15;-15;-15;-15;-15\" -j \"TEST_MULTIARG#14;14;14;14;14;14;14;14;14\" -j \"TEST_MULTIARG#0xABCD;0xABCD;0xABCD;0xABCD;0xABCD;0xABCD;0xABCD;0xABCD;0xABCD\" !"^"=!^
- -j \"TEST_MULTIARG#14.7;14.7;14.7;14.7;14.7;14.7;14.7;14.7;14.7\" -j \"TEST_MULTIARG#-13.6;-13.6;-13.6;-13.6;-13.6;-13.6;-13.6;-13.6;-13.6\""
+ -j \"TEST_MULTIARG#14.7;14.7;14.7;14.7;14.7;14.7;14.7;14.7;14.7\" -j \"TEST_MULTIARG#-13.6;-13.6;-13.6;-13.6;-13.6;-13.6;-13.6;-13.6;-13.6\" -j \"TEST_MULTIARG#xyz;xyz;xyz;xyz;xyz;xyz;xyz;xyz;xyz\""
 
 "%OPEN_COVER%" "-output:results30.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"MISSING\""
 "%OPEN_COVER%" "-output:results31.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_BIP1\""
