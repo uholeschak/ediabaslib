@@ -329,20 +329,12 @@ namespace EdiabasCall
             {
                 for (ushort set = 0; set <= resultSets; set++)
                 {
-                    if (API.apiErrorCode() != API.EDIABAS_ERR_NONE)
-                    {
-                        break;
-                    }
                     _outputWriter.WriteLine(string.Format(Culture, "DATASET: {0}", set));
                     if (API.apiResultNumber(out ushort results, set))
                     {
                         Dictionary<string, string> resultDict = new Dictionary<string,string>();
                         for (ushort result = 1; result <= results; result++)
                         {
-                            if (API.apiErrorCode() != API.EDIABAS_ERR_NONE)
-                            {
-                                break;
-                            }
                             if (API.apiResultName(out string resultName, result, set))
                             {
                                 string resultText = string.Empty;

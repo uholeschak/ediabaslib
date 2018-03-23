@@ -430,10 +430,6 @@ namespace EdiabasTest
                                     {
                                         resultText += string.Format(" F({0}): '{1}'", formatString, resultString);
                                     }
-                                    else
-                                    {
-                                        ErrorRaisedFunc(EdiabasNet.ErrorCodes.EDIABAS_API_0005);
-                                    }
                                 }
                             }
                         }
