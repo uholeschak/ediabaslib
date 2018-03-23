@@ -3490,7 +3490,7 @@ namespace EdiabasLib
             Double convDouble = 0;
             string convString = null;
 
-            if (valueString != null)
+            if (valueString != null && convertType != 'T')
             {
                 valueDouble = StringToFloat(valueString);
                 valueIsDouble = true;
