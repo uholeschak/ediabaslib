@@ -624,7 +624,7 @@ namespace UdsFileReader
             {
                 sb.Append(GetTextMapText(udsReader, 101785) ?? string.Empty);  // Katalysator-Temperatur: Bank 1
             }
-            sb.Append($" S{(index & 0x01) + 1} ");
+            sb.Append($" S{(index & 0x01) + 1}");
 
             return sb.ToString();
         }
