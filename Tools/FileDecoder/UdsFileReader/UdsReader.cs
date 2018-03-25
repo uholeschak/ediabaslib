@@ -584,7 +584,7 @@ namespace UdsFileReader
             return GetTextMapText(udsReader, 99014) ?? string.Empty; // Unbekannt
         }
 
-        private static string Type37_43Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type37_43a52_59Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 4)
             {
@@ -629,10 +629,33 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type85_88Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 2)
+            {
+                return string.Empty;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            int index = typeId - 85;
+            sb.Append($"B{(index >> 1) + 1}{(index >> 1) + 3}: ");
+            double value1 = (data[0] - 128.0) * 100.0 / 128.0;
+            sb.Append($"{value1:0:0}");
+            sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
+            if (data[1] != 0)
+            {
+                double value2 = (data[1] - 128.0) * 100.0 / 128.0;
+                sb.Append($"{value2:0:0}");
+                sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
+            }
+
+            return sb.ToString();
+        }
+
         private static readonly FixedEncodingEntry[] FixedEncodingArray =
         {
             new FixedEncodingEntry(new UInt32[]{2}, Type2Convert),
-            new FixedEncodingEntry(new UInt32[]{1, 65, 79 }, (UInt32)DataType.Invalid), // not existing
+            new FixedEncodingEntry(new UInt32[]{1, 65, 79, 109 }, (UInt32)DataType.Invalid), // not existing
             new FixedEncodingEntry(new UInt32[]{4, 17, 44, 46, 47, 91}, (UInt32)DataType.Float, 1, 1, 0, 100.0 / 255), // Unit %
             new FixedEncodingEntry(new UInt32[]{5, 15, 70}, (UInt32)DataType.Float, 3, 0, -40, 1.0), // Unit °C
             new FixedEncodingEntry(new UInt32[]{6, 7, 8, 9, 45}, (UInt32)DataType.Float, 1, 1, -128, 100 / 128), // Unit %
@@ -645,12 +668,13 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{28}, Type28Convert),
             new FixedEncodingEntry(new UInt32[]{31}, (UInt32)DataType.Float, 8, 0), // Unit s
             new FixedEncodingEntry(new UInt32[]{35}, (UInt32)DataType.Float, 103, 0, 0, 10.0), // Unit kPa rel
-            new FixedEncodingEntry(new UInt32[]{36, 37, 38, 39, 40, 41, 42, 43}, Type37_43Convert),
+            new FixedEncodingEntry(new UInt32[]{36, 37, 38, 39, 40, 41, 42, 43, 52, 53, 54, 55, 56, 57, 58, 59}, Type37_43a52_59Convert),
             new FixedEncodingEntry(new UInt32[]{48}, (UInt32)DataType.Float, null, 0),
             new FixedEncodingEntry(new UInt32[]{60, 61, 62, 63}, Type60_63Convert),
             new FixedEncodingEntry(new UInt32[]{66}, (UInt32)DataType.Float, 9, 3, 0, 0.001), // Unit V
             new FixedEncodingEntry(new UInt32[]{67, 69, 71, 72, 73, 74, 75, 76}, (UInt32)DataType.Float, 1, 0, 0, 100 / 255), // Unit %
             new FixedEncodingEntry(new UInt32[]{83}, (UInt32)DataType.Float, 103, 0, 0, 5.0), // Unit kPa abs
+            new FixedEncodingEntry(new UInt32[]{85, 86, 87, 88}, Type85_88Convert),
         };
 
         public bool Init(string dirName)
