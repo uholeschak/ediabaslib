@@ -43,7 +43,7 @@ namespace BmwDeepObd
                 {
                     Android.App.NotificationChannel notificationChannel = new Android.App.NotificationChannel(
                         ServiceNotificationChannelId,
-                        Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Default);
+                        Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Low);
                     _activityCommon.NotificationManager.CreateNotificationChannel(notificationChannel);
                 }
             }
