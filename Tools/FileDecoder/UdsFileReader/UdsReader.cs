@@ -618,6 +618,65 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type81Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 1)
+            {
+                return string.Empty;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            UInt32 textKey;
+            byte value = data[0];
+            if (value > 8)
+            {
+                value -= 8;
+                sb.Append("Bifuel: ");
+            }
+
+            switch (value)
+            {
+                case 1:
+                    textKey = 018273;   // Benzin
+                    break;
+
+                case 2:
+                    textKey = 152301;   // Methanol
+                    break;
+
+                case 3:
+                    textKey = 016086;   // Ethanol
+                    break;
+
+                case 4:
+                    textKey = 000586;   // Diesel
+                    break;
+
+                case 5:
+                    textKey = 090173;   // LPG
+                    break;
+
+                case 6:
+                    textKey = 090209;   // CNG
+                    break;
+
+                case 7:
+                    textKey = 167184;   // Propan
+                    break;
+
+                case 8:
+                    textKey = 022443;   // Batterie / elektrisch
+                    break;
+
+                default:
+                    return string.Empty;
+            }
+
+            sb.Append(GetTextMapText(udsReader, textKey) ?? string.Empty);
+
+            return sb.ToString();
+        }
+
         private static string Type85_88Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 2)
@@ -662,6 +721,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{66}, (UInt32)DataType.Float, 9, 3, 0, 0.001), // Unit V
             new FixedEncodingEntry(new UInt32[]{68}, (UInt32)DataType.Float, 113, 3, 0, 1.0 / 32783.0), // Unit Lambda
             new FixedEncodingEntry(new UInt32[]{67, 69, 71, 72, 73, 74, 75, 76}, (UInt32)DataType.Float, 1, 0, 0, 100 / 255), // Unit %
+            new FixedEncodingEntry(new UInt32[]{81}, Type81Convert),
             new FixedEncodingEntry(new UInt32[]{83}, (UInt32)DataType.Float, 103, 0, 0, 5.0), // Unit kPa abs
             new FixedEncodingEntry(new UInt32[]{85, 86, 87, 88}, Type85_88Convert),
         };
