@@ -652,6 +652,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{14}, (UInt32)DataType.Float, 1, 1, -128, 1 / 2.0), // Unit %
             new FixedEncodingEntry(new UInt32[]{16}, (UInt32)DataType.Float, 26, 2, 0, 0.01), // Unit g/s
             new FixedEncodingEntry(new UInt32[]{19}, Type19Convert),
+            new FixedEncodingEntry(new UInt32[]{20}, (UInt32)DataType.Float, 9, 3, 0, 0.005), // Unit V
             new FixedEncodingEntry(new UInt32[]{28}, Type28Convert),
             new FixedEncodingEntry(new UInt32[]{31}, (UInt32)DataType.Float, 8, 0), // Unit s
             new FixedEncodingEntry(new UInt32[]{35}, (UInt32)DataType.Float, 103, 0, 0, 10.0), // Unit kPa rel
@@ -659,6 +660,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{48}, (UInt32)DataType.Float, null, 0),
             new FixedEncodingEntry(new UInt32[]{60, 61, 62, 63}, Type60_63Convert),
             new FixedEncodingEntry(new UInt32[]{66}, (UInt32)DataType.Float, 9, 3, 0, 0.001), // Unit V
+            new FixedEncodingEntry(new UInt32[]{68}, (UInt32)DataType.Float, 113, 3, 0, 1.0 / 32783.0), // Unit Lambda
             new FixedEncodingEntry(new UInt32[]{67, 69, 71, 72, 73, 74, 75, 76}, (UInt32)DataType.Float, 1, 0, 0, 100 / 255), // Unit %
             new FixedEncodingEntry(new UInt32[]{83}, (UInt32)DataType.Float, 103, 0, 0, 5.0), // Unit kPa abs
             new FixedEncodingEntry(new UInt32[]{85, 86, 87, 88}, Type85_88Convert),
