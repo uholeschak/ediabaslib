@@ -638,7 +638,7 @@ namespace UdsFileReader
 
             StringBuilder sb = new StringBuilder();
             int index = typeId - 85;
-            sb.Append($"B{(index >> 1) + 1}{(index >> 1) + 3}: ");
+            sb.Append($"B{(index >> 1) + 1}/{(index >> 1) + 3}: ");
             double value1 = (data[0] - 128.0) * 100.0 / 128.0;
             sb.Append($"{value1:0:0}");
             sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
