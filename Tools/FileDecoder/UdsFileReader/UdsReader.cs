@@ -611,20 +611,9 @@ namespace UdsFileReader
             }
 
             StringBuilder sb = new StringBuilder();
-            int index = typeId - 60;
             double value = (data[1] | (data[0] << 8)) * 0.1 - 40.0;
             sb.Append($"{value:0:000} ");
             sb.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
-            sb.Append(" ");
-            if ((index >> 1) != 0)
-            {
-                sb.Append(GetTextMapText(udsReader, 100075) ?? string.Empty);  // Katalysator-Temperatur: Bank 2
-            }
-            else
-            {
-                sb.Append(GetTextMapText(udsReader, 101785) ?? string.Empty);  // Katalysator-Temperatur: Bank 1
-            }
-            sb.Append($" S{(index & 0x01) + 1}");
 
             return sb.ToString();
         }
@@ -637,8 +626,6 @@ namespace UdsFileReader
             }
 
             StringBuilder sb = new StringBuilder();
-            int index = typeId - 85;
-            sb.Append($"B{(index >> 1) + 1}/{(index >> 1) + 3}: ");
             double value1 = (data[0] - 128.0) * 100.0 / 128.0;
             sb.Append($"{value1:0:0}");
             sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
