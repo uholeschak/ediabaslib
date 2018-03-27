@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -9,7 +10,8 @@ namespace UdsFileReader
 {
     static class Program
     {
-        static Regex invalidFileRegex = new Regex("^(R.|ReDir|TTDOP|MUX|TTText.*|Unit.*)$", RegexOptions.IgnoreCase);
+        static readonly Regex InvalidFileRegex = new Regex("^(R.|ReDir|TTDOP|MUX|TTText.*|Unit.*)$", RegexOptions.IgnoreCase);
+        private static Dictionary<UInt32, UInt32> _unknownIdDict;
 
         static int Main(string[] args)
         {
@@ -38,6 +40,7 @@ namespace UdsFileReader
                     Console.WriteLine("Init failed");
                     return 1;
                 }
+                _unknownIdDict = new Dictionary<UInt32, UInt32>();
 
                 string[] files = Directory.GetFiles(dir, searchPattern, SearchOption.AllDirectories);
                 foreach (string file in files)
@@ -51,7 +54,7 @@ namespace UdsFileReader
                         }
 
                         string baseFile = Path.GetFileNameWithoutExtension(file);
-                        if (baseFile == null || invalidFileRegex.IsMatch(baseFile))
+                        if (baseFile == null || InvalidFileRegex.IsMatch(baseFile))
                         {
                             Console.WriteLine("Ignoring: {0}", file);
                             continue;
@@ -79,6 +82,35 @@ namespace UdsFileReader
                     }
                 }
 
+                if (_unknownIdDict.Count > 0)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    Console.WriteLine();
+                    Console.WriteLine("Unknown IDs:");
+                    foreach (UInt32 key in _unknownIdDict.Keys.OrderBy(x => x))
+                    {
+                        if (sb.Length > 0)
+                        {
+                            sb.Append(", ");
+                        }
+                        sb.Append($"{key}({_unknownIdDict[key]})");
+                    }
+                    sb.Insert(0, "Index: ");
+                    Console.WriteLine(sb.ToString());
+                    Console.WriteLine();
+
+                    sb.Clear();
+                    foreach (UInt32 key in _unknownIdDict.Keys.OrderByDescending(x => _unknownIdDict[x]))
+                    {
+                        if (sb.Length > 0)
+                        {
+                            sb.Append(", ");
+                        }
+                        sb.Append($"{key}({_unknownIdDict[key]})");
+                    }
+                    sb.Insert(0, "Value: ");
+                    Console.WriteLine(sb.ToString());
+                }
                 return 0;
             }
             catch (Exception e)
@@ -202,6 +234,14 @@ namespace UdsFileReader
                 if (dataTypeEntry.FixedEncoding == null)
                 {
                     sb.Append(" ,Unknown ID");
+                    if (_unknownIdDict.TryGetValue(dataTypeEntry.FixedEncodingId.Value, out UInt32 oldValue))
+                    {
+                        _unknownIdDict[dataTypeEntry.FixedEncodingId.Value] = oldValue + 1;
+                    }
+                    else
+                    {
+                        _unknownIdDict[dataTypeEntry.FixedEncodingId.Value] = 1;
+                    }
                 }
                 else
                 {
