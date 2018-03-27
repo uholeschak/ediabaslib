@@ -563,6 +563,59 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type3Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 2; i++)
+            {
+                if (data.Length < i + 1)
+                {
+                    break;
+                }
+                int value = data[i] & 0x1F;
+                if (value == 0)
+                {
+                    break;
+                }
+
+                UInt32 textKey;
+                switch (value)
+                {
+                    case 1:
+                        textKey = 152138;    // Regelkreis offen, Voraussetzungen für geschlossenen Regelkreis nicht erfüllt
+                        break;
+
+                    case 2:
+                        textKey = 152137;    // Regelkreis geschlossen, benutze Lambdasonden
+                        break;
+
+                    case 4:
+                        textKey = 152136;    // Regelkreis offen, wegen Fahrbedingungen
+                        break;
+
+                    case 8:
+                        textKey = 152135;    // Regelkreis offen, wegen Systemfehler erkannt
+                        break;
+
+                    case 16:
+                        textKey = 152134;    // Regelkreis geschlossen, aber Fehler Lambdasonde
+                        break;
+
+                    default:
+                        textKey = 99014;    // Unbekannt
+                        break;
+                }
+
+                if (sb.Length > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append(GetTextMapText(udsReader, textKey) ?? string.Empty);
+            }
+
+            return sb.ToString();
+        }
+
         private static string Type28Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 1)
@@ -701,6 +754,7 @@ namespace UdsFileReader
         private static readonly FixedEncodingEntry[] FixedEncodingArray =
         {
             new FixedEncodingEntry(new UInt32[]{2}, Type2Convert),
+            new FixedEncodingEntry(new UInt32[]{3}, Type3Convert),
             new FixedEncodingEntry(new UInt32[]{1, 65, 79, 80, 109, 136, 139}, (UInt32)DataType.Invalid), // not existing
             new FixedEncodingEntry(new UInt32[]{4, 17, 44, 46, 47, 91}, (UInt32)DataType.Float, 1, 1, 0, 100.0 / 255), // Unit %
             new FixedEncodingEntry(new UInt32[]{5, 15, 70, 92}, (UInt32)DataType.Float, 3, 0, -40, 1.0), // Unit °C
