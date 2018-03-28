@@ -753,19 +753,19 @@ namespace UdsFileReader
 
         private static string Type103Convert(UdsReader udsReader, int typeId, byte[] data)
         {
-            if (data.Length < 3 * 4)
+            if (data.Length < 2 + 1)
             {
                 return string.Empty;
             }
 
-            UInt32 maskData = BitConverter.ToUInt32(data, 0);
+            byte maskData = data[0];
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < 2; i++)
             {
                 if ((maskData & (1 << i)) != 0)
                 {
-                    UInt32 value = BitConverter.ToUInt32(data, (i * 4) + 4);
-                    double displayValue = (value & 0xFF) - 40.0;
+                    byte value = data[i + 1];
+                    double displayValue = value - 40.0;
 
                     if (sb.Length > 0)
                     {
@@ -779,14 +779,62 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type119Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type105Convert(UdsReader udsReader, int typeId, byte[] data)
         {
-            if (data.Length < 5 * 4)
+            if (data.Length < 6 + 1)
             {
                 return string.Empty;
             }
 
-            UInt32 maskData = BitConverter.ToUInt32(data, 0);
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+            int index = 0;
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    byte value = data[index + 1];
+                    double displayValue;
+                    if (j < 2)
+                    {
+                        displayValue = (value - 128.0) * 100.0 / 128.0;
+                    }
+                    else
+                    {
+                        displayValue = value * 100.0 / 255.0;
+                    }
+
+                    if (sb.Length > 0)
+                    {
+                        sb.Append("/");
+                    }
+                    char name = (char)('A' + i);
+                    sb.Append($"EGR {name}: ");
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                    if ((maskData & (1 << index)) != 0)
+                    {
+                        sb.Append($"{displayValue:0.}");
+                    }
+                    else
+                    {
+                        sb.Append("---");
+                    }
+                    sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
+                    index++;
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        private static string Type119Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 4 + 1)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < 2; i++)
             {
@@ -809,14 +857,14 @@ namespace UdsFileReader
 
                 if (b1)
                 {
-                    UInt32 value = BitConverter.ToUInt32(data, (i * 8) + 4);
+                    byte value = data[(i * 2) + 1];
                     double displayValue = value - 40.0;
                     sb.Append($"{displayValue:0.}");
                     sb.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
                 }
                 if (b2)
                 {
-                    UInt32 value = BitConverter.ToUInt32(data, (i * 8) + 4 + 4);
+                    byte value = data[(i * 2) + 2];
                     double displayValue = value - 40.0;
                     if (b1)
                     {
@@ -863,6 +911,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{97, 98}, (UInt32)DataType.Float, 1, 0, -125, 1.0), // Unit %
             new FixedEncodingEntry(new UInt32[]{99}, (UInt32)DataType.Float, 7, 0), // Unit Nm
             new FixedEncodingEntry(new UInt32[]{103}, Type103Convert),
+            new FixedEncodingEntry(new UInt32[]{105}, Type105Convert),
             new FixedEncodingEntry(new UInt32[]{119}, Type119Convert),
         };
 
