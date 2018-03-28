@@ -758,11 +758,11 @@ namespace UdsFileReader
                 return string.Empty;
             }
 
-            UInt32 mask = BitConverter.ToUInt32(data, 0);
+            UInt32 maskData = BitConverter.ToUInt32(data, 0);
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < 2; i++)
             {
-                if ((mask & (1 << i)) != 0)
+                if ((maskData & (1 << i)) != 0)
                 {
                     UInt32 value = BitConverter.ToUInt32(data, (i * 4) + 4);
                     double displayValue = (value & 0xFF) - 40.0;
@@ -772,6 +772,57 @@ namespace UdsFileReader
                         sb.Append(", ");
                     }
                     sb.Append($"ECT {i + 1}: {displayValue:0.}");
+                    sb.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        private static string Type119Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 5 * 4)
+            {
+                return string.Empty;
+            }
+
+            UInt32 maskData = BitConverter.ToUInt32(data, 0);
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 2; i++)
+            {
+                int maskIndex = i * 2;
+                bool b1 = (maskData & (1 << maskIndex)) != 0;
+                bool b2 = (maskData & (1 << (maskIndex + 1))) != 0;
+                int bNum = i + 1;
+                if (b1 & b2)
+                {
+                    sb.Append($"B{bNum}S1/B{bNum}S2: ");
+                }
+                else if (b1)
+                {
+                    sb.Append($"B{bNum}S1: ");
+                }
+                else if (b2)
+                {
+                    sb.Append($"B{bNum}S2: ");
+                }
+
+                if (b1)
+                {
+                    UInt32 value = BitConverter.ToUInt32(data, (i * 8) + 4);
+                    double displayValue = value - 40.0;
+                    sb.Append($"{displayValue:0.}");
+                    sb.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
+                }
+                if (b2)
+                {
+                    UInt32 value = BitConverter.ToUInt32(data, (i * 8) + 4 + 4);
+                    double displayValue = value - 40.0;
+                    if (b1)
+                    {
+                        sb.Append("/");
+                    }
+                    sb.Append($"{displayValue:0.}");
                     sb.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
                 }
             }
@@ -812,6 +863,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{97, 98}, (UInt32)DataType.Float, 1, 0, -125, 1.0), // Unit %
             new FixedEncodingEntry(new UInt32[]{99}, (UInt32)DataType.Float, 7, 0), // Unit Nm
             new FixedEncodingEntry(new UInt32[]{103}, Type103Convert),
+            new FixedEncodingEntry(new UInt32[]{119}, Type119Convert),
         };
 
         public bool Init(string dirName)
