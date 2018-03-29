@@ -827,6 +827,108 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type112Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 8 + 2)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+            int offset = 1;
+            for (int i = 0; i < 2; i++)
+            {
+                int bitStart = i * 3;
+                int infoData = (maskData >> bitStart) & 0x7;
+                bool cmd = (infoData & 0x01) != 0;
+                bool act = (infoData & 0x02) != 0;
+                bool status = (infoData & 0x04) != 0;
+                StringBuilder sbType = new StringBuilder();
+                if (cmd)
+                {
+                    sbType.Append("cmd");
+                }
+                if (act)
+                {
+                    if (sbType.Length > 0)
+                    {
+                        sbType.Append("/");
+                    }
+                    sbType.Append("act");
+                }
+                if (sbType.Length > 0)
+                {
+                    sbType.Append(": ");
+                }
+
+                StringBuilder sbValue = new StringBuilder();
+                for (int j = 0; j < 2; j++)
+                {
+                    if ((infoData & (1 << j)) != 0)
+                    {
+                        double displayValue = (data[offset + 1] | (data[offset] << 8)) / 32.0;
+                        if (sbValue.Length > 0)
+                        {
+                            sbValue.Append("/");
+                        }
+                        sbValue.Append($"{displayValue:0.}");
+                    }
+
+                    offset += 2;
+                }
+                if (sbValue.Length > 0)
+                {
+                    sbValue.Append(GetUnitMapText(udsReader, 103) ?? string.Empty); // kPa
+                }
+
+                StringBuilder sbStat = new StringBuilder();
+                if (status)
+                {
+                    int value = (data[9] >> (i * 2)) & 0x03;
+                    UInt32 textKey;
+                    switch (value)
+                    {
+                        case 1:
+                            textKey = 152138;    // Regelkreis offen
+                            break;
+
+                        case 2:
+                            textKey = 152137;    // Regelkreis geschlossen
+                            break;
+
+                        case 3:
+                            textKey = 101955;    // Fehler vorhanden
+                            break;
+
+                        default:
+                            textKey = 99014;    // Unbekannt
+                            break;
+                    }
+                    sbStat.Append(GetTextMapText(udsReader, textKey) ?? string.Empty);
+                }
+
+                if (sbType.Length > 0 || sbValue.Length > 0 || sbStat.Length > 0)
+                {
+                    if (sb.Length > 0)
+                    {
+                        sb.Append(", ");
+                    }
+                    char name = (char)('A' + i);
+                    sb.Append($"BP_{name} ");
+                    sb.Append(sbType);
+                    sb.Append(sbValue);
+                    if (sbStat.Length > 0)
+                    {
+                        sb.Append(" ");
+                        sb.Append(sbStat);
+                    }
+                }
+            }
+
+            return sb.ToString();
+        }
+
         private static string Type119Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 4 + 1)
@@ -912,6 +1014,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{99}, (UInt32)DataType.Float, 7, 0), // Unit Nm
             new FixedEncodingEntry(new UInt32[]{103}, Type103Convert),
             new FixedEncodingEntry(new UInt32[]{105}, Type105Convert),
+            new FixedEncodingEntry(new UInt32[]{112}, Type112Convert),
             new FixedEncodingEntry(new UInt32[]{119}, Type119Convert),
         };
 
