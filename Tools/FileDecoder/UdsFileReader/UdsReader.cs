@@ -739,12 +739,12 @@ namespace UdsFileReader
 
             StringBuilder sb = new StringBuilder();
             double value1 = (data[0] - 128.0) * 100.0 / 128.0;
-            sb.Append($"{value1:0.0}");
+            sb.Append($"{value1:0.0} ");
             sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
             if (data[1] != 0)
             {
                 double value2 = (data[1] - 128.0) * 100.0 / 128.0;
-                sb.Append($"{value2:0.0}");
+                sb.Append($"{value2:0.0} ");
                 sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
             }
 
@@ -771,7 +771,7 @@ namespace UdsFileReader
                     {
                         sb.Append(", ");
                     }
-                    sb.Append($"ECT {i + 1}: {displayValue:0.}");
+                    sb.Append($"ECT {i + 1}: {displayValue:0.} ");
                     sb.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
                 }
             }
@@ -813,11 +813,11 @@ namespace UdsFileReader
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if ((maskData & (1 << index)) != 0)
                     {
-                        sb.Append($"{displayValue:0.}");
+                        sb.Append($"{displayValue:0.} ");
                     }
                     else
                     {
-                        sb.Append("---");
+                        sb.Append("--- ");
                     }
                     sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
                     index++;
@@ -879,6 +879,7 @@ namespace UdsFileReader
                 }
                 if (sbValue.Length > 0)
                 {
+                    sbValue.Append(" ");
                     sbValue.Append(GetUnitMapText(udsReader, 103) ?? string.Empty); // kPa
                 }
 
@@ -961,7 +962,7 @@ namespace UdsFileReader
                 {
                     byte value = data[(i * 2) + 1];
                     double displayValue = value - 40.0;
-                    sb.Append($"{displayValue:0.}");
+                    sb.Append($"{displayValue:0.} ");
                     sb.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
                 }
                 if (b2)
@@ -972,7 +973,7 @@ namespace UdsFileReader
                     {
                         sb.Append("/");
                     }
-                    sb.Append($"{displayValue:0.}");
+                    sb.Append($"{displayValue:0.} ");
                     sb.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
                 }
             }
