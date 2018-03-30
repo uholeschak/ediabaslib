@@ -704,7 +704,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type77Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type77_78Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 2)
             {
@@ -866,6 +866,54 @@ namespace UdsFileReader
                     sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
                     index++;
                 }
+            }
+
+            return sb.ToString();
+        }
+
+        private static string Type108Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 4 + 1)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+            int index = 0;
+            for (int i = 0; i < 2; i++)
+            {
+                StringBuilder sbVal = new StringBuilder();
+                char name = (char)('A' + i);
+                sbVal.Append($"THR {name} cmd/rel: ");
+
+                for (int j = 0; j < 2; j++)
+                {
+                    byte value = data[index + 1];
+                    double displayValue = value * 100.0 / 255.0;
+
+                    if (j > 0)
+                    {
+                        sbVal.Append("/");
+                    }
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                    if ((maskData & (1 << index)) != 0)
+                    {
+                        sbVal.Append($"{displayValue:0.}");
+                    }
+                    else
+                    {
+                        sbVal.Append("---");
+                    }
+                    index++;
+                }
+                sbVal.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
+
+                if (sb.Length > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append(sbVal);
             }
 
             return sb.ToString();
@@ -1181,7 +1229,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{36, 37, 38, 39, 40, 41, 42, 43, 52, 53, 54, 55, 56, 57, 58, 59}, Type37_43a52_59Convert),
             new FixedEncodingEntry(new UInt32[]{48}, (UInt32)DataType.Float, null, 0),
             new FixedEncodingEntry(new UInt32[]{60, 61, 62, 63}, Type60_63Convert),
-            new FixedEncodingEntry(new UInt32[]{77}, Type77Convert),
+            new FixedEncodingEntry(new UInt32[]{77, 78}, Type77_78Convert),
             new FixedEncodingEntry(new UInt32[]{66}, (UInt32)DataType.Float, 9, 3, 0, 0.001), // Unit V
             new FixedEncodingEntry(new UInt32[]{68}, (UInt32)DataType.Float, 113, 3, 0, 1.0 / 32783.0), // Unit Lambda
             new FixedEncodingEntry(new UInt32[]{67, 69, 71, 72, 73, 74, 75, 76}, (UInt32)DataType.Float, 1, 0, 0, 100 / 255), // Unit %
@@ -1194,6 +1242,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{99}, (UInt32)DataType.Float, 7, 0), // Unit Nm
             new FixedEncodingEntry(new UInt32[]{103}, Type103Convert),
             new FixedEncodingEntry(new UInt32[]{105}, Type105Convert),
+            new FixedEncodingEntry(new UInt32[]{108}, Type108Convert),
             new FixedEncodingEntry(new UInt32[]{112}, Type112Convert),
             new FixedEncodingEntry(new UInt32[]{119}, Type119Convert),
             new FixedEncodingEntry(new UInt32[]{120, 121}, Type120_121Convert),
