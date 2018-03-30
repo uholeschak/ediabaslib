@@ -521,27 +521,6 @@ namespace UdsFileReader
             return null;
         }
 
-        private static string Type19Convert(UdsReader udsReader, int typeId, byte[] data)
-        {
-            if (data.Length < 1)
-            {
-                return string.Empty;
-            }
-
-            byte value = data[0];
-
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < 8; i++)
-            {
-                if ((value & (1 << i)) != 0)
-                {
-                    sb.Append($"B{(i >> 2) + 1}D{(i & 0x3) + 1} ");
-                }
-            }
-
-            return sb.ToString();
-        }
-
         private static string Type2Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 2)
@@ -613,6 +592,58 @@ namespace UdsFileReader
                     sb.Append(", ");
                 }
                 sb.Append(GetTextMapText(udsReader, textKey) ?? string.Empty);
+            }
+
+            return sb.ToString();
+        }
+
+        private static string Type18Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 1)
+            {
+                return string.Empty;
+            }
+
+            int value = data[0] & 0x07;
+            UInt32 textKey;
+            switch (value)
+            {
+                case 1:
+                    textKey = 167178;    // Vor erstem Katalysator
+                    break;
+
+                case 2:
+                    textKey = 152751;    // Nach erstem Katalysator
+                    break;
+
+                case 3:
+                    textKey = 159156;    // Außenluft/AUS
+                    break;
+
+                default:
+                    textKey = 99014;    // Unbekannt
+                    break;
+            }
+
+            return GetTextMapText(udsReader, textKey) ?? string.Empty;
+        }
+
+        private static string Type19Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 1)
+            {
+                return string.Empty;
+            }
+
+            byte value = data[0];
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 8; i++)
+            {
+                if ((value & (1 << i)) != 0)
+                {
+                    sb.Append($"B{(i >> 2) + 1}D{(i & 0x3) + 1} ");
+                }
             }
 
             return sb.ToString();
@@ -1030,6 +1061,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{13, 33, 49}, (UInt32)DataType.Float, 109, 0), // Unit km/h
             new FixedEncodingEntry(new UInt32[]{14}, (UInt32)DataType.Float, 1, 1, -128, 1 / 2.0), // Unit %
             new FixedEncodingEntry(new UInt32[]{16}, (UInt32)DataType.Float, 26, 2, 0, 0.01), // Unit g/s
+            new FixedEncodingEntry(new UInt32[]{18}, Type18Convert),
             new FixedEncodingEntry(new UInt32[]{19}, Type19Convert),
             new FixedEncodingEntry(new UInt32[]{20}, (UInt32)DataType.Float, 9, 3, 0, 0.005), // Unit V
             new FixedEncodingEntry(new UInt32[]{28}, Type28Convert),
