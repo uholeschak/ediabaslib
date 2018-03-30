@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
 
@@ -1223,6 +1224,23 @@ namespace UdsFileReader
             }
         }
 
+        public static string GetMd5Hash(string text)
+        {
+            //Prüfen ob Daten übergeben wurden.
+            if ((text == null) || (text.Length == 0))
+            {
+                return string.Empty;
+            }
+
+            //MD5 Hash aus dem String berechnen. Dazu muss der string in ein Byte[]
+            //zerlegt werden. Danach muss das Resultat wieder zurück in ein string.
+            MD5 md5 = new MD5CryptoServiceProvider();
+            byte[] textToHash = Encoding.Default.GetBytes(text);
+            byte[] result = md5.ComputeHash(textToHash);
+
+            return BitConverter.ToString(result).Replace("-", "");
+        }
+
         public static List<string[]> ExtractFileSegment(List<string> fileList, string segmentName)
         {
             string segmentStart = "[" + segmentName + "]";
@@ -1237,7 +1255,10 @@ namespace UdsFileReader
                     Stream zipStream = null;
                     string fileNameBase = Path.GetFileName(fileName);
                     FileStream fs = File.OpenRead(fileName);
-                    zf = new ZipFile(fs);
+                    zf = new ZipFile(fs)
+                    {
+                        Password = GetMd5Hash(Path.GetFileNameWithoutExtension(fileName).ToUpperInvariant())
+                    };
                     foreach (ZipEntry zipEntry in zf)
                     {
                         if (!zipEntry.IsFile)
@@ -1255,40 +1276,46 @@ namespace UdsFileReader
                     {
                         return null;
                     }
-                    using (StreamReader sr = new StreamReader(zipStream, Encoding))
+                    try
                     {
-                        bool inSegment = false;
-                        for (;;)
+                        using (StreamReader sr = new StreamReader(zipStream, Encoding))
                         {
-                            string line = sr.ReadLine();
-                            if (line == null)
+                            bool inSegment = false;
+                            for (; ; )
                             {
-                                break;
-                            }
-
-                            if (line.StartsWith("["))
-                            {
-                                if (string.Compare(line, segmentStart, StringComparison.OrdinalIgnoreCase) == 0)
+                                string line = sr.ReadLine();
+                                if (line == null)
                                 {
-                                    inSegment = true;
+                                    break;
                                 }
-                                else if (string.Compare(line, segmentEnd, StringComparison.OrdinalIgnoreCase) == 0)
-                                {
-                                    inSegment = false;
-                                }
-                                continue;
-                            }
 
-                            if (!inSegment)
-                            {
-                                continue;
-                            }
-                            string[] lineArray = line.Split(',');
-                            if (lineArray.Length > 0)
-                            {
-                                lineList.Add(lineArray);
+                                if (line.StartsWith("["))
+                                {
+                                    if (string.Compare(line, segmentStart, StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        inSegment = true;
+                                    }
+                                    else if (string.Compare(line, segmentEnd, StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        inSegment = false;
+                                    }
+                                    continue;
+                                }
+
+                                if (!inSegment)
+                                {
+                                    continue;
+                                }
+                                string[] lineArray = line.Split(',');
+                                if (lineArray.Length > 0)
+                                {
+                                    lineList.Add(lineArray);
+                                }
                             }
                         }
+                    }
+                    catch (NotImplementedException)
+                    {   // close of compressed stream throws execption
                     }
                 }
                 catch (Exception)

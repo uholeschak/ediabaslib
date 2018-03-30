@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
@@ -189,7 +190,8 @@ namespace FileDecoder
                 }
                 FileStream fsOut = File.Create(archiveFilenameOut);
                 ZipOutputStream zipStream = new ZipOutputStream(fsOut);
-                zipStream.SetLevel(3);
+                zipStream.SetLevel(9);
+                zipStream.Password = GetMd5Hash(Path.GetFileNameWithoutExtension(archiveFilenameOut).ToUpperInvariant());
 
                 try
                 {
@@ -203,7 +205,8 @@ namespace FileDecoder
                         ZipEntry newEntry = new ZipEntry(entryName)
                         {
                             DateTime = fi.LastWriteTime,
-                            Size = fi.Length
+                            Size = fi.Length,
+                            AESKeySize = 256
                         };
                         zipStream.PutNextEntry(newEntry);
 
@@ -226,6 +229,23 @@ namespace FileDecoder
                 return false;
             }
             return true;
+        }
+
+        public static string GetMd5Hash(string text)
+        {
+            //Prüfen ob Daten übergeben wurden.
+            if ((text == null) || (text.Length == 0))
+            {
+                return string.Empty;
+            }
+
+            //MD5 Hash aus dem String berechnen. Dazu muss der string in ein Byte[]
+            //zerlegt werden. Danach muss das Resultat wieder zurück in ein string.
+            MD5 md5 = new MD5CryptoServiceProvider();
+            byte[] textToHash = Encoding.Default.GetBytes(text);
+            byte[] result = md5.ComputeHash(textToHash);
+
+            return BitConverter.ToString(result).Replace("-", "");
         }
 
         static bool DecryptFile(string inFile, string outFile, string typeCodeString)
