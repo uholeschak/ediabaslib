@@ -795,6 +795,45 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type101Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 2)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            byte valueData = data[1];
+            StringBuilder sb = new StringBuilder();
+
+            if ((maskData & 0x01) != 0)
+            {
+                sb.Append("PTO_STAT: ");
+                sb.Append((valueData & 0x01) != 0 ? "ON" : "OFF");
+            }
+
+            if ((maskData & 0x02) != 0)
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append("N/D_STAT: ");
+                sb.Append((valueData & 0x02) != 0 ? "NEUTR" : "DRIVE");
+            }
+
+            if ((maskData & 0x04) != 0)
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append("MT_GEAR: ");
+                sb.Append((valueData & 0x04) != 0 ? "NEUTR" : "GEAR");
+            }
+            return sb.ToString();
+        }
+
         private static string Type103Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 2 + 1)
@@ -955,6 +994,44 @@ namespace UdsFileReader
                     index++;
                 }
                 sbVal.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
+
+                if (sb.Length > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append(sbVal);
+            }
+
+            return sb.ToString();
+        }
+
+        private static string Type111Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 2 + 1)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 2; i++)
+            {
+                StringBuilder sbVal = new StringBuilder();
+                char name = (char)('A' + i);
+                sbVal.Append($"TC{name}_PRESS: ");
+
+                double displayValue = data[i + 1];
+                
+                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                if ((maskData & (1 << i)) != 0)
+                {
+                    sbVal.Append($"{displayValue:0.} ");
+                }
+                else
+                {
+                    sbVal.Append("--- ");
+                }
+                sbVal.Append(GetUnitMapText(udsReader, 103) ?? string.Empty);  // kpa
 
                 if (sb.Length > 0)
                 {
@@ -1495,10 +1572,12 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{94}, (UInt32)DataType.Float, 110, 2, 0, 1 / 20.0), // Unit l/h
             new FixedEncodingEntry(new UInt32[]{97, 98}, (UInt32)DataType.Float, 1, 0, -125, 1.0), // Unit %
             new FixedEncodingEntry(new UInt32[]{99}, (UInt32)DataType.Float, 7, 0), // Unit Nm
+            new FixedEncodingEntry(new UInt32[]{101}, Type101Convert),
             new FixedEncodingEntry(new UInt32[]{103}, Type103Convert),
             new FixedEncodingEntry(new UInt32[]{105}, Type105Convert),
             new FixedEncodingEntry(new UInt32[]{107}, Type107Convert),
             new FixedEncodingEntry(new UInt32[]{108}, Type108Convert),
+            new FixedEncodingEntry(new UInt32[]{111}, Type111Convert),
             new FixedEncodingEntry(new UInt32[]{112}, Type112Convert),
             new FixedEncodingEntry(new UInt32[]{113}, Type113Convert),
             new FixedEncodingEntry(new UInt32[]{117, 118}, Type117_118Convert),
