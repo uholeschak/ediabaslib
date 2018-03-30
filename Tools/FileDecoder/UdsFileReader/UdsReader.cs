@@ -5,13 +5,14 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace UdsFileReader
 {
     public class UdsReader
     {
         private static readonly Encoding Encoding = Encoding.GetEncoding(1252);
-        public const string FileExtension = ".rodtxt";
+        public const string FileExtension = ".uds";
 
         public enum SegmentType
         {
@@ -1230,9 +1231,31 @@ namespace UdsFileReader
             List<string[]> lineList = new List<string[]>();
             foreach (string fileName in fileList)
             {
+                ZipFile zf = null;
                 try
                 {
-                    using (StreamReader sr = new StreamReader(fileName, Encoding))
+                    Stream zipStream = null;
+                    string fileNameBase = Path.GetFileName(fileName);
+                    FileStream fs = File.OpenRead(fileName);
+                    zf = new ZipFile(fs);
+                    foreach (ZipEntry zipEntry in zf)
+                    {
+                        if (!zipEntry.IsFile)
+                        {
+                            continue; // Ignore directories
+                        }
+                        if (string.Compare(zipEntry.Name, fileNameBase, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            zipStream = zf.GetInputStream(zipEntry);
+                            break;
+                        }
+                    }
+
+                    if (zipStream == null)
+                    {
+                        return null;
+                    }
+                    using (StreamReader sr = new StreamReader(zipStream, Encoding))
                     {
                         bool inSegment = false;
                         for (;;)
@@ -1271,6 +1294,14 @@ namespace UdsFileReader
                 catch (Exception)
                 {
                     return null;
+                }
+                finally
+                {
+                    if (zf != null)
+                    {
+                        zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                        zf.Close(); // Ensure we release resources
+                    }
                 }
             }
             return lineList;
