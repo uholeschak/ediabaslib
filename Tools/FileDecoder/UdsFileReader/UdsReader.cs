@@ -1090,6 +1090,74 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type133Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 10)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("ReAg Rate/Demand: ");
+            if ((maskData & 0x01) != 0)
+            {
+                int value = (data[1] << 8) | data[2];
+                double displayValue = value * 0.005;
+                sb.Append($"{displayValue:0.}");
+            }
+            else
+            {
+                sb.Append("---");
+            }
+            sb.Append("/");
+
+            if ((maskData & 0x02) != 0)
+            {
+                int value = (data[3] << 8) | data[4];
+                double displayValue = value * 0.005;
+                sb.Append($"{displayValue:0.}");
+            }
+            else
+            {
+                sb.Append("---");
+            }
+            sb.Append(" ");
+            sb.Append(GetUnitMapText(udsReader, 110) ?? string.Empty);  // l/h
+
+            sb.Append(" ");
+            sb.Append("ReAg Level: ");
+            if ((maskData & 0x04) != 0)
+            {
+                int value = data[5];
+                double displayValue = value * 100 / 255.0;
+                sb.Append($"{displayValue:0.}");
+            }
+            else
+            {
+                sb.Append("---");
+            }
+            sb.Append(" ");
+            sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
+
+            sb.Append(" ");
+            sb.Append("NWI ");
+            sb.Append(GetTextMapText(udsReader, 099068) ?? string.Empty);   // Time
+            sb.Append(": ");
+            if ((maskData & 0x08) != 0)
+            {
+                UInt32 value = (UInt32) ((data[6] << 24) | (data[7] << 16) | (data[8] << 8) | data[9]);
+                sb.Append($"{value / 3600}H{value % 3600}s");
+            }
+            else
+            {
+                sb.Append("---");
+            }
+
+            return sb.ToString();
+        }
+
         private static readonly FixedEncodingEntry[] FixedEncodingArray =
         {
             new FixedEncodingEntry(new UInt32[]{2}, Type2Convert),
@@ -1130,6 +1198,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{119}, Type119Convert),
             new FixedEncodingEntry(new UInt32[]{120, 121}, Type120_121Convert),
             new FixedEncodingEntry(new UInt32[]{131}, Type131Convert),
+            new FixedEncodingEntry(new UInt32[]{133}, Type133Convert),
         };
 
         public bool Init(string dirName)
