@@ -206,7 +206,7 @@ namespace FileDecoder
                         {
                             DateTime = fi.LastWriteTime,
                             Size = fi.Length,
-                            AESKeySize = 256
+                            //AESKeySize = 256
                         };
                         zipStream.PutNextEntry(newEntry);
 
