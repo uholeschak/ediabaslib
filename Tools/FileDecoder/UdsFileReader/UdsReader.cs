@@ -983,6 +983,39 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type120_121Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 8 + 1)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 4; i++)
+            {
+                if ((maskData & (1 << i)) != 0)
+                {
+                    int value = (data[(i * 2) + 1] << 8) | data[(i * 2) + 2];
+                    double displayValue = value * 0.1 - 40.0;
+                    if (sb.Length > 0)
+                    {
+                        sb.Append("/");
+                    }
+                    sb.Append($"{displayValue:0.} ");
+                }
+                else
+                {
+                    sb.Append("--- ");
+                }
+                sb.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
+            }
+
+            sb.Insert(0, "S1/S2/S3/S4: ");
+
+            return sb.ToString();
+        }
+
         private static readonly FixedEncodingEntry[] FixedEncodingArray =
         {
             new FixedEncodingEntry(new UInt32[]{2}, Type2Convert),
@@ -1019,6 +1052,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{105}, Type105Convert),
             new FixedEncodingEntry(new UInt32[]{112}, Type112Convert),
             new FixedEncodingEntry(new UInt32[]{119}, Type119Convert),
+            new FixedEncodingEntry(new UInt32[]{120, 121}, Type120_121Convert),
         };
 
         public bool Init(string dirName)
