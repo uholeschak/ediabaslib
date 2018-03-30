@@ -1071,7 +1071,7 @@ namespace UdsFileReader
 
         private static string Type113Convert(UdsReader udsReader, int typeId, byte[] data)
         {
-            if (data.Length < 8 + 2)
+            if (data.Length < 4 + 1)
             {
                 return string.Empty;
             }
@@ -1305,6 +1305,62 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type122_123Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 6 + 1)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Delta/In/Out: ");
+
+            if ((maskData & 0x01) != 0)
+            {
+                int value = (data[1] << 8) | data[2];
+                double displayValue = (value & 0x7FFF) * 0.01;
+                if ((value & 0x8000) != 0)
+                {
+                    displayValue = -displayValue;
+                }
+                sb.Append($"{displayValue:0.00}");
+            }
+            else
+            {
+                sb.Append("---");
+            }
+            sb.Append("/");
+
+            if ((maskData & 0x02) != 0)
+            {
+                int value = (data[3] << 8) | data[4];
+                double displayValue = value * 0.01;
+                sb.Append($"{displayValue:0.00}");
+            }
+            else
+            {
+                sb.Append("---");
+            }
+            sb.Append("/");
+
+            if ((maskData & 0x02) != 0)
+            {
+                int value = (data[5] << 8) | data[6];
+                double displayValue = value * 0.01;
+                sb.Append($"{displayValue:0.00}");
+            }
+            else
+            {
+                sb.Append("---");
+            }
+            sb.Append(" ");
+
+            sb.Append(GetUnitMapText(udsReader, 103) ?? string.Empty);  // kpa
+
+            return sb.ToString();
+        }
+
         private static string Type131Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 4 + 1)
@@ -1448,6 +1504,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{117, 118}, Type117_118Convert),
             new FixedEncodingEntry(new UInt32[]{119}, Type119Convert),
             new FixedEncodingEntry(new UInt32[]{120, 121}, Type120_121Convert),
+            new FixedEncodingEntry(new UInt32[]{122, 123}, Type122_123Convert),
             new FixedEncodingEntry(new UInt32[]{131}, Type131Convert),
             new FixedEncodingEntry(new UInt32[]{133}, Type133Convert),
         };
