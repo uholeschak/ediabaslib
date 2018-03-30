@@ -1022,6 +1022,74 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type117_118Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 6 + 1)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(GetTextMapText(udsReader, 175748) ?? string.Empty);   // Kompressor
+            sb.Append(" ");
+            sb.Append(GetTextMapText(udsReader, 098311) ?? string.Empty);   // ein
+            sb.Append("/");
+            sb.Append(GetTextMapText(udsReader, 098310) ?? string.Empty);   // aus
+            sb.Append(": ");
+
+            for (int i = 0; i < 2; i++)
+            {
+                if (i > 0)
+                {
+                    sb.Append("/");
+                }
+                if ((maskData & (1 << i)) != 0)
+                {
+                    byte value = data[i + 1];
+                    double displayValue = value - 40.0;
+                    sb.Append($"{displayValue:0.}");
+                }
+                else
+                {
+                    sb.Append("---");
+                }
+            }
+            sb.Append(" ");
+            sb.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
+
+            sb.Append(" ");
+            sb.Append(GetTextMapText(udsReader, 175748) ?? string.Empty);   // Kompressor
+            sb.Append(" ");
+            sb.Append(GetTextMapText(udsReader, 098311) ?? string.Empty);   // ein
+            sb.Append("/");
+            sb.Append(GetTextMapText(udsReader, 098310) ?? string.Empty);   // aus
+            sb.Append(": ");
+
+            for (int i = 0; i < 2; i++)
+            {
+                if (i > 0)
+                {
+                    sb.Append("/");
+                }
+                if ((maskData & (1 << (i + 2))) != 0)
+                {
+                    int value = (data[(i *2) + 3] << 8) | data[(i * 2) + 4];
+                    double displayValue = value * 0.1 - 40.0;
+                    sb.Append($"{displayValue:0.}");
+                }
+                else
+                {
+                    sb.Append("---");
+                }
+            }
+            sb.Append(" ");
+            sb.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
+
+            return sb.ToString();
+        }
+
         private static string Type119Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 4 + 1)
@@ -1244,6 +1312,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{105}, Type105Convert),
             new FixedEncodingEntry(new UInt32[]{108}, Type108Convert),
             new FixedEncodingEntry(new UInt32[]{112}, Type112Convert),
+            new FixedEncodingEntry(new UInt32[]{117, 118}, Type117_118Convert),
             new FixedEncodingEntry(new UInt32[]{119}, Type119Convert),
             new FixedEncodingEntry(new UInt32[]{120, 121}, Type120_121Convert),
             new FixedEncodingEntry(new UInt32[]{131}, Type131Convert),
