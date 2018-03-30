@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace FileDecoder
 {
@@ -145,6 +147,13 @@ namespace FileDecoder
                         {
                             Console.WriteLine("*** Decryption failed: {0}", file);
                         }
+                        else
+                        {
+                            if (!CreateZip(new List<string>() {outFile}, "uds", Path.ChangeExtension(outFile, "uds")))
+                            {
+                                Console.WriteLine("*** Compression failed: {0}", file);
+                            }
+                        }
                     }
                     else if (string.Compare(ext, @".clb", StringComparison.OrdinalIgnoreCase) == 0)
                     {
@@ -164,6 +173,59 @@ namespace FileDecoder
             }
 
             return 0;
+        }
+
+        private static bool CreateZip(List<string> inputFiles, string inputExt, string archiveFilenameOut)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(archiveFilenameOut))
+                {
+                    return false;
+                }
+                if (File.Exists(archiveFilenameOut))
+                {
+                    File.Delete(archiveFilenameOut);
+                }
+                FileStream fsOut = File.Create(archiveFilenameOut);
+                ZipOutputStream zipStream = new ZipOutputStream(fsOut);
+                zipStream.SetLevel(3);
+
+                try
+                {
+                    foreach (string filename in inputFiles)
+                    {
+
+                        FileInfo fi = new FileInfo(filename);
+                        string entryName = Path.GetFileName(filename);
+                        entryName = Path.ChangeExtension(entryName, inputExt);
+
+                        ZipEntry newEntry = new ZipEntry(entryName)
+                        {
+                            DateTime = fi.LastWriteTime,
+                            Size = fi.Length
+                        };
+                        zipStream.PutNextEntry(newEntry);
+
+                        byte[] buffer = new byte[4096];
+                        using (FileStream streamReader = File.OpenRead(filename))
+                        {
+                            StreamUtils.Copy(streamReader, zipStream, buffer);
+                        }
+                        zipStream.CloseEntry();
+                    }
+                }
+                finally
+                {
+                    zipStream.IsStreamOwner = true;
+                    zipStream.Close();
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
 
         static bool DecryptFile(string inFile, string outFile, string typeCodeString)
