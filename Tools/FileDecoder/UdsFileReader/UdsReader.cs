@@ -904,6 +904,32 @@ namespace UdsFileReader
             return GetTextMapText(udsReader, 99014) ?? string.Empty;  // Unbekannt
         }
 
+        private static string Type100Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 5)
+            {
+                return string.Empty;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            double value1 = (data[0] - 125.0) * 0.01;
+            double value2 = (data[1] - 125.0) * 0.01;
+            sb.Append($"TQ_Max 1/2: {value1:0.}/{value2:0.} ");
+            sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
+
+            double value3 = (data[2] - 125.0) * 0.01;
+            double value4 = (data[3] - 125.0) * 0.01;
+            sb.Append(", ");
+            sb.Append($"TQ_Max 3/4: {value3:0.}/{value4:0.} ");
+            sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
+
+            double value5 = (data[4] - 125.0) * 0.01;
+            sb.Append(", ");
+            sb.Append($"TQ_Max 5: {value5:0.} ");
+            sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
+            return sb.ToString();
+        }
+
         private static string Type101Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 2)
@@ -1948,11 +1974,13 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{83}, (UInt32)DataType.Float, 103, 0, 0, 5.0), // Unit kPa abs
             new FixedEncodingEntry(new UInt32[]{84}, Type84Convert),
             new FixedEncodingEntry(new UInt32[]{85, 86, 87, 88}, Type85_88Convert),
+            new FixedEncodingEntry(new UInt32[]{89}, (UInt32)DataType.Float, 103, 0, 0, 10.0), // Unit kPa abs
             new FixedEncodingEntry(new UInt32[]{93}, (UInt32)DataType.Float, 2, 2, -26880, 1 / 128.0), // Unit °
             new FixedEncodingEntry(new UInt32[]{94}, (UInt32)DataType.Float, 110, 2, 0, 1 / 20.0), // Unit l/h
             new FixedEncodingEntry(new UInt32[]{95}, Type95Convert),
             new FixedEncodingEntry(new UInt32[]{97, 98}, (UInt32)DataType.Float, 1, 0, -125, 1.0), // Unit %
             new FixedEncodingEntry(new UInt32[]{99}, (UInt32)DataType.Float, 7, 0), // Unit Nm
+            new FixedEncodingEntry(new UInt32[]{100}, Type100Convert),
             new FixedEncodingEntry(new UInt32[]{101}, Type101Convert),
             new FixedEncodingEntry(new UInt32[]{102}, Type102Convert),
             new FixedEncodingEntry(new UInt32[]{103}, Type103Convert),
