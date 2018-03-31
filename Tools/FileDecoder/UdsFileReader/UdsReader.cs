@@ -1584,6 +1584,7 @@ namespace UdsFileReader
                     }
                     index++;
                 }
+                sbVal.Append(" ");
                 sbVal.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
 
                 if (sb.Length > 0)
@@ -1865,6 +1866,53 @@ namespace UdsFileReader
             sb.Append(" ");
 
             sb.Append(GetUnitMapText(udsReader, 103) ?? string.Empty);  // kpa
+
+            return sb.ToString();
+        }
+
+        private static string Type124Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 2 * 4 + 1)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+            int index = 0;
+            for (int i = 0; i < 2; i++)
+            {
+                StringBuilder sbVal = new StringBuilder();
+                sbVal.Append($"B{i + 1}: ");
+
+                for (int j = 0; j < 2; j++)
+                {
+                    if (j > 0)
+                    {
+                        sbVal.Append("/");
+                    }
+                    if ((maskData & (1 << index)) != 0)
+                    {
+                        int offset = index * 2 + 1;
+                        int value = (data[offset] << 8) | data[offset + 1];
+                        double displayValue = value * 0.1 - 40.0;
+                        sbVal.Append($"{displayValue:0.}");
+                    }
+                    else
+                    {
+                        sbVal.Append("---");
+                    }
+                    index++;
+                }
+                sbVal.Append(" ");
+                sbVal.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
+
+                if (sb.Length > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append(sbVal);
+            }
 
             return sb.ToString();
         }
@@ -2238,6 +2286,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{119}, Type119Convert),
             new FixedEncodingEntry(new UInt32[]{120, 121}, Type120_121Convert),
             new FixedEncodingEntry(new UInt32[]{122, 123}, Type122_123Convert),
+            new FixedEncodingEntry(new UInt32[]{124}, Type124Convert),
             new FixedEncodingEntry(new UInt32[]{125, 126}, Type125_126Convert),
             new FixedEncodingEntry(new UInt32[]{127}, Type127Convert),
             new FixedEncodingEntry(new UInt32[]{129, 130}, Type129_130Convert),
