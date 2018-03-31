@@ -2104,6 +2104,79 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type134Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 4 + 1)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 2; i++)
+            {
+                StringBuilder sbVal = new StringBuilder();
+                sbVal.Append($"PM{i + 1}1: ");
+                if ((maskData & (1 << (i * 2))) != 0)
+                {
+                    int offset = i * 2 + 1;
+                    int value = (data[offset] << 8) | data[offset + 1];
+                    double displayValue = value / 80.0;
+                    sbVal.Append($"{displayValue:0.00} ");
+                    sbVal.Append(GetUnitMapText(udsReader, 127) ?? string.Empty);  // mg/m3
+                }
+                else
+                {
+                    sbVal.Append("---");
+                }
+
+                if (sb.Length > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append(sbVal);
+            }
+
+            return sb.ToString();
+        }
+
+        private static string Type135Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 4 + 1)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 2; i++)
+            {
+                StringBuilder sbVal = new StringBuilder();
+                char name = (char)('A' + i);
+                sbVal.Append($"MAP_{name}: ");
+                if ((maskData & (1 << (i * 2))) != 0)
+                {
+                    int offset = i * 2 + 1;
+                    int value = (data[offset] << 8) | data[offset + 1];
+                    double displayValue = value / 32.0;
+                    sbVal.Append($"{displayValue:0.00} ");
+                    sbVal.Append(GetUnitMapText(udsReader, 103) ?? string.Empty);  // kPa abs
+                }
+                else
+                {
+                    sbVal.Append("---");
+                }
+
+                if (sb.Length > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append(sbVal);
+            }
+
+            return sb.ToString();
+        }
+
         private static readonly FixedEncodingEntry[] FixedEncodingArray =
         {
             new FixedEncodingEntry(new UInt32[]{2}, Type2Convert),
@@ -2170,6 +2243,8 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{129, 130}, Type129_130Convert),
             new FixedEncodingEntry(new UInt32[]{131}, Type131Convert),
             new FixedEncodingEntry(new UInt32[]{133}, Type133Convert),
+            new FixedEncodingEntry(new UInt32[]{134}, Type134Convert),
+            new FixedEncodingEntry(new UInt32[]{135}, Type135Convert),
         };
 
         public bool Init(string dirName)
