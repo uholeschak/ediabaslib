@@ -1533,7 +1533,7 @@ namespace UdsFileReader
 
         private static string Type127Convert(UdsReader udsReader, int typeId, byte[] data)
         {
-            if (data.Length < 10)
+            if (data.Length < 3 * 4 + 1)
             {
                 return string.Empty;
             }
@@ -1570,6 +1570,52 @@ namespace UdsFileReader
                         sb.Append(", ");
                     }
                     sb.Append(sbValue);
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        private static string Type129_130Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 5 * 4 + 1)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+            int index = 0;
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    StringBuilder sbValue = new StringBuilder();
+                    if ((maskData & (1 << index)) != 0)
+                    {
+                        int offset = index * 4 + 1;
+                        UInt32 value = (UInt32)((data[offset] << 24) | (data[offset + 1] << 16) | (data[offset + 2] << 8) | data[offset + 3]);
+                        if (sbValue.Length > 0)
+                        {
+                            sbValue.Append(" / ");
+                        }
+                        sbValue.Append($"{value / 3600}H{value % 3600}s");
+                        if (i == 2)
+                        {   // abort last round
+                            break;
+                        }
+                    }
+
+                    if (sbValue.Length > 0)
+                    {
+                        if (sb.Length > 0)
+                        {
+                            sb.Append(", ");
+                        }
+                        sb.Append(sbValue);
+                    }
+
+                    index++;
                 }
             }
 
@@ -1692,6 +1738,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{120, 121}, Type120_121Convert),
             new FixedEncodingEntry(new UInt32[]{122, 123}, Type122_123Convert),
             new FixedEncodingEntry(new UInt32[]{127}, Type127Convert),
+            new FixedEncodingEntry(new UInt32[]{129, 130}, Type129_130Convert),
             new FixedEncodingEntry(new UInt32[]{131}, Type131Convert),
             new FixedEncodingEntry(new UInt32[]{133}, Type133Convert),
         };
