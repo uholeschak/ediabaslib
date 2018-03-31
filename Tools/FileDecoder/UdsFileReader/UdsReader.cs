@@ -1280,6 +1280,53 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type110Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 4 * 2 + 1)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+            int index = 0;
+            for (int i = 0; i < 2; i++)
+            {
+                StringBuilder sbVal = new StringBuilder();
+                char name = (char)('A' + i);
+                sbVal.Append($"ICP_{name} cmd/rel: ");
+
+                for (int j = 0; j < 2; j++)
+                {
+                    if (j > 0)
+                    {
+                        sbVal.Append("/");
+                    }
+                    if ((maskData & (1 << index)) != 0)
+                    {
+                        int offset = index * 2 + 1;
+                        int value = (data[offset] << 8) | data[offset + 1];
+                        double displayValue = value * 10.0;
+                        sbVal.Append($"{displayValue:0.}");
+                    }
+                    else
+                    {
+                        sbVal.Append("---");
+                    }
+                    index++;
+                }
+                sbVal.Append(GetUnitMapText(udsReader, 79) ?? string.Empty);  // Pa
+
+                if (sb.Length > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append(sbVal);
+            }
+
+            return sb.ToString();
+        }
+
         private static string Type111Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 2 + 1)
@@ -2031,6 +2078,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{106}, Type106Convert),
             new FixedEncodingEntry(new UInt32[]{107}, Type107Convert),
             new FixedEncodingEntry(new UInt32[]{108}, Type108Convert),
+            new FixedEncodingEntry(new UInt32[]{110}, Type110Convert),
             new FixedEncodingEntry(new UInt32[]{111}, Type111Convert),
             new FixedEncodingEntry(new UInt32[]{112}, Type112Convert),
             new FixedEncodingEntry(new UInt32[]{113}, Type113Convert),
