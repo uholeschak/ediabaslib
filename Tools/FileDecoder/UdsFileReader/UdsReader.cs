@@ -1629,6 +1629,38 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type116Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 4 + 1)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 2; i++)
+            {
+                if ((maskData & (1 << (i * 2))) != 0)
+                {
+                    StringBuilder sbVal = new StringBuilder();
+                    char name = (char)('A' + i);
+                    sbVal.Append($"TC{name}_RPM: ");
+                    int offset = i * 2 + 1;
+                    double displayValue = (data[offset] << 8) | data[offset + 1];
+                    sbVal.Append($"{displayValue:0.} ");
+                    sbVal.Append(GetUnitMapText(udsReader, 21) ?? string.Empty);  // /min
+
+                    if (sb.Length > 0)
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append(sbVal);
+                }
+            }
+
+            return sb.ToString();
+        }
+
         private static string Type117_118Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 6 + 1)
@@ -1834,6 +1866,50 @@ namespace UdsFileReader
 
             sb.Append(GetUnitMapText(udsReader, 103) ?? string.Empty);  // kpa
 
+            return sb.ToString();
+        }
+
+        private static string Type125_126Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 1)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+
+            if ((maskData & 0x01) != 0)
+            {
+                sb.Append("NTE:In");
+            }
+
+            if ((maskData & 0x02) != 0)
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append("NTE:Out");
+            }
+
+            if ((maskData & 0x04) != 0)
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append("NTE:Carve-out");
+            }
+
+            if ((maskData & 0x08) != 0)
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append("NTE:Def");
+            }
             return sb.ToString();
         }
 
@@ -2084,10 +2160,12 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{113}, Type113Convert),
             new FixedEncodingEntry(new UInt32[]{114}, Type114Convert),
             new FixedEncodingEntry(new UInt32[]{115}, Type115Convert),
+            new FixedEncodingEntry(new UInt32[]{116}, Type116Convert),
             new FixedEncodingEntry(new UInt32[]{117, 118}, Type117_118Convert),
             new FixedEncodingEntry(new UInt32[]{119}, Type119Convert),
             new FixedEncodingEntry(new UInt32[]{120, 121}, Type120_121Convert),
             new FixedEncodingEntry(new UInt32[]{122, 123}, Type122_123Convert),
+            new FixedEncodingEntry(new UInt32[]{125, 126}, Type125_126Convert),
             new FixedEncodingEntry(new UInt32[]{127}, Type127Convert),
             new FixedEncodingEntry(new UInt32[]{129, 130}, Type129_130Convert),
             new FixedEncodingEntry(new UInt32[]{131}, Type131Convert),
