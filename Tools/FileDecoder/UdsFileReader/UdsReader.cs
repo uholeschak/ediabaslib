@@ -1531,6 +1531,51 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type127Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 10)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 3; i++)
+            {
+                if ((maskData & (1 << i)) != 0)
+                {
+                    StringBuilder sbValue = new StringBuilder();
+                    switch (i)
+                    {
+                        case 1:
+                            sbValue.Append(GetTextMapText(udsReader, 001565) ?? string.Empty);// Leerlauf
+                            break;
+
+                        case 2:
+                            sbValue.Append("PTO");
+                            break;
+
+                        default:
+                            sbValue.Append("Total");
+                            break;
+                    }
+                    sbValue.Append(": ");
+
+                    int offset = i * 4 + 1;
+                    UInt32 value = (UInt32)((data[offset] << 24) | (data[offset + 1] << 16) | (data[offset + 2] << 8) | data[offset + 3]);
+                    sbValue.Append($"{value / 3600}H{value % 3600}s");
+
+                    if (sb.Length > 0)
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append(sbValue);
+                }
+            }
+
+            return sb.ToString();
+        }
+
         private static string Type133Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 10)
@@ -1603,7 +1648,7 @@ namespace UdsFileReader
         {
             new FixedEncodingEntry(new UInt32[]{2}, Type2Convert),
             new FixedEncodingEntry(new UInt32[]{3}, Type3Convert),
-            new FixedEncodingEntry(new UInt32[]{1, 65, 79, 80, 109, 136, 139}, (UInt32)DataType.Invalid), // not existing
+            new FixedEncodingEntry(new UInt32[]{1, 65, 79, 80, 109, 136, 139, 141}, (UInt32)DataType.Invalid), // not existing
             new FixedEncodingEntry(new UInt32[]{4, 17, 44, 46, 47, 91}, (UInt32)DataType.Float, 1, 1, 0, 100.0 / 255), // Unit %
             new FixedEncodingEntry(new UInt32[]{5, 15, 70, 92, 132}, (UInt32)DataType.Float, 3, 0, -40, 1.0), // Unit °C
             new FixedEncodingEntry(new UInt32[]{6, 7, 8, 9, 45}, (UInt32)DataType.Float, 1, 1, -128, 100 / 128), // Unit %
@@ -1625,7 +1670,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{77, 78}, Type77_78Convert),
             new FixedEncodingEntry(new UInt32[]{66}, (UInt32)DataType.Float, 9, 3, 0, 0.001), // Unit V
             new FixedEncodingEntry(new UInt32[]{68}, (UInt32)DataType.Float, 113, 3, 0, 1.0 / 32783.0), // Unit Lambda
-            new FixedEncodingEntry(new UInt32[]{67, 69, 71, 72, 73, 74, 75, 76}, (UInt32)DataType.Float, 1, 0, 0, 100 / 255), // Unit %
+            new FixedEncodingEntry(new UInt32[]{67, 69, 71, 72, 73, 74, 75, 76, 82, 90}, (UInt32)DataType.Float, 1, 0, 0, 100 / 255), // Unit %
             new FixedEncodingEntry(new UInt32[]{81}, Type81Convert),
             new FixedEncodingEntry(new UInt32[]{83}, (UInt32)DataType.Float, 103, 0, 0, 5.0), // Unit kPa abs
             new FixedEncodingEntry(new UInt32[]{85, 86, 87, 88}, Type85_88Convert),
@@ -1646,6 +1691,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{119}, Type119Convert),
             new FixedEncodingEntry(new UInt32[]{120, 121}, Type120_121Convert),
             new FixedEncodingEntry(new UInt32[]{122, 123}, Type122_123Convert),
+            new FixedEncodingEntry(new UInt32[]{127}, Type127Convert),
             new FixedEncodingEntry(new UInt32[]{131}, Type131Convert),
             new FixedEncodingEntry(new UInt32[]{133}, Type133Convert),
         };
