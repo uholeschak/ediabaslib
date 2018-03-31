@@ -898,6 +898,41 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type102Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 4 + 1)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 2; i++)
+            {
+                StringBuilder sbValue = new StringBuilder();
+                if ((maskData & (1 << i)) != 0)
+                {
+                    char name = (char)('A' + i);
+                    sbValue.Append($"MAF{name}: ");
+
+                    int offset = i * 2 + 1;
+                    int value = (data[offset] << 8) | data[offset + 1];
+                    double displayValue = value / 32.0;
+
+                    sbValue.Append($"{displayValue:0.00} ");
+                    sbValue.Append(GetUnitMapText(udsReader, 26) ?? string.Empty); // g/s
+
+                    if (sb.Length > 0)
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append(sbValue);
+                }
+            }
+
+            return sb.ToString();
+        }
+
         private static string Type103Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 2 + 1)
@@ -1825,6 +1860,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{97, 98}, (UInt32)DataType.Float, 1, 0, -125, 1.0), // Unit %
             new FixedEncodingEntry(new UInt32[]{99}, (UInt32)DataType.Float, 7, 0), // Unit Nm
             new FixedEncodingEntry(new UInt32[]{101}, Type101Convert),
+            new FixedEncodingEntry(new UInt32[]{102}, Type102Convert),
             new FixedEncodingEntry(new UInt32[]{103}, Type103Convert),
             new FixedEncodingEntry(new UInt32[]{104}, Type104Convert),
             new FixedEncodingEntry(new UInt32[]{105}, Type105Convert),
