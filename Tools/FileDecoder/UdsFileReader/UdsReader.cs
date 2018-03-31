@@ -864,12 +864,12 @@ namespace UdsFileReader
 
         private static string Type104Convert(UdsReader udsReader, int typeId, byte[] data)
         {
-            if (data.Length < 4 * 4)
+            if (data.Length < 6 + 1)
             {
                 return string.Empty;
             }
 
-            int maskData = (data[1] << 8) | data[0];
+            byte maskData = data[0];
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < 3; i++)
             {
