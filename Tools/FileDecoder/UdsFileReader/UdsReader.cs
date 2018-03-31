@@ -691,6 +691,31 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type30Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 1)
+            {
+                return string.Empty;
+            }
+
+            UInt32 textKey;
+            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+            if ((data[0] & 0x01) != 0)
+            {
+                textKey = 098360;    // aktiv
+            }
+            else
+            {
+                textKey = 098671;    // inaktiv
+            }
+            StringBuilder sb = new StringBuilder();
+            sb.Append(GetTextMapText(udsReader, 064207) ?? string.Empty);   // Nebenantrieb
+            sb.Append(" ");
+            sb.Append(GetTextMapText(udsReader, textKey) ?? string.Empty);
+
+            return sb.ToString();
+        }
+
         private static string Type37_43a52_59Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 4)
@@ -1907,7 +1932,9 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{20}, (UInt32)DataType.Float, 9, 3, 0, 0.005), // Unit V
             new FixedEncodingEntry(new UInt32[]{28}, Type28Convert),
             new FixedEncodingEntry(new UInt32[]{29}, Type29Convert),
+            new FixedEncodingEntry(new UInt32[]{30}, Type30Convert),
             new FixedEncodingEntry(new UInt32[]{31}, (UInt32)DataType.Float, 8, 0), // Unit s
+            new FixedEncodingEntry(new UInt32[]{34}, (UInt32)DataType.Float, 103, 2, 0, 0.8), // Unit kPa
             new FixedEncodingEntry(new UInt32[]{35}, (UInt32)DataType.Float, 103, 0, 0, 10.0), // Unit kPa rel
             new FixedEncodingEntry(new UInt32[]{36, 37, 38, 39, 40, 41, 42, 43, 52, 53, 54, 55, 56, 57, 58, 59}, Type37_43a52_59Convert),
             new FixedEncodingEntry(new UInt32[]{48}, (UInt32)DataType.Float, null, 0),
