@@ -1141,6 +1141,54 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type106Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 4 + 1)
+            {
+                return string.Empty;
+            }
+
+            byte maskData = data[0];
+            StringBuilder sb = new StringBuilder();
+            int index = 0;
+            for (int i = 0; i < 2; i++)
+            {
+                StringBuilder sbValue = new StringBuilder();
+                char name = (char)('A' + i);
+                sbValue.Append($"IAF_{name} cmd/rel: ");
+
+                for (int j = 0; j < 2; j++)
+                {
+                    if (j > 0)
+                    {
+                        sbValue.Append("/");
+                    }
+                    if ((maskData & (1 << index)) != 0)
+                    {
+                        byte value = data[index + 1];
+                        double displayValue = value * 100.0 / 255.0;
+                        sbValue.Append($"{displayValue:0.}");
+                    }
+                    else
+                    {
+                        sbValue.Append("---");
+                    }
+
+                    index++;
+                }
+                sbValue.Append(" ");
+                sbValue.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
+
+                if (sb.Length > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append(sbValue);
+            }
+
+            return sb.ToString();
+        }
+
         private static string Type107Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 4 + 1)
@@ -1158,16 +1206,14 @@ namespace UdsFileReader
 
                 for (int j = 0; j < 2; j++)
                 {
-                    byte value = data[index + 1];
-                    double displayValue = value - 40.0;
-
                     if (j > 0)
                     {
                         sbVal.Append("/");
                     }
-                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if ((maskData & (1 << index)) != 0)
                     {
+                        byte value = data[index + 1];
+                        double displayValue = value - 40.0;
                         sbVal.Append($"{displayValue:0.}");
                     }
                     else
@@ -1206,16 +1252,14 @@ namespace UdsFileReader
 
                 for (int j = 0; j < 2; j++)
                 {
-                    byte value = data[index + 1];
-                    double displayValue = value * 100.0 / 255.0;
-
                     if (j > 0)
                     {
                         sbVal.Append("/");
                     }
-                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if ((maskData & (1 << index)) != 0)
                     {
+                        byte value = data[index + 1];
+                        double displayValue = value * 100.0 / 255.0;
                         sbVal.Append($"{displayValue:0.}");
                     }
                     else
@@ -1251,11 +1295,9 @@ namespace UdsFileReader
                 char name = (char)('A' + i);
                 sbVal.Append($"TC{name}_PRESS: ");
 
-                double displayValue = data[i + 1];
-                
-                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if ((maskData & (1 << i)) != 0)
                 {
+                    double displayValue = data[i + 1];
                     sbVal.Append($"{displayValue:0.} ");
                 }
                 else
@@ -1396,14 +1438,14 @@ namespace UdsFileReader
 
                 for (int j = 0; j < 2; j++)
                 {
+                    if (j > 0)
+                    {
+                        sbValue.Append("/");
+                    }
                     if ((maskData & (1 << index)) != 0)
                     {
                         byte value = data[index + 1];
                         double displayValue = value * 100.0 / 255.0;
-                        if (j > 0)
-                        {
-                            sbValue.Append("/");
-                        }
                         sbValue.Append($"{displayValue:0.}");
                     }
                     else
@@ -1670,14 +1712,14 @@ namespace UdsFileReader
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < 4; i++)
             {
+                if (sb.Length > 0)
+                {
+                    sb.Append("/");
+                }
                 if ((maskData & (1 << i)) != 0)
                 {
                     int value = (data[(i * 2) + 1] << 8) | data[(i * 2) + 2];
                     double displayValue = value * 0.1 - 40.0;
-                    if (sb.Length > 0)
-                    {
-                        sb.Append("/");
-                    }
                     sb.Append($"{displayValue:0.} ");
                 }
                 else
@@ -1986,6 +2028,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{103}, Type103Convert),
             new FixedEncodingEntry(new UInt32[]{104}, Type104Convert),
             new FixedEncodingEntry(new UInt32[]{105}, Type105Convert),
+            new FixedEncodingEntry(new UInt32[]{106}, Type106Convert),
             new FixedEncodingEntry(new UInt32[]{107}, Type107Convert),
             new FixedEncodingEntry(new UInt32[]{108}, Type108Convert),
             new FixedEncodingEntry(new UInt32[]{111}, Type111Convert),
