@@ -170,10 +170,9 @@ namespace UdsFileReader
         {
             public delegate string ConvertDelegate(UdsReader udsReader, int typeId, byte[] data);
 
-            public FixedEncodingEntry(UInt32[] keyArray, UInt32 dataTypeId, UInt32? unitKey = null, Int64? numberOfDigits = null, double? scaleOffset = null, double? scaleMult = null)
+            public FixedEncodingEntry(UInt32[] keyArray, UInt32? unitKey = null, Int64? numberOfDigits = null, double? scaleOffset = null, double? scaleMult = null)
             {
                 KeyArray = keyArray;
-                DataTypeId = dataTypeId;
                 UnitKey = unitKey;
                 NumberOfDigits = numberOfDigits;
                 ScaleOffset = scaleOffset;
@@ -187,7 +186,6 @@ namespace UdsFileReader
             }
 
             public UInt32[] KeyArray { get; }
-            public UInt32 DataTypeId { get; }
             public UInt32? UnitKey { get; }
             public Int64? NumberOfDigits { get; }
             public double? ScaleOffset { get; }
@@ -321,7 +319,6 @@ namespace UdsFileReader
                             }
 
                             FixedEncoding = fixedEncodingEntry;
-                            DataTypeId = fixedEncodingEntry.DataTypeId;
                             NumberOfDigits = fixedEncodingEntry.NumberOfDigits;
                             ScaleOffset = fixedEncodingEntry.ScaleOffset;
                             ScaleMult = fixedEncodingEntry.ScaleMult;
@@ -2230,42 +2227,42 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{2}, Type2Convert),
             new FixedEncodingEntry(new UInt32[]{3}, Type3Convert),
             new FixedEncodingEntry(new UInt32[]{1, 65, 79, 80, 109, 136, 139, 140, 141, 142, 143, 152, 153, 159}, (UInt32)DataType.Invalid), // not existing
-            new FixedEncodingEntry(new UInt32[]{4, 17, 44, 46, 47, 91}, (UInt32)DataType.Float, 1, 1, 0, 100.0 / 255), // Unit %
-            new FixedEncodingEntry(new UInt32[]{5, 15, 70, 92, 132}, (UInt32)DataType.Float, 3, 0, -40, 1.0), // Unit °C
-            new FixedEncodingEntry(new UInt32[]{6, 7, 8, 9, 45}, (UInt32)DataType.Float, 1, 1, -128, 100 / 128), // Unit %
-            new FixedEncodingEntry(new UInt32[]{10}, (UInt32)DataType.Float, 103, 0, 0, 3.0), // Unit kPa rel
-            new FixedEncodingEntry(new UInt32[]{11, 51}, (UInt32)DataType.Float, 103, 0), // Unit kPa abs
-            new FixedEncodingEntry(new UInt32[]{12}, (UInt32)DataType.Float, 21, 0, 0, 0.25), // Unit /min
-            new FixedEncodingEntry(new UInt32[]{13, 33, 49}, (UInt32)DataType.Float, 109, 0), // Unit km/h
-            new FixedEncodingEntry(new UInt32[]{14}, (UInt32)DataType.Float, 1, 1, -128, 1 / 2.0), // Unit %
-            new FixedEncodingEntry(new UInt32[]{16}, (UInt32)DataType.Float, 26, 2, 0, 0.01), // Unit g/s
+            new FixedEncodingEntry(new UInt32[]{4, 17, 44, 46, 47, 91}, 1, 1, 0, 100.0 / 255), // Unit %
+            new FixedEncodingEntry(new UInt32[]{5, 15, 70, 92, 132}, 3, 0, -40, 1.0), // Unit °C
+            new FixedEncodingEntry(new UInt32[]{6, 7, 8, 9, 45}, 1, 1, -128, 100 / 128), // Unit %
+            new FixedEncodingEntry(new UInt32[]{10}, 103, 0, 0, 3.0), // Unit kPa rel
+            new FixedEncodingEntry(new UInt32[]{11, 51}, 103, 0), // Unit kPa abs
+            new FixedEncodingEntry(new UInt32[]{12}, 21, 0, 0, 0.25), // Unit /min
+            new FixedEncodingEntry(new UInt32[]{13, 33, 49}, 109, 0), // Unit km/h
+            new FixedEncodingEntry(new UInt32[]{14}, 1, 1, -128, 1 / 2.0), // Unit %
+            new FixedEncodingEntry(new UInt32[]{16}, 26, 2, 0, 0.01), // Unit g/s
             new FixedEncodingEntry(new UInt32[]{18}, Type18Convert),
             new FixedEncodingEntry(new UInt32[]{19}, Type19Convert),
-            new FixedEncodingEntry(new UInt32[]{20}, (UInt32)DataType.Float, 9, 3, 0, 0.005), // Unit V
+            new FixedEncodingEntry(new UInt32[]{20}, 9, 3, 0, 0.005), // Unit V
             new FixedEncodingEntry(new UInt32[]{28}, Type28Convert),
             new FixedEncodingEntry(new UInt32[]{29}, Type29Convert),
             new FixedEncodingEntry(new UInt32[]{30}, Type30Convert),
-            new FixedEncodingEntry(new UInt32[]{31}, (UInt32)DataType.Float, 8, 0), // Unit s
-            new FixedEncodingEntry(new UInt32[]{34}, (UInt32)DataType.Float, 103, 2, 0, 0.8), // Unit kPa
-            new FixedEncodingEntry(new UInt32[]{35}, (UInt32)DataType.Float, 103, 0, 0, 10.0), // Unit kPa rel
+            new FixedEncodingEntry(new UInt32[]{31}, 8, 0), // Unit s
+            new FixedEncodingEntry(new UInt32[]{34}, 103, 2, 0, 0.8), // Unit kPa
+            new FixedEncodingEntry(new UInt32[]{35}, 103, 0, 0, 10.0), // Unit kPa rel
             new FixedEncodingEntry(new UInt32[]{36, 37, 38, 39, 40, 41, 42, 43, 52, 53, 54, 55, 56, 57, 58, 59}, Type37_43a52_59Convert),
-            new FixedEncodingEntry(new UInt32[]{48}, (UInt32)DataType.Float, null, 0),
+            new FixedEncodingEntry(new UInt32[]{48}, null, 0),
             new FixedEncodingEntry(new UInt32[]{50}, Type50Convert),
             new FixedEncodingEntry(new UInt32[]{60, 61, 62, 63}, Type60_63Convert),
             new FixedEncodingEntry(new UInt32[]{77, 78}, Type77_78Convert),
-            new FixedEncodingEntry(new UInt32[]{66}, (UInt32)DataType.Float, 9, 3, 0, 0.001), // Unit V
-            new FixedEncodingEntry(new UInt32[]{68}, (UInt32)DataType.Float, 113, 3, 0, 1.0 / 32783.0), // Unit Lambda
-            new FixedEncodingEntry(new UInt32[]{67, 69, 71, 72, 73, 74, 75, 76, 82, 90}, (UInt32)DataType.Float, 1, 0, 0, 100 / 255), // Unit %
+            new FixedEncodingEntry(new UInt32[]{66}, 9, 3, 0, 0.001), // Unit V
+            new FixedEncodingEntry(new UInt32[]{68}, 113, 3, 0, 1.0 / 32783.0), // Unit Lambda
+            new FixedEncodingEntry(new UInt32[]{67, 69, 71, 72, 73, 74, 75, 76, 82, 90}, 1, 0, 0, 100 / 255), // Unit %
             new FixedEncodingEntry(new UInt32[]{81}, Type81Convert),
-            new FixedEncodingEntry(new UInt32[]{83}, (UInt32)DataType.Float, 103, 0, 0, 5.0), // Unit kPa abs
+            new FixedEncodingEntry(new UInt32[]{83}, 103, 0, 0, 5.0), // Unit kPa abs
             new FixedEncodingEntry(new UInt32[]{84}, Type84Convert),
             new FixedEncodingEntry(new UInt32[]{85, 86, 87, 88}, Type85_88Convert),
-            new FixedEncodingEntry(new UInt32[]{89}, (UInt32)DataType.Float, 103, 0, 0, 10.0), // Unit kPa abs
-            new FixedEncodingEntry(new UInt32[]{93}, (UInt32)DataType.Float, 2, 2, -26880, 1 / 128.0), // Unit °
-            new FixedEncodingEntry(new UInt32[]{94}, (UInt32)DataType.Float, 110, 2, 0, 1 / 20.0), // Unit l/h
+            new FixedEncodingEntry(new UInt32[]{89}, 103, 0, 0, 10.0), // Unit kPa abs
+            new FixedEncodingEntry(new UInt32[]{93}, 2, 2, -26880, 1 / 128.0), // Unit °
+            new FixedEncodingEntry(new UInt32[]{94}, 110, 2, 0, 1 / 20.0), // Unit l/h
             new FixedEncodingEntry(new UInt32[]{95}, Type95Convert),
-            new FixedEncodingEntry(new UInt32[]{97, 98}, (UInt32)DataType.Float, 1, 0, -125, 1.0), // Unit %
-            new FixedEncodingEntry(new UInt32[]{99}, (UInt32)DataType.Float, 7, 0), // Unit Nm
+            new FixedEncodingEntry(new UInt32[]{97, 98}, 1, 0, -125, 1.0), // Unit %
+            new FixedEncodingEntry(new UInt32[]{99}, 7, 0), // Unit Nm
             new FixedEncodingEntry(new UInt32[]{100}, Type100Convert),
             new FixedEncodingEntry(new UInt32[]{101}, Type101Convert),
             new FixedEncodingEntry(new UInt32[]{102}, Type102Convert),
