@@ -836,6 +836,29 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type95Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 1)
+            {
+                return string.Empty;
+            }
+
+            byte value = data[0];
+
+            switch (value)
+            {
+                case 14:
+                    return "HD Euro IV/B1";
+
+                case 15:
+                    return "HD Euro V/B2";
+
+                case 16:
+                    return "HD EURO EEC/C";
+            }
+            return GetTextMapText(udsReader, 99014) ?? string.Empty;  // Unbekannt
+        }
+
         private static string Type101Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 2)
@@ -1798,6 +1821,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{85, 86, 87, 88}, Type85_88Convert),
             new FixedEncodingEntry(new UInt32[]{93}, (UInt32)DataType.Float, 2, 2, -26880, 1 / 128.0), // Unit °
             new FixedEncodingEntry(new UInt32[]{94}, (UInt32)DataType.Float, 110, 2, 0, 1 / 20.0), // Unit l/h
+            new FixedEncodingEntry(new UInt32[]{95}, Type95Convert),
             new FixedEncodingEntry(new UInt32[]{97, 98}, (UInt32)DataType.Float, 1, 0, -125, 1.0), // Unit %
             new FixedEncodingEntry(new UInt32[]{99}, (UInt32)DataType.Float, 7, 0), // Unit Nm
             new FixedEncodingEntry(new UInt32[]{101}, Type101Convert),
