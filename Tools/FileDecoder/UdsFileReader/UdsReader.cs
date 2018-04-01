@@ -168,9 +168,9 @@ namespace UdsFileReader
 
         public class FixedEncodingEntry
         {
-            public delegate string ConvertDelegate(UdsReader udsReader, int typeId, byte[] data);
+            public delegate string ConvertDelegate(UdsReader udsReader, byte[] data);
 
-            public FixedEncodingEntry(UInt32[] keyArray, UInt32 dataLength, UInt32? unitKey = null, Int64? numberOfDigits = null, double? scaleOffset = null, double? scaleMult = null)
+            public FixedEncodingEntry(UInt32[] keyArray, UInt32 dataLength, UInt32? unitKey = null, UInt32? numberOfDigits = null, double? scaleOffset = null, double? scaleMult = null)
             {
                 KeyArray = keyArray;
                 DataLength = dataLength;
@@ -186,10 +186,65 @@ namespace UdsFileReader
                 ConvertFunc = convertFunc;
             }
 
+            public string ToString(UdsReader udsReader, byte[] data)
+            {
+                if (ConvertFunc != null)
+                {
+                    return ConvertFunc(udsReader, data);
+                }
+
+                if (DataLength == 0)
+                {
+                    return string.Empty;
+                }
+
+                if (data.Length < DataLength)
+                {
+                    return string.Empty;
+                }
+
+                UInt32 value;
+                switch (DataLength)
+                {
+                    case 1:
+                        value = data[0];
+                        break;
+
+                    case 2:
+                        value = (UInt32) (data[0] << 8) | data[1];
+                        break;
+
+                    default:
+                        return string.Empty;
+                }
+
+                double displayValue = value;
+                if (ScaleOffset.HasValue)
+                {
+                    displayValue += ScaleOffset.Value;
+                }
+                if (ScaleMult.HasValue)
+                {
+                    displayValue *= ScaleMult.Value;
+                }
+
+                StringBuilder sb = new StringBuilder();
+                UInt32 numberOfDigits = NumberOfDigits ?? 0;
+                sb.Append(displayValue.ToString($"F{numberOfDigits}"));
+
+                if (UnitKey.HasValue)
+                {
+                    sb.Append(" ");
+                    sb.Append(GetUnitMapText(udsReader, UnitKey.Value) ?? string.Empty);
+                }
+
+                return sb.ToString();
+            }
+
             public UInt32[] KeyArray { get; }
             public UInt32 DataLength { get; }
             public UInt32? UnitKey { get; }
-            public Int64? NumberOfDigits { get; }
+            public UInt32? NumberOfDigits { get; }
             public double? ScaleOffset { get; }
             public double? ScaleMult { get; }
             public ConvertDelegate ConvertFunc { get; }
@@ -520,7 +575,7 @@ namespace UdsFileReader
             return null;
         }
 
-        private static string Type2Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type2Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 2)
             {
@@ -543,7 +598,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type3Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type3Convert(UdsReader udsReader, byte[] data)
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < 2; i++)
@@ -596,7 +651,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type18Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type18Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 1)
             {
@@ -627,7 +682,7 @@ namespace UdsFileReader
             return GetTextMapText(udsReader, textKey) ?? string.Empty;
         }
 
-        private static string Type19Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type19Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 1)
             {
@@ -648,7 +703,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type20Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type20Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 2)
             {
@@ -670,7 +725,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type28Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type28Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 1)
             {
@@ -691,7 +746,7 @@ namespace UdsFileReader
             return GetTextMapText(udsReader, 99014) ?? string.Empty; // Unbekannt
         }
 
-        private static string Type29Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type29Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 1)
             {
@@ -712,7 +767,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type30Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type30Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 1)
             {
@@ -737,7 +792,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type37_43a52_59Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type37_43a52_59Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 4)
             {
@@ -756,7 +811,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type50Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type50Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 2)
             {
@@ -776,7 +831,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type60_63Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type60_63Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 2)
             {
@@ -791,7 +846,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type77_78Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type77_78Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 2)
             {
@@ -802,7 +857,7 @@ namespace UdsFileReader
             return $"{value / 60}h {value % 60}min";
         }
 
-        private static string Type81Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type81Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 1)
             {
@@ -861,7 +916,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type84Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type84Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 2)
             {
@@ -881,7 +936,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type85_88Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type85_88Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 2)
             {
@@ -902,7 +957,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type95Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type95Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 1)
             {
@@ -925,7 +980,7 @@ namespace UdsFileReader
             return GetTextMapText(udsReader, 99014) ?? string.Empty;  // Unbekannt
         }
 
-        private static string Type100Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type100Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 5)
             {
@@ -951,7 +1006,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type101Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type101Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 2)
             {
@@ -990,7 +1045,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type102Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type102Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 4 + 1)
             {
@@ -1025,7 +1080,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type103Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type103Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 2 + 1)
             {
@@ -1053,7 +1108,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type104Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type104Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 6 + 1)
             {
@@ -1114,7 +1169,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type105Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type105Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 6 + 1)
             {
@@ -1162,7 +1217,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type106Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type106Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 4 + 1)
             {
@@ -1210,7 +1265,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type107Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type107Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 4 + 1)
             {
@@ -1255,7 +1310,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type108Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type108Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 4 + 1)
             {
@@ -1301,7 +1356,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type110Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type110Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 4 * 2 + 1)
             {
@@ -1348,7 +1403,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type111Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type111Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 2 + 1)
             {
@@ -1384,7 +1439,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type112Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type112Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 8 + 2)
             {
@@ -1487,7 +1542,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type113Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type113Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 4 + 1)
             {
@@ -1571,7 +1626,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type114Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type114Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 4 + 1)
             {
@@ -1618,7 +1673,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type115Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type115Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 4 + 1)
             {
@@ -1651,7 +1706,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type116Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type116Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 4 + 1)
             {
@@ -1683,7 +1738,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type117_118Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type117_118Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 6 + 1)
             {
@@ -1751,7 +1806,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type119Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type119Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 4 + 1)
             {
@@ -1802,7 +1857,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type120_121Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type120_121Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 8 + 1)
             {
@@ -1835,7 +1890,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type122_123Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type122_123Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 6 + 1)
             {
@@ -1891,7 +1946,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type124Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type124Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 2 * 4 + 1)
             {
@@ -1938,7 +1993,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type125_126Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type125_126Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 1)
             {
@@ -1982,7 +2037,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type131Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type131Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 4 + 1)
             {
@@ -2014,7 +2069,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type127Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type127Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 3 * 4 + 1)
             {
@@ -2059,7 +2114,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type129_130Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type129_130Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 5 * 4 + 1)
             {
@@ -2105,7 +2160,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type133Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type133Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 10)
             {
@@ -2173,7 +2228,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type134Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type134Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 4 + 1)
             {
@@ -2209,7 +2264,7 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        private static string Type135Convert(UdsReader udsReader, int typeId, byte[] data)
+        private static string Type135Convert(UdsReader udsReader, byte[] data)
         {
             if (data.Length < 4 + 1)
             {
