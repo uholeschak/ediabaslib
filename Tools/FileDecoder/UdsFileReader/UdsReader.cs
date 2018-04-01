@@ -170,7 +170,7 @@ namespace UdsFileReader
         {
             public delegate string ConvertDelegate(UdsReader udsReader, byte[] data);
 
-            public FixedEncodingEntry(UInt32[] keyArray, UInt32 dataLength, UInt32? unitKey = null, UInt32? numberOfDigits = null, double? scaleOffset = null, double? scaleMult = null)
+            public FixedEncodingEntry(UInt32[] keyArray, UInt32 dataLength, UInt32? unitKey = null, UInt32? numberOfDigits = null, double? scaleOffset = null, double? scaleMult = null, string unitExtra = null)
             {
                 KeyArray = keyArray;
                 DataLength = dataLength;
@@ -178,6 +178,7 @@ namespace UdsFileReader
                 NumberOfDigits = numberOfDigits;
                 ScaleOffset = scaleOffset;
                 ScaleMult = scaleMult;
+                UnitExtra = unitExtra;
             }
 
             public FixedEncodingEntry(UInt32[] keyArray, ConvertDelegate convertFunc)
@@ -237,6 +238,11 @@ namespace UdsFileReader
                     sb.Append(" ");
                     sb.Append(GetUnitMapText(udsReader, UnitKey.Value) ?? string.Empty);
                 }
+                if (UnitExtra != null)
+                {
+                    sb.Append(" ");
+                    sb.Append(UnitExtra);
+                }
 
                 return sb.ToString();
             }
@@ -247,6 +253,7 @@ namespace UdsFileReader
             public UInt32? NumberOfDigits { get; }
             public double? ScaleOffset { get; }
             public double? ScaleMult { get; }
+            public string UnitExtra { get; }
             public ConvertDelegate ConvertFunc { get; }
         }
 
@@ -2314,6 +2321,7 @@ namespace UdsFileReader
                     double displayValue = value / 32.0;
                     sbVal.Append($"{displayValue:0.00} ");
                     sbVal.Append(GetUnitMapText(udsReader, 103) ?? string.Empty);  // kPa abs
+                    sbVal.Append(" abs");
                 }
                 else
                 {
@@ -2338,8 +2346,8 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{4, 17, 44, 46, 47, 91}, 1, 1, 1, 0, 100.0 / 255), // Unit %
             new FixedEncodingEntry(new UInt32[]{5, 15, 70, 92, 132}, 1, 3, 0, -40, 1.0), // Unit °C
             new FixedEncodingEntry(new UInt32[]{6, 7, 8, 9, 45}, 1, 1, 1, -128, 100 / 128), // Unit %
-            new FixedEncodingEntry(new UInt32[]{10}, 1, 103, 0, 0, 3.0), // Unit kPa rel
-            new FixedEncodingEntry(new UInt32[]{11, 51}, 1, 103, 0), // Unit kPa abs
+            new FixedEncodingEntry(new UInt32[]{10}, 1, 103, 0, 0, 3.0, "rel"), // Unit kPa rel
+            new FixedEncodingEntry(new UInt32[]{11, 51}, 1, 103, 0, null, null, "abs"), // Unit kPa abs
             new FixedEncodingEntry(new UInt32[]{12}, 2, 21, 0, 0, 0.25), // Unit /min
             new FixedEncodingEntry(new UInt32[]{13}, 1, 109, 0), // Unit km/h
             new FixedEncodingEntry(new UInt32[]{33, 49}, 2, 109, 0), // Unit km/h
@@ -2353,7 +2361,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{30}, Type30Convert),
             new FixedEncodingEntry(new UInt32[]{31}, 2, 8, 0), // Unit s
             new FixedEncodingEntry(new UInt32[]{34}, 2, 103, 2, 0, 0.8), // Unit kPa
-            new FixedEncodingEntry(new UInt32[]{35}, 2, 103, 0, 0, 10.0), // Unit kPa rel
+            new FixedEncodingEntry(new UInt32[]{35}, 2, 103, 0, 0, 10.0, "rel"), // Unit kPa rel
             new FixedEncodingEntry(new UInt32[]{36, 37, 38, 39, 40, 41, 42, 43, 52, 53, 54, 55, 56, 57, 58, 59}, Type37_43a52_59Convert),
             new FixedEncodingEntry(new UInt32[]{48}, 1, null, 0),
             new FixedEncodingEntry(new UInt32[]{50}, Type50Convert),
@@ -2364,10 +2372,10 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{68}, 2, 113, 3, 0, 1.0 / 32783.0), // Unit Lambda
             new FixedEncodingEntry(new UInt32[]{69, 71, 72, 73, 74, 75, 76, 82, 90}, 1, 1, 0, 0, 100 / 255), // Unit %
             new FixedEncodingEntry(new UInt32[]{81}, Type81Convert),
-            new FixedEncodingEntry(new UInt32[]{83}, 2, 103, 0, 0, 5.0), // Unit kPa abs
+            new FixedEncodingEntry(new UInt32[]{83}, 2, 103, 0, 0, 5.0, "abs"), // Unit kPa abs
             new FixedEncodingEntry(new UInt32[]{84}, Type84Convert),
             new FixedEncodingEntry(new UInt32[]{85, 86, 87, 88}, Type85_88Convert),
-            new FixedEncodingEntry(new UInt32[]{89}, 2, 103, 0, 0, 10.0), // Unit kPa abs
+            new FixedEncodingEntry(new UInt32[]{89}, 2, 103, 0, 0, 10.0, "abs"), // Unit kPa abs
             new FixedEncodingEntry(new UInt32[]{93}, 2, 2, 2, -26880, 1 / 128.0), // Unit °
             new FixedEncodingEntry(new UInt32[]{94}, 2, 110, 2, 0, 1 / 20.0), // Unit l/h
             new FixedEncodingEntry(new UInt32[]{95}, Type95Convert),
