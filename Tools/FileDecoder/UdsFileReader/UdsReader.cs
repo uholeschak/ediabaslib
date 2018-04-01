@@ -2257,7 +2257,8 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{10}, 1, 103, 0, 0, 3.0), // Unit kPa rel
             new FixedEncodingEntry(new UInt32[]{11, 51}, 1, 103, 0), // Unit kPa abs
             new FixedEncodingEntry(new UInt32[]{12}, 2, 21, 0, 0, 0.25), // Unit /min
-            new FixedEncodingEntry(new UInt32[]{13, 33, 49}, 1, 109, 0), // Unit km/h
+            new FixedEncodingEntry(new UInt32[]{13}, 1, 109, 0), // Unit km/h
+            new FixedEncodingEntry(new UInt32[]{33, 49}, 2, 109, 0), // Unit km/h
             new FixedEncodingEntry(new UInt32[]{14}, 1, 1, 1, -128, 1 / 2.0), // Unit %
             new FixedEncodingEntry(new UInt32[]{16}, 2, 26, 2, 0, 0.01), // Unit g/s
             new FixedEncodingEntry(new UInt32[]{18}, Type18Convert),
@@ -2275,8 +2276,9 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{60, 61, 62, 63}, Type60_63Convert),
             new FixedEncodingEntry(new UInt32[]{77, 78}, Type77_78Convert),
             new FixedEncodingEntry(new UInt32[]{66}, 2, 9, 3, 0, 0.001), // Unit V
+            new FixedEncodingEntry(new UInt32[]{67}, 2, 1, 0, 0, 100 / 255), // Unit %
             new FixedEncodingEntry(new UInt32[]{68}, 2, 113, 3, 0, 1.0 / 32783.0), // Unit Lambda
-            new FixedEncodingEntry(new UInt32[]{67, 69, 71, 72, 73, 74, 75, 76, 82, 90}, 2, 1, 0, 0, 100 / 255), // Unit %
+            new FixedEncodingEntry(new UInt32[]{69, 71, 72, 73, 74, 75, 76, 82, 90}, 1, 1, 0, 0, 100 / 255), // Unit %
             new FixedEncodingEntry(new UInt32[]{81}, Type81Convert),
             new FixedEncodingEntry(new UInt32[]{83}, 2, 103, 0, 0, 5.0), // Unit kPa abs
             new FixedEncodingEntry(new UInt32[]{84}, Type84Convert),
