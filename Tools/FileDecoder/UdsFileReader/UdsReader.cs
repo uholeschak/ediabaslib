@@ -643,7 +643,7 @@ namespace UdsFileReader
 
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append(GetTextMapText(udsReader, textKey) ?? string.Empty);
             }
@@ -696,7 +696,11 @@ namespace UdsFileReader
             {
                 if ((value & (1 << i)) != 0)
                 {
-                    sb.Append($"B{(i >> 2) + 1}S{(i & 0x3) + 1} ");
+                    if (sb.Length > 0)
+                    {
+                        sb.Append("; ");
+                    }
+                    sb.Append($"B{(i >> 2) + 1}S{(i & 0x3) + 1}");
                 }
             }
 
@@ -717,7 +721,7 @@ namespace UdsFileReader
             sb.Append($"{value1:0.000} ");
             sb.Append(GetUnitMapText(udsReader, 9) ?? string.Empty);  // V
 
-            sb.Append(", ");
+            sb.Append("; ");
             sb.Append($"{value2:0.00} ");
             sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
             // > 0 fett, < 0 mager
@@ -760,7 +764,11 @@ namespace UdsFileReader
             {
                 if ((value & (1 << i)) != 0)
                 {
-                    sb.Append($"B{(i >> 1) + 1}S{(i & 0x1) + 1} ");
+                    if (sb.Length > 0)
+                    {
+                        sb.Append("; ");
+                    }
+                    sb.Append($"B{(i >> 1) + 1}S{(i & 0x1) + 1}");
                 }
             }
 
@@ -945,14 +953,15 @@ namespace UdsFileReader
 
             StringBuilder sb = new StringBuilder();
             double value1 = (data[0] - 128.0) * 100.0 / 128.0;
-            sb.Append($"{value1:0.0} ");
-            sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
+            sb.Append($"{value1:0.0}");
             if (data[1] != 0)
             {
+                sb.Append("/");
                 double value2 = (data[1] - 128.0) * 100.0 / 128.0;
-                sb.Append($"{value2:0.0} ");
-                sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
+                sb.Append($"{value2:0.0}");
             }
+            sb.Append($" ");
+            sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
 
             return sb.ToString();
         }
@@ -995,12 +1004,12 @@ namespace UdsFileReader
 
             double value3 = (data[2] - 125.0) * 0.01;
             double value4 = (data[3] - 125.0) * 0.01;
-            sb.Append(", ");
+            sb.Append("; ");
             sb.Append($"TQ_Max 3/4: {value3:0.}/{value4:0.} ");
             sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
 
             double value5 = (data[4] - 125.0) * 0.01;
-            sb.Append(", ");
+            sb.Append("; ");
             sb.Append($"TQ_Max 5: {value5:0.} ");
             sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
             return sb.ToString();
@@ -1027,7 +1036,7 @@ namespace UdsFileReader
             {
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append("N/D_STAT: ");
                 sb.Append((valueData & 0x02) != 0 ? "NEUTR" : "DRIVE");
@@ -1037,7 +1046,7 @@ namespace UdsFileReader
             {
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append("MT_GEAR: ");
                 sb.Append((valueData & 0x04) != 0 ? "NEUTR" : "GEAR");
@@ -1071,7 +1080,7 @@ namespace UdsFileReader
 
                     if (sb.Length > 0)
                     {
-                        sb.Append(", ");
+                        sb.Append("; ");
                     }
                     sb.Append(sbValue);
                 }
@@ -1098,7 +1107,7 @@ namespace UdsFileReader
 
                     if (sb.Length > 0)
                     {
-                        sb.Append(", ");
+                        sb.Append("; ");
                     }
                     sb.Append($"ECT {i + 1}: {displayValue:0.} ");
                     sb.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
@@ -1160,7 +1169,7 @@ namespace UdsFileReader
 
                     if (sb.Length > 0)
                     {
-                        sb.Append(", ");
+                        sb.Append("; ");
                     }
                     sb.Append(sbValue);
                 }
@@ -1217,7 +1226,7 @@ namespace UdsFileReader
 
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append(sbValue);
             }
@@ -1265,7 +1274,7 @@ namespace UdsFileReader
 
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append(sbValue);
             }
@@ -1311,7 +1320,7 @@ namespace UdsFileReader
 
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append(sbVal);
             }
@@ -1357,7 +1366,7 @@ namespace UdsFileReader
 
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append(sbVal);
             }
@@ -1404,7 +1413,7 @@ namespace UdsFileReader
 
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append(sbVal);
             }
@@ -1440,7 +1449,7 @@ namespace UdsFileReader
 
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append(sbVal);
             }
@@ -1534,7 +1543,7 @@ namespace UdsFileReader
                 {
                     if (sb.Length > 0)
                     {
-                        sb.Append(", ");
+                        sb.Append("; ");
                     }
                     char name = (char)('A' + i);
                     sb.Append($"BP_{name} ");
@@ -1621,7 +1630,7 @@ namespace UdsFileReader
                 {
                     if (sb.Length > 0)
                     {
-                        sb.Append(", ");
+                        sb.Append("; ");
                     }
                     sb.Append(sbValue);
                     if (sbStat.Length > 0)
@@ -1674,7 +1683,7 @@ namespace UdsFileReader
 
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append(sbVal);
             }
@@ -1706,7 +1715,7 @@ namespace UdsFileReader
 
                     if (sb.Length > 0)
                     {
-                        sb.Append(", ");
+                        sb.Append("; ");
                     }
                     sb.Append(sbVal);
                 }
@@ -1738,7 +1747,7 @@ namespace UdsFileReader
 
                     if (sb.Length > 0)
                     {
-                        sb.Append(", ");
+                        sb.Append("; ");
                     }
                     sb.Append(sbVal);
                 }
@@ -1784,7 +1793,7 @@ namespace UdsFileReader
             sb.Append(" ");
             sb.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
 
-            sb.Append(", ");
+            sb.Append("; ");
             sb.Append(GetTextMapText(udsReader, 175748) ?? string.Empty);   // Kompressor
             sb.Append(" ");
             sb.Append(GetTextMapText(udsReader, 098311) ?? string.Empty);   // ein
@@ -1869,7 +1878,7 @@ namespace UdsFileReader
 
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append(sbValue);
             }
@@ -2005,7 +2014,7 @@ namespace UdsFileReader
 
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append(sbVal);
             }
@@ -2032,7 +2041,7 @@ namespace UdsFileReader
             {
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append("NTE:Out");
             }
@@ -2041,7 +2050,7 @@ namespace UdsFileReader
             {
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append("NTE:Carve-out");
             }
@@ -2050,7 +2059,7 @@ namespace UdsFileReader
             {
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append("NTE:Def");
             }
@@ -2070,7 +2079,7 @@ namespace UdsFileReader
             {
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append($"NOx{i + 1}1: ");
                 if ((maskData & (1 << i)) != 0)
@@ -2125,7 +2134,7 @@ namespace UdsFileReader
 
                     if (sb.Length > 0)
                     {
-                        sb.Append(", ");
+                        sb.Append("; ");
                     }
                     sb.Append(sbValue);
                 }
@@ -2168,7 +2177,7 @@ namespace UdsFileReader
                     {
                         if (sb.Length > 0)
                         {
-                            sb.Append(", ");
+                            sb.Append("; ");
                         }
                         sb.Append(sbValue);
                     }
@@ -2216,7 +2225,7 @@ namespace UdsFileReader
             sb.Append(" ");
             sb.Append(GetUnitMapText(udsReader, 110) ?? string.Empty);  // l/h
 
-            sb.Append(", ");
+            sb.Append("; ");
             sb.Append("ReAg Level: ");
             if ((maskData & 0x04) != 0)
             {
@@ -2231,7 +2240,7 @@ namespace UdsFileReader
             sb.Append(" ");
             sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
 
-            sb.Append(", ");
+            sb.Append("; ");
             sb.Append("NWI ");
             sb.Append(GetTextMapText(udsReader, 099068) ?? string.Empty);   // Time
             sb.Append(": ");
@@ -2276,7 +2285,7 @@ namespace UdsFileReader
 
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append(sbVal);
             }
@@ -2313,7 +2322,7 @@ namespace UdsFileReader
 
                 if (sb.Length > 0)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                 }
                 sb.Append(sbVal);
             }
