@@ -648,6 +648,28 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
+        private static string Type20Convert(UdsReader udsReader, int typeId, byte[] data)
+        {
+            if (data.Length < 2)
+            {
+                return string.Empty;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            double value1 = data[0] * 0.005;
+            double value2 = (data[1] - 128.0) * 100.0 / 128.0;
+
+            sb.Append($"{value1:0.000} ");
+            sb.Append(GetUnitMapText(udsReader, 9) ?? string.Empty);  // V
+
+            sb.Append(", ");
+            sb.Append($"{value2:0.00} ");
+            sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
+            // > 0 fett, < 0 mager
+
+            return sb.ToString();
+        }
+
         private static string Type28Convert(UdsReader udsReader, int typeId, byte[] data)
         {
             if (data.Length < 1)
@@ -2240,7 +2262,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{16}, 2, 26, 2, 0, 0.01), // Unit g/s
             new FixedEncodingEntry(new UInt32[]{18}, Type18Convert),
             new FixedEncodingEntry(new UInt32[]{19}, Type19Convert),
-            new FixedEncodingEntry(new UInt32[]{20}, 1, 9, 3, 0, 0.005), // Unit V, fix!
+            new FixedEncodingEntry(new UInt32[]{20}, Type20Convert),
             new FixedEncodingEntry(new UInt32[]{28}, Type28Convert),
             new FixedEncodingEntry(new UInt32[]{29}, Type29Convert),
             new FixedEncodingEntry(new UInt32[]{30}, Type30Convert),
