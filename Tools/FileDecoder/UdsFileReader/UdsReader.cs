@@ -2130,7 +2130,7 @@ namespace UdsFileReader
 
                     int offset = i * 4 + 1;
                     UInt32 value = (UInt32)((data[offset] << 24) | (data[offset + 1] << 16) | (data[offset + 2] << 8) | data[offset + 3]);
-                    sbValue.Append($"{value / 3600}H{value % 3600}s");
+                    sbValue.Append($"{value / 3600}H {value % 3600}s");
 
                     if (sb.Length > 0)
                     {
@@ -2166,7 +2166,7 @@ namespace UdsFileReader
                         {
                             sbValue.Append(" / ");
                         }
-                        sbValue.Append($"{value / 3600}H{value % 3600}s");
+                        sbValue.Append($"{value / 3600}H {value % 3600}s");
                         if (i == 2)
                         {   // abort last round
                             break;
@@ -2247,7 +2247,7 @@ namespace UdsFileReader
             if ((maskData & 0x08) != 0)
             {
                 UInt32 value = (UInt32) ((data[6] << 24) | (data[7] << 16) | (data[8] << 8) | data[9]);
-                sb.Append($"{value / 3600}H{value % 3600}s");
+                sb.Append($"{value / 3600}H {value % 3600}s");
             }
             else
             {
@@ -2332,9 +2332,9 @@ namespace UdsFileReader
 
         private static readonly FixedEncodingEntry[] FixedEncodingArray =
         {
+            new FixedEncodingEntry(new UInt32[]{1, 65, 79, 80, 109, 136, 139, 140, 141, 142, 143, 152, 153, 159}, 0), // not existing
             new FixedEncodingEntry(new UInt32[]{2}, Type2Convert),
             new FixedEncodingEntry(new UInt32[]{3}, Type3Convert),
-            new FixedEncodingEntry(new UInt32[]{1, 65, 79, 80, 109, 136, 139, 140, 141, 142, 143, 152, 153, 159}, 0), // not existing
             new FixedEncodingEntry(new UInt32[]{4, 17, 44, 46, 47, 91}, 1, 1, 1, 0, 100.0 / 255), // Unit %
             new FixedEncodingEntry(new UInt32[]{5, 15, 70, 92, 132}, 1, 3, 0, -40, 1.0), // Unit °C
             new FixedEncodingEntry(new UInt32[]{6, 7, 8, 9, 45}, 1, 1, 1, -128, 100 / 128), // Unit %
@@ -2504,7 +2504,7 @@ namespace UdsFileReader
                 sb.Append("\"");
 
                 sb.Append(" \"");
-                sb.Append(entry.ToString(this, new byte[] { 0xFF, 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, 0xFF }));
+                sb.Append(entry.ToString(this, new byte[] { 0xFF, 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, 0x12, 0x34, 0x56, 0x78, 0x9A, 0xCD, 0xEF, 0x01, 0x23, 0x45, 0x67, 0x89 }));
                 sb.Append("\"");
 
                 sb.AppendLine();
