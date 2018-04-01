@@ -1181,6 +1181,9 @@ namespace UdsFileReader
             int index = 0;
             for (int i = 0; i < 2; i++)
             {
+                StringBuilder sbValue = new StringBuilder();
+                char name = (char)('A' + i);
+                sbValue.Append($"EGR {name}: ");
                 for (int j = 0; j < 3; j++)
                 {
                     byte value = data[index + 1];
@@ -1194,24 +1197,29 @@ namespace UdsFileReader
                         displayValue = value * 100.0 / 255.0;
                     }
 
-                    if (sb.Length > 0)
+                    if (j > 0)
                     {
-                        sb.Append("/");
+                        sbValue.Append("/");
                     }
-                    char name = (char)('A' + i);
-                    sb.Append($"EGR {name}: ");
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if ((maskData & (1 << index)) != 0)
                     {
-                        sb.Append($"{displayValue:0.} ");
+                        sbValue.Append($"{displayValue:0.}");
                     }
                     else
                     {
-                        sb.Append("--- ");
+                        sbValue.Append("---");
                     }
-                    sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
                     index++;
                 }
+                sbValue.Append(" ");
+                sbValue.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
+
+                if (sb.Length > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append(sbValue);
             }
 
             return sb.ToString();
@@ -1298,6 +1306,7 @@ namespace UdsFileReader
                     }
                     index++;
                 }
+                sbVal.Append(" ");
                 sbVal.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
 
                 if (sb.Length > 0)
@@ -1775,7 +1784,7 @@ namespace UdsFileReader
             sb.Append(" ");
             sb.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
 
-            sb.Append(" ");
+            sb.Append(", ");
             sb.Append(GetTextMapText(udsReader, 175748) ?? string.Empty);   // Kompressor
             sb.Append(" ");
             sb.Append(GetTextMapText(udsReader, 098311) ?? string.Empty);   // ein
@@ -1817,29 +1826,33 @@ namespace UdsFileReader
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < 2; i++)
             {
+                StringBuilder sbValue = new StringBuilder();
                 int maskIndex = i * 2;
                 bool b1 = (maskData & (1 << maskIndex)) != 0;
                 bool b2 = (maskData & (1 << (maskIndex + 1))) != 0;
                 int bNum = i + 1;
                 if (b1 & b2)
                 {
-                    sb.Append($"B{bNum}S1/B{bNum}S2: ");
+                    sbValue.Append($"B{bNum}S1/B{bNum}S2: ");
                 }
                 else if (b1)
                 {
-                    sb.Append($"B{bNum}S1: ");
+                    sbValue.Append($"B{bNum}S1: ");
                 }
                 else if (b2)
                 {
-                    sb.Append($"B{bNum}S2: ");
+                    sbValue.Append($"B{bNum}S2: ");
+                }
+                else
+                {
+                    continue;
                 }
 
                 if (b1)
                 {
                     byte value = data[(i * 2) + 1];
                     double displayValue = value - 40.0;
-                    sb.Append($"{displayValue:0.} ");
-                    sb.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
+                    sbValue.Append($"{displayValue:0.}");
                 }
                 if (b2)
                 {
@@ -1847,11 +1860,18 @@ namespace UdsFileReader
                     double displayValue = value - 40.0;
                     if (b1)
                     {
-                        sb.Append("/");
+                        sbValue.Append("/");
                     }
-                    sb.Append($"{displayValue:0.} ");
-                    sb.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
+                    sbValue.Append($"{displayValue:0.}");
                 }
+                sbValue.Append(" ");
+                sbValue.Append(GetUnitMapText(udsReader, 3) ?? string.Empty);  // °C
+
+                if (sb.Length > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append(sbValue);
             }
 
             return sb.ToString();
@@ -2196,7 +2216,7 @@ namespace UdsFileReader
             sb.Append(" ");
             sb.Append(GetUnitMapText(udsReader, 110) ?? string.Empty);  // l/h
 
-            sb.Append(" ");
+            sb.Append(", ");
             sb.Append("ReAg Level: ");
             if ((maskData & 0x04) != 0)
             {
@@ -2211,7 +2231,7 @@ namespace UdsFileReader
             sb.Append(" ");
             sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
 
-            sb.Append(" ");
+            sb.Append(", ");
             sb.Append("NWI ");
             sb.Append(GetTextMapText(udsReader, 099068) ?? string.Empty);   // Time
             sb.Append(": ");
@@ -2446,6 +2466,41 @@ namespace UdsFileReader
             {
                 return false;
             }
+        }
+
+        public string TestFixedTypes()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (FixedEncodingEntry entry in FixedEncodingArray)
+            {
+                sb.Append($"{entry.KeyArray[0]}:");
+                sb.Append(" \"");
+                sb.Append(entry.ToString(this, new byte[] { 0x10 }));
+                sb.Append("\"");
+
+                sb.Append(" \"");
+                sb.Append(entry.ToString(this, new byte[] { 0x10, 0x20 }));
+                sb.Append("\"");
+
+                sb.Append(" \"");
+                sb.Append(entry.ToString(this, new byte[] { 0xFF, 0x10 }));
+                sb.Append("\"");
+
+                sb.Append(" \"");
+                sb.Append(entry.ToString(this, new byte[] { 0xFF, 0x10, 0x20 }));
+                sb.Append("\"");
+
+                sb.Append(" \"");
+                sb.Append(entry.ToString(this, new byte[] { 0xFF, 0xAB, 0xCD }));
+                sb.Append("\"");
+
+                sb.Append(" \"");
+                sb.Append(entry.ToString(this, new byte[] { 0xFF, 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, 0xFF }));
+                sb.Append("\"");
+
+                sb.AppendLine();
+            }
+            return sb.ToString();
         }
 
         public List<ParseInfoBase> ExtractFileSegment(List<string> fileList, SegmentType segmentType)
