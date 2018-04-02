@@ -479,13 +479,13 @@ namespace UdsFileReader
                 {
                     bitLength = (int)BitLength.Value;
                     byteLength = (int) ((bitLength + bitOffset + 7) / 8);
-                    if ((bitLength < 1) || (data.Length < byteOffset + byteLength))
-                    {
-                        return string.Empty;
-                    }
+                }
+                if ((bitLength < 1) || (data.Length < byteOffset + byteLength))
+                {
+                    return string.Empty;
                 }
                 byte[] subData = new byte[byteLength];
-                Array.Copy(data, 0, subData, byteOffset, byteLength);
+                Array.Copy(data, byteOffset, subData, 0, byteLength);
                 if (bitOffset > 0 || (bitLength & 0x7) != 0)
                 {
                     BitArray bitArray = new BitArray(subData);
@@ -530,7 +530,7 @@ namespace UdsFileReader
                             for (int i = 0; i < byteLength; i++)
                             {
                                 value <<= 8;
-                                value |= subData[byteLength - i];
+                                value |= subData[byteLength - i - 1];
                             }
                         }
 
@@ -569,7 +569,7 @@ namespace UdsFileReader
                                     return string.Empty;
                                 }
                             }
-                            return $"TNF {(Int64)valueSigned}";
+                            return $"{(Int64)valueSigned}";
                         }
 
                         double scaledValue;
@@ -641,8 +641,7 @@ namespace UdsFileReader
                         break;
 
                     case DataType.FixedEncoding:
-                        sb.Append(FixedEncoding.ToString(UdsReader, subData));
-                        break;
+                        return FixedEncoding.ToString(UdsReader, subData);
 
                     case DataType.String:
                         sb.Append(Encoding.GetString(subData));
