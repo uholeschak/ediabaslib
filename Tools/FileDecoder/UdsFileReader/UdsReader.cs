@@ -262,6 +262,7 @@ namespace UdsFileReader
         {
             public DataTypeEntry(UdsReader udsReader, string[] lineArray, int offset)
             {
+                UdsReader = udsReader;
                 LineArray = lineArray;
 
                 if (lineArray.Length >= offset + 10)
@@ -425,6 +426,7 @@ namespace UdsFileReader
                 }
             }
 
+            public UdsReader UdsReader { get; }
             public string[] LineArray { get; }
             public UInt32 DataTypeId { get; }
             public string[] NameDetailArray { get; }
@@ -463,7 +465,7 @@ namespace UdsFileReader
                 return dataTypeName;
             }
 
-            public string ToString(UdsReader udsReader, byte[] data)
+            public string ToString(byte[] data)
             {
                 UInt32 bitOffset = BitOffset ?? 0;
                 UInt32 byteOffset = ByteOffset ?? 0;
@@ -495,7 +497,7 @@ namespace UdsFileReader
                 switch ((DataType)DataTypeId)
                 {
                     case DataType.FixedEncoding:
-                        return FixedEncoding.ToString(udsReader, subData);
+                        return FixedEncoding.ToString(UdsReader, subData);
                 }
                 return string.Empty;
             }
