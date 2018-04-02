@@ -534,14 +534,6 @@ namespace UdsFileReader
                             }
                         }
 
-                        UInt64 valueConv = value;
-                        UInt64 signMask = (UInt64)1 << (bitLength - 1);
-                        if ((signMask & value) != 0)
-                        {
-                            valueConv = (value ^ signMask) - signMask;  // sign extend
-                        }
-                        Int64 valueSigned = (Int64)valueConv;
-
                         if (dataType == DataType.ValueName)
                         {
                             if (NameValueList == null)
@@ -553,11 +545,11 @@ namespace UdsFileReader
                             {
                                 // ReSharper disable once ReplaceWithSingleAssignment.True
                                 bool match = true;
-                                if (valueName.MinValue.HasValue && valueSigned > valueName.MinValue.Value)
+                                if (valueName.MinValue.HasValue && (Int64)value > valueName.MinValue.Value)
                                 {
                                     match = false;
                                 }
-                                if (valueName.MaxValue.HasValue && valueSigned < valueName.MaxValue.Value)
+                                if (valueName.MaxValue.HasValue && (Int64)value < valueName.MaxValue.Value)
                                 {
                                     match = false;
                                 }
@@ -570,12 +562,20 @@ namespace UdsFileReader
                                     return string.Empty;
                                 }
                             }
-                            return $"{valueSigned}";
+                            return $"{value}";
                         }
 
                         double scaledValue;
                         if ((DataTypeId & DataTypeMaskSigned) != 0)
                         {
+                            UInt64 valueConv = value;
+                            UInt64 signMask = (UInt64)1 << (bitLength - 1);
+                            if ((signMask & value) != 0)
+                            {
+                                valueConv = (value ^ signMask) - signMask;  // sign extend
+                            }
+                            Int64 valueSigned = (Int64)valueConv;
+
                             if (dataType == DataType.Integer1 || dataType == DataType.Integer2)
                             {
                                 sb.Append($"{valueSigned}");
