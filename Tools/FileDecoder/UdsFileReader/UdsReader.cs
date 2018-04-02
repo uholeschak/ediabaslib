@@ -467,13 +467,19 @@ namespace UdsFileReader
 
             public string ToString(byte[] data)
             {
+                if (data.Length == 0)
+                {
+                    return string.Empty;
+                }
                 UInt32 bitOffset = BitOffset ?? 0;
                 UInt32 byteOffset = ByteOffset ?? 0;
-                UInt32 byteLength = (UInt32) data.Length;
+                int bitLength = data.Length * 8;
+                int byteLength = data.Length;
                 if (BitLength.HasValue)
                 {
-                    byteLength = (BitLength.Value + bitOffset + 7) / 8;
-                    if (data.Length < byteOffset + byteLength)
+                    bitLength = (int)BitLength.Value;
+                    byteLength = (int) ((bitLength + bitOffset + 7) / 8);
+                    if ((bitLength < 1) || (data.Length < byteOffset + byteLength))
                     {
                         return string.Empty;
                     }
@@ -518,7 +524,21 @@ namespace UdsFileReader
                             }
                         }
 
-                        double scaledValue = value;
+                        double scaledValue;
+                        if ((DataTypeId & DataTypeMaskSigned) != 0)
+                        {
+                            UInt64 signMask = (UInt64) 1 << (bitLength - 1);
+                            if ((signMask & value) != 0)
+                            {
+                                value = (value ^ signMask) - signMask;  // sign extend
+                            }
+                            scaledValue = (Int64)value;
+                        }
+                        else
+                        {
+                            scaledValue = value;
+                        }
+
                         try
                         {
                             if (ScaleMult.HasValue)
