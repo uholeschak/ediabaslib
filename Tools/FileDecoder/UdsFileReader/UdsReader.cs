@@ -514,6 +514,7 @@ namespace UdsFileReader
                     case DataType.HexScaled:
                     case DataType.Integer1:
                     case DataType.Integer2:
+                    case DataType.ValueName:
                     {
                         UInt64 value = 0;
                         if ((DataTypeId & DataTypeMaskSwapped) != 0)
@@ -533,20 +534,53 @@ namespace UdsFileReader
                             }
                         }
 
+                        UInt64 signMask = (UInt64)1 << (bitLength - 1);
+                        if ((signMask & value) != 0)
+                        {
+                            value = (value ^ signMask) - signMask;  // sign extend
+                        }
+                        Int64 valueSigned = (Int64)value;
+
+                        if (dataType == DataType.ValueName)
+                        {
+                            if (NameValueList == null)
+                            {
+                                return string.Empty;
+                            }
+
+                            foreach (ValueName valueName in NameValueList)
+                            {
+                                // ReSharper disable once ReplaceWithSingleAssignment.True
+                                bool match = true;
+                                if (valueName.MinValue.HasValue && valueSigned > valueName.MinValue.Value)
+                                {
+                                    match = false;
+                                }
+                                if (valueName.MaxValue.HasValue && valueSigned < valueName.MaxValue.Value)
+                                {
+                                    match = false;
+                                }
+                                if (match)
+                                {
+                                    if (valueName.NameArray != null && valueName.NameArray.Length > 0)
+                                    {
+                                        return valueName.NameArray[0];
+                                    }
+                                    return string.Empty;
+                                }
+                            }
+                            return $"TNF {(Int64)valueSigned}";
+                        }
+
                         double scaledValue;
                         if ((DataTypeId & DataTypeMaskSigned) != 0)
                         {
-                            UInt64 signMask = (UInt64) 1 << (bitLength - 1);
-                            if ((signMask & value) != 0)
-                            {
-                                value = (value ^ signMask) - signMask;  // sign extend
-                            }
                             if (dataType == DataType.Integer1 || dataType == DataType.Integer2)
                             {
-                                sb.Append($"{(Int64)value}");
+                                sb.Append($"{(Int64)valueSigned}");
                                 break;
                             }
-                            scaledValue = (Int64)value;
+                            scaledValue = valueSigned;
                         }
                         else
                         {
