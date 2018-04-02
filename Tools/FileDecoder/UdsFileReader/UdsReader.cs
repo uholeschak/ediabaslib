@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -460,6 +461,43 @@ namespace UdsFileReader
                 }
 
                 return dataTypeName;
+            }
+
+            public string ToString(UdsReader udsReader, byte[] data)
+            {
+                UInt32 bitOffset = BitOffset ?? 0;
+                UInt32 byteOffset = ByteOffset ?? 0;
+                UInt32 byteLength = (UInt32) data.Length;
+                if (BitLength.HasValue)
+                {
+                    byteLength = (BitLength.Value + bitOffset + 7) / 8;
+                    if (data.Length < byteOffset + byteLength)
+                    {
+                        return string.Empty;
+                    }
+                }
+                byte[] subData = new byte[byteLength];
+                Array.Copy(data, 0, subData, byteOffset, byteLength);
+                if (bitOffset > 0)
+                {   // shift bits to left
+                    BitArray bitArray = new BitArray(subData);
+                    if (bitOffset > bitArray.Length)
+                    {
+                        return string.Empty;
+                    }
+                    for (int i = 0; i < bitArray.Length - bitOffset; i++)
+                    {
+                        bitArray[i] = bitArray[(int)(i + bitOffset)];
+                    }
+                    bitArray.CopyTo(subData, 0);
+                }
+
+                switch ((DataType)DataTypeId)
+                {
+                    case DataType.FixedEncoding:
+                        return FixedEncoding.ToString(udsReader, subData);
+                }
+                return string.Empty;
             }
         }
 
@@ -967,7 +1005,7 @@ namespace UdsFileReader
                 double value2 = (data[1] - 128.0) * 100.0 / 128.0;
                 sb.Append($"{value2:0.0}");
             }
-            sb.Append($" ");
+            sb.Append(" ");
             sb.Append(GetUnitMapText(udsReader, 1) ?? string.Empty);  // %
 
             return sb.ToString();
