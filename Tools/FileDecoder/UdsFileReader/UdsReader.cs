@@ -31,7 +31,7 @@ namespace UdsFileReader
         {
             FloatScaled = 0,
             Binary1 = 1,
-            IntegerSwap = 2,
+            Integer1 = 2,
             ValueName = 3,
             FixedEncoding = 4,
             Binary2 = 5,
@@ -39,7 +39,7 @@ namespace UdsFileReader
             HexBytes = 7,
             String = 8,
             HexScaled = 9,
-            Integer = 10,
+            Integer2 = 10,
             Invalid = 0x3F,
         }
 
@@ -331,7 +331,7 @@ namespace UdsFileReader
                     switch (dataType)
                     {
                         case DataType.FloatScaled:
-                        case DataType.IntegerSwap:
+                        case DataType.Integer1:
                         {
                             if (double.TryParse(lineArray[offset + 2], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleOffset))
                             {
@@ -565,6 +565,42 @@ namespace UdsFileReader
                         }
 
                         return scaledValue.ToString($"F{NumberOfDigits ?? 0}");
+                    }
+
+                    case DataType.Integer1:
+                    case DataType.Integer2:
+                    {
+                        UInt64 value = 0;
+                        if ((DataTypeId & DataTypeMaskSwapped) != 0)
+                        {
+                            for (int i = 0; i < byteLength; i++)
+                            {
+                                value <<= 8;
+                                value |= subData[i];
+                            }
+                        }
+                        else
+                        {
+                            for (int i = 0; i < byteLength; i++)
+                            {
+                                value <<= 8;
+                                value |= subData[byteLength - i];
+                            }
+                        }
+
+                        if ((DataTypeId & DataTypeMaskSigned) != 0)
+                        {
+                            UInt64 signMask = (UInt64)1 << (bitLength - 1);
+                            if ((signMask & value) != 0)
+                            {
+                                value = (value ^ signMask) - signMask;  // sign extend
+                            }
+                            return $"{(Int64)value}";
+                        }
+                        else
+                        {
+                            return $"{value}";
+                        }
                     }
 
                     case DataType.Binary1:
