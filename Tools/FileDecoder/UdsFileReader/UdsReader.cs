@@ -494,8 +494,59 @@ namespace UdsFileReader
                     bitArray.CopyTo(subData, 0);
                 }
 
-                switch ((DataType)(DataTypeId & DataTypeMaskEnum))
+                DataType dataType = (DataType) (DataTypeId & DataTypeMaskEnum);
+                switch (dataType)
                 {
+                    case DataType.FloatScaled:
+                    case DataType.HexScaled:
+                    {
+                        UInt64 value = 0;
+                        if ((DataTypeId & DataTypeMaskSwapped) != 0)
+                        {
+                            for (int i = 0; i < byteLength; i++)
+                            {
+                                value <<= 8;
+                                value |= subData[i];
+                            }
+                        }
+                        else
+                        {
+                            for (int i = 0; i < byteLength; i++)
+                            {
+                                value <<= 8;
+                                value |= subData[byteLength - i];
+                            }
+                        }
+
+                        double scaledValue = value;
+                        try
+                        {
+                            if (ScaleMult.HasValue)
+                            {
+                                scaledValue *= ScaleMult.Value;
+                            }
+                            if (ScaleOffset.HasValue)
+                            {
+                                scaledValue += ScaleOffset.Value;
+                            }
+                            if (ScaleDiv.HasValue)
+                            {
+                                scaledValue /= ScaleDiv.Value;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        if (dataType == DataType.HexScaled)
+                        {
+                            return $"{(UInt64)scaledValue:X}";
+                        }
+
+                        return scaledValue.ToString($"F{NumberOfDigits ?? 0}");
+                    }
+
                     case DataType.Binary1:
                     case DataType.Binary2:
                     {
