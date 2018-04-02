@@ -486,16 +486,22 @@ namespace UdsFileReader
                 }
                 byte[] subData = new byte[byteLength];
                 Array.Copy(data, 0, subData, byteOffset, byteLength);
-                if (bitOffset > 0)
-                {   // shift bits to left
+                if (bitOffset > 0 || (bitLength & 0x7) != 0)
+                {
                     BitArray bitArray = new BitArray(subData);
                     if (bitOffset > bitArray.Length)
                     {
                         return string.Empty;
                     }
+                    // shift bits to left
                     for (int i = 0; i < bitArray.Length - bitOffset; i++)
                     {
                         bitArray[i] = bitArray[(int)(i + bitOffset)];
+                    }
+                    // clear unused bits
+                    for (int i = bitLength; i < bitArray.Length; i++)
+                    {
+                        bitArray[i] = false;
                     }
                     bitArray.CopyTo(subData, 0);
                 }
@@ -508,7 +514,7 @@ namespace UdsFileReader
                     case DataType.Integer1:
                     case DataType.Integer2:
                     {
-                            UInt64 value = 0;
+                        UInt64 value = 0;
                         if ((DataTypeId & DataTypeMaskSwapped) != 0)
                         {
                             for (int i = 0; i < byteLength; i++)
