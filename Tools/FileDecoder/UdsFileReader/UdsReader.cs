@@ -516,6 +516,9 @@ namespace UdsFileReader
 
                     case DataType.FixedEncoding:
                         return FixedEncoding.ToString(UdsReader, subData);
+
+                    case DataType.String:
+                        return Encoding.GetString(subData);
                 }
                 return string.Empty;
             }
