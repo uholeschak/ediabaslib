@@ -496,6 +496,24 @@ namespace UdsFileReader
 
                 switch ((DataType)DataTypeId)
                 {
+                    case DataType.Binary1:
+                    case DataType.Binary2:
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        foreach (var value in subData)
+                        {
+                            if (sb.Length > 0)
+                            {
+                                sb.Append(" ");
+                            }
+                            sb.Append(Convert.ToString(value, 2).PadLeft(8, '0'));
+                        }
+                        return sb.ToString();
+                    }
+
+                    case DataType.HexBytes:
+                        return BitConverter.ToString(subData).Replace("-", " ");
+
                     case DataType.FixedEncoding:
                         return FixedEncoding.ToString(UdsReader, subData);
                 }
