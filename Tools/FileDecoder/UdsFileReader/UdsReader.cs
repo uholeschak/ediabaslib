@@ -506,6 +506,7 @@ namespace UdsFileReader
                     bitArray.CopyTo(subData, 0);
                 }
 
+                StringBuilder sb = new StringBuilder();
                 DataType dataType = (DataType) (DataTypeId & DataTypeMaskEnum);
                 switch (dataType)
                 {
@@ -542,7 +543,8 @@ namespace UdsFileReader
                             }
                             if (dataType == DataType.Integer1 || dataType == DataType.Integer2)
                             {
-                                return $"{(Int64)value}";
+                                sb.Append($"{(Int64)value}");
+                                break;
                             }
                             scaledValue = (Int64)value;
                         }
@@ -550,7 +552,8 @@ namespace UdsFileReader
                         {
                             if (dataType == DataType.Integer1 || dataType == DataType.Integer2)
                             {
-                                return $"{value}";
+                                sb.Append($"{value}");
+                                break;
                             }
                             scaledValue = value;
                         }
@@ -577,16 +580,17 @@ namespace UdsFileReader
 
                         if (dataType == DataType.HexScaled)
                         {
-                            return $"{(UInt64)scaledValue:X}";
+                            sb.Append($"{(UInt64)scaledValue:X}");
+                            break;
                         }
 
-                        return scaledValue.ToString($"F{NumberOfDigits ?? 0}");
+                        sb.Append(scaledValue.ToString($"F{NumberOfDigits ?? 0}"));
+                        break;
                     }
 
                     case DataType.Binary1:
                     case DataType.Binary2:
                     {
-                        StringBuilder sb = new StringBuilder();
                         foreach (var value in subData)
                         {
                             if (sb.Length > 0)
@@ -595,19 +599,35 @@ namespace UdsFileReader
                             }
                             sb.Append(Convert.ToString(value, 2).PadLeft(8, '0'));
                         }
-                        return sb.ToString();
+                        break;
                     }
 
                     case DataType.HexBytes:
-                        return BitConverter.ToString(subData).Replace("-", " ");
+                        sb.Append(BitConverter.ToString(subData).Replace("-", " "));
+                        break;
 
                     case DataType.FixedEncoding:
-                        return FixedEncoding.ToString(UdsReader, subData);
+                        sb.Append(FixedEncoding.ToString(UdsReader, subData));
+                        break;
 
                     case DataType.String:
-                        return Encoding.GetString(subData);
+                        sb.Append(Encoding.GetString(subData));
+                        break;
+
+                    default:
+                        return string.Empty;
                 }
-                return "---";
+
+                if (!string.IsNullOrEmpty(UnitText))
+                {
+                    if (sb.Length > 0)
+                    {
+                        sb.Append(" ");
+                    }
+                    sb.Append(UnitText);
+                }
+
+                return sb.ToString();
             }
         }
 
