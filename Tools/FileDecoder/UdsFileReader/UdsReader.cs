@@ -29,17 +29,17 @@ namespace UdsFileReader
 
         public enum DataType
         {
-            Float = 0,
+            FloatScaled = 0,
             Binary1 = 1,
-            Integer = 2,
+            IntegerSwap = 2,
             ValueName = 3,
             FixedEncoding = 4,
             Binary2 = 5,
             MuxTable = 6,
             HexBytes = 7,
             String = 8,
-            IntHex = 9,
-            IntUnscaled = 10,
+            HexScaled = 9,
+            Integer = 10,
             Invalid = 0x3F,
         }
 
@@ -330,8 +330,8 @@ namespace UdsFileReader
 
                     switch (dataType)
                     {
-                        case DataType.Float:
-                        case DataType.Integer:
+                        case DataType.FloatScaled:
+                        case DataType.IntegerSwap:
                         {
                             if (double.TryParse(lineArray[offset + 2], NumberStyles.Float, CultureInfo.InvariantCulture, out double scaleOffset))
                             {
@@ -494,7 +494,7 @@ namespace UdsFileReader
                     bitArray.CopyTo(subData, 0);
                 }
 
-                switch ((DataType)DataTypeId)
+                switch ((DataType)(DataTypeId & DataTypeMaskEnum))
                 {
                     case DataType.Binary1:
                     case DataType.Binary2:
@@ -520,7 +520,7 @@ namespace UdsFileReader
                     case DataType.String:
                         return Encoding.GetString(subData);
                 }
-                return string.Empty;
+                return "---";
             }
         }
 
