@@ -534,12 +534,13 @@ namespace UdsFileReader
                             }
                         }
 
+                        UInt64 valueConv = value;
                         UInt64 signMask = (UInt64)1 << (bitLength - 1);
                         if ((signMask & value) != 0)
                         {
-                            value = (value ^ signMask) - signMask;  // sign extend
+                            valueConv = (value ^ signMask) - signMask;  // sign extend
                         }
-                        Int64 valueSigned = (Int64)value;
+                        Int64 valueSigned = (Int64)valueConv;
 
                         if (dataType == DataType.ValueName)
                         {
@@ -569,7 +570,7 @@ namespace UdsFileReader
                                     return string.Empty;
                                 }
                             }
-                            return $"{(Int64)valueSigned}";
+                            return $"{valueSigned}";
                         }
 
                         double scaledValue;
@@ -577,7 +578,7 @@ namespace UdsFileReader
                         {
                             if (dataType == DataType.Integer1 || dataType == DataType.Integer2)
                             {
-                                sb.Append($"{(Int64)valueSigned}");
+                                sb.Append($"{valueSigned}");
                                 break;
                             }
                             scaledValue = valueSigned;
