@@ -505,8 +505,10 @@ namespace UdsFileReader
                 {
                     case DataType.FloatScaled:
                     case DataType.HexScaled:
+                    case DataType.Integer1:
+                    case DataType.Integer2:
                     {
-                        UInt64 value = 0;
+                            UInt64 value = 0;
                         if ((DataTypeId & DataTypeMaskSwapped) != 0)
                         {
                             for (int i = 0; i < byteLength; i++)
@@ -532,10 +534,18 @@ namespace UdsFileReader
                             {
                                 value = (value ^ signMask) - signMask;  // sign extend
                             }
+                            if (dataType == DataType.Integer1 || dataType == DataType.Integer2)
+                            {
+                                return $"{(Int64)value}";
+                            }
                             scaledValue = (Int64)value;
                         }
                         else
                         {
+                            if (dataType == DataType.Integer1 || dataType == DataType.Integer2)
+                            {
+                                return $"{value}";
+                            }
                             scaledValue = value;
                         }
 
@@ -565,42 +575,6 @@ namespace UdsFileReader
                         }
 
                         return scaledValue.ToString($"F{NumberOfDigits ?? 0}");
-                    }
-
-                    case DataType.Integer1:
-                    case DataType.Integer2:
-                    {
-                        UInt64 value = 0;
-                        if ((DataTypeId & DataTypeMaskSwapped) != 0)
-                        {
-                            for (int i = 0; i < byteLength; i++)
-                            {
-                                value <<= 8;
-                                value |= subData[i];
-                            }
-                        }
-                        else
-                        {
-                            for (int i = 0; i < byteLength; i++)
-                            {
-                                value <<= 8;
-                                value |= subData[byteLength - i];
-                            }
-                        }
-
-                        if ((DataTypeId & DataTypeMaskSigned) != 0)
-                        {
-                            UInt64 signMask = (UInt64)1 << (bitLength - 1);
-                            if ((signMask & value) != 0)
-                            {
-                                value = (value ^ signMask) - signMask;  // sign extend
-                            }
-                            return $"{(Int64)value}";
-                        }
-                        else
-                        {
-                            return $"{value}";
-                        }
                     }
 
                     case DataType.Binary1:
