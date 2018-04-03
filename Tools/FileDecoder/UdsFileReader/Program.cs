@@ -40,6 +40,9 @@ namespace UdsFileReader
                     Console.WriteLine("Init failed");
                     return 1;
                 }
+
+                //Console.WriteLine(udsReader.TestFixedTypes());
+                //return 0;
                 _unknownIdDict = new Dictionary<UInt32, UInt32>();
 
                 string[] files = Directory.GetFiles(dir, searchPattern, SearchOption.AllDirectories);
@@ -185,6 +188,8 @@ namespace UdsFileReader
                         {
                             return false;
                         }
+
+                        outStream.WriteLine(TestDataType(fileName, parseInfoMwb));
                     }
                 }
 
@@ -202,6 +207,84 @@ namespace UdsFileReader
                 }
                 return false;
             }
+        }
+
+        static string TestDataType(string fileName, UdsReader.ParseInfoMwb parseInfoMwb)
+        {
+            UdsReader.DataTypeEntry dataTypeEntry = parseInfoMwb.DataTypeEntry;
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("Test: ");
+            byte[] testData = null;
+            if (Path.GetFileNameWithoutExtension(fileName) == "EV_ECM20TDI01103L906018DQ")
+            {
+                switch (parseInfoMwb.ServiceId)
+                {
+                    case 0xF40C:    // Motordrehzahl
+                        testData = new byte[] { 0x0F, 0xA0 };
+                        break;
+
+                    case 0x11F1:    // Getriebeeingangsdrehzahl
+                        testData = new byte[] { 0x07, 0xD0 };
+                        break;
+
+                    case 0x0100:    // Status des Stellgliedtests
+                        testData = new byte[] { 0x80 };
+                        break;
+
+                    case 0xF40D:    // Fahrzeuggeschwindigkeit
+                        testData = new byte[] { 0x64 };
+                        break;
+
+                    case 0x2001:    // Status der Kraftstofferstbefüllung
+                        testData = new byte[] { 0xC0 };
+                        break;
+
+                    case 0xF41F:    // Zeit seit Motorstart
+                        testData = new byte[] { 0x27, 0x10 };
+                        break;
+
+                    case 0x100D:    // eingelegter Gang
+                        testData = new byte[] { 0x02 };
+                        break;
+                }
+            }
+
+            if (testData != null)
+            {
+                sb.Append(" \"");
+                sb.Append(dataTypeEntry.ToString(testData));
+                sb.Append("\"");
+            }
+            else
+            {
+                sb.Append(" \"");
+                sb.Append(dataTypeEntry.ToString(new byte[] { 0x10 }));
+                sb.Append("\"");
+
+                sb.Append(" \"");
+                sb.Append(dataTypeEntry.ToString(new byte[] { 0x10, 0x20 }));
+                sb.Append("\"");
+
+                sb.Append(" \"");
+                sb.Append(dataTypeEntry.ToString(new byte[] { 0xFF, 0x10 }));
+                sb.Append("\"");
+
+                sb.Append(" \"");
+                sb.Append(dataTypeEntry.ToString(new byte[] { 0xFF, 0x10, 0x20 }));
+                sb.Append("\"");
+
+                sb.Append(" \"");
+                sb.Append(dataTypeEntry.ToString(new byte[] { 0xFF, 0xAB, 0xCD }));
+                sb.Append("\"");
+
+                sb.Append(" \"");
+                sb.Append(dataTypeEntry.ToString(new byte[] { 0xFF, 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, 0x12, 0x34, 0x56, 0x78, 0x9A, 0xCD, 0xEF, 0x01, 0x23, 0x45, 0x67, 0x89 }));
+                sb.Append("\"");
+            }
+
+            return sb.ToString();
         }
 
         static bool PrintDataTypeEntry(StreamWriter outStream, UdsReader.DataTypeEntry dataTypeEntry)
