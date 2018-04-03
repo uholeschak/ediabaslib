@@ -522,7 +522,7 @@ namespace UdsFileReader
                             for (int i = 0; i < byteLength; i++)
                             {
                                 value <<= 8;
-                                value |= subData[i];
+                                value |= subData[byteLength - i - 1];
                             }
                         }
                         else
@@ -530,7 +530,7 @@ namespace UdsFileReader
                             for (int i = 0; i < byteLength; i++)
                             {
                                 value <<= 8;
-                                value |= subData[byteLength - i - 1];
+                                value |= subData[i];
                             }
                         }
 
