@@ -149,9 +149,9 @@ CFG: 01 07 E0 07 E8
 ; dummy values for test
 ;Status Klemme 15 (Binary)
 83 07 E0 22 11 75 00 : 85 07 E0 62 11 75 AA 00 00
-;Motordrehzahl (/min Mult 1/4)
+;Motordrehzahl (1000 /min Mult 1/4)
 83 07 E0 22 F4 0C 00 : 85 07 E0 62 F4 0C 0F A0 00
-;Getriebeeingangsdrehzahl (/min Mult 1/2)
+;Getriebeeingangsdrehzahl (1000 /min Mult 1/2)
 83 07 E0 22 11 F1 00 : 85 07 E0 62 11 F1 07 D0 00
 ;Kühlmitteltemperatur (10 °C, Off 40)
 83 07 E0 22 F4 05 00 : 85 07 E0 62 F4 05 32 00 00
@@ -169,7 +169,7 @@ CFG: 01 07 E0 07 E8
 83 07 E0 22 F4 04 00 : 84 07 E0 62 F4 04 FF 00
 ;Gaspedalstellung (100 %, 100 / 255)
 83 07 E0 22 F4 49 00 : 84 07 E0 62 F4 49 FF 00
-;Eingelegeter Gang (2)
+;Eingelegter Gang (2)
 83 07 E0 22 10 0D 00 : 84 07 E0 62 10 0D 02 00
 ;Motordrehmoment (1000 Nm, Mult 1/10)
 83 07 E0 22 10 47 00 : 85 07 E0 62 10 47 27 10 00
