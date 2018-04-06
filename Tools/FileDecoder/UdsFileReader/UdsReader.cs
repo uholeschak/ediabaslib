@@ -563,7 +563,7 @@ namespace UdsFileReader
                                     return string.Empty;
                                 }
                             }
-                            return $"Undef: {value}";
+                            return $"{GetTextMapText(UdsReader, 3455) ?? string.Empty}: {value}"; // Unbekannt
                         }
 
                         if (dataType == DataType.MuxTable)
@@ -601,7 +601,7 @@ namespace UdsFileReader
                             {
                                 return muxEntryDefault.DataTypeEntry.ToString(subData);
                             }
-                            return $"Undef: {value}";
+                            return $"{GetTextMapText(UdsReader, 3455) ?? string.Empty}: {value}"; // Unbekannt
                         }
 
                         double scaledValue;
