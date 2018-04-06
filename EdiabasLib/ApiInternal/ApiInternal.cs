@@ -604,6 +604,10 @@ namespace Ediabas
                     _ediabas.Dispose();
                     _ediabas = null;
                 }
+                else
+                {
+                    logFormat(ApiLogLevel.Normal, "Ignoring apiEnd()");
+                }
             }
         }
 
