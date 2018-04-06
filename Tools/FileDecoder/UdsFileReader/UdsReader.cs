@@ -515,6 +515,7 @@ namespace UdsFileReader
                     case DataType.Integer1:
                     case DataType.Integer2:
                     case DataType.ValueName:
+                    case DataType.MuxTable:
                     {
                         UInt64 value = 0;
                         if ((DataTypeId & DataTypeMaskSwapped) != 0)
@@ -545,11 +546,11 @@ namespace UdsFileReader
                             {
                                 // ReSharper disable once ReplaceWithSingleAssignment.True
                                 bool match = true;
-                                if (valueName.MinValue.HasValue && (Int64)value > valueName.MinValue.Value)
+                                if (valueName.MinValue.HasValue && (Int64)value < valueName.MinValue.Value)
                                 {
                                     match = false;
                                 }
-                                if (valueName.MaxValue.HasValue && (Int64)value < valueName.MaxValue.Value)
+                                if (valueName.MaxValue.HasValue && (Int64)value > valueName.MaxValue.Value)
                                 {
                                     match = false;
                                 }
@@ -562,7 +563,45 @@ namespace UdsFileReader
                                     return string.Empty;
                                 }
                             }
-                            return $"{value}";
+                            return $"Undef: {value}";
+                        }
+
+                        if (dataType == DataType.MuxTable)
+                        {
+                            if (MuxEntryList == null)
+                            {
+                                return string.Empty;
+                            }
+
+                            MuxEntry muxEntryDefault = null;
+                            foreach (MuxEntry muxEntry in MuxEntryList)
+                            {
+                                if (muxEntry.Default)
+                                {
+                                    muxEntryDefault = muxEntry;
+                                    continue;
+                                }
+                                // ReSharper disable once ReplaceWithSingleAssignment.True
+                                bool match = true;
+                                if (muxEntry.MinValue.HasValue && (Int64)value < muxEntry.MinValue.Value)
+                                {
+                                    match = false;
+                                }
+                                if (muxEntry.MaxValue.HasValue && (Int64)value > muxEntry.MaxValue.Value)
+                                {
+                                    match = false;
+                                }
+                                if (match)
+                                {
+                                    return muxEntry.DataTypeEntry.ToString(subData);
+                                }
+                            }
+
+                            if (muxEntryDefault != null)
+                            {
+                                return muxEntryDefault.DataTypeEntry.ToString(subData);
+                            }
+                            return $"Undef: {value}";
                         }
 
                         double scaledValue;
