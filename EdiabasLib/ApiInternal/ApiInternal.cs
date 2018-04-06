@@ -33,6 +33,10 @@ namespace Ediabas
         private static bool _firstLog = true;
 
         private volatile EdiabasNet _ediabas;
+        private string _lastIfh;
+        private string _lastUnit;
+        private string _lastApp;
+        private string _lastConfig;
         private readonly object _apiLogLock = new object();
         private StreamWriter _swLog;
         private int _logLevelApi = -1;
@@ -464,8 +468,15 @@ namespace Ediabas
             if (_ediabas != null)
             {
                 logFormat(ApiLogLevel.Normal, "apiInitExt({0}, {1}, {2}, {3})", ifh, unit, app, config);
-                logFormat(ApiLogLevel.Normal, "={0} ()", true);
-                return true;
+
+                if (_lastIfh == ifh && _lastUnit == unit && _lastApp == app && _lastConfig == config)
+                {
+                    logFormat(ApiLogLevel.Normal, "={0} ()", true);
+                    return true;
+                }
+
+                logFormat(ApiLogLevel.Normal, "Settings have changed, calling apiEnd()");
+                apiEnd(true);
             }
 
             _busyCount = 0;
@@ -497,7 +508,7 @@ namespace Ediabas
             {
                 if (ifh.StartsWith("REMOTE:", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    logFormat(ApiLogLevel.Normal, "Ignoring REMOTE", false);
+                    logFormat(ApiLogLevel.Normal, "Ignoring REMOTE");
                     ifh = null;
                 }
             }
@@ -552,6 +563,10 @@ namespace Ediabas
 
             _ediabas.EdInterfaceClass = edInterface;
             _ediabas.AbortJobFunc = abortJobFunc;
+            _lastIfh = ifh;
+            _lastUnit = unit;
+            _lastApp = app;
+            _lastConfig = config;
 
             logFormat(ApiLogLevel.Normal, "={0} ()", true);
             return true;
@@ -559,18 +574,36 @@ namespace Ediabas
 
         public void apiEnd()
         {
-            logFormat(ApiLogLevel.Normal, "apiEnd()");
+            apiEnd(false);
+        }
+
+        public void apiEnd(bool forceClose)
+        {
+            logFormat(ApiLogLevel.Normal, "apiEnd({0})", forceClose);
 
             if (_ediabas != null)
             {
-                _abortJob = true;
-                while (_jobThread != null)
+                int keepConnectionOpen = 0;
+                string prop = _ediabas.GetConfigProperty("KeepConnectionOpen");
+                if (prop != null)
                 {
-                    Thread.Sleep(10);
+                    keepConnectionOpen = (int)EdiabasNet.StringToValue(prop);
                 }
-                closeLog();
-                _ediabas.Dispose();
-                _ediabas = null;
+
+                logFormat(ApiLogLevel.Normal, "KeepConnectionOpen: {0}", keepConnectionOpen);
+
+                if (keepConnectionOpen == 0 || forceClose)
+                {
+                    logFormat(ApiLogLevel.Normal, "Closing Ediabas");
+                    _abortJob = true;
+                    while (_jobThread != null)
+                    {
+                        Thread.Sleep(10);
+                    }
+                    closeLog();
+                    _ediabas.Dispose();
+                    _ediabas = null;
+                }
             }
         }
 
