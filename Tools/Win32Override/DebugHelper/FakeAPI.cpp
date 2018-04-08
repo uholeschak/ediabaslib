@@ -893,9 +893,16 @@ HANDLE WINAPI mCreateFileA(
 {
     HANDLE hFile = CreateFileA(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
     BOOL bEnableLog = FALSE;
-    if ((dwDesiredAccess & GENERIC_READ) != 0 && hFile != INVALID_HANDLE_VALUE)
+    if ((dwDesiredAccess & GENERIC_READ) != 0)
     {
-        bEnableLog = TRUE;
+        if (hFile != INVALID_HANDLE_VALUE)
+        {
+            bEnableLog = TRUE;
+        }
+        else
+        {
+            LogPrintf(_T("CreateFileA ERROR: %S\n"), lpFileName);
+        }
     }
     if (bEnableLog)
     {
