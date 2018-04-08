@@ -198,7 +198,7 @@ CFG: 01 07 E0 07 E8
 83 07 E0 22 F4 01 00 : 87 07 E0 62 F4 01 00 00 00 00 00
 ;Überwachungsstatus seit Löschen des Fehlerspeichers
 83 07 E0 22 F4 01 00 : 87 07 E0 62 F4 01 00 00 00 00 00
-Überwachungsstatus im aktuellen Fahrzyklus
+;Überwachungsstatus im aktuellen Fahrzyklus
 83 07 E0 22 F4 41 00 : 87 07 E0 62 F4 41 00 00 00 00 00
 ;VIN (17 Byte)
 83 07 E0 22 F8 02 00 : 94 07 E0 62 F8 02 41 42 43 44 45 46 47 48 49 4A 4B 4C 4D 4E 4F 50 51 00
