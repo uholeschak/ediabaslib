@@ -26,6 +26,7 @@
 #define STATUS_SUCCESS                   ((NTSTATUS)0x00000000L)    // ntsubauth
 
 #define DECRYPT_TEXT_LINE_ADDR_REL      0x09D091
+#define READ_DECRYPTED_LINE_ADDR_REL    0x0416CC
 
 typedef std::basic_string<TCHAR> tstring;
 
@@ -71,6 +72,7 @@ static BOOL GetModuleBaseAddress();
 static BOOL GetCryptTables();
 static void *DisMember(size_t size, ...);
 static BOOL RedirectDecryptTextLine();
+static BOOL RedirectReadDecryptedLine();
 
 static HWND WINAPI mFindWindowA(
     _In_opt_ LPCSTR lpClassName,
@@ -180,6 +182,7 @@ static std::list<LPVOID> MemWatchList;
 static std::list<HRSRC> ResWatchList;
 static std::map<HRSRC, DWORD>ResSizeMap;
 static HotPatch PatchDecryptTextLine;
+static HotPatch PatchReadDecryptedLine;
 static HANDLE hLastLogRFile = INVALID_HANDLE_VALUE;
 static HANDLE hLastLogWFile = INVALID_HANDLE_VALUE;
 static BOOL bHalted = FALSE;
@@ -674,6 +677,44 @@ BOOL RedirectDecryptTextLine()
     return TRUE;
 }
 
+class CReadDecryptedLine
+{
+public:
+    typedef int(__thiscall *ptrReadDecryptedLine)(void *pthis, FILE *pfile, char *ptext, int max_len);
+
+    int mReadDecryptedLine(FILE *pfile, char *ptext, int max_len)
+    {
+        PatchReadDecryptedLine.RestoreOpcodes();
+
+        ptrReadDecryptedLine pReadDecryptedLine = (ptrReadDecryptedLine)(pModuleBaseAddr + READ_DECRYPTED_LINE_ADDR_REL);
+        int result = pReadDecryptedLine(this, pfile, ptext, max_len);
+
+        PatchReadDecryptedLine.WriteOpcodes();
+        if (ptext[0] != 0)
+        {
+            LogPrintf(_T("ReadDecryptedLine out: \"%S\"\n"), ptext);
+        }
+        return result;
+    }
+};
+
+BOOL RedirectReadDecryptedLine()
+{
+    if (pModuleBaseAddr == NULL)
+    {
+        LogPrintf(_T("RedirectReadDecryptedLine: No module base address\n"));
+        return FALSE;
+    }
+    PVOID pDecrypt = DisMember(sizeof(&CReadDecryptedLine::mReadDecryptedLine), &CReadDecryptedLine::mReadDecryptedLine);
+    PatchReadDecryptedLine.SetDetour((PVOID)(pModuleBaseAddr + READ_DECRYPTED_LINE_ADDR_REL), pDecrypt);
+    PatchReadDecryptedLine.SetWriteProtection();
+    PatchReadDecryptedLine.SaveOpcodes();
+    PatchReadDecryptedLine.WriteOpcodes();
+    LogPrintf(_T("ReadDecryptedLine patched\n"));
+
+    return TRUE;
+}
+
 HWND WINAPI mFindWindowA(
     _In_opt_ LPCSTR lpClassName,
     _In_opt_ LPCSTR lpWindowName
@@ -923,6 +964,7 @@ HANDLE WINAPI mCreateFileA(
                 {
                     bDecryptPatched = true;
                     RedirectDecryptTextLine();
+                    RedirectReadDecryptedLine();
                 }
             }
 #if true
