@@ -447,11 +447,6 @@ namespace Ediabas
             _resultSets = null;
         }
 
-        ~ApiInternal()
-        {
-            apiEnd(true);
-        }
-
         public static bool apiCheckVersion(int versionCompatibility, out string versionInfo)
         {
             versionInfo = string.Empty;
