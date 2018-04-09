@@ -447,6 +447,11 @@ namespace Ediabas
             _resultSets = null;
         }
 
+        ~ApiInternal()
+        {
+            apiEnd(true);
+        }
+
         public static bool apiCheckVersion(int versionCompatibility, out string versionInfo)
         {
             versionInfo = string.Empty;
@@ -1710,8 +1715,11 @@ namespace Ediabas
             {
                 lock (_apiLogLock)
                 {
-                    string apiTrace = _ediabas.GetConfigProperty("ApiTrace");
-                    _logLevelApi = Convert.ToInt32(apiTrace);
+                    if (_ediabas != null)
+                    {
+                        string apiTrace = _ediabas.GetConfigProperty("ApiTrace");
+                        _logLevelApi = Convert.ToInt32(apiTrace);
+                    }
                 }
             }
         }
