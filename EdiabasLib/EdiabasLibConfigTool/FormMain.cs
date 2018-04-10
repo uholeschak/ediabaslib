@@ -644,7 +644,7 @@ namespace EdiabasLibConfigTool
             if (!string.IsNullOrEmpty(dirName))
             {
                 StringBuilder sr = new StringBuilder();
-                Patch.PatchEdiabas(sr, patchType, dirName, devInfo, wlanIface, textBoxBluetoothPin.Text);
+                Patch.PatchEdiabas(sr, patchType, _test.AdapterType, dirName, devInfo, wlanIface, textBoxBluetoothPin.Text);
                 UpdateStatusText(sr.ToString());
             }
             UpdateButtonStatus();
