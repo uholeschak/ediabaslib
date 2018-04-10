@@ -43,13 +43,18 @@ namespace EdiabasLib
         {
             if (IsInterfaceOpen())
             {
-                return true;
+                if (_connectPort == port)
+                {
+                    return true;
+                }
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Bluetooth port {0} different, disconnect", port);
+                InterfaceDisconnect(true);
             }
             CustomAdapter.Init();
 
             if (!port.StartsWith(PortId, StringComparison.OrdinalIgnoreCase))
             {
-                InterfaceDisconnect();
+                InterfaceDisconnect(true);
                 return false;
             }
             _connectPort = port;
@@ -110,20 +115,20 @@ namespace EdiabasLib
 #endif
                     else
                     {
-                        InterfaceDisconnect();
+                        InterfaceDisconnect(true);
                         return false;
                     }
                 }
                 else
                 {
-                    InterfaceDisconnect();
+                    InterfaceDisconnect(true);
                     return false;
                 }
             }
             catch (Exception ex)
             {
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Connect failure: {0}", ex.Message);
-                InterfaceDisconnect();
+                InterfaceDisconnect(true);
                 return false;
             }
 
@@ -134,6 +139,28 @@ namespace EdiabasLib
 
         public static bool InterfaceDisconnect()
         {
+            return InterfaceDisconnect(false);
+        }
+
+        public static bool InterfaceDisconnect(bool forceClose)
+        {
+            if (!forceClose && Ediabas != null)
+            {
+                int keepConnectionOpen = 0;
+                string prop = Ediabas.GetConfigProperty("ObdKeepConnectionOpen");
+                if (prop != null)
+                {
+                    keepConnectionOpen = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ObdKeepConnectionOpen: {0}", keepConnectionOpen);
+                if (keepConnectionOpen != 0)
+                {
+                    return true;
+                }
+            }
+
+            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Bluetooth disconnect");
             bool result = true;
             try
             {
@@ -286,7 +313,7 @@ namespace EdiabasLib
             if (CustomAdapter.ReconnectRequired)
             {
                 Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
-                InterfaceDisconnect();
+                InterfaceDisconnect(true);
                 if (!InterfaceConnect(_connectPort, null))
                 {
                     CustomAdapter.ReconnectRequired = true;
@@ -318,7 +345,7 @@ namespace EdiabasLib
             if (CustomAdapter.ReconnectRequired)
             {
                 Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
-                InterfaceDisconnect();
+                InterfaceDisconnect(true);
                 if (!InterfaceConnect(_connectPort, null))
                 {
                     CustomAdapter.ReconnectRequired = true;

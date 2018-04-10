@@ -16,6 +16,34 @@ ref class GlobalObjects
         static array<ApiInternal ^>^ handles = gcnew array<ApiInternal ^>(10);
         static Object ^ handleLock = gcnew Object();
 
+        static GlobalObjects()
+        {
+            _onexit_m(OnExit);
+        }
+
+        static int OnExit()
+        {
+            try
+            {
+                Monitor::Enter(handleLock);
+                for (int i = 0; i < handles->Length; i++)
+                {
+                    if (handles[i] != nullptr)
+                    {
+                        handles[i]->apiEnd();
+                        handles[i] = nullptr;
+                    }
+                }
+            }
+            finally
+            {
+                Monitor::Exit(handleLock);
+            }
+
+            EdiabasLib::EdBluetoothInterface::InterfaceDisconnect(true);
+            return 0;
+        }
+
         static int GetNewApiInstance()
         {
             try

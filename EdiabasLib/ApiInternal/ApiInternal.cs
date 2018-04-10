@@ -476,7 +476,7 @@ namespace Ediabas
                 }
 
                 logFormat(ApiLogLevel.Normal, "Settings have changed, calling apiEnd()");
-                apiEnd(true);
+                apiEnd();
             }
 
             _busyCount = 0;
@@ -574,40 +574,18 @@ namespace Ediabas
 
         public void apiEnd()
         {
-            apiEnd(false);
-        }
-
-        public void apiEnd(bool forceClose)
-        {
-            logFormat(ApiLogLevel.Normal, "apiEnd({0})", forceClose);
+            logFormat(ApiLogLevel.Normal, "apiEnd()");
 
             if (_ediabas != null)
             {
-                int keepConnectionOpen = 0;
-                string prop = _ediabas.GetConfigProperty("KeepConnectionOpen");
-                if (prop != null)
+                _abortJob = true;
+                while (_jobThread != null)
                 {
-                    keepConnectionOpen = (int)EdiabasNet.StringToValue(prop);
+                    Thread.Sleep(10);
                 }
-
-                logFormat(ApiLogLevel.Normal, "KeepConnectionOpen: {0}", keepConnectionOpen);
-
-                if (keepConnectionOpen == 0 || forceClose)
-                {
-                    logFormat(ApiLogLevel.Normal, "Closing Ediabas");
-                    _abortJob = true;
-                    while (_jobThread != null)
-                    {
-                        Thread.Sleep(10);
-                    }
-                    closeLog();
-                    _ediabas.Dispose();
-                    _ediabas = null;
-                }
-                else
-                {
-                    logFormat(ApiLogLevel.Normal, "Ignoring apiEnd()");
-                }
+                closeLog();
+                _ediabas.Dispose();
+                _ediabas = null;
             }
         }
 
