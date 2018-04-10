@@ -191,7 +191,7 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        public static bool UpdateConfigFile(string fileName, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, string pin)
+        public static bool UpdateConfigFile(string fileName, int adapterType, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, string pin)
         {
             try
             {
@@ -221,6 +221,7 @@ namespace EdiabasLibConfigTool
                         UpdateConfigNode(settingsNode, @"ObdComPort", "DEEPOBDWIFI");
                         UpdateConfigNode(settingsNode, @"Interface", interfaceValue);
                     }
+                    UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
                 }
                 else if (devInfo != null)
                 {
@@ -228,6 +229,20 @@ namespace EdiabasLibConfigTool
 
                     UpdateConfigNode(settingsNode, @"ObdComPort", portValue);
                     UpdateConfigNode(settingsNode, @"Interface", interfaceValue);
+
+                    string keepConnectionValue;
+                    switch (adapterType)
+                    {
+                        case 4: // HC04
+                        case 5: // SPP-UART
+                            keepConnectionValue = @"1";
+                            break;
+
+                        default:
+                            keepConnectionValue = @"0";
+                            break;
+                    }
+                    UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", keepConnectionValue);
                 }
                 else
                 {
@@ -409,7 +424,7 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        public static bool PatchEdiabas(StringBuilder sr, PatchType patchType, string dirName, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, string pin)
+        public static bool PatchEdiabas(StringBuilder sr, PatchType patchType, int adapterType, string dirName, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, string pin)
         {
             try
             {
@@ -419,7 +434,7 @@ namespace EdiabasLibConfigTool
                     return false;
                 }
                 string configFile = Path.Combine(dirName, ConfigFileName);
-                if (!UpdateConfigFile(configFile, devInfo, wlanIface, pin))
+                if (!UpdateConfigFile(configFile, adapterType, devInfo, wlanIface, pin))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigUpdateFailed);

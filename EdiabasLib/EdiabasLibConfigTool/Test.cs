@@ -28,6 +28,7 @@ namespace EdiabasLibConfigTool
         private bool _disposed;
         public bool TestOk { get; set; }
         public bool ConfigPossible { get; set; }
+        public int AdapterType { get; private set; }
         public bool ThreadActive => _testThread != null;
 
         private enum AdapterMode
@@ -83,6 +84,7 @@ namespace EdiabasLibConfigTool
             CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
             TestOk = false;
             ConfigPossible = false;
+            AdapterType = -1;
             AccessPoint ap = _form.GetSelectedAp();
             if (ap != null)
             {
@@ -324,6 +326,8 @@ namespace EdiabasLibConfigTool
                 _form.UpdateStatusText(sr.ToString());
                 return false;
             }
+            AdapterType = (firmware[0] << 8) + firmware[1];
+
             byte[] canMode = AdapterCommandCustom(0x82, new byte[] { 0x00 });
             if ((canMode == null) || (canMode.Length < 1))
             {
