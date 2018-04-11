@@ -11,7 +11,35 @@ namespace EdiabasLib
 {
     public class EdElmInterface : IDisposable
     {
-        public static readonly string[] Elm327InitCommands = { "ATD", "ATE0", "ATSH6F1", "ATCF600", "ATCM700", "ATPBC001", "ATSPB", "ATAT0", "ATSTFF", "ATAL", "ATH1", "ATS0", "ATL0" };
+        public class ElmInitEntry
+        {
+            public ElmInitEntry(string command, bool okResponse = true)
+            {
+                Command = command;
+                OkResponse = okResponse;
+            }
+
+            public string Command { get; }
+            public bool OkResponse { get; }
+        }
+
+        public static ElmInitEntry[] Elm327InitCommands =
+        {
+            new ElmInitEntry("ATD"),
+            new ElmInitEntry("ATE0"),
+            new ElmInitEntry("ATSH6F1"),
+            new ElmInitEntry("ATCF600"),
+            new ElmInitEntry("ATCM700"),
+            new ElmInitEntry("ATPBC001"),
+            new ElmInitEntry("ATSPB"),
+            new ElmInitEntry("ATAT0"),
+            new ElmInitEntry("ATSTFF"),
+            new ElmInitEntry("ATAL"),
+            new ElmInitEntry("ATH1"),
+            new ElmInitEntry("ATS0"),
+            new ElmInitEntry("ATL0"),
+            new ElmInitEntry("ATPPS", false),
+        };
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const int Elm327ReadTimeoutOffset = 1000;
         private const int Elm327CommandTimeout = 1500;
@@ -123,17 +151,25 @@ namespace EdiabasLib
                 _elm327RespQueue.Clear();
             }
             bool firstCommand = true;
-            foreach (string command in Elm327InitCommands)
+            foreach (ElmInitEntry elmInitEntry in Elm327InitCommands)
             {
-                if (!Elm327SendCommand(command))
+                if (!Elm327SendCommand(elmInitEntry.Command, elmInitEntry.OkResponse))
                 {
                     if (!firstCommand)
                     {
                         return false;
                     }
-                    if (!Elm327SendCommand(command))
+                    if (!Elm327SendCommand(elmInitEntry.Command, elmInitEntry.OkResponse))
                     {
                         return false;
+                    }
+                }
+                if (!elmInitEntry.OkResponse)
+                {
+                    string answer = Elm327ReceiveAnswer(Elm327CommandTimeout);
+                    if (answer == null)
+                    {
+                        Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM no answer");
                     }
                 }
                 firstCommand = false;

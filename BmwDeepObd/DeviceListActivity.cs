@@ -909,14 +909,14 @@ namespace BmwDeepObd
                 }
                 if (adapterType == AdapterType.Elm327)
                 {
-                    foreach (string command in EdBluetoothInterface.Elm327InitCommands)
+                    foreach (EdElmInterface.ElmInitEntry elmInitEntry in EdBluetoothInterface.Elm327InitCommands)
                     {
                         bluetoothInStream.Flush();
                         while (bluetoothInStream.IsDataAvailable())
                         {
                             bluetoothInStream.ReadByte();
                         }
-                        byte[] sendData = Encoding.UTF8.GetBytes(command + "\r");
+                        byte[] sendData = Encoding.UTF8.GetBytes(elmInitEntry.Command + "\r");
                         LogData(sendData, 0, sendData.Length, "Send");
                         bluetoothOutStream.Write(sendData, 0, sendData.Length);
 
@@ -927,11 +927,15 @@ namespace BmwDeepObd
                             adapterType = AdapterType.Elm327Invalid;
                             break;
                         }
-                        if (!response.Contains("OK\r"))
+
+                        if (elmInitEntry.OkResponse)
                         {
-                            LogString("*** No ELM OK found");
-                            adapterType = AdapterType.Elm327Invalid;
-                            break;
+                            if (!response.Contains("OK\r"))
+                            {
+                                LogString("*** No ELM OK found");
+                                adapterType = AdapterType.Elm327Invalid;
+                                break;
+                            }
                         }
                     }
                     if (adapterType == AdapterType.Elm327Invalid && elmReports21)
@@ -960,6 +964,7 @@ namespace BmwDeepObd
             string response = null;
             StringBuilder stringBuilder = new StringBuilder();
             long startTime = Stopwatch.GetTimestamp();
+            bool lengthMessage = false;
             for (; ; )
             {
                 while (bluetoothInStream.IsDataAvailable())
@@ -978,9 +983,13 @@ namespace BmwDeepObd
                         response = stringBuilder.ToString();
                         break;
                     }
-                    if (stringBuilder.Length > 100)
+                    if (stringBuilder.Length > 500)
                     {
-                        LogString("*** ELM response too long");
+                        if (!lengthMessage)
+                        {
+                            lengthMessage = true;
+                            LogString("*** ELM response too long");
+                        }
                         break;
                     }
                 }
