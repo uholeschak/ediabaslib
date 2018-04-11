@@ -28,7 +28,7 @@ namespace EdiabasLib
             public bool MtcBtService { get; }
         }
 
-        public static readonly string[] Elm327InitCommands = EdElmInterface.Elm327InitCommands;
+        public static readonly EdElmInterface.ElmInitEntry[] Elm327InitCommands = EdElmInterface.Elm327InitCommands;
         public const string PortId = "BLUETOOTH";
         public const string Elm327Tag = "ELM327";
         public const string RawTag = "RAW";
