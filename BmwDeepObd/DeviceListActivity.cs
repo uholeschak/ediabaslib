@@ -933,8 +933,12 @@ namespace BmwDeepObd
                             if (!response.Contains("OK\r"))
                             {
                                 LogString("*** No ELM OK found");
-                                adapterType = AdapterType.Elm327Invalid;
-                                break;
+                                if (elmReports21 && elmInitEntry.Version >= 210)
+                                {
+                                    adapterType = AdapterType.Elm327Invalid;
+                                    break;
+                                }
+                                LogString("*** ELM command optional");
                             }
                         }
                     }

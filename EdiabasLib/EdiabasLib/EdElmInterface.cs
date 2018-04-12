@@ -13,14 +13,16 @@ namespace EdiabasLib
     {
         public class ElmInitEntry
         {
-            public ElmInitEntry(string command, bool okResponse = true)
+            public ElmInitEntry(string command, int version = -1, bool okResponse = true)
             {
                 Command = command;
                 OkResponse = okResponse;
+                Version = version;
             }
 
             public string Command { get; }
             public bool OkResponse { get; }
+            public int Version { get; }
         }
 
         public static ElmInitEntry[] Elm327InitCommands =
@@ -38,7 +40,9 @@ namespace EdiabasLib
             new ElmInitEntry("ATH1"),
             new ElmInitEntry("ATS0"),
             new ElmInitEntry("ATL0"),
-            new ElmInitEntry("ATPPS", false),
+            new ElmInitEntry("ATCSM0", 210),    // disable silent monitoring
+            new ElmInitEntry("ATCTM5", 210),    // timer multiplier 5
+            new ElmInitEntry("ATPPS", -1, false),
         };
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const int Elm327ReadTimeoutOffset = 1000;
@@ -153,15 +157,23 @@ namespace EdiabasLib
             bool firstCommand = true;
             foreach (ElmInitEntry elmInitEntry in Elm327InitCommands)
             {
+                bool optional = elmInitEntry.Version >= 0;
                 if (!Elm327SendCommand(elmInitEntry.Command, elmInitEntry.OkResponse))
                 {
                     if (!firstCommand)
                     {
-                        return false;
+                        if (!optional)
+                        {
+                            return false;
+                        }
+                        Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM optional command {0} failed", elmInitEntry.Command);
                     }
-                    if (!Elm327SendCommand(elmInitEntry.Command, elmInitEntry.OkResponse))
+                    if (firstCommand && !optional)
                     {
-                        return false;
+                        if (!Elm327SendCommand(elmInitEntry.Command, elmInitEntry.OkResponse))
+                        {
+                            return false;
+                        }
                     }
                 }
                 if (!elmInitEntry.OkResponse)
@@ -173,20 +185,6 @@ namespace EdiabasLib
                     }
                 }
                 firstCommand = false;
-            }
-            if (!Elm327SendCommand("ATCSM0"))
-            {
-                if (Ediabas != null)
-                {
-                    Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM disable silent monitoring not supported");
-                }
-            }
-            if (!Elm327SendCommand("ATCTM5"))
-            {
-                if (Ediabas != null)
-                {
-                    Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM timer multiplier 5 not supported");
-                }
             }
             _elm327CanHeader = 0x6F1;
             _elm327Timeout = -1;
