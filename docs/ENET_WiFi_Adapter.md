@@ -20,7 +20,7 @@ It is based on the hardware of an [A5-V11 3G/4G Router](https://wiki.openwrt.org
 
 ## Buy an adapter
 New adapters are available.  
-You could buy the [ENET WiFi adapter](http://www.ebay.de/itm/253382308081) from EBAY.  
+You could buy the [ENET WiFi adapter](https://www.ebay.de/itm/253561119091) from EBAY.  
 For BMW pre F-models use the [Bluetooth adapter](Replacement_firmware_for_ELM327.md)
 
 ## Factory reset
