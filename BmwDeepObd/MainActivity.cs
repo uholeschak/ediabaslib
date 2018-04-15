@@ -167,7 +167,7 @@ namespace BmwDeepObd
 #if OBB_MODE
         private const string EcuDirNameBmw = "EcuBmw";
         private const string EcuDirNameVag = "EcuVag";
-        private const string EcuDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Obb1.xml";
+        private const string EcuDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Obb2.xml";
         private const long EcuExtractSize = 2500000000;         // extracted ecu files size
         private const string InfoXmlName = "ObbInfo.xml";
         private const string ContentFileName = "Content.xml";

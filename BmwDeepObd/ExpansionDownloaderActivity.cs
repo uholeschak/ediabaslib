@@ -30,8 +30,8 @@ namespace BmwDeepObd
 #if DEBUG
         static readonly string Tag = typeof(ExpansionDownloaderActivity).FullName;
 #endif
-        private const int ObbFileSize = 176457424;
-        private static readonly byte[] ObbMd5 = { 0xB2, 0xE2, 0x59, 0x20, 0xBD, 0x2B, 0x11, 0x83, 0xE7, 0x94, 0xD7, 0xCE, 0x52, 0xD3, 0x8E, 0x25 };
+        private const int ObbFileSize = 179021968;
+        private static readonly byte[] ObbMd5 = { 0xF4, 0xD3, 0xD9, 0xC1, 0x1D, 0x50, 0x51, 0x9F, 0xCE, 0xCD, 0x95, 0xF0, 0xFF, 0xC2, 0xB9, 0x57 };
         private const int RequestPermissionExternalStorage = 0;
         private readonly string[] _permissionsExternalStorage =
         {
@@ -354,10 +354,12 @@ namespace BmwDeepObd
                 return false;
             }
 
+#if !DEBUG
             if (!checkMd5)
             {
                 return true;
             }
+#endif
 
             byte[] md5 = CalculateMd5(obbFile);
             if (md5 != null)
