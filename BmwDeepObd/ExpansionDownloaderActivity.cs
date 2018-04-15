@@ -346,6 +346,7 @@ namespace BmwDeepObd
         /// <returns>
         /// True if they are present, otherwise False;
         /// </returns>
+        // ReSharper disable once UnusedParameter.Local
         private bool AreExpansionFilesDelivered(bool checkMd5 = false)
         {
             string obbFile = GetObbFilename(this);
