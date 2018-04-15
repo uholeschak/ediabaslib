@@ -42,7 +42,7 @@ namespace EdiabasLib
             new ElmInitEntry("ATL0"),
             new ElmInitEntry("ATCSM0", 210),    // disable silent monitoring
             new ElmInitEntry("ATCTM5", 210),    // timer multiplier 5
-            new ElmInitEntry("ATPPS", -1, false),
+            //new ElmInitEntry("ATPPS", -1, false),     // some BT chips have a short buffer, so this test will fail
         };
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const int Elm327ReadTimeoutOffset = 1000;
