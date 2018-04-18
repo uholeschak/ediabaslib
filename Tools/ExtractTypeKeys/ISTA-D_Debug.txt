@@ -1,18 +1,25 @@
-Debugging if ISTA-D:
--------------------
+Debugging of ISTA-D:
+====================
 
 Decompile ISTA-D:
------------------
+=================
 copy files from "TesterGUI\bin\Release" to "TesterGUI\bin\ReleaseMod"
 de4dot -r "TesterGUI\bin\Release" -ru -ro "TesterGUI\bin\ReleaseMod" --dont-rename
 
 Debug ISTA-D with dnSpy-x86:
-----------------------------
+============================
 Modify IstaOperationController.dll:
 in IstaOperationStarter.Start() add:
-			MessageBox.Show("IstaOperation started");
-			return istaOperation;
+-------------------------------------------------------------------------------------
+	if (Debugger.IsAttached)
+	{
+		MessageBox.Show("IstaOperation started. Attach to IstaOperation.exe now.");
+	}
+	return istaOperation;
+-------------------------------------------------------------------------------------
+
 Debugging:
+Disable debugger detection in dnSpy!
 After message box has been shown, attach to process IstaOperation.exe
 
 Breakpoints in RheingoldDiagnostics.dll:
