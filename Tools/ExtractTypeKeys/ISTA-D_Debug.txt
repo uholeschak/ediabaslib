@@ -1,0 +1,19 @@
+Debugging if ISTA-D:
+-------------------
+
+Decompile ISTA-D:
+-----------------
+copy files from "TesterGUI\bin\Release" to "TesterGUI\bin\ReleaseMod"
+de4dot -r "TesterGUI\bin\Release" -ru -ro "TesterGUI\bin\ReleaseMod" --dont-rename
+
+Debug ISTA-D with dnSpy-x86:
+----------------------------
+Modify IstaOperationController.dll:
+in IstaOperationStarter.Start() add:
+			MessageBox.Show("IstaOperation started");
+			return istaOperation;
+Debugging:
+After message box has been shown, attach to process IstaOperation.exe
+
+Breakpoints in RheingoldDiagnostics.dll:
+Logic.StartVehicleTest() or VehicleIdent.DoVehicleIdenStep1() and VehicleIdent.DoVehicleIdenStep2()
