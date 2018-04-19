@@ -748,7 +748,7 @@ namespace BmwDeepObd
                                 {
                                     if (yesSelected)
                                     {
-                                        ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.RawTag, deviceName);
+                                        ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
                                     }
                                 });
                             };
