@@ -708,12 +708,15 @@ namespace BmwDeepObd
                         case AdapterType.Elm327Fake21:
                         case AdapterType.Elm327Fake21Opt:
                         {
+                            bool yesSelected = false;
+                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
                             string message =
                             GetString(adapterType == AdapterType.Elm327Invalid
                                 ? Resource.String.invalid_adapter_type
                                 : Resource.String.fake_elm_adapter_type);
-                            bool yesSelected = false;
-                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                            message += "<br>" + GetString(Resource.String.recommened_adapter_type);
+
                             if (adapterType == AdapterType.Elm327Fake21Opt)
                             {
                                 message += "<br>" + GetString(Resource.String.fake_elm_try);
@@ -726,7 +729,6 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                message += "<br>" + GetString(Resource.String.recommened_adapter_type);
                                 builder.SetNeutralButton(Resource.String.button_ok, (sender, args) => { });
                                 builder.SetTitle(Resource.String.alert_title_error);
                             }
