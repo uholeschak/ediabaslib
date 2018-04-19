@@ -54,6 +54,7 @@ namespace BmwDeepObd
             Elm327,             // ELM327
             Elm327Invalid,      // ELM327 invalid type
             Elm327Fake21,       // ELM327 fake 2.1 version
+            Elm327Fake21Opt,    // ELM327 fake 2.1 version optional command
             Custom,             // custom adapter
             CustomUpdate,       // custom adapter with firmware update
             EchoOnly,           // only echo response
@@ -705,20 +706,35 @@ namespace BmwDeepObd
 
                         case AdapterType.Elm327Invalid:
                         case AdapterType.Elm327Fake21:
+                        case AdapterType.Elm327Fake21Opt:
                         {
                             string message =
-                                GetString(adapterType == AdapterType.Elm327Fake21
-                                    ? Resource.String.fake_elm_adapter_type
-                                    : Resource.String.invalid_adapter_type);
-                            message += "<br>" + GetString(Resource.String.recommened_adapter_type);
-                            _altertInfoDialog = new AlertDialog.Builder(this)
-                                .SetNeutralButton(Resource.String.button_ok, (sender, args) =>
+                            GetString(adapterType == AdapterType.Elm327Invalid
+                                ? Resource.String.invalid_adapter_type
+                                : Resource.String.fake_elm_adapter_type);
+                            bool yesSelected = false;
+                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                            if (adapterType == AdapterType.Elm327Fake21Opt)
+                            {
+                                message += "<br>" + GetString(Resource.String.fake_elm_try);
+                                builder.SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
-                                })
-                                .SetCancelable(true)
-                                .SetMessage(ActivityCommon.FromHtml(message))
-                                .SetTitle(Resource.String.alert_title_error)
-                                .Show();
+                                    yesSelected = true;
+                                });
+                                builder.SetNegativeButton(Resource.String.button_no, (sender, args) => { });
+                                builder.SetTitle(Resource.String.alert_title_warning);
+                            }
+                            else
+                            {
+                                message += "<br>" + GetString(Resource.String.recommened_adapter_type);
+                                builder.SetNeutralButton(Resource.String.button_ok, (sender, args) => { });
+                                builder.SetTitle(Resource.String.alert_title_error);
+                            }
+
+                            builder.SetCancelable(true);
+                            builder.SetMessage(ActivityCommon.FromHtml(message));
+                            _altertInfoDialog = builder.Show();
+
                             _altertInfoDialog.DismissEvent += (sender, args) =>
                             {
                                 if (_activityCommon == null)
@@ -726,7 +742,13 @@ namespace BmwDeepObd
                                     return;
                                 }
                                 _altertInfoDialog = null;
-                                _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), PackageManager.GetPackageInfo(PackageName, 0), GetType());
+                                _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), PackageManager.GetPackageInfo(PackageName, 0), GetType(), (o, eventArgs) =>
+                                {
+                                    if (yesSelected)
+                                    {
+                                        ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.RawTag, deviceName);
+                                    }
+                                });
                             };
                             TextView messageView = _altertInfoDialog.FindViewById<TextView>(Android.Resource.Id.Message);
                             if (messageView != null)
@@ -933,12 +955,21 @@ namespace BmwDeepObd
                             if (!response.Contains("OK\r"))
                             {
                                 LogString("*** No ELM OK found");
-                                if (elmReports21 && elmInitEntry.Version >= 210)
+                                bool optional = elmInitEntry.Version >= 210;
+                                if (!optional)
                                 {
                                     adapterType = AdapterType.Elm327Invalid;
                                     break;
                                 }
-                                LogString("*** ELM command optional");
+                                if (elmReports21)
+                                {
+                                    LogString("*** ELM command optional, fake 2.1");
+                                    adapterType = AdapterType.Elm327Fake21Opt;
+                                }
+                                else
+                                {
+                                    LogString("*** ELM command optional");
+                                }
                             }
                         }
                     }
