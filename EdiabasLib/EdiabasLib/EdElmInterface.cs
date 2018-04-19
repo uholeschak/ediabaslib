@@ -28,6 +28,7 @@ namespace EdiabasLib
         public static ElmInitEntry[] Elm327InitCommands =
         {
             new ElmInitEntry("ATD"),
+            new ElmInitEntry("ATJE"),   // ELM data format, used for fake ELM detection
             new ElmInitEntry("ATE0"),
             new ElmInitEntry("ATSH6F1"),
             new ElmInitEntry("ATCF600"),
