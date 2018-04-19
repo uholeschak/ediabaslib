@@ -1338,10 +1338,12 @@ namespace BmwDeepObd
         }
     }
 
+    // ReSharper disable once UnusedMember.Global
     public class SelectListener : Java.Lang.Object, IDialogInterfaceOnClickListener
     {
         private readonly Context _context;
 
+        // ReSharper disable once UnusedMember.Global
         public SelectListener(Context context)
         {
             _context = context;
