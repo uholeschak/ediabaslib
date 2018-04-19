@@ -164,7 +164,7 @@
   <string name="unknown_adapter_type">Не установлен тип устройства.\nХотите все равно использовать это устройство (Пакеты данных будут посланы без изменений)?</string>
   <string name="invalid_adapter_type">ELM327 устройство поддерживает не все необходимые команды и несовместимо с этим приложением.</string>
   <string name="fake_elm_adapter_type">ELM327 устройство имеет поддельную версию 2.1 и несовместимо с этим приложением.</string>
-  <string name="fake_elm_try">Do you want to try anyway to use the adapter?</string>
+  <string name="fake_elm_try">Вы всё-таки хотите попробовать использовать адаптер?</string>
   <string formatted="false" name="recommened_adapter_type">Рекомендуется ELM327 устройство v1.4b, v1.5 или оригинальной версии v2.1,&lt;br&gt;которое базируется на процессоре PIC18F25K80 (не на MCP2515 чипе).&lt;br&gt;По ссылке &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt; можете найти улучшенную прошивку.</string>
   <string name="adapter_elm_replacement">ELM327 устройства медленные и поддерживают только D-CAN (автомобили начиная с 3/2007).\nВы можете купить улучшенную прошивку\n<a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>github.com/uholeschak/ediabaslib</a>.</string>
   <string name="adapter_cfg_required">Устройство, возможно, требуется настроить.\nХотите получить доступ к конфигурации устройства?</string>
