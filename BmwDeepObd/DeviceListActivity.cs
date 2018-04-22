@@ -993,21 +993,32 @@ namespace BmwDeepObd
                             }
                         }
                     }
-                    if (adapterType == AdapterType.Elm327Invalid && elmReports21)
-                    {
-                        adapterType = AdapterType.Elm327Fake21;
-                    }
 
                     switch (adapterType)
                     {
+                        case AdapterType.Elm327Invalid:
+                            if (elmReports21)
+                            {
+                                adapterType = AdapterType.Elm327Fake21;
+                            }
+                            break;
+
                         case AdapterType.Elm327:
                         case AdapterType.Elm327Fake21Opt:
-                            if (!Elm327CheckCan(bluetoothInStream, bluetoothOutStream))
+                        {
+                            if (!Elm327CheckCan(bluetoothInStream, bluetoothOutStream, out bool canSupport))
+                            {
+                                LogString("*** ELM CAN detection failed");
+                                adapterType = AdapterType.Elm327Invalid;
+                                break;
+                            }
+                            if (!canSupport)
                             {
                                 LogString("*** ELM no vehicle CAN support");
                                 adapterType = AdapterType.Elm327NoCan;
                             }
                             break;
+                        }
                     }
                 }
             }
@@ -1026,8 +1037,9 @@ namespace BmwDeepObd
         /// <param name="bluetoothInStream"></param>
         /// <param name="bluetoothOutStream"></param>
         /// <returns></returns>
-        private bool Elm327CheckCan(Stream bluetoothInStream, Stream bluetoothOutStream)
+        private bool Elm327CheckCan(Stream bluetoothInStream, Stream bluetoothOutStream, out bool canSupport)
         {
+            canSupport = true;
             Elm327SendCommand(bluetoothInStream, bluetoothOutStream, "ATCTM1");     // standard multiplier
             int timeout = 1000 / 4; // 1sec
             if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, string.Format("ATST{0:X02}", timeout)))
@@ -1047,7 +1059,7 @@ namespace BmwDeepObd
                 if (answer.Contains("CAN ERROR\r"))
                 {
                     LogString("*** ELM CAN error");
-                    return false;
+                    canSupport = false;
                 }
             }
 
