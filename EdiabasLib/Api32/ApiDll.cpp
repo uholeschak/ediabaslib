@@ -41,6 +41,7 @@ ref class GlobalObjects
             }
 
             EdiabasLib::EdBluetoothInterface::InterfaceDisconnect(true);
+            EdiabasLib::EdCustomWiFiInterface::InterfaceDisconnect(true);
             return 0;
         }
 
