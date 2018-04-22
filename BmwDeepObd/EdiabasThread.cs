@@ -373,7 +373,7 @@ namespace BmwDeepObd
                 return;
             }
             StringBuilder sbLog = new StringBuilder();
-            string currDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            string currDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
             sbLog.Append(currDateTime);
             bool logDataPresent = false;
             foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
