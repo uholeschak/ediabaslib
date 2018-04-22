@@ -981,6 +981,18 @@ namespace BmwDeepObd
                     {
                         adapterType = AdapterType.Elm327Fake21;
                     }
+
+                    switch (adapterType)
+                    {
+                        case AdapterType.Elm327:
+                        case AdapterType.Elm327Fake21Opt:
+                            if (!Elm327CheckCan(bluetoothInStream, bluetoothOutStream))
+                            {
+                                LogString("*** ELM no vehicle CAN support");
+                                adapterType = AdapterType.Elm327Invalid;
+                            }
+                            break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -992,6 +1004,48 @@ namespace BmwDeepObd
             return adapterType;
         }
 
+        /// <summary>
+        /// Check for vehicle can support
+        /// </summary>
+        /// <param name="bluetoothInStream"></param>
+        /// <param name="bluetoothOutStream"></param>
+        /// <returns></returns>
+        private bool Elm327CheckCan(Stream bluetoothInStream, Stream bluetoothOutStream)
+        {
+            Elm327SendCommand(bluetoothInStream, bluetoothOutStream, "ATCTM1");     // standard multiplier
+            int timeout = 1000 / 4; // 1sec
+            if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, string.Format("ATST{0:X02}", timeout)))
+            {
+                LogString("*** ELM setting timeout failed");
+                return false;
+            }
+
+            if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, "00", false)) // dummy data
+            {
+                LogString("*** ELM sending data failed");
+                return false;
+            }
+            string answer = GetElm327Reponse(bluetoothInStream);
+            if (answer != null)
+            {
+                if (answer.Contains("CAN ERROR\r"))
+                {
+                    LogString("*** ELM CAN error");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Send command to EL327
+        /// </summary>
+        /// <param name="bluetoothInStream">Bluetooth input stream</param>
+        /// <param name="bluetoothOutStream">Bluetooth output stream</param>
+        /// <param name="command">Command to send</param>
+        /// <param name="readAnswer">True: Check for valid answer</param>
+        /// <returns>True: command ok</returns>
         private bool Elm327SendCommand(Stream bluetoothInStream, Stream bluetoothOutStream, string command, bool readAnswer = true)
         {
             byte[] sendData = Encoding.UTF8.GetBytes(command + "\r");
@@ -1010,7 +1064,7 @@ namespace BmwDeepObd
                 // check for OK
                 if (!answer.Contains("OK\r"))
                 {
-                    LogString("*** ELM invalid response: " + answer.Replace("\r", "").Replace(">", ""));
+                    LogString("*** ELM invalid response");
                     return false;
                 }
             }
