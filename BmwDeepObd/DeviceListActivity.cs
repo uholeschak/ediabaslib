@@ -940,9 +940,11 @@ namespace BmwDeepObd
                         {
                             bluetoothInStream.ReadByte();
                         }
-                        byte[] sendData = Encoding.UTF8.GetBytes(elmInitEntry.Command + "\r");
-                        LogData(sendData, 0, sendData.Length, "Send");
-                        bluetoothOutStream.Write(sendData, 0, sendData.Length);
+                        if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, elmInitEntry.Command, false))
+                        {
+                            adapterType = AdapterType.Elm327Invalid;
+                            break;
+                        }
 
                         string response = GetElm327Reponse(bluetoothInStream);
                         if (response == null)
@@ -988,6 +990,31 @@ namespace BmwDeepObd
             }
             LogString("Adapter type: " + adapterType);
             return adapterType;
+        }
+
+        private bool Elm327SendCommand(Stream bluetoothInStream, Stream bluetoothOutStream, string command, bool readAnswer = true)
+        {
+            byte[] sendData = Encoding.UTF8.GetBytes(command + "\r");
+            LogData(sendData, 0, sendData.Length, "Send");
+            bluetoothOutStream.Write(sendData, 0, sendData.Length);
+            LogString("ELM CMD send: " + command);
+
+            if (readAnswer)
+            {
+                string answer = GetElm327Reponse(bluetoothInStream);
+                if (answer == null)
+                {
+                    LogString("*** No ELM response");
+                    return false;
+                }
+                // check for OK
+                if (!answer.Contains("OK\r"))
+                {
+                    LogString("*** ELM invalid response: " + answer.Replace("\r", "").Replace(">", ""));
+                    return false;
+                }
+            }
+            return true;
         }
 
         /// <summary>
@@ -1043,6 +1070,10 @@ namespace BmwDeepObd
             if (response == null)
             {
                 LogString("*** No ELM prompt");
+            }
+            else
+            {
+                LogString("ELM CMD rec: " + response.Replace("\r", "").Replace(">", ""));
             }
             return response;
         }
