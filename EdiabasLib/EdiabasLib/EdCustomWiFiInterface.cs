@@ -53,13 +53,25 @@ namespace EdiabasLib
         {
             if (TcpClient != null)
             {
+                if (ConnectPort == port)
+                {
+                    return true;
+                }
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Wifi port {0} different, disconnect", port);
+                InterfaceDisconnect(true);
                 return true;
+            }
+            if (!port.StartsWith(PortId, StringComparison.OrdinalIgnoreCase))
+            {
+                InterfaceDisconnect(true);
+                return false;
             }
             CustomAdapter.Init();
             try
             {
                 ConnectPort = port;
                 ConnectParameter = parameter;
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "WiFi connect: {0}", port);
 #if Android
                 if (ConnectParameter is ConnectParameterType connectParameter)
                 {
