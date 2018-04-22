@@ -55,6 +55,7 @@ namespace BmwDeepObd
             Elm327Invalid,      // ELM327 invalid type
             Elm327Fake21,       // ELM327 fake 2.1 version
             Elm327Fake21Opt,    // ELM327 fake 2.1 version optional command
+            Elm327NoCan,        // ELM327 no CAN support
             Custom,             // custom adapter
             CustomUpdate,       // custom adapter with firmware update
             EchoOnly,           // only echo response
@@ -689,7 +690,7 @@ namespace BmwDeepObd
                                     ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
                                 })
                                 .SetCancelable(true)
-                                .SetMessage(Resource.String.adapter_elm_replacement)
+                                .SetMessage(ActivityCommon.FromHtml(GetString(Resource.String.adapter_elm_replacement)))
                                 .SetTitle(Resource.String.alert_title_info)
                                 .Show();
                             _altertInfoDialog.DismissEvent += (sender, args) =>
@@ -707,15 +708,30 @@ namespace BmwDeepObd
                         case AdapterType.Elm327Invalid:
                         case AdapterType.Elm327Fake21:
                         case AdapterType.Elm327Fake21Opt:
+                        case AdapterType.Elm327NoCan:
                         {
                             bool yesSelected = false;
                             AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-                            string message =
-                            GetString(adapterType == AdapterType.Elm327Invalid
-                                ? Resource.String.invalid_adapter_type
-                                : Resource.String.fake_elm_adapter_type);
-                            message += "<br>" + GetString(Resource.String.recommened_adapter_type);
+                            string message;
+                            switch (adapterType)
+                            {
+                                case AdapterType.Elm327Fake21:
+                                case AdapterType.Elm327Fake21Opt:
+                                    message = GetString(Resource.String.fake_elm_adapter_type);
+                                    message += "<br>" + GetString(Resource.String.recommened_adapter_type);
+                                    break;
+
+                                case AdapterType.Elm327NoCan:
+                                    message = GetString(Resource.String.elm_no_can);
+                                    message += "<br>" + GetString(Resource.String.adapter_elm_replacement);
+                                    break;
+
+                                default:
+                                    message = GetString(Resource.String.invalid_adapter_type);
+                                    message += "<br>" + GetString(Resource.String.recommened_adapter_type);
+                                    break;
+                            }
 
                             if (adapterType == AdapterType.Elm327Fake21Opt)
                             {
@@ -989,7 +1005,7 @@ namespace BmwDeepObd
                             if (!Elm327CheckCan(bluetoothInStream, bluetoothOutStream))
                             {
                                 LogString("*** ELM no vehicle CAN support");
-                                adapterType = AdapterType.Elm327Invalid;
+                                adapterType = AdapterType.Elm327NoCan;
                             }
                             break;
                     }
