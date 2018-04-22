@@ -28,6 +28,7 @@ namespace EdiabasLib
         protected static int ConnectTimeout = 5000;
         private static readonly EdCustomAdapterCommon CustomAdapter =
             new EdCustomAdapterCommon(SendData, ReceiveData, DiscardInBuffer, ReadInBuffer, TcpReadTimeoutOffset, -1, EchoTimeout);
+        // ReSharper disable once UnusedMember.Global
         protected static Stopwatch StopWatch = new Stopwatch();
         protected static TcpClient TcpClient;
         protected static NetworkStream TcpStream;
@@ -35,6 +36,7 @@ namespace EdiabasLib
         protected static object ConnectParameter;
         protected static object ConnManager;
 
+        // ReSharper disable once UnusedMember.Global
         public static NetworkStream NetworkStream => TcpStream;
 
         public static EdiabasNet Ediabas
@@ -73,7 +75,7 @@ namespace EdiabasLib
             catch (Exception ex)
             {
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Connect failure: {0}", ex.Message);
-                InterfaceDisconnect();
+                InterfaceDisconnect(true);
                 return false;
             }
             return true;
@@ -81,6 +83,28 @@ namespace EdiabasLib
 
         public static bool InterfaceDisconnect()
         {
+            return InterfaceDisconnect(false);
+        }
+
+        public static bool InterfaceDisconnect(bool forceClose)
+        {
+            if (!forceClose && Ediabas != null)
+            {
+                int keepConnectionOpen = 0;
+                string prop = Ediabas.GetConfigProperty("ObdKeepConnectionOpen");
+                if (prop != null)
+                {
+                    keepConnectionOpen = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ObdKeepConnectionOpen: {0}", keepConnectionOpen);
+                if (keepConnectionOpen != 0)
+                {
+                    return true;
+                }
+            }
+
+            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "WiFi disconnect");
             bool result = true;
             try
             {
@@ -216,7 +240,7 @@ namespace EdiabasLib
             if (CustomAdapter.ReconnectRequired)
             {
                 Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
-                InterfaceDisconnect();
+                InterfaceDisconnect(true);
                 if (!InterfaceConnect(ConnectPort, null))
                 {
                     CustomAdapter.ReconnectRequired = true;
@@ -248,7 +272,7 @@ namespace EdiabasLib
             if (CustomAdapter.ReconnectRequired)
             {
                 Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
-                InterfaceDisconnect();
+                InterfaceDisconnect(true);
                 if (!InterfaceConnect(ConnectPort, null))
                 {
                     CustomAdapter.ReconnectRequired = true;
