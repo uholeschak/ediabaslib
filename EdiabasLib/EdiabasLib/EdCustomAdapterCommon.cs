@@ -540,7 +540,7 @@ namespace EdiabasLib
                             break;
 
                         case 1:
-                            if (AdapterType < 2)
+                            if (AdapterType < 0x0002)
                             {   // no id support
                                 break;
                             }
