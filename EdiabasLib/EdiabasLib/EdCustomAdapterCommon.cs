@@ -12,6 +12,7 @@ namespace EdiabasLib
     {
         // flags
         // ReSharper disable InconsistentNaming
+        // ReSharper disable once UnusedMember.Global
         public const byte KLINEF1_PARITY_MASK = 0x7;
         public const byte KLINEF1_PARITY_NONE = 0x0;
         public const byte KLINEF1_PARITY_EVEN = 0x1;
@@ -32,6 +33,7 @@ namespace EdiabasLib
         public const byte CANF_DISCONNECT = 0x08;
 
         // CAN protocols
+        // ReSharper disable once UnusedMember.Global
         public const byte CAN_PROT_BMW = 0x00;
         public const byte CAN_PROT_TP20 = 0x01;
         public const byte CAN_PROT_ISOTP = 0x02;
@@ -612,6 +614,15 @@ namespace EdiabasLib
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
                 ReconnectRequired = true;
                 return false;
+            }
+
+            if (Ediabas != null)
+            {
+                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "AdapterType: {0}", AdapterType);
+                if (AdapterSerial != null)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "AdapterSerial: {0}", BitConverter.ToString(AdapterSerial).Replace("-", ""));
+                }
             }
 
             return true;
