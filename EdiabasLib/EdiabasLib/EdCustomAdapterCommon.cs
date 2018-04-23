@@ -92,6 +92,8 @@ namespace EdiabasLib
 
         public int AdapterVersion { get; set; }
 
+        public byte[] AdapterSerial { get; set; }
+
         public long LastCommTick { get; set; }
 
         public bool ReconnectRequired { get; set; }
@@ -122,6 +124,7 @@ namespace EdiabasLib
             CanFlags = EdInterfaceObd.CanFlags.Empty;
             AdapterType = -1;
             AdapterVersion = -1;
+            AdapterSerial = null;
         }
 
         public void Init()
@@ -132,6 +135,7 @@ namespace EdiabasLib
             AutoKeyByteResponse = false;
             AdapterType = -1;
             AdapterVersion = -1;
+            AdapterSerial = null;
             ReconnectRequired = false;
             LastCommTick = DateTime.MinValue.Ticks;
         }
@@ -521,51 +525,81 @@ namespace EdiabasLib
                 return true;
             }
             AdapterType = -1;
+            AdapterSerial = null;
             try
             {
-                const int versionRespLen = 9;
-                byte[] identTel = { 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E };
-                _discardInBufferFunc();
-                _sendDataFunc(identTel, identTel.Length);
-                LastCommTick = Stopwatch.GetTimestamp();
-
-                List<byte> responseList = new List<byte>();
-                long startTime = Stopwatch.GetTimestamp();
-                for (; ; )
+                for (int telType = 0; telType < 2; telType++)
                 {
-                    List<byte> newList = _readInBufferFunc();
-                    if (newList.Count > 0)
+                    int respLen = 0;
+                    byte[] testTel = null;
+                    switch (telType)
                     {
-                        responseList.AddRange(newList);
-                        startTime = Stopwatch.GetTimestamp();
+                        case 0:
+                            respLen = 9;
+                            testTel = new byte []{ 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E };
+                            break;
+
+                        case 1:
+                            respLen = 13;
+                            testTel = new byte[] { 0x82, 0xF1, 0xF1, 0xFB, 0xFB, 0x5A };
+                            break;
                     }
-                    if (responseList.Count >= identTel.Length + versionRespLen)
+
+                    if (testTel == null)
                     {
-                        bool validEcho = !identTel.Where((t, i) => responseList[i] != t).Any();
-                        if (!validEcho)
-                        {
-                            return false;
-                        }
-                        if (CalcChecksumBmwFast(responseList.ToArray(), identTel.Length, versionRespLen - 1) !=
-                            responseList[identTel.Length + versionRespLen - 1])
-                        {
-                            return false;
-                        }
-                        AdapterType = responseList[identTel.Length + 5] + (responseList[identTel.Length + 4] << 8);
-                        AdapterVersion = responseList[identTel.Length + 7] + (responseList[identTel.Length + 6] << 8);
                         break;
                     }
-                    if (Stopwatch.GetTimestamp() - startTime > _readTimeoutOffsetLong * TickResolMs)
+                    _discardInBufferFunc();
+                    _sendDataFunc(testTel, testTel.Length);
+                    LastCommTick = Stopwatch.GetTimestamp();
+
+                    List<byte> responseList = new List<byte>();
+                    long startTime = Stopwatch.GetTimestamp();
+                    for (; ; )
                     {
-                        if (responseList.Count >= identTel.Length)
+                        List<byte> newList = _readInBufferFunc();
+                        if (newList.Count > 0)
                         {
-                            bool validEcho = !identTel.Where((t, i) => responseList[i] != t).Any();
-                            if (validEcho)
-                            {
-                                AdapterType = 0;
-                            }
+                            responseList.AddRange(newList);
+                            startTime = Stopwatch.GetTimestamp();
                         }
-                        return false;
+                        if (responseList.Count >= testTel.Length + respLen)
+                        {
+                            bool validEcho = !testTel.Where((t, i) => responseList[i] != t).Any();
+                            if (!validEcho)
+                            {
+                                return false;
+                            }
+                            if (CalcChecksumBmwFast(responseList.ToArray(), testTel.Length, respLen - 1) !=
+                                responseList[testTel.Length + respLen - 1])
+                            {
+                                return false;
+                            }
+                            switch (telType)
+                            {
+                                case 0:
+                                    AdapterType = responseList[testTel.Length + 5] + (responseList[testTel.Length + 4] << 8);
+                                    AdapterVersion = responseList[testTel.Length + 7] + (responseList[testTel.Length + 6] << 8);
+                                    break;
+
+                                case 1:
+                                    AdapterSerial = responseList.GetRange(testTel.Length + 4, 8).ToArray();
+                                    break;
+                            }
+                            break;
+                        }
+                        if (Stopwatch.GetTimestamp() - startTime > _readTimeoutOffsetLong * TickResolMs)
+                        {
+                            if (responseList.Count >= testTel.Length)
+                            {
+                                bool validEcho = !testTel.Where((t, i) => responseList[i] != t).Any();
+                                if (telType == 0 && validEcho)
+                                {
+                                    AdapterType = 0;
+                                }
+                            }
+                            return false;
+                        }
                     }
                 }
             }
