@@ -540,6 +540,10 @@ namespace EdiabasLib
                             break;
 
                         case 1:
+                            if (AdapterType < 2)
+                            {   // no id support
+                                break;
+                            }
                             respLen = 13;
                             testTel = new byte[] { 0x82, 0xF1, 0xF1, 0xFB, 0xFB, 0x5A };
                             break;
