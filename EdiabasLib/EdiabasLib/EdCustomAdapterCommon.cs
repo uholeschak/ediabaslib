@@ -690,10 +690,13 @@ namespace EdiabasLib
                 if (RawMode || CurrentBaudRate == 115200)
                 {
                     // BMW-FAST
+                    if (!RawMode)
+                    {
+                        UpdateAdapterInfo();
+                    }
                     if (sendData.Length >= 5 && sendData[1] == 0xF1 && sendData[2] == 0xF1 && sendData[3] == 0xFA && sendData[4] == 0xFA)
                     {   // read clamp status
-                        UpdateAdapterInfo();
-                        if (AdapterVersion < 0x000A)
+                        if (RawMode || AdapterVersion < 0x000A)
                         {
                             Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Read clamp status not supported");
                             return false;
