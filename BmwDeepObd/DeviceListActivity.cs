@@ -839,8 +839,6 @@ namespace BmwDeepObd
         /// <returns>Adapter type</returns>
         private AdapterType AdapterTypeDetection(BluetoothSocket bluetoothSocket)
         {
-            const int versionRespLen = 9;
-            byte[] customData = { 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E };
             AdapterType adapterType = AdapterType.Unknown;
 
             try
@@ -848,6 +846,8 @@ namespace BmwDeepObd
                 Stream bluetoothInStream = bluetoothSocket.InputStream;
                 Stream bluetoothOutStream = bluetoothSocket.OutputStream;
 
+                const int versionRespLen = 9;
+                byte[] customData = { 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E };
                 // custom adapter
                 bluetoothInStream.Flush();
                 while (bluetoothInStream.IsDataAvailable())
@@ -900,6 +900,12 @@ namespace BmwDeepObd
                             return AdapterType.CustomUpdate;
                         }
                         LogString("Custom adapter detected");
+
+                        if (adapterTypeId >= 0x0002)
+                        {
+                            ReadCustomSerial(bluetoothInStream, bluetoothOutStream);
+                        }
+
                         return AdapterType.Custom;
                     }
                     if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * TickResolMs)
@@ -1031,11 +1037,73 @@ namespace BmwDeepObd
             return adapterType;
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool ReadCustomSerial(Stream bluetoothInStream, Stream bluetoothOutStream)
+        {
+            const int idRespLen = 13;
+            byte[] idData = { 0x82, 0xF1, 0xF1, 0xFB, 0xFB, 0x5A };
+
+            LogString("Reading id data");
+
+            LogData(idData, 0, idData.Length, "Send");
+            bluetoothOutStream.Write(idData, 0, idData.Length);
+
+            LogData(null, 0, 0, "Resp");
+            List<byte> responseList = new List<byte>();
+            long startTime = Stopwatch.GetTimestamp();
+            for (;;)
+            {
+                while (bluetoothInStream.IsDataAvailable())
+                {
+                    int data = bluetoothInStream.ReadByte();
+                    if (data >= 0)
+                    {
+                        LogByte((byte) data);
+                        responseList.Add((byte) data);
+                        startTime = Stopwatch.GetTimestamp();
+                    }
+                }
+
+                if (responseList.Count >= idData.Length + idRespLen)
+                {
+                    LogString("Id data length");
+                    bool validEcho = !idData.Where((t, i) => responseList[i] != t).Any();
+                    if (!validEcho)
+                    {
+                        LogString("*** Echo incorrect");
+                        break;
+                    }
+
+                    byte checkSum = 0x00;
+                    for (int i = 0; i < idRespLen - 1; i++)
+                    {
+                        checkSum += responseList[i + idData.Length];
+                    }
+
+                    if (checkSum != responseList[idData.Length + idRespLen - 1])
+                    {
+                        LogString("*** Checksum incorrect");
+                        return false;
+                    }
+                    byte[] adapterSerial = responseList.GetRange(idData.Length + 4, 8).ToArray();
+                    LogString("AdapterSerial: " + BitConverter.ToString(adapterSerial).Replace("-", ""));
+                    break;
+                }
+                if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * TickResolMs)
+                {
+                    LogString("*** Id data timeout");
+                    return false;
+                }
+            }
+            return true;
+        }
+
         /// <summary>
         /// Check for vehicle can support
         /// </summary>
         /// <param name="bluetoothInStream"></param>
         /// <param name="bluetoothOutStream"></param>
+        /// <param name="canSupport">True: CAN supported</param>
         /// <returns></returns>
         private bool Elm327CheckCan(Stream bluetoothInStream, Stream bluetoothOutStream, out bool canSupport)
         {
