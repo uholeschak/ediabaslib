@@ -40,7 +40,7 @@ Follow the next steps to generate your first configuration (BMW):
 * On the next page select a job and corresponding job result for data you want to see on the main page.  
 Make sure you have set the checkmarks for these results!  
 You could test reading the value with _Test_ button below.
-* Leave the page and select possibly select another ECU.
+* Leave the page and possibly select another ECU.
 * Exit the [Configuration generator](Configuration_Generator.md) and store the configuration.
 * On the main page you will see the selected ECU tabs and the _Error_ tab.
 * Press the _Connect_ button.
