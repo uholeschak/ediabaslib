@@ -5,6 +5,7 @@ Table of contents:
 * [Manufacturers](#manufacturers)
 * [Supported adapters](#supported-adapters)
 * [First start](#first-start)
+* [Your first configuration](#your-first-configuration)
 * [The main menu](#the-main-menu)
 	* [Configuration generator](Configuration_Generator.md)
 	* [HowTo create Deep OBD for BMW and VAG pages](Page_specification.md)
@@ -30,7 +31,23 @@ At the first start of Deep OBD for BMW and VAG you will be asked to extract the 
 In the next step a configuration _(*.cccfg file)_ must be created. The easiest way to do so is to use the [configuration generator](#ConfigurationGenerator). For complex scenarios you could manually create configuration files (see [HowTo create Deep OBD pages](Page_specification.md)). After loading and compiling the configuration file, all tabs included in the file will be visible on the main page.  
 Before connecting to the vehicle via Bluetooth a [Bluetooth adapter](Build_Bluetooth_D-CAN_adapter.md) has to be selected (or you will be asked when connecting). It's recommended to pair the adapter in the android Bluetooth menu before using it in _Deep OBD for BMW and VAG_, because this way a connection password could be assigned.
 
-![E61Bt.cccfg](Deep_OBD_for_BMW_and_VAG_AppOfflineSmall.png) ![Select Bluetooth device](Deep_OBD_for_BMW_and_VAG_AppSelectBluetoothSmall.png)
+### Your first configuration
+Follow the next steps to generate your first configuration (BMW):
+* Open the [Configuration generator](Configuration_Generator.md) from the main menu
+* In the generator menu select the correct interface type and [Bluetooth adapter](Build_Bluetooth_D-CAN_adapter.md) if needed.
+* Press the _Read_ button and wait until the ECU list is populated.
+* Select an ECU entry you are interested in.
+* On the next page select a job and corresponding job result for data you want to see on the main page.  
+Make sure you have set the checkmarks for these results!  
+You could test reading the value with _Test_ button below.
+* Leave the page and select possibly select another ECU.
+* Exit the [Configuration generator](Configuration_Generator.md) and store the configuration.
+* On the main page you will see the selected ECU tabs and the _Error_ tab.
+* Press the _Connect_ button.
+* Select the desired tab.
+
+![Select Bluetooth device](Deep_OBD_for_BMW_and_VAG_AppSelectBluetoothSmall.png) ![ECU list](Configuration_Generator_AppGeneratorEcusSmall.png)
+![Job selection](Configuration_Generator_AppGeneratorJobSmall.png) ![Motor page](Deep_OBD_for_BMW_and_VAG_AppMotorSmall.png)
 
 ## The main menu
 The application has a configuration menu with the following options:
