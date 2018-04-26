@@ -2654,40 +2654,39 @@ namespace BmwDeepObd
         public void SetEdiabasInterface(EdiabasNet ediabas, string btDeviceAddress)
         {
             object connectParameter = null;
-            // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
-            if (ediabas.EdInterfaceClass is EdInterfaceObd)
+            if (ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
             {
-                ((EdInterfaceObd) ediabas.EdInterfaceClass).UdsDtcStatusOverride = UdsDtcStatusOverride;
+                edInterfaceObd.UdsDtcStatusOverride = UdsDtcStatusOverride;
                 if (SelectedInterface == InterfaceType.Ftdi)
                 {
-                    ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "FTDI0";
+                    edInterfaceObd.ComPort = "FTDI0";
                     connectParameter = new EdFtdiInterface.ConnectParameterType(_usbManager);
                 }
                 else if (SelectedInterface == InterfaceType.ElmWifi)
                 {
-                    ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "ELM327WIFI";
+                    edInterfaceObd.ComPort = "ELM327WIFI";
                     connectParameter = new EdElmWifiInterface.ConnectParameterType(_maConnectivity);
                 }
                 else if (SelectedInterface == InterfaceType.DeepObdWifi)
                 {
-                    ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "DEEPOBDWIFI";
+                    edInterfaceObd.ComPort = "DEEPOBDWIFI";
                     connectParameter = new EdCustomWiFiInterface.ConnectParameterType(_maConnectivity);
                 }
                 else
                 {
-                    ((EdInterfaceObd)ediabas.EdInterfaceClass).ComPort = "BLUETOOTH:" + btDeviceAddress;
+                    edInterfaceObd.ComPort = "BLUETOOTH:" + btDeviceAddress;
                     connectParameter = new EdBluetoothInterface.ConnectParameterType(_maConnectivity, MtcBtService, () => _context);
                     ConnectMtcBtDevice(btDeviceAddress);
                 }
             }
-            else if (ediabas.EdInterfaceClass is EdInterfaceEnet)
+            else if (ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)
             {
                 string remoteHost = string.IsNullOrEmpty(_selectedEnetIp) ? "auto:all" : _selectedEnetIp;
                 if (Emulator)
                 {   // broadcast is not working with emulator
                     remoteHost = EmulatorEnetIp;
                 }
-                ((EdInterfaceEnet)ediabas.EdInterfaceClass).RemoteHost = remoteHost;
+                edInterfaceEnet.RemoteHost = remoteHost;
                 connectParameter = new EdInterfaceEnet.ConnectParameterType(_maConnectivity);
             }
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
