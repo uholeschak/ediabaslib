@@ -743,7 +743,7 @@ namespace UdsFileReader
             public List<string[]> LineList { set; get; }
         }
 
-        private readonly SegmentInfo[] _segmentInfos =
+        private static readonly SegmentInfo[] SegmentInfos =
         {
             new SegmentInfo(SegmentType.Adp, "ADP", "RA"),
             new SegmentInfo(SegmentType.Dtc, "DTC", "RD"),
@@ -752,6 +752,19 @@ namespace UdsFileReader
             new SegmentInfo(SegmentType.Mwb, "MWB", "RM"),
             new SegmentInfo(SegmentType.Sot, "SOT", "RS"),
             new SegmentInfo(SegmentType.Xpl, "XPL", "RX"),
+        };
+
+        // simplified form without date handling
+        private static readonly Dictionary<string, string> ChassisMapFixed = new Dictionary<string, string>()
+        {
+            { "1K", "VW36" },
+            { "6R", "VW25" },
+            { "3C", "VW46" },
+            { "1T", "VW36" },
+            { "6J", "SE25" },
+            { "5N", "VW36" },
+            { "AX", "VW36" },
+            { "KE", "SE25" },
         };
 
         private Dictionary<string, string> _redirMap;
@@ -2714,7 +2727,7 @@ namespace UdsFileReader
                     return false;
                 }
 
-                foreach (SegmentInfo segmentInfo in _segmentInfos)
+                foreach (SegmentInfo segmentInfo in SegmentInfos)
                 {
                     string fileName = Path.Combine(dirName, Path.ChangeExtension(segmentInfo.FileName, FileExtension));
                     List<string[]> lineList = ExtractFileSegment(new List<string> {fileName}, segmentInfo.SegmentName);
@@ -2771,7 +2784,7 @@ namespace UdsFileReader
         public List<ParseInfoBase> ExtractFileSegment(List<string> fileList, SegmentType segmentType)
         {
             SegmentInfo segmentInfoSel = null;
-            foreach (SegmentInfo segmentInfo in _segmentInfos)
+            foreach (SegmentInfo segmentInfo in SegmentInfos)
             {
                 if (segmentInfo.SegmentType == segmentType)
                 {
@@ -2907,7 +2920,7 @@ namespace UdsFileReader
                     return null;
                 }
 
-                Dictionary<string, string> dict = new Dictionary<string, string>();
+                Dictionary<string, string> dict = new Dictionary<string, string>(ChassisMapFixed);
                 foreach (string[] textArray in textList)
                 {
                     if (textArray.Length != 2)
@@ -2920,7 +2933,19 @@ namespace UdsFileReader
                         continue;
                     }
 
-                    dict.Add(textArray[0], textArray[1]);
+                    string key = textArray[0];
+                    string value = textArray[1];
+                    if (dict.TryGetValue(key, out string dictValue))
+                    {
+                        if (string.Compare(dictValue, value, StringComparison.Ordinal) != 0)
+                        {
+                            //return null;
+                        }
+                    }
+                    else
+                    {
+                        dict.Add(key, value);
+                    }
                 }
 
                 return dict;
