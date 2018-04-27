@@ -164,6 +164,22 @@ namespace FileDecoder
                         {
                             Console.WriteLine("*** Decryption failed: {0}", file);
                         }
+                        else
+                        {
+                            if (!CreateZip(new List<string>() { outFile }, "ldat", Path.ChangeExtension(outFile, "ldat")))
+                            {
+                                Console.WriteLine("*** Compression failed: {0}", file);
+                            }
+                        }
+                    }
+                    if (string.Compare(ext, @".lbl", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        Console.WriteLine("Compressing: {0}", file);
+                        string inFile = Path.ChangeExtension(file, @".lbl");
+                        if (!CreateZip(new List<string>() { inFile }, "ldat", Path.ChangeExtension(inFile, "ldat")))
+                        {
+                            Console.WriteLine("*** Compression failed: {0}", file);
+                        }
                     }
                 }
             }
