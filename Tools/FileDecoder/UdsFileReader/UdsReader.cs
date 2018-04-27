@@ -760,6 +760,7 @@ namespace UdsFileReader
         private Dictionary<UInt32, FixedEncodingEntry> _fixedEncodingMap;
         private ILookup<UInt32, string[]> _ttdopLookup;
         private ILookup<UInt32, string[]> _muxLookup;
+        private Dictionary<string, string> _chassisMap;
 
         private static readonly Dictionary<byte, string> Type28Dict = new Dictionary<byte, string>()
         {
@@ -2707,6 +2708,12 @@ namespace UdsFileReader
                 }
                 _muxLookup = muxList.ToLookup(item => UInt32.Parse(item[0]));
 
+                _chassisMap = CreateChassisDict(Path.Combine(dirName, "Chassis" + DataReader.FileExtension));
+                if (_chassisMap == null)
+                {
+                    return false;
+                }
+
                 foreach (SegmentInfo segmentInfo in _segmentInfos)
                 {
                     string fileName = Path.Combine(dirName, Path.ChangeExtension(segmentInfo.FileName, FileExtension));
@@ -2880,6 +2887,40 @@ namespace UdsFileReader
                     }
 
                     dict.Add(key, textArray.Skip(1).ToArray());
+                }
+
+                return dict;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static Dictionary<string, string> CreateChassisDict(string fileName)
+        {
+            try
+            {
+                List<string[]> textList = DataReader.ReadFileLines(fileName);
+                if (textList == null)
+                {
+                    return null;
+                }
+
+                Dictionary<string, string> dict = new Dictionary<string, string>();
+                foreach (string[] textArray in textList)
+                {
+                    if (textArray.Length != 2)
+                    {
+                        continue;
+                    }
+
+                    if (textArray[0].Length != 2)
+                    {
+                        continue;
+                    }
+
+                    dict.Add(textArray[0], textArray[1]);
                 }
 
                 return dict;
