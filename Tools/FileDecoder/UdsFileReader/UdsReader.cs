@@ -2939,7 +2939,7 @@ namespace UdsFileReader
                     {
                         if (string.Compare(dictValue, value, StringComparison.Ordinal) != 0)
                         {
-                            //return null;
+                            // inconistent data base entry, ignore it!
                         }
                     }
                     else
