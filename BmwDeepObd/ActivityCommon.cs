@@ -3005,9 +3005,8 @@ namespace BmwDeepObd
                             {
                                 sb.Append(" \"");
                                 sb.Append(entry.Key);
-                                sb.Append("=");
+                                sb.Append("\"=");
                                 sb.Append(entry.Value);
-                                sb.Append("\"");
                             }
                         }
                     }
@@ -4960,18 +4959,23 @@ namespace BmwDeepObd
                                 {
                                     for (int match = 1; match < matchesLine[0].Groups.Count; match++)
                                     {
-                                        string key = matchesLine[0].Groups[match].Value;
-                                        if (wordDict.ContainsKey(key))
+                                        if (matchesLine[0].Groups[match].Success)
                                         {
-                                            wordDict[key] += 1;
-                                        }
-                                        else
-                                        {
-                                            wordDict[key] = 1;
+                                            string key = matchesLine[0].Groups[match].Value;
+                                            if (!string.IsNullOrWhiteSpace(key))
+                                            {
+                                                if (wordDict.ContainsKey(key))
+                                                {
+                                                    wordDict[key] += 1;
+                                                }
+                                                else
+                                                {
+                                                    wordDict[key] = 1;
+                                                }
+                                            }
                                         }
                                     }
                                 }
-
                             }
 
                             string[] words = line.Split(' ', '\t', '\n', '\r');
