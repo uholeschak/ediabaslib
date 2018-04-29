@@ -2926,11 +2926,13 @@ namespace BmwDeepObd
                     Directory.CreateDirectory(downloadDir);
                     webClient.DownloadFile(MailInfoDownloadUrl, mailInfoFile);
 
-                    string regEx;
-                    int maxWords;
-                    if (!GetKeyWordsInfo(mailInfoFile, out regEx, out maxWords))
+                    if (!GetMailKeyWordsInfo(mailInfoFile, out string wordRegEx, out int maxWords))
                     {
-                        throw new Exception("Invalid mail info");
+                        throw new Exception("Invalid mail keywords info");
+                    }
+                    if (!GetMailLinesInfo(mailInfoFile, out string linesRegEx))
+                    {
+                        throw new Exception("Invalid mail line info");
                     }
 
                     StringBuilder sb = new StringBuilder();
@@ -2995,16 +2997,17 @@ namespace BmwDeepObd
 
                     if (!string.IsNullOrEmpty(traceFile))
                     {
-                        Dictionary<string, int> wordDict = ExtractKeyWords(traceFile, new Regex(regEx), maxWords, null);
+                        Dictionary<string, int> wordDict = ExtractKeyWords(traceFile, wordRegEx, maxWords, linesRegEx, null);
                         if (wordDict != null)
                         {
                             sb.Append("\nKeywords:");
                             foreach (var entry in wordDict)
                             {
-                                sb.Append(" ");
+                                sb.Append(" \"");
                                 sb.Append(entry.Key);
                                 sb.Append("=");
                                 sb.Append(entry.Value);
+                                sb.Append("\"");
                             }
                         }
                     }
@@ -3218,7 +3221,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool GetKeyWordsInfo(string xmlFile, out string regEx, out int maxWords)
+        private bool GetMailKeyWordsInfo(string xmlFile, out string regEx, out int maxWords)
         {
             regEx = null;
             maxWords = 0;
@@ -3241,6 +3244,31 @@ namespace BmwDeepObd
                 {
                     maxWords = XmlConvert.ToInt32(maxWordsAttr.Value);
                 }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool GetMailLinesInfo(string xmlFile, out string regEx)
+        {
+            regEx = null;
+            try
+            {
+                if (!File.Exists(xmlFile))
+                {
+                    return false;
+                }
+                XDocument xmlDoc = XDocument.Load(xmlFile);
+                XElement keyWordsNode = xmlDoc.Root?.Element("lineinfo");
+                XAttribute regexAttr = keyWordsNode?.Attribute("regex");
+                if (regexAttr == null)
+                {
+                    return false;
+                }
+                regEx = regexAttr.Value;
             }
             catch (Exception)
             {
@@ -4889,12 +4917,14 @@ namespace BmwDeepObd
             return true;
         }
 
-        public static Dictionary<string, int> ExtractKeyWords(string archiveFilename, Regex regEx, int maxWords, ProgressZipDelegate progressHandler)
+        public static Dictionary<string, int> ExtractKeyWords(string archiveFilename, string wordRegEx, int maxWords, string lineRegEx, ProgressZipDelegate progressHandler)
         {
             Dictionary<string, int> wordDict = new Dictionary<string, int>();
             ZipFile zf = null;
             try
             {
+                Regex regExWord = new Regex(wordRegEx);
+                Regex regExLine = string.IsNullOrWhiteSpace(lineRegEx) ? null: new Regex(lineRegEx);
                 long index = 0;
                 FileStream fs = File.OpenRead(archiveFilename);
                 zf = new ZipFile(fs);
@@ -4922,6 +4952,28 @@ namespace BmwDeepObd
                             {
                                 break;
                             }
+
+                            if (regExLine != null)
+                            {
+                                MatchCollection matchesLine = regExLine.Matches(line);
+                                if ((matchesLine.Count == 1) && (matchesLine[0].Groups.Count > 1))
+                                {
+                                    for (int match = 1; match < matchesLine[0].Groups.Count; match++)
+                                    {
+                                        string key = matchesLine[0].Groups[match].Value;
+                                        if (wordDict.ContainsKey(key))
+                                        {
+                                            wordDict[key] += 1;
+                                        }
+                                        else
+                                        {
+                                            wordDict[key] = 1;
+                                        }
+                                    }
+                                }
+
+                            }
+
                             string[] words = line.Split(' ', '\t', '\n', '\r');
                             foreach (string word in words)
                             {
@@ -4929,7 +4981,7 @@ namespace BmwDeepObd
                                 {
                                     continue;
                                 }
-                                if (regEx.IsMatch(word))
+                                if (regExWord.IsMatch(word))
                                 {
                                     if (wordDict.ContainsKey(word))
                                     {
