@@ -21,6 +21,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Android.Bluetooth;
 using Android.Content;
@@ -53,8 +54,8 @@ namespace BmwDeepObd
             Unknown,            // unknown adapter
             Elm327,             // ELM327
             Elm327Invalid,      // ELM327 invalid type
-            Elm327Fake21,       // ELM327 fake 2.1 version
-            Elm327Fake21Opt,    // ELM327 fake 2.1 version optional command
+            Elm327Fake2X,       // ELM327 fake 2.X version
+            Elm327Fake2XOpt,    // ELM327 fake 2.X version optional command
             Elm327NoCan,        // ELM327 no CAN support
             Custom,             // custom adapter
             CustomUpdate,       // custom adapter with firmware update
@@ -93,6 +94,8 @@ namespace BmwDeepObd
         private readonly AutoResetEvent _connectedEvent = new AutoResetEvent(false);
         private volatile string _connectDeviceAddress = string.Empty;
         private volatile bool _deviceConnected;
+        private int _elmVerH = -1;
+        private int _elmVerL = -1;
 
         protected override void OnCreate (Bundle savedInstanceState)
         {
@@ -706,8 +709,8 @@ namespace BmwDeepObd
                         }
 
                         case AdapterType.Elm327Invalid:
-                        case AdapterType.Elm327Fake21:
-                        case AdapterType.Elm327Fake21Opt:
+                        case AdapterType.Elm327Fake2X:
+                        case AdapterType.Elm327Fake2XOpt:
                         case AdapterType.Elm327NoCan:
                         {
                             bool yesSelected = false;
@@ -716,9 +719,9 @@ namespace BmwDeepObd
                             string message;
                             switch (adapterType)
                             {
-                                case AdapterType.Elm327Fake21:
-                                case AdapterType.Elm327Fake21Opt:
-                                    message = GetString(Resource.String.fake_elm_adapter_type);
+                                case AdapterType.Elm327Fake2X:
+                                case AdapterType.Elm327Fake2XOpt:
+                                    message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.fake_elm_adapter_type), _elmVerH, _elmVerL);
                                     message += "<br>" + GetString(Resource.String.recommened_adapter_type);
                                     break;
 
@@ -733,7 +736,7 @@ namespace BmwDeepObd
                                     break;
                             }
 
-                            if (adapterType == AdapterType.Elm327Fake21Opt)
+                            if (adapterType == AdapterType.Elm327Fake2XOpt)
                             {
                                 message += "<br>" + GetString(Resource.String.fake_elm_try);
                                 builder.SetPositiveButton(Resource.String.button_yes, (sender, args) =>
@@ -840,6 +843,8 @@ namespace BmwDeepObd
         private AdapterType AdapterTypeDetection(BluetoothSocket bluetoothSocket)
         {
             AdapterType adapterType = AdapterType.Unknown;
+            _elmVerH = -1;
+            _elmVerL = -1;
 
             try
             {
@@ -925,7 +930,8 @@ namespace BmwDeepObd
                 LogString("No custom adapter found");
 
                 // ELM327
-                bool elmReports21 = false;
+                bool elmReports2X = false;
+                Regex elmVerRegEx = new Regex(@"ELM327\s+v(\d)\.(\d)", RegexOptions.IgnoreCase);
                 for (int retries = 0; retries < 2; retries++)
                 {
                     bluetoothInStream.Flush();
@@ -940,13 +946,25 @@ namespace BmwDeepObd
                     string response = GetElm327Reponse(bluetoothInStream);
                     if (response != null)
                     {
-                        if (response.Contains("ELM327"))
+                        MatchCollection matchesVer = elmVerRegEx.Matches(response);
+                        if ((matchesVer.Count == 1) && (matchesVer[0].Groups.Count == 3))
                         {
-                            LogString("ELM327 detected");
-                            if (response.Contains("ELM327 v2.1"))
+                            if (!Int32.TryParse(matchesVer[0].Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _elmVerH))
                             {
-                                LogString("Version 2.1 detected");
-                                elmReports21 = true;
+                                _elmVerH = -1;
+                            }
+                            if (!Int32.TryParse(matchesVer[0].Groups[2].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _elmVerL))
+                            {
+                                _elmVerL = -1;
+                            }
+                        }
+                        if (_elmVerH >= 0 && _elmVerL >= 0)
+                        {
+                            LogString(string.Format("ELM327 detected: {0}.{1}", _elmVerH, _elmVerL));
+                            if (_elmVerH >= 2)
+                            {
+                                LogString("Version >= 2.x detected");
+                                elmReports2X = true;
                             }
                             adapterType = AdapterType.Elm327;
                             break;
@@ -987,10 +1005,10 @@ namespace BmwDeepObd
                                     adapterType = AdapterType.Elm327Invalid;
                                     break;
                                 }
-                                if (elmReports21)
+                                if (elmReports2X)
                                 {
-                                    LogString("*** ELM command optional, fake 2.1");
-                                    adapterType = AdapterType.Elm327Fake21Opt;
+                                    LogString("*** ELM command optional, fake 2.X");
+                                    adapterType = AdapterType.Elm327Fake2XOpt;
                                 }
                                 else
                                 {
@@ -1003,14 +1021,14 @@ namespace BmwDeepObd
                     switch (adapterType)
                     {
                         case AdapterType.Elm327Invalid:
-                            if (elmReports21)
+                            if (elmReports2X)
                             {
-                                adapterType = AdapterType.Elm327Fake21;
+                                adapterType = AdapterType.Elm327Fake2X;
                             }
                             break;
 
                         case AdapterType.Elm327:
-                        case AdapterType.Elm327Fake21Opt:
+                        case AdapterType.Elm327Fake2XOpt:
                         {
                             if (!Elm327CheckCan(bluetoothInStream, bluetoothOutStream, out bool canSupport))
                             {
