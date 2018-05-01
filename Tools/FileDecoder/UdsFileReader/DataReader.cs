@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using ICSharpCode.SharpZipLib.Zip;
 
 namespace UdsFileReader
@@ -20,47 +22,80 @@ namespace UdsFileReader
                 DataReader = dataReader;
                 PartNumber = partNumber;
                 Address = address;
+
+                if (PartNumber.Length > 9)
+                {
+                    string part1 = PartNumber.Substring(0, 3);
+                    string part2 = PartNumber.Substring(3, 3);
+                    string part3 = PartNumber.Substring(6, 3);
+                    _suffix = PartNumber.Substring(9);
+                    _baseName = part1 + "-" + part2 + "-" + part3;
+                    _fullName = _baseName + "-" + _suffix;
+                }
             }
 
             public string GetFileName(string dir)
             {
                 try
                 {
-                    if (string.IsNullOrEmpty(PartNumber) || PartNumber.Length < 9)
+                    if (string.IsNullOrEmpty(_fullName))
                     {
                         return null;
                     }
 
-                    List<string> dirList = new List<string>();
-                    string[] dirs = Directory.GetDirectories(dir);
-                    if (dirs.Length > 0)
+                    List<string> dirList = GetDirList(dir);
+                    string fileName = ResolveFileName(dirList);
+                    if (string.IsNullOrEmpty(fileName))
                     {
-                        dirList.AddRange(dirs);
+                        return null;
                     }
-                    dirList.Add(dir);
 
-                    foreach (string subDir in dirList)
+                    List<string[]> redirectList = GetRedirects(fileName);
+                    if (redirectList == null)
                     {
-                        string fileName;
-                        string part1 = PartNumber.Substring(0, 3);
-                        string part2 = PartNumber.Substring(3, 3);
-                        string part3 = PartNumber.Substring(6, 3);
-                        string suffix = string.Empty;
-                        if (PartNumber.Length > 9)
-                        {
-                            suffix = PartNumber.Substring(9);
-                        }
-                        string baseName = part1 + "-" + part2 + "-" + part3;
+                        return null;
+                    }
 
-                        if (!string.IsNullOrEmpty(suffix))
+                    foreach (string[] redirect in redirectList)
+                    {
+                        string regString = WildCardToRegular(redirect[1].Trim());
+                        if (Regex.IsMatch(_fullName, regString, RegexOptions.IgnoreCase))
                         {
-                            fileName = Path.Combine(subDir, baseName + "-" + suffix + FileExtension);
-                            if (File.Exists(fileName))
+                            string targetFile = Path.ChangeExtension(redirect[0], FileExtension);
+                            if (!string.IsNullOrEmpty(targetFile))
                             {
-                                return fileName;
+                                foreach (string subDir in dirList)
+                                {
+                                    fileName = Path.Combine(subDir, targetFile);
+                                    if (File.Exists(fileName))
+                                    {
+                                        return fileName;
+                                    }
+                                }
                             }
                         }
-                        fileName = Path.Combine(subDir, baseName + FileExtension);
+                    }
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+
+                return null;
+            }
+
+            private string ResolveFileName(List<string> dirList)
+            {
+                try
+                {
+                    foreach (string subDir in dirList)
+                    {
+                        string fileName = Path.Combine(subDir, _fullName + FileExtension);
+                        if (File.Exists(fileName))
+                        {
+                            return fileName;
+                        }
+                        fileName = Path.Combine(subDir, _baseName + FileExtension);
                         if (File.Exists(fileName))
                         {
                             return fileName;
@@ -79,7 +114,6 @@ namespace UdsFileReader
                             return fileName;
                         }
                     }
-
                 }
                 catch (Exception)
                 {
@@ -88,9 +122,66 @@ namespace UdsFileReader
                 return null;
             }
 
+            private List<string> GetDirList(string dir)
+            {
+                try
+                {
+                    List<string> dirList = new List<string>();
+                    string[] dirs = Directory.GetDirectories(dir);
+                    if (dirs.Length > 0)
+                    {
+                        dirList.AddRange(dirs);
+                    }
+                    dirList.Add(dir);
+
+                    return dirList;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            public List<string[]> GetRedirects(string fileName)
+            {
+                try
+                {
+                    List<string[]> redirectList = new List<string[]>();
+                    List<string[]> textList = ReadFileLines(fileName);
+                    foreach (string[] lineArray in textList)
+                    {
+                        if (lineArray.Length < 3)
+                        {
+                            continue;
+                        }
+                        if (string.Compare(lineArray[0], "REDIRECT", StringComparison.OrdinalIgnoreCase) != 0)
+                        {
+                            continue;
+                        }
+
+                        redirectList.Add(lineArray.Skip(1).ToArray());
+                    }
+
+                    return redirectList;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
             public DataReader DataReader { get; }
             public string PartNumber { get; }
             public int Address { get; }
+
+            private string _fullName;
+            private string _baseName;
+            private string _suffix;
+        }
+
+        private static string WildCardToRegular(string value)
+        {
+            return "^" + Regex.Escape(value).Replace("\\?", ".") + "$";
         }
 
         public static string GetMd5Hash(string text)
