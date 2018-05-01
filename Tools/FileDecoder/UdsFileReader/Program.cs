@@ -49,6 +49,16 @@ namespace UdsFileReader
                 List<string> fileList = fileNameResolver.GetFileList(dir);
                 return 0;
 #endif
+#if false
+                DataReader dataReader = new DataReader();
+                DataReader.FileNameResolver fileNameResolver = new DataReader.FileNameResolver(dataReader, "03L906018DQ", 1);
+                DirectoryInfo dirInfoParent = Directory.GetParent(dir);
+                if (dirInfoParent != null)
+                {
+                    string fileName = fileNameResolver.GetFileName(Path.Combine(dirInfoParent.FullName, "Labels"));
+                }
+                return 0;
+#endif
                 _unknownIdDict = new Dictionary<UInt32, UInt32>();
 
                 string[] files = Directory.GetFiles(dir, searchPattern, SearchOption.AllDirectories);
