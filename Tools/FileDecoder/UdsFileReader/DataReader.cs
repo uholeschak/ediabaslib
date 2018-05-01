@@ -56,20 +56,27 @@ namespace UdsFileReader
                         return null;
                     }
 
-                    foreach (string[] redirect in redirectList)
+                    foreach (string[] redirects in redirectList)
                     {
-                        string regString = WildCardToRegular(redirect[1].Trim());
-                        if (Regex.IsMatch(_fullName, regString, RegexOptions.IgnoreCase))
+                        string targetFile = Path.ChangeExtension(redirects[0], FileExtension);
+                        for (int i = 1; i < redirects.Length; i++)
                         {
-                            string targetFile = Path.ChangeExtension(redirect[0], FileExtension);
-                            if (!string.IsNullOrEmpty(targetFile))
+                            string redirect = redirects[i].Trim();
+                            if (redirect.Length > 9)
                             {
-                                foreach (string subDir in dirList)
+                                string regString = WildCardToRegular(redirect);
+                                if (Regex.IsMatch(_fullName, regString, RegexOptions.IgnoreCase))
                                 {
-                                    fileName = Path.Combine(subDir, targetFile);
-                                    if (File.Exists(fileName))
+                                    if (!string.IsNullOrEmpty(targetFile))
                                     {
-                                        return fileName;
+                                        foreach (string subDir in dirList)
+                                        {
+                                            fileName = Path.Combine(subDir, targetFile);
+                                            if (File.Exists(fileName))
+                                            {
+                                                return fileName;
+                                            }
+                                        }
                                     }
                                 }
                             }
