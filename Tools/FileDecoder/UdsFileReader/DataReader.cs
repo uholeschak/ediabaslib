@@ -347,6 +347,7 @@ namespace UdsFileReader
                 }
 
                 char? prefix = null;
+                int numberCount = 2;
                 int textOffset = 2;
                 switch (dataType)
                 {
@@ -361,16 +362,19 @@ namespace UdsFileReader
                     case DataType.Settings:
                         prefix = 'S';
                         textOffset = 1;
+                        numberCount = 1;
                         break;
 
                     case DataType.Coding:
                         prefix = 'C';
                         textOffset = 1;
+                        numberCount = 1;
                         break;
 
                     case DataType.LongCoding:
                         prefix = 'L';
-                        textOffset = 0;
+                        textOffset = 1;
+                        numberCount = 0;
                         break;
                 }
 
@@ -406,7 +410,7 @@ namespace UdsFileReader
 
                     int? value1 = null;
                     int? value2 = null;
-                    if (textOffset >= 1)
+                    if (numberCount >= 1)
                     {
                         if (Int32.TryParse(entry1, NumberStyles.Integer, CultureInfo.InvariantCulture,
                             out Int32 valueOut1))
@@ -414,7 +418,7 @@ namespace UdsFileReader
                             value1 = valueOut1;
                         }
                     }
-                    if (textOffset >= 2)
+                    if (numberCount >= 2)
                     {
                         if (Int32.TryParse(lineArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 valueOut2))
                         {
