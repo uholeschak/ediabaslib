@@ -64,8 +64,8 @@ namespace UdsFileReader
                             {
                                 string redirect = redirects[i].Trim();
                                 bool matched = false;
-                                if (redirect.Length > 9)
-                                {
+                                if (redirect.Length > 12)
+                                {   // min 1 char suffix
                                     string regString = WildCardToRegular(redirect);
                                     if (Regex.IsMatch(_fullName, regString, RegexOptions.IgnoreCase))
                                     {
