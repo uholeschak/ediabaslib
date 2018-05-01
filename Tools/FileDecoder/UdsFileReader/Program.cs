@@ -43,6 +43,12 @@ namespace UdsFileReader
 
                 //Console.WriteLine(udsReader.TestFixedTypes());
                 //return 0;
+#if false
+                UdsReader.FileNameResolver fileNameResolver = new UdsReader.FileNameResolver(udsReader, "EV_ECM20TDI01103L906018DQ", "003003", "03L906018DQ", "1K0907951");
+                //UdsReader.FileNameResolver fileNameResolver = new UdsReader.FileNameResolver(udsReader, "EV_Kombi_UDS_VDD_RM09", "A04089", "0920881A", "1K0907951");
+                List<string> fileList = fileNameResolver.GetFileList(dir);
+                return 0;
+#endif
                 _unknownIdDict = new Dictionary<UInt32, UInt32>();
 
                 string[] files = Directory.GetFiles(dir, searchPattern, SearchOption.AllDirectories);

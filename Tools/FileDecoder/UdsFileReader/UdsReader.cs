@@ -40,12 +40,158 @@ namespace UdsFileReader
             String = 8,
             HexScaled = 9,
             Integer2 = 10,
-            Invalid = 0x3F,
         }
 
         public const int DataTypeMaskSwapped = 0x40;
         public const int DataTypeMaskSigned = 0x80;
         public const int DataTypeMaskEnum = 0x3F;
+
+        public class FileNameResolver
+        {
+            public FileNameResolver(UdsReader udsReader, string asamData, string asamRev, string partNumber, string didHarwareNumber)
+            {
+                UdsReader = udsReader;
+                AsamData = asamData;
+                AsamRev = asamRev;
+                PartNumber = partNumber;
+                DidHarwareNumber = didHarwareNumber;
+            }
+
+            public string GetChassisType(string hardwareCode)
+            {
+                if (string.IsNullOrEmpty(hardwareCode) || hardwareCode.Length < 2)
+                {
+                    return string.Empty;
+                }
+                string key = hardwareCode.Substring(0, 2).ToUpperInvariant();
+                if (UdsReader._chassisMap.TryGetValue(key, out string chassisType))
+                {
+                    return chassisType;
+                }
+
+                return string.Empty;
+            }
+
+            public List<string> GetFileList(string dir)
+            {
+                try
+                {
+                    string chassisType = GetChassisType(PartNumber);
+                    if (string.IsNullOrEmpty(chassisType))
+                    {
+                        chassisType = GetChassisType(DidHarwareNumber);
+                    }
+
+                    if (string.IsNullOrEmpty(chassisType))
+                    {
+                        return null;
+                    }
+
+                    if (ChassisInvalid.Contains(chassisType))
+                    {
+                        return null;
+                    }
+
+                    if (string.IsNullOrEmpty(AsamRev) || AsamRev.Length < 3)
+                    {
+                        return null;
+                    }
+
+                    string baseRev = AsamRev.Substring(0, 3);
+
+                    string fileName = Path.Combine(dir, AsamData + "_" + baseRev + "_" + chassisType + FileExtension);
+                    List<string> fileList = UdsReader.GetFileList(fileName);
+                    if (fileList != null)
+                    {
+                        return fileList;
+                    }
+
+                    fileName = Path.Combine(dir, AsamData + "_" + baseRev + FileExtension);
+                    fileList = UdsReader.GetFileList(fileName);
+                    if (fileList != null)
+                    {
+                        return fileList;
+                    }
+
+                    string chassisType2 = null;
+                    if (string.Compare(chassisType, "VW32", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        chassisType2 = "VW36";
+                    }
+                    else if (string.Compare(chassisType, "VW36", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        chassisType2 = "VW32";
+                    }
+
+                    if (!string.IsNullOrEmpty(chassisType2))
+                    {
+                        fileName = Path.Combine(dir, AsamData + "_" + baseRev + "_" + chassisType2 + FileExtension);
+                        fileList = UdsReader.GetFileList(fileName);
+                        if (fileList != null)
+                        {
+                            return fileList;
+                        }
+                    }
+
+                    string revNumberString = baseRev.Substring(1, 2);
+                    if (!Int32.TryParse(revNumberString, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 revNumber))
+                    {
+                        revNumber = -1;
+                    }
+
+                    int revNumberIndex = revNumber;
+                    while (revNumberIndex >= 0)
+                    {
+                        string baseRevSub = baseRev.Substring(0, 1) + string.Format(CultureInfo.InvariantCulture, "{0:00}", revNumberIndex);
+                        fileName = Path.Combine(dir, AsamData + "_" + baseRevSub + "_" + chassisType + FileExtension);
+                        fileList = UdsReader.GetFileList(fileName);
+                        if (fileList != null)
+                        {
+                            return fileList;
+                        }
+                        revNumberIndex--;
+                    }
+
+                    fileName = Path.Combine(dir, AsamData + "_" + chassisType + FileExtension);
+                    fileList = UdsReader.GetFileList(fileName);
+                    if (fileList != null)
+                    {
+                        return fileList;
+                    }
+
+                    revNumberIndex = revNumber;
+                    while (revNumberIndex >= 0)
+                    {
+                        string baseRevSub = baseRev.Substring(0, 1) + string.Format(CultureInfo.InvariantCulture, "{0:00}", revNumberIndex);
+                        fileName = Path.Combine(dir, AsamData + "_" + baseRevSub + FileExtension);
+                        fileList = UdsReader.GetFileList(fileName);
+                        if (fileList != null)
+                        {
+                            return fileList;
+                        }
+                        revNumberIndex--;
+                    }
+
+                    fileName = Path.Combine(dir, AsamData + FileExtension);
+                    fileList = UdsReader.GetFileList(fileName);
+                    if (fileList != null)
+                    {
+                        return fileList;
+                    }
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+                return null;
+            }
+
+            public UdsReader UdsReader { get; }
+            public string AsamData { get; }
+            public string AsamRev { get; }
+            public string PartNumber { get; }
+            public string DidHarwareNumber { get; }
+        }
 
         public class ValueName
         {
@@ -765,6 +911,11 @@ namespace UdsFileReader
             { "5N", "VW36" },
             { "AX", "VW36" },
             { "KE", "SE25" },
+        };
+
+        private static readonly HashSet<string> ChassisInvalid = new HashSet<string>()
+        {
+            "AU58", "AU65", "LB63", "BG", "BY63", "VW27", "VW416", "VW53", "VN54", "SE27", "SK27"
         };
 
         private Dictionary<string, string> _redirMap;
@@ -2746,6 +2897,7 @@ namespace UdsFileReader
             }
         }
 
+        // ReSharper disable once UnusedMember.Global
         public string TestFixedTypes()
         {
             StringBuilder sb = new StringBuilder();
@@ -2940,6 +3092,9 @@ namespace UdsFileReader
                         if (string.Compare(dictValue, value, StringComparison.Ordinal) != 0)
                         {
                             // inconistent data base entry, ignore it!
+#if DEBUG
+                            System.Diagnostics.Debug.WriteLine("Inconistent chassis for key: " + key);
+#endif
                         }
                     }
                     else
