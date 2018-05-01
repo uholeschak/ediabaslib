@@ -5,6 +5,7 @@
 * [Supported adapter types](AdapterTypes.md)
 * [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md)
 	* [Open Source Bluetooth firmware](Custom_Bluetooth_firmware.md)
+	* [ELM WiFi firmware](Replace_Elm327_Wifi_Mini_Firmware.md)
 * [ENET WiFi Adapter](ENET_WiFi_Adapter.md)
 * [Build a Bluetooth D-CAN/K-Line adapter](Build_Bluetooth_D-CAN_adapter.md)
 * [Command line parameters for EdiabasTest](EdiabasTest_parameters.md)
