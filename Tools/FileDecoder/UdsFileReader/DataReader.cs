@@ -15,6 +15,16 @@ namespace UdsFileReader
         private static readonly Encoding Encoding = Encoding.GetEncoding(1252);
         public const string FileExtension = ".ldat";
 
+        public enum DataType
+        {
+            Measurement,
+            Basic,
+            Adaption,
+            Settings,
+            Coding,
+            LongCoding,
+        }
+
         public class FileNameResolver
         {
             public FileNameResolver(DataReader dataReader, string partNumber, int address)
@@ -28,9 +38,9 @@ namespace UdsFileReader
                     string part1 = PartNumber.Substring(0, 3);
                     string part2 = PartNumber.Substring(3, 3);
                     string part3 = PartNumber.Substring(6, 3);
-                    _suffix = PartNumber.Substring(9);
+                    string suffix = PartNumber.Substring(9);
                     _baseName = part1 + "-" + part2 + "-" + part3;
-                    _fullName = _baseName + "-" + _suffix;
+                    _fullName = _baseName + "-" + suffix;
                 }
             }
 
@@ -60,6 +70,7 @@ namespace UdsFileReader
                             {
                                 continue;
                             }
+
                             for (int i = 1; i < redirects.Length; i++)
                             {
                                 string redirect = redirects[i].Trim();
@@ -115,6 +126,7 @@ namespace UdsFileReader
                         {
                             return fileName;
                         }
+
                         fileName = Path.Combine(subDir, _baseName + FileExtension);
                         if (File.Exists(fileName))
                         {
@@ -139,6 +151,7 @@ namespace UdsFileReader
                 {
                     return null;
                 }
+
                 return null;
             }
 
@@ -152,6 +165,7 @@ namespace UdsFileReader
                     {
                         dirList.AddRange(dirs);
                     }
+
                     dirList.Add(dir);
 
                     return dirList;
@@ -174,6 +188,7 @@ namespace UdsFileReader
                         {
                             continue;
                         }
+
                         if (string.Compare(lineArray[0], "REDIRECT", StringComparison.OrdinalIgnoreCase) != 0)
                         {
                             continue;
@@ -194,9 +209,8 @@ namespace UdsFileReader
             public string PartNumber { get; }
             public int Address { get; }
 
-            private string _fullName;
-            private string _baseName;
-            private string _suffix;
+            private readonly string _fullName;
+            private readonly string _baseName;
         }
 
         private static string WildCardToRegular(string value)
@@ -240,6 +254,7 @@ namespace UdsFileReader
                     {
                         continue; // Ignore directories
                     }
+
                     if (string.Compare(zipEntry.Name, fileNameBase, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         zipStream = zf.GetInputStream(zipEntry);
@@ -251,6 +266,7 @@ namespace UdsFileReader
                 {
                     return null;
                 }
+
                 try
                 {
                     using (StreamReader sr = new StreamReader(zipStream, Encoding))
@@ -299,7 +315,123 @@ namespace UdsFileReader
                     zf.Close(); // Ensure we release resources
                 }
             }
+
             return lineList;
+        }
+
+        public class DataInfo
+        {
+            public DataInfo(DataType dataType, int? value1, int? value2, string[] textArray)
+            {
+                DataType = dataType;
+                Value1 = value1;
+                Value2 = value2;
+                TextArray = textArray;
+            }
+
+            public DataType DataType { get; }
+            public int? Value1 { get; }
+            public int? Value2 { get; }
+            public string[] TextArray { get; }
+        }
+
+        public List<DataInfo> ExtractDataType(string fileName, DataType dataType)
+        {
+            try
+            {
+                List<DataInfo> dataInfoList = new List<DataInfo>();
+                List<string[]> lineList = ReadFileLines(fileName);
+                if (lineList == null)
+                {
+                    return null;
+                }
+
+                char? prefix = null;
+                int textOffset = 2;
+                switch (dataType)
+                {
+                    case DataType.Adaption:
+                        prefix = 'A';
+                        break;
+
+                    case DataType.Basic:
+                        prefix = 'B';
+                        break;
+
+                    case DataType.Settings:
+                        prefix = 'S';
+                        textOffset = 1;
+                        break;
+
+                    case DataType.Coding:
+                        prefix = 'C';
+                        textOffset = 1;
+                        break;
+
+                    case DataType.LongCoding:
+                        prefix = 'L';
+                        textOffset = 0;
+                        break;
+                }
+
+                foreach (string[] lineArray in lineList)
+                {
+                    if (lineArray.Length < 2)
+                    {
+                        continue;
+                    }
+
+                    string entry1 = lineArray[0].Trim();
+                    if (entry1.Length < 1)
+                    {
+                        continue;
+                    }
+
+                    if (prefix != null)
+                    {
+                        if (entry1[0] != prefix)
+                        {
+                            continue;
+                        }
+
+                        entry1 = entry1.Substring(1);
+                    }
+                    else
+                    {
+                        if (!Char.IsNumber(entry1[0]))
+                        {
+                            continue;
+                        }
+                    }
+
+                    int? value1 = null;
+                    int? value2 = null;
+                    if (textOffset >= 1)
+                    {
+                        if (Int32.TryParse(entry1, NumberStyles.Integer, CultureInfo.InvariantCulture,
+                            out Int32 valueOut1))
+                        {
+                            value1 = valueOut1;
+                        }
+                    }
+                    if (textOffset >= 2)
+                    {
+                        if (Int32.TryParse(lineArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 valueOut2))
+                        {
+                            value2 = valueOut2;
+                        }
+                    }
+                    string[] textArray = lineArray.Skip(textOffset).ToArray();
+
+                    dataInfoList.Add(new DataInfo(dataType, value1, value2, textArray));
+                }
+
+                return dataInfoList;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }
