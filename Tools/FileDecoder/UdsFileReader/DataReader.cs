@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -11,6 +12,86 @@ namespace UdsFileReader
     {
         private static readonly Encoding Encoding = Encoding.GetEncoding(1252);
         public const string FileExtension = ".ldat";
+
+        public class FileNameResolver
+        {
+            public FileNameResolver(DataReader dataReader, string partNumber, int address)
+            {
+                DataReader = dataReader;
+                PartNumber = partNumber;
+                Address = address;
+            }
+
+            public string GetFileName(string dir)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(PartNumber) || PartNumber.Length < 9)
+                    {
+                        return null;
+                    }
+
+                    List<string> dirList = new List<string>();
+                    string[] dirs = Directory.GetDirectories(dir);
+                    if (dirs.Length > 0)
+                    {
+                        dirList.AddRange(dirs);
+                    }
+                    dirList.Add(dir);
+
+                    foreach (string subDir in dirList)
+                    {
+                        string fileName;
+                        string part1 = PartNumber.Substring(0, 3);
+                        string part2 = PartNumber.Substring(3, 3);
+                        string part3 = PartNumber.Substring(6, 3);
+                        string suffix = string.Empty;
+                        if (PartNumber.Length > 9)
+                        {
+                            suffix = PartNumber.Substring(9);
+                        }
+                        string baseName = part1 + "-" + part2 + "-" + part3;
+
+                        if (!string.IsNullOrEmpty(suffix))
+                        {
+                            fileName = Path.Combine(subDir, baseName + "-" + suffix + FileExtension);
+                            if (File.Exists(fileName))
+                            {
+                                return fileName;
+                            }
+                        }
+                        fileName = Path.Combine(subDir, baseName + FileExtension);
+                        if (File.Exists(fileName))
+                        {
+                            return fileName;
+                        }
+                    }
+
+                    foreach (string subDir in dirList)
+                    {
+                        string part1 = PartNumber.Substring(0, 2);
+                        string part2 = string.Format(CultureInfo.InvariantCulture, "{0:00}", Address);
+                        string baseName = part1 + "-" + part2;
+
+                        string fileName = Path.Combine(subDir, baseName + FileExtension);
+                        if (File.Exists(fileName))
+                        {
+                            return fileName;
+                        }
+                    }
+
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+                return null;
+            }
+
+            public DataReader DataReader { get; }
+            public string PartNumber { get; }
+            public int Address { get; }
+        }
 
         public static string GetMd5Hash(string text)
         {
