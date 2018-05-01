@@ -51,59 +51,57 @@ namespace UdsFileReader
                     }
 
                     List<string[]> redirectList = GetRedirects(fileName);
-                    if (redirectList == null)
+                    if (redirectList != null)
                     {
-                        return null;
-                    }
-
-                    foreach (string[] redirects in redirectList)
-                    {
-                        string targetFile = Path.ChangeExtension(redirects[0], FileExtension);
-                        if (string.IsNullOrEmpty(targetFile))
+                        foreach (string[] redirects in redirectList)
                         {
-                            continue;
-                        }
-                        for (int i = 1; i < redirects.Length; i++)
-                        {
-                            string redirect = redirects[i].Trim();
-                            bool matched = false;
-                            if (redirect.Length > 9)
+                            string targetFile = Path.ChangeExtension(redirects[0], FileExtension);
+                            if (string.IsNullOrEmpty(targetFile))
                             {
-                                string regString = WildCardToRegular(redirect);
-                                if (Regex.IsMatch(_fullName, regString, RegexOptions.IgnoreCase))
-                                {
-                                    matched = true;
-                                }
+                                continue;
                             }
-                            else
+                            for (int i = 1; i < redirects.Length; i++)
                             {
-                                string fullRedirect = _baseName + redirect;
-                                if (string.Compare(_fullName, fullRedirect, StringComparison.OrdinalIgnoreCase) == 0)
+                                string redirect = redirects[i].Trim();
+                                bool matched = false;
+                                if (redirect.Length > 9)
                                 {
-                                    matched = true;
-                                }
-                            }
-
-                            if (matched)
-                            {
-                                foreach (string subDir in dirList)
-                                {
-                                    fileName = Path.Combine(subDir, targetFile);
-                                    if (File.Exists(fileName))
+                                    string regString = WildCardToRegular(redirect);
+                                    if (Regex.IsMatch(_fullName, regString, RegexOptions.IgnoreCase))
                                     {
-                                        return fileName;
+                                        matched = true;
+                                    }
+                                }
+                                else
+                                {
+                                    string fullRedirect = _baseName + redirect;
+                                    if (string.Compare(_fullName, fullRedirect, StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        matched = true;
+                                    }
+                                }
+
+                                if (matched)
+                                {
+                                    foreach (string subDir in dirList)
+                                    {
+                                        string targetFileName = Path.Combine(subDir, targetFile);
+                                        if (File.Exists(targetFileName))
+                                        {
+                                            return targetFileName;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+
+                    return fileName;
                 }
                 catch (Exception)
                 {
                     return null;
                 }
-
-                return null;
             }
 
             private string ResolveFileName(List<string> dirList)
