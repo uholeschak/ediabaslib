@@ -56,6 +56,10 @@ namespace UdsFileReader
                 if (dirInfoParent != null)
                 {
                     string fileName = fileNameResolver.GetFileName(Path.Combine(dirInfoParent.FullName, "Labels"));
+                    if (!string.IsNullOrEmpty(fileName))
+                    {
+                        List<DataReader.DataInfo> info = dataReader.ExtractDataType(fileName, DataReader.DataType.Settings);
+                    }
                 }
                 return 0;
 #endif
@@ -156,37 +160,24 @@ namespace UdsFileReader
                     outStream.WriteLine(includeFile);
                 }
 
-                List<UdsReader.ParseInfoBase> resultList = udsReader.ExtractFileSegment(includeFiles, UdsReader.SegmentType.Mwb);
-                if (resultList == null)
+                foreach (UdsReader.SegmentType segmentType in Enum.GetValues(typeof(UdsReader.SegmentType)))
                 {
-                    outStream.WriteLine("Parsing failed");
-                    return false;
-                }
-
-                outStream.WriteLine("MWB:");
-                foreach (UdsReader.ParseInfoBase parseInfo in resultList)
-                {
-                    outStream.WriteLine("");
-
-                    StringBuilder sb = new StringBuilder();
-                    foreach (string entry in parseInfo.LineArray)
+                    List<UdsReader.ParseInfoBase> resultList = udsReader.ExtractFileSegment(includeFiles, segmentType);
+                    if (resultList == null)
                     {
-                        if (sb.Length > 0)
-                        {
-                            sb.Append("; ");
-                        }
-                        sb.Append("\"");
-                        sb.Append(entry);
-                        sb.Append("\"");
+                        outStream.WriteLine("Parsing failed");
+                        return false;
                     }
 
-                    sb.Insert(0, "Raw: ");
-                    outStream.WriteLine(sb.ToString());
-
-                    if (parseInfo is UdsReader.ParseInfoMwb parseInfoMwb)
+                    outStream.WriteLine();
+                    outStream.WriteLine("Segment Type: {0}", segmentType.ToString());
+                    outStream.WriteLine("-----------------------------------");
+                    foreach (UdsReader.ParseInfoBase parseInfo in resultList)
                     {
-                        sb.Clear();
-                        foreach (string entry in parseInfoMwb.NameArray)
+                        outStream.WriteLine("");
+
+                        StringBuilder sb = new StringBuilder();
+                        foreach (string entry in parseInfo.LineArray)
                         {
                             if (sb.Length > 0)
                             {
@@ -196,16 +187,34 @@ namespace UdsFileReader
                             sb.Append(entry);
                             sb.Append("\"");
                         }
-                        sb.Insert(0, "Name: ");
+
+                        sb.Insert(0, "Raw: ");
                         outStream.WriteLine(sb.ToString());
-                        outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Service ID: {0:X04}", parseInfoMwb.ServiceId));
 
-                        if (!PrintDataTypeEntry(outStream, parseInfoMwb.DataTypeEntry))
+                        if (parseInfo is UdsReader.ParseInfoMwb parseInfoMwb)
                         {
-                            return false;
-                        }
+                            sb.Clear();
+                            foreach (string entry in parseInfoMwb.NameArray)
+                            {
+                                if (sb.Length > 0)
+                                {
+                                    sb.Append("; ");
+                                }
+                                sb.Append("\"");
+                                sb.Append(entry);
+                                sb.Append("\"");
+                            }
+                            sb.Insert(0, "Name: ");
+                            outStream.WriteLine(sb.ToString());
+                            outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Service ID: {0:X04}", parseInfoMwb.ServiceId));
 
-                        outStream.WriteLine(TestDataType(fileName, parseInfoMwb));
+                            if (!PrintDataTypeEntry(outStream, parseInfoMwb.DataTypeEntry))
+                            {
+                                return false;
+                            }
+
+                            outStream.WriteLine(TestDataType(fileName, parseInfoMwb));
+                        }
                     }
                 }
 
