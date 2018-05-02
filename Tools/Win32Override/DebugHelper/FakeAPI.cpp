@@ -980,18 +980,18 @@ HANDLE WINAPI mCreateFileA(
         LPSTR name = PathFindFileNameA(lpFileName);
         if (ext != NULL && name != NULL)
         {
+            if (!bDecryptPatched)
+            {
+                bDecryptPatched = true;
+                RedirectDecryptTextLine();
+                RedirectReadDecryptedLine();
+            }
             if (_stricmp(ext, ".rod") == 0)
             {
                 if (!bTablesStored)
                 {
                     bTablesStored = TRUE;
                     GetCryptTables();
-                }
-                if (!bDecryptPatched)
-                {
-                    bDecryptPatched = true;
-                    RedirectDecryptTextLine();
-                    RedirectReadDecryptedLine();
                 }
             }
 #if true
