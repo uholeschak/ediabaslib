@@ -18,6 +18,7 @@ This chapter describes how to replace the ELM327 Wifi V1.5 HW: V01W_M_V1.0 adapt
 * Connect MCLR to GND to force the PIC18F in high-Z
 * Power the Elm327 adapter
 * Flash ESP-link firmware to the ESP8266ex using the instructions for 8Mbit/1MByte flash from [ESP-link serial flashing](https://github.com/jeelabs/esp-link/blob/master/FLASHING.md#initial-serial-flashing)
+* On Windows use [NodeMCU Flasher](https://github.com/nodemcu/nodemcu-flasher), this is easier to use.
 * Disconnect GPIO0 from GND (all others stay), Power cycle the Elm327 adapter, connect to ESP_XXYYZZ wifi network.
 * Using browser, browse to 192.168.4.1, select preset pin assignment: ESP-01, Change
 * Goto Debug log page, select UART debug log: off; Goto uC Console, select Baud 38400 for `default` PIC firmware, 115200 for `replacement firmware`
