@@ -3031,7 +3031,7 @@ namespace UdsFileReader
                             return null;
                         }
 
-                        if (!UInt32.TryParse(lineArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 errorCode))
+                        if (!UInt32.TryParse(lineArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 errorCode))
                         {
                             return null;
                         }
