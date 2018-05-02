@@ -874,6 +874,16 @@ namespace UdsFileReader
             public DataTypeEntry DataTypeEntry { get; }
         }
 
+        public class ParseInfoDtc : ParseInfoBase
+        {
+            public ParseInfoDtc(UInt32 errorCode, string[] lineArray) : base(lineArray)
+            {
+                ErrorCode = errorCode;
+            }
+
+            public UInt32 ErrorCode { get; }
+        }
+
         private class SegmentInfo
         {
             public SegmentInfo(SegmentType segmentType, string segmentName, string fileName)
@@ -3011,6 +3021,22 @@ namespace UdsFileReader
                         }
 
                         parseInfo = new ParseInfoMwb(serviceId, lineArray, nameArray, dataTypeEntry);
+                        break;
+                    }
+
+                    case SegmentType.Dtc:
+                    {
+                        if (lineArray.Length < 8)
+                        {
+                            return null;
+                        }
+
+                        if (!UInt32.TryParse(lineArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 errorCode))
+                        {
+                            return null;
+                        }
+
+                        parseInfo = new ParseInfoDtc(errorCode, lineArray);
                         break;
                     }
 

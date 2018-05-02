@@ -215,6 +215,12 @@ namespace UdsFileReader
 
                             outStream.WriteLine(TestDataType(fileName, parseInfoMwb));
                         }
+
+                        if (parseInfo is UdsReader.ParseInfoDtc parseInfoDtc)
+                        {
+                            sb.Clear();
+                            outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Error Code: {0:X04}", parseInfoDtc.ErrorCode));
+                        }
                     }
                 }
 
