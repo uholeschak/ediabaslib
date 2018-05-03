@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using ICSharpCode.SharpZipLib.Core;
@@ -167,6 +168,22 @@ namespace FileDecoder
                         else
                         {
                             if (!CreateZip(new List<string>() { outFile }, "ldat", Path.ChangeExtension(outFile, "ldat")))
+                            {
+                                Console.WriteLine("*** Compression failed: {0}", file);
+                            }
+                        }
+                    }
+                    else if (string.Compare(ext, @".dat", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        Console.WriteLine("Decrypting: {0}", file);
+                        string outFile = Path.ChangeExtension(file, @".dattxt");
+                        if (!DecryptErrorCodeFile(file, outFile))
+                        {
+                            Console.WriteLine("*** Decryption failed: {0}", file);
+                        }
+                        else
+                        {
+                            if (!CreateZip(new List<string>() { outFile }, "code", Path.ChangeExtension(outFile, "code")))
                             {
                                 Console.WriteLine("*** Compression failed: {0}", file);
                             }
@@ -410,6 +427,43 @@ namespace FileDecoder
             return true;
         }
 
+        static bool DecryptErrorCodeFile(string inFile, string outFile)
+        {
+            try
+            {
+                using (FileStream fsRead = new FileStream(inFile, FileMode.Open))
+                {
+                    using (FileStream fsWrite = new FileStream(outFile, FileMode.Create))
+                    {
+                        for (; ; )
+                        {
+                            byte[] data = DecryptErrorCodeLine(fsRead);
+                            if (data == null)
+                            {
+                                return false;
+                            }
+                            if (data.Length == 0)
+                            {   // end of file
+                                break;
+                            }
+
+                            foreach (byte value in data)
+                            {
+                                fsWrite.WriteByte(value);
+                            }
+                            fsWrite.WriteByte((byte)'\r');
+                            fsWrite.WriteByte((byte)'\n');
+                        }
+                    }
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         static byte[] DecryptLine(FileStream fs, int line, byte typeCode)
         {
             try
@@ -477,6 +531,119 @@ namespace FileDecoder
                 }
 
                 return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        static byte[] DecryptErrorCodeLine(FileStream fs)
+        {
+            try
+            {
+                bool numberValid = false;
+                StringBuilder sbNumber = new StringBuilder();
+                for (int i = 0; i < 16; i++)
+                {
+                    int value = fs.ReadByte();
+                    if (value < 0)
+                    {
+                        return new byte[0];
+                    }
+                    if (value == '\r' || value == '\n')
+                    {
+                        continue;
+                    }
+                    if (value == ' ')
+                    {
+                        numberValid = true;
+                        break;
+                    }
+
+                    sbNumber.Append((char)value);
+                }
+                if (!numberValid)
+                {
+                    return null;
+                }
+
+                if (!UInt32.TryParse(sbNumber.ToString(), out UInt32 lineNumber))
+                {
+                    return null;
+                }
+
+                int dataLenIn = fs.ReadByte();
+                if (dataLenIn < 0)
+                {
+                    return null;
+                }
+
+                int dataLenOut = fs.ReadByte();
+                if (dataLenOut < 0)
+                {
+                    return null;
+                }
+
+                if (dataLenOut > dataLenIn)
+                {
+                    return null;
+                }
+
+                if ((dataLenIn % 8) != 0)
+                {
+                    return null;
+                }
+
+                byte[] data = new byte[dataLenIn];
+                int count = fs.Read(data, 0, dataLenIn);
+                if (count < dataLenIn)
+                {
+                    return null;
+                }
+                UInt32[] buffer = new uint[dataLenIn / sizeof(UInt32)];
+                for (int i = 0; i < data.Length; i += sizeof(UInt32))
+                {
+                    buffer[i >> 2] = BitConverter.ToUInt32(data, i);
+                }
+
+                string maskString = string.Format(CultureInfo.InvariantCulture, "{0:00000000}", lineNumber);
+                byte[] maskBuffer = Encoding.ASCII.GetBytes(maskString);
+
+                Int32 cryptCode = sbNumber[0];
+                Int32 cryptOffet = cryptCode * 2;
+                for (int i = 0; i < 8; i++)
+                {
+                    maskBuffer[i] += (byte) (_versionCode + CryptTab2[(byte) cryptOffet]);
+                    cryptOffet += cryptCode;
+                }
+
+                maskBuffer[0] *= CryptTab1[0x76];
+                maskBuffer[1] *= CryptTab1[0xC3];
+                maskBuffer[2] *= CryptTab1[0x88];
+                maskBuffer[3] *= CryptTab1[0x3E];
+                maskBuffer[4] *= CryptTab1[0x99];
+                maskBuffer[5] *= CryptTab1[0x22];
+                maskBuffer[6] *= CryptTab1[0xCA];
+                maskBuffer[7] *= CryptTab1[0x07];
+
+                UInt32[] mask = new UInt32[2];
+                mask[0] = BitConverter.ToUInt32(maskBuffer, 0);
+                mask[1] = BitConverter.ToUInt32(maskBuffer, 4);
+                if (!DecryptBlock(mask, buffer, 0))
+                {
+                    return null;
+                }
+
+                byte[] result = new byte[dataLenIn];
+                for (int i = 0; i < dataLenIn; i += sizeof(UInt32))
+                {
+                    byte[] conf = BitConverter.GetBytes(buffer[i >> 2]);
+                    Array.Copy(conf, 0, result, i, conf.Length);
+                }
+                Array.Resize(ref result, dataLenOut);
+                byte[] prefix = Encoding.ASCII.GetBytes(string.Format(CultureInfo.InvariantCulture, "{0:00000000},", lineNumber));
+                return prefix.Concat(result).ToArray();
             }
             catch (Exception)
             {
