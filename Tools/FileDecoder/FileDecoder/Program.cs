@@ -595,13 +595,19 @@ namespace FileDecoder
                     return null;
                 }
 
-                byte[] data = new byte[dataLenIn];
+                byte[] prefix = Encoding.ASCII.GetBytes(string.Format(CultureInfo.InvariantCulture, "{0:00000000},", lineNumber));
+                if (dataLenIn <= 0)
+                {
+                    return prefix;
+                }
+
+                byte[] data = new byte[dataLenIn + 8];
                 int count = fs.Read(data, 0, dataLenIn);
                 if (count < dataLenIn)
                 {
                     return null;
                 }
-                UInt32[] buffer = new uint[dataLenIn / sizeof(UInt32)];
+                UInt32[] buffer = new uint[data.Length / sizeof(UInt32)];
                 for (int i = 0; i < data.Length; i += sizeof(UInt32))
                 {
                     buffer[i >> 2] = BitConverter.ToUInt32(data, i);
@@ -642,7 +648,6 @@ namespace FileDecoder
                     Array.Copy(conf, 0, result, i, conf.Length);
                 }
                 Array.Resize(ref result, dataLenOut);
-                byte[] prefix = Encoding.ASCII.GetBytes(string.Format(CultureInfo.InvariantCulture, "{0:00000000},", lineNumber));
                 return prefix.Concat(result).ToArray();
             }
             catch (Exception)
