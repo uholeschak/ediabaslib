@@ -568,6 +568,11 @@ namespace FileDecoder
                     return null;
                 }
 
+                if (sbNumber.Length < 8)
+                {
+                    return null;
+                }
+
                 if (!UInt32.TryParse(sbNumber.ToString(), out UInt32 lineNumber))
                 {
                     return null;
@@ -616,7 +621,7 @@ namespace FileDecoder
                 string maskString = string.Format(CultureInfo.InvariantCulture, "{0:00000000}", lineNumber);
                 byte[] maskBuffer = Encoding.ASCII.GetBytes(maskString);
 
-                Int32 cryptCode = sbNumber[0];
+                Int32 cryptCode = sbNumber[5];
                 Int32 cryptOffet = cryptCode * 2;
                 for (int i = 0; i < 8; i++)
                 {
