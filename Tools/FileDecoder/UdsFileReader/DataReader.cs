@@ -14,7 +14,10 @@ namespace UdsFileReader
     {
         private static readonly Encoding Encoding = Encoding.GetEncoding(1252);
         public const string FileExtension = ".ldat";
+        public const string CodeFileExtension = ".cdat";
         public const string DataDir = "Labels";
+
+        public Dictionary<UInt32, string> CodeMap { get; private set; }
 
         public enum DataType
         {
@@ -236,7 +239,7 @@ namespace UdsFileReader
             return BitConverter.ToString(result).Replace("-", "");
         }
 
-        public static List<string[]> ReadFileLines(string fileName)
+        public static List<string[]> ReadFileLines(string fileName, bool codeFile = false)
         {
             List<string[]> lineList = new List<string[]>();
             ZipFile zf = null;
@@ -272,7 +275,7 @@ namespace UdsFileReader
                 {
                     using (StreamReader sr = new StreamReader(zipStream, Encoding))
                     {
-                        for (; ; )
+                        for (;;)
                         {
                             string line = sr.ReadLine();
                             if (line == null)
@@ -280,21 +283,32 @@ namespace UdsFileReader
                                 break;
                             }
 
-                            int commentStart = line.IndexOf(';');
-                            if (commentStart >= 0)
+                            if (codeFile)
                             {
-                                line = line.Substring(0, commentStart);
+                                string[] lineArray = line.Split(new [] {','}, 2);
+                                if (lineArray.Length > 0)
+                                {
+                                    lineList.Add(lineArray);
+                                }
                             }
-
-                            if (string.IsNullOrWhiteSpace(line))
+                            else
                             {
-                                continue;
-                            }
+                                int commentStart = line.IndexOf(';');
+                                if (commentStart >= 0)
+                                {
+                                    line = line.Substring(0, commentStart);
+                                }
 
-                            string[] lineArray = line.Split(',');
-                            if (lineArray.Length > 0)
-                            {
-                                lineList.Add(lineArray);
+                                if (string.IsNullOrWhiteSpace(line))
+                                {
+                                    continue;
+                                }
+
+                                string[] lineArray = line.Split(',');
+                                if (lineArray.Length > 0)
+                                {
+                                    lineList.Add(lineArray);
+                                }
                             }
                         }
                     }
@@ -436,6 +450,41 @@ namespace UdsFileReader
             catch (Exception)
             {
                 return null;
+            }
+        }
+
+        public bool Init(string rootDir)
+        {
+            try
+            {
+                string[] files = Directory.GetFiles(rootDir, "Code*" + CodeFileExtension, SearchOption.TopDirectoryOnly);
+                if (files.Length != 1)
+                {
+                    return false;
+                }
+                List<string[]> lineList = ReadFileLines(files[0], true);
+                if (lineList == null)
+                {
+                    return false;
+                }
+                CodeMap = new Dictionary<uint, string>();
+                foreach (string[] lineArray in lineList)
+                {
+                    if (lineArray.Length != 2)
+                    {
+                        return false;
+                    }
+                    if (!UInt32.TryParse(lineArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 key))
+                    {
+                        return false;
+                    }
+                    CodeMap.Add(key, lineArray[1]);
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
     }

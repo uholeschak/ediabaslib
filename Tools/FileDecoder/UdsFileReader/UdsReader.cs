@@ -937,6 +937,8 @@ namespace UdsFileReader
         private ILookup<UInt32, string[]> _muxLookup;
         private Dictionary<string, string> _chassisMap;
 
+        public DataReader DataReader { get; private set; }
+
         private static readonly Dictionary<byte, string> Type28Dict = new Dictionary<byte, string>()
         {
             {1, "OBD II (CARB)"},
@@ -2832,6 +2834,12 @@ namespace UdsFileReader
         {
             try
             {
+                DataReader = new DataReader();
+                if (!DataReader.Init(rootDir))
+                {
+                    return false;
+                }
+
                 string udsDir = Path.Combine(rootDir, UdsDir);
                 List<string[]> redirList = ExtractFileSegment(new List<string> {Path.Combine(udsDir, "ReDir" + FileExtension)}, "DIR");
                 if (redirList == null)
