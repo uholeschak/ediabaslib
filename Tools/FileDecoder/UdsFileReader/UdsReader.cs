@@ -2993,6 +2993,10 @@ namespace UdsFileReader
 
                 if (value < 1 || value > segmentInfoSel.LineList.Count)
                 {
+                    if (segmentType == SegmentType.Dtc)
+                    {
+                        continue;
+                    }
                     return null;
                 }
 
