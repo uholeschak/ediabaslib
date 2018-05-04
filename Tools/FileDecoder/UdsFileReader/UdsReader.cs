@@ -3055,7 +3055,7 @@ namespace UdsFileReader
 
                         if (!DataReader.CodeMap.TryGetValue(textKey, out string errorText))
                         {
-                            return null;
+                            errorText = string.Empty;
                         }
 
                         parseInfo = new ParseInfoDtc(errorCode, lineArray, errorText);
