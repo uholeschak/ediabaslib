@@ -223,6 +223,7 @@ namespace UdsFileReader
                         {
                             sb.Clear();
                             outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Error Code: {0}", parseInfoDtc.ErrorCode));
+                            outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Error Text: {0}", parseInfoDtc.ErrorText));
                         }
                     }
                 }
