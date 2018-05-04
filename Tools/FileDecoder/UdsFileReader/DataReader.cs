@@ -14,6 +14,7 @@ namespace UdsFileReader
     {
         private static readonly Encoding Encoding = Encoding.GetEncoding(1252);
         public const string FileExtension = ".ldat";
+        public const string DataDir = "Labels";
 
         public enum DataType
         {

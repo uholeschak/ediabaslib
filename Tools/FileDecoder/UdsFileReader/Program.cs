@@ -25,6 +25,13 @@ namespace UdsFileReader
 
             string fileSpec = args[0];
             string dir = Path.GetDirectoryName(fileSpec);
+            DirectoryInfo dirInfoParent = Directory.GetParent(dir);
+            if (dirInfoParent == null)
+            {
+                Console.WriteLine("Invalid directory");
+                return 1;
+            }
+            string rootDir = dirInfoParent.FullName;
             string searchPattern = Path.GetFileName(fileSpec);
             if (dir == null || searchPattern == null)
             {
@@ -35,7 +42,7 @@ namespace UdsFileReader
             try
             {
                 UdsReader udsReader = new UdsReader();
-                if (!udsReader.Init(dir))
+                if (!udsReader.Init(rootDir))
                 {
                     Console.WriteLine("Init failed");
                     return 1;
@@ -52,14 +59,10 @@ namespace UdsFileReader
 #if false
                 DataReader dataReader = new DataReader();
                 DataReader.FileNameResolver fileNameResolver = new DataReader.FileNameResolver(dataReader, "03L906018DQ", 1);
-                DirectoryInfo dirInfoParent = Directory.GetParent(dir);
-                if (dirInfoParent != null)
+                string fileName = fileNameResolver.GetFileName(Path.Combine(rootDir, DataReader.DataDir));
+                if (!string.IsNullOrEmpty(fileName))
                 {
-                    string fileName = fileNameResolver.GetFileName(Path.Combine(dirInfoParent.FullName, "Labels"));
-                    if (!string.IsNullOrEmpty(fileName))
-                    {
-                        List<DataReader.DataInfo> info = dataReader.ExtractDataType(fileName, DataReader.DataType.Settings);
-                    }
+                    List<DataReader.DataInfo> info = dataReader.ExtractDataType(fileName, DataReader.DataType.Settings);
                 }
                 return 0;
 #endif
@@ -219,7 +222,7 @@ namespace UdsFileReader
                         if (parseInfo is UdsReader.ParseInfoDtc parseInfoDtc)
                         {
                             sb.Clear();
-                            outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Error Code: {0:X04}", parseInfoDtc.ErrorCode));
+                            outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Error Code: {0}", parseInfoDtc.ErrorCode));
                         }
                     }
                 }

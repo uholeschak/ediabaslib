@@ -183,7 +183,7 @@ namespace FileDecoder
                         }
                         else
                         {
-                            if (!CreateZip(new List<string>() { outFile }, "code", Path.ChangeExtension(outFile, "code")))
+                            if (!CreateZip(new List<string>() { outFile }, "cdat", Path.ChangeExtension(outFile, "cdat")))
                             {
                                 Console.WriteLine("*** Compression failed: {0}", file);
                             }
