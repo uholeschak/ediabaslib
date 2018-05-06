@@ -1134,7 +1134,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, "00", false)) // dummy data
+            if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, "0000000000000000", false)) // dummy data
             {
                 LogString("*** ELM sending data failed");
                 return false;
