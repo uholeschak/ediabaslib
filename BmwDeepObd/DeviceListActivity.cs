@@ -54,8 +54,8 @@ namespace BmwDeepObd
             Unknown,            // unknown adapter
             Elm327,             // ELM327
             Elm327Invalid,      // ELM327 invalid type
-            Elm327Fake2X,       // ELM327 fake 2.X version
-            Elm327Fake2XOpt,    // ELM327 fake 2.X version optional command
+            Elm327Fake,         // ELM327 fake version
+            Elm327FakeOpt,      // ELM327 fake version optional command
             Elm327NoCan,        // ELM327 no CAN support
             Custom,             // custom adapter
             CustomUpdate,       // custom adapter with firmware update
@@ -709,8 +709,8 @@ namespace BmwDeepObd
                         }
 
                         case AdapterType.Elm327Invalid:
-                        case AdapterType.Elm327Fake2X:
-                        case AdapterType.Elm327Fake2XOpt:
+                        case AdapterType.Elm327Fake:
+                        case AdapterType.Elm327FakeOpt:
                         case AdapterType.Elm327NoCan:
                         {
                             bool yesSelected = false;
@@ -719,8 +719,8 @@ namespace BmwDeepObd
                             string message;
                             switch (adapterType)
                             {
-                                case AdapterType.Elm327Fake2X:
-                                case AdapterType.Elm327Fake2XOpt:
+                                case AdapterType.Elm327Fake:
+                                case AdapterType.Elm327FakeOpt:
                                     message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.fake_elm_adapter_type), _elmVerH, _elmVerL);
                                     message += "<br>" + GetString(Resource.String.recommened_adapter_type);
                                     break;
@@ -736,7 +736,7 @@ namespace BmwDeepObd
                                     break;
                             }
 
-                            if (adapterType == AdapterType.Elm327Fake2XOpt)
+                            if (adapterType == AdapterType.Elm327FakeOpt)
                             {
                                 message += "<br>" + GetString(Resource.String.fake_elm_try);
                                 builder.SetPositiveButton(Resource.String.button_yes, (sender, args) =>
@@ -999,20 +999,20 @@ namespace BmwDeepObd
                             if (!response.Contains("OK\r"))
                             {
                                 LogString("*** No ELM OK found");
-                                bool optional = elmInitEntry.Version >= 210;
+                                bool optional = elmInitEntry.Version >= 0;
                                 if (!optional)
                                 {
                                     adapterType = AdapterType.Elm327Invalid;
                                     break;
                                 }
-                                if (elmReports2X)
+                                if (elmReports2X && elmInitEntry.Version >= 200)
                                 {
                                     LogString("*** ELM command optional, fake 2.X");
-                                    adapterType = AdapterType.Elm327Fake2XOpt;
+                                    adapterType = AdapterType.Elm327FakeOpt;
                                 }
                                 else
                                 {
-                                    LogString("*** ELM command optional");
+                                    LogString("*** ELM command optional, fake");
                                 }
                             }
                         }
@@ -1023,12 +1023,12 @@ namespace BmwDeepObd
                         case AdapterType.Elm327Invalid:
                             if (elmReports2X)
                             {
-                                adapterType = AdapterType.Elm327Fake2X;
+                                adapterType = AdapterType.Elm327Fake;
                             }
                             break;
 
                         case AdapterType.Elm327:
-                        case AdapterType.Elm327Fake2XOpt:
+                        case AdapterType.Elm327FakeOpt:
                         {
                             if (!Elm327CheckCan(bluetoothInStream, bluetoothOutStream, out bool canSupport))
                             {
