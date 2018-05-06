@@ -1149,6 +1149,25 @@ namespace BmwDeepObd
                 }
             }
 
+            if (canSupport)
+            {
+                // fake adapters are not able to send short telegrams
+                if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, "00", false))
+                {
+                    LogString("*** ELM sending data failed");
+                    return false;
+                }
+                answer = GetElm327Reponse(bluetoothInStream);
+                if (answer != null)
+                {
+                    if (answer.Contains("CAN ERROR\r"))
+                    {
+                        LogString("*** ELM CAN error, fake adapter");
+                        return false;
+                    }
+                }
+            }
+
             return true;
         }
 
