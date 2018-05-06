@@ -321,6 +321,10 @@ namespace BmwDeepObd
 
         private void UpdateDisplay()
         {
+            if (_activityCommon == null)
+            {
+                return;
+            }
             const int maxLength = 40;
             string displayName = string.IsNullOrEmpty(_activityCommon.CustomStorageMedia) ? GetString(Resource.String.default_media) : _activityCommon.CustomStorageMedia;
             if (displayName.Length > maxLength)
@@ -347,6 +351,11 @@ namespace BmwDeepObd
 
         private void SelectMedia()
         {
+            // ReSharper disable once UseNullPropagation
+            if (_activityCommon == null)
+            {
+                return;
+            }
             _activityCommon.SelectMedia((s, a) =>
             {
                 UpdateDisplay();
