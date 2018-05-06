@@ -29,7 +29,6 @@ namespace EdiabasLib
         {
             new ElmInitEntry("ATD"),
             new ElmInitEntry("ATE0"),
-            new ElmInitEntry("ATJE"),   // ELM data format, used for fake ELM detection
             new ElmInitEntry("ATSH6F1"),
             new ElmInitEntry("ATCF600"),
             new ElmInitEntry("ATCM700"),
@@ -43,6 +42,7 @@ namespace EdiabasLib
             new ElmInitEntry("ATL0"),
             new ElmInitEntry("ATCSM0", 210),    // disable silent monitoring
             new ElmInitEntry("ATCTM5", 210),    // timer multiplier 5
+            new ElmInitEntry("ATJE", 130),      // ELM data format, used for fake ELM detection
             //new ElmInitEntry("ATPPS", -1, false),     // some BT chips have a short buffer, so this test will fail
         };
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
