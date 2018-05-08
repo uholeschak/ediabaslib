@@ -114,11 +114,7 @@
 #define BT_RESPONSE_TIMEOUT 1500    // bluetooth command response timeout
 #define BT_PIN_LENGTH 4
 #define BT_NAME_LENGTH 14
-#elif ADAPTER_TYPE == 0x10
-// ELM327 Wifi Mini ESP8266ex
-// has LED_OBD_RX and LED_RS_TX swapped
-// with upgraded ESP8266ex firmware 115200 @ 16MHz without problems
-#else
+#elif ADAPTER_TYPE == 0x05
 //SPP_UART
 #define ALLOW_FACTORY_RESET
 //#define REQUIRES_BT_FACTORY
@@ -129,6 +125,14 @@
 #define BT_RESPONSE_TIMEOUT 500
 #define BT_PIN_LENGTH 16
 #define BT_NAME_LENGTH 31
+#elif ADAPTER_TYPE == 0x06
+// ELM327 BT v1.5 Mini YiChip YC1021
+// has LED_OBD_TX = pa6, LED_OBD_RX = pa4, LED_RS_TX = pa7, LED_RS_RX = pa5
+// with reprogrammed YC1021 Eeprom 115200 @ 16MHz without problems
+#elif ADAPTER_TYPE == 0x10
+// ELM327 Wifi v1.5 Mini ESP8266ex
+// has LED_OBD_RX and LED_RS_TX swapped
+// with upgraded ESP8266ex firmware 115200 @ 16MHz without problems
 #endif
 #endif
 
@@ -139,15 +143,20 @@
 
 #define KLINE_OUT LATBbits.LATB0
 #define LLINE_OUT LATBbits.LATB1
-#if ADAPTER_TYPE != 0x10
-#define LED_RS_RX LATBbits.LATB4
-#define LED_RS_TX LATBbits.LATB5
-#define LED_OBD_RX LATBbits.LATB6
-#define LED_OBD_TX LATBbits.LATB7
-#else
+#if ADAPTER_TYPE == 0x06
+#define LED_RS_RX LATBbits.LATB5
+#define LED_RS_TX LATBbits.LATB7
+#define LED_OBD_RX LATBbits.LATB4
+#define LED_OBD_TX LATBbits.LATB6
+#elif ADAPTER_TYPE == 0x10
 #define LED_RS_RX LATBbits.LATB4
 #define LED_RS_TX LATBbits.LATB6
 #define LED_OBD_RX LATBbits.LATB5
+#define LED_OBD_TX LATBbits.LATB7
+#else
+#define LED_RS_RX LATBbits.LATB4
+#define LED_RS_TX LATBbits.LATB5
+#define LED_OBD_RX LATBbits.LATB6
 #define LED_OBD_TX LATBbits.LATB7
 #endif
 #define KLINE_IN PORTCbits.RC1
@@ -279,7 +288,7 @@ static const uint16_t adapter_version @ _ROMSIZE - 6 = ADAPTER_VERSION;
 static volatile bool start_indicator;   // show start indicator
 static volatile bool init_failed;       // initialization failed
 static uint8_t idle_counter;
-#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x10
+#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x06 && ADAPTER_TYPE != 0x10
 static bool init_bt_required;
 static uint8_t pin_buffer[BT_PIN_LENGTH];
 static uint8_t name_buffer[BT_NAME_LENGTH];
@@ -1584,7 +1593,7 @@ uint16_t uart_receive(uint8_t *buffer)
     return data_len;
 }
 
-#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x10
+#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x06 && ADAPTER_TYPE != 0x10
 bool send_bt_config(uint8_t *buffer, uint16_t count, uint8_t retries)
 {
     for (uint8_t i = 0; i < retries; i++)
@@ -2024,7 +2033,7 @@ void read_eeprom()
     }
     can_config();
 
-#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x10
+#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x06 && ADAPTER_TYPE != 0x10
     temp_value1 = eeprom_read(EEP_ADDR_BT_INIT);
     temp_value2 = eeprom_read(EEP_ADDR_BT_INIT + 1);
     init_bt_required = true;
@@ -2156,7 +2165,7 @@ bool internal_telegram(uint8_t *buffer, uint16_t len)
         }
         if ((len >= 6) && (buffer[3] & 0x7F) == 0x04)
         {      // bt pin
-#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x10
+#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x06 && ADAPTER_TYPE != 0x10
             if ((buffer[3] & 0x80) == 0x00)
             {   // write
                 for (uint8_t i = 0; i < sizeof(pin_buffer); i++)
@@ -2186,7 +2195,7 @@ bool internal_telegram(uint8_t *buffer, uint16_t len)
         }
         if ((len >= 6) && (buffer[3] & 0x7F) == 0x05)
         {      // bt name
-#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x10
+#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x06 && ADAPTER_TYPE != 0x10
             if ((buffer[3] & 0x80) == 0x00)
             {   // write
                 for (uint8_t i = 0; i < sizeof(name_buffer); i++)
@@ -3598,7 +3607,7 @@ void main(void)
     }
 #endif
     read_eeprom();
-#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x10
+#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x06 && ADAPTER_TYPE != 0x10
     if (!init_bt())
     {   // error
         init_failed = true;
