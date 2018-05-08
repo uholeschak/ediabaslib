@@ -93,6 +93,7 @@
 #else
 #if ADAPTER_TYPE == 0x03
 // BC04
+#define ALLOW_BT_CONFIG
 #define ALLOW_FACTORY_RESET
 #define REQUIRES_BT_FACTORY
 #define REQUIRES_BT_CRFL
@@ -105,6 +106,7 @@
 #define REQUIRES_BT_REC_TIMOUT
 #elif ADAPTER_TYPE == 0x04
 // HC04
+#define ALLOW_BT_CONFIG
 #define ALLOW_FACTORY_RESET
 //#define REQUIRES_BT_FACTORY
 //#define REQUIRES_BT_CRFL
@@ -116,6 +118,7 @@
 #define BT_NAME_LENGTH 14
 #elif ADAPTER_TYPE == 0x05
 //SPP_UART
+#define ALLOW_BT_CONFIG
 #define ALLOW_FACTORY_RESET
 //#define REQUIRES_BT_FACTORY
 #define REQUIRES_BT_CRFL
@@ -288,7 +291,7 @@ static const uint16_t adapter_version @ _ROMSIZE - 6 = ADAPTER_VERSION;
 static volatile bool start_indicator;   // show start indicator
 static volatile bool init_failed;       // initialization failed
 static uint8_t idle_counter;
-#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x06 && ADAPTER_TYPE != 0x10
+#if defined(ALLOW_BT_CONFIG)
 static bool init_bt_required;
 static uint8_t pin_buffer[BT_PIN_LENGTH];
 static uint8_t name_buffer[BT_NAME_LENGTH];
@@ -1593,7 +1596,7 @@ uint16_t uart_receive(uint8_t *buffer)
     return data_len;
 }
 
-#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x06 && ADAPTER_TYPE != 0x10
+#if defined(ALLOW_BT_CONFIG)
 bool send_bt_config(uint8_t *buffer, uint16_t count, uint8_t retries)
 {
     for (uint8_t i = 0; i < retries; i++)
@@ -2033,7 +2036,7 @@ void read_eeprom()
     }
     can_config();
 
-#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x06 && ADAPTER_TYPE != 0x10
+#if defined(ALLOW_BT_CONFIG)
     temp_value1 = eeprom_read(EEP_ADDR_BT_INIT);
     temp_value2 = eeprom_read(EEP_ADDR_BT_INIT + 1);
     init_bt_required = true;
@@ -2165,7 +2168,7 @@ bool internal_telegram(uint8_t *buffer, uint16_t len)
         }
         if ((len >= 6) && (buffer[3] & 0x7F) == 0x04)
         {      // bt pin
-#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x06 && ADAPTER_TYPE != 0x10
+#if defined(ALLOW_BT_CONFIG)
             if ((buffer[3] & 0x80) == 0x00)
             {   // write
                 for (uint8_t i = 0; i < sizeof(pin_buffer); i++)
@@ -2195,7 +2198,7 @@ bool internal_telegram(uint8_t *buffer, uint16_t len)
         }
         if ((len >= 6) && (buffer[3] & 0x7F) == 0x05)
         {      // bt name
-#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x06 && ADAPTER_TYPE != 0x10
+#if defined(ALLOW_BT_CONFIG)
             if ((buffer[3] & 0x80) == 0x00)
             {   // write
                 for (uint8_t i = 0; i < sizeof(name_buffer); i++)
@@ -3607,7 +3610,7 @@ void main(void)
     }
 #endif
     read_eeprom();
-#if ADAPTER_TYPE != 0x02 && ADAPTER_TYPE != 0x06 && ADAPTER_TYPE != 0x10
+#if defined(ALLOW_BT_CONFIG)
     if (!init_bt())
     {   // error
         init_failed = true;
