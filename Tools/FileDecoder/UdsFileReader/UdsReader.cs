@@ -877,14 +877,16 @@ namespace UdsFileReader
 
         public class ParseInfoDtc : ParseInfoBase
         {
-            public ParseInfoDtc(UInt32 errorCode, string[] lineArray, string errorText) : base(lineArray)
+            public ParseInfoDtc(UInt32 errorCode, string[] lineArray, string errorText, string errorDetail) : base(lineArray)
             {
                 ErrorCode = errorCode;
                 ErrorText = errorText;
+                ErrorDetail = errorDetail;
             }
 
             public UInt32 ErrorCode { get; }
             public string ErrorText { get; }
+            public string ErrorDetail { get; }
         }
 
         private class SegmentInfo
@@ -3062,7 +3064,15 @@ namespace UdsFileReader
                             errorText = string.Empty;
                         }
 
-                        parseInfo = new ParseInfoDtc(errorCode, lineArray, errorText);
+                        string errorDetail = string.Empty;
+                        int colonIndex = errorText.LastIndexOf(':');
+                        if (colonIndex >= 0)
+                        {
+                            errorDetail = errorText.Substring(colonIndex + 1).Trim();
+                            errorText = errorText.Substring(0, colonIndex);
+                        }
+
+                        parseInfo = new ParseInfoDtc(errorCode, lineArray, errorText, errorDetail);
                         break;
                     }
 
