@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="8.3.2">
+<eagle version="9.0.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -181,6 +181,9 @@ Based on the following sources:
 <packages3d>
 <package3d name="DO214AC" urn="urn:adsk.eagle:package:43417/2" type="model" library_version="2">
 <description>DIODE</description>
+<packageinstances>
+<packageinstance name="DO214AC"/>
+</packageinstances>
 </package3d>
 </packages3d>
 </library>
@@ -207,6 +210,9 @@ Based on the following sources:
 <packages3d>
 <package3d name="1X01" urn="urn:adsk.eagle:package:22485/2" type="model" library_version="3">
 <description>PIN HEADER</description>
+<packageinstances>
+<packageinstance name="1X01"/>
+</packageinstances>
 </package3d>
 </packages3d>
 </library>
@@ -268,6 +274,9 @@ Pin pitch:0.15"
 Example device(s):
 OBD-II
 </description>
+<packageinstances>
+<packageinstance name="OBDII"/>
+</packageinstances>
 </package3d>
 </packages3d>
 </library>
@@ -1392,6 +1401,9 @@ for trimmer refence see : &lt;u&gt;www.electrospec-inc.com/cross_references/trim
 <packages3d>
 <package3d name="R2512" urn="urn:adsk.eagle:package:26070/1" type="box" library_version="1">
 <description>RESISTOR</description>
+<packageinstances>
+<packageinstance name="R2512"/>
+</packageinstances>
 </package3d>
 </packages3d>
 </library>
@@ -1421,6 +1433,9 @@ drill 1.4 mm</description>
 <package3d name="SE14" urn="urn:adsk.eagle:package:26504/1" type="box" library_version="1">
 <description>SOLDER PAD
 drill 1.4 mm</description>
+<packageinstances>
+<packageinstance name="SE14"/>
+</packageinstances>
 </package3d>
 </packages3d>
 </library>
@@ -1511,10 +1526,11 @@ design rules under a new name.</description>
 <param name="slThermalsForVias" value="0"/>
 <param name="dpMaxLengthDifference" value="10mm"/>
 <param name="dpGapFactor" value="2.5"/>
-<param name="checkGrid" value="0"/>
 <param name="checkAngle" value="0"/>
 <param name="checkFont" value="1"/>
 <param name="checkRestrict" value="0"/>
+<param name="checkStop" value="0"/>
+<param name="checkValues" value="0"/>
 <param name="useDiameter" value="13"/>
 <param name="maxErrors" value="50"/>
 </designrules>
@@ -1749,16 +1765,6 @@ design rules under a new name.</description>
 </polygon>
 </signal>
 </signals>
-<errors>
-<approved hash="18,29,1f5e5c9a5c7c1fb8"/>
-<approved hash="18,29,6881b02c40fc9121"/>
-<approved hash="18,29,86c6c17bf0dcaaa1"/>
-<approved hash="18,29,1b23d330c94e41c4"/>
-<approved hash="18,29,a1ec1645537d64b9"/>
-<approved hash="18,29,23656a256ad92399"/>
-<approved hash="18,29,fb01488ca7fbf669"/>
-<approved hash="18,29,5241a4b2fe2acb3d"/>
-</errors>
 </board>
 </drawing>
 <compatibility>
