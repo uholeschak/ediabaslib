@@ -1662,13 +1662,21 @@ design rules under a new name.</description>
 <attribute name="NAME" x="22.225" y="8.365" size="0.508" layer="25" ratio="14" rot="R180"/>
 </element>
 <element name="P+" library="solpad" library_urn="urn:adsk.eagle:library:364" package="SE14" package3d_urn="urn:adsk.eagle:package:26504/1" value="SE14" x="26.035" y="2.54" smashed="yes">
-<attribute name="NAME" x="29.718" y="1.778" size="0.8128" layer="25" ratio="10"/>
+<attribute name="NAME" x="22.733" y="1.778" size="0.8128" layer="25" ratio="10"/>
 </element>
 <element name="P-" library="solpad" library_urn="urn:adsk.eagle:library:364" package="SE14" package3d_urn="urn:adsk.eagle:package:26504/1" value="SE14" x="30.48" y="10.795" smashed="yes">
 <attribute name="NAME" x="29.718" y="8.128" size="0.8128" layer="25" ratio="10"/>
 </element>
 <element name="P'-" library="solpad" library_urn="urn:adsk.eagle:library:364" package="SE14" package3d_urn="urn:adsk.eagle:package:26504/1" value="SE14" x="26.035" y="17.145" smashed="yes">
-<attribute name="NAME" x="28.448" y="16.383" size="0.8128" layer="25" ratio="10"/>
+<attribute name="NAME" x="23.368" y="17.018" size="0.8128" layer="25" ratio="10"/>
+</element>
+<element name="P''" library="solpad" library_urn="urn:adsk.eagle:library:364" package="SE14" package3d_urn="urn:adsk.eagle:package:26504/1" value="SE14" x="29.845" y="17.145" smashed="yes">
+<attribute name="NAME" x="31.623" y="17.018" size="0.8128" layer="25" ratio="10"/>
+<attribute name="VALUE" x="29.845" y="17.526" size="0.0254" layer="27"/>
+</element>
+<element name="P+'" library="solpad" library_urn="urn:adsk.eagle:library:364" package="SE14" package3d_urn="urn:adsk.eagle:package:26504/1" value="SE14" x="29.845" y="2.54" smashed="yes">
+<attribute name="NAME" x="31.623" y="1.778" size="0.8128" layer="25" ratio="10"/>
+<attribute name="VALUE" x="29.845" y="2.921" size="0.0254" layer="27"/>
 </element>
 </elements>
 <signals>
@@ -1718,11 +1726,12 @@ design rules under a new name.</description>
 <contactref element="OUT+" pad="1"/>
 <polygon width="0.254" layer="16" spacing="0.254" isolate="0.4064">
 <vertex x="3.175" y="0.635"/>
-<vertex x="29.21" y="0.635"/>
-<vertex x="29.21" y="4.445"/>
+<vertex x="31.75" y="0.635"/>
+<vertex x="31.75" y="4.445"/>
 <vertex x="3.175" y="4.445"/>
 </polygon>
 <contactref element="P+" pad="MP"/>
+<contactref element="P+'" pad="MP"/>
 </signal>
 <signal name="N$3">
 <contactref element="OBDII" pad="3"/>
@@ -1759,10 +1768,11 @@ design rules under a new name.</description>
 <contactref element="P'-" pad="MP"/>
 <polygon width="0.254" layer="1" spacing="0.254" isolate="0.4064">
 <vertex x="12.065" y="19.05"/>
-<vertex x="27.94" y="19.05"/>
-<vertex x="27.94" y="15.24"/>
+<vertex x="31.75" y="19.05"/>
+<vertex x="31.75" y="15.24"/>
 <vertex x="12.065" y="15.24"/>
 </polygon>
+<contactref element="P''" pad="MP"/>
 </signal>
 </signals>
 </board>

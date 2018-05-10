@@ -7617,6 +7617,8 @@ drill 1.4 mm</description>
 <part name="P+" library="solpad" library_urn="urn:adsk.eagle:library:364" deviceset="SE14" device="" package3d_urn="urn:adsk.eagle:package:26504/1"/>
 <part name="P-" library="solpad" library_urn="urn:adsk.eagle:library:364" deviceset="SE14" device="" package3d_urn="urn:adsk.eagle:package:26504/1"/>
 <part name="P'-" library="solpad" library_urn="urn:adsk.eagle:library:364" deviceset="SE14" device="" package3d_urn="urn:adsk.eagle:package:26504/1"/>
+<part name="P''" library="solpad" library_urn="urn:adsk.eagle:library:364" deviceset="SE14" device="" package3d_urn="urn:adsk.eagle:package:26504/1"/>
+<part name="P+'" library="solpad" library_urn="urn:adsk.eagle:library:364" deviceset="SE14" device="" package3d_urn="urn:adsk.eagle:package:26504/1"/>
 </parts>
 <sheets>
 <sheet>
@@ -7639,6 +7641,8 @@ drill 1.4 mm</description>
 <instance part="P+" gate="1" x="71.12" y="152.4"/>
 <instance part="P-" gate="1" x="88.9" y="152.4"/>
 <instance part="P'-" gate="1" x="88.9" y="193.04"/>
+<instance part="P''" gate="1" x="96.52" y="193.04"/>
+<instance part="P+'" gate="1" x="78.74" y="152.4"/>
 </instances>
 <busses>
 </busses>
@@ -7704,6 +7708,9 @@ drill 1.4 mm</description>
 <wire x1="71.12" y1="170.18" x2="71.12" y2="149.86" width="0.1524" layer="91"/>
 <junction x="71.12" y="170.18"/>
 <pinref part="P+" gate="1" pin="MP"/>
+<pinref part="P+'" gate="1" pin="MP"/>
+<wire x1="71.12" y1="149.86" x2="78.74" y2="149.86" width="0.1524" layer="91"/>
+<junction x="71.12" y="149.86"/>
 </segment>
 </net>
 <net name="N$3" class="0">
@@ -7750,7 +7757,12 @@ drill 1.4 mm</description>
 <segment>
 <pinref part="IN-" gate="G$1" pin="1"/>
 <pinref part="P'-" gate="1" pin="MP"/>
-<wire x1="88.9" y1="210.82" x2="88.9" y2="190.5" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="213.36" x2="88.9" y2="195.58" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="193.04" x2="88.9" y2="190.5" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="195.58" x2="88.9" y2="193.04" width="0.1524" layer="91"/>
+<pinref part="P''" gate="1" pin="MP"/>
+<wire x1="88.9" y1="190.5" x2="96.52" y2="190.5" width="0.1524" layer="91"/>
+<junction x="88.9" y="190.5"/>
 </segment>
 </net>
 </nets>
