@@ -3095,6 +3095,11 @@ namespace UdsFileReader
                             pcodeDetailNum = errorCode & 0xFF;
                         }
 
+                        if (detailCode.HasValue)
+                        {
+                            pcodeDetailNum = detailCode.Value;
+                        }
+
                         char keyLetter = 'P';
                         switch ((pcodeNum >> 14) & 0x03)
                         {
