@@ -877,15 +877,17 @@ namespace UdsFileReader
 
         public class ParseInfoDtc : ParseInfoBase
         {
-            public ParseInfoDtc(UInt32 errorCode, string[] lineArray, string errorText, UInt32? detailCode, string errorDetail) : base(lineArray)
+            public ParseInfoDtc(string[] lineArray, UInt32 errorCode, string pcodeText, string errorText, UInt32? detailCode, string errorDetail) : base(lineArray)
             {
                 ErrorCode = errorCode;
+                PcodeText = pcodeText;
                 ErrorText = errorText;
                 DetailCode = detailCode;
                 ErrorDetail = errorDetail;
             }
 
             public UInt32 ErrorCode { get; }
+            public string PcodeText { get; }
             public string ErrorText { get; }
             public UInt32? DetailCode { get; }
             public string ErrorDetail { get; }
@@ -3067,13 +3069,49 @@ namespace UdsFileReader
                             detailCode = detailCodeTemp;
                         }
 
+                        bool keyUsed = false;
                         if (!DataReader.CodeMap.TryGetValue(errorCode, out string errorText))
                         {
                             if (!DataReader.CodeMap.TryGetValue(textKey, out errorText))
                             {
                                 errorText = string.Empty;
                             }
+                            else
+                            {
+                                keyUsed = true;
+                            }
                         }
+
+                        UInt32 pcodeNum;
+                        UInt32 pcodeDetailNum;
+                        if (keyUsed)
+                        {
+                            pcodeNum = (textKey - 100000) & 0xFFFF;
+                            pcodeDetailNum = 0;
+                        }
+                        else
+                        {
+                            pcodeNum = (errorCode >> 8) & 0xFFFF;
+                            pcodeDetailNum = errorCode & 0xFF;
+                        }
+
+                        char keyLetter = 'P';
+                        switch ((pcodeNum >> 14) & 0x03)
+                        {
+                            case 0x1:
+                                keyLetter = 'C';
+                                break;
+
+                            case 0x2:
+                                keyLetter = 'B';
+                                break;
+
+                            case 0x3:
+                                keyLetter = 'U';
+                                break;
+                        }
+
+                        string pcodeText = string.Format(CultureInfo.InvariantCulture, "{0}{1:X04} {2:X02}", keyLetter, pcodeNum & 0x3FFF, pcodeDetailNum);
 
                         string errorDetail = string.Empty;
                         if (detailCode.HasValue && detailCode.Value > 0)
@@ -3094,7 +3132,7 @@ namespace UdsFileReader
                             }
                         }
 
-                        parseInfo = new ParseInfoDtc(errorCode, lineArray, errorText, detailCode, errorDetail);
+                        parseInfo = new ParseInfoDtc(lineArray, errorCode, pcodeText, errorText, detailCode, errorDetail);
                         break;
                     }
 
