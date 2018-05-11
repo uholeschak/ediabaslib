@@ -222,8 +222,12 @@ namespace UdsFileReader
                         if (parseInfo is UdsReader.ParseInfoDtc parseInfoDtc)
                         {
                             sb.Clear();
-                            outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Error Code: {0}", parseInfoDtc.ErrorCode));
+                            outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Error Code: {0} 0x{0:X06}", parseInfoDtc.ErrorCode));
                             outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Error Text: {0}", parseInfoDtc.ErrorText));
+                            if (parseInfoDtc.DetailCode.HasValue && parseInfoDtc.DetailCode.Value > 0)
+                            {
+                                outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Detail Code: {0:X02}", parseInfoDtc.DetailCode));
+                            }
                             if (!string.IsNullOrEmpty(parseInfoDtc.ErrorDetail))
                             {
                                 outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Error Detail: {0}", parseInfoDtc.ErrorDetail));

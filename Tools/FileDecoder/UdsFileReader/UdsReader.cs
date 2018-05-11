@@ -877,15 +877,17 @@ namespace UdsFileReader
 
         public class ParseInfoDtc : ParseInfoBase
         {
-            public ParseInfoDtc(UInt32 errorCode, string[] lineArray, string errorText, string errorDetail) : base(lineArray)
+            public ParseInfoDtc(UInt32 errorCode, string[] lineArray, string errorText, UInt32? detailCode, string errorDetail) : base(lineArray)
             {
                 ErrorCode = errorCode;
                 ErrorText = errorText;
+                DetailCode = detailCode;
                 ErrorDetail = errorDetail;
             }
 
             public UInt32 ErrorCode { get; }
             public string ErrorText { get; }
+            public UInt32? DetailCode { get; }
             public string ErrorDetail { get; }
         }
 
@@ -3059,20 +3061,37 @@ namespace UdsFileReader
                             return null;
                         }
 
+                        UInt32? detailCode = null;
+                        if (UInt32.TryParse(lineArray[2], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out UInt32 detailCodeTemp))
+                        {
+                            detailCode = detailCodeTemp;
+                        }
+
                         if (!DataReader.CodeMap.TryGetValue(textKey, out string errorText))
                         {
                             errorText = string.Empty;
                         }
 
                         string errorDetail = string.Empty;
-                        int colonIndex = errorText.LastIndexOf(':');
-                        if (colonIndex >= 0)
+                        if (detailCode.HasValue && detailCode.Value > 0)
                         {
-                            errorDetail = errorText.Substring(colonIndex + 1).Trim();
-                            errorText = errorText.Substring(0, colonIndex);
+                            uint detailKey = detailCode.Value + 96000;
+                            if (DataReader.CodeMap.TryGetValue(detailKey, out string detailText))
+                            {
+                                errorDetail = detailText;
+                            }
+                        }
+                        if (string.IsNullOrEmpty(errorDetail))
+                        {
+                            int colonIndex = errorText.LastIndexOf(':');
+                            if (colonIndex >= 0)
+                            {
+                                errorDetail = errorText.Substring(colonIndex + 1).Trim();
+                                errorText = errorText.Substring(0, colonIndex);
+                            }
                         }
 
-                        parseInfo = new ParseInfoDtc(errorCode, lineArray, errorText, errorDetail);
+                        parseInfo = new ParseInfoDtc(errorCode, lineArray, errorText, detailCode, errorDetail);
                         break;
                     }
 
