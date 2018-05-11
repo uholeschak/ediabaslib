@@ -3067,9 +3067,12 @@ namespace UdsFileReader
                             detailCode = detailCodeTemp;
                         }
 
-                        if (!DataReader.CodeMap.TryGetValue(textKey, out string errorText))
+                        if (!DataReader.CodeMap.TryGetValue(errorCode, out string errorText))
                         {
-                            errorText = string.Empty;
+                            if (!DataReader.CodeMap.TryGetValue(textKey, out errorText))
+                            {
+                                errorText = string.Empty;
+                            }
                         }
 
                         string errorDetail = string.Empty;
