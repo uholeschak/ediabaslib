@@ -1292,9 +1292,15 @@ bool uart_send(uint8_t *buffer, uint16_t count)
 
     if (temp_len + count > sizeof(send_buffer))
     {
-        if (temp_len != 0)
+        if (!PIE1bits.TXIE)
         {
-            PIE1bits.TXIE = 1;    // enable TX interrupt
+            di();
+            if (send_len != 0)
+            {
+                // make sure the transmitter is active
+                PIE1bits.TXIE = 1;
+            }
+            ei();
         }
         return false;
     }
@@ -2545,8 +2551,16 @@ void can_receiver(bool new_can_msg)
                         {
                             break;
                         }
-                        // make sure the transmitter is active
-                        PIE1bits.TXIE = 1;
+                        if (!PIE1bits.TXIE)
+                        {
+                            di();
+                            if (send_len != 0)
+                            {
+                                // make sure the transmitter is active
+                                PIE1bits.TXIE = 1;
+                            }
+                            ei();
+                        }
                         do_idle();
                     }
                     can_send_message_wait();
@@ -2891,8 +2905,16 @@ void can_isotp_receiver(bool new_can_msg)
                         {
                             break;
                         }
-                        // make sure the transmitter is active
-                        PIE1bits.TXIE = 1;
+                        if (!PIE1bits.TXIE)
+                        {
+                            di();
+                            if (send_len != 0)
+                            {
+                                // make sure the transmitter is active
+                                PIE1bits.TXIE = 1;
+                            }
+                            ei();
+                        }
                         do_idle();
                     }
                     can_send_message_wait();
