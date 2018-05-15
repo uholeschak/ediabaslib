@@ -37,7 +37,7 @@ namespace EdiabasLib
         private const int ReadTimeoutOffsetShort = 100;
         protected const int EchoTimeout = 500;
         private static readonly EdCustomAdapterCommon CustomAdapter =
-            new EdCustomAdapterCommon(SendData, ReceiveData, DiscardInBuffer, ReadInBuffer, ReadTimeoutOffsetLong, ReadTimeoutOffsetShort, EchoTimeout);
+            new EdCustomAdapterCommon(SendData, ReceiveData, DiscardInBuffer, ReadInBuffer, ReadTimeoutOffsetLong, ReadTimeoutOffsetShort, EchoTimeout, false);
         private static BluetoothSocket _bluetoothSocket;
         private static Stream _bluetoothInStream;
         private static Stream _bluetoothOutStream;
