@@ -51,6 +51,7 @@ namespace EdiabasLib
         private readonly int _readTimeoutOffsetLong;
         private readonly int _readTimeoutOffsetShort;
         private readonly int _echoTimeout;
+        private readonly bool _echoFailureReconnect;
         private readonly SendDataDelegate _sendDataFunc;
         private readonly ReceiveDataDelegate _receiveDataFunc;
         private readonly DiscardInBufferDelegate _discardInBufferFunc;
@@ -101,11 +102,13 @@ namespace EdiabasLib
         public bool ReconnectRequired { get; set; }
 
         public EdCustomAdapterCommon(SendDataDelegate sendDataFunc, ReceiveDataDelegate receiveDataFunc,
-            DiscardInBufferDelegate discardInBufferFunc, ReadInBufferDelegate readInBufferFunc, int readTimeoutOffsetLong, int readTimeoutOffsetShort, int echoTimeout)
+            DiscardInBufferDelegate discardInBufferFunc, ReadInBufferDelegate readInBufferFunc,
+            int readTimeoutOffsetLong, int readTimeoutOffsetShort, int echoTimeout, bool echoFailureReconnect)
         {
             _readTimeoutOffsetLong = readTimeoutOffsetLong;
             _readTimeoutOffsetShort = readTimeoutOffsetShort;
             _echoTimeout = echoTimeout;
+            _echoFailureReconnect = echoFailureReconnect;
             _sendDataFunc = sendDataFunc;
             _receiveDataFunc = receiveDataFunc;
             _discardInBufferFunc = discardInBufferFunc;
@@ -710,6 +713,10 @@ namespace EdiabasLib
                     if (!InterfaceReceiveData(receiveData, 0, length, _echoTimeout, _echoTimeout, null))
                     {
                         Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Echo not received");
+                        if (_echoFailureReconnect)
+                        {
+                            ReconnectRequired = true;
+                        }
                         return false;
                     }
                     for (int i = 0; i < length; i++)
@@ -717,6 +724,10 @@ namespace EdiabasLib
                         if (receiveData[i] != sendData[i])
                         {
                             Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Echo incorrect");
+                            if (_echoFailureReconnect)
+                            {
+                                ReconnectRequired = true;
+                            }
                             return false;
                         }
                     }

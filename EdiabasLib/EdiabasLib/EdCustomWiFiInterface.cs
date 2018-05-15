@@ -27,7 +27,7 @@ namespace EdiabasLib
         protected const int EchoTimeout = 1000;
         protected static int ConnectTimeout = 5000;
         private static readonly EdCustomAdapterCommon CustomAdapter =
-            new EdCustomAdapterCommon(SendData, ReceiveData, DiscardInBuffer, ReadInBuffer, TcpReadTimeoutOffset, -1, EchoTimeout);
+            new EdCustomAdapterCommon(SendData, ReceiveData, DiscardInBuffer, ReadInBuffer, TcpReadTimeoutOffset, -1, EchoTimeout, true);
         // ReSharper disable once UnusedMember.Global
         protected static Stopwatch StopWatch = new Stopwatch();
         protected static TcpClient TcpClient;
@@ -249,19 +249,32 @@ namespace EdiabasLib
                 return false;
             }
 
-            if (CustomAdapter.ReconnectRequired)
+            for (int retry = 0; retry < 2; retry++)
             {
-                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
-                InterfaceDisconnect(true);
-                if (!InterfaceConnect(ConnectPort, null))
+                if (CustomAdapter.ReconnectRequired)
                 {
-                    CustomAdapter.ReconnectRequired = true;
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
+                    InterfaceDisconnect(true);
+                    if (!InterfaceConnect(ConnectPort, null))
+                    {
+                        CustomAdapter.ReconnectRequired = true;
+                        return false;
+                    }
+                    CustomAdapter.ReconnectRequired = false;
+                }
+
+                if (CustomAdapter.InterfaceSendData(sendData, length, setDtr, dtrTimeCorr))
+                {
+                    return true;
+                }
+
+                if (!CustomAdapter.ReconnectRequired)
+                {
                     return false;
                 }
-                CustomAdapter.ReconnectRequired = false;
             }
 
-            return CustomAdapter.InterfaceSendData(sendData, length, setDtr, dtrTimeCorr);
+            return false;
         }
 
         public static bool InterfaceReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog)
