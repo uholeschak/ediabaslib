@@ -1277,20 +1277,6 @@ uint8_t calc_checkum(uint8_t *buffer, uint16_t len)
     return sum;
 }
 
-void ensure_uart_tx_active()
-{
-    if (!PIE1bits.TXIE)
-    {
-        di();
-        if (send_len != 0)
-        {
-            // make sure the transmitter is active
-            PIE1bits.TXIE = 1;
-        }
-        ei();
-    }
-}
-
 bool uart_send(uint8_t *buffer, uint16_t count)
 {
     uint16_t volatile temp_len;
@@ -1306,7 +1292,6 @@ bool uart_send(uint8_t *buffer, uint16_t count)
 
     if (temp_len + count > sizeof(send_buffer))
     {
-        ensure_uart_tx_active();
         return false;
     }
 
@@ -2552,11 +2537,6 @@ void can_receiver(bool new_can_msg)
                         {
                             break;
                         }
-                        if (temp_len == 0)
-                        {
-                            break;
-                        }
-                        ensure_uart_tx_active();
                         do_idle();
                     }
                     can_send_message_wait();
@@ -2897,11 +2877,6 @@ void can_isotp_receiver(bool new_can_msg)
                         {
                             break;
                         }
-                        if (temp_len == 0)
-                        {
-                            break;
-                        }
-                        ensure_uart_tx_active();
                         do_idle();
                     }
                     can_send_message_wait();
