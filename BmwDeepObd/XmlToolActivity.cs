@@ -276,6 +276,7 @@ namespace BmwDeepObd
         public const string JobReadMwBlock = @"Messwerteblock_lesen";
         public const string JobReadMwUds = @"GenerischS22_abfragen";
         public const string JobReadStatMwBlock = @"STATUS_MESSWERTBLOCK_LESEN";
+        public const string JobReadStatBlock = @"STATUS_BLOCK_LESEN";
         public const string DataTypeString = @"string";
         public const string DataTypeReal = @"real";
         public const string DataTypeInteger = @"integer";
@@ -3393,11 +3394,13 @@ namespace BmwDeepObd
                     continue;
                 }
 
-                if (string.Compare(job.Name, JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
+                bool statMwBlock = string.Compare(job.Name, JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
+                bool statBlock = string.Compare(job.Name, JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0;
+                if (statMwBlock || statBlock)
                 {   // use data from table instead of results
                     try
                     {
-                        _ediabas.ArgString = "MESSWERTETAB";
+                        _ediabas.ArgString = statMwBlock ? "MESSWERTETAB" : "SG_FUNKTIONEN";
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.NoInitForVJobs = true;
