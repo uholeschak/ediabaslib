@@ -519,6 +519,10 @@ namespace BmwDeepObd
             {
                 return true;
             }
+            if (string.Compare(job.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return true;
+            }
             if (string.Compare(job.Name, "FS_LESEN", StringComparison.OrdinalIgnoreCase) == 0 ||
                 string.Compare(job.Name, "IS_LESEN", StringComparison.OrdinalIgnoreCase) == 0 ||
                 string.Compare(job.Name, "AIF_LESEN", StringComparison.OrdinalIgnoreCase) == 0)
@@ -564,6 +568,20 @@ namespace BmwDeepObd
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append("JA");
+                foreach (ResultInfo resultInfo in resultInfoList)
+                {
+                    if ((selectAll || resultInfo.Selected) && !string.IsNullOrEmpty(resultInfo.Args))
+                    {
+                        sb.Append(";");
+                        sb.Append(resultInfo.Args);
+                    }
+                }
+                return sb.ToString();
+            }
+            if (string.Compare(job.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("3;JA;ARG");
                 foreach (ResultInfo resultInfo in resultInfoList)
                 {
                     if ((selectAll || resultInfo.Selected) && !string.IsNullOrEmpty(resultInfo.Args))
@@ -1163,8 +1181,9 @@ namespace BmwDeepObd
                 if (_spinnerJobResultsAdapter.Items.Count > 0 && selection < 0 && jobInfo.Selected)
                 {
                     // no selection
-                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw &&
-                        string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) != 0)
+                    bool statMbBlock = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
+                    bool statBlock = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0;
+                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !statMbBlock && !statBlock)
                     {
                         // auto select all value types
                         int index = 0;
