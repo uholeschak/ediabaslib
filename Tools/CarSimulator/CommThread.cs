@@ -4299,7 +4299,6 @@ namespace CarSimulator
                 _sendData[i++] = _receiveData[5];   // ID
                 _sendData[i++] = _receiveData[6];
 
-                //84 F1 12 6C 03 F3 03 00
                 ObdSend(_sendData);
                 return true;
             }
