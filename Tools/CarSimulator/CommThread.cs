@@ -237,7 +237,7 @@ namespace CarSimulator
 #endif
         private long _lastCanStatusTick;
         private readonly List<Tp20Channel> _tp20Channels;
-        private List<DynamicUdsEntry> _dynamicUdsEntries;
+        private readonly List<DynamicUdsEntry> _dynamicUdsEntries;
         private TcpListener _tcpServerDiag;
         private TcpClient _tcpClientDiag;
         private NetworkStream _tcpClientDiagStream;
@@ -4242,7 +4242,26 @@ namespace CarSimulator
                         int itemId = (_receiveData[7 + i * 4] << 8) + _receiveData[8 + i * 4];
                         int pos = _receiveData[9 + i * 4];
                         int length = _receiveData[10 + i * 4];
-                        udsValueList.Add(new DynamicUdsValue(itemId, pos, length, null));
+                        // search response entry
+                        ResponseEntry addEntry = null;
+                        foreach (ResponseEntry responseEntry in _configData.ResponseList)
+                        {
+                            if (responseEntry.Request.Length >= 6)
+                            {
+                                if (responseEntry.Request[0] == 0x83 &&
+                                    responseEntry.Request[1] == ecuAddr &&
+                                    responseEntry.Request[2] == 0xF1 &&
+                                    responseEntry.Request[3] == 0x22 &&
+                                    responseEntry.Request[4] == (byte) (itemId >> 8) &&
+                                    responseEntry.Request[5] == (byte) itemId
+                                    )
+                                {
+                                    addEntry = responseEntry;
+                                    break;
+                                }
+                            }
+                        }
+                        udsValueList.Add(new DynamicUdsValue(itemId, pos, length, addEntry));
                     }
                 }
             }
@@ -4270,7 +4289,16 @@ namespace CarSimulator
                         {
                             for (int pos = 0; pos < dynamicUdsValue.DataLength; pos++)
                             {
-                                _sendData[i++] = 0x00;
+                                byte value = 0x00;
+                                if (dynamicUdsValue.ResponseEntry != null)
+                                {
+                                    int offset = dynamicUdsValue.DataPos + pos + 6;
+                                    if (dynamicUdsValue.ResponseEntry.ResponseDyn.Length > offset)
+                                    {
+                                        value = dynamicUdsValue.ResponseEntry.ResponseDyn[offset];
+                                    }
+                                }
+                                _sendData[i++] = value;
                             }
                         }
                         _sendData[0] = (byte)(0x80 | (i - 3));
@@ -4303,7 +4331,8 @@ namespace CarSimulator
                     sr.Append(string.Format("Add dynamic UDS ID: ECU={0}, ID={1:X04}, IDs=", ecuAddr, dataId));
                     foreach (DynamicUdsValue dynamicUdsValue in udsValueList)
                     {
-                        sr.Append(string.Format("{0:X04},P={1},L={2} ", dynamicUdsValue.DataId, dynamicUdsValue.DataPos, dynamicUdsValue.DataLength));
+                        sr.Append(string.Format("{0:X04},P={1},L={2},R={3} ",
+                            dynamicUdsValue.DataId, dynamicUdsValue.DataPos, dynamicUdsValue.DataLength, dynamicUdsValue.ResponseEntry != null));
                     }
                     Debug.WriteLine(sr.ToString());
                     DynamicUdsEntry newEntry = new DynamicUdsEntry(ecuAddr, dataId, udsValueList);
