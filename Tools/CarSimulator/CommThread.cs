@@ -73,6 +73,25 @@ namespace CarSimulator
             public byte[] Config { get; }
         }
 
+        private class DynamicUdsEntry
+        {
+            public DynamicUdsEntry(int ecuAddr, int dataId, List<int> dataIdList)
+            {
+                EcuAddr = ecuAddr;
+                DataId = dataId;
+                DataIdList = dataIdList;
+                AssignedResponses = new List<ResponseEntry>();
+            }
+
+            public int EcuAddr { get; }
+
+            public int DataId { get; }
+
+            public List<int> DataIdList { get; }
+
+            public List<ResponseEntry> AssignedResponses { get; }
+        }
+
         private class Tp20Channel
         {
             public Tp20Channel()
@@ -202,6 +221,7 @@ namespace CarSimulator
 #endif
         private long _lastCanStatusTick;
         private readonly List<Tp20Channel> _tp20Channels;
+        private List<DynamicUdsEntry> _dynamicUdsEntries;
         private TcpListener _tcpServerDiag;
         private TcpClient _tcpClientDiag;
         private NetworkStream _tcpClientDiagStream;
@@ -576,6 +596,7 @@ namespace CarSimulator
 #endif
             _lastCanStatusTick = 0;
             _tp20Channels = new List<Tp20Channel>();
+            _dynamicUdsEntries = new List<DynamicUdsEntry>();
             _tcpServerDiag = null;
             _tcpClientDiag = null;
             _tcpClientDiagStream = null;
@@ -640,6 +661,7 @@ namespace CarSimulator
                 }
                 _isoTpMode = false;
                 _tp20Channels.Clear();
+                _dynamicUdsEntries.Clear();
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
                 _workerThread.Priority = ThreadPriority.Highest;
@@ -4092,7 +4114,10 @@ namespace CarSimulator
                         break;
 
                     default:
-                        useResponseList = true;
+                        if (!HandleDynamicUdsIds())
+                        {
+                            useResponseList = true;
+                        }
                         break;
                 }
             }
@@ -4168,6 +4193,118 @@ namespace CarSimulator
                     Debug.WriteLine(sr.ToString());
                 }
             }
+        }
+
+        private bool HandleDynamicUdsIds()
+        {
+            int ecuAddr = _receiveData[1];
+            int dataId = -1;
+            List<int> idList = null;
+            if (
+                _receiveData[0] == 0x84 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x2C &&
+                _receiveData[4] == 0x03)
+            {
+                // clear ID
+                dataId = (_receiveData[5] << 8) | _receiveData[6];
+            }
+            else if (
+                (_receiveData[0] & 0xC0) == 0x80 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x2C &&
+                _receiveData[4] == 0x01)
+            {
+                // define IDs
+                dataId = (_receiveData[5] << 8) | _receiveData[6];
+                int items = ((_receiveData[0] & 0x3F) - 4) / 4;
+                if (items > 0)
+                {
+                    idList = new List<int>();
+                    for (int i = 0; i < items; i++)
+                    {
+                        int itemId = ((int)_receiveData[7 + i * 4] << 8) + _receiveData[8 + i * 4];
+                        idList.Add(itemId);
+                    }
+                }
+            }
+            else if (
+                _receiveData[0] == 0x83 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x22)
+            {
+                // read IDs
+                int readId = (_receiveData[4] << 8) | _receiveData[5];
+                foreach (DynamicUdsEntry dynamicUdsEntry in _dynamicUdsEntries)
+                {
+                    if (dynamicUdsEntry.EcuAddr == ecuAddr && dynamicUdsEntry.DataId == readId)
+                    {
+                        Debug.WriteLine("Found dynamic UDS ID: ECU={0}, ID={1:X04}", ecuAddr, readId);
+                        int i = 0;
+                        _sendData[i++] = 0x82;
+                        _sendData[i++] = _receiveData[2];
+                        _sendData[i++] = _receiveData[1];
+                        _sendData[i++] = 0x62;
+                        _sendData[i++] = _receiveData[4];   // ID
+                        _sendData[i++] = _receiveData[5];
+
+                        foreach (int id in dynamicUdsEntry.DataIdList)
+                        {
+                            _sendData[i++] = 0x00;
+                            _sendData[i++] = 0x00;
+                        }
+                        _sendData[0] = (byte)(0x80 | (i - 3));
+
+                        ObdSend(_sendData);
+                        return true;
+                    }
+                }
+            }
+
+            if (dataId >= 0)
+            {
+                for (int idx = 0; idx < _dynamicUdsEntries.Count;)
+                {
+                    DynamicUdsEntry dynamicUdsEntry = _dynamicUdsEntries[idx];
+                    if (dynamicUdsEntry.EcuAddr == ecuAddr && dynamicUdsEntry.DataId == dataId)
+                    {
+                        Debug.WriteLine("Delete dynamic UDS ID: ECU={0}, ID={1:X04}", ecuAddr, dataId);
+                        _dynamicUdsEntries.Remove(dynamicUdsEntry);
+                    }
+                    else
+                    {
+                        idx++;
+                    }
+                }
+
+                if (idList != null)
+                {
+                    StringBuilder sr = new StringBuilder();
+                    sr.Append(string.Format("Add dynamic UDS ID: ECU={0}, ID={1:X04}, IDs=", ecuAddr, dataId));
+                    foreach (int id in idList)
+                    {
+                        sr.Append(string.Format("{0:X04} ", id));
+                    }
+                    Debug.WriteLine(sr.ToString());
+                    DynamicUdsEntry newEntry = new DynamicUdsEntry(ecuAddr, dataId, idList);
+                    _dynamicUdsEntries.Add(newEntry);
+                }
+
+                int i = 0;
+                _sendData[i++] = 0x84;
+                _sendData[i++] = _receiveData[2];
+                _sendData[i++] = _receiveData[1];
+                _sendData[i++] = (byte) (_receiveData[3] | 0x40);
+                _sendData[i++] = _receiveData[4];   // service
+                _sendData[i++] = _receiveData[5];   // ID
+                _sendData[i++] = _receiveData[6];
+
+                //84 F1 12 6C 03 F3 03 00
+                ObdSend(_sendData);
+                return true;
+            }
+
+            return false;
         }
 
         private bool ResponseE61()
@@ -6897,6 +7034,17 @@ namespace CarSimulator
                             }
                             else
                             {
+#if false
+                                {
+                                    StringBuilder sr = new StringBuilder();
+                                    sr.Append("Response: ");
+                                    for (int i = 0; i < responseEntry.ResponseDyn.Length; i++)
+                                    {
+                                        sr.Append(string.Format("{0:X02} ", responseEntry.ResponseDyn[i]));
+                                    }
+                                    Debug.WriteLine(sr.ToString());
+                                }
+#endif
                                 ObdSend(responseEntry.ResponseDyn);
                                 _nr2123SendCount = 0;
                             }
