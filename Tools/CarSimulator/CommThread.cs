@@ -75,21 +75,37 @@ namespace CarSimulator
 
         private class DynamicUdsEntry
         {
-            public DynamicUdsEntry(int ecuAddr, int dataId, List<int> dataIdList)
+            public DynamicUdsEntry(int ecuAddr, int dataId, List<DynamicUdsValue> udsValueList)
             {
                 EcuAddr = ecuAddr;
                 DataId = dataId;
-                DataIdList = dataIdList;
-                AssignedResponses = new List<ResponseEntry>();
+                UdsValueList = udsValueList;
             }
 
             public int EcuAddr { get; }
 
             public int DataId { get; }
 
-            public List<int> DataIdList { get; }
+            public List<DynamicUdsValue> UdsValueList { get; }
+        }
 
-            public List<ResponseEntry> AssignedResponses { get; }
+        private class DynamicUdsValue
+        {
+            public DynamicUdsValue(int dataId, int dataPos, int dataLength, ResponseEntry responseEntry)
+            {
+                DataId = dataId;
+                DataPos = dataPos;
+                DataLength = dataLength;
+                ResponseEntry = responseEntry;
+            }
+
+            public int DataId { get; }
+
+            public int DataPos { get; }
+
+            public int DataLength { get; }
+
+            public ResponseEntry ResponseEntry { get; }
         }
 
         private class Tp20Channel
@@ -4199,7 +4215,7 @@ namespace CarSimulator
         {
             int ecuAddr = _receiveData[1];
             int dataId = -1;
-            List<int> idList = null;
+            List<DynamicUdsValue> udsValueList = null;
             if (
                 _receiveData[0] == 0x84 &&
                 _receiveData[2] == 0xF1 &&
@@ -4220,11 +4236,13 @@ namespace CarSimulator
                 int items = ((_receiveData[0] & 0x3F) - 4) / 4;
                 if (items > 0)
                 {
-                    idList = new List<int>();
+                    udsValueList = new List<DynamicUdsValue>();
                     for (int i = 0; i < items; i++)
                     {
-                        int itemId = ((int)_receiveData[7 + i * 4] << 8) + _receiveData[8 + i * 4];
-                        idList.Add(itemId);
+                        int itemId = (_receiveData[7 + i * 4] << 8) + _receiveData[8 + i * 4];
+                        int pos = _receiveData[9 + i * 4];
+                        int length = _receiveData[10 + i * 4];
+                        udsValueList.Add(new DynamicUdsValue(itemId, pos, length, null));
                     }
                 }
             }
@@ -4248,10 +4266,12 @@ namespace CarSimulator
                         _sendData[i++] = _receiveData[4];   // ID
                         _sendData[i++] = _receiveData[5];
 
-                        foreach (int id in dynamicUdsEntry.DataIdList)
+                        foreach (DynamicUdsValue dynamicUdsValue in dynamicUdsEntry.UdsValueList)
                         {
-                            _sendData[i++] = 0x00;
-                            _sendData[i++] = 0x00;
+                            for (int pos = 0; pos < dynamicUdsValue.DataLength; pos++)
+                            {
+                                _sendData[i++] = 0x00;
+                            }
                         }
                         _sendData[0] = (byte)(0x80 | (i - 3));
 
@@ -4277,16 +4297,16 @@ namespace CarSimulator
                     }
                 }
 
-                if (idList != null)
+                if (udsValueList != null)
                 {
                     StringBuilder sr = new StringBuilder();
                     sr.Append(string.Format("Add dynamic UDS ID: ECU={0}, ID={1:X04}, IDs=", ecuAddr, dataId));
-                    foreach (int id in idList)
+                    foreach (DynamicUdsValue dynamicUdsValue in udsValueList)
                     {
-                        sr.Append(string.Format("{0:X04} ", id));
+                        sr.Append(string.Format("{0:X04},P={1},L={2} ", dynamicUdsValue.DataId, dynamicUdsValue.DataPos, dynamicUdsValue.DataLength));
                     }
                     Debug.WriteLine(sr.ToString());
-                    DynamicUdsEntry newEntry = new DynamicUdsEntry(ecuAddr, dataId, idList);
+                    DynamicUdsEntry newEntry = new DynamicUdsEntry(ecuAddr, dataId, udsValueList);
                     _dynamicUdsEntries.Add(newEntry);
                 }
 
