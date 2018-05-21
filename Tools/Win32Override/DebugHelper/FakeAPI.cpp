@@ -673,6 +673,16 @@ class CDecryptTextLine
             pDecryptTextLine(this, p1, pline, source);
 
             PatchDecryptTextLine.WriteOpcodes();
+#if false
+            if (source == 1)
+            {
+                if (_stricmp(pline, "101027,00,,,,,00") == 0)
+                {
+                    LogPrintf(_T("DecryptTextLine patching (%u): \"%S\"\n"), source, pline);
+                    strcpy(pline, "101027,01,,,,,00");
+                }
+            }
+#endif
             LogPrintf(_T("DecryptTextLine out (%u): \"%S\"\n"), source, pline);
         }
 };
