@@ -217,6 +217,89 @@ namespace UdsFileReader
             private readonly string _baseName;
         }
 
+        public string ErrorCodeToString(uint errorCode, uint errorDetail)
+        {
+            string errorText = string.Empty;
+            bool tryLongCode = errorCode - 0x4000 < 0x8000;
+            if (tryLongCode)
+            {
+                uint textKey = (errorCode << 8) | errorDetail;
+                if (CodeMap.TryGetValue(textKey, out string longText))
+                {
+                    errorText = longText;
+                }
+            }
+
+            if (string.IsNullOrEmpty(errorText))
+            {
+                uint textKey = errorCode + 100000;
+                if (CodeMap.TryGetValue(textKey, out string shortText))
+                {
+                    errorText = shortText;
+                }
+            }
+
+            if (string.IsNullOrEmpty(errorText))
+            {
+                return string.Empty;
+            }
+
+            string errorDetailText = string.Empty;
+            int colonIndex = errorText.LastIndexOf(':');
+            if (colonIndex >= 0)
+            {
+                errorDetailText = errorText.Substring(colonIndex + 1).Trim();
+                errorText = errorText.Substring(0, colonIndex);
+            }
+
+            uint detailCode = errorDetail;
+            bool fullDetail = (errorDetail & 0x80) != 0x00;
+            if (!fullDetail)
+            {
+                fullDetail = (errorDetail & 0x60) == 0x20;
+                detailCode &= 0x0F;
+            }
+
+            uint detailKey = (uint) (detailCode + (fullDetail ? 96000 : 98000));
+            if (CodeMap.TryGetValue(detailKey, out string detail))
+            {
+                if (!string.IsNullOrEmpty(detail))
+                {
+                    errorDetailText = detail;
+                }
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0} - {1}", errorCode, errorText));
+            sb.Append(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", DataReader.PCodeToString(errorCode), detailCode));
+            if (!string.IsNullOrEmpty(errorDetailText))
+            {
+                sb.AppendLine();
+                sb.Append(errorDetailText);
+            }
+            return sb.ToString();
+        }
+
+        public static string PCodeToString(uint pcodeNum)
+        {
+            char keyLetter = 'P';
+            switch ((pcodeNum >> 14) & 0x03)
+            {
+                case 0x1:
+                    keyLetter = 'C';
+                    break;
+
+                case 0x2:
+                    keyLetter = 'B';
+                    break;
+
+                case 0x3:
+                    keyLetter = 'U';
+                    break;
+            }
+            return string.Format(CultureInfo.InvariantCulture, "{0}{1:X04}", keyLetter, pcodeNum & 0x3FFF);
+        }
+
         private static string WildCardToRegular(string value)
         {
             return "^" + Regex.Escape(value).Replace("\\?", ".") + "$";

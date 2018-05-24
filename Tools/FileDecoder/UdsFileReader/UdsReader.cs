@@ -3100,23 +3100,7 @@ namespace UdsFileReader
                             pcodeDetailNum = detailCode.Value;
                         }
 
-                        char keyLetter = 'P';
-                        switch ((pcodeNum >> 14) & 0x03)
-                        {
-                            case 0x1:
-                                keyLetter = 'C';
-                                break;
-
-                            case 0x2:
-                                keyLetter = 'B';
-                                break;
-
-                            case 0x3:
-                                keyLetter = 'U';
-                                break;
-                        }
-
-                        string pcodeText = string.Format(CultureInfo.InvariantCulture, "{0}{1:X04} {2:X02}", keyLetter, pcodeNum & 0x3FFF, pcodeDetailNum);
+                        string pcodeText = string.Format(CultureInfo.InvariantCulture, "{0} {1:X02}", DataReader.PCodeToString(pcodeNum), pcodeDetailNum);
 
                         string errorDetail = string.Empty;
                         if (detailCode.HasValue && detailCode.Value > 0)
