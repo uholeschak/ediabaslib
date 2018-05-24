@@ -260,12 +260,15 @@ namespace UdsFileReader
                 detailCode &= 0x0F;
             }
 
-            uint detailKey = (uint) (detailCode + (fullDetail ? 96000 : 98000));
-            if (CodeMap.TryGetValue(detailKey, out string detail))
+            if (string.IsNullOrEmpty(errorDetailText))
             {
-                if (!string.IsNullOrEmpty(detail))
+                uint detailKey = (uint)(detailCode + (fullDetail ? 96000 : 98000));
+                if (CodeMap.TryGetValue(detailKey, out string detail))
                 {
-                    errorDetailText = detail;
+                    if (!string.IsNullOrEmpty(detail))
+                    {
+                        errorDetailText = detail;
+                    }
                 }
             }
 
@@ -274,7 +277,7 @@ namespace UdsFileReader
             sb.Append(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", DataReader.PCodeToString(errorCode), detailCode));
             if (!string.IsNullOrEmpty(errorDetailText))
             {
-                sb.AppendLine();
+                sb.Append(" - ");
                 sb.Append(errorDetailText);
             }
             return sb.ToString();
