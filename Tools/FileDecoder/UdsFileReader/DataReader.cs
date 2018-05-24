@@ -220,8 +220,7 @@ namespace UdsFileReader
         public string ErrorCodeToString(uint errorCode, uint errorDetail)
         {
             string errorText = string.Empty;
-            bool tryLongCode = errorCode - 0x4000 < 0x8000;
-            if (tryLongCode)
+            if (errorCode < 0xC000)
             {
                 uint textKey = (errorCode << 8) | errorDetail;
                 if (CodeMap.TryGetValue(textKey, out string longText))
@@ -273,8 +272,8 @@ namespace UdsFileReader
             }
 
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0} - {1}", errorCode, errorText));
-            sb.Append(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", DataReader.PCodeToString(errorCode), detailCode));
+            sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0:000000} - {1}", errorCode, errorText));
+            sb.Append(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", PCodeToString(errorCode), detailCode));
             if (!string.IsNullOrEmpty(errorDetailText))
             {
                 sb.Append(" - ");
