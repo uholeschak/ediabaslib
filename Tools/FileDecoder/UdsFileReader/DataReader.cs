@@ -221,21 +221,32 @@ namespace UdsFileReader
         {
             string errorText = string.Empty;
             bool useFullCode = errorCode >= 0x4000 && errorCode <= 0xBFFF;
+            bool fullCodeFound = false;
             if (useFullCode)
             {
                 uint textKey = (errorCode << 8) | errorDetail;
                 if (CodeMap.TryGetValue(textKey, out string longText))
                 {
                     errorText = longText;
+                    fullCodeFound = true;
                 }
             }
 
-            if (string.IsNullOrEmpty(errorText))
+            bool splitErrorText = false;
+            if (!fullCodeFound)
             {
                 uint textKey = errorCode + 100000;
                 if (CodeMap.TryGetValue(textKey, out string shortText))
                 {
                     errorText = shortText;
+                    if (errorCode <= 0x3FFF)
+                    {
+                        splitErrorText = true;
+                    }
+                    if (errorCode >= 0xC0000 && errorCode <= 0xFFFF)
+                    {
+                        splitErrorText = true;
+                    }
                 }
             }
 
@@ -248,8 +259,11 @@ namespace UdsFileReader
             int colonIndex = errorText.LastIndexOf(':');
             if (colonIndex >= 0)
             {
-                errorDetailText = errorText.Substring(colonIndex + 1).Trim();
-                errorText = errorText.Substring(0, colonIndex);
+                if (splitErrorText || fullCodeFound)
+                {
+                    errorDetailText = errorText.Substring(colonIndex + 1).Trim();
+                    errorText = errorText.Substring(0, colonIndex);
+                }
             }
 
             uint detailCode = errorDetail;
