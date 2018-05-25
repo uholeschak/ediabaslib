@@ -220,7 +220,8 @@ namespace UdsFileReader
         public string ErrorCodeToString(uint errorCode, uint errorDetail)
         {
             string errorText = string.Empty;
-            if (errorCode < 0xC000)
+            bool useFullCode = errorCode >= 0x4000 && errorCode <= 0xBFFF;
+            if (useFullCode)
             {
                 uint textKey = (errorCode << 8) | errorDetail;
                 if (CodeMap.TryGetValue(textKey, out string longText))
@@ -253,7 +254,7 @@ namespace UdsFileReader
 
             uint detailCode = errorDetail;
             bool fullDetail = (errorDetail & 0x80) != 0x00;
-            if (!fullDetail)
+            if (!useFullCode)
             {
                 fullDetail = (errorDetail & 0x60) == 0x20;
                 detailCode &= 0x0F;
