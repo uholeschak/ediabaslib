@@ -255,13 +255,13 @@ namespace UdsFileReader
                 return string.Empty;
             }
 
-            string errorDetailText = string.Empty;
+            string errorDetailText1 = string.Empty;
             int colonIndex = errorText.LastIndexOf(':');
             if (colonIndex >= 0)
             {
                 if (splitErrorText || fullCodeFound)
                 {
-                    errorDetailText = errorText.Substring(colonIndex + 1).Trim();
+                    errorDetailText1 = errorText.Substring(colonIndex + 1).Trim();
                     errorText = errorText.Substring(0, colonIndex);
                 }
             }
@@ -274,25 +274,28 @@ namespace UdsFileReader
                 detailCode &= 0x0F;
             }
 
-            if (string.IsNullOrEmpty(errorDetailText))
+            string errorDetailText2 = string.Empty;
+            uint detailKey = (uint)(detailCode + (fullDetail ? 96000 : 98000));
+            if (CodeMap.TryGetValue(detailKey, out string detail))
             {
-                uint detailKey = (uint)(detailCode + (fullDetail ? 96000 : 98000));
-                if (CodeMap.TryGetValue(detailKey, out string detail))
+                if (!string.IsNullOrEmpty(detail))
                 {
-                    if (!string.IsNullOrEmpty(detail))
-                    {
-                        errorDetailText = detail;
-                    }
+                    errorDetailText2 = detail;
                 }
             }
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0:000000} - {1}", errorCode, errorText));
             sb.Append(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", PCodeToString(errorCode), detailCode));
-            if (!string.IsNullOrEmpty(errorDetailText))
+            if (!string.IsNullOrEmpty(errorDetailText1))
             {
                 sb.Append(" - ");
-                sb.Append(errorDetailText);
+                sb.Append(errorDetailText1);
+            }
+            if (!string.IsNullOrEmpty(errorDetailText2))
+            {
+                sb.Append(" - ");
+                sb.Append(errorDetailText2);
             }
             return sb.ToString();
         }
