@@ -264,16 +264,20 @@ namespace UdsFileReader
                 }
             }
 
-            bool showWarningLight = false;
+            string errorDetailText3 = string.Empty;
             uint detailCode = errorDetail;
             bool fullDetail = (errorDetail & 0x80) != 0x00;
             if (!useFullCode)
             {
-                if (fullDetail)
+                if ((errorDetail & 0x80) != 0x00)
                 {
-                    showWarningLight = true;
+                    errorDetailText3 = (UdsReader.GetTextMapText(udsReader, 066900) ?? string.Empty)
+                                       + " " + (UdsReader.GetTextMapText(udsReader, 000085) ?? string.Empty);
                 }
-                fullDetail = (errorDetail & 0x60) == 0x20;
+                if ((errorDetail & 0x60) == 0x20)
+                {
+                    errorDetailText3 = (UdsReader.GetTextMapText(udsReader, 002693) ?? string.Empty);
+                }
                 detailCode &= 0x0F;
             }
 
@@ -285,12 +289,6 @@ namespace UdsFileReader
                 {
                     errorDetailText2 = detail;
                 }
-            }
-
-            string errorDetailText3 = string.Empty;
-            if (showWarningLight)
-            {
-                errorDetailText3 = UdsReader.GetTextMapText(udsReader, 066900) ?? string.Empty;   // "Warnleuchte EIN"
             }
 
             StringBuilder sb = new StringBuilder();
