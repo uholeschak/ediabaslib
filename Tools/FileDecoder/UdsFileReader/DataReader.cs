@@ -264,10 +264,15 @@ namespace UdsFileReader
                 }
             }
 
+            bool showWarningLight = false;
             uint detailCode = errorDetail;
             bool fullDetail = (errorDetail & 0x80) != 0x00;
             if (!useFullCode)
             {
+                if (fullDetail)
+                {
+                    showWarningLight = true;
+                }
                 fullDetail = (errorDetail & 0x60) == 0x20;
                 detailCode &= 0x0F;
             }
@@ -280,6 +285,11 @@ namespace UdsFileReader
                 {
                     errorDetailText2 = detail;
                 }
+            }
+
+            if (showWarningLight)
+            {
+                errorDetailText2 = "Warnleuchte EIN";
             }
 
             StringBuilder sb = new StringBuilder();
