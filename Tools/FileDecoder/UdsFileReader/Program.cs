@@ -51,6 +51,18 @@ namespace UdsFileReader
                 //Console.WriteLine(udsReader.TestFixedTypes());
                 //return 0;
 #if false
+                Console.WriteLine(udsReader.DataReader.ErrorCodeToString(0x161D, 0x71, udsReader) + "\n");
+                Console.WriteLine(udsReader.DataReader.ErrorCodeToString(0x161D, 0x03, udsReader) + "\n");
+                Console.WriteLine(udsReader.DataReader.ErrorCodeToString(0x161D, 0xF5, udsReader) + "\n");
+                Console.WriteLine(udsReader.DataReader.ErrorCodeToString(0x2634, 0xF5, udsReader) + "\n");
+                Console.WriteLine(udsReader.DataReader.ErrorCodeToString(0x4003, 0x96, udsReader) + "\n");
+                Console.WriteLine(udsReader.DataReader.ErrorCodeToString(0x900E, 0x96, udsReader) + "\n");
+                Console.WriteLine(udsReader.DataReader.ErrorCodeToString(0xD156, 0x75, udsReader) + "\n");
+                Console.WriteLine(udsReader.DataReader.ErrorCodeToString(0xD156, 0xF5, udsReader) + "\n");
+                Console.WriteLine(udsReader.DataReader.ErrorCodeToString(0xD156, 0x25, udsReader) + "\n");
+                Console.WriteLine(udsReader.DataReader.ErrorCodeToString(0x514E, 0xF0, udsReader) + "\n");
+#endif
+#if false
                 UdsReader.FileNameResolver fileNameResolver = new UdsReader.FileNameResolver(udsReader, "EV_ECM20TDI01103L906018DQ", "003003", "03L906018DQ", "1K0907951");
                 //UdsReader.FileNameResolver fileNameResolver = new UdsReader.FileNameResolver(udsReader, "EV_Kombi_UDS_VDD_RM09", "A04089", "0920881A", "1K0907951");
                 List<string> fileList = fileNameResolver.GetFileList(dir);
