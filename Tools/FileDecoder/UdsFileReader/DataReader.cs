@@ -250,19 +250,17 @@ namespace UdsFileReader
                 }
             }
 
-            if (string.IsNullOrEmpty(errorText))
-            {
-                return string.Empty;
-            }
-
             string errorDetailText1 = string.Empty;
-            int colonIndex = errorText.LastIndexOf(':');
-            if (colonIndex >= 0)
+            if (!string.IsNullOrEmpty(errorText))
             {
-                if (splitErrorText || fullCodeFound)
+                int colonIndex = errorText.LastIndexOf(':');
+                if (colonIndex >= 0)
                 {
-                    errorDetailText1 = errorText.Substring(colonIndex + 1).Trim();
-                    errorText = errorText.Substring(0, colonIndex);
+                    if (splitErrorText || fullCodeFound)
+                    {
+                        errorDetailText1 = errorText.Substring(colonIndex + 1).Trim();
+                        errorText = errorText.Substring(0, colonIndex);
+                    }
                 }
             }
 
@@ -285,7 +283,14 @@ namespace UdsFileReader
             }
 
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0:000000} - {1}", errorCode, errorText));
+            sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:000000}", errorCode));
+            if (!string.IsNullOrEmpty(errorText))
+            {
+                sb.Append(" - ");
+                sb.Append(errorText);
+            }
+            sb.AppendLine();
+
             sb.Append(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", PCodeToString(errorCode), detailCode));
             if (!string.IsNullOrEmpty(errorDetailText1))
             {
