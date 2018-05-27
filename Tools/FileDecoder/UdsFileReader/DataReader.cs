@@ -243,7 +243,7 @@ namespace UdsFileReader
                     {
                         splitErrorText = true;
                     }
-                    if (errorCode >= 0xC0000 && errorCode <= 0xFFFF)
+                    if (errorCode >= 0xC000 && errorCode <= 0xFFFF)
                     {
                         splitErrorText = true;
                     }
