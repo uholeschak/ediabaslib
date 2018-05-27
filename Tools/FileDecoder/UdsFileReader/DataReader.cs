@@ -268,14 +268,14 @@ namespace UdsFileReader
             uint detailCode = errorDetail;
             if (!useFullCode)
             {
+                if ((errorDetail & 0x60) == 0x20)
+                {
+                    errorDetailText3 = (UdsReader.GetTextMapText(udsReader, 002693) ?? string.Empty);
+                }
                 if ((errorDetail & 0x80) != 0x00)
                 {
                     errorDetailText3 = (UdsReader.GetTextMapText(udsReader, 066900) ?? string.Empty)
                                        + " " + (UdsReader.GetTextMapText(udsReader, 000085) ?? string.Empty);
-                }
-                if ((errorDetail & 0x60) == 0x20)
-                {
-                    errorDetailText3 = (UdsReader.GetTextMapText(udsReader, 002693) ?? string.Empty);
                 }
                 detailCode &= 0x0F;
             }
