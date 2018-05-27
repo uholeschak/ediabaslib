@@ -281,15 +281,16 @@ namespace UdsFileReader
             uint detailKey = (uint)(detailCode + (fullDetail ? 96000 : 98000));
             if (CodeMap.TryGetValue(detailKey, out string detail))
             {
-                if (!string.IsNullOrEmpty(detail))
+                if (!string.IsNullOrEmpty(detail) && string.Compare(detail, "-", StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     errorDetailText2 = detail;
                 }
             }
 
+            string errorDetailText3 = string.Empty;
             if (showWarningLight)
             {
-                errorDetailText2 = "Warnleuchte EIN";
+                errorDetailText3 = "Warnleuchte EIN";
             }
 
             StringBuilder sb = new StringBuilder();
@@ -311,6 +312,11 @@ namespace UdsFileReader
             {
                 sb.Append(" - ");
                 sb.Append(errorDetailText2);
+            }
+            if (!string.IsNullOrEmpty(errorDetailText3))
+            {
+                sb.Append(" - ");
+                sb.Append(errorDetailText3);
             }
             return sb.ToString();
         }
