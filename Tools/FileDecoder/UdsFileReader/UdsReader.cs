@@ -983,8 +983,12 @@ namespace UdsFileReader
             {35, "OBDBr-3"},
         };
 
-        private static string GetTextMapText(UdsReader udsReader, UInt32 key)
+        public static string GetTextMapText(UdsReader udsReader, UInt32 key)
         {
+            if (udsReader?._textMap == null)
+            {
+                return null;
+            }
             if (udsReader._textMap.TryGetValue(key, out string[] nameArray1)) // Keine
             {
                 if (nameArray1.Length > 0)
@@ -996,8 +1000,12 @@ namespace UdsFileReader
             return null;
         }
 
-        private static string GetUnitMapText(UdsReader udsReader, UInt32 key)
+        public static string GetUnitMapText(UdsReader udsReader, UInt32 key)
         {
+            if (udsReader?._unitMap == null)
+            {
+                return null;
+            }
             if (udsReader._unitMap.TryGetValue(key, out string[] nameArray1)) // Keine
             {
                 if (nameArray1.Length > 0)

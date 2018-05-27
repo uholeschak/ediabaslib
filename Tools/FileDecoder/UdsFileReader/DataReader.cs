@@ -217,7 +217,7 @@ namespace UdsFileReader
             private readonly string _baseName;
         }
 
-        public string ErrorCodeToString(uint errorCode, uint errorDetail)
+        public string ErrorCodeToString(uint errorCode, uint errorDetail, UdsReader udsReader = null)
         {
             string errorText = string.Empty;
             bool useFullCode = errorCode >= 0x4000 && errorCode <= 0xBFFF;
@@ -290,7 +290,7 @@ namespace UdsFileReader
             string errorDetailText3 = string.Empty;
             if (showWarningLight)
             {
-                errorDetailText3 = "Warnleuchte EIN";
+                errorDetailText3 = UdsReader.GetTextMapText(udsReader, 066900) ?? string.Empty;   // "Warnleuchte EIN"
             }
 
             StringBuilder sb = new StringBuilder();
