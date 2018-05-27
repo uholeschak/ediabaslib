@@ -266,7 +266,6 @@ namespace UdsFileReader
 
             string errorDetailText3 = string.Empty;
             uint detailCode = errorDetail;
-            bool fullDetail = (errorDetail & 0x80) != 0x00;
             if (!useFullCode)
             {
                 if ((errorDetail & 0x80) != 0x00)
@@ -282,7 +281,7 @@ namespace UdsFileReader
             }
 
             string errorDetailText2 = string.Empty;
-            uint detailKey = (uint)(detailCode + (fullDetail ? 96000 : 98000));
+            uint detailKey = (uint)(detailCode + (useFullCode ? 96000 : 98000));
             if (CodeMap.TryGetValue(detailKey, out string detail))
             {
                 if (!string.IsNullOrEmpty(detail) && string.Compare(detail, "-", StringComparison.OrdinalIgnoreCase) != 0)
