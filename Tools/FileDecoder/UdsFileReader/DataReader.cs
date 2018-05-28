@@ -217,8 +217,9 @@ namespace UdsFileReader
             private readonly string _baseName;
         }
 
-        public string ErrorCodeToString(uint errorCode, uint errorDetail, UdsReader udsReader = null)
+        public List<string> ErrorCodeToString(uint errorCode, uint errorDetail, UdsReader udsReader = null)
         {
+            List<string> resultList = new List<string>();
             string errorText = string.Empty;
             bool useFullCode = errorCode >= 0x4000 && errorCode <= 0xBFFF;
             bool fullCodeFound = false;
@@ -297,25 +298,23 @@ namespace UdsFileReader
                 sb.Append(" - ");
                 sb.Append(errorText);
             }
-            sb.AppendLine();
+            resultList.Add(sb.ToString());
 
-            sb.Append(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", PCodeToString(errorCode), detailCode));
+            resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", PCodeToString(errorCode), detailCode));
             if (!string.IsNullOrEmpty(errorDetailText1))
             {
-                sb.Append(" - ");
-                sb.Append(errorDetailText1);
+                resultList.Add(errorDetailText1);
             }
             if (!string.IsNullOrEmpty(errorDetailText2))
             {
-                sb.Append(" - ");
-                sb.Append(errorDetailText2);
+                resultList.Add(errorDetailText2);
             }
             if (!string.IsNullOrEmpty(errorDetailText3))
             {
-                sb.Append(" - ");
-                sb.Append(errorDetailText3);
+                resultList.Add(errorDetailText3);
             }
-            return sb.ToString();
+
+            return resultList;
         }
 
         public static string PCodeToString(uint pcodeNum)
