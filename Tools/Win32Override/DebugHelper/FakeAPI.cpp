@@ -855,10 +855,18 @@ HRSRC WINAPI mFindResourceA(
     if (IS_INTRESOURCE(lpName))
     {
         name = string_format("NameID=%u", (DWORD)lpName);
-        if ((DWORD)lpName == 24 && (DWORD)lpType == 6)
+#if false
+        if ((DWORD)lpType == (DWORD)RT_STRING)
         {
-            bEnableLog = TRUE;
+            switch ((DWORD)lpName)
+            {
+                case 43:    // Contains resource 680
+                    LogPrintf(_T("Access to resource block %u\n"), (DWORD)lpName);
+                    bResWatch = TRUE;
+                    break;
+            }
         }
+#endif
     }
     else
     {
@@ -922,7 +930,7 @@ HGLOBAL WINAPI mLoadResource(
             if (dwSize > 0)
             {
                 LPVOID pMem = LockResource(hMem);
-                if (pMem != NULL)
+                if (pMem != NULL && dwSize <= 0x200)
                 {
                     LogData((BYTE *)pMem, dwSize, 0x200);
                     LogPrintf(_T("\n"));
