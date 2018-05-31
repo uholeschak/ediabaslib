@@ -51,16 +51,16 @@ namespace UdsFileReader
                 //Console.WriteLine(udsReader.TestFixedTypes());
                 //return 0;
 #if false
-                PrintErrorCode(udsReader, 0x161D, 0x71);
-                PrintErrorCode(udsReader, 0x161D, 0x03);
-                PrintErrorCode(udsReader, 0x161D, 0xF5);
-                PrintErrorCode(udsReader, 0x2634, 0xF5);
-                PrintErrorCode(udsReader, 0x4003, 0x96);
-                PrintErrorCode(udsReader, 0x900E, 0x96);
-                PrintErrorCode(udsReader, 0xD156, 0x75);
-                PrintErrorCode(udsReader, 0xD156, 0xF5);
-                PrintErrorCode(udsReader, 0xD156, 0x25);
-                PrintErrorCode(udsReader, 0x514E, 0xF0);
+                PrintSaeErrorCode(udsReader, 0x161D, 0x71);
+                PrintSaeErrorCode(udsReader, 0x161D, 0x03);
+                PrintSaeErrorCode(udsReader, 0x161D, 0xF5);
+                PrintSaeErrorCode(udsReader, 0x2634, 0xF5);
+                PrintSaeErrorCode(udsReader, 0x4003, 0x96);
+                PrintSaeErrorCode(udsReader, 0x900E, 0x96);
+                PrintSaeErrorCode(udsReader, 0xD156, 0x75);
+                PrintSaeErrorCode(udsReader, 0xD156, 0xF5);
+                PrintSaeErrorCode(udsReader, 0xD156, 0x25);
+                PrintSaeErrorCode(udsReader, 0x514E, 0xF0);
 #endif
 #if false
                 UdsReader.FileNameResolver fileNameResolver = new UdsReader.FileNameResolver(udsReader, "EV_ECM20TDI01103L906018DQ", "003003", "03L906018DQ", "1K0907951");
@@ -537,9 +537,9 @@ namespace UdsFileReader
             return true;
         }
 
-        static bool PrintErrorCode(UdsReader udsReader, uint errorCode, uint errorDetail)
+        static bool PrintSaeErrorCode(UdsReader udsReader, uint errorCode, uint errorDetail)
         {
-            List<string> resultList = udsReader.DataReader.ErrorCodeToString(errorCode, errorDetail, udsReader);
+            List<string> resultList = udsReader.DataReader.SaeErrorCodeToString(errorCode, errorDetail, udsReader);
             if (resultList == null)
             {
                 return false;

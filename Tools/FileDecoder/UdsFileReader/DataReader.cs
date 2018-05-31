@@ -217,7 +217,7 @@ namespace UdsFileReader
             private readonly string _baseName;
         }
 
-        public List<string> ErrorCodeToString(uint errorCode, uint errorDetail, UdsReader udsReader = null)
+        public List<string> SaeErrorCodeToString(uint errorCode, uint errorDetail, UdsReader udsReader = null)
         {
             List<string> resultList = new List<string>();
             string errorText = string.Empty;
