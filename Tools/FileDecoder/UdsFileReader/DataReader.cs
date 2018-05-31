@@ -317,6 +317,142 @@ namespace UdsFileReader
             return resultList;
         }
 
+        public List<string> SaeDetailHeadToString(byte[] data, UdsReader udsReader = null)
+        {
+            List<string> resultList = new List<string>();
+            if (data.Length < 15)
+            {
+                return null;
+            }
+
+            if (data[0] != 0x6C)
+            {
+                return null;
+            }
+
+            resultList.Add("Umgebungsbedingungen:");
+            UInt32 value = data[2];
+            if (value != 0xFF)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("Fehlerstatus");
+                sb.Append(": ");
+                sb.Append(Convert.ToString(value, 2).PadLeft(8, '0'));
+                resultList.Add(sb.ToString());
+            }
+
+            value = data[3];
+            if (value != 0xFF)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("Fehlerpriorität");
+                sb.Append(": ");
+                sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value & 0x0F));
+                resultList.Add(sb.ToString());
+            }
+
+            value = data[4];
+            if (value != 0xFF)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("Fehlerhäufigkeit");
+                sb.Append(": ");
+                sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value));
+                resultList.Add(sb.ToString());
+            }
+
+            value = data[5];
+            if (value != 0xFF)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("Verlernzähler");
+                sb.Append(": ");
+                sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value));
+                resultList.Add(sb.ToString());
+            }
+
+            value = (UInt32)((data[6] << 16) | (data[7] << 8) | data[8]);
+            if (value != 0xFFFFF && value <= 0x3FFFFF)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("Kilometerstand");
+                sb.Append(": ");
+                sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value));
+                sb.Append(" km");
+                resultList.Add(sb.ToString());
+            }
+
+            value = data[9];
+            if (value != 0xFF)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("Zeitangabe");
+                sb.Append(": ");
+                sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value & 0x0F));
+                resultList.Add(sb.ToString());
+
+                if (value < 2)
+                {
+                    if (value == 0)
+                    {
+                        // date time
+                        UInt64 timeValue = 0;
+                        for (int i = 0; i < 5; i++)
+                        {
+                            timeValue <<= 8;
+                            timeValue += data[10 + i];
+                        }
+                        if (timeValue != 0 && timeValue != 0x1FFFFFFFF)
+                        {
+                            UInt64 tempValue = timeValue;
+                            UInt64 sec = tempValue & 0x3F;
+                            tempValue >>= 6;
+                            UInt64 min = tempValue & 0x3F;
+                            tempValue >>= 6;
+                            UInt64 hour = tempValue & 0x1F;
+                            tempValue >>= 5;
+                            UInt64 day = tempValue & 0x1F;
+                            tempValue >>= 5;
+                            UInt64 month = tempValue & 0x0F;
+                            tempValue >>= 4;
+                            UInt64 year = tempValue & 0x7F;
+
+                            sb.Clear();
+                            sb.Append("Datum");
+                            sb.Append(": ");
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:00}.{1:00}.{2:00}", year + 2000, month, day));
+                            resultList.Add(sb.ToString());
+
+                            sb.Clear();
+                            sb.Append("Zeit");
+                            sb.Append(": ");
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:00}:{1:00}:{2:00}", hour, min, sec));
+                            resultList.Add(sb.ToString());
+                        }
+                    }
+                    else
+                    {
+                        // life span
+                        UInt64 timeValue = 0;
+                        for (int i = 0; i < 4; i++)
+                        {
+                            timeValue <<= 8;
+                            timeValue += data[11 + i];
+                        }
+                        if (timeValue != 0xFFFFFFFF)
+                        {
+                            sb.Clear();
+                            sb.Append("Zähler Fhzg.-Lebensdauer");
+                            sb.Append(": ");
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", timeValue));
+                            resultList.Add(sb.ToString());
+                        }
+                    }
+                }
+            }
+            return resultList;
+        }
+
         public static string PCodeToString(uint pcodeNum)
         {
             char keyLetter = 'P';

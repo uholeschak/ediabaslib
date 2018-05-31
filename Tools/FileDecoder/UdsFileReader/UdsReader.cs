@@ -812,7 +812,7 @@ namespace UdsFileReader
                     case DataType.Binary1:
                     case DataType.Binary2:
                     {
-                        foreach (var value in subData)
+                        foreach (byte value in subData)
                         {
                             if (sb.Length > 0)
                             {
