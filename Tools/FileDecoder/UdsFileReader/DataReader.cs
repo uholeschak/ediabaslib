@@ -317,7 +317,7 @@ namespace UdsFileReader
             return resultList;
         }
 
-        public List<string> SaeDetailHeadToString(byte[] data, UdsReader udsReader = null)
+        public List<string> SaeErrorDetailHeadToString(byte[] data, UdsReader udsReader = null)
         {
             List<string> resultList = new List<string>();
             if (data.Length < 15)
@@ -330,12 +330,15 @@ namespace UdsFileReader
                 return null;
             }
 
-            resultList.Add("Umgebungsbedingungen:");
+            StringBuilder sb = new StringBuilder();
+            sb.Append(UdsReader.GetTextMapText(udsReader, 003356) ?? string.Empty);  // Umgebungsbedingungen
+            sb.Append(":");
+            resultList.Add(sb.ToString());
             UInt32 value = data[2];
             if (value != 0xFF)
             {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("Fehlerstatus");
+                sb.Clear();
+                sb.Append(UdsReader.GetTextMapText(udsReader, 018478) ?? string.Empty); // Fehlerstatus
                 sb.Append(": ");
                 sb.Append(Convert.ToString(value, 2).PadLeft(8, '0'));
                 resultList.Add(sb.ToString());
@@ -344,8 +347,8 @@ namespace UdsFileReader
             value = data[3];
             if (value != 0xFF)
             {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("Fehlerpriorität");
+                sb.Clear();
+                sb.Append(UdsReader.GetTextMapText(udsReader, 016693) ?? string.Empty); // Fehlerpriorität
                 sb.Append(": ");
                 sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value & 0x0F));
                 resultList.Add(sb.ToString());
@@ -354,8 +357,8 @@ namespace UdsFileReader
             value = data[4];
             if (value != 0xFF)
             {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("Fehlerhäufigkeit");
+                sb.Clear();
+                sb.Append(UdsReader.GetTextMapText(udsReader, 061517) ?? string.Empty); // Fehlerhäufigkeit
                 sb.Append(": ");
                 sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value));
                 resultList.Add(sb.ToString());
@@ -364,8 +367,8 @@ namespace UdsFileReader
             value = data[5];
             if (value != 0xFF)
             {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("Verlernzähler");
+                sb.Clear();
+                sb.Append(UdsReader.GetTextMapText(udsReader, 099026) ?? string.Empty); // Verlernzähler
                 sb.Append(": ");
                 sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value));
                 resultList.Add(sb.ToString());
@@ -374,19 +377,20 @@ namespace UdsFileReader
             value = (UInt32)((data[6] << 16) | (data[7] << 8) | data[8]);
             if (value != 0xFFFFF && value <= 0x3FFFFF)
             {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("Kilometerstand");
+                sb.Clear();
+                sb.Append(UdsReader.GetTextMapText(udsReader, 018858) ?? string.Empty); // Kilometerstand
                 sb.Append(": ");
                 sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value));
-                sb.Append(" km");
+                sb.Append(" ");
+                sb.Append(UdsReader.GetUnitMapText(udsReader, 000108) ?? string.Empty); // km
                 resultList.Add(sb.ToString());
             }
 
             value = data[9];
             if (value != 0xFF)
             {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("Zeitangabe");
+                sb.Clear();
+                sb.Append(UdsReader.GetTextMapText(udsReader, 039410) ?? string.Empty); // Zeitangabe
                 sb.Append(": ");
                 sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value & 0x0F));
                 resultList.Add(sb.ToString());
@@ -418,13 +422,13 @@ namespace UdsFileReader
                             UInt64 year = tempValue & 0x7F;
 
                             sb.Clear();
-                            sb.Append("Datum");
+                            sb.Append(UdsReader.GetTextMapText(udsReader, 098044) ?? string.Empty); // Datum
                             sb.Append(": ");
                             sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:00}.{1:00}.{2:00}", year + 2000, month, day));
                             resultList.Add(sb.ToString());
 
                             sb.Clear();
-                            sb.Append("Zeit");
+                            sb.Append(UdsReader.GetTextMapText(udsReader, 099068) ?? string.Empty); // Zeit
                             sb.Append(": ");
                             sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:00}:{1:00}:{2:00}", hour, min, sec));
                             resultList.Add(sb.ToString());
@@ -442,7 +446,10 @@ namespace UdsFileReader
                         if (timeValue != 0xFFFFFFFF)
                         {
                             sb.Clear();
-                            sb.Append("Zähler Fhzg.-Lebensdauer");
+                            // Zähler Fhzg.-Lebensdauer
+                            sb.Append(UdsReader.GetTextMapText(udsReader, 098050) ?? string.Empty);
+                            sb.Append(" ");
+                            sb.Append(UdsReader.GetTextMapText(udsReader, 047622) ?? string.Empty);
                             sb.Append(": ");
                             sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", timeValue));
                             resultList.Add(sb.ToString());
