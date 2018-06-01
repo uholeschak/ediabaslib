@@ -3108,7 +3108,7 @@ namespace UdsFileReader
                             pcodeDetailNum = detailCode.Value;
                         }
 
-                        string pcodeText = string.Format(CultureInfo.InvariantCulture, "{0} {1:X02}", DataReader.PCodeToString(pcodeNum), pcodeDetailNum);
+                        string pcodeText = string.Format(CultureInfo.InvariantCulture, "{0} {1:X02}", DataReader.SaePcodeToString(pcodeNum), pcodeDetailNum);
 
                         string errorDetail = string.Empty;
                         if (detailCode.HasValue && detailCode.Value > 0)

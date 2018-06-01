@@ -300,7 +300,7 @@ namespace UdsFileReader
             }
             resultList.Add(sb.ToString());
 
-            resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", PCodeToString(errorCode), detailCode));
+            resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", SaePcodeToString(errorCode), detailCode));
             if (!string.IsNullOrEmpty(errorDetailText1))
             {
                 resultList.Add(errorDetailText1);
@@ -460,7 +460,7 @@ namespace UdsFileReader
             return resultList;
         }
 
-        public static string PCodeToString(uint pcodeNum)
+        public static string SaePcodeToString(uint pcodeNum)
         {
             char keyLetter = 'P';
             switch ((pcodeNum >> 14) & 0x03)
