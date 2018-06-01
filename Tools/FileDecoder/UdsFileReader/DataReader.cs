@@ -460,6 +460,59 @@ namespace UdsFileReader
             return resultList;
         }
 
+        public static string PcodeToString(uint pcodeNum)
+        {
+            int codeValue = (int) pcodeNum;
+            if (codeValue < 0x4000)
+            {
+                return string.Empty;
+            }
+            if (codeValue > 65000)
+            {
+                return string.Empty;
+            }
+
+            int displayCode;
+            if (codeValue < 0x43E8)
+            {
+                displayCode = codeValue - 0x4000;
+            }
+            else if (codeValue < 0x3E7 + 0x4400)
+            {
+                displayCode = codeValue - 0x4018;
+            }
+            else if (codeValue < 0x3E7 + 0x4800)
+            {
+                displayCode = codeValue - 0x4030;
+            }
+            else if (codeValue < 0x3E7 + 0x4C00)
+            {
+                displayCode = codeValue - 0x4048;
+            }
+            else
+            {
+                displayCode = -1;
+            }
+            if (displayCode >= 0)
+            {
+                return string.Format(CultureInfo.InvariantCulture, "P{0:0000}", displayCode);
+            }
+
+            if (codeValue > 0x3E7 + 0x7000)
+            {
+                if (codeValue > 0x3E7 + 0x7400)
+                {
+                    return string.Empty;
+                }
+                displayCode = codeValue - 0x7018;
+            }
+            else
+            {
+                displayCode = codeValue - 0x7000;
+            }
+            return string.Format(CultureInfo.InvariantCulture, "U{0:0000}", displayCode);
+        }
+
         public static string SaePcodeToString(uint pcodeNum)
         {
             char keyLetter = 'P';
