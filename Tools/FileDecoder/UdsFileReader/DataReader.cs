@@ -462,6 +462,12 @@ namespace UdsFileReader
 
         public static string PcodeToString(uint pcodeNum)
         {
+            return PcodeToString(pcodeNum, out uint convertedValue);
+        }
+
+        public static string PcodeToString(uint pcodeNum, out uint convertedValue)
+        {
+            convertedValue = 0;
             int codeValue = (int) pcodeNum;
             if (codeValue < 0x4000)
             {
@@ -473,6 +479,7 @@ namespace UdsFileReader
             }
 
             int displayCode;
+            string codeString;
             if (codeValue < 0x43E8)
             {
                 displayCode = codeValue - 0x4000;
@@ -495,7 +502,12 @@ namespace UdsFileReader
             }
             if (displayCode >= 0)
             {
-                return string.Format(CultureInfo.InvariantCulture, "P{0:0000}", displayCode);
+                codeString = string.Format(CultureInfo.InvariantCulture, "{0:0000}", displayCode);
+                if (!uint.TryParse(codeString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out convertedValue))
+                {
+                    convertedValue = 0;
+                }
+                return "P" + codeString;
             }
 
             if (codeValue > 0x3E7 + 0x7000)
@@ -510,7 +522,13 @@ namespace UdsFileReader
             {
                 displayCode = codeValue - 0x7000;
             }
-            return string.Format(CultureInfo.InvariantCulture, "U{0:0000}", displayCode);
+            codeString = string.Format(CultureInfo.InvariantCulture, "{0:0000}", displayCode);
+            if (!uint.TryParse(codeString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out convertedValue))
+            {
+                convertedValue = 0;
+            }
+            convertedValue |= 0xC000;
+            return "U" + codeString;
         }
 
         public static string SaePcodeToString(uint pcodeNum)
