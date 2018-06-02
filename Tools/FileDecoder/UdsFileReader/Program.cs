@@ -61,8 +61,8 @@ namespace UdsFileReader
                 PrintSaeErrorCode(udsReader, 0xD156, 0xF5);
                 PrintSaeErrorCode(udsReader, 0xD156, 0x25);
                 PrintSaeErrorCode(udsReader, 0x514E, 0xF0);
-                PrintSaeErrorCode(udsReader, 0x036C, 0x6B);
-                PrintSaeErrorCode(udsReader, 0x036D, 0x6B);
+                PrintErrorCode(udsReader, 0x036C, 0x6B);
+                PrintErrorCode(udsReader, 0x036D, 0x6B);
                 PrintSaeErrorDetail(udsReader, new byte[] { 0x6C, 0x01, 0x71, 0x11, 0x12, 0x13, 0x02, 0xFB, 0xC4, 0x00, 0x00, 0x49, 0x04, 0x51, 0x03 });
                 PrintSaeErrorDetail(udsReader, new byte[] { 0x6C, 0x01, 0x71, 0x11, 0x12, 0x13, 0x02, 0xFB, 0xC4, 0x01, 0x00, 0x00, 0x00, 0x01, 0x02 });
 #endif
@@ -537,6 +537,22 @@ namespace UdsFileReader
                     }
                 }
             }
+
+            return true;
+        }
+
+        static bool PrintErrorCode(UdsReader udsReader, uint errorCode, uint errorDetail)
+        {
+            List<string> resultList = udsReader.DataReader.ErrorCodeToString(errorCode, errorDetail, udsReader);
+            if (resultList == null)
+            {
+                return false;
+            }
+            foreach (string line in resultList)
+            {
+                Console.WriteLine(line);
+            }
+            Console.WriteLine();
 
             return true;
         }

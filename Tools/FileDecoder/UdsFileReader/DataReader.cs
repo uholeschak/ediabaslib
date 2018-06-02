@@ -219,8 +219,36 @@ namespace UdsFileReader
 
         public List<string> SaeErrorCodeToString(uint errorCode, uint errorDetail, UdsReader udsReader = null)
         {
+            return CommonErrorCodeToString(errorCode, errorDetail, true, udsReader);
+        }
+
+        public List<string> ErrorCodeToString(uint errorCode, uint errorDetail, UdsReader udsReader = null)
+        {
+            return CommonErrorCodeToString(errorCode, errorDetail, false, udsReader);
+        }
+
+        public List<string> CommonErrorCodeToString(uint errorCode, uint errorDetail, bool saeMode, UdsReader udsReader = null)
+        {
             List<string> resultList = new List<string>();
             string errorText = string.Empty;
+            uint errorCodeMap = errorCode;
+            uint errorCodeKey = errorCode + 100000;
+            if (!saeMode)
+            {
+                if (errorCode < 0x4000 || errorCode > 0x7FFF)
+                {
+                    errorCodeKey = errorCode;
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(PcodeToString(errorCode, out uint convertedValue)))
+                    {
+                        return resultList;
+                    }
+                    errorCodeMap = convertedValue;
+                    errorCodeKey = convertedValue + 100000;
+                }
+            }
             bool useFullCode = errorCode >= 0x4000 && errorCode <= 0xBFFF;
             bool fullCodeFound = false;
             if (useFullCode)
@@ -236,15 +264,14 @@ namespace UdsFileReader
             bool splitErrorText = false;
             if (!fullCodeFound)
             {
-                uint textKey = errorCode + 100000;
-                if (CodeMap.TryGetValue(textKey, out string shortText))
+                if (CodeMap.TryGetValue(errorCodeKey, out string shortText))
                 {
                     errorText = shortText;
-                    if (errorCode <= 0x3FFF)
+                    if (errorCodeMap <= 0x3FFF)
                     {
                         splitErrorText = true;
                     }
-                    if (errorCode >= 0xC000 && errorCode <= 0xFFFF)
+                    if (errorCodeMap >= 0xC000 && errorCodeMap <= 0xFFFF)
                     {
                         splitErrorText = true;
                     }
@@ -300,7 +327,21 @@ namespace UdsFileReader
             }
             resultList.Add(sb.ToString());
 
-            resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", SaePcodeToString(errorCode), detailCode));
+            if (saeMode)
+            {
+                resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", SaePcodeToString(errorCode), detailCode));
+            }
+            else
+            {
+                if (errorCode > 0x3FFF && errorCode < 65000)
+                {
+                    resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", PcodeToString(errorCode), detailCode));
+                }
+                else
+                {
+                    resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0:000}", detailCode));
+                }
+            }
             if (!string.IsNullOrEmpty(errorDetailText1))
             {
                 resultList.Add(errorDetailText1);
