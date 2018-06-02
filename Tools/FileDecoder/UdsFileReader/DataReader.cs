@@ -233,8 +233,10 @@ namespace UdsFileReader
             string errorText = string.Empty;
             uint errorCodeMap = errorCode;
             uint errorCodeKey = errorCode + 100000;
+            bool useFullCode = errorCode >= 0x4000 && errorCode <= 0xBFFF;
             if (!saeMode)
             {
+                useFullCode = false;
                 if (errorCode < 0x4000 || errorCode > 0x7FFF)
                 {
                     errorCodeKey = errorCode;
@@ -249,7 +251,6 @@ namespace UdsFileReader
                     errorCodeKey = convertedValue + 100000;
                 }
             }
-            bool useFullCode = errorCode >= 0x4000 && errorCode <= 0xBFFF;
             bool fullCodeFound = false;
             if (useFullCode)
             {
@@ -293,6 +294,7 @@ namespace UdsFileReader
             }
 
             string errorDetailText3 = string.Empty;
+            string errorDetailText4 = string.Empty;
             uint detailCode = errorDetail;
             if (!useFullCode)
             {
@@ -302,7 +304,7 @@ namespace UdsFileReader
                 }
                 if ((errorDetail & 0x80) != 0x00)
                 {
-                    errorDetailText3 = (UdsReader.GetTextMapText(udsReader, 066900) ?? string.Empty)
+                    errorDetailText4 = (UdsReader.GetTextMapText(udsReader, 066900) ?? string.Empty)
                                        + " " + (UdsReader.GetTextMapText(udsReader, 000085) ?? string.Empty);
                 }
                 detailCode &= 0x0F;
@@ -353,6 +355,10 @@ namespace UdsFileReader
             if (!string.IsNullOrEmpty(errorDetailText3))
             {
                 resultList.Add(errorDetailText3);
+            }
+            if (!string.IsNullOrEmpty(errorDetailText4))
+            {
+                resultList.Add(errorDetailText4);
             }
 
             return resultList;
