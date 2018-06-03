@@ -301,16 +301,29 @@ namespace UdsFileReader
             uint detailCode = errorDetail;
             if (!useFullCode)
             {
-                if ((errorDetail & 0x60) == 0x20)
+                switch (errorType)
                 {
-                    errorDetailText2 = (UdsReader.GetTextMapText(udsReader, 002693) ?? string.Empty);   // Sporadisch
+                    case ErrorType.Iso9141:
+                        if ((errorDetail & 0x80) != 0x00)
+                        {
+                            errorDetailText2 = (UdsReader.GetTextMapText(udsReader, 002693) ?? string.Empty);   // Sporadisch
+                        }
+                        detailCode &= 0x7F;
+                        break;
+
+                    default:
+                        if ((errorDetail & 0x60) == 0x20)
+                        {
+                            errorDetailText2 = (UdsReader.GetTextMapText(udsReader, 002693) ?? string.Empty);   // Sporadisch
+                        }
+                        if ((errorDetail & 0x80) != 0x00)
+                        {
+                            errorDetailText3 = (UdsReader.GetTextMapText(udsReader, 066900) ?? string.Empty)
+                                               + " " + (UdsReader.GetTextMapText(udsReader, 000085) ?? string.Empty);   // Warnleuchte EIN
+                        }
+                        detailCode &= 0x0F;
+                        break;
                 }
-                if ((errorDetail & 0x80) != 0x00)
-                {
-                    errorDetailText3 = (UdsReader.GetTextMapText(udsReader, 066900) ?? string.Empty)
-                                       + " " + (UdsReader.GetTextMapText(udsReader, 000085) ?? string.Empty);   // Warnleuchte EIN
-                }
-                detailCode &= 0x0F;
             }
 
             if (!string.IsNullOrEmpty(errorText) && string.IsNullOrEmpty(errorDetailText1))
