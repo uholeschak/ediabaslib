@@ -232,23 +232,26 @@ namespace UdsFileReader
             List<string> resultList = new List<string>();
             string errorText = string.Empty;
             uint errorCodeMap = errorCode;
-            uint errorCodeKey = errorCode + 100000;
+            int errorCodeKey = (int) (errorCode + 100000);
             bool useFullCode = errorCode >= 0x4000 && errorCode <= 0xBFFF;
             if (!saeMode)
             {
                 useFullCode = false;
                 if (errorCode < 0x4000 || errorCode > 0x7FFF)
                 {
-                    errorCodeKey = errorCode;
+                    errorCodeKey = (int) errorCode;
                 }
                 else
                 {
                     if (string.IsNullOrEmpty(PcodeToString(errorCode, out uint convertedValue)))
                     {
-                        return resultList;
+                        errorCodeKey = -1;
                     }
-                    errorCodeMap = convertedValue;
-                    errorCodeKey = convertedValue + 100000;
+                    else
+                    {
+                        errorCodeMap = convertedValue;
+                        errorCodeKey = (int) (convertedValue + 100000);
+                    }
                 }
             }
             bool fullCodeFound = false;
@@ -265,16 +268,19 @@ namespace UdsFileReader
             bool splitErrorText = false;
             if (!fullCodeFound)
             {
-                if (CodeMap.TryGetValue(errorCodeKey, out string shortText))
+                if (errorCodeKey >= 0)
                 {
-                    errorText = shortText;
-                    if (errorCodeMap <= 0x3FFF)
+                    if (CodeMap.TryGetValue((uint)errorCodeKey, out string shortText))
                     {
-                        splitErrorText = true;
-                    }
-                    if (errorCodeMap >= 0xC000 && errorCodeMap <= 0xFFFF)
-                    {
-                        splitErrorText = true;
+                        errorText = shortText;
+                        if (errorCodeMap <= 0x3FFF)
+                        {
+                            splitErrorText = true;
+                        }
+                        if (errorCodeMap >= 0xC000 && errorCodeMap <= 0xFFFF)
+                        {
+                            splitErrorText = true;
+                        }
                     }
                 }
             }
@@ -291,6 +297,11 @@ namespace UdsFileReader
                         errorText = errorText.Substring(0, colonIndex);
                     }
                 }
+            }
+
+            if (string.IsNullOrEmpty(errorText))
+            {
+                errorText = (UdsReader.GetTextMapText(udsReader, 062047) ?? string.Empty); // Unbekannter Fehlercode
             }
 
             string errorDetailText2 = string.Empty;
@@ -315,7 +326,7 @@ namespace UdsFileReader
                 uint detailKey = (uint)(detailCode + (useFullCode ? 96000 : 98000));
                 if (CodeMap.TryGetValue(detailKey, out string detail))
                 {
-                    if (!string.IsNullOrEmpty(detail) && string.Compare(detail, "-", StringComparison.OrdinalIgnoreCase) != 0)
+                    if (!string.IsNullOrEmpty(detail))
                     {
                         errorDetailText1 = detail;
                     }
@@ -339,7 +350,12 @@ namespace UdsFileReader
             {
                 if (errorCode > 0x3FFF && errorCode < 65000)
                 {
-                    resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", PcodeToString(errorCode), detailCode));
+                    string pcodeText = PcodeToString(errorCode);
+                    if (string.IsNullOrEmpty(pcodeText))
+                    {
+                        pcodeText = (UdsReader.GetTextMapText(udsReader, 099014) ?? string.Empty);  // Unbekannt
+                    }
+                    resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", pcodeText, detailCode));
                 }
                 else
                 {
