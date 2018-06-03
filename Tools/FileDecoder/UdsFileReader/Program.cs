@@ -61,21 +61,24 @@ namespace UdsFileReader
                 PrintSaeErrorCode(udsReader, 0xD156, 0xF5);
                 PrintSaeErrorCode(udsReader, 0xD156, 0x25);
                 PrintSaeErrorCode(udsReader, 0x514E, 0xF0);
-                PrintErrorCode(udsReader, 0x036C, 0x6B);
-                PrintErrorCode(udsReader, 0x036D, 0x6B);
-                PrintErrorCode(udsReader, 0x05DF, 0x29);
-                PrintErrorCode(udsReader, 0x03A0, 0x28);
-                PrintErrorCode(udsReader, 0x045D, 0x68);
-                PrintErrorCode(udsReader, 0x038B, 0x60);
-                PrintErrorCode(udsReader, 0x0466, 0x28);
-                PrintErrorCode(udsReader, 0x4123, 0x28);
-                PrintErrorCode(udsReader, 0x4123, 0xA8);
-                PrintErrorCode(udsReader, 0x4523, 0x29);
-                PrintErrorCode(udsReader, 0x4923, 0x2A);
-                PrintErrorCode(udsReader, 0x4D23, 0x2B);
-                PrintErrorCode(udsReader, 0x7123, 0x2C);
-                PrintErrorCode(udsReader, 0x7523, 0x2D);
-                PrintErrorCode(udsReader, 0x6523, 0x2E);
+                PrintKwpErrorCode(udsReader, 0x036C, 0x6B);
+                PrintKwpErrorCode(udsReader, 0x036D, 0x6B);
+                PrintKwpErrorCode(udsReader, 0x05DF, 0x29);
+                PrintKwpErrorCode(udsReader, 0x03A0, 0x28);
+                PrintKwpErrorCode(udsReader, 0x045D, 0x68);
+                PrintKwpErrorCode(udsReader, 0x038B, 0x60);
+                PrintKwpErrorCode(udsReader, 0x0466, 0x28);
+                PrintKwpErrorCode(udsReader, 0x4123, 0x28);
+                PrintKwpErrorCode(udsReader, 0x4123, 0xA8);
+                PrintKwpErrorCode(udsReader, 0x4523, 0x29);
+                PrintKwpErrorCode(udsReader, 0x4923, 0x2A);
+                PrintKwpErrorCode(udsReader, 0x4D23, 0x2B);
+                PrintKwpErrorCode(udsReader, 0x7123, 0x2C);
+                PrintKwpErrorCode(udsReader, 0x7523, 0x2D);
+                PrintKwpErrorCode(udsReader, 0x6523, 0x2E);
+
+                PrintIsoErrorCode(udsReader, 0x455B, 0x23);
+                PrintIsoErrorCode(udsReader, 0x4474, 0x23);
                 PrintSaeErrorDetail(udsReader, new byte[] { 0x6C, 0x01, 0x71, 0x11, 0x12, 0x13, 0x02, 0xFB, 0xC4, 0x00, 0x00, 0x49, 0x04, 0x51, 0x03 });
                 PrintSaeErrorDetail(udsReader, new byte[] { 0x6C, 0x01, 0x71, 0x11, 0x12, 0x13, 0x02, 0xFB, 0xC4, 0x01, 0x00, 0x00, 0x00, 0x01, 0x02 });
 #endif
@@ -554,26 +557,24 @@ namespace UdsFileReader
             return true;
         }
 
-        static bool PrintErrorCode(UdsReader udsReader, uint errorCode, uint errorDetail)
+        static bool PrintIsoErrorCode(UdsReader udsReader, uint errorCode, uint errorDetail)
         {
-            List<string> resultList = udsReader.DataReader.ErrorCodeToString(errorCode, errorDetail, udsReader);
-            if (resultList == null || resultList.Count == 0)
-            {
-                Console.WriteLine("Error code {0} invalid", errorCode);
-                return false;
-            }
-            foreach (string line in resultList)
-            {
-                Console.WriteLine(line);
-            }
-            Console.WriteLine();
+            return PrintErrorCode(udsReader, errorCode, errorDetail, DataReader.ErrorType.Iso9141);
+        }
 
-            return true;
+        static bool PrintKwpErrorCode(UdsReader udsReader, uint errorCode, uint errorDetail)
+        {
+            return PrintErrorCode(udsReader, errorCode, errorDetail, DataReader.ErrorType.Kwp2000);
         }
 
         static bool PrintSaeErrorCode(UdsReader udsReader, uint errorCode, uint errorDetail)
         {
-            List<string> resultList = udsReader.DataReader.SaeErrorCodeToString(errorCode, errorDetail, udsReader);
+            return PrintErrorCode(udsReader, errorCode, errorDetail, DataReader.ErrorType.Sae);
+        }
+
+        static bool PrintErrorCode(UdsReader udsReader, uint errorCode, uint errorDetail, DataReader.ErrorType errorType)
+        {
+            List<string> resultList = udsReader.DataReader.ErrorCodeToString(errorCode, errorDetail, errorType, udsReader);
             if (resultList == null || resultList.Count == 0)
             {
                 Console.WriteLine("Error code {0} invalid", errorCode);

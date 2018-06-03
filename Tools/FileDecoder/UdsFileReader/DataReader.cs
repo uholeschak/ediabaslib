@@ -17,6 +17,13 @@ namespace UdsFileReader
         public const string CodeFileExtension = ".cdat";
         public const string DataDir = "Labels";
 
+        public enum ErrorType
+        {
+            Iso9141,
+            Kwp2000,
+            Sae,
+        }
+
         public Dictionary<UInt32, string> CodeMap { get; private set; }
 
         public enum DataType
@@ -217,24 +224,14 @@ namespace UdsFileReader
             private readonly string _baseName;
         }
 
-        public List<string> SaeErrorCodeToString(uint errorCode, uint errorDetail, UdsReader udsReader = null)
-        {
-            return CommonErrorCodeToString(errorCode, errorDetail, true, udsReader);
-        }
-
-        public List<string> ErrorCodeToString(uint errorCode, uint errorDetail, UdsReader udsReader = null)
-        {
-            return CommonErrorCodeToString(errorCode, errorDetail, false, udsReader);
-        }
-
-        public List<string> CommonErrorCodeToString(uint errorCode, uint errorDetail, bool saeMode, UdsReader udsReader = null)
+        public List<string> ErrorCodeToString(uint errorCode, uint errorDetail, ErrorType errorType, UdsReader udsReader = null)
         {
             List<string> resultList = new List<string>();
             string errorText = string.Empty;
             uint errorCodeMap = errorCode;
             int errorCodeKey = (int) (errorCode + 100000);
             bool useFullCode = errorCode >= 0x4000 && errorCode <= 0xBFFF;
-            if (!saeMode)
+            if (errorType != ErrorType.Sae)
             {
                 useFullCode = false;
                 if (errorCode < 0x4000 || errorCode > 0x7FFF)
@@ -306,12 +303,12 @@ namespace UdsFileReader
             {
                 if ((errorDetail & 0x60) == 0x20)
                 {
-                    errorDetailText2 = (UdsReader.GetTextMapText(udsReader, 002693) ?? string.Empty);
+                    errorDetailText2 = (UdsReader.GetTextMapText(udsReader, 002693) ?? string.Empty);   // Sporadisch
                 }
                 if ((errorDetail & 0x80) != 0x00)
                 {
                     errorDetailText3 = (UdsReader.GetTextMapText(udsReader, 066900) ?? string.Empty)
-                                       + " " + (UdsReader.GetTextMapText(udsReader, 000085) ?? string.Empty);
+                                       + " " + (UdsReader.GetTextMapText(udsReader, 000085) ?? string.Empty);   // Warnleuchte EIN
                 }
                 detailCode &= 0x0F;
             }
@@ -342,7 +339,7 @@ namespace UdsFileReader
             }
             resultList.Add(sb.ToString());
 
-            if (saeMode)
+            if (errorType == ErrorType.Sae)
             {
                 resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", SaePcodeToString(errorCode), detailCode));
             }
