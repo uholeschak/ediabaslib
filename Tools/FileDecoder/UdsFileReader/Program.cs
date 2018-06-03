@@ -70,6 +70,12 @@ namespace UdsFileReader
                 PrintErrorCode(udsReader, 0x0466, 0x28);
                 PrintErrorCode(udsReader, 0x4123, 0x28);
                 PrintErrorCode(udsReader, 0x4123, 0xA8);
+                PrintErrorCode(udsReader, 0x4523, 0x29);
+                PrintErrorCode(udsReader, 0x4923, 0x2A);
+                PrintErrorCode(udsReader, 0x4D23, 0x2B);
+                PrintErrorCode(udsReader, 0x7123, 0x2C);
+                PrintErrorCode(udsReader, 0x7523, 0x2D);
+                PrintErrorCode(udsReader, 0x6523, 0x2E);
                 PrintSaeErrorDetail(udsReader, new byte[] { 0x6C, 0x01, 0x71, 0x11, 0x12, 0x13, 0x02, 0xFB, 0xC4, 0x00, 0x00, 0x49, 0x04, 0x51, 0x03 });
                 PrintSaeErrorDetail(udsReader, new byte[] { 0x6C, 0x01, 0x71, 0x11, 0x12, 0x13, 0x02, 0xFB, 0xC4, 0x01, 0x00, 0x00, 0x00, 0x01, 0x02 });
 #endif
@@ -551,8 +557,9 @@ namespace UdsFileReader
         static bool PrintErrorCode(UdsReader udsReader, uint errorCode, uint errorDetail)
         {
             List<string> resultList = udsReader.DataReader.ErrorCodeToString(errorCode, errorDetail, udsReader);
-            if (resultList == null)
+            if (resultList == null || resultList.Count == 0)
             {
+                Console.WriteLine("Error code {0} invalid", errorCode);
                 return false;
             }
             foreach (string line in resultList)
@@ -567,8 +574,9 @@ namespace UdsFileReader
         static bool PrintSaeErrorCode(UdsReader udsReader, uint errorCode, uint errorDetail)
         {
             List<string> resultList = udsReader.DataReader.SaeErrorCodeToString(errorCode, errorDetail, udsReader);
-            if (resultList == null)
+            if (resultList == null || resultList.Count == 0)
             {
+                Console.WriteLine("Error code {0} invalid", errorCode);
                 return false;
             }
             foreach (string line in resultList)

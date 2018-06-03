@@ -555,6 +555,10 @@ namespace UdsFileReader
                 return "P" + codeString;
             }
 
+            if (codeValue < 0x7000)
+            {
+                return string.Empty;
+            }
             if (codeValue > 0x3E7 + 0x7000)
             {
                 if (codeValue > 0x3E7 + 0x7400)
