@@ -293,30 +293,32 @@ namespace UdsFileReader
                 }
             }
 
+            string errorDetailText2 = string.Empty;
             string errorDetailText3 = string.Empty;
-            string errorDetailText4 = string.Empty;
             uint detailCode = errorDetail;
             if (!useFullCode)
             {
                 if ((errorDetail & 0x60) == 0x20)
                 {
-                    errorDetailText3 = (UdsReader.GetTextMapText(udsReader, 002693) ?? string.Empty);
+                    errorDetailText2 = (UdsReader.GetTextMapText(udsReader, 002693) ?? string.Empty);
                 }
                 if ((errorDetail & 0x80) != 0x00)
                 {
-                    errorDetailText4 = (UdsReader.GetTextMapText(udsReader, 066900) ?? string.Empty)
+                    errorDetailText3 = (UdsReader.GetTextMapText(udsReader, 066900) ?? string.Empty)
                                        + " " + (UdsReader.GetTextMapText(udsReader, 000085) ?? string.Empty);
                 }
                 detailCode &= 0x0F;
             }
 
-            string errorDetailText2 = string.Empty;
-            uint detailKey = (uint)(detailCode + (useFullCode ? 96000 : 98000));
-            if (CodeMap.TryGetValue(detailKey, out string detail))
+            if (string.IsNullOrEmpty(errorDetailText1))
             {
-                if (!string.IsNullOrEmpty(detail) && string.Compare(detail, "-", StringComparison.OrdinalIgnoreCase) != 0)
+                uint detailKey = (uint)(detailCode + (useFullCode ? 96000 : 98000));
+                if (CodeMap.TryGetValue(detailKey, out string detail))
                 {
-                    errorDetailText2 = detail;
+                    if (!string.IsNullOrEmpty(detail) && string.Compare(detail, "-", StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        errorDetailText1 = detail;
+                    }
                 }
             }
 
@@ -355,10 +357,6 @@ namespace UdsFileReader
             if (!string.IsNullOrEmpty(errorDetailText3))
             {
                 resultList.Add(errorDetailText3);
-            }
-            if (!string.IsNullOrEmpty(errorDetailText4))
-            {
-                resultList.Add(errorDetailText4);
             }
 
             return resultList;
