@@ -352,26 +352,48 @@ namespace UdsFileReader
             }
             resultList.Add(sb.ToString());
 
-            if (errorType == ErrorType.Sae)
+            switch (errorType)
             {
-                resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", SaePcodeToString(errorCode), detailCode));
-            }
-            else
-            {
-                if (errorCode > 0x3FFF && errorCode < 65000)
+                case ErrorType.Iso9141:
                 {
-                    string pcodeText = PcodeToString(errorCode);
-                    if (string.IsNullOrEmpty(pcodeText))
+                    string detailCodeText = string.Format(CultureInfo.InvariantCulture, "{0:00}-{1}0", detailCode, (errorDetail & 0x80) != 0 ? 1 : 0);
+                    if (errorCode > 0x3FFF && errorCode < 65000)
                     {
-                        pcodeText = (UdsReader.GetTextMapText(udsReader, 099014) ?? string.Empty);  // Unbekannt
+                        string pcodeText = PcodeToString(errorCode);
+                        if (string.IsNullOrEmpty(pcodeText))
+                        {
+                            pcodeText = (UdsReader.GetTextMapText(udsReader, 099014) ?? string.Empty);  // Unbekannt
+                        }
+                        resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0} - {1}", pcodeText, detailCodeText));
                     }
-                    resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", pcodeText, detailCode));
+                    else
+                    {
+                        resultList.Add(detailCodeText);
+                    }
+                    break;
                 }
-                else
-                {
-                    resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0:000}", detailCode));
-                }
+
+                case ErrorType.Kwp2000:
+                    if (errorCode > 0x3FFF && errorCode < 65000)
+                    {
+                        string pcodeText = PcodeToString(errorCode);
+                        if (string.IsNullOrEmpty(pcodeText))
+                        {
+                            pcodeText = (UdsReader.GetTextMapText(udsReader, 099014) ?? string.Empty);  // Unbekannt
+                        }
+                        resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", pcodeText, detailCode));
+                    }
+                    else
+                    {
+                        resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0:000}", detailCode));
+                    }
+                    break;
+
+                default:
+                    resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", SaePcodeToString(errorCode), detailCode));
+                    break;
             }
+
             if (!string.IsNullOrEmpty(errorDetailText1))
             {
                 resultList.Add(errorDetailText1);
