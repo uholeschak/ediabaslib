@@ -299,11 +299,6 @@ namespace UdsFileReader
                 }
             }
 
-            if (string.IsNullOrEmpty(errorText))
-            {
-                errorText = (UdsReader.GetTextMapText(udsReader, 062047) ?? string.Empty); // Unbekannter Fehlercode
-            }
-
             string errorDetailText2 = string.Empty;
             string errorDetailText3 = string.Empty;
             uint detailCode = errorDetail;
@@ -321,7 +316,7 @@ namespace UdsFileReader
                 detailCode &= 0x0F;
             }
 
-            if (string.IsNullOrEmpty(errorDetailText1))
+            if (!string.IsNullOrEmpty(errorText) && string.IsNullOrEmpty(errorDetailText1))
             {
                 uint detailKey = (uint)(detailCode + (useFullCode ? 96000 : 98000));
                 if (CodeMap.TryGetValue(detailKey, out string detail))
@@ -331,6 +326,11 @@ namespace UdsFileReader
                         errorDetailText1 = detail;
                     }
                 }
+            }
+
+            if (string.IsNullOrEmpty(errorText))
+            {
+                errorText = (UdsReader.GetTextMapText(udsReader, 062047) ?? string.Empty); // Unbekannter Fehlercode
             }
 
             StringBuilder sb = new StringBuilder();
