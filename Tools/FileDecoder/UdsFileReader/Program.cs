@@ -42,7 +42,9 @@ namespace UdsFileReader
             try
             {
                 UdsReader udsReader = new UdsReader();
-                if (!udsReader.Init(rootDir))
+                if (!udsReader.Init(rootDir
+                    //, new HashSet<UdsReader.SegmentType>{ UdsReader.SegmentType.Mwb, UdsReader.SegmentType.Dtc }
+                    ))
                 {
                     Console.WriteLine("Init failed");
                     return 1;
@@ -198,6 +200,13 @@ namespace UdsFileReader
 
                 foreach (UdsReader.SegmentType segmentType in Enum.GetValues(typeof(UdsReader.SegmentType)))
                 {
+                    UdsReader.SegmentInfo segmentInfo = udsReader.GetSegmentInfo(segmentType);
+                    if (segmentInfo?.LineList == null)
+                    {
+                        outStream.WriteLine();
+                        outStream.WriteLine("*** Ignoring segment: {0}", segmentType.ToString());
+                        continue;
+                    }
                     List<UdsReader.ParseInfoBase> resultList = udsReader.ExtractFileSegment(includeFiles, segmentType);
                     if (resultList == null)
                     {

@@ -893,7 +893,7 @@ namespace UdsFileReader
             public string ErrorDetail { get; }
         }
 
-        private class SegmentInfo
+        public class SegmentInfo
         {
             public SegmentInfo(SegmentType segmentType, string segmentName, string fileName)
             {
@@ -2976,18 +2976,22 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        public List<ParseInfoBase> ExtractFileSegment(List<string> fileList, SegmentType segmentType)
+        public SegmentInfo GetSegmentInfo(SegmentType segmentType)
         {
-            SegmentInfo segmentInfoSel = null;
             foreach (SegmentInfo segmentInfo in SegmentInfos)
             {
                 if (segmentInfo.SegmentType == segmentType)
                 {
-                    segmentInfoSel = segmentInfo;
-                    break;
+                    return segmentInfo;
                 }
             }
 
+            return null;
+        }
+
+        public List<ParseInfoBase> ExtractFileSegment(List<string> fileList, SegmentType segmentType)
+        {
+            SegmentInfo segmentInfoSel = GetSegmentInfo(segmentType);
             if (segmentInfoSel?.LineList == null)
             {
                 return null;
