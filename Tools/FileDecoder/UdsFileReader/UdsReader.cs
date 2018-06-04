@@ -2846,7 +2846,7 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{135}, Type135Convert),
         };
 
-        public bool Init(string rootDir)
+        public bool Init(string rootDir, HashSet<SegmentType> requiredSegments = null)
         {
             try
             {
@@ -2916,6 +2916,13 @@ namespace UdsFileReader
 
                 foreach (SegmentInfo segmentInfo in SegmentInfos)
                 {
+                    if (requiredSegments != null)
+                    {
+                        if (!requiredSegments.Contains(segmentInfo.SegmentType))
+                        {
+                            continue;
+                        }
+                    }
                     string fileName = Path.Combine(udsDir, Path.ChangeExtension(segmentInfo.FileName, FileExtension));
                     List<string[]> lineList = ExtractFileSegment(new List<string> {fileName}, segmentInfo.SegmentName);
                     if (lineList == null)
