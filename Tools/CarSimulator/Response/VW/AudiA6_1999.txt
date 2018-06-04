@@ -6,6 +6,8 @@ CFG: 01 01 8A
 
 ; Fehlerspeicher_abfragen
 03 00 07 : 09 0F FC 45 5B 23 44 74 23
+;03 00 07 : 09 0F FC 45 5B 23 44 74 A3
+;03 00 07 : 09 0F FC 45 5B 23 00 74 A3
 ;03 00 07 : 06 0F FC FF FF 88
 ; Fehlerspeicher_loeschen
 03 00 05 : 06 13 FC FF FF 88
