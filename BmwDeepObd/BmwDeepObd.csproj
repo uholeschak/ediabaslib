@@ -77,9 +77,8 @@
     <Reference Include="Google.Android.Vending.Licensing, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Xamarin.Google.Android.Vending.Licensing.2.0.0\lib\MonoAndroid\Google.Android.Vending.Licensing.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib.Portable, Version=0.86.0.51803, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\SharpZipLib.Portable.0.86.0.0003\lib\portable-net45+netcore45+wp8+win8+wpa81+MonoTouch+MonoAndroid+Xamarin.iOS10\ICSharpCode.SharpZipLib.Portable.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
+      <HintPath>packages\SharpZipLib.0.86.0\lib\11\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Java.Interop" />
     <Reference Include="Microsoft.CSharp" />
@@ -141,6 +140,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\EdiabasLib\UdsFileReader\DataReader.cs">
+      <Link>DataReader.cs</Link>
+    </Compile>
+    <Compile Include="..\EdiabasLib\UdsFileReader\UdsReader.cs">
+      <Link>UdsReader.cs</Link>
+    </Compile>
     <Compile Include="ActivityCommon.cs" />
     <Compile Include="CanAdapterActivity.cs" />
     <Compile Include="CustomProgressDialog.cs" />
