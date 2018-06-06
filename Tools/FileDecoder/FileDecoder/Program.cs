@@ -113,10 +113,18 @@ namespace FileDecoder
                 return 1;
             }
 
+            string zipDir = dir;
             string typeCodeString = "USA";
             if (args.Length >= 2)
             {
-                typeCodeString = args[1];
+                if (args[1].Length == 3)
+                {
+                    typeCodeString = args[1];
+                }
+                else
+                {
+                    zipDir = args[1];
+                }
             }
 
             if (typeCodeString.Length != 3)
@@ -140,6 +148,14 @@ namespace FileDecoder
                 string[] files = Directory.GetFiles(dir, searchPattern, SearchOption.AllDirectories);
                 foreach (string file in files)
                 {
+                    string relPath = MakeRelativePath(dir, Path.GetDirectoryName(file));
+                    if (relPath == null)
+                    {
+                        Console.WriteLine("*** No relative path for: {0}", file);
+                        continue;
+                    }
+                    string zipOutDir = Path.Combine(zipDir, relPath);
+                    string baseFileName = Path.GetFileName(file);
                     string ext = Path.GetExtension(file);
                     if (string.Compare(ext, @".rod", StringComparison.OrdinalIgnoreCase) == 0)
                     {
@@ -151,7 +167,8 @@ namespace FileDecoder
                         }
                         else
                         {
-                            if (!CreateZip(new List<string>() {outFile}, "uds", Path.ChangeExtension(outFile, "uds")))
+                            string zipFileName = Path.Combine(zipOutDir, Path.ChangeExtension(baseFileName, "uds") ?? string.Empty);
+                            if (!CreateZip(new List<string>() {outFile}, "uds", zipFileName))
                             {
                                 Console.WriteLine("*** Compression failed: {0}", file);
                             }
@@ -167,7 +184,8 @@ namespace FileDecoder
                         }
                         else
                         {
-                            if (!CreateZip(new List<string>() { outFile }, "ldat", Path.ChangeExtension(outFile, "ldat")))
+                            string zipFileName = Path.Combine(zipOutDir, Path.ChangeExtension(baseFileName, "ldat") ?? string.Empty);
+                            if (!CreateZip(new List<string>() { outFile }, "ldat", zipFileName))
                             {
                                 Console.WriteLine("*** Compression failed: {0}", file);
                             }
@@ -183,7 +201,8 @@ namespace FileDecoder
                         }
                         else
                         {
-                            if (!CreateZip(new List<string>() { outFile }, "cdat", Path.ChangeExtension(outFile, "cdat")))
+                            string zipFileName = Path.Combine(zipOutDir, Path.ChangeExtension(baseFileName, "cdat") ?? string.Empty);
+                            if (!CreateZip(new List<string>() { outFile }, "cdat", zipFileName))
                             {
                                 Console.WriteLine("*** Compression failed: {0}", file);
                             }
@@ -193,7 +212,8 @@ namespace FileDecoder
                     {
                         Console.WriteLine("Compressing: {0}", file);
                         string inFile = Path.ChangeExtension(file, @".lbl");
-                        if (!CreateZip(new List<string>() { inFile }, "ldat", Path.ChangeExtension(inFile, "ldat")))
+                        string zipFileName = Path.Combine(zipOutDir, Path.ChangeExtension(baseFileName, "ldat") ?? string.Empty);
+                        if (!CreateZip(new List<string>() { inFile }, "ldat", zipFileName))
                         {
                             Console.WriteLine("*** Compression failed: {0}", file);
                         }
@@ -209,6 +229,47 @@ namespace FileDecoder
             return 0;
         }
 
+        public static string MakeRelativePath(string fromPath, string toPath)
+        {
+            if (string.IsNullOrEmpty(fromPath))
+            {
+                return string.Empty;
+            }
+            if (string.IsNullOrEmpty(toPath))
+            {
+                return fromPath;
+            }
+            Uri fromUri = new Uri(AppendDirectorySeparatorChar(fromPath));
+            Uri toUri = new Uri(AppendDirectorySeparatorChar(toPath));
+
+            if (fromUri.Scheme != toUri.Scheme)
+            {   // path can't be made relative.
+                return toPath;
+            }
+
+            Uri relativeUri = fromUri.MakeRelativeUri(toUri);
+            String relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+
+            if (string.Equals(toUri.Scheme, Uri.UriSchemeFile, StringComparison.OrdinalIgnoreCase))
+            {
+                relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            }
+
+            return relativePath;
+        }
+
+        public static string AppendDirectorySeparatorChar(string path)
+        {
+            // Append a slash only if the path is a directory and does not have a slash.
+            if (!Path.HasExtension(path) &&
+                !path.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                return path + Path.DirectorySeparatorChar;
+            }
+
+            return path;
+        }
+
         private static bool CreateZip(List<string> inputFiles, string inputExt, string archiveFilenameOut)
         {
             try
@@ -217,6 +278,14 @@ namespace FileDecoder
                 {
                     return false;
                 }
+
+                string dirName = Path.GetDirectoryName(archiveFilenameOut);
+                if (string.IsNullOrEmpty(dirName))
+                {
+                    return false;
+                }
+                Directory.CreateDirectory(dirName);
+
                 if (File.Exists(archiveFilenameOut))
                 {
                     File.Delete(archiveFilenameOut);
