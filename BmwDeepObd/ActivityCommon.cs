@@ -29,6 +29,7 @@ using Android.Support.V4.Content;
 using Android.Text.Method;
 using Android.Views;
 using System.Xml.Serialization;
+using UdsFileReader;
 
 // ReSharper disable InlineOutVariableDeclaration
 
@@ -209,6 +210,7 @@ namespace BmwDeepObd
         public const string AdapterSsid = "Deep OBD BMW";
         public const string DownloadDir = "Download";
         public const string EcuBaseDir = "Ecu";
+        public const string VagBaseDir = "Vag";
         public const string AppNameSpace = "de.holeschak.bmw_deep_obd";
         public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
         public const string SettingBluetoothHciLog = "bluetooth_hci_log";
@@ -598,6 +600,12 @@ namespace BmwDeepObd
 
         public static JobReader JobReader { get; }
 
+        public static UdsReader UdsReader { get; }
+
+        public static bool VagUdsChecked { get; private set; }
+
+        public static bool VagUdsActive { get; private set; }
+
         public InterfaceType SelectedInterface
         {
             get => _selectedInterface;
@@ -646,6 +654,7 @@ namespace BmwDeepObd
         static ActivityCommon()
         {
             JobReader = new JobReader();
+            UdsReader = new UdsReader();
         }
 
         public ActivityCommon(Context context, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null,
@@ -5027,6 +5036,35 @@ namespace BmwDeepObd
             char[] invalid = Path.GetInvalidFileNameChars();
             if (includeChars != null) invalid = invalid.Union(includeChars).ToArray();
             return string.Join(string.Empty, s.ToCharArray().Select(o => invalid.Contains(o) ? replaceChar : o));
+        }
+
+        public static bool InitUdsReader(string vagDir)
+        {
+            try
+            {
+                VagUdsActive = false;
+                if (!Directory.Exists(vagDir))
+                {
+                    return false;
+                }
+
+                if (!UdsReader.Init(vagDir,
+                    new HashSet<UdsReader.SegmentType> {UdsReader.SegmentType.Mwb, UdsReader.SegmentType.Dtc}))
+                {
+                    return false;
+                }
+
+                VagUdsActive = true;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally
+            {
+                VagUdsChecked = true;
+            }
         }
 
         private static bool IsEmulator()
