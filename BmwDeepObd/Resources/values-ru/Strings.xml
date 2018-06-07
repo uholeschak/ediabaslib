@@ -102,6 +102,8 @@
   <string name="compile_cpu_usage">Проверка загрузки процессора</string>
   <string name="compile_cpu_usage_value">Загрузка процессора: {0}%</string>
   <string name="compile_cpu_usage_high">Загрузка процессора на холостом ходу очень высокая ({0}%), это может привести к проблемам в соединении.\nПожалуйста, закройте фоновые приложения, которые слишком загружают процессор.</string>
+  <!--Translate-->
+  <string name="compile_vag_init">Reading VAG files</string>
   <string name="compile_start">Компилировать код пользователя</string>
   <string name="compile_crash">Сбой приложения при компиляции кода пользователя.\nСуществует известная ошибка компилятора:\nне используйте сложно инициализированные структуры или массивы в коде,\nинициализируйте их в конструкторе.</string>
 

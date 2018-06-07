@@ -129,6 +129,7 @@ namespace BmwDeepObd
                 LastAppState = LastAppState.Init;
                 AppDataPath = string.Empty;
                 EcuPath = string.Empty;
+                VagPath = string.Empty;
                 TraceActive = true;
                 DeviceName = string.Empty;
                 DeviceAddress = string.Empty;
@@ -140,6 +141,7 @@ namespace BmwDeepObd
             public LastAppState LastAppState { get; set; }
             public string AppDataPath { get; set; }
             public string EcuPath { get; set; }
+            public string VagPath { get; set; }
             public bool UserEcuFiles { get; set; }
             public bool TraceActive { get; set; }
             public bool TraceAppend { get; set; }
@@ -1450,6 +1452,7 @@ namespace BmwDeepObd
         {
             _instanceData.AppDataPath = string.Empty;
             _instanceData.EcuPath = string.Empty;
+            _instanceData.VagPath = string.Empty;
             _instanceData.UserEcuFiles = false;
             if (string.IsNullOrEmpty(_activityCommon.CustomStorageMedia))
             {
@@ -1463,13 +1466,11 @@ namespace BmwDeepObd
                     else
                     {
                         _instanceData.AppDataPath = Path.Combine(ActivityCommon.ExternalPath, AppFolderName);
-                        _instanceData.EcuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
                     }
                 }
                 else
                 {
                     _instanceData.AppDataPath = ActivityCommon.ExternalWritePath;
-                    _instanceData.EcuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
 #if !OBB_MODE
                     if (!ValidEcuFiles(_instanceData.EcuPath))
                     {
@@ -1486,7 +1487,15 @@ namespace BmwDeepObd
             else
             {
                 _instanceData.AppDataPath = Path.Combine(_activityCommon.CustomStorageMedia, AppFolderName);
+            }
+
+            if (string.IsNullOrEmpty(_instanceData.EcuPath))
+            {
                 _instanceData.EcuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
+            }
+            if (string.IsNullOrEmpty(_instanceData.VagPath))
+            {
+                _instanceData.VagPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.VagBaseDir);
             }
 
             string backgroundImageFile = Path.Combine(_instanceData.AppDataPath, "Images", "Background.jpg");
@@ -2581,6 +2590,7 @@ namespace BmwDeepObd
                                 if (_compileProgress != null)
                                 {
                                     _compileProgress.SetMessage(GetString(Resource.String.verify_files));
+                                    _compileProgress.Indeterminate = false;
                                     _compileProgress.Progress = percent;
                                 }
                             });
@@ -2599,6 +2609,26 @@ namespace BmwDeepObd
                     }
                 }
 #endif
+                if (!ActivityCommon.VagUdsChecked &&
+                    ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw &&
+                    Directory.Exists(_instanceData.VagPath))
+                {
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        if (_compileProgress != null)
+                        {
+                            _compileProgress.SetMessage(GetString(Resource.String.compile_vag_init));
+                            _compileProgress.Indeterminate = true;
+                        }
+                    });
+
+                    ActivityCommon.InitUdsReader(_instanceData.VagPath);
+                }
+
                 RunOnUiThread(() =>
                 {
                     if (_activityCommon == null)
@@ -2608,6 +2638,7 @@ namespace BmwDeepObd
                     if (_compileProgress != null)
                     {
                         _compileProgress.SetMessage(GetString(Resource.String.compile_start));
+                        _compileProgress.Indeterminate = false;
                         _compileProgress.Progress = 0;
                     }
                 });

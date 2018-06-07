@@ -78,6 +78,7 @@
   <string name="compile_cpu_usage">Checking CPU usage</string>
   <string name="compile_cpu_usage_value">CPU usage: {0}%</string>
   <string name="compile_cpu_usage_high">The CPU idle usage is very high ({0}%), this could cause communication problems.\nPlease terminate background Apps that consume too much CPU power.</string>
+  <string name="compile_vag_init">Reading VAG files</string>
   <string name="compile_start">Compiling user code</string>
   <string name="compile_crash">The app crashed during compilation of the user code.\nThere is a known compiler bug:\nDon\'t use complex initialized structures or arrays in the code,\ninitialize them in the constructor.</string>
 
