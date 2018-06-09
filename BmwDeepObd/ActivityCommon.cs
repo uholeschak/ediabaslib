@@ -3336,40 +3336,34 @@ namespace BmwDeepObd
                     return null;
                 }
 
-                int requiredLen = 4;
+                int pos = 1;
                 if (offset == 0)
                 {
                     if (dataLength < 2)
                     {
                         return null;
                     }
-                    int pos = offset + dataOffset + 1;
-                    dtcCount = dataBuffer[pos];
-                    requiredLen++;
+                    dtcCount = dataBuffer[offset + dataOffset + pos++];
                     if (dtcCount == 0)
                     {
                         return dtcList;
                     }
                 }
-                if (dataLength >= requiredLen)
+
+                while (pos + 2 < dataLength)
                 {
-                    byte[] errorData = new byte[3];
-                    int pos = offset + dataOffset + 1;
-                    if (offset == 0)
-                    {
-                        pos++;  // for error count
-                    }
+                    byte[] dtcData = new byte[3];
                     for (int i = 0; i < 3; i++)
                     {
-                        errorData[i] = dataBuffer[pos++];
+                        dtcData[i] = dataBuffer[offset + dataOffset + pos++];
                     }
-                    dtcList.Add(errorData);
+                    dtcList.Add(dtcData);
+                    if (dtcList.Count >= dtcCount)
+                    {
+                        break;
+                    }
                 }
                 offset += telLength;
-                if (dtcList.Count >= dtcCount)
-                {
-                    break;
-                }
                 if (offset == dataBuffer.Length)
                 {
                     break;

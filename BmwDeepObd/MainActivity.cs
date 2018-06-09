@@ -1919,13 +1919,21 @@ namespace BmwDeepObd
                                             }
                                         }
 
-                                        List<byte[]> errorList = null;
+                                        List<byte[]> dtcList = null;
                                         if (!kwp1281)
                                         {
-                                            errorList = ActivityCommon.ParseEcuDtcResponse(ecuResponse);
+                                            dtcList = ActivityCommon.ParseEcuDtcResponse(ecuResponse);
                                         }
                                         List<string> textList = _activityCommon.ConvertVagDtcCode(_instanceData.EcuPath, errorCode, errorTypeList, kwp1281, saeMode);
 
+                                        if (dtcList != null)
+                                        {
+                                            foreach (byte[] dtcData in dtcList)
+                                            {
+                                                srMessage.Append("\r\n");
+                                                srMessage.Append(string.Format("DTC: 0x{0:X04} 0x{1:X02}", (dtcData[0] << 8) | dtcData[1], dtcData[2]));
+                                            }
+                                        }
                                         srMessage.Append("\r\n");
                                         srMessage.Append(GetString(Resource.String.error_code));
                                         srMessage.Append(": ");
@@ -1934,6 +1942,7 @@ namespace BmwDeepObd
                                         {
                                             srMessage.Append(string.Format(";{0}", errorType));
                                         }
+
                                         if (saeMode)
                                         {
                                             srMessage.Append("\r\n");
