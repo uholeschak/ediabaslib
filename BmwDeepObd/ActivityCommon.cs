@@ -3326,7 +3326,7 @@ namespace BmwDeepObd
                 return null;
             }
             List<byte[]> dtcList = new List<byte[]>();
-            int dtcCount = 0;
+            int dtcCount = -1;
             int offset = 0;
             for (;;)
             {
@@ -3335,33 +3335,45 @@ namespace BmwDeepObd
                 {
                     return null;
                 }
-
-                int pos = 1;
-                if (offset == 0)
+                if (dataLength < 1)
                 {
-                    if (dataLength < 2)
-                    {
-                        return null;
-                    }
-                    dtcCount = dataBuffer[offset + dataOffset + pos++];
-                    if (dtcCount == 0)
-                    {
-                        return dtcList;
-                    }
+                    return null;
                 }
 
-                while (pos + 2 < dataLength)
+                int pos = 0;
+                int responseCode = dataBuffer[offset + dataOffset + pos++];
+                if (responseCode != 0x7F)
                 {
-                    byte[] dtcData = new byte[3];
-                    for (int i = 0; i < 3; i++)
+                    if (dtcCount < 0)
                     {
-                        dtcData[i] = dataBuffer[offset + dataOffset + pos++];
+                        if (dataLength < 2)
+                        {
+                            return null;
+                        }
+                        dtcCount = dataBuffer[offset + dataOffset + pos++];
+                        if (dtcCount == 0)
+                        {
+                            return dtcList;
+                        }
                     }
-                    dtcList.Add(dtcData);
-                    if (dtcList.Count >= dtcCount)
+
+                    while (pos + 2 < dataLength)
                     {
-                        break;
+                        byte[] dtcData = new byte[3];
+                        for (int i = 0; i < 3; i++)
+                        {
+                            dtcData[i] = dataBuffer[offset + dataOffset + pos++];
+                        }
+                        dtcList.Add(dtcData);
+                        if (dtcList.Count >= dtcCount)
+                        {
+                            break;
+                        }
                     }
+                }
+                if (dtcList.Count >= dtcCount)
+                {
+                    break;
                 }
                 offset += telLength;
                 if (offset == dataBuffer.Length)
