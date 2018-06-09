@@ -3290,6 +3290,99 @@ namespace BmwDeepObd
             return Java.Util.Locale.Default.Language ?? "en";
         }
 
+        public static int TelLengthKwp2000(byte[] dataBuffer, int offset, out int dataLength, out int dataOffset)
+        {
+            int bufferLen = dataBuffer.Length - offset;
+            dataLength = 0;
+            dataOffset = 0;
+            if (bufferLen < 4)
+            {
+                return -1;
+            }
+            dataLength = dataBuffer[0 + offset] & 0x3F;
+            int telLength = dataLength;
+            if (telLength == 0)
+            {   // with length byte
+                dataLength = dataBuffer[3 + offset];
+                telLength = dataLength + 5;
+                dataOffset = 4;
+            }
+            else
+            {
+                telLength += 4;
+                dataOffset = 3;
+            }
+            if (bufferLen < telLength)
+            {
+                return -1;
+            }
+            return telLength;
+        }
+
+        public static List<byte[]> ParseEcuDtcResponse(byte[] dataBuffer)
+        {
+            if (dataBuffer == null)
+            {
+                return null;
+            }
+            List<byte[]> dtcList = new List<byte[]>();
+            int dtcCount = 0;
+            int offset = 0;
+            for (;;)
+            {
+                int telLength = TelLengthKwp2000(dataBuffer, offset, out int dataLength, out int dataOffset);
+                if (telLength < 0)
+                {
+                    return null;
+                }
+
+                int requiredLen = 4;
+                if (offset == 0)
+                {
+                    if (dataLength < 2)
+                    {
+                        return null;
+                    }
+                    int pos = offset + dataOffset + 1;
+                    dtcCount = dataBuffer[pos];
+                    requiredLen++;
+                    if (dtcCount == 0)
+                    {
+                        return dtcList;
+                    }
+                }
+                if (dataLength >= requiredLen)
+                {
+                    byte[] errorData = new byte[3];
+                    int pos = offset + dataOffset + 1;
+                    if (offset == 0)
+                    {
+                        pos++;  // for error count
+                    }
+                    for (int i = 0; i < 3; i++)
+                    {
+                        errorData[i] = dataBuffer[pos++];
+                    }
+                    dtcList.Add(errorData);
+                }
+                offset += telLength;
+                if (dtcList.Count >= dtcCount)
+                {
+                    break;
+                }
+                if (offset == dataBuffer.Length)
+                {
+                    break;
+                }
+                if (offset > dataBuffer.Length)
+                {
+                    return null;
+                }
+            }
+
+            return dtcList;
+        }
+
         public static string GetVagDatUkdDir(string ecuPath, bool ignoreManufacturer = false)
         {
             string lang = GetCurrentLanguage();

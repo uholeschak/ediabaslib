@@ -1865,6 +1865,16 @@ namespace BmwDeepObd
                                                 errorCode = (Int64) resultData.OpData;
                                             }
                                         }
+
+                                        byte[] ecuResponse = null;
+                                        if (errorReport.ErrorDict.TryGetValue("ECU_RESPONSE1", out resultData))
+                                        {
+                                            if (resultData.OpData.GetType() == typeof(byte[]))
+                                            {
+                                                ecuResponse = (byte[])resultData.OpData;
+                                            }
+                                        }
+
                                         List<long> errorTypeList = new List<long>();
                                         for (int i = 0; i < 1000; i++)
                                         {
@@ -1907,6 +1917,12 @@ namespace BmwDeepObd
                                                     errorCode <<= 8;
                                                 }
                                             }
+                                        }
+
+                                        List<byte[]> errorList = null;
+                                        if (!kwp1281)
+                                        {
+                                            errorList = ActivityCommon.ParseEcuDtcResponse(ecuResponse);
                                         }
                                         List<string> textList = _activityCommon.ConvertVagDtcCode(_instanceData.EcuPath, errorCode, errorTypeList, kwp1281, saeMode);
 
