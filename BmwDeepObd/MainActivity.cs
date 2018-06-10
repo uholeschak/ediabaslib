@@ -1928,11 +1928,13 @@ namespace BmwDeepObd
 
                                         if (dtcList != null)
                                         {
+#if false
                                             foreach (byte[] dtcData in dtcList)
                                             {
                                                 srMessage.Append("\r\n");
                                                 srMessage.Append(string.Format("DTC: 0x{0:X04} 0x{1:X02}", (dtcData[0] << 8) | dtcData[1], dtcData[2]));
                                             }
+#endif
                                         }
                                         srMessage.Append("\r\n");
                                         srMessage.Append(GetString(Resource.String.error_code));
