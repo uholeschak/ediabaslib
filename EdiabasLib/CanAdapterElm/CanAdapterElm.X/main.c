@@ -396,6 +396,12 @@ bool internal_telegram(uint8_t *buffer, uint16_t len);
 void reset_comm_states();
 void tp20_disconnect();
 
+// this function forces to compiler to finish the calculation first
+inline uint16_t to_uint16(uint16_t value)
+{
+    return value;
+}
+
 inline uint16_t get_systick()
 {
     uint8_t low = TMR0L;
@@ -717,7 +723,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
                 out_data >>= 1;
                 // wait for pulse width
                 uint16_t start_tick = get_systick();
-                while ((uint16_t) (get_systick() - start_tick) < compare_tick)
+                while (to_uint16(get_systick() - start_tick) < compare_tick)
                 {
                     CLRWDT();
                 }
@@ -746,7 +752,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
         }
         // pulse with 25 ms
         uint16_t start_tick = get_systick();
-        while ((uint16_t) (get_systick() - start_tick) < 25 * TIMER0_RESOL / 1000)
+        while (to_uint16(get_systick() - start_tick) < 25 * TIMER0_RESOL / 1000)
         {
             CLRWDT();
         }
@@ -760,7 +766,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
         }
         // pulse with 25 ms
         uint16_t start_tick = get_systick();
-        while ((uint16_t) (get_systick() - start_tick) < 25 * TIMER0_RESOL / 1000)
+        while (to_uint16(get_systick() - start_tick) < 25 * TIMER0_RESOL / 1000)
         {
             CLRWDT();
         }
@@ -774,7 +780,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
             T2CONbits.TMR2ON = 0;   // disable timer 2
             uint16_t start_tick = get_systick();
             uint16_t compare_tick = kline_interbyte * TIMER0_RESOL / 1000;
-            while ((uint16_t) (get_systick() - start_tick) < compare_tick)
+            while (to_uint16(get_systick() - start_tick) < compare_tick)
             {
                 CLRWDT();
             }
@@ -1147,7 +1153,7 @@ bool kline_receive(bool auto_response)
                             // delay execution
                             uint16_t start_tick = get_systick();
                             uint16_t compare_tick = kline_interbyte * TIMER0_RESOL / 1000;
-                            while ((uint16_t) (get_systick() - start_tick) < compare_tick)
+                            while (to_uint16(get_systick() - start_tick) < compare_tick)
                             {
                                 CLRWDT();
                             }
@@ -1181,7 +1187,7 @@ bool kline_receive(bool auto_response)
                             // delay execution
                             uint16_t start_tick = get_systick();
                             uint16_t compare_tick = kline_auto_delay * TIMER0_RESOL / 1000;
-                            while ((uint16_t) (get_systick() - start_tick) < compare_tick)
+                            while (to_uint16(get_systick() - start_tick) < compare_tick)
                             {
                                 CLRWDT();
                             }
@@ -1558,7 +1564,7 @@ uint16_t uart_receive(uint8_t *buffer)
                     iface_mode = iface_mode_kline;
                     break;
                 }
-                if ((uint16_t) (get_systick() - start_tick) > (CAN_CHECK_TIMEOUT * TIMER0_RESOL / 1000))
+                if (to_uint16(get_systick() - start_tick) > (CAN_CHECK_TIMEOUT * TIMER0_RESOL / 1000))
                 {
                     iface_mode = iface_mode_can;
                     break;
@@ -1615,13 +1621,13 @@ bool send_bt_config(uint8_t *buffer, uint16_t count, uint8_t retries)
             {
                 // pause after command
                 uint16_t start_tick2 = get_systick();
-                while ((uint16_t) (get_systick() - start_tick2) < (BT_COMMAND_PAUSE * TIMER0_RESOL / 1000))
+                while (to_uint16(get_systick() - start_tick2) < (BT_COMMAND_PAUSE * TIMER0_RESOL / 1000))
                 {
                     CLRWDT();
                 }
                 return true;
             }
-            if ((uint16_t) (get_systick() - start_tick) > (BT_RESPONSE_TIMEOUT * TIMER0_RESOL / 1000))
+            if (to_uint16(get_systick() - start_tick) > (BT_RESPONSE_TIMEOUT * TIMER0_RESOL / 1000))
             {
                 break;
             }
@@ -1761,7 +1767,7 @@ bool init_bt()
     ei();
     // wait for bt chip init
     uint16_t start_tick = get_systick();
-    while ((uint16_t) (get_systick() - start_tick) < (1000 * TIMER0_RESOL / 1000))
+    while (to_uint16(get_systick() - start_tick) < (1000 * TIMER0_RESOL / 1000))
     {
         CLRWDT();
         update_led();
@@ -2094,7 +2100,7 @@ bool can_send_message_wait()
     {
         CLRWDT();
         update_led();
-        if ((uint16_t) (get_systick() - start_tick) > (250 * TIMER0_RESOL / 1000))
+        if (to_uint16(get_systick() - start_tick) > (250 * TIMER0_RESOL / 1000))
         {
             return false;
         }
@@ -2383,7 +2389,7 @@ void can_sender(bool new_can_msg)
             }
             if (can_send_wait_for_fc)
             {
-                if ((uint16_t) (get_systick() - can_send_time) > (CAN_TIMEOUT * TIMER0_RESOL / 1000))
+                if (to_uint16(get_systick() - can_send_time) > (CAN_TIMEOUT * TIMER0_RESOL / 1000))
                 {   // FC timeout
                     can_send_active = false;
                     return;
@@ -2393,7 +2399,7 @@ void can_sender(bool new_can_msg)
         }
         if (can_send_wait_sep_time)
         {
-            if ((uint16_t) (get_systick() - can_send_sep_time_start) <= ((uint16_t) (can_send_sep_time * TIMER0_RESOL / 1000)))
+            if (to_uint16(get_systick() - can_send_sep_time_start) <= ((uint16_t) (can_send_sep_time * TIMER0_RESOL / 1000)))
             {
                 return;
             }
@@ -2447,7 +2453,7 @@ void can_receiver(bool new_can_msg)
     }
     if (can_rec_clamp_valid)
     {
-        if ((uint16_t) (get_systick() - can_rec_clamp_time) > (CAN_CLAMP_TIMEOUT * TIMER0_RESOL / 1000))
+        if (to_uint16(get_systick() - can_rec_clamp_time) > (CAN_CLAMP_TIMEOUT * TIMER0_RESOL / 1000))
         {
             can_rec_clamp_valid = false;
         }
@@ -2622,7 +2628,7 @@ void can_receiver(bool new_can_msg)
     {
         if (can_rec_tel_valid)
         {   // check for timeout
-            if ((uint16_t) (get_systick() - can_rec_time) > (CAN_TIMEOUT * TIMER0_RESOL / 1000))
+            if (to_uint16(get_systick() - can_rec_time) > (CAN_TIMEOUT * TIMER0_RESOL / 1000))
             {
                 can_rec_tel_valid = false;
             }
@@ -2671,7 +2677,7 @@ void can_isotp_sender(bool new_can_msg)
             return;
         }
         if (new_can_msg ||
-                ((uint16_t) (get_systick() - can_check_time) > (CAN_CHECK_TIMEOUT * TIMER0_RESOL / 1000))
+                (to_uint16(get_systick() - can_check_time) > (CAN_CHECK_TIMEOUT * TIMER0_RESOL / 1000))
             )
         {
             if (((can_cfg_flags & CANF_CONNECT_CHECK) != 0))
@@ -2750,7 +2756,7 @@ void can_isotp_sender(bool new_can_msg)
             }
             if (can_send_wait_for_fc)
             {
-                if ((uint16_t) (get_systick() - can_send_time) > (CAN_TIMEOUT * TIMER0_RESOL / 1000))
+                if (to_uint16(get_systick() - can_send_time) > (CAN_TIMEOUT * TIMER0_RESOL / 1000))
                 {   // FC timeout
                     can_send_active = false;
                     return;
@@ -2760,7 +2766,7 @@ void can_isotp_sender(bool new_can_msg)
         }
         if (can_send_wait_sep_time)
         {
-            if ((uint16_t) (get_systick() - can_send_sep_time_start) <= ((uint16_t) (can_send_sep_time * TIMER0_RESOL / 1000)))
+            if (to_uint16(get_systick() - can_send_sep_time_start) <= ((uint16_t) (can_send_sep_time * TIMER0_RESOL / 1000)))
             {
                 return;
             }
@@ -2947,7 +2953,7 @@ void can_isotp_receiver(bool new_can_msg)
     {
         if (can_rec_tel_valid)
         {   // check for timeout
-            if ((uint16_t) (get_systick() - can_rec_time) > (CAN_TIMEOUT * TIMER0_RESOL / 1000))
+            if (to_uint16(get_systick() - can_rec_time) > (CAN_TIMEOUT * TIMER0_RESOL / 1000))
             {
                 can_rec_tel_valid = false;
             }
@@ -3085,7 +3091,7 @@ void can_tp20(bool new_can_msg)
             break;
 
         case tp20_rec_connect:   // receive connect channel
-            if ((uint16_t) (get_systick() - can_rec_time) > (CAN_TP20_T1 * TIMER0_RESOL / 1000))
+            if (to_uint16(get_systick() - can_rec_time) > (CAN_TP20_T1 * TIMER0_RESOL / 1000))
             {
                 can_tp20_state = tp20_idle;
                 break;
@@ -3175,7 +3181,7 @@ void can_tp20(bool new_can_msg)
         }
 
         case tp20_send_data_delay:
-            if ((uint16_t) (get_systick() - can_rec_time) < (can_tp20_t3 * TIMER0_RESOL / 1000))
+            if (to_uint16(get_systick() - can_rec_time) < (can_tp20_t3 * TIMER0_RESOL / 1000))
             {
                 break;
             }
@@ -3228,7 +3234,7 @@ void can_tp20(bool new_can_msg)
                 }
                 break;
             }
-            if ((uint16_t) (get_systick() - can_rec_time) > (CAN_TP20_T1 * TIMER0_RESOL / 1000))
+            if (to_uint16(get_systick() - can_rec_time) > (CAN_TP20_T1 * TIMER0_RESOL / 1000))
             {
                 tp20_disconnect();
                 break;
@@ -3236,7 +3242,7 @@ void can_tp20(bool new_can_msg)
             break;
 
         case tp20_send_alive:    // send keep alive
-            if ((uint16_t) (get_systick() - can_rec_time) < (can_cfg_idle_time * TIMER0_RESOL / 1000))
+            if (to_uint16(get_systick() - can_rec_time) < (can_cfg_idle_time * TIMER0_RESOL / 1000))
             {
                 break;
             }
@@ -3252,7 +3258,7 @@ void can_tp20(bool new_can_msg)
         case tp20_rec_par:              // receive parameter
         case tp20_send_wait_ack:        // send data, wait for ack
         case tp20_send_done_wait_ack:   // send data finished, wait for ack
-            if ((uint16_t) (get_systick() - can_rec_time) > (CAN_TP20_T1 * TIMER0_RESOL / 1000))
+            if (to_uint16(get_systick() - can_rec_time) > (CAN_TP20_T1 * TIMER0_RESOL / 1000))
             {
                 tp20_disconnect();
                 break;
@@ -3260,7 +3266,7 @@ void can_tp20(bool new_can_msg)
             break;
 
         case tp20_rec_alive:            // receive keep alive
-            if ((uint16_t) (get_systick() - can_rec_time) > (CAN_TP20_ALIVE_TO * TIMER0_RESOL / 1000))
+            if (to_uint16(get_systick() - can_rec_time) > (CAN_TP20_ALIVE_TO * TIMER0_RESOL / 1000))
             {
                 tp20_disconnect();
                 break;
@@ -3666,7 +3672,7 @@ void main(void)
                                 // delay execution
                                 uint16_t start_tick = get_systick();
                                 uint16_t compare_tick = kline_interbyte * TIMER0_RESOL / 1000;
-                                while ((uint16_t) (get_systick() - start_tick) < compare_tick)
+                                while (to_uint16(get_systick() - start_tick) < compare_tick)
                                 {
                                     CLRWDT();
                                 }
