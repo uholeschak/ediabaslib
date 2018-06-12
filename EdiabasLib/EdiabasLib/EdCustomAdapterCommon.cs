@@ -199,10 +199,16 @@ namespace EdiabasLib
                 }
             }
 
+            int interByteTime = InterByteTime;
             byte flags2 = 0x00;
             if (CurrentProtocol == EdInterfaceObd.Protocol.Kwp)
             {
                 flags2 |= KLINEF2_KWP1281_DETECT;
+                if (interByteTime > 0 && AdapterType >= 0x0002 && AdapterVersion < 0x000B)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Setting interbyte time {0} to 0 for adapter version: {1}", interByteTime, AdapterVersion);
+                    interByteTime = 0;
+                }
             }
 
             resultArray[2] = (byte)(baudHalf >> 8);     // baud rate / 2 high
@@ -210,7 +216,7 @@ namespace EdiabasLib
             resultArray[4] = flags1;                    // flags 1
             if (telType == 0x00)
             {
-                resultArray[5] = (byte)InterByteTime;   // interbyte time
+                resultArray[5] = (byte)interByteTime;   // interbyte time
                 resultArray[6] = (byte)(length >> 8);   // telegram length high
                 resultArray[7] = (byte)length;          // telegram length low
                 Array.Copy(sendData, 0, resultArray, 8, length);
@@ -219,7 +225,7 @@ namespace EdiabasLib
             else
             {
                 resultArray[5] = flags2;                // flags 2
-                resultArray[6] = (byte)InterByteTime;   // interbyte time
+                resultArray[6] = (byte)interByteTime;   // interbyte time
                 resultArray[7] = KWP1281_TIMEOUT;       // KWP1281 timeout
                 resultArray[8] = (byte)(length >> 8);   // telegram length high
                 resultArray[9] = (byte)length;          // telegram length low

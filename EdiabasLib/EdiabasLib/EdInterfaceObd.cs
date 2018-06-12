@@ -3139,19 +3139,8 @@ namespace EdiabasLib
                         break;
 
                     case KwpModes.Kwp1281:
-                    {
-                        InterfaceSetInterByteTimeDelegate setInterByteTimeFunc = InterfaceSetInterByteTimeFuncUse;
-                        if (setInterByteTimeFunc != null)
-                        {
-                            if (!setInterByteTimeFunc(0))
-                            {
-                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set interbyte time failed");
-                                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
-                            }
-                        }
                         errorCode = InitKwp1281(ref keyBytesList);
                         break;
-                    }
                 }
                 if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
