@@ -36,7 +36,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Исправлен протокол адаптера KWP1281\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.8.\nНа данный момент поддерживаются только KWP2000, KWP1281 и TP2.0 (Автомобили до 4.2012) протоколы.</string>
 
@@ -53,7 +53,7 @@
   <string name="exp_down_button_cancel">Отменить</string>
   <string name="exp_down_button_cancel_verify">Отменить проверку</string>
   <string name="exp_down_obb_missing">Приложение не было загружено из Google Play и файл расширения отсутствует.</string>
-  <string name="exp_down_time_remaining">Необходимое время: {0}</string>   
+  <string name="exp_down_time_remaining">Необходимое время: {0}</string>
 
   <!-- Downloader library -->
   <string name="notification_download_complete">Загрузка завершена</string>
@@ -102,8 +102,7 @@
   <string name="compile_cpu_usage">Проверка загрузки процессора</string>
   <string name="compile_cpu_usage_value">Загрузка процессора: {0}%</string>
   <string name="compile_cpu_usage_high">Загрузка процессора на холостом ходу очень высокая ({0}%), это может привести к проблемам в соединении.\nПожалуйста, закройте фоновые приложения, которые слишком загружают процессор.</string>
-  <!--Translate-->
-  <string name="compile_vag_init">Reading VAG files</string>
+  <string name="compile_vag_init">Загрузка VAG файлов</string>
   <string name="compile_start">Компилировать код пользователя</string>
   <string name="compile_crash">Сбой приложения при компиляции кода пользователя.\nСуществует известная ошибка компилятора:\nне используйте сложно инициализированные структуры или массивы в коде,\nинициализируйте их в конструкторе.</string>
 
