@@ -2,3 +2,6 @@
 	path = EdiabasLib/32feet
 	url = ../../inthehand/32feet.git
 	ignore = dirty
+[submodule "EdiabasLib/SharpZipLibAndroid/SharpZipLib"]
+	path = EdiabasLib/SharpZipLibAndroid/SharpZipLib
+	url = ../../icsharpcode/SharpZipLib.git
