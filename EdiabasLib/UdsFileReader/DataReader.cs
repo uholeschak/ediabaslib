@@ -681,9 +681,7 @@ namespace UdsFileReader
                 FileStream fs = File.OpenRead(fileName);
                 zf = new ZipFile(fs)
                 {
-#if !Android
                     Password = GetMd5Hash(Path.GetFileNameWithoutExtension(fileName).ToUpperInvariant())
-#endif
                 };
                 foreach (ZipEntry zipEntry in zf)
                 {
