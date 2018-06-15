@@ -66,7 +66,7 @@ using System.Runtime.InteropServices;
 #if !CODE_ANALYSIS && !NO_SIGNING
 [assembly: AssemblyDelaySign(false)]
 #pragma warning disable 1699
-[assembly: AssemblyKeyFile(@"..\..\..\InTheHand.Net.Personal\InTheHand.snk")]
+[assembly: AssemblyKeyFile(@"32feet\InTheHand.Net.Personal\InTheHand.snk")]
 #pragma warning restore 1699
 [assembly: AssemblyKeyName("")]
 #endif

@@ -61,7 +61,7 @@
     <Compile Include="TcpClientWithTimeout.cs" />
   </ItemGroup>
   <ItemGroup>
-    <AddModules Include="..\32feet\ITH.Net.Personal.FX4\bin\$(Configuration)Module\InTheHand.Net.Personal.netmodule" />
+    <AddModules Include="..\InTheHand.Net.Personal\bin\$(Configuration)Module\InTheHand.Net.Personal.netmodule" />
   </ItemGroup>
 
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

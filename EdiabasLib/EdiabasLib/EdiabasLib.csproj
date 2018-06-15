@@ -73,9 +73,9 @@
     <None Include="EdiabasLib.snk" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\32feet\ITH.Net.Personal.FX4\InTheHand.Net.Personal.FX4.Mod.csproj">
-      <Project>{29cc8d24-1564-4236-a237-e953274805d6}</Project>
-      <Name>InTheHand.Net.Personal.FX4.Mod</Name>
+    <ProjectReference Include="..\InTheHand.Net.Personal\InTheHand.Net.Personal.csproj">
+      <Project>{5f3c6e84-0768-4a84-8aaf-24e3ffb8547c}</Project>
+      <Name>InTheHand.Net.Personal</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
