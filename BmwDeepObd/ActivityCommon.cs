@@ -79,14 +79,16 @@ namespace BmwDeepObd
 
         public class VagDtcEntry
         {
-            public VagDtcEntry(uint dtcCode, byte dtcDetail)
+            public VagDtcEntry(uint dtcCode, byte dtcDetail, DataReader.ErrorType errorType)
             {
                 DtcCode = dtcCode;
                 DtcDetail = dtcDetail;
+                ErrorType = errorType;
             }
 
             public uint DtcCode { get; }
             public byte DtcDetail { get; }
+            public DataReader.ErrorType ErrorType { get; }
         }
 
         public class MwTabEntry
@@ -3331,7 +3333,7 @@ namespace BmwDeepObd
             return telLength;
         }
 
-        public static List<VagDtcEntry> ParseEcuDtcResponse(byte[] dataBuffer)
+        public static List<VagDtcEntry> ParseEcuDtcResponse(byte[] dataBuffer, bool saeMode)
         {
             if (dataBuffer == null)
             {
@@ -3376,7 +3378,7 @@ namespace BmwDeepObd
                         byte dtcDetail = dataBuffer[index + 2];
                         pos += 3;
 
-                        VagDtcEntry dtcEntry = new VagDtcEntry(dtcCode, dtcDetail);
+                        VagDtcEntry dtcEntry = new VagDtcEntry(dtcCode, dtcDetail, saeMode? DataReader.ErrorType.Sae : DataReader.ErrorType.Kwp2000);
                         dtcList.Add(dtcEntry);
                         if (dtcList.Count >= dtcCount)
                         {
