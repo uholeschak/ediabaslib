@@ -1905,7 +1905,6 @@ namespace BmwDeepObd
                                                 else if (objectName.Contains("7000"))
                                                 {
                                                     uds = true;
-                                                    saeMode = true;
                                                 }
                                             }
                                         }
@@ -1953,6 +1952,8 @@ namespace BmwDeepObd
                                             {
                                                 new ActivityCommon.VagDtcEntry((uint) errorCode, dtcDetail, UdsFileReader.DataReader.ErrorType.Uds)
                                             };
+                                            saeMode = true;
+                                            errorCode <<= 8;
                                         }
                                         else
                                         {
