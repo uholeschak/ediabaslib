@@ -22,6 +22,7 @@ namespace UdsFileReader
             Iso9141,
             Kwp2000,
             Sae,
+            Uds,
         }
 
         public Dictionary<UInt32, string> CodeMap { get; private set; }
