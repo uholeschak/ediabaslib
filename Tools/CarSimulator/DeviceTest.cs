@@ -337,7 +337,7 @@ namespace CarSimulator
             sr.Append("\r\n");
             sr.Append("Firmware: ");
             sr.Append(string.Format("{0}.{1}", firmware[2], firmware[3]));
-            if ((firmware[2] != 0x00) || (firmware[3] < 0x09))
+            if ((firmware[2] != 0x00) || (firmware[3] < 0x0B))
             {
                 sr.Append("\r\n");
                 sr.Append("Incorrect firmware version!");

@@ -153,9 +153,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\EdiabasLib\32feet\ITH.Net.Personal.FX4\InTheHand.Net.Personal.FX4.Mod.csproj">
-      <Project>{40ea20b4-9caf-486d-9952-1abb3d414e92}</Project>
-      <Name>InTheHand.Net.Personal.FX4.Mod</Name>
+    <ProjectReference Include="..\..\EdiabasLib\InTheHand.Net.Personal\InTheHand.Net.Personal.csproj">
+      <Project>{5f3c6e84-0768-4a84-8aaf-24e3ffb8547c}</Project>
+      <Name>InTheHand.Net.Personal</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
