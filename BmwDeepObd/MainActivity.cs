@@ -1890,6 +1890,7 @@ namespace BmwDeepObd
                                             errorTypeList.Add(errorType);
                                         }
                                         bool kwp1281 = false;
+                                        bool uds = false;
                                         bool saeMode = false;
                                         if (errorReport.ErrorDict.TryGetValue("OBJECT", out resultData))
                                         {
@@ -1903,6 +1904,7 @@ namespace BmwDeepObd
                                                 }
                                                 else if (objectName.Contains("7000"))
                                                 {
+                                                    uds = true;
                                                     saeMode = true;
                                                 }
                                             }
@@ -1925,12 +1927,31 @@ namespace BmwDeepObd
                                             byte dtcDetail = 0;
                                             if (errorTypeList.Count >= 2)
                                             {
-                                                dtcDetail = (byte) ((errorTypeList[0] & 0x7F) | (errorTypeList[1] << 7));
+                                                dtcDetail = (byte)((errorTypeList[0] & 0x7F) | (errorTypeList[1] << 7));
                                             }
 
                                             dtcList = new List<ActivityCommon.VagDtcEntry>
                                             {
                                                 new ActivityCommon.VagDtcEntry((uint) errorCode, dtcDetail, UdsFileReader.DataReader.ErrorType.Iso9141)
+                                            };
+                                        }
+                                        else if (uds)
+                                        {
+                                            byte dtcDetail = 0;
+                                            if (errorTypeList.Count >= 8)
+                                            {
+                                                for (int idx = 0; idx < 8; idx++)
+                                                {
+                                                    if (errorTypeList[idx] != 0)
+                                                    {
+                                                        dtcDetail |= (byte)(1 << idx);
+                                                    }
+                                                }
+                                            }
+
+                                            dtcList = new List<ActivityCommon.VagDtcEntry>
+                                            {
+                                                new ActivityCommon.VagDtcEntry((uint) errorCode, dtcDetail, UdsFileReader.DataReader.ErrorType.Uds)
                                             };
                                         }
                                         else
