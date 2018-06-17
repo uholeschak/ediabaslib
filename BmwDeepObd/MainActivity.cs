@@ -1919,8 +1919,21 @@ namespace BmwDeepObd
                                             }
                                         }
 
-                                        List<ActivityCommon.VagDtcEntry> dtcList = null;
-                                        if (!kwp1281)
+                                        List<ActivityCommon.VagDtcEntry> dtcList;
+                                        if (kwp1281)
+                                        {
+                                            byte dtcDetail = 0;
+                                            if (errorTypeList.Count >= 2)
+                                            {
+                                                dtcDetail = (byte) ((errorTypeList[0] & 0x7F) | (errorTypeList[1] << 7));
+                                            }
+
+                                            dtcList = new List<ActivityCommon.VagDtcEntry>
+                                            {
+                                                new ActivityCommon.VagDtcEntry((uint) errorCode, dtcDetail)
+                                            };
+                                        }
+                                        else
                                         {
                                             dtcList = ActivityCommon.ParseEcuDtcResponse(ecuResponse);
                                         }
