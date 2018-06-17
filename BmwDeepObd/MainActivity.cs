@@ -1930,12 +1930,12 @@ namespace BmwDeepObd
 
                                             dtcList = new List<ActivityCommon.VagDtcEntry>
                                             {
-                                                new ActivityCommon.VagDtcEntry((uint) errorCode, dtcDetail)
+                                                new ActivityCommon.VagDtcEntry((uint) errorCode, dtcDetail, UdsFileReader.DataReader.ErrorType.Iso9141)
                                             };
                                         }
                                         else
                                         {
-                                            dtcList = ActivityCommon.ParseEcuDtcResponse(ecuResponse);
+                                            dtcList = ActivityCommon.ParseEcuDtcResponse(ecuResponse, saeMode);
                                         }
                                         List<string> textList = _activityCommon.ConvertVagDtcCode(_instanceData.EcuPath, errorCode, errorTypeList, kwp1281, saeMode);
 
@@ -1945,7 +1945,7 @@ namespace BmwDeepObd
                                             foreach (ActivityCommon.VagDtcEntry dtcEntry in dtcList)
                                             {
                                                 srMessage.Append("\r\n");
-                                                srMessage.Append(string.Format("DTC: 0x{0:X04} 0x{1:X02}", dtcEntry.DtcCode, dtcEntry.DtcDetail));
+                                                srMessage.Append(string.Format("DTC: 0x{0:X04} 0x{1:X02} {2}", dtcEntry.DtcCode, dtcEntry.DtcDetail, dtcEntry.ErrorType.ToString()));
                                             }
 #endif
                                         }
