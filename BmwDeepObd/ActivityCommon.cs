@@ -77,6 +77,18 @@ namespace BmwDeepObd
             public int Address { get; }
         }
 
+        public class VagDtcEntry
+        {
+            public VagDtcEntry(uint dtcCode, byte dtcDetail)
+            {
+                DtcCode = dtcCode;
+                DtcDetail = dtcDetail;
+            }
+
+            public uint DtcCode { get; }
+            public byte DtcDetail { get; }
+        }
+
         public class MwTabEntry
         {
             public MwTabEntry(int blockNumber, int? valueIndex, string description, string comment, string valueUnit, string valueType, double? valueMin, double? valueMax, bool dummy = false)
@@ -3319,13 +3331,13 @@ namespace BmwDeepObd
             return telLength;
         }
 
-        public static List<byte[]> ParseEcuDtcResponse(byte[] dataBuffer)
+        public static List<VagDtcEntry> ParseEcuDtcResponse(byte[] dataBuffer)
         {
             if (dataBuffer == null)
             {
                 return null;
             }
-            List<byte[]> dtcList = new List<byte[]>();
+            List<VagDtcEntry> dtcList = new List<VagDtcEntry>();
             int dtcCount = -1;
             int offset = 0;
             for (;;)
@@ -3359,12 +3371,13 @@ namespace BmwDeepObd
 
                     while (pos + 2 < dataLength)
                     {
-                        byte[] dtcData = new byte[3];
-                        for (int i = 0; i < 3; i++)
-                        {
-                            dtcData[i] = dataBuffer[offset + dataOffset + pos++];
-                        }
-                        dtcList.Add(dtcData);
+                        int index = offset + dataOffset + pos;
+                        uint dtcCode = (uint) ((dataBuffer[index] << 8) | dataBuffer[index + 1]);
+                        byte dtcDetail = dataBuffer[index + 2];
+                        pos += 3;
+
+                        VagDtcEntry dtcEntry = new VagDtcEntry(dtcCode, dtcDetail);
+                        dtcList.Add(dtcEntry);
                         if (dtcList.Count >= dtcCount)
                         {
                             break;
