@@ -1841,6 +1841,8 @@ namespace BmwDeepObd
                         else
                         {
                             string lastEcuName = null;
+                            List<ActivityCommon.VagDtcEntry> dtcList = null;
+                            int errorIndex = 0;
                             foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
                             {
                                 if (ActivityCommon.IsCommunicationError(errorReport.ExecptionText))
@@ -1920,22 +1922,21 @@ namespace BmwDeepObd
                                             }
                                         }
 
-                                        List<ActivityCommon.VagDtcEntry> dtcList;
+                                        ActivityCommon.VagDtcEntry dtcEntry = null;
                                         if (kwp1281)
                                         {
+                                            dtcList = null;
                                             byte dtcDetail = 0;
                                             if (errorTypeList.Count >= 2)
                                             {
                                                 dtcDetail = (byte)((errorTypeList[0] & 0x7F) | (errorTypeList[1] << 7));
                                             }
 
-                                            dtcList = new List<ActivityCommon.VagDtcEntry>
-                                            {
-                                                new ActivityCommon.VagDtcEntry((uint) errorCode, dtcDetail, UdsFileReader.DataReader.ErrorType.Iso9141)
-                                            };
+                                            dtcEntry = new ActivityCommon.VagDtcEntry((uint) errorCode, dtcDetail, UdsFileReader.DataReader.ErrorType.Iso9141);
                                         }
                                         else if (uds)
                                         {
+                                            dtcList = null;
                                             byte dtcDetail = 0;
                                             if (errorTypeList.Count >= 8)
                                             {
@@ -1948,42 +1949,54 @@ namespace BmwDeepObd
                                                 }
                                             }
 
-                                            dtcList = new List<ActivityCommon.VagDtcEntry>
-                                            {
-                                                new ActivityCommon.VagDtcEntry((uint) errorCode, dtcDetail, UdsFileReader.DataReader.ErrorType.Uds)
-                                            };
+                                            dtcEntry = new ActivityCommon.VagDtcEntry((uint) errorCode, dtcDetail, UdsFileReader.DataReader.ErrorType.Uds);
                                             saeMode = true;
                                             errorCode <<= 8;
                                         }
                                         else
                                         {
-                                            dtcList = ActivityCommon.ParseEcuDtcResponse(ecuResponse, saeMode);
-                                        }
-                                        List<string> textList = _activityCommon.ConvertVagDtcCode(_instanceData.EcuPath, errorCode, errorTypeList, kwp1281, saeMode);
+                                            if (ecuResponse != null)
+                                            {
+                                                errorIndex = 0;
+                                                dtcList = ActivityCommon.ParseEcuDtcResponse(ecuResponse, saeMode);
+                                            }
 
-                                        if (dtcList != null)
+                                            if (dtcList != null && errorIndex < dtcList.Count)
+                                            {
+                                                dtcEntry = dtcList[errorIndex];
+                                            }
+                                        }
+
+                                        List<string> textList = null;
+                                        if (ActivityCommon.VagUdsActive && dtcEntry != null)
                                         {
-#if true
-                                            foreach (ActivityCommon.VagDtcEntry dtcEntry in dtcList)
+                                            if (dtcEntry.ErrorType != UdsFileReader.DataReader.ErrorType.Uds)
+                                            {
+                                                textList = ActivityCommon.UdsReader.DataReader.ErrorCodeToString(
+                                                    dtcEntry.DtcCode, dtcEntry.DtcDetail, dtcEntry.ErrorType, ActivityCommon.UdsReader);
+                                            }
+                                            srMessage.Append("\r\n");
+                                            srMessage.Append(GetString(Resource.String.error_code));
+                                            srMessage.Append(": ");
+                                            srMessage.Append(string.Format("0x{0:X04} 0x{1:X02} {2}", dtcEntry.DtcCode, dtcEntry.DtcDetail, dtcEntry.ErrorType.ToString()));
+                                        }
+                                        if (textList == null)
+                                        {
+                                            textList = _activityCommon.ConvertVagDtcCode(_instanceData.EcuPath, errorCode, errorTypeList, kwp1281, saeMode);
+                                            srMessage.Append("\r\n");
+                                            srMessage.Append(GetString(Resource.String.error_code));
+                                            srMessage.Append(": ");
+                                            srMessage.Append(string.Format("0x{0:X}", errorCode));
+                                            foreach (long errorType in errorTypeList)
+                                            {
+                                                srMessage.Append(string.Format(";{0}", errorType));
+                                            }
+
+                                            if (saeMode)
                                             {
                                                 srMessage.Append("\r\n");
-                                                srMessage.Append(string.Format("DTC: 0x{0:X04} 0x{1:X02} {2}", dtcEntry.DtcCode, dtcEntry.DtcDetail, dtcEntry.ErrorType.ToString()));
+                                                srMessage.Append(string.Format("{0}-{1:X02}", ActivityCommon.SaeCode16ToString(errorCode >> 8), errorCode & 0xFF));
                                             }
-#endif
-                                        }
-                                        srMessage.Append("\r\n");
-                                        srMessage.Append(GetString(Resource.String.error_code));
-                                        srMessage.Append(": ");
-                                        srMessage.Append(string.Format("0x{0:X}", errorCode));
-                                        foreach (long errorType in errorTypeList)
-                                        {
-                                            srMessage.Append(string.Format(";{0}", errorType));
-                                        }
-
-                                        if (saeMode)
-                                        {
-                                            srMessage.Append("\r\n");
-                                            srMessage.Append(string.Format("{0}-{1:X02}", ActivityCommon.SaeCode16ToString(errorCode >> 8), errorCode & 0xFF));
                                         }
                                         if (textList != null)
                                         {
@@ -2083,6 +2096,7 @@ namespace BmwDeepObd
                                     tempResultList.Add(newResultItem);
                                 }
                                 lastEcuName = errorReport.EcuName;
+                                errorIndex++;
                             }
                             if (tempResultList.Count == 0)
                             {
