@@ -62,6 +62,7 @@ namespace BmwDeepObd
                 Grp = grp;
                 Selected = false;
                 Vin = null;
+                VagPartNumber = null;
                 PageName = name;
                 EcuName = name;
                 DisplayMode = displayMode;
@@ -88,6 +89,8 @@ namespace BmwDeepObd
             public string Grp { get; set; }
 
             public string Vin { get; set; }
+
+            public string VagPartNumber { get; set; }
 
             public bool Selected { get; set; }
 
@@ -3189,6 +3192,13 @@ namespace BmwDeepObd
 
                     if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                     {
+                        if (ActivityCommon.VagUdsActive)
+                        {
+                            if (!GetVagEcuDetailInfo(ecuInfo, progress))
+                            {
+                                throw new Exception("Read detail info failed");
+                            }
+                        }
                         if (mwTabNotPresent)
                         {
                             List<string> mwTabFileNames = GetBestMatchingMwTab(ecuInfo, progress);
@@ -4116,6 +4126,94 @@ namespace BmwDeepObd
 #else
             return new List<string>();
 #endif
+        }
+
+        private bool GetVagEcuDetailInfo(EcuInfo ecuInfo, CustomProgressDialog progress)
+        {
+            try
+            {
+                string readCommand = GetReadCommand(ecuInfo);
+                if (!string.IsNullOrEmpty(readCommand))
+                {
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        if (progress != null)
+                        {
+                            progress.Progress = 0;
+                        }
+                    });
+
+                    string jobName = "Steuergeraeteversion_abfragen";
+                    if (!_ediabas.IsJobExisting(jobName))
+                    {
+                        jobName = "Steuergeraeteversion_abfragen2";
+                    }
+                    _ediabas.ArgString = string.Empty;
+                    _ediabas.ArgBinaryStd = null;
+                    _ediabas.ResultsRequests = string.Empty;
+                    _ediabas.ExecuteJob(jobName);
+
+                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
+                        bool resultOk = false;
+                        if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
+                        {
+                            if (resultData.OpData is string)
+                            {
+                                string result = (string)resultData.OpData;
+                                if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    resultOk = true;
+                                }
+                            }
+                        }
+                        if (!resultOk)
+                        {
+                            return false;
+                        }
+
+                        Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
+                        string partNumber = string.Empty;
+                        if (resultDict1.TryGetValue("GERAETENUMMER", out resultData))
+                        {
+                            if (resultData.OpData is string)
+                            {
+                                // ReSharper disable once TryCastAlwaysSucceeds
+                                partNumber = resultData.OpData as string;
+                            }
+                        }
+
+                        if (string.IsNullOrWhiteSpace(partNumber))
+                        {
+                            return false;
+                        }
+                        ecuInfo.VagPartNumber = partNumber;
+                    }
+
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        if (progress != null)
+                        {
+                            progress.Progress = 100;
+                        }
+                    });
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         private void ExecuteUpdateEcuInfo()
