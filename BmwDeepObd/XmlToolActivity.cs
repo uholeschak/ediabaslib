@@ -40,6 +40,13 @@ namespace BmwDeepObd
             RequestEdiabasTool,
         }
 
+        private enum VagUdsS22DataType
+        {
+            PartNum,
+            AsamData,
+            AsamRev
+        }
+
         public enum DisplayFontSize
         {
             Small,
@@ -63,6 +70,8 @@ namespace BmwDeepObd
                 Selected = false;
                 Vin = null;
                 VagPartNumber = null;
+                VagAsamData = null;
+                VagAsamRev = null;
                 PageName = name;
                 EcuName = name;
                 DisplayMode = displayMode;
@@ -91,6 +100,10 @@ namespace BmwDeepObd
             public string Vin { get; set; }
 
             public string VagPartNumber { get; set; }
+
+            public string VagAsamData { get; set; }
+
+            public string VagAsamRev { get; set; }
 
             public bool Selected { get; set; }
 
@@ -163,6 +176,7 @@ namespace BmwDeepObd
             public bool CommErrorsOccured { get; set; }
         }
 
+        private static readonly Encoding VagUdsEncoding = Encoding.GetEncoding(1252);
         private const string XmlDocumentFrame =
             @"<?xml version=""1.0"" encoding=""utf-8"" ?>
             <{0} xmlns=""http://www.holeschak.de/BmwDeepObd""
@@ -220,6 +234,14 @@ namespace BmwDeepObd
         {
             "D_0012", "D_MOTOR", "D_0010", "D_0013", "D_0014"
         };
+
+        private static readonly Tuple<VagUdsS22DataType, int>[] VagUdsS22Data =
+        {
+            new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.PartNum, 0xF187),
+            new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.AsamData, 0xF19E),
+            new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.AsamRev, 0xF1A2),
+        };
+
         private static readonly Tuple<string, string>[] EcuInfoVagJobs =
         {
             new Tuple<string, string>("Steuergeraeteversion_abfragen", ""),
@@ -3995,7 +4017,7 @@ namespace BmwDeepObd
                     {
                         try
                         {
-                            _ediabas.ArgString = string.Format("{0}", id);
+                            _ediabas.ArgString = string.Format(CultureInfo.InvariantCulture, "{0}", id);
                             _ediabas.ArgBinaryStd = null;
                             _ediabas.ResultsRequests = string.Empty;
                             _ediabas.ExecuteJob(JobReadMwUds);
@@ -4133,7 +4155,99 @@ namespace BmwDeepObd
             try
             {
                 string readCommand = GetReadCommand(ecuInfo);
-                if (!string.IsNullOrEmpty(readCommand))
+                if (string.IsNullOrEmpty(readCommand))
+                {
+                    return GetVagEcuDetailInfoUds(ecuInfo, progress);
+                }
+
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    if (progress != null)
+                    {
+                        progress.Progress = 0;
+                    }
+                });
+
+                string jobName = "Steuergeraeteversion_abfragen";
+                if (!_ediabas.IsJobExisting(jobName))
+                {
+                    jobName = "Steuergeraeteversion_abfragen2";
+                }
+                _ediabas.ArgString = string.Empty;
+                _ediabas.ArgBinaryStd = null;
+                _ediabas.ResultsRequests = string.Empty;
+                _ediabas.ExecuteJob(jobName);
+
+                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                if (resultSets != null && resultSets.Count >= 2)
+                {
+                    Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
+                    bool resultOk = false;
+                    if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
+                    {
+                        if (resultData.OpData is string)
+                        {
+                            string result = (string)resultData.OpData;
+                            if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                resultOk = true;
+                            }
+                        }
+                    }
+                    if (!resultOk)
+                    {
+                        return false;
+                    }
+
+                    Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
+                    string partNumber = string.Empty;
+                    if (resultDict1.TryGetValue("GERAETENUMMER", out resultData))
+                    {
+                        if (resultData.OpData is string)
+                        {
+                            // ReSharper disable once TryCastAlwaysSucceeds
+                            partNumber = resultData.OpData as string;
+                        }
+                    }
+
+                    if (string.IsNullOrWhiteSpace(partNumber))
+                    {
+                        return false;
+                    }
+                    ecuInfo.VagPartNumber = partNumber;
+                    ecuInfo.VagAsamData = null;
+                    ecuInfo.VagAsamRev = null;
+                }
+
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    if (progress != null)
+                    {
+                        progress.Progress = 100;
+                    }
+                });
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool GetVagEcuDetailInfoUds(EcuInfo ecuInfo, CustomProgressDialog progress)
+        {
+            try
+            {
+                int index = 0;
+                foreach (Tuple<VagUdsS22DataType, int> udsInfo in VagUdsS22Data)
                 {
                     RunOnUiThread(() =>
                     {
@@ -4143,19 +4257,14 @@ namespace BmwDeepObd
                         }
                         if (progress != null)
                         {
-                            progress.Progress = 0;
+                            progress.Progress = 100 * index / VagUdsS22Data.Length;
                         }
                     });
 
-                    string jobName = "Steuergeraeteversion_abfragen";
-                    if (!_ediabas.IsJobExisting(jobName))
-                    {
-                        jobName = "Steuergeraeteversion_abfragen2";
-                    }
-                    _ediabas.ArgString = string.Empty;
+                    _ediabas.ArgString = string.Format(CultureInfo.InvariantCulture, "{0}", udsInfo.Item2);
                     _ediabas.ArgBinaryStd = null;
                     _ediabas.ResultsRequests = string.Empty;
-                    _ediabas.ExecuteJob(jobName);
+                    _ediabas.ExecuteJob(JobReadMwUds);
 
                     List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                     if (resultSets != null && resultSets.Count >= 2)
@@ -4179,34 +4288,34 @@ namespace BmwDeepObd
                         }
 
                         Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
-                        string partNumber = string.Empty;
-                        if (resultDict1.TryGetValue("GERAETENUMMER", out resultData))
+                        string dataString = null;
+                        if (resultDict1.TryGetValue("ERGEBNIS1WERT", out resultData))
                         {
-                            if (resultData.OpData is string)
+                            if (resultData.OpData is byte[] data)
                             {
-                                // ReSharper disable once TryCastAlwaysSucceeds
-                                partNumber = resultData.OpData as string;
+                                dataString = VagUdsEncoding.GetString(data).TrimEnd('\0');
                             }
                         }
-
-                        if (string.IsNullOrWhiteSpace(partNumber))
+                        if (dataString == null)
                         {
                             return false;
                         }
-                        ecuInfo.VagPartNumber = partNumber;
-                    }
 
-                    RunOnUiThread(() =>
-                    {
-                        if (_activityCommon == null)
+                        switch (udsInfo.Item1)
                         {
-                            return;
+                            case VagUdsS22DataType.PartNum:
+                                ecuInfo.VagPartNumber = dataString;
+                                break;
+
+                            case VagUdsS22DataType.AsamData:
+                                ecuInfo.VagAsamData = dataString;
+                                break;
+
+                            case VagUdsS22DataType.AsamRev:
+                                ecuInfo.VagAsamRev = dataString;
+                                break;
                         }
-                        if (progress != null)
-                        {
-                            progress.Progress = 100;
-                        }
-                    });
+                    }
                 }
                 return true;
             }
