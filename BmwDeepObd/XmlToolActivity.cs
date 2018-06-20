@@ -70,6 +70,7 @@ namespace BmwDeepObd
                 Selected = false;
                 Vin = null;
                 VagPartNumber = null;
+                VagHwPartNumber = null;
                 VagAsamData = null;
                 VagAsamRev = null;
                 PageName = name;
@@ -100,6 +101,8 @@ namespace BmwDeepObd
             public string Vin { get; set; }
 
             public string VagPartNumber { get; set; }
+
+            public string VagHwPartNumber { get; set; }
 
             public string VagAsamData { get; set; }
 
@@ -4160,67 +4163,98 @@ namespace BmwDeepObd
                     return GetVagEcuDetailInfoUds(ecuInfo, progress);
                 }
 
-                RunOnUiThread(() =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-                    if (progress != null)
-                    {
-                        progress.Progress = 0;
-                    }
-                });
+                ecuInfo.VagPartNumber = null;
+                ecuInfo.VagHwPartNumber = null;
+                ecuInfo.VagAsamData = null;
+                ecuInfo.VagAsamRev = null;
 
-                string jobName = "Steuergeraeteversion_abfragen";
-                if (!_ediabas.IsJobExisting(jobName))
+                for (int index = 0; index < 2; index++)
                 {
-                    jobName = "Steuergeraeteversion_abfragen2";
-                }
-                _ediabas.ArgString = string.Empty;
-                _ediabas.ArgBinaryStd = null;
-                _ediabas.ResultsRequests = string.Empty;
-                _ediabas.ExecuteJob(jobName);
-
-                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                if (resultSets != null && resultSets.Count >= 2)
-                {
-                    Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
-                    bool resultOk = false;
-                    if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
+                    int indexLocal = index;
+                    RunOnUiThread(() =>
                     {
-                        if (resultData.OpData is string)
+                        if (_activityCommon == null)
                         {
-                            string result = (string)resultData.OpData;
-                            if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                            return;
+                        }
+                        if (progress != null)
+                        {
+                            progress.Progress = 100 * indexLocal / 2;
+                        }
+                    });
+
+                    string jobName = index == 0 ? "Steuergeraeteversion_abfragen2" : "Steuergeraeteversion_abfragen";
+                    string resultName1 = index == 0 ? "SWTEILENUMMER" : "GERAETENUMMER";
+                    string resultName2 = index == 0 ? "HWTEILENUMMER" : null;
+                    if (!_ediabas.IsJobExisting(jobName))
+                    {
+                        continue;
+                    }
+                    try
+                    {
+                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob(jobName);
+
+                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
+                            bool resultOk = false;
+                            if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
                             {
-                                resultOk = true;
+                                if (resultData.OpData is string)
+                                {
+                                    string result = (string)resultData.OpData;
+                                    if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        resultOk = true;
+                                    }
+                                }
+                            }
+                            if (resultOk)
+                            {
+                                Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
+                                string swPartNumber = string.Empty;
+                                string hwPartNumber = string.Empty;
+                                if (resultDict1.TryGetValue(resultName1, out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        // ReSharper disable once TryCastAlwaysSucceeds
+                                        swPartNumber = resultData.OpData as string;
+                                    }
+                                }
+
+                                if (resultName2 != null)
+                                {
+                                    if (resultDict1.TryGetValue(resultName2, out resultData))
+                                    {
+                                        if (resultData.OpData is string)
+                                        {
+                                            // ReSharper disable once TryCastAlwaysSucceeds
+                                            hwPartNumber = resultData.OpData as string;
+                                        }
+                                    }
+
+                                }
+                                if (!string.IsNullOrWhiteSpace(swPartNumber))
+                                {
+                                    ecuInfo.VagPartNumber = swPartNumber;
+                                    if (!string.IsNullOrWhiteSpace(hwPartNumber))
+                                    {
+                                        ecuInfo.VagHwPartNumber = hwPartNumber;
+                                    }
+                                    break;
+                                }
                             }
                         }
                     }
-                    if (!resultOk)
+                    catch (Exception)
                     {
-                        return false;
+                        // ignored
                     }
-
-                    Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
-                    string partNumber = string.Empty;
-                    if (resultDict1.TryGetValue("GERAETENUMMER", out resultData))
-                    {
-                        if (resultData.OpData is string)
-                        {
-                            // ReSharper disable once TryCastAlwaysSucceeds
-                            partNumber = resultData.OpData as string;
-                        }
-                    }
-
-                    if (string.IsNullOrWhiteSpace(partNumber))
-                    {
-                        return false;
-                    }
-                    ecuInfo.VagPartNumber = partNumber;
-                    ecuInfo.VagAsamData = null;
-                    ecuInfo.VagAsamRev = null;
                 }
 
                 RunOnUiThread(() =>
@@ -4234,6 +4268,11 @@ namespace BmwDeepObd
                         progress.Progress = 100;
                     }
                 });
+
+                if (ecuInfo.VagPartNumber == null)
+                {
+                    return false;
+                }
                 return true;
             }
             catch (Exception)
@@ -4317,6 +4356,18 @@ namespace BmwDeepObd
                         }
                     }
                 }
+
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    if (progress != null)
+                    {
+                        progress.Progress = 100;
+                    }
+                });
                 return true;
             }
             catch (Exception)
