@@ -56,7 +56,7 @@ namespace UdsFileReader
                 }
             }
 
-            public string GetFileName(string dir)
+            public string GetFileName(string rootDir)
             {
                 try
                 {
@@ -65,7 +65,7 @@ namespace UdsFileReader
                         return null;
                     }
 
-                    List<string> dirList = GetDirList(dir);
+                    List<string> dirList = GetDirList(rootDir);
                     string fileName = ResolveFileName(dirList);
                     if (string.IsNullOrEmpty(fileName))
                     {
@@ -556,7 +556,7 @@ namespace UdsFileReader
 
         public static string PcodeToString(uint pcodeNum)
         {
-            return PcodeToString(pcodeNum, out uint convertedValue);
+            return PcodeToString(pcodeNum, out _);
         }
 
         public static string PcodeToString(uint pcodeNum, out uint convertedValue)
