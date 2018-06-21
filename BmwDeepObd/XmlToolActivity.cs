@@ -343,7 +343,7 @@ namespace BmwDeepObd
         private EdiabasNet _ediabas;
         private Thread _jobThread;
         private static List<EcuInfo> _ecuList = new List<EcuInfo>();
-        private EcuInfo _ecuInfoDid = null;
+        private EcuInfo _ecuInfoDid;
         private bool _translateEnabled = true;
         private bool _translateActive;
         private bool _ecuListTranslated;
@@ -3127,9 +3127,10 @@ namespace BmwDeepObd
                 bool readFailed = false;
                 try
                 {
+                    bool udsEcu = ecuInfo.Sgbd.Contains("7000");
                     if (ActivityCommon.VagUdsActive)
                     {
-                        if (_ecuInfoDid == null && ecuInfo.Sgbd.Contains("7000"))
+                        if (_ecuInfoDid == null && udsEcu)
                         {
                             try
                             {
@@ -3255,6 +3256,31 @@ namespace BmwDeepObd
                             if (!GetVagEcuDetailInfo(ecuInfo, progress))
                             {
                                 throw new Exception("Read detail info failed");
+                            }
+
+                            try
+                            {
+                                UdsFileReader.DataReader.FileNameResolver dataResolver = new UdsFileReader.DataReader.FileNameResolver(ActivityCommon.UdsReader.DataReader, ecuInfo.VagPartNumber, (int)ecuInfo.Address);
+                                string dataFileName = dataResolver.GetFileName(_vagDir);
+                                Log.Debug("Resolver", "Data file: " + dataFileName);
+
+                                if (udsEcu)
+                                {
+                                    UdsFileReader.UdsReader.FileNameResolver udsResolver = new UdsFileReader.UdsReader.FileNameResolver(ActivityCommon.UdsReader,
+                                        ecuInfo.VagAsamData, ecuInfo.VagAsamRev, ecuInfo.VagPartNumber, _ecuInfoDid.VagHwPartNumber);
+                                    List<string> udsFileList = udsResolver.GetFileList(_vagDir);
+                                    if (udsFileList != null)
+                                    {
+                                        foreach (string name in udsFileList)
+                                        {
+                                            Log.Debug("Resolver", "Uds file: " + name);
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new Exception("Resolving files failed: " + ex.Message);
                             }
                         }
                         if (mwTabNotPresent)
