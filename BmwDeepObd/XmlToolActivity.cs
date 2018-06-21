@@ -343,6 +343,7 @@ namespace BmwDeepObd
         private EdiabasNet _ediabas;
         private Thread _jobThread;
         private static List<EcuInfo> _ecuList = new List<EcuInfo>();
+        private EcuInfo _ecuInfoDid = null;
         private bool _translateEnabled = true;
         private bool _translateActive;
         private bool _ecuListTranslated;
@@ -974,6 +975,7 @@ namespace BmwDeepObd
         {
             ClearVehicleInfo();
             _ecuList.Clear();
+            _ecuInfoDid = null;
             _ecuListTranslated = false;
             _instanceData.EcuSearchAbortIndex = -1;
         }
@@ -3125,6 +3127,35 @@ namespace BmwDeepObd
                 bool readFailed = false;
                 try
                 {
+                    if (ActivityCommon.VagUdsActive)
+                    {
+                        if (_ecuInfoDid == null && ecuInfo.Sgbd.Contains("7000"))
+                        {
+                            try
+                            {
+                                // for UDS read hw info from did
+                                _ediabas.ResolveSgbdFile("did_19");
+
+                                _ediabas.ArgString = string.Empty;
+                                _ediabas.ArgBinaryStd = null;
+                                _ediabas.ResultsRequests = string.Empty;
+                                _ediabas.ExecuteJob("_JOBS");    // force to load file
+
+                                string ecuName = _ediabas.SgbdFileName;
+                                EcuInfo ecuInfoDid = new EcuInfo(ecuName.ToUpperInvariant(), 19, string.Empty, ecuName, string.Empty);
+                                if (!GetVagEcuDetailInfo(ecuInfoDid, progress))
+                                {
+                                    throw new Exception("Read did detail info failed");
+                                }
+                                _ecuInfoDid = ecuInfoDid;
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new Exception("Read did detail info failed: " + ex.Message);
+                            }
+                        }
+                    }
+
                     _ediabas.ResolveSgbdFile(ecuInfo.Sgbd);
 
                     _ediabas.ArgString = "ALL";
@@ -4222,10 +4253,9 @@ namespace BmwDeepObd
                                 string hwPartNumber = string.Empty;
                                 if (resultDict1.TryGetValue(resultName1, out resultData))
                                 {
-                                    if (resultData.OpData is string)
+                                    if (resultData.OpData is string text)
                                     {
-                                        // ReSharper disable once TryCastAlwaysSucceeds
-                                        swPartNumber = resultData.OpData as string;
+                                        swPartNumber = text.TrimEnd();
                                     }
                                 }
 
@@ -4233,10 +4263,9 @@ namespace BmwDeepObd
                                 {
                                     if (resultDict1.TryGetValue(resultName2, out resultData))
                                     {
-                                        if (resultData.OpData is string)
+                                        if (resultData.OpData is string text)
                                         {
-                                            // ReSharper disable once TryCastAlwaysSucceeds
-                                            hwPartNumber = resultData.OpData as string;
+                                            hwPartNumber = text.TrimEnd();
                                         }
                                     }
 
@@ -4334,7 +4363,7 @@ namespace BmwDeepObd
                         {
                             if (resultData.OpData is byte[] data)
                             {
-                                dataString = VagUdsEncoding.GetString(data).TrimEnd('\0');
+                                dataString = VagUdsEncoding.GetString(data).TrimEnd('\0', ' ');
                             }
                         }
                         if (dataString == null)
