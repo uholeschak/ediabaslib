@@ -3268,7 +3268,7 @@ namespace BmwDeepObd
                                 {
                                     UdsFileReader.UdsReader.FileNameResolver udsResolver = new UdsFileReader.UdsReader.FileNameResolver(ActivityCommon.UdsReader,
                                         ecuInfo.VagAsamData, ecuInfo.VagAsamRev, ecuInfo.VagPartNumber, _ecuInfoDid.VagHwPartNumber);
-                                    List<string> udsFileList = udsResolver.GetFileList(_vagDir);
+                                    List<string> udsFileList = udsResolver.GetFileList(Path.Combine(_vagDir, UdsFileReader.UdsReader.UdsDir));
                                     if (udsFileList != null)
                                     {
                                         foreach (string name in udsFileList)
