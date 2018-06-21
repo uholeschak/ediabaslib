@@ -73,6 +73,29 @@ namespace UdsFileReader
                 return string.Empty;
             }
 
+            public string GetFileName(string rootDir)
+            {
+                string udsDir = Path.Combine(rootDir, UdsDir);
+                List<string> fileList = GetFileList(udsDir);
+                if (fileList == null || fileList.Count < 1)
+                {
+                    return null;
+                }
+
+                return fileList[0];
+            }
+
+            public static List<string> GetAllFiles(string fileName)
+            {
+                List<string> includeFiles = new List<string> { fileName };
+                if (!GetIncludeFiles(fileName, includeFiles))
+                {
+                    return null;
+                }
+
+                return includeFiles;
+            }
+
             public List<string> GetFileList(string dir)
             {
                 try
