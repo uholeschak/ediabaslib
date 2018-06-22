@@ -86,13 +86,19 @@ namespace BmwDeepObd
 
         public class JobsInfo
         {
-            public JobsInfo(string sgbd, List<JobInfo> jobList)
+            public JobsInfo(string sgbd, string vagDataFileName, string vagUdsFileName, List<JobInfo> jobList)
             {
                 Sgbd = sgbd;
+                VagDataFileName = vagDataFileName;
+                VagUdsFileName = vagUdsFileName;
                 JobList = jobList;
             }
 
             public string Sgbd { get; }
+
+            public string VagDataFileName { get; }
+
+            public string VagUdsFileName { get; }
 
             public List<JobInfo> JobList { get; }
         }
@@ -488,11 +494,17 @@ namespace BmwDeepObd
                             if (string.Compare(xnodePageChild.Name, "jobs", StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 string sgbd = null;
+                                string vagDataFileName = null;
+                                string vagUdsFileName = null;
                                 List<JobInfo> jobList = new List<JobInfo>();
                                 if (xnodePageChild.Attributes != null)
                                 {
                                     attrib = xnodePageChild.Attributes["sgbd"];
                                     if (attrib != null) sgbd = attrib.Value;
+                                    attrib = xnodePageChild.Attributes["vag_data_file"];
+                                    if (attrib != null) vagDataFileName = attrib.Value;
+                                    attrib = xnodePageChild.Attributes["vag_uds_file"];
+                                    if (attrib != null) vagUdsFileName = attrib.Value;
                                 }
                                 foreach (XmlNode xnodeJobsChild in xnodePageChild.ChildNodes)
                                 {
@@ -526,7 +538,7 @@ namespace BmwDeepObd
                                         }
                                     }
                                 }
-                                jobsInfo = new JobsInfo(sgbd, jobList);
+                                jobsInfo = new JobsInfo(sgbd, vagDataFileName, vagUdsFileName, jobList);
                             }
                             if (string.Compare(xnodePageChild.Name, "read_errors", StringComparison.OrdinalIgnoreCase) == 0)
                             {
