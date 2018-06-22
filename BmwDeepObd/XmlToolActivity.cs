@@ -60,7 +60,7 @@ namespace BmwDeepObd
             public EcuInfo(string name, Int64 address, string description, string sgbd, string grp,
                 JobReader.PageInfo.DisplayModeType displayMode = JobReader.PageInfo.DisplayModeType.List,
                 DisplayFontSize fontSize = DisplayFontSize.Small, int gaugesPortrait = JobReader.GaugesPortraitDefault, int gaugesLandscape = JobReader.GaugesLandscapeDefault,
-                string mwTabFileName = null, Dictionary<long, EcuMwTabEntry> mwTabEcuDict = null)
+                string mwTabFileName = null, Dictionary<long, EcuMwTabEntry> mwTabEcuDict = null, string vagDataFileName = null, string vagUdsFileName = null)
             {
                 Name = name;
                 Address = address;
@@ -84,6 +84,8 @@ namespace BmwDeepObd
                 MwTabFileName = mwTabFileName;
                 MwTabList = null;
                 MwTabEcuDict = mwTabEcuDict;
+                VagDataFileName = vagDataFileName;
+                VagUdsFileName = vagUdsFileName;
                 ReadCommand = null;
             }
 
@@ -130,6 +132,10 @@ namespace BmwDeepObd
             public List<ActivityCommon.MwTabEntry> MwTabList { get; set; }
 
             public Dictionary<long, EcuMwTabEntry> MwTabEcuDict { get; set; }
+
+            public string VagDataFileName { get; set; }
+
+            public string VagUdsFileName { get; set; }
 
             public bool IgnoreXmlFile { get; set; }
 
@@ -3262,13 +3268,18 @@ namespace BmwDeepObd
                             {
                                 UdsFileReader.DataReader.FileNameResolver dataResolver = new UdsFileReader.DataReader.FileNameResolver(ActivityCommon.UdsReader.DataReader, ecuInfo.VagPartNumber, (int)ecuInfo.Address);
                                 string dataFileName = dataResolver.GetFileName(_vagDir);
+#if false
                                 Log.Debug("Resolver", "Data file: " + dataFileName);
+#endif
+                                ecuInfo.VagDataFileName = dataFileName ?? string.Empty;
 
                                 if (udsEcu)
                                 {
                                     UdsFileReader.UdsReader.FileNameResolver udsResolver = new UdsFileReader.UdsReader.FileNameResolver(ActivityCommon.UdsReader,
                                         ecuInfo.VagAsamData, ecuInfo.VagAsamRev, ecuInfo.VagPartNumber, _ecuInfoDid.VagHwPartNumber);
                                     string udsFileName = udsResolver.GetFileName(_vagDir);
+                                    ecuInfo.VagUdsFileName = udsFileName ?? string.Empty;
+#if false
                                     if (udsFileName != null)
                                     {
                                         List<string> udsFileList = UdsFileReader.UdsReader.FileNameResolver.GetAllFiles(udsFileName);
@@ -3277,6 +3288,7 @@ namespace BmwDeepObd
                                             Log.Debug("Resolver", "Uds file: " + name);
                                         }
                                     }
+#endif
                                 }
                             }
                             catch (Exception ex)
@@ -4837,7 +4849,8 @@ namespace BmwDeepObd
 
         private string ReadPageSgbd(XDocument document, out JobReader.PageInfo.DisplayModeType displayMode, out DisplayFontSize fontSize,
             out int gaugesPortrait, out int gaugesLandscape,
-            out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict)
+            out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict,
+            out string vagDataFileName, out string vagUdsFileName)
         {
             displayMode = JobReader.PageInfo.DisplayModeType.List;
             fontSize = DisplayFontSize.Small;
@@ -4845,6 +4858,8 @@ namespace BmwDeepObd
             gaugesLandscape = JobReader.GaugesLandscapeDefault;
             mwTabFileName = null;
             mwTabEcuDict = null;
+            vagDataFileName = null;
+            vagUdsFileName = null;
             if (document.Root == null)
             {
                 return null;
@@ -4902,6 +4917,8 @@ namespace BmwDeepObd
             XAttribute sgbdAttr = jobsNode?.Attribute("sgbd");
             XAttribute mwTabAttr = jobsNode?.Attribute("mwtab");
             XAttribute mwDataAttr = jobsNode?.Attribute("mwdata");
+            XAttribute vagDataAttr = jobsNode?.Attribute("vag_data_file");
+            XAttribute vagUdsAttr = jobsNode?.Attribute("vag_uds_file");
             if (mwTabAttr != null)
             {
                 mwTabFileName = !IsMwTabEmpty(mwTabAttr.Value) ? Path.Combine(_ecuDir, mwTabAttr.Value) : mwTabAttr.Value;
@@ -4930,6 +4947,14 @@ namespace BmwDeepObd
                         // ignored
                     }
                 }
+            }
+            if (vagDataAttr != null)
+            {
+                vagDataFileName = Path.Combine(_vagDir, vagDataAttr.Value);
+            }
+            if (vagUdsAttr != null)
+            {
+                vagUdsFileName = Path.Combine(_vagDir, vagUdsAttr.Value);
             }
             return sgbdAttr?.Value;
         }
@@ -5033,7 +5058,8 @@ namespace BmwDeepObd
                 XElement jobsNodeNew = new XElement(ns + "jobs");
                 if (jobsNodeOld != null)
                 {
-                    jobsNodeNew.ReplaceAttributes(from el in jobsNodeOld.Attributes() where (el.Name != "sgbd" && el.Name != "mwtab" && el.Name != "mwdata") select new XAttribute(el));
+                    jobsNodeNew.ReplaceAttributes(from el in jobsNodeOld.Attributes() where (el.Name != "sgbd" && el.Name != "mwtab" && el.Name != "mwdata" &&
+                                                                                             el.Name != "vag_data_file" && el.Name != "vag_uds_file") select new XAttribute(el));
                 }
 
                 jobsNodeNew.Add(new XAttribute("sgbd", ecuInfo.Sgbd));
@@ -5078,6 +5104,24 @@ namespace BmwDeepObd
                             }
                         }
                         jobsNodeNew.Add(new XAttribute("mwdata", sr.ToString()));
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(ecuInfo.VagDataFileName))
+                {
+                    string relativePath = ActivityCommon.MakeRelativePath(_vagDir, ecuInfo.VagDataFileName);
+                    if (!string.IsNullOrEmpty(relativePath))
+                    {
+                        jobsNodeNew.Add(new XAttribute("vag_data_file", relativePath));
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(ecuInfo.VagUdsFileName))
+                {
+                    string relativePath = ActivityCommon.MakeRelativePath(_vagDir, ecuInfo.VagUdsFileName);
+                    if (!string.IsNullOrEmpty(relativePath))
+                    {
+                        jobsNodeNew.Add(new XAttribute("vag_uds_file", relativePath));
                     }
                 }
 
@@ -5407,10 +5451,11 @@ namespace BmwDeepObd
                     {
                         string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out JobReader.PageInfo.DisplayModeType displayMode, out DisplayFontSize fontSize,
                             out int gaugesPortrait, out int gaugesLandscape,
-                            out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict);
+                            out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict, out string vagDataFileName, out string vagUdsFileName);
                         if (!string.IsNullOrEmpty(sgbdName))
                         {
-                            _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, displayMode, fontSize, gaugesPortrait, gaugesLandscape, mwTabFileName, mwTabEcuDict)
+                            _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, displayMode, fontSize, gaugesPortrait, gaugesLandscape,
+                                            mwTabFileName, mwTabEcuDict, vagDataFileName, vagUdsFileName)
                             {
                                 Selected = true
                             });
@@ -5464,10 +5509,11 @@ namespace BmwDeepObd
                             {
                                 string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out JobReader.PageInfo.DisplayModeType displayMode, out DisplayFontSize fontSize,
                                     out int gaugesPortrait, out int gaugesLandscape,
-                                    out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict);
+                                    out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict, out string vagDataFileName, out string vagUdsFileName);
                                 if (!string.IsNullOrEmpty(sgbdName))
                                 {
-                                    _ecuList.Insert(0, new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, displayMode, fontSize, gaugesPortrait, gaugesLandscape, mwTabFileName, mwTabEcuDict)
+                                    _ecuList.Insert(0, new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, displayMode, fontSize, gaugesPortrait, gaugesLandscape,
+                                                        mwTabFileName, mwTabEcuDict, vagDataFileName, vagUdsFileName)
                                     {
                                         Selected = true
                                     });
