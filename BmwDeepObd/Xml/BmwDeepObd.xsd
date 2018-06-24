@@ -463,6 +463,20 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="vag_data_file" type="string1-type" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Relative path of the used VAG data file. Only used for VAG configuration generator.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="vag_uds_file" type="string1-type" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Relative path of the used VAG UDS file. Only used for VAG configuration generator.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute name="results" type="xs:string" use="optional" default="F_UW_KM">
       <xs:annotation>
         <xs:documentation>

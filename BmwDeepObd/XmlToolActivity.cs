@@ -5383,11 +5383,31 @@ namespace BmwDeepObd
                         attr?.Remove();
                         attr = ecuNode.Attribute("sgbd");
                         attr?.Remove();
+                        attr = ecuNode.Attribute("vag_data_file");
+                        attr?.Remove();
+                        attr = ecuNode.Attribute("vag_uds_file");
+                        attr?.Remove();
                     }
                     string displayTag = DisplayNameEcuPrefix + ecuInfo.Name;
                     errorsNodeNew.Add(ecuNode);
                     ecuNode.Add(new XAttribute("name", displayTag));
                     ecuNode.Add(new XAttribute("sgbd", ecuInfo.Sgbd));
+                    if (!string.IsNullOrEmpty(ecuInfo.VagDataFileName))
+                    {
+                        string relativePath = ActivityCommon.MakeRelativePath(_vagDir, ecuInfo.VagDataFileName);
+                        if (!string.IsNullOrEmpty(relativePath))
+                        {
+                            ecuNode.Add(new XAttribute("vag_data_file", relativePath));
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(ecuInfo.VagUdsFileName))
+                    {
+                        string relativePath = ActivityCommon.MakeRelativePath(_vagDir, ecuInfo.VagUdsFileName);
+                        if (!string.IsNullOrEmpty(relativePath))
+                        {
+                            ecuNode.Add(new XAttribute("vag_uds_file", relativePath));
+                        }
+                    }
 
                     XElement stringNode = new XElement(ns + "string", ecuInfo.EcuName);
                     stringNode.Add(new XAttribute("name", displayTag));
