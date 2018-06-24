@@ -20,20 +20,23 @@ namespace BmwDeepObd
     {
         public class EdiabasErrorReport
         {
-            public EdiabasErrorReport(string ecuName, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet) :
-                this(ecuName, errorDict, errorDetailSet, string.Empty)
+            public EdiabasErrorReport(string ecuName, string vagUdsFileName, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet) :
+                this(ecuName, vagUdsFileName, errorDict, errorDetailSet, string.Empty)
             {
             }
 
-            public EdiabasErrorReport(string ecuName, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet, string execptionText)
+            public EdiabasErrorReport(string ecuName, string vagUdsFileName, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet, string execptionText)
             {
                 EcuName = ecuName;
+                VagUdsFileName = vagUdsFileName;
                 ErrorDict = errorDict;
                 ErrorDetailSet = errorDetailSet;
                 ExecptionText = execptionText;
             }
 
             public string EcuName { get; }
+
+            public string VagUdsFileName { get; }
 
             public Dictionary<string, EdiabasNet.ResultData> ErrorDict { get; }
 
@@ -557,7 +560,7 @@ namespace BmwDeepObd
                         {
                             exText = EdiabasNet.GetExceptionText(ex);
                         }
-                        errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, null, null, exText));
+                        errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.VagUdsFileName, null, null, exText));
                         continue;
                     }
 
@@ -688,7 +691,7 @@ namespace BmwDeepObd
                                                 MergeResultDictionarys(ref resultDictTemp, resultDictLocal);
                                                 MergeResultDictionarys(ref resultDictTemp, resultDict0);
                                                 resultDictTemp.Add("SAE", new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeI, "SAE", (Int64) (saeMode ? 1 : 0)));
-                                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictTemp, null));
+                                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.VagUdsFileName, resultDictTemp, null));
                                             }
                                         }
                                         dictIndex++;
@@ -718,11 +721,11 @@ namespace BmwDeepObd
                                             if (details)
                                             {
                                                 List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
-                                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictLocal, new List<Dictionary<string, EdiabasNet.ResultData>>(resultSetsDetail)));
+                                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.VagUdsFileName, resultDictLocal, new List<Dictionary<string, EdiabasNet.ResultData>>(resultSetsDetail)));
                                             }
                                             else
                                             {
-                                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, resultDictLocal, null));
+                                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.VagUdsFileName, resultDictLocal, null));
                                             }
                                         }
                                     }
@@ -731,7 +734,7 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, null, null));
+                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.VagUdsFileName, null, null));
                             }
                         }
                     }
@@ -742,7 +745,7 @@ namespace BmwDeepObd
                         {
                             exText = EdiabasNet.GetExceptionText(ex);
                         }
-                        errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, null, null, exText));
+                        errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.VagUdsFileName, null, null, exText));
                         continue;
                     }
                     if (EdiabasErrorReportList == null)
