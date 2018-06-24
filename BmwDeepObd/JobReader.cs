@@ -105,16 +105,22 @@ namespace BmwDeepObd
 
         public class EcuInfo
         {
-            public EcuInfo(string name, string sgbd, string results)
+            public EcuInfo(string name, string sgbd, string vagDataFileName, string vagUdsFileName, string results)
             {
                 Name = name;
                 Sgbd = sgbd;
+                VagDataFileName = vagDataFileName;
+                VagUdsFileName = vagUdsFileName;
                 Results = results;
             }
 
             public string Name { get; }
 
             public string Sgbd { get; }
+
+            public string VagDataFileName { get; }
+
+            public string VagUdsFileName { get; }
 
             public string Results { get; }
         }
@@ -549,6 +555,8 @@ namespace BmwDeepObd
                                     {
                                         string ecuName = string.Empty;
                                         string sgbd = string.Empty;
+                                        string vagDataFileName = null;
+                                        string vagUdsFileName = null;
                                         string results = "F_UW_KM";
                                         if (xnodeErrorsChild.Attributes != null)
                                         {
@@ -556,10 +564,14 @@ namespace BmwDeepObd
                                             if (attrib != null) ecuName = attrib.Value;
                                             attrib = xnodeErrorsChild.Attributes["sgbd"];
                                             if (attrib != null) sgbd = attrib.Value;
+                                            attrib = xnodeErrorsChild.Attributes["vag_data_file"];
+                                            if (attrib != null) vagDataFileName = attrib.Value;
+                                            attrib = xnodeErrorsChild.Attributes["vag_uds_file"];
+                                            if (attrib != null) vagUdsFileName = attrib.Value;
                                             attrib = xnodeErrorsChild.Attributes["results"];
                                             if (attrib != null) results = attrib.Value;
                                         }
-                                        ecuList.Add(new EcuInfo(ecuName, sgbd, results));
+                                        ecuList.Add(new EcuInfo(ecuName, sgbd, vagDataFileName, vagUdsFileName, results));
                                     }
                                 }
                                 errorsInfo = new ErrorsInfo(ecuList);
