@@ -3444,7 +3444,7 @@ namespace BmwDeepObd
         }
 
         // ReSharper disable once UnusedParameter.Local
-        private void DownloadEcuFiles(bool manualRequest = false)
+        private void DownloadEcuFiles(bool extraMessage = false)
         {
             string ecuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
             try
@@ -3479,7 +3479,7 @@ namespace BmwDeepObd
                 // ignored
             }
 #if OBB_MODE
-            if (manualRequest)
+            if (extraMessage)
             {
                 string message = string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_extract_confirm), EcuExtractSize);
 
@@ -3502,7 +3502,7 @@ namespace BmwDeepObd
                     Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir));
             }
 #else
-            if (manualRequest)
+            if (extraMessage)
             {
                 string message = string.Format(GetString(Resource.String.download_manual), ManufacturerEcuDownloadUrl.Replace(".xml", ".zip"));
 
@@ -3566,7 +3566,7 @@ namespace BmwDeepObd
                 _downloadEcuAlertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
-                        DownloadEcuFiles(true);
+                        DownloadEcuFiles();
                     })
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
