@@ -26,8 +26,7 @@
   <string name="ecu_package">Для этого приложения доступны обновлённые ECU файлы.</string>
   <string name="ecu_download">Хотите загрузить ECU файлы (размер файла примерно {0:fs1})?</string>
   <string name="ecu_extract">Необходимо распаковать файлы ECU (приблизительный размер {0:fs1}),\nдля этого требуется загрузить информацию об обновлении.\nПродолжить?</string>
-  <!--Translate-->
-  <string name="ecu_extract_confirm">To extract the ECU files (Size approx. {0:fs1}),\nthe download of update information is required.\nDo you want to continue?</string>
+  <string name="ecu_extract_confirm">Для распаковки файлов ECU (Размер около{0:fs1})\nтребуется загрузка информации об обновлении.\nХотите продолжить? </string>
   <string name="manufacturer_select">Выбранный производитель {0}. Для выбора другого нажмите \'Отменить\'.</string>
   <string name="error_no_error">Ошибки отсутствуют</string>
   <string name="error_reading_errors">Считывание ошибок: {0}%</string>
@@ -212,8 +211,7 @@
   <string name="datalog_append_trace">Добавить Trace файл</string>
   <string name="datalog_enable_datalog">Протоколировать данные</string>
   <string name="datalog_append_datalog">Прикрепить протокол</string>
-  <!--Translate-->
-  <string name="datalog_no_tags">No data log tags are present.\nTo enable data logging, data log tags must be specified on the ECU page of the configuration generator.</string>
+  <string name="datalog_no_tags">Отсутствуют метки записи данных.\nДля активации записи данных, необходимо указать метки записи на странице ECU генератора конфигурации.</string>
   <string name="datalog_date">Дата</string>
 
   <!-- FilePicker -->
