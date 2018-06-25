@@ -202,6 +202,7 @@ namespace BmwDeepObd
         private string _ecuPath = string.Empty;
         private string _logPath = string.Empty;
         private bool _appendLog;
+        private bool _logTagsPresent;
         private string _interfaceName = string.Empty;
         private string _manufacturerName = string.Empty;
         private ActivityCommon.ManufacturerType _manufacturerType = ActivityCommon.ManufacturerType.Bmw;
@@ -214,6 +215,8 @@ namespace BmwDeepObd
         public string LogPath => _logPath;
 
         public bool AppendLog => _appendLog;
+
+        public bool LogTagsPresent => _logTagsPresent;
 
         public string ManufacturerName => _manufacturerName;
 
@@ -251,6 +254,7 @@ namespace BmwDeepObd
             string xmlDir = Path.GetDirectoryName(xmlName);
             _ecuPath = string.Empty;
             _logPath = string.Empty;
+            _logTagsPresent = false;
             _manufacturerName = string.Empty;
             _interfaceName = string.Empty;
 
@@ -594,6 +598,7 @@ namespace BmwDeepObd
                             }
                         }
                         if (!logEnabled) logFile = string.Empty;
+                        if (logEnabled) _logTagsPresent = true;
                         if (string.IsNullOrEmpty(pageName)) continue;
                         if (string.IsNullOrWhiteSpace(classCode)) classCode = null;
 

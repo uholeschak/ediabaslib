@@ -188,6 +188,7 @@
   <string name="datalog_append_trace">Append trace file</string>
   <string name="datalog_enable_datalog">Log data</string>
   <string name="datalog_append_datalog">Append log data</string>
+  <string name="datalog_no_tags">No data log tags are present.\nTo enable data logging, data log tags must be specified on the ECU page of the configuration generator.</string>
   <string name="datalog_date">Date</string>
 
   <!-- FilePicker -->
