@@ -27,6 +27,7 @@
   <string name="ecu_download">Wollen Sie jetzt die ECU Dateien herunterladen (Dateigröße ca. {0:fs1})?</string>
   <string name="manufacturer_select">Der aktuelle Hersteller ist {0}, um einen anderen zu wählen drücken Sie bitte \'Abbrechen\'.</string>
   <string name="ecu_extract">Die ECU Dateien müssen entpackt werden (Größe ca. {0:fs1}),\nder Download von Update-Informationen ist hierfür notwendig.\nWollen Sie fortfahren?</string>
+  <string name="ecu_extract_confirm">Für das Entpacken der ECU Dateien (Größe ca. {0:fs1})\nist der Download von Update-Informationen notwendig.\nWollen Sie fortfahren?</string>
   <string name="error_no_error">Keine Fehler vorhanden</string>
   <string name="error_reading_errors">Fehlerspeicher lesen: {0}%</string>
   <string name="error_no_response">Keine Antwort</string>

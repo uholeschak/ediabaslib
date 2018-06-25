@@ -3479,8 +3479,28 @@ namespace BmwDeepObd
                 // ignored
             }
 #if OBB_MODE
-            DownloadFile(EcuDownloadUrl, Path.Combine(_instanceData.AppDataPath, ActivityCommon.DownloadDir),
-                Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir));
+            if (manualRequest)
+            {
+                string message = string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_extract_confirm), EcuExtractSize);
+
+                new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                    {
+                        DownloadFile(EcuDownloadUrl, Path.Combine(_instanceData.AppDataPath, ActivityCommon.DownloadDir),
+                            Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir));
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                    {
+                    })
+                    .SetMessage(message)
+                    .SetTitle(Resource.String.alert_title_question)
+                    .Show();
+            }
+            else
+            {
+                DownloadFile(EcuDownloadUrl, Path.Combine(_instanceData.AppDataPath, ActivityCommon.DownloadDir),
+                    Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir));
+            }
 #else
             if (manualRequest)
             {

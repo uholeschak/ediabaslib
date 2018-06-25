@@ -26,6 +26,8 @@
   <string name="ecu_package">Для этого приложения доступны обновлённые ECU файлы.</string>
   <string name="ecu_download">Хотите загрузить ECU файлы (размер файла примерно {0:fs1})?</string>
   <string name="ecu_extract">Необходимо распаковать файлы ECU (приблизительный размер {0:fs1}),\nдля этого требуется загрузить информацию об обновлении.\nПродолжить?</string>
+  <!--Translate-->
+  <string name="ecu_extract_confirm">To extract the ECU files (Size approx. {0:fs1}),\nthe download of update information is required.\nDo you want to continue?</string>
   <string name="manufacturer_select">Выбранный производитель {0}. Для выбора другого нажмите \'Отменить\'.</string>
   <string name="error_no_error">Ошибки отсутствуют</string>
   <string name="error_reading_errors">Считывание ошибок: {0}%</string>
