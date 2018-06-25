@@ -211,6 +211,7 @@
   <string name="datalog_append_trace">Tracefile anhängen</string>
   <string name="datalog_enable_datalog">Daten aufzeichnen</string>
   <string name="datalog_append_datalog">Logdaten anhängen</string>
+  <string name="datalog_no_tags">Es sind keine Tags für die Datenaufzeichnung vorhanden.\nUm die Datenaufzeichnung zu aktivieren, müssen Tags für die Datenaufzeichnung auf der ECU Seite des Konfigurationsgenerator angegeben werden.</string>
   <string name="datalog_date">Datum</string>
 
   <!-- FilePicker -->

@@ -3818,6 +3818,10 @@ namespace BmwDeepObd
                             break;
 
                         case 2:
+                            if (value && !ActivityCommon.JobReader.LogTagsPresent)
+                            {
+                                _activityCommon.ShowAlert(GetString(Resource.String.datalog_no_tags), Resource.String.alert_title_warning);
+                            }
                             _instanceData.DataLogActive = value;
                             break;
 

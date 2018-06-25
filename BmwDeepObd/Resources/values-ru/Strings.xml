@@ -212,6 +212,8 @@
   <string name="datalog_append_trace">Добавить Trace файл</string>
   <string name="datalog_enable_datalog">Протоколировать данные</string>
   <string name="datalog_append_datalog">Прикрепить протокол</string>
+  <!--Translate-->
+  <string name="datalog_no_tags">No data log tags are present.\nTo enable data logging, data log tags must be specified on the ECU page of the configuration generator.</string>
   <string name="datalog_date">Дата</string>
 
   <!-- FilePicker -->
