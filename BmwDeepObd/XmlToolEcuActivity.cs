@@ -1136,8 +1136,8 @@ namespace BmwDeepObd
             _selectedJob = jobInfo;
 
             bool vagReadJob = IsVagReadJob(_selectedJob, _ecuInfo);
-            _checkBoxShowAllResults.Visibility = (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) && vagReadJob ?
-                ViewStates.Visible : ViewStates.Gone;
+            _checkBoxShowAllResults.Visibility = (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) &&
+                                                 vagReadJob && !ActivityCommon.VagUdsActive ? ViewStates.Visible : ViewStates.Gone;
 
             ResetTestResult();
             _spinnerJobResultsAdapter.Items.Clear();
@@ -1151,16 +1151,23 @@ namespace BmwDeepObd
                 if ((ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) && vagReadJob)
                 {
                     udsJob = string.Compare(jobInfo.Name, XmlToolActivity.JobReadMwUds, StringComparison.OrdinalIgnoreCase) == 0;
-                    List<ResultInfo> showResults = new List<ResultInfo>();
-                    if (_checkBoxShowAllResults.Checked && _checkBoxShowAllResults.Visibility == ViewStates.Visible)
+                    if (ActivityCommon.VagUdsActive)
                     {
-                        showResults = _selectedJob.Results;
+                        orderedResults = _selectedJob.Results;
                     }
                     else
                     {
-                        showResults.AddRange(_selectedJob.Results.Where(result => result.MwTabEntry != null && !result.MwTabEntry.Dummy));
+                        List<ResultInfo> showResults = new List<ResultInfo>();
+                        if (_checkBoxShowAllResults.Checked && _checkBoxShowAllResults.Visibility == ViewStates.Visible)
+                        {
+                            showResults = _selectedJob.Results;
+                        }
+                        else
+                        {
+                            showResults.AddRange(_selectedJob.Results.Where(result => result.MwTabEntry != null && !result.MwTabEntry.Dummy));
+                        }
+                        orderedResults = showResults.OrderBy(x => (x.MwTabEntry?.BlockNumber << 16) + x.MwTabEntry?.ValueIndexTrans);
                     }
-                    orderedResults = showResults.OrderBy(x => (x.MwTabEntry?.BlockNumber << 16) + x.MwTabEntry?.ValueIndexTrans);
                 }
                 else
                 {

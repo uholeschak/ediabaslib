@@ -3393,12 +3393,60 @@ namespace BmwDeepObd
 
         private void JobsReadThreadPart2(EcuInfo ecuInfo, List<XmlToolEcuActivity.JobInfo> jobList)
         {
+            List<UdsFileReader.DataReader.DataInfo> measDataList = null;
+            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && ActivityCommon.VagUdsActive)
+            {
+                if (!IsUdsEcu(ecuInfo))
+                {
+                    measDataList = ActivityCommon.UdsReader.DataReader.ExtractDataType(ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Measurement);
+                }
+            }
             foreach (XmlToolEcuActivity.JobInfo job in jobList)
             {
                 if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                 {
                     if (XmlToolEcuActivity.IsVagReadJob(job, ecuInfo))
                     {
+                        if (measDataList != null)
+                        {
+                            string heading = string.Empty;
+                            int lastGroup = -1;
+                            foreach (UdsFileReader.DataReader.DataInfo dataInfo in measDataList)
+                            {
+                                if (!dataInfo.Value1.HasValue || !dataInfo.Value2.HasValue)
+                                {
+                                    continue;
+                                }
+
+                                if (lastGroup != dataInfo.Value1.Value)
+                                {
+                                    lastGroup = dataInfo.Value1.Value;
+                                    heading = string.Empty;
+                                }
+                                if (dataInfo.Value2.Value == 0)
+                                {
+                                    heading = dataInfo.TextArray.Length > 0 ? dataInfo.TextArray[0] : string.Empty;
+                                    continue;
+                                }
+                                string valueName = dataInfo.TextArray.Length > 0 ? dataInfo.TextArray[0] : string.Empty;
+                                if (!string.IsNullOrEmpty(heading))
+                                {
+                                    valueName = heading + ": " + valueName;
+                                }
+
+                                List<string> commentList = dataInfo.TextArray.ToList();
+                                if (commentList.Count > 0)
+                                {
+                                    commentList.RemoveAt(0);
+                                }
+
+                                string name = string.Format(Culture, "{0}/{1}", dataInfo.Value1.Value, dataInfo.Value2.Value);
+                                string displayText = string.Format(Culture, "{0:000}/{1} {2}", dataInfo.Value1, dataInfo.Value2, valueName);
+                                string type = DataTypeReal;
+                                job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, null, commentList));
+                            }
+                            continue;
+                        }
                         if (ecuInfo.MwTabList != null)
                         {
                             job.Comments = new List<string> { GetString(Resource.String.xml_tool_job_read_mwblock) };
