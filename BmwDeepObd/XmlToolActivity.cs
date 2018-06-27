@@ -4353,7 +4353,6 @@ namespace BmwDeepObd
                                             hwPartNumber = text.TrimEnd();
                                         }
                                     }
-
                                 }
                                 if (!string.IsNullOrWhiteSpace(swPartNumber))
                                 {
