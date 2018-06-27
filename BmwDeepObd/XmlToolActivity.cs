@@ -3105,8 +3105,13 @@ namespace BmwDeepObd
             _translateEnabled = false;
 
             UpdateDisplay();
-            bool mwTabNotPresent = string.IsNullOrEmpty(ecuInfo.MwTabFileName) || (ecuInfo.MwTabEcuDict == null) ||
-                    (!IsMwTabEmpty(ecuInfo.MwTabFileName) && !File.Exists(ecuInfo.MwTabFileName));
+
+            bool mwTabNotPresent = false;
+            if (!ActivityCommon.VagUdsActive)
+            {
+                mwTabNotPresent = string.IsNullOrEmpty(ecuInfo.MwTabFileName) || (ecuInfo.MwTabEcuDict == null) ||
+                                (!IsMwTabEmpty(ecuInfo.MwTabFileName) && !File.Exists(ecuInfo.MwTabFileName));
+            }
 
             CustomProgressDialog progress = new CustomProgressDialog(this)
             {
@@ -3362,9 +3367,9 @@ namespace BmwDeepObd
                                 }
                             }
                         }
+                        ecuInfo.MwTabList = (!string.IsNullOrEmpty(ecuInfo.MwTabFileName) && !IsMwTabEmpty(ecuInfo.MwTabFileName)) ?
+                            ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName) : null;
                     }
-                    ecuInfo.MwTabList = (!string.IsNullOrEmpty(ecuInfo.MwTabFileName) && !IsMwTabEmpty(ecuInfo.MwTabFileName)) ?
-                        ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName) : null;
                     ecuInfo.ReadCommand = GetReadCommand(ecuInfo);
 
                     JobsReadThreadPart2(ecuInfo, jobList);
@@ -3451,57 +3456,60 @@ namespace BmwDeepObd
                             }
                         }
                         // fill up with virtual entries
-                        foreach (long key in ecuInfo.MwTabEcuDict.Keys)
+                        if (ecuInfo.MwTabEcuDict != null)
                         {
-                            EcuMwTabEntry ecuMwTabEntry = ecuInfo.MwTabEcuDict[key];
-                            int block = ecuMwTabEntry.BlockNumber;
-                            int index = ecuMwTabEntry.ValueIndex;
-                            bool entryFound = false;
+                            foreach (long key in ecuInfo.MwTabEcuDict.Keys)
+                            {
+                                EcuMwTabEntry ecuMwTabEntry = ecuInfo.MwTabEcuDict[key];
+                                int block = ecuMwTabEntry.BlockNumber;
+                                int index = ecuMwTabEntry.ValueIndex;
+                                bool entryFound = false;
 
-                            bool udsJob = string.Compare(job.Name, JobReadMwUds, StringComparison.OrdinalIgnoreCase) == 0;
-                            foreach (XmlToolEcuActivity.ResultInfo resultInfo in job.Results)
-                            {
-                                if (udsJob)
+                                bool udsJob = string.Compare(job.Name, JobReadMwUds, StringComparison.OrdinalIgnoreCase) == 0;
+                                foreach (XmlToolEcuActivity.ResultInfo resultInfo in job.Results)
                                 {
-                                    if (resultInfo.MwTabEntry.BlockNumber == block)
+                                    if (udsJob)
                                     {
-                                        entryFound = true;
-                                        break;
+                                        if (resultInfo.MwTabEntry.BlockNumber == block)
+                                        {
+                                            entryFound = true;
+                                            break;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (resultInfo.MwTabEntry.BlockNumber == block &&
+                                            resultInfo.MwTabEntry.ValueIndex == index)
+                                        {
+                                            entryFound = true;
+                                            break;
+                                        }
                                     }
                                 }
-                                else
+                                if (!entryFound)
                                 {
-                                    if (resultInfo.MwTabEntry.BlockNumber == block &&
-                                        resultInfo.MwTabEntry.ValueIndex == index)
+                                    int? indexStore;
+                                    string name;
+                                    string displayText;
+                                    string type;
+                                    if (!udsJob)
                                     {
-                                        entryFound = true;
-                                        break;
+                                        indexStore = index;
+                                        name = string.Format(Culture, "{0}/{1}", block, index);
+                                        displayText = string.Format(Culture, "{0:000}/{1}", block, index);
+                                        type = ecuMwTabEntry.ValueUnit;
                                     }
+                                    else
+                                    {
+                                        indexStore = null;
+                                        name = string.Format(Culture, "{0}", block);
+                                        displayText = string.Format(Culture, "{0:000}", block);
+                                        type = DataTypeBinary;
+                                    }
+                                    ActivityCommon.MwTabEntry mwTabEntry =
+                                        new ActivityCommon.MwTabEntry(block, indexStore, string.Empty, string.Empty, string.Empty, string.Empty, null, null, true);
+                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, null, null, mwTabEntry));
                                 }
-                            }
-                            if (!entryFound)
-                            {
-                                int? indexStore;
-                                string name;
-                                string displayText;
-                                string type;
-                                if (!udsJob)
-                                {
-                                    indexStore = index;
-                                    name = string.Format(Culture, "{0}/{1}", block, index);
-                                    displayText = string.Format(Culture, "{0:000}/{1}", block, index);
-                                    type = ecuMwTabEntry.ValueUnit;
-                                }
-                                else
-                                {
-                                    indexStore = null;
-                                    name = string.Format(Culture, "{0}", block);
-                                    displayText = string.Format(Culture, "{0:000}", block);
-                                    type = DataTypeBinary;
-                                }
-                                ActivityCommon.MwTabEntry mwTabEntry =
-                                    new ActivityCommon.MwTabEntry(block, indexStore, string.Empty, string.Empty, string.Empty, string.Empty, null, null, true);
-                                job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, null, null, mwTabEntry));
                             }
                         }
                     }
