@@ -1151,23 +1151,16 @@ namespace BmwDeepObd
                 if ((ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) && vagReadJob)
                 {
                     udsJob = string.Compare(jobInfo.Name, XmlToolActivity.JobReadMwUds, StringComparison.OrdinalIgnoreCase) == 0;
-                    if (ActivityCommon.VagUdsActive)
+                    List<ResultInfo> showResults = new List<ResultInfo>();
+                    if (_checkBoxShowAllResults.Checked && _checkBoxShowAllResults.Visibility == ViewStates.Visible)
                     {
-                        orderedResults = _selectedJob.Results;
+                        showResults = _selectedJob.Results;
                     }
                     else
                     {
-                        List<ResultInfo> showResults = new List<ResultInfo>();
-                        if (_checkBoxShowAllResults.Checked && _checkBoxShowAllResults.Visibility == ViewStates.Visible)
-                        {
-                            showResults = _selectedJob.Results;
-                        }
-                        else
-                        {
-                            showResults.AddRange(_selectedJob.Results.Where(result => result.MwTabEntry != null && !result.MwTabEntry.Dummy));
-                        }
-                        orderedResults = showResults.OrderBy(x => (x.MwTabEntry?.BlockNumber << 16) + x.MwTabEntry?.ValueIndexTrans);
+                        showResults.AddRange(_selectedJob.Results.Where(result => result.MwTabEntry != null && !result.MwTabEntry.Dummy));
                     }
+                    orderedResults = showResults.OrderBy(x => (x.MwTabEntry?.BlockNumber << 16) + x.MwTabEntry?.ValueIndexTrans);
                 }
                 else
                 {

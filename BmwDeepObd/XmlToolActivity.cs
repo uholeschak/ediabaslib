@@ -3441,9 +3441,11 @@ namespace BmwDeepObd
                                 }
 
                                 string name = string.Format(Culture, "{0}/{1}", dataInfo.Value1.Value, dataInfo.Value2.Value);
-                                string displayText = string.Format(Culture, "{0:000}/{1} {2}", dataInfo.Value1, dataInfo.Value2, valueName);
+                                string displayText = string.Format(Culture, "{0:000}/{1} {2}", dataInfo.Value1.Value, dataInfo.Value2.Value, valueName);
                                 string type = DataTypeReal;
-                                job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, null, commentList));
+                                ActivityCommon.MwTabEntry mwTabEntry =
+                                    new ActivityCommon.MwTabEntry(dataInfo.Value1.Value, dataInfo.Value2.Value, valueName, string.Empty, string.Empty, string.Empty, null, null);
+                                job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, null, commentList, mwTabEntry));
                             }
                             continue;
                         }
