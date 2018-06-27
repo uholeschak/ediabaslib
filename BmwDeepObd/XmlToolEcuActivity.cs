@@ -494,7 +494,7 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            if (ecuInfo.Sgbd.Contains("7000"))
+            if (XmlToolActivity.IsUdsEcu(ecuInfo))
             {
                 return string.Compare(job.Name, XmlToolActivity.JobReadMwUds, StringComparison.OrdinalIgnoreCase) == 0;
             }

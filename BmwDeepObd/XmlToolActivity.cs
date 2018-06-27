@@ -3108,14 +3108,16 @@ namespace BmwDeepObd
             bool mwTabNotPresent = string.IsNullOrEmpty(ecuInfo.MwTabFileName) || (ecuInfo.MwTabEcuDict == null) ||
                     (!IsMwTabEmpty(ecuInfo.MwTabFileName) && !File.Exists(ecuInfo.MwTabFileName));
 
-            CustomProgressDialog progress = new CustomProgressDialog(this);
+            CustomProgressDialog progress = new CustomProgressDialog(this)
+            {
+                Progress = 0,
+                Max = 100
+            };
             progress.SetMessage(GetString(Resource.String.xml_tool_analyze));
             if ((ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) &&
                 mwTabNotPresent)
             {
                 progress.Indeterminate = false;
-                progress.Progress = 0;
-                progress.Max = 100;
             }
             progress.AbortClick = sender => 
             {
@@ -3133,7 +3135,7 @@ namespace BmwDeepObd
                 bool readFailed = false;
                 try
                 {
-                    bool udsEcu = ecuInfo.Sgbd.Contains("7000");
+                    bool udsEcu = IsUdsEcu(ecuInfo);
                     if (ActivityCommon.VagUdsActive)
                     {
                         if (_ecuInfoDid == null && udsEcu)
@@ -3296,65 +3298,68 @@ namespace BmwDeepObd
                                 throw new Exception("Resolving files failed: " + ex.Message);
                             }
                         }
-                        if (mwTabNotPresent)
+                        else
                         {
-                            List<string> mwTabFileNames = GetBestMatchingMwTab(ecuInfo, progress);
-                            if (mwTabFileNames == null)
+                            if (mwTabNotPresent)
                             {
-                                throw new Exception("Read mwtab jobs failed");
-                            }
-                            if (mwTabFileNames.Count == 0)
-                            {
-                                ecuInfo.MwTabFileName = EmptyMwTab;
-                            }
-                            else if (mwTabFileNames.Count == 1)
-                            {
-                                ecuInfo.MwTabFileName = mwTabFileNames[0];
-                            }
-                            else
-                            {
-                                RunOnUiThread(() =>
+                                List<string> mwTabFileNames = GetBestMatchingMwTab(ecuInfo, progress);
+                                if (mwTabFileNames == null)
                                 {
-                                    if (_activityCommon == null)
+                                    throw new Exception("Read mwtab jobs failed");
+                                }
+                                if (mwTabFileNames.Count == 0)
+                                {
+                                    ecuInfo.MwTabFileName = EmptyMwTab;
+                                }
+                                else if (mwTabFileNames.Count == 1)
+                                {
+                                    ecuInfo.MwTabFileName = mwTabFileNames[0];
+                                }
+                                else
+                                {
+                                    RunOnUiThread(() =>
                                     {
-                                        return;
-                                    }
-                                    SelectMwTabFromListInfo(mwTabFileNames, name =>
-                                    {
-                                        if (string.IsNullOrEmpty(name))
+                                        if (_activityCommon == null)
                                         {
-                                            ReadJobThreadDone(ecuInfo, progress, true);
+                                            return;
                                         }
-                                        else
+                                        SelectMwTabFromListInfo(mwTabFileNames, name =>
                                         {
-                                            ecuInfo.MwTabFileName = name;
-                                            ecuInfo.MwTabList = ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName);
-                                            ecuInfo.ReadCommand = GetReadCommand(ecuInfo);
-                                            _jobThread = new Thread(() =>
+                                            if (string.IsNullOrEmpty(name))
                                             {
-                                                readFailed = false;
-                                                try
+                                                ReadJobThreadDone(ecuInfo, progress, true);
+                                            }
+                                            else
+                                            {
+                                                ecuInfo.MwTabFileName = name;
+                                                ecuInfo.MwTabList = ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName);
+                                                ecuInfo.ReadCommand = GetReadCommand(ecuInfo);
+                                                _jobThread = new Thread(() =>
                                                 {
-                                                    JobsReadThreadPart2(ecuInfo, jobList);
-                                                }
-                                                catch (Exception)
-                                                {
-                                                    readFailed = true;
-                                                }
-                                                RunOnUiThread(() =>
-                                                {
-                                                    if (_activityCommon == null)
+                                                    readFailed = false;
+                                                    try
                                                     {
-                                                        return;
+                                                        JobsReadThreadPart2(ecuInfo, jobList);
                                                     }
-                                                    ReadJobThreadDone(ecuInfo, progress, readFailed);
+                                                    catch (Exception)
+                                                    {
+                                                        readFailed = true;
+                                                    }
+                                                    RunOnUiThread(() =>
+                                                    {
+                                                        if (_activityCommon == null)
+                                                        {
+                                                            return;
+                                                        }
+                                                        ReadJobThreadDone(ecuInfo, progress, readFailed);
+                                                    });
                                                 });
-                                            });
-                                            _jobThread.Start();
-                                        }
+                                                _jobThread.Start();
+                                            }
+                                        });
                                     });
-                                });
-                                return;
+                                    return;
+                                }
                             }
                         }
                     }
@@ -3714,18 +3719,46 @@ namespace BmwDeepObd
             }
             else
             {
-                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw &&
-                    ((ecuInfo.MwTabList == null) || (ecuInfo.MwTabList.Count == 0)))
+                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                 {
-                    new AlertDialog.Builder(this)
-                    .SetMessage(Resource.String.xml_tool_no_mwtab)
-                    .SetTitle(Resource.String.alert_title_info)
-                    .SetNeutralButton(Resource.String.button_ok, (s, e) =>
+                    bool tableNotFound = false;
+                    if (ActivityCommon.VagUdsActive)
                     {
-                        TranslateAndSelectJobs(ecuInfo);
-                    })
-                    .Show();
-                    return;
+                        if (IsUdsEcu(ecuInfo))
+                        {
+                            if (string.IsNullOrEmpty(ecuInfo.VagUdsFileName))
+                            {
+                                tableNotFound = true;
+                            }
+                        }
+                        else
+                        {
+                            if (string.IsNullOrEmpty(ecuInfo.VagDataFileName))
+                            {
+                                tableNotFound = true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if ((ecuInfo.MwTabList == null) || (ecuInfo.MwTabList.Count == 0))
+                        {
+                            tableNotFound = true;
+                        }
+                    }
+
+                    if (tableNotFound)
+                    {
+                        new AlertDialog.Builder(this)
+                            .SetMessage(Resource.String.xml_tool_no_mwtab)
+                            .SetTitle(Resource.String.alert_title_info)
+                            .SetNeutralButton(Resource.String.button_ok, (s, e) =>
+                            {
+                                TranslateAndSelectJobs(ecuInfo);
+                            })
+                            .Show();
+                        return;
+                    }
                 }
                 // wait for thread to finish
                 if (IsJobRunning())
@@ -3749,9 +3782,14 @@ namespace BmwDeepObd
             }
         }
 
-        private string GetReadCommand(EcuInfo ecuInfo)
+        public static bool IsUdsEcu(EcuInfo ecuInfo)
         {
-            if (ecuInfo.Sgbd.Contains("7000"))
+            return ecuInfo.Sgbd.Contains("7000");
+        }
+
+        public static string GetReadCommand(EcuInfo ecuInfo)
+        {
+            if (IsUdsEcu(ecuInfo))
             {
                 return string.Empty;
             }
