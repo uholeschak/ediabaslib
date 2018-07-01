@@ -2807,6 +2807,67 @@ namespace BmwDeepObd
             return sbResult.ToString();
         }
 
+        public static String FormatResultVagUds(string vagPath, JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
+        {
+            if (!VagUdsActive)
+            {
+                return string.Empty;
+            }
+
+            if (string.IsNullOrEmpty(pageInfo.JobsInfo.VagUdsFileName))
+            {
+                return string.Empty;
+            }
+
+            string udsFileName = Path.Combine(vagPath, pageInfo.JobsInfo.VagUdsFileName);
+            List<string> udsFileList = UdsReader.FileNameResolver.GetAllFiles(udsFileName);
+            if (udsFileList == null)
+            {
+                return string.Empty;
+            }
+
+            List<UdsReader.ParseInfoBase> mwbSegmentList = UdsReader.ExtractFileSegment(udsFileList, UdsReader.SegmentType.Mwb);
+            if (mwbSegmentList == null)
+            {
+                return string.Empty;
+            }
+
+            string[] displayParts = displayInfo.Name.Split('#');
+            if (displayParts.Length != 3)
+            {
+                return string.Empty;
+            }
+
+            string serviceIdText = displayParts[displayParts.Length - 1];
+            if (!Int32.TryParse(serviceIdText, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 serviceId))
+            {
+                return string.Empty;
+            }
+
+            IList<EdiabasNet.ResultData> resultDataList;
+            if (resultDict != null && resultDict.TryGetValue(displayInfo.Result.ToUpperInvariant(), out resultDataList))
+            {
+                foreach (EdiabasNet.ResultData resultData in resultDataList)
+                {
+                    if (resultData.OpData.GetType() == typeof(byte[]))
+                    {
+                        foreach (UdsReader.ParseInfoBase parseInfo in mwbSegmentList)
+                        {
+                            if (parseInfo is UdsReader.ParseInfoMwb parseInfoMwb)
+                            {
+                                if (parseInfoMwb.ServiceId == serviceId)
+                                {
+                                    return parseInfoMwb.DataTypeEntry.ToString((byte[])resultData.OpData);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return string.Empty;
+        }
+
         public static bool IsTraceFilePresent(string traceDir)
         {
             if (string.IsNullOrEmpty(traceDir))
