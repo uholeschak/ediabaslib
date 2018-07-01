@@ -3427,7 +3427,7 @@ namespace BmwDeepObd
 
                                     string name = string.Format(Culture, "{0}", parseInfoMwb.ServiceId);
                                     string displayText = string.Format(Culture, "{0:00000} {1}", parseInfoMwb.ServiceId, valueName);
-                                    string type = DataTypeReal;
+                                    string type = DataTypeString;
                                     ActivityCommon.MwTabEntry mwTabEntry =
                                         new ActivityCommon.MwTabEntry((int) parseInfoMwb.ServiceId, null, valueName, string.Empty, string.Empty, string.Empty, null, null);
                                     job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, null, commentList, mwTabEntry));
