@@ -3394,9 +3394,18 @@ namespace BmwDeepObd
         private void JobsReadThreadPart2(EcuInfo ecuInfo, List<XmlToolEcuActivity.JobInfo> jobList)
         {
             List<UdsFileReader.DataReader.DataInfo> measDataList = null;
+            List<UdsFileReader.UdsReader.ParseInfoBase> mwbSegmentList = null;
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && ActivityCommon.VagUdsActive)
             {
-                if (!IsUdsEcu(ecuInfo))
+                if (IsUdsEcu(ecuInfo))
+                {
+                    List<string> udsFileList = UdsFileReader.UdsReader.FileNameResolver.GetAllFiles(ecuInfo.VagUdsFileName);
+                    if (udsFileList != null)
+                    {
+                        mwbSegmentList = ActivityCommon.UdsReader.ExtractFileSegment(udsFileList, UdsFileReader.UdsReader.SegmentType.Mwb);
+                    }
+                }
+                else
                 {
                     measDataList = ActivityCommon.UdsReader.DataReader.ExtractDataType(ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Measurement);
                 }
