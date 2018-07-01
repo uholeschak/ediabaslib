@@ -3416,6 +3416,26 @@ namespace BmwDeepObd
                 {
                     if (XmlToolEcuActivity.IsVagReadJob(job, ecuInfo))
                     {
+                        if (mwbSegmentList != null)
+                        {
+                            foreach (UdsFileReader.UdsReader.ParseInfoBase parseInfo in mwbSegmentList)
+                            {
+                                if (parseInfo is UdsFileReader.UdsReader.ParseInfoMwb parseInfoMwb)
+                                {
+                                    string valueName = parseInfoMwb.NameArray.Length > 0 ? parseInfoMwb.NameArray[0] : string.Empty;
+                                    List<string> commentList = parseInfoMwb.NameArray.ToList();
+
+                                    string name = string.Format(Culture, "{0}", parseInfoMwb.ServiceId);
+                                    string displayText = string.Format(Culture, "{0:00000} {1}", parseInfoMwb.ServiceId, valueName);
+                                    string type = DataTypeReal;
+                                    ActivityCommon.MwTabEntry mwTabEntry =
+                                        new ActivityCommon.MwTabEntry((int) parseInfoMwb.ServiceId, null, valueName, string.Empty, string.Empty, string.Empty, null, null);
+                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, null, commentList, mwTabEntry));
+                                }
+                            }
+                            continue;
+                        }
+
                         if (measDataList != null)
                         {
                             string heading = string.Empty;
@@ -3458,6 +3478,7 @@ namespace BmwDeepObd
                             }
                             continue;
                         }
+
                         if (ecuInfo.MwTabList != null)
                         {
                             job.Comments = new List<string> { GetString(Resource.String.xml_tool_job_read_mwblock) };
