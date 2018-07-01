@@ -2211,6 +2211,18 @@ namespace BmwDeepObd
                         foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                         {
                             string result = ActivityCommon.FormatResult(pageInfo, displayInfo, resultDict, out Android.Graphics.Color? textColor);
+                            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                            {
+                                if (ActivityCommon.VagUdsActive)
+                                {
+                                    string resultUds = ActivityCommon.FormatResultVagUds(_instanceData.VagPath, pageInfo, displayInfo, resultDict);
+                                    if (!string.IsNullOrEmpty(resultUds))
+                                    {
+                                        result = resultUds;
+                                    }
+                                }
+                            }
+
                             if (result != null)
                             {
                                 if (resultGridAdapter != null)
