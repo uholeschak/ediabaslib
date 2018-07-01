@@ -1369,6 +1369,7 @@ namespace BmwDeepObd
             {
                 try
                 {
+                    bool udsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
                     _ediabas.ResolveSgbdFile(_ecuInfo.Sgbd);
 
                     _ediabas.ArgString = string.Empty;
@@ -1443,9 +1444,37 @@ namespace BmwDeepObd
                                 {
                                     if (resultDict.TryGetValue("ERGEBNIS1WERT", out resultData))
                                     {
-                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Data type: {0}", resultData.ResType.ToString());
-                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Format: {0}", _selectedResult.Format ?? "No format");
-                                        resultText = FormatResult(resultData, _selectedResult.Format);
+                                        resultText = string.Empty;
+                                        if (udsEcu && resultData.OpData.GetType() == typeof(byte[]))
+                                        {
+                                            List<string> udsFileList = UdsFileReader.UdsReader.FileNameResolver.GetAllFiles(_ecuInfo.VagUdsFileName);
+                                            if (udsFileList != null)
+                                            {
+                                                List<UdsFileReader.UdsReader.ParseInfoBase> mwbSegmentList = ActivityCommon.UdsReader.ExtractFileSegment(udsFileList, UdsFileReader.UdsReader.SegmentType.Mwb);
+                                                if (mwbSegmentList != null)
+                                                {
+                                                    foreach (UdsFileReader.UdsReader.ParseInfoBase parseInfo in mwbSegmentList)
+                                                    {
+                                                        if (parseInfo is UdsFileReader.UdsReader.ParseInfoMwb parseInfoMwb)
+                                                        {
+                                                            if (parseInfoMwb.ServiceId == _selectedResult.MwTabEntry.BlockNumber)
+                                                            {
+                                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ServiceID match: {0}", parseInfoMwb.ServiceId);
+                                                                resultText = parseInfoMwb.DataTypeEntry.ToString((byte[])resultData.OpData);
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        if (string.IsNullOrEmpty(resultText))
+                                        {
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Data type: {0}", resultData.ResType.ToString());
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Format: {0}", _selectedResult.Format ?? "No format");
+                                            resultText = FormatResult(resultData, _selectedResult.Format);
+                                        }
                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", resultText);
                                         break;
                                     }
