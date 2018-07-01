@@ -2807,20 +2807,13 @@ namespace BmwDeepObd
             return sbResult.ToString();
         }
 
-        public static String FormatResultVagUds(string vagPath, JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
+        public static String FormatResultVagUds(List<string> udsFileList, JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
         {
             if (!VagUdsActive)
             {
                 return string.Empty;
             }
 
-            if (string.IsNullOrEmpty(pageInfo.JobsInfo.VagUdsFileName))
-            {
-                return string.Empty;
-            }
-
-            string udsFileName = Path.Combine(vagPath, pageInfo.JobsInfo.VagUdsFileName);
-            List<string> udsFileList = UdsReader.FileNameResolver.GetAllFiles(udsFileName);
             if (udsFileList == null)
             {
                 return string.Empty;

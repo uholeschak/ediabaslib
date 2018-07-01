@@ -2213,9 +2213,16 @@ namespace BmwDeepObd
                             string result = ActivityCommon.FormatResult(pageInfo, displayInfo, resultDict, out Android.Graphics.Color? textColor);
                             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                             {
-                                if (ActivityCommon.VagUdsActive)
+                                if (ActivityCommon.VagUdsActive && !string.IsNullOrEmpty(pageInfo.JobsInfo.VagUdsFileName))
                                 {
-                                    string resultUds = ActivityCommon.FormatResultVagUds(_instanceData.VagPath, pageInfo, displayInfo, resultDict);
+                                    List<string> udsFileList = pageInfo.JobsInfo.VagUdsFileListCache;
+                                    if (pageInfo.JobsInfo.VagUdsFileListCache == null)
+                                    {
+                                        string udsFileName = Path.Combine(_instanceData.VagPath, pageInfo.JobsInfo.VagUdsFileName);
+                                        udsFileList = UdsFileReader.UdsReader.FileNameResolver.GetAllFiles(udsFileName);
+                                        pageInfo.JobsInfo.VagUdsFileListCache = udsFileList;
+                                    }
+                                    string resultUds = ActivityCommon.FormatResultVagUds(udsFileList, pageInfo, displayInfo, resultDict);
                                     if (!string.IsNullOrEmpty(resultUds))
                                     {
                                         result = resultUds;
