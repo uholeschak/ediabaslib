@@ -2821,7 +2821,7 @@ namespace BmwDeepObd
             }
 
             string serviceIdText = displayParts[displayParts.Length - 1];
-            if (!Int32.TryParse(serviceIdText, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 serviceId))
+            if (!UInt32.TryParse(serviceIdText, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 serviceId))
             {
                 return string.Empty;
             }

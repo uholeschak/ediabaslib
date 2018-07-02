@@ -47,7 +47,7 @@ namespace UdsFileReader
         public const int DataTypeMaskSigned = 0x80;
         public const int DataTypeMaskEnum = 0x3F;
 
-        private Dictionary<string, List<ParseInfoBase>> _mwbParseInfoDict = new Dictionary<string, List<ParseInfoBase>>();
+        private Dictionary<string, Dictionary<uint, ParseInfoMwb>> _mwbParseInfoDict = new Dictionary<string, Dictionary<uint, ParseInfoMwb>>();
 
         public class FileNameResolver
         {
@@ -3014,32 +3014,46 @@ namespace UdsFileReader
             return null;
         }
 
-        public ParseInfoMwb GetMwbParseInfo(string fileName, int serviceId)
+        public ParseInfoMwb GetMwbParseInfo(string fileName, uint serviceId)
         {
-            if (!_mwbParseInfoDict.TryGetValue(fileName, out List<ParseInfoBase> mwbSegmentList))
+            try
             {
-                List<string> includeFiles = FileNameResolver.GetAllFiles(fileName);
-                if (includeFiles == null)
+                if (!_mwbParseInfoDict.TryGetValue(fileName, out Dictionary<uint, ParseInfoMwb> mbwSegmentDict))
                 {
-                    return null;
-                }
-                mwbSegmentList = ExtractFileSegment(includeFiles, SegmentType.Mwb);
-                if (mwbSegmentList == null)
-                {
-                    return null;
-                }
-                _mwbParseInfoDict.Add(fileName, mwbSegmentList);
-            }
-
-            foreach (ParseInfoBase parseInfo in mwbSegmentList)
-            {
-                if (parseInfo is ParseInfoMwb parseInfoMwb)
-                {
-                    if (parseInfoMwb.ServiceId == serviceId)
+                    List<string> includeFiles = FileNameResolver.GetAllFiles(fileName);
+                    if (includeFiles == null)
                     {
-                        return parseInfoMwb;
+                        return null;
                     }
+                    List<ParseInfoBase> mwbSegmentList = ExtractFileSegment(includeFiles, SegmentType.Mwb);
+                    if (mwbSegmentList == null)
+                    {
+                        return null;
+                    }
+
+                    mbwSegmentDict = new Dictionary<uint, ParseInfoMwb>();
+                    foreach (ParseInfoBase parseInfo in mwbSegmentList)
+                    {
+                        if (parseInfo is ParseInfoMwb parseInfoMwb)
+                        {
+                            if (!mbwSegmentDict.ContainsKey(parseInfoMwb.ServiceId))
+                            {
+                                mbwSegmentDict.Add(parseInfoMwb.ServiceId, parseInfoMwb);
+                            }
+                        }
+                    }
+
+                    _mwbParseInfoDict.Add(fileName, mbwSegmentDict);
                 }
+
+                if (mbwSegmentDict.TryGetValue(serviceId, out ParseInfoMwb parseInfoMwbMatch))
+                {
+                    return parseInfoMwbMatch;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
 
             return null;
