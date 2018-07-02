@@ -2215,14 +2215,8 @@ namespace BmwDeepObd
                             {
                                 if (ActivityCommon.VagUdsActive && !string.IsNullOrEmpty(pageInfo.JobsInfo.VagUdsFileName))
                                 {
-                                    List<string> udsFileList = pageInfo.JobsInfo.VagUdsFileListCache;
-                                    if (pageInfo.JobsInfo.VagUdsFileListCache == null)
-                                    {
-                                        string udsFileName = Path.Combine(_instanceData.VagPath, pageInfo.JobsInfo.VagUdsFileName);
-                                        udsFileList = UdsFileReader.UdsReader.FileNameResolver.GetAllFiles(udsFileName);
-                                        pageInfo.JobsInfo.VagUdsFileListCache = udsFileList;
-                                    }
-                                    string resultUds = ActivityCommon.FormatResultVagUds(udsFileList, pageInfo, displayInfo, resultDict);
+                                    string udsFileName = Path.Combine(_instanceData.VagPath, pageInfo.JobsInfo.VagUdsFileName);
+                                    string resultUds = ActivityCommon.FormatResultVagUds(udsFileName, pageInfo, displayInfo, resultDict);
                                     if (!string.IsNullOrEmpty(resultUds))
                                     {
                                         result = resultUds;

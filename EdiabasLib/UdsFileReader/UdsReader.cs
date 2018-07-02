@@ -47,6 +47,8 @@ namespace UdsFileReader
         public const int DataTypeMaskSigned = 0x80;
         public const int DataTypeMaskEnum = 0x3F;
 
+        private Dictionary<string, Dictionary<uint, ParseInfoMwb>> _mwbParseInfoDict = new Dictionary<string, Dictionary<uint, ParseInfoMwb>>();
+
         public class FileNameResolver
         {
             public FileNameResolver(UdsReader udsReader, string asamData, string asamRev, string partNumber, string didHarwareNumber)
@@ -3007,6 +3009,51 @@ namespace UdsFileReader
                 {
                     return segmentInfo;
                 }
+            }
+
+            return null;
+        }
+
+        public ParseInfoMwb GetMwbParseInfo(string fileName, uint serviceId)
+        {
+            try
+            {
+                if (!_mwbParseInfoDict.TryGetValue(fileName, out Dictionary<uint, ParseInfoMwb> mbwSegmentDict))
+                {
+                    List<string> includeFiles = FileNameResolver.GetAllFiles(fileName);
+                    if (includeFiles == null)
+                    {
+                        return null;
+                    }
+                    List<ParseInfoBase> mwbSegmentList = ExtractFileSegment(includeFiles, SegmentType.Mwb);
+                    if (mwbSegmentList == null)
+                    {
+                        return null;
+                    }
+
+                    mbwSegmentDict = new Dictionary<uint, ParseInfoMwb>();
+                    foreach (ParseInfoBase parseInfo in mwbSegmentList)
+                    {
+                        if (parseInfo is ParseInfoMwb parseInfoMwb)
+                        {
+                            if (!mbwSegmentDict.ContainsKey(parseInfoMwb.ServiceId))
+                            {
+                                mbwSegmentDict.Add(parseInfoMwb.ServiceId, parseInfoMwb);
+                            }
+                        }
+                    }
+
+                    _mwbParseInfoDict.Add(fileName, mbwSegmentDict);
+                }
+
+                if (mbwSegmentDict.TryGetValue(serviceId, out ParseInfoMwb parseInfoMwbMatch))
+                {
+                    return parseInfoMwbMatch;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
 
             return null;

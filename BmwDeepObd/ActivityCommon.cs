@@ -2807,20 +2807,9 @@ namespace BmwDeepObd
             return sbResult.ToString();
         }
 
-        public static String FormatResultVagUds(List<string> udsFileList, JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
+        public static String FormatResultVagUds(string udsFileName, JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
         {
             if (!VagUdsActive)
-            {
-                return string.Empty;
-            }
-
-            if (udsFileList == null)
-            {
-                return string.Empty;
-            }
-
-            List<UdsReader.ParseInfoBase> mwbSegmentList = UdsReader.ExtractFileSegment(udsFileList, UdsReader.SegmentType.Mwb);
-            if (mwbSegmentList == null)
             {
                 return string.Empty;
             }
@@ -2832,7 +2821,13 @@ namespace BmwDeepObd
             }
 
             string serviceIdText = displayParts[displayParts.Length - 1];
-            if (!Int32.TryParse(serviceIdText, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 serviceId))
+            if (!UInt32.TryParse(serviceIdText, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 serviceId))
+            {
+                return string.Empty;
+            }
+
+            UdsReader.ParseInfoMwb parseInfoMwb = UdsReader.GetMwbParseInfo(udsFileName, serviceId);
+            if (parseInfoMwb == null)
             {
                 return string.Empty;
             }
@@ -2844,16 +2839,7 @@ namespace BmwDeepObd
                 {
                     if (resultData.OpData.GetType() == typeof(byte[]))
                     {
-                        foreach (UdsReader.ParseInfoBase parseInfo in mwbSegmentList)
-                        {
-                            if (parseInfo is UdsReader.ParseInfoMwb parseInfoMwb)
-                            {
-                                if (parseInfoMwb.ServiceId == serviceId)
-                                {
-                                    return parseInfoMwb.DataTypeEntry.ToString((byte[])resultData.OpData);
-                                }
-                            }
-                        }
+                        return parseInfoMwb.DataTypeEntry.ToString((byte[])resultData.OpData);
                     }
                 }
             }
