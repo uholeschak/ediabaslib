@@ -47,6 +47,8 @@ namespace UdsFileReader
         public const int DataTypeMaskSigned = 0x80;
         public const int DataTypeMaskEnum = 0x3F;
 
+        private Dictionary<string, List<ParseInfoBase>> _mwbParseInfoDict = new Dictionary<string, List<ParseInfoBase>>();
+
         public class FileNameResolver
         {
             public FileNameResolver(UdsReader udsReader, string asamData, string asamRev, string partNumber, string didHarwareNumber)
@@ -3006,6 +3008,37 @@ namespace UdsFileReader
                 if (segmentInfo.SegmentType == segmentType)
                 {
                     return segmentInfo;
+                }
+            }
+
+            return null;
+        }
+
+        public ParseInfoMwb GetMwbParseInfo(string fileName, int serviceId)
+        {
+            if (!_mwbParseInfoDict.TryGetValue(fileName, out List<ParseInfoBase> mwbSegmentList))
+            {
+                List<string> includeFiles = FileNameResolver.GetAllFiles(fileName);
+                if (includeFiles == null)
+                {
+                    return null;
+                }
+                mwbSegmentList = ExtractFileSegment(includeFiles, SegmentType.Mwb);
+                if (mwbSegmentList == null)
+                {
+                    return null;
+                }
+                _mwbParseInfoDict.Add(fileName, mwbSegmentList);
+            }
+
+            foreach (ParseInfoBase parseInfo in mwbSegmentList)
+            {
+                if (parseInfo is ParseInfoMwb parseInfoMwb)
+                {
+                    if (parseInfoMwb.ServiceId == serviceId)
+                    {
+                        return parseInfoMwb;
+                    }
                 }
             }
 

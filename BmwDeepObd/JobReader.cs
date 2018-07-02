@@ -92,7 +92,6 @@ namespace BmwDeepObd
                 VagDataFileName = vagDataFileName;
                 VagUdsFileName = vagUdsFileName;
                 JobList = jobList;
-                VagUdsFileListCache = null;
             }
 
             public string Sgbd { get; }
@@ -102,8 +101,6 @@ namespace BmwDeepObd
             public string VagUdsFileName { get; }
 
             public List<JobInfo> JobList { get; }
-
-            public List<string> VagUdsFileListCache { get; set; }
         }
 
         public class EcuInfo
