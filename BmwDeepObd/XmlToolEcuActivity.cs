@@ -1447,25 +1447,11 @@ namespace BmwDeepObd
                                         resultText = string.Empty;
                                         if (udsEcu && resultData.OpData.GetType() == typeof(byte[]))
                                         {
-                                            List<string> udsFileList = UdsFileReader.UdsReader.FileNameResolver.GetAllFiles(_ecuInfo.VagUdsFileName);
-                                            if (udsFileList != null)
+                                            UdsFileReader.UdsReader.ParseInfoMwb parseInfoMwb = ActivityCommon.UdsReader.GetMwbParseInfo(_ecuInfo.VagUdsFileName, (uint) _selectedResult.MwTabEntry.BlockNumber);
+                                            if (parseInfoMwb != null)
                                             {
-                                                List<UdsFileReader.UdsReader.ParseInfoBase> mwbSegmentList = ActivityCommon.UdsReader.ExtractFileSegment(udsFileList, UdsFileReader.UdsReader.SegmentType.Mwb);
-                                                if (mwbSegmentList != null)
-                                                {
-                                                    foreach (UdsFileReader.UdsReader.ParseInfoBase parseInfo in mwbSegmentList)
-                                                    {
-                                                        if (parseInfo is UdsFileReader.UdsReader.ParseInfoMwb parseInfoMwb)
-                                                        {
-                                                            if (parseInfoMwb.ServiceId == _selectedResult.MwTabEntry.BlockNumber)
-                                                            {
-                                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ServiceID match: {0}", parseInfoMwb.ServiceId);
-                                                                resultText = parseInfoMwb.DataTypeEntry.ToString((byte[])resultData.OpData);
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-                                                }
+                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ServiceID match: {0}", parseInfoMwb.ServiceId);
+                                                resultText = parseInfoMwb.DataTypeEntry.ToString((byte[])resultData.OpData);
                                             }
                                         }
 
