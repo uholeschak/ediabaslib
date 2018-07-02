@@ -1980,46 +1980,16 @@ namespace BmwDeepObd
                                                 if (!string.IsNullOrEmpty(errorReport.VagUdsFileName))
                                                 {
                                                     string udsFileName = Path.Combine(_instanceData.VagPath, errorReport.VagUdsFileName);
-                                                    List<string> udsFileList = UdsFileReader.UdsReader.FileNameResolver.GetAllFiles(udsFileName);
-                                                    if (udsFileList != null)
+                                                    UdsFileReader.UdsReader.ParseInfoDtc parseInfoDtc =
+                                                        ActivityCommon.UdsReader.GetDtcParseInfo(udsFileName, dtcEntry.DtcCode, dtcEntry.DtcDetail);
+                                                    if (parseInfoDtc != null)
                                                     {
-                                                        List<UdsFileReader.UdsReader.ParseInfoBase> resultDtcList =
-                                                            ActivityCommon.UdsReader.ExtractFileSegment(udsFileList, UdsFileReader.UdsReader.SegmentType.Dtc);
-                                                        if (resultDtcList != null)
+                                                        textList = new List<string>
                                                         {
-                                                            UdsFileReader.UdsReader.ParseInfoDtc parseInfoMatch = null;
-                                                            foreach (UdsFileReader.UdsReader.ParseInfoBase parseInfo in resultDtcList)
-                                                            {
-                                                                if (parseInfo is UdsFileReader.UdsReader.ParseInfoDtc parseInfoDtc)
-                                                                {
-                                                                    if (parseInfoDtc.ErrorCode == dtcEntry.DtcCode)
-                                                                    {
-                                                                        if (!parseInfoDtc.DetailCode.HasValue || parseInfoDtc.DetailCode.Value == 0)
-                                                                        {
-                                                                            parseInfoMatch = parseInfoDtc;
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            if (parseInfoDtc.DetailCode.Value == dtcEntry.DtcDetail)
-                                                                            {
-                                                                                parseInfoMatch = parseInfoDtc;
-                                                                                break;
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-
-                                                            if (parseInfoMatch != null)
-                                                            {
-                                                                textList = new List<string>
-                                                                {
-                                                                    parseInfoMatch.PcodeText,
-                                                                    parseInfoMatch.ErrorText,
-                                                                    parseInfoMatch.ErrorDetail
-                                                                };
-                                                            }
-                                                        }
+                                                            parseInfoDtc.PcodeText,
+                                                            parseInfoDtc.ErrorText,
+                                                            parseInfoDtc.ErrorDetail
+                                                        };
                                                     }
                                                 }
                                             }

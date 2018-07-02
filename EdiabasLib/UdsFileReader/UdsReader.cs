@@ -47,7 +47,8 @@ namespace UdsFileReader
         public const int DataTypeMaskSigned = 0x80;
         public const int DataTypeMaskEnum = 0x3F;
 
-        private Dictionary<string, Dictionary<uint, ParseInfoMwb>> _mwbParseInfoDict = new Dictionary<string, Dictionary<uint, ParseInfoMwb>>();
+        private readonly Dictionary<string, Dictionary<uint, ParseInfoMwb>> _mwbParseInfoDict = new Dictionary<string, Dictionary<uint, ParseInfoMwb>>();
+        private readonly Dictionary<string, Dictionary<uint, ParseInfoDtc>> _dtcParseInfoDict = new Dictionary<string, Dictionary<uint, ParseInfoDtc>>();
 
         public class FileNameResolver
         {
@@ -3049,6 +3050,67 @@ namespace UdsFileReader
                 if (mbwSegmentDict.TryGetValue(serviceId, out ParseInfoMwb parseInfoMwbMatch))
                 {
                     return parseInfoMwbMatch;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return null;
+        }
+
+        public ParseInfoDtc GetDtcParseInfo(string fileName, uint errorCode, uint detailCode)
+        {
+            try
+            {
+                if (!_dtcParseInfoDict.TryGetValue(fileName, out Dictionary<uint, ParseInfoDtc> dtcSegmentDict))
+                {
+                    List<string> includeFiles = FileNameResolver.GetAllFiles(fileName);
+                    if (includeFiles == null)
+                    {
+                        return null;
+                    }
+                    List<ParseInfoBase> dtcSegmentList = ExtractFileSegment(includeFiles, SegmentType.Dtc);
+                    if (dtcSegmentList == null)
+                    {
+                        return null;
+                    }
+
+                    dtcSegmentDict = new Dictionary<uint, ParseInfoDtc>();
+                    foreach (ParseInfoBase parseInfo in dtcSegmentList)
+                    {
+                        if (parseInfo is ParseInfoDtc parseInfoDtc)
+                        {
+                            uint addKey = parseInfoDtc.ErrorCode << 8;
+                            if (!dtcSegmentDict.ContainsKey(addKey))
+                            {
+                                dtcSegmentDict.Add(addKey, parseInfoDtc);
+                            }
+
+                            if (parseInfoDtc.DetailCode.HasValue && parseInfoDtc.DetailCode.Value != 0)
+                            {
+                                addKey |= parseInfoDtc.DetailCode.Value & 0xFF;
+                                if (!dtcSegmentDict.ContainsKey(addKey))
+                                {
+                                    dtcSegmentDict.Add(addKey, parseInfoDtc);
+                                }
+                            }
+                        }
+                    }
+
+                    _dtcParseInfoDict.Add(fileName, dtcSegmentDict);
+                }
+
+                uint matchKey = errorCode << 8;
+                uint matchKeyDetail = matchKey | (detailCode & 0xFF);
+                if (dtcSegmentDict.TryGetValue(matchKeyDetail, out ParseInfoDtc parseInfoDtcMatch))
+                {
+                    return parseInfoDtcMatch;
+                }
+                if (dtcSegmentDict.TryGetValue(matchKey, out parseInfoDtcMatch))
+                {
+                    return parseInfoDtcMatch;
                 }
             }
             catch (Exception)
