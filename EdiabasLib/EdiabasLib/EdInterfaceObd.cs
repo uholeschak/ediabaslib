@@ -114,6 +114,8 @@ namespace EdiabasLib
 
         protected string ComPortProtected = string.Empty;
         protected int UdsDtcStatusOverrideProtected = -1;
+        protected int UdsEcuCanIdOverrideProtected = -1;
+        protected int UdsTesterCanIdOverrideProtected = -1;
         protected double DtrTimeCorrCom = 0.3;
         protected double DtrTimeCorrFtdi = 0.3;
         protected int AddRecTimeout = 20;
@@ -261,6 +263,18 @@ namespace EdiabasLib
                 if (prop != null)
                 {
                     UdsDtcStatusOverride = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected.GetConfigProperty("ObdUdsEcuCanIdOverride");
+                if (prop != null)
+                {
+                    UdsEcuCanIdOverride = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected.GetConfigProperty("ObdUdsTesterCanIdOverride");
+                if (prop != null)
+                {
+                    UdsTesterCanIdOverride = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected.GetConfigProperty("ObdDtrTimeCorrCom");
@@ -1699,6 +1713,30 @@ namespace EdiabasLib
             set
             {
                 UdsDtcStatusOverrideProtected = value;
+            }
+        }
+
+        public int UdsEcuCanIdOverride
+        {
+            get
+            {
+                return UdsEcuCanIdOverrideProtected;
+            }
+            set
+            {
+                UdsEcuCanIdOverrideProtected = value;
+            }
+        }
+
+        public int UdsTesterCanIdOverride
+        {
+            get
+            {
+                return UdsTesterCanIdOverrideProtected;
+            }
+            set
+            {
+                UdsTesterCanIdOverrideProtected = value;
             }
         }
 
@@ -3638,7 +3676,21 @@ namespace EdiabasLib
                 if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Overriding UDS DTC status with {0:X02}", (byte) UdsDtcStatusOverride);
             }
 
-            if (!InterfaceSetCanIdsFuncUse(ParEdicEcuCanId, ParEdicTesterCanId, canFlags))
+            int ecuCanId = ParEdicEcuCanId;
+            if (UdsEcuCanIdOverride >= 0)
+            {
+                ecuCanId = UdsEcuCanIdOverride;
+                if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Overriding UDS ECU CAN ID with {0:X04}", UdsEcuCanIdOverride);
+            }
+
+            int testerCanId = ParEdicTesterCanId;
+            if (UdsTesterCanIdOverride >= 0)
+            {
+                testerCanId = UdsTesterCanIdOverride;
+                if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Overriding UDS tester CAN ID with {0:X04}", UdsTesterCanIdOverride);
+            }
+
+            if (!InterfaceSetCanIdsFuncUse(ecuCanId, testerCanId, canFlags))
             {
                 if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Setting CAN IDs failed");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
