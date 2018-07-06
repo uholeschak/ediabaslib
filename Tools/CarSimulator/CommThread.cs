@@ -17,6 +17,7 @@ using System.Threading;
 using Peak.Can.Basic;
 // ReSharper disable RedundantAssignment
 // ReSharper disable RedundantCast
+// ReSharper disable UnusedAutoPropertyAccessor.Local
 
 namespace CarSimulator
 {
@@ -194,27 +195,29 @@ namespace CarSimulator
             public List<byte[]> SendData { get; }
         }
 
+        // ReSharper disable MemberCanBePrivate.Local
         private class VagEcuAddressEntry
         {
-            public VagEcuAddressEntry(uint group, uint tp20Ecu, uint tp20Tester, uint isoTpEcu, uint isoTpTester)
+            public VagEcuAddressEntry(uint group, uint tp20EcuAddr, uint tp20TesterAddr, uint isoTpEcuCanId, uint isoTpTesterCanId)
             {
                 Group = group;
-                Tp20Ecu = tp20Ecu;
-                Tp20Tester = tp20Tester;
-                IsoTpEcu = isoTpEcu;
-                IsoTpTester = isoTpTester;
+                Tp20EcuAddr = tp20EcuAddr;
+                Tp20TesterAddr = tp20TesterAddr;
+                IsoTpEcuCanId = isoTpEcuCanId;
+                IsoTpTesterCanId = isoTpTesterCanId;
             }
 
             public uint Group { get; }
 
-            public uint Tp20Ecu { get; }
+            public uint Tp20EcuAddr { get; }
 
-            public uint Tp20Tester { get; }
+            public uint Tp20TesterAddr { get; }
 
-            public uint IsoTpEcu { get; }
+            public uint IsoTpEcuCanId { get; }
 
-            public uint IsoTpTester { get; }
+            public uint IsoTpTesterCanId { get; }
         }
+        // ReSharper restore MemberCanBePrivate.Local
 
         public enum ConceptType
         {
@@ -316,7 +319,9 @@ namespace CarSimulator
 #else
                                     0;
 #endif
-        private VagEcuAddressEntry[] EcuAddressArray =
+
+        // ReSharper disable once UnusedMember.Local
+        private readonly VagEcuAddressEntry[] _vagEcuAddressArray =
         {
             new VagEcuAddressEntry(0x00000001, 0x00000010, 0x00000001, 0x000007E0, 0x000007E8),
             new VagEcuAddressEntry(0x00000002, 0x0000001A, 0x00000002, 0x000007E1, 0x000007E9),
@@ -4016,23 +4021,12 @@ namespace CarSimulator
             }
 #if MAP_ISOTP_ECU
             // map to mot ecu
-            if (((canId & 0x700) == 0x700) && (canId != 0x700) && (canId != 0x710))
+            foreach (VagEcuAddressEntry ecuAddressEntry in _vagEcuAddressArray)
             {
-                switch (canId)
+                if (ecuAddressEntry.IsoTpEcuCanId == canId)
                 {
-                    case 0x700: // keep alive
-                    case 0x710: // did
-                    case 0x7DF: // functional address
-                        return null;
-
-                    default:
-                        if ((canId & 0x7E0) == 0x7E0)
-                        {
-                            Debug.WriteLine("Mapped ISOTP CAN ID: {0:X03} {1:X03}", canId, canId + 0x08);
-                            return new byte[] { 0x01, (byte)(canId >> 8), (byte)canId, (byte)(canId >> 8), (byte)(canId + 0x08) };
-                        }
-                        Debug.WriteLine("Mapped ISOTP CAN ID: {0:X03} {1:X03}", canId, canId + 0x6A);
-                        return new byte[] { 0x01, (byte)(canId >> 8), (byte)canId, (byte)(canId >> 8), (byte)(canId + 0x6A) };
+                    Debug.WriteLine("Mapped ISOTP CAN ID: {0:X03} {1:X03}", canId, ecuAddressEntry.IsoTpTesterCanId);
+                    return new byte[] { 0x01, (byte)(canId >> 8), (byte)canId, (byte)(ecuAddressEntry.IsoTpTesterCanId >> 8), (byte)(ecuAddressEntry.IsoTpTesterCanId) };
                 }
             }
 #endif
