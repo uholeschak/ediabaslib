@@ -1,4 +1,5 @@
 ﻿//#define USE_UDP_SOCKET
+//#define MAP_ISOTP_ECU
 #if DEBUG
 #define CAN_DEBUG
 #endif
@@ -2807,6 +2808,12 @@ namespace CarSimulator
                 return false;
             }
             // create BMW-FAST telegram
+#if MAP_ISOTP_ECU
+            if (targetAddr != 0x710)
+            {   // no did
+                targetAddr = 0x7E0; // mot
+            }
+#endif
             if (dataBuffer.Length > 0x3F)
             {
                 if (dataBuffer.Length > 0xFF)
@@ -3243,6 +3250,14 @@ namespace CarSimulator
                     if (canMsg.DATA[1] == 0xC0)
                     {
                         byte[] configData = GetConfigData(canMsg.DATA[0]);
+#if MAP_ISOTP_ECU
+                        if (configData != null && configData.Length == 2 && canMsg.DATA[0] != 0x1F)
+                        {
+                            // don't ignore did
+                            Debug.WriteLine("Ignore Tp20 ECU: {0:X02}", canMsg.DATA[0]);
+                            configData = null;
+                        }
+#endif
                         if ((configData == null) || (configData.Length != 2))
                         {
 #if CAN_DEBUG
@@ -3268,7 +3283,7 @@ namespace CarSimulator
                             TelAddress = configData[1],
                             AppId = canMsg.DATA[6],
                             RxId = (canMsg.DATA[5] << 8) | canMsg.DATA[4],
-                            TxId = 0x700 + canMsg.DATA[0],   // no real id
+                            TxId = 0x600 + canMsg.DATA[0],   // no real id
                             LastKeepAliveTick = Stopwatch.GetTimestamp()
                         };
                         _tp20Channels.Add(newChannel);
@@ -3742,6 +3757,28 @@ namespace CarSimulator
                     return configData;
                 }
             }
+#if MAP_ISOTP_ECU
+            // map to mot ecu
+            if (((canId & 0x700) == 0x700) && (canId != 0x700) && (canId != 0x710))
+            {
+                switch (canId)
+                {
+                    case 0x700: // keep alive
+                    case 0x710: // did
+                    case 0x7DF: // functional address
+                        return null;
+
+                    default:
+                        if ((canId & 0x7E0) == 0x7E0)
+                        {
+                            Debug.WriteLine("Mapped ISOTP CAN ID: {0:X03} {1:X03}", canId, canId + 0x08);
+                            return new byte[] { 0x01, (byte)(canId >> 8), (byte)canId, (byte)(canId >> 8), (byte)(canId + 0x08) };
+                        }
+                        Debug.WriteLine("Mapped ISOTP CAN ID: {0:X03} {1:X03}", canId, canId + 0x6A);
+                        return new byte[] { 0x01, (byte)(canId >> 8), (byte)canId, (byte)(canId >> 8), (byte)(canId + 0x6A) };
+                }
+            }
+#endif
             return null;
         }
 
