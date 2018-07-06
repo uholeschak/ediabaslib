@@ -237,6 +237,10 @@ namespace CarSimulator
         private long _lastCanReceiveTick;
 #endif
         private long _lastCanStatusTick;
+#if MAP_ISOTP_ECU
+        private uint _originalEcuId;
+        private uint _originalTesterId;
+#endif
         private readonly List<Tp20Channel> _tp20Channels;
         private readonly List<DynamicUdsEntry> _dynamicUdsEntries;
         private TcpListener _tcpServerDiag;
@@ -2809,6 +2813,8 @@ namespace CarSimulator
             }
             // create BMW-FAST telegram
 #if MAP_ISOTP_ECU
+            _originalEcuId = targetAddr;
+            _originalTesterId = testerAddr;
             if (targetAddr != 0x710)
             {   // no did
                 targetAddr = 0x7E0; // mot
@@ -2862,6 +2868,10 @@ namespace CarSimulator
 
             uint sourceAddr = (uint) (sendData[1] << 8) + sendData[2];
             int testerId = GetIsoTpTesterId(sourceAddr);
+#if MAP_ISOTP_ECU
+            sourceAddr = _originalEcuId;
+            testerId = (int)_originalTesterId;
+#endif
             if (testerId < 0)
             {
 #if CAN_DEBUG
