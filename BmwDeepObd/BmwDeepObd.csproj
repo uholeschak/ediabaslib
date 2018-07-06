@@ -143,6 +143,9 @@
     <Compile Include="..\EdiabasLib\UdsFileReader\UdsReader.cs">
       <Link>UdsReader.cs</Link>
     </Compile>
+    <Compile Include="..\EdiabasLib\UdsFileReader\VehicleInfoVag.cs">
+      <Link>VehicleInfoVag.cs</Link>
+    </Compile>
     <Compile Include="ActivityCommon.cs" />
     <Compile Include="CanAdapterActivity.cs" />
     <Compile Include="CustomProgressDialog.cs" />
@@ -167,7 +170,7 @@
     <Compile Include="ResultGridAdapter.cs" />
     <Compile Include="StringAdapter.cs" />
     <Compile Include="StringObjAdapter.cs" />
-    <Compile Include="VehicleInfo.cs" />
+    <Compile Include="VehicleInfoBmw.cs" />
     <Compile Include="XmlToolActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

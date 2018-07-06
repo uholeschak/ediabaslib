@@ -2320,7 +2320,7 @@ namespace BmwDeepObd
                                                 if (!string.IsNullOrEmpty(br))
                                                 {
                                                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected BR: {0}", br);
-                                                    string vtype = VehicleInfo.GetVehicleTypeFromBrName(br, _ediabas);
+                                                    string vtype = VehicleInfoBmw.GetVehicleTypeFromBrName(br, _ediabas);
                                                     if (!string.IsNullOrEmpty(vtype))
                                                     {
                                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle type: {0}", vtype);
@@ -2338,7 +2338,7 @@ namespace BmwDeepObd
                                     if (!string.IsNullOrEmpty(br))
                                     {
                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected BR: {0}", br);
-                                        string vtype = VehicleInfo.GetVehicleTypeFromBrName(br, _ediabas);
+                                        string vtype = VehicleInfoBmw.GetVehicleTypeFromBrName(br, _ediabas);
                                         if (!string.IsNullOrEmpty(vtype))
                                         {
                                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle type: {0}", vtype);
@@ -2372,10 +2372,10 @@ namespace BmwDeepObd
 
                 if (string.IsNullOrEmpty(vehicleType))
                 {
-                    vehicleType = VehicleInfo.GetVehicleTypeFromVin(detectedVin, _ediabas);
+                    vehicleType = VehicleInfoBmw.GetVehicleTypeFromVin(detectedVin, _ediabas);
                 }
                 detectedVehicleType = vehicleType;
-                string groupSgbd = VehicleInfo.GetGroupSgbdFromVehicleType(vehicleType, _ediabas);
+                string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, _ediabas);
                 if (string.IsNullOrEmpty(groupSgbd))
                 {
                     _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No group SGBD found");
@@ -2715,10 +2715,10 @@ namespace BmwDeepObd
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group files: {0}", groupFiles);
                     if (string.IsNullOrEmpty(vehicleType))
                     {
-                        vehicleType = VehicleInfo.GetVehicleTypeFromVin(detectedVin, _ediabas);
+                        vehicleType = VehicleInfoBmw.GetVehicleTypeFromVin(detectedVin, _ediabas);
                     }
                     detectedVehicleType = vehicleType;
-                    ReadOnlyCollection<VehicleInfo.IEcuLogisticsEntry> ecuLogistics = VehicleInfo.GetEcuLogisticsFromVehicleType(vehicleType, _ediabas);
+                    ReadOnlyCollection<VehicleInfoBmw.IEcuLogisticsEntry> ecuLogistics = VehicleInfoBmw.GetEcuLogisticsFromVehicleType(vehicleType, _ediabas);
                     string[] groupArray = groupFiles.Split(',');
                     List<string> groupList;
                     if (ecuLogistics != null)
@@ -2726,7 +2726,7 @@ namespace BmwDeepObd
                         groupList = new List<string>();
                         foreach (string group in groupArray)
                         {
-                            VehicleInfo.IEcuLogisticsEntry entry = VehicleInfo.GetEcuLogisticsByGroupName(ecuLogistics, group);
+                            VehicleInfoBmw.IEcuLogisticsEntry entry = VehicleInfoBmw.GetEcuLogisticsByGroupName(ecuLogistics, group);
                             if (entry != null)
                             {
                                 groupList.Add(group);

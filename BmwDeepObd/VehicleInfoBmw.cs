@@ -9,7 +9,7 @@ using ICSharpCode.SharpZipLib.Zip;
 
 namespace BmwDeepObd
 {
-    public class VehicleInfo
+    public class VehicleInfoBmw
     {
         // ReSharper disable InconsistentNaming
         public enum BusType
