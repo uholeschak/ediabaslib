@@ -48,6 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\EdiabasLib\UdsFileReader\VehicleInfoVag.cs">
+      <Link>VehicleInfoVag.cs</Link>
+    </Compile>
     <Compile Include="BluetoothSearch.cs">
       <SubType>Form</SubType>
     </Compile>

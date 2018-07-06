@@ -49,6 +49,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UdsReader.cs" />
+    <Compile Include="VehicleInfoVag.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
