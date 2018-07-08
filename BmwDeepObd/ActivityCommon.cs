@@ -2748,12 +2748,12 @@ namespace BmwDeepObd
             string sgbdName = fileName;
             if (SelectedManufacturer != ManufacturerType.Bmw)
             {
-                string[] nameArray = fileName.Split('#');
-                if (nameArray.Length == 2)
+                if (fileName.StartsWith(XmlToolActivity.VagUdsCommonSgbd + "#", true, CultureInfo.InvariantCulture))
                 {
-                    sgbdName = nameArray[0];
-                    if (string.Compare(sgbdName, "mot7000", StringComparison.OrdinalIgnoreCase) == 0)
+                    string[] nameArray = fileName.Split('#');
+                    if (nameArray.Length == 2)
                     {
+                        sgbdName = nameArray[0];
                         object addressObj = new System.ComponentModel.UInt32Converter().ConvertFromInvariantString(nameArray[1]);
                         if (!(addressObj is UInt32 address))
                         {
