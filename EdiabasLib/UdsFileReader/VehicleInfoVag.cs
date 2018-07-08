@@ -1,19 +1,22 @@
-﻿namespace UdsFileReader
+﻿using System;
+using System.Collections.Generic;
+
+namespace UdsFileReader
 {
     public static class VehicleInfoVag
     {
         public class EcuAddressEntry
         {
-            public EcuAddressEntry(uint group, uint tp20EcuAddr, uint tp20TesterAddr, uint isoTpEcuCanId, uint isoTpTesterCanId)
+            public EcuAddressEntry(uint address, uint tp20EcuAddr, uint tp20TesterAddr, uint isoTpEcuCanId, uint isoTpTesterCanId)
             {
-                Group = group;
+                Address = address;
                 Tp20EcuAddr = tp20EcuAddr;
                 Tp20TesterAddr = tp20TesterAddr;
                 IsoTpEcuCanId = isoTpEcuCanId;
                 IsoTpTesterCanId = isoTpTesterCanId;
             }
 
-            public uint Group { get; }
+            public uint Address { get; }
 
             public uint Tp20EcuAddr { get; }
 
@@ -250,5 +253,39 @@
             new EcuAddressEntry(0x000000DE, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF),
             new EcuAddressEntry(0x000000DF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF),
         };
+
+        private static Dictionary<uint, EcuAddressEntry> _addressGroupDict;
+
+        public static EcuAddressEntry GetAddressEntry(uint address)
+        {
+            try
+            {
+                if (_addressGroupDict == null)
+                {
+                    _addressGroupDict = new Dictionary<uint, EcuAddressEntry>();
+                    foreach (EcuAddressEntry ecuAddressEntry in EcuAddressArray)
+                    {
+                        if (!_addressGroupDict.ContainsKey(ecuAddressEntry.Address))
+                        {
+                            _addressGroupDict.Add(ecuAddressEntry.Address, ecuAddressEntry);
+                        }
+                    }
+                }
+
+                if (_addressGroupDict.TryGetValue(address, out EcuAddressEntry ecuAddressEntryMatch))
+                {
+                    if (ecuAddressEntryMatch.Tp20EcuAddr <= 0x7FF && ecuAddressEntryMatch.IsoTpTesterCanId <= 0x7FF)
+                    {
+                        return ecuAddressEntryMatch;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return null;
+        }
     }
 }

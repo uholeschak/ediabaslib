@@ -1370,7 +1370,7 @@ namespace BmwDeepObd
                 try
                 {
                     bool udsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
-                    _ediabas.ResolveSgbdFile(_ecuInfo.Sgbd);
+                    ActivityCommon.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
 
                     _ediabas.ArgString = string.Empty;
                     if (_selectedResult.MwTabEntry != null && _ecuInfo.ReadCommand != null)

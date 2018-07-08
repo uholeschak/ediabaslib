@@ -551,7 +551,7 @@ namespace BmwDeepObd
                     }
                     try
                     {
-                        Ediabas.ResolveSgbdFile(ecuInfo.Sgbd);
+                        ActivityCommon.ResolveSgbdFile(Ediabas, ecuInfo.Sgbd);
                     }
                     catch (Exception ex)
                     {
@@ -781,7 +781,7 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        Ediabas.ResolveSgbdFile(pageInfo.JobsInfo?.Sgbd);
+                        ActivityCommon.ResolveSgbdFile(Ediabas, pageInfo.JobsInfo?.Sgbd);
                     }
                     catch (Exception ex)
                     {
@@ -828,7 +828,7 @@ namespace BmwDeepObd
                             if (!string.IsNullOrEmpty(sgbd) &&
                                 string.Compare(currentSgbd, sgbd, StringComparison.OrdinalIgnoreCase) != 0)
                             {
-                                Ediabas.ResolveSgbdFile(sgbd);
+                                ActivityCommon.ResolveSgbdFile(Ediabas, sgbd);
                                 currentSgbd = sgbd;
                             }
 

@@ -1370,7 +1370,7 @@ namespace BmwDeepObd
                 List<string> messageList = new List<string>();
                 try
                 {
-                    _ediabas.ResolveSgbdFile(_instanceData.SgbdFileName);
+                    ActivityCommon.ResolveSgbdFile(_ediabas, _instanceData.SgbdFileName);
 
                     _ediabas.ArgString = "ALL";
                     _ediabas.ArgBinaryStd = null;

@@ -2680,6 +2680,8 @@ namespace BmwDeepObd
             if (ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
             {
                 edInterfaceObd.UdsDtcStatusOverride = UdsDtcStatusOverride;
+                edInterfaceObd.UdsEcuCanIdOverride = -1;
+                edInterfaceObd.UdsTesterCanIdOverride = -1;
                 if (SelectedInterface == InterfaceType.Ftdi)
                 {
                     edInterfaceObd.ComPort = "FTDI0";
@@ -2713,6 +2715,74 @@ namespace BmwDeepObd
                 connectParameter = new EdInterfaceEnet.ConnectParameterType(_maConnectivity);
             }
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
+        }
+
+        public static bool SetEdiabasUdsCanId(EdiabasNet ediabas, VehicleInfoVag.EcuAddressEntry ecuAddressEntry = null)
+        {
+            if (ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
+            {
+                if (ecuAddressEntry != null)
+                {
+                    edInterfaceObd.UdsEcuCanIdOverride = (int)ecuAddressEntry.IsoTpEcuCanId;
+                    edInterfaceObd.UdsTesterCanIdOverride = (int)ecuAddressEntry.IsoTpTesterCanId;
+                }
+                else
+                {
+                    edInterfaceObd.UdsEcuCanIdOverride = -1;
+                    edInterfaceObd.UdsTesterCanIdOverride = -1;
+                }
+                return true;
+            }
+
+            return false;
+        }
+
+        public static void ResolveSgbdFile(EdiabasNet ediabas, string fileName)
+        {
+            if (ediabas == null)
+            {
+                return;
+            }
+
+            bool mapped = false;
+            string sgbdName = fileName;
+            if (SelectedManufacturer != ManufacturerType.Bmw)
+            {
+                string[] nameArray = fileName.Split('#');
+                if (nameArray.Length == 2)
+                {
+                    sgbdName = nameArray[0];
+                    if (string.Compare(sgbdName, "mot7000", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        object addressObj = new System.ComponentModel.UInt32Converter().ConvertFromInvariantString(nameArray[1]);
+                        if (!(addressObj is UInt32 address))
+                        {
+                            ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ResolveSgbdFile invalid number for: {0} ", fileName);
+                            // ReSharper disable once NotResolvedInText
+                            throw new ArgumentOutOfRangeException("ResolveSgbdFile", "Parsing address failed");
+                        }
+                        VehicleInfoVag.EcuAddressEntry ecuAddressEntry = VehicleInfoVag.GetAddressEntry(address);
+                        if (ecuAddressEntry == null)
+                        {
+                            ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ResolveSgbdFile no address entry for: {0} ", fileName);
+                            // ReSharper disable once NotResolvedInText
+                            throw new ArgumentOutOfRangeException("ResolveSgbdFile", "No address entry found");
+                        }
+                        ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Mapped group {0} to ISOTP CAN IDs: {1:X03}, {2:X03}",
+                            address, ecuAddressEntry.Tp20EcuAddr, ecuAddressEntry.Tp20TesterAddr);
+
+                        SetEdiabasUdsCanId(ediabas, ecuAddressEntry);
+                        mapped = true;
+                    }
+                }
+            }
+
+            if (!mapped)
+            {
+                SetEdiabasUdsCanId(ediabas);
+            }
+
+            ediabas.ResolveSgbdFile(sgbdName);
         }
 
         public static string FormatResult(JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, out Android.Graphics.Color? textColor)
