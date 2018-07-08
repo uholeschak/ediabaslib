@@ -93,7 +93,7 @@ namespace BmwDeepObd
 
         public class MwTabEntry
         {
-            public MwTabEntry(int blockNumber, int? valueIndex, string description, string comment, string valueUnit, string valueType, double? valueMin, double? valueMax, bool dummy = false)
+            public MwTabEntry(long blockNumber, long? valueIndex, string description, string comment, string valueUnit, string valueType, double? valueMin, double? valueMax, bool dummy = false)
             {
                 BlockNumber = blockNumber;
                 ValueIndex = valueIndex;
@@ -106,9 +106,9 @@ namespace BmwDeepObd
                 Dummy = dummy;
             }
 
-            public int BlockNumber { get; }
-            public int? ValueIndex { get; }
-            public int ValueIndexTrans
+            public long BlockNumber { get; }
+            public long? ValueIndex { get; }
+            public long ValueIndexTrans
             {
                 get
                 {
@@ -4081,9 +4081,9 @@ namespace BmwDeepObd
             return mwTabFileList;
         }
 
-        public static SortedSet<int> ExtractVagMwBlocks(List<MwTabFileEntry> mwTabFileList)
+        public static SortedSet<long> ExtractVagMwBlocks(List<MwTabFileEntry> mwTabFileList)
         {
-            SortedSet<int> mwBlocks = new SortedSet<int>();
+            SortedSet<long> mwBlocks = new SortedSet<long>();
 
             foreach (MwTabFileEntry mwTabFileEntry in mwTabFileList)
             {

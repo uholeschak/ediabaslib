@@ -3981,7 +3981,7 @@ namespace BmwDeepObd
 
             List<ActivityCommon.MwTabFileEntry> wmTabList = ActivityCommon.GetMatchingVagMwTabs(Path.Combine(_datUkdDir, "mwtabs"), ecuInfo.Sgbd);
 #if false
-            SortedSet<int> mwBlocks = ActivityCommon.ExtractVagMwBlocks(wmTabList);
+            SortedSet<long> mwBlocks = ActivityCommon.ExtractVagMwBlocks(wmTabList);
 #else
             SortedSet<int> mwBlocks = new SortedSet<int>();
             for (int i = 0; i < 0x100; i++)
@@ -4193,7 +4193,7 @@ namespace BmwDeepObd
         {
 #if false
             List<ActivityCommon.MwTabFileEntry> wmTabList = ActivityCommon.GetMatchingVagMwTabsUds(Path.Combine(_datUkdDir, "mwtabs"), ecuInfo.Address);
-            SortedSet<int> mwIds = ActivityCommon.ExtractVagMwBlocks(wmTabList);
+            SortedSet<long> mwIds = ActivityCommon.ExtractVagMwBlocks(wmTabList);
 #else
             SortedSet<int> mwIds = new SortedSet<int>();
             for (int i = 0x1000; i <= 0x16FF; i++)
@@ -5306,7 +5306,7 @@ namespace BmwDeepObd
                     }
 
                     int jobId = 1;
-                    int lastBlockNumber = -1;
+                    long lastBlockNumber = -1;
                     foreach (XmlToolEcuActivity.ResultInfo result in job.Results)
                     {
                         if (!result.Selected)
