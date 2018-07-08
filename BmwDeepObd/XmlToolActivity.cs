@@ -309,6 +309,7 @@ namespace BmwDeepObd
         private readonly Regex _vinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
 
         public const string EmptyMwTab = "-";
+        public const string VagUdsCommonSgbd = @"mot7000";
         public const string JobReadMwBlock = @"Messwerteblock_lesen";
         public const string JobReadMwUds = @"GenerischS22_abfragen";
         public const string JobReadStatMwBlock = @"STATUS_MESSWERTBLOCK_LESEN";
@@ -2983,7 +2984,7 @@ namespace BmwDeepObd
                                 throw;  // should always work with ISOTP
                             }
 
-                            sgbdFileNameOverride = string.Format(CultureInfo.InvariantCulture, "mot7000#0x{0:X02}", ecuEntry.Address);
+                            sgbdFileNameOverride = string.Format(CultureInfo.InvariantCulture, VagUdsCommonSgbd + "#0x{0:X02}", ecuEntry.Address);
                             ActivityCommon.ResolveSgbdFile(_ediabas, sgbdFileNameOverride);
 
                             _ediabas.ArgString = string.Empty;
@@ -4646,7 +4647,20 @@ namespace BmwDeepObd
                         {
                             ecuInfo.Description = GetEcuComment(_ediabas.ResultSets);
                         }
-                        string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
+
+                        string ecuName = null;
+                        if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                        {
+                            if (ecuInfo.Sgbd.StartsWith(VagUdsCommonSgbd + "#", true, CultureInfo.InvariantCulture))
+                            {
+                                ecuName = ecuInfo.Sgbd;
+                            }
+                        }
+                        if (string.IsNullOrEmpty(ecuName))
+                        {
+                            ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
+                        }
+
                         if (_ecuList.Any(info => !info.Equals(ecuInfo) && string.Compare(info.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0))
                         {   // already existing
                             _ecuList.Remove(ecuInfo);
