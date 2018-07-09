@@ -558,7 +558,8 @@ BOOL GetCryptTables()
         if (memcmp(pAddr, pSignature1, strlen(pSignature1) - 1) == 0)
         {
             pSig1Addr = pAddr;
-            break;
+            // use last table
+            // break;
         }
     }
     if (pSig1Addr == NULL)
@@ -603,7 +604,8 @@ BOOL GetCryptTables()
         if (memcmp(pAddr, pSignature2, sizeof(pSignature2)) == 0)
         {
             pSig2Addr = pAddr;
-            break;
+            // use last table
+            // break;
         }
     }
     if (pSig2Addr == NULL)
