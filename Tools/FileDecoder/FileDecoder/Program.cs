@@ -966,7 +966,8 @@ namespace FileDecoder
             }
 
             int offset = 0;
-            if (baseName.StartsWith("TTTEXT") || baseName.StartsWith("UNIT"))
+            string typeName = "-" + _versionCodeString.ToUpperInvariant();
+            if ((baseName.StartsWith("TTTEXT") || baseName.StartsWith("UNIT")) && baseName.EndsWith(typeName))
             {
                 offset = _versionCode;
             }
