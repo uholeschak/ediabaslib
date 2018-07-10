@@ -500,13 +500,24 @@ namespace FileDecoder
         {
             try
             {
+                string baseName = Path.GetFileNameWithoutExtension(inFile);
+                if (baseName == null)
+                {
+                    return false;
+                }
+                string typeName = "-" + _versionCodeString.ToUpperInvariant();
+                int versionCode = 0;
+                if (baseName.EndsWith(typeName))
+                {
+                    versionCode = _versionCode;
+                }
                 using (FileStream fsRead = new FileStream(inFile, FileMode.Open))
                 {
                     using (FileStream fsWrite = new FileStream(outFile, FileMode.Create))
                     {
                         for (; ; )
                         {
-                            byte[] data = DecryptErrorCodeLine(fsRead);
+                            byte[] data = DecryptErrorCodeLine(fsRead, versionCode);
                             if (data == null)
                             {
                                 return false;
@@ -607,7 +618,7 @@ namespace FileDecoder
             }
         }
 
-        static byte[] DecryptErrorCodeLine(FileStream fs)
+        static byte[] DecryptErrorCodeLine(FileStream fs, int versionCode)
         {
             try
             {
@@ -694,7 +705,7 @@ namespace FileDecoder
                 Int32 cryptOffet = cryptCode * 2;
                 for (int i = 0; i < 8; i++)
                 {
-                    maskBuffer[i] += (byte) (_versionCode + CryptTab2[(byte) cryptOffet]);
+                    maskBuffer[i] += (byte) (versionCode + CryptTab2[(byte) cryptOffet]);
                     cryptOffet += cryptCode;
                 }
 
