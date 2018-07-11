@@ -20,7 +20,7 @@ namespace FileDecoder
         }
 
         // from string resource 383;
-        private const string VersionCodeString = "6da97491a5097b22";
+        private const string TypeCodeString = "6da97491a5097b22";
         static readonly byte[] CryptTab1 =
         {
             0x56, 0x15, 0x8F, 0xDB, 0xC5, 0x2A, 0x05, 0x7D, 0x19, 0xC8, 0xE5, 0x36, 0xA4, 0xB6, 0x91, 0x5E,
@@ -92,8 +92,8 @@ namespace FileDecoder
             0xCD, 0xA3, 0x7B, 0x15, 0x56, 0x1C, 0x1B, 0x57, 0x67, 0xA0, 0xA9, 0x9E, 0x04, 0xB6, 0xE5, 0xB7
         };
 
-        private static int _versionCode;
-        private static string _versionCodeString;
+        private static int _typeCode;
+        private static string _typeCodeString;
         private static UInt32 _holdrand;
 
         static int Main(string[] args)
@@ -135,15 +135,15 @@ namespace FileDecoder
 
             try
             {
-                _versionCode = DecryptVersionCodeString(VersionCodeString);
-                if (_versionCode < 0)
+                _typeCode = DecryptTypeCodeString(TypeCodeString);
+                if (_typeCode < 0)
                 {
-                    Console.WriteLine("Decryption of version code failed");
+                    Console.WriteLine("Decryption of type code failed");
                     return 1;
                 }
 
-                _versionCodeString = VersionCodeToString(_versionCode);
-                Console.WriteLine("Version code: {0:X04} {1}", _versionCode, _versionCodeString);
+                _typeCodeString = TypeCodeToString(_typeCode);
+                Console.WriteLine("Type code: {0:X04} {1}", _typeCode, _typeCodeString);
 
                 string[] files = Directory.GetFiles(dir, searchPattern, SearchOption.AllDirectories);
                 foreach (string file in files)
@@ -357,10 +357,10 @@ namespace FileDecoder
             if (dirInfo != null)
             {
                 string parentDir = dirInfo.Name;
-                if (string.Compare(parentDir, _versionCodeString, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(parentDir, _typeCodeString, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     extendedCode = true;
-                    typeCodeString = _versionCodeString;
+                    typeCodeString = _typeCodeString;
                 }
             }
 
@@ -373,7 +373,7 @@ namespace FileDecoder
                     return false;
                 }
 
-                int codeOffset = _versionCode * inFile[dotIdx] * inFile[dotIdx - 1] * inFile[dotIdx - 2];
+                int codeOffset = _typeCode * inFile[dotIdx] * inFile[dotIdx - 1] * inFile[dotIdx - 2];
                 typeCode += (byte) codeOffset;
             }
 
@@ -505,11 +505,11 @@ namespace FileDecoder
                 {
                     return false;
                 }
-                string typeName = "-" + _versionCodeString.ToUpperInvariant();
+                string typeName = "-" + _typeCodeString.ToUpperInvariant();
                 int versionCode = 0;
                 if (baseName.EndsWith(typeName))
                 {
-                    versionCode = _versionCode;
+                    versionCode = _typeCode;
                 }
                 using (FileStream fsRead = new FileStream(inFile, FileMode.Open))
                 {
@@ -977,10 +977,10 @@ namespace FileDecoder
             }
 
             int offset = 0;
-            string typeName = "-" + _versionCodeString.ToUpperInvariant();
+            string typeName = "-" + _typeCodeString.ToUpperInvariant();
             if ((baseName.StartsWith("TTTEXT") || baseName.StartsWith("UNIT")) && baseName.EndsWith(typeName))
             {
-                offset = _versionCode;
+                offset = _typeCode;
             }
 
             int factor = (byte)segmentName[1];
@@ -1254,7 +1254,7 @@ namespace FileDecoder
             return (_holdrand >> 16) & 0x7FFF;
         }
 
-        static int DecryptVersionCodeString(string typeCode)
+        static int DecryptTypeCodeString(string typeCode)
         {
             if (!UInt64.TryParse(typeCode, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out UInt64 value))
             {
@@ -1282,14 +1282,14 @@ namespace FileDecoder
             return (int) code;
         }
 
-        static string VersionCodeToString(int versionCode)
+        static string TypeCodeToString(int typeCode)
         {
-            byte versionLow = (byte)versionCode;
-            if (versionLow <= 0x48)
+            byte typeLow = (byte)typeCode;
+            if (typeLow <= 0x48)
             {
-                if (versionLow <= 0x30)
+                if (typeLow <= 0x30)
                 {
-                    switch (versionLow)
+                    switch (typeLow)
                     {
                         case 0x30:
                             return "NEZ";
@@ -1310,7 +1310,7 @@ namespace FileDecoder
                     return "INVALID";
                 }
 
-                switch (versionLow)
+                switch (typeLow)
                 {
                     case 0x34:
                         return "AER";
@@ -1327,9 +1327,9 @@ namespace FileDecoder
                 }
             }
 
-            if (versionLow <= 0xA0)
+            if (typeLow <= 0xA0)
             {
-                switch (versionLow)
+                switch (typeLow)
                 {
                     case 0xA0:
                         return "HGJ";
@@ -1347,7 +1347,7 @@ namespace FileDecoder
                 return "INVALID";
             }
 
-            switch (versionLow)
+            switch (typeLow)
             {
                 case 0xA1:
                     return "ROJ";
