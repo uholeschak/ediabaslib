@@ -22,12 +22,14 @@
 #define LOGFILE _T("DebugHelper.txt")
 #define CRYPTFILE1 _T("CryptTable1.bin")
 #define CRYPTFILE2 _T("CryptTable2.bin")
-#define VALID_TIME_DATE_STAMP 0x597C995A
+#define VALID_TIME_DATE_STAMP_780DE         0x597C995A
+#define VALID_TIME_DATE_STAMP_783RUS        0x589B6F53
 
 #define STATUS_SUCCESS                   ((NTSTATUS)0x00000000L)    // ntsubauth
 
-#define DECRYPT_TEXT_LINE_ADDR_REL      0x09D091
-#define READ_DECRYPTED_LINE_ADDR_REL    0x0416CC
+#define DECRYPT_TEXT_LINE_ADDR_REL_780DE    0x09D091
+#define DECRYPT_TEXT_LINE_ADDR_REL_783RUS   0x0A6D2D
+#define READ_DECRYPTED_LINE_ADDR_REL_780DE  0x0416CC
 
 typedef std::basic_string<TCHAR> tstring;
 
@@ -178,6 +180,8 @@ static FILE *fLog = NULL;
 static BYTE* pModuleBaseAddr = 0;
 static DWORD dwModuleBaseSize = 0;
 static DWORD dwTimeDateStamp = 0;
+static DWORD dwDecryptTextLineRelAddr = 0;
+static DWORD dwReadDecryptedLineRelAddr = 0;
 static std::list<HANDLE> FileWatchList;
 static std::list<HANDLE> FileMemWatchList;
 static std::list<LPVOID> MemWatchList;
@@ -671,7 +675,7 @@ class CDecryptTextLine
             }
             PatchDecryptTextLine.RestoreOpcodes();
 
-            ptrDecryptTextLine pDecryptTextLine = (ptrDecryptTextLine) (pModuleBaseAddr + DECRYPT_TEXT_LINE_ADDR_REL);
+            ptrDecryptTextLine pDecryptTextLine = (ptrDecryptTextLine) (pModuleBaseAddr + dwDecryptTextLineRelAddr);
             pDecryptTextLine(this, p1, pline, source);
 
             PatchDecryptTextLine.WriteOpcodes();
@@ -696,13 +700,21 @@ BOOL RedirectDecryptTextLine()
         LogPrintf(_T("RedirectDecryptTextLine: No module base address\n"));
         return FALSE;
     }
-    if (dwTimeDateStamp != VALID_TIME_DATE_STAMP)
+    if (dwTimeDateStamp == VALID_TIME_DATE_STAMP_780DE)
+    {
+        dwDecryptTextLineRelAddr = DECRYPT_TEXT_LINE_ADDR_REL_780DE;
+    }
+    else if (dwTimeDateStamp == VALID_TIME_DATE_STAMP_783RUS)
+    {
+        dwDecryptTextLineRelAddr = DECRYPT_TEXT_LINE_ADDR_REL_783RUS;
+    }
+    else
     {
         LogPrintf(_T("RedirectDecryptTextLine: Time date stamp invalid\n"));
         return FALSE;
     }
     PVOID pDecrypt = DisMember(sizeof(&CDecryptTextLine::mDecryptTextLine), &CDecryptTextLine::mDecryptTextLine);
-    PatchDecryptTextLine.SetDetour((PVOID)(pModuleBaseAddr + DECRYPT_TEXT_LINE_ADDR_REL), pDecrypt);
+    PatchDecryptTextLine.SetDetour((PVOID)(pModuleBaseAddr + dwDecryptTextLineRelAddr), pDecrypt);
     PatchDecryptTextLine.SetWriteProtection();
     PatchDecryptTextLine.SaveOpcodes();
     PatchDecryptTextLine.WriteOpcodes();
@@ -720,7 +732,7 @@ public:
     {
         PatchReadDecryptedLine.RestoreOpcodes();
 
-        ptrReadDecryptedLine pReadDecryptedLine = (ptrReadDecryptedLine)(pModuleBaseAddr + READ_DECRYPTED_LINE_ADDR_REL);
+        ptrReadDecryptedLine pReadDecryptedLine = (ptrReadDecryptedLine)(pModuleBaseAddr + dwReadDecryptedLineRelAddr);
         int result = pReadDecryptedLine(this, pfile, ptext, max_len);
 
         PatchReadDecryptedLine.WriteOpcodes();
@@ -739,13 +751,17 @@ BOOL RedirectReadDecryptedLine()
         LogPrintf(_T("RedirectReadDecryptedLine: No module base address\n"));
         return FALSE;
     }
-    if (dwTimeDateStamp != VALID_TIME_DATE_STAMP)
+    if (dwTimeDateStamp == VALID_TIME_DATE_STAMP_780DE)
+    {
+        dwReadDecryptedLineRelAddr = READ_DECRYPTED_LINE_ADDR_REL_780DE;
+    }
+    else
     {
         LogPrintf(_T("RedirectReadDecryptedLine: Time date stamp invalid\n"));
         return FALSE;
     }
     PVOID pDecrypt = DisMember(sizeof(&CReadDecryptedLine::mReadDecryptedLine), &CReadDecryptedLine::mReadDecryptedLine);
-    PatchReadDecryptedLine.SetDetour((PVOID)(pModuleBaseAddr + READ_DECRYPTED_LINE_ADDR_REL), pDecrypt);
+    PatchReadDecryptedLine.SetDetour((PVOID)(pModuleBaseAddr + dwReadDecryptedLineRelAddr), pDecrypt);
     PatchReadDecryptedLine.SetWriteProtection();
     PatchReadDecryptedLine.SaveOpcodes();
     PatchReadDecryptedLine.WriteOpcodes();
