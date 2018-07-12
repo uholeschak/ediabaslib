@@ -29,6 +29,7 @@ namespace FileDecoder
         static readonly UInt64[] DecryptTypeCodeData = { 0x11, 0x27, 0x05, 0x1113 };
 #endif
 
+        static readonly byte[] CryptTabIndex = { 0x23, 0x12, 0x21, 0x42, 0x51, 0x14, 0x47, 0x67 };
         static readonly byte[] CryptTab1 =
         {
             0x56, 0x15, 0x8F, 0xDB, 0xC5, 0x2A, 0x05, 0x7D, 0x19, 0xC8, 0xE5, 0x36, 0xA4, 0xB6, 0x91, 0x5E,
@@ -722,14 +723,10 @@ namespace FileDecoder
                     cryptOffet += cryptCode;
                 }
 
-                maskBuffer[0] *= CryptTab1[CryptTab2[0x23]];
-                maskBuffer[1] *= CryptTab1[CryptTab2[0x12]];
-                maskBuffer[2] *= CryptTab1[CryptTab2[0x21]];
-                maskBuffer[3] *= CryptTab1[CryptTab2[0x42]];
-                maskBuffer[4] *= CryptTab1[CryptTab2[0x51]];
-                maskBuffer[5] *= CryptTab1[CryptTab2[0x14]];
-                maskBuffer[6] *= CryptTab1[CryptTab2[0x47]];
-                maskBuffer[7] *= CryptTab1[CryptTab2[0x67]];
+                for (int i = 0; i < maskBuffer.Length; i++)
+                {
+                    maskBuffer[i] *= CryptTab1[CryptTab2[CryptTabIndex[i]]];
+                }
 
                 UInt32[] mask = new UInt32[2];
                 mask[0] = BitConverter.ToUInt32(maskBuffer, 0);
@@ -1003,10 +1000,9 @@ namespace FileDecoder
                 mask[i] += (byte)offset;
             }
 
-            byte[] tabIndex = { 0x23, 0x12, 0x21, 0x42, 0x51, 0x14, 0x47, 0x67 };
             for (int i = 0; i < mask.Length; i++)
             {
-                mask[i] *= CryptTab1[CryptTab2[tabIndex[i]]];
+                mask[i] *= CryptTab1[CryptTab2[CryptTabIndex[i]]];
             }
 
             return mask;
