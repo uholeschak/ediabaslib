@@ -713,7 +713,12 @@ namespace FileDecoder
                 Int32 cryptOffet = cryptCode * 2;
                 for (int i = 0; i < 8; i++)
                 {
+#if VERSION_780
                     maskBuffer[i] += (byte) (versionCode + CryptTab2[(byte) cryptOffet]);
+#else
+                    maskBuffer[i] += CryptTab2[(byte)cryptOffet];
+                    maskBuffer[i] += (byte) versionCode;
+#endif
                     cryptOffet += cryptCode;
                 }
 
