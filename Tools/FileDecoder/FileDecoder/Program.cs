@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define VERSION_780
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -20,7 +21,14 @@ namespace FileDecoder
         }
 
         // from string resource 383;
-        private const string TypeCodeString = "6da97491a5097b22";
+#if VERSION_780
+        private const string TypeCodeString = "6da97491a5097b22"; // DRV
+        static readonly UInt64[] DecryptTypeCodeData = { 0x18, 0x9B, 0x6B, 0x1180 };
+#else
+        private const string TypeCodeString = "f406626d5727b505";   // RUS
+        static readonly UInt64[] DecryptTypeCodeData = { 0x11, 0x27, 0x05, 0x1113 };
+#endif
+
         static readonly byte[] CryptTab1 =
         {
             0x56, 0x15, 0x8F, 0xDB, 0xC5, 0x2A, 0x05, 0x7D, 0x19, 0xC8, 0xE5, 0x36, 0xA4, 0xB6, 0x91, 0x5E,
@@ -709,14 +717,14 @@ namespace FileDecoder
                     cryptOffet += cryptCode;
                 }
 
-                maskBuffer[0] *= CryptTab1[0x76];
-                maskBuffer[1] *= CryptTab1[0xC3];
-                maskBuffer[2] *= CryptTab1[0x88];
-                maskBuffer[3] *= CryptTab1[0x3E];
-                maskBuffer[4] *= CryptTab1[0x99];
-                maskBuffer[5] *= CryptTab1[0x22];
-                maskBuffer[6] *= CryptTab1[0xCA];
-                maskBuffer[7] *= CryptTab1[0x07];
+                maskBuffer[0] *= CryptTab1[CryptTab2[0x23]];
+                maskBuffer[1] *= CryptTab1[CryptTab2[0x12]];
+                maskBuffer[2] *= CryptTab1[CryptTab2[0x21]];
+                maskBuffer[3] *= CryptTab1[CryptTab2[0x42]];
+                maskBuffer[4] *= CryptTab1[CryptTab2[0x51]];
+                maskBuffer[5] *= CryptTab1[CryptTab2[0x14]];
+                maskBuffer[6] *= CryptTab1[CryptTab2[0x47]];
+                maskBuffer[7] *= CryptTab1[CryptTab2[0x67]];
 
                 UInt32[] mask = new UInt32[2];
                 mask[0] = BitConverter.ToUInt32(maskBuffer, 0);
@@ -1263,17 +1271,17 @@ namespace FileDecoder
 
             byte[] data = BitConverter.GetBytes(value);
 
-            int pos = 0x18;
+            int pos = (int) DecryptTypeCodeData[0];
             for (int i = 0; i < 8; i++)
             {
                 byte tempCode = (byte) (data[i] ^ CryptTab2[i]);
                 data[i] ^= CryptTab2[pos];
-                pos = tempCode + 0x9B;
+                pos = tempCode + (int) DecryptTypeCodeData[1];
             }
 
             UInt64 convVal = BitConverter.ToUInt64(data, 0);
-            convVal -= 0x6B;
-            UInt64 code = convVal / 0x1180;
+            convVal -= DecryptTypeCodeData[2];
+            UInt64 code = convVal / DecryptTypeCodeData[3];
             if (code > 0xFFF)
             {
                 return -1;
