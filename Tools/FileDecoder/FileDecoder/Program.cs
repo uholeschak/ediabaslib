@@ -1003,10 +1003,10 @@ namespace FileDecoder
                 mask[i] += (byte)offset;
             }
 
-            byte[] tabIndex = { 0x76, 0xC3, 0x88, 0x3E, 0x99, 0x22, 0xCA, 0x07 };
+            byte[] tabIndex = { 0x23, 0x12, 0x21, 0x42, 0x51, 0x14, 0x47, 0x67 };
             for (int i = 0; i < mask.Length; i++)
             {
-                mask[i] *= CryptTab1[tabIndex[i]];
+                mask[i] *= CryptTab1[CryptTab2[tabIndex[i]]];
             }
 
             return mask;
