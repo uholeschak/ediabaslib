@@ -552,7 +552,7 @@ BOOL GetCryptTables()
 
     const char *pSignature1 = "Copyright(c) 2004, Ross-Tech LLC";
     BYTE *pSig1Addr = NULL;
-    for (DWORD dwOffset = 0; dwOffset < dwModuleBaseSize; dwOffset += 16)
+    for (DWORD dwOffset = 0; dwOffset < dwModuleBaseSize; dwOffset += 8)
     {
         BYTE *pAddr = pModuleBaseAddr + dwOffset;
         if (memcmp(pAddr, pSignature1, strlen(pSignature1) - 1) == 0)
@@ -598,7 +598,7 @@ BOOL GetCryptTables()
         23, 29, 31, 37, 41, 43, 47, 53
     };
     BYTE *pSig2Addr = NULL;
-    for (DWORD dwOffset = 0; dwOffset < dwModuleBaseSize; dwOffset += 16)
+    for (DWORD dwOffset = 0; dwOffset < dwModuleBaseSize; dwOffset += 8)
     {
         BYTE *pAddr = pModuleBaseAddr + dwOffset;
         if (memcmp(pAddr, pSignature2, sizeof(pSignature2)) == 0)
