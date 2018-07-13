@@ -107,6 +107,7 @@ namespace FileDecoder
 
         static int Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.Unicode;
             if (args.Length < 1)
             {
                 Console.WriteLine("No input file specified");
@@ -407,6 +408,15 @@ namespace FileDecoder
                             {
                                 if (!IsValidText(data))
                                 {
+#if false
+                                    Encoding enc1 = Encoding.GetEncoding(1251);
+                                    string asc1 = enc1.GetString(data);
+                                    Console.WriteLine("Invalid: {0}", asc1);
+#endif
+#if true
+                                    Console.WriteLine("Invalid decrypted text");
+                                    return false;
+#else
                                     Console.WriteLine("Type code invalid, trying all values");
                                     bool found = false;
                                     for (int code = 0; code < 0x100; code++)
@@ -428,9 +438,9 @@ namespace FileDecoder
                                             if (!IsValidText(data))
                                             {
 #if false
-                                                System.Text.ASCIIEncoding ascii = new System.Text.ASCIIEncoding();
-                                                string asc = ascii.GetString(data);
-                                                Console.WriteLine("Invalid: {0}", asc);
+                                                Encoding enc2 = Encoding.GetEncoding(1251);
+                                                string asc2 = enc2.GetString(data);
+                                                Console.WriteLine("Invalid: {0}", asc2);
 #endif
                                                 bValid = false;
                                                 break;
@@ -453,6 +463,7 @@ namespace FileDecoder
                                         Console.WriteLine("Type code not found");
                                         return false;
                                     }
+#endif
                                 }
                             }
 
@@ -483,7 +494,13 @@ namespace FileDecoder
             {
                 return false;
             }
-            for (int i = 0; i < 6; i++)
+
+            if (data[0] == '#' || data[0] == ':')
+            {
+                return true;
+            }
+
+            for (int i = 0; i < 3; i++)
             {
                 byte value = data[i];
                 if (i == 0)
