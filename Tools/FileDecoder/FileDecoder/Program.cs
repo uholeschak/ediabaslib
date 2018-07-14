@@ -103,7 +103,9 @@ namespace FileDecoder
 
         private static int _typeCode;
         private static string _typeCodeString;
+#if VERSION_780
         private static UInt32 _holdrand;
+#endif
 
         static int Main(string[] args)
         {
@@ -661,6 +663,14 @@ namespace FileDecoder
                     {
                         continue;
                     }
+
+                    if (segmentFile)
+                    {
+                        if (value == '[')
+                        {
+                            return new byte[0]; // end of segment
+                        }
+                    }
                     if (value == ' ')
                     {
                         numberValid = true;
@@ -724,9 +734,15 @@ namespace FileDecoder
                     buffer[i >> 2] = BitConverter.ToUInt32(data, i);
                 }
 
-                byte[] maskBuffer = Encoding.ASCII.GetBytes(sbNumber.ToString());
+                string numberString = sbNumber.ToString();
+                if (numberString.Length == 6)
+                {
+                    numberString += numberString[0];
+                    numberString += numberString[1];
+                }
+                byte[] maskBuffer = Encoding.ASCII.GetBytes(numberString);
 
-                Int32 cryptCode = sbNumber[5];
+                Int32 cryptCode = numberString[5];
                 Int32 cryptOffet = cryptCode * 2;
                 for (int i = 0; i < 8; i++)
                 {
@@ -798,6 +814,7 @@ namespace FileDecoder
             }
         }
 
+#if VERSION_780
         static ResultCode DecryptSegment(FileStream fsRead, FileStream fsWrite, string fileName)
         {
             try
@@ -1023,6 +1040,93 @@ namespace FileDecoder
 
             return mask;
         }
+#else
+        static ResultCode DecryptSegment(FileStream fsRead, FileStream fsWrite, string fileName)
+        {
+            try
+            {
+                string baseName = Path.GetFileNameWithoutExtension(fileName);
+                if (baseName == null)
+                {
+                    return ResultCode.Error;
+                }
+                string typeName = "-" + _typeCodeString.ToUpperInvariant();
+                int versionCode = 0;
+                if (baseName.EndsWith(typeName))
+                {
+                    versionCode = _typeCode;
+                }
+
+                StringBuilder sb = new StringBuilder();
+                bool startFound = false;
+                for (; ; )
+                {
+                    int value = fsRead.ReadByte();
+                    if (value < 0)
+                    {
+                        return ResultCode.Done;
+                    }
+                    if (value == '[')
+                    {
+                        startFound = true;
+                    }
+                    if (!startFound)
+                    {
+                        continue;
+                    }
+                    if (value == 0x0A && sb.Length > 0)
+                    {
+                        break;
+                    }
+                    if (value != 0x0A && value != 0x0D)
+                    {
+                        sb.Append((char)value);
+                    }
+                }
+                string segmentNameLine = sb.ToString();
+                if (segmentNameLine.Length < 5 || segmentNameLine[0] != '[' || segmentNameLine[segmentNameLine.Length - 1] != ']')
+                {
+                    return ResultCode.Error;
+                }
+                string segmentName = segmentNameLine.Substring(1, segmentNameLine.Length - 2);
+
+                for (; ; )
+                {
+                    byte[] data = DecryptStdLine(fsRead, versionCode, true);
+                    if (data == null)
+                    {
+                        return ResultCode.Error;
+                    }
+                    if (data.Length == 0)
+                    {   // end of segment
+                        break;
+                    }
+
+                    foreach (byte value in data)
+                    {
+                        fsWrite.WriteByte(value);
+                    }
+                    fsWrite.WriteByte((byte)'\r');
+                    fsWrite.WriteByte((byte)'\n');
+                }
+
+                ASCIIEncoding ascii = new ASCIIEncoding();
+                byte[] segmentData = ascii.GetBytes(segmentName);
+                fsWrite.WriteByte((byte)'[');
+                fsWrite.WriteByte((byte)'/');
+                fsWrite.Write(segmentData, 0, segmentData.Length);
+                fsWrite.WriteByte((byte)']');
+                fsWrite.WriteByte((byte)'\r');
+                fsWrite.WriteByte((byte)'\n');
+
+                return ResultCode.Ok;
+            }
+            catch (Exception)
+            {
+                return ResultCode.Error;
+            }
+        }
+#endif
 
         static bool DecryptBlock(UInt32[] mask, UInt32[] buffer, int codeTable)
         {
@@ -1092,6 +1196,7 @@ namespace FileDecoder
             return true;
         }
 
+#if VERSION_780
         static void DecompressData(byte[] inData, Stream fsout, int bytes)
         {
             using (MemoryStream outMemoryStream = new MemoryStream())
@@ -1278,6 +1383,7 @@ namespace FileDecoder
 
             return (_holdrand >> 16) & 0x7FFF;
         }
+#endif
 
         static int DecryptTypeCodeString(string typeCode)
         {
