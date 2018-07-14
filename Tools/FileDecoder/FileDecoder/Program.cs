@@ -734,15 +734,14 @@ namespace FileDecoder
                     buffer[i >> 2] = BitConverter.ToUInt32(data, i);
                 }
 
-                string numberString = sbNumber.ToString();
-                if (numberString.Length == 6)
+                if (sbNumber.Length == 6)
                 {
-                    numberString += numberString[4];
-                    numberString += numberString[3];
+                    sbNumber.Append(sbNumber[4]);
+                    sbNumber.Append(sbNumber[3]);
                 }
-                byte[] maskBuffer = Encoding.ASCII.GetBytes(numberString);
+                byte[] maskBuffer = Encoding.ASCII.GetBytes(sbNumber.ToString());
 
-                Int32 cryptCode = numberString[5];
+                Int32 cryptCode = sbNumber[5];
                 Int32 cryptOffet = cryptCode * 2;
                 for (int i = 0; i < 8; i++)
                 {
