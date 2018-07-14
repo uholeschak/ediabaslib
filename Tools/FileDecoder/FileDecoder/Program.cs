@@ -1069,6 +1069,13 @@ namespace FileDecoder
                     {
                         startFound = true;
                     }
+                    if (sb.Length == 0 && value >= '0' && value <= '9')
+                    {
+                        // no segment name, direct start with number
+                        fsRead.Position--;
+                        sb.Append("[NONAME]");
+                        break;
+                    }
                     if (!startFound)
                     {
                         continue;
