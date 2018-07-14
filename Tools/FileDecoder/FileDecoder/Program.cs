@@ -1,4 +1,4 @@
-﻿#define VERSION_780
+﻿//#define VERSION_780
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -188,7 +188,7 @@ namespace FileDecoder
                     {
                         Console.WriteLine("Decrypting: {0}", file);
                         string outFile = Path.ChangeExtension(file, @".lbl");
-                        if (!DecryptFile(file, outFile, typeCodeString))
+                        if (!DecryptClbFile(file, outFile, typeCodeString))
                         {
                             Console.WriteLine("*** Decryption failed: {0}", file);
                         }
@@ -205,7 +205,7 @@ namespace FileDecoder
                     {
                         Console.WriteLine("Decrypting: {0}", file);
                         string outFile = Path.ChangeExtension(file, @".dattxt");
-                        if (!DecryptErrorCodeFile(file, outFile))
+                        if (!DecryptDatFile(file, outFile))
                         {
                             Console.WriteLine("*** Decryption failed: {0}", file);
                         }
@@ -360,7 +360,7 @@ namespace FileDecoder
             return BitConverter.ToString(result).Replace("-", "");
         }
 
-        static bool DecryptFile(string inFile, string outFile, string typeCodeString)
+        static bool DecryptClbFile(string inFile, string outFile, string typeCodeString)
         {
             bool extendedCode = false;
             DirectoryInfo dirInfo = Directory.GetParent(inFile);
@@ -395,7 +395,7 @@ namespace FileDecoder
                     {
                         for (int line = 0; ; line++)
                         {
-                            byte[] data = DecryptLine(fsRead, line, typeCode);
+                            byte[] data = DecryptClbLine(fsRead, line, typeCode);
                             if (data == null)
                             {
                                 return false;
@@ -522,7 +522,7 @@ namespace FileDecoder
             return true;
         }
 
-        static bool DecryptErrorCodeFile(string inFile, string outFile)
+        static bool DecryptDatFile(string inFile, string outFile)
         {
             try
             {
@@ -543,7 +543,7 @@ namespace FileDecoder
                     {
                         for (; ; )
                         {
-                            byte[] data = DecryptErrorCodeLine(fsRead, versionCode);
+                            byte[] data = DecryptStdLine(fsRead, versionCode, false);
                             if (data == null)
                             {
                                 return false;
@@ -570,7 +570,7 @@ namespace FileDecoder
             }
         }
 
-        static byte[] DecryptLine(FileStream fs, int line, byte typeCode)
+        static byte[] DecryptClbLine(FileStream fs, int line, byte typeCode)
         {
             try
             {
@@ -644,7 +644,7 @@ namespace FileDecoder
             }
         }
 
-        static byte[] DecryptErrorCodeLine(FileStream fs, int versionCode)
+        static byte[] DecryptStdLine(FileStream fs, int versionCode, bool segmentFile)
         {
             try
             {
@@ -674,12 +674,12 @@ namespace FileDecoder
                     return null;
                 }
 
-                if (sbNumber.Length < 8)
+                if (sbNumber.Length != 6 && sbNumber.Length != 8)
                 {
                     return null;
                 }
 
-                if (!UInt32.TryParse(sbNumber.ToString(), out UInt32 lineNumber))
+                if (!UInt32.TryParse(sbNumber.ToString(), out UInt32 _))
                 {
                     return null;
                 }
@@ -706,7 +706,7 @@ namespace FileDecoder
                     return null;
                 }
 
-                byte[] prefix = Encoding.ASCII.GetBytes(string.Format(CultureInfo.InvariantCulture, "{0:00000000},", lineNumber));
+                byte[] prefix = Encoding.ASCII.GetBytes(sbNumber + ",");
                 if (dataLenIn <= 0)
                 {
                     return prefix;
@@ -724,8 +724,7 @@ namespace FileDecoder
                     buffer[i >> 2] = BitConverter.ToUInt32(data, i);
                 }
 
-                string maskString = string.Format(CultureInfo.InvariantCulture, "{0:00000000}", lineNumber);
-                byte[] maskBuffer = Encoding.ASCII.GetBytes(maskString);
+                byte[] maskBuffer = Encoding.ASCII.GetBytes(sbNumber.ToString());
 
                 Int32 cryptCode = sbNumber[5];
                 Int32 cryptOffet = cryptCode * 2;
