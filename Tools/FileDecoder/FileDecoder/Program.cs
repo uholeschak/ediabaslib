@@ -1089,6 +1089,14 @@ namespace FileDecoder
                 }
                 string segmentName = segmentNameLine.Substring(1, segmentNameLine.Length - 2);
 
+                ASCIIEncoding ascii = new ASCIIEncoding();
+                byte[] segmentData = ascii.GetBytes(segmentName);
+                fsWrite.WriteByte((byte)'[');
+                fsWrite.Write(segmentData, 0, segmentData.Length);
+                fsWrite.WriteByte((byte)']');
+                fsWrite.WriteByte((byte)'\r');
+                fsWrite.WriteByte((byte)'\n');
+
                 for (; ; )
                 {
                     byte[] data = DecryptStdLine(fsRead, versionCode, true);
@@ -1109,8 +1117,6 @@ namespace FileDecoder
                     fsWrite.WriteByte((byte)'\n');
                 }
 
-                ASCIIEncoding ascii = new ASCIIEncoding();
-                byte[] segmentData = ascii.GetBytes(segmentName);
                 fsWrite.WriteByte((byte)'[');
                 fsWrite.WriteByte((byte)'/');
                 fsWrite.Write(segmentData, 0, segmentData.Length);
