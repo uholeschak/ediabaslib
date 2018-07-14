@@ -22,15 +22,15 @@
 #define LOGFILE _T("DebugHelper.txt")
 #define CRYPTFILE1 _T("CryptTable1.bin")
 #define CRYPTFILE2 _T("CryptTable2.bin")
-#define VALID_TIME_DATE_STAMP_780DE         0x597C995A
-#define VALID_TIME_DATE_STAMP_783RUS        0x589B6F53
+#define VALID_TIME_DATE_STAMP_17_8_0_DE             0x597C995A
+#define VALID_TIME_DATE_STAMP_17_1_3_RUS            0x589B6F53
 
 #define STATUS_SUCCESS                   ((NTSTATUS)0x00000000L)    // ntsubauth
 
-#define DECRYPT_TEXT_LINE_ADDR_REL_780DE    0x09D091
-#define DECRYPT_TEXT_LINE_ADDR_REL_783RUS   0x0A6D2D
-#define READ_ENCRYPTED_LINE_ADDR_REL_780DE  0x0416CC
-#define READ_ENCRYPTED_LINE_ADDR_REL_783RUS 0x045536
+#define DECRYPT_TEXT_LINE_ADDR_REL_17_8_0_DE        0x09D091
+#define DECRYPT_TEXT_LINE_ADDR_REL_17_1_3_RUS       0x0A6D2D
+#define READ_ENCRYPTED_LINE_ADDR_REL_17_8_0_DE      0x0416CC
+#define READ_ENCRYPTED_LINE_ADDR_REL_17_1_3_RUS     0x045536
 
 typedef std::basic_string<TCHAR> tstring;
 
@@ -701,13 +701,13 @@ BOOL RedirectDecryptTextLine()
         LogPrintf(_T("RedirectDecryptTextLine: No module base address\n"));
         return FALSE;
     }
-    if (dwTimeDateStamp == VALID_TIME_DATE_STAMP_780DE)
+    if (dwTimeDateStamp == VALID_TIME_DATE_STAMP_17_8_0_DE)
     {
-        dwDecryptTextLineRelAddr = DECRYPT_TEXT_LINE_ADDR_REL_780DE;
+        dwDecryptTextLineRelAddr = DECRYPT_TEXT_LINE_ADDR_REL_17_8_0_DE;
     }
-    else if (dwTimeDateStamp == VALID_TIME_DATE_STAMP_783RUS)
+    else if (dwTimeDateStamp == VALID_TIME_DATE_STAMP_17_1_3_RUS)
     {
-        dwDecryptTextLineRelAddr = DECRYPT_TEXT_LINE_ADDR_REL_783RUS;
+        dwDecryptTextLineRelAddr = DECRYPT_TEXT_LINE_ADDR_REL_17_1_3_RUS;
     }
     else
     {
@@ -752,13 +752,13 @@ BOOL RedirectReadEncryptedLine()
         LogPrintf(_T("RedirectReadEncryptedLine: No module base address\n"));
         return FALSE;
     }
-    if (dwTimeDateStamp == VALID_TIME_DATE_STAMP_780DE)
+    if (dwTimeDateStamp == VALID_TIME_DATE_STAMP_17_8_0_DE)
     {
-        dwReadEncryptedLineRelAddr = READ_ENCRYPTED_LINE_ADDR_REL_780DE;
+        dwReadEncryptedLineRelAddr = READ_ENCRYPTED_LINE_ADDR_REL_17_8_0_DE;
     }
-    else if (dwTimeDateStamp == VALID_TIME_DATE_STAMP_783RUS)
+    else if (dwTimeDateStamp == VALID_TIME_DATE_STAMP_17_1_3_RUS)
     {
-        dwReadEncryptedLineRelAddr = READ_ENCRYPTED_LINE_ADDR_REL_783RUS;
+        dwReadEncryptedLineRelAddr = READ_ENCRYPTED_LINE_ADDR_REL_17_1_3_RUS;
     }
     else
     {
