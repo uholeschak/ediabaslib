@@ -1073,7 +1073,7 @@ namespace FileDecoder
                     {
                         // no segment name, direct start with number
                         fsRead.Position--;
-                        sb.Append("[NONAME]");
+                        sb.Append("[]");
                         break;
                     }
                     if (!startFound)
@@ -1090,7 +1090,7 @@ namespace FileDecoder
                     }
                 }
                 string segmentNameLine = sb.ToString();
-                if (segmentNameLine.Length < 5 || segmentNameLine[0] != '[' || segmentNameLine[segmentNameLine.Length - 1] != ']')
+                if (segmentNameLine.Length < 2 || segmentNameLine[0] != '[' || segmentNameLine[segmentNameLine.Length - 1] != ']')
                 {
                     return ResultCode.Error;
                 }
