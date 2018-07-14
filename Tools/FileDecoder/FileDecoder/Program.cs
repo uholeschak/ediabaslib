@@ -1,4 +1,15 @@
-﻿#define VERSION_17_8_0
+﻿//#define VERSION_17_1_3
+//#define VERSION_17_8_0
+#define VERSION_17_8_1
+
+#if VERSION_17_1_3
+#define VERSION_17_1_X
+#endif
+
+#if VERSION_17_8_0 || VERSION_17_8_1
+#define VERSION_17_8_X
+#endif
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,9 +33,14 @@ namespace FileDecoder
 
         // from string resource 383;
 #if VERSION_17_8_0
-        private const string TypeCodeString = "6da97491a5097b22"; // DRV
+        private const string TypeCodeString = "6da97491a5097b22"; // DRV 17.8.0
         static readonly UInt64[] DecryptTypeCodeData = { 0x18, 0x9B, 0x6B, 0x1180 };
-#else
+#endif
+#if VERSION_17_8_1
+        private const string TypeCodeString = "9fa5bd574f2c23f5";   // RUS 17.8.1
+        static readonly UInt64[] DecryptTypeCodeData = { 0x18, 0x9C, 0x6C, 0x1181 };
+#endif
+#if VERSION_17_1_3
         // 17.1.3
         private const string TypeCodeString = "f406626d5727b505";   // RUS
         static readonly UInt64[] DecryptTypeCodeData = { 0x11, 0x27, 0x05, 0x1113 };
@@ -104,7 +120,7 @@ namespace FileDecoder
 
         private static int _typeCode;
         private static string _typeCodeString;
-#if VERSION_17_8_0
+#if VERSION_17_8_X
         private static UInt32 _holdrand;
 #endif
 
@@ -746,7 +762,7 @@ namespace FileDecoder
                 Int32 cryptOffet = cryptCode * 2;
                 for (int i = 0; i < 8; i++)
                 {
-#if VERSION_17_8_0
+#if VERSION_17_8_X
                     maskBuffer[i] += (byte) (versionCode + CryptTab2[(byte) cryptOffet]);
 #else
                     maskBuffer[i] += CryptTab2[(byte)cryptOffet];
@@ -814,7 +830,7 @@ namespace FileDecoder
             }
         }
 
-#if VERSION_17_8_0
+#if VERSION_17_8_X
         static ResultCode DecryptSegment(FileStream fsRead, FileStream fsWrite, string fileName)
         {
             try
@@ -1209,7 +1225,7 @@ namespace FileDecoder
             return true;
         }
 
-#if VERSION_17_8_0
+#if VERSION_17_8_X
         static void DecompressData(byte[] inData, Stream fsout, int bytes)
         {
             using (MemoryStream outMemoryStream = new MemoryStream())
