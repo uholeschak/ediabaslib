@@ -1,4 +1,4 @@
-﻿//#define VERSION_780
+﻿#define VERSION_17_8_0
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -21,10 +21,11 @@ namespace FileDecoder
         }
 
         // from string resource 383;
-#if VERSION_780
+#if VERSION_17_8_0
         private const string TypeCodeString = "6da97491a5097b22"; // DRV
         static readonly UInt64[] DecryptTypeCodeData = { 0x18, 0x9B, 0x6B, 0x1180 };
 #else
+        // 17.1.3
         private const string TypeCodeString = "f406626d5727b505";   // RUS
         static readonly UInt64[] DecryptTypeCodeData = { 0x11, 0x27, 0x05, 0x1113 };
 #endif
@@ -103,7 +104,7 @@ namespace FileDecoder
 
         private static int _typeCode;
         private static string _typeCodeString;
-#if VERSION_780
+#if VERSION_17_8_0
         private static UInt32 _holdrand;
 #endif
 
@@ -745,7 +746,7 @@ namespace FileDecoder
                 Int32 cryptOffet = cryptCode * 2;
                 for (int i = 0; i < 8; i++)
                 {
-#if VERSION_780
+#if VERSION_17_8_0
                     maskBuffer[i] += (byte) (versionCode + CryptTab2[(byte) cryptOffet]);
 #else
                     maskBuffer[i] += CryptTab2[(byte)cryptOffet];
@@ -813,7 +814,7 @@ namespace FileDecoder
             }
         }
 
-#if VERSION_780
+#if VERSION_17_8_0
         static ResultCode DecryptSegment(FileStream fsRead, FileStream fsWrite, string fileName)
         {
             try
@@ -1208,7 +1209,7 @@ namespace FileDecoder
             return true;
         }
 
-#if VERSION_780
+#if VERSION_17_8_0
         static void DecompressData(byte[] inData, Stream fsout, int bytes)
         {
             using (MemoryStream outMemoryStream = new MemoryStream())
