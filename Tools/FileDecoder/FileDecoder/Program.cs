@@ -737,8 +737,8 @@ namespace FileDecoder
                 string numberString = sbNumber.ToString();
                 if (numberString.Length == 6)
                 {
-                    numberString += numberString[0];
-                    numberString += numberString[1];
+                    numberString += numberString[4];
+                    numberString += numberString[3];
                 }
                 byte[] maskBuffer = Encoding.ASCII.GetBytes(numberString);
 
