@@ -29,7 +29,8 @@
 
 #define DECRYPT_TEXT_LINE_ADDR_REL_780DE    0x09D091
 #define DECRYPT_TEXT_LINE_ADDR_REL_783RUS   0x0A6D2D
-#define READ_DECRYPTED_LINE_ADDR_REL_780DE  0x0416CC
+#define READ_ENCRYPTED_LINE_ADDR_REL_780DE  0x0416CC
+#define READ_ENCRYPTED_LINE_ADDR_REL_783RUS 0x045536
 
 typedef std::basic_string<TCHAR> tstring;
 
@@ -75,7 +76,7 @@ static BOOL GetModuleBaseAddress();
 static BOOL GetCryptTables();
 static void *DisMember(size_t size, ...);
 static BOOL RedirectDecryptTextLine();
-static BOOL RedirectReadDecryptedLine();
+static BOOL RedirectReadEncryptedLine();
 
 static HWND WINAPI mFindWindowA(
     _In_opt_ LPCSTR lpClassName,
@@ -181,14 +182,14 @@ static BYTE* pModuleBaseAddr = 0;
 static DWORD dwModuleBaseSize = 0;
 static DWORD dwTimeDateStamp = 0;
 static DWORD dwDecryptTextLineRelAddr = 0;
-static DWORD dwReadDecryptedLineRelAddr = 0;
+static DWORD dwReadEncryptedLineRelAddr = 0;
 static std::list<HANDLE> FileWatchList;
 static std::list<HANDLE> FileMemWatchList;
 static std::list<LPVOID> MemWatchList;
 static std::list<HRSRC> ResWatchList;
 static std::map<HRSRC, DWORD>ResSizeMap;
 static HotPatch PatchDecryptTextLine;
-static HotPatch PatchReadDecryptedLine;
+static HotPatch PatchReadEncryptedLine;
 static HANDLE hLastLogRFile = INVALID_HANDLE_VALUE;
 static HANDLE hLastLogWFile = INVALID_HANDLE_VALUE;
 static BOOL bHalted = FALSE;
@@ -723,49 +724,53 @@ BOOL RedirectDecryptTextLine()
     return TRUE;
 }
 
-class CReadDecryptedLine
+class CReadEncryptedLine
 {
 public:
-    typedef int(__thiscall *ptrReadDecryptedLine)(void *pthis, FILE *pfile, char *ptext, int max_len);
+    typedef int(__thiscall *ptrReadEncryptedLine)(void *pthis, FILE *pfile, char *ptext, int max_len);
 
-    int mReadDecryptedLine(FILE *pfile, char *ptext, int max_len)
+    int mReadEncryptedLine(FILE *pfile, char *ptext, int max_len)
     {
-        PatchReadDecryptedLine.RestoreOpcodes();
+        PatchReadEncryptedLine.RestoreOpcodes();
 
-        ptrReadDecryptedLine pReadDecryptedLine = (ptrReadDecryptedLine)(pModuleBaseAddr + dwReadDecryptedLineRelAddr);
-        int result = pReadDecryptedLine(this, pfile, ptext, max_len);
+        ptrReadEncryptedLine pReadEncryptedLine = (ptrReadEncryptedLine)(pModuleBaseAddr + dwReadEncryptedLineRelAddr);
+        int result = pReadEncryptedLine(this, pfile, ptext, max_len);
 
-        PatchReadDecryptedLine.WriteOpcodes();
+        PatchReadEncryptedLine.WriteOpcodes();
         if (ptext[0] != 0)
         {
-            LogPrintf(_T("ReadDecryptedLine out: \"%S\"\n"), ptext);
+            LogPrintf(_T("ReadEncryptedLine out: \"%S\"\n"), ptext);
         }
         return result;
     }
 };
 
-BOOL RedirectReadDecryptedLine()
+BOOL RedirectReadEncryptedLine()
 {
     if (pModuleBaseAddr == NULL)
     {
-        LogPrintf(_T("RedirectReadDecryptedLine: No module base address\n"));
+        LogPrintf(_T("RedirectReadEncryptedLine: No module base address\n"));
         return FALSE;
     }
     if (dwTimeDateStamp == VALID_TIME_DATE_STAMP_780DE)
     {
-        dwReadDecryptedLineRelAddr = READ_DECRYPTED_LINE_ADDR_REL_780DE;
+        dwReadEncryptedLineRelAddr = READ_ENCRYPTED_LINE_ADDR_REL_780DE;
+    }
+    else if (dwTimeDateStamp == VALID_TIME_DATE_STAMP_783RUS)
+    {
+        dwReadEncryptedLineRelAddr = READ_ENCRYPTED_LINE_ADDR_REL_783RUS;
     }
     else
     {
-        LogPrintf(_T("RedirectReadDecryptedLine: Time date stamp invalid\n"));
+        LogPrintf(_T("RedirectReadEncryptedLine: Time date stamp invalid\n"));
         return FALSE;
     }
-    PVOID pDecrypt = DisMember(sizeof(&CReadDecryptedLine::mReadDecryptedLine), &CReadDecryptedLine::mReadDecryptedLine);
-    PatchReadDecryptedLine.SetDetour((PVOID)(pModuleBaseAddr + dwReadDecryptedLineRelAddr), pDecrypt);
-    PatchReadDecryptedLine.SetWriteProtection();
-    PatchReadDecryptedLine.SaveOpcodes();
-    PatchReadDecryptedLine.WriteOpcodes();
-    LogPrintf(_T("ReadDecryptedLine patched\n"));
+    PVOID pDecrypt = DisMember(sizeof(&CReadEncryptedLine::mReadEncryptedLine), &CReadEncryptedLine::mReadEncryptedLine);
+    PatchReadEncryptedLine.SetDetour((PVOID)(pModuleBaseAddr + dwReadEncryptedLineRelAddr), pDecrypt);
+    PatchReadEncryptedLine.SetWriteProtection();
+    PatchReadEncryptedLine.SaveOpcodes();
+    PatchReadEncryptedLine.WriteOpcodes();
+    LogPrintf(_T("ReadEncryptedLine patched\n"));
 
     return TRUE;
 }
@@ -1020,7 +1025,7 @@ HANDLE WINAPI mCreateFileA(
             {
                 bDecryptPatched = true;
                 RedirectDecryptTextLine();
-                RedirectReadDecryptedLine();
+                RedirectReadEncryptedLine();
             }
             if (_stricmp(ext, ".rod") == 0)
             {
