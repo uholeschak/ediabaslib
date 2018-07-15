@@ -101,7 +101,14 @@ namespace UdsFileReader
                 string fileName = fileNameResolver.GetFileName(Path.Combine(rootDir, DataReader.DataDir));
                 if (!string.IsNullOrEmpty(fileName))
                 {
-                    List<DataReader.DataInfo> info = dataReader.ExtractDataType(fileName, DataReader.DataType.Settings);
+                    List<DataReader.DataInfo> info = dataReader.ExtractDataType(fileName, DataReader.DataType.LongCoding);
+                    foreach (DataReader.DataInfo dataInfo in info)
+                    {
+                        foreach (string text in dataInfo.TextArray)
+                        {
+                            Console.WriteLine(text);
+                        }
+                    }
                 }
                 return 0;
 #endif
