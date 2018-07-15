@@ -481,11 +481,10 @@ namespace UdsFileReader
 
                     if (UInt32.TryParse(lineArray[offset + 9], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 nameDetailKey))
                     {
-                        if (!udsReader._textMap.TryGetValue(nameDetailKey, out string[] nameDetailArray))
+                        if (udsReader._textMap.TryGetValue(nameDetailKey, out string[] nameDetailArray))
                         {
-                            throw new Exception("No name detail found");
+                            NameDetailArray = nameDetailArray;
                         }
-                        NameDetailArray = nameDetailArray;
                     }
 
                     if (UInt32.TryParse(lineArray[offset + 5], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 unitKey) && unitKey > 0)
