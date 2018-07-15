@@ -657,6 +657,16 @@ namespace UdsFileReader
             {
                 return EncodingCyrillic;
             }
+
+            DirectoryInfo dirInfoParent = Directory.GetParent(fileName);
+            if (dirInfoParent != null)
+            {
+                if (string.Compare(dirInfoParent.Name, "RUS", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return EncodingCyrillic;
+                }
+            }
+
             return EncodingLatin1;
         }
 
