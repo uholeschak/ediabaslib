@@ -306,7 +306,8 @@ namespace UdsFileReader
 
             sb.Append("Test: ");
             byte[] testData = null;
-            if (Path.GetFileNameWithoutExtension(fileName) == "EV_ECM20TDI01103L906018DQ")
+            string baseFileName = Path.GetFileNameWithoutExtension(fileName) ?? string.Empty;
+            if (baseFileName.StartsWith("EV_ECM20TDI01103L906018DQ", true, CultureInfo.InvariantCulture))
             {
                 switch (parseInfoMwb.ServiceId)
                 {
@@ -343,7 +344,7 @@ namespace UdsFileReader
                        break;
                 }
             }
-            else if (Path.GetFileNameWithoutExtension(fileName) == "EV_Kombi_UDS_VDD_RM09_A04_VW32")
+            else if (baseFileName.StartsWith("EV_Kombi_UDS_VDD_RM09_A04_VW32", true, CultureInfo.InvariantCulture))
             {
                 switch (parseInfoMwb.ServiceId)
                 {

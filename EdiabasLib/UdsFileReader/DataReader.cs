@@ -12,7 +12,8 @@ namespace UdsFileReader
 {
     public class DataReader
     {
-        private static readonly Encoding Encoding = Encoding.GetEncoding(1252);
+        public static readonly Encoding EncodingLatin1 = Encoding.GetEncoding(1252);
+        public static readonly Encoding EncodingCyrillic = Encoding.GetEncoding(1251);
         public const string FileExtension = ".ldat";
         public const string CodeFileExtension = ".cdat";
         public const string DataDir = "Labels";
@@ -649,6 +650,16 @@ namespace UdsFileReader
             return string.Format(CultureInfo.InvariantCulture, "{0}{1:X04}", keyLetter, pcodeNum & 0x3FFF);
         }
 
+        public static Encoding GetEncodingForFileName(string fileName)
+        {
+            string baseFileName = Path.GetFileNameWithoutExtension(fileName) ?? string.Empty;
+            if (baseFileName.EndsWith("-RUS", true, CultureInfo.InvariantCulture))
+            {
+                return EncodingCyrillic;
+            }
+            return EncodingLatin1;
+        }
+
         private static string WildCardToRegular(string value)
         {
             return "^" + Regex.Escape(value).Replace("\\?", ".") + "$";
@@ -678,6 +689,7 @@ namespace UdsFileReader
             try
             {
                 Stream zipStream = null;
+                Encoding encoding = GetEncodingForFileName(fileName);
                 string fileNameBase = Path.GetFileName(fileName);
                 FileStream fs = File.OpenRead(fileName);
                 zf = new ZipFile(fs)
@@ -705,7 +717,7 @@ namespace UdsFileReader
 
                 try
                 {
-                    using (StreamReader sr = new StreamReader(zipStream, Encoding))
+                    using (StreamReader sr = new StreamReader(zipStream, encoding))
                     {
                         for (;;)
                         {
