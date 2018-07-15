@@ -1,13 +1,10 @@
 ﻿//#define VERSION_17_1_3
 //#define VERSION_17_8_0
-#define VERSION_17_8_1
+//#define VERSION_17_8_1
+#define VERSION_18_2_1
 
-#if VERSION_17_1_3
-#define VERSION_17_1_X
-#endif
-
-#if VERSION_17_8_0 || VERSION_17_8_1
-#define VERSION_17_8_X
+#if !VERSION_17_1_3
+#define ZIPLIB_SUPPORT
 #endif
 
 using System;
@@ -32,6 +29,10 @@ namespace FileDecoder
         }
 
         // from string resource 383;
+#if VERSION_18_2_1
+        private const string TypeCodeString = "ccc49968f325f16b"; // DRV 18.2.1
+        static readonly UInt64[] DecryptTypeCodeData = { 0x22, 0x46, 0x02, 0x1221 };
+#endif
 #if VERSION_17_8_0
         private const string TypeCodeString = "6da97491a5097b22"; // DRV 17.8.0
         static readonly UInt64[] DecryptTypeCodeData = { 0x18, 0x9B, 0x6B, 0x1180 };
@@ -120,7 +121,7 @@ namespace FileDecoder
 
         private static int _typeCode;
         private static string _typeCodeString;
-#if VERSION_17_8_X
+#if ZIPLIB_SUPPORT
         private static UInt32 _holdrand;
 #endif
 
@@ -762,7 +763,7 @@ namespace FileDecoder
                 Int32 cryptOffet = cryptCode * 2;
                 for (int i = 0; i < 8; i++)
                 {
-#if VERSION_17_8_X
+#if ZIPLIB_SUPPORT
                     maskBuffer[i] += (byte) (versionCode + CryptTab2[(byte) cryptOffet]);
 #else
                     maskBuffer[i] += CryptTab2[(byte)cryptOffet];
@@ -830,7 +831,7 @@ namespace FileDecoder
             }
         }
 
-#if VERSION_17_8_X
+#if ZIPLIB_SUPPORT
         static ResultCode DecryptSegment(FileStream fsRead, FileStream fsWrite, string fileName)
         {
             try
@@ -1225,7 +1226,7 @@ namespace FileDecoder
             return true;
         }
 
-#if VERSION_17_8_X
+#if ZIPLIB_SUPPORT
         static void DecompressData(byte[] inData, Stream fsout, int bytes)
         {
             using (MemoryStream outMemoryStream = new MemoryStream())
