@@ -3442,6 +3442,10 @@ namespace BmwDeepObd
                                 {
                                     string valueName = parseInfoMwb.NameArray.Length > 0 ? parseInfoMwb.NameArray[0] : string.Empty;
                                     List<string> commentList = parseInfoMwb.NameArray.ToList();
+                                    if (parseInfoMwb.DataTypeEntry.NameDetailArray != null)
+                                    {
+                                        commentList.AddRange(parseInfoMwb.DataTypeEntry.NameDetailArray.ToList());
+                                    }
 
                                     string name = string.Format(Culture, "{0}", parseInfoMwb.ServiceId);
                                     string displayText = string.Format(Culture, "{0:00000} {1}", parseInfoMwb.ServiceId, valueName);
