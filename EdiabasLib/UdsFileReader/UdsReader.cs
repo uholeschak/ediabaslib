@@ -13,7 +13,6 @@ namespace UdsFileReader
 {
     public class UdsReader
     {
-        private static readonly Encoding Encoding = Encoding.GetEncoding(1252);
         public const string FileExtension = ".uds";
         public const string UdsDir = "UDS_EV";
 
@@ -481,11 +480,10 @@ namespace UdsFileReader
 
                     if (UInt32.TryParse(lineArray[offset + 9], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 nameDetailKey))
                     {
-                        if (!udsReader._textMap.TryGetValue(nameDetailKey, out string[] nameDetailArray))
+                        if (udsReader._textMap.TryGetValue(nameDetailKey, out string[] nameDetailArray))
                         {
-                            throw new Exception("No name detail found");
+                            NameDetailArray = nameDetailArray;
                         }
-                        NameDetailArray = nameDetailArray;
                     }
 
                     if (UInt32.TryParse(lineArray[offset + 5], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 unitKey) && unitKey > 0)
@@ -857,7 +855,7 @@ namespace UdsFileReader
                         return FixedEncoding.ToString(UdsReader, subData);
 
                     case DataType.String:
-                        sb.Append(Encoding.GetString(subData));
+                        sb.Append(DataReader.EncodingLatin1.GetString(subData));
                         break;
 
                     default:
@@ -3402,6 +3400,7 @@ namespace UdsFileReader
                 try
                 {
                     Stream zipStream = null;
+                    Encoding encoding = DataReader.GetEncodingForFileName(fileName);
                     string fileNameBase = Path.GetFileName(fileName);
                     FileStream fs = File.OpenRead(fileName);
                     zf = new ZipFile(fs)
@@ -3427,7 +3426,7 @@ namespace UdsFileReader
                     }
                     try
                     {
-                        using (StreamReader sr = new StreamReader(zipStream, Encoding))
+                        using (StreamReader sr = new StreamReader(zipStream, encoding))
                         {
                             bool inSegment = false;
                             for (; ; )
