@@ -1,7 +1,7 @@
-﻿//#define VERSION_17_1_3
-//#define VERSION_17_8_0
+﻿#define VERSION_18_2_1
 //#define VERSION_17_8_1
-#define VERSION_18_2_1
+//#define VERSION_17_8_0
+//#define VERSION_17_1_3
 
 #if !VERSION_17_1_3
 #define ZIPLIB_SUPPORT
@@ -30,21 +30,21 @@ namespace FileDecoder
 
         // from string resource 383;
 #if VERSION_18_2_1
+        private const int VersionCode = 0x1221;
         private const string TypeCodeString = "ccc49968f325f16b"; // DRV 18.2.1
-        static readonly UInt64[] DecryptTypeCodeData = { 0x22, 0x46, 0x02, 0x1221 };
-#endif
-#if VERSION_17_8_0
-        private const string TypeCodeString = "6da97491a5097b22"; // DRV 17.8.0
-        static readonly UInt64[] DecryptTypeCodeData = { 0x18, 0x9B, 0x6B, 0x1180 };
 #endif
 #if VERSION_17_8_1
+        private const int VersionCode = 0x1181;
         private const string TypeCodeString = "9fa5bd574f2c23f5";   // RUS 17.8.1
-        static readonly UInt64[] DecryptTypeCodeData = { 0x18, 0x9C, 0x6C, 0x1181 };
+#endif
+#if VERSION_17_8_0
+        private const int VersionCode = 0x1180;
+        private const string TypeCodeString = "6da97491a5097b22"; // DRV 17.8.0
 #endif
 #if VERSION_17_1_3
         // 17.1.3
+        private const int VersionCode = 0x1113;
         private const string TypeCodeString = "f406626d5727b505";   // RUS
-        static readonly UInt64[] DecryptTypeCodeData = { 0x11, 0x27, 0x05, 0x1113 };
 #endif
 
         static readonly byte[] CryptTabIndex = { 0x23, 0x12, 0x21, 0x42, 0x51, 0x14, 0x47, 0x67 };
@@ -1423,17 +1423,20 @@ namespace FileDecoder
 
             byte[] data = BitConverter.GetBytes(value);
 
-            int pos = (int) DecryptTypeCodeData[0];
+            byte code1 = (VersionCode >> 4) & 0xFF;
+            byte code2 = (byte) ((code1 + VersionCode + 3) & 0xFF);
+            byte code3 = (byte) ((-code1 + VersionCode + 3) & 0xFF);
+            int pos = code1;
             for (int i = 0; i < 8; i++)
             {
                 byte tempCode = (byte) (data[i] ^ CryptTab2[i]);
                 data[i] ^= CryptTab2[pos];
-                pos = tempCode + (int) DecryptTypeCodeData[1];
+                pos = tempCode + code2;
             }
 
             UInt64 convVal = BitConverter.ToUInt64(data, 0);
-            convVal -= DecryptTypeCodeData[2];
-            UInt64 code = convVal / DecryptTypeCodeData[3];
+            convVal -= code3;
+            UInt64 code = convVal / VersionCode;
             if (code > 0xFFF)
             {
                 return -1;
