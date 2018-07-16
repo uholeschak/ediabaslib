@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -41,20 +42,20 @@ namespace FileDecoder
 
         // TypeCodeString from string resource 383
 #if VERSION_18_2_1
-        private const int VersionCode = 0x1221;
+        private const int FileVersionCode = 0x1221;
         private const string TypeCodeKey = "ccc49968f325f16b";   // DRV 18.2.1
 #endif
 #if VERSION_17_8_1
-        private const int VersionCode = 0x1181;
+        private const int FileVersionCode = 0x1181;
         private const string TypeCodeKey = "9fa5bd574f2c23f5";   // RUS 17.8.1
 #endif
 #if VERSION_17_8_0
-        private const int VersionCode = 0x1180;
+        private const int FileVersionCode = 0x1180;
         private const string TypeCodeKey = "6da97491a5097b22";   // DRV 17.8.0
 #endif
 #if VERSION_17_1_3
         // 17.1.3
-        private const int VersionCode = 0x1113;
+        private const int FileVersionCode = 0x1113;
         private const string TypeCodeKey = "f406626d5727b505";   // RUS 17.1.3
 #endif
 
@@ -162,10 +163,31 @@ namespace FileDecoder
             try
             {
                 string exePath = Path.Combine(dir, "VCDS.exe");
+                int fileVersionCode;
+                try
+                {
+                    FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(exePath);
+                    int verMajor = fileVersionInfo.FileMajorPart;
+                    int verMinor = fileVersionInfo.FileMinorPart;
+                    int verBuild = fileVersionInfo.FileBuildPart;
+                    fileVersionCode = (verMajor << 8) | ((verMinor & 0xF) << 4) | (verBuild & 0xF);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("*** Reading file version failed: {0}", e.Message);
+                    return 1;
+                }
+                Console.WriteLine("Extracted file version code: {0:X04}", fileVersionCode);
+
                 string typeCodeKey = ExtractStringFromDll(exePath, 383);
+                if (typeCodeKey == null)
+                {
+                    Console.WriteLine("*** Extracting type code key failed");
+                    return 1;
+                }
                 Console.WriteLine("Extracted type code key: {0}", typeCodeKey);
 
-                _typeCode = DecryptTypeCodeString(TypeCodeKey);
+                _typeCode = DecryptTypeCodeString(fileVersionCode, typeCodeKey);
                 if (_typeCode < 0)
                 {
                     Console.WriteLine("Decryption of type code failed");
@@ -252,8 +274,8 @@ namespace FileDecoder
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                Console.WriteLine("*** Exception: {0}", e.Message);
+                return 1;
             }
 
             return 0;
@@ -264,14 +286,14 @@ namespace FileDecoder
             IntPtr lib = LoadLibrary(file);
             if (lib == IntPtr.Zero)
             {
-                return string.Empty;
+                return null;
             }
             StringBuilder result = new StringBuilder(2048);
             int count = LoadString(lib, number, result, result.Capacity);
             FreeLibrary(lib);
             if (count == 0)
             {
-                return string.Empty;
+                return null;
             }
             return result.ToString();
         }
@@ -1432,7 +1454,7 @@ namespace FileDecoder
         }
 #endif
 
-        static int DecryptTypeCodeString(string typeCodeKey)
+        static int DecryptTypeCodeString(int fileVersionCode, string typeCodeKey)
         {
             if (!UInt64.TryParse(typeCodeKey, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out UInt64 value))
             {
@@ -1441,9 +1463,9 @@ namespace FileDecoder
 
             byte[] data = BitConverter.GetBytes(value);
 
-            byte code1 = (VersionCode >> 4) & 0xFF;
-            byte code2 = (byte) ((code1 + VersionCode + 3) & 0xFF);
-            byte code3 = (byte) ((-code1 + VersionCode + 3) & 0xFF);
+            byte code1 = (byte) ((fileVersionCode >> 4) & 0xFF);
+            byte code2 = (byte) ((code1 + fileVersionCode + 3) & 0xFF);
+            byte code3 = (byte) ((-code1 + fileVersionCode + 3) & 0xFF);
             int pos = code1;
             for (int i = 0; i < 8; i++)
             {
@@ -1454,7 +1476,7 @@ namespace FileDecoder
 
             UInt64 convVal = BitConverter.ToUInt64(data, 0);
             convVal -= code3;
-            UInt64 code = convVal / VersionCode;
+            UInt64 code = convVal / (UInt64) fileVersionCode;
             if (code > 0xFFF)
             {
                 return -1;
