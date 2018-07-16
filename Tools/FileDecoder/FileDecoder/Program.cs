@@ -42,20 +42,20 @@ namespace FileDecoder
         // TypeCodeString from string resource 383
 #if VERSION_18_2_1
         private const int VersionCode = 0x1221;
-        private const string TypeCodeString = "ccc49968f325f16b";   // DRV 18.2.1
+        private const string TypeCodeKey = "ccc49968f325f16b";   // DRV 18.2.1
 #endif
 #if VERSION_17_8_1
         private const int VersionCode = 0x1181;
-        private const string TypeCodeString = "9fa5bd574f2c23f5";   // RUS 17.8.1
+        private const string TypeCodeKey = "9fa5bd574f2c23f5";   // RUS 17.8.1
 #endif
 #if VERSION_17_8_0
         private const int VersionCode = 0x1180;
-        private const string TypeCodeString = "6da97491a5097b22";   // DRV 17.8.0
+        private const string TypeCodeKey = "6da97491a5097b22";   // DRV 17.8.0
 #endif
 #if VERSION_17_1_3
         // 17.1.3
         private const int VersionCode = 0x1113;
-        private const string TypeCodeString = "f406626d5727b505";   // RUS 17.1.3
+        private const string TypeCodeKey = "f406626d5727b505";   // RUS 17.1.3
 #endif
 
         static readonly byte[] CryptTabIndex = { 0x23, 0x12, 0x21, 0x42, 0x51, 0x14, 0x47, 0x67 };
@@ -162,8 +162,10 @@ namespace FileDecoder
             try
             {
                 string exePath = Path.Combine(dir, "VCDS.exe");
-                string typeCodeString = ExtractStringFromDll(exePath, 383);
-                _typeCode = DecryptTypeCodeString(TypeCodeString);
+                string typeCodeKey = ExtractStringFromDll(exePath, 383);
+                Console.WriteLine("Extracted type code key: {0}", typeCodeKey);
+
+                _typeCode = DecryptTypeCodeString(TypeCodeKey);
                 if (_typeCode < 0)
                 {
                     Console.WriteLine("Decryption of type code failed");
@@ -1430,11 +1432,11 @@ namespace FileDecoder
         }
 #endif
 
-        static int DecryptTypeCodeString(string typeCode)
+        static int DecryptTypeCodeString(string typeCodeKey)
         {
-            if (!UInt64.TryParse(typeCode, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out UInt64 value))
+            if (!UInt64.TryParse(typeCodeKey, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out UInt64 value))
             {
-                return -1;
+                return 0;
             }
 
             byte[] data = BitConverter.GetBytes(value);
