@@ -31,25 +31,6 @@ namespace FileDecoder
             Done,
         }
 
-        // TypeCodeString from string resource 383
-#if VERSION_18_2_1
-        private const int FileVersionCode = 0x1221;
-        private const string TypeCodeKey = "ccc49968f325f16b";   // DRV 18.2.1
-#endif
-#if VERSION_17_8_1
-        private const int FileVersionCode = 0x1181;
-        private const string TypeCodeKey = "9fa5bd574f2c23f5";   // RUS 17.8.1
-#endif
-#if VERSION_17_8_0
-        private const int FileVersionCode = 0x1180;
-        private const string TypeCodeKey = "6da97491a5097b22";   // DRV 17.8.0
-#endif
-#if VERSION_17_1_3
-        // 17.1.3
-        private const int FileVersionCode = 0x1113;
-        private const string TypeCodeKey = "f406626d5727b505";   // RUS 17.1.3
-#endif
-
         static readonly byte[] CryptTabIndex = { 0x23, 0x12, 0x21, 0x42, 0x51, 0x14, 0x47, 0x67 };
         static readonly byte[] CryptTab1 =
         {
