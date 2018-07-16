@@ -1,13 +1,4 @@
-﻿#define VERSION_18_2_1
-//#define VERSION_17_8_1
-//#define VERSION_17_8_0
-//#define VERSION_17_1_3
-
-#if !VERSION_17_1_3
-#define ZIPLIB_SUPPORT
-#endif
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -131,11 +122,10 @@ namespace FileDecoder
             0xCD, 0xA3, 0x7B, 0x15, 0x56, 0x1C, 0x1B, 0x57, 0x67, 0xA0, 0xA9, 0x9E, 0x04, 0xB6, 0xE5, 0xB7
         };
 
+        private static int _fileVersionCode;
         private static int _typeCode;
         private static string _typeCodeString;
-#if ZIPLIB_SUPPORT
         private static UInt32 _holdrand;
-#endif
 
         static int Main(string[] args)
         {
@@ -163,21 +153,20 @@ namespace FileDecoder
             try
             {
                 string exePath = Path.Combine(dir, "VCDS.exe");
-                int fileVersionCode;
                 try
                 {
                     FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(exePath);
                     int verMajor = fileVersionInfo.FileMajorPart;
                     int verMinor = fileVersionInfo.FileMinorPart;
                     int verBuild = fileVersionInfo.FileBuildPart;
-                    fileVersionCode = (verMajor << 8) | ((verMinor & 0xF) << 4) | (verBuild & 0xF);
+                    _fileVersionCode = (verMajor << 8) | ((verMinor & 0xF) << 4) | (verBuild & 0xF);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("*** Reading file version failed: {0}", e.Message);
                     return 1;
                 }
-                Console.WriteLine("Extracted file version code: {0:X04}", fileVersionCode);
+                Console.WriteLine("Extracted file version code: {0:X04}", _fileVersionCode);
 
                 string typeCodeKey = ExtractStringFromDll(exePath, 383);
                 if (typeCodeKey == null)
@@ -187,7 +176,7 @@ namespace FileDecoder
                 }
                 Console.WriteLine("Extracted type code key: {0}", typeCodeKey);
 
-                _typeCode = DecryptTypeCodeString(fileVersionCode, typeCodeKey);
+                _typeCode = DecryptTypeCodeString(_fileVersionCode, typeCodeKey);
                 if (_typeCode < 0)
                 {
                     Console.WriteLine("Decryption of type code failed");
@@ -802,12 +791,15 @@ namespace FileDecoder
                 Int32 cryptOffet = cryptCode * 2;
                 for (int i = 0; i < 8; i++)
                 {
-#if ZIPLIB_SUPPORT
-                    maskBuffer[i] += (byte) (versionCode + CryptTab2[(byte) cryptOffet]);
-#else
-                    maskBuffer[i] += CryptTab2[(byte)cryptOffet];
-                    maskBuffer[i] += (byte) versionCode;
-#endif
+                    if (_fileVersionCode >= 0x1180)
+                    {
+                        maskBuffer[i] += (byte)(versionCode + CryptTab2[(byte)cryptOffet]);
+                    }
+                    else
+                    {
+                        maskBuffer[i] += CryptTab2[(byte)cryptOffet];
+                        maskBuffer[i] += (byte)versionCode;
+                    }
                     cryptOffet += cryptCode;
                 }
 
@@ -849,7 +841,15 @@ namespace FileDecoder
                     {
                         for (;;)
                         {
-                            ResultCode resultCode = DecryptSegment(fsRead, fsWrite, inFile);
+                            ResultCode resultCode;
+                            if (_fileVersionCode >= 0x1180)
+                            {
+                                resultCode = DecryptSegmentZipLib(fsRead, fsWrite, inFile);
+                            }
+                            else
+                            {
+                                resultCode = DecryptSegmentStd(fsRead, fsWrite, inFile);
+                            }
                             if (resultCode == ResultCode.Error)
                             {
                                 return false;
@@ -870,8 +870,7 @@ namespace FileDecoder
             }
         }
 
-#if ZIPLIB_SUPPORT
-        static ResultCode DecryptSegment(FileStream fsRead, FileStream fsWrite, string fileName)
+        static ResultCode DecryptSegmentZipLib(FileStream fsRead, FileStream fsWrite, string fileName)
         {
             try
             {
@@ -1096,8 +1095,8 @@ namespace FileDecoder
 
             return mask;
         }
-#else
-        static ResultCode DecryptSegment(FileStream fsRead, FileStream fsWrite, string fileName)
+
+        static ResultCode DecryptSegmentStd(FileStream fsRead, FileStream fsWrite, string fileName)
         {
             try
             {
@@ -1195,7 +1194,6 @@ namespace FileDecoder
                 return ResultCode.Error;
             }
         }
-#endif
 
         static bool DecryptBlock(UInt32[] mask, UInt32[] buffer, int codeTable)
         {
@@ -1265,7 +1263,6 @@ namespace FileDecoder
             return true;
         }
 
-#if ZIPLIB_SUPPORT
         static void DecompressData(byte[] inData, Stream fsout, int bytes)
         {
             using (MemoryStream outMemoryStream = new MemoryStream())
@@ -1452,7 +1449,6 @@ namespace FileDecoder
 
             return (_holdrand >> 16) & 0x7FFF;
         }
-#endif
 
         static int DecryptTypeCodeString(int fileVersionCode, string typeCodeKey)
         {
