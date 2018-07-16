@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using ICSharpCode.SharpZipLib.Core;
@@ -21,6 +22,16 @@ namespace FileDecoder
 {
     static class Program
     {
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Ansi)]
+        private static extern IntPtr LoadLibrary([MarshalAs(UnmanagedType.LPStr)]string lpFileName);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern int LoadString(IntPtr hInstance, int id, StringBuilder lpBuffer, int nBufferMax);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool FreeLibrary(IntPtr hModule);
+
         enum ResultCode
         {
             Ok,
@@ -144,27 +155,14 @@ namespace FileDecoder
             }
 
             string zipDir = dir;
-            string typeCodeString = "USA";
             if (args.Length >= 2)
             {
-                if (args[1].Length == 3)
-                {
-                    typeCodeString = args[1];
-                }
-                else
-                {
-                    zipDir = args[1];
-                }
+                zipDir = args[1];
             }
-
-            if (typeCodeString.Length != 3)
-            {
-                Console.WriteLine("Type code string length must be 3");
-                return 1;
-            }
-
             try
             {
+                string exePath = Path.Combine(dir, "VCDS.exe");
+                string typeCodeString = ExtractStringFromDll(exePath, 383);
                 _typeCode = DecryptTypeCodeString(TypeCodeString);
                 if (_typeCode < 0)
                 {
@@ -208,7 +206,7 @@ namespace FileDecoder
                     {
                         Console.WriteLine("Decrypting: {0}", file);
                         string outFile = Path.ChangeExtension(file, @".lbl");
-                        if (!DecryptClbFile(file, outFile, typeCodeString))
+                        if (!DecryptClbFile(file, outFile))
                         {
                             Console.WriteLine("*** Decryption failed: {0}", file);
                         }
@@ -257,6 +255,23 @@ namespace FileDecoder
             }
 
             return 0;
+        }
+
+        public static string ExtractStringFromDll(string file, int number)
+        {
+            IntPtr lib = LoadLibrary(file);
+            if (lib == IntPtr.Zero)
+            {
+                return string.Empty;
+            }
+            StringBuilder result = new StringBuilder(2048);
+            int count = LoadString(lib, number, result, result.Capacity);
+            FreeLibrary(lib);
+            if (count == 0)
+            {
+                return string.Empty;
+            }
+            return result.ToString();
         }
 
         public static string MakeRelativePath(string fromPath, string toPath)
@@ -379,10 +394,11 @@ namespace FileDecoder
             return BitConverter.ToString(result).Replace("-", "");
         }
 
-        static bool DecryptClbFile(string inFile, string outFile, string typeCodeString)
+        static bool DecryptClbFile(string inFile, string outFile)
         {
             bool extendedCode = false;
             DirectoryInfo dirInfo = Directory.GetParent(inFile);
+            string typeCodeString = "USA";
             if (dirInfo != null)
             {
                 string parentDir = dirInfo.Name;
