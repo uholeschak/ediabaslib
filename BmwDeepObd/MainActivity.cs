@@ -1972,7 +1972,11 @@ namespace BmwDeepObd
                                         {
                                             if (dtcEntry.ErrorType != UdsFileReader.DataReader.ErrorType.Uds)
                                             {
-                                                string dataFileName = Path.Combine(_instanceData.VagPath, errorReport.VagDataFileName);
+                                                string dataFileName = null;
+                                                if (!string.IsNullOrEmpty(errorReport.VagDataFileName))
+                                                {
+                                                    dataFileName = Path.Combine(_instanceData.VagPath, errorReport.VagDataFileName);
+                                                }
                                                 UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(dataFileName);
                                                 textList = udsReader.DataReader.ErrorCodeToString(
                                                     dtcEntry.DtcCode, dtcEntry.DtcDetail, dtcEntry.ErrorType, udsReader);
@@ -1981,7 +1985,11 @@ namespace BmwDeepObd
                                             {
                                                 if (!string.IsNullOrEmpty(errorReport.VagUdsFileName))
                                                 {
-                                                    string udsFileName = Path.Combine(_instanceData.VagPath, errorReport.VagUdsFileName);
+                                                    string udsFileName = null;
+                                                    if (!string.IsNullOrEmpty(errorReport.VagUdsFileName))
+                                                    {
+                                                        udsFileName = Path.Combine(_instanceData.VagPath, errorReport.VagUdsFileName);
+                                                    }
                                                     UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(udsFileName);
                                                     UdsFileReader.UdsReader.ParseInfoDtc parseInfoDtc = udsReader.GetDtcParseInfo(udsFileName, dtcEntry.DtcCode, dtcEntry.DtcDetail);
                                                     if (parseInfoDtc != null)
