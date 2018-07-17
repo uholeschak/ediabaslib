@@ -1972,16 +1972,18 @@ namespace BmwDeepObd
                                         {
                                             if (dtcEntry.ErrorType != UdsFileReader.DataReader.ErrorType.Uds)
                                             {
-                                                textList = ActivityCommon.UdsReader.DataReader.ErrorCodeToString(
-                                                    dtcEntry.DtcCode, dtcEntry.DtcDetail, dtcEntry.ErrorType, ActivityCommon.UdsReader);
+                                                string dataFileName = Path.Combine(_instanceData.VagPath, errorReport.VagDataFileName);
+                                                UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(dataFileName);
+                                                textList = udsReader.DataReader.ErrorCodeToString(
+                                                    dtcEntry.DtcCode, dtcEntry.DtcDetail, dtcEntry.ErrorType, udsReader);
                                             }
                                             else
                                             {
                                                 if (!string.IsNullOrEmpty(errorReport.VagUdsFileName))
                                                 {
                                                     string udsFileName = Path.Combine(_instanceData.VagPath, errorReport.VagUdsFileName);
-                                                    UdsFileReader.UdsReader.ParseInfoDtc parseInfoDtc =
-                                                        ActivityCommon.UdsReader.GetDtcParseInfo(udsFileName, dtcEntry.DtcCode, dtcEntry.DtcDetail);
+                                                    UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(udsFileName);
+                                                    UdsFileReader.UdsReader.ParseInfoDtc parseInfoDtc = udsReader.GetDtcParseInfo(udsFileName, dtcEntry.DtcCode, dtcEntry.DtcDetail);
                                                     if (parseInfoDtc != null)
                                                     {
                                                         textList = new List<string>
