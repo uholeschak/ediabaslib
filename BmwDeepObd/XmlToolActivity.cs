@@ -3291,7 +3291,8 @@ namespace BmwDeepObd
 
                             try
                             {
-                                UdsFileReader.DataReader.FileNameResolver dataResolver = new UdsFileReader.DataReader.FileNameResolver(ActivityCommon.UdsReader.DataReader, ecuInfo.VagPartNumber, (int)ecuInfo.Address);
+                                UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader();
+                                UdsFileReader.DataReader.FileNameResolver dataResolver = new UdsFileReader.DataReader.FileNameResolver(udsReader.DataReader, ecuInfo.VagPartNumber, (int)ecuInfo.Address);
                                 string dataFileName = dataResolver.GetFileName(_vagDir);
 #if false
                                 Log.Debug("Resolver", "Data file: " + dataFileName);
@@ -3300,7 +3301,7 @@ namespace BmwDeepObd
 
                                 if (udsEcu)
                                 {
-                                    UdsFileReader.UdsReader.FileNameResolver udsResolver = new UdsFileReader.UdsReader.FileNameResolver(ActivityCommon.UdsReader,
+                                    UdsFileReader.UdsReader.FileNameResolver udsResolver = new UdsFileReader.UdsReader.FileNameResolver(udsReader,
                                         ecuInfo.VagAsamData, ecuInfo.VagAsamRev, ecuInfo.VagPartNumber, _ecuInfoDid.VagHwPartNumber);
                                     string udsFileName = udsResolver.GetFileName(_vagDir);
                                     ecuInfo.VagUdsFileName = udsFileName ?? string.Empty;
@@ -3420,12 +3421,14 @@ namespace BmwDeepObd
                     List<string> udsFileList = UdsFileReader.UdsReader.FileNameResolver.GetAllFiles(ecuInfo.VagUdsFileName);
                     if (udsFileList != null)
                     {
-                        mwbSegmentList = ActivityCommon.UdsReader.ExtractFileSegment(udsFileList, UdsFileReader.UdsReader.SegmentType.Mwb);
+                        UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(ecuInfo.VagUdsFileName);
+                        mwbSegmentList = udsReader.ExtractFileSegment(udsFileList, UdsFileReader.UdsReader.SegmentType.Mwb);
                     }
                 }
                 else
                 {
-                    measDataList = ActivityCommon.UdsReader.DataReader.ExtractDataType(ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Measurement);
+                    UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(ecuInfo.VagDataFileName);
+                    measDataList = udsReader.DataReader.ExtractDataType(ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Measurement);
                 }
             }
             foreach (XmlToolEcuActivity.JobInfo job in jobList)

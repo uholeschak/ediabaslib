@@ -224,7 +224,7 @@ namespace BmwDeepObd
         public const string AdapterSsid = "Deep OBD BMW";
         public const string DownloadDir = "Download";
         public const string EcuBaseDir = "Ecu";
-        public const string VagBaseDir = "Vag";
+        public const string VagBaseDir = @"Vag/de";
         public const string AppNameSpace = "de.holeschak.bmw_deep_obd";
         public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
         public const string SettingBluetoothHciLog = "bluetooth_hci_log";
@@ -404,6 +404,7 @@ namespace BmwDeepObd
         private static string _customStorageMedia;
         private static string _appId;
         private static int _btEnableCounter;
+        private static UdsReader _udsReader;
         private readonly BluetoothAdapter _btAdapter;
         private readonly Java.Lang.Object _clipboardManager;
         private readonly WifiManager _maWifi;
@@ -614,8 +615,6 @@ namespace BmwDeepObd
 
         public static JobReader JobReader { get; }
 
-        public static UdsReader UdsReader { get; }
-
         public static bool VagUdsChecked { get; private set; }
 
         public static bool VagUdsActive { get; private set; }
@@ -668,7 +667,7 @@ namespace BmwDeepObd
         static ActivityCommon()
         {
             JobReader = new JobReader();
-            UdsReader = new UdsReader();
+            _udsReader = new UdsReader();
         }
 
         public ActivityCommon(Context context, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null,
@@ -2896,7 +2895,8 @@ namespace BmwDeepObd
                 return string.Empty;
             }
 
-            UdsReader.ParseInfoMwb parseInfoMwb = UdsReader.GetMwbParseInfo(udsFileName, serviceId);
+            UdsReader udsReader = GetUdsReader(udsFileName);
+            UdsReader.ParseInfoMwb parseInfoMwb = udsReader.GetMwbParseInfo(udsFileName, serviceId);
             if (parseInfoMwb == null)
             {
                 return string.Empty;
@@ -5272,8 +5272,8 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (!UdsReader.Init(vagDir,
-                    new HashSet<UdsReader.SegmentType> {UdsReader.SegmentType.Mwb, UdsReader.SegmentType.Dtc}))
+                UdsReader udsReader = GetUdsReader();
+                if (!udsReader.Init(vagDir, new HashSet<UdsReader.SegmentType> {UdsReader.SegmentType.Mwb, UdsReader.SegmentType.Dtc}))
                 {
                     return false;
                 }
@@ -5289,6 +5289,11 @@ namespace BmwDeepObd
             {
                 VagUdsChecked = true;
             }
+        }
+
+        public static UdsReader GetUdsReader(string fileName = null)
+        {
+            return _udsReader;
         }
 
         private static bool IsEmulator()

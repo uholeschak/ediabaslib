@@ -1447,7 +1447,8 @@ namespace BmwDeepObd
                                         resultText = string.Empty;
                                         if (udsEcu && resultData.OpData.GetType() == typeof(byte[]))
                                         {
-                                            UdsFileReader.UdsReader.ParseInfoMwb parseInfoMwb = ActivityCommon.UdsReader.GetMwbParseInfo(_ecuInfo.VagUdsFileName, (uint) _selectedResult.MwTabEntry.BlockNumber);
+                                            UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_ecuInfo.VagUdsFileName);
+                                            UdsFileReader.UdsReader.ParseInfoMwb parseInfoMwb = udsReader.GetMwbParseInfo(_ecuInfo.VagUdsFileName, (uint) _selectedResult.MwTabEntry.BlockNumber);
                                             if (parseInfoMwb != null)
                                             {
                                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ServiceID match: {0}", parseInfoMwb.ServiceId);
