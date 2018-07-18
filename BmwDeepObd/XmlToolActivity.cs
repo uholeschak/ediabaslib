@@ -3292,8 +3292,9 @@ namespace BmwDeepObd
                             try
                             {
                                 UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader();
+                                string vagDirLang = Path.Combine(_vagDir, udsReader.LanguageDir);
                                 UdsFileReader.DataReader.FileNameResolver dataResolver = new UdsFileReader.DataReader.FileNameResolver(udsReader.DataReader, ecuInfo.VagPartNumber, (int)ecuInfo.Address);
-                                string dataFileName = dataResolver.GetFileName(_vagDir);
+                                string dataFileName = dataResolver.GetFileName(vagDirLang);
 #if false
                                 Log.Debug("Resolver", "Data file: " + dataFileName);
 #endif
@@ -3303,7 +3304,7 @@ namespace BmwDeepObd
                                 {
                                     UdsFileReader.UdsReader.FileNameResolver udsResolver = new UdsFileReader.UdsReader.FileNameResolver(udsReader,
                                         ecuInfo.VagAsamData, ecuInfo.VagAsamRev, ecuInfo.VagPartNumber, _ecuInfoDid.VagHwPartNumber);
-                                    string udsFileName = udsResolver.GetFileName(_vagDir);
+                                    string udsFileName = udsResolver.GetFileName(vagDirLang);
                                     ecuInfo.VagUdsFileName = udsFileName ?? string.Empty;
 #if false
                                     if (udsFileName != null)
