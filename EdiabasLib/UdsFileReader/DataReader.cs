@@ -109,7 +109,7 @@ namespace UdsFileReader
                                 {
                                     foreach (string subDir in dirList)
                                     {
-                                        string targetFileName = Path.Combine(subDir, targetFile);
+                                        string targetFileName = Path.Combine(subDir, targetFile.ToLowerInvariant());
                                         if (File.Exists(targetFileName))
                                         {
                                             return targetFileName;
@@ -134,13 +134,13 @@ namespace UdsFileReader
                 {
                     foreach (string subDir in dirList)
                     {
-                        string fileName = Path.Combine(subDir, _fullName + FileExtension);
+                        string fileName = Path.Combine(subDir, _fullName.ToLowerInvariant() + FileExtension);
                         if (File.Exists(fileName))
                         {
                             return fileName;
                         }
 
-                        fileName = Path.Combine(subDir, _baseName + FileExtension);
+                        fileName = Path.Combine(subDir, _baseName.ToLowerInvariant() + FileExtension);
                         if (File.Exists(fileName))
                         {
                             return fileName;
@@ -153,7 +153,7 @@ namespace UdsFileReader
                         string part2 = string.Format(CultureInfo.InvariantCulture, "{0:00}", Address);
                         string baseName = part1 + "-" + part2;
 
-                        string fileName = Path.Combine(subDir, baseName + FileExtension);
+                        string fileName = Path.Combine(subDir, baseName.ToLowerInvariant() + FileExtension);
                         if (File.Exists(fileName))
                         {
                             return fileName;
