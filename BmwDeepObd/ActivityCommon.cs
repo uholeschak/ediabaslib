@@ -219,12 +219,13 @@ namespace BmwDeepObd
         public delegate void WifiConnectedWarnDelegate();
         public const int UdsDtcStatusOverride = 0x2C;
         public const string MtcBtAppName = @"com.microntek.bluetooth";
+        public const string DefaultLang = "en";
         public const string TraceFileName = "ifh.trc.zip";
         public const string EmulatorEnetIp = "192.168.10.244";
         public const string AdapterSsid = "Deep OBD BMW";
         public const string DownloadDir = "Download";
         public const string EcuBaseDir = "Ecu";
-        public const string VagBaseDir = @"Vag/de";
+        public const string VagBaseDir = "Vag";
         public const string AppNameSpace = "de.holeschak.bmw_deep_obd";
         public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
         public const string SettingBluetoothHciLog = "bluetooth_hci_log";
@@ -404,7 +405,7 @@ namespace BmwDeepObd
         private static string _customStorageMedia;
         private static string _appId;
         private static int _btEnableCounter;
-        private static UdsReader _udsReader;
+        private static Dictionary<string,UdsReader> _udsReaderDict;
         private readonly BluetoothAdapter _btAdapter;
         private readonly Java.Lang.Object _clipboardManager;
         private readonly WifiManager _maWifi;
@@ -667,7 +668,6 @@ namespace BmwDeepObd
         static ActivityCommon()
         {
             JobReader = new JobReader();
-            _udsReader = new UdsReader();
         }
 
         public ActivityCommon(Context context, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null,
@@ -3411,7 +3411,7 @@ namespace BmwDeepObd
 
         public static string GetCurrentLanguage()
         {
-            return Java.Util.Locale.Default.Language ?? "en";
+            return Java.Util.Locale.Default.Language ?? DefaultLang;
         }
 
         public static int TelLengthKwp2000(byte[] dataBuffer, int offset, out int dataLength, out int dataOffset)
@@ -3520,7 +3520,7 @@ namespace BmwDeepObd
             string dirName = Path.Combine(ecuPath, "dat.ukd", lang);
             if (!Directory.Exists(dirName))
             {
-                dirName = Path.Combine(ecuPath, "dat.ukd", "en");
+                dirName = Path.Combine(ecuPath, "dat.ukd", DefaultLang);
             }
 
             if (!ignoreManufacturer)
@@ -5272,10 +5272,39 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                UdsReader udsReader = GetUdsReader();
-                if (!udsReader.Init(vagDir, new HashSet<UdsReader.SegmentType> {UdsReader.SegmentType.Mwb, UdsReader.SegmentType.Dtc}))
+                if (_udsReaderDict == null)
                 {
-                    return false;
+                    _udsReaderDict = new Dictionary<string, UdsReader>();
+                    string[] subdirs = Directory.GetDirectories(vagDir, "*", SearchOption.TopDirectoryOnly);
+                    foreach (string subdir in subdirs)
+                    {
+                        string langDir = Path.GetFileName(subdir) ?? string.Empty;
+                        string key = langDir.ToLowerInvariant();
+                        if (key.Length == 2)
+                        {
+                            if (!_udsReaderDict.ContainsKey(key))
+                            {
+                                UdsReader udsReader = new UdsReader();
+                                if (!udsReader.Init(subdir,
+                                    new HashSet<UdsReader.SegmentType>
+                                    {
+                                        UdsReader.SegmentType.Mwb,
+                                        UdsReader.SegmentType.Dtc
+                                    }))
+                                {
+                                    return false;
+                                }
+
+                                udsReader.LanguageDir = langDir;
+                                _udsReaderDict.Add(key, udsReader);
+                            }
+                        }
+                    }
+                }
+
+                if (!_udsReaderDict.ContainsKey(DefaultLang))
+                {
+                    return false;   // no default reader
                 }
 
                 VagUdsActive = true;
@@ -5293,7 +5322,44 @@ namespace BmwDeepObd
 
         public static UdsReader GetUdsReader(string fileName = null)
         {
-            return _udsReader;
+            try
+            {
+                UdsReader udsReader;
+                if (!string.IsNullOrEmpty(fileName))
+                {
+                    DirectoryInfo dirInfoParent = Directory.GetParent(fileName);
+                    for (int i = 0; i < 3; i++)
+                    {
+                        if (dirInfoParent == null)
+                        {
+                            break;
+                        }
+
+                        string key = dirInfoParent.Name.ToLowerInvariant();
+                        if (_udsReaderDict.TryGetValue(key, out udsReader))
+                        {
+                            return udsReader;
+                        }
+                        dirInfoParent = Directory.GetParent(dirInfoParent.FullName);
+                    }
+                }
+
+                string lang = GetCurrentLanguage();
+                if (_udsReaderDict.TryGetValue(lang, out udsReader))
+                {
+                    return udsReader;
+                }
+
+                if (_udsReaderDict.TryGetValue(DefaultLang, out udsReader))
+                {
+                    return udsReader;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            return null;
         }
 
         private static bool IsEmulator()

@@ -970,6 +970,12 @@ namespace UdsFileReader
         private Dictionary<string, string> _chassisMap;
 
         public DataReader DataReader { get; private set; }
+        public string LanguageDir { get; set; }
+
+        public UdsReader()
+        {
+            LanguageDir = string.Empty;
+        }
 
         private static readonly Dictionary<byte, string> Type28Dict = new Dictionary<byte, string>()
         {
