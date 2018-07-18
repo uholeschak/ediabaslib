@@ -2894,7 +2894,7 @@ namespace UdsFileReader
                     {
                         return false;
                     }
-                    _redirMap.Add(redirArray[1].ToUpperInvariant(), redirArray[2]);
+                    _redirMap.Add(redirArray[1].ToLowerInvariant(), redirArray[2]);
                 }
 
                 _textMap = CreateTextDict(udsDir, "tttext*" + FileExtension, "TXT");
@@ -3493,7 +3493,7 @@ namespace UdsFileReader
             string fullName = Path.ChangeExtension(fileName, FileExtension);
             if (!File.Exists(fullName))
             {
-                string key = Path.GetFileNameWithoutExtension(fileName)?.ToUpperInvariant();
+                string key = Path.GetFileNameWithoutExtension(fileName)?.ToLowerInvariant();
                 if (key == null)
                 {
                     return null;
@@ -3514,7 +3514,7 @@ namespace UdsFileReader
                 {
                     return null;
                 }
-                fullName = Path.Combine(dirName, fullName);
+                fullName = Path.Combine(dirName, fullName.ToLowerInvariant());
 
                 if (!File.Exists(fullName))
                 {
@@ -3559,7 +3559,7 @@ namespace UdsFileReader
                         string file = line[1];
                         if (!string.IsNullOrWhiteSpace(file))
                         {
-                            string fileNameInc = Path.Combine(dir, Path.ChangeExtension(file, FileExtension));
+                            string fileNameInc = Path.Combine(dir, Path.ChangeExtension(file.ToLowerInvariant(), FileExtension));
                             if (File.Exists(fileNameInc) && !includeFiles.Contains(fileNameInc))
                             {
                                 includeFiles.Add(fileNameInc);
