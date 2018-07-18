@@ -16,7 +16,7 @@ namespace UdsFileReader
         public static readonly Encoding EncodingCyrillic = Encoding.GetEncoding(1251);
         public const string FileExtension = ".ldat";
         public const string CodeFileExtension = ".cdat";
-        public const string DataDir = "Labels";
+        public const string DataDir = "labels";
 
         public enum ErrorType
         {
@@ -653,7 +653,7 @@ namespace UdsFileReader
         public static Encoding GetEncodingForFileName(string fileName)
         {
             string baseFileName = Path.GetFileNameWithoutExtension(fileName) ?? string.Empty;
-            if (baseFileName.EndsWith("-RUS", true, CultureInfo.InvariantCulture))
+            if (baseFileName.EndsWith("-rus", true, CultureInfo.InvariantCulture))
             {
                 return EncodingCyrillic;
             }
@@ -661,7 +661,7 @@ namespace UdsFileReader
             DirectoryInfo dirInfoParent = Directory.GetParent(fileName);
             if (dirInfoParent != null)
             {
-                if (string.Compare(dirInfoParent.Name, "RUS", StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(dirInfoParent.Name, "rus", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return EncodingCyrillic;
                 }
@@ -911,7 +911,7 @@ namespace UdsFileReader
         {
             try
             {
-                string[] files = Directory.GetFiles(rootDir, "Code*" + CodeFileExtension, SearchOption.TopDirectoryOnly);
+                string[] files = Directory.GetFiles(rootDir, "code*" + CodeFileExtension, SearchOption.TopDirectoryOnly);
                 if (files.Length != 1)
                 {
                     return false;

@@ -14,7 +14,7 @@ namespace UdsFileReader
     public class UdsReader
     {
         public const string FileExtension = ".uds";
-        public const string UdsDir = "UDS_EV";
+        public const string UdsDir = "uds_ev";
 
         public enum SegmentType
         {
@@ -2881,7 +2881,7 @@ namespace UdsFileReader
                 }
 
                 string udsDir = Path.Combine(rootDir, UdsDir);
-                List<string[]> redirList = ExtractFileSegment(new List<string> {Path.Combine(udsDir, "ReDir" + FileExtension)}, "DIR");
+                List<string[]> redirList = ExtractFileSegment(new List<string> {Path.Combine(udsDir, "redir" + FileExtension)}, "DIR");
                 if (redirList == null)
                 {
                     return false;
@@ -2897,13 +2897,13 @@ namespace UdsFileReader
                     _redirMap.Add(redirArray[1].ToUpperInvariant(), redirArray[2]);
                 }
 
-                _textMap = CreateTextDict(udsDir, "TTText*" + FileExtension, "TXT");
+                _textMap = CreateTextDict(udsDir, "tttext*" + FileExtension, "TXT");
                 if (_textMap == null)
                 {
                     return false;
                 }
 
-                _unitMap = CreateTextDict(udsDir, "Unit*" + FileExtension, "UNT");
+                _unitMap = CreateTextDict(udsDir, "unit*" + FileExtension, "UNT");
                 if (_unitMap == null)
                 {
                     return false;
@@ -2918,21 +2918,21 @@ namespace UdsFileReader
                     }
                 }
 
-                List<string[]> ttdopList = ExtractFileSegment(new List<string> { Path.Combine(udsDir, "TTDOP" + FileExtension) }, "DOP");
+                List<string[]> ttdopList = ExtractFileSegment(new List<string> { Path.Combine(udsDir, "ttdop" + FileExtension) }, "DOP");
                 if (ttdopList == null)
                 {
                     return false;
                 }
                 _ttdopLookup = ttdopList.ToLookup(item => UInt32.Parse(item[0]));
 
-                List<string[]> muxList = ExtractFileSegment(new List<string> { Path.Combine(udsDir, "MUX" + FileExtension) }, "MUX");
+                List<string[]> muxList = ExtractFileSegment(new List<string> { Path.Combine(udsDir, "mux" + FileExtension) }, "MUX");
                 if (muxList == null)
                 {
                     return false;
                 }
                 _muxLookup = muxList.ToLookup(item => UInt32.Parse(item[0]));
 
-                _chassisMap = CreateChassisDict(Path.Combine(udsDir, "Chassis" + DataReader.FileExtension));
+                _chassisMap = CreateChassisDict(Path.Combine(udsDir, "chassis" + DataReader.FileExtension));
                 if (_chassisMap == null)
                 {
                     return false;
