@@ -176,8 +176,8 @@ namespace FileDecoder
                         Console.WriteLine("*** No relative path for: {0}", file);
                         continue;
                     }
-                    string zipOutDir = Path.Combine(zipDir, relPath);
-                    string baseFileName = Path.GetFileName(file);
+                    string zipOutDir = Path.Combine(zipDir, relPath.ToLowerInvariant());
+                    string baseFileName = (Path.GetFileName(file) ?? string.Empty).ToLowerInvariant();
                     string ext = Path.GetExtension(file);
                     if (string.Compare(ext, @".rod", StringComparison.OrdinalIgnoreCase) == 0)
                     {
@@ -189,7 +189,7 @@ namespace FileDecoder
                         }
                         else
                         {
-                            string zipFileName = Path.Combine(zipOutDir, Path.ChangeExtension(baseFileName, "uds") ?? string.Empty);
+                            string zipFileName = Path.Combine(zipOutDir, Path.ChangeExtension(baseFileName, "uds"));
                             if (!CreateZip(new List<string>() {outFile}, "uds", zipFileName))
                             {
                                 Console.WriteLine("*** Compression failed: {0}", file);
@@ -206,7 +206,7 @@ namespace FileDecoder
                         }
                         else
                         {
-                            string zipFileName = Path.Combine(zipOutDir, Path.ChangeExtension(baseFileName, "ldat") ?? string.Empty);
+                            string zipFileName = Path.Combine(zipOutDir, Path.ChangeExtension(baseFileName, "ldat"));
                             if (!CreateZip(new List<string>() { outFile }, "ldat", zipFileName))
                             {
                                 Console.WriteLine("*** Compression failed: {0}", file);
@@ -223,7 +223,7 @@ namespace FileDecoder
                         }
                         else
                         {
-                            string zipFileName = Path.Combine(zipOutDir, Path.ChangeExtension(baseFileName, "cdat") ?? string.Empty);
+                            string zipFileName = Path.Combine(zipOutDir, Path.ChangeExtension(baseFileName, "cdat"));
                             if (!CreateZip(new List<string>() { outFile }, "cdat", zipFileName))
                             {
                                 Console.WriteLine("*** Compression failed: {0}", file);
@@ -234,7 +234,7 @@ namespace FileDecoder
                     {
                         Console.WriteLine("Compressing: {0}", file);
                         string inFile = Path.ChangeExtension(file, @".lbl");
-                        string zipFileName = Path.Combine(zipOutDir, Path.ChangeExtension(baseFileName, "ldat") ?? string.Empty);
+                        string zipFileName = Path.Combine(zipOutDir, Path.ChangeExtension(baseFileName, "ldat"));
                         if (!CreateZip(new List<string>() { inFile }, "ldat", zipFileName))
                         {
                             Console.WriteLine("*** Compression failed: {0}", file);
