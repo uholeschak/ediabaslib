@@ -3201,7 +3201,7 @@ namespace BmwDeepObd
                     {
                         if (!ReadDidInfo(progress))
                         {
-                            throw new Exception("Read did detail info failed");
+                            throw new Exception("Read did info failed");
                         }
                     }
 
