@@ -66,8 +66,8 @@ namespace UdsFileReader
                         return null;
                     }
 
-                    string labelDir = Path.Combine(rootDir, DataDir);
-                    List<string> dirList = GetDirList(labelDir);
+                    string dataDir = Path.Combine(rootDir, DataDir);
+                    List<string> dirList = GetDirList(dataDir);
                     string fileName = ResolveFileName(dirList);
                     if (string.IsNullOrEmpty(fileName))
                     {
