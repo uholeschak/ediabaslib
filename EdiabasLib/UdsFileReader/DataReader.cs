@@ -66,7 +66,8 @@ namespace UdsFileReader
                         return null;
                     }
 
-                    List<string> dirList = GetDirList(rootDir);
+                    string labelDir = Path.Combine(rootDir, DataDir);
+                    List<string> dirList = GetDirList(labelDir);
                     string fileName = ResolveFileName(dirList);
                     if (string.IsNullOrEmpty(fileName))
                     {
@@ -173,7 +174,7 @@ namespace UdsFileReader
                 try
                 {
                     List<string> dirList = new List<string>();
-                    string[] dirs = Directory.GetDirectories(dir);
+                    string[] dirs = Directory.GetDirectories(dir, "*", SearchOption.TopDirectoryOnly);
                     if (dirs.Length > 0)
                     {
                         dirList.AddRange(dirs);
