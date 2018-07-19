@@ -2873,6 +2873,44 @@ namespace BmwDeepObd
             return vinInfo != null ? vinInfo.Key : string.Empty;
         }
 
+        private bool ReadDidInfo(CustomProgressDialog progress)
+        {
+            try
+            {
+                if (!ActivityCommon.VagUdsActive)
+                {
+                    return true;
+                }
+                if (_ecuInfoDid != null)
+                {
+                    return true;
+                }
+
+                // for UDS read hw info from did
+                ActivityCommon.ResolveSgbdFile(_ediabas, "did_19");
+
+                _ediabas.ArgString = string.Empty;
+                _ediabas.ArgBinaryStd = null;
+                _ediabas.ResultsRequests = string.Empty;
+                _ediabas.ExecuteJob("_JOBS");    // force to load file
+
+                string ecuName = _ediabas.SgbdFileName;
+                EcuInfo ecuInfoDid = new EcuInfo(ecuName.ToUpperInvariant(), 19, string.Empty, ecuName, string.Empty);
+                if (!GetVagEcuDetailInfo(ecuInfoDid, progress))
+                {
+                    return false;
+                }
+                _ecuInfoDid = ecuInfoDid;
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
+        }
+
         private void ExecuteAnalyzeJobVag(int searchStartIndex)
         {
             List<ActivityCommon.VagEcuEntry> ecuVagList = ActivityCommon.ReadVagEcuList(_ecuDir);
@@ -3159,32 +3197,11 @@ namespace BmwDeepObd
                 try
                 {
                     bool udsEcu = IsUdsEcu(ecuInfo);
-                    if (ActivityCommon.VagUdsActive)
+                    if (ActivityCommon.VagUdsActive && udsEcu)
                     {
-                        if (_ecuInfoDid == null && udsEcu)
+                        if (!ReadDidInfo(progress))
                         {
-                            try
-                            {
-                                // for UDS read hw info from did
-                                ActivityCommon.ResolveSgbdFile(_ediabas, "did_19");
-
-                                _ediabas.ArgString = string.Empty;
-                                _ediabas.ArgBinaryStd = null;
-                                _ediabas.ResultsRequests = string.Empty;
-                                _ediabas.ExecuteJob("_JOBS");    // force to load file
-
-                                string ecuName = _ediabas.SgbdFileName;
-                                EcuInfo ecuInfoDid = new EcuInfo(ecuName.ToUpperInvariant(), 19, string.Empty, ecuName, string.Empty);
-                                if (!GetVagEcuDetailInfo(ecuInfoDid, progress))
-                                {
-                                    throw new Exception("Read did detail info failed");
-                                }
-                                _ecuInfoDid = ecuInfoDid;
-                            }
-                            catch (Exception ex)
-                            {
-                                throw new Exception("Read did detail info failed: " + ex.Message);
-                            }
+                            throw new Exception("Read did info failed");
                         }
                     }
 
