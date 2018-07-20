@@ -3840,11 +3840,11 @@ namespace BmwDeepObd
 
             UpdateOptionsMenu();
             UpdateDisplay();
-            if (_ediabasJobAbort || ecuInfo.JobList == null)
+            if (_ediabasJobAbort)
             {
                 return;
             }
-            if (readFailed || (ecuInfo.JobList.Count == 0))
+            if (readFailed || (ecuInfo.JobList?.Count == 0))
             {
                 _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_read_jobs_failed), Resource.String.alert_title_error);
             }
