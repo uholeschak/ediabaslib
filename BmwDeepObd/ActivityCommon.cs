@@ -5070,13 +5070,19 @@ namespace BmwDeepObd
                 XElement[] fileNodes = xmlDoc.Root.Elements("file").ToArray();
                 int nodeCount = fileNodes.Length;
                 int index = 0;
+                int lastPercent = -1;
                 foreach (XElement fileNode in fileNodes)
                 {
                     if (progressHandler != null)
                     {
-                        if (progressHandler.Invoke(100 * index / nodeCount))
+                        int percent = 100 * index / nodeCount;
+                        if (lastPercent != percent)
                         {
-                            return false;
+                            lastPercent = percent;
+                            if (progressHandler.Invoke(percent))
+                            {
+                                return false;
+                            }
                         }
                     }
 
