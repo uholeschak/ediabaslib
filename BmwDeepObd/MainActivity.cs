@@ -3036,18 +3036,6 @@ namespace BmwDeepObd
                             {
                                 ExtractZipFile(_obbFileName, downloadInfo.TargetDir, downloadInfo.InfoXml, key, false,
                                     new List<string> { Path.Combine(_instanceData.AppDataPath, "EcuVag") });
-                                RunOnUiThread(() =>
-                                {
-                                    if (_activityCommon == null)
-                                    {
-                                        return;
-                                    }
-
-                                    if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
-                                    {
-                                        //_updateHandler?.Post(CompileCode);
-                                    }
-                                });
                                 return;
                             }
                             error = true;
@@ -3443,6 +3431,13 @@ namespace BmwDeepObd
                     }
                     else
                     {
+                        if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                        {
+                            if (ActivityCommon.JobReader.PageList.Count > 0)
+                            {
+                                CompileCode();
+                            }
+                        }
                         RequestConfigSelect();
                     }
                 });
