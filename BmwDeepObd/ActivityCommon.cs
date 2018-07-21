@@ -5268,6 +5268,13 @@ namespace BmwDeepObd
             return string.Join(string.Empty, s.ToCharArray().Select(o => invalid.Contains(o) ? replaceChar : o));
         }
 
+        public static void ResetUdsReader()
+        {
+            VagUdsChecked = false;
+            VagUdsActive = false;
+            _udsReaderDict = null;
+        }
+
         public static bool InitUdsReader(string vagDir)
         {
             try

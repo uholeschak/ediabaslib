@@ -2925,6 +2925,8 @@ namespace BmwDeepObd
                 return;
             }
 
+            ActivityCommon.ResetUdsReader();
+
             if (_downloadProgress == null)
             {
                 _downloadProgress = new CustomProgressDialog(this);
@@ -3429,6 +3431,13 @@ namespace BmwDeepObd
                     }
                     else
                     {
+                        if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                        {
+                            if (ActivityCommon.JobReader.PageList.Count > 0)
+                            {
+                                CompileCode();
+                            }
+                        }
                         RequestConfigSelect();
                     }
                 });
