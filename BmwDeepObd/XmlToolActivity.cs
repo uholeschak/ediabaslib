@@ -3128,33 +3128,53 @@ namespace BmwDeepObd
                                 }
                             }
                         }
-                        if (ActivityCommon.CollectDebugInfo && thisEcuInfo != null)
+
+                        if (thisEcuInfo != null)
                         {
-                            // get more ecu infos
-                            string readCommand = GetReadCommand(thisEcuInfo);
-                            foreach (Tuple<string, string> job in EcuInfoVagJobs)
+                            bool udsEcu = IsUdsEcu(thisEcuInfo);
+                            if (ActivityCommon.VagUdsActive && udsEcu)
                             {
-                                try
+                                if (_ecuInfoDid == null)
                                 {
-                                    if (_ediabas.IsJobExisting(job.Item1))
+                                    if (!ReadVagDidInfo(progress))
                                     {
-                                        string jobArgs = job.Item2;
-                                        if (!string.IsNullOrEmpty(readCommand))
-                                        {
-                                            if (string.Compare(job.Item1, JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0 && jobArgs.EndsWith(";"))
-                                            {
-                                                jobArgs += readCommand;
-                                            }
-                                        }
-                                        _ediabas.ArgString = jobArgs;
-                                        _ediabas.ArgBinaryStd = null;
-                                        _ediabas.ResultsRequests = string.Empty;
-                                        _ediabas.ExecuteJob(job.Item1);
+                                        throw new Exception("Read did info failed");
                                     }
+                                    ActivityCommon.ResolveSgbdFile(_ediabas, thisEcuInfo.Sgbd);
                                 }
-                                catch (Exception)
+                                if (!ReadVagEcuInfo(progress, thisEcuInfo))
                                 {
-                                    // ignored
+                                    throw new Exception("Read ecu info failed");
+                                }
+                            }
+                            if (ActivityCommon.CollectDebugInfo)
+                            {
+                                // get more ecu infos
+                                string readCommand = GetReadCommand(thisEcuInfo);
+                                foreach (Tuple<string, string> job in EcuInfoVagJobs)
+                                {
+                                    try
+                                    {
+                                        if (_ediabas.IsJobExisting(job.Item1))
+                                        {
+                                            string jobArgs = job.Item2;
+                                            if (!string.IsNullOrEmpty(readCommand))
+                                            {
+                                                if (string.Compare(job.Item1, JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0 && jobArgs.EndsWith(";"))
+                                                {
+                                                    jobArgs += readCommand;
+                                                }
+                                            }
+                                            _ediabas.ArgString = jobArgs;
+                                            _ediabas.ArgBinaryStd = null;
+                                            _ediabas.ResultsRequests = string.Empty;
+                                            _ediabas.ExecuteJob(job.Item1);
+                                        }
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // ignored
+                                    }
                                 }
                             }
                         }
