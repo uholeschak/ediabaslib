@@ -169,7 +169,7 @@ namespace BmwDeepObd
 #if OBB_MODE
         private const string EcuDirNameBmw = "EcuBmw";
         private const string EcuDirNameVag = "EcuVag";
-        private const string EcuDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Obb2.xml";
+        private const string EcuDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Obb3.xml";
         private const long EcuExtractSize = 2500000000;         // extracted ecu files size
         private const string InfoXmlName = "ObbInfo.xml";
         private const string ContentFileName = "Content.xml";
@@ -1495,7 +1495,7 @@ namespace BmwDeepObd
             }
             if (string.IsNullOrEmpty(_instanceData.VagPath))
             {
-                _instanceData.VagPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.VagBaseDir);
+                _instanceData.VagPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir, ActivityCommon.VagBaseDir);
             }
 
             string backgroundImageFile = Path.Combine(_instanceData.AppDataPath, "Images", "Background.jpg");
@@ -2690,10 +2690,10 @@ namespace BmwDeepObd
                     });
                 }
 #if OBB_MODE
+                string ecuBaseDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir);
                 if (_instanceData.VerifyEcuFiles)
                 {
                     _instanceData.VerifyEcuFiles = false;
-                    string ecuBaseDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir);
                     if (ValidEcuPackage(ecuBaseDir))
                     {
                         if (!ActivityCommon.VerifyContent(Path.Combine(ecuBaseDir, ContentFileName), false, percent =>
@@ -2728,7 +2728,7 @@ namespace BmwDeepObd
 #endif
                 if (!ActivityCommon.VagUdsChecked &&
                     ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw &&
-                    Directory.Exists(_instanceData.VagPath))
+                    Directory.Exists(_instanceData.VagPath) && ValidEcuPackage(ecuBaseDir))
                 {
                     RunOnUiThread(() =>
                     {
