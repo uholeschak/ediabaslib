@@ -2873,7 +2873,7 @@ namespace BmwDeepObd
             return vinInfo != null ? vinInfo.Key : string.Empty;
         }
 
-        private bool ReadDidInfo(CustomProgressDialog progress)
+        private bool ReadVagDidInfo(CustomProgressDialog progress)
         {
             try
             {
@@ -2909,6 +2909,59 @@ namespace BmwDeepObd
             }
 
             return false;
+        }
+
+        private bool ReadVagEcuInfo(CustomProgressDialog progress, EcuInfo ecuInfo)
+        {
+            try
+            {
+                if (!ActivityCommon.VagUdsActive)
+                {
+                    return true;
+                }
+
+                if (!GetVagEcuDetailInfo(ecuInfo, progress))
+                {
+                    return false;
+                }
+
+                UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader();
+                string vagDirLang = Path.Combine(_vagDir, udsReader.LanguageDir);
+                UdsFileReader.DataReader.FileNameResolver dataResolver = new UdsFileReader.DataReader.FileNameResolver(udsReader.DataReader, ecuInfo.VagPartNumber, (int)ecuInfo.Address);
+                string dataFileName = dataResolver.GetFileName(vagDirLang);
+#if false
+                Log.Debug("Resolver", "Data file: " + dataFileName);
+#endif
+                ecuInfo.VagDataFileName = dataFileName ?? string.Empty;
+
+                if (IsUdsEcu(ecuInfo))
+                {
+                    if (_ecuInfoDid == null)
+                    {
+                        return false;
+                    }
+                    UdsFileReader.UdsReader.FileNameResolver udsResolver = new UdsFileReader.UdsReader.FileNameResolver(udsReader,
+                        ecuInfo.VagAsamData, ecuInfo.VagAsamRev, ecuInfo.VagPartNumber, _ecuInfoDid.VagHwPartNumber);
+                    string udsFileName = udsResolver.GetFileName(vagDirLang);
+                    ecuInfo.VagUdsFileName = udsFileName ?? string.Empty;
+#if false
+                    if (udsFileName != null)
+                    {
+                        List<string> udsFileList = UdsFileReader.UdsReader.FileNameResolver.GetAllFiles(udsFileName);
+                        foreach (string name in udsFileList)
+                        {
+                            Log.Debug("Resolver", "Uds file: " + name);
+                        }
+                    }
+#endif
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         private void ExecuteAnalyzeJobVag(int searchStartIndex)
@@ -3199,7 +3252,7 @@ namespace BmwDeepObd
                     bool udsEcu = IsUdsEcu(ecuInfo);
                     if (ActivityCommon.VagUdsActive && udsEcu)
                     {
-                        if (!ReadDidInfo(progress))
+                        if (!ReadVagDidInfo(progress))
                         {
                             throw new Exception("Read did info failed");
                         }
@@ -3301,43 +3354,9 @@ namespace BmwDeepObd
                     {
                         if (ActivityCommon.VagUdsActive)
                         {
-                            if (!GetVagEcuDetailInfo(ecuInfo, progress))
+                            if (!ReadVagEcuInfo(progress, ecuInfo))
                             {
-                                throw new Exception("Read detail info failed");
-                            }
-
-                            try
-                            {
-                                UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader();
-                                string vagDirLang = Path.Combine(_vagDir, udsReader.LanguageDir);
-                                UdsFileReader.DataReader.FileNameResolver dataResolver = new UdsFileReader.DataReader.FileNameResolver(udsReader.DataReader, ecuInfo.VagPartNumber, (int)ecuInfo.Address);
-                                string dataFileName = dataResolver.GetFileName(vagDirLang);
-#if false
-                                Log.Debug("Resolver", "Data file: " + dataFileName);
-#endif
-                                ecuInfo.VagDataFileName = dataFileName ?? string.Empty;
-
-                                if (udsEcu)
-                                {
-                                    UdsFileReader.UdsReader.FileNameResolver udsResolver = new UdsFileReader.UdsReader.FileNameResolver(udsReader,
-                                        ecuInfo.VagAsamData, ecuInfo.VagAsamRev, ecuInfo.VagPartNumber, _ecuInfoDid.VagHwPartNumber);
-                                    string udsFileName = udsResolver.GetFileName(vagDirLang);
-                                    ecuInfo.VagUdsFileName = udsFileName ?? string.Empty;
-#if false
-                                    if (udsFileName != null)
-                                    {
-                                        List<string> udsFileList = UdsFileReader.UdsReader.FileNameResolver.GetAllFiles(udsFileName);
-                                        foreach (string name in udsFileList)
-                                        {
-                                            Log.Debug("Resolver", "Uds file: " + name);
-                                        }
-                                    }
-#endif
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                throw new Exception("Resolving files failed: " + ex.Message);
+                                throw new Exception("Read ecu info failed");
                             }
                         }
                         else
@@ -3840,11 +3859,11 @@ namespace BmwDeepObd
 
             UpdateOptionsMenu();
             UpdateDisplay();
-            if (_ediabasJobAbort || ecuInfo.JobList == null)
+            if (_ediabasJobAbort)
             {
                 return;
             }
-            if (readFailed || (ecuInfo.JobList.Count == 0))
+            if (readFailed || (ecuInfo.JobList?.Count == 0))
             {
                 _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_read_jobs_failed), Resource.String.alert_title_error);
             }
