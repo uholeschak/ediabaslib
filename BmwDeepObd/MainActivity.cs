@@ -2925,6 +2925,8 @@ namespace BmwDeepObd
                 return;
             }
 
+            ActivityCommon.ResetUdsReader();
+
             if (_downloadProgress == null)
             {
                 _downloadProgress = new CustomProgressDialog(this);
@@ -3034,6 +3036,18 @@ namespace BmwDeepObd
                             {
                                 ExtractZipFile(_obbFileName, downloadInfo.TargetDir, downloadInfo.InfoXml, key, false,
                                     new List<string> { Path.Combine(_instanceData.AppDataPath, "EcuVag") });
+                                RunOnUiThread(() =>
+                                {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+
+                                    if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                                    {
+                                        //_updateHandler?.Post(CompileCode);
+                                    }
+                                });
                                 return;
                             }
                             error = true;
