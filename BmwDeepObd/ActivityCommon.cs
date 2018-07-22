@@ -1945,6 +1945,7 @@ namespace BmwDeepObd
             builder.SetView(listView);
             builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
             {
+                ResetUdsReader();
                 switch (listView.CheckedItemPosition)
                 {
                     case 0:
