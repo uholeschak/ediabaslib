@@ -3378,6 +3378,9 @@ namespace BmwDeepObd
                         }
                         else
                         {
+                            ecuInfo.VagDataFileName = string.Empty;
+                            ecuInfo.VagUdsFileName = string.Empty;
+
                             if (mwTabNotPresent)
                             {
                                 List<string> mwTabFileNames = GetBestMatchingMwTab(ecuInfo, progress);
