@@ -993,6 +993,20 @@ namespace BmwDeepObd
                 }
             }
 
+            if (!ActivityCommon.CommActive)
+            {
+                if (_activityCommon.InitUdsReaderThread(_instanceData.VagPath, result =>
+                {
+                    if (result)
+                    {
+                        ButtonConnectClick(sender, e);
+                    }
+                }))
+                {
+                    return;
+                }
+            }
+
             if (ActivityCommon.CommActive)
             {
                 StopEdiabasThread(false);
@@ -2726,26 +2740,6 @@ namespace BmwDeepObd
                     }
                 }
 #endif
-                if (!ActivityCommon.VagUdsChecked &&
-                    ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw &&
-                    Directory.Exists(_instanceData.VagPath) && ValidEcuPackage(ecuBaseDir))
-                {
-                    RunOnUiThread(() =>
-                    {
-                        if (_activityCommon == null)
-                        {
-                            return;
-                        }
-                        if (_compileProgress != null)
-                        {
-                            _compileProgress.SetMessage(GetString(Resource.String.compile_vag_init));
-                            _compileProgress.Indeterminate = true;
-                        }
-                    });
-
-                    ActivityCommon.InitUdsReader(_instanceData.VagPath);
-                }
-
                 RunOnUiThread(() =>
                 {
                     if (_activityCommon == null)
@@ -3431,13 +3425,6 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
-                        {
-                            if (ActivityCommon.JobReader.PageList.Count > 0)
-                            {
-                                CompileCode();
-                            }
-                        }
                         RequestConfigSelect();
                     }
                 });
@@ -3918,6 +3905,18 @@ namespace BmwDeepObd
             {
                 return;
             }
+
+            if (_activityCommon.InitUdsReaderThread(_instanceData.VagPath, result =>
+            {
+                if (result)
+                {
+                    StartXmlTool();
+                }
+            }))
+            {
+                return;
+            }
+
             Intent serverIntent = new Intent(this, typeof(XmlToolActivity));
             serverIntent.PutExtra(XmlToolActivity.ExtraInitDir, _instanceData.EcuPath);
             serverIntent.PutExtra(XmlToolActivity.ExtraAppDataDir, _instanceData.AppDataPath);

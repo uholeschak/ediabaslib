@@ -103,7 +103,6 @@
   <string name="compile_cpu_usage">CPU Auslastung überprüfen</string>
   <string name="compile_cpu_usage_value">CPU Auslastung: {0}%</string>
   <string name="compile_cpu_usage_high">Die CPU Auslastung im Leerlauf ist sehr hoch ({0}%), dies kann Kommunikationsprobleme verursachen.\nBitte beenden Sie Hintergrund-Apps welche die CPU zu stark belasten.</string>
-  <string name="compile_vag_init">VAG Dateien lesen</string>
   <string name="compile_start">Anwendercode kompilieren</string>
   <string name="compile_crash">Die App ist beim Kompilieren des Anwerdercodes abgestürzt.\nEs gibt einen bekannten Compilerfehler:\nVerwenden Sie keine komplexen initialisierten Strukturen oder Arrays, initialisieren Sie diese im Konstruktor.</string>
 
@@ -119,7 +118,11 @@
   <string name="extract_failed">Das Entpacken der Dateien ist fehlgeschlagen.\nDie Zip-Datei scheint beschädigt zu sein.</string>
   <string name="extract_failed_io">Das Speichern der extrahierten Dateien ist fehlgeschlagen.\nIst kein Speicher mehr auf dem Gerät verfügbar?</string>
 
-  <!-- Send trace file -->
+  <!-- Init VAG UDS -->
+  <string name="vag_uds_init">VAG Dateien lesen</string>
+  <string name="vag_uds_error">VAG Dateien lesen fehlgeschlagen</string>
+
+    <!-- Send trace file -->
   <string name="send_trace_file_request">Es sind Kommunikationsfehler aufgetreten.\nWollen Sie eine komprimierte und anonyme Trace-Datei (Größe {0:fs0}) senden um Produktverbesserungen zu ermöglichen?</string>
   <string name="send_message_request">Es sind Kommunikationsfehler aufgetreten.\nWollen Sie anonyme Daten senden um Produktverbesserungen zu ermöglichen?</string>
   <string name="send_trace_file">Trace-Datei senden</string>

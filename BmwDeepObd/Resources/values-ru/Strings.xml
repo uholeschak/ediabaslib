@@ -103,7 +103,6 @@
   <string name="compile_cpu_usage">Проверка загрузки процессора</string>
   <string name="compile_cpu_usage_value">Загрузка процессора: {0}%</string>
   <string name="compile_cpu_usage_high">Загрузка процессора на холостом ходу очень высокая ({0}%), это может привести к проблемам в соединении.\nПожалуйста, закройте фоновые приложения, которые слишком загружают процессор.</string>
-  <string name="compile_vag_init">Загрузка VAG файлов</string>
   <string name="compile_start">Компилировать код пользователя</string>
   <string name="compile_crash">Сбой приложения при компиляции кода пользователя.\nСуществует известная ошибка компилятора:\nне используйте сложно инициализированные структуры или массивы в коде,\nинициализируйте их в конструкторе.</string>
 
@@ -119,7 +118,12 @@
   <string name="extract_failed">Не удалось разархивировать файлы.\nВозможно поврежден Zip-файл.</string>
   <string name="extract_failed_io">Не удалось сохранить разархивированные файлы.\nНа данном устройстве недостаточно свободаной памяти?</string>
 
-  <!-- Send trace file -->
+  <!-- Init VAG UDS -->
+  <string name="vag_uds_init">Загрузка VAG файлов</string>
+  <!--Translate-->
+  <string name="vag_uds_error">Reading VAG files failed</string>
+
+    <!-- Send trace file -->
   <string name="send_trace_file_request">Ошибка соединения.\nХотите отправить анонимный и сжатый Trace-файл (размер {0:fs0}) для улучшения качества продукта?</string>
   <string name="send_message_request">Ошибка соединения.\nХотите отправить анонимный файл для улучшения качества продукта?</string>
   <string name="send_trace_file">Послать Trace-файл</string>
