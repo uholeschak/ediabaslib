@@ -323,6 +323,7 @@ namespace BmwDeepObd
 
         // Intent extra
         public const string ExtraInitDir = "init_dir";
+        public const string ExtraVagDir = "vag_dir";
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceName = "device_name";
@@ -434,8 +435,8 @@ namespace BmwDeepObd
             };
 
             _ecuDir = Intent.GetStringExtra(ExtraInitDir);
+            _vagDir = Intent.GetStringExtra(ExtraVagDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
-            _vagDir = Path.Combine(_appDataDir, ActivityCommon.EcuBaseDir, ActivityCommon.VagBaseDir);
             if (!_activityRecreated)
             {
                 _instanceData.DeviceName = Intent.GetStringExtra(ExtraDeviceName);
