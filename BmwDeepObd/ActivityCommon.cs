@@ -5393,15 +5393,12 @@ namespace BmwDeepObd
                 }
 
                 VagUdsActive = true;
+                VagUdsChecked = true;
                 return true;
             }
             catch (Exception)
             {
                 return false;
-            }
-            finally
-            {
-                VagUdsChecked = true;
             }
         }
 
