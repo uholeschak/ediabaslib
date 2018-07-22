@@ -39,7 +39,7 @@
 \n\nChanges in this version:\n</string>
   <string name="version_last_changes">- Fixed adapter KWP1281 protocol\n- Fixed minor problems</string>
   <string name="app_info_message">Deep OBD for BMW and VAG\nVersion: {0}\nId: {1}</string>
-  <string name="vag_mode_info">The VAG mode ist still experimental.\nA <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD Adapter</a> with al least firmware version 0.8 is required.\nAt the moment only the protocols KWP2000, KWP1281 and TP2.0 (vehicles until 4.2012) are supported.</string>
+  <string name="vag_mode_info">The VAG mode ist still experimental.\nA <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD Adapter</a> with at least firmware version 0.11 is required.\nAt the moment only the protocols KWP2000, KWP1281, TP2.0 and UDS are supported.\nIt is possible to select the old VAG mode again in the settings dialog.</string>
 
   <!-- Expansion downloader -->
   <string name="exp_down_paused_cellular">Would you like to enable downloading over cellular connections? Depending on your data plan, this may cost you money.</string>
@@ -273,6 +273,8 @@
   <string name="settings_check_cpu_usage">Check CPU usage at start</string>
   <string name="settings_caption_check_ecu_files">Check ECU files</string>
   <string name="settings_check_ecu_files">Check ECU files at startup</string>
+  <string name="settings_caption_old_vag_mode">VAG mode</string>
+  <string name="settings_old_vag_mode">Use old VAG mode</string>
   <string name="settings_caption_storage">Storage media</string>
   <string name="settings_caption_debug">Debugging</string>
   <string name="settings_collect_debug_info">Collect debug information for trace files</string>

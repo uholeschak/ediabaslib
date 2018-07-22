@@ -405,6 +405,7 @@ namespace BmwDeepObd
         private static string _externalWritePath;
         private static string _customStorageMedia;
         private static string _appId;
+        private static bool _vagUdsActive;
         private static int _btEnableCounter;
         private static Dictionary<string,UdsReader> _udsReaderDict;
         private readonly BluetoothAdapter _btAdapter;
@@ -572,6 +573,21 @@ namespace BmwDeepObd
             set => _appId = value;
         }
 
+        public static bool VagUdsChecked { get; private set; }
+
+        public static bool VagUdsActive
+        {
+            get
+            {
+                if (OldVagMode)
+                {
+                    return false;
+                }
+                return _vagUdsActive;
+            }
+            private set => _vagUdsActive = value;
+        }
+
         public static bool ActivityStartedFromMain { get; set; }
 
         // default is true, to disable warning at startup
@@ -603,6 +619,8 @@ namespace BmwDeepObd
 
         public static bool CheckEcuFiles { get; set; }
 
+        public static bool OldVagMode { get; set; }
+
         public static bool CollectDebugInfo { get; set; }
 
         public static string YandexApiKey { get; set; }
@@ -616,10 +634,6 @@ namespace BmwDeepObd
         public static EdiabasThread EdiabasThread { get; set; }
 
         public static JobReader JobReader { get; }
-
-        public static bool VagUdsChecked { get; private set; }
-
-        public static bool VagUdsActive { get; private set; }
 
         public InterfaceType SelectedInterface
         {
@@ -5272,7 +5286,7 @@ namespace BmwDeepObd
 
         public bool InitUdsReaderThread(string vagPath, InitUdsFinishDelegate handler)
         {
-            if (VagUdsChecked || SelectedManufacturer == ManufacturerType.Bmw)
+            if (OldVagMode || VagUdsChecked || SelectedManufacturer == ManufacturerType.Bmw)
             {
                 return false;
             }
@@ -5331,6 +5345,10 @@ namespace BmwDeepObd
 
         public static bool InitUdsReader(string vagDir)
         {
+            if (OldVagMode)
+            {
+                return true;
+            }
             try
             {
                 VagUdsActive = false;

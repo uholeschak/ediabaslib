@@ -39,7 +39,8 @@
 \n\nИзменения в этой версии:\n</string>
   <string name="version_last_changes">- Исправлен протокол адаптера KWP1281\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
-  <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.8.\nНа данный момент поддерживаются только KWP2000, KWP1281 и TP2.0 (Автомобили до 4.2012) протоколы.</string>
+  <!--Translate-->
+  <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281 и TP2.0 (Автомобили до 4.2012) протоколы.</string>
 
   <!-- Expansion downloader -->
   <string name="exp_down_paused_cellular">Хотите активировать загрузку через мобильное соединение? Это может привести к дополнительным расходам.</string>
@@ -296,6 +297,9 @@
   <string name="settings_caption_cpu_usage">Загрузка процессора</string>
   <string name="settings_check_cpu_usage">Проверка загрузки процессора при запуске</string>
   <string name="settings_caption_check_ecu_files">Проверка ECU файлов</string>
+  <!--Translate-->
+  <string name="settings_caption_old_vag_mode">VAG mode</string>
+  <string name="settings_old_vag_mode">Use old VAG mode</string>
   <string name="settings_check_ecu_files">Проверка ECU файлов при запуске</string>
   <string name="settings_caption_storage">Носитель памяти</string>
   <string name="settings_caption_debug">Отладить</string>

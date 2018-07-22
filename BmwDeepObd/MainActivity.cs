@@ -1350,6 +1350,7 @@ namespace BmwDeepObd
                     ActivityCommon.SendDataBroadcast = prefs.GetBoolean("SendDataBroadcast", ActivityCommon.SendDataBroadcast);
                     ActivityCommon.CheckCpuUsage = prefs.GetBoolean("CheckCpuUsage", true);
                     ActivityCommon.CheckEcuFiles = prefs.GetBoolean("CheckEcuFiles", true);
+                    ActivityCommon.OldVagMode = prefs.GetBoolean("OldVagMode", false);
                     ActivityCommon.CollectDebugInfo = prefs.GetBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
                 }
             }
@@ -1388,6 +1389,7 @@ namespace BmwDeepObd
                 prefsEdit.PutBoolean("SendDataBroadcast", ActivityCommon.SendDataBroadcast);
                 prefsEdit.PutBoolean("CheckCpuUsage", ActivityCommon.CheckCpuUsage);
                 prefsEdit.PutBoolean("CheckEcuFiles", ActivityCommon.CheckEcuFiles);
+                prefsEdit.PutBoolean("OldVagMode", ActivityCommon.OldVagMode);
                 prefsEdit.PutBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
                 prefsEdit.Commit();
             }
