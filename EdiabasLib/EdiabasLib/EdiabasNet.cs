@@ -5367,6 +5367,10 @@ namespace EdiabasLib
                                     }
                                     if (appendZip)
                                     {
+                                        if (File.Exists(zipFileNameOld))
+                                        {
+                                            File.Delete(zipFileNameOld);
+                                        }
                                         File.Move(zipFileName, zipFileNameOld);
                                     }
                                     FileStream fsOut = File.Create(zipFileName);
