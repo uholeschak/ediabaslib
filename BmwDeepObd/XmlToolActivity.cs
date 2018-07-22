@@ -2957,6 +2957,7 @@ namespace BmwDeepObd
 #endif
                 }
 
+                ecuInfo.MwTabFileName = string.Empty;
                 return true;
             }
             catch (Exception)
