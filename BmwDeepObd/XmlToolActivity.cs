@@ -435,7 +435,7 @@ namespace BmwDeepObd
 
             _ecuDir = Intent.GetStringExtra(ExtraInitDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
-            _vagDir = Path.Combine(_appDataDir, ActivityCommon.VagBaseDir);
+            _vagDir = Path.Combine(_appDataDir, ActivityCommon.EcuBaseDir, ActivityCommon.VagBaseDir);
             if (!_activityRecreated)
             {
                 _instanceData.DeviceName = Intent.GetStringExtra(ExtraDeviceName);
@@ -2973,11 +2973,6 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (!ActivityCommon.VagUdsChecked && Directory.Exists(_vagDir))
-            {
-                ActivityCommon.InitUdsReader(_vagDir);
-            }
-
             EdiabasOpen();
             ClearVehicleInfo();
             _instanceData.EcuSearchAbortIndex = -1;
@@ -4684,11 +4679,6 @@ namespace BmwDeepObd
                 {
                     ecuVagList = ActivityCommon.ReadVagEcuList(_ecuDir);
                     ecuNameDict = ActivityCommon.GetVagEcuNamesDict(_ecuDir);
-
-                    if (!ActivityCommon.VagUdsChecked && Directory.Exists(_vagDir))
-                    {
-                        ActivityCommon.InitUdsReader(_vagDir);
-                    }
                 }
                 for (int idx = 0; idx < _ecuList.Count; idx++)
                 {

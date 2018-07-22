@@ -79,7 +79,6 @@
   <string name="compile_cpu_usage">Checking CPU usage</string>
   <string name="compile_cpu_usage_value">CPU usage: {0}%</string>
   <string name="compile_cpu_usage_high">The CPU idle usage is very high ({0}%), this could cause communication problems.\nPlease terminate background Apps that consume too much CPU power.</string>
-  <string name="compile_vag_init">Reading VAG files</string>
   <string name="compile_start">Compiling user code</string>
   <string name="compile_crash">The app crashed during compilation of the user code.\nThere is a known compiler bug:\nDon\'t use complex initialized structures or arrays in the code,\ninitialize them in the constructor.</string>
 
@@ -94,6 +93,10 @@
   <string name="verify_files">Verify files</string>
   <string name="extract_failed">Extracting files failed.\nThe zip file seems to be corrupted.</string>
   <string name="extract_failed_io">Writing extracted files failed.\nIs there no space left on the device?</string>
+
+  <!-- Init VAG UDS -->
+  <string name="vag_uds_init">Reading VAG files</string>
+  <string name="vag_uds_error">Reading VAG files failed</string>
 
   <!-- Send trace file -->
   <string name="send_trace_file_request">Communication errors have occured.\nDo you want to send a compressed and anonymous trace file (size {0:fs0}) to allow improvement of the product?</string>
