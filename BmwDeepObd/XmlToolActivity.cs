@@ -314,6 +314,7 @@ namespace BmwDeepObd
             new Tuple<string, string>("GenerischS22_abfragen", "0xF197"),
             new Tuple<string, string>("GenerischS22_abfragen", "0xF19E"),
             new Tuple<string, string>("GenerischS22_abfragen", "0xF1A0"),
+            new Tuple<string, string>("GenerischS22_abfragen", "0xF1A1"),
             new Tuple<string, string>("GenerischS22_abfragen", "0xF1A2"),
             new Tuple<string, string>("GenerischS22_abfragen", "0xF1A3"),
             new Tuple<string, string>("GenerischS22_abfragen", "0xF1A4"),
