@@ -2968,6 +2968,14 @@ namespace BmwDeepObd
                     string udsFileName = udsResolver.GetFileName(vagDirLang);
                     ecuInfo.VagUdsFileName = udsFileName ?? string.Empty;
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VAG uds file: {0}", ecuInfo.VagUdsFileName);
+                    List<string> udsFileList = UdsFileReader.UdsReader.FileNameResolver.GetAllFiles(ecuInfo.VagUdsFileName);
+                    if (udsFileList != null)
+                    {
+                        foreach (string fileName in udsFileList)
+                        {
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Include file: {0}", fileName);
+                        }
+                    }
                 }
 
                 ecuInfo.MwTabFileName = string.Empty;
