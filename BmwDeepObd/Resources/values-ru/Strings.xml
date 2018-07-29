@@ -230,7 +230,7 @@
   <!-- Interface selection -->
   <string name="select_interface">Выбрать интерфейс</string>
   <string name="select_interface_bt">Bluetooth</string>
-  <string name="select_interface_enet">ENET (WIFI)</string>
+  <string name="select_interface_enet">ENET / Deep OBD WIFI</string>
   <string name="select_interface_elmwifi">ELM327 WIFI</string>
   <string name="select_interface_deepobdwifi">Deep OBD ELM WIFI</string>
   <string name="select_interface_ftdi">USB (FTDI)</string>
