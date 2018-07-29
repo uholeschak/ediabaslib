@@ -2973,7 +2973,7 @@ namespace BmwDeepObd
                     {
                         foreach (string fileName in udsFileList)
                         {
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Include file: {0}", fileName);
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VAG include file: {0}", fileName);
                         }
                     }
                 }
