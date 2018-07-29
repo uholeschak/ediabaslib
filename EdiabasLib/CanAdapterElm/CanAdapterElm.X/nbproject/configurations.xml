@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="62">
+<configurationDescriptor version="65">
   <logicalFolder name="root" displayName="root" projectFiles="true">
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
@@ -35,6 +35,9 @@
         <languageToolchainVersion>1.33</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
+      <packs>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="0.1.33"/>
+      </packs>
       <compileType>
         <linkerTool>
           <linkerLibItems>
@@ -475,6 +478,9 @@
         <languageToolchainVersion>1.33</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
+      <packs>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="0.1.33"/>
+      </packs>
       <compileType>
         <linkerTool>
           <linkerLibItems>
@@ -915,6 +921,9 @@
         <languageToolchainVersion>1.33</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
+      <packs>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="0.1.33"/>
+      </packs>
       <compileType>
         <linkerTool>
           <linkerLibItems>
@@ -1355,6 +1364,9 @@
         <languageToolchainVersion>1.33</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
+      <packs>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="0.1.33"/>
+      </packs>
       <compileType>
         <linkerTool>
           <linkerLibItems>
@@ -1795,6 +1807,9 @@
         <languageToolchainVersion>1.33</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
+      <packs>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="0.1.33"/>
+      </packs>
       <compileType>
         <linkerTool>
           <linkerLibItems>
@@ -2235,6 +2250,9 @@
         <languageToolchainVersion>1.33</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
+      <packs>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="0.1.33"/>
+      </packs>
       <compileType>
         <linkerTool>
           <linkerLibItems>
