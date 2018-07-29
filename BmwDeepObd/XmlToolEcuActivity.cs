@@ -108,6 +108,7 @@ namespace BmwDeepObd
         public class InstanceData
         {
             public bool IgnoreFormatSelection { get; set; }
+            public bool ResultAmountWarnShown { get; set; }
         }
 
         public delegate void AcceptDelegate(bool accepted);
@@ -1262,7 +1263,7 @@ namespace BmwDeepObd
         private void ResultSelected(int pos)
         {
             UpdateResultSettings(_selectedResult);  // store old settings
-            if (pos >= 0)
+            if (pos >= 0 && pos < _spinnerJobResultsAdapter.Items.Count)
             {
                 _selectedResult = _spinnerJobResultsAdapter.Items[pos];
                 _textViewResultCommentsTitle.Text = string.Format(GetString(Resource.String.xml_tool_ecu_result_comments), _selectedResult.Name);
@@ -1329,7 +1330,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void ResultCheckChanged()
+        private void ResultCheckChanged(bool isChecked)
         {
             if ((_selectedJob == null) || (_selectedResult == null))
             {
@@ -1337,6 +1338,19 @@ namespace BmwDeepObd
             }
             int selectCount = _selectedJob.Results.Count(resultInfo => resultInfo.Selected);
             bool selectJob = selectCount > 0;
+            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+            {
+                bool statMwBlock = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
+                bool statBlock = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0;
+                if ((statMwBlock || statBlock) && isChecked && selectCount > 10)
+                {
+                    if (!_instanceData.ResultAmountWarnShown)
+                    {
+                        _instanceData.ResultAmountWarnShown = true;
+                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_result_amount_limit), Resource.String.alert_title_warning);
+                    }
+                }
+            }
             if (_selectedJob.Selected != selectJob)
             {
                 _selectedJob.Selected = selectJob;
@@ -1679,7 +1693,7 @@ namespace BmwDeepObd
                     {
                         tagInfo.Info.Selected = args.IsChecked;
                         NotifyDataSetChanged();
-                        _context.ResultCheckChanged();
+                        _context.ResultCheckChanged(args.IsChecked);
                     }
                 }
             }

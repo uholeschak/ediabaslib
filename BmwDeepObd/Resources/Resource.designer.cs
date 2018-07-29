@@ -4286,26 +4286,26 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0900bd
 			public const int button_active = 2131296445;
 			
+			// aapt resource value: 0x7f09019f
+			public const int button_can_adapter_can_100 = 2131296671;
+			
 			// aapt resource value: 0x7f09019e
-			public const int button_can_adapter_can_100 = 2131296670;
+			public const int button_can_adapter_can_500 = 2131296670;
 			
 			// aapt resource value: 0x7f09019d
-			public const int button_can_adapter_can_500 = 2131296669;
-			
-			// aapt resource value: 0x7f09019c
-			public const int button_can_adapter_can_auto = 2131296668;
-			
-			// aapt resource value: 0x7f09019f
-			public const int button_can_adapter_can_off = 2131296671;
+			public const int button_can_adapter_can_auto = 2131296669;
 			
 			// aapt resource value: 0x7f0901a0
-			public const int button_can_adapter_fw_update = 2131296672;
+			public const int button_can_adapter_can_off = 2131296672;
 			
-			// aapt resource value: 0x7f09019a
-			public const int button_can_adapter_read = 2131296666;
+			// aapt resource value: 0x7f0901a1
+			public const int button_can_adapter_fw_update = 2131296673;
 			
 			// aapt resource value: 0x7f09019b
-			public const int button_can_adapter_write = 2131296667;
+			public const int button_can_adapter_read = 2131296667;
+			
+			// aapt resource value: 0x7f09019c
+			public const int button_can_adapter_write = 2131296668;
 			
 			// aapt resource value: 0x7f090040
 			public const int button_connected = 2131296320;
@@ -4367,89 +4367,89 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f090042
 			public const int button_yes = 2131296322;
 			
-			// aapt resource value: 0x7f090185
-			public const int can_adapter_bat_voltage = 2131296645;
-			
-			// aapt resource value: 0x7f090181
-			public const int can_adapter_block_size = 2131296641;
-			
-			// aapt resource value: 0x7f090183
-			public const int can_adapter_bt_name = 2131296643;
-			
-			// aapt resource value: 0x7f090199
-			public const int can_adapter_bt_not_reliable = 2131296665;
+			// aapt resource value: 0x7f090186
+			public const int can_adapter_bat_voltage = 2131296646;
 			
 			// aapt resource value: 0x7f090182
-			public const int can_adapter_bt_pin = 2131296642;
-			
-			// aapt resource value: 0x7f090189
-			public const int can_adapter_comm_error = 2131296649;
-			
-			// aapt resource value: 0x7f09018a
-			public const int can_adapter_comm_error_std = 2131296650;
-			
-			// aapt resource value: 0x7f090188
-			public const int can_adapter_expert = 2131296648;
-			
-			// aapt resource value: 0x7f090195
-			public const int can_adapter_fw_update_active = 2131296661;
-			
-			// aapt resource value: 0x7f090196
-			public const int can_adapter_fw_update_conn_failed = 2131296662;
-			
-			// aapt resource value: 0x7f090197
-			public const int can_adapter_fw_update_failed = 2131296663;
-			
-			// aapt resource value: 0x7f090194
-			public const int can_adapter_fw_update_info = 2131296660;
-			
-			// aapt resource value: 0x7f090198
-			public const int can_adapter_fw_update_ok = 2131296664;
-			
-			// aapt resource value: 0x7f090193
-			public const int can_adapter_fw_update_present = 2131296659;
-			
-			// aapt resource value: 0x7f090186
-			public const int can_adapter_fw_version = 2131296646;
-			
-			// aapt resource value: 0x7f09018d
-			public const int can_adapter_ignition_no_status = 2131296653;
-			
-			// aapt resource value: 0x7f09018c
-			public const int can_adapter_ignition_off = 2131296652;
-			
-			// aapt resource value: 0x7f09018b
-			public const int can_adapter_ignition_on = 2131296651;
+			public const int can_adapter_block_size = 2131296642;
 			
 			// aapt resource value: 0x7f090184
-			public const int can_adapter_ignition_state = 2131296644;
+			public const int can_adapter_bt_name = 2131296644;
 			
-			// aapt resource value: 0x7f09017f
-			public const int can_adapter_mode_name = 2131296639;
+			// aapt resource value: 0x7f09019a
+			public const int can_adapter_bt_not_reliable = 2131296666;
 			
-			// aapt resource value: 0x7f090190
-			public const int can_adapter_name_length = 2131296656;
+			// aapt resource value: 0x7f090183
+			public const int can_adapter_bt_pin = 2131296643;
 			
-			// aapt resource value: 0x7f090192
-			public const int can_adapter_new_name = 2131296658;
+			// aapt resource value: 0x7f09018a
+			public const int can_adapter_comm_error = 2131296650;
 			
-			// aapt resource value: 0x7f090191
-			public const int can_adapter_new_pin = 2131296657;
+			// aapt resource value: 0x7f09018b
+			public const int can_adapter_comm_error_std = 2131296651;
 			
-			// aapt resource value: 0x7f09018f
-			public const int can_adapter_pin_length = 2131296655;
+			// aapt resource value: 0x7f090189
+			public const int can_adapter_expert = 2131296649;
 			
-			// aapt resource value: 0x7f090180
-			public const int can_adapter_sep_time = 2131296640;
+			// aapt resource value: 0x7f090196
+			public const int can_adapter_fw_update_active = 2131296662;
+			
+			// aapt resource value: 0x7f090197
+			public const int can_adapter_fw_update_conn_failed = 2131296663;
+			
+			// aapt resource value: 0x7f090198
+			public const int can_adapter_fw_update_failed = 2131296664;
+			
+			// aapt resource value: 0x7f090195
+			public const int can_adapter_fw_update_info = 2131296661;
+			
+			// aapt resource value: 0x7f090199
+			public const int can_adapter_fw_update_ok = 2131296665;
+			
+			// aapt resource value: 0x7f090194
+			public const int can_adapter_fw_update_present = 2131296660;
 			
 			// aapt resource value: 0x7f090187
-			public const int can_adapter_ser_num = 2131296647;
+			public const int can_adapter_fw_version = 2131296647;
 			
 			// aapt resource value: 0x7f09018e
-			public const int can_adapter_text_off = 2131296654;
+			public const int can_adapter_ignition_no_status = 2131296654;
 			
-			// aapt resource value: 0x7f09017e
-			public const int can_adapter_title = 2131296638;
+			// aapt resource value: 0x7f09018d
+			public const int can_adapter_ignition_off = 2131296653;
+			
+			// aapt resource value: 0x7f09018c
+			public const int can_adapter_ignition_on = 2131296652;
+			
+			// aapt resource value: 0x7f090185
+			public const int can_adapter_ignition_state = 2131296645;
+			
+			// aapt resource value: 0x7f090180
+			public const int can_adapter_mode_name = 2131296640;
+			
+			// aapt resource value: 0x7f090191
+			public const int can_adapter_name_length = 2131296657;
+			
+			// aapt resource value: 0x7f090193
+			public const int can_adapter_new_name = 2131296659;
+			
+			// aapt resource value: 0x7f090192
+			public const int can_adapter_new_pin = 2131296658;
+			
+			// aapt resource value: 0x7f090190
+			public const int can_adapter_pin_length = 2131296656;
+			
+			// aapt resource value: 0x7f090181
+			public const int can_adapter_sep_time = 2131296641;
+			
+			// aapt resource value: 0x7f090188
+			public const int can_adapter_ser_num = 2131296648;
+			
+			// aapt resource value: 0x7f09018f
+			public const int can_adapter_text_off = 2131296655;
+			
+			// aapt resource value: 0x7f09017f
+			public const int can_adapter_title = 2131296639;
 			
 			// aapt resource value: 0x7f090020
 			public const int character_counter_pattern = 2131296288;
@@ -5329,6 +5329,9 @@ namespace BmwDeepObd
 			
 			// aapt resource value: 0x7f090130
 			public const int xml_tool_reset_ecu_setting = 2131296560;
+			
+			// aapt resource value: 0x7f09017e
+			public const int xml_tool_result_amount_limit = 2131296638;
 			
 			// aapt resource value: 0x7f09014b
 			public const int xml_tool_result_vin = 2131296587;
