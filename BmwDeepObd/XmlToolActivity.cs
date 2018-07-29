@@ -2954,10 +2954,8 @@ namespace BmwDeepObd
                 string vagDirLang = Path.Combine(_vagDir, udsReader.LanguageDir);
                 UdsFileReader.DataReader.FileNameResolver dataResolver = new UdsFileReader.DataReader.FileNameResolver(udsReader.DataReader, ecuInfo.VagPartNumber, (int)ecuInfo.Address);
                 string dataFileName = dataResolver.GetFileName(vagDirLang);
-#if false
-                Log.Debug("Resolver", "Data file: " + dataFileName);
-#endif
                 ecuInfo.VagDataFileName = dataFileName ?? string.Empty;
+                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VAG data file: {0}", ecuInfo.VagDataFileName);
 
                 if (IsUdsEcu(ecuInfo))
                 {
@@ -2969,16 +2967,7 @@ namespace BmwDeepObd
                         ecuInfo.VagAsamData, ecuInfo.VagAsamRev, ecuInfo.VagPartNumber, _ecuInfoDid.VagHwPartNumber);
                     string udsFileName = udsResolver.GetFileName(vagDirLang);
                     ecuInfo.VagUdsFileName = udsFileName ?? string.Empty;
-#if false
-                    if (udsFileName != null)
-                    {
-                        List<string> udsFileList = UdsFileReader.UdsReader.FileNameResolver.GetAllFiles(udsFileName);
-                        foreach (string name in udsFileList)
-                        {
-                            Log.Debug("Resolver", "Uds file: " + name);
-                        }
-                    }
-#endif
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VAG uds file: {0}", ecuInfo.VagUdsFileName);
                 }
 
                 ecuInfo.MwTabFileName = string.Empty;
@@ -3504,12 +3493,20 @@ namespace BmwDeepObd
                     {
                         UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(ecuInfo.VagUdsFileName);
                         mwbSegmentList = udsReader.ExtractFileSegment(udsFileList, UdsFileReader.UdsReader.SegmentType.Mwb);
+                        if (!string.IsNullOrEmpty(ecuInfo.VagUdsFileName))
+                        {
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Found {0} MWB segments for: {1}", mwbSegmentList?.Count, ecuInfo.VagUdsFileName);
+                        }
                     }
                 }
                 else
                 {
                     UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(ecuInfo.VagDataFileName);
                     measDataList = udsReader.DataReader.ExtractDataType(ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Measurement);
+                    if (!string.IsNullOrEmpty(ecuInfo.VagDataFileName))
+                    {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Found {0} measurement entries for: {1}", measDataList?.Count, ecuInfo.VagDataFileName);
+                    }
                 }
             }
             foreach (XmlToolEcuActivity.JobInfo job in jobList)
