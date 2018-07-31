@@ -438,7 +438,7 @@ namespace BmwDeepObd
                 int pos = args.Position;
                 if (pos >= 0)
                 {
-                    ExecuteJobsRead(_ecuList[pos]);
+                    PerformJobsRead(_ecuList[pos]);
                 }
             };
             listViewEcu.ItemLongClick += (sender, args) =>
@@ -3243,6 +3243,36 @@ namespace BmwDeepObd
             _jobThread.Start();
         }
 
+        private void PerformJobsRead(EcuInfo ecuInfo)
+        {
+            if (IsJobRunning())
+            {
+                return;
+            }
+            _instanceData.AutoStart = false;
+            if (string.IsNullOrEmpty(_instanceData.DeviceAddress))
+            {
+                if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, _appDataDir, (sender, args) =>
+                {
+                    // no auto start
+                }))
+                {
+                    return;
+                }
+            }
+            if (_activityCommon.ShowConnectWarning(retry =>
+            {
+                if (retry)
+                {
+                    PerformJobsRead(ecuInfo);
+                }
+            }))
+            {
+                return;
+            }
+            ExecuteJobsRead(ecuInfo);
+        }
+
         private void ExecuteJobsRead(EcuInfo ecuInfo)
         {
             EdiabasOpen();
@@ -4863,7 +4893,7 @@ namespace BmwDeepObd
         {
             if (ecuInfo.Selected)
             {
-                ExecuteJobsRead(ecuInfo);
+                PerformJobsRead(ecuInfo);
             }
             else
             {
