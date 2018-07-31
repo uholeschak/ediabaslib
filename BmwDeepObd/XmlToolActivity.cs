@@ -173,6 +173,7 @@ namespace BmwDeepObd
 
             public bool ForceAppend { get; set; }
             public bool AutoStart { get; set; }
+            public int AutoStartSearchStartIndex { get; set; }
             public bool AddErrorsPage { get; set; }
             public int ManualConfigIdx { get; set; }
             public int EcuSearchAbortIndex { get; set; }
@@ -651,7 +652,7 @@ namespace BmwDeepObd
                         }
                         else if (_instanceData.AutoStart)
                         {
-                            ExecuteAnalyzeJob();
+                            ExecuteAnalyzeJob(_instanceData.AutoStartSearchStartIndex);
                         }
                     }
                     _instanceData.AutoStart = false;
@@ -1534,11 +1535,11 @@ namespace BmwDeepObd
                 {
                     ClearEcuList();
                     UpdateDisplay();
-                    ExecuteAnalyzeJob();
+                    PerformAnalyze();
                 })
                 .SetNegativeButton(Resource.String.button_no, (s, a) =>
                 {
-                    ExecuteAnalyzeJob();
+                    PerformAnalyze();
                 })
                 .SetCancelable(true)
                 .SetMessage(Resource.String.xml_tool_clear_ecus)
@@ -1564,7 +1565,7 @@ namespace BmwDeepObd
                                 new AlertDialog.Builder(this)
                                     .SetPositiveButton(Resource.String.button_yes, (s, a) =>
                                     {
-                                        ExecuteAnalyzeJob(_instanceData.EcuSearchAbortIndex);
+                                        PerformAnalyze(_instanceData.EcuSearchAbortIndex);
                                     })
                                     .SetNegativeButton(Resource.String.button_no, (s, a) =>
                                     {
@@ -1579,7 +1580,7 @@ namespace BmwDeepObd
                             RequestClearEcu();
                             break;
                         }
-                        ExecuteAnalyzeJob();
+                        PerformAnalyze();
                         break;
 
                     case Resource.Id.menu_xml_tool_edit_grp:
@@ -1720,7 +1721,7 @@ namespace BmwDeepObd
             });
         }
 
-        private void PerformAnalyze()
+        private void PerformAnalyze(int searchStartIndex = -1)
         {
             if (IsJobRunning())
             {
@@ -1732,6 +1733,7 @@ namespace BmwDeepObd
                 if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, _appDataDir, (sender, args) =>
                 {
                     _instanceData.AutoStart = true;
+                    _instanceData.AutoStartSearchStartIndex = searchStartIndex;
                 }))
                 {
                     return;
@@ -1741,13 +1743,13 @@ namespace BmwDeepObd
             {
                 if (retry)
                 {
-                    PerformAnalyze();
+                    PerformAnalyze(searchStartIndex);
                 }
             }))
             {
                 return;
             }
-            ExecuteAnalyzeJob();
+            ExecuteAnalyzeJob(searchStartIndex);
         }
 
         private void ExecuteAnalyzeJob(int searchStartIndex = -1)
