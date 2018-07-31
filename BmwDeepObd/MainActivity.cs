@@ -1319,6 +1319,11 @@ namespace BmwDeepObd
                 _currentVersionCode = PackageManager.GetPackageInfo(PackageName, 0).VersionCode;
                 _obbFileName = ExpansionDownloaderActivity.GetObbFilename(this);
                 ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
+#if false    // simulate settings reset
+                ISharedPreferencesEditor prefsEdit = prefs.Edit();
+                prefsEdit.Clear();
+                prefsEdit.Commit();
+#endif
                 _activityCommon.SelectedEnetIp = prefs.GetString("EnetIp", string.Empty);
                 _activityCommon.CustomStorageMedia = prefs.GetString("StorageMedia", string.Empty);
                 if (!_activityRecreated)
