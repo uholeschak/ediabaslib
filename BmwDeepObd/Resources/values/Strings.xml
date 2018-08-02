@@ -25,8 +25,8 @@
   <string name="ecu_not_found">No ECU files have been found.</string>
   <string name="ecu_package">Updated ECU files are available for this application.</string>
   <string name="ecu_download">Do you want to download the ECU files now (File size approx. {0:fs1})?</string>
-  <string name="ecu_extract">The ECU files have to be extracted (Size approx. {0:fs1}),\nthis requires the download of update information.\nDo you want to continue?</string>
-  <string name="ecu_extract_confirm">To extract the ECU files (Size approx. {0:fs1})\nthe download of update information is required.\nDo you want to continue?</string>
+  <string name="ecu_extract">The ECU files have to be extracted (Size approx. {0:fs1}),\nthis requires the download of update information.\nIf the extraction is very slow please use a faster storage media.\nDo you want to continue?</string>
+  <string name="ecu_extract_confirm">To extract the ECU files (Size approx. {0:fs1})\nthe download of update information is required.\nIf the extraction is very slow please use a faster storage media.\nDo you want to continue?</string>
   <string name="manufacturer_select">The current manufacturer is {0}, to choose a different one select \'abort\'.</string>
   <string name="error_no_error">No errors present</string>
   <string name="error_reading_errors">Reading error memory: {0}%</string>
@@ -91,7 +91,7 @@
   <string name="decrypt_file">Preparing archive</string>
   <string name="extract_file">Extracting files</string>
   <string name="verify_files">Verify files</string>
-  <string name="extract_failed">Extracting files failed.\nThe zip file seems to be corrupted.</string>
+  <string name="extract_failed">Extracting files failed.\nThe zip file seems to be corrupted.\nIn most cases the reason is a defective storage media.</string>
   <string name="extract_failed_io">Writing extracted files failed.\nIs there no space left on the device?</string>
 
   <!-- Init VAG UDS -->
