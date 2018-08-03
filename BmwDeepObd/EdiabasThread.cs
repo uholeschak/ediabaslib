@@ -590,10 +590,15 @@ namespace BmwDeepObd
                         Ediabas.NoInitForVJobs = true;
                         Ediabas.ExecuteJob("_JOBS");    // force to load file
 
+                        string argString = string.Empty;
+                        if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && !string.IsNullOrEmpty(ecuInfo.VagUdsFileName))
+                        {
+                            argString = "MW_LESEN";
+                        }
                         string errorJob = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw ? "FS_LESEN" : "Fehlerspeicher_abfragen";
                         if (Ediabas.IsJobExisting(errorJob))
                         {
-                            Ediabas.ArgString = string.Empty;
+                            Ediabas.ArgString = argString;
                             Ediabas.ArgBinaryStd = null;
                             Ediabas.ResultsRequests = string.Empty;
                             Ediabas.ExecuteJob(errorJob);
@@ -623,7 +628,7 @@ namespace BmwDeepObd
                                 {
                                     if (Ediabas.IsJobExisting("FehlerspeicherSAE_abfragen"))
                                     {
-                                        Ediabas.ArgString = string.Empty;
+                                        Ediabas.ArgString = argString;
                                         Ediabas.ArgBinaryStd = null;
                                         Ediabas.ResultsRequests = string.Empty;
                                         Ediabas.ExecuteJob("FehlerspeicherSAE_abfragen");
@@ -700,6 +705,7 @@ namespace BmwDeepObd
                                         dictIndex++;
                                         continue;
                                     }
+                                    // BMW only
                                     if (resultDictLocal.TryGetValue("F_ORT_NR", out resultData))
                                     {
                                         if (resultData.OpData is Int64)
