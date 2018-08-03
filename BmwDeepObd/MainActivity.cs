@@ -1889,12 +1889,21 @@ namespace BmwDeepObd
                                             }
                                         }
 
-                                        byte[] ecuResponse = null;
+                                        byte[] ecuResponse1 = null;
                                         if (errorReport.ErrorDict.TryGetValue("ECU_RESPONSE1", out resultData))
                                         {
                                             if (resultData.OpData.GetType() == typeof(byte[]))
                                             {
-                                                ecuResponse = (byte[])resultData.OpData;
+                                                ecuResponse1 = (byte[])resultData.OpData;
+                                            }
+                                        }
+
+                                        byte[] ecuResponse2 = null;
+                                        if (errorReport.ErrorDict.TryGetValue("ECU_RESPONSE2", out resultData))
+                                        {
+                                            if (resultData.OpData.GetType() == typeof(byte[]))
+                                            {
+                                                ecuResponse2 = (byte[])resultData.OpData;
                                             }
                                         }
 
@@ -1976,10 +1985,10 @@ namespace BmwDeepObd
                                         }
                                         else
                                         {
-                                            if (ecuResponse != null)
+                                            if (ecuResponse1 != null)
                                             {
                                                 errorIndex = 0;
-                                                dtcList = ActivityCommon.ParseEcuDtcResponse(ecuResponse, saeMode);
+                                                dtcList = ActivityCommon.ParseEcuDtcResponse(ecuResponse1, saeMode);
                                             }
 
                                             if (dtcList != null && errorIndex < dtcList.Count)
