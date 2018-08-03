@@ -300,6 +300,43 @@ namespace LogfileConverter
                                 }
                             }
                         }
+
+                        MatchCollection canEdicIsoTpEcuOverrideMatches = Regex.Matches(line, @"^Overriding UDS ECU CAN ID with (....)");
+                        if (canEdicIsoTpEcuOverrideMatches.Count == 1)
+                        {
+                            if (canEdicIsoTpEcuOverrideMatches[0].Groups.Count == 2)
+                            {
+                                try
+                                {
+                                    _edicCanEcuAddr = Convert.ToInt32(canEdicIsoTpEcuOverrideMatches[0].Groups[1].Value, 16);
+                                    _edicCanMode = false;
+                                    _edicCanIsoTpMode = true;
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
+                        }
+
+                        MatchCollection canEdicIsoTpTesterOverrideMatches = Regex.Matches(line, @"^Overriding UDS tester CAN ID with (....)");
+                        if (canEdicIsoTpTesterOverrideMatches.Count == 1)
+                        {
+                            if (canEdicIsoTpTesterOverrideMatches[0].Groups.Count == 2)
+                            {
+                                try
+                                {
+                                    _edicCanTesterAddr = Convert.ToInt32(canEdicIsoTpTesterOverrideMatches[0].Groups[1].Value, 16);
+                                    _edicCanMode = false;
+                                    _edicCanIsoTpMode = true;
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
+                        }
+
                         if (Regex.IsMatch(line, @"^ \((Send|Resp)\):"))
                         {
                             bool send = Regex.IsMatch(line, @"^ \(Send\):");
