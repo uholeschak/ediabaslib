@@ -590,12 +590,12 @@ namespace BmwDeepObd
                         Ediabas.NoInitForVJobs = true;
                         Ediabas.ExecuteJob("_JOBS");    // force to load file
 
+                        string errorJob = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw ? "FS_LESEN" : "Fehlerspeicher_abfragen";
                         string argString = string.Empty;
                         if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && !string.IsNullOrEmpty(ecuInfo.VagUdsFileName))
                         {
                             argString = "MW_LESEN";
                         }
-                        string errorJob = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw ? "FS_LESEN" : "Fehlerspeicher_abfragen";
                         if (Ediabas.IsJobExisting(errorJob))
                         {
                             Ediabas.ArgString = argString;
@@ -628,7 +628,7 @@ namespace BmwDeepObd
                                 {
                                     if (Ediabas.IsJobExisting("FehlerspeicherSAE_abfragen"))
                                     {
-                                        Ediabas.ArgString = argString;
+                                        Ediabas.ArgString = "MW_LESEN";
                                         Ediabas.ArgBinaryStd = null;
                                         Ediabas.ResultsRequests = string.Empty;
                                         Ediabas.ExecuteJob("FehlerspeicherSAE_abfragen");
