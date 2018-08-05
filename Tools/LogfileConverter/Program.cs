@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using NDesk.Options;
+using UdsFileReader;
 
 namespace LogfileConverter
 {
@@ -252,6 +253,7 @@ namespace LogfileConverter
                 string line;
                 string readString = string.Empty;
                 string writeString = string.Empty;
+                string lastCfgLine = string.Empty;
                 while ((line = streamReader.ReadLine()) != null)
                 {
                     if (line.Length > 0)
@@ -349,6 +351,26 @@ namespace LogfileConverter
                                 {
                                     if (_edicCanIsoTpMode)
                                     {
+                                        int deviceAddress = -1;
+                                        foreach (VehicleInfoVag.EcuAddressEntry ecuAddressEntry in VehicleInfoVag.EcuAddressArray)
+                                        {
+                                            if (ecuAddressEntry.IsoTpEcuCanId == _edicCanEcuAddr && ecuAddressEntry.IsoTpTesterCanId == _edicCanTesterAddr)
+                                            {
+                                                deviceAddress = (int) ecuAddressEntry.Address;
+                                                break;
+                                            }
+                                        }
+
+                                        if (deviceAddress >= 0)
+                                        {
+                                            string cfgLine = $"CFG: {deviceAddress:X02} {(_edicCanEcuAddr >> 8):X02} {(_edicCanEcuAddr & 0xFF):X02} {(_edicCanTesterAddr >> 8):X02} {(_edicCanTesterAddr & 0xFF):X02}";
+                                            if (string.Compare(lastCfgLine, cfgLine, StringComparison.Ordinal) != 0)
+                                            {
+                                                streamWriter.WriteLine(cfgLine);
+                                                lastCfgLine = cfgLine;
+                                            }
+                                        }
+
                                         // convert to KWP2000 format
                                         int dataLength = lineValues.Count;
                                         if (dataLength < 0x3F)
