@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -351,23 +350,26 @@ namespace LogfileConverter
                                 {
                                     if (_edicCanIsoTpMode)
                                     {
-                                        int deviceAddress = -1;
-                                        foreach (VehicleInfoVag.EcuAddressEntry ecuAddressEntry in VehicleInfoVag.EcuAddressArray)
+                                        if (_responseFile && (writeString.Length == 0 || readString.Length == 0))
                                         {
-                                            if (ecuAddressEntry.IsoTpEcuCanId == _edicCanEcuAddr && ecuAddressEntry.IsoTpTesterCanId == _edicCanTesterAddr)
+                                            int deviceAddress = -1;
+                                            foreach (VehicleInfoVag.EcuAddressEntry ecuAddressEntry in VehicleInfoVag.EcuAddressArray)
                                             {
-                                                deviceAddress = (int) ecuAddressEntry.Address;
-                                                break;
+                                                if (ecuAddressEntry.IsoTpEcuCanId == _edicCanEcuAddr && ecuAddressEntry.IsoTpTesterCanId == _edicCanTesterAddr)
+                                                {
+                                                    deviceAddress = (int)ecuAddressEntry.Address;
+                                                    break;
+                                                }
                                             }
-                                        }
 
-                                        if (deviceAddress >= 0)
-                                        {
-                                            string cfgLine = $"CFG: {deviceAddress:X02} {(_edicCanEcuAddr >> 8):X02} {(_edicCanEcuAddr & 0xFF):X02} {(_edicCanTesterAddr >> 8):X02} {(_edicCanTesterAddr & 0xFF):X02}";
-                                            if (string.Compare(lastCfgLine, cfgLine, StringComparison.Ordinal) != 0)
+                                            if (deviceAddress >= 0)
                                             {
-                                                streamWriter.WriteLine(cfgLine);
-                                                lastCfgLine = cfgLine;
+                                                string cfgLine = $"CFG: {deviceAddress:X02} {(_edicCanEcuAddr >> 8):X02} {(_edicCanEcuAddr & 0xFF):X02} {(_edicCanTesterAddr >> 8):X02} {(_edicCanTesterAddr & 0xFF):X02}";
+                                                if (string.Compare(lastCfgLine, cfgLine, StringComparison.Ordinal) != 0)
+                                                {
+                                                    streamWriter.WriteLine(cfgLine);
+                                                    lastCfgLine = cfgLine;
+                                                }
                                             }
                                         }
 
