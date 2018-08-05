@@ -3530,6 +3530,35 @@ namespace BmwDeepObd
             return dtcList;
         }
 
+        public static byte[] ParseSaeDetailDtcResponse(byte[] dataBuffer)
+        {
+            if (dataBuffer == null)
+            {
+                return null;
+            }
+            int offset = 0;
+            int telLength = TelLengthKwp2000(dataBuffer, offset, out int dataLength, out int dataOffset);
+            if (telLength < 0)
+            {
+                return null;
+            }
+            if (dataLength < 3)
+            {
+                return null;
+            }
+
+            int blockStart = offset + dataOffset + 2;
+            int blockType = dataBuffer[blockStart];
+            if (blockType == 0x6C)
+            {
+                byte[] blockData = new byte[dataLength - 2];
+                Array.Copy(dataBuffer, blockStart, blockData, 0, blockData.Length);
+                return blockData;
+            }
+
+            return null;
+        }
+
         public static string GetVagDatUkdDir(string ecuPath, bool ignoreManufacturer = false)
         {
             string lang = GetCurrentLanguage();
