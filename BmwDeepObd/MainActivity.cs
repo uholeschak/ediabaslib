@@ -1890,20 +1890,25 @@ namespace BmwDeepObd
                                         }
 
                                         byte[] ecuResponse1 = null;
-                                        if (errorReport.ErrorDict.TryGetValue("ECU_RESPONSE1", out resultData))
+                                        List<byte[]> ecuResponseList = new List<byte[]>();
+                                        foreach (string key in errorReport.ErrorDict.Keys)
                                         {
-                                            if (resultData.OpData.GetType() == typeof(byte[]))
+                                            if (key.StartsWith("ECU_RESPONSE", StringComparison.OrdinalIgnoreCase))
                                             {
-                                                ecuResponse1 = (byte[])resultData.OpData;
-                                            }
-                                        }
-
-                                        byte[] ecuResponse2 = null;
-                                        if (errorReport.ErrorDict.TryGetValue("ECU_RESPONSE2", out resultData))
-                                        {
-                                            if (resultData.OpData.GetType() == typeof(byte[]))
-                                            {
-                                                ecuResponse2 = (byte[])resultData.OpData;
+                                                if (errorReport.ErrorDict.TryGetValue(key, out resultData))
+                                                {
+                                                    if (resultData.OpData.GetType() == typeof(byte[]))
+                                                    {
+                                                        if (string.Compare(key, "ECU_RESPONSE1", StringComparison.OrdinalIgnoreCase) == 0)
+                                                        {
+                                                            ecuResponse1 = (byte[]) resultData.OpData;
+                                                        }
+                                                        else
+                                                        {
+                                                            ecuResponseList.Add((byte[])resultData.OpData);
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
 
@@ -1924,6 +1929,7 @@ namespace BmwDeepObd
                                         bool kwp1281 = false;
                                         bool uds = false;
                                         bool saeMode = false;
+                                        bool saeDetail = false;
                                         if (errorReport.ErrorDict.TryGetValue("OBJECT", out resultData))
                                         {
                                             // ReSharper disable once UsePatternMatching
@@ -1947,6 +1953,7 @@ namespace BmwDeepObd
                                                 if ((Int64) resultData.OpData != 0)
                                                 {
                                                     saeMode = true;
+                                                    saeDetail = true;
                                                     errorCode <<= 8;
                                                 }
                                             }
@@ -2010,6 +2017,19 @@ namespace BmwDeepObd
                                                 UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(dataFileName);
                                                 textList = udsReader.DataReader.ErrorCodeToString(
                                                     dtcEntry.DtcCode, dtcEntry.DtcDetail, dtcEntry.ErrorType, udsReader);
+
+                                                if (saeDetail && ecuResponseList.Count > 0)
+                                                {
+                                                    byte[] detailData = ActivityCommon.ParseSaeDetailDtcResponse(ecuResponseList[0]);
+                                                    if (detailData != null)
+                                                    {
+                                                        List<string> saeDetailList = udsReader.DataReader.SaeErrorDetailHeadToString(detailData, udsReader);
+                                                        if (saeDetailList != null)
+                                                        {
+                                                            textList.AddRange(saeDetailList);
+                                                        }
+                                                    }
+                                                }
                                             }
                                             else
                                             {
