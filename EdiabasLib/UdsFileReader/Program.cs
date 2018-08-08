@@ -84,6 +84,10 @@ namespace UdsFileReader
                 PrintIsoErrorCode(udsReader, 0x0074, 0xA3);
                 PrintSaeErrorDetail(udsReader, new byte[] { 0x6C, 0x01, 0x71, 0x11, 0x12, 0x13, 0x02, 0xFB, 0xC4, 0x00, 0x00, 0x49, 0x04, 0x51, 0x03 });
                 PrintSaeErrorDetail(udsReader, new byte[] { 0x6C, 0x01, 0x71, 0x11, 0x12, 0x13, 0x02, 0xFB, 0xC4, 0x01, 0x00, 0x00, 0x00, 0x01, 0x02 });
+                PrintUdsErrorDetail(udsReader, new byte[] { 0x59, 0x06, 0x00, 0x40, 0x11, 0x08, 0x01, 0x02, 0x01, 0x02, 0x1F, 0x00, 0x93, 0x13, 0x00,
+                    0x00, 0x49, 0x56, 0xB0, 0xA3, 0x71, 0x00, 0x00, 0x80, 0x18, 0x12, 0x00, 0x00, 0x00, 0xCA, 0x84, 0x00, 0x00, 0xFF, 0x00, 0x00,
+                    0x61, 0x02, 0x40, 0x00, 0x00, 0x00, 0x00, 0x10 });
+                return 0;
 #endif
 #if false
                 UdsReader.FileNameResolver fileNameResolver = new UdsReader.FileNameResolver(udsReader, "EV_ECM20TDI01103L906018DQ", "003003", "03L906018DQ", "1K0907951");
@@ -626,5 +630,22 @@ namespace UdsFileReader
 
             return true;
         }
+
+        static bool PrintUdsErrorDetail(UdsReader udsReader, byte[] data)
+        {
+            List<string> resultList = udsReader.ErrorDetailBlockToString(data);
+            if (resultList == null)
+            {
+                return false;
+            }
+            foreach (string line in resultList)
+            {
+                Console.WriteLine(line);
+            }
+            Console.WriteLine();
+
+            return true;
+        }
+
     }
 }
