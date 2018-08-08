@@ -569,7 +569,7 @@ namespace BmwDeepObd
                 OnBackPressedContinue();
                 return;
             }
-            int resourceId = Resource.String.xml_tool_msg_save_config;
+            int resourceId = Resource.String.xml_tool_msg_save_config_select;
             if (!_ecuList.Any(x => x.Selected))
             {
                 resourceId = Resource.String.xml_tool_msg_save_config_empty;

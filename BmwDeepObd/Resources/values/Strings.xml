@@ -326,6 +326,7 @@
   <string name="xml_tool_read_ecu_info_failed">Reading ECU information failed</string>
   <string name="xml_tool_save_xml_failed">Saving configuration failed</string>
   <string name="xml_tool_msg_save_config">Do you want to save the configuration?</string>
+  <string name="xml_tool_msg_save_config_select">Do you want to save the configuration and use as active configuration?</string>
   <string name="xml_tool_msg_save_config_empty">You have selected no data to display.\nClick the ECUs and select the desired jobs and results.\nDo you want to save the configuration anyway?</string>
   <string name="xml_tool_msg_ecu_error">Unable to get valid informations for some ECUs.</string>
   <string name="xml_tool_msg_pin78">A connection of the adapter pins 7 and 8 is required to detect more ECUs.</string>
