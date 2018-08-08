@@ -349,6 +349,7 @@
   <string name="xml_tool_read_ecu_info_failed">ECU Information lesen fehlgeschlagen</string>
   <string name="xml_tool_save_xml_failed">Konfiguration speichern fehlgeschlagen</string>
   <string name="xml_tool_msg_save_config">Wollen Sie die Konfiguration speichern?</string>
+  <string name="xml_tool_msg_save_config_select">Wollen Sie die Konfiguration speichern und als aktive Konfiguration verwenden?</string>
   <string name="xml_tool_msg_save_config_empty">Sie haben keine Daten für die Anzeige ausgewählt.\nKlicken Sie auf die ECUs und wählen Sie die gewünschen Jobs und Ergebnisse.\nWollen Sie die Konfiguration trotzdem speichern?</string>
   <string name="xml_tool_msg_ecu_error">Für einige ECUs konnten keine Information ermittelt werden.</string>
   <string name="xml_tool_msg_pin78">Eine Verbindung zwischen den Adapter Pins 7 and 8 ist notwendig, um mehr ECUs erkennen zu können.</string>
