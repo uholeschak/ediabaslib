@@ -348,9 +348,10 @@ namespace LogfileConverter
                             {
                                 if (send)
                                 {
+                                    string cfgLineWrite = null;
                                     if (_edicCanIsoTpMode)
                                     {
-                                        if (_responseFile && (writeString.Length == 0 || readString.Length == 0))
+                                        if (_responseFile)
                                         {
                                             int deviceAddress = -1;
                                             foreach (VehicleInfoVag.EcuAddressEntry ecuAddressEntry in VehicleInfoVag.EcuAddressArray)
@@ -367,8 +368,8 @@ namespace LogfileConverter
                                                 string cfgLine = $"CFG: {deviceAddress:X02} {(_edicCanEcuAddr >> 8):X02} {(_edicCanEcuAddr & 0xFF):X02} {(_edicCanTesterAddr >> 8):X02} {(_edicCanTesterAddr & 0xFF):X02}";
                                                 if (string.Compare(lastCfgLine, cfgLine, StringComparison.Ordinal) != 0)
                                                 {
-                                                    streamWriter.WriteLine(cfgLine);
                                                     lastCfgLine = cfgLine;
+                                                    cfgLineWrite = cfgLine;
                                                 }
                                             }
                                         }
@@ -421,6 +422,11 @@ namespace LogfileConverter
                                         else
                                         {
                                             writeString = string.Empty;
+                                        }
+
+                                        if (!string.IsNullOrEmpty(cfgLineWrite))
+                                        {
+                                            streamWriter.WriteLine(cfgLineWrite);
                                         }
                                     }
                                     else
