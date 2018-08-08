@@ -152,13 +152,17 @@ CFG: 03 07 13 07 7D
 83 07 13 19 02 2C E4 : 83 07 13 7F 19 78 AD 87 07 13 59 02 99 00 40 11 08 EE
 ; added
 83 07 13 19 02 AE E4 : 83 07 13 7F 19 78 AD 87 07 13 59 02 99 00 40 11 08 EE
+; 59: Block start
 ; 11 08:
 ; 01: Fehlerstatus
-; 02: Fehlerpriorität (low nibble),
+; 02: Fehlerpriorität (low nibble)
 ; 01: Fehlerhäufigkeit
 ; 02:
 ; 1F: Verlernzähler
 ; 00 93 13: Kilometerstand (h, m, l), upper nibble ignored, 0xFFFFF invalid
+; 00
+; 00 49 56 B0 A3: Datum Zeit 5 Byte (h .. l), coding like sae
+; 71: Spannung * 0.2 (V), 0xFF = invalid
 86 07 13 19 06 00 40 11 FF 0F : 83 07 13 7F 19 78 AD AC 07 13 59 06 00 40 11 08 01 02 01 02 1F 00 93 13 00 00 49 56 B0 A3 71 00 00 80 18 12 00 00 00 CA 84 00 00 FF 00 00 61 02 40 00 00 00 00 10 56
 83 07 13 22 06 10 D5 : 83 07 13 7F 22 31 6F
 8B 07 13 22 F1 87 F1 89 F1 91 F1 A3 F1 A5 65 : 83 07 13 7F 22 78 B6 AE 07 13 62 F1 87 33 51 30 39 30 37 33 37 39 4B 20 F1 89 30 36 32 32 F1 91 33 51 30 39 30 37 33 37 39 46 20 F1 A3 48 34 32 F1 A5 00 06 40 16 05 4D AD
