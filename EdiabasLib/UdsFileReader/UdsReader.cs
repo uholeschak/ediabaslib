@@ -3125,6 +3125,135 @@ namespace UdsFileReader
             return null;
         }
 
+        public List<string> ErrorDetailBlockToString(byte[] data)
+        {
+            UdsReader udsReader = this;
+            List<string> resultList = new List<string>();
+            if (data.Length < 1)
+            {
+                return null;
+            }
+
+            if (data[0] != 0x59)
+            {
+                return null;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append(GetTextMapText(udsReader, 003356) ?? string.Empty);  // Umgebungsbedingungen
+            sb.Append(":");
+            resultList.Add(sb.ToString());
+            UInt32 value;
+            if (data.Length >= 6 + 1)
+            {
+                value = data[6];
+                if (value != 0xFF)
+                {
+                    sb.Clear();
+                    sb.Append(GetTextMapText(udsReader, 018478) ?? string.Empty); // Fehlerstatus
+                    sb.Append(": ");
+                    sb.Append(Convert.ToString(value, 2).PadLeft(8, '0'));
+                    resultList.Add(sb.ToString());
+                }
+            }
+
+            if (data.Length >= 7 + 1)
+            {
+                value = data[7];
+                if (value != 0xFF)
+                {
+                    sb.Clear();
+                    sb.Append(GetTextMapText(udsReader, 016693) ?? string.Empty); // Fehlerpriorität
+                    sb.Append(": ");
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value & 0x0F));
+                    resultList.Add(sb.ToString());
+                }
+            }
+
+            if (data.Length >= 8 + 1)
+            {
+                value = data[8];
+                if (value != 0xFF)
+                {
+                    sb.Clear();
+                    sb.Append(GetTextMapText(udsReader, 061517) ?? string.Empty); // Fehlerhäufigkeit
+                    sb.Append(": ");
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value));
+                    resultList.Add(sb.ToString());
+                }
+            }
+
+            if (data.Length >= 10 + 1)
+            {
+                value = data[10];
+                if (value != 0xFF)
+                {
+                    sb.Clear();
+                    sb.Append(GetTextMapText(udsReader, 099026) ?? string.Empty); // Verlernzähler
+                    sb.Append(": ");
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value));
+                    resultList.Add(sb.ToString());
+                }
+            }
+
+            if (data.Length >= 11 + 3)
+            {
+                value = (UInt32) ((data[11] << 16) | (data[12] << 8) | data[13]);
+                if (value != 0xFFFFF)
+                {
+                    sb.Clear();
+                    sb.Append(GetTextMapText(udsReader, 018858) ?? string.Empty); // Kilometerstand
+                    sb.Append(": ");
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value));
+                    sb.Append(" ");
+                    sb.Append(GetUnitMapText(udsReader, 000108) ?? string.Empty); // km
+                    resultList.Add(sb.ToString());
+                }
+            }
+
+            if (data.Length >= 15 + 5)
+            {
+                // date time
+                UInt64 timeValue = 0;
+                for (int i = 0; i < 5; i++)
+                {
+                    timeValue <<= 8;
+                    timeValue += data[15 + i];
+                }
+
+                if (timeValue != 0 && timeValue != 0x1FFFFFFFF)
+                {
+                    UInt64 tempValue = timeValue;
+                    UInt64 sec = tempValue & 0x3F;
+                    tempValue >>= 6;
+                    UInt64 min = tempValue & 0x3F;
+                    tempValue >>= 6;
+                    UInt64 hour = tempValue & 0x1F;
+                    tempValue >>= 5;
+                    UInt64 day = tempValue & 0x1F;
+                    tempValue >>= 5;
+                    UInt64 month = tempValue & 0x0F;
+                    tempValue >>= 4;
+                    UInt64 year = tempValue & 0x7F;
+
+                    sb.Clear();
+                    sb.Append(GetTextMapText(udsReader, 098044) ?? string.Empty); // Datum
+                    sb.Append(": ");
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:00}.{1:00}.{2:00}", year + 2000, month,
+                        day));
+                    resultList.Add(sb.ToString());
+
+                    sb.Clear();
+                    sb.Append(GetTextMapText(udsReader, 099068) ?? string.Empty); // Zeit
+                    sb.Append(": ");
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:00}:{1:00}:{2:00}", hour, min, sec));
+                    resultList.Add(sb.ToString());
+                }
+            }
+
+            return resultList;
+        }
+
         public List<ParseInfoBase> ExtractFileSegment(List<string> fileList, SegmentType segmentType)
         {
             SegmentInfo segmentInfoSel = GetSegmentInfo(segmentType);
