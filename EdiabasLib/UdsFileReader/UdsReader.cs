@@ -3165,7 +3165,7 @@ namespace UdsFileReader
                     sb.Clear();
                     sb.Append(GetTextMapText(udsReader, 016693) ?? string.Empty); // Fehlerpriorität
                     sb.Append(": ");
-                    sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value & 0x0F));
+                    sb.Append($"{value & 0x0F:0}");
                     resultList.Add(sb.ToString());
                 }
             }
@@ -3178,7 +3178,7 @@ namespace UdsFileReader
                     sb.Clear();
                     sb.Append(GetTextMapText(udsReader, 061517) ?? string.Empty); // Fehlerhäufigkeit
                     sb.Append(": ");
-                    sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value));
+                    sb.Append($"{value:0}");
                     resultList.Add(sb.ToString());
                 }
             }
@@ -3191,7 +3191,7 @@ namespace UdsFileReader
                     sb.Clear();
                     sb.Append(GetTextMapText(udsReader, 099026) ?? string.Empty); // Verlernzähler
                     sb.Append(": ");
-                    sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value));
+                    sb.Append($"{value:0}");
                     resultList.Add(sb.ToString());
                 }
             }
@@ -3204,7 +3204,7 @@ namespace UdsFileReader
                     sb.Clear();
                     sb.Append(GetTextMapText(udsReader, 018858) ?? string.Empty); // Kilometerstand
                     sb.Append(": ");
-                    sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value));
+                    sb.Append($"{value:0}");
                     sb.Append(" ");
                     sb.Append(GetUnitMapText(udsReader, 000108) ?? string.Empty); // km
                     resultList.Add(sb.ToString());
@@ -3247,6 +3247,21 @@ namespace UdsFileReader
                     sb.Append(GetTextMapText(udsReader, 099068) ?? string.Empty); // Zeit
                     sb.Append(": ");
                     sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:00}:{1:00}:{2:00}", hour, min, sec));
+                    resultList.Add(sb.ToString());
+                }
+            }
+
+            if (data.Length >= 20 + 1)
+            {
+                value = data[20];
+                if (value != 0xFF)
+                {
+                    sb.Clear();
+                    sb.Append(GetTextMapText(udsReader, 098291) ?? string.Empty); // Spannung Klemme 30
+                    sb.Append(": ");
+                    double valueDouble = value * 0.2;
+                    sb.Append($"{valueDouble:0.0} ");
+                    sb.Append(GetUnitMapText(udsReader, 9) ?? string.Empty);    // V
                     resultList.Add(sb.ToString());
                 }
             }
