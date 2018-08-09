@@ -446,7 +446,7 @@ namespace UdsFileReader
                 sb.Clear();
                 sb.Append(UdsReader.GetTextMapText(udsReader, 016693) ?? string.Empty); // Fehlerpriorität
                 sb.Append(": ");
-                sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value & 0x0F));
+                sb.Append($"{value & 0x0F:0}");
                 resultList.Add(sb.ToString());
             }
 
@@ -456,7 +456,7 @@ namespace UdsFileReader
                 sb.Clear();
                 sb.Append(UdsReader.GetTextMapText(udsReader, 061517) ?? string.Empty); // Fehlerhäufigkeit
                 sb.Append(": ");
-                sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value));
+                sb.Append($"{value:0}");
                 resultList.Add(sb.ToString());
             }
 
@@ -466,7 +466,7 @@ namespace UdsFileReader
                 sb.Clear();
                 sb.Append(UdsReader.GetTextMapText(udsReader, 099026) ?? string.Empty); // Verlernzähler
                 sb.Append(": ");
-                sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value));
+                sb.Append($"{value:0}");
                 resultList.Add(sb.ToString());
             }
 
@@ -476,7 +476,7 @@ namespace UdsFileReader
                 sb.Clear();
                 sb.Append(UdsReader.GetTextMapText(udsReader, 018858) ?? string.Empty); // Kilometerstand
                 sb.Append(": ");
-                sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", value));
+                sb.Append($"{value:0}");
                 sb.Append(" ");
                 sb.Append(UdsReader.GetUnitMapText(udsReader, 000108) ?? string.Empty); // km
                 resultList.Add(sb.ToString());
@@ -547,7 +547,7 @@ namespace UdsFileReader
                             sb.Append(" ");
                             sb.Append(UdsReader.GetTextMapText(udsReader, 047622) ?? string.Empty);
                             sb.Append(": ");
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", timeValue));
+                            sb.Append($"{timeValue:0}");
                             resultList.Add(sb.ToString());
                         }
                     }
