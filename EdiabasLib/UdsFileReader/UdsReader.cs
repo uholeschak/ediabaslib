@@ -3250,7 +3250,7 @@ namespace UdsFileReader
                     resultList.Add(sb.ToString());
                 }
             }
-
+#if false
             if (data.Length >= 20 + 1)
             {
                 value = data[20];
@@ -3265,7 +3265,7 @@ namespace UdsFileReader
                     resultList.Add(sb.ToString());
                 }
             }
-
+#endif
             return resultList;
         }
 
