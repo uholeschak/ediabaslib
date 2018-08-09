@@ -3134,7 +3134,8 @@ namespace UdsFileReader
                 return null;
             }
 
-            if (data[0] != 0x59)
+            int offset = 0;
+            if (data[offset + 0] != 0x59)
             {
                 return null;
             }
@@ -3144,9 +3145,9 @@ namespace UdsFileReader
             sb.Append(":");
             resultList.Add(sb.ToString());
             UInt32 value;
-            if (data.Length >= 6 + 1)
+            if (data.Length >= offset + 6 + 1)
             {
-                value = data[6];
+                value = data[offset + 6];
                 if (value != 0xFF)
                 {
                     sb.Clear();
@@ -3157,9 +3158,9 @@ namespace UdsFileReader
                 }
             }
 
-            if (data.Length >= 7 + 1)
+            if (data.Length >= offset + 7 + 1)
             {
-                value = data[7];
+                value = data[offset + 7];
                 if (value != 0xFF)
                 {
                     sb.Clear();
@@ -3170,9 +3171,9 @@ namespace UdsFileReader
                 }
             }
 
-            if (data.Length >= 8 + 1)
+            if (data.Length >= offset + 8 + 1)
             {
-                value = data[8];
+                value = data[offset + 8];
                 if (value != 0xFF)
                 {
                     sb.Clear();
@@ -3183,9 +3184,9 @@ namespace UdsFileReader
                 }
             }
 
-            if (data.Length >= 10 + 1)
+            if (data.Length >= offset + 10 + 1)
             {
-                value = data[10];
+                value = data[offset + 10];
                 if (value != 0xFF)
                 {
                     sb.Clear();
@@ -3196,9 +3197,9 @@ namespace UdsFileReader
                 }
             }
 
-            if (data.Length >= 11 + 3)
+            if (data.Length >= offset + 11 + 3)
             {
-                value = (UInt32) ((data[11] << 16) | (data[12] << 8) | data[13]);
+                value = (UInt32) ((data[offset + 11] << 16) | (data[offset + 12] << 8) | data[offset + 13]);
                 if (value != 0xFFFFF)
                 {
                     sb.Clear();
@@ -3211,14 +3212,14 @@ namespace UdsFileReader
                 }
             }
 
-            if (data.Length >= 15 + 5)
+            if (data.Length >= offset + 15 + 5)
             {
                 // date time
                 UInt64 timeValue = 0;
                 for (int i = 0; i < 5; i++)
                 {
                     timeValue <<= 8;
-                    timeValue += data[15 + i];
+                    timeValue += data[offset + 15 + i];
                 }
 
                 if (timeValue != 0 && timeValue != 0x1FFFFFFFF)
@@ -3251,9 +3252,9 @@ namespace UdsFileReader
                 }
             }
 #if false
-            if (data.Length >= 20 + 1)
+            if (data.Length >= offset + 20 + 1)
             {
-                value = data[20];
+                value = data[offset + 20];
                 if (value != 0xFF)
                 {
                     sb.Clear();
