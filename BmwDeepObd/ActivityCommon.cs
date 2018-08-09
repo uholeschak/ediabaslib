@@ -3530,32 +3530,70 @@ namespace BmwDeepObd
             return dtcList;
         }
 
-        public static byte[] ParseSaeDetailDtcResponse(byte[] dataBuffer)
+        public static List<byte[]> ExtractValidEcuResponses(byte[] dataBuffer)
         {
             if (dataBuffer == null)
             {
                 return null;
             }
+            List<byte[]> responseList = new List<byte[]>();
             int offset = 0;
-            int telLength = TelLengthKwp2000(dataBuffer, offset, out int dataLength, out int dataOffset);
-            if (telLength < 0)
+            for (; ; )
             {
-                return null;
+                int telLength = TelLengthKwp2000(dataBuffer, offset, out int dataLength, out int dataOffset);
+                if (telLength < 0)
+                {
+                    return null;
+                }
+                if (dataLength < 1)
+                {
+                    return null;
+                }
+
+                int responseCode = dataBuffer[offset + dataOffset];
+                if (responseCode != 0x7F)
+                {
+                    byte[] response = new byte[dataLength];
+                    Array.Copy(dataBuffer, offset + dataOffset, response, 0, dataLength);
+                    responseList.Add(response);
+                    offset += telLength;
+                    if (offset == dataBuffer.Length)
+                    {
+                        break;
+                    }
+
+                    if (offset > dataBuffer.Length)
+                    {
+                        return null;
+                    }
+                }
             }
-            if (dataLength < 3)
+
+            return responseList;
+        }
+
+        public static byte[] ParseSaeDetailDtcResponse(byte[] dataBuffer)
+        {
+            List<byte[]> responseList = ExtractValidEcuResponses(dataBuffer);
+            if (responseList == null)
             {
                 return null;
             }
 
-            int blockStart = offset + dataOffset + 2;
-            int blockType = dataBuffer[blockStart];
-            if (blockType == 0x6C)
+            foreach (byte[] response in responseList)
             {
-                byte[] blockData = new byte[dataLength - 2];
-                Array.Copy(dataBuffer, blockStart, blockData, 0, blockData.Length);
-                return blockData;
+                if (response.Length >= 3)
+                {
+                    int blockStart = 2;
+                    int blockType = response[blockStart];
+                    if (blockType == 0x6C)
+                    {
+                        byte[] blockData = new byte[response.Length - 2];
+                        Array.Copy(response, blockStart, blockData, 0, blockData.Length);
+                        return blockData;
+                    }
+                }
             }
-
             return null;
         }
 
