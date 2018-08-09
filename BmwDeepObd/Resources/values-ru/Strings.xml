@@ -349,8 +349,7 @@
   <string name="xml_tool_read_ecu_info_failed">Не удалось считать ECU информацию</string>
   <string name="xml_tool_save_xml_failed">Не удалось сохранить конфигурацию</string>
   <string name="xml_tool_msg_save_config">Сохранить конфигурацию?</string>
-  <!--Translate-->
-  <string name="xml_tool_msg_save_config_select">Do you want to save the configuration and use as active configuration?</string>
+  <string name="xml_tool_msg_save_config_select">Хотите сохранить конфигурацию и использовать её как активную?</string>
   <string name="xml_tool_msg_save_config_empty">Вы не выбрали информации для отображения.\nКликайте по ECU и выбирайте необходимые задания (job) и результаты.\nСохранить конфигурацию в текущем виде?</string>
   <string name="xml_tool_msg_ecu_error">Для некоторых ECU информация не может быть найдена.</string>
   <string name="xml_tool_msg_pin78">Необходимо соединить контакты 7 и 8 в OBD разъеме адаптера, чтобы определилось больше блоков управления.</string>
