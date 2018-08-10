@@ -2051,6 +2051,19 @@ namespace BmwDeepObd
                                                             parseInfoDtc.ErrorDetail
                                                         };
                                                     }
+
+                                                    if (ecuResponseList.Count > 0)
+                                                    {
+                                                        byte[] response = ActivityCommon.ExtractUdsEcuResponses(ecuResponseList[0]);
+                                                        if (response != null)
+                                                        {
+                                                            List<string> errorDetailList = udsReader.ErrorDetailBlockToString(response);
+                                                            if (errorDetailList != null)
+                                                            {
+                                                                textList.AddRange(errorDetailList);
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                             srMessage.Append("\r\n");
