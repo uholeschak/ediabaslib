@@ -5553,15 +5553,7 @@ namespace BmwDeepObd
                 XElement ecuNode = GetEcuNode(ecuInfo, ns, errorsNode);
                 if (ecuNode != null)
                 {
-                    if (stringsNode != null)
-                    {
-                        string displayTag = DisplayNameEcuPrefix + ecuInfo.Name;
-                        string displayText = GetStringEntry(displayTag, ns, stringsNode);
-                        if (displayText != null)
-                        {
-                            ecuInfo.EcuName = displayText;
-                        }
-                    }
+                    SetEcuNameFromStringsNode(ns, ecuInfo, stringsNode);
                 }
             }
             if (addUnusedEcus || (_instanceData.ManualConfigIdx > 0))
@@ -5584,6 +5576,10 @@ namespace BmwDeepObd
                             PageName = string.Empty,
                             EcuName = string.Empty
                         };
+                        if (SetEcuNameFromStringsNode(ns, ecuInfo, stringsNode))
+                        {
+                            ecuInfo.PageName = ecuInfo.EcuName;
+                        }
                         _ecuList.Add(ecuInfo);
                     }
                 }
@@ -6382,6 +6378,21 @@ namespace BmwDeepObd
             {
                 node.Remove();
             }
+        }
+
+        private bool SetEcuNameFromStringsNode(XNamespace ns, EcuInfo ecuInfo, XElement stringsNode)
+        {
+            if (stringsNode != null)
+            {
+                string displayTag = DisplayNameEcuPrefix + ecuInfo.Name;
+                string displayText = GetStringEntry(displayTag, ns, stringsNode);
+                if (displayText != null)
+                {
+                    ecuInfo.EcuName = displayText;
+                    return true;
+                }
+            }
+            return false;
         }
 
         private string XmlFileDir()
