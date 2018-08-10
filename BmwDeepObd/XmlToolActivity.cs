@@ -2900,7 +2900,7 @@ namespace BmwDeepObd
             return vinInfo != null ? vinInfo.Key : string.Empty;
         }
 
-        private bool ReadVagDidInfo(CustomProgressDialog progress)
+        private bool ReadVagDidInfo(CustomProgressDialog progress = null)
         {
             try
             {
@@ -2938,7 +2938,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        private bool ReadVagEcuInfo(CustomProgressDialog progress, EcuInfo ecuInfo)
+        private bool ReadVagEcuInfo(EcuInfo ecuInfo, CustomProgressDialog progress = null)
         {
             try
             {
@@ -3156,13 +3156,13 @@ namespace BmwDeepObd
                             {
                                 if (_ecuInfoDid == null)
                                 {
-                                    if (!ReadVagDidInfo(progress))
+                                    if (!ReadVagDidInfo())
                                     {
                                         throw new Exception("Read did info failed");
                                     }
                                     ActivityCommon.ResolveSgbdFile(_ediabas, thisEcuInfo.Sgbd);
                                 }
-                                if (!ReadVagEcuInfo(progress, thisEcuInfo))
+                                if (!ReadVagEcuInfo(thisEcuInfo))
                                 {
                                     throw new Exception("Read ecu info failed");
                                 }
@@ -3424,7 +3424,7 @@ namespace BmwDeepObd
                     {
                         if (ActivityCommon.VagUdsActive)
                         {
-                            if (!ReadVagEcuInfo(progress, ecuInfo))
+                            if (!ReadVagEcuInfo(ecuInfo, progress))
                             {
                                 throw new Exception("Read ecu info failed");
                             }
