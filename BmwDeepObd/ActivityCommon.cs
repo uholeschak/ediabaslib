@@ -3597,6 +3597,29 @@ namespace BmwDeepObd
             return null;
         }
 
+        public static byte[] ExtractUdsEcuResponses(byte[] dataBuffer)
+        {
+            if (dataBuffer == null)
+            {
+                return null;
+            }
+
+            int dataOffset = 18;
+            if (dataBuffer.Length < dataOffset + 2)
+            {
+                return null;
+            }
+
+            if ((dataBuffer[dataOffset] & 0x40) == 0x00 || dataBuffer[dataOffset + 1] == 0x7F)
+            {
+                return null;    // error response
+            }
+
+            byte[] data = new byte[dataBuffer.Length - dataOffset];
+            Array.Copy(dataBuffer, dataOffset, data, 0, data.Length);
+            return data;
+        }
+
         public static string GetVagDatUkdDir(string ecuPath, bool ignoreManufacturer = false)
         {
             string lang = GetCurrentLanguage();
