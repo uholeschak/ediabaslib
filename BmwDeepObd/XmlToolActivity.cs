@@ -5580,7 +5580,7 @@ namespace BmwDeepObd
                             vagDataFileName, vagUdsFileName)
                         {
                             PageName = string.Empty,
-                            EcuName = string.Empty,
+                            EcuName = string.Empty
                         };
                         if (SetEcuNameFromStringsNode(ns, ecuInfo, stringsNode))
                         {
