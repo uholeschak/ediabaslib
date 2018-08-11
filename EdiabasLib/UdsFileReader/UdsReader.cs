@@ -3140,9 +3140,6 @@ namespace UdsFileReader
             }
 
             StringBuilder sb = new StringBuilder();
-            sb.Append(GetTextMapText(udsReader, 003356) ?? string.Empty);  // Umgebungsbedingungen
-            sb.Append(":");
-            resultList.Add(sb.ToString());
             UInt32 value;
             if (data.Length >= 6 + 1)
             {
@@ -3266,6 +3263,13 @@ namespace UdsFileReader
                 }
             }
 #endif
+            if (resultList.Count > 0)
+            {
+                sb.Clear();
+                sb.Append(GetTextMapText(udsReader, 003356) ?? string.Empty);  // Umgebungsbedingungen
+                sb.Append(":");
+                resultList.Insert(0, sb.ToString());
+            }
             return resultList;
         }
 
