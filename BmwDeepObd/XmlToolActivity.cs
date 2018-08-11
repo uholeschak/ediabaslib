@@ -5566,12 +5566,18 @@ namespace BmwDeepObd
                     {
                         continue;
                     }
+
+                    XAttribute vagDataAttr = ecuNode.Attribute("vag_data_file");
+                    string vagDataFileName = vagDataAttr?.Value;
+                    XAttribute vagUdsAttr = ecuNode.Attribute("vag_uds_file");
+                    string vagUdsFileName = vagUdsAttr?.Value;
                     bool ecuFound = _ecuList.Any(ecuInfo => string.Compare(sgbdName, ecuInfo.Sgbd, StringComparison.OrdinalIgnoreCase) == 0);
                     if (!ecuFound)
                     {
                         // ReSharper disable once PossibleNullReferenceException
                         EcuInfo ecuInfo = new EcuInfo(sgbdName.ToUpperInvariant(), -1, string.Empty, sgbdName, string.Empty,
-                            JobReader.PageInfo.DisplayModeType.List, DisplayFontSize.Small, JobReader.GaugesPortraitDefault, JobReader.GaugesLandscapeDefault, string.Empty)
+                            JobReader.PageInfo.DisplayModeType.List, DisplayFontSize.Small, JobReader.GaugesPortraitDefault, JobReader.GaugesLandscapeDefault, string.Empty, null,
+                            vagDataFileName, vagUdsFileName)
                         {
                             PageName = string.Empty,
                             EcuName = string.Empty
