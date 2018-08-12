@@ -1979,7 +1979,7 @@ namespace BmwDeepObd
                                             {
                                                 for (int idx = 0; idx < 8; idx++)
                                                 {
-                                                    if (errorTypeList[idx] != 0)
+                                                    if (errorTypeList[idx] == 1)
                                                     {
                                                         dtcDetail |= (byte)(1 << idx);
                                                     }
