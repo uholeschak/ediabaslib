@@ -3161,15 +3161,16 @@ namespace UdsFileReader
                 {
                     resultList.Add(GetTextMapText(udsReader, 023505) ?? string.Empty);   // Unbestätigt
                 }
-
+#if false   // bad translation
                 if ((detailCode & 0x10) == 0x00)
                 {
-                    resultList.Add(GetTextMapText(udsReader, 246422) ?? string.Empty);   // geprüft seit letzter Löschung
+                    resultList.Add(GetTextMapText(udsReader, 170986) ?? string.Empty);   // geprüft seit letzter Löschung
                 }
                 else
                 {
-                    resultList.Add(GetTextMapText(udsReader, 246421) ?? string.Empty);   // ungeprüft seit letzter Löschung
+                    resultList.Add(GetTextMapText(udsReader, 151076) ?? string.Empty);   // ungeprüft seit letzter Löschung
                 }
+#endif
             }
 
             return resultList;
