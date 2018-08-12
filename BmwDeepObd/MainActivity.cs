@@ -2044,12 +2044,19 @@ namespace BmwDeepObd
                                                     UdsFileReader.UdsReader.ParseInfoDtc parseInfoDtc = udsReader.GetDtcParseInfo(udsFileName, dtcEntry.DtcCode, dtcEntry.DtcDetail);
                                                     if (parseInfoDtc != null)
                                                     {
-                                                        textList = new List<string>
+                                                        textList = new List<string>();
+                                                        if (!string.IsNullOrWhiteSpace(parseInfoDtc.PcodeText))
                                                         {
-                                                            parseInfoDtc.PcodeText,
-                                                            parseInfoDtc.ErrorText,
-                                                            parseInfoDtc.ErrorDetail
-                                                        };
+                                                            textList.Add(parseInfoDtc.PcodeText);
+                                                        }
+                                                        if (!string.IsNullOrWhiteSpace(parseInfoDtc.ErrorText))
+                                                        {
+                                                            textList.Add(parseInfoDtc.ErrorText);
+                                                        }
+                                                        if (!string.IsNullOrWhiteSpace(parseInfoDtc.ErrorDetail))
+                                                        {
+                                                            textList.Add(parseInfoDtc.ErrorDetail);
+                                                        }
                                                     }
 
                                                     if (ecuResponseList.Count > 0)
