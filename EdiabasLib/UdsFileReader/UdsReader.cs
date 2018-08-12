@@ -3125,6 +3125,56 @@ namespace UdsFileReader
             return null;
         }
 
+        public List<string> ErrorCodeToString(string fileName, uint errorCode, uint detailCode)
+        {
+            UdsReader udsReader = this;
+            List<string> resultList = new List<string>();
+            ParseInfoDtc parseInfoDtc = GetDtcParseInfo(fileName, errorCode, detailCode);
+            if (parseInfoDtc != null)
+            {
+                if (!string.IsNullOrWhiteSpace(parseInfoDtc.PcodeText))
+                {
+                    resultList.Add(string.Format(CultureInfo.InvariantCulture, "{0} - {1:000}", parseInfoDtc.PcodeText, detailCode));
+                }
+                if (!string.IsNullOrWhiteSpace(parseInfoDtc.ErrorText))
+                {
+                    resultList.Add(parseInfoDtc.ErrorText);
+                }
+                if (!string.IsNullOrWhiteSpace(parseInfoDtc.ErrorDetail))
+                {
+                    resultList.Add(parseInfoDtc.ErrorDetail);
+                }
+
+                if ((detailCode & 0x80) != 0x00)
+                {
+                    resultList.Add((GetTextMapText(udsReader, 066900) ?? string.Empty) + " " + (GetTextMapText(udsReader, 000085) ?? string.Empty));   // Warnleuchte EIN
+                }
+                if ((detailCode & 0x01) == 0x00)
+                {
+                    resultList.Add(GetTextMapText(udsReader, 002693) ?? string.Empty);   // Sporadisch
+                }
+                if ((detailCode & 0x08) != 0x00)
+                {
+                    resultList.Add(GetTextMapText(udsReader, 022457) ?? string.Empty);   // Bestätigt
+                }
+                else
+                {
+                    resultList.Add(GetTextMapText(udsReader, 023505) ?? string.Empty);   // Unbestätigt
+                }
+
+                if ((detailCode & 0x10) == 0x00)
+                {
+                    resultList.Add(GetTextMapText(udsReader, 246422) ?? string.Empty);   // geprüft seit letzter Löschung
+                }
+                else
+                {
+                    resultList.Add(GetTextMapText(udsReader, 246421) ?? string.Empty);   // ungeprüft seit letzter Löschung
+                }
+            }
+
+            return resultList;
+        }
+
         public List<string> ErrorDetailBlockToString(byte[] data)
         {
             UdsReader udsReader = this;

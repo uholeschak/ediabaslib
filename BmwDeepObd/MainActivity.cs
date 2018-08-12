@@ -2041,24 +2041,7 @@ namespace BmwDeepObd
                                                         udsFileName = Path.Combine(_instanceData.VagPath, errorReport.VagUdsFileName);
                                                     }
                                                     UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(udsFileName);
-                                                    UdsFileReader.UdsReader.ParseInfoDtc parseInfoDtc = udsReader.GetDtcParseInfo(udsFileName, dtcEntry.DtcCode, dtcEntry.DtcDetail);
-                                                    if (parseInfoDtc != null)
-                                                    {
-                                                        textList = new List<string>();
-                                                        if (!string.IsNullOrWhiteSpace(parseInfoDtc.PcodeText))
-                                                        {
-                                                            textList.Add(parseInfoDtc.PcodeText);
-                                                        }
-                                                        if (!string.IsNullOrWhiteSpace(parseInfoDtc.ErrorText))
-                                                        {
-                                                            textList.Add(parseInfoDtc.ErrorText);
-                                                        }
-                                                        if (!string.IsNullOrWhiteSpace(parseInfoDtc.ErrorDetail))
-                                                        {
-                                                            textList.Add(parseInfoDtc.ErrorDetail);
-                                                        }
-                                                    }
-
+                                                    textList = udsReader.ErrorCodeToString(udsFileName, dtcEntry.DtcCode, dtcEntry.DtcDetail);
                                                     if (ecuResponseList.Count > 0)
                                                     {
                                                         byte[] response = ActivityCommon.ExtractUdsEcuResponses(ecuResponseList[0]);
