@@ -4276,6 +4276,11 @@ namespace BmwDeepObd
 #endif
         }
 
+        public static bool VagFilesRequired()
+        {
+            return SelectedManufacturer != ManufacturerType.Bmw && !OldVagMode;
+        }
+
         public bool StoreTranslationCache(string fileName)
         {
             try
@@ -4887,8 +4892,7 @@ namespace BmwDeepObd
         public static string AppendDirectorySeparatorChar(string path)
         {
             // Append a slash only if the path is a directory and does not have a slash.
-            if (!Path.HasExtension(path) &&
-                !path.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            if (!path.EndsWith(Path.DirectorySeparatorChar.ToString()))
             {
                 return path + Path.DirectorySeparatorChar;
             }
@@ -4922,7 +4926,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static void ExtractZipFile(string archiveFilenameIn, string outFolder, string key, ProgressZipDelegate progressHandler)
+        public static void ExtractZipFile(string archiveFilenameIn, string outFolder, string key, List<string> ignoreFolders, ProgressZipDelegate progressHandler)
         {
             FileStream fs = null;
             ZipFile zf = null;
@@ -5001,9 +5005,22 @@ namespace BmwDeepObd
                     // Optionally match entrynames against a selection list here to skip as desired.
                     // The unpacked length is available in the zipEntry.Size property.
 
-                    byte[] buffer = new byte[4096];     // 4K is optimum
-                    Stream zipStream = zf.GetInputStream(zipEntry);
-
+                    if (ignoreFolders != null)
+                    {
+                        bool ignoreFile = false;
+                        foreach (string ignoreFolder in ignoreFolders)
+                        {
+                            if (entryFileName.StartsWith(ignoreFolder))
+                            {
+                                ignoreFile = true;
+                                break;
+                            }
+                        }
+                        if (ignoreFile)
+                        {
+                            continue;
+                        }
+                    }
                     // Manipulate the output filename here as desired.
                     String fullZipToPath = Path.Combine(outFolder, entryFileName);
                     string directoryName = Path.GetDirectoryName(fullZipToPath);
@@ -5013,12 +5030,16 @@ namespace BmwDeepObd
                         Directory.CreateDirectory(directoryName);
                     }
 
-                    // Unzip file in buffered chunks. This is just as fast as unpacking to a buffer the full size
-                    // of the file, but does not waste memory.
-                    // The "using" will close the stream even if an exception occurs.
-                    using (FileStream streamWriter = File.Create(fullZipToPath))
+                    byte[] buffer = new byte[4096];     // 4K is optimum
+                    using (Stream zipStream = zf.GetInputStream(zipEntry))
                     {
-                        StreamUtils.Copy(zipStream, streamWriter, buffer);
+                        // Unzip file in buffered chunks. This is just as fast as unpacking to a buffer the full size
+                        // of the file, but does not waste memory.
+                        // The "using" will close the stream even if an exception occurs.
+                        using (FileStream streamWriter = File.Create(fullZipToPath))
+                        {
+                            StreamUtils.Copy(zipStream, streamWriter, buffer);
+                        }
                     }
                     index++;
                 }
@@ -5105,9 +5126,10 @@ namespace BmwDeepObd
                         if (string.Compare(zipEntry.Name, archiveName, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             byte[] buffer = new byte[4096]; // 4K is optimum
-                            Stream zipStream = zf.GetInputStream(zipEntry);
-
-                            StreamUtils.Copy(zipStream, outStream, buffer);
+                            using (Stream zipStream = zf.GetInputStream(zipEntry))
+                            {
+                                StreamUtils.Copy(zipStream, outStream, buffer);
+                            }
                             break;
                         }
                     }
@@ -5204,7 +5226,7 @@ namespace BmwDeepObd
                         return false;
                     }
 
-                    bool vagFile = fileName.StartsWith(VagBaseDir + @"/");
+                    bool vagFile = fileName.StartsWith(AppendDirectorySeparatorChar(VagBaseDir));
                     if (!vagDirPresent && vagFile)
                     {
                         continue;   // ignore VAG files if not present

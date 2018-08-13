@@ -3378,7 +3378,15 @@ namespace BmwDeepObd
                         }
                     });
 
-                    ActivityCommon.ExtractZipFile(fileName, targetDirectory, key,
+                    List<string> ignoreFolders = null;
+                    if (!ActivityCommon.VagFilesRequired())
+                    {
+                        ignoreFolders = new List<string>
+                        {
+                            ActivityCommon.AppendDirectorySeparatorChar(ActivityCommon.VagBaseDir)
+                        };
+                    }
+                    ActivityCommon.ExtractZipFile(fileName, targetDirectory, key, ignoreFolders,
                         (percent, decrypt) =>
                         {
                             RunOnUiThread(() =>
@@ -3680,6 +3688,15 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
+#if OBB_MODE
+                if (ActivityCommon.VagFilesRequired())
+                {
+                    if (!Directory.Exists(Path.Combine(path, ActivityCommon.VagBaseDir)))
+                    {
+                        return false;
+                    }
+                }
+#endif
                 string xmlInfoName = Path.Combine(path, InfoXmlName);
                 if (!File.Exists(xmlInfoName))
                 {
