@@ -5167,6 +5167,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                bool vagDirPresent = Directory.Exists(Path.Combine(baseDir, VagBaseDir));
                 XDocument xmlDoc = XDocument.Load(contentFile);
                 if (xmlDoc.Root == null)
                 {
@@ -5203,6 +5204,11 @@ namespace BmwDeepObd
                         return false;
                     }
 
+                    bool vagFile = fileName.StartsWith(VagBaseDir + @"/");
+                    if (!vagDirPresent && vagFile)
+                    {
+                        continue;   // ignore VAG files if not present
+                    }
                     XAttribute sizeAttr = fileNode.Attribute("size");
                     if (sizeAttr == null)
                     {
