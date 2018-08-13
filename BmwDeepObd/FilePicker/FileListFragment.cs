@@ -33,7 +33,7 @@ namespace BmwDeepObd.FilePicker
                 }
                 if (string.IsNullOrEmpty(DefaultInitialDirectory))
                 {
-                    DefaultInitialDirectory = @"/";
+                    DefaultInitialDirectory = Path.DirectorySeparatorChar.ToString();
                 }
             }
             public string DefaultInitialDirectory { get; set; }
