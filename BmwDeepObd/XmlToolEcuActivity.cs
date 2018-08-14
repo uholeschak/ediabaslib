@@ -185,6 +185,7 @@ namespace BmwDeepObd
         private string _traceDir;
         private bool _traceAppend;
         private string _deviceAddress;
+        private string _resultFilterText;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -400,6 +401,7 @@ namespace BmwDeepObd
         protected override void OnStart()
         {
             base.OnStart();
+            _resultFilterText = null;
             if (_activityCommon.MtcBtService)
             {
                 _activityCommon.StartMtcService();
@@ -453,6 +455,32 @@ namespace BmwDeepObd
             });
         }
 
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            var inflater = MenuInflater;
+            inflater.Inflate(Resource.Menu.xml_ecu_tool_menu, menu);
+            IMenuItem menuSearch = menu.FindItem(Resource.Id.action_search);
+            if (menuSearch != null)
+            {
+                menuSearch.SetActionView(new Android.Support.V7.Widget.SearchView(this));
+
+                if (menuSearch.ActionView is Android.Support.V7.Widget.SearchView searchViewV7)
+                {
+                    searchViewV7.QueryTextChange += (sender, e) =>
+                    {
+                        e.Handled = OnQueryTextChange(e.NewText, false);
+                    };
+
+                    searchViewV7.QueryTextSubmit += (sender, e) =>
+                    {
+                        e.Handled = OnQueryTextChange(e.Query, true);
+                    };
+                }
+            }
+
+            return true;
+        }
+
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             HideKeyboard();
@@ -483,6 +511,17 @@ namespace BmwDeepObd
                     break;
             }
             return false;
+        }
+
+        private bool OnQueryTextChange(string text, bool submit)
+        {
+            _resultFilterText = text;
+            JobSelected(_selectedJob);
+            if (submit)
+            {
+                HideKeyboard();
+            }
+            return true;
         }
 
         public static bool IsVagReadJob(JobInfo job, XmlToolActivity.EcuInfo ecuInfo)
@@ -1173,6 +1212,15 @@ namespace BmwDeepObd
                     {   // ignore binary results
                         continue;
                     }
+
+                    if (!string.IsNullOrEmpty(_resultFilterText))
+                    {
+                        if (result.DisplayName.IndexOf(_resultFilterText, StringComparison.OrdinalIgnoreCase) < 0)
+                        {
+                            continue;   // filter is not matching
+                        }
+                    }
+
                     _spinnerJobResultsAdapter.Items.Add(result);
                     if (result.Selected && selection < 0)
                     {
