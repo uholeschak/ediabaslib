@@ -2760,26 +2760,27 @@ namespace BmwDeepObd
             }
 
             bool mapped = false;
-            string sgbdName = fileName;
+            string baseFileName = Path.GetFileName(fileName);
+            string sgbdName = baseFileName;
             if (SelectedManufacturer != ManufacturerType.Bmw)
             {
-                if (fileName.StartsWith(XmlToolActivity.VagUdsCommonSgbd + "#", true, CultureInfo.InvariantCulture))
+                if (baseFileName != null && baseFileName.StartsWith(XmlToolActivity.VagUdsCommonSgbd + "#", true, CultureInfo.InvariantCulture))
                 {
-                    string[] nameArray = fileName.Split('#');
+                    string[] nameArray = baseFileName.Split('#');
                     if (nameArray.Length == 2)
                     {
                         sgbdName = nameArray[0];
                         object addressObj = new System.ComponentModel.UInt32Converter().ConvertFromInvariantString(nameArray[1]);
                         if (!(addressObj is UInt32 address))
                         {
-                            ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ResolveSgbdFile invalid number for: {0} ", fileName);
+                            ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ResolveSgbdFile invalid number for: {0} ", baseFileName);
                             // ReSharper disable once NotResolvedInText
                             throw new ArgumentOutOfRangeException("ResolveSgbdFile", "Parsing address failed");
                         }
                         VehicleInfoVag.EcuAddressEntry ecuAddressEntry = VehicleInfoVag.GetAddressEntry(address);
                         if (ecuAddressEntry == null)
                         {
-                            ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ResolveSgbdFile no address entry for: {0} ", fileName);
+                            ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ResolveSgbdFile no address entry for: {0} ", baseFileName);
                             // ReSharper disable once NotResolvedInText
                             throw new ArgumentOutOfRangeException("ResolveSgbdFile", "No address entry found");
                         }
