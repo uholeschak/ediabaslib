@@ -1512,7 +1512,9 @@ namespace BmwDeepObd
             if (forceMobile && _mobileNetwork != null)
             {
                 NetworkInfo networkInfo = _maConnectivity.GetNetworkInfo(_mobileNetwork);
-                if (networkInfo != null && networkInfo.IsConnected && networkInfo.Type == ConnectivityType.Mobile)
+                NetworkCapabilities networkCapabilities = _maConnectivity.GetNetworkCapabilities(_mobileNetwork);
+                if (networkInfo != null && networkInfo.IsConnected &&
+                    networkCapabilities != null && networkCapabilities.HasTransport(Android.Net.TransportType.Cellular))
                 {
                     defaultNetwork = _mobileNetwork;
                 }
@@ -5942,8 +5944,8 @@ namespace BmwDeepObd
 
             public override void OnAvailable(Network network)
             {
-                NetworkInfo networkInfo = _activityCommon._maConnectivity.GetNetworkInfo(network);
-                if (networkInfo != null && networkInfo.Type == ConnectivityType.Mobile)
+                NetworkCapabilities networkCapabilities = _activityCommon._maConnectivity.GetNetworkCapabilities(network);
+                if (networkCapabilities != null && networkCapabilities.HasTransport(Android.Net.TransportType.Cellular))
                 {
                     _activityCommon._mobileNetwork = network;
                     _activityCommon.SetPreferredNetworkInterface();
@@ -5952,8 +5954,8 @@ namespace BmwDeepObd
 
             public override void OnLost(Network network)
             {
-                NetworkInfo networkInfo = _activityCommon._maConnectivity.GetNetworkInfo(network);
-                if (networkInfo != null && networkInfo.Type == ConnectivityType.Mobile)
+                NetworkCapabilities networkCapabilities = _activityCommon._maConnectivity.GetNetworkCapabilities(network);
+                if (networkCapabilities != null && networkCapabilities.HasTransport(Android.Net.TransportType.Cellular))
                 {
                     _activityCommon._mobileNetwork = null;
                     _activityCommon.SetPreferredNetworkInterface();
