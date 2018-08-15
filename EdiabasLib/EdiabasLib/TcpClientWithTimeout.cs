@@ -101,25 +101,13 @@ namespace EdiabasLib
                     foreach (Android.Net.Network network in networks)
                     {
                         Android.Net.NetworkInfo networkInfo = connectivityManager.GetNetworkInfo(network);
-                        if (networkInfo != null && networkInfo.IsConnected)
+                        Android.Net.NetworkCapabilities networkCapabilities = connectivityManager.GetNetworkCapabilities(network);
+                        // HasTransport support started also with Lollipop
+                        if (networkInfo != null && networkInfo.IsConnected &&
+                            networkCapabilities != null && networkCapabilities.HasTransport(Android.Net.TransportType.Wifi))
                         {
-                            bool isWifi;
-                            if (Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.P)
-                            {
-                                Android.Net.NetworkCapabilities networkCapabilities = connectivityManager.GetNetworkCapabilities(network);
-                                isWifi = networkCapabilities != null && networkCapabilities.HasTransport(Android.Net.TransportType.Wifi);
-                            }
-                            else
-                            {
-#pragma warning disable CS0618 // Typ oder Element ist veraltet
-                                isWifi = networkInfo.Type == Android.Net.ConnectivityType.Wifi;
-#pragma warning restore CS0618 // Typ oder Element ist veraltet
-                            }
-                            if (isWifi)
-                            {
-                                bindNetwork = network;
-                                break;
-                            }
+                            bindNetwork = network;
+                            break;
                         }
                     }
                 }
