@@ -107,7 +107,7 @@ namespace EdiabasLib
                             if (Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.P)
                             {
                                 Android.Net.NetworkCapabilities networkCapabilities = connectivityManager.GetNetworkCapabilities(network);
-                                isWifi = networkCapabilities.HasTransport(Android.Net.TransportType.Wifi);
+                                isWifi = networkCapabilities != null && networkCapabilities.HasTransport(Android.Net.TransportType.Wifi);
                             }
                             else
                             {
