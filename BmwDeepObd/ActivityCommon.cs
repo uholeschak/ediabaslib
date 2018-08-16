@@ -423,6 +423,7 @@ namespace BmwDeepObd
         private PowerManager.WakeLock _wakeLockCpu;
         private readonly Tuple<LockType, PowerManager.WakeLock>[] _lockArray;
         private CellularCallback _cellularCallback;
+        private WifiCallback _wifiCallback;
         private Network _mobileNetwork;
         private Handler _btUpdateHandler;
         private Timer _usbCheckTimer;
@@ -733,8 +734,8 @@ namespace BmwDeepObd
                 LocalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
                 context.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.ActionBroadcastCommand));
                 context.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
-                context.RegisterReceiver(_bcReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
                 context.RegisterReceiver(_bcReceiver, new IntentFilter(GlobalBroadcastReceiver.NotificationBroadcastAction));
+                RegisterWifiNetworkCallback();
                 if (UsbSupport)
                 {   // usb handling
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
@@ -821,6 +822,7 @@ namespace BmwDeepObd
                         _usbCheckTimer.Dispose();
                         _usbCheckTimer = null;
                     }
+                    UnRegisterWifiCallback();
                     if (_context != null && _bcReceiver != null)
                     {
                         LocalBroadcastManager.GetInstance(_context).UnregisterReceiver(_bcReceiver);
@@ -1471,6 +1473,69 @@ namespace BmwDeepObd
                     return false;
                 }
                 _cellularCallback = null;
+            }
+            return true;
+        }
+
+        public bool RegisterWifiNetworkCallback()
+        {
+            if (_maConnectivity == null)
+            {
+                return false;
+            }
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+            {
+                try
+                {
+#pragma warning disable CS0618 // Typ oder Element ist veraltet
+                    _context?.RegisterReceiver(_bcReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
+#pragma warning restore CS0618 // Typ oder Element ist veraltet
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+                return true;
+            }
+            UnRegisterWifiCallback();
+            try
+            {
+                NetworkRequest.Builder builder = new NetworkRequest.Builder();
+                builder.AddCapability(NetCapability.Internet);
+                builder.AddTransportType(Android.Net.TransportType.Wifi);
+                NetworkRequest networkRequest = builder.Build();
+                _wifiCallback = new WifiCallback(this);
+                _maConnectivity.RequestNetwork(networkRequest, _wifiCallback);
+                _maConnectivity.RegisterNetworkCallback(networkRequest, _wifiCallback);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool UnRegisterWifiCallback()
+        {
+            if (_maConnectivity == null)
+            {
+                return false;
+            }
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+            {
+                return true;
+            }
+            if (_wifiCallback != null)
+            {
+                try
+                {
+                    _maConnectivity.UnregisterNetworkCallback(_wifiCallback);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+                _wifiCallback = null;
             }
             return true;
         }
@@ -5801,6 +5866,39 @@ namespace BmwDeepObd
             return a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
         }
 
+        private void NetworkStateChanged(bool wifi)
+        {
+            _activity?.RunOnUiThread(() =>
+            {
+                if (_disposed)
+                {
+                    return;
+                }
+                switch (_selectedInterface)
+                {
+                    case InterfaceType.Bluetooth:
+                    case InterfaceType.Enet:
+                    case InterfaceType.ElmWifi:
+                    case InterfaceType.DeepObdWifi:
+                    {
+                        bool interfaceAvailable = IsInterfaceAvailable();
+                        if (!_lastInvertfaceAvailable.HasValue ||
+                            _lastInvertfaceAvailable.Value != interfaceAvailable)
+                        {
+                            _lastInvertfaceAvailable = interfaceAvailable;
+                            _bcReceiverUpdateDisplayHandler?.Invoke();
+                        }
+                        break;
+                    }
+                }
+                if (wifi)
+                {
+                    // using hipri here could create endless loop (and is set by timer anyway)
+                    SetPreferredNetworkInterface(false);
+                }
+            });
+        }
+
         private void UsbCheckEvent(Object state)
         {
             if (_usbCheckTimer == null)
@@ -5864,24 +5962,10 @@ namespace BmwDeepObd
                 switch (action)
                 {
                     case BluetoothAdapter.ActionStateChanged:
+#pragma warning disable CS0618 // Typ oder Element ist veraltet
                     case ConnectivityManager.ConnectivityAction:
-                        switch (_activityCommon._selectedInterface)
-                        {
-                            case InterfaceType.Bluetooth:
-                            case InterfaceType.Enet:
-                            case InterfaceType.ElmWifi:
-                            case InterfaceType.DeepObdWifi:
-                            {
-                                bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
-                                if (!_activityCommon._lastInvertfaceAvailable.HasValue ||
-                                    _activityCommon._lastInvertfaceAvailable.Value != interfaceAvailable)
-                                {
-                                    _activityCommon._lastInvertfaceAvailable = interfaceAvailable;
-                                    _activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
-                                }
-                                break;
-                            }
-                        }
+                        _activityCommon.NetworkStateChanged(action == ConnectivityManager.ConnectivityAction);
+#pragma warning restore CS0618 // Typ oder Element ist veraltet
                         if (action == BluetoothAdapter.ActionStateChanged)
                         {
                             BtNoEvents = false;
@@ -5899,11 +5983,6 @@ namespace BmwDeepObd
                                         break;
                                 }
                             }
-                        }
-                        if (action == ConnectivityManager.ConnectivityAction)
-                        {
-                            // using hipri here could create endless loop (and is set by timer anyway)
-                            _activityCommon.SetPreferredNetworkInterface(false);
                         }
                         break;
 
@@ -5960,6 +6039,26 @@ namespace BmwDeepObd
                     _activityCommon._mobileNetwork = null;
                     _activityCommon.SetPreferredNetworkInterface();
                 }
+            }
+        }
+
+        public class WifiCallback : ConnectivityManager.NetworkCallback
+        {
+            private readonly ActivityCommon _activityCommon;
+
+            public WifiCallback(ActivityCommon activityCommon)
+            {
+                _activityCommon = activityCommon;
+            }
+
+            public override void OnAvailable(Network network)
+            {
+                _activityCommon.NetworkStateChanged(true);
+            }
+
+            public override void OnLost(Network network)
+            {
+                _activityCommon.NetworkStateChanged(true);
             }
         }
     }
