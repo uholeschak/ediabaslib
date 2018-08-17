@@ -94,8 +94,16 @@ namespace BmwDeepObd
                     {
                         if (_isStarted)
                         {
-                            StopForeground(true);
-                            StopSelf();
+                            try
+                            {
+                                StopForeground(true);
+                                StopSelf();
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+
                             _isStarted = false;
                         }
                     }
@@ -154,17 +162,24 @@ namespace BmwDeepObd
 
         private void RegisterForegroundService()
         {
-            var notification = new NotificationCompat.Builder(this, ServiceNotificationChannelId)
-                .SetContentTitle(Resources.GetString(Resource.String.app_name))
-                .SetContentText(Resources.GetString(Resource.String.service_notification))
-                .SetSmallIcon(Resource.Drawable.ic_stat_obd)
-                .SetContentIntent(BuildIntentToShowMainActivity())
-                .SetOngoing(true)
-                .AddAction(BuildStopServiceAction())
-                .Build();
+            try
+            {
+                var notification = new NotificationCompat.Builder(this, ServiceNotificationChannelId)
+                    .SetContentTitle(Resources.GetString(Resource.String.app_name))
+                    .SetContentText(Resources.GetString(Resource.String.service_notification))
+                    .SetSmallIcon(Resource.Drawable.ic_stat_obd)
+                    .SetContentIntent(BuildIntentToShowMainActivity())
+                    .SetOngoing(true)
+                    .AddAction(BuildStopServiceAction())
+                    .Build();
 
-            // Enlist this instance of the service as a foreground service
-            StartForeground(ServiceRunningNotificationId, notification);
+                // Enlist this instance of the service as a foreground service
+                StartForeground(ServiceRunningNotificationId, notification);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private void SendStopCommBroadcast()
@@ -221,8 +236,15 @@ namespace BmwDeepObd
             {
                 if (_isStarted)
                 {
-                    StopForeground(true);
-                    StopSelf();
+                    try
+                    {
+                        StopForeground(true);
+                        StopSelf();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                     _isStarted = false;
                 }
                 lock (ActivityCommon.GlobalLockObject)
