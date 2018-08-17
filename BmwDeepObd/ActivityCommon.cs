@@ -1503,6 +1503,7 @@ namespace BmwDeepObd
                 NetworkRequest.Builder builder = new NetworkRequest.Builder();
                 builder.AddCapability(NetCapability.Internet);
                 builder.AddTransportType(Android.Net.TransportType.Wifi);
+                builder.AddTransportType(Android.Net.TransportType.Ethernet);
                 NetworkRequest networkRequest = builder.Build();
                 _wifiCallback = new WifiCallback(this);
                 _maConnectivity.RequestNetwork(networkRequest, _wifiCallback);
