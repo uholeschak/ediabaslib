@@ -45,6 +45,16 @@ Test connection:
 - BlueFlashCmd.exe identify
 - Dump flash: BlueFlashCmd.exe dump <filename_without_extension>
 
+Changing a parameter:
+---------------------
+- Dump current settings:
+pscli dump <xxx.psr>
+- Create merge file merge.psr with new settings (e.g. clock 13Mhz):
+// PSKEY_ANA_FREQ
+&01fe = 32c8
+- Merge settings:
+pscli merge <merge.psr>
+
 Programming:
 ------------
 - BlueFlashCmd.exe <filename_without_extension>
