@@ -27,6 +27,8 @@ This page allows to change some global app settings.
   * _Check cpu usage at start_: Check CPU usage at program startup. This requires some time. I high CPU use could cause communication problems.
 * _Check ECU files_ options:
   * _Check ECU files at startup_: Check if all ECU files are present and have the correct size. This is time consuming. If you are are sure the ECU files will not get damaged you could disable this option.
+* _VAG mode_ options:
+  * _Use old VAG mode_: Use the old VAG mode instead of the new implementation. This is only recommended only of you want to use existing configuration files.
 * _Storage media_ options:
   * _Default or storage location_: If the default storage media for the ECU files is not appropriate, a different media could be selected here.  
   The application storage directory on the media will be always fixed to _de.holeschak.bmw_deep_obd_.
