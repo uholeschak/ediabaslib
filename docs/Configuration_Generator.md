@@ -46,7 +46,9 @@ The page has the following properties:
 * _Tag for data logging_: If the _Log data_ option is enabled on the main page the result data will get this tag in the log file. If the entry is empty no data will be logged.
 * _Output format_: Here the output format of the result data could be modified. The format specification is in the form of [Ediabas result types and formats](EDIABAS_result_types_and_formats.md). Depending on the job data type more or less result types will be listed.
 * _Read_: This button executes the selected job and displays the result in the specified format next to the button.
-With the _Save_ button the configuration will be stored and used as default on the main page.
+* _Search results_: If the result list for a job becomes too large, the results could be filtered with the search widget of the title bar.
+
+With the _Save_ button on the main configuration page the configuration will be stored and used as default on the main page.
 Hint: A long click on the ECU list opens a submenu that allows to change the order of the ECU entries in the list.
 
 ![ECU list](Configuration_Generator_AppGeneratorEcusSmall.png) ![Job selection](Configuration_Generator_AppGeneratorJobSmall.png)
