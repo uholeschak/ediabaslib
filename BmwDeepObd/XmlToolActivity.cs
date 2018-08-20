@@ -3561,15 +3561,37 @@ namespace BmwDeepObd
                             {
                                 if (parseInfo is UdsFileReader.UdsReader.ParseInfoMwb parseInfoMwb)
                                 {
-                                    string valueName = parseInfoMwb.NameArray.Length > 0 ? parseInfoMwb.NameArray[0] : string.Empty;
-                                    List<string> commentList = parseInfoMwb.NameArray.ToList();
-                                    if (parseInfoMwb.DataTypeEntry.NameDetailArray != null)
+                                    string valueName = parseInfoMwb.Name ?? string.Empty;
+                                    StringBuilder sbDispText = new StringBuilder();
+                                    if (parseInfoMwb.DataId.HasValue)
                                     {
-                                        commentList.AddRange(parseInfoMwb.DataTypeEntry.NameDetailArray.ToList());
+                                        sbDispText.Append(string.Format(Culture, "{0:00000}", parseInfoMwb.DataId.Value));
+                                        if (parseInfoMwb.DataTypeEntry.DataDetailId.HasValue)
+                                        {
+                                            sbDispText.Append("-");
+                                            sbDispText.Append(string.Format(Culture, "{0:00000}", parseInfoMwb.DataTypeEntry.DataDetailId.Value));
+                                        }
                                     }
+                                    if (parseInfoMwb.Name != null)
+                                    {
+                                        if (sbDispText.Length > 0)
+                                        {
+                                            sbDispText.Append(" ");
+                                        }
+                                        sbDispText.Append(parseInfoMwb.Name);
+                                    }
+                                    string displayText = sbDispText.ToString();
+
+                                    StringBuilder sbComment = new StringBuilder();
+                                    sbComment.Append(string.Format(Culture, "{0:00000}", parseInfoMwb.ServiceId));
+                                    if (parseInfoMwb.DataTypeEntry.NameDetail != null)
+                                    {
+                                        sbComment.Append(" ");
+                                        sbComment.Append(parseInfoMwb.DataTypeEntry.NameDetail);
+                                    }
+                                    List<string> commentList = new List<string> {sbComment.ToString()};
 
                                     string name = string.Format(Culture, "{0}", parseInfoMwb.ServiceId);
-                                    string displayText = string.Format(Culture, "{0:00000} {1}", parseInfoMwb.ServiceId, valueName);
                                     string type = DataTypeString;
                                     ActivityCommon.MwTabEntry mwTabEntry =
                                         new ActivityCommon.MwTabEntry((int) parseInfoMwb.ServiceId, null, valueName, string.Empty, string.Empty, string.Empty, null, null);

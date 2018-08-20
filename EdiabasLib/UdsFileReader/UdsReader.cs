@@ -483,6 +483,20 @@ namespace UdsFileReader
                         if (udsReader._textMap.TryGetValue(nameDetailKey, out string[] nameDetailArray))
                         {
                             NameDetailArray = nameDetailArray;
+                            if (nameDetailArray != null)
+                            {
+                                if (nameDetailArray.Length >= 1)
+                                {
+                                    NameDetail = nameDetailArray[0];
+                                }
+                                if (nameDetailArray.Length >= 3)
+                                {
+                                    if (UInt32.TryParse(nameDetailArray[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 value))
+                                    {
+                                        DataDetailId = value;
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -601,6 +615,8 @@ namespace UdsFileReader
             public string[] LineArray { get; }
             public UInt32 DataTypeId { get; }
             public string[] NameDetailArray { get; }
+            public string NameDetail { get; }
+            public UInt32? DataDetailId { get; }
             public Int64? NumberOfDigits { get; }
             public UInt32? FixedEncodingId { get; }
             public double? ScaleOffset { get; }
@@ -892,10 +908,26 @@ namespace UdsFileReader
                 ServiceId = serviceId;
                 NameArray = nameArray;
                 DataTypeEntry = dataTypeEntry;
+                if (nameArray != null)
+                {
+                    if (nameArray.Length >= 1)
+                    {
+                        Name = nameArray[0];
+                    }
+                    if (nameArray.Length >= 3)
+                    {
+                        if (UInt32.TryParse(nameArray[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 value))
+                        {
+                            DataId = value;
+                        }
+                    }
+                }
             }
 
             public UInt32 ServiceId { get; }
             public string[] NameArray { get; }
+            public string Name { get; }
+            public UInt32? DataId { get; }
             public DataTypeEntry DataTypeEntry { get; }
         }
 
