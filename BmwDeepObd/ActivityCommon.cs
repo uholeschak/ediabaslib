@@ -4673,18 +4673,25 @@ namespace BmwDeepObd
                                 string errorMessage = string.Empty;
                                 if (!args.Cancelled && (args.Error != null))
                                 {
-                                    WebException webException = args.Error as WebException;
-                                    Stream responseStream = webException?.Response?.GetResponseStream();
-                                    if (responseStream != null)
+                                    try
                                     {
-                                        string responseText;
-                                        using (var reader = new StreamReader(responseStream))
+                                        WebException webException = args.Error as WebException;
+                                        Stream responseStream = webException?.Response?.GetResponseStream();
+                                        if (responseStream != null)
                                         {
-                                            responseText = reader.ReadToEnd();
+                                            string responseText;
+                                            using (var reader = new StreamReader(responseStream))
+                                            {
+                                                responseText = reader.ReadToEnd();
+                                            }
+                                            // ReSharper disable once NotAccessedVariable
+                                            int errorCode;
+                                            errorMessage = GetTranslationError(responseText, out errorCode);
                                         }
-                                        // ReSharper disable once NotAccessedVariable
-                                        int errorCode;
-                                        errorMessage = GetTranslationError(responseText, out errorCode);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // stream error occured
                                     }
                                 }
 
