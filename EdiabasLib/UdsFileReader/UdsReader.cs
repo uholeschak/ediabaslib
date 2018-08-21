@@ -3092,6 +3092,15 @@ namespace UdsFileReader
                             {
                                 mbwSegmentDict.Add(parseInfoMwb.UniqueIdString, parseInfoMwb);
                             }
+
+                            string[] uniqueParts1 = parseInfoMwb.UniqueIdString.Split('-');
+                            if (uniqueParts1.Length > 0 && !string.IsNullOrEmpty(uniqueParts1[0]))
+                            {
+                                if (!mbwSegmentDict.ContainsKey(uniqueParts1[0]))
+                                {
+                                    mbwSegmentDict.Add(uniqueParts1[0], parseInfoMwb);
+                                }
+                            }
                         }
                     }
 
@@ -3101,6 +3110,15 @@ namespace UdsFileReader
                 if (mbwSegmentDict.TryGetValue(uniqueIdString, out ParseInfoMwb parseInfoMwbMatch))
                 {
                     return parseInfoMwbMatch;
+                }
+
+                string[] uniqueParts2 = uniqueIdString.Split('-');   // try with service id only
+                if (uniqueParts2.Length > 0 && !string.IsNullOrEmpty(uniqueParts2[0]))
+                {
+                    if (mbwSegmentDict.TryGetValue(uniqueParts2[0], out parseInfoMwbMatch))
+                    {
+                        return parseInfoMwbMatch;
+                    }
                 }
             }
             catch (Exception)
