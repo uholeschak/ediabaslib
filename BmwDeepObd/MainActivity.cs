@@ -2015,18 +2015,20 @@ namespace BmwDeepObd
                                                     dataFileName = Path.Combine(_instanceData.VagPath, errorReport.VagDataFileName);
                                                 }
                                                 UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(dataFileName);
-                                                textList = udsReader.DataReader.ErrorCodeToString(
-                                                    dtcEntry.DtcCode, dtcEntry.DtcDetail, dtcEntry.ErrorType, udsReader);
-
-                                                if (saeDetail && ecuResponseList.Count > 0)
+                                                if (udsReader != null)
                                                 {
-                                                    byte[] detailData = ActivityCommon.ParseSaeDetailDtcResponse(ecuResponseList[0]);
-                                                    if (detailData != null)
+                                                    textList = udsReader.DataReader.ErrorCodeToString(
+                                                        dtcEntry.DtcCode, dtcEntry.DtcDetail, dtcEntry.ErrorType, udsReader);
+                                                    if (saeDetail && ecuResponseList.Count > 0)
                                                     {
-                                                        List<string> saeDetailList = udsReader.DataReader.SaeErrorDetailHeadToString(detailData, udsReader);
-                                                        if (saeDetailList != null)
+                                                        byte[] detailData = ActivityCommon.ParseSaeDetailDtcResponse(ecuResponseList[0]);
+                                                        if (detailData != null)
                                                         {
-                                                            textList.AddRange(saeDetailList);
+                                                            List<string> saeDetailList = udsReader.DataReader.SaeErrorDetailHeadToString(detailData, udsReader);
+                                                            if (saeDetailList != null)
+                                                            {
+                                                                textList.AddRange(saeDetailList);
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -2041,16 +2043,19 @@ namespace BmwDeepObd
                                                         udsFileName = Path.Combine(_instanceData.VagPath, errorReport.VagUdsFileName);
                                                     }
                                                     UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(udsFileName);
-                                                    textList = udsReader.ErrorCodeToString(udsFileName, dtcEntry.DtcCode, dtcEntry.DtcDetail);
-                                                    if (ecuResponseList.Count > 0)
+                                                    if (udsReader != null)
                                                     {
-                                                        byte[] response = ActivityCommon.ExtractUdsEcuResponses(ecuResponseList[0]);
-                                                        if (response != null)
+                                                        textList = udsReader.ErrorCodeToString(udsFileName, dtcEntry.DtcCode, dtcEntry.DtcDetail);
+                                                        if (ecuResponseList.Count > 0)
                                                         {
-                                                            List<string> errorDetailList = udsReader.ErrorDetailBlockToString(response);
-                                                            if (errorDetailList != null)
+                                                            byte[] response = ActivityCommon.ExtractUdsEcuResponses(ecuResponseList[0]);
+                                                            if (response != null)
                                                             {
-                                                                textList.AddRange(errorDetailList);
+                                                                List<string> errorDetailList = udsReader.ErrorDetailBlockToString(response);
+                                                                if (errorDetailList != null)
+                                                                {
+                                                                    textList.AddRange(errorDetailList);
+                                                                }
                                                             }
                                                         }
                                                     }

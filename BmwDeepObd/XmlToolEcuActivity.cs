@@ -1507,13 +1507,13 @@ namespace BmwDeepObd
                                     if (resultDict.TryGetValue("ERGEBNIS1WERT", out resultData))
                                     {
                                         resultText = string.Empty;
-                                        if (udsEcu && resultData.OpData.GetType() == typeof(byte[]))
+                                        if (ActivityCommon.VagUdsActive && udsEcu && resultData.OpData.GetType() == typeof(byte[]))
                                         {
                                             UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_ecuInfo.VagUdsFileName);
-                                            UdsFileReader.UdsReader.ParseInfoMwb parseInfoMwb = udsReader.GetMwbParseInfo(_ecuInfo.VagUdsFileName, (uint) _selectedResult.MwTabEntry.BlockNumber);
+                                            UdsFileReader.UdsReader.ParseInfoMwb parseInfoMwb = udsReader?.GetMwbParseInfo(_ecuInfo.VagUdsFileName, _selectedResult.Name);
                                             if (parseInfoMwb != null)
                                             {
-                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ServiceID match: {0}", parseInfoMwb.ServiceId);
+                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UniqueId match: {0}", parseInfoMwb.UniqueIdString);
                                                 resultText = parseInfoMwb.DataTypeEntry.ToString((byte[])resultData.OpData);
                                             }
                                         }

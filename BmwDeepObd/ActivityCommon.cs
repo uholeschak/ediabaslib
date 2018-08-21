@@ -2974,14 +2974,9 @@ namespace BmwDeepObd
                 return string.Empty;
             }
 
-            string serviceIdText = displayParts[displayParts.Length - 1];
-            if (!UInt32.TryParse(serviceIdText, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 serviceId))
-            {
-                return string.Empty;
-            }
-
+            string uniqueIdString = displayParts[displayParts.Length - 1];
             UdsReader udsReader = GetUdsReader(udsFileName);
-            UdsReader.ParseInfoMwb parseInfoMwb = udsReader.GetMwbParseInfo(udsFileName, serviceId);
+            UdsReader.ParseInfoMwb parseInfoMwb = udsReader?.GetMwbParseInfo(udsFileName, uniqueIdString);
             if (parseInfoMwb == null)
             {
                 return string.Empty;

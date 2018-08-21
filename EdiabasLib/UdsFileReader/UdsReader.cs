@@ -46,7 +46,7 @@ namespace UdsFileReader
         public const int DataTypeMaskSigned = 0x80;
         public const int DataTypeMaskEnum = 0x3F;
 
-        private readonly Dictionary<string, Dictionary<uint, ParseInfoMwb>> _mwbParseInfoDict = new Dictionary<string, Dictionary<uint, ParseInfoMwb>>();
+        private readonly Dictionary<string, Dictionary<string, ParseInfoMwb>> _mwbParseInfoDict = new Dictionary<string, Dictionary<string, ParseInfoMwb>>();
         private readonly Dictionary<string, Dictionary<uint, ParseInfoDtc>> _dtcParseInfoDict = new Dictionary<string, Dictionary<uint, ParseInfoDtc>>();
 
         public class FileNameResolver
@@ -922,6 +922,20 @@ namespace UdsFileReader
                         }
                     }
                 }
+
+                StringBuilder sbId = new StringBuilder();
+                if (DataId.HasValue)
+                {
+                    sbId.Append(string.Format(CultureInfo.InvariantCulture, "{0}", ServiceId));
+                    sbId.Append("-");
+                    sbId.Append(string.Format(CultureInfo.InvariantCulture, "{0}", DataId.Value));
+                    if (DataTypeEntry.DataDetailId.HasValue)
+                    {
+                        sbId.Append("-");
+                        sbId.Append(string.Format(CultureInfo.InvariantCulture, "{0}", DataTypeEntry.DataDetailId.Value));
+                    }
+                }
+                UniqueIdString = sbId.ToString();
             }
 
             public UInt32 ServiceId { get; }
@@ -929,6 +943,7 @@ namespace UdsFileReader
             public string Name { get; }
             public UInt32? DataId { get; }
             public DataTypeEntry DataTypeEntry { get; }
+            public string UniqueIdString { get; }
         }
 
         public class ParseInfoDtc : ParseInfoBase
@@ -3051,11 +3066,11 @@ namespace UdsFileReader
             return null;
         }
 
-        public ParseInfoMwb GetMwbParseInfo(string fileName, uint serviceId)
+        public ParseInfoMwb GetMwbParseInfo(string fileName, string uniqueIdString)
         {
             try
             {
-                if (!_mwbParseInfoDict.TryGetValue(fileName, out Dictionary<uint, ParseInfoMwb> mbwSegmentDict))
+                if (!_mwbParseInfoDict.TryGetValue(fileName, out Dictionary<string, ParseInfoMwb> mbwSegmentDict))
                 {
                     List<string> includeFiles = FileNameResolver.GetAllFiles(fileName);
                     if (includeFiles == null)
@@ -3068,14 +3083,14 @@ namespace UdsFileReader
                         return null;
                     }
 
-                    mbwSegmentDict = new Dictionary<uint, ParseInfoMwb>();
+                    mbwSegmentDict = new Dictionary<string, ParseInfoMwb>();
                     foreach (ParseInfoBase parseInfo in mwbSegmentList)
                     {
                         if (parseInfo is ParseInfoMwb parseInfoMwb)
                         {
-                            if (!mbwSegmentDict.ContainsKey(parseInfoMwb.ServiceId))
+                            if (!mbwSegmentDict.ContainsKey(parseInfoMwb.UniqueIdString))
                             {
-                                mbwSegmentDict.Add(parseInfoMwb.ServiceId, parseInfoMwb);
+                                mbwSegmentDict.Add(parseInfoMwb.UniqueIdString, parseInfoMwb);
                             }
                         }
                     }
@@ -3083,7 +3098,7 @@ namespace UdsFileReader
                     _mwbParseInfoDict.Add(fileName, mbwSegmentDict);
                 }
 
-                if (mbwSegmentDict.TryGetValue(serviceId, out ParseInfoMwb parseInfoMwbMatch))
+                if (mbwSegmentDict.TryGetValue(uniqueIdString, out ParseInfoMwb parseInfoMwbMatch))
                 {
                     return parseInfoMwbMatch;
                 }
