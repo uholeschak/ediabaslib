@@ -924,9 +924,9 @@ namespace UdsFileReader
                 }
 
                 StringBuilder sbId = new StringBuilder();
+                sbId.Append(string.Format(CultureInfo.InvariantCulture, "{0}", ServiceId));
                 if (DataId.HasValue)
                 {
-                    sbId.Append(string.Format(CultureInfo.InvariantCulture, "{0}", ServiceId));
                     sbId.Append("-");
                     sbId.Append(string.Format(CultureInfo.InvariantCulture, "{0}", DataId.Value));
                     if (DataTypeEntry.DataDetailId.HasValue)
