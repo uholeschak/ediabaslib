@@ -6356,11 +6356,45 @@ namespace BmwDeepObd
 
         private XElement GetDisplayNode(XmlToolEcuActivity.ResultInfo result, XmlToolEcuActivity.JobInfo job, XNamespace ns, XElement jobNode)
         {
-            string displayTag = DisplayNameJobPrefix + job.Name + "#" + result.Name;
+            if (result.MwTabEntry != null)
+            {
+                bool compareDisplayTag = false;
+                foreach (XElement node in jobNode.Elements(ns + "display"))
+                {
+                    XAttribute nameAttrib = node.Attribute("name");
+                    if (nameAttrib != null)
+                    {
+                        string[] nameArray = nameAttrib.Value.Split('#');
+                        if (nameArray.Length >= 3 && nameArray[2].Contains("-"))
+                        {
+                            compareDisplayTag = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (compareDisplayTag)
+                {
+                    string displayTag = DisplayNameJobPrefix + job.Name + "#" + result.Name;
+                    return (from node in jobNode.Elements(ns + "display")
+                        let nameAttrib = node.Attribute("name")
+                        where nameAttrib != null
+                        where string.Compare(nameAttrib.Value, displayTag, StringComparison.OrdinalIgnoreCase) == 0
+                        select node).FirstOrDefault();
+
+                }
+
+                string resultName = result.MwTabEntry.ValueIndex.HasValue ? string.Format(Culture, "{0}#MW_Wert", result.MwTabEntry.ValueIndexTrans, result.Name) : "1#ERGEBNIS1WERT";
+                return (from node in jobNode.Elements(ns + "display")
+                        let resultAttrib = node.Attribute("result")
+                        where resultAttrib != null
+                        where string.Compare(resultAttrib.Value, resultName, StringComparison.OrdinalIgnoreCase) == 0
+                        select node).FirstOrDefault();
+            }
             return (from node in jobNode.Elements(ns + "display")
-                    let nameAttrib = node.Attribute("name")
-                    where nameAttrib != null
-                    where string.Compare(nameAttrib.Value, displayTag, StringComparison.OrdinalIgnoreCase) == 0
+                    let resultAttrib = node.Attribute("result")
+                    where resultAttrib != null
+                    where string.Compare(resultAttrib.Value, result.Name, StringComparison.OrdinalIgnoreCase) == 0
                     select node).FirstOrDefault();
         }
 
