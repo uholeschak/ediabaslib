@@ -5090,7 +5090,7 @@ namespace BmwDeepObd
                                 continue;
                             }
                         }
-                        XElement displayNode = GetDisplayNode(result, ns, jobNode);
+                        XElement displayNode = GetDisplayNode(result, job, ns, jobNode);
                         if (displayNode != null)
                         {
                             result.Selected = true;
@@ -5499,7 +5499,7 @@ namespace BmwDeepObd
                         XElement displayNodeNew = new XElement(ns + "display");
                         if (jobNodeOld != null)
                         {
-                            displayNodeOld = GetDisplayNode(result, ns, jobNodeOld);
+                            displayNodeOld = GetDisplayNode(result, job, ns, jobNodeOld);
                             if (displayNodeOld != null)
                             {
                                 displayNodeNew.ReplaceAttributes(from el in displayNodeOld.Attributes()
@@ -6354,21 +6354,14 @@ namespace BmwDeepObd
                     select node).FirstOrDefault();
         }
 
-        private XElement GetDisplayNode(XmlToolEcuActivity.ResultInfo result, XNamespace ns, XElement jobNode)
+        private XElement GetDisplayNode(XmlToolEcuActivity.ResultInfo result, XmlToolEcuActivity.JobInfo job, XNamespace ns, XElement jobNode)
         {
-            if (result.MwTabEntry != null)
-            {
-                string resultName = result.MwTabEntry.ValueIndex.HasValue ? string.Format(Culture, "{0}#MW_Wert", result.MwTabEntry.ValueIndexTrans, result.Name) : "1#ERGEBNIS1WERT";
-                return (from node in jobNode.Elements(ns + "display")
-                        let nameAttrib = node.Attribute("result")
-                        where nameAttrib != null
-                        where string.Compare(nameAttrib.Value, resultName, StringComparison.OrdinalIgnoreCase) == 0
-                        select node).FirstOrDefault();
-            }
+            string displayTag = DisplayNameJobPrefix + job.Name + "#" + result.Name;
             return (from node in jobNode.Elements(ns + "display")
-                    let nameAttrib = node.Attribute("result")
+                    let nameAttrib = node.Attribute("name")
                     where nameAttrib != null
-                    where string.Compare(nameAttrib.Value, result.Name, StringComparison.OrdinalIgnoreCase) == 0 select node).FirstOrDefault();
+                    where string.Compare(nameAttrib.Value, displayTag, StringComparison.OrdinalIgnoreCase) == 0
+                    select node).FirstOrDefault();
         }
 
         private XElement GetFileNode(string fileName, XNamespace ns, XElement pagesNode)
