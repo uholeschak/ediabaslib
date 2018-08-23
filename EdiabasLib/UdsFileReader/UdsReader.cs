@@ -478,6 +478,15 @@ namespace UdsFileReader
                         BitLength = bitLength;
                     }
 
+                    UInt32 byteLengthCalc = 0;
+                    UInt32 bitOffsetCalc = BitOffset ?? 0;
+                    UInt32 byteOffsetCalc = ByteOffset ?? 0;
+                    if (BitLength.HasValue)
+                    {
+                        byteLengthCalc = ((BitLength.Value + bitOffsetCalc + 7) / 8);
+                    }
+                    MinTelLength = byteOffsetCalc + byteLengthCalc;
+
                     if (UInt32.TryParse(lineArray[offset + 9], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 nameDetailKey))
                     {
                         if (udsReader._textMap.TryGetValue(nameDetailKey, out string[] nameDetailArray))
@@ -626,6 +635,7 @@ namespace UdsFileReader
             public UInt32? ByteOffset { get; }
             public UInt32? BitOffset { get; }
             public UInt32? BitLength { get; }
+            public UInt32 MinTelLength { get; }
             public List<ValueName> NameValueList { get; }
             public List<MuxEntry> MuxEntryList { get; }
             public FixedEncodingEntry FixedEncoding { get; }
