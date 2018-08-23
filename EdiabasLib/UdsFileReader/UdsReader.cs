@@ -478,7 +478,7 @@ namespace UdsFileReader
                         BitLength = bitLength;
                     }
 
-                    MinTelLength = (ByteOffset ?? 0) + (BitLength ?? 0 + (BitOffset ?? 0) + 7) / 8;
+                    MinTelLength = (ByteOffset ?? 0) + ((BitLength ?? 0) + (BitOffset ?? 0) + 7) / 8;
 
                     if (UInt32.TryParse(lineArray[offset + 9], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 nameDetailKey))
                     {
