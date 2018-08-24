@@ -3244,7 +3244,7 @@ namespace UdsFileReader
             return resultList;
         }
 
-        public List<string> ErrorDetailBlockToString(byte[] data)
+        public List<string> ErrorDetailBlockToString(string fileName, byte[] data)
         {
             UdsReader udsReader = this;
             List<string> resultList = new List<string>();
@@ -3382,6 +3382,12 @@ namespace UdsFileReader
                 }
             }
 #endif
+            List<string> resultListMwb = ErrorMbwDetailsToString(fileName, data);
+            if (resultListMwb != null && resultListMwb.Count > 0)
+            {
+                resultList.AddRange(resultListMwb);
+            }
+
             if (resultList.Count > 0)
             {
                 sb.Clear();
@@ -3389,6 +3395,100 @@ namespace UdsFileReader
                 sb.Append(":");
                 resultList.Insert(0, sb.ToString());
             }
+            return resultList;
+        }
+
+        private List<string> ErrorMbwDetailsToString(string fileName, byte[] data)
+        {
+            int offset = 21;
+            if (data.Length <= offset)
+            {
+                return null;
+            }
+
+            List<string> includeFiles = FileNameResolver.GetAllFiles(fileName);
+            if (includeFiles == null)
+            {
+                return null;
+            }
+            List<ParseInfoBase> mwbSegmentList = ExtractFileSegment(includeFiles, SegmentType.Mwb);
+            if (mwbSegmentList == null)
+            {
+                return null;
+            }
+
+            List<string> resultList = new List<string>();
+            while (data.Length - offset > 0)
+            {
+                List<string> resultListSub = ErrorMbwDetailToString(mwbSegmentList, data, ref offset);
+                if (resultListSub == null)
+                {
+                    return null;
+                }
+                resultList.AddRange(resultListSub);
+            }
+
+            return resultList;
+        }
+
+        private List<string> ErrorMbwDetailToString(List<ParseInfoBase> mwbSegmentList, byte[] data, ref int offset)
+        {
+            List<string> resultList = new List<string>();
+            if (data.Length - offset < 3)
+            {
+                return null;
+            }
+
+            UInt32 serviceId = (UInt32) (data[offset + 0] << 8) | data[offset + 1];
+            List<ParseInfoMwb> parseInfoList = new List<ParseInfoMwb>();
+            foreach (ParseInfoBase parseInfo in mwbSegmentList)
+            {
+                if (parseInfo is ParseInfoMwb parseInfoMwb)
+                {
+                    if (parseInfoMwb.ServiceId == serviceId)
+                    {
+                        parseInfoList.Add(parseInfoMwb);
+                    }
+                }
+            }
+
+            if (parseInfoList.Count == 0)
+            {
+                return null;
+            }
+
+            int telLength = 0;
+            foreach (ParseInfoMwb parseInfoMwb in parseInfoList)
+            {
+                byte[] subData = new byte[data.Length - offset - 2];
+                Array.Copy(data, offset + 2, subData, 0, subData.Length);
+                string dataString = parseInfoMwb.DataTypeEntry.ToString(subData);
+                if (!string.IsNullOrEmpty(dataString))
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append(parseInfoMwb.Name);
+                    if (!string.IsNullOrEmpty(parseInfoMwb.DataTypeEntry.NameDetail))
+                    {
+                        sb.Append("-");
+                        sb.Append(parseInfoMwb.DataTypeEntry.NameDetail);
+                    }
+                    sb.Append(": ");
+                    sb.Append(dataString);
+                    resultList.Add(sb.ToString());
+                }
+
+                if (telLength < parseInfoMwb.DataTypeEntry.MinTelLength)
+                {
+                    telLength = (int) parseInfoMwb.DataTypeEntry.MinTelLength;
+                }
+            }
+
+            if (telLength <= 0)
+            {
+                return null;
+            }
+            offset += telLength + 2;
+
             return resultList;
         }
 
