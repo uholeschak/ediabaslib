@@ -3406,6 +3406,11 @@ namespace UdsFileReader
                 return null;
             }
 
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return null;
+            }
+
             List<string> includeFiles = FileNameResolver.GetAllFiles(fileName);
             if (includeFiles == null)
             {
