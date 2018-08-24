@@ -2051,7 +2051,7 @@ namespace BmwDeepObd
                                                             byte[] response = ActivityCommon.ExtractUdsEcuResponses(ecuResponseList[0]);
                                                             if (response != null)
                                                             {
-                                                                List<string> errorDetailList = udsReader.ErrorDetailBlockToString(response);
+                                                                List<string> errorDetailList = udsReader.ErrorDetailBlockToString(udsFileName, response);
                                                                 if (errorDetailList != null)
                                                                 {
                                                                     textList.AddRange(errorDetailList);
