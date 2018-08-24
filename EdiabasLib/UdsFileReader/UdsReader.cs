@@ -3451,6 +3451,10 @@ namespace UdsFileReader
             }
 
             UInt32 serviceId = (UInt32) (data[offset + 0] << 8) | data[offset + 1];
+            if (serviceId == 0)
+            {
+                return null;
+            }
             List<ParseInfoMwb> parseInfoList = new List<ParseInfoMwb>();
             foreach (ParseInfoBase parseInfo in mwbSegmentList)
             {
