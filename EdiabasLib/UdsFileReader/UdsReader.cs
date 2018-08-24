@@ -47,6 +47,7 @@ namespace UdsFileReader
         public const int DataTypeMaskEnum = 0x3F;
 
         private readonly Dictionary<string, Dictionary<string, ParseInfoMwb>> _mwbParseInfoDict = new Dictionary<string, Dictionary<string, ParseInfoMwb>>();
+        private readonly Dictionary<string, List<ParseInfoBase>> _dtcMwbParseInfoDict = new Dictionary<string, List<ParseInfoBase>>();
         private readonly Dictionary<string, Dictionary<uint, ParseInfoDtc>> _dtcParseInfoDict = new Dictionary<string, Dictionary<uint, ParseInfoDtc>>();
 
         public class FileNameResolver
@@ -3411,15 +3412,20 @@ namespace UdsFileReader
                 return null;
             }
 
-            List<string> includeFiles = FileNameResolver.GetAllFiles(fileName);
-            if (includeFiles == null)
+            if (!_dtcMwbParseInfoDict.TryGetValue(fileName, out List<ParseInfoBase> mwbSegmentList))
             {
-                return null;
-            }
-            List<ParseInfoBase> mwbSegmentList = ExtractFileSegment(includeFiles, SegmentType.Mwb);
-            if (mwbSegmentList == null)
-            {
-                return null;
+                List<string> includeFiles = FileNameResolver.GetAllFiles(fileName);
+                if (includeFiles == null)
+                {
+                    return null;
+                }
+                mwbSegmentList = ExtractFileSegment(includeFiles, SegmentType.Mwb);
+                if (mwbSegmentList == null)
+                {
+                    return null;
+                }
+
+                _dtcMwbParseInfoDict.Add(fileName, mwbSegmentList);
             }
 
             List<string> resultList = new List<string>();
