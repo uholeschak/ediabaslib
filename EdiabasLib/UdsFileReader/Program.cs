@@ -634,7 +634,7 @@ namespace UdsFileReader
 
         static bool PrintUdsErrorDetail(UdsReader udsReader, byte[] data)
         {
-            List<string> resultList = udsReader.ErrorDetailBlockToString(data);
+            List<string> resultList = udsReader.ErrorDetailBlockToString(null, data);
             if (resultList == null)
             {
                 return false;
