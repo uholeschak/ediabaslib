@@ -31,6 +31,8 @@ using EdiabasLib;
 using Java.Interop;
 using Mono.CSharp;
 // ReSharper disable MergeCastWithTypeCheck
+// ReSharper disable IdentifierTypo
+// ReSharper disable StringLiteralTypo
 
 #if APP_USB_FILTER
 [assembly: Android.App.UsesFeature("android.hardware.usb.host")]
@@ -151,6 +153,7 @@ namespace BmwDeepObd
             public string DeviceAddress { get; set; }
             public string ConfigFileName { get; set; }
             public int LastVersionCode { get; set; }
+            public bool StorageRequirementsAccepted { get; set; }
             public bool CheckCpuUsage { get; set; }
             public bool VerifyEcuFiles { get; set; }
             public bool CommErrorsOccured { get; set; }
@@ -1022,6 +1025,7 @@ namespace BmwDeepObd
         }
 
         [Export("onActiveClick")]
+        // ReSharper disable once UnusedMember.Global
         public void OnActiveClick(View v)
         {
             if (ActivityCommon.EdiabasThread == null)
@@ -1033,6 +1037,7 @@ namespace BmwDeepObd
         }
 
         [Export("onErrorResetClick")]
+        // ReSharper disable once UnusedMember.Global
         public void OnErrorResetClick(View v)
         {
             if (!ActivityCommon.CommActive)
@@ -1058,6 +1063,7 @@ namespace BmwDeepObd
         }
 
         [Export("onCopyErrorsClick")]
+        // ReSharper disable once UnusedMember.Global
         public void OnCopyErrorsClick(View v)
         {
             if (!ActivityCommon.CommActive)
@@ -1334,6 +1340,7 @@ namespace BmwDeepObd
                     _instanceData.DeviceAddress = prefs.GetString("DeviceAddress", string.Empty);
                     _instanceData.ConfigFileName = prefs.GetString("ConfigFile", string.Empty);
                     _instanceData.LastVersionCode = prefs.GetInt("VersionCode", -1);
+                    _instanceData.StorageRequirementsAccepted = _instanceData.LastVersionCode == _currentVersionCode && prefs.GetBoolean("StorageAccepted", false);
 
                     ActivityCommon.BtNoEvents = prefs.GetBoolean("BtNoEvents", false);
                     ActivityCommon.EnableTranslation = prefs.GetBoolean("EnableTranslation", false);
@@ -1377,6 +1384,7 @@ namespace BmwDeepObd
                 prefsEdit.PutString("ConfigFile", _instanceData.ConfigFileName);
                 prefsEdit.PutString("StorageMedia", _activityCommon.CustomStorageMedia ?? string.Empty);
                 prefsEdit.PutInt("VersionCode", _currentVersionCode);
+                prefsEdit.PutBoolean("StorageAccepted", _instanceData.StorageRequirementsAccepted);
                 prefsEdit.PutBoolean("BtNoEvents", ActivityCommon.BtNoEvents);
                 prefsEdit.PutBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
                 prefsEdit.PutString("YandexApiKey", ActivityCommon.YandexApiKey ?? string.Empty);
@@ -2479,6 +2487,7 @@ namespace BmwDeepObd
             buttonErrorCopy.Enabled = present;
         }
 
+        // ReSharper disable once UnusedMember.Global
         public static String FormatResultDouble(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
         {
             return FormatResultDouble(new MultiMap<string, EdiabasNet.ResultData>(resultDict), dataName, format);
@@ -2524,6 +2533,7 @@ namespace BmwDeepObd
             return string.Empty;
         }
 
+        // ReSharper disable once UnusedMember.Global
         public static Int64 GetResultInt64(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
         {
             return GetResultInt64(new MultiMap<string, EdiabasNet.ResultData>(resultDict), dataName, 0, out found);
@@ -2547,6 +2557,7 @@ namespace BmwDeepObd
             return 0;
         }
 
+        // ReSharper disable once UnusedMember.Global
         public static Double GetResultDouble(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
         {
             return GetResultDouble(new MultiMap<string, EdiabasNet.ResultData>(resultDict), dataName, 0, out found);
@@ -2570,6 +2581,7 @@ namespace BmwDeepObd
             return 0;
         }
 
+        // ReSharper disable once UnusedMember.Global
         public static String GetResultString(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, out bool found)
         {
             return GetResultString(new MultiMap<string, EdiabasNet.ResultData>(resultDict), dataName, 0, out found);
@@ -3600,6 +3612,31 @@ namespace BmwDeepObd
                 return true;
             }
 #if OBB_MODE
+            if (!_instanceData.StorageRequirementsAccepted)
+            {
+                string message = string.Format(new FileSizeFormatProvider(), GetString(Resource.String.storage_requirements), EcuExtractSize);
+                _downloadEcuAlertDialog = new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_accept, (sender, args) =>
+                    {
+                        _instanceData.StorageRequirementsAccepted = true;
+                    })
+                    .SetNegativeButton(Resource.String.button_decline, (sender, args) =>
+                    {
+                    })
+                    .SetMessage(message)
+                    .SetTitle(Resource.String.alert_title_question)
+                    .Show();
+                _downloadEcuAlertDialog.DismissEvent += (sender, args) =>
+                {
+                    if (!_instanceData.StorageRequirementsAccepted)
+                    {
+                        Finish();
+                    }
+                    _downloadEcuAlertDialog = null;
+                    CheckForEcuFiles(checkPackage);
+                };
+                return false;
+            }
             if (!ValidEcuFiles(_instanceData.EcuPath) || !ValidEcuPackage(Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir)))
             {
                 string message = string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_extract), EcuExtractSize);

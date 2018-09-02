@@ -11,6 +11,8 @@
   <string name="button_select">Auswählen</string>
   <string name="button_generate">Generieren</string>
   <string name="button_copy">Kopieren</string>
+  <string name="button_accept">Akzeptieren</string>
+  <string name="button_decline">Ablehen</string>
   <string name="button_donate">Spenden</string>
   <string name="back_button_twice_for_exit">Die Schaltfläche zwei mal drücken zum Beenden</string>
   <string name="no_ext_storage">Kein externer Speicher verfügbar</string>
@@ -26,6 +28,7 @@
   <string name="ecu_package">Es stehen aktualisierte ECU Dateien für diese Anwendung zur Verfügung.</string>
   <string name="ecu_download">Wollen Sie jetzt die ECU Dateien herunterladen (Dateigröße ca. {0:fs1})?</string>
   <string name="manufacturer_select">Der aktuelle Hersteller ist {0}, um einen anderen zu wählen drücken Sie bitte \'Abbrechen\'.</string>
+  <string name="storage_requirements">Diese App benötigt ein schnelles Speichermedium mit einem freien Speicherbereich von mindestens {0:fs1}.\nDie Verwendung der App ist nicht zulässig, wenn diese Bedingung nicht akzeptiert wird.</string>
   <string name="ecu_extract">Die ECU Dateien müssen entpackt werden (Größe ca. {0:fs1}),\nder Download von Update-Informationen ist hierfür notwendig.\nWenn das Entpacken sehr langsam ist, verwenden Sie bitte ein schnelleres Speichermedium.\nWollen Sie fortfahren?</string>
   <string name="ecu_extract_confirm">Für das Entpacken der ECU Dateien (Größe ca. {0:fs1})\nist der Download von Update-Informationen notwendig.\nWenn das Entpacken sehr langsam ist, verwenden Sie bitte ein schnelleres Speichermedium.\nWollen Sie fortfahren?</string>
   <string name="error_no_error">Keine Fehler vorhanden</string>
@@ -37,7 +40,7 @@
 \nSie können gerne mitwirken oder Probleme melden.
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
 \n\nÄnderungen in dieser Version:\n</string>
-  <string name="version_last_changes">- Neuer VAG Modus, die Konfiguration müssen neu generiert werden\n- Der neue Modus kann in den Einstellungen abgeschaltet werden.\n- Kleinere Probleme behoben</string>
+  <string name="version_last_changes">- Verbesserte VAG UDS Fehlerdetails\n- Kleinere Probleme behoben</string>
   <string name="app_info_message">Deep OBD für BMW und VAG\nVersion: {0}\nId: {1}</string>
   <string name="vag_mode_info">Der VAG Modus ist noch experimentell.\nEs wird ein <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD Adapter</a> mit mindestens Firmwareversion 0.11 benötigt.\nIm Moment werden nur die Protokolle KWP2000, KWP1281, TP2.0 und UDS unterstützt.\nFür den neuen VAG Modus müssen die Konfiguration neu generiert werden.\nEs ist möglich den alten VAG Modus wieder in den globalen Einstellungen wählen.</string>
 
