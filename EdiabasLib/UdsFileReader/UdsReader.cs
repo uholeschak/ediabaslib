@@ -479,7 +479,10 @@ namespace UdsFileReader
                         BitLength = bitLength;
                     }
 
-                    MinTelLength = (ByteOffset ?? 0) + ((BitLength ?? 0) + (BitOffset ?? 0) + 7) / 8;
+                    if (BitLength.HasValue)
+                    {
+                        MinTelLength = (ByteOffset ?? 0) + ((BitLength ?? 0) + (BitOffset ?? 0) + 7) / 8;
+                    }
 
                     if (UInt32.TryParse(lineArray[offset + 9], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 nameDetailKey))
                     {
@@ -629,7 +632,7 @@ namespace UdsFileReader
             public UInt32? ByteOffset { get; }
             public UInt32? BitOffset { get; }
             public UInt32? BitLength { get; }
-            public UInt32 MinTelLength { get; }
+            public UInt32? MinTelLength { get; }
             public List<ValueName> NameValueList { get; }
             public List<MuxEntry> MuxEntryList { get; }
             public FixedEncodingEntry FixedEncoding { get; }
@@ -3492,9 +3495,13 @@ namespace UdsFileReader
                     resultList.Add(sb.ToString());
                 }
 
-                if (telLength < parseInfoMwb.DataTypeEntry.MinTelLength)
+                if (!parseInfoMwb.DataTypeEntry.MinTelLength.HasValue)
                 {
-                    telLength = (int) parseInfoMwb.DataTypeEntry.MinTelLength;
+                    return null;
+                }
+                if (telLength < parseInfoMwb.DataTypeEntry.MinTelLength.Value)
+                {
+                    telLength = (int) parseInfoMwb.DataTypeEntry.MinTelLength.Value;
                 }
             }
 

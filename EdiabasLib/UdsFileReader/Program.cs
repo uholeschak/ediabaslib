@@ -496,6 +496,15 @@ namespace UdsFileReader
                 sb.Append(string.Format(CultureInfo.InvariantCulture, "; Len: {0}", dataTypeEntry.BitLength.Value));
             }
 
+            if (dataTypeEntry.MinTelLength.HasValue)
+            {
+                sb.Append(string.Format(CultureInfo.InvariantCulture, "; MinTelLen: {0}", dataTypeEntry.MinTelLength.Value));
+            }
+            else
+            {
+                sb.Append("*** No MinTelLen");
+            }
+
             outStream.WriteLine(sb.ToString());
 
             if (dataTypeEntry.NameValueList != null)
