@@ -54,8 +54,14 @@
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Checksum\BZip2Crc.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Checksum\Crc32.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Checksum\IChecksum.cs" />
+    <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Core\Exceptions\SharpZipBaseException.cs" />
+    <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Core\Exceptions\StreamDecodingException.cs" />
+    <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Core\Exceptions\StreamUnsupportedException.cs" />
+    <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Core\Exceptions\UnexpectedEndOfStreamException.cs" />
+    <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Core\Exceptions\ValueOutOfRangeException.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Core\FileSystemScanner.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Core\INameTransform.cs" />
+    <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Core\InvalidNameException.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Core\IScanFilter.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Core\NameFilter.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Core\PathFilter.cs" />
@@ -72,12 +78,12 @@
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Lzw\LzwConstants.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Lzw\LzwException.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Lzw\LzwInputStream.cs" />
-    <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\SharpZipBaseException.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Tar\InvalidHeaderException.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Tar\TarArchive.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Tar\TarBuffer.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Tar\TarEntry.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Tar\TarException.cs" />
+    <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Tar\TarExtendedHeaderReader.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Tar\TarHeader.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Tar\TarInputStream.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Tar\TarOutputStream.cs" />
@@ -107,6 +113,7 @@
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Zip\ZipInputStream.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Zip\ZipNameTransform.cs" />
     <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Zip\ZipOutputStream.cs" />
+    <Compile Include="SharpZipLib\src\ICSharpCode.SharpZipLib\Zip\ZipStrings.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
