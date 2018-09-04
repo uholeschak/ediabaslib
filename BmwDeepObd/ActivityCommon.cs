@@ -227,6 +227,13 @@ namespace BmwDeepObd
         public const string DownloadDir = "Download";
         public const string EcuBaseDir = "Ecu";
         public const string VagBaseDir = "Vag";
+#if OBB_MODE
+        public const string EcuDirNameBmw = "EcuBmw";
+        public const string EcuDirNameVag = "EcuVag";
+#else
+        public const string EcuDirNameBmw = "Ecu";
+        public const string EcuDirNameVag = "EcuVag";
+#endif
         public const string AppNameSpace = "de.holeschak.bmw_deep_obd";
         public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
         public const string SettingBluetoothHciLog = "bluetooth_hci_log";
@@ -5265,7 +5272,8 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                bool vagDirPresent = Directory.Exists(Path.Combine(baseDir, VagBaseDir));
+                bool vagUdsDirPresent = Directory.Exists(Path.Combine(baseDir, VagBaseDir));
+                bool vagEcuDirPresent = Directory.Exists(Path.Combine(baseDir, EcuDirNameVag));
                 XDocument xmlDoc = XDocument.Load(contentFile);
                 if (xmlDoc.Root == null)
                 {
@@ -5302,10 +5310,15 @@ namespace BmwDeepObd
                         return false;
                     }
 
-                    bool vagFile = fileName.StartsWith(AppendDirectorySeparatorChar(VagBaseDir));
-                    if (!vagDirPresent && vagFile)
+                    bool vagUdsFile = fileName.StartsWith(AppendDirectorySeparatorChar(VagBaseDir));
+                    if (!vagUdsDirPresent && vagUdsFile)
                     {
-                        continue;   // ignore VAG files if not present
+                        continue;   // ignore VAG UDS files if not present
+                    }
+                    bool vagEcuFile = fileName.StartsWith(AppendDirectorySeparatorChar(EcuDirNameVag));
+                    if (!vagEcuDirPresent && vagEcuFile)
+                    {
+                        continue;   // ignore VAG ECU files if not present
                     }
                     XAttribute sizeAttr = fileNode.Attribute("size");
                     if (sizeAttr == null)
