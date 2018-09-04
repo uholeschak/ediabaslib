@@ -3400,8 +3400,19 @@ namespace BmwDeepObd
                     {
                         ignoreFolders = new List<string>
                         {
+                            ActivityCommon.AppendDirectorySeparatorChar(EcuDirNameVag),
                             ActivityCommon.AppendDirectorySeparatorChar(ActivityCommon.VagBaseDir)
                         };
+                    }
+                    else
+                    {
+                        if (!ActivityCommon.VagUdsFilesRequired())
+                        {
+                            ignoreFolders = new List<string>
+                            {
+                                ActivityCommon.AppendDirectorySeparatorChar(ActivityCommon.VagBaseDir)
+                            };
+                        }
                     }
                     ActivityCommon.ExtractZipFile(fileName, targetDirectory, key, ignoreFolders,
                         (percent, decrypt) =>
@@ -3732,6 +3743,13 @@ namespace BmwDeepObd
                 }
 #if OBB_MODE
                 if (ActivityCommon.VagFilesRequired())
+                {
+                    if (!Directory.Exists(Path.Combine(path, EcuDirNameVag)))
+                    {
+                        return false;
+                    }
+                }
+                if (ActivityCommon.VagUdsFilesRequired())
                 {
                     if (!Directory.Exists(Path.Combine(path, ActivityCommon.VagBaseDir)))
                     {
