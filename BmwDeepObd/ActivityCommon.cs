@@ -4342,7 +4342,12 @@ namespace BmwDeepObd
 
         public static bool VagFilesRequired()
         {
-            return SelectedManufacturer != ManufacturerType.Bmw && !OldVagMode;
+            return SelectedManufacturer != ManufacturerType.Bmw;
+        }
+
+        public static bool VagUdsFilesRequired()
+        {
+            return VagFilesRequired() && !OldVagMode;
         }
 
         public bool StoreTranslationCache(string fileName)
