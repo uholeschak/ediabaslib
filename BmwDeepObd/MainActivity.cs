@@ -170,15 +170,11 @@ namespace BmwDeepObd
         private const string SharedAppName = ActivityCommon.AppNameSpace;
         private const string AppFolderName = ActivityCommon.AppNameSpace;
 #if OBB_MODE
-        private const string EcuDirNameBmw = "EcuBmw";
-        private const string EcuDirNameVag = "EcuVag";
         private const string EcuDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Obb3.xml";
         private const long EcuExtractSize = 2500000000;         // extracted ecu files size
         private const string InfoXmlName = "ObbInfo.xml";
         private const string ContentFileName = "Content.xml";
 #else
-        private const string EcuDirNameBmw = "Ecu";
-        private const string EcuDirNameVag = "EcuVag";
         private const string EcuDownloadUrlBmw = @"http://www.holeschak.de/BmwDeepObd/Ecu3.xml";
         private const string EcuDownloadUrlVag = @"http://www.holeschak.de/BmwDeepObd/EcuVag1.xml";
         private const string InfoXmlName = "Info.xml";
@@ -240,13 +236,13 @@ namespace BmwDeepObd
                 {
                     case ActivityCommon.ManufacturerType.Bmw:
 #if OBB_MODE
-                        return Path.Combine(ActivityCommon.EcuBaseDir, EcuDirNameBmw);
+                        return Path.Combine(ActivityCommon.EcuBaseDir, ActivityCommon.EcuDirNameBmw);
 #else
                         return EcuDirNameBmw;
 #endif
                 }
 #if OBB_MODE
-                return Path.Combine(ActivityCommon.EcuBaseDir, EcuDirNameVag);
+                return Path.Combine(ActivityCommon.EcuBaseDir, ActivityCommon.EcuDirNameVag);
 #else
                 return EcuDirNameVag;
 #endif
@@ -2766,21 +2762,26 @@ namespace BmwDeepObd
                     _instanceData.VerifyEcuFiles = false;
                     if (ValidEcuPackage(ecuBaseDir))
                     {
+                        int lastPercent = -1;
                         if (!ActivityCommon.VerifyContent(Path.Combine(ecuBaseDir, ContentFileName), false, percent =>
                         {
-                            RunOnUiThread(() =>
+                            if (lastPercent != percent)
                             {
-                                if (_activityCommon == null)
+                                lastPercent = percent;
+                                RunOnUiThread(() =>
                                 {
-                                    return;
-                                }
-                                if (_compileProgress != null)
-                                {
-                                    _compileProgress.SetMessage(GetString(Resource.String.verify_files));
-                                    _compileProgress.Indeterminate = false;
-                                    _compileProgress.Progress = percent;
-                                }
-                            });
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+                                    if (_compileProgress != null)
+                                    {
+                                        _compileProgress.SetMessage(GetString(Resource.String.verify_files));
+                                        _compileProgress.Indeterminate = false;
+                                        _compileProgress.Progress = percent;
+                                    }
+                                });
+                            }
                             return false;
                         }))
                         {
@@ -3400,7 +3401,7 @@ namespace BmwDeepObd
                     {
                         ignoreFolders = new List<string>
                         {
-                            ActivityCommon.AppendDirectorySeparatorChar(EcuDirNameVag),
+                            ActivityCommon.AppendDirectorySeparatorChar(ActivityCommon.EcuDirNameVag),
                             ActivityCommon.AppendDirectorySeparatorChar(ActivityCommon.VagBaseDir)
                         };
                     }
@@ -3414,39 +3415,49 @@ namespace BmwDeepObd
                             };
                         }
                     }
+                    int lastZipPercent = -1;
                     ActivityCommon.ExtractZipFile(fileName, targetDirectory, key, ignoreFolders,
                         (percent, decrypt) =>
                         {
+                            if (lastZipPercent != percent)
+                            {
+                                lastZipPercent = percent;
+                                RunOnUiThread(() =>
+                                {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+                                    if (_downloadProgress != null)
+                                    {
+                                        _downloadProgress.SetMessage(decrypt ? GetString(Resource.String.decrypt_file) : GetString(Resource.String.extract_file));
+                                        _downloadProgress.Progress = percent;
+                                    }
+                                });
+                            }
+                            return _extractZipCanceled;
+                        });
+#if OBB_MODE
+                    int lastVerifyPercent = -1;
+                    if (!ActivityCommon.VerifyContent(Path.Combine(targetDirectory, ContentFileName), true, percent =>
+                    {
+                        if (lastVerifyPercent != percent)
+                        {
+                            lastVerifyPercent = percent;
                             RunOnUiThread(() =>
                             {
                                 if (_activityCommon == null)
                                 {
                                     return;
                                 }
+
                                 if (_downloadProgress != null)
                                 {
-                                    _downloadProgress.SetMessage(decrypt ? GetString(Resource.String.decrypt_file) : GetString(Resource.String.extract_file));
+                                    _downloadProgress.SetMessage(GetString(Resource.String.verify_files));
                                     _downloadProgress.Progress = percent;
                                 }
                             });
-                            return _extractZipCanceled;
-                        });
-#if OBB_MODE
-                    if (!ActivityCommon.VerifyContent(Path.Combine(targetDirectory, ContentFileName), true, percent =>
-                    {
-                        RunOnUiThread(() =>
-                        {
-                            if (_activityCommon == null)
-                            {
-                                return;
-                            }
-
-                            if (_downloadProgress != null)
-                            {
-                                _downloadProgress.SetMessage(GetString(Resource.String.verify_files));
-                                _downloadProgress.Progress = percent;
-                            }
-                        });
+                        }
                         return _extractZipCanceled;
                     }))
                     {
@@ -3744,7 +3755,7 @@ namespace BmwDeepObd
 #if OBB_MODE
                 if (ActivityCommon.VagFilesRequired())
                 {
-                    if (!Directory.Exists(Path.Combine(path, EcuDirNameVag)))
+                    if (!Directory.Exists(Path.Combine(path, ActivityCommon.EcuDirNameVag)))
                     {
                         return false;
                     }
