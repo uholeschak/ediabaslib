@@ -5274,6 +5274,10 @@ namespace BmwDeepObd
 
                 bool vagUdsDirPresent = Directory.Exists(Path.Combine(baseDir, VagBaseDir));
                 bool vagEcuDirPresent = Directory.Exists(Path.Combine(baseDir, EcuDirNameVag));
+                if (vagUdsDirPresent && !vagEcuDirPresent)
+                {
+                    return false;
+                }
                 XDocument xmlDoc = XDocument.Load(contentFile);
                 if (xmlDoc.Root == null)
                 {
