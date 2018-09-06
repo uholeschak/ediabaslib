@@ -3573,16 +3573,11 @@ namespace BmwDeepObd
                                 {
                                     string valueName = parseInfoMwb.Name ?? string.Empty;
                                     StringBuilder sbDispText = new StringBuilder();
-                                    if (parseInfoMwb.DataId.HasValue)
+                                    if (!string.IsNullOrEmpty(parseInfoMwb.DataIdString))
                                     {
-                                        sbDispText.Append(string.Format(Culture, "{0:00000}", parseInfoMwb.DataId.Value));
-                                        if (parseInfoMwb.DataTypeEntry.DataDetailId.HasValue)
-                                        {
-                                            sbDispText.Append("-");
-                                            sbDispText.Append(string.Format(Culture, "{0:00000}", parseInfoMwb.DataTypeEntry.DataDetailId.Value));
-                                        }
+                                        sbDispText.Append(parseInfoMwb.DataIdString);
                                     }
-                                    if (parseInfoMwb.Name != null)
+                                    if (!string.IsNullOrEmpty(parseInfoMwb.Name))
                                     {
                                         if (sbDispText.Length > 0)
                                         {
