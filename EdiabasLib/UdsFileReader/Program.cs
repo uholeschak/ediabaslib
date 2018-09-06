@@ -268,6 +268,7 @@ namespace UdsFileReader
                             sb.Insert(0, "Name: ");
                             outStream.WriteLine(sb.ToString());
                             outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Service ID: {0:X04}", parseInfoMwb.ServiceId));
+                            outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Data ID Name: {0}", parseInfoMwb.DataIdString));
 
                             if (!PrintDataTypeEntry(outStream, parseInfoMwb.DataTypeEntry))
                             {

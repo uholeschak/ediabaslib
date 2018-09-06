@@ -488,6 +488,7 @@ namespace UdsFileReader
                     {
                         if (udsReader._textMap.TryGetValue(nameDetailKey, out string[] nameDetailArray))
                         {
+                            NameDetailKey = nameDetailKey;
                             NameDetailArray = nameDetailArray;
                             if (nameDetailArray != null)
                             {
@@ -497,9 +498,13 @@ namespace UdsFileReader
                                 }
                                 if (nameDetailArray.Length >= 3)
                                 {
-                                    if (UInt32.TryParse(nameDetailArray[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 value))
+                                    if (UInt32.TryParse(nameDetailArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 valueType))
                                     {
-                                        DataDetailId = value;
+                                        DataDetailIdType = valueType;
+                                    }
+                                    if (UInt32.TryParse(nameDetailArray[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 valueId))
+                                    {
+                                        DataDetailId = valueId;
                                     }
                                 }
                             }
@@ -620,9 +625,11 @@ namespace UdsFileReader
             public UdsReader UdsReader { get; }
             public string[] LineArray { get; }
             public UInt32 DataTypeId { get; }
+            public UInt32? NameDetailKey { get; }
             public string[] NameDetailArray { get; }
             public string NameDetail { get; }
             public UInt32? DataDetailId { get; }
+            public UInt32? DataDetailIdType { get; }
             public Int64? NumberOfDigits { get; }
             public UInt32? FixedEncodingId { get; }
             public double? ScaleOffset { get; }
@@ -910,9 +917,10 @@ namespace UdsFileReader
 
         public class ParseInfoMwb : ParseInfoBase
         {
-            public ParseInfoMwb(UInt32 serviceId, string[] lineArray, string[] nameArray, DataTypeEntry dataTypeEntry) : base(lineArray)
+            public ParseInfoMwb(UInt32 serviceId, string[] lineArray, UInt32 nameKey, string[] nameArray, DataTypeEntry dataTypeEntry) : base(lineArray)
             {
                 ServiceId = serviceId;
+                NameKey = nameKey;
                 NameArray = nameArray;
                 DataTypeEntry = dataTypeEntry;
                 if (nameArray != null)
@@ -923,12 +931,30 @@ namespace UdsFileReader
                     }
                     if (nameArray.Length >= 3)
                     {
-                        if (UInt32.TryParse(nameArray[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 value))
+                        if (UInt32.TryParse(nameArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 valueType))
                         {
-                            DataId = value;
+                            DataIdType = valueType;
+                        }
+                        if (UInt32.TryParse(nameArray[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 valueId))
+                        {
+                            DataId = valueId;
                         }
                     }
                 }
+
+                StringBuilder sbIdName = new StringBuilder();
+                string namePart1 = GetDataIdName(NameKey, DataId, DataIdType);
+                if (!string.IsNullOrEmpty(namePart1))
+                {
+                    sbIdName.Append(namePart1);
+                    string namePart2 = GetDataIdName(DataTypeEntry.NameDetailKey, DataTypeEntry.DataDetailId, DataTypeEntry.DataDetailIdType);
+                    if (!string.IsNullOrEmpty(namePart2))
+                    {
+                        sbIdName.Append("-");
+                        sbIdName.Append(namePart2);
+                    }
+                }
+                DataIdString = sbIdName.ToString();
 
                 StringBuilder sbId = new StringBuilder();
                 sbId.Append(string.Format(CultureInfo.InvariantCulture, "{0}", ServiceId));
@@ -946,11 +972,85 @@ namespace UdsFileReader
             }
 
             public UInt32 ServiceId { get; }
+            public UInt32 NameKey { get; }
             public string[] NameArray { get; }
             public string Name { get; }
             public UInt32? DataId { get; }
+            public UInt32? DataIdType { get; }
             public DataTypeEntry DataTypeEntry { get; }
+            public string DataIdString { get; }
             public string UniqueIdString { get; }
+
+            static string GetDataIdName(UInt32? nameKey, UInt32? dataId, UInt32? dataIdType)
+            {
+                if (!nameKey.HasValue)
+                {
+                    return string.Empty;
+                }
+
+                UInt32 displayValue;
+                string prefix;
+                if (dataId.HasValue && dataIdType.HasValue)
+                {
+                    displayValue = dataId.Value;
+                    switch (dataIdType.Value)
+                    {
+                        case 1:
+                            prefix = "FSS";
+                            break;
+
+                        case 2:
+                            prefix = "IDE";
+                            break;
+
+                        case 3:
+                            prefix = "LTD";
+                            break;
+
+                        case 4:
+                            prefix = "LTE";
+                            break;
+
+                        case 5:
+                            prefix = "LTF";
+                            break;
+
+                        case 6:
+                            prefix = "LTG";
+                            break;
+
+                        case 7:
+                            prefix = "MAS";
+                            break;
+
+                        case 8:
+                            prefix = "SER";
+                            break;
+
+                        case 9:
+                            prefix = "SFT";
+                            break;
+
+                        case 10:
+                        case 11:
+                        case 12:
+                        case 13:
+                            prefix = string.Format(CultureInfo.InvariantCulture, "LR{0}", dataIdType.Value - 10);
+                            break;
+
+                        default:
+                            prefix = "UNK";
+                            break;
+                    }
+                }
+                else
+                {
+                    displayValue = nameKey.Value;
+                    prefix = "ENG";
+                }
+
+                return string.Format(CultureInfo.InvariantCulture, "{0}{1:00000}", prefix, displayValue & 0x1FFFF);
+            }
         }
 
         public class ParseInfoDtc : ParseInfoBase
@@ -3586,7 +3686,7 @@ namespace UdsFileReader
                             return null;
                         }
 
-                        parseInfo = new ParseInfoMwb(serviceId, lineArray, nameArray, dataTypeEntry);
+                        parseInfo = new ParseInfoMwb(serviceId, lineArray, nameKey, nameArray, dataTypeEntry);
                         break;
                     }
 
