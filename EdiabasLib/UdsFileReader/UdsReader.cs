@@ -958,17 +958,23 @@ namespace UdsFileReader
 
                 StringBuilder sbId = new StringBuilder();
                 sbId.Append(string.Format(CultureInfo.InvariantCulture, "{0}", ServiceId));
+                sbId.Append("-");
+                sbId.Append(DataIdString);
+                UniqueIdString = sbId.ToString();
+
+                StringBuilder sbIdOld = new StringBuilder();
+                sbIdOld.Append(string.Format(CultureInfo.InvariantCulture, "{0}", ServiceId));
                 if (DataId.HasValue)
                 {
-                    sbId.Append("-");
-                    sbId.Append(string.Format(CultureInfo.InvariantCulture, "{0}", DataId.Value));
+                    sbIdOld.Append("-");
+                    sbIdOld.Append(string.Format(CultureInfo.InvariantCulture, "{0}", DataId.Value));
                     if (DataTypeEntry.DataDetailId.HasValue)
                     {
-                        sbId.Append("-");
-                        sbId.Append(string.Format(CultureInfo.InvariantCulture, "{0}", DataTypeEntry.DataDetailId.Value));
+                        sbIdOld.Append("-");
+                        sbIdOld.Append(string.Format(CultureInfo.InvariantCulture, "{0}", DataTypeEntry.DataDetailId.Value));
                     }
                 }
-                UniqueIdString = sbId.ToString();
+                UniqueIdStringOld = sbIdOld.ToString();
             }
 
             public UInt32 ServiceId { get; }
@@ -980,6 +986,7 @@ namespace UdsFileReader
             public DataTypeEntry DataTypeEntry { get; }
             public string DataIdString { get; }
             public string UniqueIdString { get; }
+            public string UniqueIdStringOld { get; }
 
             static string GetDataIdName(UInt32? nameKey, UInt32? dataId, UInt32? dataIdType)
             {
@@ -3198,6 +3205,10 @@ namespace UdsFileReader
                             if (!mbwSegmentDict.ContainsKey(parseInfoMwb.UniqueIdString))
                             {
                                 mbwSegmentDict.Add(parseInfoMwb.UniqueIdString, parseInfoMwb);
+                            }
+                            if (!mbwSegmentDict.ContainsKey(parseInfoMwb.UniqueIdStringOld))
+                            {
+                                mbwSegmentDict.Add(parseInfoMwb.UniqueIdStringOld, parseInfoMwb);
                             }
 
                             string[] uniqueParts1 = parseInfoMwb.UniqueIdString.Split('-');

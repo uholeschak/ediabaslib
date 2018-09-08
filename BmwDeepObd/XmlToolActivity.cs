@@ -3600,7 +3600,8 @@ namespace BmwDeepObd
                                     string type = DataTypeString;
                                     ActivityCommon.MwTabEntry mwTabEntry =
                                         new ActivityCommon.MwTabEntry((int) parseInfoMwb.ServiceId, null, valueName, string.Empty, string.Empty, string.Empty, null, null);
-                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, null, commentList, mwTabEntry));
+                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, null, commentList, mwTabEntry)
+                                        { NameOld = parseInfoMwb.UniqueIdStringOld });
                                 }
                             }
                             continue;
@@ -6371,11 +6372,17 @@ namespace BmwDeepObd
                 if (compareDisplayTag)
                 {
                     string displayTag = DisplayNameJobPrefix + job.Name + "#" + result.Name;
+                    string displayTagOld = displayTag;
+                    if (!string.IsNullOrEmpty(result.NameOld))
+                    {
+                        displayTagOld = DisplayNameJobPrefix + job.Name + "#" + result.NameOld;
+                    }
                     return (from node in jobNode.Elements(ns + "display")
                         let nameAttrib = node.Attribute("name")
                         where nameAttrib != null
-                        where string.Compare(nameAttrib.Value, displayTag, StringComparison.OrdinalIgnoreCase) == 0
-                        select node).FirstOrDefault();
+                        where string.Compare(nameAttrib.Value, displayTag, StringComparison.OrdinalIgnoreCase) == 0 ||
+                               string.Compare(nameAttrib.Value, displayTagOld, StringComparison.OrdinalIgnoreCase) == 0
+                            select node).FirstOrDefault();
 
                 }
 

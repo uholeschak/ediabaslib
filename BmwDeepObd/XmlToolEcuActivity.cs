@@ -44,6 +44,8 @@ namespace BmwDeepObd
 
             public string Name { get; }
 
+            public string NameOld { get; set; }
+
             public string DisplayName { get; }
 
             public string Type { get; }
