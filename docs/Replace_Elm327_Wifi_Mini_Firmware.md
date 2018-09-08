@@ -1,6 +1,7 @@
 # Replace ELM327 Wifi V1.5 HW: V01W_M_V1.0 adapter firmware
 
 This chapter describes how to replace the ELM327 Wifi V1.5 HW: V01W_M_V1.0 adapter PIC18F25K80 and ESP8266ex firmware.  
+**At the moment the firmware ist still untested and officially not supported by EdiabasLib!**
 
 ### Requirements:
 
