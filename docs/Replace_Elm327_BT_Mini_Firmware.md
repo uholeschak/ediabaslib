@@ -1,6 +1,7 @@
 # Replace ELM327 BT V1.5 HW: V01_M_V2.3 adapter firmware (or equivalent)
 
 This chapter describes how to replace the ELM327 BT V1.5 HW: V01_M_V2.3 adapter PIC18F25K80 firmware and YC1021 BT settings.  
+**At the moment the firmware ist still untested and officially not supported by EdiabasLib!**
 
 ### Requirements:
 
