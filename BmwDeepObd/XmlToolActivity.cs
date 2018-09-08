@@ -345,6 +345,7 @@ namespace BmwDeepObd
         public const string DataTypeReal = @"real";
         public const string DataTypeInteger = @"integer";
         public const string DataTypeBinary = @"binary";
+        public const string DataTypeStringReal = @"string/real";
 
         // Intent extra
         public const string ExtraInitDir = "init_dir";
@@ -3597,7 +3598,7 @@ namespace BmwDeepObd
                                     List<string> commentList = new List<string> {sbComment.ToString()};
 
                                     string name = parseInfoMwb.UniqueIdString;
-                                    string type = DataTypeString;
+                                    string type = parseInfoMwb.DataTypeEntry.HasDataValue() ? DataTypeStringReal : DataTypeString;
                                     ActivityCommon.MwTabEntry mwTabEntry =
                                         new ActivityCommon.MwTabEntry((int) parseInfoMwb.ServiceId, null, valueName, string.Empty, string.Empty, string.Empty, null, null);
                                     job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, displayText, type, null, commentList, mwTabEntry)

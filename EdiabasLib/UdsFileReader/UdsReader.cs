@@ -666,8 +666,28 @@ namespace UdsFileReader
                 return dataTypeName;
             }
 
+            public bool HasDataValue()
+            {
+                DataType dataType = (DataType)(DataTypeId & DataTypeMaskEnum);
+                switch (dataType)
+                {
+                    case DataType.FloatScaled:
+                    case DataType.HexScaled:
+                    case DataType.Integer1:
+                    case DataType.Integer2:
+                        return true;
+                }
+                return false;
+            }
+
             public string ToString(byte[] data)
             {
+                return ToString(data, out double? _);
+            }
+
+            public string ToString(byte[] data, out double? stringDataValue)
+            {
+                stringDataValue = null;
                 if (data.Length == 0)
                 {
                     return string.Empty;
@@ -819,6 +839,7 @@ namespace UdsFileReader
                             if (dataType == DataType.Integer1 || dataType == DataType.Integer2)
                             {
                                 sb.Append($"{valueSigned}");
+                                stringDataValue = valueSigned;
                                 break;
                             }
                             scaledValue = valueSigned;
@@ -828,6 +849,7 @@ namespace UdsFileReader
                             if (dataType == DataType.Integer1 || dataType == DataType.Integer2)
                             {
                                 sb.Append($"{value}");
+                                stringDataValue = value;
                                 break;
                             }
                             scaledValue = value;
@@ -856,10 +878,12 @@ namespace UdsFileReader
                         if (dataType == DataType.HexScaled)
                         {
                             sb.Append($"{(UInt64)scaledValue:X}");
+                            stringDataValue = scaledValue;
                             break;
                         }
 
                         sb.Append(scaledValue.ToString($"F{NumberOfDigits ?? 0}"));
+                        stringDataValue = scaledValue;
                         break;
                     }
 

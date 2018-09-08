@@ -1516,7 +1516,15 @@ namespace BmwDeepObd
                                             if (parseInfoMwb != null)
                                             {
                                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UniqueId match: {0}", parseInfoMwb.UniqueIdString);
-                                                resultText = parseInfoMwb.DataTypeEntry.ToString((byte[])resultData.OpData);
+                                                resultText = parseInfoMwb.DataTypeEntry.ToString((byte[])resultData.OpData, out double? stringDataValue);
+                                                if (stringDataValue.HasValue)
+                                                {
+                                                    string resultTextFormat = FormatResult(new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeR, "ERGEBNIS1WERT", stringDataValue.Value), _selectedResult.Format);
+                                                    if (!string.IsNullOrEmpty(resultTextFormat))
+                                                    {
+                                                        resultText += " / " + resultTextFormat;
+                                                    }
+                                                }
                                             }
                                         }
 
