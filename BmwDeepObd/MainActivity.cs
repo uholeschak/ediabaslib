@@ -1206,7 +1206,8 @@ namespace BmwDeepObd
                             connectParameter = new EdFtdiInterface.ConnectParameterType(_activityCommon.UsbManager);
                             break;
                     }
-                    ActivityCommon.EdiabasThread.StartThread(portName, connectParameter, pageInfo, true, _instanceData.TraceDir, _instanceData.TraceAppend, _instanceData.DataLogDir, _instanceData.DataLogAppend);
+                    ActivityCommon.EdiabasThread.StartThread(portName, connectParameter, pageInfo, true,
+                        _instanceData.VagPath, _instanceData.TraceDir, _instanceData.TraceAppend, _instanceData.DataLogDir, _instanceData.DataLogAppend);
                     if (UseCommService())
                     {
                         _activityCommon.StartForegroundService();
