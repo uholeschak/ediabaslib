@@ -2996,7 +2996,12 @@ namespace BmwDeepObd
                 {
                     if (resultData.OpData.GetType() == typeof(byte[]))
                     {
-                        return parseInfoMwb.DataTypeEntry.ToString((byte[])resultData.OpData);
+                        string resultText = parseInfoMwb.DataTypeEntry.ToString((byte[])resultData.OpData, out double? stringDataValue);
+                        if (stringDataValue.HasValue && !string.IsNullOrEmpty(displayInfo.Format))
+                        {
+                            resultText = EdiabasNet.FormatResult(new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeR, displayInfo.Result, stringDataValue.Value), displayInfo.Format) ?? string.Empty;
+                        }
+                        return resultText;
                     }
                 }
             }
