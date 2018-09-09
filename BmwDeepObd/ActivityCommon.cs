@@ -2968,8 +2968,10 @@ namespace BmwDeepObd
             return sbResult.ToString();
         }
 
-        public static String FormatResultVagUds(string udsFileName, JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
+        public static String FormatResultVagUds(string udsFileName, JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict,
+            out double? dataValue)
         {
+            dataValue = null;
             if (!VagUdsActive)
             {
                 return string.Empty;
@@ -2999,6 +3001,7 @@ namespace BmwDeepObd
                         string resultText = parseInfoMwb.DataTypeEntry.ToString((byte[])resultData.OpData, out double? stringDataValue);
                         if (stringDataValue.HasValue && !string.IsNullOrEmpty(displayInfo.Format))
                         {
+                            dataValue = stringDataValue;
                             resultText = EdiabasNet.FormatResult(new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeR, displayInfo.Result, stringDataValue.Value), displayInfo.Format) ?? string.Empty;
                         }
                         return resultText;
