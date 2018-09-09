@@ -2252,13 +2252,14 @@ namespace BmwDeepObd
                     {
                         foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                         {
+                            double? dataValue = null;
                             string result = ActivityCommon.FormatResult(pageInfo, displayInfo, resultDict, out Android.Graphics.Color? textColor);
                             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                             {
                                 if (ActivityCommon.VagUdsActive && !string.IsNullOrEmpty(pageInfo.JobsInfo.VagUdsFileName))
                                 {
                                     string udsFileName = Path.Combine(_instanceData.VagPath, pageInfo.JobsInfo.VagUdsFileName);
-                                    string resultUds = ActivityCommon.FormatResultVagUds(udsFileName, pageInfo, displayInfo, resultDict);
+                                    string resultUds = ActivityCommon.FormatResultVagUds(udsFileName, pageInfo, displayInfo, resultDict, out dataValue);
                                     if (!string.IsNullOrEmpty(resultUds))
                                     {
                                         result = resultUds;
@@ -2272,13 +2273,21 @@ namespace BmwDeepObd
                                 {
                                     if (displayInfo.GridType != JobReader.DisplayInfo.GridModeType.Hidden)
                                     {
-                                        double value = GetResultDouble(resultDict, displayInfo.Result, 0, out bool foundDouble);
-                                        if (!foundDouble)
+                                        double value;
+                                        if (dataValue.HasValue)
                                         {
-                                            Int64 valueInt64 = GetResultInt64(resultDict, displayInfo.Result, 0, out bool foundInt64);
-                                            if (foundInt64)
+                                            value = dataValue.Value;
+                                        }
+                                        else
+                                        {
+                                            value = GetResultDouble(resultDict, displayInfo.Result, 0, out bool foundDouble);
+                                            if (!foundDouble)
                                             {
-                                                value = valueInt64;
+                                                Int64 valueInt64 = GetResultInt64(resultDict, displayInfo.Result, 0, out bool foundInt64);
+                                                if (foundInt64)
+                                                {
+                                                    value = valueInt64;
+                                                }
                                             }
                                         }
 
