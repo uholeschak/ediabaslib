@@ -374,6 +374,24 @@ namespace BmwDeepObd
             }
         }
 
+        private string FormatResult(JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
+        {
+            string result = ActivityCommon.FormatResult(pageInfo, displayInfo, resultDict, out Android.Graphics.Color? _);
+            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+            {
+                if (ActivityCommon.VagUdsActive && !string.IsNullOrEmpty(pageInfo.JobsInfo.VagUdsFileName))
+                {
+                    string udsFileName = Path.Combine(_vagPath, pageInfo.JobsInfo.VagUdsFileName);
+                    string resultUds = ActivityCommon.FormatResultVagUds(udsFileName, pageInfo, displayInfo, resultDict, out double? _);
+                    if (!string.IsNullOrEmpty(resultUds))
+                    {
+                        result = resultUds;
+                    }
+                }
+            }
+            return result;
+        }
+
         private void LogData(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
         {
             if (_swDataLog == null)
@@ -386,19 +404,7 @@ namespace BmwDeepObd
             bool logDataPresent = false;
             foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
             {
-                string result = ActivityCommon.FormatResult(pageInfo, displayInfo, resultDict, out Android.Graphics.Color? _);
-                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
-                {
-                    if (ActivityCommon.VagUdsActive && !string.IsNullOrEmpty(pageInfo.JobsInfo.VagUdsFileName))
-                    {
-                        string udsFileName = Path.Combine(_vagPath, pageInfo.JobsInfo.VagUdsFileName);
-                        string resultUds = ActivityCommon.FormatResultVagUds(udsFileName, pageInfo, displayInfo, resultDict, out double? _);
-                        if (!string.IsNullOrEmpty(resultUds))
-                        {
-                            result = resultUds;
-                        }
-                    }
-                }
+                string result = FormatResult(pageInfo, displayInfo, resultDict);
                 if (result != null)
                 {
                     if (!string.IsNullOrEmpty(displayInfo.LogTag))
@@ -451,7 +457,7 @@ namespace BmwDeepObd
             };
             foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
             {
-                string result = ActivityCommon.FormatResult(pageInfo, displayInfo, resultDict, out Android.Graphics.Color? _);
+                string result = FormatResult(pageInfo, displayInfo, resultDict);
                 if (result != null)
                 {
                     BroadcastItem broadcastItem = new BroadcastItem
