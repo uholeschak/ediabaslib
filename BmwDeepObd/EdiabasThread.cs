@@ -177,6 +177,7 @@ namespace BmwDeepObd
         private bool _ediabasJobAbort;
         private JobReader.PageInfo _lastPageInfo;
         private long _lastUpdateTime;
+        private string _vagPath;
         private string _logDir;
         private bool _appendLog;
         private StreamWriter _swDataLog;
@@ -229,7 +230,7 @@ namespace BmwDeepObd
             }
         }
 
-        public bool StartThread(string comPort, object connectParameter, JobReader.PageInfo pageInfo, bool commActive, string traceDir, bool traceAppend, string logDir, bool appendLog)
+        public bool StartThread(string comPort, object connectParameter, JobReader.PageInfo pageInfo, bool commActive, string vagPath, string traceDir, bool traceAppend, string logDir, bool appendLog)
         {
             if (_workerThread != null)
             {
@@ -267,6 +268,7 @@ namespace BmwDeepObd
                 JobPageInfo = pageInfo;
                 _lastPageInfo = null;
                 _lastUpdateTime = Stopwatch.GetTimestamp();
+                _vagPath = vagPath;
                 _logDir = logDir;
                 _appendLog = appendLog;
                 InitProperties(null);
@@ -385,6 +387,18 @@ namespace BmwDeepObd
             foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
             {
                 string result = ActivityCommon.FormatResult(pageInfo, displayInfo, resultDict, out Android.Graphics.Color? _);
+                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                {
+                    if (ActivityCommon.VagUdsActive && !string.IsNullOrEmpty(pageInfo.JobsInfo.VagUdsFileName))
+                    {
+                        string udsFileName = Path.Combine(_vagPath, pageInfo.JobsInfo.VagUdsFileName);
+                        string resultUds = ActivityCommon.FormatResultVagUds(udsFileName, pageInfo, displayInfo, resultDict, out double? _);
+                        if (!string.IsNullOrEmpty(resultUds))
+                        {
+                            result = resultUds;
+                        }
+                    }
+                }
                 if (result != null)
                 {
                     if (!string.IsNullOrEmpty(displayInfo.LogTag))
