@@ -2859,8 +2859,8 @@ namespace BmwDeepObd
                             // ReSharper disable once NotResolvedInText
                             throw new ArgumentOutOfRangeException("ResolveSgbdFile", "No address entry found");
                         }
-                        ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Mapped address {0:X02} to ISOTP CAN IDs: {1:X03}, {2:X03}",
-                            address, ecuAddressEntry.Tp20EcuAddr, ecuAddressEntry.Tp20TesterAddr);
+                        ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Mapped address {0:X02} to UDS CAN IDs: {1:X03}, {2:X03}",
+                            address, ecuAddressEntry.IsoTpEcuCanId, ecuAddressEntry.IsoTpTesterCanId);
 
                         SetEdiabasUdsCanId(ediabas, ecuAddressEntry);
                         mapped = true;
