@@ -188,7 +188,7 @@ namespace UdsFileReader
                     foreach (string subDir in dirList)
                     {
                         string part1 = PartNumber.Substring(0, 2);
-                        string part2 = string.Format(CultureInfo.InvariantCulture, "{0:00}", Address);
+                        string part2 = string.Format(CultureInfo.InvariantCulture, "{0:X02}", Address);
                         string baseName = part1 + "-" + part2;
 
                         string fileName = Path.Combine(subDir, baseName.ToLowerInvariant() + FileExtension);
