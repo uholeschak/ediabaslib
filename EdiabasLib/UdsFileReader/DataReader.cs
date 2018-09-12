@@ -40,21 +40,36 @@ namespace UdsFileReader
 
         public class FileNameResolver
         {
-            public FileNameResolver(DataReader dataReader, string partNumber, int address)
+            public FileNameResolver(DataReader dataReader, string partNumber, string hwPartNumber, int address)
             {
                 DataReader = dataReader;
                 PartNumber = partNumber;
+                HwPartNumber = hwPartNumber;
                 Address = address;
 
-                if (PartNumber.Length > 9)
+                _fullName = ConvertPartNumber(PartNumber, out _baseName);
+                _fullNameHw = ConvertPartNumber(hwPartNumber, out _baseNameHw);
+            }
+
+            private static string ConvertPartNumber(string partNumber, out string baseName)
+            {
+                string fullName = string.Empty;
+                baseName = string.Empty;
+                if (!string.IsNullOrEmpty(partNumber) && partNumber.Length >= 9)
                 {
-                    string part1 = PartNumber.Substring(0, 3);
-                    string part2 = PartNumber.Substring(3, 3);
-                    string part3 = PartNumber.Substring(6, 3);
-                    string suffix = PartNumber.Substring(9);
-                    _baseName = part1 + "-" + part2 + "-" + part3;
-                    _fullName = _baseName + "-" + suffix;
+                    string part1 = partNumber.Substring(0, 3);
+                    string part2 = partNumber.Substring(3, 3);
+                    string part3 = partNumber.Substring(6, 3);
+                    baseName = part1 + "-" + part2 + "-" + part3;
+                    fullName = baseName;
+                    if (partNumber.Length > 9)
+                    {
+                        string suffix = partNumber.Substring(9);
+                        fullName = baseName + "-" + suffix;
+                    }
                 }
+
+                return fullName;
             }
 
             public string GetFileName(string rootDir)
@@ -74,6 +89,13 @@ namespace UdsFileReader
                         return null;
                     }
 
+                    string baseFileName = Path.GetFileNameWithoutExtension(fileName);
+                    if (string.IsNullOrEmpty(baseFileName))
+                    {
+                        return null;
+                    }
+
+                    bool newFormat = baseFileName.Length >= 5 && baseFileName[2] == '-';
                     List<string[]> redirectList = GetRedirects(fileName);
                     if (redirectList != null)
                     {
@@ -84,37 +106,52 @@ namespace UdsFileReader
                             {
                                 continue;
                             }
+                            bool matched = false;
 
-                            for (int i = 1; i < redirects.Length; i++)
+                            if (newFormat)
                             {
-                                string redirect = redirects[i].Trim();
-                                bool matched = false;
-                                if (redirect.Length > 12)
-                                {   // min 1 char suffix
-                                    string regString = WildCardToRegular(redirect);
-                                    if (Regex.IsMatch(_fullName, regString, RegexOptions.IgnoreCase))
+                                string fullName = _fullName;
+                                if (redirects.Length >= 3)
+                                {
+                                    string redirectSource = redirects[2].Trim();
+                                    if (string.Compare(redirectSource, "HW", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
-                                        matched = true;
+                                        fullName = _fullNameHw;
                                     }
                                 }
-                                else
+
+                                if (string.IsNullOrEmpty(fullName))
                                 {
+                                    continue;
+                                }
+
+                                string redirect = redirects[1].Trim();
+                                string regString = WildCardToRegular(redirect);
+                                if (Regex.IsMatch(fullName, regString, RegexOptions.IgnoreCase))
+                                {
+                                    matched = true;
+                                }
+                            }
+                            else
+                            {
+                                for (int i = 1; i < redirects.Length; i++)
+                                {
+                                    string redirect = redirects[i].Trim();
                                     string fullRedirect = _baseName + redirect;
                                     if (string.Compare(_fullName, fullRedirect, StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         matched = true;
                                     }
                                 }
-
-                                if (matched)
+                            }
+                            if (matched)
+                            {
+                                foreach (string subDir in dirList)
                                 {
-                                    foreach (string subDir in dirList)
+                                    string targetFileName = Path.Combine(subDir, targetFile.ToLowerInvariant());
+                                    if (File.Exists(targetFileName))
                                     {
-                                        string targetFileName = Path.Combine(subDir, targetFile.ToLowerInvariant());
-                                        if (File.Exists(targetFileName))
-                                        {
-                                            return targetFileName;
-                                        }
+                                        return targetFileName;
                                     }
                                 }
                             }
@@ -221,10 +258,13 @@ namespace UdsFileReader
 
             public DataReader DataReader { get; }
             public string PartNumber { get; }
+            public string HwPartNumber { get; }
             public int Address { get; }
 
             private readonly string _fullName;
             private readonly string _baseName;
+            private readonly string _fullNameHw;
+            private readonly string _baseNameHw;
         }
 
         public List<string> ErrorCodeToString(uint errorCode, uint errorDetail, ErrorType errorType, UdsReader udsReader = null)
@@ -673,7 +713,14 @@ namespace UdsFileReader
 
         private static string WildCardToRegular(string value)
         {
-            return "^" + Regex.Escape(value).Replace("\\?", ".") + "$";
+            string regEx = "^" + Regex.Escape(value).Replace("\\?", ".");
+            string regExTrim = regEx.TrimEnd('.');     // ? at the end is optional
+            if (regEx != regExTrim)
+            {
+                regEx = regExTrim + ".*";
+            }
+            regEx += "$";
+            return regEx;
         }
 
         public static string GetMd5Hash(string text)
