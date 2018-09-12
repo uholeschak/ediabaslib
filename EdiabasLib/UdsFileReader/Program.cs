@@ -102,7 +102,7 @@ namespace UdsFileReader
 #endif
 #if false
                 DataReader dataReader = new DataReader();
-                DataReader.FileNameResolver fileNameResolver = new DataReader.FileNameResolver(dataReader, "03L906018DQ", 1);
+                DataReader.FileNameResolver fileNameResolver = new DataReader.FileNameResolver(dataReader, "03L906018DQ", string.Empty, 1);
                 string fileName = fileNameResolver.GetFileName(Path.Combine(rootDir, DataReader.DataDir));
                 if (!string.IsNullOrEmpty(fileName))
                 {
