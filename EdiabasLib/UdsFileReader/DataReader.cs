@@ -83,7 +83,7 @@ namespace UdsFileReader
 
                     string dataDir = Path.Combine(rootDir, DataDir);
                     List<string> dirList = GetDirList(dataDir);
-                    string fileName = ResolveFileName(dirList);
+                    string fileName = ResolveFileName(dirList, out bool redirectFile);
                     if (string.IsNullOrEmpty(fileName))
                     {
                         return null;
@@ -95,7 +95,6 @@ namespace UdsFileReader
                         return null;
                     }
 
-                    bool newFormat = baseFileName.Length >= 5 && baseFileName[2] == '-';
                     List<string[]> redirectList = GetRedirects(fileName);
                     if (redirectList != null)
                     {
@@ -108,7 +107,7 @@ namespace UdsFileReader
                             }
                             bool matched = false;
 
-                            if (newFormat)
+                            if (redirectFile)
                             {
                                 string fullName = _fullName;
                                 if (redirects.Length >= 3)
@@ -158,6 +157,11 @@ namespace UdsFileReader
                         }
                     }
 
+                    if (redirectFile)
+                    {
+                        return null;    // no redirect found
+                    }
+
                     return fileName;
                 }
                 catch (Exception)
@@ -166,8 +170,9 @@ namespace UdsFileReader
                 }
             }
 
-            private string ResolveFileName(List<string> dirList)
+            private string ResolveFileName(List<string> dirList, out bool redirectFile)
             {
+                redirectFile = false;
                 try
                 {
                     foreach (string subDir in dirList)
@@ -194,6 +199,7 @@ namespace UdsFileReader
                         string fileName = Path.Combine(subDir, baseName.ToLowerInvariant() + FileExtension);
                         if (File.Exists(fileName))
                         {
+                            redirectFile = true;
                             return fileName;
                         }
                     }
