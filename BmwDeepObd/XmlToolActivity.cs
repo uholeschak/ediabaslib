@@ -4800,13 +4800,24 @@ namespace BmwDeepObd
                         }
 
                         string ecuName = null;
+                        int address = -1;
                         if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                         {
                             if (ecuInfo.Sgbd.StartsWith(VagUdsCommonSgbd + "#", true, CultureInfo.InvariantCulture))
                             {
                                 ecuName = ecuInfo.Sgbd;
+                                string[] nameArray = ecuName.Split('#');
+                                if (nameArray.Length == 2)
+                                {
+                                    object addressObj = new System.ComponentModel.UInt32Converter().ConvertFromInvariantString(nameArray[1]);
+                                    if ((addressObj is UInt32 ecuAddress))
+                                    {
+                                        address = (int) ecuAddress;
+                                    }
+                                }
                             }
                         }
+
                         if (string.IsNullOrEmpty(ecuName))
                         {
                             ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
@@ -4818,7 +4829,6 @@ namespace BmwDeepObd
                             continue;
                         }
                         string displayName = ecuName;
-                        int address = 0;
                         if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && ecuVagList != null && ecuNameDict != null)
                         {
                             string compareName = ecuInfo.Sgbd;
@@ -4829,19 +4839,27 @@ namespace BmwDeepObd
                                 compareName = compareName.Substring(0, 3);
                                 limitString = true;
                             }
-                            foreach (ActivityCommon.VagEcuEntry entry in ecuVagList)
+
+                            if (address < 0)
                             {
-                                string entryName = entry.SysName;
-                                if (limitString && entryName.Length > 3)
+                                foreach (ActivityCommon.VagEcuEntry entry in ecuVagList)
                                 {
-                                    entryName = entryName.Substring(0, 3);
+                                    string entryName = entry.SysName;
+                                    if (limitString && entryName.Length > 3)
+                                    {
+                                        entryName = entryName.Substring(0, 3);
+                                    }
+                                    if (string.Compare(entryName, compareName, StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        ecuNameDict.TryGetValue(entry.Address, out displayName);
+                                        address = entry.Address;
+                                        break;
+                                    }
                                 }
-                                if (string.Compare(entryName, compareName, StringComparison.OrdinalIgnoreCase) == 0)
-                                {
-                                    ecuNameDict.TryGetValue(entry.Address, out displayName);
-                                    address = entry.Address;
-                                    break;
-                                }
+                            }
+                            else
+                            {
+                                ecuNameDict.TryGetValue(address, out displayName);
                             }
                         }
                         ecuInfo.Name = ecuName.ToUpperInvariant();
