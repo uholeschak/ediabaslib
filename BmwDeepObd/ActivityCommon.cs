@@ -5130,6 +5130,7 @@ namespace BmwDeepObd
                         using (FileStream streamWriter = File.Create(fullZipToPath))
                         {
                             StreamUtils.Copy(zipStream, streamWriter, buffer);
+                            streamWriter.Flush(true);
                         }
                     }
                     index++;
