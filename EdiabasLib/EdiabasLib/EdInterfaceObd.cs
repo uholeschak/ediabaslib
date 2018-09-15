@@ -1299,6 +1299,12 @@ namespace EdiabasLib
                 EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send EDIC");
                 if (CommAnswerLenProtected[1] != 0x0000)
                 {   // command
+                    if (ParTransmitFunc == TransUnsupported)
+                    {
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** EDIC transport unsupported");
+                        EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0011);
+                        return false;
+                    }
                     receiveData = ByteArray0;
                     switch (CommAnswerLenProtected[1])
                     {
