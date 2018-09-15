@@ -2476,7 +2476,19 @@ namespace BmwDeepObd
             {
                 selected = resultItems.Any(resultItem => resultItem.CheckVisible && resultItem.Selected);
             }
-            buttonErrorReset.Enabled = selected;
+
+            bool enabled = selected;
+            if (enabled && ActivityCommon.CommActive)
+            {
+                lock (EdiabasThread.DataLock)
+                {
+                    if (ActivityCommon.EdiabasThread.ErrorResetActive)
+                    {
+                        enabled = false;
+                    }
+                }
+            }
+            buttonErrorReset.Enabled = enabled;
         }
 
         private void UpdateButtonErrorCopy(Button buttonErrorCopy, List<TableResultItem> resultItems)
