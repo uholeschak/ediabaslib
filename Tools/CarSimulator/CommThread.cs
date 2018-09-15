@@ -4099,6 +4099,7 @@ namespace CarSimulator
                 _sendData[4] = 0xFF;
                 _sendData[5] = 0xFF;
 
+                Debug.WriteLine("Error reset");
                 if (!_ecuErrorResetList.Contains(_receiveData[1]))
                 {
                     _ecuErrorResetList.Add(_receiveData[1]);

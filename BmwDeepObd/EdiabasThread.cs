@@ -159,6 +159,7 @@ namespace BmwDeepObd
         }
 
         public List<string> ErrorResetList { get; set; }
+        public bool ErrorResetActive { get; private set; }
 
         public EdiabasNet Ediabas { get; private set; }
 
@@ -556,6 +557,7 @@ namespace BmwDeepObd
                 {
                     errorResetList = ErrorResetList;
                     ErrorResetList = null;
+                    ErrorResetActive = errorResetList != null;
                 }
 
                 List<EdiabasErrorReport> errorReportList = new List<EdiabasErrorReport>();
@@ -1038,6 +1040,7 @@ namespace BmwDeepObd
             EdiabasErrorMessage = string.Empty;
             EdiabasErrorReportList = null;
             ErrorResetList = null;
+            ErrorResetActive = false;
             ResultPageInfo = null;
             UpdateProgress = 0;
 
