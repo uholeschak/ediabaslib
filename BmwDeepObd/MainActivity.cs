@@ -1056,6 +1056,7 @@ namespace BmwDeepObd
                     ActivityCommon.EdiabasThread.ErrorResetList = errorResetList;
                 }
             }
+            UpdateDisplay();
         }
 
         [Export("onCopyErrorsClick")]
@@ -2482,7 +2483,7 @@ namespace BmwDeepObd
             {
                 lock (EdiabasThread.DataLock)
                 {
-                    if (ActivityCommon.EdiabasThread.ErrorResetActive)
+                    if (ActivityCommon.EdiabasThread.ErrorResetList != null || ActivityCommon.EdiabasThread.ErrorResetActive)
                     {
                         enabled = false;
                     }
