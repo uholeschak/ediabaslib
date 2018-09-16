@@ -106,7 +106,7 @@ namespace UdsFileReader
                 try
                 {
                     string chassisType = null;
-                    if (!string.IsNullOrEmpty(Vin) && Vin.Length >= 10)
+                    if (ModelYear >= 0 && !string.IsNullOrEmpty(Vin) && Vin.Length >= 10)
                     {
                         chassisType = GetChassisType(Vin.Substring(6, 2));
                     }
