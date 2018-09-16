@@ -53,6 +53,17 @@ namespace UdsFileReader
                 //Console.WriteLine(udsReader.TestFixedTypes());
                 //return 0;
 #if false
+                StringBuilder sbVin = new StringBuilder();;
+                sbVin.Append(@"WVWFA71F77V");
+                for (char code = '0'; code <= 'Z'; code++)
+                {
+                    sbVin[9] = code;
+                    int modelYear = DataReader.GetModelYear(sbVin.ToString());
+                    Console.WriteLine("'{0}': {1}", code, modelYear);
+                }
+                return 0;
+#endif
+#if false
                 PrintSaeErrorCode(udsReader, 0x161D, 0x71);
                 PrintSaeErrorCode(udsReader, 0x161D, 0x03);
                 PrintSaeErrorCode(udsReader, 0x161D, 0xF5);
