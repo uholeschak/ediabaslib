@@ -52,22 +52,24 @@ namespace UdsFileReader
 
         public class FileNameResolver
         {
-            public FileNameResolver(UdsReader udsReader, string asamData, string asamRev, string partNumber, string didHarwareNumber)
+            public FileNameResolver(UdsReader udsReader, string vin, string asamData, string asamRev, string partNumber, string didHarwareNumber)
             {
                 UdsReader = udsReader;
+                Vin = vin;
                 AsamData = asamData;
                 AsamRev = asamRev;
                 PartNumber = partNumber;
                 DidHarwareNumber = didHarwareNumber;
+                ModelYear = DataReader.GetModelYear(Vin);
             }
 
-            public string GetChassisType(string hardwareCode)
+            public string GetChassisType(string modelCode)
             {
-                if (string.IsNullOrEmpty(hardwareCode) || hardwareCode.Length < 2)
+                if (string.IsNullOrEmpty(modelCode) || modelCode.Length < 2)
                 {
                     return string.Empty;
                 }
-                string key = hardwareCode.Substring(0, 2).ToUpperInvariant();
+                string key = modelCode.Substring(0, 2).ToUpperInvariant();
                 if (UdsReader._chassisMap.TryGetValue(key, out string chassisType))
                 {
                     return chassisType;
@@ -103,7 +105,17 @@ namespace UdsFileReader
             {
                 try
                 {
-                    string chassisType = GetChassisType(PartNumber);
+                    string chassisType = null;
+                    if (!string.IsNullOrEmpty(Vin) && Vin.Length >= 10)
+                    {
+                        chassisType = GetChassisType(Vin.Substring(6, 2));
+                    }
+
+                    if (string.IsNullOrEmpty(chassisType))
+                    {
+                        chassisType = GetChassisType(PartNumber);
+                    }
+
                     if (string.IsNullOrEmpty(chassisType))
                     {
                         chassisType = GetChassisType(DidHarwareNumber);
@@ -214,10 +226,12 @@ namespace UdsFileReader
             }
 
             public UdsReader UdsReader { get; }
+            public string Vin { get; }
             public string AsamData { get; }
             public string AsamRev { get; }
             public string PartNumber { get; }
             public string DidHarwareNumber { get; }
+            public int ModelYear { get; }
         }
 
         public class ValueName
