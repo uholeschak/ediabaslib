@@ -358,6 +358,11 @@ namespace BmwDeepObd
             //new Tuple<string, string>("Fehlerspeicher_loeschen", ""),
         };
 
+        private static readonly byte[][] EcuInfoVagUdsRaw =
+        {
+            new byte[] {0x09, 0x02},    // VIN
+        };
+
         private readonly Regex _vinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
 
         public const string EmptyMwTab = "-";
@@ -3228,6 +3233,22 @@ namespace BmwDeepObd
                                     catch (Exception)
                                     {
                                         // ignored
+                                    }
+                                }
+
+                                if (udsEcu)
+                                {
+                                    foreach (byte[] sendData in EcuInfoVagUdsRaw)
+                                    {
+                                        try
+                                        {
+                                            _ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "RawData");
+                                            _ediabas.EdInterfaceClass.TransmitData(sendData, out byte[] _);
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // ignored
+                                        }
                                     }
                                 }
                             }
