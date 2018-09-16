@@ -48,6 +48,17 @@ namespace BmwDeepObd
             public string ExecptionText { get; }
         }
 
+        public class EdiabasErrorReportReset : EdiabasErrorReport
+        {
+            public EdiabasErrorReportReset(string ecuName, string vagDataFileName, string vagUdsFileName, Dictionary<string, EdiabasNet.ResultData> errorDict, bool errorResetOk) :
+                base(ecuName, vagDataFileName, vagUdsFileName, errorDict, null, string.Empty)
+            {
+                ErrorResetOk = errorResetOk;
+            }
+
+            public bool ErrorResetOk { get; }
+        }
+
         [DataContract]
         private class BroadcastItem
         {
@@ -599,6 +610,40 @@ namespace BmwDeepObd
                                 Ediabas.ArgBinaryStd = null;
                                 Ediabas.ResultsRequests = string.Empty;
                                 Ediabas.ExecuteJob(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw ? "FS_LOESCHEN" : "Fehlerspeicher_loeschen");
+
+                                bool errorResetOk = false;
+                                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
+                                if (resultSets.Count > 1)
+                                {
+                                    string resultName;
+                                    Dictionary<string, EdiabasNet.ResultData> resultDictCheck;
+                                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+                                    {
+                                        resultName = "JOB_STATUS";
+                                        resultDictCheck = resultSets[1];
+                                    }
+                                    else
+                                    {
+                                        resultName = "JOBSTATUS";
+                                        resultDictCheck = resultSets[0];
+                                    }
+                                    if (resultDictCheck.TryGetValue(resultName, out EdiabasNet.ResultData resultData))
+                                    {
+                                        if (resultData.OpData is string)
+                                        {
+                                            // read details
+                                            string jobStatus = (string)resultData.OpData;
+                                            if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                            {
+                                                errorResetOk = true;
+                                            }
+                                        }
+                                    }
+                                    if (errorResetOk)
+                                    {
+                                        errorReportList.Add(new EdiabasErrorReportReset(ecuInfo.Name, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, resultDictCheck, errorResetOk));
+                                    }
+                                }
                             }
                         }
                         catch (Exception)

@@ -1872,6 +1872,30 @@ namespace BmwDeepObd
                             int errorIndex = 0;
                             foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
                             {
+                                if (errorReport is EdiabasThread.EdiabasErrorReportReset errorReportReset)
+                                {
+                                    if (errorReportReset.ErrorResetOk)
+                                    {
+                                        bool changed = false;
+                                        foreach (TableResultItem resultItem in resultListAdapter.Items)
+                                        {
+                                            if (resultItem.Tag is string ecuName && string.CompareOrdinal(ecuName, errorReport.EcuName) == 0)
+                                            {
+                                                if (resultItem.Selected)
+                                                {
+                                                    resultItem.Selected = false;
+                                                    changed = true;
+                                                }
+                                            }
+                                        }
+
+                                        if (changed)
+                                        {
+                                            resultListAdapter.NotifyDataSetChanged();
+                                        }
+                                    }
+                                    continue;
+                                }
                                 if (ActivityCommon.IsCommunicationError(errorReport.ExecptionText))
                                 {
                                     _instanceData.CommErrorsOccured = true;
