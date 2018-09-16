@@ -3005,7 +3005,7 @@ namespace BmwDeepObd
                         return false;
                     }
                     UdsFileReader.UdsReader.FileNameResolver udsResolver = new UdsFileReader.UdsReader.FileNameResolver(udsReader,
-                        ecuInfo.VagAsamData, ecuInfo.VagAsamRev, ecuInfo.VagPartNumber, _ecuInfoDid.VagHwPartNumber);
+                        ecuInfo.Vin, ecuInfo.VagAsamData, ecuInfo.VagAsamRev, ecuInfo.VagPartNumber, _ecuInfoDid.VagHwPartNumber);
                     string udsFileName = udsResolver.GetFileName(vagDirLang);
                     ecuInfo.VagUdsFileName = udsFileName ?? string.Empty;
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VAG uds file: {0}", ecuInfo.VagUdsFileName);
