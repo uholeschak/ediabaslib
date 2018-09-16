@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using Els_kom.Compression.Libs.Zlib;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 
@@ -1247,11 +1248,11 @@ namespace FileDecoder
         static void DecompressData(byte[] inData, Stream fsout, int bytes)
         {
             using (MemoryStream outMemoryStream = new MemoryStream())
-            using (ZOutputStreamMod outZStream = new ZOutputStreamMod(outMemoryStream))
+            using (ZOutputStream outZStream = new ZOutputStream(outMemoryStream))
             using (Stream inMemoryStream = new MemoryStream(inData))
             {
                 CopyStream(inMemoryStream, outZStream, inData.Length);
-                outZStream.finish();
+                outZStream.Flush();
                 outMemoryStream.Position = 0;
                 CopyStream(outMemoryStream, fsout, bytes);
             }
