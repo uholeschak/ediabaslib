@@ -102,8 +102,8 @@ namespace UdsFileReader
                 return 0;
 #endif
 #if false
-                UdsReader.FileNameResolver fileNameResolver = new UdsReader.FileNameResolver(udsReader, "EV_ECM20TDI01103L906018DQ", "003003", "03L906018DQ", "1K0907951");
-                //UdsReader.FileNameResolver fileNameResolver = new UdsReader.FileNameResolver(udsReader, "EV_Kombi_UDS_VDD_RM09", "A04089", "0920881A", "1K0907951");
+                UdsReader.FileNameResolver fileNameResolver = new UdsReader.FileNameResolver(udsReader, "WVGZZZ1TZBW000000", "EV_ECM20TDI01103L906018DQ", "003003", "03L906018DQ", "1K0907951");
+                //UdsReader.FileNameResolver fileNameResolver = new UdsReader.FileNameResolver(udsReader, "WVGZZZ1TZBW000000", "EV_Kombi_UDS_VDD_RM09", "A04089", "0920881A", "1K0907951");
                 List<string> fileList = fileNameResolver.GetFileList(dir);
                 foreach (string fileName in fileList)
                 {
