@@ -42,6 +42,7 @@ namespace BmwDeepObd
 
         private enum VagUdsS22DataType
         {
+            Vin,
             PartNum,
             HwPartNum,
             AsamData,
@@ -248,6 +249,7 @@ namespace BmwDeepObd
 
         private static readonly Tuple<VagUdsS22DataType, int>[] VagUdsS22Data =
         {
+            new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.Vin, 0xF190),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.PartNum, 0xF187),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.HwPartNum, 0xF191),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.AsamData, 0xF19E),
@@ -4759,6 +4761,10 @@ namespace BmwDeepObd
 
                         switch (udsInfo.Item1)
                         {
+                            case VagUdsS22DataType.Vin:
+                                ecuInfo.Vin = dataString;
+                                break;
+
                             case VagUdsS22DataType.PartNum:
                                 ecuInfo.VagPartNumber = dataString;
                                 break;
