@@ -70,9 +70,13 @@ namespace UdsFileReader
                     return string.Empty;
                 }
                 string key = modelCode.Substring(0, 2).ToUpperInvariant();
-                if (UdsReader._chassisMap.TryGetValue(key, out string chassisType))
+                if (UdsReader._chassisMap.TryGetValue(key, out ChassisInfo chassisInfo))
                 {
-                    return chassisType;
+                    if (chassisInfo.ConverterFunc != null)
+                    {
+                        return chassisInfo.ConverterFunc(UdsReader, this);
+                    }
+                    return chassisInfo.ChassisName;
                 }
 
                 return string.Empty;
@@ -1142,17 +1146,172 @@ namespace UdsFileReader
             new SegmentInfo(SegmentType.Xpl, "XPL", "RX"),
         };
 
-        // simplified form without date handling
-        private static readonly Dictionary<string, string> ChassisMapFixed = new Dictionary<string, string>()
+        public class ChassisInfo
         {
-            { "1K", "VW36" },
-            { "6R", "VW25" },
-            { "3C", "VW46" },
-            { "1T", "VW36" },
-            { "6J", "SE25" },
-            { "5N", "VW36" },
-            { "AX", "VW36" },
-            { "KE", "SE25" },
+            public delegate string NameConverterDelegate(UdsReader udsReader, FileNameResolver fileNameResolver);
+
+            public ChassisInfo(string chassisName)
+            {
+                ChassisName = chassisName;
+            }
+
+            public ChassisInfo(NameConverterDelegate converterFunc)
+            {
+                ConverterFunc = converterFunc;
+            }
+
+            public string ChassisName { get; }
+            public NameConverterDelegate ConverterFunc { get; }
+        }
+
+        static string ChassisName1K(UdsReader udsReader, FileNameResolver fileNameResolver)
+        {
+            bool oldVer = false;
+            if (fileNameResolver.ModelYear >= 0)
+            {
+                if (fileNameResolver.ModelYear < 2009)
+                {
+                    oldVer = true;
+                }
+                else if (fileNameResolver.ModelYear == 2009)
+                {
+                    // ToDo: check serial
+                }
+            }
+
+            return oldVer ? "VW35" : "VW36";
+        }
+
+        static string ChassisName6R(UdsReader udsReader, FileNameResolver fileNameResolver)
+        {
+            bool oldVer = false;
+            if (fileNameResolver.ModelYear >= 0)
+            {
+                if (fileNameResolver.ModelYear < 2015)
+                {
+                    oldVer = true;
+                }
+                else if (fileNameResolver.ModelYear == 2015)
+                {
+                    // ToDo: check manufacturer
+                }
+            }
+
+            return oldVer ? "VW25" : "VW26";
+        }
+
+        static string ChassisName3C(UdsReader udsReader, FileNameResolver fileNameResolver)
+        {
+            bool oldVer = false;
+            if (fileNameResolver.ModelYear >= 0)
+            {
+                if (fileNameResolver.ModelYear < 2015)
+                {
+                    oldVer = true;
+                }
+                else if (fileNameResolver.ModelYear == 2015)
+                {
+                    // ToDo: check manufacturer
+                }
+            }
+
+            return oldVer ? "VW46" : "VW48";
+        }
+
+        static string ChassisName1T(UdsReader udsReader, FileNameResolver fileNameResolver)
+        {
+            bool oldVer = false;
+            if (fileNameResolver.ModelYear >= 0)
+            {
+                if (fileNameResolver.ModelYear < 2016)
+                {
+                    oldVer = true;
+                }
+                else if (fileNameResolver.ModelYear == 2016)
+                {
+                    // ToDo: check manufacturer
+                }
+            }
+
+            return oldVer ? "VW36" : "VW37";
+        }
+
+        static string ChassisName6J(UdsReader udsReader, FileNameResolver fileNameResolver)
+        {
+            bool oldVer = false;
+            if (fileNameResolver.ModelYear >= 0)
+            {
+                if (fileNameResolver.ModelYear < 2016)
+                {
+                    oldVer = true;
+                }
+            }
+
+            return oldVer ? "SE26" : "SE27";
+        }
+
+        static string ChassisName5N(UdsReader udsReader, FileNameResolver fileNameResolver)
+        {
+            bool oldVer = false;
+            if (fileNameResolver.ModelYear >= 0)
+            {
+                if (fileNameResolver.ModelYear < 2016)
+                {
+                    oldVer = true;
+                }
+                else if (fileNameResolver.ModelYear == 2016)
+                {
+                    // ToDo: check manufacturer and serial
+                }
+            }
+
+            return oldVer ? "VW36" : "VW37";
+        }
+
+        // ReSharper disable once InconsistentNaming
+        static string ChassisNameAX(UdsReader udsReader, FileNameResolver fileNameResolver)
+        {
+            bool oldVer = false;
+            if (fileNameResolver.ModelYear >= 0)
+            {
+                if (fileNameResolver.ModelYear < 2017)
+                {
+                    oldVer = true;
+                }
+                else if (fileNameResolver.ModelYear == 2017)
+                {
+                    // ToDo: check manufacturer
+                }
+            }
+
+            return oldVer ? "VW36" : "VW37";
+        }
+
+        // ReSharper disable once InconsistentNaming
+        static string ChassisNameKE(UdsReader udsReader, FileNameResolver fileNameResolver)
+        {
+            bool oldVer = false;
+            if (fileNameResolver.ModelYear >= 0)
+            {
+                if (fileNameResolver.ModelYear < 2016)
+                {
+                    oldVer = true;
+                }
+            }
+
+            return oldVer ? "SE25" : "SE26";
+        }
+
+        private static readonly Dictionary<string, ChassisInfo> ChassisMapFixed = new Dictionary<string, ChassisInfo>()
+        {
+            { "1K", new ChassisInfo(ChassisName1K) },
+            { "6R", new ChassisInfo(ChassisName6R) },
+            { "3C", new ChassisInfo(ChassisName3C) },
+            { "1T", new ChassisInfo(ChassisName1T) },
+            { "6J", new ChassisInfo(ChassisName6J) },
+            { "5N", new ChassisInfo(ChassisName5N) },
+            { "AX", new ChassisInfo(ChassisNameAX) },
+            { "KE", new ChassisInfo(ChassisNameKE) },
         };
 
         private static readonly HashSet<string> ChassisInvalid = new HashSet<string>()
@@ -1166,7 +1325,7 @@ namespace UdsFileReader
         private Dictionary<UInt32, FixedEncodingEntry> _fixedEncodingMap;
         private ILookup<UInt32, string[]> _ttdopLookup;
         private ILookup<UInt32, string[]> _muxLookup;
-        private Dictionary<string, string> _chassisMap;
+        private Dictionary<string, ChassisInfo> _chassisMap;
 
         public DataReader DataReader { get; private set; }
         public string LanguageDir { get; set; }
@@ -3866,7 +4025,7 @@ namespace UdsFileReader
             }
         }
 
-        public static Dictionary<string, string> CreateChassisDict(string fileName)
+        public static Dictionary<string, ChassisInfo> CreateChassisDict(string fileName)
         {
             try
             {
@@ -3876,7 +4035,7 @@ namespace UdsFileReader
                     return null;
                 }
 
-                Dictionary<string, string> dict = new Dictionary<string, string>(ChassisMapFixed);
+                Dictionary<string, ChassisInfo> dict = new Dictionary<string, ChassisInfo> (ChassisMapFixed);
                 foreach (string[] textArray in textList)
                 {
                     if (textArray.Length != 2)
@@ -3891,19 +4050,15 @@ namespace UdsFileReader
 
                     string key = textArray[0];
                     string value = textArray[1];
-                    if (dict.TryGetValue(key, out string dictValue))
+                    if (dict.TryGetValue(key, out ChassisInfo chassisInfo))
                     {
-                        if (string.Compare(dictValue, value, StringComparison.Ordinal) != 0)
-                        {
-                            // inconistent data base entry, ignore it!
 #if DEBUG
-                            System.Diagnostics.Debug.WriteLine("Inconistent chassis for key: " + key);
+                        System.Diagnostics.Debug.WriteLine("Multiple chassis entry for key: " + key);
 #endif
-                        }
                     }
                     else
                     {
-                        dict.Add(key, value);
+                        dict.Add(key, new ChassisInfo(value));
                     }
                 }
 
