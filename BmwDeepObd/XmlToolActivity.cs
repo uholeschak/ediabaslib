@@ -4719,6 +4719,7 @@ namespace BmwDeepObd
                         }
                     });
 
+                    bool optional = udsInfo.Item1 == VagUdsS22DataType.Vin;
                     _ediabas.ArgString = string.Format(CultureInfo.InvariantCulture, "{0}", udsInfo.Item2);
                     _ediabas.ArgBinaryStd = null;
                     _ediabas.ResultsRequests = string.Empty;
@@ -4742,6 +4743,10 @@ namespace BmwDeepObd
                         }
                         if (!resultOk)
                         {
+                            if (optional)
+                            {
+                                continue;
+                            }
                             return false;
                         }
 
@@ -4756,6 +4761,10 @@ namespace BmwDeepObd
                         }
                         if (dataString == null)
                         {
+                            if (optional)
+                            {
+                                continue;
+                            }
                             return false;
                         }
 
