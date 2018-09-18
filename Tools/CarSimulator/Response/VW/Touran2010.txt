@@ -4,6 +4,8 @@
 ; mot_01.grp
 ; ISO-TP ecu address, CAN ID, Tester ID
 CFG: 01 07 E0 07 E8
+; VIN SID 09
+82 07 E0 09 02 00 : 94 07 E0 49 02 01 57 56 47 5A 5A 5A 31 54 5A 42 57 30 32 34 36 35 35 00
 ; Diag session control
 ; P2=50ms P2Ext=500*10ms=5s
 82 07 E0 10 03 00 : 86 07 E0 50 03 00 32 01 F4 00
