@@ -2951,7 +2951,7 @@ namespace BmwDeepObd
                 }
 
                 // for UDS read VIN from motor
-                ActivityCommon.ResolveSgbdFile(_ediabas, "mot7000");
+                ActivityCommon.ResolveSgbdFile(_ediabas, "mot_01");
 
                 _ediabas.ArgString = string.Empty;
                 _ediabas.ArgBinaryStd = null;
@@ -4642,6 +4642,7 @@ namespace BmwDeepObd
                     return GetVagEcuDetailInfoUds(ecuInfo, progress);
                 }
 
+                ecuInfo.Vin = null;
                 ecuInfo.VagPartNumber = null;
                 ecuInfo.VagHwPartNumber = null;
                 ecuInfo.VagAsamData = null;
@@ -4761,6 +4762,12 @@ namespace BmwDeepObd
         {
             try
             {
+                ecuInfo.Vin = null;
+                ecuInfo.VagPartNumber = null;
+                ecuInfo.VagHwPartNumber = null;
+                ecuInfo.VagAsamData = null;
+                ecuInfo.VagAsamRev = null;
+
                 int index = 0;
                 foreach (Tuple<VagUdsS22DataType, int> udsInfo in VagUdsS22Data)
                 {
