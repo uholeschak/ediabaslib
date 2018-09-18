@@ -413,6 +413,7 @@ namespace BmwDeepObd
         private EdiabasNet _ediabas;
         private Thread _jobThread;
         private static List<EcuInfo> _ecuList = new List<EcuInfo>();
+        private EcuInfo _ecuInfoMot;
         private EcuInfo _ecuInfoDid;
         private bool _translateEnabled = true;
         private bool _translateActive;
@@ -1045,6 +1046,7 @@ namespace BmwDeepObd
         {
             ClearVehicleInfo();
             _ecuList.Clear();
+            _ecuInfoMot = null;
             _ecuInfoDid = null;
             _ecuListTranslated = false;
             _instanceData.EcuSearchAbortIndex = -1;
@@ -2935,6 +2937,44 @@ namespace BmwDeepObd
             return vinInfo != null ? vinInfo.Key : string.Empty;
         }
 
+        private bool ReadVagMotInfo(CustomProgressDialog progress = null)
+        {
+            try
+            {
+                if (!ActivityCommon.VagUdsActive)
+                {
+                    return true;
+                }
+                if (_ecuInfoMot != null)
+                {
+                    return true;
+                }
+
+                // for UDS read VIN from motor
+                ActivityCommon.ResolveSgbdFile(_ediabas, "mot7000");
+
+                _ediabas.ArgString = string.Empty;
+                _ediabas.ArgBinaryStd = null;
+                _ediabas.ResultsRequests = string.Empty;
+                _ediabas.ExecuteJob("_JOBS");    // force to load file
+
+                string ecuName = _ediabas.SgbdFileName;
+                EcuInfo ecuInfoMot = new EcuInfo(ecuName.ToUpperInvariant(), 1, string.Empty, ecuName, string.Empty);
+                if (!GetVagEcuDetailInfo(ecuInfoMot, progress))
+                {
+                    return false;
+                }
+                _ecuInfoMot = ecuInfoMot;
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
+        }
+
         private bool ReadVagDidInfo(CustomProgressDialog progress = null)
         {
             try
@@ -3002,12 +3042,12 @@ namespace BmwDeepObd
 
                 if (IsUdsEcu(ecuInfo))
                 {
-                    if (_ecuInfoDid == null)
+                    if (_ecuInfoMot == null || _ecuInfoDid == null)
                     {
                         return false;
                     }
                     UdsFileReader.UdsReader.FileNameResolver udsResolver = new UdsFileReader.UdsReader.FileNameResolver(udsReader,
-                        ecuInfo.Vin, ecuInfo.VagAsamData, ecuInfo.VagAsamRev, ecuInfo.VagPartNumber, _ecuInfoDid.VagHwPartNumber);
+                        _ecuInfoMot.Vin, ecuInfo.VagAsamData, ecuInfo.VagAsamRev, ecuInfo.VagPartNumber, _ecuInfoDid.VagHwPartNumber);
                     string udsFileName = udsResolver.GetFileName(vagDirLang);
                     ecuInfo.VagUdsFileName = udsFileName ?? string.Empty;
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VAG uds file: {0}", ecuInfo.VagUdsFileName);
@@ -3195,12 +3235,25 @@ namespace BmwDeepObd
                             bool udsEcu = IsUdsEcu(thisEcuInfo);
                             if (ActivityCommon.VagUdsActive && udsEcu)
                             {
+                                bool resolveSgbd = false;
+                                if (_ecuInfoMot == null)
+                                {
+                                    resolveSgbd = true;
+                                    if (!ReadVagMotInfo())
+                                    {
+                                        throw new Exception("Read mot info failed");
+                                    }
+                                }
                                 if (_ecuInfoDid == null)
                                 {
+                                    resolveSgbd = true;
                                     if (!ReadVagDidInfo())
                                     {
                                         throw new Exception("Read did info failed");
                                     }
+                                }
+                                if (resolveSgbd)
+                                {
                                     ActivityCommon.ResolveSgbdFile(_ediabas, thisEcuInfo.Sgbd);
                                 }
                                 if (!ReadVagEcuInfo(thisEcuInfo))
@@ -3379,6 +3432,10 @@ namespace BmwDeepObd
                     bool udsEcu = IsUdsEcu(ecuInfo);
                     if (ActivityCommon.VagUdsActive && udsEcu)
                     {
+                        if (!ReadVagMotInfo(progress))
+                        {
+                            throw new Exception("Read mot info failed");
+                        }
                         if (!ReadVagDidInfo(progress))
                         {
                             throw new Exception("Read did info failed");
