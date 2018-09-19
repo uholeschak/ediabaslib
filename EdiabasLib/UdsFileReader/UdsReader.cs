@@ -60,6 +60,17 @@ namespace UdsFileReader
                 AsamRev = asamRev;
                 PartNumber = partNumber;
                 DidHarwareNumber = didHarwareNumber;
+                Manufacturer = string.Empty;
+                SerialNumber = -1;
+                if (!string.IsNullOrEmpty(Vin) && Vin.Length >= 17)
+                {
+                    Manufacturer = Vin.Substring(0, 3);
+                    string serial = Vin.Substring(11, 6);
+                    if (Int64.TryParse(serial, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int64 serValue))
+                    {
+                        SerialNumber = serValue;
+                    }
+                }
                 ModelYear = DataReader.GetModelYear(Vin);
             }
 
@@ -235,6 +246,8 @@ namespace UdsFileReader
             public string AsamRev { get; }
             public string PartNumber { get; }
             public string DidHarwareNumber { get; }
+            public string Manufacturer { get; }
+            public long SerialNumber { get; }
             public int ModelYear { get; }
         }
 
@@ -1175,7 +1188,22 @@ namespace UdsFileReader
                 }
                 else if (fileNameResolver.ModelYear == 2009)
                 {
-                    // ToDo: check serial
+                    long serNum = fileNameResolver.SerialNumber;
+                    if (serNum >= 0)
+                    {
+                        if (serNum < 199999)
+                        {
+                            oldVer = true;
+                        }
+                        else if (serNum > 400000 && serNum <= 700000)
+                        {
+                            oldVer = true;
+                        }
+                        else if (serNum > 800000 && serNum <= 900000)
+                        {
+                            oldVer = true;
+                        }
+                    }
                 }
             }
 
@@ -1227,9 +1255,12 @@ namespace UdsFileReader
                 {
                     oldVer = true;
                 }
-                else if (fileNameResolver.ModelYear == 2016)
+                else
                 {
-                    // ToDo: check manufacturer
+                    if (string.Compare(fileNameResolver.Manufacturer, "LSV", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        oldVer = true;
+                    }
                 }
             }
 
