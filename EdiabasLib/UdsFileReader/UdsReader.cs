@@ -1221,8 +1221,15 @@ namespace UdsFileReader
                 }
                 else if (fileNameResolver.ModelYear == 2015)
                 {
-                    // ToDo: check manufacturer
+                    if (string.Compare(fileNameResolver.Manufacturer, "LSV", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        oldVer = true;
+                    }
                 }
+            }
+            else
+            {
+                oldVer = true;
             }
 
             return oldVer ? "VW25" : "VW26";
@@ -1237,10 +1244,22 @@ namespace UdsFileReader
                 {
                     oldVer = true;
                 }
+                else if (fileNameResolver.ModelYear == 2016 &&
+                        string.Compare(fileNameResolver.Manufacturer, "LSV", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    oldVer = true;
+                }
                 else if (fileNameResolver.ModelYear == 2015)
                 {
-                    // ToDo: check manufacturer
+                    if (fileNameResolver.SerialNumber >= 0 && fileNameResolver.SerialNumber < 200000)
+                    {
+                        oldVer = true;
+                    }
                 }
+            }
+            else
+            {
+                oldVer = true;
             }
 
             return oldVer ? "VW46" : "VW48";
@@ -1263,6 +1282,10 @@ namespace UdsFileReader
                     }
                 }
             }
+            else
+            {
+                oldVer = true;
+            }
 
             return oldVer ? "VW36" : "VW37";
         }
@@ -1276,6 +1299,10 @@ namespace UdsFileReader
                 {
                     oldVer = true;
                 }
+            }
+            else
+            {
+                oldVer = true;
             }
 
             return oldVer ? "SE26" : "SE27";
@@ -1292,8 +1319,27 @@ namespace UdsFileReader
                 }
                 else if (fileNameResolver.ModelYear == 2016)
                 {
-                    // ToDo: check manufacturer and serial
+                    if (string.Compare(fileNameResolver.Manufacturer, "WVG", StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        oldVer = true;
+                    }
+                    else
+                    {
+                        long serNum = fileNameResolver.SerialNumber;
+                        if (serNum >= 0)
+                        {
+                            if (!((serNum >= 300000 && serNum < 500000) || serNum > 800000))
+                            {
+                                oldVer = true;
+                            }
+                            // ToDo: more check required
+                        }
+                    }
                 }
+            }
+            else
+            {
+                oldVer = true;
             }
 
             return oldVer ? "VW36" : "VW37";
