@@ -1221,7 +1221,10 @@ namespace UdsFileReader
                 }
                 else if (fileNameResolver.ModelYear == 2015)
                 {
-                    // ToDo: check manufacturer
+                    if (string.Compare(fileNameResolver.Manufacturer, "LSV", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        oldVer = true;
+                    }
                 }
             }
 
@@ -1237,9 +1240,17 @@ namespace UdsFileReader
                 {
                     oldVer = true;
                 }
+                else if (fileNameResolver.ModelYear == 2016 &&
+                        string.Compare(fileNameResolver.Manufacturer, "LSV", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    oldVer = true;
+                }
                 else if (fileNameResolver.ModelYear == 2015)
                 {
-                    // ToDo: check manufacturer
+                    if (fileNameResolver.SerialNumber >= 0 && fileNameResolver.SerialNumber < 200000)
+                    {
+                        oldVer = true;
+                    }
                 }
             }
 
