@@ -60,6 +60,14 @@ namespace UdsFileReader
                 AsamRev = asamRev;
                 PartNumber = partNumber;
                 DidHarwareNumber = didHarwareNumber;
+                if (!string.IsNullOrEmpty(Vin) && Vin.Length >= 3)
+                {
+                    Manufacturer = Vin.Substring(0, 3);
+                }
+                else
+                {
+                    Manufacturer = string.Empty;
+                }
                 ModelYear = DataReader.GetModelYear(Vin);
             }
 
@@ -235,6 +243,7 @@ namespace UdsFileReader
             public string AsamRev { get; }
             public string PartNumber { get; }
             public string DidHarwareNumber { get; }
+            public string Manufacturer { get; }
             public int ModelYear { get; }
         }
 
@@ -1227,9 +1236,12 @@ namespace UdsFileReader
                 {
                     oldVer = true;
                 }
-                else if (fileNameResolver.ModelYear == 2016)
+                else
                 {
-                    // ToDo: check manufacturer
+                    if (string.Compare(fileNameResolver.Manufacturer, "LSV", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        oldVer = true;
+                    }
                 }
             }
 
