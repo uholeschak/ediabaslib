@@ -21,7 +21,6 @@ using EdiabasLib;
 using System.Collections.ObjectModel;
 // ReSharper disable IdentifierTypo
 // ReSharper disable StringLiteralTypo
-
 // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
 
 namespace BmwDeepObd
@@ -377,6 +376,7 @@ namespace BmwDeepObd
         public const string JobReadStatBlock = @"STATUS_BLOCK_LESEN";
         public const string JobReadEcuVersion = @"Steuergeraeteversion_abfragen";
         public const string JobReadEcuVersion2 = @"Steuergeraeteversion_abfragen2";
+        public const string JobReadVin = @"Fahrgestellnr_abfragen";
         public const string DataTypeString = @"string";
         public const string DataTypeReal = @"real";
         public const string DataTypeInteger = @"integer";
@@ -3876,7 +3876,7 @@ namespace BmwDeepObd
                             }
                         }
                     }
-                    else if (string.Compare(job.Name, "Fahrgestellnr_abfragen", StringComparison.OrdinalIgnoreCase) == 0)
+                    else if (string.Compare(job.Name, JobReadVin, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         job.Comments = new List<string> { GetString(Resource.String.xml_tool_job_read_vin) };
                         job.Results.Add(new XmlToolEcuActivity.ResultInfo("Fahrgestellnr", GetString(Resource.String.xml_tool_result_vin), DataTypeString, null, null));
@@ -4650,7 +4650,7 @@ namespace BmwDeepObd
                 ecuInfo.VagAsamData = null;
                 ecuInfo.VagAsamRev = null;
 
-                for (int index = 0; index < 2; index++)
+                for (int index = 0; index < 3; index++)
                 {
                     int indexLocal = index;
                     RunOnUiThread(() =>
@@ -4665,10 +4665,34 @@ namespace BmwDeepObd
                         }
                     });
 
-                    string jobName = index == 0 ? JobReadEcuVersion2 : JobReadEcuVersion;
-                    string resultName1 = index == 0 ? "SWTEILENUMMER" : "GERAETENUMMER";
-                    string resultName2 = index == 0 ? "HWTEILENUMMER" : null;
-                    if (!_ediabas.IsJobExisting(jobName))
+                    string jobName = null;
+                    string resultName1 = null;
+                    string resultName2 = null;
+                    switch (index)
+                    {
+                        case 0:
+                            jobName = JobReadEcuVersion2;
+                            resultName1 = "SWTEILENUMMER";
+                            resultName2 = "HWTEILENUMMER";
+                            break;
+
+                        case 1:
+                            if (!string.IsNullOrEmpty(ecuInfo.VagPartNumber))
+                            {
+                                break;
+                            }
+                            jobName = JobReadEcuVersion;
+                            resultName1 = "GERAETENUMMER";
+                            resultName2 = null;
+                            break;
+
+                        case 2:
+                            jobName = JobReadVin;
+                            resultName1 = "FAHRGESTELLNR";
+                            resultName2 = null;
+                            break;
+                    }
+                    if (string.IsNullOrEmpty(jobName) || !_ediabas.IsJobExisting(jobName))
                     {
                         continue;
                     }
@@ -4698,34 +4722,50 @@ namespace BmwDeepObd
                             if (resultOk)
                             {
                                 Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
-                                string swPartNumber = string.Empty;
-                                string hwPartNumber = string.Empty;
-                                if (resultDict1.TryGetValue(resultName1, out resultData))
+                                if (index == 2)
                                 {
-                                    if (resultData.OpData is string text)
-                                    {
-                                        swPartNumber = text.TrimEnd();
-                                    }
-                                }
-
-                                if (resultName2 != null)
-                                {
-                                    if (resultDict1.TryGetValue(resultName2, out resultData))
+                                    if (resultDict1.TryGetValue(resultName1, out resultData))
                                     {
                                         if (resultData.OpData is string text)
                                         {
-                                            hwPartNumber = text.TrimEnd();
+                                            string vin = text.TrimEnd();
+                                            if (_vinRegex.IsMatch(vin))
+                                            {
+                                                ecuInfo.Vin = vin;
+                                            }
                                         }
                                     }
                                 }
-                                if (!string.IsNullOrWhiteSpace(swPartNumber))
+                                else
                                 {
-                                    ecuInfo.VagPartNumber = swPartNumber;
-                                    if (!string.IsNullOrWhiteSpace(hwPartNumber))
+                                    string swPartNumber = string.Empty;
+                                    string hwPartNumber = string.Empty;
+                                    if (resultDict1.TryGetValue(resultName1, out resultData))
                                     {
-                                        ecuInfo.VagHwPartNumber = hwPartNumber;
+                                        if (resultData.OpData is string text)
+                                        {
+                                            swPartNumber = text.TrimEnd();
+                                        }
                                     }
-                                    break;
+
+                                    if (resultName2 != null)
+                                    {
+                                        if (resultDict1.TryGetValue(resultName2, out resultData))
+                                        {
+                                            if (resultData.OpData is string text)
+                                            {
+                                                hwPartNumber = text.TrimEnd();
+                                            }
+                                        }
+                                    }
+                                    if (!string.IsNullOrWhiteSpace(swPartNumber))
+                                    {
+                                        ecuInfo.VagPartNumber = swPartNumber;
+                                        if (!string.IsNullOrWhiteSpace(hwPartNumber))
+                                        {
+                                            ecuInfo.VagHwPartNumber = hwPartNumber;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -4837,7 +4877,10 @@ namespace BmwDeepObd
                         switch (udsInfo.Item1)
                         {
                             case VagUdsS22DataType.Vin:
-                                ecuInfo.Vin = dataString;
+                                if (_vinRegex.IsMatch(dataString))
+                                {
+                                    ecuInfo.Vin = dataString;
+                                }
                                 break;
 
                             case VagUdsS22DataType.PartNum:
