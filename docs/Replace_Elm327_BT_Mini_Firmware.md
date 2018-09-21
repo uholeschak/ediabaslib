@@ -16,7 +16,7 @@ This chapter describes how to replace the ELM327 BT V1.5 HW: V01_M_V2.3 adapter 
 ## Step1: Program the YC1021 BT settings
 * Connect your EZP2010 Eeprom programmer clip on to the SOIC8 (150mil) 24C32 eeprom chip, take note of orientation (red wire of clipon goes to red annotated 24C32 pin1)
 * Do a full read with eeprom powered from programmer (do not apply power from obd side), it make take a few read tries to get the full dump correctly, if the first 0x80 bytes do not contain any 0xff your read is correct.
-* Edit the dump to your liking (for some chips an offset of 0x11 may be required)
+* Edit the dump to your liking (for some chips an offset of -11 dec may be required for the addresses)
   * BT address: 0xF93 (6 bytes, normally dont touch)
   * BLE address: 0xF99 (6 bytes, normally dont touch)
   * PinCode: 0xF9F, size + pinchars (max 15 chars)
