@@ -551,7 +551,7 @@ namespace BmwDeepObd
                 {
                     return true;
                 }
-                if (string.Compare(job.Name, "Fahrgestellnr_abfragen", StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(job.Name, XmlToolActivity.JobReadVin, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return true;
                 }
