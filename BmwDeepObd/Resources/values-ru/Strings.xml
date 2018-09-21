@@ -344,8 +344,7 @@
   <string name="xml_tool_no_mwtab">Не обнаружено таблиц данных для этого ECU файла</string>
   <string name="xml_tool_select_sgbd">Выбрать тип автомобиля</string>
   <string name="xml_tool_no_response">Автомобиль не отвечает</string>
-  <!--Translate-->
-  <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nЕсли у вашего автомобиля используется К-LINE коммуникация, то необходимо использовать USB или Deep ОDB устройство.\nУ более старших моделей возможна только ручная настройка конфигурации.\nДля этого вам необходимо в INPA на информационной странице для каждого ECU найти необходимые .GRP и .PRG файлы.\nПерейти к <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>ручной настройке</a>?</string>
+  <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nЕсли у вашего автомобиля используется К-LINE коммуникация, то необходимо использовать USB или Deep ОDB адаптер.\nЗдесь приведён список <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>поддерживаемых адаптеров</a>.</string>
   <string name="xml_tool_no_response_adapter">Автомобиль не отвечает.\nХотите проверить соединение адаптера?</string>
   <string name="xml_tool_read_jobs_failed">Не удалось считать Jobs</string>
   <string name="xml_tool_aborting">Отмена операции</string>
