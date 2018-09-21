@@ -19,6 +19,8 @@ using Android.Widget;
 using BmwDeepObd.FilePicker;
 using EdiabasLib;
 using System.Collections.ObjectModel;
+// ReSharper disable IdentifierTypo
+// ReSharper disable StringLiteralTypo
 
 // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
 
