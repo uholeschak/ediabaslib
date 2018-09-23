@@ -47,7 +47,8 @@ namespace BmwDeepObd
             PartNum,
             HwPartNum,
             AsamData,
-            AsamRev
+            AsamRev,
+            SubSystems
         }
 
         public enum DisplayFontSize
@@ -112,6 +113,8 @@ namespace BmwDeepObd
             public string VagAsamData { get; set; }
 
             public string VagAsamRev { get; set; }
+
+            public List<UInt16> SubSystems { get; set; }
 
             public bool Selected { get; set; }
 
@@ -255,6 +258,7 @@ namespace BmwDeepObd
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.HwPartNum, 0xF191),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.AsamData, 0xF19E),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.AsamRev, 0xF1A2),
+            new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.SubSystems, 0x0608),
         };
 
         private static readonly Tuple<string, string>[] EcuInfoVagJobs =
@@ -4825,7 +4829,8 @@ namespace BmwDeepObd
                         }
                     });
 
-                    bool optional = udsInfo.Item1 == VagUdsS22DataType.Vin;
+                    bool optional = udsInfo.Item1 == VagUdsS22DataType.Vin || udsInfo.Item1 == VagUdsS22DataType.SubSystems;
+                    bool binary = udsInfo.Item1 == VagUdsS22DataType.SubSystems;
                     _ediabas.ArgString = string.Format(CultureInfo.InvariantCulture, "{0}", udsInfo.Item2);
                     _ediabas.ArgBinaryStd = null;
                     _ediabas.ResultsRequests = string.Empty;
@@ -4858,26 +4863,46 @@ namespace BmwDeepObd
 
                         Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
                         string dataString = null;
+                        byte[] dataBytes = null;
                         if (resultDict1.TryGetValue("ERGEBNIS1WERT", out resultData))
                         {
                             if (resultData.OpData is byte[] data)
                             {
-                                dataString = VagUdsEncoding.GetString(data).TrimEnd('\0', ' ');
+                                dataBytes = data;
+                                if (!binary)
+                                {
+                                    dataString = VagUdsEncoding.GetString(data).TrimEnd('\0', ' ');
+                                }
                             }
                         }
-                        if (dataString == null)
+
+                        if (binary)
                         {
-                            if (optional)
+                            if (dataBytes == null)
                             {
-                                continue;
+                                if (optional)
+                                {
+                                    continue;
+                                }
+                                return false;
                             }
-                            return false;
+                        }
+                        else
+                        {
+                            if (dataString == null)
+                            {
+                                if (optional)
+                                {
+                                    continue;
+                                }
+                                return false;
+                            }
                         }
 
                         switch (udsInfo.Item1)
                         {
                             case VagUdsS22DataType.Vin:
-                                if (_vinRegex.IsMatch(dataString))
+                                if (_vinRegex.IsMatch(dataString ?? string.Empty))
                                 {
                                     ecuInfo.Vin = dataString;
                                 }
@@ -4898,6 +4923,21 @@ namespace BmwDeepObd
                             case VagUdsS22DataType.AsamRev:
                                 ecuInfo.VagAsamRev = dataString;
                                 break;
+
+                            case VagUdsS22DataType.SubSystems:
+                            {
+                                List<UInt16> subSystems = new List<UInt16>();
+                                for (int i = 0; i < dataBytes.Length - 1; i += 2)
+                                {
+                                    UInt16 value = (UInt16) ((dataBytes[i] << 8) + dataBytes[i + 1]);
+                                    if (value != 0xFFFF)
+                                    {
+                                        subSystems.Add(value);
+                                    }
+                                }
+                                ecuInfo.SubSystems = subSystems;
+                                break;
+                            }
                         }
                     }
                 }
