@@ -51,6 +51,13 @@ namespace BmwDeepObd
             SubSystems
         }
 
+        private enum VagUdsS22SubSysDataType
+        {
+            PartNum,
+            HwPartNum,
+            SysName
+        }
+
         public enum DisplayFontSize
         {
             Small,
@@ -114,7 +121,7 @@ namespace BmwDeepObd
 
             public string VagAsamRev { get; set; }
 
-            public List<UInt16> SubSystems { get; set; }
+            public List<EcuInfoSubSys> SubSystems { get; set; }
 
             public bool Selected { get; set; }
 
@@ -145,6 +152,22 @@ namespace BmwDeepObd
             public bool IgnoreXmlFile { get; set; }
 
             public string ReadCommand { get; set; }
+        }
+
+        public class EcuInfoSubSys
+        {
+            public EcuInfoSubSys(uint subSysAddr)
+            {
+                SubSysAddr = subSysAddr;
+            }
+
+            public uint SubSysAddr { get; }
+
+            public string VagPartNumber { get; set; }
+
+            public string VagHwPartNumber { get; set; }
+
+            public string SysName { get; set; }
         }
 
         public class EcuMwTabEntry
@@ -259,6 +282,13 @@ namespace BmwDeepObd
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.AsamData, 0xF19E),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.AsamRev, 0xF1A2),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.SubSystems, 0x0608),
+        };
+
+        private static readonly Tuple<VagUdsS22SubSysDataType, int>[] VagUdsS22SubSysData =
+        {
+            new Tuple<VagUdsS22SubSysDataType, int>(VagUdsS22SubSysDataType.PartNum, 0x6000),
+            new Tuple<VagUdsS22SubSysDataType, int>(VagUdsS22SubSysDataType.HwPartNum, 0x6200),
+            new Tuple<VagUdsS22SubSysDataType, int>(VagUdsS22SubSysDataType.SysName, 0x6C00),
         };
 
         private static readonly Tuple<string, string>[] EcuInfoVagJobs =
@@ -4653,6 +4683,7 @@ namespace BmwDeepObd
                 ecuInfo.VagHwPartNumber = null;
                 ecuInfo.VagAsamData = null;
                 ecuInfo.VagAsamRev = null;
+                ecuInfo.SubSystems = null;
 
                 for (int index = 0; index < 3; index++)
                 {
@@ -4813,6 +4844,7 @@ namespace BmwDeepObd
                 ecuInfo.VagHwPartNumber = null;
                 ecuInfo.VagAsamData = null;
                 ecuInfo.VagAsamRev = null;
+                ecuInfo.SubSystems = null;
 
                 int index = 0;
                 foreach (Tuple<VagUdsS22DataType, int> udsInfo in VagUdsS22Data)
@@ -4926,17 +4958,131 @@ namespace BmwDeepObd
 
                             case VagUdsS22DataType.SubSystems:
                             {
-                                List<UInt16> subSystems = new List<UInt16>();
+                                List<EcuInfoSubSys> subSystems = new List<EcuInfoSubSys>();
                                 for (int i = 0; i < dataBytes.Length - 1; i += 2)
                                 {
                                     UInt16 value = (UInt16) ((dataBytes[i] << 8) + dataBytes[i + 1]);
                                     if (value != 0xFFFF)
                                     {
-                                        subSystems.Add(value);
+                                        subSystems.Add(new EcuInfoSubSys(value));
                                     }
                                 }
                                 ecuInfo.SubSystems = subSystems;
                                 break;
+                            }
+                        }
+                    }
+                }
+
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    if (progress != null)
+                    {
+                        progress.Progress = 100;
+                    }
+                });
+
+                if (!GetVagEcuSubSysInfoUds(ecuInfo, progress))
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool GetVagEcuSubSysInfoUds(EcuInfo ecuInfo, CustomProgressDialog progress)
+        {
+            try
+            {
+                if (ecuInfo.SubSystems == null || ecuInfo.SubSystems.Count == 0)
+                {
+                    return true;
+                }
+
+                int maxItems = VagUdsS22SubSysData.Length * ecuInfo.SubSystems.Count;
+                int index = 0;
+                foreach (EcuInfoSubSys subSystem in ecuInfo.SubSystems)
+                {
+                    subSystem.VagPartNumber = null;
+                    subSystem.VagHwPartNumber = null;
+                    subSystem.SysName = null;
+
+                    foreach (Tuple<VagUdsS22SubSysDataType, int> udsInfo in VagUdsS22SubSysData)
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+                            if (progress != null)
+                            {
+                                progress.Progress = 100 * index / maxItems;
+                            }
+                        });
+
+                        _ediabas.ArgString = string.Format(CultureInfo.InvariantCulture, "{0}", udsInfo.Item2 + subSystem.SubSysAddr);
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob(JobReadMwUds);
+
+                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
+                            bool resultOk = false;
+                            if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    string result = (string)resultData.OpData;
+                                    if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        resultOk = true;
+                                    }
+                                }
+                            }
+                            if (!resultOk)
+                            {
+                                continue;
+                            }
+
+                            Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
+                            string dataString = null;
+                            if (resultDict1.TryGetValue("ERGEBNIS1WERT", out resultData))
+                            {
+                                if (resultData.OpData is byte[] data)
+                                {
+                                    dataString = VagUdsEncoding.GetString(data).TrimEnd('\0', ' ');
+                                }
+                            }
+
+                            if (dataString == null)
+                            {
+                                continue;
+                            }
+
+                            switch (udsInfo.Item1)
+                            {
+                                case VagUdsS22SubSysDataType.PartNum:
+                                    subSystem.VagPartNumber = dataString;
+                                    break;
+
+                                case VagUdsS22SubSysDataType.HwPartNum:
+                                    subSystem.VagHwPartNumber = dataString;
+                                    break;
+
+                                case VagUdsS22SubSysDataType.SysName:
+                                    subSystem.SysName = dataString;
+                                    break;
                             }
                         }
                     }
