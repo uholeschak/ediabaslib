@@ -5029,61 +5029,68 @@ namespace BmwDeepObd
                             }
                         });
 
-                        _ediabas.ArgString = string.Format(CultureInfo.InvariantCulture, "{0}", udsInfo.Item2 + subSystem.SubSysAddr);
-                        _ediabas.ArgBinaryStd = null;
-                        _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob(JobReadMwUds);
-
-                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                        if (resultSets != null && resultSets.Count >= 2)
+                        try
                         {
-                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
-                            bool resultOk = false;
-                            if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
+                            _ediabas.ArgString = string.Format(CultureInfo.InvariantCulture, "{0}", udsInfo.Item2 + subSystem.SubSysAddr);
+                            _ediabas.ArgBinaryStd = null;
+                            _ediabas.ResultsRequests = string.Empty;
+                            _ediabas.ExecuteJob(JobReadMwUds);
+
+                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                            if (resultSets != null && resultSets.Count >= 2)
                             {
-                                if (resultData.OpData is string)
+                                Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
+                                bool resultOk = false;
+                                if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
                                 {
-                                    string result = (string)resultData.OpData;
-                                    if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                    if (resultData.OpData is string)
                                     {
-                                        resultOk = true;
+                                        string result = (string)resultData.OpData;
+                                        if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            resultOk = true;
+                                        }
                                     }
                                 }
-                            }
-                            if (!resultOk)
-                            {
-                                continue;
-                            }
-
-                            Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
-                            string dataString = null;
-                            if (resultDict1.TryGetValue("ERGEBNIS1WERT", out resultData))
-                            {
-                                if (resultData.OpData is byte[] data)
+                                if (!resultOk)
                                 {
-                                    dataString = VagUdsEncoding.GetString(data).TrimEnd('\0', ' ');
+                                    continue;
+                                }
+
+                                Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
+                                string dataString = null;
+                                if (resultDict1.TryGetValue("ERGEBNIS1WERT", out resultData))
+                                {
+                                    if (resultData.OpData is byte[] data)
+                                    {
+                                        dataString = VagUdsEncoding.GetString(data).TrimEnd('\0', ' ');
+                                    }
+                                }
+
+                                if (dataString == null)
+                                {
+                                    continue;
+                                }
+
+                                switch (udsInfo.Item1)
+                                {
+                                    case VagUdsS22SubSysDataType.PartNum:
+                                        subSystem.VagPartNumber = dataString;
+                                        break;
+
+                                    case VagUdsS22SubSysDataType.HwPartNum:
+                                        subSystem.VagHwPartNumber = dataString;
+                                        break;
+
+                                    case VagUdsS22SubSysDataType.SysName:
+                                        subSystem.SysName = dataString;
+                                        break;
                                 }
                             }
-
-                            if (dataString == null)
-                            {
-                                continue;
-                            }
-
-                            switch (udsInfo.Item1)
-                            {
-                                case VagUdsS22SubSysDataType.PartNum:
-                                    subSystem.VagPartNumber = dataString;
-                                    break;
-
-                                case VagUdsS22SubSysDataType.HwPartNum:
-                                    subSystem.VagHwPartNumber = dataString;
-                                    break;
-
-                                case VagUdsS22SubSysDataType.SysName:
-                                    subSystem.SysName = dataString;
-                                    break;
-                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
                         }
                     }
                 }
