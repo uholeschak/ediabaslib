@@ -291,8 +291,8 @@ namespace BmwDeepObd
 
         private static readonly Tuple<VagUdsS22SubSysDataType, int>[] VagUdsS22SubSysData =
         {
-            new Tuple<VagUdsS22SubSysDataType, int>(VagUdsS22SubSysDataType.PartNum, 0x6000),
-            new Tuple<VagUdsS22SubSysDataType, int>(VagUdsS22SubSysDataType.HwPartNum, 0x6200),
+            new Tuple<VagUdsS22SubSysDataType, int>(VagUdsS22SubSysDataType.PartNum, 0x6200),
+            new Tuple<VagUdsS22SubSysDataType, int>(VagUdsS22SubSysDataType.HwPartNum, 0x6000),
             new Tuple<VagUdsS22SubSysDataType, int>(VagUdsS22SubSysDataType.SysName, 0x6C00),
         };
 
