@@ -187,26 +187,21 @@ namespace UdsFileReader
                 redirectFile = false;
                 try
                 {
-                    string fullName = _fullName;
-                    string baseName = _baseName;
-                    if (IndexSubSys.HasValue)
+                    if (!IndexSubSys.HasValue)
                     {
-                        fullName = _fullNameSubSys;
-                        baseName = _baseNameSubSys;
-                    }
-
-                    foreach (string subDir in dirList)
-                    {
-                        string fileName = Path.Combine(subDir, fullName.ToLowerInvariant() + FileExtension);
-                        if (File.Exists(fileName))
+                        foreach (string subDir in dirList)
                         {
-                            return fileName;
-                        }
+                            string fileName = Path.Combine(subDir, _fullName.ToLowerInvariant() + FileExtension);
+                            if (File.Exists(fileName))
+                            {
+                                return fileName;
+                            }
 
-                        fileName = Path.Combine(subDir, baseName.ToLowerInvariant() + FileExtension);
-                        if (File.Exists(fileName))
-                        {
-                            return fileName;
+                            fileName = Path.Combine(subDir, _baseName.ToLowerInvariant() + FileExtension);
+                            if (File.Exists(fileName))
+                            {
+                                return fileName;
+                            }
                         }
                     }
 
