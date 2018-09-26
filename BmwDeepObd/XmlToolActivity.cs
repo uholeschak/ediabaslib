@@ -156,10 +156,13 @@ namespace BmwDeepObd
 
         public class EcuInfoSubSys
         {
-            public EcuInfoSubSys(uint subSysAddr)
+            public EcuInfoSubSys(int subSysIndex, uint subSysAddr)
             {
+                SubSysIndex = subSysIndex;
                 SubSysAddr = subSysAddr;
             }
+
+            public int SubSysIndex { get; }
 
             public uint SubSysAddr { get; }
 
@@ -168,6 +171,8 @@ namespace BmwDeepObd
             public string VagHwPartNumber { get; set; }
 
             public string SysName { get; set; }
+
+            public string VagDataFileName { get; set; }
         }
 
         public class EcuMwTabEntry
@@ -3095,6 +3100,18 @@ namespace BmwDeepObd
                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VAG include file: {0}", fileName);
                         }
                     }
+
+                    foreach (EcuInfoSubSys subSystem in ecuInfo.SubSystems)
+                    {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolving sub sys: {0}, VAG part number: '{1}'",
+                            subSystem.SubSysIndex, subSystem.VagPartNumber ?? string.Empty);
+                        UdsFileReader.DataReader.FileNameResolver dataResolverSubSys =
+                            new UdsFileReader.DataReader.FileNameResolver(udsReader.DataReader, ecuInfo.VagPartNumber, ecuInfo.VagHwPartNumber,
+                                subSystem.VagPartNumber, (int)ecuInfo.Address, subSystem.SubSysIndex);
+                        string dataFileNameSubSys = dataResolverSubSys.GetFileName(vagDirLang);
+                        subSystem.VagDataFileName = dataFileNameSubSys ?? string.Empty;
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Sub sys: {0}, data file: {1}", subSystem.SubSysIndex, subSystem.VagDataFileName);
+                    }
                 }
 
                 ecuInfo.MwTabFileName = string.Empty;
@@ -4959,12 +4976,13 @@ namespace BmwDeepObd
                             case VagUdsS22DataType.SubSystems:
                             {
                                 List<EcuInfoSubSys> subSystems = new List<EcuInfoSubSys>();
+                                int subSysIndex = 0;
                                 for (int i = 0; i < dataBytes.Length - 1; i += 2)
                                 {
                                     UInt16 value = (UInt16) ((dataBytes[i] << 8) + dataBytes[i + 1]);
                                     if (value != 0xFFFF)
                                     {
-                                        subSystems.Add(new EcuInfoSubSys(value));
+                                        subSystems.Add(new EcuInfoSubSys(subSysIndex++, value));
                                     }
                                 }
                                 ecuInfo.SubSystems = subSystems;

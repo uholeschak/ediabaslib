@@ -40,6 +40,14 @@ namespace UdsFileReader
 
         public class FileNameResolver
         {
+            public FileNameResolver(DataReader dataReader, string partNumber, string hwPartNumber, string partNumberSubSys, int address, int indexSubSys) :
+                this(dataReader, partNumber, hwPartNumber, address)
+            {
+                PartNumberSubSys = partNumberSubSys;
+                IndexSubSys = indexSubSys;
+                _fullNameSubSys = ConvertPartNumber(PartNumberSubSys, out _baseNameSubSys);
+            }
+
             public FileNameResolver(DataReader dataReader, string partNumber, string hwPartNumber, int address)
             {
                 DataReader = dataReader;
@@ -117,6 +125,10 @@ namespace UdsFileReader
                                     {
                                         fullName = _fullNameHw;
                                     }
+                                    else if (string.Compare(redirectSource, "SL", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        fullName = _fullNameSubSys;
+                                    }
                                 }
 
                                 if (string.IsNullOrEmpty(fullName))
@@ -175,32 +187,48 @@ namespace UdsFileReader
                 redirectFile = false;
                 try
                 {
+                    string fullName = _fullName;
+                    string baseName = _baseName;
+                    if (IndexSubSys.HasValue)
+                    {
+                        fullName = _fullNameSubSys;
+                        baseName = _baseNameSubSys;
+                    }
+
                     foreach (string subDir in dirList)
                     {
-                        string fileName = Path.Combine(subDir, _fullName.ToLowerInvariant() + FileExtension);
+                        string fileName = Path.Combine(subDir, fullName.ToLowerInvariant() + FileExtension);
                         if (File.Exists(fileName))
                         {
                             return fileName;
                         }
 
-                        fileName = Path.Combine(subDir, _baseName.ToLowerInvariant() + FileExtension);
+                        fileName = Path.Combine(subDir, baseName.ToLowerInvariant() + FileExtension);
                         if (File.Exists(fileName))
                         {
                             return fileName;
                         }
                     }
 
-                    foreach (string subDir in dirList)
+                    if (!string.IsNullOrEmpty(PartNumber) && PartNumber.Length >= 2)
                     {
-                        string part1 = PartNumber.Substring(0, 2);
-                        string part2 = string.Format(CultureInfo.InvariantCulture, "{0:X02}", Address);
-                        string baseName = part1 + "-" + part2;
-
-                        string fileName = Path.Combine(subDir, baseName.ToLowerInvariant() + FileExtension);
-                        if (File.Exists(fileName))
+                        foreach (string subDir in dirList)
                         {
-                            redirectFile = true;
-                            return fileName;
+                            string part1 = PartNumber.Substring(0, 2);
+                            string part2 = string.Format(CultureInfo.InvariantCulture, "{0:X02}", Address);
+                            string baseNameTest = part1 + "-" + part2;
+                            if (IndexSubSys.HasValue)
+                            {
+                                string part3 = string.Format(CultureInfo.InvariantCulture, "{0:X02}", IndexSubSys.Value + 1);
+                                baseNameTest += "-" + part3;
+                            }
+
+                            string fileName = Path.Combine(subDir, baseNameTest.ToLowerInvariant() + FileExtension);
+                            if (File.Exists(fileName))
+                            {
+                                redirectFile = true;
+                                return fileName;
+                            }
                         }
                     }
                 }
@@ -265,12 +293,16 @@ namespace UdsFileReader
             public DataReader DataReader { get; }
             public string PartNumber { get; }
             public string HwPartNumber { get; }
+            public string PartNumberSubSys { get; }
             public int Address { get; }
+            public int? IndexSubSys { get; }
 
             private readonly string _fullName;
             private readonly string _baseName;
             private readonly string _fullNameHw;
             private readonly string _baseNameHw;
+            private readonly string _fullNameSubSys;
+            private readonly string _baseNameSubSys;
         }
 
         public List<string> ErrorCodeToString(uint errorCode, uint errorDetail, ErrorType errorType, UdsReader udsReader = null)
