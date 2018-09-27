@@ -53,8 +53,8 @@ namespace BmwDeepObd
 
         private enum VagUdsS22SubSysDataType
         {
+            Coding,
             PartNum,
-            HwPartNum,
             SysName
         }
 
@@ -166,9 +166,9 @@ namespace BmwDeepObd
 
             public uint SubSysAddr { get; }
 
-            public string VagPartNumber { get; set; }
+            public byte[] Coding { get; set; }
 
-            public string VagHwPartNumber { get; set; }
+            public string VagPartNumber { get; set; }
 
             public string SysName { get; set; }
 
@@ -291,8 +291,8 @@ namespace BmwDeepObd
 
         private static readonly Tuple<VagUdsS22SubSysDataType, int>[] VagUdsS22SubSysData =
         {
+            new Tuple<VagUdsS22SubSysDataType, int>(VagUdsS22SubSysDataType.Coding, 0x6000),
             new Tuple<VagUdsS22SubSysDataType, int>(VagUdsS22SubSysDataType.PartNum, 0x6200),
-            new Tuple<VagUdsS22SubSysDataType, int>(VagUdsS22SubSysDataType.HwPartNum, 0x6000),
             new Tuple<VagUdsS22SubSysDataType, int>(VagUdsS22SubSysDataType.SysName, 0x6C00),
         };
 
@@ -5029,8 +5029,8 @@ namespace BmwDeepObd
                 int index = 0;
                 foreach (EcuInfoSubSys subSystem in ecuInfo.SubSystems)
                 {
+                    subSystem.Coding = null;
                     subSystem.VagPartNumber = null;
-                    subSystem.VagHwPartNumber = null;
                     subSystem.SysName = null;
 
                     foreach (Tuple<VagUdsS22SubSysDataType, int> udsInfo in VagUdsS22SubSysData)
@@ -5076,28 +5076,44 @@ namespace BmwDeepObd
                                 }
 
                                 Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
+                                bool binary = udsInfo.Item1 == VagUdsS22SubSysDataType.Coding;
                                 string dataString = null;
+                                byte[] dataBytes = null;
                                 if (resultDict1.TryGetValue("ERGEBNIS1WERT", out resultData))
                                 {
                                     if (resultData.OpData is byte[] data)
                                     {
-                                        dataString = VagUdsEncoding.GetString(data).TrimEnd('\0', ' ');
+                                        dataBytes = data;
+                                        if (!binary)
+                                        {
+                                            dataString = VagUdsEncoding.GetString(data).TrimEnd('\0', ' ');
+                                        }
                                     }
                                 }
 
-                                if (dataString == null)
+                                if (binary)
                                 {
-                                    continue;
+                                    if (dataBytes == null)
+                                    {
+                                        continue;
+                                    }
+                                }
+                                else
+                                {
+                                    if (dataString == null)
+                                    {
+                                        continue;
+                                    }
                                 }
 
                                 switch (udsInfo.Item1)
                                 {
-                                    case VagUdsS22SubSysDataType.PartNum:
-                                        subSystem.VagPartNumber = dataString;
+                                    case VagUdsS22SubSysDataType.Coding:
+                                        subSystem.Coding = dataBytes;
                                         break;
 
-                                    case VagUdsS22SubSysDataType.HwPartNum:
-                                        subSystem.VagHwPartNumber = dataString;
+                                    case VagUdsS22SubSysDataType.PartNum:
+                                        subSystem.VagPartNumber = dataString;
                                         break;
 
                                     case VagUdsS22SubSysDataType.SysName:
