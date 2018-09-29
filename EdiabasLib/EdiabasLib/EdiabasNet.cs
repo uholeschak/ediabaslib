@@ -5979,7 +5979,8 @@ namespace EdiabasLib
             byte[] result;
             try
             {
-                result = Enumerable.Range(0, valueStr.Length)
+                int length = valueStr.Length - valueStr.Length % 2;
+                result = Enumerable.Range(0, length)
                  .Where(x => x % 2 == 0)
                  .Select(x => Convert.ToByte(valueStr.Substring(x, 2), 16))
                  .ToArray();
