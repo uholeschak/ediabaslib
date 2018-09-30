@@ -11,7 +11,7 @@ namespace BmwDeepObd
     public class ForegroundService : Android.App.Service
     {
 #if DEBUG
-        static readonly string Tag = typeof(ForegroundService).FullName;
+        private static readonly string Tag = typeof(ForegroundService).FullName;
 #endif
         public const int ServiceRunningNotificationId = 10000;
         public const string ServiceNotificationChannelId = "ServiceNotificationDefault";
@@ -24,7 +24,7 @@ namespace BmwDeepObd
         public const string ActionStopService = "ForegroundService.action.STOP_SERVICE";
         public const string ActionMainActivity = "ForegroundService.action.MAIN_ACTIVITY";
 
-        bool _isStarted;
+        private bool _isStarted;
         private ActivityCommon _activityCommon;
         private Handler _stopHandler;
 

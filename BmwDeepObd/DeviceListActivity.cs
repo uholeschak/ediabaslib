@@ -75,6 +75,9 @@ namespace BmwDeepObd
         private const int ResponseTimeout = 1000;
 
         // Return Intent extra
+#if DEBUG
+        private static readonly string Tag = typeof(DeviceListActivity).FullName;
+#endif
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
@@ -324,6 +327,9 @@ namespace BmwDeepObd
             _newDevicesArrayAdapter.Clear();
             if (!_activityCommon.MtcBtServiceBound)
             {
+#if DEBUG
+                Android.Util.Log.Info(Tag, "UpdateMtcDevices: Service not bound");
+#endif
                 return;
             }
             MtcServiceConnection mtcServiceConnection = _activityCommon.MtcServiceConnection;
@@ -333,13 +339,22 @@ namespace BmwDeepObd
 
                 int offset = mtcServiceConnection.ApiVersion < 2 ? 0 : 1;
                 long nowDevAddr = mtcServiceConnection.GetNowDevAddr();
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("UpdateMtcDevices: offset={0}, now addr={1}", offset, nowDevAddr));
+#endif
                 string nowDevAddrString = string.Format(CultureInfo.InvariantCulture, "{0:X012}", nowDevAddr);
                 IList<string> deviceList = mtcServiceConnection.GetDeviceList();
                 IList<string> matchList = mtcServiceConnection.GetMatchList();
                 foreach (string device in matchList)
                 {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("MatchList: device={0}", device));
+#endif
                     if (ExtractMtcDeviceInfo(offset, device, out string name, out string address))
                     {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, string.Format("Extracted name={0}, address={1}", name, address));
+#endif
                         string mac = address.Replace(":", string.Empty);
                         if (string.Compare(mac, nowDevAddrString, StringComparison.OrdinalIgnoreCase) == 0)
                         {
@@ -350,8 +365,14 @@ namespace BmwDeepObd
                 }
                 foreach (string device in deviceList)
                 {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("DeviceList: device={0}", device));
+#endif
                     if (ExtractMtcDeviceInfo(offset, device, out string name, out string address))
                     {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, string.Format("Extracted name={0}, address={1}", name, address));
+#endif
                         _newDevicesArrayAdapter.Add(name + "\n" + address);
                     }
                 }
