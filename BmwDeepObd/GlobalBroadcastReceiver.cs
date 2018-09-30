@@ -13,7 +13,7 @@ namespace BmwDeepObd
     public class GlobalBroadcastReceiver : BroadcastReceiver
     {
 #if DEBUG
-        static readonly string Tag = typeof(GlobalBroadcastReceiver).FullName;
+        private static readonly string Tag = typeof(GlobalBroadcastReceiver).FullName;
 #endif
         public const string MtcBtSmallon = @"com.microntek.bt.smallon";
         public const string MtcBtSmalloff = @"com.microntek.bt.smalloff";
