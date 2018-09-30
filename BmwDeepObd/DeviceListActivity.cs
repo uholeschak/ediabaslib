@@ -30,7 +30,6 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using EdiabasLib;
-using Java.Util;
 using Android.Text.Method;
 
 namespace BmwDeepObd
@@ -71,7 +70,7 @@ namespace BmwDeepObd
             DeleteDevice,       // delete device
         }
 
-        private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
+        private static readonly Java.Util.UUID SppUuid = Java.Util.UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const int ResponseTimeout = 1000;
 
@@ -83,6 +82,7 @@ namespace BmwDeepObd
 
         // Member fields
         private BluetoothAdapter _btAdapter;
+        private Timer _deviceUpdateTimer;
         private static ArrayAdapter<string> _pairedDevicesArrayAdapter;
         private static ArrayAdapter<string> _newDevicesArrayAdapter;
         private Receiver _receiver;
@@ -208,9 +208,36 @@ namespace BmwDeepObd
         protected override void OnResume()
         {
             base.OnResume();
-            if (!_activityCommon.MtcBtService)
+            if (_activityCommon.MtcBtService)
+            {
+                if (_deviceUpdateTimer == null)
+                {
+                    _deviceUpdateTimer = new Timer(state =>
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+                            UpdateMtcDevices();
+                        });
+                    }, null, 1000, 1000);
+                }
+            }
+            else
             {
                 UpdatePairedDevices();
+            }
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+            if (_deviceUpdateTimer != null)
+            {
+                _deviceUpdateTimer.Dispose();
+                _deviceUpdateTimer = null;
             }
         }
 
