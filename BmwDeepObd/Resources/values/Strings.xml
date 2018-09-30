@@ -332,7 +332,7 @@
   <string name="xml_tool_msg_save_config_select">Do you want to save the configuration and use as active configuration?</string>
   <string name="xml_tool_msg_save_config_empty">You have selected no data to display.\nClick the ECUs and select the desired jobs and results.\nDo you want to save the configuration anyway?</string>
   <string name="xml_tool_msg_ecu_error">Unable to get valid informations for some ECUs.</string>
-  <string name="xml_tool_msg_pin78">A connection of the adapter pins 7 and 8 is required to detect more ECUs.</string>
+  <string name="xml_tool_msg_pin78">A connection of the adapter pins 7 and 8 is required to detect more ECUs.\nFor vehicles with OBD I socket in the engine bay additionally the pin 8 of the OBD II socket has to be connected at the vehicle side.</string>
   <string name="xml_tool_select_ecu_type">Select ECU type</string>
   <string name="xml_tool_ecu_list">Detected ECUs</string>
   <string name="xml_tool_info_sgbd">SGBD</string>

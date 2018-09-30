@@ -355,7 +355,7 @@
   <string name="xml_tool_msg_save_config_select">Wollen Sie die Konfiguration speichern und als aktive Konfiguration verwenden?</string>
   <string name="xml_tool_msg_save_config_empty">Sie haben keine Daten für die Anzeige ausgewählt.\nKlicken Sie auf die ECUs und wählen Sie die gewünschen Jobs und Ergebnisse.\nWollen Sie die Konfiguration trotzdem speichern?</string>
   <string name="xml_tool_msg_ecu_error">Für einige ECUs konnten keine Information ermittelt werden.</string>
-  <string name="xml_tool_msg_pin78">Eine Verbindung zwischen den Adapter Pins 7 and 8 ist notwendig, um mehr ECUs erkennen zu können.</string>
+  <string name="xml_tool_msg_pin78">Eine Verbindung zwischen den Adapter Pins 7 and 8 ist notwendig, um mehr ECUs erkennen zu können.\nBei Fahrzeugen mit OBD I Buchse im Motorraum muss zusätzlich Pin 8 an der OBD II Buchse im Fahrzeug verbunden werden!</string>
   <string name="xml_tool_select_ecu_type">ECU-Typ auswählen</string>
   <string name="xml_tool_ecu_list">Erkannte ECUs</string>
   <string name="xml_tool_info_sgbd">SGBD</string>
