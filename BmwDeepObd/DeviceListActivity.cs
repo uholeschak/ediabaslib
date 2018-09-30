@@ -208,7 +208,10 @@ namespace BmwDeepObd
         protected override void OnResume()
         {
             base.OnResume();
-            UpdatePairedDevices();
+            if (!_activityCommon.MtcBtService)
+            {
+                UpdatePairedDevices();
+            }
         }
 
         protected override void OnStop()
