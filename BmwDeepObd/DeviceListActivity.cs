@@ -225,7 +225,7 @@ namespace BmwDeepObd
                             }
                             UpdateMtcDevices();
                         });
-                    }, null, 1000, 1000);
+                    }, null, 1000, 2000);
                 }
             }
             else

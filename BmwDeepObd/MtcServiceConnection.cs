@@ -8,7 +8,7 @@ namespace BmwDeepObd
     public class MtcServiceConnection : Java.Lang.Object, IServiceConnection
     {
 #if DEBUG
-        static readonly string Tag = typeof(MtcServiceConnection).FullName;
+        private static readonly string Tag = typeof(MtcServiceConnection).FullName;
 #endif
         public const string InterfaceToken = @"android.microntek.mtcser.BTServiceInf";
         public const string ServicePkg = @"android.microntek.mtcser";
