@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using Google.Apis.AndroidPublisher.v2;
-using Google.Apis.AndroidPublisher.v2.Data;
+using Google.Apis.AndroidPublisher.v3;
+using Google.Apis.AndroidPublisher.v3.Data;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Upload;
@@ -22,7 +22,6 @@ namespace ApkUploader
     {
         private const string PackageName = @"de.holeschak.bmw_deep_obd";
         private const string ExpansionKeep = @"*";
-        private static readonly string[] TracksAll = { "alpha", "beta", "production", "internal", "rollout" };
         private static readonly string[] TracksEdit = { "alpha", "beta", "production", "internal" };
         private volatile Thread _serviceThread;
         private readonly string _apkPath;
@@ -361,25 +360,56 @@ namespace ApkUploader
                         EditsResource edits = service.Edits;
                         EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
                         AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
-                        foreach (string track in TracksAll)
+
+                        TracksListResponse tracksListResponse = await edits.Tracks.List(PackageName, appEdit.Id).ExecuteAsync(_cts.Token);
+                        if (tracksListResponse.Tracks != null)
                         {
-                            if (sb.Length > 0)
+                            foreach (Track track in tracksListResponse.Tracks)
                             {
-                                sb.AppendLine();
-                            }
-                            sb.AppendLine($"Track: {track}");
-                            try
-                            {
-                                Track trackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
-                                foreach (int? version in trackResponse.VersionCodes)
+                                if (sb.Length > 0)
                                 {
-                                    if (version != null)
+                                    sb.AppendLine();
+                                }
+                                sb.AppendLine($"Track: {track.TrackValue}");
+                                foreach (TrackRelease trackRelease in track.Releases)
+                                {
+                                    if (trackRelease != null)
                                     {
-                                        sb.AppendLine($"Version: {version.Value}");
-                                        await PrintExpansion(sb, edits, appEdit, version.Value);
+                                        if (trackRelease.Name != null)
+                                        {
+                                            sb.AppendLine($"Name: {trackRelease.Name}");
+                                        }
+                                        if (trackRelease.Status != null)
+                                        {
+                                            sb.AppendLine($"Status: {trackRelease.Status}");
+                                        }
+
+                                        if (trackRelease.ReleaseNotes != null)
+                                        {
+                                            foreach (LocalizedText localizedText in trackRelease.ReleaseNotes)
+                                            {
+                                                if (localizedText != null)
+                                                {
+                                                    sb.AppendLine($"Note ({localizedText.Language}): {localizedText.Text}");
+                                                }
+                                            }
+                                        }
+
+                                        if (trackRelease.VersionCodes != null)
+                                        {
+                                            foreach (long? version in trackRelease.VersionCodes)
+                                            {
+                                                if (version.HasValue)
+                                                {
+                                                    sb.AppendLine($"Version: {version.Value}");
+                                                    await PrintExpansion(sb, edits, appEdit, (int)version.Value);
+                                                }
+                                            }
+                                        }
+
                                         try
                                         {
-                                            Testers testers = await edits.Testers.Get(PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
+                                            Testers testers = await edits.Testers.Get(PackageName, appEdit.Id, track.TrackValue).ExecuteAsync(_cts.Token);
                                             sb.AppendLine("Test active");
                                             if (testers.GoogleGroups != null)
                                             {
@@ -400,34 +430,8 @@ namespace ApkUploader
                                         {
                                             // ignored
                                         }
-
-                                        try
-                                        {
-                                            ApkListingsListResponse listingsResponse = await edits.Apklistings.List(PackageName, appEdit.Id, version.Value).ExecuteAsync(_cts.Token);
-                                            if (listingsResponse.Listings != null)
-                                            {
-                                                foreach (ApkListing listing in listingsResponse.Listings)
-                                                {
-                                                    string changes = listing.RecentChanges ?? string.Empty;
-                                                    changes = changes.Replace("\n", "\\n");
-                                                    sb.AppendLine($"Changes ({listing.Language}): {changes}");
-                                                }
-                                            }
-                                        }
-                                        catch (Exception)
-                                        {
-                                            // ignored
-                                        }
-                                    }
-                                    else
-                                    {
-                                        sb.AppendLine("No version");
                                     }
                                 }
-                            }
-                            catch (Exception)
-                            {
-                                sb.AppendLine("No data");
                             }
                         }
                     }
@@ -476,39 +480,48 @@ namespace ApkUploader
                         AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
                         Track trackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, fromTrack).ExecuteAsync(_cts.Token);
                         sb.AppendLine($"From track: {fromTrack}");
-                        if (trackResponse.VersionCodes.Count != 1 || !trackResponse.VersionCodes[0].HasValue)
+                        if (trackResponse.Releases.Count != 1)
                         {
-                            sb.AppendLine($"Invalid version count: {trackResponse.VersionCodes.Count}");
+                            sb.AppendLine($"Invalid release count: {trackResponse.Releases.Count}");
+                            UpdateStatus(sb.ToString());
+                            throw new Exception("Invalid release count");
+                        }
+                        TrackRelease trackRelease = trackResponse.Releases[0];
+                        if (trackRelease.VersionCodes.Count != 1 || !trackRelease.VersionCodes[0].HasValue)
+                        {
+                            sb.AppendLine($"Invalid version count: {trackRelease.VersionCodes.Count}");
                             UpdateStatus(sb.ToString());
                             throw new Exception("Invalid version count");
                         }
-                        int currentVersion = trackResponse.VersionCodes[0].Value;
+                        long currentVersion = trackRelease.VersionCodes[0].Value;
                         sb.AppendLine($"Version: {currentVersion}");
                         UpdateStatus(sb.ToString());
 
-                        Track assignTrack = new Track { VersionCodes = new List<int?> { currentVersion } };
+                        Track assignTrack = new Track
+                        {
+                            Releases = new List<TrackRelease>
+                            {
+                                new TrackRelease
+                                {
+                                    Name = trackRelease.Name,
+                                    VersionCodes = new List<long?>
+                                    {
+                                        currentVersion
+                                    },
+                                    Status = trackRelease.Status,
+                                    ReleaseNotes = trackRelease.ReleaseNotes,
+                                }
+                            }
+                        };
+
                         await edits.Tracks.Update(assignTrack, PackageName, appEdit.Id, toTrack).ExecuteAsync();
                         sb.AppendLine($"Assigned to track: {toTrack}");
                         UpdateStatus(sb.ToString());
 
-                        Track unassignTrack = new Track { VersionCodes = new List<int?>() };
+                        Track unassignTrack = new Track();
                         await edits.Tracks.Update(unassignTrack, PackageName, appEdit.Id, fromTrack).ExecuteAsync();
                         sb.AppendLine($"Unassigned from track: {fromTrack}");
                         UpdateStatus(sb.ToString());
-
-                        ApkListingsListResponse listingsResponse = await edits.Apklistings.List(PackageName, appEdit.Id, currentVersion).ExecuteAsync(_cts.Token);
-                        if (listingsResponse.Listings != null)
-                        {
-                            foreach (ApkListing listing in listingsResponse.Listings)
-                            {
-                                if (listing.RecentChanges != null)
-                                {
-                                    await edits.Apklistings.Update(listing, PackageName, appEdit.Id, currentVersion, listing.Language).ExecuteAsync(_cts.Token);
-                                    sb.AppendLine($"Changes for language {listing.Language} updated");
-                                    UpdateStatus(sb.ToString());
-                                }
-                            }
-                        }
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
                         AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
@@ -553,15 +566,38 @@ namespace ApkUploader
                         EditsResource edits = service.Edits;
                         EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
                         AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
+                        TrackRelease trackReleaseOld = null;
                         try
                         {
                             Track trackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
                             sb.AppendLine($"Track: {track}");
-                            foreach (int? version in trackResponse.VersionCodes)
+
+                            foreach (TrackRelease trackRelease in trackResponse.Releases)
                             {
-                                if (version != null)
+                                if (trackRelease != null)
                                 {
-                                    sb.AppendLine($"Version: {version.Value}");
+                                    if (trackReleaseOld == null)
+                                    {
+                                        trackReleaseOld = trackRelease;
+                                    }
+
+                                    if (trackRelease.Name != null)
+                                    {
+                                        sb.AppendLine($"Name: {trackRelease.Name}");
+                                    }
+
+                                    if (trackRelease.Status != null)
+                                    {
+                                        sb.AppendLine($"Status: {trackRelease.Status}");
+                                    }
+
+                                    foreach (long? version in trackRelease.VersionCodes)
+                                    {
+                                        if (version.HasValue)
+                                        {
+                                            sb.AppendLine($"Version: {version.Value}");
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -570,10 +606,22 @@ namespace ApkUploader
                             sb.AppendLine($"No version for track: {track}");
                         }
 
-                        Track assignTrack = new Track { VersionCodes = new List<int?>() };
+                        Track assignTrack = new Track();
                         if (versionAssign.HasValue)
                         {
-                            assignTrack.VersionCodes.Add(versionAssign);
+                            assignTrack.Releases = new List<TrackRelease>
+                            {
+                                new TrackRelease
+                                {
+                                    Name = versionAssign.ToString(),
+                                    VersionCodes = new List<long?>
+                                    {
+                                        versionAssign
+                                    },
+                                    Status = "completed",
+                                    ReleaseNotes = trackReleaseOld?.ReleaseNotes,
+                                }
+                            };
                             sb.AppendLine($"Assign version: {versionAssign}");
                         }
                         else
@@ -637,29 +685,61 @@ namespace ApkUploader
                         AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
                         Track trackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
                         sb.AppendLine($"Track: {track}");
-                        if (trackResponse.VersionCodes.Count != 1 || !trackResponse.VersionCodes[0].HasValue)
+                        if (trackResponse.Releases.Count != 1)
                         {
-                            sb.AppendLine($"Invalid version count: {trackResponse.VersionCodes.Count}");
+                            sb.AppendLine($"Invalid release count: {trackResponse.Releases.Count}");
+                            UpdateStatus(sb.ToString());
+                            throw new Exception("Invalid release count");
+                        }
+                        TrackRelease trackRelease = trackResponse.Releases[0];
+                        if (trackRelease.VersionCodes.Count != 1 || !trackRelease.VersionCodes[0].HasValue)
+                        {
+                            sb.AppendLine($"Invalid version count: {trackRelease.VersionCodes.Count}");
                             UpdateStatus(sb.ToString());
                             throw new Exception("Invalid version count");
                         }
-                        int currentVersion = trackResponse.VersionCodes[0].Value;
+                        long currentVersion = trackRelease.VersionCodes[0].Value;
+                        if (trackRelease.Name != null)
+                        {
+                            sb.AppendLine($"Name: {trackRelease.Name}");
+                        }
+                        if (trackRelease.Status != null)
+                        {
+                            sb.AppendLine($"Status: {trackRelease.Status}");
+                        }
                         sb.AppendLine($"Version: {currentVersion}");
                         UpdateStatus(sb.ToString());
 
-                        await edits.Apklistings.Deleteall(PackageName, appEdit.Id, currentVersion).ExecuteAsync(_cts.Token);
-                        sb.AppendLine("All changes cleared");
-                        UpdateStatus(sb.ToString());
+                        List<LocalizedText> releaseNotes = new List<LocalizedText>();
                         foreach (UpdateInfo updateInfo in apkChanges)
                         {
-                            ApkListing apkListing = new ApkListing
+                            LocalizedText localizedText = new LocalizedText
                             {
-                                RecentChanges = updateInfo.Changes
+                                Language = updateInfo.Language,
+                                Text = updateInfo.Changes
                             };
-                            await edits.Apklistings.Update(apkListing, PackageName, appEdit.Id, currentVersion, updateInfo.Language).ExecuteAsync(_cts.Token);
-                            sb.AppendLine($"Changes for language {updateInfo.Language} updated");
-                            UpdateStatus(sb.ToString());
+                            releaseNotes.Add(localizedText);
                         }
+
+                        Track trackUpdate = new Track
+                        {
+                            Releases = new List<TrackRelease>
+                            {
+                                new TrackRelease
+                                {
+                                    Name = trackRelease.Name,
+                                    VersionCodes = new List<long?>
+                                    {
+                                        currentVersion
+                                    },
+                                    Status = trackRelease.Status,
+                                    ReleaseNotes = releaseNotes,
+                                }
+                            }
+                        };
+
+                        await edits.Tracks.Update(trackUpdate, PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
+                        sb.AppendLine($"Track {track} updated");
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
                         AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
@@ -826,25 +906,39 @@ namespace ApkUploader
                             }
                         }
 
-                        Track updateTrack = new Track { VersionCodes = new List<int?> { versionCode.Value } };
-                        EditsResource.TracksResource.UpdateRequest updateRequest = edits.Tracks.Update(updateTrack, PackageName, appEdit.Id, track);
-                        Track updatedTrack = await updateRequest.ExecuteAsync(_cts.Token);
-                        sb.AppendLine($"Track updated: {updatedTrack.TrackValue}");
-                        UpdateStatus(sb.ToString());
-
+                        List<LocalizedText> releaseNotes = new List<LocalizedText>();
                         if (apkChanges != null)
                         {
                             foreach (UpdateInfo updateInfo in apkChanges)
                             {
-                                ApkListing apkListing = new ApkListing
+                                LocalizedText localizedText = new LocalizedText
                                 {
-                                    RecentChanges = updateInfo.Changes
+                                    Language = updateInfo.Language,
+                                    Text = updateInfo.Changes
                                 };
-                                await edits.Apklistings.Update(apkListing, PackageName, appEdit.Id, versionCode.Value, updateInfo.Language).ExecuteAsync(_cts.Token);
-                                sb.AppendLine($"Changes for language {updateInfo.Language} updated");
-                                UpdateStatus(sb.ToString());
+                                releaseNotes.Add(localizedText);
                             }
                         }
+
+                        Track trackUpdate = new Track
+                        {
+                            Releases = new List<TrackRelease>
+                            {
+                                new TrackRelease
+                                {
+                                    Name = versionCode.ToString(),
+                                    VersionCodes = new List<long?>
+                                    {
+                                        versionCode.Value
+                                    },
+                                    Status = "completed",
+                                    ReleaseNotes = releaseNotes,
+                                }
+                            }
+                        };
+
+                        await edits.Tracks.Update(trackUpdate, PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
+                        sb.AppendLine($"Track {track} updated");
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
                         AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
