@@ -82,6 +82,7 @@ namespace ApkUploader
             buttonClose.Enabled = enable;
             comboBoxTrackAssign.Enabled = enable;
             comboBoxTrackUnassign.Enabled = enable;
+            checkBoxUpdateName.Enabled = enable;
             textBoxVersion.Enabled = enable;
             textBoxApkFile.Enabled = enable;
             textBoxObbFile.Enabled = enable;
@@ -1022,6 +1023,7 @@ namespace ApkUploader
         private void FormMain_Load(object sender, EventArgs e)
         {
             textBoxVersion.Text = Properties.Settings.Default.VersionAssign;
+            checkBoxUpdateName.Checked = Properties.Settings.Default.UpdateName;
             textBoxApkFile.Text = Properties.Settings.Default.ApkFileName;
             textBoxObbFile.Text = Properties.Settings.Default.ObbFileName;
             textBoxResourceFolder.Text = Properties.Settings.Default.ResourceFolder;
@@ -1094,11 +1096,14 @@ namespace ApkUploader
                     return;
                 }
 
-                appVersion = ReadAppVersion(textBoxResourceFolder.Text);
-                if (appVersion == null)
+                if (checkBoxUpdateName.Checked)
                 {
-                    UpdateStatus("Reading app version failed!");
-                    return;
+                    appVersion = ReadAppVersion(textBoxResourceFolder.Text);
+                    if (appVersion == null)
+                    {
+                        UpdateStatus("Reading app version failed!");
+                        return;
+                    }
                 }
             }
             UpdateChanges(comboBoxTrackAssign.Text, apkChanges, appVersion);
@@ -1194,6 +1199,7 @@ namespace ApkUploader
             try
             {
                 Properties.Settings.Default.VersionAssign = textBoxVersion.Text;
+                Properties.Settings.Default.UpdateName = checkBoxUpdateName.Checked;
                 Properties.Settings.Default.ApkFileName = textBoxApkFile.Text;
                 Properties.Settings.Default.ObbFileName = textBoxObbFile.Text;
                 Properties.Settings.Default.TrackAssign = comboBoxTrackAssign.Text;

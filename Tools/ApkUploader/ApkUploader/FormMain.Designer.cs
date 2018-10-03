@@ -56,6 +56,7 @@
             this.textBoxVersion = new System.Windows.Forms.TextBox();
             this.labelVersion = new System.Windows.Forms.Label();
             this.buttonUpdateChanges = new System.Windows.Forms.Button();
+            this.checkBoxUpdateName = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // textBoxStatus
@@ -244,7 +245,7 @@
             this.comboBoxTrackUnassign.Location = new System.Drawing.Point(764, 43);
             this.comboBoxTrackUnassign.Name = "comboBoxTrackUnassign";
             this.comboBoxTrackUnassign.Size = new System.Drawing.Size(100, 21);
-            this.comboBoxTrackUnassign.TabIndex = 17;
+            this.comboBoxTrackUnassign.TabIndex = 18;
             // 
             // comboBoxTrackAssign
             // 
@@ -313,6 +314,16 @@
             this.buttonUpdateChanges.UseVisualStyleBackColor = true;
             this.buttonUpdateChanges.Click += new System.EventHandler(this.buttonUpdateChanges_Click);
             // 
+            // checkBoxUpdateName
+            // 
+            this.checkBoxUpdateName.Location = new System.Drawing.Point(523, 41);
+            this.checkBoxUpdateName.Name = "checkBoxUpdateName";
+            this.checkBoxUpdateName.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.checkBoxUpdateName.Size = new System.Drawing.Size(130, 24);
+            this.checkBoxUpdateName.TabIndex = 17;
+            this.checkBoxUpdateName.Text = "Update name";
+            this.checkBoxUpdateName.UseVisualStyleBackColor = true;
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -320,6 +331,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(912, 569);
+            this.Controls.Add(this.checkBoxUpdateName);
             this.Controls.Add(this.buttonUpdateChanges);
             this.Controls.Add(this.labelVersion);
             this.Controls.Add(this.textBoxVersion);
@@ -386,6 +398,7 @@
         private System.Windows.Forms.TextBox textBoxVersion;
         private System.Windows.Forms.Label labelVersion;
         private System.Windows.Forms.Button buttonUpdateChanges;
+        private System.Windows.Forms.CheckBox checkBoxUpdateName;
     }
 }
 
