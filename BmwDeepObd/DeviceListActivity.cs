@@ -337,14 +337,22 @@ namespace BmwDeepObd
             {
                 FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
 
-                int offset = mtcServiceConnection.ApiVersion < 2 ? 0 : 1;
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("UpdateMtcDevices: api={0}", mtcServiceConnection.ApiVersion));
+                sbyte btState = mtcServiceConnection.GetBtState();
+                Android.Util.Log.Info(Tag, string.Format("BtState: {0}", btState));
+                bool autoConnect = mtcServiceConnection.GetAutoConnect();
+                Android.Util.Log.Info(Tag, string.Format("AutoConnect: {0}", autoConnect));
+#endif
                 long nowDevAddr = mtcServiceConnection.GetNowDevAddr();
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("UpdateMtcDevices: offset={0}, now addr={1}", offset, nowDevAddr));
+                Android.Util.Log.Info(Tag, string.Format("NowDevAddr: {0}", nowDevAddr));
 #endif
                 string nowDevAddrString = string.Format(CultureInfo.InvariantCulture, "{0:X012}", nowDevAddr);
                 IList<string> deviceList = mtcServiceConnection.GetDeviceList();
                 IList<string> matchList = mtcServiceConnection.GetMatchList();
+                int offset = mtcServiceConnection.ApiVersion < 2 ? 0 : 1;
+
                 foreach (string device in matchList)
                 {
 #if DEBUG
@@ -381,9 +389,11 @@ namespace BmwDeepObd
                     _newDevicesArrayAdapter.Add(Resources.GetText(Resource.String.none_found));
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // ignored
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("UpdateMtcDevices exception: {0}", ex.Message));
+#endif
             }
         }
 
