@@ -127,6 +127,9 @@ namespace BmwDeepObd
                 {
                     if (intent.HasExtra(GlobalBroadcastReceiver.BtScanFinished))
                     {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "BtScanFinished");
+#endif
                         ShowScanState(false);
                     }
                 }
@@ -353,40 +356,55 @@ namespace BmwDeepObd
                 IList<string> matchList = mtcServiceConnection.GetMatchList();
                 int offset = mtcServiceConnection.ApiVersion < 2 ? 0 : 1;
 
-                foreach (string device in matchList)
+                if (matchList != null)
                 {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("MatchList: device={0}", device));
-#endif
-                    if (ExtractMtcDeviceInfo(offset, device, out string name, out string address))
+                    foreach (string device in matchList)
                     {
-#if DEBUG
-                        Android.Util.Log.Info(Tag, string.Format("Extracted name={0}, address={1}", name, address));
-#endif
-                        string mac = address.Replace(":", string.Empty);
-                        if (string.Compare(mac, nowDevAddrString, StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.IsNullOrEmpty(device))
                         {
-                            name += " " + GetString(Resource.String.bt_device_connected);
+                            continue;
                         }
-                        _pairedDevicesArrayAdapter.Add(name + "\n" + address);
+#if DEBUG
+                        Android.Util.Log.Info(Tag, string.Format("MatchList: device={0}", device));
+#endif
+                        if (ExtractMtcDeviceInfo(offset, device, out string name, out string address))
+                        {
+#if DEBUG
+                            Android.Util.Log.Info(Tag, string.Format("Extracted name={0}, address={1}", name, address));
+#endif
+                            string mac = address.Replace(":", string.Empty);
+                            if (string.Compare(mac, nowDevAddrString, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                name += " " + GetString(Resource.String.bt_device_connected);
+                            }
+                            _pairedDevicesArrayAdapter.Add(name + "\n" + address);
+                        }
                     }
                 }
-                foreach (string device in deviceList)
+
+                if (deviceList != null)
                 {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("DeviceList: device={0}", device));
-#endif
-                    if (ExtractMtcDeviceInfo(offset, device, out string name, out string address))
+                    foreach (string device in deviceList)
                     {
+                        if (string.IsNullOrEmpty(device))
+                        {
+                            continue;
+                        }
 #if DEBUG
-                        Android.Util.Log.Info(Tag, string.Format("Extracted name={0}, address={1}", name, address));
+                        Android.Util.Log.Info(Tag, string.Format("DeviceList: device={0}", device));
 #endif
-                        _newDevicesArrayAdapter.Add(name + "\n" + address);
+                        if (ExtractMtcDeviceInfo(offset, device, out string name, out string address))
+                        {
+#if DEBUG
+                            Android.Util.Log.Info(Tag, string.Format("Extracted name={0}, address={1}", name, address));
+#endif
+                            _newDevicesArrayAdapter.Add(name + "\n" + address);
+                        }
                     }
-                }
-                if (_newDevicesArrayAdapter.Count == 0)
-                {
-                    _newDevicesArrayAdapter.Add(Resources.GetText(Resource.String.none_found));
+                    if (_newDevicesArrayAdapter.Count == 0)
+                    {
+                        _newDevicesArrayAdapter.Add(Resources.GetText(Resource.String.none_found));
+                    }
                 }
             }
             catch (Exception ex)

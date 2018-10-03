@@ -436,6 +436,7 @@ namespace BmwDeepObd
         private Timer _usbCheckTimer;
         private Timer _networkTimer;
         private int _usbDeviceDetectCount;
+        private GlobalBroadcastReceiver _gbcReceiver;
         private Receiver _bcReceiver;
         private InterfaceType _selectedInterface;
         private string _selectedEnetIp;
@@ -684,6 +685,8 @@ namespace BmwDeepObd
         // ReSharper disable once ConvertToAutoProperty
         public Android.App.ActivityManager ActivityManager => _activityManager;
 
+        public GlobalBroadcastReceiver GbcReceiver => _gbcReceiver;
+
         public Receiver BcReceiver => _bcReceiver;
 
         public XDocument XmlDocDtcCodes { get; set; }
@@ -737,6 +740,12 @@ namespace BmwDeepObd
 
             if (context != null && ((_bcReceiverUpdateDisplayHandler != null) || (_bcReceiverReceivedHandler != null)))
             {
+                // android 8 rejects global receivers, so we register it locally
+                _gbcReceiver = new GlobalBroadcastReceiver();
+                context.RegisterReceiver(_gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MtcBtSmallon));
+                context.RegisterReceiver(_gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MtcBtSmalloff));
+                context.RegisterReceiver(_gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MicBtReport));
+
                 _bcReceiver = new Receiver(this);
                 LocalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
                 context.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.ActionBroadcastCommand));
@@ -830,11 +839,20 @@ namespace BmwDeepObd
                         _usbCheckTimer = null;
                     }
                     UnRegisterWifiCallback();
-                    if (_context != null && _bcReceiver != null)
+                    if (_context != null)
                     {
-                        LocalBroadcastManager.GetInstance(_context).UnregisterReceiver(_bcReceiver);
-                        _context.UnregisterReceiver(_bcReceiver);
-                        _bcReceiver = null;
+                        if (_gbcReceiver != null)
+                        {
+                            LocalBroadcastManager.GetInstance(_context).UnregisterReceiver(_gbcReceiver);
+                            _context.UnregisterReceiver(_gbcReceiver);
+                            _gbcReceiver = null;
+                        }
+                        if (_bcReceiver != null)
+                        {
+                            LocalBroadcastManager.GetInstance(_context).UnregisterReceiver(_bcReceiver);
+                            _context.UnregisterReceiver(_bcReceiver);
+                            _bcReceiver = null;
+                        }
                     }
                     if (_wakeLockScreenBright != null)
                     {

@@ -80,7 +80,7 @@ namespace BmwDeepObd
             }
             _connectedHandler?.Invoke(Bound);
 #if DEBUG
-            Android.Util.Log.Info(Tag, string.Format("MTC Service connected: {0}, Version: {1}", Bound, ApiVersion));
+            Android.Util.Log.Info(Tag, string.Format("MTC Service connected: {0}, ClassName: {1}, Version: {2}", Bound, name?.ClassName ?? string.Empty, ApiVersion));
 #endif
         }
 
