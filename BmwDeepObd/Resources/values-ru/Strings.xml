@@ -162,6 +162,8 @@
   <string name="none_paired">Отсутствуют авторизированные устойства.</string>
   <string name="none_found">Устройство не найдено</string>
   <string name="bt_not_enabled">Bluetooth не активирован</string>
+  <!--Translate-->
+  <string name="bt_mtc_service_error">The Bluetooth service is connected, but no data is received.\nPlease fix the problem with the Bluetooth service first.</string>
   <string name="title_paired_devices">Авторизированные устройства</string>
   <string name="title_other_devices">Другие доступные устройства</string>
   <string name="button_scan">Поиск устройств</string>
