@@ -92,6 +92,7 @@ namespace BmwDeepObd
         private AlertDialog _altertInfoDialog;
         private Button _scanButton;
         private ActivityCommon _activityCommon;
+        private bool _mtcErrorDisplayed;
         private string _appDataDir;
         private readonly StringBuilder _sbLog = new StringBuilder();
         private readonly AutoResetEvent _connectedEvent = new AutoResetEvent(false);
@@ -340,13 +341,18 @@ namespace BmwDeepObd
             {
                 FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
 
+                sbyte btState = mtcServiceConnection.GetBtState();
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("UpdateMtcDevices: api={0}, time={1:yyyy-MM-dd HH:mm:ss}", mtcServiceConnection.ApiVersion, DateTime.Now));
-                sbyte btState = mtcServiceConnection.GetBtState();
                 Android.Util.Log.Info(Tag, string.Format("BtState: {0}", btState));
                 bool autoConnect = mtcServiceConnection.GetAutoConnect();
                 Android.Util.Log.Info(Tag, string.Format("AutoConnect: {0}", autoConnect));
 #endif
+                if (btState == 0 && !_mtcErrorDisplayed)
+                {
+                    _mtcErrorDisplayed = true;
+                    _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_service_error), Resource.String.alert_title_error);
+                }
                 long nowDevAddr = mtcServiceConnection.GetNowDevAddr();
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("NowDevAddr: {0}", nowDevAddr));
