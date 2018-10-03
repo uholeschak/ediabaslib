@@ -4,12 +4,16 @@ using Android.Support.V4.Content;
 
 namespace BmwDeepObd
 {
+#if false
     [BroadcastReceiver(Enabled = true, Exported = true, Name = ActivityCommon.AppNameSpace + ".GlobalBroadcastReceiver")]
     [Android.App.IntentFilter(new[] {
         MtcBtSmallon,
         MtcBtSmalloff,
         MicBtReport
     }, Categories = new []{ Intent.CategoryDefault } )]
+#else
+    [BroadcastReceiver(Exported = false)]
+#endif
     public class GlobalBroadcastReceiver : BroadcastReceiver
     {
 #if DEBUG
@@ -83,10 +87,16 @@ namespace BmwDeepObd
                                 case 87:
                                 case 88:
                                 case 89:
+#if DEBUG
+                                    Android.Util.Log.Info(Tag, "Ignoring bt_state");
+#endif
                                     break;
 
                                 case 90:
                                 {
+#if DEBUG
+                                    Android.Util.Log.Info(Tag, "Sending notification: " + BtUpdateList);
+#endif
                                     Intent broadcastIntent = new Intent(NotificationBroadcastAction);
                                     broadcastIntent.PutExtra(BtUpdateList, btState);
                                     LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
@@ -95,6 +105,9 @@ namespace BmwDeepObd
 
                                 default:
                                 {
+#if DEBUG
+                                    Android.Util.Log.Info(Tag, "Sending notification: " + BtScanFinished);
+#endif
                                     Intent broadcastIntent = new Intent(NotificationBroadcastAction);
                                     broadcastIntent.PutExtra(BtScanFinished, btState);
                                     LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
