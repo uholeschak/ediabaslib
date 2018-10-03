@@ -175,6 +175,41 @@ namespace ApkUploader
             return null;
         }
 
+        private string ReadAppVersion(string resourceDir)
+        {
+            try
+            {
+                string parentDir = Directory.GetParent(resourceDir).FullName;
+                string propertiesDir = Path.Combine(parentDir, "Properties");
+                string manifestFile = Path.Combine(propertiesDir, "AndroidManifest.xml");
+                if (!File.Exists(manifestFile))
+                {
+                    return string.Empty;
+                }
+
+                XNamespace android = XNamespace.Get("http://schemas.android.com/apk/res/android");
+                XDocument xmlDoc = XDocument.Load(manifestFile);
+                if (xmlDoc.Root == null)
+                {
+                    return string.Empty;
+                }
+
+                XAttribute verNameAttr = xmlDoc.Root.Attribute(android + "versionName");
+                if (verNameAttr == null)
+                {
+                    return string.Empty;
+                }
+
+                return verNameAttr.Value;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return null;
+        }
+
         private async Task<UserCredential> GetCredatials()
         {
             UserCredential credential;
@@ -656,7 +691,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UpdateChanges(string track, List<UpdateInfo> apkChanges)
+        private bool UpdateChanges(string track, List<UpdateInfo> apkChanges, string appName)
         {
             if (_serviceThread != null)
             {
@@ -677,6 +712,12 @@ namespace ApkUploader
                 StringBuilder sb = new StringBuilder();
                 try
                 {
+                    if (!string.IsNullOrEmpty(appName))
+                    {
+                        sb.AppendLine($"App name: {appName}");
+                        UpdateStatus(sb.ToString());
+                    }
+
                     UserCredential credential = await GetCredatials();
                     using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(credential)))
                     {
@@ -721,13 +762,18 @@ namespace ApkUploader
                             releaseNotes.Add(localizedText);
                         }
 
+                        string trackName = appName;
+                        if (string.IsNullOrEmpty(trackName))
+                        {
+                            trackName = trackRelease.Name;
+                        }
                         Track trackUpdate = new Track
                         {
                             Releases = new List<TrackRelease>
                             {
                                 new TrackRelease
                                 {
-                                    Name = trackRelease.Name,
+                                    Name = trackName,
                                     VersionCodes = new List<long?>
                                     {
                                         currentVersion
@@ -764,7 +810,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UploadApk(string apkFileName, string expansionFileName, string track, List<UpdateInfo> apkChanges)
+        private bool UploadApk(string apkFileName, string expansionFileName, string track, List<UpdateInfo> apkChanges, string appName)
         {
             if (_serviceThread != null)
             {
@@ -805,6 +851,12 @@ namespace ApkUploader
                             sb.Append($"{updateInfo.Language} ");
                         }
                         sb.AppendLine();
+                        UpdateStatus(sb.ToString());
+                    }
+
+                    if (!string.IsNullOrEmpty(appName))
+                    {
+                        sb.AppendLine($"App name: {appName}");
                         UpdateStatus(sb.ToString());
                     }
 
@@ -920,13 +972,18 @@ namespace ApkUploader
                             }
                         }
 
+                        string trackName = appName;
+                        if (string.IsNullOrEmpty(trackName))
+                        {
+                            trackName = versionCode.ToString();
+                        }
                         Track trackUpdate = new Track
                         {
                             Releases = new List<TrackRelease>
                             {
                                 new TrackRelease
                                 {
-                                    Name = versionCode.ToString(),
+                                    Name = trackName,
                                     VersionCodes = new List<long?>
                                     {
                                         versionCode.Value
@@ -1027,6 +1084,7 @@ namespace ApkUploader
         private void buttonUpdateChanges_Click(object sender, EventArgs e)
         {
             List<UpdateInfo> apkChanges = null;
+            string appVersion = null;
             if (!string.IsNullOrWhiteSpace(textBoxResourceFolder.Text))
             {
                 apkChanges = ReadUpdateInfo(textBoxResourceFolder.Text);
@@ -1035,8 +1093,15 @@ namespace ApkUploader
                     UpdateStatus("Reading resources failed!");
                     return;
                 }
+
+                appVersion = ReadAppVersion(textBoxResourceFolder.Text);
+                if (appVersion == null)
+                {
+                    UpdateStatus("Reading app version failed!");
+                    return;
+                }
             }
-            UpdateChanges(comboBoxTrackAssign.Text, apkChanges);
+            UpdateChanges(comboBoxTrackAssign.Text, apkChanges, appVersion);
         }
 
         private void buttonChangeTrack_Click(object sender, EventArgs e)
@@ -1062,6 +1127,7 @@ namespace ApkUploader
         private void buttonUploadApk_Click(object sender, EventArgs e)
         {
             List<UpdateInfo> apkChanges = null;
+            string appVersion = null;
             if (!string.IsNullOrWhiteSpace(textBoxResourceFolder.Text))
             {
                 apkChanges = ReadUpdateInfo(textBoxResourceFolder.Text);
@@ -1070,9 +1136,16 @@ namespace ApkUploader
                     UpdateStatus("Reading resources failed!");
                     return;
                 }
+
+                appVersion = ReadAppVersion(textBoxResourceFolder.Text);
+                if (appVersion == null)
+                {
+                    UpdateStatus("Reading app version failed!");
+                    return;
+                }
             }
 
-            UploadApk(textBoxApkFile.Text, textBoxObbFile.Text, comboBoxTrackAssign.Text, apkChanges);
+            UploadApk(textBoxApkFile.Text, textBoxObbFile.Text, comboBoxTrackAssign.Text, apkChanges, appVersion);
         }
 
         private void buttonSelectApk_Click(object sender, EventArgs e)
