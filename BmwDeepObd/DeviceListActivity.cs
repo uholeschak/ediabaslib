@@ -225,7 +225,7 @@ namespace BmwDeepObd
                             }
                             UpdateMtcDevices();
                         });
-                    }, null, 1000, 2000);
+                    }, null, 1000, 5000);
                 }
             }
             else
@@ -338,7 +338,7 @@ namespace BmwDeepObd
                 FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
 
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("UpdateMtcDevices: api={0}", mtcServiceConnection.ApiVersion));
+                Android.Util.Log.Info(Tag, string.Format("UpdateMtcDevices: api={0}, time={1:HH:mm:ss tt}", mtcServiceConnection.ApiVersion, DateTime.Now));
                 sbyte btState = mtcServiceConnection.GetBtState();
                 Android.Util.Log.Info(Tag, string.Format("BtState: {0}", btState));
                 bool autoConnect = mtcServiceConnection.GetAutoConnect();
