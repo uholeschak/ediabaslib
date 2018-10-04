@@ -93,6 +93,7 @@ namespace BmwDeepObd
         private Button _scanButton;
         private ActivityCommon _activityCommon;
         private bool _mtcErrorDisplayed;
+        private bool _mtcOffline;
         private string _appDataDir;
         private readonly StringBuilder _sbLog = new StringBuilder();
         private readonly AutoResetEvent _connectedEvent = new AutoResetEvent(false);
@@ -348,11 +349,28 @@ namespace BmwDeepObd
                 bool autoConnect = mtcServiceConnection.GetAutoConnect();
                 Android.Util.Log.Info(Tag, string.Format("AutoConnect: {0}", autoConnect));
 #endif
-                if (btState == 0 && !_mtcErrorDisplayed)
+                bool oldOffline = _mtcOffline;
+                _mtcOffline = btState == 0;
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("MTC offline: {0}", _mtcOffline));
+#endif
+                if (_mtcOffline)
                 {
-                    _mtcErrorDisplayed = true;
-                    _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_service_error), Resource.String.alert_title_error);
+                    if (!_mtcErrorDisplayed)
+                    {
+                        _mtcErrorDisplayed = true;
+                        _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_service_error), Resource.String.alert_title_error);
+                    }
+                    UpdatePairedDevices();
+                    _scanButton.Enabled = false;
+                    return;
                 }
+
+                if (oldOffline != _mtcOffline)
+                {
+                    _scanButton.Enabled = true;
+                }
+
                 long nowDevAddr = mtcServiceConnection.GetNowDevAddr();
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("NowDevAddr: {0}", nowDevAddr));
@@ -1378,7 +1396,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (_activityCommon.MtcBtServiceBound)
+                if (_activityCommon.MtcBtServiceBound && !_mtcOffline)
                 {
                     SelectMtcDeviceAction(name, address, paired);
                 }
