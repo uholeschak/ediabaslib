@@ -361,7 +361,7 @@ namespace BmwDeepObd
                     if (!_mtcErrorDisplayed)
                     {
                         _mtcErrorDisplayed = true;
-                        _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_service_error), Resource.String.alert_title_error);
+                        _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_service_error), Resource.String.alert_title_warning);
                     }
                     UpdatePairedDevices();
                     ShowScanState(false);
