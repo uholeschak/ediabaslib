@@ -433,8 +433,11 @@ namespace BmwDeepObd
                     }
                 }
             }
+#pragma warning disable 168
             catch (Exception ex)
+#pragma warning restore 168
             {
+                // ignored
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("UpdateMtcDevices exception: {0}", ex.Message));
 #endif
