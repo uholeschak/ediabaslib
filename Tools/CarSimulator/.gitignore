@@ -2,6 +2,5 @@
 /obj/
 /*.suo
 /*.ncb
-/*.dll
 /.vs/
 /packages/

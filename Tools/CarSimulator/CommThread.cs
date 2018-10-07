@@ -232,7 +232,7 @@ namespace CarSimulator
         private ConfigData _configData;
         private bool _testMode;
         private bool _isoTpMode;
-        private byte _pcanHandle;
+        private ushort _pcanHandle;
         private long _lastCanSendTick;
 #if CAN_DEBUG
         private long _lastCanReceiveTick;
