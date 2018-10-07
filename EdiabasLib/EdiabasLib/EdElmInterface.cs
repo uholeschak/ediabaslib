@@ -692,7 +692,7 @@ namespace EdiabasLib
                     }
                     string answer = Elm327ReceiveAnswer(Elm327CommandTimeout);
                     // check for OK
-                    if (!answer.Contains("OK\r") && !answer.Contains("STOPPED\r") && !answer.Contains("NO DATA\r"))
+                    if (!answer.Contains("OK\r") && !answer.Contains("STOPPED\r") && !answer.Contains("NO DATA\r") && !answer.Contains("DATA ERROR\r"))
                     {
                         if (Ediabas != null)
                         {
