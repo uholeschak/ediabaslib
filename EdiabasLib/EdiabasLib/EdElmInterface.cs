@@ -49,6 +49,15 @@ namespace EdiabasLib
             new ElmInitEntry("ATJE", 130),      // ELM data format, used for fake ELM detection
             //new ElmInitEntry("ATPPS", -1, false),     // some BT chips have a short buffer, so this test will fail
         };
+
+        public static ElmInitEntry[] Elm327InitFullTransport =
+        {
+            new ElmInitEntry("ATSH6F1"),
+            new ElmInitEntry("ATFCSH6F1"),
+            new ElmInitEntry("ATPBC101"),   // set Parameter for CAN B Custom Protocol 11/500 with var. DLC
+            new ElmInitEntry("ATBI"),       // bypass init sequence
+        };
+
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const int Elm327ReadTimeoutOffset = 1000;
         private const int Elm327CommandTimeout = 1500;
@@ -60,6 +69,7 @@ namespace EdiabasLib
         private readonly Stream _outStream;
         private long _elm327ReceiveStartTime;
         private bool _elm327DataMode;
+        private bool _elm327FullTransport;
         private int _elm327CanHeader;
         private int _elm327Timeout;
         private Thread _elm327Thread;
@@ -191,6 +201,22 @@ namespace EdiabasLib
                 }
                 firstCommand = false;
             }
+
+            _elm327FullTransport = !Elm327SendCommand("ATPP2COFF");
+            Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM full transport: {0}", _elm327FullTransport);
+
+            if (_elm327FullTransport)
+            {
+                foreach (ElmInitEntry elmInitEntry in Elm327InitFullTransport)
+                {
+                    if (!Elm327SendCommand(elmInitEntry.Command))
+                    {
+                        Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM full transport command {0} failed", elmInitEntry.Command);
+                        return false;
+                    }
+                }
+            }
+
             _elm327CanHeader = 0x6F1;
             _elm327Timeout = -1;
             StreamFailure = false;
@@ -243,9 +269,77 @@ namespace EdiabasLib
         {
             while (!_elm327TerminateThread)
             {
-                Elm327CanSender();
+                if (_elm327FullTransport)
+                {
+                    Elm327CanSenderFull();
+                }
+                else
+                {
+                    Elm327CanSender();
+                }
                 Elm327CanReceiver();
                 _elm327RequEvent.WaitOne(10, false);
+            }
+        }
+
+        private void Elm327CanSenderFull()
+        {
+            byte[] requBuffer;
+            lock (_elm327BufferLock)
+            {
+                requBuffer = _elm327RequBuffer;
+                _elm327RequBuffer = null;
+            }
+
+            if (requBuffer != null && requBuffer.Length >= 4)
+            {
+                byte targetAddr = requBuffer[1];
+                byte sourceAddr = requBuffer[2];
+                int dataOffset = 3;
+                int dataLength = requBuffer[0] & 0x3F;
+                if (dataLength == 0)
+                {
+                    // with length byte
+                    dataLength = requBuffer[3];
+                    dataOffset = 4;
+                }
+
+                if (requBuffer.Length < (dataOffset + dataLength))
+                {
+                    return;
+                }
+
+                int canHeader = 0x600 | sourceAddr;
+                if (_elm327CanHeader != canHeader)
+                {
+                    if (!Elm327SendCommand("ATSH" + string.Format("{0:X03}", canHeader)))
+                    {
+                        _elm327CanHeader = -1;
+                        return;
+                    }
+                    if (!Elm327SendCommand("ATFCSH" + string.Format("{0:X03}", canHeader)))
+                    {
+                        _elm327CanHeader = -1;
+                        return;
+                    }
+                    _elm327CanHeader = canHeader;
+                }
+                if (!Elm327SendCommand("ATFCSD" + string.Format("{0:X02}300000", targetAddr)))
+                {
+                    return;
+                }
+                if (!Elm327SendCommand("ATCEA" + string.Format("{0:X02}", targetAddr)))
+                {
+                    return;
+                }
+                if (!Elm327SendCommand("ATFCSM1"))
+                {
+                    return;
+                }
+
+                byte[] canSendBuffer = new byte[dataLength];
+                Array.Copy(requBuffer, dataOffset, canSendBuffer, 0, dataLength);
+                Elm327SendCanTelegram(canSendBuffer);
             }
         }
 
@@ -279,6 +373,7 @@ namespace EdiabasLib
                 {
                     if (!Elm327SendCommand("ATSH" + string.Format("{0:X03}", canHeader)))
                     {
+                        _elm327CanHeader = -1;
                         return;
                     }
                     _elm327CanHeader = canHeader;
@@ -503,15 +598,18 @@ namespace EdiabasLib
                                     }
                                     blockCount = 1;
 
-                                    byte[] canSendBuffer = new byte[8];
-                                    canSendBuffer[0] = sourceAddr;
-                                    canSendBuffer[1] = 0x30; // FC
-                                    canSendBuffer[2] = Elm327CanBlockSize;
-                                    canSendBuffer[3] = Elm327CanSepTime;
-                                    fcCount = Elm327CanBlockSize;
-                                    if (!Elm327SendCanTelegram(canSendBuffer))
+                                    if (!_elm327FullTransport)
                                     {
-                                        return;
+                                        byte[] canSendBuffer = new byte[8];
+                                        canSendBuffer[0] = sourceAddr;
+                                        canSendBuffer[1] = 0x30; // FC
+                                        canSendBuffer[2] = Elm327CanBlockSize;
+                                        canSendBuffer[3] = Elm327CanSepTime;
+                                        fcCount = Elm327CanBlockSize;
+                                        if (!Elm327SendCanTelegram(canSendBuffer))
+                                        {
+                                            return;
+                                        }
                                     }
                                     _elm327ReceiveStartTime = Stopwatch.GetTimestamp();
                                     break;
@@ -556,7 +654,7 @@ namespace EdiabasLib
                             }
                             recLen += telLen;
                             blockCount++;
-                            if (fcCount > 0 && recLen < recDataBuffer.Length)
+                            if (!_elm327FullTransport && fcCount > 0 && recLen < recDataBuffer.Length)
                             {
                                 fcCount--;
                                 if (fcCount == 0)
