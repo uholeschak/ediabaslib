@@ -29,6 +29,7 @@ namespace EdiabasLib
         {
             new ElmInitEntry("ATD"),
             new ElmInitEntry("ATE0"),
+            new ElmInitEntry("ATPP2COFF"),      // reject fake elms (disables also WGSoft adapters)
             new ElmInitEntry("ATSH6F1"),
             new ElmInitEntry("ATCF600"),
             new ElmInitEntry("ATCM700"),
