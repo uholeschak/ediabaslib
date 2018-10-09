@@ -32,10 +32,6 @@ namespace EdiabasLib
             new ElmInitEntry("ATSH6F1"),
             new ElmInitEntry("ATCF600"),
             new ElmInitEntry("ATCM700"),
-            //new ElmInitEntry("ATPP2CSVC0"),
-            //new ElmInitEntry("ATPP2DSV01"),
-            //new ElmInitEntry("ATPP2CON"),
-            //new ElmInitEntry("ATPP2DON"),
             new ElmInitEntry("ATPBC001"),
             new ElmInitEntry("ATSPB"),
             new ElmInitEntry("ATAT0"),
@@ -191,7 +187,7 @@ namespace EdiabasLib
                 if (!elmInitEntry.OkResponse)
                 {
                     string answer = Elm327ReceiveAnswer(Elm327CommandTimeout);
-                    if (answer == null)
+                    if (string.IsNullOrEmpty(answer))
                     {
                         Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM no answer");
                     }
@@ -199,7 +195,23 @@ namespace EdiabasLib
                 firstCommand = false;
             }
 
-            _elm327FullTransport = !Elm327SendCommand("ATPP2COFF");
+            if (!Elm327SendCommand("AT@1", false))
+            {
+                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Sending @1 failed");
+                return false;
+            }
+            string elmDevDesc = Elm327ReceiveAnswer(Elm327CommandTimeout);
+            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM ID: {0}", elmDevDesc);
+
+            if (!Elm327SendCommand("AT#1", false))
+            {
+                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Sending #1 failed");
+                return false;
+            }
+            string elmManufact = Elm327ReceiveAnswer(Elm327CommandTimeout);
+            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM Manufacturer: {0}", elmManufact);
+
+            _elm327FullTransport = elmManufact.ToUpperInvariant().Contains("WGSOFT");
             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM full transport: {0}", _elm327FullTransport);
 
             if (_elm327FullTransport)
