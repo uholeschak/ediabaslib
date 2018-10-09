@@ -3101,16 +3101,19 @@ namespace BmwDeepObd
                         }
                     }
 
-                    foreach (EcuInfoSubSys subSystem in ecuInfo.SubSystems)
+                    if (ecuInfo.SubSystems != null)
                     {
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolving sub sys: {0}, VAG part number: '{1}'",
-                            subSystem.SubSysIndex, subSystem.VagPartNumber ?? string.Empty);
-                        UdsFileReader.DataReader.FileNameResolver dataResolverSubSys =
-                            new UdsFileReader.DataReader.FileNameResolver(udsReader.DataReader, ecuInfo.VagPartNumber, ecuInfo.VagHwPartNumber,
-                                subSystem.VagPartNumber, (int)ecuInfo.Address, subSystem.SubSysIndex);
-                        string dataFileNameSubSys = dataResolverSubSys.GetFileName(vagDirLang);
-                        subSystem.VagDataFileName = dataFileNameSubSys ?? string.Empty;
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Sub sys: {0}, data file: {1}", subSystem.SubSysIndex, subSystem.VagDataFileName);
+                        foreach (EcuInfoSubSys subSystem in ecuInfo.SubSystems)
+                        {
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolving sub sys: {0}, VAG part number: '{1}'",
+                                subSystem.SubSysIndex, subSystem.VagPartNumber ?? string.Empty);
+                            UdsFileReader.DataReader.FileNameResolver dataResolverSubSys =
+                                new UdsFileReader.DataReader.FileNameResolver(udsReader.DataReader, ecuInfo.VagPartNumber, ecuInfo.VagHwPartNumber,
+                                    subSystem.VagPartNumber, (int)ecuInfo.Address, subSystem.SubSysIndex);
+                            string dataFileNameSubSys = dataResolverSubSys.GetFileName(vagDirLang);
+                            subSystem.VagDataFileName = dataFileNameSubSys ?? string.Empty;
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Sub sys: {0}, data file: {1}", subSystem.SubSysIndex, subSystem.VagDataFileName);
+                        }
                     }
                 }
 
