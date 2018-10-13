@@ -3074,7 +3074,7 @@ namespace BmwDeepObd
                     return false;
                 }
                 string vagDirLang = Path.Combine(_vagDir, udsReader.LanguageDir);
-                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolving VAG part number: '{0}', HW part number: '{1}'",
+                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolving VAG part number: {0}, HW part number: {1}",
                     ecuInfo.VagPartNumber ?? string.Empty, ecuInfo.VagHwPartNumber ?? string.Empty);
                 UdsFileReader.DataReader.FileNameResolver dataResolver = new UdsFileReader.DataReader.FileNameResolver(udsReader.DataReader, ecuInfo.VagPartNumber, ecuInfo.VagHwPartNumber, (int)ecuInfo.Address);
                 string dataFileName = dataResolver.GetFileName(vagDirLang);
@@ -3105,7 +3105,7 @@ namespace BmwDeepObd
                     {
                         foreach (EcuInfoSubSys subSystem in ecuInfo.SubSystems)
                         {
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolving sub sys: {0}, VAG part number: '{1}'",
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolving sub sys: {0}, VAG part number: {1}",
                                 subSystem.SubSysIndex, subSystem.VagPartNumber ?? string.Empty);
                             UdsFileReader.DataReader.FileNameResolver dataResolverSubSys =
                                 new UdsFileReader.DataReader.FileNameResolver(udsReader.DataReader, ecuInfo.VagPartNumber, ecuInfo.VagHwPartNumber,
