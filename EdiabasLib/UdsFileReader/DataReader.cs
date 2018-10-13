@@ -187,8 +187,10 @@ namespace UdsFileReader
                 redirectFile = false;
                 try
                 {
+                    string partNumber;
                     if (!IndexSubSys.HasValue)
                     {
+                        partNumber = PartNumber;
                         foreach (string subDir in dirList)
                         {
                             string fileName = Path.Combine(subDir, _fullName.ToLowerInvariant() + FileExtension);
@@ -204,12 +206,16 @@ namespace UdsFileReader
                             }
                         }
                     }
+                    else
+                    {
+                        partNumber = PartNumberSubSys;
+                    }
 
-                    if (!string.IsNullOrEmpty(PartNumber) && PartNumber.Length >= 2)
+                    if (!string.IsNullOrEmpty(partNumber) && partNumber.Length >= 2)
                     {
                         foreach (string subDir in dirList)
                         {
-                            string part1 = PartNumber.Substring(0, 2);
+                            string part1 = partNumber.Substring(0, 2);
                             string part2 = string.Format(CultureInfo.InvariantCulture, "{0:X02}", Address);
                             string baseNameTest = part1 + "-" + part2;
                             if (IndexSubSys.HasValue)
