@@ -23,6 +23,7 @@ namespace UdsFileReader
             Ffmux,
             Ges,
             Mwb,
+            Slv,
             Sot,
             Xpl,
         }
@@ -1136,9 +1137,36 @@ namespace UdsFileReader
             public string ErrorDetail { get; }
         }
 
+        public class ParseInfoSlv : ParseInfoBase
+        {
+            public ParseInfoSlv(string[] lineArray, UInt32? tableKey, List<SlaveInfo> slaveList) : base(lineArray)
+            {
+                TableKey = tableKey;
+                SlaveList = slaveList;
+            }
+
+            public UInt32? TableKey { get; }
+            public List<SlaveInfo> SlaveList { get; }
+
+            public class SlaveInfo
+            {
+                public SlaveInfo(UInt32 minId, UInt32 maxId, string name)
+                {
+                    MinId = minId;
+                    MaxId = maxId;
+                    Name = name;
+                }
+
+                public UInt32 MinId { get; }
+                public UInt32 MaxId { get; }
+                public string Name { get; }
+            }
+
+        }
+
         public class SegmentInfo
         {
-            public SegmentInfo(SegmentType segmentType, string segmentName, string fileName)
+            public SegmentInfo(SegmentType segmentType, string segmentName, string fileName = null)
             {
                 SegmentType = segmentType;
                 SegmentName = segmentName;
@@ -1148,6 +1176,7 @@ namespace UdsFileReader
             public SegmentType SegmentType { get; }
             public string SegmentName { get; }
             public string FileName { get; }
+            public bool Ignored { set; get; }
             public List<string[]> LineList { set; get; }
         }
 
@@ -1160,6 +1189,7 @@ namespace UdsFileReader
             new SegmentInfo(SegmentType.Mwb, "MWB", "RM"),
             new SegmentInfo(SegmentType.Sot, "SOT", "RS"),
             new SegmentInfo(SegmentType.Xpl, "XPL", "RX"),
+            new SegmentInfo(SegmentType.Slv, "SLV"),
         };
 
         public class ChassisInfo
@@ -3387,14 +3417,22 @@ namespace UdsFileReader
 
                 foreach (SegmentInfo segmentInfo in SegmentInfos)
                 {
+                    segmentInfo.Ignored = false;
+                    if (string.IsNullOrEmpty(segmentInfo.FileName))
+                    {
+                        continue;
+                    }
+
                     if (requiredSegments != null)
                     {
                         if (!requiredSegments.Contains(segmentInfo.SegmentType))
                         {
+                            segmentInfo.Ignored = true;
                             continue;
                         }
                     }
-                    string fileName = Path.Combine(udsDir, Path.ChangeExtension(segmentInfo.FileName, FileExtension));
+
+                    string fileName = Path.Combine(udsDir, Path.ChangeExtension(segmentInfo.FileName ?? string.Empty, FileExtension));
                     List<string[]> lineList = ExtractFileSegment(new List<string> {fileName}, segmentInfo.SegmentName);
                     if (lineList == null)
                     {
@@ -3908,7 +3946,7 @@ namespace UdsFileReader
         public List<ParseInfoBase> ExtractFileSegment(List<string> fileList, SegmentType segmentType)
         {
             SegmentInfo segmentInfoSel = GetSegmentInfo(segmentType);
-            if (segmentInfoSel?.LineList == null)
+            if (segmentInfoSel == null || segmentInfoSel.Ignored)
             {
                 return null;
             }
@@ -3932,23 +3970,26 @@ namespace UdsFileReader
                     return null;
                 }
 
-                if (value < 1 || value > segmentInfoSel.LineList.Count)
+                string[] lineArray = null;
+                if (segmentInfoSel.LineList != null)
                 {
-                    if (segmentType == SegmentType.Dtc)
+                    if (value < 1 || value > segmentInfoSel.LineList.Count)
                     {
-                        continue;
+                        if (segmentType == SegmentType.Dtc)
+                        {
+                            continue;
+                        }
+                        return null;
                     }
-                    return null;
+                    lineArray = segmentInfoSel.LineList[(int)value - 1];
                 }
-
-                string[] lineArray = segmentInfoSel.LineList[(int) value - 1];
 
                 ParseInfoBase parseInfo;
                 switch (segmentType)
                 {
                     case SegmentType.Mwb:
                     {
-                        if (lineArray.Length < 14)
+                        if (lineArray == null || lineArray.Length < 14)
                         {
                             return null;
                         }
@@ -3983,7 +4024,7 @@ namespace UdsFileReader
 
                     case SegmentType.Dtc:
                     {
-                        if (lineArray.Length < 8)
+                        if (lineArray == null || lineArray.Length < 8)
                         {
                             return null;
                         }
@@ -4057,6 +4098,50 @@ namespace UdsFileReader
                         }
 
                         parseInfo = new ParseInfoDtc(lineArray, errorCode, pcodeText, errorText, detailCode, errorDetail);
+                        break;
+                    }
+
+                    case SegmentType.Slv:
+                    {
+                        List<ParseInfoSlv.SlaveInfo> slaveList = null;
+                        UInt32? tableKey = null;
+                        if (value != 0)
+                        {
+                            tableKey = value;
+                            slaveList = new List<ParseInfoSlv.SlaveInfo>();
+                            IEnumerable<string[]> bitList = _ttdopLookup[tableKey.Value];
+                            foreach (string[] ttdopArray in bitList)
+                            {
+                                if (ttdopArray.Length >= 4)
+                                {
+                                    if (!UInt32.TryParse(ttdopArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 minId))
+                                    {
+                                        return null;
+                                    }
+                                    if (!UInt32.TryParse(ttdopArray[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 maxId))
+                                    {
+                                        return null;
+                                    }
+                                    if (!UInt32.TryParse(ttdopArray[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 nameKey))
+                                    {
+                                        return null;
+                                    }
+                                    if (!_textMap.TryGetValue(nameKey, out string[] nameArray))
+                                    {
+                                        return null;
+                                    }
+
+                                    string slvName = string.Empty;
+                                    if (nameArray.Length >= 1)
+                                    {
+                                        slvName = nameArray[0];
+                                    }
+                                    slaveList.Add(new ParseInfoSlv.SlaveInfo(minId, maxId, slvName));
+                                }
+                            }
+                        }
+
+                        parseInfo = new ParseInfoSlv(line, tableKey, slaveList);
                         break;
                     }
 
