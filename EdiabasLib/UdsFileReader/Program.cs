@@ -228,7 +228,7 @@ namespace UdsFileReader
                 foreach (UdsReader.SegmentType segmentType in Enum.GetValues(typeof(UdsReader.SegmentType)))
                 {
                     UdsReader.SegmentInfo segmentInfo = udsReader.GetSegmentInfo(segmentType);
-                    if (segmentInfo?.LineList == null)
+                    if (segmentInfo == null || segmentInfo.Ignored)
                     {
                         outStream.WriteLine();
                         outStream.WriteLine("*** Ignoring segment: {0}", segmentType.ToString());
@@ -249,19 +249,21 @@ namespace UdsFileReader
                         outStream.WriteLine("");
 
                         StringBuilder sb = new StringBuilder();
-                        foreach (string entry in parseInfo.LineArray)
+                        if (parseInfo.LineArray != null)
                         {
-                            if (sb.Length > 0)
+                            foreach (string entry in parseInfo.LineArray)
                             {
-                                sb.Append("; ");
+                                if (sb.Length > 0)
+                                {
+                                    sb.Append("; ");
+                                }
+                                sb.Append("\"");
+                                sb.Append(entry);
+                                sb.Append("\"");
                             }
-                            sb.Append("\"");
-                            sb.Append(entry);
-                            sb.Append("\"");
+                            sb.Insert(0, "Raw: ");
+                            outStream.WriteLine(sb.ToString());
                         }
-
-                        sb.Insert(0, "Raw: ");
-                        outStream.WriteLine(sb.ToString());
 
                         if (parseInfo is UdsReader.ParseInfoMwb parseInfoMwb)
                         {
@@ -301,6 +303,23 @@ namespace UdsFileReader
                             if (!string.IsNullOrEmpty(parseInfoDtc.ErrorDetail))
                             {
                                 outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Error Detail: {0}", parseInfoDtc.ErrorDetail));
+                            }
+                        }
+
+                        if (parseInfo is UdsReader.ParseInfoSlv parseInfoSlv)
+                        {
+                            sb.Clear();
+                            if (parseInfoSlv.TableKey.HasValue)
+                            {
+                                outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Slave Table Key: {0}", parseInfoSlv.TableKey));
+                                if (parseInfoSlv.SlaveList != null)
+                                {
+                                    foreach (UdsReader.ParseInfoSlv.SlaveInfo slaveInfo in parseInfoSlv.SlaveList)
+                                    {
+                                        outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "MinId: {0}, MaxId: {1}, Name: {2}",
+                                            slaveInfo.MinId, slaveInfo.MaxId, slaveInfo.Name));
+                                    }
+                                }
                             }
                         }
                     }
