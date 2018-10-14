@@ -50,6 +50,7 @@ namespace UdsFileReader
         private readonly Dictionary<string, Dictionary<string, ParseInfoMwb>> _mwbParseInfoDict = new Dictionary<string, Dictionary<string, ParseInfoMwb>>();
         private readonly Dictionary<string, List<ParseInfoBase>> _dtcMwbParseInfoDict = new Dictionary<string, List<ParseInfoBase>>();
         private readonly Dictionary<string, Dictionary<uint, ParseInfoDtc>> _dtcParseInfoDict = new Dictionary<string, Dictionary<uint, ParseInfoDtc>>();
+        private readonly Dictionary<string, List<ParseInfoSlv>> _slvParseInfoDict = new Dictionary<string, List<ParseInfoSlv>>();
 
         public class FileNameResolver
         {
@@ -1150,15 +1151,15 @@ namespace UdsFileReader
 
             public class SlaveInfo
             {
-                public SlaveInfo(UInt32 minId, UInt32 maxId, string name)
+                public SlaveInfo(UInt32 minAddr, UInt32 maxAddr, string name)
                 {
-                    MinId = minId;
-                    MaxId = maxId;
+                    MinAddr = minAddr;
+                    MaxAddr = maxAddr;
                     Name = name;
                 }
 
-                public UInt32 MinId { get; }
-                public UInt32 MaxId { get; }
+                public UInt32 MinAddr { get; }
+                public UInt32 MaxAddr { get; }
                 public string Name { get; }
             }
 
@@ -3626,6 +3627,63 @@ namespace UdsFileReader
             return null;
         }
 
+        public ParseInfoSlv.SlaveInfo GetSlvInfo(string fileName, uint slvAddr)
+        {
+            try
+            {
+                if (!_slvParseInfoDict.TryGetValue(fileName, out List<ParseInfoSlv> slvSegmentListMatch))
+                {
+                    List<string> includeFiles = FileNameResolver.GetAllFiles(fileName);
+                    if (includeFiles == null)
+                    {
+                        return null;
+                    }
+                    List<ParseInfoBase> slvSegmentList = ExtractFileSegment(includeFiles, SegmentType.Slv);
+                    if (slvSegmentList == null)
+                    {
+                        return null;
+                    }
+
+                    slvSegmentListMatch = new List<ParseInfoSlv>();
+                    foreach (ParseInfoBase parseInfo in slvSegmentList)
+                    {
+                        if (parseInfo is ParseInfoSlv parseInfoSlv)
+                        {
+                            if (parseInfoSlv.SlaveList != null)
+                            {
+                                slvSegmentListMatch.Add(parseInfoSlv);
+                            }
+                        }
+                    }
+
+                    _slvParseInfoDict.Add(fileName, slvSegmentListMatch);
+                }
+
+                if (_slvParseInfoDict.TryGetValue(fileName, out List<ParseInfoSlv> parseInfoSlvMatch))
+                {
+                    foreach (ParseInfoSlv parseInfoSlv in parseInfoSlvMatch)
+                    {
+                        if (parseInfoSlv.SlaveList != null)
+                        {
+                            foreach (ParseInfoSlv.SlaveInfo slaveInfo in parseInfoSlv.SlaveList)
+                            {
+                                if (slaveInfo.MinAddr >= slvAddr && slaveInfo.MaxAddr <= slvAddr)
+                                {
+                                    return slaveInfo;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return null;
+        }
+
         public List<string> ErrorCodeToString(string fileName, uint errorCode, uint detailCode)
         {
             UdsReader udsReader = this;
@@ -4114,11 +4172,11 @@ namespace UdsFileReader
                             {
                                 if (ttdopArray.Length >= 4)
                                 {
-                                    if (!UInt32.TryParse(ttdopArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 minId))
+                                    if (!UInt32.TryParse(ttdopArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 minAddr))
                                     {
                                         return null;
                                     }
-                                    if (!UInt32.TryParse(ttdopArray[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 maxId))
+                                    if (!UInt32.TryParse(ttdopArray[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 maxAddr))
                                     {
                                         return null;
                                     }
@@ -4136,7 +4194,7 @@ namespace UdsFileReader
                                     {
                                         slvName = nameArray[0];
                                     }
-                                    slaveList.Add(new ParseInfoSlv.SlaveInfo(minId, maxId, slvName));
+                                    slaveList.Add(new ParseInfoSlv.SlaveInfo(minAddr, maxAddr, slvName));
                                 }
                             }
                         }
