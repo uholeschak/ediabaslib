@@ -316,8 +316,8 @@ namespace UdsFileReader
                                 {
                                     foreach (UdsReader.ParseInfoSlv.SlaveInfo slaveInfo in parseInfoSlv.SlaveList)
                                     {
-                                        outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "MinId: {0}, MaxId: {1}, Name: {2}",
-                                            slaveInfo.MinId, slaveInfo.MaxId, slaveInfo.Name));
+                                        outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Min Addr: {0}, Max Addr: {1}, Name: {2}",
+                                            slaveInfo.MinAddr, slaveInfo.MaxAddr, slaveInfo.Name));
                                     }
                                 }
                             }
