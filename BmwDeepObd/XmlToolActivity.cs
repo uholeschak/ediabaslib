@@ -156,15 +156,14 @@ namespace BmwDeepObd
 
         public class EcuInfoSubSys
         {
-            public EcuInfoSubSys(int subSysIndex, uint subSysAddr)
+            public EcuInfoSubSys(uint subSysAddr)
             {
-                SubSysIndex = subSysIndex;
                 SubSysAddr = subSysAddr;
             }
 
-            public int SubSysIndex { get; }
-
             public uint SubSysAddr { get; }
+
+            public int SubSysIndex { get; set; }
 
             public byte[] Coding { get; set; }
 
@@ -4979,16 +4978,22 @@ namespace BmwDeepObd
                             case VagUdsS22DataType.SubSystems:
                             {
                                 List<EcuInfoSubSys> subSystems = new List<EcuInfoSubSys>();
-                                int subSysIndex = 0;
                                 for (int i = 0; i < dataBytes.Length - 1; i += 2)
                                 {
                                     UInt16 value = (UInt16) ((dataBytes[i] << 8) + dataBytes[i + 1]);
                                     if (value != 0xFFFF)
                                     {
-                                        subSystems.Add(new EcuInfoSubSys(subSysIndex++, value));
+                                        subSystems.Add(new EcuInfoSubSys(value));
                                     }
                                 }
-                                ecuInfo.SubSystems = subSystems;
+
+                                List<EcuInfoSubSys> subSystemsOrder = subSystems.OrderBy(x => x.SubSysAddr).ToList();
+                                int subIndex = 0;
+                                foreach (EcuInfoSubSys subSystem in subSystemsOrder)
+                                {
+                                    subSystem.SubSysIndex = subIndex++;
+                                }
+                                ecuInfo.SubSystems = subSystemsOrder;
                                 break;
                             }
                         }
