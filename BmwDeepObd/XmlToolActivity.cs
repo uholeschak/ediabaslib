@@ -172,6 +172,8 @@ namespace BmwDeepObd
             public string SysName { get; set; }
 
             public string VagDataFileName { get; set; }
+
+            public string Name { get; set; }
         }
 
         public class EcuMwTabEntry
@@ -3111,7 +3113,17 @@ namespace BmwDeepObd
                                     subSystem.VagPartNumber, (int)ecuInfo.Address, subSystem.SubSysIndex);
                             string dataFileNameSubSys = dataResolverSubSys.GetFileName(vagDirLang);
                             subSystem.VagDataFileName = dataFileNameSubSys ?? string.Empty;
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Sub sys: {0}, data file: {1}", subSystem.SubSysIndex, subSystem.VagDataFileName);
+                            string name = string.Empty;
+                            if (!string.IsNullOrEmpty(ecuInfo.VagUdsFileName))
+                            {
+                                UdsFileReader.UdsReader.ParseInfoSlv.SlaveInfo slaveInfo = udsReader.GetSlvInfo(ecuInfo.VagUdsFileName, subSystem.SubSysAddr);
+                                if (slaveInfo != null)
+                                {
+                                    name = slaveInfo.Name;
+                                }
+                            }
+                            subSystem.Name = name ?? string.Empty;
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Sub sys: {0}, data file: {1}, name: {2}", subSystem.SubSysIndex, subSystem.VagDataFileName, subSystem.Name);
                         }
                     }
                 }
