@@ -188,6 +188,7 @@ namespace BmwDeepObd
         private bool _traceAppend;
         private string _deviceAddress;
         private string _resultFilterText;
+        private bool _displayEcuInfo;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -274,6 +275,11 @@ namespace BmwDeepObd
             {
                 int pos = args.Position;
                 JobSelected(pos >= 0 ? _spinnerJobsAdapter.Items[pos] : null);
+                if (_displayEcuInfo)
+                {
+                    DisplayEcuInfo();
+                    _displayEcuInfo = false;
+                }
             };
 
             _layoutJobConfig = FindViewById<LinearLayout>(Resource.Id.layoutJobConfig);
@@ -392,6 +398,7 @@ namespace BmwDeepObd
             UpdateDisplay();
             DisplayTypeSelected();
             ResetTestResult();
+            DisplayEcuInfo();
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -1308,6 +1315,52 @@ namespace BmwDeepObd
             _spinnerJobResultsAdapter.NotifyDataSetChanged();
             _spinnerJobResults.SetSelection(selection);
             ResultSelected(selection);
+        }
+
+        private void DisplayEcuInfo()
+        {
+            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+            {
+                return;
+            }
+            _textViewJobCommentsTitle.Text = GetString(Resource.String.xml_tool_ecu_job_comments_ecu_info);
+
+            StringBuilder sb = new StringBuilder();
+            if (!string.IsNullOrEmpty(_ecuInfo.VagPartNumber))
+            {
+                sb.Append(string.Format("{0:X02}: ", _ecuInfo.Address));
+                sb.Append(_ecuInfo.VagPartNumber);
+                if (!string.IsNullOrEmpty(_ecuInfo.VagHwPartNumber))
+                {
+                    sb.Append(" / ");
+                    sb.Append(_ecuInfo.VagHwPartNumber);
+                }
+            }
+
+            if (_ecuInfo.SubSystems != null)
+            {
+                foreach (XmlToolActivity.EcuInfoSubSys subSystem in _ecuInfo.SubSystems)
+                {
+                    sb.Append("\r\n");
+                    sb.Append(string.Format("{0}: ", subSystem.SubSysIndex + 1));
+                    bool append = false;
+                    if (!string.IsNullOrEmpty(subSystem.VagPartNumber))
+                    {
+                        sb.Append(subSystem.VagPartNumber);
+                        append = true;
+                    }
+                    if (!string.IsNullOrEmpty(subSystem.Name))
+                    {
+                        if (append)
+                        {
+                            sb.Append(" / ");
+                        }
+                        sb.Append(subSystem.Name);
+                    }
+                }
+            }
+            _textViewJobComments.Text = sb.ToString();
+            _displayEcuInfo = true;
         }
 
         private void ResultSelected(int pos)
