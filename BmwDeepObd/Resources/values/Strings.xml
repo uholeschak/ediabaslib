@@ -368,6 +368,8 @@
   <string name="xml_tool_ecu_title">Jobs for ECU: {0}</string>
   <string name="xml_tool_ecu_job_comments">Comments for job: {0}</string>
   <string name="xml_tool_ecu_job_comments_ecu_info">ECU information:</string>
+  <string name="xml_tool_ecu_job_comments_ecu_info_addr">Address {0:X02}:</string>
+  <string name="xml_tool_ecu_job_comments_ecu_info_subsys">Subsystem {0}:</string>
   <string name="xml_tool_ecu_result_comments">Comments for result: {0}</string>
   <string name="xml_tool_ecu_result_type">Data type</string>
   <string name="xml_tool_ecu_user_format">User</string>
