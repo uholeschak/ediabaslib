@@ -392,6 +392,8 @@
   <string name="xml_tool_ecu_job_comments">Комментарии для Job: {0}</string>
   <!--Translate-->
   <string name="xml_tool_ecu_job_comments_ecu_info">ECU information:</string>
+  <string name="xml_tool_ecu_job_comments_ecu_info_addr">Address {0:X02}:</string>
+  <string name="xml_tool_ecu_job_comments_ecu_info_subsys">Subsystem {0}:</string>
   <string name="xml_tool_ecu_result_comments">Комментарии для результата: {0}</string>
   <string name="xml_tool_ecu_result_type">Тип данных</string>
   <string name="xml_tool_ecu_user_format">Пользователь</string>

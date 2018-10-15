@@ -1326,15 +1326,21 @@ namespace BmwDeepObd
             _textViewJobCommentsTitle.Text = GetString(Resource.String.xml_tool_ecu_job_comments_ecu_info);
 
             StringBuilder sb = new StringBuilder();
+            sb.Append(string.Format(GetString(Resource.String.xml_tool_ecu_job_comments_ecu_info_addr), _ecuInfo.Address));
+            sb.Append(" ");
+            bool append = false;
             if (!string.IsNullOrEmpty(_ecuInfo.VagPartNumber))
             {
-                sb.Append(string.Format("{0:X02}: ", _ecuInfo.Address));
                 sb.Append(_ecuInfo.VagPartNumber);
-                if (!string.IsNullOrEmpty(_ecuInfo.VagHwPartNumber))
+                append = true;
+            }
+            if (!string.IsNullOrEmpty(_ecuInfo.VagHwPartNumber))
+            {
+                if (append)
                 {
                     sb.Append(" / ");
-                    sb.Append(_ecuInfo.VagHwPartNumber);
                 }
+                sb.Append(_ecuInfo.VagHwPartNumber);
             }
 
             if (_ecuInfo.SubSystems != null)
@@ -1342,11 +1348,21 @@ namespace BmwDeepObd
                 foreach (XmlToolActivity.EcuInfoSubSys subSystem in _ecuInfo.SubSystems)
                 {
                     sb.Append("\r\n");
-                    sb.Append(string.Format("{0}: ", subSystem.SubSysIndex + 1));
-                    bool append = false;
+                    sb.Append(string.Format(GetString(Resource.String.xml_tool_ecu_job_comments_ecu_info_subsys), subSystem.SubSysIndex + 1));
+                    sb.Append(" ");
+                    append = false;
                     if (!string.IsNullOrEmpty(subSystem.VagPartNumber))
                     {
                         sb.Append(subSystem.VagPartNumber);
+                        append = true;
+                    }
+                    if (!string.IsNullOrEmpty(subSystem.SysName))
+                    {
+                        if (append)
+                        {
+                            sb.Append(" / ");
+                        }
+                        sb.Append(subSystem.SysName);
                         append = true;
                     }
                     if (!string.IsNullOrEmpty(subSystem.Name))
