@@ -7055,6 +7055,10 @@ namespace BmwDeepObd
                 TextView textEcuDesc = view.FindViewById<TextView>(Resource.Id.textEcuDesc);
 
                 StringBuilder stringBuilderName = new StringBuilder();
+                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && item.Address >= 0)
+                {
+                    stringBuilderName.Append(string.Format("{0:X02} ", item.Address));
+                }
                 stringBuilderName.Append(!string.IsNullOrEmpty(item.EcuName) ? item.EcuName : item.Name);
                 if (!string.IsNullOrEmpty(item.Description))
                 {

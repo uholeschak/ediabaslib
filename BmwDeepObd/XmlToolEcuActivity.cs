@@ -132,7 +132,9 @@ namespace BmwDeepObd
         private InstanceData _instanceData = new InstanceData();
         private InputMethodManager _imm;
         private View _contentView;
+        private TextView _textViewPageNameTitle;
         private EditText _editTextPageName;
+        private TextView _textViewEcuNameTitle;
         private EditText _editTextEcuName;
         private CheckBox _checkBoxDisplayTypeGrid;
         private TextView _textViewFontSizeTitle;
@@ -225,10 +227,18 @@ namespace BmwDeepObd
 
             _ecuInfo = IntentEcuInfo;
 
+            _textViewPageNameTitle = FindViewById<TextView>(Resource.Id.textViewPageNameTitle);
+            _textViewPageNameTitle.SetOnTouchListener(this);
+
             _editTextPageName = FindViewById<EditText>(Resource.Id.editTextPageName);
+            _editTextPageName.SetOnTouchListener(this);
             _editTextPageName.Text = _ecuInfo.PageName;
 
+            _textViewEcuNameTitle = FindViewById<TextView>(Resource.Id.textViewEcuNameTitle);
+            _textViewEcuNameTitle.SetOnTouchListener(this);
+
             _editTextEcuName = FindViewById<EditText>(Resource.Id.editTextEcuName);
+            _editTextEcuName.SetOnTouchListener(this);
             _editTextEcuName.Text = _ecuInfo.EcuName;
 
             _checkBoxDisplayTypeGrid = FindViewById<CheckBox>(Resource.Id.checkBoxDisplayTypeGrid);
@@ -515,6 +525,12 @@ namespace BmwDeepObd
             switch (e.Action)
             {
                 case MotionEventActions.Down:
+                    if (v == _textViewPageNameTitle || v == _editTextPageName ||
+                        v == _textViewEcuNameTitle || v == _editTextEcuName)
+                    {
+                        DisplayEcuInfo();
+                        break;
+                    }
                     UpdateResultSettings(_selectedResult);
                     HideKeyboard();
                     break;
@@ -1320,6 +1336,10 @@ namespace BmwDeepObd
         private void DisplayEcuInfo()
         {
             if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+            {
+                return;
+            }
+            if (!ActivityCommon.VagUdsActive)
             {
                 return;
             }
