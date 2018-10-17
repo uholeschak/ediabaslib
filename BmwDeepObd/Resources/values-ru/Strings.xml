@@ -29,8 +29,7 @@
   <string name="ecu_not_found">ECU файлы не найдены.</string>
   <string name="ecu_package">Для этого приложения доступны обновлённые ECU файлы.</string>
   <string name="ecu_download">Хотите загрузить ECU файлы (размер файла примерно {0:fs1})?</string>
-  <!--Translate-->
-  <string name="storage_requirements">Для этого приложения требуется более быстрое устройство хранения данных со свободным пространством не менее {0:fs1}.\nИспользование этого приложения не допускается, если условие не будет принято.</string>  <string name="ecu_extract">Необходимо распаковать файлы ECU (приблизительный размер {0:fs1}),\nдля этого требуется загрузить информацию об обновлении.\nЕсли распаковка происходит очень медленно, используйте более быстрый носитель данных.\nПродолжить?</string>
+  <string name="storage_requirements">Мы не несём ответственности в случае неисправности или повреждения транспортного средства.\nДля этого приложения требуется более быстрое устройство хранения данных со свободным пространством не менее {0:fs1}.\nИспользование этого приложения не допускается, если условие не будет принято.</string>  <string name="ecu_extract">Необходимо распаковать файлы ECU (приблизительный размер {0:fs1}),\nдля этого требуется загрузить информацию об обновлении.\nЕсли распаковка происходит очень медленно, используйте более быстрый носитель данных.\nПродолжить?</string>
   <string name="ecu_extract_confirm">Для распаковки файлов ECU (Размер около{0:fs1})\nтребуется загрузка информации об обновлении.\nЕсли распаковка происходит очень медленно, используйте более быстрый носитель данных.\nХотите продолжить? </string>
   <string name="manufacturer_select">Выбранный производитель {0}. Для выбора другого нажмите \'Отменить\'.</string>
   <string name="error_no_error">Ошибки отсутствуют</string>
@@ -42,7 +41,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Улучшена детализация VAG UDS ошибок\n- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Небольшие улучшения для VAG\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -392,10 +391,9 @@
   <!-- XML Tool Ecu Activity -->
   <string name="xml_tool_ecu_title">Jobs для ECU: {0}</string>
   <string name="xml_tool_ecu_job_comments">Комментарии для Job: {0}</string>
-  <!--Translate-->
-  <string name="xml_tool_ecu_job_comments_ecu_info">ECU information:</string>
-  <string name="xml_tool_ecu_job_comments_ecu_info_addr">Address {0:X02}:</string>
-  <string name="xml_tool_ecu_job_comments_ecu_info_subsys">Subsystem {0}:</string>
+  <string name="xml_tool_ecu_job_comments_ecu_info">ECU информация:</string>
+  <string name="xml_tool_ecu_job_comments_ecu_info_addr">Aдрес {0:X02}:</string>
+  <string name="xml_tool_ecu_job_comments_ecu_info_subsys">Подсистема {0}:</string>
   <string name="xml_tool_ecu_result_comments">Комментарии для результата: {0}</string>
   <string name="xml_tool_ecu_result_type">Тип данных</string>
   <string name="xml_tool_ecu_user_format">Пользователь</string>
