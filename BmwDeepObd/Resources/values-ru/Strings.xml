@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- ReSharper disable MarkupAttributeTypo -->
+<!-- ReSharper disable MarkupTextTypo -->
 <resources>
   <string name="library_name">DeepObd</string>
   <string name="app_name">Deep OBD для BMW и VAG</string>
@@ -162,7 +164,6 @@
   <string name="none_paired">Отсутствуют авторизированные устойства.</string>
   <string name="none_found">Устройство не найдено</string>
   <string name="bt_not_enabled">Bluetooth не активирован</string>
-  <!--Translate-->
   <string name="bt_mtc_service_error">Bluetooth подключён, но обмен данными отсутствует.\nИспользуется ограниченный режим. Пожалуйста, соедините устройства через меню телефона.</string>
   <string name="title_paired_devices">Авторизированные устройства</string>
   <string name="title_other_devices">Другие доступные устройства</string>
