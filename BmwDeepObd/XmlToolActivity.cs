@@ -428,6 +428,9 @@ namespace BmwDeepObd
         public const string JobReadEcuVersion = @"Steuergeraeteversion_abfragen";
         public const string JobReadEcuVersion2 = @"Steuergeraeteversion_abfragen2";
         public const string JobReadVin = @"Fahrgestellnr_abfragen";
+        public const string JobReadCoding = @"CodierungS22_lesen";
+        public const string JobReadCoding2 = @"CodierungS22_lesen2";
+        public const string JobReadLongCoding = @"LangeCodierung_lesen";
         public const string DataTypeString = @"string";
         public const string DataTypeReal = @"real";
         public const string DataTypeInteger = @"integer";
@@ -4729,7 +4732,8 @@ namespace BmwDeepObd
                 ecuInfo.Coding = null;
                 ecuInfo.SubSystems = null;
 
-                for (int index = 0; index < 3; index++)
+                int maxIndex = 5;
+                for (int index = 0; index <= maxIndex; index++)
                 {
                     int indexLocal = index;
                     RunOnUiThread(() =>
@@ -4740,7 +4744,7 @@ namespace BmwDeepObd
                         }
                         if (progress != null)
                         {
-                            progress.Progress = 100 * indexLocal / 2;
+                            progress.Progress = 100 * indexLocal / maxIndex;
                         }
                     });
 
@@ -4768,6 +4772,32 @@ namespace BmwDeepObd
                         case 2:
                             jobName = JobReadVin;
                             resultName1 = "FAHRGESTELLNR";
+                            resultName2 = null;
+                            break;
+
+                        case 3:
+                            jobName = JobReadLongCoding;
+                            resultName1 = "CODIERUNGWERTBINAER";
+                            resultName2 = null;
+                            break;
+
+                        case 4:
+                            if (ecuInfo.Coding != null)
+                            {
+                                break;
+                            }
+                            jobName = JobReadCoding2;
+                            resultName1 = "CODIERUNGWERTBINAER";
+                            resultName2 = null;
+                            break;
+
+                        case 5:
+                            if (ecuInfo.Coding != null)
+                            {
+                                break;
+                            }
+                            jobName = JobReadCoding;
+                            resultName1 = "CODIERUNGWERTBINAER";
                             resultName2 = null;
                             break;
                     }
@@ -4801,50 +4831,67 @@ namespace BmwDeepObd
                             if (resultOk)
                             {
                                 Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
-                                if (index == 2)
+                                switch (index)
                                 {
-                                    if (resultDict1.TryGetValue(resultName1, out resultData))
+                                    case 0:
+                                    case 1:
                                     {
-                                        if (resultData.OpData is string text)
-                                        {
-                                            string vin = text.TrimEnd();
-                                            if (_vinRegex.IsMatch(vin))
-                                            {
-                                                ecuInfo.Vin = vin;
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    string swPartNumber = string.Empty;
-                                    string hwPartNumber = string.Empty;
-                                    if (resultDict1.TryGetValue(resultName1, out resultData))
-                                    {
-                                        if (resultData.OpData is string text)
-                                        {
-                                            swPartNumber = text.TrimEnd();
-                                        }
-                                    }
-
-                                    if (resultName2 != null)
-                                    {
-                                        if (resultDict1.TryGetValue(resultName2, out resultData))
+                                        string swPartNumber = string.Empty;
+                                        string hwPartNumber = string.Empty;
+                                        if (resultDict1.TryGetValue(resultName1, out resultData))
                                         {
                                             if (resultData.OpData is string text)
                                             {
-                                                hwPartNumber = text.TrimEnd();
+                                                swPartNumber = text.TrimEnd();
                                             }
                                         }
-                                    }
-                                    if (!string.IsNullOrWhiteSpace(swPartNumber))
-                                    {
-                                        ecuInfo.VagPartNumber = swPartNumber;
-                                        if (!string.IsNullOrWhiteSpace(hwPartNumber))
+
+                                        if (resultName2 != null)
                                         {
-                                            ecuInfo.VagHwPartNumber = hwPartNumber;
+                                            if (resultDict1.TryGetValue(resultName2, out resultData))
+                                            {
+                                                if (resultData.OpData is string text)
+                                                {
+                                                    hwPartNumber = text.TrimEnd();
+                                                }
+                                            }
                                         }
+                                        if (!string.IsNullOrWhiteSpace(swPartNumber))
+                                        {
+                                            ecuInfo.VagPartNumber = swPartNumber;
+                                            if (!string.IsNullOrWhiteSpace(hwPartNumber))
+                                            {
+                                                ecuInfo.VagHwPartNumber = hwPartNumber;
+                                            }
+                                        }
+                                        break;
                                     }
+
+                                    case 2:
+                                        if (resultDict1.TryGetValue(resultName1, out resultData))
+                                        {
+                                            if (resultData.OpData is string text)
+                                            {
+                                                string vin = text.TrimEnd();
+                                                if (_vinRegex.IsMatch(vin))
+                                                {
+                                                    ecuInfo.Vin = vin;
+                                                }
+                                            }
+                                        }
+                                        break;
+
+                                    case 3:
+                                    case 4:
+                                    case 5:
+                                        if (resultDict1.TryGetValue(resultName1, out resultData))
+                                        {
+                                            if (resultData.OpData is byte[] coding)
+                                            {
+                                                ecuInfo.Coding = coding;
+                                            }
+                                        }
+                                        break;
                                 }
                             }
                         }
