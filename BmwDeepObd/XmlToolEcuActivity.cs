@@ -1362,6 +1362,14 @@ namespace BmwDeepObd
                 }
                 sb.Append(_ecuInfo.VagHwPartNumber);
             }
+            if (!string.IsNullOrEmpty(_ecuInfo.VagSysName))
+            {
+                if (append)
+                {
+                    sb.Append(" / ");
+                }
+                sb.Append(_ecuInfo.VagSysName);
+            }
 
             if (_ecuInfo.SubSystems != null)
             {
@@ -1376,13 +1384,13 @@ namespace BmwDeepObd
                         sb.Append(subSystem.VagPartNumber);
                         append = true;
                     }
-                    if (!string.IsNullOrEmpty(subSystem.SysName))
+                    if (!string.IsNullOrEmpty(subSystem.VagSysName))
                     {
                         if (append)
                         {
                             sb.Append(" / ");
                         }
-                        sb.Append(subSystem.SysName);
+                        sb.Append(subSystem.VagSysName);
                         append = true;
                     }
                     if (!string.IsNullOrEmpty(subSystem.Name))

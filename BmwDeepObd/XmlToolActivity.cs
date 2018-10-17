@@ -46,8 +46,10 @@ namespace BmwDeepObd
             Vin,
             PartNum,
             HwPartNum,
+            SysName,
             AsamData,
             AsamRev,
+            Coding,
             SubSystems
         }
 
@@ -82,8 +84,11 @@ namespace BmwDeepObd
                 Vin = null;
                 VagPartNumber = null;
                 VagHwPartNumber = null;
+                VagSysName = null;
                 VagAsamData = null;
                 VagAsamRev = null;
+                Coding = null;
+                SubSystems = null;
                 PageName = name;
                 EcuName = name;
                 DisplayMode = displayMode;
@@ -117,9 +122,13 @@ namespace BmwDeepObd
 
             public string VagHwPartNumber { get; set; }
 
+            public string VagSysName { get; set; }
+
             public string VagAsamData { get; set; }
 
             public string VagAsamRev { get; set; }
+
+            public byte[] Coding { get; set; }
 
             public List<EcuInfoSubSys> SubSystems { get; set; }
 
@@ -169,7 +178,7 @@ namespace BmwDeepObd
 
             public string VagPartNumber { get; set; }
 
-            public string SysName { get; set; }
+            public string VagSysName { get; set; }
 
             public string VagDataFileName { get; set; }
 
@@ -285,8 +294,10 @@ namespace BmwDeepObd
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.Vin, 0xF190),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.PartNum, 0xF187),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.HwPartNum, 0xF191),
+            new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.SysName, 0xF197),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.AsamData, 0xF19E),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.AsamRev, 0xF1A2),
+            new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.Coding, 0x0600),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.SubSystems, 0x0608),
         };
 
@@ -4712,8 +4723,10 @@ namespace BmwDeepObd
                 ecuInfo.Vin = null;
                 ecuInfo.VagPartNumber = null;
                 ecuInfo.VagHwPartNumber = null;
+                ecuInfo.VagSysName = null;
                 ecuInfo.VagAsamData = null;
                 ecuInfo.VagAsamRev = null;
+                ecuInfo.Coding = null;
                 ecuInfo.SubSystems = null;
 
                 for (int index = 0; index < 3; index++)
@@ -4875,6 +4888,8 @@ namespace BmwDeepObd
                 ecuInfo.VagHwPartNumber = null;
                 ecuInfo.VagAsamData = null;
                 ecuInfo.VagAsamRev = null;
+                ecuInfo.VagSysName = null;
+                ecuInfo.Coding = null;
                 ecuInfo.SubSystems = null;
 
                 int index = 0;
@@ -4892,8 +4907,26 @@ namespace BmwDeepObd
                         }
                     });
 
-                    bool optional = udsInfo.Item1 == VagUdsS22DataType.Vin || udsInfo.Item1 == VagUdsS22DataType.SubSystems;
-                    bool binary = udsInfo.Item1 == VagUdsS22DataType.SubSystems;
+                    bool optional = true;
+                    switch (udsInfo.Item1)
+                    {
+                        case VagUdsS22DataType.PartNum:
+                        case VagUdsS22DataType.HwPartNum:
+                        case VagUdsS22DataType.AsamData:
+                        case VagUdsS22DataType.AsamRev:
+                            optional = false;
+                            break;
+                    }
+
+                    bool binary = false;
+                    switch (udsInfo.Item1)
+                    {
+                        case VagUdsS22DataType.Coding:
+                        case VagUdsS22DataType.SubSystems:
+                            binary = true;
+                            break;
+                    }
+
                     _ediabas.ArgString = string.Format(CultureInfo.InvariantCulture, "{0}", udsInfo.Item2);
                     _ediabas.ArgBinaryStd = null;
                     _ediabas.ResultsRequests = string.Empty;
@@ -4979,12 +5012,20 @@ namespace BmwDeepObd
                                 ecuInfo.VagHwPartNumber = dataString;
                                 break;
 
+                            case VagUdsS22DataType.SysName:
+                                ecuInfo.VagSysName = dataString;
+                                break;
+
                             case VagUdsS22DataType.AsamData:
                                 ecuInfo.VagAsamData = dataString;
                                 break;
 
                             case VagUdsS22DataType.AsamRev:
                                 ecuInfo.VagAsamRev = dataString;
+                                break;
+
+                            case VagUdsS22DataType.Coding:
+                                ecuInfo.Coding = dataBytes;
                                 break;
 
                             case VagUdsS22DataType.SubSystems:
@@ -5051,7 +5092,7 @@ namespace BmwDeepObd
                 {
                     subSystem.Coding = null;
                     subSystem.VagPartNumber = null;
-                    subSystem.SysName = null;
+                    subSystem.VagSysName = null;
 
                     foreach (Tuple<VagUdsS22SubSysDataType, int> udsInfo in VagUdsS22SubSysData)
                     {
@@ -5137,7 +5178,7 @@ namespace BmwDeepObd
                                         break;
 
                                     case VagUdsS22SubSysDataType.SysName:
-                                        subSystem.SysName = dataString;
+                                        subSystem.VagSysName = dataString;
                                         break;
                                 }
                             }
