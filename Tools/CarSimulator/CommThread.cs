@@ -6909,7 +6909,7 @@ namespace CarSimulator
                     SendData(keyBytes, 0, keyBytes.Length);
 
                     if (ReceiveData(_receiveData, 0, 1, 50, 50)) // too fast for ELM
-                        //if (ReceiveData(_receiveData, 0, 1, 200, 200))
+                    //if (ReceiveData(_receiveData, 0, 1, 200, 200))
                     {
                         if ((byte) (~_receiveData[0]) == keyBytes[1])
                         {
