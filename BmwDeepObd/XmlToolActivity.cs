@@ -432,7 +432,6 @@ namespace BmwDeepObd
         public const string JobReadEcuVersion2 = @"Steuergeraeteversion_abfragen2";
         public const string JobReadVin = @"Fahrgestellnr_abfragen";
         public const string JobReadCoding = @"CodierungS22_lesen";
-        public const string JobReadCoding2 = @"CodierungS22_lesen2";
         public const string JobReadLongCoding = @"LangeCodierung_lesen";
         public const string DataTypeString = @"string";
         public const string DataTypeReal = @"real";
@@ -4736,7 +4735,7 @@ namespace BmwDeepObd
                 ecuInfo.VagCodingLong = null;
                 ecuInfo.SubSystems = null;
 
-                int maxIndex = 5;
+                int maxIndex = 4;
                 for (int index = 0; index <= maxIndex; index++)
                 {
                     int indexLocal = index;
@@ -4787,16 +4786,6 @@ namespace BmwDeepObd
 
                         case 4:
                             jobName = JobReadLongCoding;
-                            resultName1 = "CODIERUNGWERTBINAER";
-                            resultName2 = null;
-                            break;
-
-                        case 5:
-                            if (ecuInfo.VagCodingLong != null)
-                            {
-                                break;
-                            }
-                            jobName = JobReadCoding2;
                             resultName1 = "CODIERUNGWERTBINAER";
                             resultName2 = null;
                             break;
@@ -4892,7 +4881,6 @@ namespace BmwDeepObd
                                         break;
 
                                     case 4:
-                                    case 5:
                                         if (resultDict1.TryGetValue(resultName1, out resultData))
                                         {
                                             if (resultData.OpData is byte[] coding)
