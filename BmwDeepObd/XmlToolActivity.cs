@@ -87,7 +87,8 @@ namespace BmwDeepObd
                 VagSysName = null;
                 VagAsamData = null;
                 VagAsamRev = null;
-                Coding = null;
+                VagCodingShort = null;
+                VagCodingLong = null;
                 SubSystems = null;
                 PageName = name;
                 EcuName = name;
@@ -128,7 +129,9 @@ namespace BmwDeepObd
 
             public string VagAsamRev { get; set; }
 
-            public byte[] Coding { get; set; }
+            public byte[] VagCodingShort { get; set; }
+
+            public byte[] VagCodingLong { get; set; }
 
             public List<EcuInfoSubSys> SubSystems { get; set; }
 
@@ -174,7 +177,7 @@ namespace BmwDeepObd
 
             public int SubSysIndex { get; set; }
 
-            public byte[] Coding { get; set; }
+            public byte[] VagCodingLong { get; set; }
 
             public string VagPartNumber { get; set; }
 
@@ -4729,7 +4732,8 @@ namespace BmwDeepObd
                 ecuInfo.VagSysName = null;
                 ecuInfo.VagAsamData = null;
                 ecuInfo.VagAsamRev = null;
-                ecuInfo.Coding = null;
+                ecuInfo.VagCodingShort = null;
+                ecuInfo.VagCodingLong = null;
                 ecuInfo.SubSystems = null;
 
                 int maxIndex = 5;
@@ -4776,27 +4780,23 @@ namespace BmwDeepObd
                             break;
 
                         case 3:
-                            jobName = JobReadLongCoding;
+                            jobName = JobReadCoding;
                             resultName1 = "CODIERUNGWERTBINAER";
                             resultName2 = null;
                             break;
 
                         case 4:
-                            if (ecuInfo.Coding != null)
-                            {
-                                break;
-                            }
-                            jobName = JobReadCoding2;
+                            jobName = JobReadLongCoding;
                             resultName1 = "CODIERUNGWERTBINAER";
                             resultName2 = null;
                             break;
 
                         case 5:
-                            if (ecuInfo.Coding != null)
+                            if (ecuInfo.VagCodingLong != null)
                             {
                                 break;
                             }
-                            jobName = JobReadCoding;
+                            jobName = JobReadCoding2;
                             resultName1 = "CODIERUNGWERTBINAER";
                             resultName2 = null;
                             break;
@@ -4882,13 +4882,22 @@ namespace BmwDeepObd
                                         break;
 
                                     case 3:
+                                        if (resultDict1.TryGetValue(resultName1, out resultData))
+                                        {
+                                            if (resultData.OpData is byte[] coding)
+                                            {
+                                                ecuInfo.VagCodingShort = coding;
+                                            }
+                                        }
+                                        break;
+
                                     case 4:
                                     case 5:
                                         if (resultDict1.TryGetValue(resultName1, out resultData))
                                         {
                                             if (resultData.OpData is byte[] coding)
                                             {
-                                                ecuInfo.Coding = coding;
+                                                ecuInfo.VagCodingLong = coding;
                                             }
                                         }
                                         break;
@@ -4936,7 +4945,8 @@ namespace BmwDeepObd
                 ecuInfo.VagAsamData = null;
                 ecuInfo.VagAsamRev = null;
                 ecuInfo.VagSysName = null;
-                ecuInfo.Coding = null;
+                ecuInfo.VagCodingShort = null;
+                ecuInfo.VagCodingLong = null;
                 ecuInfo.SubSystems = null;
 
                 int index = 0;
@@ -5072,7 +5082,7 @@ namespace BmwDeepObd
                                 break;
 
                             case VagUdsS22DataType.Coding:
-                                ecuInfo.Coding = dataBytes;
+                                ecuInfo.VagCodingLong = dataBytes;
                                 break;
 
                             case VagUdsS22DataType.SubSystems:
@@ -5137,7 +5147,7 @@ namespace BmwDeepObd
                 int index = 0;
                 foreach (EcuInfoSubSys subSystem in ecuInfo.SubSystems)
                 {
-                    subSystem.Coding = null;
+                    subSystem.VagCodingLong = null;
                     subSystem.VagPartNumber = null;
                     subSystem.VagSysName = null;
 
@@ -5183,10 +5193,16 @@ namespace BmwDeepObd
                                     continue;
                                 }
 
-                                Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
-                                bool binary = udsInfo.Item1 == VagUdsS22SubSysDataType.Coding;
+                                bool binary = false;
+                                switch (udsInfo.Item1)
+                                {
+                                    case VagUdsS22SubSysDataType.Coding:
+                                        binary = true;
+                                        break;
+                                }
                                 string dataString = null;
                                 byte[] dataBytes = null;
+                                Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
                                 if (resultDict1.TryGetValue("ERGEBNIS1WERT", out resultData))
                                 {
                                     if (resultData.OpData is byte[] data)
@@ -5217,7 +5233,7 @@ namespace BmwDeepObd
                                 switch (udsInfo.Item1)
                                 {
                                     case VagUdsS22SubSysDataType.Coding:
-                                        subSystem.Coding = dataBytes;
+                                        subSystem.VagCodingLong = dataBytes;
                                         break;
 
                                     case VagUdsS22SubSysDataType.PartNum:
