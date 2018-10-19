@@ -945,12 +945,22 @@ namespace UdsFileReader
                 Value1 = value1;
                 Value2 = value2;
                 TextArray = textArray;
+                OrderIndex = 0;
+                if (Value1.HasValue)
+                {
+                    OrderIndex |= (UInt64) Value1.Value << 32;
+                }
+                if (Value2.HasValue)
+                {
+                    OrderIndex |= (UInt32)Value2.Value;
+                }
             }
 
             public DataType DataType { get; }
             public int? Value1 { get; }
             public int? Value2 { get; }
             public string[] TextArray { get; }
+            public UInt64 OrderIndex { get; protected set; }
         }
 
         public class DataInfoLongCoding : DataInfo
@@ -1014,6 +1024,28 @@ namespace UdsFileReader
                     if (textArray.Length >= textIndex + 1)
                     {
                         Text = textArray[textIndex];
+                    }
+
+                    OrderIndex = 0;
+                    if (Byte.HasValue)
+                    {
+                        OrderIndex |= (UInt64)Byte.Value << 32;
+                    }
+                    if (LineNumber.HasValue)
+                    {
+                        OrderIndex |= (UInt32)LineNumber.Value;
+                    }
+                    else if (Bit.HasValue)
+                    {
+                        OrderIndex |= (UInt32)Bit.Value << 16;
+                    }
+                    else if (BitMin.HasValue)
+                    {
+                        OrderIndex |= (UInt32)BitMin.Value << 16;
+                        if (BitValue.HasValue)
+                        {
+                            OrderIndex |= (UInt32)BitValue.Value;
+                        }
                     }
                 }
             }
@@ -1147,7 +1179,8 @@ namespace UdsFileReader
                     }
                 }
 
-                return dataInfoList;
+                List<DataInfo> dataInfoListOrder = dataInfoList.OrderBy(x => x.OrderIndex).ToList();
+                return dataInfoListOrder;
             }
             catch (Exception)
             {
