@@ -136,30 +136,47 @@ namespace UdsFileReader
                     try
                     {
                         string fileExt = Path.GetExtension(file);
-                        if (string.Compare(fileExt, UdsReader.FileExtension, StringComparison.OrdinalIgnoreCase) != 0)
+                        if (string.Compare(fileExt, DataReader.FileExtension, StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            continue;
-                        }
-
-                        string baseFile = Path.GetFileNameWithoutExtension(file);
-                        if (baseFile == null || InvalidFileRegex.IsMatch(baseFile))
-                        {
-                            Console.WriteLine("Ignoring: {0}", file);
-                            continue;
-                        }
-                        Console.WriteLine("Parsing: {0}", file);
-                        string outFile = Path.ChangeExtension(file, ".txt");
-                        if (outFile == null)
-                        {
-                            Console.WriteLine("*** Invalid output file");
-                        }
-                        else
-                        {
-                            using (StreamWriter outputStream = new StreamWriter(outFile, false, new UTF8Encoding(true)))
+                            Console.WriteLine("Parsing: {0}", file);
+                            string outFileData = Path.ChangeExtension(file, ".txt");
+                            if (outFileData == null)
                             {
-                                if (!ParseFile(udsReader, file, outputStream))
+                                Console.WriteLine("*** Invalid output file");
+                            }
+                            else
+                            {
+                                using (StreamWriter outputStream = new StreamWriter(outFileData, false, new UTF8Encoding(true)))
                                 {
-                                    Console.WriteLine("*** Parsing failed: {0}", file);
+                                    if (!ParseDataFile(udsReader.DataReader, file, outputStream))
+                                    {
+                                        Console.WriteLine("*** Parsing failed: {0}", file);
+                                    }
+                                }
+                            }
+                        }
+                        else if (string.Compare(fileExt, UdsReader.FileExtension, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            string baseFile = Path.GetFileNameWithoutExtension(file);
+                            if (baseFile == null || InvalidFileRegex.IsMatch(baseFile))
+                            {
+                                Console.WriteLine("Ignoring: {0}", file);
+                                continue;
+                            }
+                            Console.WriteLine("Parsing: {0}", file);
+                            string outFileUds = Path.ChangeExtension(file, ".txt");
+                            if (outFileUds == null)
+                            {
+                                Console.WriteLine("*** Invalid output file");
+                            }
+                            else
+                            {
+                                using (StreamWriter outputStream = new StreamWriter(outFileUds, false, new UTF8Encoding(true)))
+                                {
+                                    if (!ParseUdsFile(udsReader, file, outputStream))
+                                    {
+                                        Console.WriteLine("*** Parsing failed: {0}", file);
+                                    }
                                 }
                             }
                         }
@@ -208,7 +225,149 @@ namespace UdsFileReader
             }
         }
 
-        static bool ParseFile(UdsReader udsReader, string fileName, StreamWriter outStream)
+        static bool ParseDataFile(DataReader dataReader, string fileName, StreamWriter outStream)
+        {
+            try
+            {
+                foreach (DataReader.DataType dataType in Enum.GetValues(typeof(DataReader.DataType)))
+                {
+                    List<DataReader.DataInfo> dataInfoList = dataReader.ExtractDataType(fileName, dataType);
+                    if (dataInfoList == null)
+                    {
+                        outStream.WriteLine("Parsing failed");
+                        return false;
+                    }
+                    if (dataInfoList.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    outStream.WriteLine();
+                    outStream.WriteLine("Data Type: {0}", dataType.ToString());
+                    outStream.WriteLine("-----------------------------------");
+
+                    foreach (DataReader.DataInfo dataInfo in dataInfoList)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        if (dataInfo.TextArray != null)
+                        {
+                            foreach (string entry in dataInfo.TextArray)
+                            {
+                                if (sb.Length > 0)
+                                {
+                                    sb.Append("; ");
+                                }
+                                sb.Append("\"");
+                                sb.Append(entry);
+                                sb.Append("\"");
+                            }
+                            sb.Insert(0, "Raw: ");
+
+                            if (dataInfo.Value1.HasValue)
+                            {
+                                if (sb.Length > 0)
+                                {
+                                    sb.Append("; ");
+                                }
+                                sb.Append(string.Format(CultureInfo.InvariantCulture, "V1: {0}", dataInfo.Value1.Value));
+                            }
+                            if (dataInfo.Value2.HasValue)
+                            {
+                                if (sb.Length > 0)
+                                {
+                                    sb.Append("; ");
+                                }
+                                sb.Append(string.Format(CultureInfo.InvariantCulture, "V2: {0}", dataInfo.Value2.Value));
+                            }
+                            outStream.WriteLine(sb.ToString());
+                        }
+
+                        if (dataInfo is DataReader.DataInfoLongCoding longCoding)
+                        {
+                            sb.Clear();
+                            if (longCoding.Byte.HasValue)
+                            {
+                                if (sb.Length > 0)
+                                {
+                                    sb.Append("; ");
+                                }
+                                sb.Append(string.Format(CultureInfo.InvariantCulture, "Byte: {0}", longCoding.Byte.Value));
+                            }
+                            if (longCoding.Bit.HasValue)
+                            {
+                                if (sb.Length > 0)
+                                {
+                                    sb.Append("; ");
+                                }
+                                sb.Append(string.Format(CultureInfo.InvariantCulture, "Bit: {0}", longCoding.Bit.Value));
+                            }
+                            if (longCoding.BitMin.HasValue)
+                            {
+                                if (sb.Length > 0)
+                                {
+                                    sb.Append("; ");
+                                }
+                                sb.Append(string.Format(CultureInfo.InvariantCulture, "BitMin: {0}", longCoding.BitMin.Value));
+                            }
+                            if (longCoding.BitMax.HasValue)
+                            {
+                                if (sb.Length > 0)
+                                {
+                                    sb.Append("; ");
+                                }
+                                sb.Append(string.Format(CultureInfo.InvariantCulture, "BitMax: {0}", longCoding.BitMax.Value));
+                            }
+                            if (longCoding.BitValue.HasValue)
+                            {
+                                if (sb.Length > 0)
+                                {
+                                    sb.Append("; ");
+                                }
+                                sb.Append(string.Format(CultureInfo.InvariantCulture, "BitValue: 0x{0:X02}", longCoding.BitValue.Value));
+                            }
+                            if (longCoding.LineNumber.HasValue)
+                            {
+                                if (sb.Length > 0)
+                                {
+                                    sb.Append("; ");
+                                }
+                                sb.Append(string.Format(CultureInfo.InvariantCulture, "Line: {0}", longCoding.LineNumber.Value));
+                            }
+                            if (longCoding.Text != null)
+                            {
+                                if (sb.Length > 0)
+                                {
+                                    sb.Append("; ");
+                                }
+                                sb.Append(string.Format(CultureInfo.InvariantCulture, "Text: \"{0}\"", longCoding.Text));
+                            }
+
+                            if (sb.Length > 0)
+                            {
+                                sb.Insert(0, "LongCoding: ");
+                                outStream.WriteLine(sb.ToString());
+                            }
+                        }
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    outStream.WriteLine("Exception: {0}", ex.Message);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+                return false;
+            }
+        }
+
+        static bool ParseUdsFile(UdsReader udsReader, string fileName, StreamWriter outStream)
         {
             try
             {
@@ -239,6 +398,10 @@ namespace UdsFileReader
                     {
                         outStream.WriteLine("Parsing failed");
                         return false;
+                    }
+                    if (resultList.Count == 0)
+                    {
+                        continue;
                     }
 
                     outStream.WriteLine();

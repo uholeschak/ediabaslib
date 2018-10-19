@@ -33,6 +33,7 @@ namespace UdsFileReader
             Measurement,
             Basic,
             Adaption,
+            Login,
             Settings,
             Coding,
             LongCoding,
@@ -952,6 +953,80 @@ namespace UdsFileReader
             public string[] TextArray { get; }
         }
 
+        public class DataInfoLongCoding : DataInfo
+        {
+            public DataInfoLongCoding(DataType dataType, int? value1, int? value2, string[] textArray) :
+                base(dataType, value1, value2, textArray)
+            {
+                if (textArray.Length >= 1)
+                {
+                    if (Int32.TryParse(textArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 value))
+                    {
+                        Byte = value;
+                    }
+                }
+
+                int textIndex = 2;
+                if (textArray.Length >= 2)
+                {
+                    string bitRange = textArray[1];
+                    if (bitRange.EndsWith("="))
+                    {
+                        bitRange = bitRange.Substring(0, bitRange.Length - 1);
+                        if (Int32.TryParse(bitRange, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 value))
+                        {
+                            LineNumber = value;
+                        }
+                    }
+                    else
+                    {
+                        if (bitRange.Contains('~'))
+                        {
+                            string[] bitArray = textArray[1].Split('~');
+                            if (bitArray.Length == 2)
+                            {
+                                if (Int32.TryParse(bitArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 valueMin))
+                                {
+                                    if (Int32.TryParse(bitArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 valueMax))
+                                    {
+                                        BitMin = valueMin;
+                                        BitMax = valueMax;
+                                    }
+                                }
+                            }
+                            if (textArray.Length >= 3)
+                            {
+                                if (Int32.TryParse(textArray[2], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out Int32 value))
+                                {
+                                    BitValue = value;
+                                }
+                            }
+                            textIndex = 3;
+                        }
+                        else
+                        {
+                            if (Int32.TryParse(bitRange, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 value))
+                            {
+                                Bit = value;
+                            }
+                        }
+                    }
+                    if (textArray.Length >= textIndex + 1)
+                    {
+                        Text = textArray[textIndex];
+                    }
+                }
+            }
+
+            public int? Byte { get; }
+            public int? Bit { get; }
+            public int? BitMin { get; }
+            public int? BitMax { get; }
+            public int? BitValue { get; }
+            public int? LineNumber { get; }
+            public string Text { get; }
+        }
+
         public List<DataInfo> ExtractDataType(string fileName, DataType dataType)
         {
             try
@@ -963,33 +1038,39 @@ namespace UdsFileReader
                     return null;
                 }
 
-                char? prefix = null;
+                string prefix = null;
                 int numberCount = 2;
                 int textOffset = 2;
                 switch (dataType)
                 {
                     case DataType.Adaption:
-                        prefix = 'A';
+                        prefix = "A";
                         break;
 
                     case DataType.Basic:
-                        prefix = 'B';
+                        prefix = "B";
+                        break;
+
+                    case DataType.Login:
+                        prefix = "L";
+                        textOffset = 1;
+                        numberCount = 1;
                         break;
 
                     case DataType.Settings:
-                        prefix = 'S';
+                        prefix = "S";
                         textOffset = 1;
                         numberCount = 1;
                         break;
 
                     case DataType.Coding:
-                        prefix = 'C';
+                        prefix = "C";
                         textOffset = 1;
                         numberCount = 1;
                         break;
 
                     case DataType.LongCoding:
-                        prefix = 'L';
+                        prefix = "LC";
                         textOffset = 1;
                         numberCount = 0;
                         break;
@@ -1008,14 +1089,24 @@ namespace UdsFileReader
                         continue;
                     }
 
+                    bool longCoding = string.Compare(entry1, "LC", StringComparison.OrdinalIgnoreCase) == 0;
                     if (prefix != null)
                     {
-                        if (entry1[0] != prefix)
+                        if (longCoding)
                         {
-                            continue;
+                            if (string.Compare(entry1, prefix, StringComparison.OrdinalIgnoreCase) != 0)
+                            {
+                                continue;
+                            }
                         }
-
-                        entry1 = entry1.Substring(1);
+                        else
+                        {
+                            if (!entry1.StartsWith(prefix))
+                            {
+                                continue;
+                            }
+                            entry1 = entry1.Substring(prefix.Length);
+                        }
                     }
                     else
                     {
@@ -1044,7 +1135,16 @@ namespace UdsFileReader
                     }
                     string[] textArray = lineArray.Skip(textOffset).ToArray();
 
-                    dataInfoList.Add(new DataInfo(dataType, value1, value2, textArray));
+                    switch (dataType)
+                    {
+                        case DataType.LongCoding:
+                            dataInfoList.Add(new DataInfoLongCoding(dataType, value1, value2, textArray));
+                            break;
+
+                        default:
+                            dataInfoList.Add(new DataInfo(dataType, value1, value2, textArray));
+                            break;
+                    }
                 }
 
                 return dataInfoList;
