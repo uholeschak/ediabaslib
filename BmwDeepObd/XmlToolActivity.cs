@@ -81,15 +81,9 @@ namespace BmwDeepObd
                 Sgbd = sgbd;
                 Grp = grp;
                 Selected = false;
-                Vin = null;
-                VagPartNumber = null;
-                VagHwPartNumber = null;
-                VagSysName = null;
-                VagAsamData = null;
-                VagAsamRev = null;
-                VagCodingShort = null;
-                VagCodingLong = null;
-                SubSystems = null;
+
+                InitReadValues();
+
                 PageName = name;
                 EcuName = name;
                 DisplayMode = displayMode;
@@ -103,6 +97,23 @@ namespace BmwDeepObd
                 VagDataFileName = vagDataFileName;
                 VagUdsFileName = vagUdsFileName;
                 ReadCommand = null;
+            }
+
+            public void InitReadValues()
+            {
+                Vin = null;
+                VagPartNumber = null;
+                VagHwPartNumber = null;
+                VagSysName = null;
+                VagAsamData = null;
+                VagAsamRev = null;
+                VagDeviceNumber = null;
+                VagImporterNumber = null;
+                VagCompanyNumber = null;
+                VagCodingType = null;
+                VagCodingShort = null;
+                VagCodingLong = null;
+                SubSystems = null;
             }
 
             public string Name { get; set; }
@@ -129,7 +140,15 @@ namespace BmwDeepObd
 
             public string VagAsamRev { get; set; }
 
-            public byte[] VagCodingShort { get; set; }
+            public UInt64? VagDeviceNumber { get; set; }
+
+            public UInt64? VagImporterNumber { get; set; }
+
+            public UInt64? VagCompanyNumber { get; set; }
+
+            public UInt64? VagCodingType { get; set; }
+
+            public UInt64? VagCodingShort { get; set; }
 
             public byte[] VagCodingLong { get; set; }
 
@@ -4725,15 +4744,7 @@ namespace BmwDeepObd
                     return GetVagEcuDetailInfoUds(ecuInfo, progress);
                 }
 
-                ecuInfo.Vin = null;
-                ecuInfo.VagPartNumber = null;
-                ecuInfo.VagHwPartNumber = null;
-                ecuInfo.VagSysName = null;
-                ecuInfo.VagAsamData = null;
-                ecuInfo.VagAsamRev = null;
-                ecuInfo.VagCodingShort = null;
-                ecuInfo.VagCodingLong = null;
-                ecuInfo.SubSystems = null;
+                ecuInfo.InitReadValues();
 
                 int maxIndex = 4;
                 for (int index = 0; index <= maxIndex; index++)
@@ -4785,6 +4796,10 @@ namespace BmwDeepObd
                             break;
 
                         case 4:
+                            if (ecuInfo.VagCodingLong != null)
+                            {
+                                break;
+                            }
                             jobName = JobReadLongCoding;
                             resultName1 = "CODIERUNGWERTBINAER";
                             resultName2 = null;
@@ -4853,6 +4868,66 @@ namespace BmwDeepObd
                                                 ecuInfo.VagHwPartNumber = hwPartNumber;
                                             }
                                         }
+
+                                        if (resultDict1.TryGetValue("GERAETENUMMER", out resultData))
+                                        {
+                                            if (resultData.OpData is string text)
+                                            {
+                                                if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
+                                                {
+                                                    ecuInfo.VagDeviceNumber = value;
+                                                }
+                                            }
+                                        }
+
+                                        if (resultDict1.TryGetValue("IMPORTEURSNUMMER", out resultData))
+                                        {
+                                            if (resultData.OpData is string text)
+                                            {
+                                                if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
+                                                {
+                                                    ecuInfo.VagImporterNumber = value;
+                                                }
+                                            }
+                                        }
+
+                                        if (resultDict1.TryGetValue("BETRIEBSNUMMER", out resultData))
+                                        {
+                                            if (resultData.OpData is string text)
+                                            {
+                                                if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
+                                                {
+                                                    ecuInfo.VagCompanyNumber = value;
+                                                }
+                                            }
+                                        }
+
+                                        if (resultDict1.TryGetValue("SYSTEMBEZEICHNUNG", out resultData))
+                                        {
+                                            if (resultData.OpData is string text)
+                                            {
+                                                ecuInfo.VagSysName = text.TrimEnd();
+                                            }
+                                        }
+
+                                        if (resultDict1.TryGetValue("CODIERUNGTYP", out resultData))
+                                        {
+                                            if (resultData.OpData is Int64 value)
+                                            {
+                                                ecuInfo.VagCodingType = (UInt64) value;
+                                            }
+                                        }
+
+                                        if (resultDict1.TryGetValue("CODIERUNG", out resultData))
+                                        {
+                                            if (resultData.OpData is string text)
+                                            {
+                                                if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
+                                                {
+                                                    ecuInfo.VagCodingShort = value;
+                                                }
+                                            }
+                                        }
                                         break;
                                     }
 
@@ -4871,15 +4946,6 @@ namespace BmwDeepObd
                                         break;
 
                                     case 3:
-                                        if (resultDict1.TryGetValue(resultName1, out resultData))
-                                        {
-                                            if (resultData.OpData is byte[] coding)
-                                            {
-                                                ecuInfo.VagCodingShort = coding;
-                                            }
-                                        }
-                                        break;
-
                                     case 4:
                                         if (resultDict1.TryGetValue(resultName1, out resultData))
                                         {
@@ -4927,15 +4993,7 @@ namespace BmwDeepObd
         {
             try
             {
-                ecuInfo.Vin = null;
-                ecuInfo.VagPartNumber = null;
-                ecuInfo.VagHwPartNumber = null;
-                ecuInfo.VagAsamData = null;
-                ecuInfo.VagAsamRev = null;
-                ecuInfo.VagSysName = null;
-                ecuInfo.VagCodingShort = null;
-                ecuInfo.VagCodingLong = null;
-                ecuInfo.SubSystems = null;
+                ecuInfo.InitReadValues();
 
                 int index = 0;
                 foreach (Tuple<VagUdsS22DataType, int> udsInfo in VagUdsS22Data)
