@@ -110,7 +110,7 @@ namespace BmwDeepObd
                 VagDeviceNumber = null;
                 VagImporterNumber = null;
                 VagCompanyNumber = null;
-                VagCodingType = null;
+                VagCodingMax = null;
                 VagCodingShort = null;
                 VagCodingLong = null;
                 SubSystems = null;
@@ -146,7 +146,7 @@ namespace BmwDeepObd
 
             public UInt64? VagCompanyNumber { get; set; }
 
-            public UInt64? VagCodingType { get; set; }
+            public UInt64? VagCodingMax { get; set; }
 
             public UInt64? VagCodingShort { get; set; }
 
@@ -4906,15 +4906,19 @@ namespace BmwDeepObd
                                         {
                                             if (resultData.OpData is string text)
                                             {
-                                                ecuInfo.VagSysName = text.TrimEnd();
+                                                string sysName = text.TrimEnd();
+                                                if (!string.IsNullOrWhiteSpace(sysName))
+                                                {
+                                                    ecuInfo.VagSysName = sysName;
+                                                }
                                             }
                                         }
 
-                                        if (resultDict1.TryGetValue("CODIERUNGTYP", out resultData))
+                                        if (resultDict1.TryGetValue("MAXWERTCODIERUNG", out resultData))
                                         {
                                             if (resultData.OpData is Int64 value)
                                             {
-                                                ecuInfo.VagCodingType = (UInt64) value;
+                                                ecuInfo.VagCodingMax = (UInt64) value;
                                             }
                                         }
 
