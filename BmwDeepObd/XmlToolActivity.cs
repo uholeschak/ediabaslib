@@ -4746,7 +4746,7 @@ namespace BmwDeepObd
 
                 ecuInfo.InitReadValues();
 
-                int maxIndex = 4;
+                int maxIndex = 5;
                 for (int index = 0; index <= maxIndex; index++)
                 {
                     int indexLocal = index;
@@ -4763,6 +4763,7 @@ namespace BmwDeepObd
                     });
 
                     string jobName = null;
+                    string jobArgs = string.Empty;
                     string resultName = null;
                     switch (index)
                     {
@@ -4785,8 +4786,9 @@ namespace BmwDeepObd
                             break;
 
                         case 3:
-                            jobName = JobReadCoding;
-                            resultName = "CODIERUNGWERTBINAER";
+                            jobName = JobReadMwUds;
+                            jobArgs = "0x0600";
+                            resultName = "ERGEBNIS1WERT";
                             break;
 
                         case 4:
@@ -4797,6 +4799,15 @@ namespace BmwDeepObd
                             jobName = JobReadLongCoding;
                             resultName = "CODIERUNGWERTBINAER";
                             break;
+
+                        case 5:
+                            if (ecuInfo.VagCodingLong != null)
+                            {
+                                break;
+                            }
+                            jobName = JobReadCoding;
+                            resultName = "CODIERUNGWERTBINAER";
+                            break;
                     }
                     if (string.IsNullOrEmpty(jobName) || !_ediabas.IsJobExisting(jobName))
                     {
@@ -4804,7 +4815,7 @@ namespace BmwDeepObd
                     }
                     try
                     {
-                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgString = jobArgs;
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.ExecuteJob(jobName);
@@ -5014,6 +5025,7 @@ namespace BmwDeepObd
 
                                     case 3:
                                     case 4:
+                                    case 5:
                                         if (resultDict1.TryGetValue(resultName, out resultData))
                                         {
                                             if (resultData.OpData is byte[] coding)
