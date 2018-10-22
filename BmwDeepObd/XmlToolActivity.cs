@@ -110,10 +110,20 @@ namespace BmwDeepObd
                 VagDeviceNumber = null;
                 VagImporterNumber = null;
                 VagGarageNumber = null;
+                VagCodingType = null;
                 VagCodingMax = null;
                 VagCodingShort = null;
                 VagCodingLong = null;
                 SubSystems = null;
+            }
+
+            public enum CodingType
+            {
+                ShortV1,
+                ShortV2,
+                LongUds,
+                ReadLong,
+                CodingS22,
             }
 
             public string Name { get; set; }
@@ -145,6 +155,8 @@ namespace BmwDeepObd
             public UInt64? VagImporterNumber { get; set; }
 
             public UInt64? VagGarageNumber { get; set; }
+
+            public CodingType? VagCodingType { get; set; }
 
             public UInt64? VagCodingMax { get; set; }
 
@@ -4765,6 +4777,7 @@ namespace BmwDeepObd
                     string jobName = null;
                     string jobArgs = string.Empty;
                     string resultName = null;
+                    EcuInfo.CodingType? codingType = null;
                     switch (index)
                     {
                         case 0:
@@ -4789,6 +4802,7 @@ namespace BmwDeepObd
                             jobName = JobReadMwUds;
                             jobArgs = "0x0600";
                             resultName = "ERGEBNIS1WERT";
+                            codingType = EcuInfo.CodingType.LongUds;
                             break;
 
                         case 4:
@@ -4798,6 +4812,7 @@ namespace BmwDeepObd
                             }
                             jobName = JobReadLongCoding;
                             resultName = "CODIERUNGWERTBINAER";
+                            codingType = EcuInfo.CodingType.ReadLong;
                             break;
 
                         case 5:
@@ -4807,6 +4822,7 @@ namespace BmwDeepObd
                             }
                             jobName = JobReadCoding;
                             resultName = "CODIERUNGWERTBINAER";
+                            codingType = EcuInfo.CodingType.CodingS22;
                             break;
                     }
                     if (string.IsNullOrEmpty(jobName) || !_ediabas.IsJobExisting(jobName))
@@ -4926,6 +4942,7 @@ namespace BmwDeepObd
                                                 if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
                                                 {
                                                     ecuInfo.VagCodingShort = value;
+                                                    ecuInfo.VagCodingType = EcuInfo.CodingType.ShortV1;
                                                 }
                                             }
                                         }
@@ -5004,6 +5021,7 @@ namespace BmwDeepObd
                                                 if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
                                                 {
                                                     ecuInfo.VagCodingShort = value;
+                                                    ecuInfo.VagCodingType = EcuInfo.CodingType.ShortV2;
                                                 }
                                             }
                                         }
@@ -5031,6 +5049,7 @@ namespace BmwDeepObd
                                             if (resultData.OpData is byte[] coding)
                                             {
                                                 ecuInfo.VagCodingLong = coding;
+                                                ecuInfo.VagCodingType = codingType;
                                             }
                                         }
                                         break;
@@ -5207,6 +5226,7 @@ namespace BmwDeepObd
                                 break;
 
                             case VagUdsS22DataType.Coding:
+                                ecuInfo.VagCodingType = EcuInfo.CodingType.LongUds;
                                 ecuInfo.VagCodingLong = dataBytes;
                                 break;
 
