@@ -436,7 +436,12 @@
   <!-- XML ECU Tool Options Menu -->
   <string name="menu_xml_ecu_tool_search">Suchen</string>
 
-  <!-- CAN Adapter Activity -->
+  <!-- Coding Activity -->
+  <string name="coding_subsystem_title">Subsystem</string>
+  <string name="coding_raw_title">Kodierung</string>
+  <string name="coding_assistant_title">Kodierungs-Assistent</string>
+
+    <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">CAN Adapter</string>
   <string name="can_adapter_mode_name">CAN Betriebsart</string>
   <string name="can_adapter_sep_time">Telegrammabstand [ms]</string>
