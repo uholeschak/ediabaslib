@@ -248,7 +248,7 @@ namespace BmwDeepObd
                 DisplayTypeSelected();
             };
 
-            _textViewFontSizeTitle  = FindViewById<TextView>(Resource.Id.textViewFontSizeTitle);
+            _textViewFontSizeTitle = FindViewById<TextView>(Resource.Id.textViewFontSizeTitle);
             _spinnerFontSize = FindViewById<Spinner>(Resource.Id.spinnerFontSize);
             _spinnerFontSizeAdapter = new StringObjAdapter(this);
             _spinnerFontSize.Adapter = _spinnerFontSizeAdapter;

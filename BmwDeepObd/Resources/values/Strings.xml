@@ -413,6 +413,7 @@
   <string name="menu_xml_ecu_tool_search">Search</string>
 
   <!-- Coding Activity -->
+  <string name="vag_coding_title">Coding ECU: {0}</string>
   <string name="vag_coding_subsystem_title">Subsystem</string>
   <string name="vag_coding_raw_title">Coding</string>
   <string name="vag_coding_assistant_title">Coding assistant</string>
