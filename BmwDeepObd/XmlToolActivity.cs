@@ -117,6 +117,27 @@ namespace BmwDeepObd
                 SubSystems = null;
             }
 
+            public bool HasVagCoding()
+            {
+                if (VagCodingShort != null || VagCodingLong != null)
+                {
+                    return true;
+                }
+
+                if (SubSystems != null)
+                {
+                    foreach (EcuInfoSubSys subSystem in SubSystems)
+                    {
+                        if (subSystem.VagCodingLong != null)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }
+
             public enum CodingType
             {
                 ShortV1,
