@@ -97,6 +97,11 @@ namespace BmwDeepObd
             public bool Selected { get; set; }
         }
 
+        private enum ActivityRequest
+        {
+            RequestVagCoding,
+        }
+
         enum FormatType
         {
             None,
@@ -177,6 +182,7 @@ namespace BmwDeepObd
         private Button _buttonTestFormat;
         private TextView _textViewTestFormatOutput;
         private Button _buttonEdiabasTool;
+        private Button _buttonCoding;
         private ActivityCommon _activityCommon;
         private XmlToolActivity.EcuInfo _ecuInfo;
         private JobInfo _selectedJob;
@@ -404,6 +410,14 @@ namespace BmwDeepObd
                 Finish();
             };
 
+            _buttonCoding = FindViewById<Button>(Resource.Id.buttonCoding);
+            _buttonCoding.Visibility = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw ? ViewStates.Visible : ViewStates.Gone;
+            _buttonCoding.Enabled = _ecuInfo.HasVagCoding();
+            _buttonCoding.Click += (sender, args) =>
+            {
+                StartVagCoding();
+            };
+
             _layoutJobConfig.Visibility = ViewStates.Gone;
             UpdateDisplay();
             DisplayTypeSelected();
@@ -472,6 +486,16 @@ namespace BmwDeepObd
                     base.OnBackPressed();
                 }
             });
+        }
+
+        protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
+        {
+            switch ((ActivityRequest) requestCode)
+            {
+                case ActivityRequest.RequestVagCoding:
+                    UpdateDisplay();
+                    break;
+            }
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -1672,6 +1696,20 @@ namespace BmwDeepObd
                 });
             });
             _jobThread.Start();
+        }
+
+        private void StartVagCoding()
+        {
+            VagCodingActivity.IntentEcuInfo = _ecuInfo;
+            Intent serverIntent = new Intent(this, typeof(VagCodingActivity));
+            serverIntent.PutExtra(VagCodingActivity.ExtraEcuName, _ecuInfo.Name);
+            serverIntent.PutExtra(VagCodingActivity.ExtraEcuDir, _ecuDir);
+            serverIntent.PutExtra(VagCodingActivity.ExtraTraceDir, _traceDir);
+            serverIntent.PutExtra(VagCodingActivity.ExtraTraceAppend, _traceAppend);
+            serverIntent.PutExtra(VagCodingActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
+            serverIntent.PutExtra(VagCodingActivity.ExtraDeviceAddress, _deviceAddress);
+            serverIntent.PutExtra(VagCodingActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestVagCoding);
         }
 
         private class JobListAdapter : BaseAdapter<JobInfo>

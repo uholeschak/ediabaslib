@@ -326,11 +326,23 @@
                 android:layout_height="wrap_content"
                 android:background="#666"
                 android:textColor="#fff" />
-            <Button
-                android:id="@+id/buttonEdiabasTool"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/layoutTestFormat"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/xml_tool_button_ediabas_tool" />
+                android:gravity="left">
+                <Button
+                    android:id="@+id/buttonEdiabasTool"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/xml_tool_button_ediabas_tool" />
+                <Button
+                    android:id="@+id/buttonCoding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/xml_tool_button_coding" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

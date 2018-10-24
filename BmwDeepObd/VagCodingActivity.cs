@@ -98,6 +98,7 @@ namespace BmwDeepObd
             _textViewVagCodingSubsystem.SetOnTouchListener(this);
 
             _spinnerVagCodingSubsystem = FindViewById<Spinner>(Resource.Id.spinnerVagCodingSubsystem);
+            _spinnerVagCodingSubsystem.SetOnTouchListener(this);
             _spinnerVagCodingSubsystemAdapter = new StringObjAdapter(this);
             _spinnerVagCodingSubsystem.Adapter = _spinnerVagCodingSubsystemAdapter;
             _spinnerVagCodingSubsystem.ItemSelected += SubSystemItemSelected;
@@ -109,6 +110,7 @@ namespace BmwDeepObd
             _editTextVagCodingRaw.SetOnTouchListener(this);
 
             _layoutVagCodingAssitant = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingAssitant);
+            _textViewVagCodingRaw.SetOnTouchListener(this);
             _layoutVagCodingAssitant.Visibility = ViewStates.Gone;
 
             UpdateCodingSubsystemList();
@@ -354,7 +356,7 @@ namespace BmwDeepObd
                             }
                             sb.Append(subSystem.Name);
                         }
-                        _spinnerVagCodingSubsystemAdapter.Items.Add(new StringObjType(sb.ToString(), subSystem));
+                        _spinnerVagCodingSubsystemAdapter.Items.Add(new StringObjType(sb.ToString(), index));
                     }
                 }
             }
