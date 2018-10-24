@@ -7,47 +7,47 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <TextView
-            android:id="@+id/textViewCodingSubsystem"
-            android:text="@+string/coding_subsystem_title"
+            android:id="@+id/textViewVagCodingSubsystem"
+            android:text="@+string/vag_coding_subsystem_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#666"
             android:textColor="#fff" />
         <android.widget.Spinner
-            android:id="@+id/codingSpinnerDevice"
+            android:id="@+id/spinnerVagCodingSubsystem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView
-            android:id="@+id/textViewCodingRaw"
-            android:text="@+string/coding_raw_title"
+            android:id="@+id/textViewVagCodingRaw"
+            android:text="@+string/vag_coding_raw_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#666"
             android:textColor="#fff" />
         <EditText
-            android:id="@+id/editTextCodingRaw"
+            android:id="@+id/editTextVagCodingRaw"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
             android:maxLines="1" />
         <LinearLayout
-            android:id="@+id/layoutCodingAssitant"
+            android:id="@+id/layoutVagCodingAssitant"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:id="@+id/textViewCodingAssistant"
-                android:text="@+string/coding_assistant_title"
+                android:id="@+id/textViewVagCodingAssistant"
+                android:text="@+string/vag_coding_assistant_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#666"
                 android:textColor="#fff" />
             <TextView
-                android:id="@+id/textViewCodingAssistantComments"
+                android:id="@+id/textViewVagCodingAssistantComments"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             <ListView
-                android:id="@+id/listCodingAssistant"
+                android:id="@+id/listViewVagCodingAssistant"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:longClickable="true"

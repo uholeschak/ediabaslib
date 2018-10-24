@@ -437,9 +437,9 @@
   <string name="menu_xml_ecu_tool_search">Suchen</string>
 
   <!-- Coding Activity -->
-  <string name="coding_subsystem_title">Subsystem</string>
-  <string name="coding_raw_title">Kodierung</string>
-  <string name="coding_assistant_title">Kodierungs-Assistent</string>
+  <string name="vag_coding_subsystem_title">Subsystem</string>
+  <string name="vag_coding_raw_title">Kodierung</string>
+  <string name="vag_coding_assistant_title">Kodierungs-Assistent</string>
 
     <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">CAN Adapter</string>

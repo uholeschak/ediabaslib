@@ -455,7 +455,7 @@
     <AndroidResource Include="Resources\menu\xml_ecu_tool_menu.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\coding.axml">
+    <AndroidResource Include="Resources\layout\vag_coding.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>

@@ -437,9 +437,9 @@
 
   <!-- Coding Activity -->
   <!--Translate-->
-  <string name="coding_subsystem_title">Subsystem</string>
-  <string name="coding_raw_title">Coding</string>
-  <string name="coding_assistant_title">Coding assistant</string>
+  <string name="vag_coding_subsystem_title">Subsystem</string>
+  <string name="vag_coding_raw_title">Coding</string>
+  <string name="vag_coding_assistant_title">Coding assistant</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">CAN адаптер</string>
