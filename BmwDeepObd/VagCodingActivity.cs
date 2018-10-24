@@ -42,6 +42,7 @@ namespace BmwDeepObd
         private InstanceData _instanceData = new InstanceData();
         private InputMethodManager _imm;
         private View _contentView;
+        private LinearLayout _layoutVagCoding;
         private TextView _textViewVagCodingSubsystem;
         private Spinner _spinnerVagCodingSubsystem;
         private StringObjAdapter _spinnerVagCodingSubsystemAdapter;
@@ -93,6 +94,9 @@ namespace BmwDeepObd
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
 
             _ecuInfo = IntentEcuInfo;
+
+            _layoutVagCoding = FindViewById<LinearLayout>(Resource.Id.layoutVagCoding);
+            _layoutVagCoding.SetOnTouchListener(this);
 
             _textViewVagCodingSubsystem = FindViewById<TextView>(Resource.Id.textViewVagCodingSubsystem);
             _textViewVagCodingSubsystem.SetOnTouchListener(this);
