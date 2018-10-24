@@ -401,7 +401,7 @@ namespace BmwDeepObd
                 string codingText = string.Empty;
                 if (coding != null)
                 {
-                    codingText = BitConverter.ToString(coding).Replace("-", "");
+                    codingText = BitConverter.ToString(coding).Replace("-", " ");
                 }
 
                 _editTextVagCodingRaw.Text = codingText;
