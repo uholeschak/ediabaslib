@@ -169,6 +169,7 @@
     <Compile Include="ResultGridAdapter.cs" />
     <Compile Include="StringAdapter.cs" />
     <Compile Include="StringObjAdapter.cs" />
+    <Compile Include="VagCodingActivity.cs" />
     <Compile Include="VehicleInfoBmw.cs" />
     <Compile Include="XmlToolActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
