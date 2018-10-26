@@ -1,54 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutVagCoding"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/textViewVagCodingSubsystem"
+        android:text="@+string/vag_coding_subsystem_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#666"
+        android:textColor="#fff" />
+    <android.widget.Spinner
+        android:id="@+id/spinnerVagCodingSubsystem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/textViewVagCodingRaw"
+        android:text="@+string/vag_coding_raw_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#666"
+        android:textColor="#fff" />
+    <EditText
+        android:id="@+id/editTextVagCodingRaw"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:maxLines="1" />
     <LinearLayout
-        android:id="@+id/layoutVagCoding"
+        android:id="@+id/layoutVagCodingAssitant"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_weight="1">
         <TextView
-            android:id="@+id/textViewVagCodingSubsystem"
-            android:text="@+string/vag_coding_subsystem_title"
+            android:id="@+id/textViewVagCodingAssistant"
+            android:text="@+string/vag_coding_assistant_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#666"
             android:textColor="#fff" />
-        <android.widget.Spinner
-            android:id="@+id/spinnerVagCodingSubsystem"
+        <ListView
+            android:id="@+id/listViewVagCodingAssistant"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/textViewVagCodingRaw"
-            android:text="@+string/vag_coding_raw_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#666"
-            android:textColor="#fff" />
-        <EditText
-            android:id="@+id/editTextVagCodingRaw"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            android:maxLines="1" />
-        <LinearLayout
-            android:id="@+id/layoutVagCodingAssitant"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-            <TextView
-                android:id="@+id/textViewVagCodingAssistant"
-                android:text="@+string/vag_coding_assistant_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#666"
-                android:textColor="#fff" />
-            <ListView
-                android:id="@+id/listViewVagCodingAssistant"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-        </LinearLayout>
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
     </LinearLayout>
-</ScrollView>
+</LinearLayout>
