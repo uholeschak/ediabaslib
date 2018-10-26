@@ -26,6 +26,8 @@ namespace BmwDeepObd
         public class InstanceData
         {
             public int SelectedSubsystem { get; set; }
+            public byte[] CurrentCoding { get; set; }
+            public string CurrentDataFileName { get; set; }
         }
 
         // Intent extra
@@ -49,6 +51,8 @@ namespace BmwDeepObd
         private TextView _textViewVagCodingRaw;
         private EditText _editTextVagCodingRaw;
         private LinearLayout _layoutVagCodingAssitant;
+        private ResultListAdapter _layoutVagCodingAssitantAdapter;
+        private ListView _listViewVagCodingAssistant;
         private ActivityCommon _activityCommon;
         private XmlToolActivity.EcuInfo _ecuInfo;
         private EdiabasNet _ediabas;
@@ -115,7 +119,11 @@ namespace BmwDeepObd
 
             _layoutVagCodingAssitant = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingAssitant);
             _textViewVagCodingRaw.SetOnTouchListener(this);
-            _layoutVagCodingAssitant.Visibility = ViewStates.Gone;
+
+            _listViewVagCodingAssistant = FindViewById<ListView>(Resource.Id.listViewVagCodingAssistant);
+            _layoutVagCodingAssitantAdapter = new ResultListAdapter(this, -1, 0, true);
+            _listViewVagCodingAssistant.Adapter = _layoutVagCodingAssitantAdapter;
+            _listViewVagCodingAssistant.SetOnTouchListener(this);
 
             UpdateCodingSubsystemList();
         }
@@ -372,11 +380,14 @@ namespace BmwDeepObd
 
         private void UpdateCoding()
         {
+            _instanceData.CurrentCoding = null;
+            _instanceData.CurrentDataFileName = null;
             if (_spinnerVagCodingSubsystem.SelectedItemPosition >= 0)
             {
                 int subSystemIndex = (int)_spinnerVagCodingSubsystemAdapter.Items[_spinnerVagCodingSubsystem.SelectedItemPosition].Data;
                 _instanceData.SelectedSubsystem = subSystemIndex;
 
+                string dataFileName = null;
                 byte[] coding = null;
                 if (subSystemIndex == 0)
                 {
@@ -388,6 +399,7 @@ namespace BmwDeepObd
                     {
                         coding = BitConverter.GetBytes(_ecuInfo.VagCodingShort.Value);
                     }
+                    dataFileName = _ecuInfo.VagDataFileName;
                 }
                 else
                 {
@@ -398,11 +410,20 @@ namespace BmwDeepObd
                             if (subSystem.SubSysIndex + 1 == subSystemIndex)
                             {
                                 coding = subSystem.VagCodingLong;
+                                dataFileName = subSystem.VagDataFileName;
                                 break;
                             }
                         }
                     }
                 }
+
+                if (coding != null)
+                {
+                    _instanceData.CurrentCoding = new byte[coding.Length];
+                    Array.Copy(coding, _instanceData.CurrentCoding, coding.Length);
+                }
+
+                _instanceData.CurrentDataFileName = dataFileName;
 
                 string codingText = string.Empty;
                 if (coding != null)
@@ -412,6 +433,79 @@ namespace BmwDeepObd
 
                 _editTextVagCodingRaw.Text = codingText;
             }
+
+            UpdateCodingAssistant();
+        }
+
+        private void UpdateCodingAssistant()
+        {
+            _layoutVagCodingAssitantAdapter.Items.Clear();
+            if (_instanceData.CurrentCoding != null && _instanceData.CurrentDataFileName != null)
+            {
+                UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_instanceData.CurrentDataFileName);
+                // ReSharper disable once UseNullPropagation
+                if (udsReader != null)
+                {
+                    List<UdsFileReader.DataReader.DataInfo> dataInfoList =
+                        udsReader.DataReader.ExtractDataType(_instanceData.CurrentDataFileName, UdsFileReader.DataReader.DataType.LongCoding);
+                    if (dataInfoList != null)
+                    {
+                        StringBuilder sbComment = new StringBuilder();
+                        foreach (UdsFileReader.DataReader.DataInfo dataInfo in dataInfoList)
+                        {
+                            if (dataInfo is UdsFileReader.DataReader.DataInfoLongCoding dataInfoLongCoding)
+                            {
+                                if (!string.IsNullOrEmpty(dataInfoLongCoding.Text))
+                                {
+                                    bool textLine = dataInfoLongCoding.LineNumber != null;
+                                    if (textLine)
+                                    {
+                                        if (sbComment.Length > 0)
+                                        {
+                                            sbComment.Append("\r\n");
+                                        }
+                                        sbComment.Append(dataInfoLongCoding.Text);
+                                    }
+                                    else
+                                    {
+                                        if (sbComment.Length > 0)
+                                        {
+                                            _layoutVagCodingAssitantAdapter.Items.Add(new TableResultItem(sbComment.ToString(), null, null, false, false));
+                                            sbComment.Clear();
+                                        }
+
+                                        if (dataInfoLongCoding.Byte != null)
+                                        {
+                                            StringBuilder sb = new StringBuilder();
+                                            sb.Append(string.Format("{0}: ", dataInfoLongCoding.Byte.Value));
+                                            if (dataInfoLongCoding.Bit != null)
+                                            {
+                                                sb.Append(string.Format("Bit {0}", dataInfoLongCoding.Bit.Value));
+                                            }
+                                            else if (dataInfoLongCoding.BitMin != null && dataInfoLongCoding.BitMax != null && dataInfoLongCoding.BitValue != null)
+                                            {
+                                                sb.Append(string.Format("Bit {0}-{1}={2:X02}",
+                                                    dataInfoLongCoding.BitMin.Value, dataInfoLongCoding.BitMax.Value, dataInfoLongCoding.BitValue.Value));
+                                            }
+
+                                            sb.Append(" ");
+                                            sb.Append(dataInfoLongCoding.Text);
+                                            _layoutVagCodingAssitantAdapter.Items.Add(new TableResultItem(sb.ToString(), null, dataInfoLongCoding, true, false));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (sbComment.Length > 0)
+                        {
+                            _layoutVagCodingAssitantAdapter.Items.Add(new TableResultItem(sbComment.ToString(), null, null, false, false));
+                            sbComment.Clear();
+                        }
+                    }
+                }
+            }
+            _layoutVagCodingAssitantAdapter.NotifyDataSetChanged();
+            _layoutVagCodingAssitant.Visibility = _layoutVagCodingAssitantAdapter.Items.Count > 0 ? ViewStates.Visible : ViewStates.Gone;
         }
 
         private void HideKeyboard()
