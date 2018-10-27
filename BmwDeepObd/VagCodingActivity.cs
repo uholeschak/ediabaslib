@@ -476,21 +476,43 @@ namespace BmwDeepObd
 
                                         if (dataInfoLongCoding.Byte != null)
                                         {
+                                            bool selected = false;
+                                            bool enabled = false;
+                                            byte? dataByte = null;
                                             StringBuilder sb = new StringBuilder();
+                                            if (dataInfoLongCoding.Byte.Value < _instanceData.CurrentCoding.Length)
+                                            {
+                                                dataByte = _instanceData.CurrentCoding[dataInfoLongCoding.Byte.Value];
+                                            }
                                             sb.Append(string.Format("{0}: ", dataInfoLongCoding.Byte.Value));
                                             if (dataInfoLongCoding.Bit != null)
                                             {
+                                                if (dataByte.HasValue)
+                                                {
+                                                    selected = (dataByte.Value & (1 << dataInfoLongCoding.Bit)) != 0;
+                                                    enabled = true;
+                                                }
                                                 sb.Append(string.Format("Bit {0}", dataInfoLongCoding.Bit.Value));
                                             }
                                             else if (dataInfoLongCoding.BitMin != null && dataInfoLongCoding.BitMax != null && dataInfoLongCoding.BitValue != null)
                                             {
+                                                if (dataByte.HasValue)
+                                                {
+                                                    byte mask = 0x00;
+                                                    for (int i = dataInfoLongCoding.BitMin.Value; i <= dataInfoLongCoding.BitMax.Value; i++)
+                                                    {
+                                                        mask |= (byte)(1 << i);
+                                                    }
+                                                    selected = (dataByte.Value & mask) == dataInfoLongCoding.BitValue;
+                                                    enabled = !selected;
+                                                }
                                                 sb.Append(string.Format("Bit {0}-{1}={2:X02}",
                                                     dataInfoLongCoding.BitMin.Value, dataInfoLongCoding.BitMax.Value, dataInfoLongCoding.BitValue.Value));
                                             }
 
                                             sb.Append(" ");
                                             sb.Append(dataInfoLongCoding.Text);
-                                            _layoutVagCodingAssitantAdapter.Items.Add(new TableResultItem(sb.ToString(), null, dataInfoLongCoding, true, false));
+                                            _layoutVagCodingAssitantAdapter.Items.Add(new TableResultItem(sb.ToString(), null, dataInfoLongCoding, true, selected));
                                         }
                                     }
                                 }
