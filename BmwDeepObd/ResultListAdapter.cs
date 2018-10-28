@@ -76,6 +76,7 @@ namespace BmwDeepObd
             }
             _ignoreCheckEvent = true;
             checkBoxSelect.Checked = item.Selected;
+            checkBoxSelect.Enabled = item.CheckEnable;
             _ignoreCheckEvent = false;
 
             checkBoxSelect.Tag = new TagInfo(item);
@@ -199,6 +200,7 @@ namespace BmwDeepObd
             Text2 = text2;
             Tag = tag;
             CheckVisible = checkVisible;
+            CheckEnable = true;
             _selected = selected;
             TextColor = textColor;
         }
@@ -225,6 +227,8 @@ namespace BmwDeepObd
         public object Tag { get; }
 
         public bool CheckVisible { get; }
+
+        public bool CheckEnable { get; set; }
 
         public bool Selected
         {

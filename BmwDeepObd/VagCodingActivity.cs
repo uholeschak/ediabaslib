@@ -450,6 +450,7 @@ namespace BmwDeepObd
                         udsReader.DataReader.ExtractDataType(_instanceData.CurrentDataFileName, UdsFileReader.DataReader.DataType.LongCoding);
                     if (dataInfoList != null)
                     {
+                        string lastCommentLine = null;
                         StringBuilder sbComment = new StringBuilder();
                         foreach (UdsFileReader.DataReader.DataInfo dataInfo in dataInfoList)
                         {
@@ -460,14 +461,19 @@ namespace BmwDeepObd
                                     bool textLine = dataInfoLongCoding.LineNumber != null;
                                     if (textLine)
                                     {
-                                        if (sbComment.Length > 0)
+                                        if (lastCommentLine == null || (lastCommentLine != dataInfoLongCoding.Text))
                                         {
-                                            sbComment.Append("\r\n");
+                                            if (sbComment.Length > 0)
+                                            {
+                                                sbComment.Append("\r\n");
+                                            }
+                                            sbComment.Append(dataInfoLongCoding.Text);
                                         }
-                                        sbComment.Append(dataInfoLongCoding.Text);
+                                        lastCommentLine = dataInfoLongCoding.Text;
                                     }
                                     else
                                     {
+                                        lastCommentLine = null;
                                         if (sbComment.Length > 0)
                                         {
                                             _layoutVagCodingAssitantAdapter.Items.Add(new TableResultItem(sbComment.ToString(), null, null, false, false));
@@ -484,7 +490,7 @@ namespace BmwDeepObd
                                             {
                                                 dataByte = _instanceData.CurrentCoding[dataInfoLongCoding.Byte.Value];
                                             }
-                                            sb.Append(string.Format("{0}: ", dataInfoLongCoding.Byte.Value));
+                                            sb.Append(string.Format("{0}", dataInfoLongCoding.Byte.Value));
                                             if (dataInfoLongCoding.Bit != null)
                                             {
                                                 if (dataByte.HasValue)
@@ -492,7 +498,7 @@ namespace BmwDeepObd
                                                     selected = (dataByte.Value & (1 << dataInfoLongCoding.Bit)) != 0;
                                                     enabled = true;
                                                 }
-                                                sb.Append(string.Format("Bit {0}", dataInfoLongCoding.Bit.Value));
+                                                sb.Append(string.Format("/{0}", dataInfoLongCoding.Bit.Value));
                                             }
                                             else if (dataInfoLongCoding.BitMin != null && dataInfoLongCoding.BitMax != null && dataInfoLongCoding.BitValue != null)
                                             {
@@ -506,13 +512,16 @@ namespace BmwDeepObd
                                                     selected = (dataByte.Value & mask) == dataInfoLongCoding.BitValue;
                                                     enabled = !selected;
                                                 }
-                                                sb.Append(string.Format("Bit {0}-{1}={2:X02}",
+                                                sb.Append(string.Format("/{0}-{1}={2:X02}",
                                                     dataInfoLongCoding.BitMin.Value, dataInfoLongCoding.BitMax.Value, dataInfoLongCoding.BitValue.Value));
                                             }
 
                                             sb.Append(" ");
                                             sb.Append(dataInfoLongCoding.Text);
-                                            _layoutVagCodingAssitantAdapter.Items.Add(new TableResultItem(sb.ToString(), null, dataInfoLongCoding, true, selected));
+                                            _layoutVagCodingAssitantAdapter.Items.Add(new TableResultItem(sb.ToString(), null, dataInfoLongCoding, true, selected)
+                                            {
+                                                CheckEnable = enabled
+                                            });
                                         }
                                     }
                                 }
