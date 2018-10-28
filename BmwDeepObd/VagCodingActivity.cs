@@ -63,6 +63,7 @@ namespace BmwDeepObd
         private string _traceDir;
         private bool _traceAppend;
         private string _deviceAddress;
+        private bool _ignoreTextChange;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -116,6 +117,13 @@ namespace BmwDeepObd
 
             _editTextVagCodingRaw = FindViewById<EditText>(Resource.Id.editTextVagCodingRaw);
             _editTextVagCodingRaw.SetOnTouchListener(this);
+            _editTextVagCodingRaw.TextChanged += (sender, args) =>
+                {
+                    if (!_ignoreTextChange)
+                    {
+                        UpdateCodingAssistant();
+                    }
+                };
 
             _layoutVagCodingAssitant = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingAssitant);
             _textViewVagCodingRaw.SetOnTouchListener(this);
@@ -426,7 +434,6 @@ namespace BmwDeepObd
                 _instanceData.CurrentDataFileName = dataFileName;
             }
 
-            UpdateRawCoding();
             UpdateCodingAssistant();
         }
 
@@ -437,7 +444,10 @@ namespace BmwDeepObd
             {
                 codingText = BitConverter.ToString(_instanceData.CurrentCoding).Replace("-", " ");
             }
+
+            _ignoreTextChange = true;
             _editTextVagCodingRaw.Text = codingText;
+            _ignoreTextChange = false;
         }
 
         private void UpdateCodingSelected(UdsFileReader.DataReader.DataInfoLongCoding dataInfoLongCoding, bool selectState)
@@ -485,6 +495,8 @@ namespace BmwDeepObd
 
         private void UpdateCodingAssistant()
         {
+            UpdateRawCoding();
+
             _layoutVagCodingAssitantAdapter.Items.Clear();
             if (_instanceData.CurrentCoding != null && _instanceData.CurrentDataFileName != null)
             {
