@@ -424,16 +424,62 @@ namespace BmwDeepObd
                 }
 
                 _instanceData.CurrentDataFileName = dataFileName;
-
-                string codingText = string.Empty;
-                if (coding != null)
-                {
-                    codingText = BitConverter.ToString(coding).Replace("-", " ");
-                }
-
-                _editTextVagCodingRaw.Text = codingText;
             }
 
+            UpdateRawCoding();
+            UpdateCodingAssistant();
+        }
+
+        private void UpdateRawCoding()
+        {
+            string codingText = string.Empty;
+            if (_instanceData.CurrentCoding != null)
+            {
+                codingText = BitConverter.ToString(_instanceData.CurrentCoding).Replace("-", " ");
+            }
+            _editTextVagCodingRaw.Text = codingText;
+        }
+
+        private void UpdateCodingSelected(UdsFileReader.DataReader.DataInfoLongCoding dataInfoLongCoding, bool selectState)
+        {
+            if (_instanceData.CurrentCoding == null)
+            {
+                return;
+            }
+            if (dataInfoLongCoding.Byte == null)
+            {
+                return;
+            }
+            if (dataInfoLongCoding.Byte.Value >= _instanceData.CurrentCoding.Length)
+            {
+                return;
+            }
+
+            byte dataByte = _instanceData.CurrentCoding[dataInfoLongCoding.Byte.Value];
+            if (dataInfoLongCoding.Bit != null)
+            {
+                byte mask = (byte) (1 << dataInfoLongCoding.Bit);
+                if (selectState)
+                {
+                    dataByte |= mask;
+                }
+                else
+                {
+                    dataByte &= (byte) (~mask);
+                }
+            }
+            else if (dataInfoLongCoding.BitMin != null && dataInfoLongCoding.BitMax != null && dataInfoLongCoding.BitValue != null)
+            {
+                byte mask = 0x00;
+                for (int i = dataInfoLongCoding.BitMin.Value; i <= dataInfoLongCoding.BitMax.Value; i++)
+                {
+                    mask |= (byte)(1 << i);
+                }
+                dataByte &= (byte)(~mask);
+                dataByte |= (byte) dataInfoLongCoding.BitValue.Value;
+            }
+
+            _instanceData.CurrentCoding[dataInfoLongCoding.Byte.Value] = dataByte;
             UpdateCodingAssistant();
         }
 
@@ -518,10 +564,15 @@ namespace BmwDeepObd
 
                                             sb.Append(" ");
                                             sb.Append(dataInfoLongCoding.Text);
-                                            _layoutVagCodingAssitantAdapter.Items.Add(new TableResultItem(sb.ToString(), null, dataInfoLongCoding, true, selected)
+                                            TableResultItem resultItem = new TableResultItem(sb.ToString(), null, dataInfoLongCoding, true, selected)
                                             {
                                                 CheckEnable = enabled
-                                            });
+                                            };
+                                            resultItem.CheckChangeEvent += item =>
+                                            {
+                                                UpdateCodingSelected(item.Tag as UdsFileReader.DataReader.DataInfoLongCoding, item.Selected);
+                                            };
+                                            _layoutVagCodingAssitantAdapter.Items.Add(resultItem);
                                         }
                                     }
                                 }
