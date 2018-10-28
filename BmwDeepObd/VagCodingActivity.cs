@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Text;
 using Android.Content;
-using Android.Content.Res;
 using Android.Hardware.Usb;
 using Android.OS;
 using Android.Support.V7.App;
@@ -63,7 +60,6 @@ namespace BmwDeepObd
         private string _traceDir;
         private bool _traceAppend;
         private string _deviceAddress;
-        private bool _ignoreTextChange;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -117,13 +113,6 @@ namespace BmwDeepObd
 
             _editTextVagCodingRaw = FindViewById<EditText>(Resource.Id.editTextVagCodingRaw);
             _editTextVagCodingRaw.SetOnTouchListener(this);
-            _editTextVagCodingRaw.TextChanged += (sender, args) =>
-                {
-                    if (!_ignoreTextChange)
-                    {
-                        UpdateCodingAssistant();
-                    }
-                };
 
             _layoutVagCodingAssitant = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingAssitant);
             _textViewVagCodingRaw.SetOnTouchListener(this);
@@ -210,6 +199,10 @@ namespace BmwDeepObd
             switch (e.Action)
             {
                 case MotionEventActions.Down:
+                    if (v != _editTextVagCodingRaw)
+                    {
+                        ReadRawCoding();
+                    }
                     HideKeyboard();
                     break;
             }
@@ -437,6 +430,40 @@ namespace BmwDeepObd
             UpdateCodingAssistant();
         }
 
+        private void ReadRawCoding()
+        {
+            if (_instanceData.CurrentCoding != null)
+            {
+                string codingText = _editTextVagCodingRaw.Text.Trim();
+                string[] codingArray = codingText.Split(' ', ';', ',');
+                byte[] dataArray;
+                try
+                {
+                    List<byte> binList = new List<byte>();
+                    foreach (string arg in codingArray)
+                    {
+                        if (!string.IsNullOrEmpty(arg))
+                        {
+                            binList.Add(Convert.ToByte(arg, 16));
+                        }
+                    }
+
+                    dataArray = binList.ToArray();
+                }
+                catch (Exception)
+                {
+                    dataArray = null;
+                }
+
+                if (dataArray != null && dataArray.Length == _instanceData.CurrentCoding.Length)
+                {
+                    Array.Copy(dataArray, _instanceData.CurrentCoding, dataArray.Length);
+                }
+
+                UpdateCodingAssistant();
+            }
+        }
+
         private void UpdateRawCoding()
         {
             string codingText = string.Empty;
@@ -445,9 +472,7 @@ namespace BmwDeepObd
                 codingText = BitConverter.ToString(_instanceData.CurrentCoding).Replace("-", " ");
             }
 
-            _ignoreTextChange = true;
             _editTextVagCodingRaw.Text = codingText;
-            _ignoreTextChange = false;
         }
 
         private void UpdateCodingSelected(UdsFileReader.DataReader.DataInfoLongCoding dataInfoLongCoding, bool selectState)
@@ -486,7 +511,10 @@ namespace BmwDeepObd
                     mask |= (byte)(1 << i);
                 }
                 dataByte &= (byte)(~mask);
-                dataByte |= (byte) dataInfoLongCoding.BitValue.Value;
+                if (selectState)
+                {
+                    dataByte |= (byte)dataInfoLongCoding.BitValue.Value;
+                }
             }
 
             _instanceData.CurrentCoding[dataInfoLongCoding.Byte.Value] = dataByte;
@@ -568,7 +596,7 @@ namespace BmwDeepObd
                                                         mask |= (byte)(1 << i);
                                                     }
                                                     selected = (dataByte.Value & mask) == dataInfoLongCoding.BitValue;
-                                                    enabled = !selected;
+                                                    enabled = !selected || dataInfoLongCoding.BitValue != 0x00;
                                                 }
                                                 sb.Append(string.Format("/{0}-{1}={2:X02}",
                                                     dataInfoLongCoding.BitMin.Value, dataInfoLongCoding.BitMax.Value, dataInfoLongCoding.BitValue.Value));
