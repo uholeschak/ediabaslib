@@ -83,6 +83,9 @@ namespace BmwDeepObd
             checkBoxSelect.CheckedChange -= OnCheckChanged;
             checkBoxSelect.CheckedChange += OnCheckChanged;
 
+            View viewSeparator = view.FindViewById<View>(Resource.Id.ViewSeparator);
+            viewSeparator.Visibility = item.SeparatorVisible ? ViewStates.Visible : ViewStates.Gone;
+
             TextView textView1 = view.FindViewById<TextView>(Resource.Id.ListText1);
             TextView textView2 = view.FindViewById<TextView>(Resource.Id.ListText2);
 
@@ -201,6 +204,7 @@ namespace BmwDeepObd
             Tag = tag;
             CheckVisible = checkVisible;
             CheckEnable = true;
+            SeparatorVisible = true;
             _selected = selected;
             TextColor = textColor;
         }
@@ -229,6 +233,8 @@ namespace BmwDeepObd
         public bool CheckVisible { get; }
 
         public bool CheckEnable { get; set; }
+
+        public bool SeparatorVisible { get; set; }
 
         public bool Selected
         {

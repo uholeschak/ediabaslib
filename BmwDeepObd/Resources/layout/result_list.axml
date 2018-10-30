@@ -33,6 +33,7 @@
         </LinearLayout>
     </LinearLayout>
     <View
+        android:id="@+id/ViewSeparator"
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:background="#635D63" />
