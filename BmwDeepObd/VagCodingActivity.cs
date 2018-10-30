@@ -537,6 +537,8 @@ namespace BmwDeepObd
                     if (dataInfoList != null)
                     {
                         string lastCommentLine = null;
+                        TableResultItem lastGroupResultItem = null;
+                        long lastGroupId = -1;
                         StringBuilder sbComment = new StringBuilder();
                         foreach (UdsFileReader.DataReader.DataInfo dataInfo in dataInfoList)
                         {
@@ -570,6 +572,7 @@ namespace BmwDeepObd
                                         {
                                             bool selected = false;
                                             bool enabled = false;
+                                            long groupId = -1;
                                             byte? dataByte = null;
                                             StringBuilder sb = new StringBuilder();
                                             if (dataInfoLongCoding.Byte.Value < _instanceData.CurrentCoding.Length)
@@ -597,6 +600,7 @@ namespace BmwDeepObd
                                                     }
                                                     selected = (dataByte.Value & mask) == dataInfoLongCoding.BitValue;
                                                     enabled = !selected || dataInfoLongCoding.BitValue != 0x00;
+                                                    groupId = (dataInfoLongCoding.Byte.Value << 16) + (dataInfoLongCoding.BitMin.Value << 8) + dataInfoLongCoding.BitMax.Value;
                                                 }
                                                 sb.Append(string.Format("/{0}-{1}={2:X02}",
                                                     dataInfoLongCoding.BitMin.Value, dataInfoLongCoding.BitMax.Value, dataInfoLongCoding.BitValue.Value));
@@ -613,6 +617,20 @@ namespace BmwDeepObd
                                                 UpdateCodingSelected(item.Tag as UdsFileReader.DataReader.DataInfoLongCoding, item.Selected);
                                             };
                                             _layoutVagCodingAssitantAdapter.Items.Add(resultItem);
+                                            if (groupId >= 0)
+                                            {
+                                                if (lastGroupResultItem != null && lastGroupId >= 0 && lastGroupId == groupId)
+                                                {
+                                                    lastGroupResultItem.SeparatorVisible = false;
+                                                }
+                                                lastGroupResultItem = resultItem;
+                                                lastGroupId = groupId;
+                                            }
+                                            else
+                                            {
+                                                lastGroupResultItem = null;
+                                                lastGroupId = -1;
+                                            }
                                         }
                                     }
                                 }
