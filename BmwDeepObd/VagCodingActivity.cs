@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading;
 using System.Text;
 using Android.Content;
@@ -24,6 +25,7 @@ namespace BmwDeepObd
         {
             public int SelectedSubsystem { get; set; }
             public byte[] CurrentCoding { get; set; }
+            public XmlToolActivity.EcuInfo.CodingType? CurrentCodingType { get; set; }
             public string CurrentDataFileName { get; set; }
         }
 
@@ -45,6 +47,9 @@ namespace BmwDeepObd
         private TextView _textViewVagCodingSubsystem;
         private Spinner _spinnerVagCodingSubsystem;
         private StringObjAdapter _spinnerVagCodingSubsystemAdapter;
+        private LinearLayout _layoutVagCodingShort;
+        private TextView _textViewVagCodingShortTitle;
+        private EditText _editTextVagCodingShort;
         private LinearLayout _layoutVagCodingComments;
         private TextView _textViewVagCodingCommentsTitle;
         private TextView _textViewCodingComments;
@@ -110,6 +115,15 @@ namespace BmwDeepObd
             _spinnerVagCodingSubsystemAdapter = new StringObjAdapter(this);
             _spinnerVagCodingSubsystem.Adapter = _spinnerVagCodingSubsystemAdapter;
             _spinnerVagCodingSubsystem.ItemSelected += SubSystemItemSelected;
+
+            _layoutVagCodingShort = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingShort);
+            _layoutVagCodingShort.SetOnTouchListener(this);
+
+            _textViewVagCodingShortTitle = FindViewById<TextView>(Resource.Id.textViewVagCodingShortTitle);
+            _textViewVagCodingShortTitle.SetOnTouchListener(this);
+
+            _editTextVagCodingShort = FindViewById<EditText>(Resource.Id.editTextVagCodingShort);
+            _editTextVagCodingShort.SetOnTouchListener(this);
 
             _layoutVagCodingComments = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingComments);
             _layoutVagCodingComments.SetOnTouchListener(this);
@@ -211,7 +225,7 @@ namespace BmwDeepObd
             switch (e.Action)
             {
                 case MotionEventActions.Down:
-                    if (v != _editTextVagCodingRaw)
+                    if (v != _editTextVagCodingShort && v != _editTextVagCodingRaw)
                     {
                         ReadRawCoding();
                     }
@@ -402,6 +416,8 @@ namespace BmwDeepObd
 
                 string dataFileName = null;
                 byte[] coding = null;
+                XmlToolActivity.EcuInfo.CodingType? codingType = null;
+
                 if (subSystemIndex == 0)
                 {
                     if (_ecuInfo.VagCodingLong != null)
@@ -424,6 +440,8 @@ namespace BmwDeepObd
                             Array.Copy(codingData, coding, coding.Length);
                         }
                     }
+
+                    codingType = _ecuInfo.VagCodingType;
                     dataFileName = _ecuInfo.VagDataFileName;
                 }
                 else
@@ -435,6 +453,7 @@ namespace BmwDeepObd
                             if (subSystem.SubSysIndex + 1 == subSystemIndex)
                             {
                                 coding = subSystem.VagCodingLong;
+                                codingType = XmlToolActivity.EcuInfo.CodingType.LongUds;
                                 dataFileName = subSystem.VagDataFileName;
                                 break;
                             }
@@ -448,6 +467,7 @@ namespace BmwDeepObd
                     Array.Copy(coding, _instanceData.CurrentCoding, coding.Length);
                 }
 
+                _instanceData.CurrentCodingType = codingType;
                 _instanceData.CurrentDataFileName = dataFileName;
             }
 
@@ -458,45 +478,99 @@ namespace BmwDeepObd
         {
             if (_instanceData.CurrentCoding != null)
             {
-                string codingText = _editTextVagCodingRaw.Text.Trim();
-                string[] codingArray = codingText.Split(' ', ';', ',');
-                byte[] dataArray;
-                try
+                if (_editTextVagCodingRaw.Enabled)
                 {
-                    List<byte> binList = new List<byte>();
-                    foreach (string arg in codingArray)
+                    string codingText = _editTextVagCodingRaw.Text.Trim();
+                    string[] codingArray = codingText.Split(' ', ';', ',');
+                    byte[] dataArray;
+                    try
                     {
-                        if (!string.IsNullOrEmpty(arg))
+                        List<byte> binList = new List<byte>();
+                        foreach (string arg in codingArray)
                         {
-                            binList.Add(Convert.ToByte(arg, 16));
+                            if (!string.IsNullOrEmpty(arg))
+                            {
+                                binList.Add(Convert.ToByte(arg, 16));
+                            }
                         }
+
+                        dataArray = binList.ToArray();
+                    }
+                    catch (Exception)
+                    {
+                        dataArray = null;
                     }
 
-                    dataArray = binList.ToArray();
+                    if (dataArray != null && dataArray.Length == _instanceData.CurrentCoding.Length)
+                    {
+                        Array.Copy(dataArray, _instanceData.CurrentCoding, dataArray.Length);
+                    }
                 }
-                catch (Exception)
+                else if (_editTextVagCodingShort.Enabled)
                 {
-                    dataArray = null;
-                }
-
-                if (dataArray != null && dataArray.Length == _instanceData.CurrentCoding.Length)
-                {
-                    Array.Copy(dataArray, _instanceData.CurrentCoding, dataArray.Length);
+                    try
+                    {
+                        if (UInt64.TryParse(_editTextVagCodingShort.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
+                        {
+                            byte[] codingData = BitConverter.GetBytes(value);
+                            if (codingData.Length >= _instanceData.CurrentCoding.Length)
+                            {
+                                Array.Copy(codingData, _instanceData.CurrentCoding, _instanceData.CurrentCoding.Length);
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }
 
                 UpdateCodingInfo();
             }
         }
 
-        private void UpdateRawCoding()
+        private bool IsShortCoding()
         {
-            string codingText = string.Empty;
-            if (_instanceData.CurrentCoding != null)
+            if (_instanceData.CurrentCodingType != null)
             {
-                codingText = BitConverter.ToString(_instanceData.CurrentCoding).Replace("-", " ");
+                switch (_instanceData.CurrentCodingType.Value)
+                {
+                    case XmlToolActivity.EcuInfo.CodingType.ShortV1:
+                    case XmlToolActivity.EcuInfo.CodingType.ShortV2:
+                        return true;
+                }
             }
 
-            _editTextVagCodingRaw.Text = codingText;
+            return false;
+        }
+
+        private void UpdateCodingText()
+        {
+            string codingTextRaw = string.Empty;
+            string codingTextShort = string.Empty;
+            if (_instanceData.CurrentCoding != null)
+            {
+                try
+                {
+                    codingTextRaw = BitConverter.ToString(_instanceData.CurrentCoding).Replace("-", " ");
+
+                    if (IsShortCoding())
+                    {
+                        byte[] dataArray = new byte[8];
+                        int length = dataArray.Length < _instanceData.CurrentCoding.Length ? dataArray.Length : _instanceData.CurrentCoding.Length;
+                        Array.Copy(_instanceData.CurrentCoding, dataArray, length);
+                        UInt64 value = BitConverter.ToUInt64(dataArray, 0);
+                        codingTextShort = string.Format(CultureInfo.InvariantCulture, "{0}", value);
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            _editTextVagCodingRaw.Text = codingTextRaw;
+            _editTextVagCodingShort.Text = codingTextShort;
         }
 
         private void UpdateCodingSelected(UdsFileReader.DataReader.DataInfoLongCoding dataInfoLongCoding, bool selectState)
@@ -547,8 +621,9 @@ namespace BmwDeepObd
 
         private void UpdateCodingInfo()
         {
-            UpdateRawCoding();
+            UpdateCodingText();
 
+            bool shortCoding = IsShortCoding();
             StringBuilder sbCodingComment = new StringBuilder();
             _layoutVagCodingAssitantAdapter.Items.Clear();
             if (_instanceData.CurrentCoding != null && _instanceData.CurrentDataFileName != null)
@@ -557,19 +632,22 @@ namespace BmwDeepObd
                 // ReSharper disable once UseNullPropagation
                 if (udsReader != null)
                 {
-                    List<UdsFileReader.DataReader.DataInfo> dataInfoCodingList =
-                        udsReader.DataReader.ExtractDataType(_instanceData.CurrentDataFileName, UdsFileReader.DataReader.DataType.Coding);
-                    if (dataInfoCodingList != null)
+                    if (shortCoding)
                     {
-                        foreach (UdsFileReader.DataReader.DataInfo dataInfo in dataInfoCodingList)
+                        List<UdsFileReader.DataReader.DataInfo> dataInfoCodingList =
+                            udsReader.DataReader.ExtractDataType(_instanceData.CurrentDataFileName, UdsFileReader.DataReader.DataType.Coding);
+                        if (dataInfoCodingList != null)
                         {
-                            if (dataInfo.TextArray.Length > 0)
+                            foreach (UdsFileReader.DataReader.DataInfo dataInfo in dataInfoCodingList)
                             {
-                                if (sbCodingComment.Length > 0)
+                                if (dataInfo.TextArray.Length > 0)
                                 {
-                                    sbCodingComment.Append("\r\n");
+                                    if (sbCodingComment.Length > 0)
+                                    {
+                                        sbCodingComment.Append("\r\n");
+                                    }
+                                    sbCodingComment.Append(dataInfo.TextArray[0]);
                                 }
-                                sbCodingComment.Append(dataInfo.TextArray[0]);
                             }
                         }
                     }
@@ -686,6 +764,10 @@ namespace BmwDeepObd
                     }
                 }
             }
+
+            _layoutVagCodingShort.Visibility = shortCoding ? ViewStates.Visible : ViewStates.Gone;
+            _editTextVagCodingShort.Enabled = shortCoding;
+            _editTextVagCodingRaw.Enabled = !shortCoding;
 
             _textViewCodingComments.Text = sbCodingComment.ToString();
             _layoutVagCodingComments.Visibility = sbCodingComment.Length > 0 ? ViewStates.Visible : ViewStates.Gone;

@@ -16,21 +16,40 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <LinearLayout
-        android:id="@+id/layoutVagCodingComments"
+        android:id="@+id/layoutVagCodingShort"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:id="@+id/textViewVagCodingCommentsTitle"
-            android:text="@+string/vag_coding_comments_title"
+            android:id="@+id/textViewVagCodingShortTitle"
+            android:text="@+string/vag_coding_short_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#666"
             android:textColor="#fff" />
-        <TextView
-            android:id="@+id/textViewCodingComments"
+        <EditText
+            android:id="@+id/editTextVagCodingShort"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLines="1" />
+        <LinearLayout
+            android:id="@+id/layoutVagCodingComments"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/textViewVagCodingCommentsTitle"
+                android:text="@+string/vag_coding_comments_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#666"
+                android:textColor="#fff" />
+            <TextView
+                android:id="@+id/textViewCodingComments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
     </LinearLayout>
     <TextView
         android:id="@+id/textViewVagCodingRaw"
@@ -43,7 +62,7 @@
         android:id="@+id/editTextVagCodingRaw"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
+        android:inputType="text|textNoSuggestions"
         android:maxLines="1" />
     <LinearLayout
         android:id="@+id/layoutVagCodingAssitant"
