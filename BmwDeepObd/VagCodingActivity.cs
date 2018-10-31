@@ -45,6 +45,9 @@ namespace BmwDeepObd
         private TextView _textViewVagCodingSubsystem;
         private Spinner _spinnerVagCodingSubsystem;
         private StringObjAdapter _spinnerVagCodingSubsystemAdapter;
+        private LinearLayout _layoutVagCodingComments;
+        private TextView _textViewVagCodingCommentsTitle;
+        private TextView _textViewCodingComments;
         private TextView _textViewVagCodingRaw;
         private EditText _editTextVagCodingRaw;
         private LinearLayout _layoutVagCodingAssitant;
@@ -108,6 +111,15 @@ namespace BmwDeepObd
             _spinnerVagCodingSubsystem.Adapter = _spinnerVagCodingSubsystemAdapter;
             _spinnerVagCodingSubsystem.ItemSelected += SubSystemItemSelected;
 
+            _layoutVagCodingComments = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingComments);
+            _layoutVagCodingComments.SetOnTouchListener(this);
+
+            _textViewVagCodingCommentsTitle = FindViewById<TextView>(Resource.Id.textViewVagCodingCommentsTitle);
+            _textViewVagCodingCommentsTitle.SetOnTouchListener(this);
+
+            _textViewCodingComments = FindViewById<TextView>(Resource.Id.textViewCodingComments);
+            _textViewCodingComments.SetOnTouchListener(this);
+
             _textViewVagCodingRaw = FindViewById<TextView>(Resource.Id.textViewVagCodingRaw);
             _textViewVagCodingRaw.SetOnTouchListener(this);
 
@@ -115,7 +127,7 @@ namespace BmwDeepObd
             _editTextVagCodingRaw.SetOnTouchListener(this);
 
             _layoutVagCodingAssitant = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingAssitant);
-            _textViewVagCodingRaw.SetOnTouchListener(this);
+            _layoutVagCodingAssitant.SetOnTouchListener(this);
 
             _listViewVagCodingAssistant = FindViewById<ListView>(Resource.Id.listViewVagCodingAssistant);
             _layoutVagCodingAssitantAdapter = new ResultListAdapter(this, -1, 0, true);
@@ -427,7 +439,7 @@ namespace BmwDeepObd
                 _instanceData.CurrentDataFileName = dataFileName;
             }
 
-            UpdateCodingAssistant();
+            UpdateCodingInfo();
         }
 
         private void ReadRawCoding()
@@ -460,7 +472,7 @@ namespace BmwDeepObd
                     Array.Copy(dataArray, _instanceData.CurrentCoding, dataArray.Length);
                 }
 
-                UpdateCodingAssistant();
+                UpdateCodingInfo();
             }
         }
 
@@ -518,13 +530,14 @@ namespace BmwDeepObd
             }
 
             _instanceData.CurrentCoding[dataInfoLongCoding.Byte.Value] = dataByte;
-            UpdateCodingAssistant();
+            UpdateCodingInfo();
         }
 
-        private void UpdateCodingAssistant()
+        private void UpdateCodingInfo()
         {
             UpdateRawCoding();
 
+            StringBuilder sbCodingComment = new StringBuilder();
             _layoutVagCodingAssitantAdapter.Items.Clear();
             if (_instanceData.CurrentCoding != null && _instanceData.CurrentDataFileName != null)
             {
@@ -532,15 +545,32 @@ namespace BmwDeepObd
                 // ReSharper disable once UseNullPropagation
                 if (udsReader != null)
                 {
-                    List<UdsFileReader.DataReader.DataInfo> dataInfoList =
+                    List<UdsFileReader.DataReader.DataInfo> dataInfoCodingList =
+                        udsReader.DataReader.ExtractDataType(_instanceData.CurrentDataFileName, UdsFileReader.DataReader.DataType.Coding);
+                    if (dataInfoCodingList != null)
+                    {
+                        foreach (UdsFileReader.DataReader.DataInfo dataInfo in dataInfoCodingList)
+                        {
+                            if (dataInfo.TextArray.Length > 0)
+                            {
+                                if (sbCodingComment.Length > 0)
+                                {
+                                    sbCodingComment.Append("\r\n");
+                                }
+                                sbCodingComment.Append(dataInfo.TextArray[0]);
+                            }
+                        }
+                    }
+
+                    List<UdsFileReader.DataReader.DataInfo> dataInfoLcList =
                         udsReader.DataReader.ExtractDataType(_instanceData.CurrentDataFileName, UdsFileReader.DataReader.DataType.LongCoding);
-                    if (dataInfoList != null)
+                    if (dataInfoLcList != null)
                     {
                         string lastCommentLine = null;
                         TableResultItem lastGroupResultItem = null;
                         long lastGroupId = -1;
                         StringBuilder sbComment = new StringBuilder();
-                        foreach (UdsFileReader.DataReader.DataInfo dataInfo in dataInfoList)
+                        foreach (UdsFileReader.DataReader.DataInfo dataInfo in dataInfoLcList)
                         {
                             if (dataInfo is UdsFileReader.DataReader.DataInfoLongCoding dataInfoLongCoding)
                             {
@@ -644,6 +674,10 @@ namespace BmwDeepObd
                     }
                 }
             }
+
+            _textViewCodingComments.Text = sbCodingComment.ToString();
+            _layoutVagCodingComments.Visibility = sbCodingComment.Length > 0 ? ViewStates.Visible : ViewStates.Gone;
+
             _layoutVagCodingAssitantAdapter.NotifyDataSetChanged();
             _layoutVagCodingAssitant.Visibility = _layoutVagCodingAssitantAdapter.Items.Count > 0 ? ViewStates.Visible : ViewStates.Gone;
         }
