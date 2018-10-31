@@ -410,7 +410,19 @@ namespace BmwDeepObd
                     }
                     else if (_ecuInfo.VagCodingShort != null)
                     {
-                        coding = BitConverter.GetBytes(_ecuInfo.VagCodingShort.Value);
+                        int codingLength = 0;
+                        ulong maxValue = _ecuInfo.VagCodingMax ?? 0;
+                        while (maxValue != 0)
+                        {
+                            codingLength++;
+                            maxValue >>= 8;
+                        }
+                        byte[] codingData = BitConverter.GetBytes(_ecuInfo.VagCodingShort.Value);
+                        if (codingLength > 0 && codingData.Length >= codingLength)
+                        {
+                            coding = new byte[codingLength];
+                            Array.Copy(codingData, coding, coding.Length);
+                        }
                     }
                     dataFileName = _ecuInfo.VagDataFileName;
                 }
