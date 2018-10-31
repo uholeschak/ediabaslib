@@ -26,6 +26,7 @@ namespace BmwDeepObd
             public int SelectedSubsystem { get; set; }
             public byte[] CurrentCoding { get; set; }
             public XmlToolActivity.EcuInfo.CodingType? CurrentCodingType { get; set; }
+            public UInt64? CurrentCodingMax { get; set; }
             public string CurrentDataFileName { get; set; }
         }
 
@@ -417,6 +418,7 @@ namespace BmwDeepObd
                 string dataFileName = null;
                 byte[] coding = null;
                 XmlToolActivity.EcuInfo.CodingType? codingType = null;
+                UInt64? codingMax = null;
 
                 if (subSystemIndex == 0)
                 {
@@ -442,6 +444,7 @@ namespace BmwDeepObd
                     }
 
                     codingType = _ecuInfo.VagCodingType;
+                    codingMax = _ecuInfo.VagCodingMax;
                     dataFileName = _ecuInfo.VagDataFileName;
                 }
                 else
@@ -468,6 +471,7 @@ namespace BmwDeepObd
                 }
 
                 _instanceData.CurrentCodingType = codingType;
+                _instanceData.CurrentCodingMax = codingMax;
                 _instanceData.CurrentDataFileName = dataFileName;
             }
 
@@ -512,10 +516,13 @@ namespace BmwDeepObd
                     {
                         if (UInt64.TryParse(_editTextVagCodingShort.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
                         {
-                            byte[] codingData = BitConverter.GetBytes(value);
-                            if (codingData.Length >= _instanceData.CurrentCoding.Length)
+                            if (_instanceData.CurrentCodingMax.HasValue && value <= _instanceData.CurrentCodingMax.Value)
                             {
-                                Array.Copy(codingData, _instanceData.CurrentCoding, _instanceData.CurrentCoding.Length);
+                                byte[] codingData = BitConverter.GetBytes(value);
+                                if (codingData.Length >= _instanceData.CurrentCoding.Length)
+                                {
+                                    Array.Copy(codingData, _instanceData.CurrentCoding, _instanceData.CurrentCoding.Length);
+                                }
                             }
                         }
                     }
