@@ -64,6 +64,18 @@
         android:inputType="text|textNoSuggestions"
         android:maxLines="1" />
     <LinearLayout
+        android:id="@+id/layoutCodingButtons"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left">
+        <Button
+            android:id="@+id/buttonCodingWrite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/vag_coding_button_write" />
+    </LinearLayout>
+    <LinearLayout
         android:id="@+id/layoutVagCodingAssitant"
         android:orientation="vertical"
         android:layout_width="match_parent"
