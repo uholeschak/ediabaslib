@@ -124,7 +124,19 @@ namespace BmwDeepObd
             _textViewVagCodingShortTitle.SetOnTouchListener(this);
 
             _editTextVagCodingShort = FindViewById<EditText>(Resource.Id.editTextVagCodingShort);
-            _editTextVagCodingShort.SetOnTouchListener(this);
+            _editTextVagCodingShort.EditorAction += (sender, args) =>
+            {
+                switch (args.ActionId)
+                {
+                    case ImeAction.Go:
+                    case ImeAction.Send:
+                    case ImeAction.Next:
+                    case ImeAction.Done:
+                    case ImeAction.Previous:
+                        ReadRawCoding();
+                        break;
+                }
+            };
 
             _layoutVagCodingComments = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingComments);
             _layoutVagCodingComments.SetOnTouchListener(this);
@@ -139,7 +151,19 @@ namespace BmwDeepObd
             _textViewVagCodingRaw.SetOnTouchListener(this);
 
             _editTextVagCodingRaw = FindViewById<EditText>(Resource.Id.editTextVagCodingRaw);
-            _editTextVagCodingRaw.SetOnTouchListener(this);
+            _editTextVagCodingRaw.EditorAction += (sender, args) =>
+            {
+                switch (args.ActionId)
+                {
+                    case ImeAction.Go:
+                    case ImeAction.Send:
+                    case ImeAction.Next:
+                    case ImeAction.Done:
+                    case ImeAction.Previous:
+                        ReadRawCoding();
+                        break;
+                }
+            };
 
             _layoutVagCodingAssitant = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingAssitant);
             _layoutVagCodingAssitant.SetOnTouchListener(this);
@@ -226,10 +250,7 @@ namespace BmwDeepObd
             switch (e.Action)
             {
                 case MotionEventActions.Down:
-                    if (v != _editTextVagCodingShort && v != _editTextVagCodingRaw)
-                    {
-                        ReadRawCoding();
-                    }
+                    ReadRawCoding();
                     HideKeyboard();
                     break;
             }
