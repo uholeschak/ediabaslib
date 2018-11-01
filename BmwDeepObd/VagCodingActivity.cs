@@ -124,19 +124,7 @@ namespace BmwDeepObd
             _textViewVagCodingShortTitle.SetOnTouchListener(this);
 
             _editTextVagCodingShort = FindViewById<EditText>(Resource.Id.editTextVagCodingShort);
-            _editTextVagCodingShort.EditorAction += (sender, args) =>
-            {
-                switch (args.ActionId)
-                {
-                    case ImeAction.Go:
-                    case ImeAction.Send:
-                    case ImeAction.Next:
-                    case ImeAction.Done:
-                    case ImeAction.Previous:
-                        ReadRawCoding();
-                        break;
-                }
-            };
+            _editTextVagCodingShort.EditorAction += CodingEditorAction;
 
             _layoutVagCodingComments = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingComments);
             _layoutVagCodingComments.SetOnTouchListener(this);
@@ -151,19 +139,7 @@ namespace BmwDeepObd
             _textViewVagCodingRaw.SetOnTouchListener(this);
 
             _editTextVagCodingRaw = FindViewById<EditText>(Resource.Id.editTextVagCodingRaw);
-            _editTextVagCodingRaw.EditorAction += (sender, args) =>
-            {
-                switch (args.ActionId)
-                {
-                    case ImeAction.Go:
-                    case ImeAction.Send:
-                    case ImeAction.Next:
-                    case ImeAction.Done:
-                    case ImeAction.Previous:
-                        ReadRawCoding();
-                        break;
-                }
-            };
+            _editTextVagCodingRaw.EditorAction += CodingEditorAction;
 
             _layoutVagCodingAssitant = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingAssitant);
             _layoutVagCodingAssitant.SetOnTouchListener(this);
@@ -499,6 +475,20 @@ namespace BmwDeepObd
             UpdateCodingInfo();
         }
 
+        private void CodingEditorAction(object sender, TextView.EditorActionEventArgs e)
+        {
+            switch (e.ActionId)
+            {
+                case ImeAction.Go:
+                case ImeAction.Send:
+                case ImeAction.Next:
+                case ImeAction.Done:
+                case ImeAction.Previous:
+                    ReadRawCoding();
+                    break;
+            }
+        }
+
         private void ReadRawCoding()
         {
             if (_instanceData.CurrentCoding != null)
@@ -576,6 +566,7 @@ namespace BmwDeepObd
         {
             string codingTextRaw = string.Empty;
             string codingTextShort = string.Empty;
+            string codingTextShortTitle = string.Empty;
             if (_instanceData.CurrentCoding != null)
             {
                 try
@@ -589,6 +580,7 @@ namespace BmwDeepObd
                         Array.Copy(_instanceData.CurrentCoding, dataArray, length);
                         UInt64 value = BitConverter.ToUInt64(dataArray, 0);
                         codingTextShort = string.Format(CultureInfo.InvariantCulture, "{0}", value);
+                        codingTextShortTitle = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_coding_short_title), 0, _instanceData.CurrentCodingMax);
                     }
                 }
                 catch (Exception)
@@ -599,6 +591,7 @@ namespace BmwDeepObd
 
             _editTextVagCodingRaw.Text = codingTextRaw;
             _editTextVagCodingShort.Text = codingTextShort;
+            _textViewVagCodingShortTitle.Text = codingTextShortTitle;
         }
 
         private void UpdateCodingSelected(UdsFileReader.DataReader.DataInfoLongCoding dataInfoLongCoding, bool selectState)

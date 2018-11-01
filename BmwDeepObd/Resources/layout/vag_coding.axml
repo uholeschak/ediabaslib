@@ -22,7 +22,6 @@
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/textViewVagCodingShortTitle"
-            android:text="@+string/vag_coding_short_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#666"
