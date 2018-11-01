@@ -420,6 +420,7 @@
   <string name="vag_coding_comments_title">Hints</string>
   <string name="vag_coding_raw_title">Coding (hex)</string>
   <string name="vag_coding_assistant_title">Coding assistant</string>
+  <string name="vag_coding_button_write">Write coding</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">CAN adapter</string>

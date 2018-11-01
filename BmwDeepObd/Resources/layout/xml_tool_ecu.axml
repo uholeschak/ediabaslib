@@ -327,7 +327,7 @@
                 android:background="#666"
                 android:textColor="#fff" />
             <LinearLayout
-                android:id="@+id/layoutTestFormat"
+                android:id="@+id/layoutAddFunctions"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
