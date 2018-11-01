@@ -141,6 +141,10 @@ namespace CarSimulator
                 }
             }
             // select last selected item
+            if (_selectedItem == null && listViewDevices.Items.Count > 0)
+            {
+                _selectedItem = listViewDevices.Items[0];
+            }
             if (_selectedItem != null)
             {
                 foreach (ListViewItem listViewItem in listViewDevices.Items)
