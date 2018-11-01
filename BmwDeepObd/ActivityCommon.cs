@@ -5095,12 +5095,45 @@ namespace BmwDeepObd
 
                 zf = new ZipFile(fs);
 
+                // count files to extract, to display the correct progress
+                int fileCount = 0;
+                foreach (ZipEntry zipEntry in zf)
+                {
+                    if (!zipEntry.IsFile)
+                    {
+                        continue;           // Ignore directories
+                    }
+
+                    string entryFileName = zipEntry.Name;
+                    if (ignoreFolders != null)
+                    {
+                        bool ignoreFile = false;
+                        foreach (string ignoreFolder in ignoreFolders)
+                        {
+                            if (entryFileName.StartsWith(ignoreFolder))
+                            {
+                                ignoreFile = true;
+                                break;
+                            }
+                        }
+                        if (ignoreFile)
+                        {
+                            continue;
+                        }
+                    }
+                    fileCount++;
+                }
+                if (fileCount == 0)
+                {
+                    fileCount = 1;
+                }
+
                 long index = 0;
                 foreach (ZipEntry zipEntry in zf)
                 {
                     if (progressHandler != null)
                     {
-                        if (progressHandler((int)(100 * index / zf.Count)))
+                        if (progressHandler((int)(100 * index / fileCount)))
                         {
                             return;
                         }
@@ -5109,7 +5142,8 @@ namespace BmwDeepObd
                     {
                         continue;           // Ignore directories
                     }
-                    String entryFileName = zipEntry.Name;
+
+                    string entryFileName = zipEntry.Name;
                     // to remove the folder from the entry:- entryFileName = Path.GetFileName(entryFileName);
                     // Optionally match entrynames against a selection list here to skip as desired.
                     // The unpacked length is available in the zipEntry.Size property.
