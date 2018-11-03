@@ -148,7 +148,7 @@ namespace BmwDeepObd
             _buttonCodingWrite.SetOnTouchListener(this);
             _buttonCodingWrite.Click += (sender, args) =>
             {
-
+                ExecuteWriteCoding();
             };
 
             _layoutVagCodingAssitant = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingAssitant);
@@ -820,6 +820,42 @@ namespace BmwDeepObd
         private void HideKeyboard()
         {
             _imm?.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
+        }
+
+        private void ExecuteWriteCoding()
+        {
+            if (_instanceData.CurrentCoding == null)
+            {
+                return;
+            }
+
+            EdiabasOpen();
+
+            CustomProgressDialog progress = new CustomProgressDialog(this);
+            progress.SetMessage(GetString(Resource.String.xml_tool_execute_test_job));
+            progress.ButtonAbort.Visibility = ViewStates.Gone;
+            progress.Show();
+
+            string resultText = string.Empty;
+            bool executeFailed = false;
+            _jobThread = new Thread(() =>
+            {
+                try
+                {
+                    ActivityCommon.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
+
+                    string jobName = string.Empty;
+                    _ediabas.ArgString = string.Empty;
+                    _ediabas.ArgBinaryStd = null;
+                    _ediabas.ResultsRequests = string.Empty;
+                    _ediabas.ExecuteJob(jobName);
+                }
+                catch (Exception)
+                {
+                    executeFailed = true;
+                }
+            });
+            _jobThread.Start();
         }
     }
 }
