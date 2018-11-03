@@ -3064,7 +3064,7 @@ namespace BmwDeepObd
                         XElement xmlInfo = new XElement("Info");
                         xmlInfo.Add(new XAttribute("Url", url));
 #if OBB_MODE
-                        xmlInfo.Add(new XAttribute("Name", _obbFileName));
+                        xmlInfo.Add(new XAttribute("Name", Path.GetFileName(_obbFileName) ?? string.Empty));
 #else
                         xmlInfo.Add(new XAttribute("Name", fileName));
 #endif
