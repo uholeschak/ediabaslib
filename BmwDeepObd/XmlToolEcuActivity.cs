@@ -585,7 +585,7 @@ namespace BmwDeepObd
             }
             if (XmlToolActivity.IsUdsEcu(ecuInfo))
             {
-                return string.Compare(job.Name, XmlToolActivity.JobReadMwUds, StringComparison.OrdinalIgnoreCase) == 0;
+                return string.Compare(job.Name, XmlToolActivity.JobReadS22Uds, StringComparison.OrdinalIgnoreCase) == 0;
             }
             return string.Compare(job.Name, XmlToolActivity.JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
         }
@@ -1239,7 +1239,7 @@ namespace BmwDeepObd
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if ((ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) && vagReadJob)
                 {
-                    udsJob = string.Compare(jobInfo.Name, XmlToolActivity.JobReadMwUds, StringComparison.OrdinalIgnoreCase) == 0;
+                    udsJob = string.Compare(jobInfo.Name, XmlToolActivity.JobReadS22Uds, StringComparison.OrdinalIgnoreCase) == 0;
                     List<ResultInfo> showResults = new List<ResultInfo>();
                     if (_checkBoxShowAllResults.Checked && _checkBoxShowAllResults.Visibility == ViewStates.Visible)
                     {

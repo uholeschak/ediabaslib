@@ -477,14 +477,17 @@ namespace BmwDeepObd
         public const string EmptyMwTab = "-";
         public const string VagUdsCommonSgbd = @"mot7000";
         public const string JobReadMwBlock = @"Messwerteblock_lesen";
-        public const string JobReadMwUds = @"GenerischS22_abfragen";
+        public const string JobReadS22Uds = @"GenerischS22_abfragen";
+        public const string JobWriteS2EUds = @"GenerischS2E_schreiben";
         public const string JobReadStatMwBlock = @"STATUS_MESSWERTBLOCK_LESEN";
         public const string JobReadStatBlock = @"STATUS_BLOCK_LESEN";
         public const string JobReadEcuVersion = @"Steuergeraeteversion_abfragen";
         public const string JobReadEcuVersion2 = @"Steuergeraeteversion_abfragen2";
         public const string JobReadVin = @"Fahrgestellnr_abfragen";
         public const string JobReadCoding = @"CodierungS22_lesen";
+        public const string JobWriteCoding = @"CodierungS2E_schreiben";
         public const string JobReadLongCoding = @"LangeCodierung_lesen";
+        public const string JobWriteLongCoding = @"LangeCodierung_schreiben";
         public const string DataTypeString = @"string";
         public const string DataTypeReal = @"real";
         public const string DataTypeInteger = @"integer";
@@ -3961,7 +3964,7 @@ namespace BmwDeepObd
                                 int index = ecuMwTabEntry.ValueIndex;
                                 bool entryFound = false;
 
-                                bool udsJob = string.Compare(job.Name, JobReadMwUds, StringComparison.OrdinalIgnoreCase) == 0;
+                                bool udsJob = string.Compare(job.Name, JobReadS22Uds, StringComparison.OrdinalIgnoreCase) == 0;
                                 foreach (XmlToolEcuActivity.ResultInfo resultInfo in job.Results)
                                 {
                                     if (udsJob)
@@ -4637,7 +4640,7 @@ namespace BmwDeepObd
                             _ediabas.ArgString = string.Format(CultureInfo.InvariantCulture, "{0}", id);
                             _ediabas.ArgBinaryStd = null;
                             _ediabas.ResultsRequests = string.Empty;
-                            _ediabas.ExecuteJob(JobReadMwUds);
+                            _ediabas.ExecuteJob(JobReadS22Uds);
 
                             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                             if (resultSets != null && resultSets.Count >= 2)
@@ -4820,7 +4823,7 @@ namespace BmwDeepObd
                             break;
 
                         case 3:
-                            jobName = JobReadMwUds;
+                            jobName = JobReadS22Uds;
                             jobArgs = "0x0600";
                             resultName = "ERGEBNIS1WERT";
                             codingType = EcuInfo.CodingType.LongUds;
@@ -5152,7 +5155,7 @@ namespace BmwDeepObd
                     _ediabas.ArgString = string.Format(CultureInfo.InvariantCulture, "{0}", udsInfo.Item2);
                     _ediabas.ArgBinaryStd = null;
                     _ediabas.ResultsRequests = string.Empty;
-                    _ediabas.ExecuteJob(JobReadMwUds);
+                    _ediabas.ExecuteJob(JobReadS22Uds);
 
                     List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                     if (resultSets != null && resultSets.Count >= 2)
@@ -5336,7 +5339,7 @@ namespace BmwDeepObd
                             _ediabas.ArgString = string.Format(CultureInfo.InvariantCulture, "{0}", udsInfo.Item2 + subSystem.SubSysAddr);
                             _ediabas.ArgBinaryStd = null;
                             _ediabas.ResultsRequests = string.Empty;
-                            _ediabas.ExecuteJob(JobReadMwUds);
+                            _ediabas.ExecuteJob(JobReadS22Uds);
 
                             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                             if (resultSets != null && resultSets.Count >= 2)

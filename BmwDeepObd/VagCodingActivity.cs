@@ -148,7 +148,7 @@ namespace BmwDeepObd
             _buttonCodingWrite.SetOnTouchListener(this);
             _buttonCodingWrite.Click += (sender, args) =>
             {
-                ExecuteWriteCoding();
+                ExecuteWriteCoding(true);
             };
 
             _layoutVagCodingAssitant = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingAssitant);
@@ -214,6 +214,10 @@ namespace BmwDeepObd
 
         public override void OnBackPressed()
         {
+            if (IsJobRunning())
+            {
+                return;
+            }
             StoreResults();
             base.OnBackPressed();
         }
@@ -224,6 +228,10 @@ namespace BmwDeepObd
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
+                    if (IsJobRunning())
+                    {
+                        return true;
+                    }
                     StoreResults();
                     Finish();
                     return true;
@@ -611,7 +619,7 @@ namespace BmwDeepObd
             _editTextVagCodingRaw.Text = codingTextRaw;
             _editTextVagCodingShort.Text = codingTextShort;
             _textViewVagCodingShortTitle.Text = codingTextShortTitle;
-            _buttonCodingWrite.Enabled = enableWriteButton;
+            _buttonCodingWrite.Enabled = enableWriteButton && !IsJobRunning();
         }
 
         private void UpdateCodingSelected(UdsFileReader.DataReader.DataInfoLongCoding dataInfoLongCoding, bool selectState)
@@ -822,9 +830,13 @@ namespace BmwDeepObd
             _imm?.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
         }
 
-        private void ExecuteWriteCoding()
+        private void ExecuteWriteCoding(bool readOnly = false)
         {
-            if (_instanceData.CurrentCoding == null)
+            if (_instanceData.CurrentCoding == null || _instanceData.CurrentCodingType == null)
+            {
+                return;
+            }
+            if (IsJobRunning())
             {
                 return;
             }
@@ -836,26 +848,168 @@ namespace BmwDeepObd
             progress.ButtonAbort.Visibility = ViewStates.Gone;
             progress.Show();
 
-            string resultText = string.Empty;
             bool executeFailed = false;
+            bool writeFailed = false;
+            bool readFailed = false;
             _jobThread = new Thread(() =>
             {
                 try
                 {
                     ActivityCommon.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
 
-                    string jobName = string.Empty;
-                    _ediabas.ArgString = string.Empty;
-                    _ediabas.ArgBinaryStd = null;
-                    _ediabas.ResultsRequests = string.Empty;
-                    _ediabas.ExecuteJob(jobName);
+                    string codingString = BitConverter.ToString(_instanceData.CurrentCoding).Replace("-", "");
+                    string readJobName = string.Empty;
+                    string readJobArgs = string.Empty;
+                    string readResultName = string.Empty;
+                    string writeJobName = string.Empty;
+                    string writeJobArgs = string.Empty;
+                    switch (_instanceData.CurrentCodingType.Value)
+                    {
+                        case XmlToolActivity.EcuInfo.CodingType.LongUds:
+                            readJobName = XmlToolActivity.JobReadS22Uds;
+                            readResultName = "ERGEBNIS1WERT";
+                            writeJobName = XmlToolActivity.JobWriteS2EUds;
+                            if (_instanceData.SelectedSubsystem == 0)
+                            {
+                                readJobArgs = "0x0600";
+                                writeJobArgs = readJobArgs + ";" + codingString;
+                            }
+                            else
+                            {
+                                if (_ecuInfo.SubSystems == null || _instanceData.SelectedSubsystem >= _ecuInfo.SubSystems.Count)
+                                {
+                                    break;
+                                }
+                                XmlToolActivity.EcuInfoSubSys subSystem = _ecuInfo.SubSystems[_instanceData.SelectedSubsystem];
+                                readJobArgs = string.Format(CultureInfo.InvariantCulture, "{0}", 0x6000 + subSystem.SubSysAddr);
+                                writeJobArgs = readJobArgs + ";" + codingString;
+                            }
+                            break;
+
+                        case XmlToolActivity.EcuInfo.CodingType.ReadLong:
+                            readJobName = XmlToolActivity.JobReadLongCoding;
+                            readResultName = "CODIERUNGWERTBINAER";
+                            writeJobName = XmlToolActivity.JobWriteLongCoding;
+                            writeJobArgs = codingString;
+                            break;
+
+                        case XmlToolActivity.EcuInfo.CodingType.CodingS22:
+                            readJobName = XmlToolActivity.JobReadCoding;
+                            readResultName = "CODIERUNGWERTBINAER";
+                            writeJobName = XmlToolActivity.JobWriteCoding;
+                            writeJobArgs = codingString;
+                            break;
+                    }
+
+                    if (!readOnly)
+                    {
+                        if (string.IsNullOrEmpty(writeJobName))
+                        {
+                            throw new Exception("Not supported");
+                        }
+                        _ediabas.ArgString = writeJobArgs;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob(writeJobName);
+
+                        bool resultOk = false;
+                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
+                            if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    string result = (string)resultData.OpData;
+                                    if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        resultOk = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!resultOk)
+                        {
+                            writeFailed = true;
+                        }
+                    }
+
+                    {
+                        if (string.IsNullOrEmpty(readJobName))
+                        {
+                            throw new Exception("Not supported");
+                        }
+                        _ediabas.ArgString = readJobArgs;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob(readJobName);
+
+                        bool resultOk = false;
+                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
+                            if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    string result = (string)resultData.OpData;
+                                    if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        resultOk = true;
+                                    }
+                                }
+                            }
+                            if (resultOk)
+                            {
+                                Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
+                                if (resultDict1.TryGetValue(readResultName, out resultData))
+                                {
+                                    if (resultData.OpData is byte[] coding)
+                                    {
+                                        _instanceData.CurrentCoding = coding;
+                                    }
+                                }
+
+                            }
+                        }
+                        if (!resultOk)
+                        {
+                            readFailed = true;
+                        }
+                    }
                 }
                 catch (Exception)
                 {
                     executeFailed = true;
                 }
+
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    progress.Dismiss();
+                    progress.Dispose();
+
+                    if (executeFailed || writeFailed)
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.vag_coding_write_coding_failed), Resource.String.alert_title_error);
+                    }
+                    else if (readFailed)
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.vag_coding_read_coding_failed), Resource.String.alert_title_error);
+                    }
+
+                    UpdateCodingInfo();
+                });
             });
             _jobThread.Start();
+
+            UpdateCodingText();
         }
     }
 }
