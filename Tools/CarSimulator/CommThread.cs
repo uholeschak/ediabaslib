@@ -7151,7 +7151,14 @@ namespace CarSimulator
                                     byte[] dummyResponse = { 0x83, _receiveData[1], _receiveData[2], 0x7F, _receiveData[3], 0x31, 0x00 };   // request out of range
                                     ObdSend(dummyResponse);
                                 }
-                                if (_receiveData.Length >= 6 && _receiveData[0] == 0x83 && _receiveData[3] == 0x09)
+                                else if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3] == 0x2E)
+                                {   // service 2E
+                                    found = true;
+                                    Debug.WriteLine("Dummy service2E: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
+                                    byte[] dummyResponse = { 0x83, _receiveData[1], _receiveData[2], 0x6E, _receiveData[4], _receiveData[5], 0x00 };   // positive write ACK
+                                    ObdSend(dummyResponse);
+                                }
+                                else if (_receiveData.Length >= 6 && _receiveData[0] == 0x83 && _receiveData[3] == 0x09)
                                 {   // service 09
                                     found = true;
                                     Debug.WriteLine("Dummy service09: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
@@ -7169,11 +7176,18 @@ namespace CarSimulator
                                         0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x25, 0x00, 0x00, 0x00 };
                                     ObdSend(dummyResponse);
                                 }
-                                else if (_receiveData.Length >= 6 && _receiveData[0] == 0x83 && _receiveData[3] == 0x22)
+                                else if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3] == 0x22)
                                 {   // service 22
                                     found = true;
                                     Debug.WriteLine("Dummy service22: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
                                     byte[] dummyResponse = { 0x83, _receiveData[2], _receiveData[1], 0x7F, _receiveData[3], 0x31, 0x00 };   // request out of range
+                                    ObdSend(dummyResponse);
+                                }
+                                else if (_receiveData.Length >= 6 && _receiveData[3] == 0x2E)
+                                {   // service 2E
+                                    found = true;
+                                    Debug.WriteLine("Dummy service2E: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
+                                    byte[] dummyResponse = { 0x83, _receiveData[2], _receiveData[1], 0x6E, _receiveData[4], _receiveData[5], 0x00 };   // positive write ACK
                                     ObdSend(dummyResponse);
                                 }
                             }
