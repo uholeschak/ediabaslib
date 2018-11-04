@@ -863,8 +863,22 @@ namespace BmwDeepObd
                     string readResultName = string.Empty;
                     string writeJobName = string.Empty;
                     string writeJobArgs = string.Empty;
+                    bool shortCoding = false;
+                    XmlToolActivity.EcuInfoSubSys subSystem = null;
                     switch (_instanceData.CurrentCodingType.Value)
                     {
+                        case XmlToolActivity.EcuInfo.CodingType.ShortV1:
+                            readJobName = XmlToolActivity.JobReadEcuVersion;
+                            readResultName = "CODIERUNG";
+                            shortCoding = true;
+                            break;
+
+                        case XmlToolActivity.EcuInfo.CodingType.ShortV2:
+                            readJobName = XmlToolActivity.JobReadEcuVersion2;
+                            readResultName = "GERAETECODIERUNG";
+                            shortCoding = true;
+                            break;
+
                         case XmlToolActivity.EcuInfo.CodingType.LongUds:
                             readJobName = XmlToolActivity.JobReadS22Uds;
                             readResultName = "ERGEBNIS1WERT";
@@ -880,7 +894,7 @@ namespace BmwDeepObd
                                 {
                                     break;
                                 }
-                                XmlToolActivity.EcuInfoSubSys subSystem = _ecuInfo.SubSystems[_instanceData.SelectedSubsystem];
+                                subSystem = _ecuInfo.SubSystems[_instanceData.SelectedSubsystem];
                                 readJobArgs = string.Format(CultureInfo.InvariantCulture, "{0}", 0x6000 + subSystem.SubSysAddr);
                                 writeJobArgs = readJobArgs + ";" + codingString;
                             }
@@ -967,12 +981,31 @@ namespace BmwDeepObd
                                 Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
                                 if (resultDict1.TryGetValue(readResultName, out resultData))
                                 {
-                                    if (resultData.OpData is byte[] coding)
+                                    if (shortCoding)
                                     {
-                                        _instanceData.CurrentCoding = coding;
+                                        if (resultData.OpData is string text)
+                                        {
+                                            if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
+                                            {
+                                                _ecuInfo.VagCodingShort = value;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (resultData.OpData is byte[] coding)
+                                        {
+                                            if (subSystem != null)
+                                            {
+                                                subSystem.VagCodingLong = coding;
+                                            }
+                                            else
+                                            {
+                                                _ecuInfo.VagCodingLong = coding;
+                                            }
+                                        }
                                     }
                                 }
-
                             }
                         }
                         if (!resultOk)
@@ -1004,7 +1037,7 @@ namespace BmwDeepObd
                         _activityCommon.ShowAlert(GetString(Resource.String.vag_coding_read_coding_failed), Resource.String.alert_title_error);
                     }
 
-                    UpdateCodingInfo();
+                    UpdateCoding();
                 });
             });
             _jobThread.Start();
