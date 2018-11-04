@@ -768,7 +768,7 @@ namespace BmwDeepObd
                                                         mask |= (byte)(1 << i);
                                                     }
                                                     selected = (dataByte.Value & mask) == dataInfoLongCoding.BitValue;
-                                                    enabled = !selected || dataInfoLongCoding.BitValue != 0x00;
+                                                    enabled = !selected;
                                                     groupId = (dataInfoLongCoding.Byte.Value << 16) + (dataInfoLongCoding.BitMin.Value << 8) + dataInfoLongCoding.BitMax.Value;
                                                 }
                                                 sb.Append(string.Format("/{0}-{1}={2:X02}",
