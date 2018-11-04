@@ -148,7 +148,7 @@ namespace BmwDeepObd
             _buttonCodingWrite.SetOnTouchListener(this);
             _buttonCodingWrite.Click += (sender, args) =>
             {
-                ExecuteWriteCoding(true);
+                ExecuteWriteCoding();
             };
 
             _layoutVagCodingAssitant = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingAssitant);
