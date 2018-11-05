@@ -484,6 +484,8 @@ namespace BmwDeepObd
         public const string JobReadEcuVersion = @"Steuergeraeteversion_abfragen";
         public const string JobReadEcuVersion2 = @"Steuergeraeteversion_abfragen2";
         public const string JobReadVin = @"Fahrgestellnr_abfragen";
+        public const string JobWriteCodingV1 = @"Steuergeraet_Codieren";
+        public const string JobWriteCodingV2 = @"Steuergeraet_Codieren2";
         public const string JobReadCoding = @"CodierungS22_lesen";
         public const string JobWriteCoding = @"CodierungS2E_schreiben";
         public const string JobReadLongCoding = @"LangeCodierung_lesen";

@@ -858,25 +858,47 @@ namespace BmwDeepObd
                     ActivityCommon.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
 
                     string codingString = BitConverter.ToString(_instanceData.CurrentCoding).Replace("-", "");
+                    byte[] codingExtra = new byte[7];
+                    string codingExtraString = BitConverter.ToString(codingExtra).Replace("-", "");
                     string readJobName = string.Empty;
                     string readJobArgs = string.Empty;
                     string readResultName = string.Empty;
                     string writeJobName = string.Empty;
                     string writeJobArgs = string.Empty;
+
                     bool shortCoding = false;
+                    switch (_instanceData.CurrentCodingType.Value)
+                    {
+                        case XmlToolActivity.EcuInfo.CodingType.ShortV1:
+                        case XmlToolActivity.EcuInfo.CodingType.ShortV2:
+                            shortCoding = true;
+                            break;
+                    }
+
+                    UInt64 codingValue = 0;
+                    if (shortCoding)
+                    {
+                        byte[] dataArray = new byte[8];
+                        int length = dataArray.Length < _instanceData.CurrentCoding.Length ? dataArray.Length : _instanceData.CurrentCoding.Length;
+                        Array.Copy(_instanceData.CurrentCoding, dataArray, length);
+                        codingValue = BitConverter.ToUInt64(dataArray, 0);
+                    }
+
                     XmlToolActivity.EcuInfoSubSys subSystem = null;
                     switch (_instanceData.CurrentCodingType.Value)
                     {
                         case XmlToolActivity.EcuInfo.CodingType.ShortV1:
                             readJobName = XmlToolActivity.JobReadEcuVersion;
                             readResultName = "CODIERUNG";
-                            shortCoding = true;
+                            writeJobName = XmlToolActivity.JobWriteCodingV1;
+                            writeJobArgs = codingExtraString + ";" + "3;" + string.Format(CultureInfo.InvariantCulture, "{0}", codingValue);
                             break;
 
                         case XmlToolActivity.EcuInfo.CodingType.ShortV2:
                             readJobName = XmlToolActivity.JobReadEcuVersion2;
                             readResultName = "GERAETECODIERUNG";
-                            shortCoding = true;
+                            writeJobName = XmlToolActivity.JobWriteCodingV2;
+                            writeJobArgs = codingExtraString + ";" + string.Format(CultureInfo.InvariantCulture, "{0}", codingValue);
                             break;
 
                         case XmlToolActivity.EcuInfo.CodingType.LongUds:
