@@ -4968,7 +4968,7 @@ namespace BmwDeepObd
                                                 if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
                                                 {
                                                     ecuInfo.VagCodingShort = value;
-                                                    ecuInfo.VagCodingType = EcuInfo.CodingType.ShortV1;
+                                                    ecuInfo.VagCodingType = EcuInfo.CodingType.ShortV2;
                                                 }
                                             }
                                         }
@@ -5047,7 +5047,7 @@ namespace BmwDeepObd
                                                 if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
                                                 {
                                                     ecuInfo.VagCodingShort = value;
-                                                    ecuInfo.VagCodingType = EcuInfo.CodingType.ShortV2;
+                                                    ecuInfo.VagCodingType = EcuInfo.CodingType.ShortV1;
                                                 }
                                             }
                                         }
