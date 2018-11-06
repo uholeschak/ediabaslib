@@ -8,6 +8,7 @@ using Android.Content;
 using Android.Hardware.Usb;
 using Android.OS;
 using Android.Support.V7.App;
+using Android.Text.Method;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
@@ -136,6 +137,7 @@ namespace BmwDeepObd
 
             _textViewCodingComments = FindViewById<TextView>(Resource.Id.textViewCodingComments);
             _textViewCodingComments.SetOnTouchListener(this);
+            _textViewCodingComments.MovementMethod = new ScrollingMovementMethod();
 
             _textViewVagCodingRaw = FindViewById<TextView>(Resource.Id.textViewVagCodingRaw);
             _textViewVagCodingRaw.SetOnTouchListener(this);
