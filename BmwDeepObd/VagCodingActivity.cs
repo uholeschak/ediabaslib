@@ -25,7 +25,6 @@ namespace BmwDeepObd
         public class InstanceData
         {
             public int SelectedSubsystem { get; set; }
-            public byte[] InitialCoding { get; set; }
             public byte[] CurrentCoding { get; set; }
             public XmlToolActivity.EcuInfo.CodingType? CurrentCodingType { get; set; }
             public UInt64? CurrentCodingMax { get; set; }
@@ -423,7 +422,6 @@ namespace BmwDeepObd
 
         private void UpdateCoding()
         {
-            _instanceData.InitialCoding = null;
             _instanceData.CurrentCoding = null;
             _instanceData.CurrentDataFileName = null;
             if (_spinnerVagCodingSubsystem.SelectedItemPosition >= 0)
@@ -482,9 +480,7 @@ namespace BmwDeepObd
 
                 if (coding != null)
                 {
-                    _instanceData.InitialCoding = new byte[coding.Length];
                     _instanceData.CurrentCoding = new byte[coding.Length];
-                    Array.Copy(coding, _instanceData.InitialCoding, coding.Length);
                     Array.Copy(coding, _instanceData.CurrentCoding, coding.Length);
                 }
 
@@ -588,7 +584,6 @@ namespace BmwDeepObd
             string codingTextRaw = string.Empty;
             string codingTextShort = string.Empty;
             string codingTextShortTitle = string.Empty;
-            bool enableWriteButton = false;
             if (_instanceData.CurrentCoding != null)
             {
                 try
@@ -604,11 +599,6 @@ namespace BmwDeepObd
                         codingTextShort = string.Format(CultureInfo.InvariantCulture, "{0}", value);
                         codingTextShortTitle = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_coding_short_title), 0, _instanceData.CurrentCodingMax);
                     }
-
-                    if (_instanceData.InitialCoding != null && _instanceData.InitialCoding.Length > 0)
-                    {
-                        enableWriteButton = !_instanceData.InitialCoding.SequenceEqual(_instanceData.CurrentCoding);
-                    }
                 }
                 catch (Exception)
                 {
@@ -619,7 +609,7 @@ namespace BmwDeepObd
             _editTextVagCodingRaw.Text = codingTextRaw;
             _editTextVagCodingShort.Text = codingTextShort;
             _textViewVagCodingShortTitle.Text = codingTextShortTitle;
-            _buttonCodingWrite.Enabled = enableWriteButton && !IsJobRunning();
+            _buttonCodingWrite.Enabled = !IsJobRunning();
         }
 
         private void UpdateCodingSelected(UdsFileReader.DataReader.DataInfoLongCoding dataInfoLongCoding, bool selectState)
