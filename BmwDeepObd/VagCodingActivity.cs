@@ -858,8 +858,6 @@ namespace BmwDeepObd
                     ActivityCommon.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
 
                     string codingString = BitConverter.ToString(_instanceData.CurrentCoding).Replace("-", "");
-                    byte[] codingExtra = new byte[7];
-                    string codingExtraString = BitConverter.ToString(codingExtra).Replace("-", "");
                     string readJobName = string.Empty;
                     string readJobArgs = string.Empty;
                     string readResultName = string.Empty;
@@ -876,12 +874,16 @@ namespace BmwDeepObd
                     }
 
                     UInt64 codingValue = 0;
+                    string codingExtraString = string.Empty;
                     if (shortCoding)
                     {
                         byte[] dataArray = new byte[8];
                         int length = dataArray.Length < _instanceData.CurrentCoding.Length ? dataArray.Length : _instanceData.CurrentCoding.Length;
                         Array.Copy(_instanceData.CurrentCoding, dataArray, length);
                         codingValue = BitConverter.ToUInt64(dataArray, 0);
+
+                        codingExtraString = string.Format(CultureInfo.InvariantCulture, "{0:000000}{1:000}{2:00000}",
+                            _ecuInfo.VagDeviceNumber ?? 0, _ecuInfo.VagImporterNumber ?? 0, _ecuInfo.VagGarageNumber ?? 0);
                     }
 
                     XmlToolActivity.EcuInfoSubSys subSystem = null;
