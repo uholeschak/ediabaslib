@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Text;
 using Android.Content;
@@ -48,6 +49,7 @@ namespace BmwDeepObd
         private InstanceData _instanceData = new InstanceData();
         private InputMethodManager _imm;
         private View _contentView;
+        private ScrollView _scrollViewVagCoding;
         private LinearLayout _layoutVagCoding;
         private TextView _textViewVagCodingSubsystem;
         private Spinner _spinnerVagCodingSubsystem;
@@ -116,6 +118,9 @@ namespace BmwDeepObd
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
 
             _ecuInfo = IntentEcuInfo;
+
+            _scrollViewVagCoding = FindViewById<ScrollView>(Resource.Id.scrollViewVagCoding);
+            _scrollViewVagCoding.SetOnTouchListener(this);
 
             _layoutVagCoding = FindViewById<LinearLayout>(Resource.Id.layoutVagCoding);
             _layoutVagCoding.SetOnTouchListener(this);
@@ -538,7 +543,6 @@ namespace BmwDeepObd
             }
 
             UpdateCodingInfo();
-            AndroidUtility.SetListViewHeightBasedOnChildren(_listViewVagCodingAssistant);
         }
 
         private void CodingEditorAction(object sender, TextView.EditorActionEventArgs e)
@@ -557,6 +561,7 @@ namespace BmwDeepObd
 
         private void ReadCodingEditors()
         {
+            bool dataChanged = false;
             if (_instanceData.CurrentCoding != null)
             {
                 if (_editTextVagCodingRaw.Enabled)
@@ -584,7 +589,11 @@ namespace BmwDeepObd
 
                     if (dataArray != null && dataArray.Length == _instanceData.CurrentCoding.Length)
                     {
-                        Array.Copy(dataArray, _instanceData.CurrentCoding, dataArray.Length);
+                        if (!dataArray.SequenceEqual(_instanceData.CurrentCoding))
+                        {
+                            Array.Copy(dataArray, _instanceData.CurrentCoding, dataArray.Length);
+                            dataChanged = true;
+                        }
                     }
                 }
                 else if (_editTextVagCodingShort.Enabled)
@@ -598,6 +607,14 @@ namespace BmwDeepObd
                                 byte[] codingData = BitConverter.GetBytes(value);
                                 if (codingData.Length >= _instanceData.CurrentCoding.Length)
                                 {
+                                    for (int i = 0; i < _instanceData.CurrentCoding.Length; i++)
+                                    {
+                                        if (codingData[i] != _instanceData.CurrentCoding[i])
+                                        {
+                                            dataChanged = true;
+                                            break;
+                                        }
+                                    }
                                     Array.Copy(codingData, _instanceData.CurrentCoding, _instanceData.CurrentCoding.Length);
                                 }
                             }
@@ -617,21 +634,33 @@ namespace BmwDeepObd
                         {
                             if (valueWorkshop <= 99999)
                             {
-                                _instanceData.CurrentWorkshopNumber = valueWorkshop;
+                                if (_instanceData.CurrentWorkshopNumber != valueWorkshop)
+                                {
+                                    _instanceData.CurrentWorkshopNumber = valueWorkshop;
+                                    dataChanged = true;
+                                }
                             }
                         }
                         if (UInt64.TryParse(_editTextVagImporterNumber.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 valueImporter))
                         {
                             if (valueImporter <= 999)
                             {
-                                _instanceData.CurrentImporterNumber = valueImporter;
+                                if (_instanceData.CurrentImporterNumber != valueImporter)
+                                {
+                                    _instanceData.CurrentImporterNumber = valueImporter;
+                                    dataChanged = true;
+                                }
                             }
                         }
                         if (UInt64.TryParse(_editTextVagEquipmentNumber.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 valueEquipment))
                         {
                             if (valueEquipment <= 999999)
                             {
-                                _instanceData.CurrentEquipmentNumber = valueEquipment;
+                                if (_instanceData.CurrentEquipmentNumber != valueEquipment)
+                                {
+                                    _instanceData.CurrentEquipmentNumber = valueEquipment;
+                                    dataChanged = true;
+                                }
                             }
                         }
                     }
@@ -642,7 +671,10 @@ namespace BmwDeepObd
 
                 }
 
-                UpdateCodingInfo();
+                if (dataChanged)
+                {
+                    UpdateCodingInfo();
+                }
             }
         }
 
@@ -759,7 +791,7 @@ namespace BmwDeepObd
 
             bool shortCoding = IsShortCoding();
             StringBuilder sbCodingComment = new StringBuilder();
-            _layoutVagCodingAssitantAdapter.Items.Clear();
+            List<TableResultItem> codingAssitantItems = new List<TableResultItem>();
             if (_instanceData.CurrentCoding != null && _instanceData.CurrentDataFileName != null)
             {
                 UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_instanceData.CurrentDataFileName);
@@ -818,7 +850,7 @@ namespace BmwDeepObd
                                         lastCommentLine = null;
                                         if (sbComment.Length > 0)
                                         {
-                                            _layoutVagCodingAssitantAdapter.Items.Add(new TableResultItem(sbComment.ToString(), null, null, false, false));
+                                            codingAssitantItems.Add(new TableResultItem(sbComment.ToString(), null, null, false, false));
                                             sbComment.Clear();
                                         }
 
@@ -870,7 +902,7 @@ namespace BmwDeepObd
                                             {
                                                 UpdateCodingSelected(item.Tag as UdsFileReader.DataReader.DataInfoLongCoding, item.Selected);
                                             };
-                                            _layoutVagCodingAssitantAdapter.Items.Add(resultItem);
+                                            codingAssitantItems.Add(resultItem);
                                             if (groupId >= 0)
                                             {
                                                 if (lastGroupResultItem != null && lastGroupId >= 0 && lastGroupId == groupId)
@@ -892,7 +924,7 @@ namespace BmwDeepObd
                         }
                         if (sbComment.Length > 0)
                         {
-                            _layoutVagCodingAssitantAdapter.Items.Add(new TableResultItem(sbComment.ToString(), null, null, false, false));
+                            codingAssitantItems.Add(new TableResultItem(sbComment.ToString(), null, null, false, false));
                             sbComment.Clear();
                         }
                     }
@@ -908,7 +940,50 @@ namespace BmwDeepObd
 
             _layoutVagCodingRepairShopCode.Visibility = _instanceData.SelectedSubsystem == 0 ? ViewStates.Visible : ViewStates.Gone;
 
-            _layoutVagCodingAssitantAdapter.NotifyDataSetChanged();
+            bool assistantChange = false;
+            if (codingAssitantItems.Count == _layoutVagCodingAssitantAdapter.Items.Count)
+            {
+                for (int i = 0; i < codingAssitantItems.Count; i++)
+                {
+                    TableResultItem itemNew = codingAssitantItems[i];
+                    TableResultItem itemOld = _layoutVagCodingAssitantAdapter.Items[i];
+                    if (string.CompareOrdinal(itemNew.Text1 ?? string.Empty, itemOld.Text1 ?? string.Empty) != 0)
+                    {
+                        assistantChange = true;
+                        break;
+                    }
+
+                    if (itemNew.CheckEnable != itemOld.CheckEnable)
+                    {
+                        assistantChange = true;
+                        break;
+                    }
+
+                    if (itemNew.CheckVisible != itemOld.CheckVisible)
+                    {
+                        assistantChange = true;
+                        break;
+                    }
+
+                    if (itemNew.Selected != itemOld.Selected)
+                    {
+                        assistantChange = true;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                assistantChange = true;
+            }
+
+            if (assistantChange)
+            {
+                _layoutVagCodingAssitantAdapter.Items.Clear();
+                _layoutVagCodingAssitantAdapter.Items.AddRange(codingAssitantItems);
+                _layoutVagCodingAssitantAdapter.NotifyDataSetChanged();
+                AndroidUtility.SetListViewHeightBasedOnChildren(_listViewVagCodingAssistant);
+            }
             _layoutVagCodingAssitant.Visibility = _layoutVagCodingAssitantAdapter.Items.Count > 0 ? ViewStates.Visible : ViewStates.Gone;
         }
 

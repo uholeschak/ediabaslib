@@ -2437,10 +2437,7 @@ namespace BmwDeepObd
                         if (resultChanged)
                         {
                             resultListAdapter.Items.Clear();
-                            foreach (TableResultItem resultItem in tempResultList)
-                            {
-                                resultListAdapter.Items.Add(resultItem);
-                            }
+                            resultListAdapter.Items.AddRange(tempResultList);
                             resultListAdapter.NotifyDataSetChanged();
                         }
                     }
