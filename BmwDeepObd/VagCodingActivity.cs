@@ -278,6 +278,13 @@ namespace BmwDeepObd
                     ReadCodingEditors();
                     HideKeyboard();
                     break;
+
+                case MotionEventActions.Move:
+                    if (v == _listViewVagCodingAssistant)
+                    {
+                        return true;
+                    }
+                    break;
             }
             return false;
         }
@@ -531,6 +538,7 @@ namespace BmwDeepObd
             }
 
             UpdateCodingInfo();
+            AndroidUtility.SetListViewHeightBasedOnChildren(_listViewVagCodingAssistant);
         }
 
         private void CodingEditorAction(object sender, TextView.EditorActionEventArgs e)
