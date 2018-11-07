@@ -443,9 +443,9 @@
   <string name="vag_coding_short_title">Kodierung (dec): {0}-{1}</string>
   <string name="vag_coding_comments_title">Hinweise</string>
   <string name="vag_coding_raw_title">Kodierung (hex)</string>
-  <string name="vag_coding_device_number_title">Gerätenummer (dec): 0-999999</string>
-  <string name="vag_coding_importer_number_title">Importeurnummer (dec): 0-999</string>
-  <string name="vag_coding_garage_number_title">Betriebsnummer (dec): 0-99999</string>
+  <string name="vag_coding_workshop_number_title">Betriebsnummer (dec): 0-99999</string>
+  <string name="vag_coding_importer_number_title">Importeursnummer (dec): 0-999</string>
+  <string name="vag_coding_equipment_number_title">Gerätenummer (dec): 0-999999</string>
   <string name="vag_coding_assistant_title">Kodierungs-Assistent</string>
   <string name="vag_coding_button_write">Kodierung schreiben</string>
   <string name="vag_coding_write_coding_failed">Kodierung schreiben fehlgeschlagen</string>

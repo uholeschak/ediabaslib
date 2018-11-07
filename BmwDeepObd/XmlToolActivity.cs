@@ -107,9 +107,9 @@ namespace BmwDeepObd
                 VagSysName = null;
                 VagAsamData = null;
                 VagAsamRev = null;
-                VagDeviceNumber = null;
+                VagEquipmentNumber = null;
                 VagImporterNumber = null;
-                VagGarageNumber = null;
+                VagWorkshopNumber = null;
                 VagCodingType = null;
                 VagCodingMax = null;
                 VagCodingShort = null;
@@ -171,11 +171,11 @@ namespace BmwDeepObd
 
             public string VagAsamRev { get; set; }
 
-            public UInt64? VagDeviceNumber { get; set; }
+            public UInt64? VagEquipmentNumber { get; set; }
 
             public UInt64? VagImporterNumber { get; set; }
 
-            public UInt64? VagGarageNumber { get; set; }
+            public UInt64? VagWorkshopNumber { get; set; }
 
             public CodingType? VagCodingType { get; set; }
 
@@ -4914,7 +4914,7 @@ namespace BmwDeepObd
                                             {
                                                 if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
                                                 {
-                                                    ecuInfo.VagDeviceNumber = value;
+                                                    ecuInfo.VagEquipmentNumber = value;
                                                 }
                                             }
                                         }
@@ -4936,7 +4936,7 @@ namespace BmwDeepObd
                                             {
                                                 if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
                                                 {
-                                                    ecuInfo.VagGarageNumber = value;
+                                                    ecuInfo.VagWorkshopNumber = value;
                                                 }
                                             }
                                         }
@@ -4993,7 +4993,7 @@ namespace BmwDeepObd
                                             {
                                                 if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
                                                 {
-                                                    ecuInfo.VagDeviceNumber = value;
+                                                    ecuInfo.VagEquipmentNumber = value;
                                                 }
                                             }
                                         }
@@ -5015,7 +5015,7 @@ namespace BmwDeepObd
                                             {
                                                 if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
                                                 {
-                                                    ecuInfo.VagGarageNumber = value;
+                                                    ecuInfo.VagWorkshopNumber = value;
                                                 }
                                             }
                                         }

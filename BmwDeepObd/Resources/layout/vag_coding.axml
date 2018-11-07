@@ -55,7 +55,7 @@
         </LinearLayout>
     </LinearLayout>
     <TextView
-        android:id="@+id/textViewVagCodingRaw"
+        android:id="@+id/textViewVagCodingRawTitle"
         android:text="@+string/vag_coding_raw_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -67,45 +67,51 @@
         android:layout_height="wrap_content"
         android:inputType="text|textNoSuggestions"
         android:maxLines="1" />
-    <TextView
-        android:id="@+id/textViewVagDeviceNumber"
-        android:text="@+string/vag_coding_device_number_title"
+    <LinearLayout
+        android:id="@+id/layoutVagCodingExtra"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#666"
-        android:textColor="#fff" />
-    <EditText
-        android:id="@+id/editTextVagDeviceNumber"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:maxLines="1" />
-    <TextView
-        android:id="@+id/textViewVagImporterNumber"
-        android:text="@+string/vag_coding_importer_number_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#666"
-        android:textColor="#fff" />
-    <EditText
-        android:id="@+id/editTextVagImporterNumber"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:maxLines="1" />
-    <TextView
-        android:id="@+id/textViewVagGarageNumber"
-        android:text="@+string/vag_coding_garage_number_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#666"
-        android:textColor="#fff" />
-    <EditText
-        android:id="@+id/editTextVagGarageNumber"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:maxLines="1" />
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/textViewVagWorkshopNumberTitle"
+            android:text="@+string/vag_coding_workshop_number_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <EditText
+            android:id="@+id/editTextVagWorkshopNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLines="1" />
+        <TextView
+            android:id="@+id/textViewVagImporterNumberTitle"
+            android:text="@+string/vag_coding_importer_number_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <EditText
+            android:id="@+id/editTextVagImporterNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLines="1" />
+        <TextView
+            android:id="@+id/textViewVagEquipmentNumberTitle"
+            android:text="@+string/vag_coding_equipment_number_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <EditText
+            android:id="@+id/editTextVagEquipmentNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLines="1" />
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/layoutCodingButtons"
         android:orientation="horizontal"
