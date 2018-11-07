@@ -60,7 +60,7 @@ namespace BmwDeepObd
         private TextView _textViewCodingComments;
         private TextView _textViewVagCodingRawTitle;
         private EditText _editTextVagCodingRaw;
-        private LinearLayout _layoutVagCodingExtra;
+        private LinearLayout _layoutVagCodingRepairShopCode;
         private TextView _textViewVagWorkshopNumberTitle;
         private EditText _editTextVagWorkshopNumber;
         private TextView _textViewVagImporterNumberTitle;
@@ -154,8 +154,8 @@ namespace BmwDeepObd
             _editTextVagCodingRaw = FindViewById<EditText>(Resource.Id.editTextVagCodingRaw);
             _editTextVagCodingRaw.EditorAction += CodingEditorAction;
 
-            _layoutVagCodingExtra = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingExtra);
-            _layoutVagCodingExtra.SetOnTouchListener(this);
+            _layoutVagCodingRepairShopCode = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingRepairShopCode);
+            _layoutVagCodingRepairShopCode.SetOnTouchListener(this);
 
             _textViewVagWorkshopNumberTitle = FindViewById<TextView>(Resource.Id.textViewVagWorkshopNumberTitle);
             _textViewVagWorkshopNumberTitle.SetOnTouchListener(this);
@@ -601,7 +601,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                if (_layoutVagCodingExtra.Visibility == ViewStates.Visible)
+                if (_layoutVagCodingRepairShopCode.Visibility == ViewStates.Visible)
                 {
                     try
                     {
@@ -898,7 +898,7 @@ namespace BmwDeepObd
             _textViewCodingComments.Text = sbCodingComment.ToString();
             _layoutVagCodingComments.Visibility = sbCodingComment.Length > 0 ? ViewStates.Visible : ViewStates.Gone;
 
-            _layoutVagCodingExtra.Visibility = _instanceData.SelectedSubsystem == 0 ? ViewStates.Visible : ViewStates.Gone;
+            _layoutVagCodingRepairShopCode.Visibility = _instanceData.SelectedSubsystem == 0 ? ViewStates.Visible : ViewStates.Gone;
 
             _layoutVagCodingAssitantAdapter.NotifyDataSetChanged();
             _layoutVagCodingAssitant.Visibility = _layoutVagCodingAssitantAdapter.Items.Count > 0 ? ViewStates.Visible : ViewStates.Gone;
@@ -909,7 +909,7 @@ namespace BmwDeepObd
             _imm?.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
         }
 
-        private void ExecuteWriteCoding(bool readOnly = false)
+        private void ExecuteWriteCoding()
         {
             if (_instanceData.CurrentCoding == null || _instanceData.CurrentCodingType == null)
             {
@@ -928,8 +928,6 @@ namespace BmwDeepObd
             progress.Show();
 
             bool executeFailed = false;
-            bool writeFailed = false;
-            bool readFailed = false;
             _jobThread = new Thread(() =>
             {
                 try
@@ -937,9 +935,6 @@ namespace BmwDeepObd
                     ActivityCommon.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
 
                     string codingString = BitConverter.ToString(_instanceData.CurrentCoding).Replace("-", "");
-                    string readJobName = string.Empty;
-                    string readJobArgs = string.Empty;
-                    string readResultName = string.Empty;
                     string writeJobName = string.Empty;
                     string writeJobArgs = string.Empty;
 
@@ -953,7 +948,7 @@ namespace BmwDeepObd
                     }
 
                     UInt64 codingValue = 0;
-                    string codingExtraString = string.Empty;
+                    string repairShopCodeString = string.Empty;
                     if (shortCoding)
                     {
                         byte[] dataArray = new byte[8];
@@ -961,7 +956,7 @@ namespace BmwDeepObd
                         Array.Copy(_instanceData.CurrentCoding, dataArray, length);
                         codingValue = BitConverter.ToUInt64(dataArray, 0);
 
-                        codingExtraString = string.Format(CultureInfo.InvariantCulture, "{0:000000}{1:000}{2:00000}",
+                        repairShopCodeString = string.Format(CultureInfo.InvariantCulture, "{0:000000}{1:000}{2:00000}",
                             _instanceData.CurrentEquipmentNumber, _instanceData.CurrentImporterNumber, _instanceData.CurrentWorkshopNumber);
                     }
 
@@ -969,27 +964,20 @@ namespace BmwDeepObd
                     switch (_instanceData.CurrentCodingType.Value)
                     {
                         case XmlToolActivity.EcuInfo.CodingType.ShortV1:
-                            readJobName = XmlToolActivity.JobReadEcuVersion;
-                            readResultName = "CODIERUNG";
                             writeJobName = XmlToolActivity.JobWriteCodingV1;
-                            writeJobArgs = codingExtraString + ";" + "3;" + string.Format(CultureInfo.InvariantCulture, "{0}", codingValue);
+                            writeJobArgs = repairShopCodeString + ";" + "3;" + string.Format(CultureInfo.InvariantCulture, "{0}", codingValue);
                             break;
 
                         case XmlToolActivity.EcuInfo.CodingType.ShortV2:
-                            readJobName = XmlToolActivity.JobReadEcuVersion2;
-                            readResultName = "GERAETECODIERUNG";
                             writeJobName = XmlToolActivity.JobWriteCodingV2;
-                            writeJobArgs = codingExtraString + ";" + string.Format(CultureInfo.InvariantCulture, "{0}", codingValue);
+                            writeJobArgs = repairShopCodeString + ";" + string.Format(CultureInfo.InvariantCulture, "{0}", codingValue);
                             break;
 
                         case XmlToolActivity.EcuInfo.CodingType.LongUds:
-                            readJobName = XmlToolActivity.JobReadS22Uds;
-                            readResultName = "ERGEBNIS1WERT";
                             writeJobName = XmlToolActivity.JobWriteS2EUds;
                             if (_instanceData.SelectedSubsystem == 0)
                             {
-                                readJobArgs = "0x0600";
-                                writeJobArgs = readJobArgs + ";" + codingString;
+                                writeJobArgs = "0x0600;" + codingString;
                             }
                             else
                             {
@@ -998,123 +986,51 @@ namespace BmwDeepObd
                                     break;
                                 }
                                 subSystem = _ecuInfo.SubSystems[_instanceData.SelectedSubsystem];
-                                readJobArgs = string.Format(CultureInfo.InvariantCulture, "{0}", 0x6000 + subSystem.SubSysAddr);
-                                writeJobArgs = readJobArgs + ";" + codingString;
+                                writeJobArgs = string.Format(CultureInfo.InvariantCulture, "{0};{1}", 0x6000 + subSystem.SubSysAddr, codingString);
                             }
                             break;
 
                         case XmlToolActivity.EcuInfo.CodingType.ReadLong:
-                            readJobName = XmlToolActivity.JobReadLongCoding;
-                            readResultName = "CODIERUNGWERTBINAER";
                             writeJobName = XmlToolActivity.JobWriteLongCoding;
                             writeJobArgs = codingString;
                             break;
 
                         case XmlToolActivity.EcuInfo.CodingType.CodingS22:
-                            readJobName = XmlToolActivity.JobReadCoding;
-                            readResultName = "CODIERUNGWERTBINAER";
                             writeJobName = XmlToolActivity.JobWriteCoding;
                             writeJobArgs = codingString;
                             break;
                     }
 
-                    if (!readOnly)
+                    if (string.IsNullOrEmpty(writeJobName))
                     {
-                        if (string.IsNullOrEmpty(writeJobName))
-                        {
-                            throw new Exception("Not supported");
-                        }
-                        _ediabas.ArgString = writeJobArgs;
-                        _ediabas.ArgBinaryStd = null;
-                        _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob(writeJobName);
+                        throw new Exception("Not supported");
+                    }
+                    _ediabas.ArgString = writeJobArgs;
+                    _ediabas.ArgBinaryStd = null;
+                    _ediabas.ResultsRequests = string.Empty;
+                    _ediabas.ExecuteJob(writeJobName);
 
-                        bool resultOk = false;
-                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                        if (resultSets != null && resultSets.Count >= 2)
+                    bool resultOk = false;
+                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
+                        if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
                         {
-                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
-                            if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
+                            if (resultData.OpData is string)
                             {
-                                if (resultData.OpData is string)
+                                string result = (string)resultData.OpData;
+                                if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
                                 {
-                                    string result = (string)resultData.OpData;
-                                    if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
-                                    {
-                                        resultOk = true;
-                                    }
+                                    resultOk = true;
                                 }
                             }
-                        }
-
-                        if (!resultOk)
-                        {
-                            writeFailed = true;
                         }
                     }
 
+                    if (!resultOk)
                     {
-                        if (string.IsNullOrEmpty(readJobName))
-                        {
-                            throw new Exception("Not supported");
-                        }
-                        _ediabas.ArgString = readJobArgs;
-                        _ediabas.ArgBinaryStd = null;
-                        _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob(readJobName);
-
-                        bool resultOk = false;
-                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                        if (resultSets != null && resultSets.Count >= 2)
-                        {
-                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
-                            if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
-                            {
-                                if (resultData.OpData is string)
-                                {
-                                    string result = (string)resultData.OpData;
-                                    if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
-                                    {
-                                        resultOk = true;
-                                    }
-                                }
-                            }
-                            if (resultOk)
-                            {
-                                Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
-                                if (resultDict1.TryGetValue(readResultName, out resultData))
-                                {
-                                    if (shortCoding)
-                                    {
-                                        if (resultData.OpData is string text)
-                                        {
-                                            if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
-                                            {
-                                                _ecuInfo.VagCodingShort = value;
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (resultData.OpData is byte[] coding)
-                                        {
-                                            if (subSystem != null)
-                                            {
-                                                subSystem.VagCodingLong = coding;
-                                            }
-                                            else
-                                            {
-                                                _ecuInfo.VagCodingLong = coding;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if (!resultOk)
-                        {
-                            readFailed = true;
-                        }
+                        executeFailed = true;
                     }
                 }
                 catch (Exception)
@@ -1131,16 +1047,25 @@ namespace BmwDeepObd
                     progress.Dismiss();
                     progress.Dispose();
 
-                    if (executeFailed || writeFailed)
+                    if (executeFailed)
                     {
                         _activityCommon.ShowAlert(GetString(Resource.String.vag_coding_write_coding_failed), Resource.String.alert_title_error);
+                        UpdateCoding();
                     }
-                    else if (readFailed)
+                    else
                     {
-                        _activityCommon.ShowAlert(GetString(Resource.String.vag_coding_read_coding_failed), Resource.String.alert_title_error);
+                        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                            .SetMessage(Resource.String.vag_coding_write_coding_ok)
+                            .SetTitle(Resource.String.alert_title_info)
+                            .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
+                            .Show();
+                        alertDialog.DismissEvent += (sender, args) =>
+                        {
+                            _ecuInfo.JobList = null;    // force update
+                            SetResult(Android.App.Result.Ok);
+                            Finish();
+                        };
                     }
-
-                    UpdateCoding();
                 });
             });
             _jobThread.Start();

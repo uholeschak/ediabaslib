@@ -407,6 +407,7 @@ namespace BmwDeepObd
                 Intent intent = new Intent();
                 intent.PutExtra(ExtraCallEdiabasTool, true);
                 SetResult(Android.App.Result.Ok, intent);
+                StoreResults();
                 Finish();
             };
 
@@ -493,6 +494,11 @@ namespace BmwDeepObd
             switch ((ActivityRequest) requestCode)
             {
                 case ActivityRequest.RequestVagCoding:
+                    if (resultCode == Android.App.Result.Ok)
+                    {
+                        Finish();
+                        break;
+                    }
                     UpdateDisplay();
                     break;
             }
@@ -1700,6 +1706,8 @@ namespace BmwDeepObd
 
         private void StartVagCoding()
         {
+            StoreResults();
+
             VagCodingActivity.IntentEcuInfo = _ecuInfo;
             Intent serverIntent = new Intent(this, typeof(VagCodingActivity));
             serverIntent.PutExtra(VagCodingActivity.ExtraEcuName, _ecuInfo.Name);

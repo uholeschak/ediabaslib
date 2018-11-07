@@ -3032,7 +3032,7 @@ namespace BmwDeepObd
 			public const int layoutVagCodingComments = 2131231034;
 			
 			// aapt resource value: 0x7f08013f
-			public const int layoutVagCodingExtra = 2131231039;
+			public const int layoutVagCodingRepairShopCode = 2131231039;
 			
 			// aapt resource value: 0x7f080137
 			public const int layoutVagCodingShort = 2131231031;
@@ -5231,9 +5231,6 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f09018d
 			public const int vag_coding_raw_title = 2131296653;
 			
-			// aapt resource value: 0x7f090194
-			public const int vag_coding_read_coding_failed = 2131296660;
-			
 			// aapt resource value: 0x7f09018b
 			public const int vag_coding_short_title = 2131296651;
 			
@@ -5248,6 +5245,9 @@ namespace BmwDeepObd
 			
 			// aapt resource value: 0x7f090193
 			public const int vag_coding_write_coding_failed = 2131296659;
+			
+			// aapt resource value: 0x7f090194
+			public const int vag_coding_write_coding_ok = 2131296660;
 			
 			// aapt resource value: 0x7f090064
 			public const int vag_mode_info = 2131296356;
