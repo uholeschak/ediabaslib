@@ -68,7 +68,7 @@
         android:inputType="text|textNoSuggestions"
         android:maxLines="1" />
     <LinearLayout
-        android:id="@+id/layoutVagCodingExtra"
+        android:id="@+id/layoutVagCodingRepairShopCode"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

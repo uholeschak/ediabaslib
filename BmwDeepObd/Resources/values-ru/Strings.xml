@@ -450,7 +450,7 @@
   <string name="vag_coding_assistant_title">Coding assistant</string>
   <string name="vag_coding_button_write">Write coding</string>
   <string name="vag_coding_write_coding_failed">Write coding failed</string>
-  <string name="vag_coding_read_coding_failed">Read coding failed</string>
+  <string name="vag_coding_write_coding_ok">Write coding successful</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">CAN адаптер</string>

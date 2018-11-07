@@ -449,9 +449,9 @@
   <string name="vag_coding_assistant_title">Kodierungs-Assistent</string>
   <string name="vag_coding_button_write">Kodierung schreiben</string>
   <string name="vag_coding_write_coding_failed">Kodierung schreiben fehlgeschlagen</string>
-  <string name="vag_coding_read_coding_failed">Kodierung lesen fehlgeschlagen</string>
+  <string name="vag_coding_write_coding_ok">Kodierung schreiben erfolgreich</string>
 
-  <!-- CAN Adapter Activity -->
+    <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">CAN Adapter</string>
   <string name="can_adapter_mode_name">CAN Betriebsart</string>
   <string name="can_adapter_sep_time">Telegrammabstand [ms]</string>
