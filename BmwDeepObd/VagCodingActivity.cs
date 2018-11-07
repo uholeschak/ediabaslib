@@ -555,6 +555,7 @@ namespace BmwDeepObd
                 case ImeAction.Done:
                 case ImeAction.Previous:
                     ReadCodingEditors();
+                    HideKeyboard();
                     break;
             }
         }
@@ -990,9 +991,14 @@ namespace BmwDeepObd
         private void HideKeyboard()
         {
             _imm?.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
-        }
+            _editTextVagCodingShort.ClearFocus();
+            _editTextVagCodingRaw.ClearFocus();
+            _editTextVagWorkshopNumber.ClearFocus();
+            _editTextVagImporterNumber.ClearFocus();
+            _editTextVagEquipmentNumber.ClearFocus();
+    }
 
-        private void ExecuteWriteCoding()
+    private void ExecuteWriteCoding()
         {
             if (_instanceData.CurrentCoding == null || _instanceData.CurrentCodingType == null)
             {
