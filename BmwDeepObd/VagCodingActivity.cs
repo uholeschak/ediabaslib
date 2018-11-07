@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Text;
 using Android.Content;
@@ -29,6 +28,9 @@ namespace BmwDeepObd
             public byte[] CurrentCoding { get; set; }
             public XmlToolActivity.EcuInfo.CodingType? CurrentCodingType { get; set; }
             public UInt64? CurrentCodingMax { get; set; }
+            public UInt64 CurrentWorkshopNumber { get; set; }
+            public UInt64 CurrentImporterNumber { get; set; }
+            public UInt64 CurrentEquipmentNumber { get; set; }
             public string CurrentDataFileName { get; set; }
         }
 
@@ -56,8 +58,15 @@ namespace BmwDeepObd
         private LinearLayout _layoutVagCodingComments;
         private TextView _textViewVagCodingCommentsTitle;
         private TextView _textViewCodingComments;
-        private TextView _textViewVagCodingRaw;
+        private TextView _textViewVagCodingRawTitle;
         private EditText _editTextVagCodingRaw;
+        private LinearLayout _layoutVagCodingExtra;
+        private TextView _textViewVagWorkshopNumberTitle;
+        private EditText _editTextVagWorkshopNumber;
+        private TextView _textViewVagImporterNumberTitle;
+        private EditText _editTextVagImporterNumber;
+        private TextView _textViewVagEquipmentNumberTitle;
+        private EditText _editTextVagEquipmentNumber;
         private Button _buttonCodingWrite;
         private LinearLayout _layoutVagCodingAssitant;
         private ResultListAdapter _layoutVagCodingAssitantAdapter;
@@ -139,11 +148,32 @@ namespace BmwDeepObd
             _textViewCodingComments.SetOnTouchListener(this);
             _textViewCodingComments.MovementMethod = new ScrollingMovementMethod();
 
-            _textViewVagCodingRaw = FindViewById<TextView>(Resource.Id.textViewVagCodingRaw);
-            _textViewVagCodingRaw.SetOnTouchListener(this);
+            _textViewVagCodingRawTitle = FindViewById<TextView>(Resource.Id.textViewVagCodingRawTitle);
+            _textViewVagCodingRawTitle.SetOnTouchListener(this);
 
             _editTextVagCodingRaw = FindViewById<EditText>(Resource.Id.editTextVagCodingRaw);
             _editTextVagCodingRaw.EditorAction += CodingEditorAction;
+
+            _layoutVagCodingExtra = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingExtra);
+            _layoutVagCodingExtra.SetOnTouchListener(this);
+
+            _textViewVagWorkshopNumberTitle = FindViewById<TextView>(Resource.Id.textViewVagWorkshopNumberTitle);
+            _textViewVagWorkshopNumberTitle.SetOnTouchListener(this);
+
+            _editTextVagWorkshopNumber = FindViewById<EditText>(Resource.Id.editTextVagWorkshopNumber);
+            _editTextVagWorkshopNumber.EditorAction += CodingEditorAction;
+
+            _textViewVagImporterNumberTitle = FindViewById<TextView>(Resource.Id.textViewVagImporterNumberTitle);
+            _textViewVagImporterNumberTitle.SetOnTouchListener(this);
+
+            _editTextVagImporterNumber = FindViewById<EditText>(Resource.Id.editTextVagImporterNumber);
+            _editTextVagImporterNumber.EditorAction += CodingEditorAction;
+
+            _textViewVagEquipmentNumberTitle = FindViewById<TextView>(Resource.Id.textViewVagEquipmentNumberTitle);
+            _textViewVagEquipmentNumberTitle.SetOnTouchListener(this);
+
+            _editTextVagEquipmentNumber = FindViewById<EditText>(Resource.Id.editTextVagEquipmentNumber);
+            _editTextVagEquipmentNumber.EditorAction += CodingEditorAction;
 
             _buttonCodingWrite = FindViewById<Button>(Resource.Id.buttonCodingWrite);
             _buttonCodingWrite.SetOnTouchListener(this);
@@ -245,7 +275,7 @@ namespace BmwDeepObd
             switch (e.Action)
             {
                 case MotionEventActions.Down:
-                    ReadRawCoding();
+                    ReadCodingEditors();
                     HideKeyboard();
                     break;
             }
@@ -435,6 +465,9 @@ namespace BmwDeepObd
                 byte[] coding = null;
                 XmlToolActivity.EcuInfo.CodingType? codingType = null;
                 UInt64? codingMax = null;
+                UInt64 workshopNumber = 0;
+                UInt64 importerNumber = 0;
+                UInt64 equipmentNumber = 0;
 
                 if (subSystemIndex == 0)
                 {
@@ -461,6 +494,9 @@ namespace BmwDeepObd
 
                     codingType = _ecuInfo.VagCodingType;
                     codingMax = _ecuInfo.VagCodingMax;
+                    workshopNumber = _ecuInfo.VagWorkshopNumber ?? 0;
+                    importerNumber = _ecuInfo.VagImporterNumber ?? 0;
+                    equipmentNumber = _ecuInfo.VagEquipmentNumber ?? 0;
                     dataFileName = _ecuInfo.VagDataFileName;
                 }
                 else
@@ -488,6 +524,9 @@ namespace BmwDeepObd
 
                 _instanceData.CurrentCodingType = codingType;
                 _instanceData.CurrentCodingMax = codingMax;
+                _instanceData.CurrentWorkshopNumber = workshopNumber;
+                _instanceData.CurrentImporterNumber = importerNumber;
+                _instanceData.CurrentEquipmentNumber = equipmentNumber;
                 _instanceData.CurrentDataFileName = dataFileName;
             }
 
@@ -503,12 +542,12 @@ namespace BmwDeepObd
                 case ImeAction.Next:
                 case ImeAction.Done:
                 case ImeAction.Previous:
-                    ReadRawCoding();
+                    ReadCodingEditors();
                     break;
             }
         }
 
-        private void ReadRawCoding()
+        private void ReadCodingEditors()
         {
             if (_instanceData.CurrentCoding != null)
             {
@@ -562,6 +601,39 @@ namespace BmwDeepObd
                     }
                 }
 
+                if (_layoutVagCodingExtra.Visibility == ViewStates.Visible)
+                {
+                    try
+                    {
+                        if (UInt64.TryParse(_editTextVagWorkshopNumber.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 valueWorkshop))
+                        {
+                            if (valueWorkshop <= 99999)
+                            {
+                                _instanceData.CurrentWorkshopNumber = valueWorkshop;
+                            }
+                        }
+                        if (UInt64.TryParse(_editTextVagImporterNumber.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 valueImporter))
+                        {
+                            if (valueImporter <= 999)
+                            {
+                                _instanceData.CurrentImporterNumber = valueImporter;
+                            }
+                        }
+                        if (UInt64.TryParse(_editTextVagEquipmentNumber.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 valueEquipment))
+                        {
+                            if (valueEquipment <= 999999)
+                            {
+                                _instanceData.CurrentEquipmentNumber = valueEquipment;
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                }
+
                 UpdateCodingInfo();
             }
         }
@@ -586,6 +658,9 @@ namespace BmwDeepObd
             string codingTextRaw = string.Empty;
             string codingTextShort = string.Empty;
             string codingTextShortTitle = string.Empty;
+            string codingTextWorkshop = string.Empty;
+            string codingTextImporter = string.Empty;
+            string codingTextEquipment = string.Empty;
             if (_instanceData.CurrentCoding != null)
             {
                 try
@@ -601,6 +676,13 @@ namespace BmwDeepObd
                         codingTextShort = string.Format(CultureInfo.InvariantCulture, "{0}", value);
                         codingTextShortTitle = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_coding_short_title), 0, _instanceData.CurrentCodingMax);
                     }
+
+                    if (_instanceData.SelectedSubsystem == 0)
+                    {
+                        codingTextWorkshop = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.CurrentWorkshopNumber);
+                        codingTextImporter = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.CurrentImporterNumber);
+                        codingTextEquipment = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.CurrentEquipmentNumber);
+                    }
                 }
                 catch (Exception)
                 {
@@ -611,6 +693,9 @@ namespace BmwDeepObd
             _editTextVagCodingRaw.Text = codingTextRaw;
             _editTextVagCodingShort.Text = codingTextShort;
             _textViewVagCodingShortTitle.Text = codingTextShortTitle;
+            _editTextVagWorkshopNumber.Text = codingTextWorkshop;
+            _editTextVagImporterNumber.Text = codingTextImporter;
+            _editTextVagEquipmentNumber.Text = codingTextEquipment;
             _buttonCodingWrite.Enabled = !IsJobRunning();
         }
 
@@ -813,6 +898,8 @@ namespace BmwDeepObd
             _textViewCodingComments.Text = sbCodingComment.ToString();
             _layoutVagCodingComments.Visibility = sbCodingComment.Length > 0 ? ViewStates.Visible : ViewStates.Gone;
 
+            _layoutVagCodingExtra.Visibility = _instanceData.SelectedSubsystem == 0 ? ViewStates.Visible : ViewStates.Gone;
+
             _layoutVagCodingAssitantAdapter.NotifyDataSetChanged();
             _layoutVagCodingAssitant.Visibility = _layoutVagCodingAssitantAdapter.Items.Count > 0 ? ViewStates.Visible : ViewStates.Gone;
         }
@@ -875,7 +962,7 @@ namespace BmwDeepObd
                         codingValue = BitConverter.ToUInt64(dataArray, 0);
 
                         codingExtraString = string.Format(CultureInfo.InvariantCulture, "{0:000000}{1:000}{2:00000}",
-                            _ecuInfo.VagDeviceNumber ?? 0, _ecuInfo.VagImporterNumber ?? 0, _ecuInfo.VagGarageNumber ?? 0);
+                            _instanceData.CurrentEquipmentNumber, _instanceData.CurrentImporterNumber, _instanceData.CurrentWorkshopNumber);
                     }
 
                     XmlToolActivity.EcuInfoSubSys subSystem = null;

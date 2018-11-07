@@ -419,9 +419,9 @@
   <string name="vag_coding_short_title">Coding (dec): {0}-{1}</string>
   <string name="vag_coding_comments_title">Hints</string>
   <string name="vag_coding_raw_title">Coding (hex)</string>
-  <string name="vag_coding_device_number_title">Device number (dec): 0-999999</string>
+  <string name="vag_coding_workshop_number_title">Workshop code (dec): 0-99999</string>
   <string name="vag_coding_importer_number_title">Importer number (dec): 0-999</string>
-  <string name="vag_coding_garage_number_title">Garage number (dec): 0-99999</string>
+  <string name="vag_coding_equipment_number_title">Equipment number (dec): 0-999999</string>
   <string name="vag_coding_assistant_title">Coding assistant</string>
   <string name="vag_coding_button_write">Write coding</string>
   <string name="vag_coding_write_coding_failed">Write coding failed</string>
