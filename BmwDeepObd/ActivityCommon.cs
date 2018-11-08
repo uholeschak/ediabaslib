@@ -5009,6 +5009,16 @@ namespace BmwDeepObd
             return path;
         }
 
+        public static int DecToBcd(int value)
+        {
+            return (((value / 10) << 4) | (value % 10));
+        }
+
+        public static int BcdToDec(int value)
+        {
+            return (((value >> 4) * 10) + (value & 0xF));
+        }
+
         public static bool CheckZipFile(string archiveFilename)
         {
             ZipFile zf = null;

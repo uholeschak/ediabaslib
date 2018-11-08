@@ -51,6 +51,7 @@ namespace BmwDeepObd
             AsamData,
             AsamRev,
             Coding,
+            ProgDate,
             SubSystems
         }
 
@@ -115,6 +116,7 @@ namespace BmwDeepObd
                 VagCodingMax = null;
                 VagCodingShort = null;
                 VagCodingLong = null;
+                VagProgDate = null;
                 SubSystems = null;
             }
 
@@ -185,6 +187,8 @@ namespace BmwDeepObd
             public UInt64? VagCodingShort { get; set; }
 
             public byte[] VagCodingLong { get; set; }
+
+            public byte[] VagProgDate { get; set; }
 
             public List<EcuInfoSubSys> SubSystems { get; set; }
 
@@ -355,6 +359,7 @@ namespace BmwDeepObd
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.AsamData, 0xF19E),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.AsamRev, 0xF1A2),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.Coding, 0x0600),
+            new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.ProgDate, 0xF199),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.SubSystems, 0x0608),
         };
 
@@ -5001,6 +5006,7 @@ namespace BmwDeepObd
                     bool binary = false;
                     switch (udsInfo.Item1)
                     {
+                        case VagUdsS22DataType.ProgDate:
                         case VagUdsS22DataType.Coding:
                         case VagUdsS22DataType.SubSystems:
                             binary = true;
@@ -5113,6 +5119,10 @@ namespace BmwDeepObd
                             case VagUdsS22DataType.Coding:
                                 ecuInfo.VagCodingType = EcuInfo.CodingType.LongUds;
                                 ecuInfo.VagCodingLong = dataBytes;
+                                break;
+
+                            case VagUdsS22DataType.ProgDate:
+                                ecuInfo.VagProgDate = dataBytes;
                                 break;
 
                             case VagUdsS22DataType.SubSystems:
