@@ -1036,19 +1036,19 @@ namespace BmwDeepObd
         private byte[] GetRepairShopCodeData()
         {
             byte[] repairShopCodeData = new byte[6];
-            byte[] workShopData = BitConverter.GetBytes(_instanceData.CurrentWorkshopNumber);
+            byte[] workShopData = BitConverter.GetBytes(_instanceData.CurrentWorkshopNumber & 0x01FFFF);    // 17 bit
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(workShopData);
             }
 
-            byte[] importerNumberData = BitConverter.GetBytes(_instanceData.CurrentImporterNumber << 1);
+            byte[] importerNumberData = BitConverter.GetBytes((_instanceData.CurrentImporterNumber & 0x0003FF) << 1);  // 10 bit
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(importerNumberData);
             }
 
-            byte[] equipmentNumberData = BitConverter.GetBytes(_instanceData.CurrentEquipmentNumber << 3);
+            byte[] equipmentNumberData = BitConverter.GetBytes((_instanceData.CurrentEquipmentNumber & 0x1FFFFF) << 3);  // 21 bit
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(equipmentNumberData);
