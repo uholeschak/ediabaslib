@@ -3780,7 +3780,7 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-                return Directory.EnumerateFiles(path, "*.prg").Any();
+                return Directory.GetFiles(path, "*.prg", SearchOption.TopDirectoryOnly).Any();
             }
             catch (Exception)
             {
