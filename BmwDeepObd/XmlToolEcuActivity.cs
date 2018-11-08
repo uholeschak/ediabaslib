@@ -412,7 +412,8 @@ namespace BmwDeepObd
             };
 
             _buttonCoding = FindViewById<Button>(Resource.Id.buttonCoding);
-            _buttonCoding.Visibility = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw ? ViewStates.Visible : ViewStates.Gone;
+            //_buttonCoding.Visibility = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw ? ViewStates.Visible : ViewStates.Gone;
+            _buttonCoding.Visibility = ViewStates.Gone;
             _buttonCoding.Enabled = _ecuInfo.HasVagCoding();
             _buttonCoding.Click += (sender, args) =>
             {
