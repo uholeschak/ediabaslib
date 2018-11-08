@@ -497,6 +497,10 @@ namespace BmwDeepObd
                             maxValue >>= 8;
                         }
                         byte[] codingData = BitConverter.GetBytes(_ecuInfo.VagCodingShort.Value);
+                        if (!BitConverter.IsLittleEndian)
+                        {
+                            Array.Reverse(codingData);
+                        }
                         if (codingLength > 0 && codingData.Length >= codingLength)
                         {
                             coding = new byte[codingLength];
@@ -606,6 +610,10 @@ namespace BmwDeepObd
                             if (_instanceData.CurrentCodingMax.HasValue && value <= _instanceData.CurrentCodingMax.Value)
                             {
                                 byte[] codingData = BitConverter.GetBytes(value);
+                                if (!BitConverter.IsLittleEndian)
+                                {
+                                    Array.Reverse(codingData);
+                                }
                                 if (codingData.Length >= _instanceData.CurrentCoding.Length)
                                 {
                                     for (int i = 0; i < _instanceData.CurrentCoding.Length; i++)
@@ -713,6 +721,10 @@ namespace BmwDeepObd
                         byte[] dataArray = new byte[8];
                         int length = dataArray.Length < _instanceData.CurrentCoding.Length ? dataArray.Length : _instanceData.CurrentCoding.Length;
                         Array.Copy(_instanceData.CurrentCoding, dataArray, length);
+                        if (!BitConverter.IsLittleEndian)
+                        {
+                            Array.Reverse(dataArray);
+                        }
                         UInt64 value = BitConverter.ToUInt64(dataArray, 0);
                         codingTextShort = string.Format(CultureInfo.InvariantCulture, "{0}", value);
                         codingTextShortTitle = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_coding_short_title), 0, _instanceData.CurrentCodingMax);
@@ -996,9 +1008,69 @@ namespace BmwDeepObd
             _editTextVagWorkshopNumber.ClearFocus();
             _editTextVagImporterNumber.ClearFocus();
             _editTextVagEquipmentNumber.ClearFocus();
-    }
+        }
 
-    private void ExecuteWriteCoding()
+        private bool CheckCodingResult()
+        {
+            bool resultOk = false;
+            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+            if (resultSets != null && resultSets.Count >= 2)
+            {
+                Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
+                if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
+                {
+                    if (resultData.OpData is string)
+                    {
+                        string result = (string)resultData.OpData;
+                        if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            resultOk = true;
+                        }
+                    }
+                }
+            }
+
+            return resultOk;
+        }
+
+        private byte[] GetRepairShopCodeData()
+        {
+            byte[] repairShopCodeData = new byte[6];
+            byte[] workShopData = BitConverter.GetBytes(_instanceData.CurrentWorkshopNumber);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(workShopData);
+            }
+
+            byte[] importerNumberData = BitConverter.GetBytes(_instanceData.CurrentImporterNumber << 1);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(importerNumberData);
+            }
+
+            byte[] equipmentNumberData = BitConverter.GetBytes(_instanceData.CurrentEquipmentNumber << 3);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(equipmentNumberData);
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                repairShopCodeData[i + 0] |= equipmentNumberData[i + 5];
+            }
+            for (int i = 0; i < 2; i++)
+            {
+                repairShopCodeData[i + 2] |= importerNumberData[i + 6];
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                repairShopCodeData[i + 3] |= workShopData[i + 5];
+            }
+
+            return repairShopCodeData;
+        }
+
+        private void ExecuteWriteCoding()
         {
             if (_instanceData.CurrentCoding == null || _instanceData.CurrentCodingType == null)
             {
@@ -1024,6 +1096,11 @@ namespace BmwDeepObd
                     ActivityCommon.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
 
                     string codingString = BitConverter.ToString(_instanceData.CurrentCoding).Replace("-", "");
+                    string repairShopCodeString = string.Format(CultureInfo.InvariantCulture, "{0:000000}{1:000}{2:00000}",
+                        _instanceData.CurrentEquipmentNumber, _instanceData.CurrentImporterNumber, _instanceData.CurrentWorkshopNumber);
+                    string repairShopCodeDataString = BitConverter.ToString(GetRepairShopCodeData()).Replace("-", "");
+                    string writeJobRscName = string.Empty;
+                    string writeJobRscArgs = string.Empty;
                     string writeJobName = string.Empty;
                     string writeJobArgs = string.Empty;
 
@@ -1037,19 +1114,18 @@ namespace BmwDeepObd
                     }
 
                     UInt64 codingValue = 0;
-                    string repairShopCodeString = string.Empty;
                     if (shortCoding)
                     {
                         byte[] dataArray = new byte[8];
                         int length = dataArray.Length < _instanceData.CurrentCoding.Length ? dataArray.Length : _instanceData.CurrentCoding.Length;
                         Array.Copy(_instanceData.CurrentCoding, dataArray, length);
+                        if (!BitConverter.IsLittleEndian)
+                        {
+                            Array.Reverse(dataArray);
+                        }
                         codingValue = BitConverter.ToUInt64(dataArray, 0);
-
-                        repairShopCodeString = string.Format(CultureInfo.InvariantCulture, "{0:000000}{1:000}{2:00000}",
-                            _instanceData.CurrentEquipmentNumber, _instanceData.CurrentImporterNumber, _instanceData.CurrentWorkshopNumber);
                     }
 
-                    XmlToolActivity.EcuInfoSubSys subSystem = null;
                     switch (_instanceData.CurrentCodingType.Value)
                     {
                         case XmlToolActivity.EcuInfo.CodingType.ShortV1:
@@ -1067,6 +1143,9 @@ namespace BmwDeepObd
                             if (_instanceData.SelectedSubsystem == 0)
                             {
                                 writeJobArgs = "0x0600;" + codingString;
+
+                                writeJobRscName = XmlToolActivity.JobWriteS2EUds;
+                                writeJobRscArgs = "0xF198;" + repairShopCodeDataString;
                             }
                             else
                             {
@@ -1074,7 +1153,7 @@ namespace BmwDeepObd
                                 {
                                     break;
                                 }
-                                subSystem = _ecuInfo.SubSystems[_instanceData.SelectedSubsystem];
+                                XmlToolActivity.EcuInfoSubSys subSystem = _ecuInfo.SubSystems[_instanceData.SelectedSubsystem];
                                 writeJobArgs = string.Format(CultureInfo.InvariantCulture, "{0};{1}", 0x6000 + subSystem.SubSysAddr, codingString);
                             }
                             break;
@@ -1090,36 +1169,30 @@ namespace BmwDeepObd
                             break;
                     }
 
-                    if (string.IsNullOrEmpty(writeJobName))
+                    if (!executeFailed && !string.IsNullOrEmpty(writeJobRscName))
                     {
-                        throw new Exception("Not supported");
-                    }
-                    _ediabas.ArgString = writeJobArgs;
-                    _ediabas.ArgBinaryStd = null;
-                    _ediabas.ResultsRequests = string.Empty;
-                    _ediabas.ExecuteJob(writeJobName);
+                        _ediabas.ArgString = writeJobRscArgs;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob(writeJobRscName);
 
-                    bool resultOk = false;
-                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                    if (resultSets != null && resultSets.Count >= 2)
-                    {
-                        Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
-                        if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
+                        if (!CheckCodingResult())
                         {
-                            if (resultData.OpData is string)
-                            {
-                                string result = (string)resultData.OpData;
-                                if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
-                                {
-                                    resultOk = true;
-                                }
-                            }
+                            executeFailed = true;
                         }
                     }
 
-                    if (!resultOk)
+                    if (!executeFailed && !string.IsNullOrEmpty(writeJobName))
                     {
-                        executeFailed = true;
+                        _ediabas.ArgString = writeJobArgs;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob(writeJobName);
+
+                        if (!CheckCodingResult())
+                        {
+                            executeFailed = true;
+                        }
                     }
                 }
                 catch (Exception)
