@@ -1099,6 +1099,8 @@ namespace BmwDeepObd
                     string repairShopCodeString = string.Format(CultureInfo.InvariantCulture, "{0:000000}{1:000}{2:00000}",
                         _instanceData.CurrentEquipmentNumber, _instanceData.CurrentImporterNumber, _instanceData.CurrentWorkshopNumber);
                     string repairShopCodeDataString = BitConverter.ToString(GetRepairShopCodeData()).Replace("-", "");
+                    string writeJobProgDate = string.Empty;
+                    string writeJobProgDateArgs = string.Empty;
                     string writeJobRscName = string.Empty;
                     string writeJobRscArgs = string.Empty;
                     string writeJobName = string.Empty;
@@ -1144,6 +1146,18 @@ namespace BmwDeepObd
                             {
                                 writeJobArgs = "0x0600;" + codingString;
 
+                                byte[] progDate = _ecuInfo.VagProgDate;
+                                if (progDate == null)
+                                {
+                                    progDate = new byte[3];
+                                    DateTime dateTime = DateTime.Now;
+                                    progDate[0] = (byte)ActivityCommon.DecToBcd(dateTime.Year % 100);
+                                    progDate[1] = (byte)ActivityCommon.DecToBcd(dateTime.Month);
+                                    progDate[2] = (byte)ActivityCommon.DecToBcd(dateTime.Day);
+                                }
+                                writeJobProgDate = XmlToolActivity.JobWriteS2EUds;
+                                writeJobProgDateArgs = "0xF199;" + BitConverter.ToString(progDate).Replace("-", "");
+
                                 writeJobRscName = XmlToolActivity.JobWriteS2EUds;
                                 writeJobRscArgs = "0xF198;" + repairShopCodeDataString;
                             }
@@ -1167,6 +1181,19 @@ namespace BmwDeepObd
                             writeJobName = XmlToolActivity.JobWriteCoding;
                             writeJobArgs = codingString;
                             break;
+                    }
+
+                    if (!executeFailed && !string.IsNullOrEmpty(writeJobProgDate))
+                    {
+                        _ediabas.ArgString = writeJobProgDateArgs;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob(writeJobProgDate);
+
+                        if (!CheckCodingResult())
+                        {
+                            executeFailed = true;
+                        }
                     }
 
                     if (!executeFailed && !string.IsNullOrEmpty(writeJobRscName))
