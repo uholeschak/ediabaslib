@@ -43,6 +43,7 @@ namespace BmwDeepObd
 
         private enum VagUdsS22DataType
         {
+            EcuInfo,
             Vin,
             PartNum,
             HwPartNum,
@@ -346,10 +347,11 @@ namespace BmwDeepObd
 
         private static readonly Tuple<VagUdsS22DataType, int>[] VagUdsS22Data =
         {
+            new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.EcuInfo, -1),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.Vin, 0xF190),
-            new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.PartNum, 0xF187),
-            new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.HwPartNum, 0xF191),
-            new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.SysName, 0xF197),
+            //new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.PartNum, 0xF187),
+            //new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.HwPartNum, 0xF191),
+            //new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.SysName, 0xF197),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.AsamData, 0xF19E),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.AsamRev, 0xF1A2),
             new Tuple<VagUdsS22DataType, int>(VagUdsS22DataType.Coding, 0x0600),
@@ -4884,94 +4886,7 @@ namespace BmwDeepObd
                                 switch (index)
                                 {
                                     case 0:
-                                        if (resultDict1.TryGetValue("SWTEILENUMMER", out resultData))
-                                        {
-                                            if (resultData.OpData is string text)
-                                            {
-                                                string swPartNumber = text.TrimEnd();
-                                                if (!string.IsNullOrWhiteSpace(swPartNumber))
-                                                {
-                                                    ecuInfo.VagPartNumber = swPartNumber;
-                                                }
-                                            }
-                                        }
-
-                                        if (resultDict1.TryGetValue("HWTEILENUMMER", out resultData))
-                                        {
-                                            if (resultData.OpData is string text)
-                                            {
-                                                string hwPartNumber = text.TrimEnd();
-                                                if (!string.IsNullOrWhiteSpace(hwPartNumber))
-                                                {
-                                                    ecuInfo.VagHwPartNumber = hwPartNumber;
-                                                }
-                                            }
-                                        }
-
-                                        if (resultDict1.TryGetValue("GERAETENUMMER", out resultData))
-                                        {
-                                            if (resultData.OpData is string text)
-                                            {
-                                                if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
-                                                {
-                                                    ecuInfo.VagEquipmentNumber = value;
-                                                }
-                                            }
-                                        }
-
-                                        if (resultDict1.TryGetValue("IMPORTEURSNUMMER", out resultData))
-                                        {
-                                            if (resultData.OpData is string text)
-                                            {
-                                                if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
-                                                {
-                                                    ecuInfo.VagImporterNumber = value;
-                                                }
-                                            }
-                                        }
-
-                                        if (resultDict1.TryGetValue("BETRIEBSNUMMER", out resultData))
-                                        {
-                                            if (resultData.OpData is string text)
-                                            {
-                                                if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
-                                                {
-                                                    ecuInfo.VagWorkshopNumber = value;
-                                                }
-                                            }
-                                        }
-
-                                        if (resultDict1.TryGetValue("SYSTEMBEZEICHNUNG", out resultData))
-                                        {
-                                            if (resultData.OpData is string text)
-                                            {
-                                                string sysName = text.TrimEnd();
-                                                if (!string.IsNullOrWhiteSpace(sysName))
-                                                {
-                                                    ecuInfo.VagSysName = sysName;
-                                                }
-                                            }
-                                        }
-
-                                        if (resultDict1.TryGetValue("MAXWERTCODIERUNG", out resultData))
-                                        {
-                                            if (resultData.OpData is Int64 value)
-                                            {
-                                                ecuInfo.VagCodingMax = (UInt64)value;
-                                            }
-                                        }
-
-                                        if (resultDict1.TryGetValue("CODIERUNG", out resultData))
-                                        {
-                                            if (resultData.OpData is string text)
-                                            {
-                                                if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
-                                                {
-                                                    ecuInfo.VagCodingShort = value;
-                                                    ecuInfo.VagCodingType = EcuInfo.CodingType.ShortV2;
-                                                }
-                                            }
-                                        }
+                                        EvalResponseJobReadEcuVersion2(ecuInfo, resultDict1);
                                         break;
 
                                     case 1:
@@ -5134,6 +5049,19 @@ namespace BmwDeepObd
                         }
                     });
 
+                    string jobName = JobReadS22Uds;
+                    string argString = string.Empty;
+                    switch (udsInfo.Item1)
+                    {
+                        case VagUdsS22DataType.EcuInfo:
+                            jobName = JobReadEcuVersion2;
+                            break;
+
+                        default:
+                            argString = string.Format(CultureInfo.InvariantCulture, "{0}", udsInfo.Item2);
+                            break;
+                    }
+
                     bool optional = true;
                     switch (udsInfo.Item1)
                     {
@@ -5154,10 +5082,10 @@ namespace BmwDeepObd
                             break;
                     }
 
-                    _ediabas.ArgString = string.Format(CultureInfo.InvariantCulture, "{0}", udsInfo.Item2);
+                    _ediabas.ArgString = argString;
                     _ediabas.ArgBinaryStd = null;
                     _ediabas.ResultsRequests = string.Empty;
-                    _ediabas.ExecuteJob(JobReadS22Uds);
+                    _ediabas.ExecuteJob(jobName);
 
                     List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                     if (resultSets != null && resultSets.Count >= 2)
@@ -5185,6 +5113,12 @@ namespace BmwDeepObd
                         }
 
                         Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
+                        if (udsInfo.Item1 == VagUdsS22DataType.EcuInfo)
+                        {
+                            EvalResponseJobReadEcuVersion2(ecuInfo, resultDict1);
+                            continue;
+                        }
+
                         string dataString = null;
                         byte[] dataBytes = null;
                         if (resultDict1.TryGetValue("ERGEBNIS1WERT", out resultData))
@@ -5302,6 +5236,98 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        private void EvalResponseJobReadEcuVersion2(EcuInfo ecuInfo, Dictionary<string, EdiabasNet.ResultData> resultDict)
+        {
+            if (resultDict.TryGetValue("SWTEILENUMMER", out EdiabasNet.ResultData resultData))
+            {
+                if (resultData.OpData is string text)
+                {
+                    string swPartNumber = text.TrimEnd();
+                    if (!string.IsNullOrWhiteSpace(swPartNumber))
+                    {
+                        ecuInfo.VagPartNumber = swPartNumber;
+                    }
+                }
+            }
+
+            if (resultDict.TryGetValue("HWTEILENUMMER", out resultData))
+            {
+                if (resultData.OpData is string text)
+                {
+                    string hwPartNumber = text.TrimEnd();
+                    if (!string.IsNullOrWhiteSpace(hwPartNumber))
+                    {
+                        ecuInfo.VagHwPartNumber = hwPartNumber;
+                    }
+                }
+            }
+
+            if (resultDict.TryGetValue("GERAETENUMMER", out resultData))
+            {
+                if (resultData.OpData is string text)
+                {
+                    if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
+                    {
+                        ecuInfo.VagEquipmentNumber = value;
+                    }
+                }
+            }
+
+            if (resultDict.TryGetValue("IMPORTEURSNUMMER", out resultData))
+            {
+                if (resultData.OpData is string text)
+                {
+                    if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
+                    {
+                        ecuInfo.VagImporterNumber = value;
+                    }
+                }
+            }
+
+            if (resultDict.TryGetValue("BETRIEBSNUMMER", out resultData))
+            {
+                if (resultData.OpData is string text)
+                {
+                    if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
+                    {
+                        ecuInfo.VagWorkshopNumber = value;
+                    }
+                }
+            }
+
+            if (resultDict.TryGetValue("SYSTEMBEZEICHNUNG", out resultData))
+            {
+                if (resultData.OpData is string text)
+                {
+                    string sysName = text.TrimEnd();
+                    if (!string.IsNullOrWhiteSpace(sysName))
+                    {
+                        ecuInfo.VagSysName = sysName;
+                    }
+                }
+            }
+
+            if (resultDict.TryGetValue("MAXWERTCODIERUNG", out resultData))
+            {
+                if (resultData.OpData is Int64 value)
+                {
+                    ecuInfo.VagCodingMax = (UInt64)value;
+                }
+            }
+
+            if (resultDict.TryGetValue("CODIERUNG", out resultData))
+            {
+                if (resultData.OpData is string text)
+                {
+                    if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
+                    {
+                        ecuInfo.VagCodingShort = value;
+                        ecuInfo.VagCodingType = EcuInfo.CodingType.ShortV2;
+                    }
+                }
             }
         }
 
