@@ -131,11 +131,15 @@ namespace BmwDeepObd
 
         protected override void OnDestroy()
         {
-            StoreSettings();
-
             base.OnDestroy();
             _activityCommon.Dispose();
             _activityCommon = null;
+        }
+
+        public override void OnBackPressed()
+        {
+            StoreSettings();
+            base.OnBackPressed();
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
@@ -143,6 +147,7 @@ namespace BmwDeepObd
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
+                    StoreSettings();
                     Finish();
                     return true;
             }
