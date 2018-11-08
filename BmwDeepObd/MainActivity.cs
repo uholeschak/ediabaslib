@@ -672,6 +672,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestGlobalSettings:
+                    StoreSettings();
                     UpdateDirectories();
                     UpdateOptionsMenu();
                     UpdateDisplay();
