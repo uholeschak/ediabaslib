@@ -27,7 +27,7 @@ namespace BmwDeepObd
         {
             public int SelectedSubsystem { get; set; }
             public byte[] CurrentCoding { get; set; }
-            public XmlToolActivity.EcuInfo.CodingRequestType? CurrentCodingType { get; set; }
+            public XmlToolActivity.EcuInfo.CodingRequestType? CurrentCodingRequestType { get; set; }
             public UInt64? CurrentCodingMax { get; set; }
             public UInt64 CurrentWorkshopNumber { get; set; }
             public UInt64 CurrentImporterNumber { get; set; }
@@ -538,7 +538,7 @@ namespace BmwDeepObd
                     Array.Copy(coding, _instanceData.CurrentCoding, coding.Length);
                 }
 
-                _instanceData.CurrentCodingType = codingRequestType;
+                _instanceData.CurrentCodingRequestType = codingRequestType;
                 _instanceData.CurrentCodingMax = codingMax;
                 _instanceData.CurrentWorkshopNumber = workshopNumber;
                 _instanceData.CurrentImporterNumber = importerNumber;
@@ -689,9 +689,9 @@ namespace BmwDeepObd
 
         private bool IsShortCoding()
         {
-            if (_instanceData.CurrentCodingType != null)
+            if (_instanceData.CurrentCodingRequestType != null)
             {
-                switch (_instanceData.CurrentCodingType.Value)
+                switch (_instanceData.CurrentCodingRequestType.Value)
                 {
                     case XmlToolActivity.EcuInfo.CodingRequestType.ShortV1:
                     case XmlToolActivity.EcuInfo.CodingRequestType.ShortV2:
@@ -1072,7 +1072,7 @@ namespace BmwDeepObd
 
         private void ExecuteWriteCoding()
         {
-            if (_instanceData.CurrentCoding == null || _instanceData.CurrentCodingType == null)
+            if (_instanceData.CurrentCoding == null || _instanceData.CurrentCodingRequestType == null)
             {
                 return;
             }
@@ -1107,7 +1107,7 @@ namespace BmwDeepObd
                     string writeJobArgs = string.Empty;
 
                     bool shortCoding = false;
-                    switch (_instanceData.CurrentCodingType.Value)
+                    switch (_instanceData.CurrentCodingRequestType.Value)
                     {
                         case XmlToolActivity.EcuInfo.CodingRequestType.ShortV1:
                         case XmlToolActivity.EcuInfo.CodingRequestType.ShortV2:
@@ -1128,7 +1128,7 @@ namespace BmwDeepObd
                         codingValue = BitConverter.ToUInt64(dataArray, 0);
                     }
 
-                    switch (_instanceData.CurrentCodingType.Value)
+                    switch (_instanceData.CurrentCodingRequestType.Value)
                     {
                         case XmlToolActivity.EcuInfo.CodingRequestType.ShortV1:
                             writeJobName = XmlToolActivity.JobWriteCodingV1;

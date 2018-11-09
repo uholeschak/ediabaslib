@@ -5255,14 +5255,12 @@ namespace BmwDeepObd
                     }
                 }
             }
+
             if (resultDict.TryGetValue("GERAETECODIERUNGTYP", out resultData))
             {
-                if (resultData.OpData is string text)
+                if (resultData.OpData is Int64 value)
                 {
-                    if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
-                    {
-                        ecuInfo.VagCodingTypeValue = value;
-                    }
+                    ecuInfo.VagCodingTypeValue = (UInt64)value;
                 }
             }
         }
@@ -5353,18 +5351,16 @@ namespace BmwDeepObd
                     if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
                     {
                         ecuInfo.VagCodingShort = value;
+                        ecuInfo.VagCodingRequestType = EcuInfo.CodingRequestType.ShortV2;
                     }
                 }
             }
 
             if (resultDict.TryGetValue("CODIERUNGTYP", out resultData))
             {
-                if (resultData.OpData is string text)
+                if (resultData.OpData is Int64 value)
                 {
-                    if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
-                    {
-                        ecuInfo.VagCodingTypeValue = value;
-                    }
+                    ecuInfo.VagCodingTypeValue = (UInt64)value;
                 }
             }
         }
