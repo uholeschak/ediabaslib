@@ -1179,7 +1179,7 @@ namespace BmwDeepObd
 
                         case XmlToolActivity.EcuInfo.CodingRequestType.CodingS22:
                             writeJobName = XmlToolActivity.JobWriteCoding;
-                            writeJobArgs = codingString;
+                            writeJobArgs = repairShopCodeString + ";" + codingString + string.Format(CultureInfo.InvariantCulture, ";{0}", _ecuInfo.VagCodingTypeValue ?? 0x10);
                             break;
                     }
 
