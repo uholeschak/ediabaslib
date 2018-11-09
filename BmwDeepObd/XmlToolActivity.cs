@@ -112,7 +112,8 @@ namespace BmwDeepObd
                 VagEquipmentNumber = null;
                 VagImporterNumber = null;
                 VagWorkshopNumber = null;
-                VagCodingType = null;
+                VagCodingRequestType = null;
+                VagCodingTypeValue = null;
                 VagCodingMax = null;
                 VagCodingShort = null;
                 VagCodingLong = null;
@@ -141,7 +142,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            public enum CodingType
+            public enum CodingRequestType
             {
                 ShortV1,
                 ShortV2,
@@ -180,7 +181,9 @@ namespace BmwDeepObd
 
             public UInt64? VagWorkshopNumber { get; set; }
 
-            public CodingType? VagCodingType { get; set; }
+            public CodingRequestType? VagCodingRequestType { get; set; }
+
+            public UInt64? VagCodingTypeValue { get; set; }
 
             public UInt64? VagCodingMax { get; set; }
 
@@ -4810,7 +4813,7 @@ namespace BmwDeepObd
                     string jobName = null;
                     string jobArgs = string.Empty;
                     string resultName = null;
-                    EcuInfo.CodingType? codingType = null;
+                    EcuInfo.CodingRequestType? codingRequestType = null;
                     switch (index)
                     {
                         case 0:
@@ -4835,7 +4838,7 @@ namespace BmwDeepObd
                             jobName = JobReadS22Uds;
                             jobArgs = "0x0600";
                             resultName = "ERGEBNIS1WERT";
-                            codingType = EcuInfo.CodingType.LongUds;
+                            codingRequestType = EcuInfo.CodingRequestType.LongUds;
                             break;
 
                         case 4:
@@ -4845,7 +4848,7 @@ namespace BmwDeepObd
                             }
                             jobName = JobReadLongCoding;
                             resultName = "CODIERUNGWERTBINAER";
-                            codingType = EcuInfo.CodingType.ReadLong;
+                            codingRequestType = EcuInfo.CodingRequestType.ReadLong;
                             break;
 
                         case 5:
@@ -4855,7 +4858,7 @@ namespace BmwDeepObd
                             }
                             jobName = JobReadCoding;
                             resultName = "CODIERUNGWERTBINAER";
-                            codingType = EcuInfo.CodingType.CodingS22;
+                            codingRequestType = EcuInfo.CodingRequestType.CodingS22;
                             break;
                     }
                     if (string.IsNullOrEmpty(jobName) || !_ediabas.IsJobExisting(jobName))
@@ -4920,7 +4923,7 @@ namespace BmwDeepObd
                                             if (resultData.OpData is byte[] coding)
                                             {
                                                 ecuInfo.VagCodingLong = coding;
-                                                ecuInfo.VagCodingType = codingType;
+                                                ecuInfo.VagCodingRequestType = codingRequestType;
                                             }
                                         }
                                         break;
@@ -5117,7 +5120,7 @@ namespace BmwDeepObd
                                 break;
 
                             case VagUdsS22DataType.Coding:
-                                ecuInfo.VagCodingType = EcuInfo.CodingType.LongUds;
+                                ecuInfo.VagCodingRequestType = EcuInfo.CodingRequestType.LongUds;
                                 ecuInfo.VagCodingLong = dataBytes;
                                 break;
 
@@ -5248,7 +5251,17 @@ namespace BmwDeepObd
                     if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
                     {
                         ecuInfo.VagCodingShort = value;
-                        ecuInfo.VagCodingType = EcuInfo.CodingType.ShortV1;
+                        ecuInfo.VagCodingRequestType = EcuInfo.CodingRequestType.ShortV1;
+                    }
+                }
+            }
+            if (resultDict.TryGetValue("GERAETECODIERUNGTYP", out resultData))
+            {
+                if (resultData.OpData is string text)
+                {
+                    if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
+                    {
+                        ecuInfo.VagCodingTypeValue = value;
                     }
                 }
             }
@@ -5340,7 +5353,17 @@ namespace BmwDeepObd
                     if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
                     {
                         ecuInfo.VagCodingShort = value;
-                        ecuInfo.VagCodingType = EcuInfo.CodingType.ShortV2;
+                    }
+                }
+            }
+
+            if (resultDict.TryGetValue("CODIERUNGTYP", out resultData))
+            {
+                if (resultData.OpData is string text)
+                {
+                    if (UInt64.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
+                    {
+                        ecuInfo.VagCodingTypeValue = value;
                     }
                 }
             }

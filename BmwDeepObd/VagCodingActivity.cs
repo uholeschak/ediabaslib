@@ -27,7 +27,7 @@ namespace BmwDeepObd
         {
             public int SelectedSubsystem { get; set; }
             public byte[] CurrentCoding { get; set; }
-            public XmlToolActivity.EcuInfo.CodingType? CurrentCodingType { get; set; }
+            public XmlToolActivity.EcuInfo.CodingRequestType? CurrentCodingType { get; set; }
             public UInt64? CurrentCodingMax { get; set; }
             public UInt64 CurrentWorkshopNumber { get; set; }
             public UInt64 CurrentImporterNumber { get; set; }
@@ -475,7 +475,7 @@ namespace BmwDeepObd
 
                 string dataFileName = null;
                 byte[] coding = null;
-                XmlToolActivity.EcuInfo.CodingType? codingType = null;
+                XmlToolActivity.EcuInfo.CodingRequestType? codingRequestType = null;
                 UInt64? codingMax = null;
                 UInt64 workshopNumber = 0;
                 UInt64 importerNumber = 0;
@@ -508,7 +508,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    codingType = _ecuInfo.VagCodingType;
+                    codingRequestType = _ecuInfo.VagCodingRequestType;
                     codingMax = _ecuInfo.VagCodingMax;
                     workshopNumber = _ecuInfo.VagWorkshopNumber ?? 0;
                     importerNumber = _ecuInfo.VagImporterNumber ?? 0;
@@ -524,7 +524,7 @@ namespace BmwDeepObd
                             if (subSystem.SubSysIndex + 1 == subSystemIndex)
                             {
                                 coding = subSystem.VagCodingLong;
-                                codingType = XmlToolActivity.EcuInfo.CodingType.LongUds;
+                                codingRequestType = XmlToolActivity.EcuInfo.CodingRequestType.LongUds;
                                 dataFileName = subSystem.VagDataFileName;
                                 break;
                             }
@@ -538,7 +538,7 @@ namespace BmwDeepObd
                     Array.Copy(coding, _instanceData.CurrentCoding, coding.Length);
                 }
 
-                _instanceData.CurrentCodingType = codingType;
+                _instanceData.CurrentCodingType = codingRequestType;
                 _instanceData.CurrentCodingMax = codingMax;
                 _instanceData.CurrentWorkshopNumber = workshopNumber;
                 _instanceData.CurrentImporterNumber = importerNumber;
@@ -693,8 +693,8 @@ namespace BmwDeepObd
             {
                 switch (_instanceData.CurrentCodingType.Value)
                 {
-                    case XmlToolActivity.EcuInfo.CodingType.ShortV1:
-                    case XmlToolActivity.EcuInfo.CodingType.ShortV2:
+                    case XmlToolActivity.EcuInfo.CodingRequestType.ShortV1:
+                    case XmlToolActivity.EcuInfo.CodingRequestType.ShortV2:
                         return true;
                 }
             }
@@ -1109,8 +1109,8 @@ namespace BmwDeepObd
                     bool shortCoding = false;
                     switch (_instanceData.CurrentCodingType.Value)
                     {
-                        case XmlToolActivity.EcuInfo.CodingType.ShortV1:
-                        case XmlToolActivity.EcuInfo.CodingType.ShortV2:
+                        case XmlToolActivity.EcuInfo.CodingRequestType.ShortV1:
+                        case XmlToolActivity.EcuInfo.CodingRequestType.ShortV2:
                             shortCoding = true;
                             break;
                     }
@@ -1130,17 +1130,17 @@ namespace BmwDeepObd
 
                     switch (_instanceData.CurrentCodingType.Value)
                     {
-                        case XmlToolActivity.EcuInfo.CodingType.ShortV1:
+                        case XmlToolActivity.EcuInfo.CodingRequestType.ShortV1:
                             writeJobName = XmlToolActivity.JobWriteCodingV1;
-                            writeJobArgs = repairShopCodeString + ";" + "3;" + string.Format(CultureInfo.InvariantCulture, "{0}", codingValue);
+                            writeJobArgs = repairShopCodeString + string.Format(CultureInfo.InvariantCulture, ";{0};{1}", codingValue, _ecuInfo.VagCodingTypeValue ?? 0x03);
                             break;
 
-                        case XmlToolActivity.EcuInfo.CodingType.ShortV2:
+                        case XmlToolActivity.EcuInfo.CodingRequestType.ShortV2:
                             writeJobName = XmlToolActivity.JobWriteCodingV2;
-                            writeJobArgs = repairShopCodeString + ";" + string.Format(CultureInfo.InvariantCulture, "{0}", codingValue);
+                            writeJobArgs = repairShopCodeString + string.Format(CultureInfo.InvariantCulture, ";{0}", codingValue);
                             break;
 
-                        case XmlToolActivity.EcuInfo.CodingType.LongUds:
+                        case XmlToolActivity.EcuInfo.CodingRequestType.LongUds:
                             writeJobName = XmlToolActivity.JobWriteS2EUds;
                             if (_instanceData.SelectedSubsystem == 0)
                             {
@@ -1172,12 +1172,12 @@ namespace BmwDeepObd
                             }
                             break;
 
-                        case XmlToolActivity.EcuInfo.CodingType.ReadLong:
+                        case XmlToolActivity.EcuInfo.CodingRequestType.ReadLong:
                             writeJobName = XmlToolActivity.JobWriteLongCoding;
-                            writeJobArgs = codingString;
+                            writeJobArgs = repairShopCodeString + ";" + codingString + string.Format(CultureInfo.InvariantCulture, ";{0}", _ecuInfo.VagCodingTypeValue ?? 0x10);
                             break;
 
-                        case XmlToolActivity.EcuInfo.CodingType.CodingS22:
+                        case XmlToolActivity.EcuInfo.CodingRequestType.CodingS22:
                             writeJobName = XmlToolActivity.JobWriteCoding;
                             writeJobArgs = codingString;
                             break;
