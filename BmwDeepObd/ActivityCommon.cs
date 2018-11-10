@@ -5356,14 +5356,45 @@ namespace BmwDeepObd
                 }
 
                 XElement[] fileNodes = xmlDoc.Root.Elements("file").ToArray();
-                int nodeCount = fileNodes.Length;
+                int fileCount = 0;
+                foreach (XElement fileNode in fileNodes)
+                {
+                    XAttribute nameAttr = fileNode.Attribute("name");
+                    if (nameAttr == null)
+                    {
+                        return false;
+                    }
+                    string fileName = nameAttr.Value;
+                    if (string.IsNullOrEmpty(fileName))
+                    {
+                        return false;
+                    }
+
+                    bool vagUdsFile = fileName.StartsWith(AppendDirectorySeparatorChar(VagBaseDir));
+                    if (!vagUdsDirPresent && vagUdsFile)
+                    {
+                        continue;   // ignore VAG UDS files if not present
+                    }
+                    bool vagEcuFile = fileName.StartsWith(AppendDirectorySeparatorChar(EcuDirNameVag));
+                    if (!vagEcuDirPresent && vagEcuFile)
+                    {
+                        continue;   // ignore VAG ECU files if not present
+                    }
+
+                    fileCount++;
+                }
+                if (fileCount == 0)
+                {
+                    fileCount = 1;
+                }
+
                 int index = 0;
                 int lastPercent = -1;
                 foreach (XElement fileNode in fileNodes)
                 {
                     if (progressHandler != null)
                     {
-                        int percent = 100 * index / nodeCount;
+                        int percent = 100 * index / fileCount;
                         if (lastPercent != percent)
                         {
                             lastPercent = percent;
