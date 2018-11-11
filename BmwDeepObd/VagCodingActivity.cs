@@ -1131,11 +1131,14 @@ namespace BmwDeepObd
                     switch (_instanceData.CurrentCodingRequestType.Value)
                     {
                         case XmlToolActivity.EcuInfo.CodingRequestType.ShortV1:
-                            writeJobName = XmlToolActivity.JobWriteCodingV1;
-                            writeJobArgs = repairShopCodeString + string.Format(CultureInfo.InvariantCulture, ";{0};{1}", codingValue, _ecuInfo.VagCodingTypeValue ?? 0x03);
-                            break;
-
                         case XmlToolActivity.EcuInfo.CodingRequestType.ShortV2:
+                            if (_ediabas.SgbdFileName.ToUpperInvariant().Contains("1281"))
+                            {
+                                writeJobName = XmlToolActivity.JobWriteCodingV1;
+                                writeJobArgs = repairShopCodeString + string.Format(CultureInfo.InvariantCulture, ";{0};{1}", codingValue, _ecuInfo.VagCodingTypeValue ?? 0x03);
+                                break;
+                            }
+
                             writeJobName = XmlToolActivity.JobWriteCodingV2;
                             writeJobArgs = repairShopCodeString + string.Format(CultureInfo.InvariantCulture, ";{0}", codingValue);
                             break;
