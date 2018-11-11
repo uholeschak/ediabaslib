@@ -1239,7 +1239,7 @@ namespace BmwDeepObd
                     if (executeFailed)
                     {
                         _activityCommon.ShowAlert(GetString(Resource.String.vag_coding_write_coding_failed), Resource.String.alert_title_error);
-                        UpdateCoding();
+                        UpdateCodingInfo();
                     }
                     else
                     {
