@@ -72,7 +72,7 @@ namespace BmwDeepObd
             Init,
             Compile,
             TabsCreated,
-            Terminated,
+            Stopped,
         }
 
         private class DownloadInfo
@@ -476,7 +476,7 @@ namespace BmwDeepObd
             base.OnStop();
 
             _activityCommon?.StopMtcService();
-            StoreSettings();
+            StoreLastAppState(LastAppState.Stopped);
         }
 
         protected override void OnResume()
@@ -539,7 +539,6 @@ namespace BmwDeepObd
                 _webClient = null;
             }
             _extractZipCanceled = true;
-            StoreSettings();
             if (_activityCommon != null)
             {
                 _activityCommon.UnRegisterInternetCellular();
@@ -559,7 +558,6 @@ namespace BmwDeepObd
                 }
                 _updateHandler = null;
             }
-            StoreLastAppState(LastAppState.Terminated);
         }
 
         public override void OnBackPressed()
@@ -1377,6 +1375,8 @@ namespace BmwDeepObd
             {
                 ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
                 ISharedPreferencesEditor prefsEdit = prefs.Edit();
+                prefsEdit.Clear();
+                prefsEdit.PutString("LastAppState", _instanceData.LastAppState.ToString());
                 prefsEdit.PutString("DeviceName", _instanceData.DeviceName);
                 prefsEdit.PutString("DeviceAddress", _instanceData.DeviceAddress);
                 prefsEdit.PutString("EnetIp", _activityCommon.SelectedEnetIp);
@@ -1413,17 +1413,8 @@ namespace BmwDeepObd
 
         private void StoreLastAppState(LastAppState lastAppState)
         {
-            try
-            {
-                ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
-                ISharedPreferencesEditor prefsEdit = prefs.Edit();
-                prefsEdit.PutString("LastAppState", lastAppState.ToString());
-                prefsEdit.Commit();
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            _instanceData.LastAppState = lastAppState;
+            StoreSettings();
         }
 
         private void RequestStoragePermissions()
