@@ -1297,7 +1297,7 @@ namespace EdiabasLib
                     return false;
                 }
                 EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send EDIC");
-                if (sendData.Length == 0 && CommAnswerLenProtected[1] != 0x0000)
+                if (CommAnswerLenProtected[1] != 0x0000)
                 {   // command
                     if (ParTransmitFunc == TransUnsupported)
                     {
@@ -1439,6 +1439,9 @@ namespace EdiabasLib
 
                         case 0x0011:    // stop communication
                             return true;
+
+                        case 0x0082:    // normal communication
+                            break;
 
                         default:
                             return true;
