@@ -6773,6 +6773,17 @@ namespace CarSimulator
                             activeResponse.ResponseMultiList.Add(dummyResponse);
                             telBlockIndex = 0;
                         }
+                        else if (_receiveData.Length >= 4 && _receiveData[0] >= 0x07 && _receiveData[2] == 0x10)
+                        {   // parameter coding
+                            found = true;
+                            Debug.WriteLine("Parameter coding");
+                            byte[] dummyResponse = new byte[_receiveData[0]];
+                            Array.Copy(_receiveData, dummyResponse, dummyResponse.Length);
+                            dummyResponse[2] = 0xF6;
+                            activeResponse = new ResponseEntry(_receiveData, dummyResponse, null);
+                            activeResponse.ResponseMultiList.Add(dummyResponse);
+                            telBlockIndex = 0;
+                        }
                     }
                     if (!found)
                     {
