@@ -1297,7 +1297,7 @@ namespace EdiabasLib
                     return false;
                 }
                 EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send EDIC");
-                if (CommAnswerLenProtected[1] != 0x0000)
+                if (sendData.Length == 0 && CommAnswerLenProtected[1] != 0x0000)
                 {   // command
                     if (ParTransmitFunc == TransUnsupported)
                     {
