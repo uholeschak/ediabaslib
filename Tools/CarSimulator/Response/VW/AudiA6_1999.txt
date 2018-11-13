@@ -135,6 +135,9 @@ CFG: 97 01 8A
 ; Fehlerspeicher_loeschen
 03 00 05 : 06 13 FC FF FF 88
 
+; parameter coding (dummy)
+07 00 10 00 16 05 2C : 07 00 F6 00 16 05 2C
+
 ;for nav_37.grp (ISO 9141)
 ; wake address, key bytes (odd parity)
 CFG: 37 01 8A
