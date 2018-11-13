@@ -4511,7 +4511,7 @@ namespace EdiabasLib
                 {   // store received data
                     if ((recBlocks == 0) || (LastKwp1281Cmd != Kwp1281Ack) || (!ackStored && appendAck))
                     {
-                        int blockLen = Kwp1281Buffer[0];
+                        int blockLen = Kwp1281Buffer[0] + 1;
                         if (recLength + blockLen > receiveData.Length)
                         {
                             EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receive buffer overflow, ignore data");
