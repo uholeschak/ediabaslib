@@ -559,6 +559,8 @@ namespace BmwDeepObd
 
         public static object GlobalLockObject => LockObject;
 
+        public static bool StaticDataInitialized { get; set; }
+
         public static string ExternalPath => _externalPath;
 
         public static string ExternalWritePath => _externalWritePath;

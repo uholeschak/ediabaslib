@@ -1329,7 +1329,7 @@ namespace BmwDeepObd
 #endif
                 _activityCommon.SelectedEnetIp = prefs.GetString("EnetIp", string.Empty);
                 _activityCommon.CustomStorageMedia = prefs.GetString("StorageMedia", string.Empty);
-                if (!_activityRecreated)
+                if (!ActivityCommon.StaticDataInitialized || !_activityRecreated)
                 {
                     string stateString = prefs.GetString("LastAppState", string.Empty);
                     _instanceData.LastAppState = System.Enum.TryParse(stateString, true, out LastAppState lastAppState) ? lastAppState : LastAppState.Init;
@@ -1361,6 +1361,7 @@ namespace BmwDeepObd
                     ActivityCommon.CheckEcuFiles = prefs.GetBoolean("CheckEcuFiles", true);
                     ActivityCommon.OldVagMode = prefs.GetBoolean("OldVagMode", false);
                     ActivityCommon.CollectDebugInfo = prefs.GetBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
+                    ActivityCommon.StaticDataInitialized = true;
                 }
             }
             catch (Exception)
