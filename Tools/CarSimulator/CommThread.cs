@@ -6648,6 +6648,7 @@ namespace CarSimulator
             byte blockCount = 1;
             int telBlockIndex = 0;
             int initSequenceCount = 0;
+            ResponseEntry identityResponse = responseOnlyEntry;
             ResponseEntry activeResponse = null;
             for (; ; )
             {
@@ -6777,11 +6778,7 @@ namespace CarSimulator
                         {   // parameter coding
                             found = true;
                             Debug.WriteLine("Parameter coding");
-                            byte[] dummyResponse = new byte[_receiveData[0]];
-                            Array.Copy(_receiveData, dummyResponse, dummyResponse.Length);
-                            dummyResponse[2] = 0xF6;
-                            activeResponse = new ResponseEntry(_receiveData, dummyResponse, null);
-                            activeResponse.ResponseMultiList.Add(dummyResponse);
+                            activeResponse = identityResponse;
                             telBlockIndex = 0;
                         }
                     }
