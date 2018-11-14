@@ -218,6 +218,12 @@ namespace BmwDeepObd
 
             SetResult(Android.App.Result.Canceled);
 
+            if (IntentEcuInfo == null)
+            {
+                Finish();
+                return;
+            }
+
             _activityCommon = new ActivityCommon(this, () =>
             {
 
