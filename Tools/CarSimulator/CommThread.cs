@@ -6650,6 +6650,7 @@ namespace CarSimulator
             int initSequenceCount = 0;
             ResponseEntry identityResponse = responseOnlyEntry;
             ResponseEntry activeResponse = null;
+            byte[] lastCoding = null;
             for (; ; )
             {
                 if (_stopThread)
@@ -6678,6 +6679,11 @@ namespace CarSimulator
                     if (telBlockIndex < activeResponse.ResponseMultiList.Count)
                     {
                         byte[] responseTel = activeResponse.ResponseMultiList[telBlockIndex];
+                        if (lastCoding != null && responseTel.Length == 8 && responseTel[2] == 0xF6 && responseTel[3] == 0x00)
+                        {
+                            Debug.WriteLine("updating coding values");
+                            Array.Copy(lastCoding, 0, responseTel, 4, lastCoding.Length);
+                        }
                         Array.Copy(responseTel, _sendData, responseTel.Length);
                         telBlockIndex++;
                     }
@@ -6778,6 +6784,8 @@ namespace CarSimulator
                         {   // parameter coding
                             found = true;
                             Debug.WriteLine("Parameter coding");
+                            lastCoding = new byte[4];
+                            Array.Copy(_receiveData, 3, lastCoding, 0, lastCoding.Length);
                             activeResponse = identityResponse;
                             telBlockIndex = 0;
                         }
