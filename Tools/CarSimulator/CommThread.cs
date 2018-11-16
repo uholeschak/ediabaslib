@@ -6960,6 +6960,7 @@ namespace CarSimulator
                 Debug.WriteLine("Init done");
             }
 
+            byte[] lastCoding = null;
             long lastRecTime = Stopwatch.GetTimestamp();
             for (;;)
             {
@@ -7119,6 +7120,11 @@ namespace CarSimulator
                             {
                                 foreach (byte[] responseTel in responseEntry.ResponseMultiList)
                                 {
+                                    if (lastCoding != null && responseTel.Length > 22 + 3 && responseTel[3] == 0x5A && responseTel[4] == 0x9B)
+                                    {
+                                        Debug.WriteLine("updating coding values");
+                                        Array.Copy(lastCoding, 0, responseTel, 22, lastCoding.Length);
+                                    }
                                     bool nr2123 = responseTel.Length == 7 && responseTel[3] == 0x7F && ((responseTel[5] == 0x21) || (responseTel[5] == 0x23));
                                     if (!nr2123 || (_nr2123SendCount < Kwp2000Nr2123Retries))
                                     {
@@ -7153,7 +7159,13 @@ namespace CarSimulator
                                     Debug.WriteLine(sr.ToString());
                                 }
 #endif
-                                ObdSend(responseEntry.ResponseDyn);
+                                byte[] responseTel = responseEntry.ResponseDyn;
+                                if (lastCoding != null && responseTel.Length > 22 + 3 && responseTel[3] == 0x5A && responseTel[4] == 0x9B)
+                                {
+                                    Debug.WriteLine("updating coding values");
+                                    Array.Copy(lastCoding, 0, responseTel, 22, lastCoding.Length);
+                                }
+                                ObdSend(responseTel);
                                 _nr2123SendCount = 0;
                             }
                             lastRecTime = Stopwatch.GetTimestamp();
@@ -7223,7 +7235,16 @@ namespace CarSimulator
                                 else if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3] == 0x3B)
                                 {   // service 3B
                                     found = true;
-                                    Debug.WriteLine("Dummy service3B: {0:X02}", _receiveData[4]);
+                                    if (_receiveData[4] == 0x9A && _receiveData[0] == 0x90)
+                                    {
+                                        Debug.WriteLine("Parameter coding");
+                                        lastCoding = new byte[3];
+                                        Array.Copy(_receiveData, 16, lastCoding, 0, lastCoding.Length);
+                                    }
+                                    else
+                                    {
+                                        Debug.WriteLine("Dummy service3B: {0:X02}", _receiveData[4]);
+                                    }
                                     byte[] dummyResponse = { 0x82, _receiveData[2], _receiveData[1], 0x7B, _receiveData[4], 0x00 };   // positive write ACK
                                     ObdSend(dummyResponse);
                                 }
