@@ -7227,6 +7227,13 @@ namespace CarSimulator
                                     byte[] dummyResponse = { 0x82, _receiveData[2], _receiveData[1], 0x7B, _receiveData[4], 0x00 };   // positive write ACK
                                     ObdSend(dummyResponse);
                                 }
+                                else if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3] == 0x1A)
+                                {   // service 1A
+                                    found = true;
+                                    Debug.WriteLine("Dummy service1A: {0:X02}", _receiveData[4]);
+                                    byte[] dummyResponse = { 0x83, _receiveData[2], _receiveData[1], 0x7F, _receiveData[3], 0x11, 0x00 };   // not supported
+                                    ObdSend(dummyResponse);
+                                }
                             }
                         }
                     }
