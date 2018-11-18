@@ -76,6 +76,7 @@ namespace BmwDeepObd
         private LinearLayout _layoutVagCodingAssitant;
         private ResultListAdapter _layoutVagCodingAssitantAdapter;
         private ListView _listViewVagCodingAssistant;
+        private int _listViewCodingAssistantWidthLast;
         private ActivityCommon _activityCommon;
         private XmlToolActivity.EcuInfo _ecuInfo;
         private EdiabasNet _ediabas;
@@ -212,6 +213,10 @@ namespace BmwDeepObd
             _layoutVagCodingAssitantAdapter = new ResultListAdapter(this, -1, 0, true);
             _listViewVagCodingAssistant.Adapter = _layoutVagCodingAssitantAdapter;
             _listViewVagCodingAssistant.SetOnTouchListener(this);
+            _listViewVagCodingAssistant.LayoutChange += (sender, args) =>
+            {
+                UpdateCodingInfo();
+            };
 
             UpdateCodingSubsystemList();
         }
@@ -1029,6 +1034,12 @@ namespace BmwDeepObd
             }
             else
             {
+                assistantChange = true;
+            }
+
+            if (_listViewCodingAssistantWidthLast != _listViewVagCodingAssistant.Width)
+            {
+                _listViewCodingAssistantWidthLast = _listViewVagCodingAssistant.Width;
                 assistantChange = true;
             }
 
