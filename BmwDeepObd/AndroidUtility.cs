@@ -14,15 +14,19 @@ namespace BmwDeepObd
             }
 
             int totalHeight = listView.PaddingTop + listView.PaddingBottom;
+            int desiredWidth = View.MeasureSpec.MakeMeasureSpec(listView.Width, MeasureSpecMode.AtMost);
             for (int i = 0; i < listView.Count; i++)
             {
                 View listItem = listView.Adapter.GetView(i, null, listView);
-                if (listItem.GetType() == typeof(ViewGroup))
+                if (listItem != null)
                 {
-                    listItem.LayoutParameters = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
+                    if (listItem.GetType() == typeof(ViewGroup))
+                    {
+                        listItem.LayoutParameters = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
+                    }
+                    listItem.Measure(desiredWidth, View.MeasureSpec.MakeMeasureSpec(0, MeasureSpecMode.Unspecified));
+                    totalHeight += listItem.MeasuredHeight;
                 }
-                listItem.Measure(0, 0);
-                totalHeight += listItem.MeasuredHeight;
             }
 
             listView.LayoutParameters.Height = totalHeight + (listView.DividerHeight * (listView.Count - 1));
