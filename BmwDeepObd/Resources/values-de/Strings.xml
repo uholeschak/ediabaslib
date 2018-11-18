@@ -448,6 +448,7 @@
   <string name="vag_coding_equipment_number_title">Gerätenummer (dec): 0-999999</string>
   <string name="vag_coding_assistant_title">Kodierungs-Assistent</string>
   <string name="vag_coding_button_write">Kodierung schreiben</string>
+  <string name="vag_coding_write_values_invalid">Wenn die Betriebsnummer, Importeursnummer oder Gerätenummer 0 sind kann es sein, dass die ECU die Kodierung ablehnt.\nWollen Sie trotzdem fortfahren?</string>
   <string name="vag_coding_write_coding_failed">Kodierung schreiben fehlgeschlagen</string>
   <string name="vag_coding_write_coding_ok">Kodierung schreiben erfolgreich</string>
 

@@ -202,7 +202,7 @@ namespace BmwDeepObd
             _buttonCodingWrite.SetOnTouchListener(this);
             _buttonCodingWrite.Click += (sender, args) =>
             {
-                ExecuteWriteCoding();
+                WriteCodingRequest();
             };
 
             _layoutVagCodingAssitant = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingAssitant);
@@ -1110,6 +1110,36 @@ namespace BmwDeepObd
             }
 
             return repairShopCodeData;
+        }
+
+        private void WriteCodingRequest()
+        {
+            bool valuesValid = true;
+            if (_instanceData.CurrentWorkshopNumber != null && _instanceData.CurrentImporterNumber != null && _instanceData.CurrentImporterNumber != null)
+            {
+                valuesValid = _instanceData.CurrentWorkshopNumber.Value != 0 &&
+                              _instanceData.CurrentImporterNumber.Value != 0 &&
+                              _instanceData.CurrentImporterNumber.Value != 0;
+            }
+
+            if (!valuesValid)
+            {
+                new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                    {
+                        ExecuteWriteCoding();
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                    {
+                    })
+                    .SetCancelable(true)
+                    .SetMessage(Resource.String.vag_coding_write_values_invalid)
+                    .SetTitle(Resource.String.alert_title_warning)
+                    .Show();
+                return;
+            }
+
+            ExecuteWriteCoding();
         }
 
         private void ExecuteWriteCoding()

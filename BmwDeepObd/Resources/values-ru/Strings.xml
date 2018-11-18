@@ -449,6 +449,7 @@
   <string name="vag_coding_equipment_number_title">Equipment number (dec): 0-999999</string>
   <string name="vag_coding_assistant_title">Coding assistant</string>
   <string name="vag_coding_button_write">Write coding</string>
+  <string name="vag_coding_write_values_invalid">If the workshop code, importer number or equipment number is 0 the ECU may reject coding.\nDo you want to continue anyway?</string>
   <string name="vag_coding_write_coding_failed">Write coding failed</string>
   <string name="vag_coding_write_coding_ok">Write coding successful</string>
 
