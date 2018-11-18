@@ -6961,6 +6961,7 @@ namespace CarSimulator
             }
 
             byte[] lastCoding = null;
+            byte[] lastRepairShop = null;
             long lastRecTime = Stopwatch.GetTimestamp();
             for (;;)
             {
@@ -7120,10 +7121,11 @@ namespace CarSimulator
                             {
                                 foreach (byte[] responseTel in responseEntry.ResponseMultiList)
                                 {
-                                    if (lastCoding != null && responseTel.Length > 22 + 3 && responseTel[3] == 0x5A && responseTel[4] == 0x9B)
+                                    if (lastCoding != null && lastRepairShop != null && responseTel.Length > 22 + 3 && responseTel[3] == 0x5A && responseTel[4] == 0x9B)
                                     {
                                         Debug.WriteLine("updating coding values");
                                         Array.Copy(lastCoding, 0, responseTel, 22, lastCoding.Length);
+                                        Array.Copy(lastRepairShop, 0, responseTel, 25, lastRepairShop.Length);
                                     }
                                     bool nr2123 = responseTel.Length == 7 && responseTel[3] == 0x7F && ((responseTel[5] == 0x21) || (responseTel[5] == 0x23));
                                     if (!nr2123 || (_nr2123SendCount < Kwp2000Nr2123Retries))
@@ -7160,10 +7162,11 @@ namespace CarSimulator
                                 }
 #endif
                                 byte[] responseTel = responseEntry.ResponseDyn;
-                                if (lastCoding != null && responseTel.Length > 22 + 3 && responseTel[3] == 0x5A && responseTel[4] == 0x9B)
+                                if (lastCoding != null && lastRepairShop != null && responseTel.Length > 22 + 3 && responseTel[3] == 0x5A && responseTel[4] == 0x9B)
                                 {
                                     Debug.WriteLine("updating coding values");
                                     Array.Copy(lastCoding, 0, responseTel, 22, lastCoding.Length);
+                                    Array.Copy(lastRepairShop, 0, responseTel, 25, lastRepairShop.Length);
                                 }
                                 ObdSend(responseTel);
                                 _nr2123SendCount = 0;
@@ -7240,6 +7243,8 @@ namespace CarSimulator
                                         Debug.WriteLine("Parameter coding");
                                         lastCoding = new byte[3];
                                         Array.Copy(_receiveData, 16, lastCoding, 0, lastCoding.Length);
+                                        lastRepairShop = new byte[6];
+                                        Array.Copy(_receiveData, 5, lastRepairShop, 0, lastRepairShop.Length);
                                     }
                                     else
                                     {
