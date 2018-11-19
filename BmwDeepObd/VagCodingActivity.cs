@@ -78,6 +78,7 @@ namespace BmwDeepObd
         private ListView _listViewVagCodingAssistant;
         private int _listViewCodingAssistantWidthLast;
         private ActivityCommon _activityCommon;
+        private Handler _updateHandler;
         private XmlToolActivity.EcuInfo _ecuInfo;
         private EdiabasNet _ediabas;
         private Thread _jobThread;
@@ -118,6 +119,7 @@ namespace BmwDeepObd
             {
 
             }, BroadcastReceived);
+            _updateHandler = new Handler();
 
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _traceDir = Intent.GetStringExtra(ExtraTraceDir);
@@ -269,6 +271,20 @@ namespace BmwDeepObd
             EdiabasClose();
             _activityCommon.Dispose();
             _activityCommon = null;
+
+            if (_updateHandler != null)
+            {
+                try
+                {
+                    _updateHandler.RemoveCallbacksAndMessages(null);
+                    _updateHandler.Dispose();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+                _updateHandler = null;
+            }
         }
 
         public override void OnBackPressed()
@@ -842,7 +858,7 @@ namespace BmwDeepObd
             UpdateCodingInfo();
         }
 
-        private void UpdateCodingInfo()
+        private void UpdateCodingInfo(bool forceUpdate = false)
         {
             UpdateCodingText();
 
@@ -1037,18 +1053,27 @@ namespace BmwDeepObd
                 assistantChange = true;
             }
 
+            bool widthChange = false;
             if (_listViewCodingAssistantWidthLast != _listViewVagCodingAssistant.Width)
             {
                 _listViewCodingAssistantWidthLast = _listViewVagCodingAssistant.Width;
                 assistantChange = true;
+                widthChange = true;
             }
 
-            if (assistantChange)
+            if (forceUpdate || assistantChange)
             {
                 _layoutVagCodingAssitantAdapter.Items.Clear();
                 _layoutVagCodingAssitantAdapter.Items.AddRange(codingAssitantItems);
                 _layoutVagCodingAssitantAdapter.NotifyDataSetChanged();
                 AndroidUtility.SetListViewHeightBasedOnChildren(_listViewVagCodingAssistant);
+                if (widthChange)
+                {
+                    _updateHandler.Post(() =>
+                    {
+                        UpdateCodingInfo(true);
+                    });
+                }
             }
             _layoutVagCodingAssitant.Visibility = _layoutVagCodingAssitantAdapter.Items.Count > 0 ? ViewStates.Visible : ViewStates.Gone;
         }
