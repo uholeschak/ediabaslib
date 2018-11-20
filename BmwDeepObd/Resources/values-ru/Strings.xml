@@ -451,6 +451,7 @@
   <string name="vag_coding_button_write">Write coding</string>
   <string name="vag_coding_write_values_invalid">If the workshop code, importer number or equipment number is 0 the ECU may reject coding.\nDo you want to continue anyway?</string>
   <string name="vag_coding_write_coding_failed">Write coding failed</string>
+  <string name="vag_coding_write_coding_access_denied">Access denied, you have to login first</string>
   <string name="vag_coding_write_coding_ok">Write coding successful</string>
 
   <!-- CAN Adapter Activity -->

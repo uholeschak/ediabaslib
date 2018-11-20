@@ -1088,9 +1088,10 @@ namespace BmwDeepObd
             _editTextVagEquipmentNumber.ClearFocus();
         }
 
-        private bool CheckCodingResult()
+        private bool CheckCodingResult(out bool accessDenied)
         {
             bool resultOk = false;
+            accessDenied = false;
             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
             if (resultSets != null && resultSets.Count >= 2)
             {
@@ -1103,6 +1104,10 @@ namespace BmwDeepObd
                         if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             resultOk = true;
+                        }
+                        else if (result.Contains("ERROR_NRC_SecurityAccessDenied", StringComparison.OrdinalIgnoreCase))
+                        {
+                            accessDenied = true;
                         }
                     }
                 }
@@ -1197,6 +1202,7 @@ namespace BmwDeepObd
             progress.Show();
 
             bool executeFailed = false;
+            bool accessDenied = false;
             _jobThread = new Thread(() =>
             {
                 try
@@ -1294,7 +1300,7 @@ namespace BmwDeepObd
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.ExecuteJob(writeJobProgDate);
 
-                        if (!CheckCodingResult())
+                        if (!CheckCodingResult(out accessDenied))
                         {
                             executeFailed = true;
                         }
@@ -1307,7 +1313,7 @@ namespace BmwDeepObd
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.ExecuteJob(writeJobRscName);
 
-                        if (!CheckCodingResult())
+                        if (!CheckCodingResult(out accessDenied))
                         {
                             executeFailed = true;
                         }
@@ -1320,7 +1326,7 @@ namespace BmwDeepObd
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.ExecuteJob(writeJobName);
 
-                        if (!CheckCodingResult())
+                        if (!CheckCodingResult(out accessDenied))
                         {
                             executeFailed = true;
                         }
@@ -1342,7 +1348,8 @@ namespace BmwDeepObd
 
                     if (executeFailed)
                     {
-                        _activityCommon.ShowAlert(GetString(Resource.String.vag_coding_write_coding_failed), Resource.String.alert_title_error);
+                        int resId = accessDenied ? Resource.String.vag_coding_write_coding_access_denied : Resource.String.vag_coding_write_coding_failed;
+                        _activityCommon.ShowAlert(GetString(resId), Resource.String.alert_title_error);
                         UpdateCodingInfo();
                     }
                     else
