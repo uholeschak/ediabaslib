@@ -7200,7 +7200,11 @@ namespace CarSimulator
                                 {   // service 3B
                                     found = true;
                                     Debug.WriteLine("Dummy service3B: {0:X02}", _receiveData[4]);
+#if true
                                     byte[] dummyResponse = { 0x82, _receiveData[1], _receiveData[2], 0x7B, _receiveData[4], 0x00 };   // positive write ACK
+#else
+                                    byte[] dummyResponse = { 0x83, _receiveData[2], _receiveData[1], 0x7F, _receiveData[3], 0x33, 0x00 };   // access denied
+#endif
                                     ObdSend(dummyResponse);
                                 }
                                 else if (_receiveData.Length >= 6 && _receiveData[0] == 0x83 && _receiveData[3] == 0x09)
@@ -7250,7 +7254,11 @@ namespace CarSimulator
                                     {
                                         Debug.WriteLine("Dummy service3B: {0:X02}", _receiveData[4]);
                                     }
+#if true
                                     byte[] dummyResponse = { 0x82, _receiveData[2], _receiveData[1], 0x7B, _receiveData[4], 0x00 };   // positive write ACK
+#else
+                                    byte[] dummyResponse = { 0x83, _receiveData[2], _receiveData[1], 0x7F, _receiveData[3], 0x33, 0x00 };   // access denied
+#endif
                                     ObdSend(dummyResponse);
                                 }
                                 else if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3] == 0x1A)
