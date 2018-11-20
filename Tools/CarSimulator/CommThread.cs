@@ -7236,7 +7236,11 @@ namespace CarSimulator
                                 {   // service 2E
                                     found = true;
                                     Debug.WriteLine("Dummy service2E: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
+#if true
                                     byte[] dummyResponse = { 0x83, _receiveData[2], _receiveData[1], 0x6E, _receiveData[4], _receiveData[5], 0x00 };   // positive write ACK
+#else
+                                    byte[] dummyResponse = { 0x83, _receiveData[2], _receiveData[1], 0x7F, _receiveData[3], 0x33, 0x00 };   // access denied
+#endif
                                     ObdSend(dummyResponse);
                                 }
                                 else if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3] == 0x3B)
