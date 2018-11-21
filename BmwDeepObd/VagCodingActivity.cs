@@ -36,6 +36,7 @@ namespace BmwDeepObd
         }
 
         // Intent extra
+        public const string ExtraCodingMode = "coding_mode";
         public const string ExtraEcuName = "ecu_name";
         public const string ExtraEcuDir = "ecu_dir";
         public const string ExtraTraceDir = "trace_dir";
@@ -44,6 +45,12 @@ namespace BmwDeepObd
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
 
+        public enum CodingMode
+        {
+            Standard,
+            Login
+        }
+
         public static XmlToolActivity.EcuInfo IntentEcuInfo { get; set; }
 
         private InstanceData _instanceData = new InstanceData();
@@ -51,6 +58,7 @@ namespace BmwDeepObd
         private View _contentView;
         private ScrollView _scrollViewVagCoding;
         private LinearLayout _layoutVagCoding;
+        private LinearLayout _layoutVagCodingSubsystem;
         private TextView _textViewVagCodingSubsystem;
         private Spinner _spinnerVagCodingSubsystem;
         private StringObjAdapter _spinnerVagCodingSubsystemAdapter;
@@ -84,6 +92,7 @@ namespace BmwDeepObd
         private Thread _jobThread;
         private bool _activityActive;
         private bool _ediabasJobAbort;
+        private CodingMode _codingMode;
         private string _ecuDir;
         private string _traceDir;
         private bool _traceAppend;
@@ -121,6 +130,7 @@ namespace BmwDeepObd
             }, BroadcastReceived);
             _updateHandler = new Handler();
 
+            _codingMode = (CodingMode) Intent.GetIntExtra(ExtraCodingMode, (int) CodingMode.Standard);
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _traceDir = Intent.GetStringExtra(ExtraTraceDir);
             _traceAppend = Intent.GetBooleanExtra(ExtraTraceAppend, true);
@@ -136,6 +146,9 @@ namespace BmwDeepObd
 
             _layoutVagCoding = FindViewById<LinearLayout>(Resource.Id.layoutVagCoding);
             _layoutVagCoding.SetOnTouchListener(this);
+
+            _layoutVagCodingSubsystem = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingSubsystem);
+            _layoutVagCodingSubsystem.SetOnTouchListener(this);
 
             _textViewVagCodingSubsystem = FindViewById<TextView>(Resource.Id.textViewVagCodingSubsystem);
             _textViewVagCodingSubsystem.SetOnTouchListener(this);
@@ -448,54 +461,61 @@ namespace BmwDeepObd
             int selection = _instanceData.SelectedSubsystem;
 
             _spinnerVagCodingSubsystemAdapter.Items.Clear();
-            if (_ecuInfo.VagCodingShort != null || _ecuInfo.VagCodingLong != null)
+            if (_codingMode == CodingMode.Standard)
             {
-                int index = 0;
-                StringBuilder sb = new StringBuilder();
-                sb.Append(string.Format("{0}: ", index));
-                bool append = false;
-                if (!string.IsNullOrEmpty(_ecuInfo.VagPartNumber))
+                if (_ecuInfo.VagCodingShort != null || _ecuInfo.VagCodingLong != null)
                 {
-                    sb.Append(_ecuInfo.VagPartNumber);
-                    append = true;
-                }
-                if (!string.IsNullOrEmpty(_ecuInfo.VagSysName))
-                {
-                    if (append)
+                    int index = 0;
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append(string.Format("{0}: ", index));
+                    bool append = false;
+                    if (!string.IsNullOrEmpty(_ecuInfo.VagPartNumber))
                     {
-                        sb.Append(" / ");
+                        sb.Append(_ecuInfo.VagPartNumber);
+                        append = true;
                     }
-                    sb.Append(_ecuInfo.VagSysName);
+                    if (!string.IsNullOrEmpty(_ecuInfo.VagSysName))
+                    {
+                        if (append)
+                        {
+                            sb.Append(" / ");
+                        }
+                        sb.Append(_ecuInfo.VagSysName);
+                    }
+                    _spinnerVagCodingSubsystemAdapter.Items.Add(new StringObjType(sb.ToString(), index));
                 }
-                _spinnerVagCodingSubsystemAdapter.Items.Add(new StringObjType(sb.ToString(), index));
-            }
 
-            if (_ecuInfo.SubSystems != null)
-            {
-                foreach (XmlToolActivity.EcuInfoSubSys subSystem in _ecuInfo.SubSystems)
+                if (_ecuInfo.SubSystems != null)
                 {
-                    if (subSystem.VagCodingLong != null)
+                    foreach (XmlToolActivity.EcuInfoSubSys subSystem in _ecuInfo.SubSystems)
                     {
-                        int index = subSystem.SubSysIndex + 1;
-                        StringBuilder sb = new StringBuilder();
-                        sb.Append(string.Format("{0}: ", index));
-                        bool append = false;
-                        if (!string.IsNullOrEmpty(subSystem.VagPartNumber))
+                        if (subSystem.VagCodingLong != null)
                         {
-                            sb.Append(subSystem.VagPartNumber);
-                            append = true;
-                        }
-                        if (!string.IsNullOrEmpty(subSystem.Name))
-                        {
-                            if (append)
+                            int index = subSystem.SubSysIndex + 1;
+                            StringBuilder sb = new StringBuilder();
+                            sb.Append(string.Format("{0}: ", index));
+                            bool append = false;
+                            if (!string.IsNullOrEmpty(subSystem.VagPartNumber))
                             {
-                                sb.Append(" / ");
+                                sb.Append(subSystem.VagPartNumber);
+                                append = true;
                             }
-                            sb.Append(subSystem.Name);
+                            if (!string.IsNullOrEmpty(subSystem.Name))
+                            {
+                                if (append)
+                                {
+                                    sb.Append(" / ");
+                                }
+                                sb.Append(subSystem.Name);
+                            }
+                            _spinnerVagCodingSubsystemAdapter.Items.Add(new StringObjType(sb.ToString(), index));
                         }
-                        _spinnerVagCodingSubsystemAdapter.Items.Add(new StringObjType(sb.ToString(), index));
                     }
                 }
+            }
+            else
+            {
+                _spinnerVagCodingSubsystemAdapter.Items.Add(new StringObjType("-", 0));
             }
             _spinnerVagCodingSubsystemAdapter.NotifyDataSetChanged();
 
@@ -520,55 +540,68 @@ namespace BmwDeepObd
                 UInt64? importerNumber = null;
                 UInt64? equipmentNumber = null;
 
-                if (subSystemIndex == 0)
+                if (_codingMode == CodingMode.Standard)
                 {
-                    if (_ecuInfo.VagCodingLong != null)
+                    if (subSystemIndex == 0)
                     {
-                        coding = _ecuInfo.VagCodingLong;
-                    }
-                    else if (_ecuInfo.VagCodingShort != null)
-                    {
-                        int codingLength = 0;
-                        ulong maxValue = _ecuInfo.VagCodingMax ?? 0;
-                        while (maxValue != 0)
+                        if (_ecuInfo.VagCodingLong != null)
                         {
-                            codingLength++;
-                            maxValue >>= 8;
+                            coding = _ecuInfo.VagCodingLong;
                         }
-                        byte[] codingData = BitConverter.GetBytes(_ecuInfo.VagCodingShort.Value);
-                        if (!BitConverter.IsLittleEndian)
+                        else if (_ecuInfo.VagCodingShort != null)
                         {
-                            Array.Reverse(codingData);
+                            int codingLength = 0;
+                            ulong maxValue = _ecuInfo.VagCodingMax ?? 0;
+                            while (maxValue != 0)
+                            {
+                                codingLength++;
+                                maxValue >>= 8;
+                            }
+                            byte[] codingData = BitConverter.GetBytes(_ecuInfo.VagCodingShort.Value);
+                            if (!BitConverter.IsLittleEndian)
+                            {
+                                Array.Reverse(codingData);
+                            }
+                            if (codingLength > 0 && codingData.Length >= codingLength)
+                            {
+                                coding = new byte[codingLength];
+                                Array.Copy(codingData, coding, coding.Length);
+                            }
                         }
-                        if (codingLength > 0 && codingData.Length >= codingLength)
-                        {
-                            coding = new byte[codingLength];
-                            Array.Copy(codingData, coding, coding.Length);
-                        }
-                    }
 
+                        codingRequestType = _ecuInfo.VagCodingRequestType;
+                        codingMax = _ecuInfo.VagCodingMax;
+                        workshopNumber = _ecuInfo.VagWorkshopNumber;
+                        importerNumber = _ecuInfo.VagImporterNumber;
+                        equipmentNumber = _ecuInfo.VagEquipmentNumber;
+                        dataFileName = _ecuInfo.VagDataFileName;
+                    }
+                    else
+                    {
+                        if (_ecuInfo.SubSystems != null)
+                        {
+                            foreach (XmlToolActivity.EcuInfoSubSys subSystem in _ecuInfo.SubSystems)
+                            {
+                                if (subSystem.SubSysIndex + 1 == subSystemIndex)
+                                {
+                                    coding = subSystem.VagCodingLong;
+                                    codingRequestType = XmlToolActivity.EcuInfo.CodingRequestType.LongUds;
+                                    dataFileName = subSystem.VagDataFileName;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    coding = new byte[2];
                     codingRequestType = _ecuInfo.VagCodingRequestType;
-                    codingMax = _ecuInfo.VagCodingMax;
+                    codingMax = 0xFFFF;
                     workshopNumber = _ecuInfo.VagWorkshopNumber;
                     importerNumber = _ecuInfo.VagImporterNumber;
                     equipmentNumber = _ecuInfo.VagEquipmentNumber;
                     dataFileName = _ecuInfo.VagDataFileName;
-                }
-                else
-                {
-                    if (_ecuInfo.SubSystems != null)
-                    {
-                        foreach (XmlToolActivity.EcuInfoSubSys subSystem in _ecuInfo.SubSystems)
-                        {
-                            if (subSystem.SubSysIndex + 1 == subSystemIndex)
-                            {
-                                coding = subSystem.VagCodingLong;
-                                codingRequestType = XmlToolActivity.EcuInfo.CodingRequestType.LongUds;
-                                dataFileName = subSystem.VagDataFileName;
-                                break;
-                            }
-                        }
-                    }
                 }
 
                 if (coding != null)
@@ -873,8 +906,10 @@ namespace BmwDeepObd
                 {
                     if (shortCoding)
                     {
-                        List<UdsFileReader.DataReader.DataInfo> dataInfoCodingList =
-                            udsReader.DataReader.ExtractDataType(_instanceData.CurrentDataFileName, UdsFileReader.DataReader.DataType.Coding);
+                        UdsFileReader.DataReader.DataType dataType = _codingMode == CodingMode.Standard ?
+                            UdsFileReader.DataReader.DataType.Coding : UdsFileReader.DataReader.DataType.Login;
+                        List <UdsFileReader.DataReader.DataInfo> dataInfoCodingList =
+                            udsReader.DataReader.ExtractDataType(_instanceData.CurrentDataFileName, dataType);
                         if (dataInfoCodingList != null)
                         {
                             foreach (UdsFileReader.DataReader.DataInfo dataInfo in dataInfoCodingList)
@@ -891,118 +926,123 @@ namespace BmwDeepObd
                         }
                     }
 
-                    List<UdsFileReader.DataReader.DataInfo> dataInfoLcList =
-                        udsReader.DataReader.ExtractDataType(_instanceData.CurrentDataFileName, UdsFileReader.DataReader.DataType.LongCoding);
-                    if (dataInfoLcList != null)
+                    if (_codingMode == CodingMode.Standard)
                     {
-                        string lastCommentLine = null;
-                        TableResultItem lastGroupResultItem = null;
-                        long lastGroupId = -1;
-                        StringBuilder sbComment = new StringBuilder();
-                        foreach (UdsFileReader.DataReader.DataInfo dataInfo in dataInfoLcList)
+                        List<UdsFileReader.DataReader.DataInfo> dataInfoLcList =
+                            udsReader.DataReader.ExtractDataType(_instanceData.CurrentDataFileName, UdsFileReader.DataReader.DataType.LongCoding);
+                        if (dataInfoLcList != null)
                         {
-                            if (dataInfo is UdsFileReader.DataReader.DataInfoLongCoding dataInfoLongCoding)
+                            string lastCommentLine = null;
+                            TableResultItem lastGroupResultItem = null;
+                            long lastGroupId = -1;
+                            StringBuilder sbComment = new StringBuilder();
+                            foreach (UdsFileReader.DataReader.DataInfo dataInfo in dataInfoLcList)
                             {
-                                if (!string.IsNullOrEmpty(dataInfoLongCoding.Text))
+                                if (dataInfo is UdsFileReader.DataReader.DataInfoLongCoding dataInfoLongCoding)
                                 {
-                                    bool textLine = dataInfoLongCoding.LineNumber != null;
-                                    if (textLine)
+                                    if (!string.IsNullOrEmpty(dataInfoLongCoding.Text))
                                     {
-                                        if (lastCommentLine == null || (lastCommentLine != dataInfoLongCoding.Text))
+                                        bool textLine = dataInfoLongCoding.LineNumber != null;
+                                        if (textLine)
                                         {
+                                            if (lastCommentLine == null || (lastCommentLine != dataInfoLongCoding.Text))
+                                            {
+                                                if (sbComment.Length > 0)
+                                                {
+                                                    sbComment.Append("\r\n");
+                                                }
+                                                sbComment.Append(dataInfoLongCoding.Text);
+                                            }
+                                            lastCommentLine = dataInfoLongCoding.Text;
+                                        }
+                                        else
+                                        {
+                                            lastCommentLine = null;
                                             if (sbComment.Length > 0)
                                             {
-                                                sbComment.Append("\r\n");
+                                                codingAssitantItems.Add(new TableResultItem(sbComment.ToString(), null, null, false, false));
+                                                sbComment.Clear();
                                             }
-                                            sbComment.Append(dataInfoLongCoding.Text);
-                                        }
-                                        lastCommentLine = dataInfoLongCoding.Text;
-                                    }
-                                    else
-                                    {
-                                        lastCommentLine = null;
-                                        if (sbComment.Length > 0)
-                                        {
-                                            codingAssitantItems.Add(new TableResultItem(sbComment.ToString(), null, null, false, false));
-                                            sbComment.Clear();
-                                        }
 
-                                        if (dataInfoLongCoding.Byte != null)
-                                        {
-                                            bool selected = false;
-                                            bool enabled = false;
-                                            long groupId = -1;
-                                            byte? dataByte = null;
-                                            StringBuilder sb = new StringBuilder();
-                                            if (dataInfoLongCoding.Byte.Value < _instanceData.CurrentCoding.Length)
+                                            if (dataInfoLongCoding.Byte != null)
                                             {
-                                                dataByte = _instanceData.CurrentCoding[dataInfoLongCoding.Byte.Value];
-                                            }
-                                            sb.Append(string.Format("{0}", dataInfoLongCoding.Byte.Value));
-                                            if (dataInfoLongCoding.Bit != null)
-                                            {
-                                                if (dataByte.HasValue)
+                                                bool selected = false;
+                                                bool enabled = false;
+                                                long groupId = -1;
+                                                byte? dataByte = null;
+                                                StringBuilder sb = new StringBuilder();
+                                                if (dataInfoLongCoding.Byte.Value < _instanceData.CurrentCoding.Length)
                                                 {
-                                                    selected = (dataByte.Value & (1 << dataInfoLongCoding.Bit)) != 0;
-                                                    enabled = true;
+                                                    dataByte = _instanceData.CurrentCoding[dataInfoLongCoding.Byte.Value];
                                                 }
-                                                sb.Append(string.Format("/{0}", dataInfoLongCoding.Bit.Value));
-                                            }
-                                            else if (dataInfoLongCoding.BitMin != null && dataInfoLongCoding.BitMax != null && dataInfoLongCoding.BitValue != null)
-                                            {
-                                                if (dataByte.HasValue)
+                                                sb.Append(string.Format("{0}", dataInfoLongCoding.Byte.Value));
+                                                if (dataInfoLongCoding.Bit != null)
                                                 {
-                                                    byte mask = 0x00;
-                                                    for (int i = dataInfoLongCoding.BitMin.Value; i <= dataInfoLongCoding.BitMax.Value; i++)
+                                                    if (dataByte.HasValue)
                                                     {
-                                                        mask |= (byte)(1 << i);
+                                                        selected = (dataByte.Value & (1 << dataInfoLongCoding.Bit)) != 0;
+                                                        enabled = true;
                                                     }
-                                                    selected = (dataByte.Value & mask) == dataInfoLongCoding.BitValue;
-                                                    enabled = !selected;
-                                                    groupId = (dataInfoLongCoding.Byte.Value << 16) + (dataInfoLongCoding.BitMin.Value << 8) + dataInfoLongCoding.BitMax.Value;
+                                                    sb.Append(string.Format("/{0}", dataInfoLongCoding.Bit.Value));
                                                 }
-                                                sb.Append(string.Format("/{0}-{1}={2:X02}",
-                                                    dataInfoLongCoding.BitMin.Value, dataInfoLongCoding.BitMax.Value, dataInfoLongCoding.BitValue.Value));
-                                            }
-
-                                            sb.Append(" ");
-                                            sb.Append(dataInfoLongCoding.Text);
-                                            TableResultItem resultItem = new TableResultItem(sb.ToString(), null, dataInfoLongCoding, true, selected)
-                                            {
-                                                CheckEnable = enabled
-                                            };
-                                            resultItem.CheckChangeEvent += item =>
-                                            {
-                                                UpdateCodingSelected(item.Tag as UdsFileReader.DataReader.DataInfoLongCoding, item.Selected);
-                                            };
-                                            codingAssitantItems.Add(resultItem);
-                                            if (groupId >= 0)
-                                            {
-                                                if (lastGroupResultItem != null && lastGroupId >= 0 && lastGroupId == groupId)
+                                                else if (dataInfoLongCoding.BitMin != null && dataInfoLongCoding.BitMax != null && dataInfoLongCoding.BitValue != null)
                                                 {
-                                                    lastGroupResultItem.SeparatorVisible = false;
+                                                    if (dataByte.HasValue)
+                                                    {
+                                                        byte mask = 0x00;
+                                                        for (int i = dataInfoLongCoding.BitMin.Value; i <= dataInfoLongCoding.BitMax.Value; i++)
+                                                        {
+                                                            mask |= (byte)(1 << i);
+                                                        }
+                                                        selected = (dataByte.Value & mask) == dataInfoLongCoding.BitValue;
+                                                        enabled = !selected;
+                                                        groupId = (dataInfoLongCoding.Byte.Value << 16) + (dataInfoLongCoding.BitMin.Value << 8) + dataInfoLongCoding.BitMax.Value;
+                                                    }
+                                                    sb.Append(string.Format("/{0}-{1}={2:X02}",
+                                                        dataInfoLongCoding.BitMin.Value, dataInfoLongCoding.BitMax.Value, dataInfoLongCoding.BitValue.Value));
                                                 }
-                                                lastGroupResultItem = resultItem;
-                                                lastGroupId = groupId;
-                                            }
-                                            else
-                                            {
-                                                lastGroupResultItem = null;
-                                                lastGroupId = -1;
+
+                                                sb.Append(" ");
+                                                sb.Append(dataInfoLongCoding.Text);
+                                                TableResultItem resultItem = new TableResultItem(sb.ToString(), null, dataInfoLongCoding, true, selected)
+                                                {
+                                                    CheckEnable = enabled
+                                                };
+                                                resultItem.CheckChangeEvent += item =>
+                                                {
+                                                    UpdateCodingSelected(item.Tag as UdsFileReader.DataReader.DataInfoLongCoding, item.Selected);
+                                                };
+                                                codingAssitantItems.Add(resultItem);
+                                                if (groupId >= 0)
+                                                {
+                                                    if (lastGroupResultItem != null && lastGroupId >= 0 && lastGroupId == groupId)
+                                                    {
+                                                        lastGroupResultItem.SeparatorVisible = false;
+                                                    }
+                                                    lastGroupResultItem = resultItem;
+                                                    lastGroupId = groupId;
+                                                }
+                                                else
+                                                {
+                                                    lastGroupResultItem = null;
+                                                    lastGroupId = -1;
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
-                        }
-                        if (sbComment.Length > 0)
-                        {
-                            codingAssitantItems.Add(new TableResultItem(sbComment.ToString(), null, null, false, false));
-                            sbComment.Clear();
+                            if (sbComment.Length > 0)
+                            {
+                                codingAssitantItems.Add(new TableResultItem(sbComment.ToString(), null, null, false, false));
+                                sbComment.Clear();
+                            }
                         }
                     }
                 }
             }
+
+            _layoutVagCodingSubsystem.Visibility = _codingMode == CodingMode.Standard ? ViewStates.Visible : ViewStates.Gone;
 
             _layoutVagCodingShort.Visibility = shortCoding ? ViewStates.Visible : ViewStates.Gone;
             _editTextVagCodingShort.Enabled = shortCoding;
@@ -1011,7 +1051,7 @@ namespace BmwDeepObd
             _textViewCodingComments.Text = sbCodingComment.ToString();
             _layoutVagCodingComments.Visibility = sbCodingComment.Length > 0 ? ViewStates.Visible : ViewStates.Gone;
 
-            _layoutVagCodingRepairShopCode.Visibility = _instanceData.SelectedSubsystem == 0 ? ViewStates.Visible : ViewStates.Gone;
+            _layoutVagCodingRepairShopCode.Visibility = (_codingMode == CodingMode.Standard && _instanceData.SelectedSubsystem == 0) ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagCodingWorkshop.Visibility = _instanceData.CurrentWorkshopNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagCodingImporterNumber.Visibility = _instanceData.CurrentImporterNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagCodingEquipmentNumber.Visibility = _instanceData.CurrentEquipmentNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
@@ -1242,55 +1282,71 @@ namespace BmwDeepObd
                         codingValue = BitConverter.ToUInt64(dataArray, 0);
                     }
 
-                    switch (_instanceData.CurrentCodingRequestType.Value)
+                    if (_codingMode != CodingMode.Standard)
                     {
-                        case XmlToolActivity.EcuInfo.CodingRequestType.ShortV1:
-                        case XmlToolActivity.EcuInfo.CodingRequestType.ShortV2:
-                            writeJobName = XmlToolActivity.JobWriteEcuCoding;
-                            writeJobArgs = repairShopCodeString + string.Format(CultureInfo.InvariantCulture, ";{0};{1}", codingValue, _ecuInfo.VagCodingTypeValue ?? 0x03);
-                            break;
+                        if (_ecuInfo.Sgbd.Contains("1281", StringComparison.OrdinalIgnoreCase))
+                        {
+                            writeJobName = XmlToolActivity.JobWriteLogin;
+                            writeJobArgs = string.Format(CultureInfo.InvariantCulture, "{0:00000};{1}", codingValue, 0);
+                        }
+                        else
+                        {
+                            writeJobName = XmlToolActivity.JobWriteEcuCoding2;
+                            writeJobArgs = repairShopCodeString + string.Format(CultureInfo.InvariantCulture, ";{0}", codingValue);
+                        }
+                    }
+                    else
+                    {
+                        switch (_instanceData.CurrentCodingRequestType.Value)
+                        {
+                            case XmlToolActivity.EcuInfo.CodingRequestType.ShortV1:
+                            case XmlToolActivity.EcuInfo.CodingRequestType.ShortV2:
+                                writeJobName = XmlToolActivity.JobWriteEcuCoding;
+                                writeJobArgs = repairShopCodeString + string.Format(CultureInfo.InvariantCulture, ";{0};{1}", codingValue, _ecuInfo.VagCodingTypeValue ?? 0x03);
+                                break;
 
-                        case XmlToolActivity.EcuInfo.CodingRequestType.LongUds:
-                            writeJobName = XmlToolActivity.JobWriteS2EUds;
-                            if (_instanceData.SelectedSubsystem == 0)
-                            {
-                                writeJobArgs = "0x0600;" + codingString;
-
-                                byte[] progDate = _ecuInfo.VagProgDate;
-                                if (progDate == null)
+                            case XmlToolActivity.EcuInfo.CodingRequestType.LongUds:
+                                writeJobName = XmlToolActivity.JobWriteS2EUds;
+                                if (_instanceData.SelectedSubsystem == 0)
                                 {
-                                    progDate = new byte[3];
-                                    DateTime dateTime = DateTime.Now;
-                                    progDate[0] = (byte)ActivityCommon.DecToBcd(dateTime.Year % 100);
-                                    progDate[1] = (byte)ActivityCommon.DecToBcd(dateTime.Month);
-                                    progDate[2] = (byte)ActivityCommon.DecToBcd(dateTime.Day);
-                                }
-                                writeJobProgDate = XmlToolActivity.JobWriteS2EUds;
-                                writeJobProgDateArgs = "0xF199;" + BitConverter.ToString(progDate).Replace("-", "");
+                                    writeJobArgs = "0x0600;" + codingString;
 
-                                writeJobRscName = XmlToolActivity.JobWriteS2EUds;
-                                writeJobRscArgs = "0xF198;" + repairShopCodeDataString;
-                            }
-                            else
-                            {
-                                if (_ecuInfo.SubSystems == null || _instanceData.SelectedSubsystem >= _ecuInfo.SubSystems.Count)
+                                    byte[] progDate = _ecuInfo.VagProgDate;
+                                    if (progDate == null)
+                                    {
+                                        progDate = new byte[3];
+                                        DateTime dateTime = DateTime.Now;
+                                        progDate[0] = (byte)ActivityCommon.DecToBcd(dateTime.Year % 100);
+                                        progDate[1] = (byte)ActivityCommon.DecToBcd(dateTime.Month);
+                                        progDate[2] = (byte)ActivityCommon.DecToBcd(dateTime.Day);
+                                    }
+                                    writeJobProgDate = XmlToolActivity.JobWriteS2EUds;
+                                    writeJobProgDateArgs = "0xF199;" + BitConverter.ToString(progDate).Replace("-", "");
+
+                                    writeJobRscName = XmlToolActivity.JobWriteS2EUds;
+                                    writeJobRscArgs = "0xF198;" + repairShopCodeDataString;
+                                }
+                                else
                                 {
-                                    break;
+                                    if (_ecuInfo.SubSystems == null || _instanceData.SelectedSubsystem >= _ecuInfo.SubSystems.Count)
+                                    {
+                                        break;
+                                    }
+                                    XmlToolActivity.EcuInfoSubSys subSystem = _ecuInfo.SubSystems[_instanceData.SelectedSubsystem];
+                                    writeJobArgs = string.Format(CultureInfo.InvariantCulture, "{0};{1}", 0x6000 + subSystem.SubSysAddr, codingString);
                                 }
-                                XmlToolActivity.EcuInfoSubSys subSystem = _ecuInfo.SubSystems[_instanceData.SelectedSubsystem];
-                                writeJobArgs = string.Format(CultureInfo.InvariantCulture, "{0};{1}", 0x6000 + subSystem.SubSysAddr, codingString);
-                            }
-                            break;
+                                break;
 
-                        case XmlToolActivity.EcuInfo.CodingRequestType.ReadLong:
-                            writeJobName = XmlToolActivity.JobWriteLongCoding;
-                            writeJobArgs = repairShopCodeString + ";" + codingString + string.Format(CultureInfo.InvariantCulture, ";{0}", _ecuInfo.VagCodingTypeValue ?? 0x10);
-                            break;
+                            case XmlToolActivity.EcuInfo.CodingRequestType.ReadLong:
+                                writeJobName = XmlToolActivity.JobWriteLongCoding;
+                                writeJobArgs = repairShopCodeString + ";" + codingString + string.Format(CultureInfo.InvariantCulture, ";{0}", _ecuInfo.VagCodingTypeValue ?? 0x10);
+                                break;
 
-                        case XmlToolActivity.EcuInfo.CodingRequestType.CodingS22:
-                            writeJobName = XmlToolActivity.JobWriteCoding;
-                            writeJobArgs = repairShopCodeString + ";" + codingString + string.Format(CultureInfo.InvariantCulture, ";{0}", _ecuInfo.VagCodingTypeValue ?? 0x10);
-                            break;
+                            case XmlToolActivity.EcuInfo.CodingRequestType.CodingS22:
+                                writeJobName = XmlToolActivity.JobWriteCoding;
+                                writeJobArgs = repairShopCodeString + ";" + codingString + string.Format(CultureInfo.InvariantCulture, ";{0}", _ecuInfo.VagCodingTypeValue ?? 0x10);
+                                break;
+                        }
                     }
 
                     if (!executeFailed && !string.IsNullOrEmpty(writeJobProgDate))
