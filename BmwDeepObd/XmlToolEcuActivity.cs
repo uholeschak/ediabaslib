@@ -183,6 +183,7 @@ namespace BmwDeepObd
         private TextView _textViewTestFormatOutput;
         private Button _buttonEdiabasTool;
         private Button _buttonCoding;
+        private Button _buttonLogin;
         private ActivityCommon _activityCommon;
         private XmlToolActivity.EcuInfo _ecuInfo;
         private JobInfo _selectedJob;
@@ -422,7 +423,15 @@ namespace BmwDeepObd
             _buttonCoding.Enabled = _ecuInfo.HasVagCoding();
             _buttonCoding.Click += (sender, args) =>
             {
-                StartVagCoding();
+                StartVagCoding(false);
+            };
+
+            _buttonLogin = FindViewById<Button>(Resource.Id.buttonLogin);
+            _buttonLogin.Visibility = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw ? ViewStates.Visible : ViewStates.Gone;
+            _buttonLogin.Enabled = _ecuInfo.HasVagLogin();
+            _buttonLogin.Click += (sender, args) =>
+            {
+                StartVagCoding(true);
             };
 
             _layoutJobConfig.Visibility = ViewStates.Gone;
@@ -1710,12 +1719,13 @@ namespace BmwDeepObd
             _jobThread.Start();
         }
 
-        private void StartVagCoding()
+        private void StartVagCoding(bool login)
         {
             StoreResults();
 
             VagCodingActivity.IntentEcuInfo = _ecuInfo;
             Intent serverIntent = new Intent(this, typeof(VagCodingActivity));
+            serverIntent.PutExtra(VagCodingActivity.ExtraCodingMode, (int)(login ? VagCodingActivity.CodingMode.Login : VagCodingActivity.CodingMode.Standard));
             serverIntent.PutExtra(VagCodingActivity.ExtraEcuName, _ecuInfo.Name);
             serverIntent.PutExtra(VagCodingActivity.ExtraEcuDir, _ecuDir);
             serverIntent.PutExtra(VagCodingActivity.ExtraTraceDir, _traceDir);

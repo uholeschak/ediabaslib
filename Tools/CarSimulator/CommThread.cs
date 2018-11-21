@@ -7281,11 +7281,18 @@ namespace CarSimulator
                                     found = true;
                                     if (_receiveData[4] == 0x9A && _receiveData[0] == 0x90)
                                     {
-                                        Debug.WriteLine("Parameter coding");
-                                        lastCoding = new byte[3];
-                                        Array.Copy(_receiveData, 16, lastCoding, 0, lastCoding.Length);
-                                        lastRepairShop = new byte[6];
-                                        Array.Copy(_receiveData, 5, lastRepairShop, 0, lastRepairShop.Length);
+                                        if ((_receiveData[16] & 0x80) == 0x00)
+                                        {
+                                            Debug.WriteLine("Parameter coding");
+                                            lastCoding = new byte[3];
+                                            Array.Copy(_receiveData, 16, lastCoding, 0, lastCoding.Length);
+                                            lastRepairShop = new byte[6];
+                                            Array.Copy(_receiveData, 5, lastRepairShop, 0, lastRepairShop.Length);
+                                        }
+                                        else
+                                        {
+                                            Debug.WriteLine("Parameter coding 2");
+                                        }
                                     }
                                     else
                                     {

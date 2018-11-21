@@ -142,6 +142,19 @@ namespace BmwDeepObd
                 return false;
             }
 
+            public bool HasVagLogin()
+            {
+                if (VagCodingShort != null)
+                {
+                    if (Sgbd.Contains("1281", StringComparison.OrdinalIgnoreCase) || Sgbd.Contains("2000", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
             public enum CodingRequestType
             {
                 ShortV1,
@@ -495,6 +508,8 @@ namespace BmwDeepObd
         public const string JobReadEcuVersion2 = @"Steuergeraeteversion_abfragen2";
         public const string JobReadVin = @"Fahrgestellnr_abfragen";
         public const string JobWriteEcuCoding = @"Steuergeraet_Codieren";
+        public const string JobWriteEcuCoding2 = @"Steuergeraet_Codieren2";
+        public const string JobWriteLogin = @"Login";
         public const string JobReadCoding = @"CodierungS22_lesen";
         public const string JobWriteCoding = @"CodierungS2E_schreiben";
         public const string JobReadLongCoding = @"LangeCodierung_lesen";
