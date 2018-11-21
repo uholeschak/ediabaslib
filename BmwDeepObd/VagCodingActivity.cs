@@ -1133,7 +1133,7 @@ namespace BmwDeepObd
             bool resultOk = false;
             accessDenied = false;
             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-            if (resultSets != null && resultSets.Count >= 2)
+            if (resultSets != null && resultSets.Count >= 1)
             {
                 Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
                 if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
@@ -1287,7 +1287,7 @@ namespace BmwDeepObd
                         if (_ecuInfo.Sgbd.Contains("1281", StringComparison.OrdinalIgnoreCase))
                         {
                             writeJobName = XmlToolActivity.JobWriteLogin;
-                            writeJobArgs = string.Format(CultureInfo.InvariantCulture, "{0:00000};{1}", codingValue, 0);
+                            writeJobArgs = string.Format(CultureInfo.InvariantCulture, "{0:00000};{1}", codingValue, 0x3);
                         }
                         else
                         {
@@ -1415,12 +1415,19 @@ namespace BmwDeepObd
                             .SetTitle(Resource.String.alert_title_info)
                             .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
                             .Show();
-                        alertDialog.DismissEvent += (sender, args) =>
+                        if (_codingMode == CodingMode.Standard)
                         {
-                            _ecuInfo.JobList = null;    // force update
-                            SetResult(Android.App.Result.Ok);
-                            Finish();
-                        };
+                            alertDialog.DismissEvent += (sender, args) =>
+                            {
+                                _ecuInfo.JobList = null;    // force update
+                                SetResult(Android.App.Result.Ok);
+                                Finish();
+                            };
+                        }
+                        else
+                        {
+                            UpdateCodingInfo();
+                        }
                     }
                 });
             });
