@@ -6789,6 +6789,15 @@ namespace CarSimulator
                             activeResponse = identityResponse;
                             telBlockIndex = 0;
                         }
+                        else if (_receiveData.Length >= 4 && _receiveData[0] >= 0x04 && _receiveData[2] == 0x2B)
+                        {   // login
+                            found = true;
+                            Debug.WriteLine("Login");
+                            byte[] dummyResponse = { 0x04, 0x00, 0x09, 0x0F };
+                            activeResponse = new ResponseEntry(_receiveData, dummyResponse, null);
+                            activeResponse.ResponseMultiList.Add(dummyResponse);
+                            telBlockIndex = 0;
+                        }
                         else if (_receiveData.Length >= 3 && _receiveData[0] == 0x03 && _receiveData[2] == 0x00)
                         {   // ECU identification
                             found = true;
