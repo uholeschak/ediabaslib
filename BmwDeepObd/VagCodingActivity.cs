@@ -1287,7 +1287,7 @@ namespace BmwDeepObd
                         if (_ecuInfo.Sgbd.Contains("1281", StringComparison.OrdinalIgnoreCase))
                         {
                             writeJobName = XmlToolActivity.JobWriteLogin;
-                            writeJobArgs = string.Format(CultureInfo.InvariantCulture, "{0:00000};{1}", codingValue, 0x3);
+                            writeJobArgs = string.Format(CultureInfo.InvariantCulture, "{0:00000};{1}", _ecuInfo.VagWorkshopNumber ?? 0, codingValue);
                         }
                         else
                         {
