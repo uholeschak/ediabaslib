@@ -430,10 +430,14 @@
   <!--Translate-->
   <string name="xml_tool_button_coding">Coding</string>
   <string name="xml_tool_button_login">Coding 2/Login</string>
+  <string name="xml_tool_button_authenticate">Authenticate</string>
   <string name="xml_tool_execute_test_job">Выполнение Job</string>
   <string name="xml_tool_read_test_job_failed">Не удалось выполнить Job</string>
   <string name="xml_tool_ecu_msg_no_selection">Вы не выбрали данные для отображения.\nВыберите сначала нужные задания и результаты из списка.\nВы все равно хотите отменить?</string>
   <string name="xml_tool_result_amount_limit">Количество результатов ограничено типом ECU.\nДанные не будут переданы, если вы выберете слишком много результатов.</string>
+  <!--Translate-->
+  <string name="xml_tool_ecu_msg_auth_input">Enter the authentication code (0-65535):</string>
+  <string name="xml_tool_ecu_msg_auth_value_invalid">The authentication code is invalid.</string>
 
   <!-- XML ECU Tool Options Menu -->
   <string name="menu_xml_ecu_tool_search">Поиск</string>
@@ -452,7 +456,7 @@
   <string name="vag_coding_button_write">Write coding</string>
   <string name="vag_coding_write_values_invalid">If the workshop code, importer number or equipment number is 0 the ECU may reject coding.\nDo you want to continue anyway?</string>
   <string name="vag_coding_write_coding_failed">Write coding failed</string>
-  <string name="vag_coding_write_coding_access_denied">Access denied, you have to login first</string>
+  <string name="vag_coding_write_coding_access_denied">Access denied, you have to authenticate first</string>
   <string name="vag_coding_write_coding_ok">Write coding successful</string>
 
   <!-- CAN Adapter Activity -->

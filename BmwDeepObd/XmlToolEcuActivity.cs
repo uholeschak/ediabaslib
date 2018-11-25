@@ -184,6 +184,7 @@ namespace BmwDeepObd
         private Button _buttonEdiabasTool;
         private Button _buttonCoding;
         private Button _buttonLogin;
+        private Button _buttonAuthenticate;
         private ActivityCommon _activityCommon;
         private XmlToolActivity.EcuInfo _ecuInfo;
         private JobInfo _selectedJob;
@@ -450,6 +451,13 @@ namespace BmwDeepObd
             _buttonLogin.Click += (sender, args) =>
             {
                 StartVagCoding(true);
+            };
+
+            _buttonAuthenticate = FindViewById<Button>(Resource.Id.buttonAuthenticate);
+            _buttonAuthenticate.Visibility = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw ? ViewStates.Visible : ViewStates.Gone;
+            _buttonAuthenticate.Click += (sender, args) =>
+            {
+                VagAuthenticate();
             };
 
             _layoutJobConfig.Visibility = ViewStates.Gone;
@@ -1752,6 +1760,26 @@ namespace BmwDeepObd
             serverIntent.PutExtra(VagCodingActivity.ExtraDeviceAddress, _deviceAddress);
             serverIntent.PutExtra(VagCodingActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestVagCoding);
+        }
+
+        private void VagAuthenticate()
+        {
+            NumberInputDialog numberInput = new NumberInputDialog(this);
+            numberInput.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+            {
+                string number = numberInput.Number;
+                if (!UInt64.TryParse(number, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 authValue) || authValue > 0xFFFF)
+                {
+                    _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_ecu_msg_auth_value_invalid), Resource.String.alert_title_error);
+                    return;
+                }
+            });
+            numberInput.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
+            {
+            });
+            numberInput.SetMessage(GetString(Resource.String.xml_tool_ecu_msg_auth_input));
+            numberInput.Number = "0";
+            numberInput.Show();
         }
 
         private class JobListAdapter : BaseAdapter<JobInfo>

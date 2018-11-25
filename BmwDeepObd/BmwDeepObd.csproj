@@ -166,6 +166,7 @@
     <Compile Include="AndroidUtility.cs" />
     <Compile Include="MtcServiceConnection.cs" />
     <Compile Include="MultiMap.cs" />
+    <Compile Include="NumberInputDialog.cs" />
     <Compile Include="PicBootloader.cs" />
     <Compile Include="ResultGridAdapter.cs" />
     <Compile Include="StringAdapter.cs" />
@@ -458,6 +459,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\vag_coding.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\number_input.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>

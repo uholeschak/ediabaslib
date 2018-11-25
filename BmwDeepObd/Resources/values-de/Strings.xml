@@ -430,12 +430,15 @@
   <string name="xml_tool_button_ediabas_tool">Ediabas Tool</string>
   <string name="xml_tool_button_coding">Kodieren</string>
   <string name="xml_tool_button_login">Kodieren 2/Login</string>
+  <string name="xml_tool_button_authenticate">Authentifizieren</string>
   <string name="xml_tool_execute_test_job">Job wird ausgeführt</string>
   <string name="xml_tool_read_test_job_failed">Ausführen des Jobs fehlgeschlagen</string>
   <string name="xml_tool_ecu_msg_no_selection">Sie haben keine Daten für die Anzeige ausgewählt.\nWählen Sie hierfür zunächst die gewünschen Jobs und Ergebnisse aus der Liste.\nWollen Sie trotzdem abbrechen?</string>
   <string name="xml_tool_result_amount_limit">Abhängig vom ECU-Typ ist die Anzahl der Ergebnisse begrenzt.\nWenn sie zu viele Ergebnisse wählen, werden keine Daten übertragen.</string>
+  <string name="xml_tool_ecu_msg_auth_input">Geben Sie den Authentifizierungs-Code ein (0-65535):</string>
+  <string name="xml_tool_ecu_msg_auth_value_invalid">Der Authentifizierungs-Code ist ungültig.</string>
 
-  <!-- XML ECU Tool Options Menu -->
+    <!-- XML ECU Tool Options Menu -->
   <string name="menu_xml_ecu_tool_search">Suchen</string>
 
   <!-- Coding Activity -->
@@ -451,7 +454,7 @@
   <string name="vag_coding_button_write">Kodierung schreiben</string>
   <string name="vag_coding_write_values_invalid">Wenn die Betriebsnummer, Importeursnummer oder Gerätenummer 0 sind kann es sein, dass die ECU die Kodierung ablehnt.\nWollen Sie trotzdem fortfahren?</string>
   <string name="vag_coding_write_coding_failed">Kodierung schreiben fehlgeschlagen</string>
-  <string name="vag_coding_write_coding_access_denied">Zugriff verweigert, Sie müssen sich zuerst einloggen</string>
+  <string name="vag_coding_write_coding_access_denied">Zugriff verweigert, Sie müssen sich zuerst authentifizieren</string>
   <string name="vag_coding_write_coding_ok">Kodierung schreiben erfolgreich</string>
 
     <!-- CAN Adapter Activity -->
