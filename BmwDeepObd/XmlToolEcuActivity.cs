@@ -429,7 +429,7 @@ namespace BmwDeepObd
             bool loginEnabled = false;
             if (_ecuInfo.HasVagLogin())
             {
-                if (_ecuInfo.Sgbd.Contains("1281", StringComparison.OrdinalIgnoreCase))
+                if (XmlToolActivity.Is1281Ecu(_ecuInfo))
                 {
                     loginEnabled = true;
                 }
