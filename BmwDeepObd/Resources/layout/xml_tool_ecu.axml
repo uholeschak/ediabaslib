@@ -331,11 +331,12 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left|center_vertical">
+                android:gravity="left">
                 <Button
                     android:id="@+id/buttonEdiabasTool"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="@string/xml_tool_button_ediabas_tool" />
             </LinearLayout>
             <LinearLayout
@@ -343,21 +344,24 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left|center_vertical">
+                android:layout_gravity="left">
                 <Button
                     android:id="@+id/buttonCoding"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="@string/xml_tool_button_coding" />
                 <Button
                     android:id="@+id/buttonLogin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="@string/xml_tool_button_login" />
                 <Button
                     android:id="@+id/buttonAuthenticate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="@string/xml_tool_button_authenticate" />
             </LinearLayout>
         </LinearLayout>
