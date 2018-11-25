@@ -4314,7 +4314,12 @@ namespace BmwDeepObd
 
         public static bool IsUdsEcu(EcuInfo ecuInfo)
         {
-            return ecuInfo.Sgbd.Contains("7000");
+            return ecuInfo.Sgbd.Contains("7000", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool Is1281Ecu(EcuInfo ecuInfo)
+        {
+            return ecuInfo.Sgbd.Contains("1281", StringComparison.OrdinalIgnoreCase);
         }
 
         public static string GetReadCommand(EcuInfo ecuInfo)
@@ -4323,7 +4328,7 @@ namespace BmwDeepObd
             {
                 return string.Empty;
             }
-            return ecuInfo.Sgbd.Contains("1281") ? "WertEinmalLesen" : "LESEN";
+            return Is1281Ecu(ecuInfo) ? "WertEinmalLesen" : "LESEN";
         }
 
         private void SelectMwTabFromListInfo(List<string> fileNames, MwTabFileSelected handler)
