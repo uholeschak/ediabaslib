@@ -426,9 +426,27 @@ namespace BmwDeepObd
                 StartVagCoding(false);
             };
 
+            bool loginEnabled = false;
+            if (_ecuInfo.HasVagLogin())
+            {
+                if (_ecuInfo.Sgbd.Contains("1281", StringComparison.OrdinalIgnoreCase))
+                {
+                    loginEnabled = true;
+                }
+                else
+                {
+                    UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_ecuInfo.VagDataFileName);
+                    List<UdsFileReader.DataReader.DataInfo> dataInfoCodingList = udsReader.DataReader.ExtractDataType(_ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Login);
+                    if (dataInfoCodingList?.Count > 0)
+                    {
+                        loginEnabled = true;
+                    }
+                }
+            }
+
             _buttonLogin = FindViewById<Button>(Resource.Id.buttonLogin);
             _buttonLogin.Visibility = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw ? ViewStates.Visible : ViewStates.Gone;
-            _buttonLogin.Enabled = _ecuInfo.HasVagLogin();
+            _buttonLogin.Enabled = loginEnabled;
             _buttonLogin.Click += (sender, args) =>
             {
                 StartVagCoding(true);

@@ -144,12 +144,9 @@ namespace BmwDeepObd
 
             public bool HasVagLogin()
             {
-                if (VagCodingShort != null)
+                if (!IsUdsEcu(this))
                 {
-                    if (Sgbd.Contains("1281", StringComparison.OrdinalIgnoreCase) || Sgbd.Contains("2000", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
 
                 return false;
