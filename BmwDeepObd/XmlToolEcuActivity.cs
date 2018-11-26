@@ -1794,6 +1794,38 @@ namespace BmwDeepObd
                     {
                         executeFailed = true;
                     }
+
+                    if (!executeFailed)
+                    {
+                        UInt64 key = (UInt64)(seed ?? 0) ^ authValue;
+                        _ediabas.ArgString = string.Format(CultureInfo.InvariantCulture, "{0}", key);
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob("KEY_SENDEN");
+
+                        bool resultOk = false;
+                        resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 1)
+                        {
+                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
+                            if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    string result = (string)resultData.OpData;
+                                    if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        resultOk = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!resultOk)
+                        {
+                            executeFailed = true;
+                        }
+                    }
                 }
                 catch (Exception)
                 {
