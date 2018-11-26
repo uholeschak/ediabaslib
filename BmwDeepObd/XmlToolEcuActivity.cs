@@ -1745,6 +1745,83 @@ namespace BmwDeepObd
             _jobThread.Start();
         }
 
+        private void ExecuteVagAuthenticate(UInt64 authValue)
+        {
+            EdiabasOpen();
+
+            CustomProgressDialog progress = new CustomProgressDialog(this);
+            progress.SetMessage(GetString(Resource.String.xml_tool_execute_auth_job));
+            progress.ButtonAbort.Visibility = ViewStates.Gone;
+            progress.Show();
+
+            bool executeFailed = false;
+            _jobThread = new Thread(() =>
+            {
+                try
+                {
+                    //bool udsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
+                    ActivityCommon.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
+
+                    _ediabas.ArgString = string.Empty;
+                    _ediabas.ArgBinaryStd = null;
+                    _ediabas.ResultsRequests = string.Empty;
+                    _ediabas.ExecuteJob("SEED_ANFORDERN");
+
+                    Int64? seed = null;
+                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        int dictIndex = 0;
+                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                        {
+                            if (dictIndex == 0)
+                            {
+                                dictIndex++;
+                                continue;
+                            }
+                            if (resultDict.TryGetValue("SEED", out EdiabasNet.ResultData resultData))
+                            {
+                                if (resultData.OpData is Int64)
+                                {
+                                    seed = (Int64)resultData.OpData;
+                                }
+                            }
+                            dictIndex++;
+                        }
+                    }
+
+                    if (seed == null)
+                    {
+                        executeFailed = true;
+                    }
+                }
+                catch (Exception)
+                {
+                    executeFailed = true;
+                }
+
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    progress.Dismiss();
+                    progress.Dispose();
+
+                    if (executeFailed)
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_auth_job_failed), Resource.String.alert_title_error);
+                    }
+                    else
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_auth_job_ok), Resource.String.alert_title_info);
+                    }
+                });
+            });
+            _jobThread.Start();
+        }
+
         private void StartVagCoding(bool login)
         {
             StoreResults();
@@ -1773,6 +1850,8 @@ namespace BmwDeepObd
                     _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_ecu_msg_auth_value_invalid), Resource.String.alert_title_error);
                     return;
                 }
+
+                ExecuteVagAuthenticate(authValue);
             });
             numberInput.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
             {
