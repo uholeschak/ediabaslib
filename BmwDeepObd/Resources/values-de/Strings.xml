@@ -437,8 +437,11 @@
   <string name="xml_tool_result_amount_limit">Abhängig vom ECU-Typ ist die Anzahl der Ergebnisse begrenzt.\nWenn sie zu viele Ergebnisse wählen, werden keine Daten übertragen.</string>
   <string name="xml_tool_ecu_msg_auth_input">Geben Sie den Authentifizierungs-Code ein (0-65535):</string>
   <string name="xml_tool_ecu_msg_auth_value_invalid">Der Authentifizierungs-Code ist ungültig.</string>
+  <string name="xml_tool_execute_auth_job">Authentifizieren</string>
+  <string name="xml_tool_auth_job_ok">Authentifizierung erfolgreich</string>
+  <string name="xml_tool_auth_job_failed">Authentifizierung fehlgeschlagen</string>
 
-    <!-- XML ECU Tool Options Menu -->
+  <!-- XML ECU Tool Options Menu -->
   <string name="menu_xml_ecu_tool_search">Suchen</string>
 
   <!-- Coding Activity -->
