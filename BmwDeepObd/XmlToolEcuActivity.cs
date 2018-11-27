@@ -1764,14 +1764,15 @@ namespace BmwDeepObd
 
                     if (udsEcu)
                     {
-                        _ediabas.ArgString = "0xF19E";  // asam data
+                        // send dummy request to open the connection first
+                        _ediabas.ArgString = "0xF19E";  // ASAM data
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.ExecuteJob(XmlToolActivity.JobReadS22Uds);
 
                         int dataOffset = XmlToolActivity.VagUdsRawDataOffset;
                         byte[] seed = null;
-                        byte[] seedRequest = {0x27, 0x03};
+                        byte[] seedRequest = {0x27, 0x01};
                         _ediabas.EdInterfaceClass.TransmitData(seedRequest, out byte[] seedResponse);
                         if (seedResponse == null || seedResponse.Length < dataOffset + 6 || seedResponse[dataOffset + 0] != 0x67)
                         {
@@ -1781,6 +1782,26 @@ namespace BmwDeepObd
                         {
                             seed = new byte[4];
                             Array.Copy(seedResponse, dataOffset + 2, seed, 0, seed.Length);
+                        }
+
+                        if (!executeFailed)
+                        {
+                            byte[] authData = BitConverter.GetBytes((UInt32)authValue);
+                            if (BitConverter.IsLittleEndian)
+                            {
+                                Array.Reverse(authData);
+                            }
+                            byte[] keyRequest = { 0x27, 0x02, 0x00, 0x00, 0x00, 0x00 };
+                            for (int i = 0; i < seed?.Length; i++)
+                            {
+                                keyRequest[i + 2] = (byte) (seed[i] ^ authData[i]);
+                            }
+
+                            _ediabas.EdInterfaceClass.TransmitData(keyRequest, out byte[] keyResponse);
+                            if (keyResponse == null || keyResponse.Length < dataOffset + 2 || keyResponse[dataOffset + 0] != 0x67)
+                            {
+                                executeFailed = true;
+                            }
                         }
                     }
                     else
