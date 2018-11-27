@@ -494,6 +494,7 @@ namespace BmwDeepObd
 
         private readonly Regex _vinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
 
+        public const int VagUdsRawDataOffset = 18;
         public const string EmptyMwTab = "-";
         public const string VagUdsCommonSgbd = @"mot7000";
         public const string JobReadMwBlock = @"Messwerteblock_lesen";

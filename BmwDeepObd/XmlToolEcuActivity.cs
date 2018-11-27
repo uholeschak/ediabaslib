@@ -1759,71 +1759,95 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    //bool udsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
+                    bool udsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
                     ActivityCommon.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
 
-                    _ediabas.ArgString = string.Empty;
-                    _ediabas.ArgBinaryStd = null;
-                    _ediabas.ResultsRequests = string.Empty;
-                    _ediabas.ExecuteJob("SEED_ANFORDERN");
-
-                    Int64? seed = null;
-                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                    if (resultSets != null && resultSets.Count >= 2)
+                    if (udsEcu)
                     {
-                        int dictIndex = 0;
-                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
-                        {
-                            if (dictIndex == 0)
-                            {
-                                dictIndex++;
-                                continue;
-                            }
-                            if (resultDict.TryGetValue("SEED", out EdiabasNet.ResultData resultData))
-                            {
-                                if (resultData.OpData is Int64)
-                                {
-                                    seed = (Int64)resultData.OpData;
-                                }
-                            }
-                            dictIndex++;
-                        }
-                    }
-
-                    if (seed == null)
-                    {
-                        executeFailed = true;
-                    }
-
-                    if (!executeFailed)
-                    {
-                        UInt64 key = (UInt64)(seed ?? 0) ^ authValue;
-                        _ediabas.ArgString = string.Format(CultureInfo.InvariantCulture, "{0}", key);
+                        _ediabas.ArgString = "0xF19E";  // asam data
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob("KEY_SENDEN");
+                        _ediabas.ExecuteJob(XmlToolActivity.JobReadS22Uds);
 
-                        bool resultOk = false;
-                        resultSets = _ediabas.ResultSets;
-                        if (resultSets != null && resultSets.Count >= 1)
+                        int dataOffset = XmlToolActivity.VagUdsRawDataOffset;
+                        byte[] seed = null;
+                        byte[] seedRequest = {0x27, 0x03};
+                        _ediabas.EdInterfaceClass.TransmitData(seedRequest, out byte[] seedResponse);
+                        if (seedResponse == null || seedResponse.Length < dataOffset + 6 || seedResponse[dataOffset + 0] != 0x67)
                         {
-                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
-                            if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
+                            executeFailed = true;
+                        }
+                        else
+                        {
+                            seed = new byte[4];
+                            Array.Copy(seedResponse, dataOffset + 2, seed, 0, seed.Length);
+                        }
+                    }
+                    else
+                    {
+                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob("SEED_ANFORDERN");
+
+                        Int64? seed = null;
+                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            int dictIndex = 0;
+                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
                             {
-                                if (resultData.OpData is string)
+                                if (dictIndex == 0)
                                 {
-                                    string result = (string)resultData.OpData;
-                                    if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                    dictIndex++;
+                                    continue;
+                                }
+                                if (resultDict.TryGetValue("SEED", out EdiabasNet.ResultData resultData))
+                                {
+                                    if (resultData.OpData is Int64)
                                     {
-                                        resultOk = true;
+                                        seed = (Int64)resultData.OpData;
+                                    }
+                                }
+                                dictIndex++;
+                            }
+                        }
+
+                        if (seed == null)
+                        {
+                            executeFailed = true;
+                        }
+
+                        if (!executeFailed)
+                        {
+                            UInt64 key = (UInt64)(seed ?? 0) ^ authValue;
+                            _ediabas.ArgString = string.Format(CultureInfo.InvariantCulture, "{0}", key);
+                            _ediabas.ArgBinaryStd = null;
+                            _ediabas.ResultsRequests = string.Empty;
+                            _ediabas.ExecuteJob("KEY_SENDEN");
+
+                            bool resultOk = false;
+                            resultSets = _ediabas.ResultSets;
+                            if (resultSets != null && resultSets.Count >= 1)
+                            {
+                                Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
+                                if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        string result = (string)resultData.OpData;
+                                        if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            resultOk = true;
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        if (!resultOk)
-                        {
-                            executeFailed = true;
+                            if (!resultOk)
+                            {
+                                executeFailed = true;
+                            }
                         }
                     }
                 }
