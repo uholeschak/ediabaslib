@@ -451,8 +451,8 @@
   <string name="vag_coding_importer_number_title">Importer number (dec): 0-999</string>
   <string name="vag_coding_equipment_number_title">Equipment number (dec): 0-999999</string>
   <string name="vag_coding_assistant_title">Coding assistant</string>
-  <string name="vag_coding_button_write">Execute</string>
-  <string name="vag_coding_processing">Processing</string>
+  <string name="vag_coding_execute_title">Execute operation</string>
+  <string name="vag_coding_button_execute">Execute</string>
   <string name="vag_coding_write_values_invalid">If the workshop code, importer number or equipment number is 0 the ECU may reject coding.\nDo you want to continue anyway?</string>
   <string name="vag_coding_write_coding_failed">Write coding failed</string>
   <string name="vag_coding_write_coding_access_denied">Access denied, you have to authenticate first</string>

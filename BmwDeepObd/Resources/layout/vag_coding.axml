@@ -150,15 +150,21 @@
         </LinearLayout>
         <LinearLayout
             android:id="@+id/layoutCodingButtons"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="left">
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/textViewVagCodingExecuteTitle"
+                android:text="@+string/vag_coding_execute_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#666"
+                android:textColor="#fff" />
             <Button
-                android:id="@+id/buttonCodingWrite"
+                android:id="@+id/buttonCodingExecute"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/vag_coding_button_write" />
+                android:text="@string/vag_coding_button_execute" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/layoutVagCodingAssitant"
