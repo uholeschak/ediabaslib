@@ -66,19 +66,25 @@
                     android:maxLines="10" />
             </LinearLayout>
         </LinearLayout>
-        <TextView
-            android:id="@+id/textViewVagCodingRawTitle"
-            android:text="@+string/vag_coding_raw_title"
+        <LinearLayout
+            android:id="@+id/layoutVagCodingRaw"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#666"
-            android:textColor="#fff" />
-        <EditText
-            android:id="@+id/editTextVagCodingRaw"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text|textNoSuggestions"
-            android:maxLines="1" />
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/textViewVagCodingRawTitle"
+                android:text="@+string/vag_coding_raw_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#666"
+                android:textColor="#fff" />
+            <EditText
+                android:id="@+id/editTextVagCodingRaw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text|textNoSuggestions"
+                android:maxLines="1" />
+        </LinearLayout>
         <LinearLayout
             android:id="@+id/layoutVagCodingRepairShopCode"
             android:orientation="vertical"
