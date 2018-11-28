@@ -424,7 +424,7 @@ namespace BmwDeepObd
             _buttonCoding.Enabled = _ecuInfo.HasVagCoding();
             _buttonCoding.Click += (sender, args) =>
             {
-                StartVagCoding(false);
+                StartVagCoding(VagCodingActivity.CodingMode.Standard);
             };
 
             bool loginEnabled = false;
@@ -450,7 +450,7 @@ namespace BmwDeepObd
             _buttonLogin.Enabled = loginEnabled;
             _buttonLogin.Click += (sender, args) =>
             {
-                StartVagCoding(true);
+                StartVagCoding(VagCodingActivity.CodingMode.Login);
             };
 
             bool authEnabled = !XmlToolActivity.Is1281Ecu(_ecuInfo);
@@ -459,7 +459,7 @@ namespace BmwDeepObd
             _buttonAuthenticate.Enabled = authEnabled;
             _buttonAuthenticate.Click += (sender, args) =>
             {
-                VagAuthenticate();
+                StartVagCoding(VagCodingActivity.CodingMode.Authenticate);
             };
 
             _layoutJobConfig.Visibility = ViewStates.Gone;
@@ -1747,167 +1747,13 @@ namespace BmwDeepObd
             _jobThread.Start();
         }
 
-        private void ExecuteVagAuthenticate(UInt64 authValue)
-        {
-            EdiabasOpen();
-
-            CustomProgressDialog progress = new CustomProgressDialog(this);
-            progress.SetMessage(GetString(Resource.String.xml_tool_execute_auth_job));
-            progress.ButtonAbort.Visibility = ViewStates.Gone;
-            progress.Show();
-
-            bool executeFailed = false;
-            _jobThread = new Thread(() =>
-            {
-                try
-                {
-                    bool udsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
-                    ActivityCommon.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
-
-                    if (udsEcu)
-                    {
-                        // send dummy request to open the connection first
-                        _ediabas.ArgString = "0xF19E";  // ASAM data
-                        _ediabas.ArgBinaryStd = null;
-                        _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob(XmlToolActivity.JobReadS22Uds);
-
-                        int dataOffset = XmlToolActivity.VagUdsRawDataOffset;
-                        byte[] seed = null;
-                        byte[] seedRequest = {0x27, 0x03};
-                        _ediabas.EdInterfaceClass.TransmitData(seedRequest, out byte[] seedResponse);
-                        if (seedResponse == null || seedResponse.Length < dataOffset + 6 || seedResponse[dataOffset + 0] != 0x67)
-                        {
-                            executeFailed = true;
-                        }
-                        else
-                        {
-                            seed = new byte[4];
-                            Array.Copy(seedResponse, dataOffset + 2, seed, 0, seed.Length);
-                        }
-
-                        if (!executeFailed)
-                        {
-                            byte[] authData = BitConverter.GetBytes((UInt32)authValue);
-                            if (BitConverter.IsLittleEndian)
-                            {
-                                Array.Reverse(authData);
-                            }
-                            byte[] keyRequest = { 0x27, 0x04, 0x00, 0x00, 0x00, 0x00 };
-                            for (int i = 0; i < seed?.Length; i++)
-                            {
-                                keyRequest[i + 2] = (byte) (seed[i] ^ authData[i]);
-                            }
-
-                            _ediabas.EdInterfaceClass.TransmitData(keyRequest, out byte[] keyResponse);
-                            if (keyResponse == null || keyResponse.Length < dataOffset + 2 || keyResponse[dataOffset + 0] != 0x67)
-                            {
-                                executeFailed = true;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        _ediabas.ArgString = string.Empty;
-                        _ediabas.ArgBinaryStd = null;
-                        _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob("SEED_ANFORDERN");
-
-                        Int64? seed = null;
-                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                        if (resultSets != null && resultSets.Count >= 2)
-                        {
-                            int dictIndex = 0;
-                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
-                            {
-                                if (dictIndex == 0)
-                                {
-                                    dictIndex++;
-                                    continue;
-                                }
-                                if (resultDict.TryGetValue("SEED", out EdiabasNet.ResultData resultData))
-                                {
-                                    if (resultData.OpData is Int64)
-                                    {
-                                        seed = (Int64)resultData.OpData;
-                                    }
-                                }
-                                dictIndex++;
-                            }
-                        }
-
-                        if (seed == null)
-                        {
-                            executeFailed = true;
-                        }
-
-                        if (!executeFailed)
-                        {
-                            UInt64 key = (UInt64)(seed ?? 0) ^ authValue;
-                            _ediabas.ArgString = string.Format(CultureInfo.InvariantCulture, "{0}", key);
-                            _ediabas.ArgBinaryStd = null;
-                            _ediabas.ResultsRequests = string.Empty;
-                            _ediabas.ExecuteJob("KEY_SENDEN");
-
-                            bool resultOk = false;
-                            resultSets = _ediabas.ResultSets;
-                            if (resultSets != null && resultSets.Count >= 1)
-                            {
-                                Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
-                                if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
-                                {
-                                    if (resultData.OpData is string)
-                                    {
-                                        string result = (string)resultData.OpData;
-                                        if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
-                                        {
-                                            resultOk = true;
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (!resultOk)
-                            {
-                                executeFailed = true;
-                            }
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                    executeFailed = true;
-                }
-
-                RunOnUiThread(() =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-                    progress.Dismiss();
-                    progress.Dispose();
-
-                    if (executeFailed)
-                    {
-                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_auth_job_failed), Resource.String.alert_title_error);
-                    }
-                    else
-                    {
-                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_auth_job_ok), Resource.String.alert_title_info);
-                    }
-                });
-            });
-            _jobThread.Start();
-        }
-
-        private void StartVagCoding(bool login)
+        private void StartVagCoding(VagCodingActivity.CodingMode codingMode)
         {
             StoreResults();
 
             VagCodingActivity.IntentEcuInfo = _ecuInfo;
             Intent serverIntent = new Intent(this, typeof(VagCodingActivity));
-            serverIntent.PutExtra(VagCodingActivity.ExtraCodingMode, (int)(login ? VagCodingActivity.CodingMode.Login : VagCodingActivity.CodingMode.Standard));
+            serverIntent.PutExtra(VagCodingActivity.ExtraCodingMode, (int)codingMode);
             serverIntent.PutExtra(VagCodingActivity.ExtraEcuName, _ecuInfo.Name);
             serverIntent.PutExtra(VagCodingActivity.ExtraEcuDir, _ecuDir);
             serverIntent.PutExtra(VagCodingActivity.ExtraTraceDir, _traceDir);
@@ -1916,28 +1762,6 @@ namespace BmwDeepObd
             serverIntent.PutExtra(VagCodingActivity.ExtraDeviceAddress, _deviceAddress);
             serverIntent.PutExtra(VagCodingActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestVagCoding);
-        }
-
-        private void VagAuthenticate()
-        {
-            NumberInputDialog numberInput = new NumberInputDialog(this);
-            numberInput.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
-            {
-                string number = numberInput.Number;
-                if (!UInt64.TryParse(number, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 authValue) || authValue > 999999)
-                {
-                    _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_ecu_msg_auth_value_invalid), Resource.String.alert_title_error);
-                    return;
-                }
-
-                ExecuteVagAuthenticate(authValue);
-            });
-            numberInput.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
-            {
-            });
-            numberInput.SetMessage(GetString(Resource.String.xml_tool_ecu_msg_auth_input));
-            numberInput.Number = "0";
-            numberInput.Show();
         }
 
         private class JobListAdapter : BaseAdapter<JobInfo>
