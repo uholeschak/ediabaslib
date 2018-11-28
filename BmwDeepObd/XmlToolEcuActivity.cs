@@ -453,8 +453,10 @@ namespace BmwDeepObd
                 StartVagCoding(true);
             };
 
+            bool authEnabled = !XmlToolActivity.Is1281Ecu(_ecuInfo);
             _buttonAuthenticate = FindViewById<Button>(Resource.Id.buttonAuthenticate);
             _buttonAuthenticate.Visibility = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw ? ViewStates.Visible : ViewStates.Gone;
+            _buttonAuthenticate.Enabled = authEnabled;
             _buttonAuthenticate.Click += (sender, args) =>
             {
                 VagAuthenticate();
@@ -1772,7 +1774,7 @@ namespace BmwDeepObd
 
                         int dataOffset = XmlToolActivity.VagUdsRawDataOffset;
                         byte[] seed = null;
-                        byte[] seedRequest = {0x27, 0x01};
+                        byte[] seedRequest = {0x27, 0x03};
                         _ediabas.EdInterfaceClass.TransmitData(seedRequest, out byte[] seedResponse);
                         if (seedResponse == null || seedResponse.Length < dataOffset + 6 || seedResponse[dataOffset + 0] != 0x67)
                         {
@@ -1791,7 +1793,7 @@ namespace BmwDeepObd
                             {
                                 Array.Reverse(authData);
                             }
-                            byte[] keyRequest = { 0x27, 0x02, 0x00, 0x00, 0x00, 0x00 };
+                            byte[] keyRequest = { 0x27, 0x04, 0x00, 0x00, 0x00, 0x00 };
                             for (int i = 0; i < seed?.Length; i++)
                             {
                                 keyRequest[i + 2] = (byte) (seed[i] ^ authData[i]);
@@ -1922,7 +1924,7 @@ namespace BmwDeepObd
             numberInput.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
             {
                 string number = numberInput.Number;
-                if (!UInt64.TryParse(number, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 authValue) || authValue > 0xFFFF)
+                if (!UInt64.TryParse(number, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 authValue) || authValue > 999999)
                 {
                     _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_ecu_msg_auth_value_invalid), Resource.String.alert_title_error);
                     return;
