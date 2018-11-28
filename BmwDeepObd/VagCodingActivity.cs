@@ -82,7 +82,9 @@ namespace BmwDeepObd
         private LinearLayout _layoutVagCodingEquipmentNumber;
         private TextView _textViewVagEquipmentNumberTitle;
         private EditText _editTextVagEquipmentNumber;
-        private Button _buttonCodingWrite;
+        private LinearLayout _layoutCodingButtons;
+        private TextView _textViewVagCodingExecuteTitle;
+        private Button _buttonCodingExecute;
         private LinearLayout _layoutVagCodingAssitant;
         private ResultListAdapter _layoutVagCodingAssitantAdapter;
         private ListView _listViewVagCodingAssistant;
@@ -219,11 +221,17 @@ namespace BmwDeepObd
             _editTextVagEquipmentNumber = FindViewById<EditText>(Resource.Id.editTextVagEquipmentNumber);
             _editTextVagEquipmentNumber.EditorAction += CodingEditorAction;
 
-            _buttonCodingWrite = FindViewById<Button>(Resource.Id.buttonCodingWrite);
-            _buttonCodingWrite.SetOnTouchListener(this);
-            _buttonCodingWrite.Click += (sender, args) =>
+            _layoutCodingButtons = FindViewById<LinearLayout>(Resource.Id.layoutCodingButtons);
+            _layoutCodingButtons.SetOnTouchListener(this);
+
+            _textViewVagCodingExecuteTitle = FindViewById<TextView>(Resource.Id.textViewVagCodingExecuteTitle);
+            _textViewVagCodingExecuteTitle.SetOnTouchListener(this);
+
+            _buttonCodingExecute = FindViewById<Button>(Resource.Id.buttonCodingExecute);
+            _buttonCodingExecute.SetOnTouchListener(this);
+            _buttonCodingExecute.Click += (sender, args) =>
             {
-                WriteCodingRequest();
+                ExecuteCodingRequest();
             };
 
             _layoutVagCodingAssitant = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingAssitant);
@@ -716,6 +724,10 @@ namespace BmwDeepObd
                                     Array.Copy(codingData, _instanceData.CurrentCoding, _instanceData.CurrentCoding.Length);
                                 }
                             }
+                            else
+                            {
+                                dataChanged = true;
+                            }
                         }
                     }
                     catch (Exception)
@@ -740,6 +752,10 @@ namespace BmwDeepObd
                                         dataChanged = true;
                                     }
                                 }
+                                else
+                                {
+                                    dataChanged = true;
+                                }
                             }
                         }
 
@@ -756,6 +772,10 @@ namespace BmwDeepObd
                                         dataChanged = true;
                                     }
                                 }
+                                else
+                                {
+                                    dataChanged = true;
+                                }
                             }
                         }
 
@@ -771,6 +791,10 @@ namespace BmwDeepObd
                                         dataChanged = true;
                                     }
                                 }
+                                else
+                                {
+                                    dataChanged = true;
+                                }
                             }
                         }
                     }
@@ -778,7 +802,6 @@ namespace BmwDeepObd
                     {
                         // ignored
                     }
-
                 }
 
                 if (dataChanged)
@@ -871,7 +894,7 @@ namespace BmwDeepObd
             _editTextVagWorkshopNumber.Text = codingTextWorkshop;
             _editTextVagImporterNumber.Text = codingTextImporter;
             _editTextVagEquipmentNumber.Text = codingTextEquipment;
-            _buttonCodingWrite.Enabled = !IsJobRunning();
+            _buttonCodingExecute.Enabled = !IsJobRunning();
         }
 
         private void UpdateCodingSelected(UdsFileReader.DataReader.DataInfoLongCoding dataInfoLongCoding, bool selectState)
@@ -1237,7 +1260,7 @@ namespace BmwDeepObd
             return repairShopCodeData;
         }
 
-        private void WriteCodingRequest()
+        private void ExecuteCodingRequest()
         {
             bool valuesValid = true;
             if (_instanceData.CurrentWorkshopNumber != null && _instanceData.CurrentImporterNumber != null && _instanceData.CurrentImporterNumber != null)
