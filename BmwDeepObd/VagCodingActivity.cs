@@ -1338,115 +1338,49 @@ namespace BmwDeepObd
                         codingValue = BitConverter.ToUInt64(dataArray, 0);
                     }
 
-                    if (_codingMode == CodingMode.Authenticate)
+                    if (_codingMode == CodingMode.Authenticate && XmlToolActivity.IsUdsEcu(_ecuInfo))
                     {
-                        if (XmlToolActivity.IsUdsEcu(_ecuInfo))
+                        // send dummy request to open the connection first
+                        _ediabas.ArgString = "0xF19E";  // ASAM data
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob(XmlToolActivity.JobReadS22Uds);
+
+                        int dataOffset = XmlToolActivity.VagUdsRawDataOffset;
+                        byte[] seed = null;
+                        byte[] seedRequest = { 0x27, 0x03 };
+                        _ediabas.EdInterfaceClass.TransmitData(seedRequest, out byte[] seedResponse);
+                        if (seedResponse == null || seedResponse.Length < dataOffset + 6 || seedResponse[dataOffset + 0] != 0x67)
                         {
-                            // send dummy request to open the connection first
-                            _ediabas.ArgString = "0xF19E";  // ASAM data
-                            _ediabas.ArgBinaryStd = null;
-                            _ediabas.ResultsRequests = string.Empty;
-                            _ediabas.ExecuteJob(XmlToolActivity.JobReadS22Uds);
-
-                            int dataOffset = XmlToolActivity.VagUdsRawDataOffset;
-                            byte[] seed = null;
-                            byte[] seedRequest = { 0x27, 0x03 };
-                            _ediabas.EdInterfaceClass.TransmitData(seedRequest, out byte[] seedResponse);
-                            if (seedResponse == null || seedResponse.Length < dataOffset + 6 || seedResponse[dataOffset + 0] != 0x67)
-                            {
-                                executeFailed = true;
-                            }
-                            else
-                            {
-                                seed = new byte[4];
-                                Array.Copy(seedResponse, dataOffset + 2, seed, 0, seed.Length);
-                            }
-
-                            if (!executeFailed)
-                            {
-                                byte[] authData = BitConverter.GetBytes((UInt32)codingValue);
-                                if (BitConverter.IsLittleEndian)
-                                {
-                                    Array.Reverse(authData);
-                                }
-                                byte[] keyRequest = { 0x27, 0x04, 0x00, 0x00, 0x00, 0x00 };
-                                for (int i = 0; i < seed?.Length; i++)
-                                {
-                                    keyRequest[i + 2] = (byte)(seed[i] ^ authData[i]);
-                                }
-
-                                _ediabas.EdInterfaceClass.TransmitData(keyRequest, out byte[] keyResponse);
-                                if (keyResponse == null || keyResponse.Length < dataOffset + 2 || keyResponse[dataOffset + 0] != 0x67)
-                                {
-                                    executeFailed = true;
-                                }
-                            }
+                            executeFailed = true;
                         }
                         else
                         {
-                            _ediabas.ArgString = string.Empty;
-                            _ediabas.ArgBinaryStd = null;
-                            _ediabas.ResultsRequests = string.Empty;
-                            _ediabas.ExecuteJob("SEED_ANFORDERN");
+                            seed = new byte[4];
+                            Array.Copy(seedResponse, dataOffset + 2, seed, 0, seed.Length);
+                        }
 
-                            Int64? seed = null;
-                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                            if (resultSets != null && resultSets.Count >= 2)
+                        if (!executeFailed && seed != null)
+                        {
+                            if (BitConverter.IsLittleEndian)
                             {
-                                int dictIndex = 0;
-                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
-                                {
-                                    if (dictIndex == 0)
-                                    {
-                                        dictIndex++;
-                                        continue;
-                                    }
-                                    if (resultDict.TryGetValue("SEED", out EdiabasNet.ResultData resultData))
-                                    {
-                                        if (resultData.OpData is Int64)
-                                        {
-                                            seed = (Int64)resultData.OpData;
-                                        }
-                                    }
-                                    dictIndex++;
-                                }
+                                Array.Reverse(seed);
+                            }
+                            UInt32 seedValue = BitConverter.ToUInt32(seed, 0);
+                            UInt32 keyValue = (UInt32) (seedValue + codingValue);
+                            byte[] keyData = BitConverter.GetBytes(keyValue);
+                            if (BitConverter.IsLittleEndian)
+                            {
+                                Array.Reverse(keyData);
                             }
 
-                            if (seed == null)
+                            byte[] keyRequest = { 0x27, 0x04, 0x00, 0x00, 0x00, 0x00 };
+                            Array.Copy(keyData, 0, keyRequest, 2, keyData.Length);
+
+                            _ediabas.EdInterfaceClass.TransmitData(keyRequest, out byte[] keyResponse);
+                            if (keyResponse == null || keyResponse.Length < dataOffset + 2 || keyResponse[dataOffset + 0] != 0x67)
                             {
                                 executeFailed = true;
-                            }
-
-                            if (!executeFailed)
-                            {
-                                UInt64 key = (UInt64)(seed ?? 0) ^ codingValue;
-                                _ediabas.ArgString = string.Format(CultureInfo.InvariantCulture, "{0}", key);
-                                _ediabas.ArgBinaryStd = null;
-                                _ediabas.ResultsRequests = string.Empty;
-                                _ediabas.ExecuteJob("KEY_SENDEN");
-
-                                bool resultOk = false;
-                                resultSets = _ediabas.ResultSets;
-                                if (resultSets != null && resultSets.Count >= 1)
-                                {
-                                    Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[0];
-                                    if (resultDict.TryGetValue("JOBSTATUS", out EdiabasNet.ResultData resultData))
-                                    {
-                                        if (resultData.OpData is string)
-                                        {
-                                            string result = (string)resultData.OpData;
-                                            if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
-                                            {
-                                                resultOk = true;
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (!resultOk)
-                                {
-                                    executeFailed = true;
-                                }
                             }
                         }
                     }
@@ -1465,15 +1399,25 @@ namespace BmwDeepObd
 
                         if (_codingMode != CodingMode.Standard)
                         {
-                            if (XmlToolActivity.Is1281Ecu(_ecuInfo))
+                            if (_codingMode == CodingMode.Authenticate)
                             {
                                 writeJobName = XmlToolActivity.JobWriteLogin;
-                                writeJobArgs = string.Format(CultureInfo.InvariantCulture, "{0:00000};{1}", _ecuInfo.VagWorkshopNumber ?? 0, codingValue);
+                                // a repairShopCodeString of 0 is rejected, but the value is not used, so we specify a dummy
+                                // the max allowed code is 99999 here
+                                writeJobArgs = string.Format(CultureInfo.InvariantCulture, "00000100100001;{0}", codingValue);
                             }
                             else
                             {
-                                writeJobName = XmlToolActivity.JobWriteEcuCoding2;
-                                writeJobArgs = repairShopCodeString + string.Format(CultureInfo.InvariantCulture, ";{0}", codingValue);
+                                if (XmlToolActivity.Is1281Ecu(_ecuInfo))
+                                {
+                                    writeJobName = XmlToolActivity.JobWriteLogin;
+                                    writeJobArgs = string.Format(CultureInfo.InvariantCulture, "{0:00000};{1}", _ecuInfo.VagWorkshopNumber ?? 0, codingValue);
+                                }
+                                else
+                                {
+                                    writeJobName = XmlToolActivity.JobWriteEcuCoding2;
+                                    writeJobArgs = repairShopCodeString + string.Format(CultureInfo.InvariantCulture, ";{0}", codingValue);
+                                }
                             }
                         }
                         else
