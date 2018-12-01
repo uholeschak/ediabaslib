@@ -2644,9 +2644,6 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f08008c
 			public const int buttonAdapterWrite = 2131230860;
 			
-			// aapt resource value: 0x7f08018f
-			public const int buttonAuthenticate = 2131231119;
-			
 			// aapt resource value: 0x7f0800a4
 			public const int buttonCanAdapterFwUpdate = 2131230884;
 			
@@ -2673,6 +2670,9 @@ namespace BmwDeepObd
 			
 			// aapt resource value: 0x7f0800cb
 			public const int buttonRow = 2131230923;
+			
+			// aapt resource value: 0x7f08018f
+			public const int buttonSecurityAccess = 2131231119;
 			
 			// aapt resource value: 0x7f080123
 			public const int buttonStorageLocation = 2131231011;

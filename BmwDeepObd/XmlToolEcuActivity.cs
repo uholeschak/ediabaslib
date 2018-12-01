@@ -184,7 +184,7 @@ namespace BmwDeepObd
         private Button _buttonEdiabasTool;
         private Button _buttonCoding;
         private Button _buttonLogin;
-        private Button _buttonAuthenticate;
+        private Button _buttonSecurityAccess;
         private ActivityCommon _activityCommon;
         private XmlToolActivity.EcuInfo _ecuInfo;
         private JobInfo _selectedJob;
@@ -454,12 +454,12 @@ namespace BmwDeepObd
             };
 
             bool authEnabled = !XmlToolActivity.Is1281Ecu(_ecuInfo);
-            _buttonAuthenticate = FindViewById<Button>(Resource.Id.buttonAuthenticate);
-            _buttonAuthenticate.Visibility = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw ? ViewStates.Visible : ViewStates.Gone;
-            _buttonAuthenticate.Enabled = authEnabled;
-            _buttonAuthenticate.Click += (sender, args) =>
+            _buttonSecurityAccess = FindViewById<Button>(Resource.Id.buttonSecurityAccess);
+            _buttonSecurityAccess.Visibility = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw ? ViewStates.Visible : ViewStates.Gone;
+            _buttonSecurityAccess.Enabled = authEnabled;
+            _buttonSecurityAccess.Click += (sender, args) =>
             {
-                StartVagCoding(VagCodingActivity.CodingMode.Authenticate);
+                StartVagCoding(VagCodingActivity.CodingMode.SecurityAccess);
             };
 
             _layoutJobConfig.Visibility = ViewStates.Gone;
