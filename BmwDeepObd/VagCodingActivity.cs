@@ -623,7 +623,7 @@ namespace BmwDeepObd
                         case CodingMode.Authenticate:
                             coding = new byte[4];
                             codingRequestType = XmlToolActivity.EcuInfo.CodingRequestType.ShortV2;
-                            codingMax = 999999;
+                            codingMax = 99999;  // original program allows 999999, but is rejected by EDIABAS
                             dataFileName = _ecuInfo.VagDataFileName;
                             break;
                     }
