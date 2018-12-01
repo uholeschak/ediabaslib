@@ -430,7 +430,7 @@
   <!--Translate-->
   <string name="xml_tool_button_coding">Coding</string>
   <string name="xml_tool_button_login">Coding 2/Login</string>
-  <string name="xml_tool_button_authenticate">Authenticate</string>
+  <string name="xml_tool_button_authenticate">Security access</string>
   <string name="xml_tool_execute_test_job">Выполнение Job</string>
   <string name="xml_tool_read_test_job_failed">Не удалось выполнить Job</string>
   <string name="xml_tool_ecu_msg_no_selection">Вы не выбрали данные для отображения.\nВыберите сначала нужные задания и результаты из списка.\nВы все равно хотите отменить?</string>
@@ -444,7 +444,7 @@
   <string name="vag_coding_title">Coding ECU: {0}</string>
   <string name="vag_coding_subsystem_title">Subsystem</string>
   <string name="vag_coding_short_title">Coding (dec): {0}-{1}</string>
-  <string name="vag_coding_auth_title">Authentication code (dec): {0}-{1}</string>
+  <string name="vag_coding_auth_title">Security access (dec): {0}-{1}</string>
   <string name="vag_coding_comments_title">Hints</string>
   <string name="vag_coding_raw_title">Coding (hex)</string>
   <string name="vag_coding_workshop_number_title">Workshop code (dec): 0-99999</string>
@@ -455,10 +455,10 @@
   <string name="vag_coding_button_execute">Execute</string>
   <string name="vag_coding_write_values_invalid">If the workshop code, importer number or equipment number is 0 the ECU may reject coding.\nDo you want to continue anyway?</string>
   <string name="vag_coding_write_coding_failed">Write coding failed</string>
-  <string name="vag_coding_write_coding_access_denied">Access denied, you have to authenticate first</string>
+  <string name="vag_coding_write_coding_access_denied">Access denied, you have to use security access first</string>
   <string name="vag_coding_write_coding_ok">Write coding successful</string>
-  <string name="vag_coding_auth_job_failed">Authentication failed</string>
-  <string name="vag_coding_auth_job_ok">Authentication successful</string>
+  <string name="vag_coding_auth_job_failed">Security access failed</string>
+  <string name="vag_coding_auth_job_ok">Security access successful</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">CAN адаптер</string>
