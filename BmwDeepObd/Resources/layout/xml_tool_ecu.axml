@@ -358,7 +358,7 @@
                     android:layout_gravity="center_vertical"
                     android:text="@string/xml_tool_button_login" />
                 <Button
-                    android:id="@+id/buttonAuthenticate"
+                    android:id="@+id/buttonSecurityAccess"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"

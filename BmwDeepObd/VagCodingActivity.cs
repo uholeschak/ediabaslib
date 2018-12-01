@@ -49,7 +49,7 @@ namespace BmwDeepObd
         {
             Standard,
             Login,
-            Authenticate
+            SecurityAccess
         }
 
         public static XmlToolActivity.EcuInfo IntentEcuInfo { get; set; }
@@ -620,7 +620,7 @@ namespace BmwDeepObd
                             dataFileName = _ecuInfo.VagDataFileName;
                             break;
 
-                        case CodingMode.Authenticate:
+                        case CodingMode.SecurityAccess:
                             coding = new byte[4];
                             codingRequestType = XmlToolActivity.EcuInfo.CodingRequestType.ShortV2;
                             codingMax = 99999;  // original program allows 999999, but is rejected by EDIABAS
@@ -855,7 +855,7 @@ namespace BmwDeepObd
                         int resId;
                         switch (_codingMode)
                         {
-                            case CodingMode.Authenticate:
+                            case CodingMode.SecurityAccess:
                                 resId = Resource.String.vag_coding_auth_title;
                                 break;
 
@@ -965,7 +965,7 @@ namespace BmwDeepObd
                                 dataType = UdsFileReader.DataReader.DataType.Login;
                                 break;
 
-                            case CodingMode.Authenticate:
+                            case CodingMode.SecurityAccess:
                                 dataType = UdsFileReader.DataReader.DataType.Settings;
                                 break;
 
@@ -1338,7 +1338,7 @@ namespace BmwDeepObd
                         codingValue = BitConverter.ToUInt64(dataArray, 0);
                     }
 
-                    if (_codingMode == CodingMode.Authenticate && XmlToolActivity.IsUdsEcu(_ecuInfo))
+                    if (_codingMode == CodingMode.SecurityAccess && XmlToolActivity.IsUdsEcu(_ecuInfo))
                     {
                         // send dummy request to open the connection first
                         _ediabas.ArgString = "0xF19E";  // ASAM data
@@ -1399,7 +1399,7 @@ namespace BmwDeepObd
 
                         if (_codingMode != CodingMode.Standard)
                         {
-                            if (_codingMode == CodingMode.Authenticate)
+                            if (_codingMode == CodingMode.SecurityAccess)
                             {
                                 writeJobName = XmlToolActivity.JobWriteLogin;
                                 // a repairShopCodeString of 0 is rejected, but the value is not used, so we specify a dummy
@@ -1533,7 +1533,7 @@ namespace BmwDeepObd
                         int resId;
                         switch (_codingMode)
                         {
-                            case CodingMode.Authenticate:
+                            case CodingMode.SecurityAccess:
                                 resId = Resource.String.vag_coding_auth_job_failed;
                                 break;
 
@@ -1549,7 +1549,7 @@ namespace BmwDeepObd
                         int resId;
                         switch (_codingMode)
                         {
-                            case CodingMode.Authenticate:
+                            case CodingMode.SecurityAccess:
                                 resId = Resource.String.vag_coding_auth_job_ok;
                                 break;
 
