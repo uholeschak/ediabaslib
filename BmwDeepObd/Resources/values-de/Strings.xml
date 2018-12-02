@@ -459,12 +459,13 @@
   <string name="vag_coding_write_coding_failed">Kodierung schreiben fehlgeschlagen</string>
   <string name="vag_coding_write_coding_access_denied">Zugriff verweigert, Sie müssen sich zuerst authentifizieren</string>
   <string name="vag_coding_write_coding_ok">Kodierung schreiben erfolgreich</string>
-  <string name="vag_coding_login_job_failed">Login fehlgeschlagen</string>
+  <string name="vag_coding_write_coding2_failed">Kodierung schreiben fehlgeschlagen.\nWenn der Code falsch war, müssen Sie die Zündung für mindesten 10 Minuten eingeschaltet lassen, bevor Sie es erneut versuchen!</string>
+  <string name="vag_coding_login_job_failed">Login fehlgeschlagen.\nWenn der Code falsch war, müssen Sie die Zündung für 1 bis 2 Minuten ausschalten, bevor Sie es erneut versuchen!</string>
   <string name="vag_coding_login_job_ok">Login erfolgreich</string>
   <string name="vag_coding_sec_access_job_failed">Zugriffsberechtigung fehlgeschlagen</string>
   <string name="vag_coding_sec_access_job_ok">Zugriffsberechtigung erfolgreich</string>
 
-    <!-- CAN Adapter Activity -->
+  <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">CAN Adapter</string>
   <string name="can_adapter_mode_name">CAN Betriebsart</string>
   <string name="can_adapter_sep_time">Telegrammabstand [ms]</string>

@@ -1539,6 +1539,10 @@ namespace BmwDeepObd
                         int resId;
                         switch (_codingMode)
                         {
+                            case CodingMode.Coding2:
+                                resId = accessDenied ? Resource.String.vag_coding_write_coding_access_denied : Resource.String.vag_coding_write_coding2_failed;
+                                break;
+
                             case CodingMode.Login:
                                 resId = Resource.String.vag_coding_login_job_failed;
                                 break;
