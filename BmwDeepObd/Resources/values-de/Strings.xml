@@ -42,7 +42,7 @@
 \nSie können gerne mitwirken oder Probleme melden.
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
 \n\nÄnderungen in dieser Version:\n</string>
-  <string name="version_last_changes">- Kleine VAG Verbesserungen\n- Kleinere Probleme behoben</string>
+  <string name="version_last_changes">- VAG Kodieren hinzugefügt\n- Kleinere Probleme behoben</string>
   <string name="app_info_message">Deep OBD für BMW und VAG\nVersion: {0}\nId: {1}</string>
   <string name="vag_mode_info">Der VAG Modus ist noch experimentell.\nEs wird ein <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD Adapter</a> mit mindestens Firmwareversion 0.11 benötigt.\nIm Moment werden nur die Protokolle KWP2000, KWP1281, TP2.0 und UDS unterstützt.\nFür den neuen VAG Modus müssen die Konfiguration neu generiert werden.\nEs ist möglich den alten VAG Modus wieder in den globalen Einstellungen wählen.</string>
 
@@ -456,6 +456,7 @@
   <string name="vag_coding_button_execute">Ausführen</string>
   <string name="vag_coding_processing">Vorgang wird ausgeführt</string>
   <string name="vag_coding_write_values_invalid">Wenn die Betriebsnummer, Importeursnummer oder Gerätenummer 0 sind kann es sein, dass die ECU die Kodierung ablehnt.\nWollen Sie trotzdem fortfahren?</string>
+  <string name="vag_coding_write_coding_illegal_arguments">Die Job Argumente sind außerhalb des gültigen Bereichs</string>
   <string name="vag_coding_write_coding_failed">Kodierung schreiben fehlgeschlagen</string>
   <string name="vag_coding_write_coding_access_denied">Zugriff verweigert, Sie müssen sich zuerst authentifizieren</string>
   <string name="vag_coding_write_coding_ok">Kodierung schreiben erfolgreich</string>

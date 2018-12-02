@@ -53,6 +53,14 @@ namespace BmwDeepObd
             SecurityAccess
         }
 
+        private enum JobStatus
+        {
+            Unknown,
+            Ok,
+            IllegalArguments,
+            AccessDenied,
+        }
+
         public static XmlToolActivity.EcuInfo IntentEcuInfo { get; set; }
 
         private InstanceData _instanceData = new InstanceData();
@@ -1202,10 +1210,9 @@ namespace BmwDeepObd
             _editTextVagEquipmentNumber.ClearFocus();
         }
 
-        private bool CheckCodingResult(out bool accessDenied)
+        private JobStatus CheckCodingResult()
         {
-            bool resultOk = false;
-            accessDenied = false;
+            JobStatus jobStatus = JobStatus.Unknown;
             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
             if (resultSets != null && resultSets.Count >= 1)
             {
@@ -1217,17 +1224,21 @@ namespace BmwDeepObd
                         string result = (string)resultData.OpData;
                         if (string.Compare(result, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            resultOk = true;
+                            jobStatus = JobStatus.Ok;
+                        }
+                        else if (result.Contains("ERROR_ARGUMENT", StringComparison.OrdinalIgnoreCase))
+                        {
+                            jobStatus = JobStatus.IllegalArguments;
                         }
                         else if (result.Contains("ERROR_NRC_SecurityAccessDenied", StringComparison.OrdinalIgnoreCase))
                         {
-                            accessDenied = true;
+                            jobStatus = JobStatus.AccessDenied;
                         }
                     }
                 }
             }
 
-            return resultOk;
+            return jobStatus;
         }
 
         private byte[] GetRepairShopCodeData()
@@ -1316,7 +1327,7 @@ namespace BmwDeepObd
             progress.Show();
 
             bool executeFailed = false;
-            bool accessDenied = false;
+            JobStatus jobStatus = JobStatus.Unknown;
             _jobThread = new Thread(() =>
             {
                 try
@@ -1487,7 +1498,8 @@ namespace BmwDeepObd
                             _ediabas.ResultsRequests = string.Empty;
                             _ediabas.ExecuteJob(writeJobProgDate);
 
-                            if (!CheckCodingResult(out accessDenied))
+                            jobStatus = CheckCodingResult();
+                            if (jobStatus != JobStatus.Ok)
                             {
                                 executeFailed = true;
                             }
@@ -1500,7 +1512,8 @@ namespace BmwDeepObd
                             _ediabas.ResultsRequests = string.Empty;
                             _ediabas.ExecuteJob(writeJobRscName);
 
-                            if (!CheckCodingResult(out accessDenied))
+                            jobStatus = CheckCodingResult();
+                            if (jobStatus != JobStatus.Ok)
                             {
                                 executeFailed = true;
                             }
@@ -1513,7 +1526,8 @@ namespace BmwDeepObd
                             _ediabas.ResultsRequests = string.Empty;
                             _ediabas.ExecuteJob(writeJobName);
 
-                            if (!CheckCodingResult(out accessDenied))
+                            jobStatus = CheckCodingResult();
+                            if (jobStatus != JobStatus.Ok)
                             {
                                 executeFailed = true;
                             }
@@ -1536,24 +1550,38 @@ namespace BmwDeepObd
 
                     if (executeFailed)
                     {
-                        int resId;
-                        switch (_codingMode)
+                        int resId = -1;
+                        switch (jobStatus)
                         {
-                            case CodingMode.Coding2:
-                                resId = accessDenied ? Resource.String.vag_coding_write_coding_access_denied : Resource.String.vag_coding_write_coding2_failed;
+                            case JobStatus.IllegalArguments:
+                                resId = Resource.String.vag_coding_write_coding_illegal_arguments;
                                 break;
 
-                            case CodingMode.Login:
-                                resId = Resource.String.vag_coding_login_job_failed;
+                            case JobStatus.AccessDenied:
+                                resId = Resource.String.vag_coding_write_coding_access_denied;
                                 break;
+                        }
 
-                            case CodingMode.SecurityAccess:
-                                resId = Resource.String.vag_coding_sec_access_job_failed;
-                                break;
+                        if (resId < 0)
+                        {
+                            switch (_codingMode)
+                            {
+                                case CodingMode.Coding2:
+                                    resId = Resource.String.vag_coding_write_coding2_failed;
+                                    break;
 
-                            default:
-                                resId = accessDenied ? Resource.String.vag_coding_write_coding_access_denied : Resource.String.vag_coding_write_coding_failed;
-                                break;
+                                case CodingMode.Login:
+                                    resId = Resource.String.vag_coding_login_job_failed;
+                                    break;
+
+                                case CodingMode.SecurityAccess:
+                                    resId = Resource.String.vag_coding_sec_access_job_failed;
+                                    break;
+
+                                default:
+                                    resId = Resource.String.vag_coding_write_coding_failed;
+                                    break;
+                            }
                         }
                         _activityCommon.ShowAlert(GetString(resId), Resource.String.alert_title_error);
                         UpdateCodingInfo();
