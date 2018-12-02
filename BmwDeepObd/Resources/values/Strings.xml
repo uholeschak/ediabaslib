@@ -435,9 +435,10 @@
   <string name="vag_coding_write_coding_failed">Write coding failed</string>
   <string name="vag_coding_write_coding_access_denied">Access denied, you have to use security access first</string>
   <string name="vag_coding_write_coding_ok">Write coding successful</string>
-  <string name="vag_coding_login_job_failed">Login failed</string>
+  <string name="vag_coding_write_coding2_failed">Write coding failed.\nIf the code was incorrect, switch the ignition off for 1-2 minutes before trying it again!</string>
+  <string name="vag_coding_login_job_failed">Login failed.\nIf the code was incorrect, switch the ignition off for 1-2 minutes before trying it again!</string>
   <string name="vag_coding_login_job_ok">Login successful</string>
-  <string name="vag_coding_sec_access_job_failed">Security access failed</string>
+  <string name="vag_coding_sec_access_job_failed">Security access failed.\nIf the code was incorrect, keep the ignition on for 10 minutes before trying it again!</string>
   <string name="vag_coding_sec_access_job_ok">Security access successful</string>
 
   <!-- CAN Adapter Activity -->
