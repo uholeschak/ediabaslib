@@ -47,7 +47,8 @@ namespace BmwDeepObd
 
         public enum CodingMode
         {
-            Standard,
+            Coding,
+            Coding2,
             Login,
             SecurityAccess
         }
@@ -134,7 +135,7 @@ namespace BmwDeepObd
             }, BroadcastReceived);
             _updateHandler = new Handler();
 
-            _codingMode = (CodingMode) Intent.GetIntExtra(ExtraCodingMode, (int) CodingMode.Standard);
+            _codingMode = (CodingMode) Intent.GetIntExtra(ExtraCodingMode, (int) CodingMode.Coding);
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _traceDir = Intent.GetStringExtra(ExtraTraceDir);
             _traceAppend = Intent.GetBooleanExtra(ExtraTraceAppend, true);
@@ -474,7 +475,7 @@ namespace BmwDeepObd
             int selection = _instanceData.SelectedSubsystem;
 
             _spinnerVagCodingSubsystemAdapter.Items.Clear();
-            if (_codingMode == CodingMode.Standard)
+            if (_codingMode == CodingMode.Coding)
             {
                 if (_ecuInfo.VagCodingShort != null || _ecuInfo.VagCodingLong != null)
                 {
@@ -553,7 +554,7 @@ namespace BmwDeepObd
                 UInt64? importerNumber = null;
                 UInt64? equipmentNumber = null;
 
-                if (_codingMode == CodingMode.Standard)
+                if (_codingMode == CodingMode.Coding)
                 {
                     if (subSystemIndex == 0)
                     {
@@ -610,6 +611,7 @@ namespace BmwDeepObd
                 {
                     switch (_codingMode)
                     {
+                        case CodingMode.Coding2:
                         case CodingMode.Login:
                             coding = new byte[2];
                             codingRequestType = XmlToolActivity.EcuInfo.CodingRequestType.ShortV2;
@@ -855,8 +857,12 @@ namespace BmwDeepObd
                         int resId;
                         switch (_codingMode)
                         {
+                            case CodingMode.Login:
+                                resId = Resource.String.vag_coding_login_title;
+                                break;
+
                             case CodingMode.SecurityAccess:
-                                resId = Resource.String.vag_coding_auth_title;
+                                resId = Resource.String.vag_coding_sec_access_title;
                                 break;
 
                             default:
@@ -961,6 +967,7 @@ namespace BmwDeepObd
                         UdsFileReader.DataReader.DataType dataType;
                         switch (_codingMode)
                         {
+                            case CodingMode.Coding2:
                             case CodingMode.Login:
                                 dataType = UdsFileReader.DataReader.DataType.Login;
                                 break;
@@ -991,7 +998,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    if (_codingMode == CodingMode.Standard)
+                    if (_codingMode == CodingMode.Coding)
                     {
                         List<UdsFileReader.DataReader.DataInfo> dataInfoLcList =
                             udsReader.DataReader.ExtractDataType(_instanceData.CurrentDataFileName, UdsFileReader.DataReader.DataType.LongCoding);
@@ -1107,18 +1114,18 @@ namespace BmwDeepObd
                 }
             }
 
-            _layoutVagCodingSubsystem.Visibility = _codingMode == CodingMode.Standard ? ViewStates.Visible : ViewStates.Gone;
+            _layoutVagCodingSubsystem.Visibility = _codingMode == CodingMode.Coding ? ViewStates.Visible : ViewStates.Gone;
 
             _layoutVagCodingShort.Visibility = shortCoding ? ViewStates.Visible : ViewStates.Gone;
             _editTextVagCodingShort.Enabled = shortCoding;
 
-            _layoutVagCodingRaw.Visibility = _codingMode == CodingMode.Standard ? ViewStates.Visible : ViewStates.Gone;
+            _layoutVagCodingRaw.Visibility = _codingMode == CodingMode.Coding ? ViewStates.Visible : ViewStates.Gone;
             _editTextVagCodingRaw.Enabled = !shortCoding;
 
             _layoutVagCodingComments.Visibility = sbCodingComment.Length > 0 ? ViewStates.Visible : ViewStates.Gone;
             _textViewCodingComments.Text = sbCodingComment.ToString();
 
-            _layoutVagCodingRepairShopCode.Visibility = (_codingMode == CodingMode.Standard && _instanceData.SelectedSubsystem == 0) ? ViewStates.Visible : ViewStates.Gone;
+            _layoutVagCodingRepairShopCode.Visibility = (_codingMode == CodingMode.Coding && _instanceData.SelectedSubsystem == 0) ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagCodingWorkshop.Visibility = _instanceData.CurrentWorkshopNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagCodingImporterNumber.Visibility = _instanceData.CurrentImporterNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagCodingEquipmentNumber.Visibility = _instanceData.CurrentEquipmentNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
@@ -1397,27 +1404,26 @@ namespace BmwDeepObd
                         string writeJobName = string.Empty;
                         string writeJobArgs = string.Empty;
 
-                        if (_codingMode != CodingMode.Standard)
+                        if (_codingMode != CodingMode.Coding)
                         {
-                            if (_codingMode == CodingMode.SecurityAccess)
+                            switch (_codingMode)
                             {
-                                writeJobName = XmlToolActivity.JobWriteLogin;
-                                // a repairShopCodeString of 0 is rejected, but the value is not used, so we specify a dummy
-                                // the max allowed code is 99999 here
-                                writeJobArgs = string.Format(CultureInfo.InvariantCulture, "00000100100001;{0}", codingValue);
-                            }
-                            else
-                            {
-                                if (XmlToolActivity.Is1281Ecu(_ecuInfo))
-                                {
-                                    writeJobName = XmlToolActivity.JobWriteLogin;
-                                    writeJobArgs = string.Format(CultureInfo.InvariantCulture, "{0:00000};{1}", _ecuInfo.VagWorkshopNumber ?? 0, codingValue);
-                                }
-                                else
-                                {
+                                case CodingMode.Coding2:
                                     writeJobName = XmlToolActivity.JobWriteEcuCoding2;
                                     writeJobArgs = repairShopCodeString + string.Format(CultureInfo.InvariantCulture, ";{0}", codingValue);
-                                }
+                                    break;
+
+                                case CodingMode.Login:
+                                    writeJobName = XmlToolActivity.JobWriteLogin;
+                                    writeJobArgs = string.Format(CultureInfo.InvariantCulture, "{0:00000};{1}", _ecuInfo.VagWorkshopNumber ?? 0, codingValue);
+                                    break;
+
+                                case CodingMode.SecurityAccess:
+                                    writeJobName = XmlToolActivity.JobWriteLogin;
+                                    // a repairShopCodeString of 0 is rejected, but the value is not used, so we specify a dummy
+                                    // the max allowed code is 99999 here
+                                    writeJobArgs = string.Format(CultureInfo.InvariantCulture, "00000100100001;{0}", codingValue);
+                                    break;
                             }
                         }
                         else
@@ -1533,8 +1539,12 @@ namespace BmwDeepObd
                         int resId;
                         switch (_codingMode)
                         {
+                            case CodingMode.Login:
+                                resId = Resource.String.vag_coding_login_job_failed;
+                                break;
+
                             case CodingMode.SecurityAccess:
-                                resId = Resource.String.vag_coding_auth_job_failed;
+                                resId = Resource.String.vag_coding_sec_access_job_failed;
                                 break;
 
                             default:
@@ -1549,8 +1559,12 @@ namespace BmwDeepObd
                         int resId;
                         switch (_codingMode)
                         {
+                            case CodingMode.Login:
+                                resId = Resource.String.vag_coding_login_job_ok;
+                                break;
+
                             case CodingMode.SecurityAccess:
-                                resId = Resource.String.vag_coding_auth_job_ok;
+                                resId = Resource.String.vag_coding_sec_access_job_ok;
                                 break;
 
                             default:
@@ -1563,7 +1577,7 @@ namespace BmwDeepObd
                             .SetTitle(Resource.String.alert_title_info)
                             .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
                             .Show();
-                        if (_codingMode == CodingMode.Standard)
+                        if (_codingMode == CodingMode.Coding)
                         {
                             alertDialog.DismissEvent += (sender, args) =>
                             {

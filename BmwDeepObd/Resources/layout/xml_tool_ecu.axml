@@ -340,7 +340,7 @@
                     android:text="@string/xml_tool_button_ediabas_tool" />
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/layoutVagFunctions"
+                android:id="@+id/layoutVagFunctions1"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -352,6 +352,19 @@
                     android:layout_gravity="center_vertical"
                     android:text="@string/xml_tool_button_coding" />
                 <Button
+                    android:id="@+id/buttonCoding2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/xml_tool_button_coding2" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layoutVagFunctions2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left">
+                <Button
                     android:id="@+id/buttonLogin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -362,7 +375,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:text="@string/xml_tool_button_authenticate" />
+                    android:text="@string/xml_tool_button_sec_access" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

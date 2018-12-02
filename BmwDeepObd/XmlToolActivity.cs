@@ -142,9 +142,19 @@ namespace BmwDeepObd
                 return false;
             }
 
+            public bool HasVagCoding2()
+            {
+                if (!Is1281Ecu(this) && !IsUdsEcu(this))
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
             public bool HasVagLogin()
             {
-                if (!IsUdsEcu(this))
+                if (Is1281Ecu(this))
                 {
                     return true;
                 }

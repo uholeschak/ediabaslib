@@ -183,6 +183,7 @@ namespace BmwDeepObd
         private TextView _textViewTestFormatOutput;
         private Button _buttonEdiabasTool;
         private Button _buttonCoding;
+        private Button _buttonCoding2;
         private Button _buttonLogin;
         private Button _buttonSecurityAccess;
         private ActivityCommon _activityCommon;
@@ -419,35 +420,37 @@ namespace BmwDeepObd
                 Finish();
             };
 
+            ViewStates vagButtonsVisibility = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw ? ViewStates.Visible : ViewStates.Gone;
             _buttonCoding = FindViewById<Button>(Resource.Id.buttonCoding);
-            _buttonCoding.Visibility = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw ? ViewStates.Visible : ViewStates.Gone;
+            _buttonCoding.Visibility = vagButtonsVisibility;
             _buttonCoding.Enabled = _ecuInfo.HasVagCoding();
             _buttonCoding.Click += (sender, args) =>
             {
-                StartVagCoding(VagCodingActivity.CodingMode.Standard);
+                StartVagCoding(VagCodingActivity.CodingMode.Coding);
             };
 
-            bool loginEnabled = false;
-            if (_ecuInfo.HasVagLogin())
+            bool coding2Enabled = false;
+            if (_ecuInfo.HasVagCoding2())
             {
-                if (XmlToolActivity.Is1281Ecu(_ecuInfo))
+                UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_ecuInfo.VagDataFileName);
+                List<UdsFileReader.DataReader.DataInfo> dataInfoCodingList = udsReader.DataReader.ExtractDataType(_ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Login);
+                if (dataInfoCodingList?.Count > 0)
                 {
-                    loginEnabled = true;
-                }
-                else
-                {
-                    UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_ecuInfo.VagDataFileName);
-                    List<UdsFileReader.DataReader.DataInfo> dataInfoCodingList = udsReader.DataReader.ExtractDataType(_ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Login);
-                    if (dataInfoCodingList?.Count > 0)
-                    {
-                        loginEnabled = true;
-                    }
+                    coding2Enabled = true;
                 }
             }
 
+            _buttonCoding2 = FindViewById<Button>(Resource.Id.buttonCoding2);
+            _buttonCoding2.Visibility = vagButtonsVisibility;
+            _buttonCoding2.Enabled = coding2Enabled;
+            _buttonCoding2.Click += (sender, args) =>
+            {
+                StartVagCoding(VagCodingActivity.CodingMode.Coding2);
+            };
+
             _buttonLogin = FindViewById<Button>(Resource.Id.buttonLogin);
-            _buttonLogin.Visibility = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw ? ViewStates.Visible : ViewStates.Gone;
-            _buttonLogin.Enabled = loginEnabled;
+            _buttonLogin.Visibility = vagButtonsVisibility;
+            _buttonLogin.Enabled = _ecuInfo.HasVagLogin();
             _buttonLogin.Click += (sender, args) =>
             {
                 StartVagCoding(VagCodingActivity.CodingMode.Login);
@@ -455,7 +458,7 @@ namespace BmwDeepObd
 
             bool authEnabled = !XmlToolActivity.Is1281Ecu(_ecuInfo);
             _buttonSecurityAccess = FindViewById<Button>(Resource.Id.buttonSecurityAccess);
-            _buttonSecurityAccess.Visibility = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw ? ViewStates.Visible : ViewStates.Gone;
+            _buttonSecurityAccess.Visibility = vagButtonsVisibility;
             _buttonSecurityAccess.Enabled = authEnabled;
             _buttonSecurityAccess.Click += (sender, args) =>
             {
