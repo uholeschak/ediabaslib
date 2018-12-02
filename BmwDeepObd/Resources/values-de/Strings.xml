@@ -429,8 +429,9 @@
   <string name="xml_tool_ecu_add_functions">Zusätzliche Funtionen</string>
   <string name="xml_tool_button_ediabas_tool">Ediabas Tool</string>
   <string name="xml_tool_button_coding">Kodieren</string>
-  <string name="xml_tool_button_login">Kodieren 2/Login</string>
-  <string name="xml_tool_button_authenticate">Zugriffsberechtigung</string>
+  <string name="xml_tool_button_coding2">Kodieren 2</string>
+  <string name="xml_tool_button_login">Login</string>
+  <string name="xml_tool_button_sec_access">Zugriffsberechtigung</string>
   <string name="xml_tool_execute_test_job">Job wird ausgeführt</string>
   <string name="xml_tool_read_test_job_failed">Ausführen des Jobs fehlgeschlagen</string>
   <string name="xml_tool_ecu_msg_no_selection">Sie haben keine Daten für die Anzeige ausgewählt.\nWählen Sie hierfür zunächst die gewünschen Jobs und Ergebnisse aus der Liste.\nWollen Sie trotzdem abbrechen?</string>
@@ -443,7 +444,8 @@
   <string name="vag_coding_title">ECU Kodieren: {0}</string>
   <string name="vag_coding_subsystem_title">Subsystem</string>
   <string name="vag_coding_short_title">Kodierung (dec): {0}-{1}</string>
-  <string name="vag_coding_auth_title">Zugriffsberechtigung (dec): {0}-{1}</string>
+  <string name="vag_coding_login_title">Login (dec): {0}-{1}</string>
+  <string name="vag_coding_sec_access_title">Zugriffsberechtigung (dec): {0}-{1}</string>
   <string name="vag_coding_comments_title">Hinweise</string>
   <string name="vag_coding_raw_title">Kodierung (hex)</string>
   <string name="vag_coding_workshop_number_title">Betriebsnummer (dec): 0-99999</string>
@@ -457,8 +459,10 @@
   <string name="vag_coding_write_coding_failed">Kodierung schreiben fehlgeschlagen</string>
   <string name="vag_coding_write_coding_access_denied">Zugriff verweigert, Sie müssen sich zuerst authentifizieren</string>
   <string name="vag_coding_write_coding_ok">Kodierung schreiben erfolgreich</string>
-  <string name="vag_coding_auth_job_failed">Zugriffsberechtigung fehlgeschlagen</string>
-  <string name="vag_coding_auth_job_ok">Zugriffsberechtigung erfolgreich</string>
+  <string name="vag_coding_login_job_failed">Login fehlgeschlagen</string>
+  <string name="vag_coding_login_job_ok">Login erfolgreich</string>
+  <string name="vag_coding_sec_access_job_failed">Zugriffsberechtigung fehlgeschlagen</string>
+  <string name="vag_coding_sec_access_job_ok">Zugriffsberechtigung erfolgreich</string>
 
     <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">CAN Adapter</string>
