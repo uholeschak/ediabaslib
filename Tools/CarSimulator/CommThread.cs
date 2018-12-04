@@ -2316,12 +2316,26 @@ namespace CarSimulator
             // create BMW-FAST telegram
             if (dataBuffer.Length > 0x3F)
             {
-                receiveData[0] = 0x80;
-                receiveData[1] = targetAddr;
-                receiveData[2] = sourceAddr;
-                receiveData[3] = (byte)dataBuffer.Length;
-                Array.Copy(dataBuffer, 0, receiveData, 4, dataBuffer.Length);
-                len = dataBuffer.Length + 4;
+                if (dataBuffer.Length > 0xFF)
+                {
+                    receiveData[0] = 0x80;
+                    receiveData[1] = targetAddr;
+                    receiveData[2] = sourceAddr;
+                    receiveData[3] = 0;
+                    receiveData[4] = (byte)(dataBuffer.Length >> 8);
+                    receiveData[5] = (byte)dataBuffer.Length;
+                    Array.Copy(dataBuffer, 0, receiveData, 6, dataBuffer.Length);
+                    len = dataBuffer.Length + 6;
+                }
+                else
+                {
+                    receiveData[0] = 0x80;
+                    receiveData[1] = targetAddr;
+                    receiveData[2] = sourceAddr;
+                    receiveData[3] = (byte)dataBuffer.Length;
+                    Array.Copy(dataBuffer, 0, receiveData, 4, dataBuffer.Length);
+                    len = dataBuffer.Length + 4;
+                }
             }
             else
             {
@@ -2356,8 +2370,16 @@ namespace CarSimulator
             int dataLength = sendData[0] & 0x3F;
             if (dataLength == 0)
             {   // with length byte
-                dataLength = sendData[3];
-                dataOffset = 4;
+                if (sendData[3] == 0)
+                {
+                    dataLength = (sendData[4] << 8) + sendData[5];
+                    dataOffset = 6;
+                }
+                else
+                {
+                    dataLength = sendData[3];
+                    dataOffset = 4;
+                }
             }
 
             if ((Stopwatch.GetTimestamp() - _lastCanSendTick) < 10 * TickResolMs)
@@ -3574,7 +3596,14 @@ namespace CarSimulator
             int sendLength = sendData[0] & 0x3F;
             if (sendLength == 0)
             {   // with length byte
-                sendLength = sendData[3] + 4;
+                if (sendData[3] == 0)
+                {
+                    sendLength = (sendData[4] << 8) + sendData[5] + 6;
+                }
+                else
+                {
+                    sendLength = sendData[3] + 4;
+                }
             }
             else
             {
@@ -3606,7 +3635,14 @@ namespace CarSimulator
             int recLength = receiveData[0] & 0x3F;
             if (recLength == 0)
             {   // with length byte
-                recLength = receiveData[3] + 4;
+                if (receiveData[3] == 0)
+                {
+                    recLength = (receiveData[4] << 8) + receiveData[5] + 6;
+                }
+                else
+                {
+                    recLength = receiveData[3] + 4;
+                }
             }
             else
             {
@@ -4009,7 +4045,14 @@ namespace CarSimulator
             int recLength = _receiveData[0] & 0x3F;
             if (recLength == 0)
             {   // with length byte
-                recLength = _receiveData[3] + 4;
+                if (_receiveData[3] == 0)
+                {
+                    recLength = (_receiveData[4] << 8) + _receiveData[5] + 6;
+                }
+                else
+                {
+                    recLength = _receiveData[3] + 4;
+                }
             }
             else
             {
