@@ -3336,11 +3336,13 @@ namespace EdiabasLib
                 int timeout = (Nr78Dict.Count > 0) ? ParTimeoutNr78 : ParTimeoutStd;
                 //if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout: {0}", timeout);
                 // header byte
-                if (!ReceiveData(receiveData, 0, 4, timeout, ParTimeoutTelEnd))
+                int headLength = 4;
+                if (!ReceiveData(receiveData, 0, headLength, timeout, ParTimeoutTelEnd))
                 {
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No header received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
+
                 if ((receiveData[0] & 0xC0) != 0x80)
                 {
                     if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, 4, "Head");
@@ -3349,8 +3351,19 @@ namespace EdiabasLib
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
 
+                if ((receiveData[0] & 0x3F) == 0x00 && receiveData[3] == 0)
+                {   // 2 byte length
+                    if (!ReceiveData(receiveData, headLength, 2, timeout, ParTimeoutTelEnd))
+                    {
+                        if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No length received");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    }
+
+                    headLength += 2;
+                }
+
                 int recLength = TelLengthBmwFast(receiveData);
-                if (!ReceiveData(receiveData, 4, recLength - 3, ParTimeoutTelEnd, ParTimeoutTelEnd))
+                if (!ReceiveData(receiveData, headLength, recLength - headLength + 1, ParTimeoutTelEnd, ParTimeoutTelEnd))
                 {
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No tail received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
@@ -3818,7 +3831,14 @@ namespace EdiabasLib
             int telLength = dataBuffer[0] & 0x3F;
             if (telLength == 0)
             {   // with length byte
-                telLength = dataBuffer[3] + 4;
+                if (dataBuffer[3] == 0)
+                {
+                    telLength = (dataBuffer[4] << 8) + dataBuffer[5] + 6;
+                }
+                else
+                {
+                    telLength = dataBuffer[3] + 4;
+                }
             }
             else
             {
