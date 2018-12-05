@@ -310,8 +310,16 @@ namespace EdiabasLib
                 if (dataLength == 0)
                 {
                     // with length byte
-                    dataLength = requBuffer[3];
-                    dataOffset = 4;
+                    if (requBuffer[3] == 0x00)
+                    {
+                        dataLength = (requBuffer[4] << 8) + requBuffer[5];
+                        dataOffset = 6;
+                    }
+                    else
+                    {
+                        dataLength = requBuffer[3];
+                        dataOffset = 4;
+                    }
                 }
 
                 if (requBuffer.Length < (dataOffset + dataLength))
@@ -370,8 +378,16 @@ namespace EdiabasLib
                 if (dataLength == 0)
                 {
                     // with length byte
-                    dataLength = requBuffer[3];
-                    dataOffset = 4;
+                    if (requBuffer[3] == 0x00)
+                    {
+                        dataLength = (requBuffer[4] << 8) + requBuffer[5];
+                        dataOffset = 6;
+                    }
+                    else
+                    {
+                        dataLength = requBuffer[3];
+                        dataOffset = 4;
+                    }
                 }
                 if (requBuffer.Length < (dataOffset + dataLength))
                 {
@@ -403,7 +419,7 @@ namespace EdiabasLib
                     // first frame
                     Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Send FF");
                     canSendBuffer[0] = targetAddr;
-                    canSendBuffer[1] = (byte)(0x10 | ((dataLength >> 8) & 0xFF)); // FF
+                    canSendBuffer[1] = (byte)(0x10 | ((dataLength >> 8) & 0x0F)); // FF
                     canSendBuffer[2] = (byte)dataLength;
                     int telLen = 5;
                     Array.Copy(requBuffer, dataOffset, canSendBuffer, 3, telLen);
@@ -668,7 +684,18 @@ namespace EdiabasLib
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Received length: {0}", recLen);
                 byte[] responseTel;
                 // create BMW-FAST telegram
-                if (recDataBuffer.Length > 0x3F)
+                if (recDataBuffer.Length > 0xFF)
+                {
+                    responseTel = new byte[recDataBuffer.Length + 6];
+                    responseTel[0] = 0x80;
+                    responseTel[1] = targetAddr;
+                    responseTel[2] = sourceAddr;
+                    responseTel[3] = 0x00;
+                    responseTel[4] = (byte)(recDataBuffer.Length >> 8);
+                    responseTel[5] = (byte)recDataBuffer.Length;
+                    Array.Copy(recDataBuffer, 0, responseTel, 6, recDataBuffer.Length);
+                }
+                else if (recDataBuffer.Length > 0x3F)
                 {
                     responseTel = new byte[recDataBuffer.Length + 4];
                     responseTel[0] = 0x80;
