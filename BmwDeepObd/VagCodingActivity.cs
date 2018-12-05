@@ -123,7 +123,6 @@ namespace BmwDeepObd
             SupportActionBar.SetDisplayShowHomeEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             //SupportActionBar.SetDisplayShowCustomEnabled(true);
-            SupportActionBar.Title = string.Format(GetString(Resource.String.vag_coding_title), Intent.GetStringExtra(ExtraEcuName) ?? string.Empty);
             SetContentView(Resource.Layout.vag_coding);
 
             _imm = (InputMethodManager)GetSystemService(InputMethodService);
@@ -153,6 +152,23 @@ namespace BmwDeepObd
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
 
             _ecuInfo = IntentEcuInfo;
+
+            int resId;
+            switch (_codingMode)
+            {
+                case CodingMode.Login:
+                    resId = Resource.String.vag_coding_title_login;
+                    break;
+
+                case CodingMode.SecurityAccess:
+                    resId = Resource.String.vag_coding_title_sec_access;
+                    break;
+
+                default:
+                    resId = Resource.String.vag_coding_title_coding;
+                    break;
+            }
+            SupportActionBar.Title = string.Format(GetString(resId), Intent.GetStringExtra(ExtraEcuName) ?? string.Empty);
 
             _scrollViewVagCoding = FindViewById<ScrollView>(Resource.Id.scrollViewVagCoding);
             _scrollViewVagCoding.SetOnTouchListener(this);

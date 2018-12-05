@@ -442,7 +442,9 @@
 
   <!-- Coding Activity -->
   <!--Translate-->
-  <string name="vag_coding_title">Coding ECU: {0}</string>
+  <string name="vag_coding_title_coding">Coding ECU: {0}</string>
+  <string name="vag_coding_title_login">Login ECU: {0}</string>
+  <string name="vag_coding_title_sec_access">Security access ECU: {0}</string>
   <string name="vag_coding_subsystem_title">Subsystem</string>
   <string name="vag_coding_short_title">Coding (dec): {0}-{1}</string>
   <string name="vag_coding_login_title">Login (dec): {0}-{1}</string>
