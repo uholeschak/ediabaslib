@@ -712,6 +712,15 @@ namespace EdiabasLib
                         }
                     }
 
+                    if (sendData.Length >= 6 && (sendData[0] & 0x3F) == 0x00 && sendData[3] == 0x00)
+                    {   // long telegram format
+                        if (!RawMode && AdapterVersion < 0x000C)
+                        {
+                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Long telegrams not supported");
+                            return false;
+                        }
+                    }
+
                     _sendDataFunc(sendData, length);
                     LastCommTick = Stopwatch.GetTimestamp();
                     // remove echo
