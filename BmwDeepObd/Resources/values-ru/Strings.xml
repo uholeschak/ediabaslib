@@ -194,6 +194,8 @@
 
   <!-- tabs_errors -->
   <string name="button_error_reset">Удалить ошибки</string>
+  <!--Translate-->
+  <string name="button_error_reset_all">Reset all errors</string>
 
   <!-- Options Menu -->
   <string name="menu_settings">Настройки</string>

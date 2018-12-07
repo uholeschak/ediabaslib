@@ -195,6 +195,7 @@
 
   <!-- tabs_errors -->
   <string name="button_error_reset">Fehler löschen</string>
+  <string name="button_error_reset_all">Alle Fehler löschen</string>
 
   <!-- Options Menu -->
   <string name="menu_settings">Einstellungen</string>

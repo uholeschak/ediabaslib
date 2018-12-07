@@ -420,7 +420,8 @@ namespace BmwDeepObd
                 Finish();
             };
 
-            ViewStates vagButtonsVisibility = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw ? ViewStates.Visible : ViewStates.Gone;
+            ViewStates vagButtonsVisibility = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && ActivityCommon.VagUdsActive ?
+                ViewStates.Visible : ViewStates.Gone;
             _buttonCoding = FindViewById<Button>(Resource.Id.buttonCoding);
             _buttonCoding.Visibility = vagButtonsVisibility;
             _buttonCoding.Enabled = _ecuInfo.HasVagCoding();
@@ -433,10 +434,13 @@ namespace BmwDeepObd
             if (_ecuInfo.HasVagCoding2())
             {
                 UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_ecuInfo.VagDataFileName);
-                List<UdsFileReader.DataReader.DataInfo> dataInfoCodingList = udsReader.DataReader.ExtractDataType(_ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Login);
-                if (dataInfoCodingList?.Count > 0)
+                if (udsReader != null)
                 {
-                    coding2Enabled = true;
+                    List<UdsFileReader.DataReader.DataInfo> dataInfoCodingList = udsReader.DataReader.ExtractDataType(_ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Login);
+                    if (dataInfoCodingList?.Count > 0)
+                    {
+                        coding2Enabled = true;
+                    }
                 }
             }
 
