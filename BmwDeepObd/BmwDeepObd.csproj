@@ -67,6 +67,9 @@
     <DefineConstants>Android;OBB_MODE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AndroidFlowLayout, Version=1.9.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\AndroidFlowLayout.1.9.0.1\lib\monoandroid403\AndroidFlowLayout.dll</HintPath>
+    </Reference>
     <Reference Include="Google.Android.Vending.Expansion.Downloader, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Xamarin.Google.Android.Vending.Expansion.Downloader.2.0.0\lib\MonoAndroid\Google.Android.Vending.Expansion.Downloader.dll</HintPath>
     </Reference>

@@ -17,35 +17,31 @@
             android:dividerHeight="0px"
             android:layout_weight="1" />
     </LinearLayout>
-    <LinearLayout
+    <org.apmem.tools.layouts.FlowLayout
         android:orientation="horizontal"
+        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <Button
             android:id="@+id/button_error_reset"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="onErrorResetClick"
             android:text="@string/button_error_reset" />
         <Button
-            android:id="@+id/button_copy"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onCopyErrorsClick"
-            android:text="@string/button_copy" />
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
             android:id="@+id/button_error_reset_all"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="onErrorResetAllClick"
             android:text="@string/button_error_reset_all" />
-    </LinearLayout>
+        <Button
+            android:id="@+id/button_copy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onCopyErrorsClick"
+            android:text="@string/button_copy" />
+    </org.apmem.tools.layouts.FlowLayout>
 </LinearLayout>
