@@ -127,10 +127,13 @@ namespace BmwDeepObd
 
         public class ErrorsInfo
         {
-            public ErrorsInfo(List<EcuInfo> ecuList)
+            public ErrorsInfo(string sgbdFunctional, List<EcuInfo> ecuList)
             {
+                SgbdFunctional = sgbdFunctional;
                 EcuList = ecuList;
             }
+
+            public string SgbdFunctional { get; }
 
             public List<EcuInfo> EcuList { get; }
         }
@@ -552,6 +555,10 @@ namespace BmwDeepObd
                             }
                             if (string.Compare(xnodePageChild.Name, "read_errors", StringComparison.OrdinalIgnoreCase) == 0)
                             {
+                                string sgbdFunctional = string.Empty;
+                                attrib = xnodePageChild.Attributes["sgbd_functional"];
+                                if (attrib != null) sgbdFunctional = attrib.Value;
+
                                 List<EcuInfo> ecuList = new List<EcuInfo>();
                                 foreach (XmlNode xnodeErrorsChild in xnodePageChild.ChildNodes)
                                 {
@@ -578,7 +585,7 @@ namespace BmwDeepObd
                                         ecuList.Add(new EcuInfo(ecuName, sgbd, vagDataFileName, vagUdsFileName, results));
                                     }
                                 }
-                                errorsInfo = new ErrorsInfo(ecuList);
+                                errorsInfo = new ErrorsInfo(sgbdFunctional, ecuList);
                             }
                             if (string.Compare(xnodePageChild.Name, "code", StringComparison.OrdinalIgnoreCase) == 0)
                             {

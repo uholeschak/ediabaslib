@@ -1058,6 +1058,25 @@ namespace BmwDeepObd
             UpdateDisplay();
         }
 
+        [Export("onErrorResetAllClick")]
+        // ReSharper disable once UnusedMember.Global
+        public void OnErrorResetAllClick(View v)
+        {
+            if (!ActivityCommon.CommActive)
+            {
+                return;
+            }
+            string sgbdFunctional = ActivityCommon.EdiabasThread.JobPageInfo?.ErrorsInfo?.SgbdFunctional;
+            if (!string.IsNullOrEmpty(sgbdFunctional))
+            {
+                lock (EdiabasThread.DataLock)
+                {
+                    ActivityCommon.EdiabasThread.ErrorResetSgbdFunc = sgbdFunctional;
+                }
+            }
+            UpdateDisplay();
+        }
+
         [Export("onCopyErrorsClick")]
         // ReSharper disable once UnusedMember.Global
         public void OnCopyErrorsClick(View v)
@@ -1787,10 +1806,12 @@ namespace BmwDeepObd
                     buttonActive = dynamicFragment.View.FindViewById<ToggleButton>(Resource.Id.button_active);
                 }
                 Button buttonErrorReset = null;
+                Button buttonErrorResetAll = null;
                 Button buttonErrorCopy = null;
                 if (pageInfo.ErrorsInfo != null)
                 {
                     buttonErrorReset = dynamicFragment.View.FindViewById<Button>(Resource.Id.button_error_reset);
+                    buttonErrorResetAll = dynamicFragment.View.FindViewById<Button>(Resource.Id.button_error_reset_all);
                     buttonErrorCopy = dynamicFragment.View.FindViewById<Button>(Resource.Id.button_copy);
                 }
 
@@ -2213,6 +2234,7 @@ namespace BmwDeepObd
                             }
                         }
                         UpdateButtonErrorReset(buttonErrorReset, tempResultList);
+                        UpdateButtonErrorResetAll(buttonErrorResetAll, tempResultList, pageInfo);
                         UpdateButtonErrorCopy(buttonErrorCopy, (errorReportList != null) ? tempResultList : null);
 
                         if (stringList.Count > 0)
@@ -2442,6 +2464,7 @@ namespace BmwDeepObd
                     resultGridAdapter?.Items.Clear();
                     resultGridAdapter?.NotifyDataSetChanged();
                     UpdateButtonErrorReset(buttonErrorReset, null);
+                    UpdateButtonErrorResetAll(buttonErrorResetAll, null, pageInfo);
                     UpdateButtonErrorCopy(buttonErrorCopy, null);
                 }
 
@@ -2497,13 +2520,48 @@ namespace BmwDeepObd
             {
                 lock (EdiabasThread.DataLock)
                 {
-                    if (ActivityCommon.EdiabasThread.ErrorResetList != null || ActivityCommon.EdiabasThread.ErrorResetActive)
+                    if (ActivityCommon.EdiabasThread.ErrorResetList != null ||
+                        !string.IsNullOrEmpty(ActivityCommon.EdiabasThread.ErrorResetSgbdFunc) ||
+                        ActivityCommon.EdiabasThread.ErrorResetActive)
                     {
                         enabled = false;
                     }
                 }
             }
             buttonErrorReset.Enabled = enabled;
+        }
+
+        private void UpdateButtonErrorResetAll(Button buttonErrorResetAll, List<TableResultItem> resultItems, JobReader.PageInfo pageInfo)
+        {
+            if (buttonErrorResetAll == null)
+            {
+                return;
+            }
+
+            string sgbdFunctional = pageInfo?.ErrorsInfo?.SgbdFunctional;
+            bool visible = !string.IsNullOrEmpty(sgbdFunctional);
+
+            bool checkVisible = false;
+            if (resultItems != null)
+            {
+                checkVisible = resultItems.Any(resultItem => resultItem.CheckVisible);
+            }
+
+            bool enabled = checkVisible;
+            if (enabled && ActivityCommon.CommActive)
+            {
+                lock (EdiabasThread.DataLock)
+                {
+                    if (ActivityCommon.EdiabasThread.ErrorResetList != null ||
+                        !string.IsNullOrEmpty(ActivityCommon.EdiabasThread.ErrorResetSgbdFunc) ||
+                        ActivityCommon.EdiabasThread.ErrorResetActive)
+                    {
+                        enabled = false;
+                    }
+                }
+            }
+            buttonErrorResetAll.Visibility = visible ? ViewStates.Visible : ViewStates.Gone;
+            buttonErrorResetAll.Enabled = enabled;
         }
 
         private void UpdateButtonErrorCopy(Button buttonErrorCopy, List<TableResultItem> resultItems)

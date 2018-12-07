@@ -496,6 +496,13 @@
     <xs:sequence>
       <xs:element name="ecu" type="ecu-type" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:attribute name="sgbd_functional" type="string1-type" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+              Functional SGBD for this vehicle type. Used for global error reset.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="code-type" mixed="true">

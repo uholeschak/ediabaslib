@@ -61,7 +61,7 @@
       <string name="SZM">SZM Schaltzentrum Mittelkonsole</string>
       <string name="TCU">TCU Telematic Control Unit</string>
     </strings>
-    <read_errors>
+    <read_errors sgbd_functional ="e60.prg">
       <ecu name="CAS" sgbd="d_cas" />
       <ecu name="DDE" sgbd="d_motor" results="F_UW_KM;F_UW_ANZ" />
       <ecu name="EKPS" sgbd="d_ekp" />

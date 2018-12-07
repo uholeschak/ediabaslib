@@ -36,4 +36,16 @@
             android:onClick="onCopyErrorsClick"
             android:text="@string/button_copy" />
     </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/button_error_reset_all"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onErrorResetAllClick"
+            android:text="@string/button_error_reset_all" />
+    </LinearLayout>
 </LinearLayout>

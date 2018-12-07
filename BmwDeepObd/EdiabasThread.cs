@@ -170,6 +170,7 @@ namespace BmwDeepObd
         }
 
         public List<string> ErrorResetList { get; set; }
+        public string ErrorResetSgbdFunc { get; set; }
         public bool ErrorResetActive { get; private set; }
 
         public EdiabasNet Ediabas { get; private set; }
@@ -564,14 +565,58 @@ namespace BmwDeepObd
                     _ediabasInitReq = false;
                 }
                 List<string> errorResetList;
+                string errorResetSgbdFunc;
                 lock (DataLock)
                 {
                     errorResetList = ErrorResetList;
                     ErrorResetList = null;
-                    ErrorResetActive = errorResetList != null;
+                    errorResetSgbdFunc = ErrorResetSgbdFunc;
+                    ErrorResetSgbdFunc = null;
+                    ErrorResetActive = errorResetList != null || !string.IsNullOrEmpty(errorResetSgbdFunc);
                 }
 
                 List<EdiabasErrorReport> errorReportList = new List<EdiabasErrorReport>();
+
+                try
+                {
+                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !string.IsNullOrEmpty(errorResetSgbdFunc))
+                    {
+                        ActivityCommon.ResolveSgbdFile(Ediabas, errorResetSgbdFunc);
+
+                        Ediabas.ArgString = string.Empty;
+                        Ediabas.ArgBinaryStd = null;
+                        Ediabas.ResultsRequests = string.Empty;
+                        Ediabas.ExecuteJob("FS_LOESCHEN_FUNKTIONAL");
+
+                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
+                        if (resultSets.Count > 1)
+                        {
+                            bool errorResetOk = false;
+                            Dictionary<string, EdiabasNet.ResultData> resultDictCheck = resultSets[1];
+                            if (resultDictCheck.TryGetValue("JOB_STATUS", out EdiabasNet.ResultData resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    // read details
+                                    string jobStatus = (string)resultData.OpData;
+                                    if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        errorResetOk = true;
+                                    }
+                                }
+                            }
+                            if (errorResetOk)
+                            {
+                                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                                errorReportList.Add(new EdiabasErrorReportReset(string.Empty, null, null, resultDictCheck, errorResetOk));
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
 
                 int index = -1;
                 foreach (JobReader.EcuInfo ecuInfo in pageInfo.ErrorsInfo.EcuList)
@@ -611,10 +656,10 @@ namespace BmwDeepObd
                                 Ediabas.ResultsRequests = string.Empty;
                                 Ediabas.ExecuteJob(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw ? "FS_LOESCHEN" : "Fehlerspeicher_loeschen");
 
-                                bool errorResetOk = false;
                                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
                                 if (resultSets.Count > 1)
                                 {
+                                    bool errorResetOk = false;
                                     string resultName;
                                     Dictionary<string, EdiabasNet.ResultData> resultDictCheck;
                                     if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
@@ -1085,6 +1130,7 @@ namespace BmwDeepObd
             EdiabasErrorMessage = string.Empty;
             EdiabasErrorReportList = null;
             ErrorResetList = null;
+            ErrorResetSgbdFunc = null;
             ErrorResetActive = false;
             ResultPageInfo = null;
             UpdateProgress = 0;

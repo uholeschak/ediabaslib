@@ -123,6 +123,11 @@ namespace BmwDeepObd
 
             public bool HasVagCoding()
             {
+                if (!ActivityCommon.VagUdsActive)
+                {
+                    return false;
+                }
+
                 if (VagCodingShort != null || VagCodingLong != null)
                 {
                     return true;
@@ -144,6 +149,11 @@ namespace BmwDeepObd
 
             public bool HasVagCoding2()
             {
+                if (!ActivityCommon.VagUdsActive)
+                {
+                    return false;
+                }
+
                 if (!Is1281Ecu(this) && !IsUdsEcu(this))
                 {
                     return true;
@@ -154,6 +164,11 @@ namespace BmwDeepObd
 
             public bool HasVagLogin()
             {
+                if (!ActivityCommon.VagUdsActive)
+                {
+                    return false;
+                }
+
                 if (Is1281Ecu(this))
                 {
                     return true;
@@ -293,6 +308,7 @@ namespace BmwDeepObd
                 DeviceName = string.Empty;
                 DeviceAddress = string.Empty;
                 TraceActive = true;
+                SgbdFunctional = string.Empty;
                 Vin = string.Empty;
                 VehicleType = string.Empty;
             }
@@ -308,6 +324,7 @@ namespace BmwDeepObd
             public string TraceDir { get; set; }
             public bool TraceActive { get; set; }
             public bool TraceAppend { get; set; }
+            public string SgbdFunctional { get; set; }
             public string Vin { get; set; }
             public string VehicleType { get; set; }
             public bool CommErrorsOccured { get; set; }
@@ -1185,6 +1202,7 @@ namespace BmwDeepObd
 
         private void ClearVehicleInfo()
         {
+            _instanceData.SgbdFunctional = string.Empty;
             _instanceData.Vin = string.Empty;
             _instanceData.VehicleType = string.Empty;
         }
@@ -2178,6 +2196,7 @@ namespace BmwDeepObd
                 {
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Selected Ecu file: {0}", ecuFileNameBest);
                     _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
+                    _instanceData.SgbdFunctional = ecuFileNameBest;
 
                     try
                     {
@@ -6468,6 +6487,12 @@ namespace BmwDeepObd
                 if (errorsNodeOld != null)
                 {
                     errorsNodeNew.ReplaceAttributes(from el in errorsNodeOld.Attributes() select new XAttribute(el));
+                }
+                XAttribute attrSgbdFunc = errorsNodeNew.Attribute("sgbd_functional");
+                attrSgbdFunc?.Remove();
+                if (!string.IsNullOrEmpty(_instanceData.SgbdFunctional))
+                {
+                    errorsNodeNew.Add(new XAttribute("sgbd_functional", _instanceData.SgbdFunctional));
                 }
 
                 foreach (EcuInfo ecuInfo in _ecuList)
