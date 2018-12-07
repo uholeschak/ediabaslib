@@ -1069,6 +1069,30 @@ namespace BmwDeepObd
             string sgbdFunctional = ActivityCommon.EdiabasThread.JobPageInfo?.ErrorsInfo?.SgbdFunctional;
             if (!string.IsNullOrEmpty(sgbdFunctional))
             {
+                View parent = v.Parent as View;
+                parent = parent?.Parent as View;
+                ListView listViewResult = parent?.FindViewById<ListView>(Resource.Id.resultList);
+                ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult?.Adapter;
+                if (resultListAdapter != null)
+                {
+                    bool changed = false;
+                    foreach (TableResultItem resultItem in resultListAdapter.Items)
+                    {
+                        if (resultItem.CheckVisible)
+                        {
+                            if (!resultItem.Selected)
+                            {
+                                resultItem.Selected = true;
+                                changed = true;
+                            }
+                        }
+                    }
+
+                    if (changed)
+                    {
+                        resultListAdapter.NotifyDataSetChanged();
+                    }
+                }
                 lock (EdiabasThread.DataLock)
                 {
                     ActivityCommon.EdiabasThread.ErrorResetSgbdFunc = sgbdFunctional;
@@ -1893,7 +1917,8 @@ namespace BmwDeepObd
                                         bool changed = false;
                                         foreach (TableResultItem resultItem in resultListAdapter.Items)
                                         {
-                                            if (resultItem.Tag is string ecuName && string.CompareOrdinal(ecuName, errorReport.EcuName) == 0)
+                                            if (string.IsNullOrEmpty(errorReport.EcuName) ||
+                                                (resultItem.Tag is string ecuName && string.CompareOrdinal(ecuName, errorReport.EcuName) == 0))
                                             {
                                                 if (resultItem.Selected)
                                                 {
