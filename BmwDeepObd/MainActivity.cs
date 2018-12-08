@@ -301,6 +301,7 @@ namespace BmwDeepObd
                 return;
             }
             UpdateSelectedPage();
+            UpdateDisplay();
         }
 
         public void OnTabUnselected(TabLayout.Tab tab)
