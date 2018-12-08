@@ -591,24 +591,34 @@ namespace BmwDeepObd
                         List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
                         if (resultSets.Count > 1)
                         {
-                            bool errorResetOk = false;
-                            Dictionary<string, EdiabasNet.ResultData> resultDictCheck = resultSets[1];
-                            if (resultDictCheck.TryGetValue("JOB_STATUS", out EdiabasNet.ResultData resultData))
+                            Dictionary<string, EdiabasNet.ResultData> resultDictOk = null;
+                            int dictIndex = 0;
+                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
                             {
-                                if (resultData.OpData is string)
+                                if (dictIndex == 0)
                                 {
-                                    // read details
-                                    string jobStatus = (string)resultData.OpData;
-                                    if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                    dictIndex++;
+                                    continue;
+                                }
+                                if (resultDictLocal.TryGetValue("JOB_STATUS", out EdiabasNet.ResultData resultData))
+                                {
+                                    if (resultData.OpData is string)
                                     {
-                                        errorResetOk = true;
+                                        // read details
+                                        string jobStatus = (string)resultData.OpData;
+                                        if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            resultDictOk = resultDictLocal;
+                                            break;
+                                        }
                                     }
                                 }
+                                dictIndex++;
                             }
-                            if (errorResetOk)
+
+                            if (resultDictOk != null)
                             {
-                                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                                errorReportList.Add(new EdiabasErrorReportReset(string.Empty, null, null, resultDictCheck, errorResetOk));
+                                errorReportList.Add(new EdiabasErrorReportReset(string.Empty, null, null, resultDictOk, true));
                             }
                         }
                     }
