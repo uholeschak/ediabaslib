@@ -919,6 +919,28 @@ namespace BmwDeepObd
 
         public static bool CommActive => EdiabasThread != null && EdiabasThread.ThreadRunning();
 
+        public static bool ErrorResetActive
+        {
+            get
+            {
+                bool active = false;
+                if (CommActive)
+                {
+                    lock (EdiabasThread.DataLock)
+                    {
+                        if (EdiabasThread.ErrorResetList != null ||
+                            !string.IsNullOrEmpty(EdiabasThread.ErrorResetSgbdFunc) ||
+                            EdiabasThread.ErrorResetActive)
+                        {
+                            active = true;
+                        }
+                    }
+                }
+
+                return active;
+            }
+        }
+
         public string InterfaceName()
         {
             switch (_selectedInterface)
