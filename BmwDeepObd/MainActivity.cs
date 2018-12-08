@@ -2249,6 +2249,7 @@ namespace BmwDeepObd
                                     {
                                         UpdateButtonErrorReset(buttonErrorReset, resultListAdapter.Items);
                                     };
+                                    newResultItem.CheckEnable = !ActivityCommon.ErrorResetActive;
                                     tempResultList.Add(newResultItem);
                                 }
                                 lastEcuName = errorReport.EcuName;
@@ -2473,6 +2474,16 @@ namespace BmwDeepObd
                                     resultChanged = true;
                                     break;
                                 }
+                                if (resultNew.CheckVisible != resultOld.CheckVisible)
+                                {
+                                    resultChanged = true;
+                                    break;
+                                }
+                                if (resultNew.CheckEnable != resultOld.CheckEnable)
+                                {
+                                    resultChanged = true;
+                                    break;
+                                }
                             }
                         }
                         if (resultChanged)
@@ -2542,17 +2553,9 @@ namespace BmwDeepObd
             }
 
             bool enabled = selected;
-            if (enabled && ActivityCommon.CommActive)
+            if (enabled && ActivityCommon.ErrorResetActive)
             {
-                lock (EdiabasThread.DataLock)
-                {
-                    if (ActivityCommon.EdiabasThread.ErrorResetList != null ||
-                        !string.IsNullOrEmpty(ActivityCommon.EdiabasThread.ErrorResetSgbdFunc) ||
-                        ActivityCommon.EdiabasThread.ErrorResetActive)
-                    {
-                        enabled = false;
-                    }
-                }
+                enabled = false;
             }
             buttonErrorReset.Enabled = enabled;
         }
@@ -2574,17 +2577,9 @@ namespace BmwDeepObd
             }
 
             bool enabled = checkVisible;
-            if (enabled && ActivityCommon.CommActive)
+            if (enabled && ActivityCommon.ErrorResetActive)
             {
-                lock (EdiabasThread.DataLock)
-                {
-                    if (ActivityCommon.EdiabasThread.ErrorResetList != null ||
-                        !string.IsNullOrEmpty(ActivityCommon.EdiabasThread.ErrorResetSgbdFunc) ||
-                        ActivityCommon.EdiabasThread.ErrorResetActive)
-                    {
-                        enabled = false;
-                    }
-                }
+                enabled = false;
             }
             buttonErrorResetAll.Visibility = visible ? ViewStates.Visible : ViewStates.Gone;
             buttonErrorResetAll.Enabled = enabled;
