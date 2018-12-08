@@ -18,6 +18,7 @@ using Peak.Can.Basic;
 // ReSharper disable RedundantAssignment
 // ReSharper disable RedundantCast
 // ReSharper disable UnusedAutoPropertyAccessor.Local
+// ReSharper disable IdentifierTypo
 
 namespace CarSimulator
 {
@@ -4148,6 +4149,56 @@ namespace CarSimulator
                     _ecuErrorResetList.Add(_receiveData[1]);
                 }
                 ObdSend(_sendData);
+                standardResponse = true;
+            }
+            else if (
+                _receiveData[0] == 0xC3 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x14 &&
+                _receiveData[4] == 0xFF &&
+                _receiveData[5] == 0xFF)
+            {   // global error reset
+                Debug.WriteLine("Global error reset");
+                HashSet<byte> addrHash = new HashSet<byte>();
+                foreach (ResponseEntry responseEntry in _configData.ResponseList)
+                {
+                    foreach (byte[] responseTel in responseEntry.ResponseList)
+                    {
+                        if (responseTel.Length >= 3 && (responseTel[0] & 0xC0) == 0x80)
+                        {
+                            addrHash.Add(responseTel[2]);
+                        }
+                    }
+                    foreach (byte[] responseTel in responseEntry.ResponseMultiList)
+                    {
+                        if (responseTel.Length >= 3 && (responseTel[0] & 0xC0) == 0x80)
+                        {
+                            addrHash.Add(responseTel[2]);
+                        }
+                    }
+                }
+
+                StringBuilder sb = new StringBuilder();
+                sb.Append("Reset addr: ");
+                foreach (byte addr in addrHash)
+                {
+                    sb.Append(string.Format("{0:X02} ", addr));
+
+                    _sendData[0] = 0x83;
+                    _sendData[1] = 0xF1;
+                    _sendData[2] = addr;
+                    _sendData[3] = 0x54;
+                    _sendData[4] = 0xFF;
+                    _sendData[5] = 0xFF;
+
+                    if (!_ecuErrorResetList.Contains(addr))
+                    {
+                        _ecuErrorResetList.Add(addr);
+                    }
+                    ObdSend(_sendData);
+                }
+
+                Debug.WriteLine(sb.ToString());
                 standardResponse = true;
             }
             else if (
