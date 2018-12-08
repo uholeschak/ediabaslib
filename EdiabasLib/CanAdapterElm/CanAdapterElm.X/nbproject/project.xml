@@ -14,6 +14,36 @@
             <make-dep-projects>
                 <make-dep-project>bootloader</make-dep-project>
             </make-dep-projects>
+            <sourceRootList/>
+            <confList>
+                <confElem>
+                    <name>default</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>bc04</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>hc04</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>spp_uart</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>yc1021</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>esp8266</name>
+                    <type>2</type>
+                </confElem>
+            </confList>
+            <formatting>
+                <project-formatting-style>false</project-formatting-style>
+            </formatting>
         </data>
     </configuration>
 </project>
