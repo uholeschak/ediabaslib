@@ -4,6 +4,7 @@
 
 using namespace System;
 using namespace System::Threading;
+using namespace System::Collections::Generic;
 using namespace System::Runtime::InteropServices;
 using namespace msclr::interop;
 using namespace Ediabas;
@@ -13,7 +14,7 @@ using namespace Ediabas;
 ref class GlobalObjects
 {
     public:
-        static array<ApiInternal ^>^ handles = gcnew array<ApiInternal ^>(10);
+        static List<ApiInternal ^>^ handles = gcnew List<ApiInternal ^>();
         static Object ^ handleLock = gcnew Object();
 
         static GlobalObjects()
@@ -26,9 +27,10 @@ ref class GlobalObjects
             try
             {
                 Monitor::Enter(handleLock);
-                for (int i = 0; i < handles->Length; i++)
+                for (int i = 0; i < handles->Count; i++)
                 {
-                    if (handles[i] != nullptr)
+                    ApiInternal ^ apiInternal = handles[i];
+                    if (apiInternal != nullptr)
                     {
                         handles[i]->apiEnd();
                         handles[i] = nullptr;
@@ -50,15 +52,18 @@ ref class GlobalObjects
             try
             {
                 Monitor::Enter( handleLock );
-                for (int i = 0; i < handles->Length; i++)
+                ApiInternal ^apiInternal = gcnew ApiInternal();
+                for (int i = 0; i < handles->Count; i++)
                 {
                     if (handles[i] == nullptr)
                     {
-                        ApiInternal ^apiInternal = gcnew ApiInternal();
                         handles[i] = apiInternal;
                         return i + 1;
                     }
                 }
+                // no free handle found, create new one
+                handles->Add(apiInternal);
+                return handles->Count;
             }
             finally
             {
@@ -73,7 +78,7 @@ ref class GlobalObjects
             {
                 Monitor::Enter( handleLock );
                 int index = handle - 1;
-                if (index >= 0 && index < handles->Length)
+                if (index >= 0 && index < handles->Count)
                 {
                     handles[index] = nullptr;
                 }
@@ -90,7 +95,7 @@ ref class GlobalObjects
             {
                 Monitor::Enter( handleLock );
                 int index = handle - 1;
-                if (index >= 0 && index < handles->Length)
+                if (index >= 0 && index < handles->Count)
                 {
                     return handles[index];
                 }
