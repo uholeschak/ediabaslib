@@ -29,7 +29,7 @@
   <string name="ecu_not_found">ECU файлы не найдены.</string>
   <string name="ecu_package">Для этого приложения доступны обновлённые ECU файлы.</string>
   <string name="ecu_download">Хотите загрузить ECU файлы (размер файла примерно {0:fs1})?</string>
-  <string name="storage_requirements">Это программа для экспертов.\nМы не несём ответственности в случае неисправности или повреждения транспортного средства.\nДля этого приложения требуется более быстрое устройство хранения данных со свободным пространством не менее {0:fs1}.\nИспользование этого приложения не допускается, если условие не будет принято.</string>  <string name="ecu_extract">Необходимо распаковать файлы ECU (приблизительный размер {0:fs1}),\nдля этого требуется загрузить информацию об обновлении.\nЕсли распаковка происходит очень медленно, используйте более быстрый носитель данных.\nПродолжить?</string>
+  <string name="storage_requirements">Эта программа разработана для экспертов.\nМы не несём ответственности в случае неисправности или повреждения транспортного средства.\nДля этого приложения требуется более быстрое устройство хранения данных со свободным пространством не менее {0:fs1}.\nИспользование этого приложения не допускается, если условие не будет принято.</string>  <string name="ecu_extract">Необходимо распаковать файлы ECU (приблизительный размер {0:fs1}),\nдля этого требуется загрузить информацию об обновлении.\nЕсли распаковка происходит очень медленно, используйте более быстрый носитель данных.\nПродолжить?</string>
   <string name="ecu_extract_confirm">Для распаковки файлов ECU (Размер около{0:fs1})\nтребуется загрузка информации об обновлении.\nЕсли распаковка происходит очень медленно, используйте более быстрый носитель данных.\nХотите продолжить? </string>
   <string name="manufacturer_select">Выбранный производитель {0}. Для выбора другого нажмите \'Отменить\'.</string>
   <string name="error_no_error">Ошибки отсутствуют</string>
@@ -450,14 +450,14 @@
   <string name="vag_coding_sec_access_title">Права дооступа (деc.): {0}-{1}</string>
   <string name="vag_coding_comments_title">Примечания</string>
   <string name="vag_coding_raw_title">Кодировка (шест.)</string>
-  <string name="vag_coding_workshop_number_title">Номер операции (деc.): 0-99999</string>
-  <string name="vag_coding_importer_number_title">Номер импортера (деc.): 0-999</string>
+  <string name="vag_coding_workshop_number_title">Номер мастерской (деc.): 0-99999</string>
+  <string name="vag_coding_importer_number_title">Номер импортёра (деc.): 0-999</string>
   <string name="vag_coding_equipment_number_title">Номер устройства (деc.): 0-999999</string>
   <string name="vag_coding_assistant_title">Помощник по кодированию</string>
   <string name="vag_coding_execute_title">Выполнить операцию</string>
   <string name="vag_coding_button_execute">Выполнить</string>
   <string name="vag_coding_processing">Выполнение операции</string>
-  <string name="vag_coding_write_values_invalid">Если номер операции, номер импортера или номер устройства равен 0, то ECU может отклонить кодировку.\nХотите продолжить?</string>
+  <string name="vag_coding_write_values_invalid">Если номер мастерской, номер импортера или номер устройства равен 0, то ECU может отклонить кодировку.\nХотите продолжить?</string>
   <string name="vag_coding_write_coding_illegal_arguments">Аргументы для операции находятся вне рабочего диапазона</string>
   <string name="vag_coding_write_coding_failed">Не удалось записать кодировку</string>
   <string name="vag_coding_write_coding_access_denied">В доступе отказано, сначала вы должны авторизироваться</string>
