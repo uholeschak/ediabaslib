@@ -7090,7 +7090,14 @@ namespace CarSimulator
                 if (recLength == 0)
                 {
                     // with length byte
-                    recLength = _receiveData[3] + 4;
+                    if (_receiveData[3] == 0)
+                    {
+                        recLength = (_receiveData[4] << 8) + _receiveData[5] + 6;
+                    }
+                    else
+                    {
+                        recLength = _receiveData[3] + 4;
+                    }
                 }
                 else
                 {
@@ -7199,7 +7206,7 @@ namespace CarSimulator
                         if (_conceptType == ConceptType.ConceptKwp2000)
                         {
                             if ((responseEntry.Config == null) || (responseEntry.Config.Length < 1) ||
-                            (responseEntry.Config[0] != wakeAddress))
+                                (responseEntry.Config[0] != wakeAddress))
                             {
                                 continue;
                             }
@@ -7390,7 +7397,31 @@ namespace CarSimulator
                                     }
                                     else
                                     {
-                                        Debug.WriteLine("Dummy service3B: {0:X02}", _receiveData[4]);
+                                        if (_receiveData[4] == 0x9A && recLength > 17 + 2)
+                                        {
+                                            Debug.WriteLine("Parameter long coding");
+                                            if (_conceptType == ConceptType.ConceptTp20)
+                                            {
+                                                foreach (ResponseEntry responseEntry in _configData.ResponseList)
+                                                {
+                                                    if (responseEntry.Request.Length == 6 && responseEntry.Request[1] == _receiveData[1] && responseEntry.Request[2] == _receiveData[2] &&
+                                                        responseEntry.Request[3] == 0x1A && responseEntry.Request[4] == 0x9A)
+                                                    {
+                                                        Debug.WriteLine("Found read long coding");
+                                                        if (responseEntry.ResponseDyn != null && responseEntry.ResponseDyn[3] == 0x5A && responseEntry.ResponseDyn[4] == 0x9A &&
+                                                            responseEntry.ResponseDyn.Length == recLength)
+                                                        {
+                                                            Debug.WriteLine("Updating long coding response");
+                                                            Array.Copy(_receiveData, 5, responseEntry.ResponseDyn, 5, recLength - 6);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Debug.WriteLine("Dummy service3B: {0:X02}", _receiveData[4]);
+                                        }
                                     }
 #if true
                                     byte[] dummyResponse = { 0x82, _receiveData[2], _receiveData[1], 0x7B, _receiveData[4], 0x00 };   // positive write ACK
