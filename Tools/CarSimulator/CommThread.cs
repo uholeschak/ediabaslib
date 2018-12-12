@@ -7382,12 +7382,13 @@ namespace CarSimulator
                                                     responseEntry.Request[3] == 0x1A && responseEntry.Request[4] == 0x9B)
                                                 {
                                                     Debug.WriteLine("Found read coding");
-                                                    if (responseEntry.ResponseDyn != null &&
-                                                        responseEntry.ResponseDyn[3] == 0x5A && responseEntry.ResponseDyn[4] == 0x9B && responseEntry.ResponseDyn.Length > 22 + 3)
+                                                    byte[] responseTelDyn = responseEntry.ResponseDyn;
+                                                    if (responseTelDyn != null &&
+                                                        responseTelDyn[3] == 0x5A && responseTelDyn[4] == 0x9B && responseTelDyn.Length > 22 + 3)
                                                     {
                                                         Debug.WriteLine("Updating coding response dyn");
-                                                        Array.Copy(lastCoding, 0, responseEntry.ResponseDyn, 22, lastCoding.Length);
-                                                        Array.Copy(lastRepairShop, 0, responseEntry.ResponseDyn, 25, lastRepairShop.Length);
+                                                        Array.Copy(lastCoding, 0, responseTelDyn, 22, lastCoding.Length);
+                                                        Array.Copy(lastRepairShop, 0, responseTelDyn, 25, lastRepairShop.Length);
                                                     }
 
                                                     foreach (byte[] responseTel in responseEntry.ResponseMultiList)
@@ -7395,8 +7396,8 @@ namespace CarSimulator
                                                         if (responseTel[3] == 0x5A && responseTel[4] == 0x9B && responseTel.Length > 22 + 3)
                                                         {
                                                             Debug.WriteLine("Updating coding response multi");
-                                                            Array.Copy(lastCoding, 0, responseEntry.ResponseDyn, 22, lastCoding.Length);
-                                                            Array.Copy(lastRepairShop, 0, responseEntry.ResponseDyn, 25, lastRepairShop.Length);
+                                                            Array.Copy(lastCoding, 0, responseTel, 22, lastCoding.Length);
+                                                            Array.Copy(lastRepairShop, 0, responseTel, 25, lastRepairShop.Length);
                                                         }
                                                     }
                                                 }
@@ -7418,11 +7419,12 @@ namespace CarSimulator
                                                     responseEntry.Request[3] == 0x1A && responseEntry.Request[4] == 0x9A)
                                                 {
                                                     Debug.WriteLine("Found read long coding");
-                                                    if (responseEntry.ResponseDyn != null &&
-                                                        responseEntry.ResponseDyn[3] == 0x5A && responseEntry.ResponseDyn[4] == 0x9A && responseEntry.ResponseDyn.Length == recLength)
+                                                    byte[] responseTelDyn = responseEntry.ResponseDyn;
+                                                    if (responseTelDyn != null &&
+                                                        responseTelDyn[3] == 0x5A && responseTelDyn[4] == 0x9A && responseTelDyn.Length == recLength)
                                                     {
                                                         Debug.WriteLine("Updating long coding response dyn");
-                                                        Array.Copy(_receiveData, 5, responseEntry.ResponseDyn, 5, recLength - 6);
+                                                        Array.Copy(_receiveData, 5, responseTelDyn, 5, recLength - 6);
                                                     }
 
                                                     foreach (byte[] responseTel in responseEntry.ResponseMultiList)
@@ -7430,7 +7432,7 @@ namespace CarSimulator
                                                         if (responseTel[3] == 0x5A && responseTel[4] == 0x9A && responseTel.Length == recLength)
                                                         {
                                                             Debug.WriteLine("Updating long coding response multi");
-                                                            Array.Copy(_receiveData, 5, responseEntry.ResponseDyn, 5, recLength - 6);
+                                                            Array.Copy(_receiveData, 5, responseTel, 5, recLength - 6);
                                                         }
                                                     }
                                                 }
