@@ -45,6 +45,10 @@ namespace BmwDeepObd
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
 
+        private UInt64 workshopNumberMax = 99999;
+        private UInt64 importerNumberMax = 999;
+        private UInt64 equipmentNumberMax = 999999;
+
         public enum CodingMode
         {
             Coding,
@@ -770,7 +774,7 @@ namespace BmwDeepObd
                         {
                             if (UInt64.TryParse(_editTextVagWorkshopNumber.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 valueWorkshop))
                             {
-                                if (valueWorkshop <= 99999)
+                                if (valueWorkshop <= workshopNumberMax)
                                 {
                                     if (_instanceData.CurrentWorkshopNumber.Value != valueWorkshop)
                                     {
@@ -790,7 +794,7 @@ namespace BmwDeepObd
                             if (UInt64.TryParse(_editTextVagImporterNumber.Text, NumberStyles.Integer,
                                 CultureInfo.InvariantCulture, out UInt64 valueImporter))
                             {
-                                if (valueImporter <= 999)
+                                if (valueImporter <= importerNumberMax)
                                 {
                                     if (_instanceData.CurrentImporterNumber.Value != valueImporter)
                                     {
@@ -809,7 +813,7 @@ namespace BmwDeepObd
                         {
                             if (UInt64.TryParse(_editTextVagEquipmentNumber.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 valueEquipment))
                             {
-                                if (valueEquipment <= 999999)
+                                if (valueEquipment <= equipmentNumberMax)
                                 {
                                     if (_instanceData.CurrentEquipmentNumber.Value != valueEquipment)
                                     {
@@ -860,6 +864,10 @@ namespace BmwDeepObd
             string codingTextWorkshop = string.Empty;
             string codingTextImporter = string.Empty;
             string codingTextEquipment = string.Empty;
+            string workshopNumberTitle = string.Empty;
+            string importerNumberTitle = string.Empty;
+            string equipmentNumberTitle = string.Empty;
+
             if (_instanceData.CurrentCoding != null)
             {
                 try
@@ -911,6 +919,10 @@ namespace BmwDeepObd
                             codingTextEquipment = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.CurrentEquipmentNumber);
                         }
                     }
+
+                    workshopNumberTitle = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_coding_workshop_number_title), 0, workshopNumberMax);
+                    importerNumberTitle = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_coding_importer_number_title), 0, importerNumberMax);
+                    equipmentNumberTitle = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_coding_equipment_number_title), 0, equipmentNumberMax);
                 }
                 catch (Exception)
                 {
@@ -921,8 +933,11 @@ namespace BmwDeepObd
             _editTextVagCodingRaw.Text = codingTextRaw;
             _editTextVagCodingShort.Text = codingTextShort;
             _textViewVagCodingShortTitle.Text = codingTextShortTitle;
+            _textViewVagWorkshopNumberTitle.Text = workshopNumberTitle;
             _editTextVagWorkshopNumber.Text = codingTextWorkshop;
+            _textViewVagImporterNumberTitle.Text = importerNumberTitle;
             _editTextVagImporterNumber.Text = codingTextImporter;
+            _textViewVagEquipmentNumberTitle.Text = equipmentNumberTitle;
             _editTextVagEquipmentNumber.Text = codingTextEquipment;
             _buttonCodingExecute.Enabled = !IsJobRunning();
         }
