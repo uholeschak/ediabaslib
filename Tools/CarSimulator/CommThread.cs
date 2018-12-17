@@ -272,8 +272,9 @@ namespace CarSimulator
         private int _kwp1281InvEchoIndex;
         private int _kwp1281InvBlockEndIndex;
 #pragma warning restore 414
-        private byte _kwp2000AdaptionStatus = 0x01;
-        private byte _kwp2000AdaptionChannel = 0x00;
+        private byte _kwp2000AdaptionStatus;
+        private byte _kwp2000AdaptionChannel;
+        private int _kwp2000AdaptionValue;
         private readonly Stopwatch[] _timeValveWrite = new Stopwatch[4];
         private byte _mode; // 2: conveyor, 4: transport
         private int _outputs; // 0:left, 1:right, 2:down, 3:comp
@@ -644,6 +645,11 @@ namespace CarSimulator
             _kwp1281InvRespIndex = 0;
             _kwp1281InvEchoIndex = 0;
             _kwp1281InvBlockEndIndex = 0;
+
+            _kwp2000AdaptionStatus = 0x01;
+            _kwp2000AdaptionChannel = 0x00;
+            _kwp2000AdaptionValue = 0x1234;
+
             for (int i = 0; i < _timeValveWrite.Length; i++)
             {
                 _timeValveWrite[i] = new Stopwatch();
@@ -7489,7 +7495,7 @@ namespace CarSimulator
                                     {
                                         found = true;
                                         byte[] dummyResponse = { 0x8E, _receiveData[2], _receiveData[1], (byte)(_receiveData[3] | 0x40), _receiveData[4],
-                                            0x01, 0x03, 0x01, 0x02, 0x12, 0x34, 0x01, 0x14, 0x01, 0x06, 0x01, 0x08, 0x00 };
+                                            0x01, 0x03, 0x01, 0x04, (byte)(_kwp2000AdaptionValue >> 8), (byte)_kwp2000AdaptionValue, 0x01, 0x14, 0x01, 0x06, 0x01, 0x08, 0x00 };
                                         if (_receiveData[3] == 0x31)
                                         {
                                             if (_receiveData[4] == 0xB8)
@@ -7507,7 +7513,8 @@ namespace CarSimulator
                                                 }
                                                 else if (recLength > 9)
                                                 {
-                                                    Debug.WriteLine("Write adaption channel value: {0:X02}{1:X02}", _receiveData[7], _receiveData[8]);
+                                                    _kwp2000AdaptionValue = (_receiveData[7] << 8) + _receiveData[8];
+                                                    Debug.WriteLine("Write adaption channel value: {0:X04}", _kwp2000AdaptionValue);
                                                 }
                                                 _kwp2000AdaptionStatus = 0x82;
                                             }
