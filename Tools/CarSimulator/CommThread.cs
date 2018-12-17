@@ -272,6 +272,8 @@ namespace CarSimulator
         private int _kwp1281InvEchoIndex;
         private int _kwp1281InvBlockEndIndex;
 #pragma warning restore 414
+        private byte _kwp2000AdaptionStatus = 0x01;
+        private byte _kwp2000AdaptionChannel = 0x00;
         private readonly Stopwatch[] _timeValveWrite = new Stopwatch[4];
         private byte _mode; // 2: conveyor, 4: transport
         private int _outputs; // 0:left, 1:right, 2:down, 3:comp
@@ -7478,6 +7480,47 @@ namespace CarSimulator
                                             Debug.WriteLine("Dummy service27: {0:X02}", _receiveData[4]);
                                         }
                                         byte[] dummyResponse = { 0x82, _receiveData[2], _receiveData[1], 0x67, _receiveData[4], 0x00 };   // positive ACK
+                                        ObdSend(dummyResponse);
+                                    }
+                                }
+                                else if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && (_receiveData[3] == 0x31 || _receiveData[3] == 0x32))
+                                {   // service 31 (StartRoutineByLocalIdentifier), service 32 (StopRoutineByLocalIdentifier)
+                                    if (_receiveData[5] == 0x01 && _receiveData[6] == 0x03)
+                                    {
+                                        found = true;
+                                        byte[] dummyResponse = { 0x8E, _receiveData[2], _receiveData[1], (byte)(_receiveData[3] | 0x40), _receiveData[4],
+                                            0x01, 0x03, 0x01, 0x02, 0x01, 0x03, 0x01, 0x14, 0x01, 0x06, 0x01, 0x08, 0x00 };
+                                        if (_receiveData[3] == 0x31)
+                                        {
+                                            if (_receiveData[4] == 0xB8)
+                                            {
+                                                Debug.WriteLine("Reset adaption channel");
+                                                _kwp2000AdaptionStatus = 0x81;
+                                            }
+                                            if (_receiveData[4] == 0xB9)
+                                            {
+                                                _kwp2000AdaptionChannel = _receiveData[7];
+                                                Debug.WriteLine("Set adaption channel: {0:X02}", _kwp2000AdaptionChannel);
+                                                _kwp2000AdaptionStatus = 0x82;
+                                            }
+                                            else if (_receiveData[4] == 0xBA)
+                                            {
+                                                Debug.WriteLine("Read adaption channel status: {0:X02}", _kwp2000AdaptionStatus);
+                                                dummyResponse[7] = _kwp2000AdaptionStatus;
+                                                if (_kwp2000AdaptionStatus == 0x82)
+                                                {
+                                                    _kwp2000AdaptionStatus = 0x05;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (_receiveData[4] == 0xB8)
+                                            {
+                                                Debug.WriteLine("Close adaption channel");
+                                                _kwp2000AdaptionStatus = 0x01;
+                                            }
+                                        }
                                         ObdSend(dummyResponse);
                                     }
                                 }
