@@ -7545,6 +7545,68 @@ namespace CarSimulator
                                         }
                                         ObdSend(dummyResponse);
                                     }
+                                    else if (_receiveData[5] == 0x01 && _receiveData[6] == 0x0A)
+                                    {
+                                        found = true;
+                                        byte[] dummyResponse = { 0x8C, _receiveData[2], _receiveData[1], (byte)(_receiveData[3] | 0x40), _receiveData[4],
+                                            0x01, 0x04, 0x01, 0x06, 0x01, 0x07, 0x01, 0x08, 0x01, 0x0A, 0x00 };
+                                        if (_receiveData[3] == 0x31)
+                                        {
+                                            if (_receiveData[4] == 0xB8)
+                                            {
+                                                Debug.WriteLine("Reset adaption channel");
+                                                _kwp2000AdaptionStatus = 0x81;
+                                            }
+                                            if (_receiveData[4] == 0xB9)
+                                            {
+                                                Debug.WriteLine("RecLength: {0}", recLength);
+                                                if (recLength == 9)
+                                                {
+                                                    _kwp2000AdaptionChannel = _receiveData[7];
+                                                    Debug.WriteLine("Set adaption channel: {0:X02}", _kwp2000AdaptionChannel);
+                                                }
+                                                else if (recLength > 9)
+                                                {
+                                                    _kwp2000AdaptionValue = (_receiveData[7] << 8) + _receiveData[8];
+                                                    Debug.WriteLine("Write adaption channel value: {0:X04}", _kwp2000AdaptionValue);
+                                                }
+                                                _kwp2000AdaptionStatus = 0x82;
+                                            }
+                                            else if (_receiveData[4] == 0xBA)
+                                            {
+                                                Debug.WriteLine("Read adaption channel status: {0:X02}", _kwp2000AdaptionStatus);
+                                                if (_kwp2000AdaptionStatus == 0x81)
+                                                {
+                                                    dummyResponse[7] = _kwp2000AdaptionStatus;
+                                                }
+                                                else
+                                                {
+                                                    dummyResponse[7] = _kwp2000AdaptionChannel;
+                                                    dummyResponse[8] = _kwp2000AdaptionStatus;
+                                                }
+                                                if (_kwp2000AdaptionStatus == 0x82)
+                                                {
+                                                    _kwp2000AdaptionStatus = 0x05;
+                                                }
+                                            }
+                                            else if (_receiveData[4] == 0xBB)
+                                            {
+                                                if (recLength > 9)
+                                                {
+                                                    Debug.WriteLine("Store adaption channel value: {0:X02}{1:X02}", _receiveData[7], _receiveData[8]);
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (_receiveData[4] == 0xB8)
+                                            {
+                                                Debug.WriteLine("Close adaption channel");
+                                                _kwp2000AdaptionStatus = 0x82;
+                                            }
+                                        }
+                                        ObdSend(dummyResponse);
+                                    }
                                 }
                             }
                         }
