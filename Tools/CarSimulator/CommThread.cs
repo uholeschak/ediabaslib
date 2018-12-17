@@ -7489,7 +7489,7 @@ namespace CarSimulator
                                     {
                                         found = true;
                                         byte[] dummyResponse = { 0x8E, _receiveData[2], _receiveData[1], (byte)(_receiveData[3] | 0x40), _receiveData[4],
-                                            0x01, 0x03, 0x01, 0x02, 0x01, 0x03, 0x01, 0x14, 0x01, 0x06, 0x01, 0x08, 0x00 };
+                                            0x01, 0x03, 0x01, 0x02, 0x12, 0x34, 0x01, 0x14, 0x01, 0x06, 0x01, 0x08, 0x00 };
                                         if (_receiveData[3] == 0x31)
                                         {
                                             if (_receiveData[4] == 0xB8)
@@ -7499,8 +7499,16 @@ namespace CarSimulator
                                             }
                                             if (_receiveData[4] == 0xB9)
                                             {
-                                                _kwp2000AdaptionChannel = _receiveData[7];
-                                                Debug.WriteLine("Set adaption channel: {0:X02}", _kwp2000AdaptionChannel);
+                                                Debug.WriteLine("RecLength: {0}", recLength);
+                                                if (recLength == 9)
+                                                {
+                                                    _kwp2000AdaptionChannel = _receiveData[7];
+                                                    Debug.WriteLine("Set adaption channel: {0:X02}", _kwp2000AdaptionChannel);
+                                                }
+                                                else if (recLength > 9)
+                                                {
+                                                    Debug.WriteLine("Write adaption channel value: {0:X02}{1:X02}", _receiveData[7], _receiveData[8]);
+                                                }
                                                 _kwp2000AdaptionStatus = 0x82;
                                             }
                                             else if (_receiveData[4] == 0xBA)
@@ -7512,13 +7520,20 @@ namespace CarSimulator
                                                     _kwp2000AdaptionStatus = 0x05;
                                                 }
                                             }
+                                            else if (_receiveData[4] == 0xBB)
+                                            {
+                                                if (recLength > 9)
+                                                {
+                                                    Debug.WriteLine("Store adaption channel value: {0:X02}{1:X02}", _receiveData[7], _receiveData[8]);
+                                                }
+                                            }
                                         }
                                         else
                                         {
                                             if (_receiveData[4] == 0xB8)
                                             {
                                                 Debug.WriteLine("Close adaption channel");
-                                                _kwp2000AdaptionStatus = 0x01;
+                                                _kwp2000AdaptionStatus = 0x82;
                                             }
                                         }
                                         ObdSend(dummyResponse);
