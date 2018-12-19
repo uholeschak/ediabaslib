@@ -7498,6 +7498,7 @@ namespace CarSimulator
                                             0x01, 0x03, 0x01, 0x04, (byte)(_kwp2000AdaptionValue >> 8), (byte)_kwp2000AdaptionValue, 0x01, 0x14, 0x01, 0x06, 0x01, 0x08, 0x00 };
                                         if (_receiveData[3] == 0x31)
                                         {
+                                            Debug.WriteLine("Start routine short");
                                             if (_receiveData[4] == 0xB8)
                                             {
                                                 Debug.WriteLine("Reset adaption channel");
@@ -7537,6 +7538,7 @@ namespace CarSimulator
                                         }
                                         else
                                         {
+                                            Debug.WriteLine("Stop routine short");
                                             if (_receiveData[4] == 0xB8)
                                             {
                                                 Debug.WriteLine("Close adaption channel");
@@ -7548,10 +7550,11 @@ namespace CarSimulator
                                     else if (_receiveData[5] == 0x01 && _receiveData[6] == 0x0A)
                                     {
                                         found = true;
-                                        byte[] dummyResponse = { 0x8C, _receiveData[2], _receiveData[1], (byte)(_receiveData[3] | 0x40), _receiveData[4],
-                                            0x01, 0x04, 0x01, 0x06, 0x01, 0x07, 0x01, 0x08, 0x01, 0x0A, 0x00 };
+                                        byte[] dummyResponse = { 0x8E, _receiveData[2], _receiveData[1], (byte)(_receiveData[3] | 0x40), _receiveData[4],
+                                            0x01, 0x04, 0x01, 0x06, 0x03, (byte)(_kwp2000AdaptionValue >> 8), (byte)_kwp2000AdaptionValue, 0x07, 0x01, 0x08, 0x01, 0x0A, 0x00 };
                                         if (_receiveData[3] == 0x31)
                                         {
+                                            Debug.WriteLine("Start routine long");
                                             if (_receiveData[4] == 0xB8)
                                             {
                                                 Debug.WriteLine("Reset adaption channel");
@@ -7559,7 +7562,6 @@ namespace CarSimulator
                                             }
                                             if (_receiveData[4] == 0xB9)
                                             {
-                                                Debug.WriteLine("RecLength: {0}", recLength);
                                                 if (recLength == 9)
                                                 {
                                                     _kwp2000AdaptionChannel = _receiveData[7];
@@ -7599,6 +7601,7 @@ namespace CarSimulator
                                         }
                                         else
                                         {
+                                            Debug.WriteLine("Stop routine long");
                                             if (_receiveData[4] == 0xB8)
                                             {
                                                 Debug.WriteLine("Close adaption channel");
