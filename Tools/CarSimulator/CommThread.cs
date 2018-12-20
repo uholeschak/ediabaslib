@@ -7506,7 +7506,6 @@ namespace CarSimulator
                                             }
                                             if (_receiveData[4] == 0xB9)
                                             {
-                                                Debug.WriteLine("RecLength: {0}", recLength);
                                                 if (recLength == 9)
                                                 {
                                                     _kwp2000AdaptionChannel = _receiveData[7];
