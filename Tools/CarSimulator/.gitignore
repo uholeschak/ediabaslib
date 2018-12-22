@@ -4,3 +4,4 @@
 /*.ncb
 /.vs/
 /packages/
+*.sln.DotSettings.user
