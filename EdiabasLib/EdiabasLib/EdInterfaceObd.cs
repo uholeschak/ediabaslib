@@ -316,6 +316,15 @@ namespace EdiabasLib
                 CommParameterProtected = value;
                 bool edicPar = (CommParameterProtected != null) && (CommParameterProtected.Length > 0) &&
                               (CommParameterProtected[0] == 0x0000);
+                if (edicPar)
+                {
+                    if (CommParameterProtected.Length > 4 && CommParameterProtected[4] == 0x00)
+                    {
+                        EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, CommParameterProtected, 0, CommParameterProtected.Length, "EDIC CommParameter ignored");
+                        return;
+                    }
+                }
+
                 CommAnswerLenProtected[0] = 0;
                 CommAnswerLenProtected[1] = 0;
 
