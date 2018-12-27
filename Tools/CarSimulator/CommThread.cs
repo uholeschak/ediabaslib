@@ -7553,8 +7553,11 @@ namespace CarSimulator
                                     else if (_receiveData[5] == 0x01 && _receiveData[6] == 0x0A)
                                     {
                                         found = true;
-                                        byte[] dummyResponse = { 0x8E, _receiveData[2], _receiveData[1], (byte)(_receiveData[3] | 0x40), _receiveData[4],
-                                            0x01, 0x04, 0x01, 0x06, 0x03, (byte)(_kwp2000AdaptionValue >> 8), (byte)_kwp2000AdaptionValue, 0x01, 0x14, 0x01, 0x06, 0x01, 0x08, 0x00 };
+                                        List<byte> dummyResponseList = new List<byte>
+                                        {
+                                            0x8D, _receiveData[2], _receiveData[1], (byte)(_receiveData[3] | 0x40), _receiveData[4],
+                                            0x01, 0x04, 0x01, 0x06, 0x01, 0x01, 0x14, 0x01, 0x06, 0x01, 0x08, 0x00
+                                        };
                                         if (_receiveData[3] == 0x31)
                                         {
                                             Debug.WriteLine("Start routine long");
@@ -7581,15 +7584,21 @@ namespace CarSimulator
                                             }
                                             else if (_receiveData[4] == 0xBA)
                                             {
-                                                Debug.WriteLine("Read adaption channel status: {0:X02}", _kwp2000AdaptionStatus);
+                                                Debug.WriteLine("Read adaption channel status: {0:X02}, channel: {1}", _kwp2000AdaptionStatus, _kwp2000AdaptionChannel);
                                                 if (_kwp2000AdaptionChannel < 0)
                                                 {
-                                                    dummyResponse[7] = _kwp2000AdaptionStatus;
+                                                    dummyResponseList[7] = _kwp2000AdaptionStatus;
                                                 }
                                                 else
                                                 {
-                                                    dummyResponse[7] = (byte) _kwp2000AdaptionChannel;
-                                                    dummyResponse[8] = _kwp2000AdaptionStatus;
+                                                    dummyResponseList[7] = (byte) _kwp2000AdaptionChannel;
+                                                    dummyResponseList[8] = _kwp2000AdaptionStatus;
+
+                                                    Debug.WriteLine("Inserting adaption value: {0:X04}", _kwp2000AdaptionValue);
+                                                    dummyResponseList[0] += 2;
+                                                    dummyResponseList[9] = 0x03;
+                                                    dummyResponseList.Insert(10, (byte)(_kwp2000AdaptionValue >> 8));
+                                                    dummyResponseList.Insert(11, (byte)_kwp2000AdaptionValue);
                                                 }
                                             }
                                             else if (_receiveData[4] == 0xBB)
@@ -7611,7 +7620,7 @@ namespace CarSimulator
                                                 _kwp2000AdaptionStatus = 0x01;  // ANP_NICHT_EINGREIFEN
                                             }
                                         }
-                                        ObdSend(dummyResponse);
+                                        ObdSend(dummyResponseList.ToArray());
                                     }
                                 }
                             }
