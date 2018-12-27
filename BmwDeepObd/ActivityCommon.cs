@@ -238,6 +238,9 @@ namespace BmwDeepObd
         public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
         public const string SettingBluetoothHciLog = "bluetooth_hci_log";
         private const string MailInfoDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Mail.xml";
+#if DEBUG
+        private static readonly string Tag = typeof(ActivityCommon).FullName;
+#endif
 
         private static readonly Dictionary<long, string> VagDtcSaeDict = new Dictionary<long, string>
         {
@@ -5071,6 +5074,10 @@ namespace BmwDeepObd
 
         public static void ExtractZipFile(string archiveFilenameIn, string outFolder, string key, List<string> ignoreFolders, ProgressZipDelegate progressHandler)
         {
+#if DEBUG
+            string lastFileName = string.Empty;
+            Android.Util.Log.Info(Tag, string.Format("ExtractZipFile Archive: '{0}', Folder: '{1}'", archiveFilenameIn, outFolder));
+#endif
             FileStream fs = null;
             ZipFile zf = null;
             string tempFile = Path.Combine(outFolder, "temp.zip");
@@ -5161,7 +5168,9 @@ namespace BmwDeepObd
                 {
                     fileCount = 1;
                 }
-
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("ExtractZipFile FileCount: {0}", fileCount));
+#endif
                 long index = 0;
                 foreach (ZipEntry zipEntry in zf)
                 {
@@ -5213,6 +5222,9 @@ namespace BmwDeepObd
                         // Unzip file in buffered chunks. This is just as fast as unpacking to a buffer the full size
                         // of the file, but does not waste memory.
                         // The "using" will close the stream even if an exception occurs.
+#if DEBUG
+                        lastFileName = fullZipToPath;
+#endif
                         using (FileStream streamWriter = File.Create(fullZipToPath))
                         {
                             StreamUtils.Copy(zipStream, streamWriter, buffer);
@@ -5221,7 +5233,18 @@ namespace BmwDeepObd
                     }
                     index++;
                 }
+#if DEBUG
+                Android.Util.Log.Info(Tag, "ExtractZipFile done");
+#endif
             }
+#if DEBUG
+            catch (Exception ex)
+            {
+                string exceptionText = EdiabasNet.GetExceptionText(ex);
+                Android.Util.Log.Info(Tag, string.Format("ExtractZipFile File: '{0}', Exception: '{1}', ", lastFileName, exceptionText));
+                throw;
+            }
+#endif
             finally
             {
                 zf?.Close(); // Ensure we release resources
