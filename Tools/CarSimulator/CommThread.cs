@@ -7554,7 +7554,7 @@ namespace CarSimulator
                                     {
                                         found = true;
                                         byte[] dummyResponse = { 0x8E, _receiveData[2], _receiveData[1], (byte)(_receiveData[3] | 0x40), _receiveData[4],
-                                            0x01, 0x04, 0x01, 0x06, 0x03, (byte)(_kwp2000AdaptionValue >> 8), (byte)_kwp2000AdaptionValue, 0x07, 0x01, 0x08, 0x01, 0x0A, 0x00 };
+                                            0x01, 0x04, 0x01, 0x06, 0x03, (byte)(_kwp2000AdaptionValue >> 8), (byte)_kwp2000AdaptionValue, 0x01, 0x14, 0x01, 0x06, 0x01, 0x08, 0x00 };
                                         if (_receiveData[3] == 0x31)
                                         {
                                             Debug.WriteLine("Start routine long");
