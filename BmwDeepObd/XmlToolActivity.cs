@@ -862,7 +862,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestSelectJobs:
-                    if (XmlToolEcuActivity.IntentEcuInfo.JobList != null)
+                    if (XmlToolEcuActivity.IntentEcuInfo?.JobList != null)
                     {
                         int selectCount = XmlToolEcuActivity.IntentEcuInfo.JobList.Count(job => job.Selected);
                         XmlToolEcuActivity.IntentEcuInfo.Selected = selectCount > 0;
