@@ -345,10 +345,10 @@ namespace BmwDeepObd
                 FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
 
                 sbyte btState = mtcServiceConnection.GetBtState();
+                bool autoConnect = mtcServiceConnection.GetAutoConnect();
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("UpdateMtcDevices: api={0}, time={1:yyyy-MM-dd HH:mm:ss}", mtcServiceConnection.ApiVersion, DateTime.Now));
                 Android.Util.Log.Info(Tag, string.Format("BtState: {0}", btState));
-                bool autoConnect = mtcServiceConnection.GetAutoConnect();
                 Android.Util.Log.Info(Tag, string.Format("AutoConnect: {0}", autoConnect));
 #endif
                 bool oldOffline = _mtcOffline;
