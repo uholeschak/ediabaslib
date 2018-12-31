@@ -6753,6 +6753,7 @@ namespace CarSimulator
             ResponseEntry identityResponse = responseOnlyEntry;
             ResponseEntry activeResponse = null;
             byte[] lastCoding = null;
+            int lastAdaption = 0x0000;
             for (; ; )
             {
                 if (_stopThread)
@@ -6889,6 +6890,23 @@ namespace CarSimulator
                             lastCoding = new byte[4];
                             Array.Copy(_receiveData, 3, lastCoding, 0, lastCoding.Length);
                             activeResponse = identityResponse;
+                            telBlockIndex = 0;
+                        }
+                        else if (_receiveData.Length >= 4 && _receiveData[0] >= 0x04 && (_receiveData[2] == 0x21 || _receiveData[2] == 0x22))
+                        {   // read adaption
+                            found = true;
+                            if (_receiveData.Length >= 6 && _receiveData[0] >= 0x06 && _receiveData[2] == 0x22)
+                            {
+                                Debug.WriteLine("Adaption test");
+                                lastAdaption = (_receiveData[4] << 8) + _receiveData[5];
+                            }
+                            else
+                            {
+                                Debug.WriteLine("Adaption read");
+                            }
+                            byte[] dummyResponse = { 0x06, 0x00, 0xE6, _receiveData[3], (byte)(lastAdaption >> 8), (byte)lastAdaption };
+                            activeResponse = new ResponseEntry(_receiveData, dummyResponse, null);
+                            activeResponse.ResponseMultiList.Add(dummyResponse);
                             telBlockIndex = 0;
                         }
                         else if (_receiveData.Length >= 4 && _receiveData[0] >= 0x04 && _receiveData[2] == 0x2B)
