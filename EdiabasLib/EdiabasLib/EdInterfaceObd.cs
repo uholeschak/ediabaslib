@@ -1300,6 +1300,10 @@ namespace EdiabasLib
             receiveData = null;
             if (EdicSimulation)
             {
+                if (CommAnswerLenProtected[1] == 0x0084)
+                {
+                    StopFrequent();
+                }
                 if (SendBufferFrequentLength != 0)
                 {
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Frequent mode active");
@@ -1451,6 +1455,9 @@ namespace EdiabasLib
                             return true;
 
                         case 0x0082:    // normal communication
+                            break;
+
+                        case 0x0084:    // stop frequent, normal communication
                             break;
 
                         default:

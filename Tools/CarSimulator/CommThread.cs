@@ -6892,10 +6892,15 @@ namespace CarSimulator
                             activeResponse = identityResponse;
                             telBlockIndex = 0;
                         }
-                        else if (_receiveData.Length >= 4 && _receiveData[0] >= 0x04 && (_receiveData[2] == 0x21 || _receiveData[2] == 0x22))
-                        {   // read adaption
+                        else if (_receiveData.Length >= 4 && _receiveData[0] >= 0x04 && (_receiveData[2] == 0x21 || _receiveData[2] == 0x22 || _receiveData[2] == 0x2A))
+                        {   // adaption
                             found = true;
-                            if (_receiveData.Length >= 6 && _receiveData[0] >= 0x06 && _receiveData[2] == 0x22)
+                            if (_receiveData.Length >= 9 && _receiveData[0] >= 0x09 && _receiveData[2] == 0x2A)
+                            {
+                                Debug.WriteLine("Adaption store");
+                                lastAdaption = (_receiveData[4] << 8) + _receiveData[5];
+                            }
+                            else if (_receiveData.Length >= 6 && _receiveData[0] >= 0x06 && _receiveData[2] == 0x22)
                             {
                                 Debug.WriteLine("Adaption test");
                                 lastAdaption = (_receiveData[4] << 8) + _receiveData[5];
