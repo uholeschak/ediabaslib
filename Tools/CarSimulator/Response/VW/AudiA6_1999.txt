@@ -182,7 +182,9 @@ CFG: 76 01 8A
 
 ; Anpassung_lesen#1;WertEinmalLesen
 04 00 21 01 : 06 45 E6 01 00 02
-; Anpassung_testen#1;Lautstaerke;WertEinmalLesen
-06 00 22 01 00 00 : 06 4B E6 01 00 02
+; Anpassung_testen#1;0x0002;WertEinmalLesen
+06 00 22 01 00 02 : 06 4B E6 01 00 02
+; Anpassung_testen#1;0x1234;WertEinmalLesen
+06 00 22 01 12 34 : 06 4B E6 01 12 34
 ; Anpassung_lesen#2;WertEinmalLesen
 04 00 21 02 : 06 53 E6 02 00 03
