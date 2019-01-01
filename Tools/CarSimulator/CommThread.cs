@@ -6895,21 +6895,29 @@ namespace CarSimulator
                         else if (_receiveData.Length >= 4 && _receiveData[0] >= 0x04 && (_receiveData[2] == 0x21 || _receiveData[2] == 0x22 || _receiveData[2] == 0x2A))
                         {   // adaption
                             found = true;
+                            bool addValues = true;
                             if (_receiveData.Length >= 9 && _receiveData[0] >= 0x09 && _receiveData[2] == 0x2A)
                             {
-                                Debug.WriteLine("Adaption store");
+                                Debug.WriteLine("Adaption save");
                                 lastAdaption = (_receiveData[4] << 8) + _receiveData[5];
+                                addValues = false;
                             }
                             else if (_receiveData.Length >= 6 && _receiveData[0] >= 0x06 && _receiveData[2] == 0x22)
                             {
-                                Debug.WriteLine("Adaption test");
+                                Debug.WriteLine("Adaption transfer");
                                 lastAdaption = (_receiveData[4] << 8) + _receiveData[5];
                             }
                             else
                             {
                                 Debug.WriteLine("Adaption read");
                             }
-                            byte[] dummyResponse = { 0x06, 0x00, 0xE6, _receiveData[3], (byte)(lastAdaption >> 8), (byte)lastAdaption };
+                            List<byte> dummyResponseList = new List<byte>() { 0x06, 0x00, 0xE6, _receiveData[3], (byte)(lastAdaption >> 8), (byte)lastAdaption };
+                            if (addValues)
+                            {
+                                dummyResponseList.AddRange(new List<byte>() { 0xE7, 0x01, 0xC8, 0x00, 0x05, 0x0A, 0x8A, 0x14, 0x64, 0x80, 0x14, 0x64, 0x80 });
+                                dummyResponseList[0] = (byte)dummyResponseList.Count;
+                            }
+                            byte[] dummyResponse = dummyResponseList.ToArray();
                             activeResponse = new ResponseEntry(_receiveData, dummyResponse, null);
                             activeResponse.ResponseMultiList.Add(dummyResponse);
                             telBlockIndex = 0;
