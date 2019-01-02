@@ -4867,20 +4867,20 @@ namespace BmwDeepObd
                     switch (index)
                     {
                         case 0:
-                            jobName = JobReadEcuVersion2;
+                            jobName = JobReadSupportedFunc;
                             break;
 
                         case 1:
+                            jobName = JobReadEcuVersion2;
+                            break;
+
+                        case 2:
                             if (!string.IsNullOrEmpty(ecuInfo.VagPartNumber))
                             {
                                 break;
                             }
                             jobName = JobReadEcuVersion;
                             resultName = "GERAETENUMMER";
-                            break;
-
-                        case 2:
-                            jobName = JobReadSupportedFunc;
                             break;
 
                         case 3:
@@ -4948,15 +4948,15 @@ namespace BmwDeepObd
                                 switch (index)
                                 {
                                     case 0:
-                                        EvalResponseJobReadEcuVersion2(ecuInfo, resultDict1);
+                                        EvalResponseJobReadSupportedFunc(ecuInfo, resultSets);
                                         break;
 
                                     case 1:
-                                        EvalResponseJobReadEcuVersion(ecuInfo, resultDict1);
+                                        EvalResponseJobReadEcuVersion2(ecuInfo, resultDict1);
                                         break;
 
                                     case 2:
-                                        EvalResponseJobReadSupportedFunc(ecuInfo, resultSets);
+                                        EvalResponseJobReadEcuVersion(ecuInfo, resultDict1);
                                         break;
 
                                     case 3:
@@ -5238,6 +5238,8 @@ namespace BmwDeepObd
         private void EvalResponseJobReadSupportedFunc(EcuInfo ecuInfo, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
         {
             HashSet<UInt64> supportedFuncHash = new HashSet<UInt64>();
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Supported functions: ");
             int dictIndex = 0;
             foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
             {
@@ -5250,12 +5252,14 @@ namespace BmwDeepObd
                 {
                     if (resultData.OpData is Int64 funcNr)
                     {
+                        sb.Append(string.Format(Culture, "{0:X04} ", funcNr));
                         supportedFuncHash.Add((UInt64) funcNr);
                     }
                 }
                 dictIndex++;
             }
 
+            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, sb.ToString());
             ecuInfo.VagSupportedFuncHash = supportedFuncHash;
         }
 
