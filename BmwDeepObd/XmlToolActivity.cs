@@ -62,6 +62,15 @@ namespace BmwDeepObd
             SysName
         }
 
+        private enum SupportedFuncType
+        {
+            ActuatorDiag = 0x0003,      // func 0x0102
+            ActuatorDiag2 = 0x0067,     // func 0x0107
+            Adaption = 0x000A,          // func 0x0103
+            AdaptionLong = 0x03F2,      // func 0x010A
+            AdaptionLong2 = 0x07DA,     // func 0x0113
+        }
+
         public enum DisplayFontSize
         {
             Small,
@@ -4867,20 +4876,20 @@ namespace BmwDeepObd
                     switch (index)
                     {
                         case 0:
-                            jobName = JobReadSupportedFunc;
-                            break;
-
-                        case 1:
                             jobName = JobReadEcuVersion2;
                             break;
 
-                        case 2:
+                        case 1:
                             if (!string.IsNullOrEmpty(ecuInfo.VagPartNumber))
                             {
                                 break;
                             }
                             jobName = JobReadEcuVersion;
                             resultName = "GERAETENUMMER";
+                            break;
+
+                        case 2:
+                            jobName = JobReadSupportedFunc;
                             break;
 
                         case 3:
@@ -4948,15 +4957,15 @@ namespace BmwDeepObd
                                 switch (index)
                                 {
                                     case 0:
-                                        EvalResponseJobReadSupportedFunc(ecuInfo, resultSets);
-                                        break;
-
-                                    case 1:
                                         EvalResponseJobReadEcuVersion2(ecuInfo, resultDict1);
                                         break;
 
-                                    case 2:
+                                    case 1:
                                         EvalResponseJobReadEcuVersion(ecuInfo, resultDict1);
+                                        break;
+
+                                    case 2:
+                                        EvalResponseJobReadSupportedFunc(ecuInfo, resultSets);
                                         break;
 
                                     case 3:
@@ -5253,6 +5262,11 @@ namespace BmwDeepObd
                     if (resultData.OpData is Int64 funcNr)
                     {
                         sb.Append(string.Format(Culture, "{0:X04} ", funcNr));
+                        if (Enum.IsDefined(typeof(SupportedFuncType), (int)funcNr))
+                        {
+                            SupportedFuncType funcType = (SupportedFuncType)funcNr;
+                            sb.Append(string.Format(Culture, "({0}) ", funcType));
+                        }
                         supportedFuncHash.Add((UInt64) funcNr);
                     }
                 }
