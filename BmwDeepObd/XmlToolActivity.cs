@@ -104,6 +104,7 @@ namespace BmwDeepObd
             public void InitReadValues()
             {
                 Vin = null;
+                VagSupportedFuncHash = null;
                 VagPartNumber = null;
                 VagHwPartNumber = null;
                 VagSysName = null;
@@ -199,6 +200,8 @@ namespace BmwDeepObd
             public string Grp { get; set; }
 
             public string Vin { get; set; }
+
+            public HashSet<UInt64> VagSupportedFuncHash { get; set; }
 
             public string VagPartNumber { get; set; }
 
@@ -529,6 +532,7 @@ namespace BmwDeepObd
         public const string JobWriteS2EUds = @"GenerischS2E_schreiben";
         public const string JobReadStatMwBlock = @"STATUS_MESSWERTBLOCK_LESEN";
         public const string JobReadStatBlock = @"STATUS_BLOCK_LESEN";
+        public const string JobReadSupportedFunc = @"UnterstFunktionen_abfragen";
         public const string JobReadEcuVersion = @"Steuergeraeteversion_abfragen";
         public const string JobReadEcuVersion2 = @"Steuergeraeteversion_abfragen2";
         public const string JobReadVin = @"Fahrgestellnr_abfragen";
@@ -4876,18 +4880,22 @@ namespace BmwDeepObd
                             break;
 
                         case 2:
+                            jobName = JobReadSupportedFunc;
+                            break;
+
+                        case 3:
                             jobName = JobReadVin;
                             resultName = "FAHRGESTELLNR";
                             break;
 
-                        case 3:
+                        case 4:
                             jobName = JobReadS22Uds;
                             jobArgs = "0x0600";
                             resultName = "ERGEBNIS1WERT";
                             codingRequestType = EcuInfo.CodingRequestType.LongUds;
                             break;
 
-                        case 4:
+                        case 5:
                             if (ecuInfo.VagCodingLong != null)
                             {
                                 break;
@@ -4897,7 +4905,7 @@ namespace BmwDeepObd
                             codingRequestType = EcuInfo.CodingRequestType.ReadLong;
                             break;
 
-                        case 5:
+                        case 6:
                             if (ecuInfo.VagCodingLong != null)
                             {
                                 break;
@@ -4948,6 +4956,10 @@ namespace BmwDeepObd
                                         break;
 
                                     case 2:
+                                        EvalResponseJobReadSupportedFunc(ecuInfo, resultSets);
+                                        break;
+
+                                    case 3:
                                         if (resultDict1.TryGetValue(resultName, out resultData))
                                         {
                                             if (resultData.OpData is string text)
@@ -4961,9 +4973,9 @@ namespace BmwDeepObd
                                         }
                                         break;
 
-                                    case 3:
                                     case 4:
                                     case 5:
+                                    case 6:
                                         if (resultDict1.TryGetValue(resultName, out resultData))
                                         {
                                             if (resultData.OpData is byte[] coding)
@@ -5221,6 +5233,30 @@ namespace BmwDeepObd
             {
                 return false;
             }
+        }
+
+        private void EvalResponseJobReadSupportedFunc(EcuInfo ecuInfo, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
+        {
+            HashSet<UInt64> supportedFuncHash = new HashSet<UInt64>();
+            int dictIndex = 0;
+            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+            {
+                if (dictIndex == 0)
+                {
+                    dictIndex++;
+                    continue;
+                }
+                if (resultDict.TryGetValue("FUNKTIONSNR", out EdiabasNet.ResultData resultData))
+                {
+                    if (resultData.OpData is Int64 funcNr)
+                    {
+                        supportedFuncHash.Add((UInt64) funcNr);
+                    }
+                }
+                dictIndex++;
+            }
+
+            ecuInfo.VagSupportedFuncHash = supportedFuncHash;
         }
 
         private void EvalResponseJobReadEcuVersion(EcuInfo ecuInfo, Dictionary<string, EdiabasNet.ResultData> resultDict)
