@@ -469,6 +469,21 @@
   <string name="vag_coding_sec_access_job_failed">Zugriffsberechtigung fehlgeschlagen</string>
   <string name="vag_coding_sec_access_job_ok">Zugriffsberechtigung erfolgreich</string>
 
+  <!-- Adaption Activity -->
+  <string name="vag_adaption_channel_title">Dokumentierter Kanal</string>
+  <string name="vag_adaption_channel_number_title">Kanalnummer</string>
+  <string name="vag_adaption_comments_title">Hinweise</string>
+  <string name="vag_adaption_value_current_title">Aktueller Adaptionswert</string>
+  <string name="vag_adaption_value_new_title">Neuer Adaptionswert</string>
+  <string name="vag_adaption_value_test_title">Getesteter Adaptionswert</string>
+  <string name="vag_adaption_workshop_number_title">Betriebsnummer (dec): {0}-{1}</string>
+  <string name="vag_adaption_importer_number_title">Importeursnummer (dec): {0}-{1}</string>
+  <string name="vag_adaption_equipment_number_title">Gerätenummer (dec): {0}-{1}</string>
+  <string name="vag_adaption_operation_title">Vorgänge</string>
+  <string name="vag_adaption_button_read">Lesen</string>
+  <string name="vag_adaption_button_test">Testen</string>
+  <string name="vag_adaption_button_store">Speichern</string>
+
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">CAN Adapter</string>
   <string name="can_adapter_mode_name">CAN Betriebsart</string>
