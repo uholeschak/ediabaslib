@@ -7581,7 +7581,7 @@ namespace CarSimulator
                                         }
                                         ObdSend(dummyResponse);
                                     }
-                                    else if (_receiveData[5] == 0x01 && _receiveData[6] == 0x0A)
+                                    else if (_receiveData[5] == 0x01 && (_receiveData[6] == 0x0A || _receiveData[6] == 0x13))
                                     {
                                         found = true;
                                         List<byte> dummyResponseList = new List<byte>
