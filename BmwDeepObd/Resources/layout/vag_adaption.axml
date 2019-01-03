@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollViewVagAdaption"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/layoutVagAdaption"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+        <LinearLayout
+            android:id="@+id/layoutVagAdaptionChannel"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/textViewVagAdaptionChannel"
+                android:text="@+string/vag_adaption_channel_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#666"
+                android:textColor="#fff" />
+            <android.widget.Spinner
+                android:id="@+id/spinnerVagAdaptionChannel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/textViewVagAdaptionChannelNumber"
+                android:text="@+string/vag_adaption_channel_number_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#666"
+                android:textColor="#fff" />
+            <EditText
+                android:id="@+id/editTextVagAdaptionChannelNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLines="1" />
+         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layoutVagAdaptionInfo"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/layoutVagAdaptionComments"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/textViewVagAdaptionCommentsTitle"
+                    android:text="@+string/vag_adaption_comments_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#666"
+                    android:textColor="#fff" />
+                <TextView
+                    android:id="@+id/textViewAdaptionComments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars = "vertical"
+                    android:fadeScrollbars="false"
+                    android:minLines="1"
+                    android:maxLines="10" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layoutVagAdaptionMeasValues"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/textViewVagAdaptionMeas1Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#666"
+                    android:textColor="#fff" />
+                <TextView
+                    android:id="@+id/textViewAdaptionMeas1Value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/textViewVagAdaptionMeas2Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#666"
+                    android:textColor="#fff" />
+                <TextView
+                    android:id="@+id/textViewAdaptionMeas2Value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/textViewVagAdaptionMeas3Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#666"
+                    android:textColor="#fff" />
+                <TextView
+                    android:id="@+id/textViewAdaptionMeas3Value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/textViewVagAdaptionMeas4Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#666"
+                    android:textColor="#fff" />
+                <TextView
+                    android:id="@+id/textViewAdaptionMeas4Value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layoutVagAdaptionValues"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/textViewVagAdaptionValueCurrentTitle"
+                android:text="@+string/vag_adaption_value_current_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#666"
+                android:textColor="#fff" />
+            <TextView
+                android:id="@+id/editTextVagAdaptionValueCurrent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/textViewVagAdaptionValueNewTitle"
+                android:text="@+string/vag_adaption_value_new_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#666"
+                android:textColor="#fff" />
+            <EditText
+                android:id="@+id/editTextVagAdaptionValueNew"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLines="1" />
+            <TextView
+                android:id="@+id/textViewVagAdaptionValueTestTitle"
+                android:text="@+string/vag_adaption_value_test_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#666"
+                android:textColor="#fff" />
+            <TextView
+                android:id="@+id/editTextVagAdaptionValueTest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layoutVagAdaptionRepairShopCode"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/layoutVagAdaptionWorkshop"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/textViewVagWorkshopNumberTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#666"
+                    android:textColor="#fff" />
+                <EditText
+                    android:id="@+id/editTextVagWorkshopNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layoutVagAdaptionImporterNumber"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/textViewVagImporterNumberTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#666"
+                    android:textColor="#fff" />
+                <EditText
+                    android:id="@+id/editTextVagImporterNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layoutVagAdaptionEquipmentNumber"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/textViewVagEquipmentNumberTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#666"
+                    android:textColor="#fff" />
+                <EditText
+                    android:id="@+id/editTextVagEquipmentNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1" />
+            </LinearLayout>
+        </LinearLayout>
+        <TextView
+            android:id="@+id/textViewVagAdaptionOperationTitle"
+            android:text="@+string/vag_adaption_operation_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <org.apmem.tools.layouts.FlowLayout
+            android:id="@+id/layoutAdaptionButtons"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left">
+            <Button
+                android:id="@+id/buttonAdaptionRead"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vag_adaption_button_read" />
+            <Button
+                android:id="@+id/buttonAdaptionTest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vag_adaption_button_test" />
+            <Button
+                android:id="@+id/buttonAdaptionStore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vag_adaption_button_store" />
+        </org.apmem.tools.layouts.FlowLayout>
+    </LinearLayout>
+</ScrollView>
