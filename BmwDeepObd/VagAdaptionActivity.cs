@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
 using System.Threading;
 using Android.Content;
 using Android.Hardware.Usb;
@@ -164,7 +165,7 @@ namespace BmwDeepObd
             _spinnerVagAdaptionChannel.SetOnTouchListener(this);
             _spinnerVagAdaptionChannelAdapter = new StringObjAdapter(this);
             _spinnerVagAdaptionChannel.Adapter = _spinnerVagAdaptionChannelAdapter;
-            _spinnerVagAdaptionChannel.ItemSelected += SubSystemItemSelected;
+            _spinnerVagAdaptionChannel.ItemSelected += AdaptionChannelItemSelected;
 
             _textViewVagAdaptionChannelNumber = FindViewById<TextView>(Resource.Id.textViewVagAdaptionChannelNumber);
             _textViewVagAdaptionChannelNumber.SetOnTouchListener(this);
@@ -287,7 +288,7 @@ namespace BmwDeepObd
                 ExecuteAdaption();
             };
 
-            UpdateAdaptionInfo();
+            UpdateAdaptionSubsystemList();
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -497,9 +498,61 @@ namespace BmwDeepObd
         {
         }
 
-        private void SubSystemItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
+        private void AdaptionChannelItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {
             HideKeyboard();
+            UpdateAdaption();
+        }
+
+        private void UpdateAdaptionSubsystemList()
+        {
+            int selectedChannel = _instanceData.SelectedChannel;
+            int selection = 1;
+
+            _spinnerVagAdaptionChannelAdapter.Items.Clear();
+
+            if (!string.IsNullOrEmpty(_ecuInfo.VagDataFileName))
+            {
+                UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_ecuInfo.VagDataFileName);
+                // ReSharper disable once UseNullPropagation
+                if (udsReader != null)
+                {
+                    int index = 0;
+                    List<UdsFileReader.DataReader.DataInfo> dataInfoAdaptionList =
+                        udsReader.DataReader.ExtractDataType(_ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Adaption);
+                    if (dataInfoAdaptionList != null)
+                    {
+                        foreach (UdsFileReader.DataReader.DataInfo dataInfo in dataInfoAdaptionList)
+                        {
+                            if (dataInfo.Value1.HasValue && dataInfo.Value2.HasValue && dataInfo.Value2.Value == 0 && dataInfo.TextArray.Length > 0)
+                            {
+                                _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(dataInfo.TextArray[0], dataInfo.Value1.Value));
+                                if (selectedChannel == dataInfo.Value1.Value)
+                                {
+                                    selection = index;
+                                }
+                                index++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            _spinnerVagAdaptionChannelAdapter.NotifyDataSetChanged();
+            _spinnerVagAdaptionChannel.SetSelection(selection);
+
+            UpdateAdaption();
+        }
+
+        private void UpdateAdaption()
+        {
+            if (_spinnerVagAdaptionChannel.SelectedItemPosition >= 0)
+            {
+                int channel = (int)_spinnerVagAdaptionChannelAdapter.Items[_spinnerVagAdaptionChannel.SelectedItemPosition].Data;
+                _instanceData.SelectedChannel = channel;
+            }
+
+            UpdateAdaptionInfo();
         }
 
         private void AdaptionEditorAction(object sender, TextView.EditorActionEventArgs e)
@@ -529,6 +582,39 @@ namespace BmwDeepObd
         private void UpdateAdaptionInfo()
         {
             UpdateAdaptionText();
+
+            StringBuilder sbAdaptionComment = new StringBuilder();
+            if (!string.IsNullOrEmpty(_ecuInfo.VagDataFileName))
+            {
+                UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_ecuInfo.VagDataFileName);
+                // ReSharper disable once UseNullPropagation
+                if (udsReader != null)
+                {
+                    List<UdsFileReader.DataReader.DataInfo> dataInfoAdaptionList =
+                        udsReader.DataReader.ExtractDataType(_ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Adaption);
+                    if (dataInfoAdaptionList != null)
+                    {
+                        foreach (UdsFileReader.DataReader.DataInfo dataInfo in dataInfoAdaptionList)
+                        {
+                            if (dataInfo.Value1.HasValue && dataInfo.Value2.HasValue &&
+                                dataInfo.Value1.Value == _instanceData.SelectedChannel && dataInfo.Value2.Value > 4)
+                            {
+                                if (dataInfo.TextArray.Length > 0)
+                                {
+                                    if (sbAdaptionComment.Length > 0)
+                                    {
+                                        sbAdaptionComment.Append("\r\n");
+                                    }
+                                    sbAdaptionComment.Append(dataInfo.TextArray[0]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            _layoutVagAdaptionComments.Visibility = sbAdaptionComment.Length > 0 ? ViewStates.Visible : ViewStates.Gone;
+            _textVagViewAdaptionComments.Text = sbAdaptionComment.ToString();
 
             _layoutVagAdaptionRepairShopCode.Visibility = IsShortAdaption() ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagAdaptionWorkshop.Visibility = _instanceData.CurrentWorkshopNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
