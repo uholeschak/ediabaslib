@@ -45,9 +45,9 @@ namespace BmwDeepObd
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
 
-        private UInt64 workshopNumberMax = 99999;
-        private UInt64 importerNumberMax = 999;
-        private UInt64 equipmentNumberMax = 999999;
+        public const UInt64 WorkshopNumberMax = 99999;
+        public const UInt64 ImporterNumberMax = 999;
+        public const UInt64 EquipmentNumberMax = 999999;
 
         public enum CodingMode
         {
@@ -81,7 +81,7 @@ namespace BmwDeepObd
         private EditText _editTextVagCodingShort;
         private LinearLayout _layoutVagCodingComments;
         private TextView _textViewVagCodingCommentsTitle;
-        private TextView _textViewCodingComments;
+        private TextView _textViewVagCodingComments;
         private LinearLayout _layoutVagCodingRaw;
         private TextView _textViewVagCodingRawTitle;
         private EditText _editTextVagCodingRaw;
@@ -207,9 +207,9 @@ namespace BmwDeepObd
             _textViewVagCodingCommentsTitle = FindViewById<TextView>(Resource.Id.textViewVagCodingCommentsTitle);
             _textViewVagCodingCommentsTitle.SetOnTouchListener(this);
 
-            _textViewCodingComments = FindViewById<TextView>(Resource.Id.textViewCodingComments);
-            _textViewCodingComments.SetOnTouchListener(this);
-            _textViewCodingComments.MovementMethod = new ScrollingMovementMethod();
+            _textViewVagCodingComments = FindViewById<TextView>(Resource.Id.textViewVagCodingComments);
+            _textViewVagCodingComments.SetOnTouchListener(this);
+            _textViewVagCodingComments.MovementMethod = new ScrollingMovementMethod();
 
             _layoutVagCodingRaw = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingRaw);
             _layoutVagCodingRaw.SetOnTouchListener(this);
@@ -774,7 +774,7 @@ namespace BmwDeepObd
                         {
                             if (UInt64.TryParse(_editTextVagWorkshopNumber.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 valueWorkshop))
                             {
-                                if (valueWorkshop <= workshopNumberMax)
+                                if (valueWorkshop <= WorkshopNumberMax)
                                 {
                                     if (_instanceData.CurrentWorkshopNumber.Value != valueWorkshop)
                                     {
@@ -794,7 +794,7 @@ namespace BmwDeepObd
                             if (UInt64.TryParse(_editTextVagImporterNumber.Text, NumberStyles.Integer,
                                 CultureInfo.InvariantCulture, out UInt64 valueImporter))
                             {
-                                if (valueImporter <= importerNumberMax)
+                                if (valueImporter <= ImporterNumberMax)
                                 {
                                     if (_instanceData.CurrentImporterNumber.Value != valueImporter)
                                     {
@@ -813,7 +813,7 @@ namespace BmwDeepObd
                         {
                             if (UInt64.TryParse(_editTextVagEquipmentNumber.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 valueEquipment))
                             {
-                                if (valueEquipment <= equipmentNumberMax)
+                                if (valueEquipment <= EquipmentNumberMax)
                                 {
                                     if (_instanceData.CurrentEquipmentNumber.Value != valueEquipment)
                                     {
@@ -920,9 +920,9 @@ namespace BmwDeepObd
                         }
                     }
 
-                    workshopNumberTitle = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_coding_workshop_number_title), 0, workshopNumberMax);
-                    importerNumberTitle = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_coding_importer_number_title), 0, importerNumberMax);
-                    equipmentNumberTitle = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_coding_equipment_number_title), 0, equipmentNumberMax);
+                    workshopNumberTitle = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_coding_workshop_number_title), 0, WorkshopNumberMax);
+                    importerNumberTitle = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_coding_importer_number_title), 0, ImporterNumberMax);
+                    equipmentNumberTitle = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_coding_equipment_number_title), 0, EquipmentNumberMax);
                 }
                 catch (Exception)
                 {
@@ -1162,7 +1162,7 @@ namespace BmwDeepObd
             _editTextVagCodingRaw.Enabled = !shortCoding;
 
             _layoutVagCodingComments.Visibility = sbCodingComment.Length > 0 ? ViewStates.Visible : ViewStates.Gone;
-            _textViewCodingComments.Text = sbCodingComment.ToString();
+            _textViewVagCodingComments.Text = sbCodingComment.ToString();
 
             _layoutVagCodingRepairShopCode.Visibility = (_codingMode == CodingMode.Coding && _instanceData.SelectedSubsystem == 0) ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagCodingWorkshop.Visibility = _instanceData.CurrentWorkshopNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;

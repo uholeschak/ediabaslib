@@ -58,7 +58,7 @@
                     android:background="#666"
                     android:textColor="#fff" />
                 <TextView
-                    android:id="@+id/textViewAdaptionComments"
+                    android:id="@+id/textVagViewAdaptionComments"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:scrollbars = "vertical"
@@ -126,7 +126,7 @@
                 android:background="#666"
                 android:textColor="#fff" />
             <TextView
-                android:id="@+id/editTextVagAdaptionValueCurrent"
+                android:id="@+id/textViewVagAdaptionValueCurrent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             <TextView
@@ -150,7 +150,7 @@
                 android:background="#666"
                 android:textColor="#fff" />
             <TextView
-                android:id="@+id/editTextVagAdaptionValueTest"
+                android:id="@+id/textViewVagAdaptionValueTest"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>

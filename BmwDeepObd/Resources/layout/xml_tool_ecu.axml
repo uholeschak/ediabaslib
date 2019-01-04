@@ -351,6 +351,12 @@
                     android:layout_gravity="center_vertical"
                     android:text="@string/xml_tool_button_coding2" />
                 <Button
+                    android:id="@+id/buttonAdaption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/xml_tool_button_adaption" />
+                <Button
                     android:id="@+id/buttonLogin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -62,7 +62,7 @@ namespace BmwDeepObd
             SysName
         }
 
-        private enum SupportedFuncType
+        public enum SupportedFuncType
         {
             ActuatorDiag = 0x0003,      // func 0x0102
             ActuatorDiag2 = 0x0067,     // func 0x0107
