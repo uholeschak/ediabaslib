@@ -27,7 +27,6 @@ namespace BmwDeepObd
             public UInt64? CurrentWorkshopNumber { get; set; }
             public UInt64? CurrentImporterNumber { get; set; }
             public UInt64? CurrentEquipmentNumber { get; set; }
-            public string CurrentDataFileName { get; set; }
         }
 
         // Intent extra
@@ -287,6 +286,8 @@ namespace BmwDeepObd
             {
                 ExecuteAdaption();
             };
+
+            UpdateAdaptionInfo();
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -513,6 +514,70 @@ namespace BmwDeepObd
                     HideKeyboard();
                     break;
             }
+        }
+
+        private bool IsShortAdaption()
+        {
+            if (_ecuInfo.VagSupportedFuncHash.Contains((UInt64)XmlToolActivity.SupportedFuncType.Adaption))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private void UpdateAdaptionInfo()
+        {
+            UpdateAdaptionText();
+
+            _layoutVagAdaptionRepairShopCode.Visibility = IsShortAdaption() ? ViewStates.Visible : ViewStates.Gone;
+            _layoutVagAdaptionWorkshop.Visibility = _instanceData.CurrentWorkshopNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
+            _layoutVagAdaptionImporterNumber.Visibility = _instanceData.CurrentImporterNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
+            _layoutVagAdaptionEquipmentNumber.Visibility = _instanceData.CurrentEquipmentNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
+        }
+
+        private void UpdateAdaptionText()
+        {
+            string codingTextWorkshop = string.Empty;
+            string codingTextImporter = string.Empty;
+            string codingTextEquipment = string.Empty;
+            string workshopNumberTitle = string.Empty;
+            string importerNumberTitle = string.Empty;
+            string equipmentNumberTitle = string.Empty;
+
+            try
+            {
+                if (_instanceData.CurrentWorkshopNumber.HasValue)
+                {
+                    codingTextWorkshop = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.CurrentWorkshopNumber);
+                }
+                if (_instanceData.CurrentImporterNumber.HasValue)
+                {
+                    codingTextImporter = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.CurrentImporterNumber);
+                }
+                if (_instanceData.CurrentEquipmentNumber.HasValue)
+                {
+                    codingTextEquipment = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.CurrentEquipmentNumber);
+                }
+
+                workshopNumberTitle = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_adaption_workshop_number_title), 0, VagCodingActivity.WorkshopNumberMax);
+                importerNumberTitle = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_adaption_importer_number_title), 0, VagCodingActivity.ImporterNumberMax);
+                equipmentNumberTitle = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_adaption_equipment_number_title), 0, VagCodingActivity.EquipmentNumberMax);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            _textViewVagWorkshopNumberTitle.Text = workshopNumberTitle;
+            _editTextVagWorkshopNumber.Text = codingTextWorkshop;
+            _textViewVagImporterNumberTitle.Text = importerNumberTitle;
+            _editTextVagImporterNumber.Text = codingTextImporter;
+            _textViewVagEquipmentNumberTitle.Text = equipmentNumberTitle;
+            _editTextVagEquipmentNumber.Text = codingTextEquipment;
+            _buttonAdaptionRead.Enabled = !IsJobRunning();
+            _buttonAdaptionTest.Enabled = !IsJobRunning();
+            _buttonAdaptionStore.Enabled = !IsJobRunning();
         }
 
         private void HideKeyboard()
