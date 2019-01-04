@@ -99,6 +99,7 @@ namespace BmwDeepObd
         private XmlToolActivity.EcuInfo _ecuInfo;
         private EdiabasNet _ediabas;
         private Thread _jobThread;
+        private List<UdsFileReader.DataReader.DataInfo> _dataInfoAdaptionList;
         private bool _activityActive;
         private bool _ediabasJobAbort;
         private string _ecuDir;
@@ -146,6 +147,7 @@ namespace BmwDeepObd
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
 
             _ecuInfo = IntentEcuInfo;
+            UpdateInfoAdaptionList();
 
             SupportActionBar.Title = string.Format(GetString(Resource.String.vag_adaption_title_adaption), Intent.GetStringExtra(ExtraEcuName) ?? string.Empty);
 
@@ -504,6 +506,22 @@ namespace BmwDeepObd
             UpdateAdaption();
         }
 
+        private void UpdateInfoAdaptionList()
+        {
+            List<UdsFileReader.DataReader.DataInfo> dataInfoAdaptionList = null;
+            if (!string.IsNullOrEmpty(_ecuInfo.VagDataFileName))
+            {
+                UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_ecuInfo.VagDataFileName);
+                // ReSharper disable once UseNullPropagation
+                if (udsReader != null)
+                {
+                    dataInfoAdaptionList = udsReader.DataReader.ExtractDataType(_ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Adaption);
+                }
+            }
+
+            _dataInfoAdaptionList = dataInfoAdaptionList;
+        }
+
         private void UpdateAdaptionSubsystemList()
         {
             int selectedChannel = _instanceData.SelectedChannel;
@@ -511,29 +529,19 @@ namespace BmwDeepObd
 
             _spinnerVagAdaptionChannelAdapter.Items.Clear();
 
-            if (!string.IsNullOrEmpty(_ecuInfo.VagDataFileName))
+            int index = 0;
+            if (_dataInfoAdaptionList != null)
             {
-                UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_ecuInfo.VagDataFileName);
-                // ReSharper disable once UseNullPropagation
-                if (udsReader != null)
+                foreach (UdsFileReader.DataReader.DataInfo dataInfo in _dataInfoAdaptionList)
                 {
-                    int index = 0;
-                    List<UdsFileReader.DataReader.DataInfo> dataInfoAdaptionList =
-                        udsReader.DataReader.ExtractDataType(_ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Adaption);
-                    if (dataInfoAdaptionList != null)
+                    if (dataInfo.Value1.HasValue && dataInfo.Value2.HasValue && dataInfo.Value2.Value == 0 && dataInfo.TextArray.Length > 0)
                     {
-                        foreach (UdsFileReader.DataReader.DataInfo dataInfo in dataInfoAdaptionList)
+                        _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(dataInfo.TextArray[0], dataInfo.Value1.Value));
+                        if (selectedChannel == dataInfo.Value1.Value)
                         {
-                            if (dataInfo.Value1.HasValue && dataInfo.Value2.HasValue && dataInfo.Value2.Value == 0 && dataInfo.TextArray.Length > 0)
-                            {
-                                _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(dataInfo.TextArray[0], dataInfo.Value1.Value));
-                                if (selectedChannel == dataInfo.Value1.Value)
-                                {
-                                    selection = index;
-                                }
-                                index++;
-                            }
+                            selection = index;
                         }
+                        index++;
                     }
                 }
             }
@@ -584,30 +592,20 @@ namespace BmwDeepObd
             UpdateAdaptionText();
 
             StringBuilder sbAdaptionComment = new StringBuilder();
-            if (!string.IsNullOrEmpty(_ecuInfo.VagDataFileName))
+            if (_dataInfoAdaptionList != null)
             {
-                UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_ecuInfo.VagDataFileName);
-                // ReSharper disable once UseNullPropagation
-                if (udsReader != null)
+                foreach (UdsFileReader.DataReader.DataInfo dataInfo in _dataInfoAdaptionList)
                 {
-                    List<UdsFileReader.DataReader.DataInfo> dataInfoAdaptionList =
-                        udsReader.DataReader.ExtractDataType(_ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Adaption);
-                    if (dataInfoAdaptionList != null)
+                    if (dataInfo.Value1.HasValue && dataInfo.Value2.HasValue &&
+                        dataInfo.Value1.Value == _instanceData.SelectedChannel && dataInfo.Value2.Value > 4)
                     {
-                        foreach (UdsFileReader.DataReader.DataInfo dataInfo in dataInfoAdaptionList)
+                        if (dataInfo.TextArray.Length > 0)
                         {
-                            if (dataInfo.Value1.HasValue && dataInfo.Value2.HasValue &&
-                                dataInfo.Value1.Value == _instanceData.SelectedChannel && dataInfo.Value2.Value > 4)
+                            if (sbAdaptionComment.Length > 0)
                             {
-                                if (dataInfo.TextArray.Length > 0)
-                                {
-                                    if (sbAdaptionComment.Length > 0)
-                                    {
-                                        sbAdaptionComment.Append("\r\n");
-                                    }
-                                    sbAdaptionComment.Append(dataInfo.TextArray[0]);
-                                }
+                                sbAdaptionComment.Append("\r\n");
                             }
+                            sbAdaptionComment.Append(dataInfo.TextArray[0]);
                         }
                     }
                 }
