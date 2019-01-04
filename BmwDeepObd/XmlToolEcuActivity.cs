@@ -100,6 +100,7 @@ namespace BmwDeepObd
         private enum ActivityRequest
         {
             RequestVagCoding,
+            RequestVagAdaption,
         }
 
         enum FormatType
@@ -184,6 +185,7 @@ namespace BmwDeepObd
         private Button _buttonEdiabasTool;
         private Button _buttonCoding;
         private Button _buttonCoding2;
+        private Button _buttonAdaption;
         private Button _buttonLogin;
         private Button _buttonSecurityAccess;
         private ActivityCommon _activityCommon;
@@ -444,12 +446,29 @@ namespace BmwDeepObd
                 }
             }
 
+            bool adaptionEnabled = false;
+            if (_ecuInfo.VagSupportedFuncHash != null)
+            {
+                adaptionEnabled =
+                    _ecuInfo.VagSupportedFuncHash.Contains((UInt64) XmlToolActivity.SupportedFuncType.Adaption) ||
+                    _ecuInfo.VagSupportedFuncHash.Contains((UInt64) XmlToolActivity.SupportedFuncType.AdaptionLong) ||
+                    _ecuInfo.VagSupportedFuncHash.Contains((UInt64) XmlToolActivity.SupportedFuncType.AdaptionLong2);
+            }
+
             _buttonCoding2 = FindViewById<Button>(Resource.Id.buttonCoding2);
             _buttonCoding2.Visibility = vagButtonsVisibility;
             _buttonCoding2.Enabled = coding2Enabled;
             _buttonCoding2.Click += (sender, args) =>
             {
                 StartVagCoding(VagCodingActivity.CodingMode.Coding2);
+            };
+
+            _buttonAdaption = FindViewById<Button>(Resource.Id.buttonAdaption);
+            _buttonAdaption.Visibility = vagButtonsVisibility;
+            _buttonAdaption.Enabled = adaptionEnabled;
+            _buttonAdaption.Click += (sender, args) =>
+            {
+                StartVagAdaption();
             };
 
             _buttonLogin = FindViewById<Button>(Resource.Id.buttonLogin);
@@ -1769,6 +1788,22 @@ namespace BmwDeepObd
             serverIntent.PutExtra(VagCodingActivity.ExtraDeviceAddress, _deviceAddress);
             serverIntent.PutExtra(VagCodingActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestVagCoding);
+        }
+
+        private void StartVagAdaption()
+        {
+            StoreResults();
+
+            VagAdaptionActivity.IntentEcuInfo = _ecuInfo;
+            Intent serverIntent = new Intent(this, typeof(VagAdaptionActivity));
+            serverIntent.PutExtra(VagAdaptionActivity.ExtraEcuName, _ecuInfo.Name);
+            serverIntent.PutExtra(VagAdaptionActivity.ExtraEcuDir, _ecuDir);
+            serverIntent.PutExtra(VagAdaptionActivity.ExtraTraceDir, _traceDir);
+            serverIntent.PutExtra(VagAdaptionActivity.ExtraTraceAppend, _traceAppend);
+            serverIntent.PutExtra(VagAdaptionActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
+            serverIntent.PutExtra(VagAdaptionActivity.ExtraDeviceAddress, _deviceAddress);
+            serverIntent.PutExtra(VagAdaptionActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestVagAdaption);
         }
 
         private class JobListAdapter : BaseAdapter<JobInfo>

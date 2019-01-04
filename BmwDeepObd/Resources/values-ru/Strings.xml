@@ -430,6 +430,8 @@
   <string name="xml_tool_button_ediabas_tool">Ediabas утилита</string>
   <string name="xml_tool_button_coding">Кодировать</string>
   <string name="xml_tool_button_coding2">Кодировать 2</string>
+  <!--Translate-->
+  <string name="xml_tool_button_adaption">Adaption</string>
   <string name="xml_tool_button_login">Авторизация</string>
   <string name="xml_tool_button_sec_access">Права доступа</string>
   <string name="xml_tool_execute_test_job">Выполнение Job</string>
@@ -470,6 +472,7 @@
 
   <!-- Adaption Activity -->
   <!--Translate-->
+  <string name="vag_adaption_title_adaption">Adaption ECU: {0}</string>
   <string name="vag_adaption_channel_title">Documented channel</string>
   <string name="vag_adaption_channel_number_title">Channel number</string>
   <string name="vag_adaption_comments_title">Примечания</string>

@@ -431,6 +431,7 @@
   <string name="xml_tool_button_ediabas_tool">Ediabas Tool</string>
   <string name="xml_tool_button_coding">Kodieren</string>
   <string name="xml_tool_button_coding2">Kodieren 2</string>
+  <string name="xml_tool_button_adaption">Adaption</string>
   <string name="xml_tool_button_login">Login</string>
   <string name="xml_tool_button_sec_access">Zugriffsberechtigung</string>
   <string name="xml_tool_execute_test_job">Job wird ausgeführt</string>
@@ -470,6 +471,7 @@
   <string name="vag_coding_sec_access_job_ok">Zugriffsberechtigung erfolgreich</string>
 
   <!-- Adaption Activity -->
+  <string name="vag_adaption_title_adaption">Adaption ECU: {0}</string>
   <string name="vag_adaption_channel_title">Dokumentierter Kanal</string>
   <string name="vag_adaption_channel_number_title">Kanalnummer</string>
   <string name="vag_adaption_comments_title">Hinweise</string>
