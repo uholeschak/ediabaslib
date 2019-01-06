@@ -39,6 +39,8 @@ namespace BmwDeepObd
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
 
+        private const int MaxMeasValues = 4;
+
         private enum JobStatus
         {
             Unknown,
@@ -186,8 +188,8 @@ namespace BmwDeepObd
             _layoutVagAdaptionMeasValues = FindViewById<LinearLayout>(Resource.Id.layoutVagAdaptionMeasValues);
             _layoutVagAdaptionMeasValues.SetOnTouchListener(this);
 
-            _textViewVagAdaptionMeasTitles = new TextView[4];
-            _textViewAdaptionMeasValues = new TextView[4];
+            _textViewVagAdaptionMeasTitles = new TextView[MaxMeasValues];
+            _textViewAdaptionMeasValues = new TextView[MaxMeasValues];
 
             _textViewVagAdaptionMeasTitles[0] = FindViewById<TextView>(Resource.Id.textViewVagAdaptionMeas1Title);
             _textViewVagAdaptionMeasTitles[0].SetOnTouchListener(this);
@@ -394,7 +396,7 @@ namespace BmwDeepObd
             switch (e.Action)
             {
                 case MotionEventActions.Down:
-                    //ReadCodingEditors();
+                    ReadAdaptionEditors();
                     HideKeyboard();
                     break;
             }
@@ -542,7 +544,8 @@ namespace BmwDeepObd
                 {
                     if (dataInfo.Value1.HasValue && dataInfo.Value2.HasValue && dataInfo.Value2.Value == 0 && dataInfo.TextArray.Length > 0)
                     {
-                        _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(dataInfo.TextArray[0], dataInfo.Value1.Value));
+                        string text = string.Format(CultureInfo.InvariantCulture, "{0}: {1}", dataInfo.Value1.Value, dataInfo.TextArray[0]);
+                        _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(text, dataInfo.Value1.Value));
                         if (selectedChannel == dataInfo.Value1.Value)
                         {
                             selection = index;
@@ -589,6 +592,7 @@ namespace BmwDeepObd
 
         private void ReadAdaptionEditors()
         {
+            bool dataChanged = false;
             if (_editTextVagAdaptionChannelNumber.Enabled)
             {
                 try
@@ -597,7 +601,11 @@ namespace BmwDeepObd
                     {
                         if (value <= 0xFF)
                         {
-                            _instanceData.SelectedChannel = (int)value;
+                            if (_instanceData.SelectedChannel != (int) value)
+                            {
+                                _instanceData.SelectedChannel = (int)value;
+                                dataChanged = true;
+                            }
                         }
                     }
                 }
@@ -605,6 +613,11 @@ namespace BmwDeepObd
                 {
                     // ignored
                 }
+            }
+
+            if (dataChanged)
+            {
+                UpdateAdaptionInfo();
             }
         }
 
@@ -622,7 +635,7 @@ namespace BmwDeepObd
         {
             UpdateAdaptionText();
 
-            StringBuilder[] measTitles = new StringBuilder[4];
+            StringBuilder[] measTitles = new StringBuilder[MaxMeasValues];
             StringBuilder sbAdaptionComment = new StringBuilder();
             if (_dataInfoAdaptionList != null)
             {
@@ -659,6 +672,18 @@ namespace BmwDeepObd
                     }
                 }
             }
+
+            int selection = 0;
+            int itemIndex = 0;
+            foreach (StringObjType stringObjType in _spinnerVagAdaptionChannelAdapter.Items)
+            {
+                if ((int) stringObjType.Data == _instanceData.SelectedChannel)
+                {
+                    selection = itemIndex;
+                }
+                itemIndex++;
+            }
+            _spinnerVagAdaptionChannel.SetSelection(selection);
 
             _layoutVagAdaptionComments.Visibility = sbAdaptionComment.Length > 0 ? ViewStates.Visible : ViewStates.Gone;
             _textVagViewAdaptionComments.Text = sbAdaptionComment.ToString();
