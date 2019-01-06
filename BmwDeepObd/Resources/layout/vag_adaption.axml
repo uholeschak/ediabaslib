@@ -242,6 +242,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/vag_adaption_button_store" />
+            <Button
+                android:id="@+id/buttonAdaptionStop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vag_adaption_button_stop" />
         </org.apmem.tools.layouts.FlowLayout>
     </LinearLayout>
 </ScrollView>
