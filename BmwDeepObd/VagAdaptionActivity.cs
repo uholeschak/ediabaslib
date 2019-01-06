@@ -65,14 +65,8 @@ namespace BmwDeepObd
         private TextView _textViewVagAdaptionCommentsTitle;
         private TextView _textVagViewAdaptionComments;
         private LinearLayout _layoutVagAdaptionMeasValues;
-        private TextView _textViewVagAdaptionMeas1Title;
-        private TextView _textViewAdaptionMeas1Value;
-        private TextView _textViewVagAdaptionMeas2Title;
-        private TextView _textViewAdaptionMeas2Value;
-        private TextView _textViewVagAdaptionMeas3Title;
-        private TextView _textViewAdaptionMeas3Value;
-        private TextView _textViewVagAdaptionMeas4Title;
-        private TextView _textViewAdaptionMeas4Value;
+        private TextView[] _textViewVagAdaptionMeasTitles;
+        private TextView[] _textViewAdaptionMeasValues;
         private LinearLayout _layoutVagAdaptionValues;
         private TextView _textViewVagAdaptionValueCurrentTitle;
         private TextView _textViewVagAdaptionValueCurrent;
@@ -94,6 +88,7 @@ namespace BmwDeepObd
         private Button _buttonAdaptionRead;
         private Button _buttonAdaptionTest;
         private Button _buttonAdaptionStore;
+        private Button _buttonAdaptionStop;
         private ActivityCommon _activityCommon;
         private Handler _updateHandler;
         private XmlToolActivity.EcuInfo _ecuInfo;
@@ -191,29 +186,32 @@ namespace BmwDeepObd
             _layoutVagAdaptionMeasValues = FindViewById<LinearLayout>(Resource.Id.layoutVagAdaptionMeasValues);
             _layoutVagAdaptionMeasValues.SetOnTouchListener(this);
 
-            _textViewVagAdaptionMeas1Title = FindViewById<TextView>(Resource.Id.textViewVagAdaptionMeas1Title);
-            _textViewVagAdaptionMeas1Title.SetOnTouchListener(this);
+            _textViewVagAdaptionMeasTitles = new TextView[4];
+            _textViewAdaptionMeasValues = new TextView[4];
 
-            _textViewAdaptionMeas1Value = FindViewById<TextView>(Resource.Id.textViewAdaptionMeas1Value);
-            _textViewAdaptionMeas1Value.SetOnTouchListener(this);
+            _textViewVagAdaptionMeasTitles[0] = FindViewById<TextView>(Resource.Id.textViewVagAdaptionMeas1Title);
+            _textViewVagAdaptionMeasTitles[0].SetOnTouchListener(this);
 
-            _textViewVagAdaptionMeas2Title = FindViewById<TextView>(Resource.Id.textViewVagAdaptionMeas2Title);
-            _textViewVagAdaptionMeas2Title.SetOnTouchListener(this);
+            _textViewAdaptionMeasValues[0] = FindViewById<TextView>(Resource.Id.textViewAdaptionMeas1Value);
+            _textViewAdaptionMeasValues[0].SetOnTouchListener(this);
 
-            _textViewAdaptionMeas2Value = FindViewById<TextView>(Resource.Id.textViewAdaptionMeas2Value);
-            _textViewAdaptionMeas2Value.SetOnTouchListener(this);
+            _textViewVagAdaptionMeasTitles[1] = FindViewById<TextView>(Resource.Id.textViewVagAdaptionMeas2Title);
+            _textViewVagAdaptionMeasTitles[1].SetOnTouchListener(this);
 
-            _textViewVagAdaptionMeas3Title = FindViewById<TextView>(Resource.Id.textViewVagAdaptionMeas3Title);
-            _textViewVagAdaptionMeas3Title.SetOnTouchListener(this);
+            _textViewAdaptionMeasValues[1] = FindViewById<TextView>(Resource.Id.textViewAdaptionMeas2Value);
+            _textViewAdaptionMeasValues[1].SetOnTouchListener(this);
 
-            _textViewAdaptionMeas3Value = FindViewById<TextView>(Resource.Id.textViewAdaptionMeas3Value);
-            _textViewAdaptionMeas3Value.SetOnTouchListener(this);
+            _textViewVagAdaptionMeasTitles[2] = FindViewById<TextView>(Resource.Id.textViewVagAdaptionMeas3Title);
+            _textViewVagAdaptionMeasTitles[2].SetOnTouchListener(this);
 
-            _textViewVagAdaptionMeas4Title = FindViewById<TextView>(Resource.Id.textViewVagAdaptionMeas4Title);
-            _textViewVagAdaptionMeas4Title.SetOnTouchListener(this);
+            _textViewAdaptionMeasValues[2] = FindViewById<TextView>(Resource.Id.textViewAdaptionMeas3Value);
+            _textViewAdaptionMeasValues[2].SetOnTouchListener(this);
 
-            _textViewAdaptionMeas4Value = FindViewById<TextView>(Resource.Id.textViewAdaptionMeas4Value);
-            _textViewAdaptionMeas4Value.SetOnTouchListener(this);
+            _textViewVagAdaptionMeasTitles[3] = FindViewById<TextView>(Resource.Id.textViewVagAdaptionMeas4Title);
+            _textViewVagAdaptionMeasTitles[3].SetOnTouchListener(this);
+
+            _textViewAdaptionMeasValues[3] = FindViewById<TextView>(Resource.Id.textViewAdaptionMeas4Value);
+            _textViewAdaptionMeasValues[3].SetOnTouchListener(this);
 
             _layoutVagAdaptionValues = FindViewById<LinearLayout>(Resource.Id.layoutVagAdaptionValues);
             _layoutVagAdaptionValues.SetOnTouchListener(this);
@@ -290,7 +288,14 @@ namespace BmwDeepObd
                 ExecuteAdaption();
             };
 
-            UpdateAdaptionSubsystemList();
+            _buttonAdaptionStop = FindViewById<Button>(Resource.Id.buttonAdaptionStop);
+            _buttonAdaptionStop.SetOnTouchListener(this);
+            _buttonAdaptionStop.Click += (sender, args) =>
+            {
+                ExecuteAdaption();
+            };
+
+            UpdateAdaptionChannelList();
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -522,16 +527,17 @@ namespace BmwDeepObd
             _dataInfoAdaptionList = dataInfoAdaptionList;
         }
 
-        private void UpdateAdaptionSubsystemList()
+        private void UpdateAdaptionChannelList()
         {
             int selectedChannel = _instanceData.SelectedChannel;
-            int selection = 1;
+            int selection = 0;
 
             _spinnerVagAdaptionChannelAdapter.Items.Clear();
 
             int index = 0;
             if (_dataInfoAdaptionList != null)
             {
+                _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(GetString(Resource.String.vag_adaption_channel_select), -1));
                 foreach (UdsFileReader.DataReader.DataInfo dataInfo in _dataInfoAdaptionList)
                 {
                     if (dataInfo.Value1.HasValue && dataInfo.Value2.HasValue && dataInfo.Value2.Value == 0 && dataInfo.TextArray.Length > 0)
@@ -557,7 +563,10 @@ namespace BmwDeepObd
             if (_spinnerVagAdaptionChannel.SelectedItemPosition >= 0)
             {
                 int channel = (int)_spinnerVagAdaptionChannelAdapter.Items[_spinnerVagAdaptionChannel.SelectedItemPosition].Data;
-                _instanceData.SelectedChannel = channel;
+                if (channel >= 0)
+                {
+                    _instanceData.SelectedChannel = channel;
+                }
             }
 
             UpdateAdaptionInfo();
@@ -572,8 +581,30 @@ namespace BmwDeepObd
                 case ImeAction.Next:
                 case ImeAction.Done:
                 case ImeAction.Previous:
+                    ReadAdaptionEditors();
                     HideKeyboard();
                     break;
+            }
+        }
+
+        private void ReadAdaptionEditors()
+        {
+            if (_editTextVagAdaptionChannelNumber.Enabled)
+            {
+                try
+                {
+                    if (UInt64.TryParse(_editTextVagAdaptionChannelNumber.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
+                    {
+                        if (value <= 0xFF)
+                        {
+                            _instanceData.SelectedChannel = (int)value;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
         }
 
@@ -591,15 +622,33 @@ namespace BmwDeepObd
         {
             UpdateAdaptionText();
 
+            StringBuilder[] measTitles = new StringBuilder[4];
             StringBuilder sbAdaptionComment = new StringBuilder();
             if (_dataInfoAdaptionList != null)
             {
                 foreach (UdsFileReader.DataReader.DataInfo dataInfo in _dataInfoAdaptionList)
                 {
                     if (dataInfo.Value1.HasValue && dataInfo.Value2.HasValue &&
-                        dataInfo.Value1.Value == _instanceData.SelectedChannel && dataInfo.Value2.Value > 4)
+                        dataInfo.Value1.Value == _instanceData.SelectedChannel && dataInfo.TextArray.Length > 0)
                     {
-                        if (dataInfo.TextArray.Length > 0)
+                        int index = dataInfo.Value2.Value;
+                        if (index > 0 && index <= 4)
+                        {
+                            if (measTitles[index - 1] == null)
+                            {
+                                measTitles[index - 1] = new StringBuilder();
+                            }
+
+                            foreach (string text in dataInfo.TextArray)
+                            {
+                                if (measTitles[index - 1].Length > 0)
+                                {
+                                    measTitles[index - 1].Append(" ");
+                                }
+                                measTitles[index - 1].Append(text);
+                            }
+                        }
+                        else
                         {
                             if (sbAdaptionComment.Length > 0)
                             {
@@ -614,6 +663,13 @@ namespace BmwDeepObd
             _layoutVagAdaptionComments.Visibility = sbAdaptionComment.Length > 0 ? ViewStates.Visible : ViewStates.Gone;
             _textVagViewAdaptionComments.Text = sbAdaptionComment.ToString();
 
+            for (int i = 0; i < measTitles.Length; i++)
+            {
+                string title = measTitles[i] != null ? measTitles[i].ToString() : string.Empty;
+                _textViewVagAdaptionMeasTitles[i].Text =
+                    string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_adaption_meas_value_title), i + 1, title);
+            }
+
             _layoutVagAdaptionRepairShopCode.Visibility = IsShortAdaption() ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagAdaptionWorkshop.Visibility = _instanceData.CurrentWorkshopNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagAdaptionImporterNumber.Visibility = _instanceData.CurrentImporterNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
@@ -622,6 +678,7 @@ namespace BmwDeepObd
 
         private void UpdateAdaptionText()
         {
+            string adaptionChannelNumber = string.Empty;
             string codingTextWorkshop = string.Empty;
             string codingTextImporter = string.Empty;
             string codingTextEquipment = string.Empty;
@@ -631,6 +688,7 @@ namespace BmwDeepObd
 
             try
             {
+                adaptionChannelNumber = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.SelectedChannel);
                 if (_instanceData.CurrentWorkshopNumber.HasValue)
                 {
                     codingTextWorkshop = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.CurrentWorkshopNumber);
@@ -653,6 +711,7 @@ namespace BmwDeepObd
                 // ignored
             }
 
+            _editTextVagAdaptionChannelNumber.Text = adaptionChannelNumber;
             _textViewVagWorkshopNumberTitle.Text = workshopNumberTitle;
             _editTextVagWorkshopNumber.Text = codingTextWorkshop;
             _textViewVagImporterNumberTitle.Text = importerNumberTitle;
@@ -662,6 +721,7 @@ namespace BmwDeepObd
             _buttonAdaptionRead.Enabled = !IsJobRunning();
             _buttonAdaptionTest.Enabled = !IsJobRunning();
             _buttonAdaptionStore.Enabled = !IsJobRunning();
+            _buttonAdaptionStop.Enabled = IsJobRunning();
         }
 
         private void HideKeyboard()

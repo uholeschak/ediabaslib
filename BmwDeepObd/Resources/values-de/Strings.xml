@@ -473,11 +473,13 @@
   <!-- Adaption Activity -->
   <string name="vag_adaption_title_adaption">Adaption ECU: {0}</string>
   <string name="vag_adaption_channel_title">Dokumentierter Kanal</string>
+  <string name="vag_adaption_channel_select">Adaptionskanal wählen</string>
   <string name="vag_adaption_channel_number_title">Kanalnummer</string>
   <string name="vag_adaption_comments_title">Hinweise</string>
   <string name="vag_adaption_value_current_title">Aktueller Adaptionswert</string>
   <string name="vag_adaption_value_new_title">Neuer Adaptionswert</string>
   <string name="vag_adaption_value_test_title">Getesteter Adaptionswert</string>
+  <string name="vag_adaption_meas_value_title">Wert {0}: {1}</string>
   <string name="vag_adaption_workshop_number_title">Betriebsnummer (dec): {0}-{1}</string>
   <string name="vag_adaption_importer_number_title">Importeursnummer (dec): {0}-{1}</string>
   <string name="vag_adaption_equipment_number_title">Gerätenummer (dec): {0}-{1}</string>
@@ -485,6 +487,7 @@
   <string name="vag_adaption_button_read">Lesen</string>
   <string name="vag_adaption_button_test">Testen</string>
   <string name="vag_adaption_button_store">Speichern</string>
+  <string name="vag_adaption_button_stop">Stop</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">CAN Adapter</string>

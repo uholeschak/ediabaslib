@@ -474,11 +474,13 @@
   <!--Translate-->
   <string name="vag_adaption_title_adaption">Adaption ECU: {0}</string>
   <string name="vag_adaption_channel_title">Documented channel</string>
+  <string name="vag_adaption_channel_select">Select adaption channel</string>
   <string name="vag_adaption_channel_number_title">Channel number</string>
   <string name="vag_adaption_comments_title">Примечания</string>
   <string name="vag_adaption_value_current_title">Current adaption value</string>
   <string name="vag_adaption_value_new_title">New adaption value</string>
   <string name="vag_adaption_value_test_title">Tested adaption value</string>
+  <string name="vag_adaption_meas_value_title">Value {0}: {1}</string>
   <string name="vag_adaption_workshop_number_title">Номер мастерской (деc.): {0}-{1}</string>
   <string name="vag_adaption_importer_number_title">Номер импортёра (деc.): {0}-{1}</string>
   <string name="vag_adaption_equipment_number_title">Номер устройства (деc.): {0}-{1}</string>
@@ -486,6 +488,7 @@
   <string name="vag_adaption_button_read">Read</string>
   <string name="vag_adaption_button_test">Test</string>
   <string name="vag_adaption_button_store">Store</string>
+  <string name="vag_adaption_button_stop">Stop</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">CAN адаптер</string>
