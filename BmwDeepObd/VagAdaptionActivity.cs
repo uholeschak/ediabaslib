@@ -31,11 +31,16 @@ namespace BmwDeepObd
             }
 
             public int SelectedChannel { get; set; }
+            public UInt64? AdaptionValueStart { get; set; }
+            public UInt64? AdaptionValueNew { get; set; }
+            public UInt64? AdaptionValueTest { get; set; }
             public UInt64? CurrentWorkshopNumber { get; set; }
             public UInt64? CurrentImporterNumber { get; set; }
             public UInt64? CurrentEquipmentNumber { get; set; }
             public string[] AdaptionValues { get; set; }
             public string[] AdaptionUnits { get; set; }
+            public bool TestAdaption { get; set; }
+            public bool StoreAdaption { get; set; }
             public bool StopAdaption { get; set; }
         }
 
@@ -282,19 +287,21 @@ namespace BmwDeepObd
             _buttonAdaptionRead.SetOnTouchListener(this);
             _buttonAdaptionRead.Click += (sender, args) =>
             {
-                ExecuteAdaption();
+                ExecuteAdaptionRequest();
             };
 
             _buttonAdaptionTest = FindViewById<Button>(Resource.Id.buttonAdaptionTest);
             _buttonAdaptionTest.SetOnTouchListener(this);
             _buttonAdaptionTest.Click += (sender, args) =>
             {
+                _instanceData.TestAdaption = true;
             };
 
             _buttonAdaptionStore = FindViewById<Button>(Resource.Id.buttonAdaptionStore);
             _buttonAdaptionStore.SetOnTouchListener(this);
             _buttonAdaptionStore.Click += (sender, args) =>
             {
+                _instanceData.StoreAdaption = true;
             };
 
             _buttonAdaptionStop = FindViewById<Button>(Resource.Id.buttonAdaptionStop);
@@ -579,6 +586,10 @@ namespace BmwDeepObd
                 }
             }
 
+            _instanceData.CurrentWorkshopNumber = _ecuInfo.VagWorkshopNumber;
+            _instanceData.CurrentImporterNumber = _ecuInfo.VagImporterNumber;
+            _instanceData.CurrentEquipmentNumber = _ecuInfo.VagEquipmentNumber;
+
             UpdateAdaptionInfo();
         }
 
@@ -611,6 +622,28 @@ namespace BmwDeepObd
                             if (_instanceData.SelectedChannel != (int) value)
                             {
                                 _instanceData.SelectedChannel = (int)value;
+                                dataChanged = true;
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            if (_editTextVagAdaptionValueNew.Enabled && _instanceData.AdaptionValueNew.HasValue)
+            {
+                try
+                {
+                    if (UInt64.TryParse(_editTextVagAdaptionValueNew.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
+                    {
+                        if (value <= 0xFFFF)
+                        {
+                            if (_instanceData.AdaptionValueNew.Value != value)
+                            {
+                                _instanceData.AdaptionValueNew = value;
                                 dataChanged = true;
                             }
                         }
@@ -711,6 +744,9 @@ namespace BmwDeepObd
         private void UpdateAdaptionText()
         {
             string adaptionChannelNumber = string.Empty;
+            string adaptionValueStart = string.Empty;
+            string adaptionValueNew = string.Empty;
+            string adaptionValueTest = string.Empty;
             string codingTextWorkshop = string.Empty;
             string codingTextImporter = string.Empty;
             string codingTextEquipment = string.Empty;
@@ -718,10 +754,26 @@ namespace BmwDeepObd
             string importerNumberTitle = string.Empty;
             string equipmentNumberTitle = string.Empty;
             bool jobRunning = IsJobRunning();
+            bool operationActive = _instanceData.TestAdaption || _instanceData.StoreAdaption || _instanceData.StoreAdaption;
 
             try
             {
                 adaptionChannelNumber = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.SelectedChannel);
+                if (jobRunning)
+                {
+                    if (_instanceData.AdaptionValueStart != null)
+                    {
+                        adaptionValueStart = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.AdaptionValueStart.Value);
+                    }
+                    if (_instanceData.AdaptionValueNew != null)
+                    {
+                        adaptionValueNew = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.AdaptionValueNew.Value);
+                    }
+                    if (_instanceData.AdaptionValueTest != null)
+                    {
+                        adaptionValueTest = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.AdaptionValueTest.Value);
+                    }
+                }
                 if (_instanceData.CurrentWorkshopNumber.HasValue)
                 {
                     codingTextWorkshop = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.CurrentWorkshopNumber);
@@ -747,6 +799,21 @@ namespace BmwDeepObd
             _spinnerVagAdaptionChannel.Enabled = !jobRunning;
             _editTextVagAdaptionChannelNumber.Enabled = !jobRunning;
             _editTextVagAdaptionChannelNumber.Text = adaptionChannelNumber;
+            _textViewVagAdaptionValueCurrent.Text = adaptionValueStart;
+            _editTextVagAdaptionValueNew.Enabled = jobRunning && _instanceData.AdaptionValueNew != null;
+            if (_editTextVagAdaptionValueNew.Enabled)
+            {
+                if (_editTextVagAdaptionValueNew.Text.Length == 0)
+                {
+                    _editTextVagAdaptionValueNew.Text = adaptionValueNew;
+                }
+            }
+            else
+            {
+                _editTextVagAdaptionValueNew.Text = adaptionValueNew;
+            }
+            _textViewVagAdaptionValueTest.Text = adaptionValueTest;
+            _editTextVagAdaptionValueNew.Enabled = jobRunning;
 
             for (int i = 0; i < _textViewAdaptionMeasValues.Length; i++)
             {
@@ -763,21 +830,28 @@ namespace BmwDeepObd
             }
 
             _textViewVagWorkshopNumberTitle.Text = workshopNumberTitle;
+            _editTextVagWorkshopNumber.Enabled = !jobRunning;
             _editTextVagWorkshopNumber.Text = codingTextWorkshop;
+
             _textViewVagImporterNumberTitle.Text = importerNumberTitle;
+            _editTextVagImporterNumber.Enabled = !jobRunning;
             _editTextVagImporterNumber.Text = codingTextImporter;
+
             _textViewVagEquipmentNumberTitle.Text = equipmentNumberTitle;
+            _editTextVagEquipmentNumber.Enabled = !jobRunning;
             _editTextVagEquipmentNumber.Text = codingTextEquipment;
+
             _buttonAdaptionRead.Enabled = !jobRunning;
-            _buttonAdaptionTest.Enabled = !jobRunning;
-            _buttonAdaptionStore.Enabled = !jobRunning;
-            _buttonAdaptionStop.Enabled = jobRunning;
+            _buttonAdaptionTest.Enabled = jobRunning && !operationActive;
+            _buttonAdaptionStore.Enabled = jobRunning && !operationActive && _instanceData.AdaptionValueTest != null;
+            _buttonAdaptionStop.Enabled = jobRunning && !operationActive;
         }
 
         private void HideKeyboard()
         {
             _imm?.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
             _editTextVagAdaptionChannelNumber.ClearFocus();
+            _editTextVagAdaptionValueNew.ClearFocus();
             _editTextVagWorkshopNumber.ClearFocus();
             _editTextVagImporterNumber.ClearFocus();
             _editTextVagEquipmentNumber.ClearFocus();
@@ -889,6 +963,20 @@ namespace BmwDeepObd
             }
 
             EdiabasOpen();
+
+            _instanceData.AdaptionValueStart = null;
+            _instanceData.AdaptionValueNew = null;
+            _instanceData.AdaptionValueTest = null;
+            for (int i = 0; i < _instanceData.AdaptionValues.Length; i++)
+            {
+                _instanceData.AdaptionValues[i] = null;
+            }
+            for (int i = 0; i < _instanceData.AdaptionUnits.Length; i++)
+            {
+                _instanceData.AdaptionUnits[i] = null;
+            }
+            _instanceData.TestAdaption = false;
+            _instanceData.StoreAdaption = false;
             _instanceData.StopAdaption = false;
 
             bool executeFailed = false;
@@ -899,124 +987,170 @@ namespace BmwDeepObd
                 {
                     ActivityCommon.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
 
+                    string repairShopCodeString = string.Format(CultureInfo.InvariantCulture, "{0:000000}{1:000}{2:00000}",
+                        _instanceData.CurrentEquipmentNumber ?? 0, _instanceData.CurrentImporterNumber ?? 0, _instanceData.CurrentWorkshopNumber ?? 0);
+                    int adaptionChannel = _instanceData.SelectedChannel;
+                    bool longAdaption = false;
+                    string adaptionJob = string.Empty;
+
+                    if (_ecuInfo.VagSupportedFuncHash.Contains((UInt64) XmlToolActivity.SupportedFuncType.Adaption))
                     {
-                        string repairShopCodeString = string.Format(CultureInfo.InvariantCulture, "{0:000000}{1:000}{2:00000}",
-                            _instanceData.CurrentEquipmentNumber ?? 0, _instanceData.CurrentImporterNumber ?? 0, _instanceData.CurrentWorkshopNumber ?? 0);
-                        int adaptionChannel = _instanceData.SelectedChannel;
-                        string adaptionJob = string.Empty;
+                        adaptionJob = @"Anpassung2";
+                    }
+                    else if (_ecuInfo.VagSupportedFuncHash.Contains((UInt64) XmlToolActivity.SupportedFuncType.AdaptionLong))
+                    {
+                        longAdaption = true;
+                        adaptionJob = @"LangeAnpassung";
+                    }
+                    else if (_ecuInfo.VagSupportedFuncHash.Contains((UInt64)XmlToolActivity.SupportedFuncType.AdaptionLong2))
+                    {
+                        longAdaption = true;
+                        adaptionJob = @"LangeAnpassung2";
+                    }
 
-                        if (_ecuInfo.VagSupportedFuncHash.Contains((UInt64) XmlToolActivity.SupportedFuncType.Adaption))
-                        {
-                            adaptionJob = @"Anpassung2";
-                        }
-                        else if (_ecuInfo.VagSupportedFuncHash.Contains((UInt64) XmlToolActivity.SupportedFuncType.AdaptionLong))
-                        {
-                            adaptionJob = @"LangeAnpassung";
-                        }
-                        else if (_ecuInfo.VagSupportedFuncHash.Contains((UInt64)XmlToolActivity.SupportedFuncType.AdaptionLong2))
-                        {
-                            adaptionJob = @"LangeAnpassung2";
-                        }
+                    if (string.IsNullOrEmpty(adaptionJob))
+                    {
+                        executeFailed = true;
+                    }
 
-                        if (string.IsNullOrEmpty(adaptionJob))
+                    if (!executeFailed && !string.IsNullOrEmpty(adaptionJob))
+                    {
+                        bool connected = false;
+                        for (;;)
                         {
-                            executeFailed = true;
-                        }
+                            bool testAdaption = _instanceData.TestAdaption;
+                            bool storeAdaption = _instanceData.StoreAdaption;
+                            bool stopAdaption = _instanceData.StopAdaption;
+                            UInt64? adaptionValueNew = _instanceData.AdaptionValueNew;
+                            string adaptionCommand = connected ? @"LESEN" : @"START";
 
-                        if (!executeFailed && !string.IsNullOrEmpty(adaptionJob))
-                        {
-                            bool connected = false;
-                            for (;;)
+                            if (stopAdaption)
                             {
-                                bool stopAdaption = _instanceData.StopAdaption;
-                                string adaptionCommand = connected ? @"LESEN" : @"START";
-                                if (stopAdaption)
-                                {
-                                    adaptionCommand = @"STOP";
-                                }
-                                string adaptionJobArgs = repairShopCodeString + string.Format(CultureInfo.InvariantCulture, ";{0};{1}", adaptionChannel, adaptionCommand);
-
-                                _ediabas.ArgString = adaptionJobArgs;
-                                _ediabas.ArgBinaryStd = null;
-                                _ediabas.ResultsRequests = string.Empty;
-                                _ediabas.ExecuteJob(adaptionJob);
-
-                                jobStatus = CheckAdaptionResult();
-                                if (jobStatus != JobStatus.Ok)
-                                {
-                                    executeFailed = true;
-                                }
-
-                                if (executeFailed)
-                                {
-                                    break;
-                                }
-
-                                if (stopAdaption)
-                                {
-                                    break;
-                                }
-
-                                connected = true;
-
-                                string[] adaptionValues = new string[MaxMeasValues];
-                                string[] adaptionUnits = new string[MaxMeasValues];
-                                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                                int dictIndex = 0;
-                                if (resultSets != null)
-                                {
-                                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
-                                    {
-                                        EdiabasNet.ResultData resultData;
-                                        if (dictIndex == 0)
-                                        {
-                                            dictIndex++;
-                                            continue;
-                                        }
-                                        if (resultDictLocal.TryGetValue("MW_WERT", out resultData))
-                                        {
-                                            if (resultData.OpData is string valueText)
-                                            {
-                                                if (dictIndex - 1 < adaptionValues.Length)
-                                                {
-                                                    adaptionValues[dictIndex - 1] = valueText;
-                                                }
-                                            }
-                                        }
-                                        if (resultDictLocal.TryGetValue("MWEINH_TEXT", out resultData))
-                                        {
-                                            if (resultData.OpData is string unitText)
-                                            {
-                                                if (dictIndex - 1 < adaptionUnits.Length)
-                                                {
-                                                    adaptionUnits[dictIndex - 1] = unitText;
-                                                }
-                                            }
-                                        }
-                                        dictIndex++;
-                                    }
-                                }
-
-                                RunOnUiThread(() =>
-                                {
-                                    if (_activityCommon == null)
-                                    {
-                                        return;
-                                    }
-
-                                    for (int i = 0; i < adaptionValues.Length; i++)
-                                    {
-                                        _instanceData.AdaptionValues[i] = adaptionValues[i];
-                                    }
-
-                                    for (int i = 0; i < adaptionUnits.Length; i++)
-                                    {
-                                        _instanceData.AdaptionUnits[i] = adaptionUnits[i];
-                                    }
-
-                                    UpdateAdaptionText();
-                                });
+                                adaptionCommand = @"STOP";
                             }
+                            else if ((testAdaption || storeAdaption) && adaptionValueNew != null)
+                            {
+                                adaptionCommand = string.Format(CultureInfo.InvariantCulture, "{0};{1}", testAdaption ? @"AENDERN" : @"SPEICHERN", adaptionValueNew);
+                                if (longAdaption)
+                                {
+                                    adaptionCommand += ";2";
+                                }
+                            }
+                            string adaptionJobArgs = repairShopCodeString + string.Format(CultureInfo.InvariantCulture, ";{0};{1}", adaptionChannel, adaptionCommand);
+
+                            _ediabas.ArgString = adaptionJobArgs;
+                            _ediabas.ArgBinaryStd = null;
+                            _ediabas.ResultsRequests = string.Empty;
+                            _ediabas.ExecuteJob(adaptionJob);
+
+                            jobStatus = CheckAdaptionResult();
+                            if (jobStatus != JobStatus.Ok)
+                            {
+                                executeFailed = true;
+                            }
+
+                            if (executeFailed)
+                            {
+                                break;
+                            }
+
+                            if (stopAdaption)
+                            {
+                                break;
+                            }
+
+                            connected = true;
+
+                            UInt64? adaptionValue = null;
+                            string[] adaptionValues = new string[MaxMeasValues];
+                            string[] adaptionUnits = new string[MaxMeasValues];
+                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                            int dictIndex = 0;
+                            if (resultSets != null)
+                            {
+                                if (resultSets.Count >= 2)
+                                {
+                                    Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                                    if (resultDict.TryGetValue("ANPASSWERT", out EdiabasNet.ResultData resultData))
+                                    {
+                                        if (resultData.OpData is Int64 value)
+                                        {
+                                            adaptionValue = (UInt64)value;
+                                        }
+                                    }
+                                }
+                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                                {
+                                    EdiabasNet.ResultData resultData;
+                                    if (dictIndex == 0)
+                                    {
+                                        dictIndex++;
+                                        continue;
+                                    }
+                                    if (resultDictLocal.TryGetValue("MW_WERT", out resultData))
+                                    {
+                                        if (resultData.OpData is string valueText)
+                                        {
+                                            if (dictIndex - 1 < adaptionValues.Length)
+                                            {
+                                                adaptionValues[dictIndex - 1] = valueText;
+                                            }
+                                        }
+                                    }
+                                    if (resultDictLocal.TryGetValue("MWEINH_TEXT", out resultData))
+                                    {
+                                        if (resultData.OpData is string unitText)
+                                        {
+                                            if (dictIndex - 1 < adaptionUnits.Length)
+                                            {
+                                                adaptionUnits[dictIndex - 1] = unitText;
+                                            }
+                                        }
+                                    }
+                                    dictIndex++;
+                                }
+                            }
+
+                            if (testAdaption)
+                            {
+                                _instanceData.TestAdaption = false;
+                                if (adaptionValue != null)
+                                {
+                                    _instanceData.AdaptionValueTest = adaptionValue;
+                                }
+                            }
+
+                            if (storeAdaption)
+                            {
+                                _instanceData.StoreAdaption = false;
+                                _instanceData.StopAdaption = true;
+                            }
+
+                            if (_instanceData.AdaptionValueStart == null && adaptionValue != null)
+                            {
+                                _instanceData.AdaptionValueStart = adaptionValue;
+                                _instanceData.AdaptionValueNew = adaptionValue;
+                            }
+
+                            RunOnUiThread(() =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+
+                                for (int i = 0; i < adaptionValues.Length; i++)
+                                {
+                                    _instanceData.AdaptionValues[i] = adaptionValues[i];
+                                }
+
+                                for (int i = 0; i < adaptionUnits.Length; i++)
+                                {
+                                    _instanceData.AdaptionUnits[i] = adaptionUnits[i];
+                                }
+
+                                UpdateAdaptionText();
+                            });
                         }
                     }
                 }
