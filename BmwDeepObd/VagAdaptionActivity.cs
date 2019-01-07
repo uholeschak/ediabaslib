@@ -663,7 +663,8 @@ namespace BmwDeepObd
 
         private bool IsShortAdaption()
         {
-            if (_ecuInfo.VagSupportedFuncHash.Contains((UInt64)XmlToolActivity.SupportedFuncType.Adaption))
+            if (_ecuInfo.VagSupportedFuncHash != null &&
+                _ecuInfo.VagSupportedFuncHash.Contains((UInt64)XmlToolActivity.SupportedFuncType.Adaption))
             {
                 return true;
             }
@@ -990,24 +991,32 @@ namespace BmwDeepObd
                     string repairShopCodeString = string.Format(CultureInfo.InvariantCulture, "{0:000000}{1:000}{2:00000}",
                         _instanceData.CurrentEquipmentNumber ?? 0, _instanceData.CurrentImporterNumber ?? 0, _instanceData.CurrentWorkshopNumber ?? 0);
                     int adaptionChannel = _instanceData.SelectedChannel;
+                    bool is1281Ecu = XmlToolActivity.Is1281Ecu(_ecuInfo);
                     bool longAdaption = false;
                     string adaptionJob = string.Empty;
                     UInt64? adaptionValueType = null;
                     int adaptionValueLength = 2;
 
-                    if (_ecuInfo.VagSupportedFuncHash.Contains((UInt64) XmlToolActivity.SupportedFuncType.Adaption))
+                    if (is1281Ecu)
                     {
-                        adaptionJob = @"Anpassung2";
+                        adaptionJob = @"Anpassung_lesen";
                     }
-                    else if (_ecuInfo.VagSupportedFuncHash.Contains((UInt64) XmlToolActivity.SupportedFuncType.AdaptionLong))
+                    else if (_ecuInfo.VagSupportedFuncHash != null)
                     {
-                        longAdaption = true;
-                        adaptionJob = @"LangeAnpassung";
-                    }
-                    else if (_ecuInfo.VagSupportedFuncHash.Contains((UInt64)XmlToolActivity.SupportedFuncType.AdaptionLong2))
-                    {
-                        longAdaption = true;
-                        adaptionJob = @"LangeAnpassung2";
+                        if (_ecuInfo.VagSupportedFuncHash.Contains((UInt64)XmlToolActivity.SupportedFuncType.Adaption))
+                        {
+                            adaptionJob = @"Anpassung2";
+                        }
+                        else if (_ecuInfo.VagSupportedFuncHash.Contains((UInt64)XmlToolActivity.SupportedFuncType.AdaptionLong))
+                        {
+                            longAdaption = true;
+                            adaptionJob = @"LangeAnpassung";
+                        }
+                        else if (_ecuInfo.VagSupportedFuncHash.Contains((UInt64)XmlToolActivity.SupportedFuncType.AdaptionLong2))
+                        {
+                            longAdaption = true;
+                            adaptionJob = @"LangeAnpassung2";
+                        }
                     }
 
                     if (string.IsNullOrEmpty(adaptionJob))
@@ -1024,30 +1033,54 @@ namespace BmwDeepObd
                             bool storeAdaption = _instanceData.StoreAdaption;
                             bool stopAdaption = _instanceData.StopAdaption;
                             UInt64? adaptionValueNew = _instanceData.AdaptionValueNew;
-                            string adaptionCommand = connected ? @"LESEN" : @"START";
+                            string adaptionJobArgs = string.Empty;
 
-                            if (stopAdaption)
+                            if (is1281Ecu)
                             {
-                                adaptionCommand = @"STOP";
-                            }
-                            else if ((testAdaption || storeAdaption) && adaptionValueNew != null)
-                            {
-                                if (longAdaption)
+                                adaptionJob = @"Anpassung_lesen";
+                                adaptionJobArgs = string.Format(CultureInfo.InvariantCulture, "{0};WertEinmalLesen", adaptionChannel);
+                                if (adaptionValueNew != null)
                                 {
-                                    StringBuilder sbAdaptionValue = new StringBuilder();
-                                    for (int i = 0; i < adaptionValueLength; i++)
+                                    if (testAdaption)
                                     {
-                                        sbAdaptionValue.Insert(0, string.Format(CultureInfo.InvariantCulture, "{0:X02}", (adaptionValueNew >> (i * 8)) & 0xFF));
+                                        adaptionJob = @"Anpassung_testen";
+                                        adaptionJobArgs = string.Format(CultureInfo.InvariantCulture, "{0};{1};WertEinmalLesen", adaptionChannel, adaptionValueNew.Value);
                                     }
-                                    adaptionCommand = string.Format(CultureInfo.InvariantCulture, "{0};{1};{2}",
-                                        testAdaption ? @"AENDERN" : @"SPEICHERN", sbAdaptionValue.ToString(), adaptionValueType ?? 2);
-                                }
-                                else
-                                {
-                                    adaptionCommand = string.Format(CultureInfo.InvariantCulture, "{0};{1}", testAdaption ? @"AENDERN" : @"SPEICHERN", adaptionValueNew);
+                                    else if (storeAdaption)
+                                    {
+                                        adaptionJob = @"Anpassung_speichern";
+                                        adaptionJobArgs = string.Format(CultureInfo.InvariantCulture, "{0:00000};{1};{2}",
+                                            _instanceData.CurrentWorkshopNumber ?? 0, adaptionChannel, adaptionValueNew.Value);
+                                    }
                                 }
                             }
-                            string adaptionJobArgs = repairShopCodeString + string.Format(CultureInfo.InvariantCulture, ";{0};{1}", adaptionChannel, adaptionCommand);
+                            else
+                            {
+                                string adaptionCommand = connected ? @"LESEN" : @"START";
+
+                                if (stopAdaption)
+                                {
+                                    adaptionCommand = @"STOP";
+                                }
+                                else if ((testAdaption || storeAdaption) && adaptionValueNew != null)
+                                {
+                                    if (longAdaption)
+                                    {
+                                        StringBuilder sbAdaptionValue = new StringBuilder();
+                                        for (int i = 0; i < adaptionValueLength; i++)
+                                        {
+                                            sbAdaptionValue.Insert(0, string.Format(CultureInfo.InvariantCulture, "{0:X02}", (adaptionValueNew.Value >> (i * 8)) & 0xFF));
+                                        }
+                                        adaptionCommand = string.Format(CultureInfo.InvariantCulture, "{0};{1};{2}",
+                                            testAdaption ? @"AENDERN" : @"SPEICHERN", sbAdaptionValue.ToString(), adaptionValueType ?? 2);
+                                    }
+                                    else
+                                    {
+                                        adaptionCommand = string.Format(CultureInfo.InvariantCulture, "{0};{1}", testAdaption ? @"AENDERN" : @"SPEICHERN", adaptionValueNew.Value);
+                                    }
+                                }
+                                adaptionJobArgs = repairShopCodeString + string.Format(CultureInfo.InvariantCulture, ";{0};{1}", adaptionChannel, adaptionCommand);
+                            }
 
                             _ediabas.ArgString = adaptionJobArgs;
                             _ediabas.ArgBinaryStd = null;
@@ -1081,8 +1114,17 @@ namespace BmwDeepObd
                             {
                                 if (resultSets.Count >= 2)
                                 {
+                                    // ReSharper disable once InlineOutVariableDeclaration
+                                    EdiabasNet.ResultData resultData;
                                     Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                                    if (resultDict.TryGetValue("ANPASSWERT", out EdiabasNet.ResultData resultData))
+                                    if (resultDict.TryGetValue("ANPASSUNG_WERT", out resultData))
+                                    {
+                                        if (resultData.OpData is Int64 value)
+                                        {
+                                            adaptionValue = (UInt64)value;
+                                        }
+                                    }
+                                    if (resultDict.TryGetValue("ANPASSWERT", out resultData))
                                     {
                                         if (resultData.OpData is Int64 value)
                                         {

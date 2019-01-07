@@ -454,6 +454,10 @@ namespace BmwDeepObd
                     _ecuInfo.VagSupportedFuncHash.Contains((UInt64) XmlToolActivity.SupportedFuncType.AdaptionLong) ||
                     _ecuInfo.VagSupportedFuncHash.Contains((UInt64) XmlToolActivity.SupportedFuncType.AdaptionLong2);
             }
+            if (XmlToolActivity.Is1281Ecu(_ecuInfo))
+            {
+                adaptionEnabled = true;
+            }
 
             _buttonCoding2 = FindViewById<Button>(Resource.Id.buttonCoding2);
             _buttonCoding2.Visibility = vagButtonsVisibility;
