@@ -992,6 +992,8 @@ namespace BmwDeepObd
                     int adaptionChannel = _instanceData.SelectedChannel;
                     bool longAdaption = false;
                     string adaptionJob = string.Empty;
+                    UInt64? adaptionValueType = null;
+                    int adaptionValueLength = 2;
 
                     if (_ecuInfo.VagSupportedFuncHash.Contains((UInt64) XmlToolActivity.SupportedFuncType.Adaption))
                     {
@@ -1030,10 +1032,19 @@ namespace BmwDeepObd
                             }
                             else if ((testAdaption || storeAdaption) && adaptionValueNew != null)
                             {
-                                adaptionCommand = string.Format(CultureInfo.InvariantCulture, "{0};{1}", testAdaption ? @"AENDERN" : @"SPEICHERN", adaptionValueNew);
                                 if (longAdaption)
                                 {
-                                    adaptionCommand += ";2";
+                                    StringBuilder sbAdaptionValue = new StringBuilder();
+                                    for (int i = 0; i < adaptionValueLength; i++)
+                                    {
+                                        sbAdaptionValue.Insert(0, string.Format(CultureInfo.InvariantCulture, "{0:X02}", (adaptionValueNew >> (i * 8)) & 0xFF));
+                                    }
+                                    adaptionCommand = string.Format(CultureInfo.InvariantCulture, "{0};{1};{2}",
+                                        testAdaption ? @"AENDERN" : @"SPEICHERN", sbAdaptionValue.ToString(), adaptionValueType ?? 2);
+                                }
+                                else
+                                {
+                                    adaptionCommand = string.Format(CultureInfo.InvariantCulture, "{0};{1}", testAdaption ? @"AENDERN" : @"SPEICHERN", adaptionValueNew);
                                 }
                             }
                             string adaptionJobArgs = repairShopCodeString + string.Format(CultureInfo.InvariantCulture, ";{0};{1}", adaptionChannel, adaptionCommand);
@@ -1076,6 +1087,24 @@ namespace BmwDeepObd
                                         if (resultData.OpData is Int64 value)
                                         {
                                             adaptionValue = (UInt64)value;
+                                        }
+                                        else if (resultData.OpData is byte[] valueBin)
+                                        {
+                                            UInt64 tempValue = 0;
+                                            foreach (byte data in valueBin)
+                                            {
+                                                tempValue <<= 8;
+                                                tempValue |= data;
+                                            }
+                                            adaptionValue = tempValue;
+                                            adaptionValueLength = valueBin.Length;
+                                        }
+                                    }
+                                    if (resultDict.TryGetValue("ANPASSWERTTYP", out resultData))
+                                    {
+                                        if (resultData.OpData is Int64 value)
+                                        {
+                                            adaptionValueType = (UInt64)value;
                                         }
                                     }
                                 }
