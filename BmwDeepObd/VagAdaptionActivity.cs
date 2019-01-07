@@ -1150,21 +1150,39 @@ namespace BmwDeepObd
                                         }
                                     }
                                 }
+
+                                int dictOffset = is1281Ecu ? 2 : 1;
                                 foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
                                 {
-                                    EdiabasNet.ResultData resultData;
-                                    if (dictIndex == 0)
+                                    if (dictIndex < dictOffset)
                                     {
                                         dictIndex++;
                                         continue;
                                     }
+
+                                    // ReSharper disable once InlineOutVariableDeclaration
+                                    EdiabasNet.ResultData resultData;
                                     if (resultDictLocal.TryGetValue("MW_WERT", out resultData))
                                     {
                                         if (resultData.OpData is string valueText)
                                         {
-                                            if (dictIndex - 1 < adaptionValues.Length)
+                                            if (dictIndex - dictOffset < adaptionValues.Length)
                                             {
-                                                adaptionValues[dictIndex - 1] = valueText;
+                                                adaptionValues[dictIndex - dictOffset] = valueText;
+                                            }
+                                        }
+                                        else if (resultData.OpData is Int64 valueInt)
+                                        {
+                                            if (dictIndex - dictOffset < adaptionValues.Length)
+                                            {
+                                                adaptionValues[dictIndex - dictOffset] = string.Format(CultureInfo.InvariantCulture, "{0}", valueInt);
+                                            }
+                                        }
+                                        else if (resultData.OpData is Double valueDouble)
+                                        {
+                                            if (dictIndex - dictOffset < adaptionValues.Length)
+                                            {
+                                                adaptionValues[dictIndex - dictOffset] = string.Format(CultureInfo.InvariantCulture, "{0}", valueDouble);
                                             }
                                         }
                                     }
@@ -1172,9 +1190,9 @@ namespace BmwDeepObd
                                     {
                                         if (resultData.OpData is string unitText)
                                         {
-                                            if (dictIndex - 1 < adaptionUnits.Length)
+                                            if (dictIndex - dictOffset < adaptionUnits.Length)
                                             {
-                                                adaptionUnits[dictIndex - 1] = unitText;
+                                                adaptionUnits[dictIndex - dictOffset] = unitText;
                                             }
                                         }
                                     }
