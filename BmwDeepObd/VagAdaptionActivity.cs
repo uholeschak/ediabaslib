@@ -680,7 +680,7 @@ namespace BmwDeepObd
         {
             UpdateAdaptionText();
 
-            StringBuilder[] measTitles = new StringBuilder[MaxMeasValues];
+            string[] measTitles = new string[MaxMeasValues];
             StringBuilder sbAdaptionComment = new StringBuilder();
             if (_dataInfoAdaptionList != null)
             {
@@ -690,29 +690,28 @@ namespace BmwDeepObd
                         dataInfo.Value1.Value == _instanceData.SelectedChannel && dataInfo.TextArray.Length > 0)
                     {
                         int index = dataInfo.Value2.Value;
+
+                        StringBuilder sbLine = new StringBuilder();
+                        foreach (string text in dataInfo.TextArray)
+                        {
+                            if (sbLine.Length > 0)
+                            {
+                                sbLine.Append(" ");
+                            }
+                            sbLine.Append(text);
+                        }
+
                         if (index > 0 && index <= 4)
                         {
-                            if (measTitles[index - 1] == null)
-                            {
-                                measTitles[index - 1] = new StringBuilder();
-                            }
-
-                            foreach (string text in dataInfo.TextArray)
-                            {
-                                if (measTitles[index - 1].Length > 0)
-                                {
-                                    measTitles[index - 1].Append(" ");
-                                }
-                                measTitles[index - 1].Append(text);
-                            }
+                            measTitles[index - 1] = sbLine.ToString();
                         }
-                        else
+                        else if (index > 4)
                         {
                             if (sbAdaptionComment.Length > 0)
                             {
                                 sbAdaptionComment.Append("\r\n");
                             }
-                            sbAdaptionComment.Append(dataInfo.TextArray[0]);
+                            sbAdaptionComment.Append(sbLine);
                         }
                     }
                 }
@@ -735,9 +734,8 @@ namespace BmwDeepObd
 
             for (int i = 0; i < measTitles.Length; i++)
             {
-                string title = measTitles[i] != null ? measTitles[i].ToString() : string.Empty;
                 _textViewVagAdaptionMeasTitles[i].Text =
-                    string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_adaption_meas_value_title), i + 1, title);
+                    string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_adaption_meas_value_title), i + 1, measTitles[i] ?? string.Empty);
             }
 
             _layoutVagAdaptionRepairShopCode.Visibility = XmlToolActivity.Is1281Ecu(_ecuInfo) ? ViewStates.Gone : ViewStates.Visible;
