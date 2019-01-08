@@ -644,6 +644,10 @@ namespace BmwDeepObd
                             if (_instanceData.AdaptionValueNew.Value != value)
                             {
                                 _instanceData.AdaptionValueNew = value;
+                                if (_editTextVagAdaptionValueNew.Enabled)
+                                {
+                                    _editTextVagAdaptionValueNew.Text = string.Empty;   // focre update
+                                }
                                 dataChanged = true;
                             }
                         }
@@ -736,7 +740,7 @@ namespace BmwDeepObd
                     string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_adaption_meas_value_title), i + 1, title);
             }
 
-            _layoutVagAdaptionRepairShopCode.Visibility = IsShortAdaption() ? ViewStates.Visible : ViewStates.Gone;
+            _layoutVagAdaptionRepairShopCode.Visibility = XmlToolActivity.Is1281Ecu(_ecuInfo) ? ViewStates.Gone : ViewStates.Visible;
             _layoutVagAdaptionWorkshop.Visibility = _instanceData.CurrentWorkshopNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagAdaptionImporterNumber.Visibility = _instanceData.CurrentImporterNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagAdaptionEquipmentNumber.Visibility = _instanceData.CurrentEquipmentNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
