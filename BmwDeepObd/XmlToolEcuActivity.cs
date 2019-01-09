@@ -595,7 +595,7 @@ namespace BmwDeepObd
 
                     searchViewV7.QueryTextSubmit += (sender, e) =>
                     {
-                        e.Handled = OnQueryTextChange(e.Query, true);
+                        e.Handled = OnQueryTextChange(e.NewText, true);
                     };
                 }
             }

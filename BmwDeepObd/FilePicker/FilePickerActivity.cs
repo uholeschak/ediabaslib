@@ -58,7 +58,7 @@ namespace BmwDeepObd.FilePicker
 
                     searchViewV7.QueryTextSubmit += (sender, e) =>
                     {
-                        e.Handled = OnQueryTextChange(e.Query);
+                        e.Handled = OnQueryTextChange(e.NewText);
                     };
                 }
             }
