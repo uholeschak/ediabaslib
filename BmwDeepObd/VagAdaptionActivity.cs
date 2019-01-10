@@ -816,7 +816,7 @@ namespace BmwDeepObd
                 _editTextVagAdaptionValueNew.Text = adaptionValueNew;
             }
             _textViewVagAdaptionValueTest.Text = adaptionValueTest;
-            _editTextVagAdaptionValueNew.Enabled = jobRunning;
+            _editTextVagAdaptionValueNew.Enabled = jobRunning && _instanceData.SelectedChannel != 0;
 
             for (int i = 0; i < _textViewAdaptionMeasValues.Length; i++)
             {
@@ -833,19 +833,19 @@ namespace BmwDeepObd
             }
 
             _textViewVagWorkshopNumberTitle.Text = workshopNumberTitle;
-            _editTextVagWorkshopNumber.Enabled = !jobRunning;
+            _editTextVagWorkshopNumber.Enabled = false;
             _editTextVagWorkshopNumber.Text = codingTextWorkshop;
 
             _textViewVagImporterNumberTitle.Text = importerNumberTitle;
-            _editTextVagImporterNumber.Enabled = !jobRunning;
+            _editTextVagImporterNumber.Enabled = false;
             _editTextVagImporterNumber.Text = codingTextImporter;
 
             _textViewVagEquipmentNumberTitle.Text = equipmentNumberTitle;
-            _editTextVagEquipmentNumber.Enabled = !jobRunning;
+            _editTextVagEquipmentNumber.Enabled = false;
             _editTextVagEquipmentNumber.Text = codingTextEquipment;
 
             _buttonAdaptionRead.Enabled = !jobRunning;
-            _buttonAdaptionTest.Enabled = jobRunning && !operationActive;
+            _buttonAdaptionTest.Enabled = jobRunning && !operationActive && _instanceData.SelectedChannel != 0;
             _buttonAdaptionStore.Enabled = jobRunning && !operationActive && _instanceData.AdaptionValueTest != null;
             _buttonAdaptionStop.Enabled = jobRunning && !operationActive;
         }
@@ -967,9 +967,14 @@ namespace BmwDeepObd
 
             EdiabasOpen();
 
-            _instanceData.AdaptionValueStart = null;
-            _instanceData.AdaptionValueNew = null;
-            _instanceData.AdaptionValueTest = null;
+            UInt64? startValue = null;
+            if (_instanceData.SelectedChannel == 0)
+            {
+                startValue = 0;
+            }
+            _instanceData.AdaptionValueStart = startValue;
+            _instanceData.AdaptionValueNew = startValue;
+            _instanceData.AdaptionValueTest = startValue;
             for (int i = 0; i < _instanceData.AdaptionValues.Length; i++)
             {
                 _instanceData.AdaptionValues[i] = null;
@@ -1035,7 +1040,7 @@ namespace BmwDeepObd
                             bool storeAdaption = _instanceData.StoreAdaption;
                             bool stopAdaption = _instanceData.StopAdaption;
                             UInt64? adaptionValueNew = _instanceData.AdaptionValueNew;
-                            string adaptionJobArgs = string.Empty;
+                            string adaptionJobArgs;
 
                             if (is1281Ecu)
                             {
