@@ -54,6 +54,7 @@ namespace BmwDeepObd
         public const string ExtraEnetIp = "enet_ip";
 
         private const int MaxMeasValues = 4;
+        private const int ResetChannelNumber = 0;
 
         private enum JobStatus
         {
@@ -816,7 +817,7 @@ namespace BmwDeepObd
                 _editTextVagAdaptionValueNew.Text = adaptionValueNew;
             }
             _textViewVagAdaptionValueTest.Text = adaptionValueTest;
-            _editTextVagAdaptionValueNew.Enabled = jobRunning && _instanceData.SelectedChannel != 0;
+            _editTextVagAdaptionValueNew.Enabled = jobRunning && _instanceData.SelectedChannel != ResetChannelNumber;
 
             for (int i = 0; i < _textViewAdaptionMeasValues.Length; i++)
             {
@@ -845,7 +846,7 @@ namespace BmwDeepObd
             _editTextVagEquipmentNumber.Text = codingTextEquipment;
 
             _buttonAdaptionRead.Enabled = !jobRunning;
-            _buttonAdaptionTest.Enabled = jobRunning && !operationActive && _instanceData.SelectedChannel != 0;
+            _buttonAdaptionTest.Enabled = jobRunning && !operationActive && _instanceData.SelectedChannel != ResetChannelNumber;
             _buttonAdaptionStore.Enabled = jobRunning && !operationActive && _instanceData.AdaptionValueTest != null;
             _buttonAdaptionStop.Enabled = jobRunning && !operationActive;
         }
@@ -967,8 +968,9 @@ namespace BmwDeepObd
 
             EdiabasOpen();
 
+            bool resetChannel = _instanceData.SelectedChannel == ResetChannelNumber;
             UInt64? startValue = null;
-            if (_instanceData.SelectedChannel == 0)
+            if (resetChannel)
             {
                 startValue = 0;
             }
@@ -1210,7 +1212,7 @@ namespace BmwDeepObd
                             if (testAdaption)
                             {
                                 _instanceData.TestAdaption = false;
-                                if (adaptionValue != null)
+                                if (!resetChannel && adaptionValue != null)
                                 {
                                     _instanceData.AdaptionValueTest = adaptionValue;
                                 }
@@ -1222,7 +1224,7 @@ namespace BmwDeepObd
                                 _instanceData.StopAdaption = true;
                             }
 
-                            if (_instanceData.AdaptionValueStart == null && adaptionValue != null)
+                            if (!resetChannel && _instanceData.AdaptionValueStart == null && adaptionValue != null)
                             {
                                 _instanceData.AdaptionValueStart = adaptionValue;
                                 _instanceData.AdaptionValueNew = adaptionValue;
@@ -1235,14 +1237,17 @@ namespace BmwDeepObd
                                     return;
                                 }
 
-                                for (int i = 0; i < adaptionValues.Length; i++)
+                                if (!resetChannel)
                                 {
-                                    _instanceData.AdaptionValues[i] = adaptionValues[i];
-                                }
+                                    for (int i = 0; i < adaptionValues.Length; i++)
+                                    {
+                                        _instanceData.AdaptionValues[i] = adaptionValues[i];
+                                    }
 
-                                for (int i = 0; i < adaptionUnits.Length; i++)
-                                {
-                                    _instanceData.AdaptionUnits[i] = adaptionUnits[i];
+                                    for (int i = 0; i < adaptionUnits.Length; i++)
+                                    {
+                                        _instanceData.AdaptionUnits[i] = adaptionUnits[i];
+                                    }
                                 }
 
                                 UpdateAdaptionText();
