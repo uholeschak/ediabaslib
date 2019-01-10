@@ -551,6 +551,7 @@ namespace BmwDeepObd
 
             _spinnerVagAdaptionChannelAdapter.Items.Clear();
 
+            bool resetChannelPresent = false;
             int index = 0;
             if (_dataInfoAdaptionList != null)
             {
@@ -561,13 +562,27 @@ namespace BmwDeepObd
                     {
                         string text = string.Format(CultureInfo.InvariantCulture, "{0}: {1}", dataInfo.Value1.Value, dataInfo.TextArray[0]);
                         _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(text, dataInfo.Value1.Value));
-                        if (selectedChannel == dataInfo.Value1.Value)
+
+                        if (dataInfo.Value1.Value == ResetChannelNumber)
                         {
-                            selection = index;
+                            resetChannelPresent = true;
                         }
+                        else
+                        {
+                            if (dataInfo.Value1.Value == selectedChannel)
+                            {
+                                selection = index;
+                            }
+                        }
+
                         index++;
                     }
                 }
+            }
+
+            if (!resetChannelPresent)
+            {
+                _spinnerVagAdaptionChannelAdapter.Items.Insert(1, new StringObjType(GetString(Resource.String.vag_adaption_channel_reset), ResetChannelNumber));
             }
 
             _spinnerVagAdaptionChannelAdapter.NotifyDataSetChanged();
@@ -722,7 +737,8 @@ namespace BmwDeepObd
             int itemIndex = 0;
             foreach (StringObjType stringObjType in _spinnerVagAdaptionChannelAdapter.Items)
             {
-                if ((int) stringObjType.Data == _instanceData.SelectedChannel)
+                int channel = (int) stringObjType.Data;
+                if (channel == _instanceData.SelectedChannel && channel != ResetChannelNumber)
                 {
                     selection = itemIndex;
                 }
