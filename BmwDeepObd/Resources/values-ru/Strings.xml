@@ -476,6 +476,7 @@
   <string name="vag_adaption_title_adaption">Adaption ECU: {0}</string>
   <string name="vag_adaption_channel_title">Documented channel</string>
   <string name="vag_adaption_channel_select">Select adaption channel</string>
+  <string name="vag_adaption_channel_reset">Reset adaption channels</string>
   <string name="vag_adaption_channel_number_title">Channel number</string>
   <string name="vag_adaption_comments_title">Примечания</string>
   <string name="vag_adaption_value_current_title">Current adaption value</string>
