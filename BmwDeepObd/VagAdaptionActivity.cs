@@ -1071,7 +1071,7 @@ namespace BmwDeepObd
                             if (is1281Ecu)
                             {
                                 adaptionJob = @"Anpassung_lesen";
-                                adaptionJobArgs = string.Format(CultureInfo.InvariantCulture, "{0};WertEinmalLesen", adaptionChannel);
+                                adaptionJobArgs = string.Format(CultureInfo.InvariantCulture, "{0};WertEinmalLesen", adaptionChannel == 0 ? 1 : adaptionChannel);
                                 if (adaptionValueNew != null)
                                 {
                                     if (testAdaption)
