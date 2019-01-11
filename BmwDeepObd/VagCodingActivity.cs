@@ -1161,8 +1161,9 @@ namespace BmwDeepObd
             _layoutVagCodingRaw.Visibility = _codingMode == CodingMode.Coding ? ViewStates.Visible : ViewStates.Gone;
             _editTextVagCodingRaw.Enabled = !shortCoding;
 
-            _layoutVagCodingComments.Visibility = sbCodingComment.Length > 0 ? ViewStates.Visible : ViewStates.Gone;
-            _textViewVagCodingComments.Text = sbCodingComment.ToString();
+            string codingComment = sbCodingComment.ToString();
+            _layoutVagCodingComments.Visibility = !string.IsNullOrWhiteSpace(codingComment) ? ViewStates.Visible : ViewStates.Gone;
+            _textViewVagCodingComments.Text = codingComment;
 
             _layoutVagCodingRepairShopCode.Visibility = (_codingMode == CodingMode.Coding && _instanceData.SelectedSubsystem == 0) ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagCodingWorkshop.Visibility = _instanceData.CurrentWorkshopNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
