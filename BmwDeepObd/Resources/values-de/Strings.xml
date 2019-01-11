@@ -461,7 +461,7 @@
   <string name="vag_coding_processing">Vorgang wird ausgeführt</string>
   <string name="vag_coding_write_values_invalid">Wenn die Betriebsnummer, Importeursnummer oder Gerätenummer 0 sind kann es sein, dass die ECU die Werte ablehnt.\nWollen Sie trotzdem fortfahren?</string>
   <string name="vag_coding_write_coding_illegal_arguments">Die Job Argumente sind außerhalb des gültigen Bereichs</string>
-  <string name="vag_coding_write_coding_failed">Kodierung schreiben fehlgeschlagen</string>
+  <string name="vag_coding_write_coding_failed">Der Vorgang ist fehlgeschlagen</string>
   <string name="vag_coding_write_coding_access_denied">Zugriff verweigert, Sie müssen sich zuerst authentifizieren</string>
   <string name="vag_coding_write_coding_ok">Kodierung schreiben erfolgreich</string>
   <string name="vag_coding_write_coding2_failed">Kodierung schreiben fehlgeschlagen.\nWenn der Code falsch war, müssen Sie die Zündung für mindesten 10 Minuten eingeschaltet lassen, bevor Sie es erneut versuchen!</string>
