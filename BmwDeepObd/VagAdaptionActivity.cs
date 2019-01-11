@@ -582,7 +582,8 @@ namespace BmwDeepObd
 
             if (!resetChannelPresent)
             {
-                _spinnerVagAdaptionChannelAdapter.Items.Insert(1, new StringObjType(GetString(Resource.String.vag_adaption_channel_reset), ResetChannelNumber));
+                string text = string.Format(CultureInfo.InvariantCulture, "{0}: {1}", ResetChannelNumber, GetString(Resource.String.vag_adaption_channel_reset));
+                _spinnerVagAdaptionChannelAdapter.Items.Insert(1, new StringObjType(text, ResetChannelNumber));
             }
 
             _spinnerVagAdaptionChannelAdapter.NotifyDataSetChanged();
@@ -696,6 +697,7 @@ namespace BmwDeepObd
         {
             UpdateAdaptionText();
 
+            bool resetChannel = _instanceData.SelectedChannel == ResetChannelNumber;
             string[] measTitles = new string[MaxMeasValues];
             StringBuilder sbAdaptionComment = new StringBuilder();
             if (_dataInfoAdaptionList != null)
@@ -733,12 +735,18 @@ namespace BmwDeepObd
                 }
             }
 
+            string adaptionComment = sbAdaptionComment.ToString();
+            if (resetChannel && string.IsNullOrWhiteSpace(adaptionComment))
+            {
+                adaptionComment = GetString(Resource.String.vag_adaption_channel_reset_info);
+            }
+
             int selection = 0;
             int itemIndex = 0;
             foreach (StringObjType stringObjType in _spinnerVagAdaptionChannelAdapter.Items)
             {
                 int channel = (int) stringObjType.Data;
-                if (channel == _instanceData.SelectedChannel && channel != ResetChannelNumber)
+                if (channel == _instanceData.SelectedChannel && !resetChannel)
                 {
                     selection = itemIndex;
                 }
@@ -746,8 +754,8 @@ namespace BmwDeepObd
             }
             _spinnerVagAdaptionChannel.SetSelection(selection);
 
-            _layoutVagAdaptionComments.Visibility = sbAdaptionComment.Length > 0 ? ViewStates.Visible : ViewStates.Gone;
-            _textVagViewAdaptionComments.Text = sbAdaptionComment.ToString();
+            _layoutVagAdaptionComments.Visibility = !string.IsNullOrWhiteSpace(adaptionComment) ? ViewStates.Visible : ViewStates.Gone;
+            _textVagViewAdaptionComments.Text = adaptionComment;
 
             for (int i = 0; i < measTitles.Length; i++)
             {
@@ -774,6 +782,7 @@ namespace BmwDeepObd
             string importerNumberTitle = string.Empty;
             string equipmentNumberTitle = string.Empty;
             bool jobRunning = IsJobRunning();
+            bool resetChannel = _instanceData.SelectedChannel == ResetChannelNumber;
             bool operationActive = _instanceData.TestAdaption || _instanceData.StoreAdaption || _instanceData.StoreAdaption;
 
             try
@@ -820,7 +829,7 @@ namespace BmwDeepObd
             _editTextVagAdaptionChannelNumber.Enabled = !jobRunning;
             _editTextVagAdaptionChannelNumber.Text = adaptionChannelNumber;
             _textViewVagAdaptionValueCurrent.Text = adaptionValueStart;
-            _editTextVagAdaptionValueNew.Enabled = jobRunning && _instanceData.AdaptionValueNew != null;
+            _editTextVagAdaptionValueNew.Enabled = jobRunning && !resetChannel && _instanceData.AdaptionValueNew != null;
             if (_editTextVagAdaptionValueNew.Enabled)
             {
                 if (_editTextVagAdaptionValueNew.Text.Length == 0)
@@ -833,7 +842,6 @@ namespace BmwDeepObd
                 _editTextVagAdaptionValueNew.Text = adaptionValueNew;
             }
             _textViewVagAdaptionValueTest.Text = adaptionValueTest;
-            _editTextVagAdaptionValueNew.Enabled = jobRunning && _instanceData.SelectedChannel != ResetChannelNumber;
 
             for (int i = 0; i < _textViewAdaptionMeasValues.Length; i++)
             {
