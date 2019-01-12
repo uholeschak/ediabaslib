@@ -284,6 +284,7 @@ namespace BmwDeepObd
             _textViewVagAdaptionOperationTitle = FindViewById<TextView>(Resource.Id.textViewVagAdaptionOperationTitle);
             _textViewVagAdaptionOperationTitle.SetOnTouchListener(this);
 
+            bool is1281Ecu = XmlToolActivity.Is1281Ecu(_ecuInfo);
             _buttonAdaptionRead = FindViewById<Button>(Resource.Id.buttonAdaptionRead);
             _buttonAdaptionRead.SetOnTouchListener(this);
             _buttonAdaptionRead.Click += (sender, args) =>
@@ -303,6 +304,10 @@ namespace BmwDeepObd
             _buttonAdaptionStore.Click += (sender, args) =>
             {
                 _instanceData.StoreAdaption = true;
+                if (is1281Ecu && !IsJobRunning())
+                {
+                    ExecuteAdaptionRequest();
+                }
             };
 
             _buttonAdaptionStop = FindViewById<Button>(Resource.Id.buttonAdaptionStop);
@@ -782,6 +787,7 @@ namespace BmwDeepObd
             string importerNumberTitle = string.Empty;
             string equipmentNumberTitle = string.Empty;
             bool jobRunning = IsJobRunning();
+            bool is1281Ecu = XmlToolActivity.Is1281Ecu(_ecuInfo);
             bool resetChannel = _instanceData.SelectedChannel == ResetChannelNumber;
             bool operationActive = _instanceData.TestAdaption || _instanceData.StoreAdaption || _instanceData.StoreAdaption;
 
@@ -869,9 +875,19 @@ namespace BmwDeepObd
             _editTextVagEquipmentNumber.Enabled = false;
             _editTextVagEquipmentNumber.Text = codingTextEquipment;
 
-            _buttonAdaptionRead.Enabled = !jobRunning;
-            _buttonAdaptionTest.Enabled = jobRunning && !operationActive && _instanceData.SelectedChannel != ResetChannelNumber;
-            _buttonAdaptionStore.Enabled = jobRunning && !operationActive && _instanceData.AdaptionValueTest != null;
+            if (is1281Ecu && resetChannel)
+            {
+                _buttonAdaptionRead.Enabled = false;
+                _buttonAdaptionTest.Enabled = false;
+                _buttonAdaptionStore.Enabled = !operationActive;
+                _buttonAdaptionStop.Enabled = jobRunning && !operationActive;
+            }
+            else
+            {
+                _buttonAdaptionRead.Enabled = !jobRunning;
+                _buttonAdaptionTest.Enabled = jobRunning && !operationActive && !resetChannel;
+                _buttonAdaptionStore.Enabled = jobRunning && !operationActive && _instanceData.AdaptionValueTest != null;
+            }
             _buttonAdaptionStop.Enabled = jobRunning && !operationActive;
         }
 
@@ -992,6 +1008,7 @@ namespace BmwDeepObd
 
             EdiabasOpen();
 
+            bool is1281Ecu = XmlToolActivity.Is1281Ecu(_ecuInfo);
             bool resetChannel = _instanceData.SelectedChannel == ResetChannelNumber;
             UInt64? startValue = null;
             if (resetChannel)
@@ -1010,7 +1027,10 @@ namespace BmwDeepObd
                 _instanceData.AdaptionUnits[i] = null;
             }
             _instanceData.TestAdaption = false;
-            _instanceData.StoreAdaption = false;
+            if (!(is1281Ecu && resetChannel))
+            {
+                _instanceData.StoreAdaption = false;
+            }
             _instanceData.StopAdaption = false;
 
             bool executeFailed = false;
@@ -1024,7 +1044,6 @@ namespace BmwDeepObd
                     string repairShopCodeString = string.Format(CultureInfo.InvariantCulture, "{0:000000}{1:000}{2:00000}",
                         _instanceData.CurrentEquipmentNumber ?? 0, _instanceData.CurrentImporterNumber ?? 0, _instanceData.CurrentWorkshopNumber ?? 0);
                     int adaptionChannel = _instanceData.SelectedChannel;
-                    bool is1281Ecu = XmlToolActivity.Is1281Ecu(_ecuInfo);
                     bool longAdaption = false;
                     string adaptionJob = string.Empty;
                     UInt64? adaptionValueType = null;
@@ -1071,7 +1090,7 @@ namespace BmwDeepObd
                             if (is1281Ecu)
                             {
                                 adaptionJob = @"Anpassung_lesen";
-                                adaptionJobArgs = string.Format(CultureInfo.InvariantCulture, "{0};WertEinmalLesen", adaptionChannel == 0 ? 1 : adaptionChannel);
+                                adaptionJobArgs = string.Format(CultureInfo.InvariantCulture, "{0};WertEinmalLesen", adaptionChannel);
                                 if (adaptionValueNew != null)
                                 {
                                     if (testAdaption)
@@ -1132,6 +1151,11 @@ namespace BmwDeepObd
                             }
 
                             if (stopAdaption)
+                            {
+                                break;
+                            }
+
+                            if (storeAdaption && is1281Ecu)
                             {
                                 break;
                             }
