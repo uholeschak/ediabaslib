@@ -885,7 +885,7 @@ namespace BmwDeepObd
             else
             {
                 _buttonAdaptionRead.Enabled = !jobRunning;
-                _buttonAdaptionTest.Enabled = jobRunning && !operationActive && !resetChannel;
+                _buttonAdaptionTest.Enabled = jobRunning && !operationActive && _instanceData.AdaptionValueStart != null && !resetChannel;
                 _buttonAdaptionStore.Enabled = jobRunning && !operationActive && _instanceData.AdaptionValueTest != null;
             }
             _buttonAdaptionStop.Enabled = jobRunning && !operationActive;
