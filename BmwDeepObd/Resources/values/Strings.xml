@@ -450,8 +450,8 @@
   <string name="vag_adaption_title_adaption">Adaption ECU: {0}</string>
   <string name="vag_adaption_channel_title">Documented channel</string>
   <string name="vag_adaption_channel_select">Select adaption channel</string>
-  <string name="vag_adaption_channel_reset">Reset adaption channels</string>
-  <string name="vag_adaption_channel_reset_info">Writing of value 0 to adaption channel 0 resets all values</string>
+  <string name="vag_adaption_channel_reset">Reset adaption values</string>
+  <string name="vag_adaption_channel_reset_info">Storing adaption channel 0 resets all adaption values</string>
   <string name="vag_adaption_channel_number_title">Channel number</string>
   <string name="vag_adaption_comments_title">Hints</string>
   <string name="vag_adaption_value_current_title">Current adaption value</string>
