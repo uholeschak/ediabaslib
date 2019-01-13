@@ -221,6 +221,8 @@ namespace CarSimulator
         private const int EnetDiagPort = 6801;
         private const int EnetControlPort = 6811;
         private const int Kwp2000Nr2123Retries = 3;
+        private const int ResetAdaptionChannel = 0;
+        private const int DefaultAdaptionChannelValue = 0x1234;
         private volatile bool _stopThread;
         private bool _threadRunning;
         private Thread _workerThread;
@@ -648,7 +650,7 @@ namespace CarSimulator
 
             _kwp2000AdaptionStatus = 0x01;
             _kwp2000AdaptionChannel = -1;
-            _kwp2000AdaptionValue = 0x1234;
+            _kwp2000AdaptionValue = DefaultAdaptionChannelValue;
 
             for (int i = 0; i < _timeValveWrite.Length; i++)
             {
@@ -6753,7 +6755,7 @@ namespace CarSimulator
             ResponseEntry identityResponse = responseOnlyEntry;
             ResponseEntry activeResponse = null;
             byte[] lastCoding = null;
-            int lastAdaption = 0x0000;
+            int lastAdaption = DefaultAdaptionChannelValue;
             for (; ; )
             {
                 if (_stopThread)
@@ -6898,14 +6900,25 @@ namespace CarSimulator
                             bool addValues = true;
                             if (_receiveData.Length >= 9 && _receiveData[0] >= 0x09 && _receiveData[2] == 0x2A)
                             {
-                                Debug.WriteLine("Adaption save");
-                                lastAdaption = (_receiveData[4] << 8) + _receiveData[5];
+                                if (_receiveData[3] == ResetAdaptionChannel)
+                                {
+                                    Debug.WriteLine("Adaption reset");
+                                    lastAdaption = DefaultAdaptionChannelValue;
+                                }
+                                else
+                                {
+                                    Debug.WriteLine("Adaption save");
+                                    lastAdaption = (_receiveData[4] << 8) + _receiveData[5];
+                                }
                                 addValues = false;
                             }
                             else if (_receiveData.Length >= 6 && _receiveData[0] >= 0x06 && _receiveData[2] == 0x22)
                             {
                                 Debug.WriteLine("Adaption transfer");
-                                lastAdaption = (_receiveData[4] << 8) + _receiveData[5];
+                                if (_receiveData[3] != ResetAdaptionChannel)
+                                {
+                                    lastAdaption = (_receiveData[4] << 8) + _receiveData[5];
+                                }
                             }
                             else
                             {
@@ -7551,7 +7564,10 @@ namespace CarSimulator
                                                 }
                                                 else if (recLength > 9)
                                                 {
-                                                    _kwp2000AdaptionValue = (_receiveData[7] << 8) + _receiveData[8];
+                                                    if (_kwp2000AdaptionChannel != ResetAdaptionChannel)
+                                                    {
+                                                        _kwp2000AdaptionValue = (_receiveData[7] << 8) + _receiveData[8];
+                                                    }
                                                     Debug.WriteLine("Write adaption channel value: {0:X04}", _kwp2000AdaptionValue);
                                                     _kwp2000AdaptionStatus = 0x82;  // ANP_WERT_EINGEBEN
                                                 }
@@ -7565,7 +7581,15 @@ namespace CarSimulator
                                             {
                                                 if (recLength > 9)
                                                 {
-                                                    Debug.WriteLine("Store adaption channel value: {0:X02}{1:X02}", _receiveData[7], _receiveData[8]);
+                                                    if (_kwp2000AdaptionChannel == ResetAdaptionChannel)
+                                                    {
+                                                        _kwp2000AdaptionValue = DefaultAdaptionChannelValue;
+                                                        Debug.WriteLine("Store adaption channel value default");
+                                                    }
+                                                    else
+                                                    {
+                                                        Debug.WriteLine("Store adaption channel value: {0:X02}{1:X02}", _receiveData[7], _receiveData[8]);
+                                                    }
                                                     _kwp2000AdaptionStatus = 0x05;  // ANP_ENDE
                                                 }
                                             }
@@ -7608,7 +7632,10 @@ namespace CarSimulator
                                                 }
                                                 else if (recLength > 9)
                                                 {
-                                                    _kwp2000AdaptionValue = (_receiveData[7] << 8) + _receiveData[8];
+                                                    if (_kwp2000AdaptionChannel != ResetAdaptionChannel)
+                                                    {
+                                                        _kwp2000AdaptionValue = (_receiveData[7] << 8) + _receiveData[8];
+                                                    }
                                                     Debug.WriteLine("Write adaption channel value: {0:X04}", _kwp2000AdaptionValue);
                                                     _kwp2000AdaptionStatus = 0x02;  // ANP_WERT_BESTAETIGEN
                                                 }
@@ -7636,7 +7663,15 @@ namespace CarSimulator
                                             {
                                                 if (recLength > 9)
                                                 {
-                                                    Debug.WriteLine("Store adaption channel value: {0:X02}{1:X02}", _receiveData[7], _receiveData[8]);
+                                                    if (_kwp2000AdaptionChannel == ResetAdaptionChannel)
+                                                    {
+                                                        _kwp2000AdaptionValue = DefaultAdaptionChannelValue;
+                                                        Debug.WriteLine("Store adaption channel value default");
+                                                    }
+                                                    else
+                                                    {
+                                                        Debug.WriteLine("Store adaption channel value: {0:X02}{1:X02}", _receiveData[7], _receiveData[8]);
+                                                    }
                                                     _kwp2000AdaptionStatus = 0x05;  // ANP_ENDE
                                                 }
                                             }
