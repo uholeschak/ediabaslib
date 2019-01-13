@@ -4045,6 +4045,46 @@ namespace UdsFileReader
                 ParseInfoBase parseInfo;
                 switch (segmentType)
                 {
+                    case SegmentType.Adp:
+                    {
+                        if (lineArray == null)
+                        {
+                            return null;
+                        }
+                        if (lineArray.Length == 2)
+                        {
+                            continue;
+                        }
+                        if (lineArray.Length < 15)
+                        {
+                            return null;
+                        }
+
+                        if (!UInt32.TryParse(lineArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 nameKey))
+                        {
+                            return null;
+                        }
+
+                        if (!_textMap.TryGetValue(nameKey, out string[] nameArray))
+                        {
+                            return null;
+                        }
+
+                        DataTypeEntry dataTypeEntry = null;
+                        if (lineArray[4].Length > 0)
+                        {   // data type present
+                            try
+                            {
+                                dataTypeEntry = new DataTypeEntry(this, lineArray, 3);
+                            }
+                            catch (Exception)
+                            {
+                                return null;
+                            }
+                        }
+                        continue;
+                    }
+
                     case SegmentType.Mwb:
                     {
                         if (lineArray == null || lineArray.Length < 14)
