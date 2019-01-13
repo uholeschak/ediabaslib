@@ -5733,6 +5733,7 @@ namespace BmwDeepObd
                                 if (!udsReader.Init(subdir,
                                     new HashSet<UdsReader.SegmentType>
                                     {
+                                        UdsReader.SegmentType.Adp,
                                         UdsReader.SegmentType.Mwb,
                                         UdsReader.SegmentType.Dtc
                                     }))
