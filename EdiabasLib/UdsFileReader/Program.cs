@@ -444,6 +444,14 @@ namespace UdsFileReader
                             sb.Insert(0, "Name: ");
                             outStream.WriteLine(sb.ToString());
                             outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Service ID: {0:X04}", parseInfoMwb.ServiceId));
+
+                            if (parseInfo is UdsReader.ParseInfoAdp parseInfoAdp)
+                            {
+                                if (parseInfoAdp.AdaptionChannel.HasValue)
+                                {
+                                    outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Adaption Channel: {0:X02}", parseInfoAdp.AdaptionChannel.Value));
+                                }
+                            }
                             outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Data ID Name: {0}", parseInfoMwb.DataIdString));
 
                             if (!PrintDataTypeEntry(outStream, parseInfoMwb.DataTypeEntry))

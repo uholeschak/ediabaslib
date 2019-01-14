@@ -1129,6 +1129,17 @@ namespace UdsFileReader
             }
         }
 
+        public class ParseInfoAdp : ParseInfoMwb
+        {
+            public ParseInfoAdp(UInt32 serviceId, UInt32? adaptionChannel, string[] lineArray, UInt32 nameKey, string[] nameArray, DataTypeEntry dataTypeEntry) :
+                base(serviceId, lineArray, nameKey, nameArray, dataTypeEntry)
+            {
+                AdaptionChannel = adaptionChannel;
+            }
+
+            public UInt32? AdaptionChannel { get; }
+        }
+
         public class ParseInfoDtc : ParseInfoBase
         {
             public ParseInfoDtc(string[] lineArray, UInt32 errorCode, string pcodeText, string errorText, UInt32? detailCode, string errorDetail) : base(lineArray)
@@ -4084,6 +4095,17 @@ namespace UdsFileReader
                             return null;
                         }
 
+                        UInt32? adaptionChannel = null;
+                        if (lineArray[1].Length > 0)
+                        {
+                            if (!UInt32.TryParse(lineArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 channel))
+                            {
+                                return null;
+                            }
+
+                            adaptionChannel = channel;
+                        }
+
                         DataTypeEntry dataTypeEntry;
                         try
                         {
@@ -4093,7 +4115,8 @@ namespace UdsFileReader
                         {
                             return null;
                         }
-                        continue;
+                        parseInfo = new ParseInfoAdp(serviceId, adaptionChannel, lineArray, nameKey, nameArray, dataTypeEntry);
+                        break;
                     }
 
                     case SegmentType.Mwb:
