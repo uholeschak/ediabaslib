@@ -4070,6 +4070,11 @@ namespace UdsFileReader
                             return null;
                         }
 
+                        if (!UInt32.TryParse(lineArray[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 serviceId))
+                        {
+                            return null;
+                        }
+
                         DataTypeEntry dataTypeEntry = null;
                         if (lineArray[4].Length > 0)
                         {   // data type present
