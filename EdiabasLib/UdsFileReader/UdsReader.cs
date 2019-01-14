@@ -476,10 +476,19 @@ namespace UdsFileReader
 
                 if (lineArray.Length >= offset + 10)
                 {
-                    if (!UInt32.TryParse(lineArray[offset + 1], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 dataTypeId))
+                    UInt32 dataTypeId;
+                    if (lineArray[offset + 1].Length > 0)
                     {
-                        throw new Exception("No data type id");
+                        if (!UInt32.TryParse(lineArray[offset + 1], NumberStyles.Integer, CultureInfo.InvariantCulture, out dataTypeId))
+                        {
+                            throw new Exception("No data type id");
+                        }
                     }
+                    else
+                    {
+                        dataTypeId = (UInt32)DataType.HexBytes;
+                    }
+
                     DataTypeId = dataTypeId;
                     DataType dataType = (DataType)(dataTypeId & DataTypeMaskEnum);
 
@@ -4075,17 +4084,14 @@ namespace UdsFileReader
                             return null;
                         }
 
-                        DataTypeEntry dataTypeEntry = null;
-                        if (lineArray[4].Length > 0)
-                        {   // data type present
-                            try
-                            {
-                                dataTypeEntry = new DataTypeEntry(this, lineArray, 3);
-                            }
-                            catch (Exception)
-                            {
-                                return null;
-                            }
+                        DataTypeEntry dataTypeEntry;
+                        try
+                        {
+                            dataTypeEntry = new DataTypeEntry(this, lineArray, 3);
+                        }
+                        catch (Exception)
+                        {
+                            return null;
                         }
                         continue;
                     }
