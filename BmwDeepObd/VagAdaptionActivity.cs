@@ -75,6 +75,7 @@ namespace BmwDeepObd
         private TextView _textViewVagAdaptionChannel;
         private Spinner _spinnerVagAdaptionChannel;
         private StringObjAdapter _spinnerVagAdaptionChannelAdapter;
+        private LinearLayout _layoutVagAdaptionChannelNumber;
         private TextView _textViewVagAdaptionChannelNumber;
         private EditText _editTextVagAdaptionChannelNumber;
         private LinearLayout _layoutVagAdaptionInfo;
@@ -181,6 +182,9 @@ namespace BmwDeepObd
             _spinnerVagAdaptionChannelAdapter = new StringObjAdapter(this);
             _spinnerVagAdaptionChannel.Adapter = _spinnerVagAdaptionChannelAdapter;
             _spinnerVagAdaptionChannel.ItemSelected += AdaptionChannelItemSelected;
+
+            _layoutVagAdaptionChannelNumber = FindViewById<LinearLayout>(Resource.Id.layoutVagAdaptionChannelNumber);
+            _layoutVagAdaptionChannelNumber.SetOnTouchListener(this);
 
             _textViewVagAdaptionChannelNumber = FindViewById<TextView>(Resource.Id.textViewVagAdaptionChannelNumber);
             _textViewVagAdaptionChannelNumber.SetOnTouchListener(this);
@@ -594,7 +598,7 @@ namespace BmwDeepObd
                             sbDispText.Append(parseInfoAdp.Name);
                         }
                         string displayText = sbDispText.ToString();
-                        _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(displayText, (int) parseInfoAdp.ServiceId));
+                        _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(displayText, index));
 
                         if (parseInfoAdp.ServiceId == selectedChannel)
                         {
@@ -820,6 +824,7 @@ namespace BmwDeepObd
                     string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_adaption_meas_value_title), i + 1, measTitles[i] ?? string.Empty);
             }
 
+            _layoutVagAdaptionChannelNumber.Visibility = XmlToolActivity.IsUdsEcu(_ecuInfo) ? ViewStates.Gone : ViewStates.Visible;
             _layoutVagAdaptionRepairShopCode.Visibility = XmlToolActivity.Is1281Ecu(_ecuInfo) ? ViewStates.Gone : ViewStates.Visible;
             _layoutVagAdaptionWorkshop.Visibility = _instanceData.CurrentWorkshopNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagAdaptionImporterNumber.Visibility = _instanceData.CurrentImporterNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
@@ -839,6 +844,7 @@ namespace BmwDeepObd
             string importerNumberTitle = string.Empty;
             string equipmentNumberTitle = string.Empty;
             bool jobRunning = IsJobRunning();
+            bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
             bool is1281Ecu = XmlToolActivity.Is1281Ecu(_ecuInfo);
             bool resetChannel = _instanceData.SelectedChannel == ResetChannelNumber;
             bool operationActive = _instanceData.TestAdaption || _instanceData.StoreAdaption || _instanceData.StoreAdaption;
@@ -884,7 +890,7 @@ namespace BmwDeepObd
             }
 
             _spinnerVagAdaptionChannel.Enabled = !jobRunning;
-            _editTextVagAdaptionChannelNumber.Enabled = !jobRunning;
+            _editTextVagAdaptionChannelNumber.Enabled = !jobRunning && !isUdsEcu;
             _editTextVagAdaptionChannelNumber.Text = adaptionChannelNumber;
             _textViewVagAdaptionValueCurrent.Text = adaptionValueStart;
             _editTextVagAdaptionValueNew.Enabled = jobRunning && !resetChannel && _instanceData.AdaptionValueNew != null;
@@ -916,15 +922,15 @@ namespace BmwDeepObd
             }
 
             _textViewVagWorkshopNumberTitle.Text = workshopNumberTitle;
-            _editTextVagWorkshopNumber.Enabled = false;
+            _editTextVagWorkshopNumber.Enabled = isUdsEcu;
             _editTextVagWorkshopNumber.Text = codingTextWorkshop;
 
             _textViewVagImporterNumberTitle.Text = importerNumberTitle;
-            _editTextVagImporterNumber.Enabled = false;
+            _editTextVagImporterNumber.Enabled = isUdsEcu;
             _editTextVagImporterNumber.Text = codingTextImporter;
 
             _textViewVagEquipmentNumberTitle.Text = equipmentNumberTitle;
-            _editTextVagEquipmentNumber.Enabled = false;
+            _editTextVagEquipmentNumber.Enabled = isUdsEcu;
             _editTextVagEquipmentNumber.Text = codingTextEquipment;
 
             if (is1281Ecu && resetChannel)
