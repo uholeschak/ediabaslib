@@ -454,7 +454,7 @@ namespace BmwDeepObd
                     _ecuInfo.VagSupportedFuncHash.Contains((UInt64) XmlToolActivity.SupportedFuncType.AdaptionLong) ||
                     _ecuInfo.VagSupportedFuncHash.Contains((UInt64) XmlToolActivity.SupportedFuncType.AdaptionLong2);
             }
-            if (XmlToolActivity.Is1281Ecu(_ecuInfo))
+            if (XmlToolActivity.Is1281Ecu(_ecuInfo) || XmlToolActivity.IsUdsEcu(_ecuInfo))
             {
                 adaptionEnabled = true;
             }

@@ -112,6 +112,7 @@ namespace BmwDeepObd
         private EdiabasNet _ediabas;
         private Thread _jobThread;
         private List<UdsFileReader.DataReader.DataInfo> _dataInfoAdaptionList;
+        private List<UdsFileReader.UdsReader.ParseInfoAdp> _parseInfoAdaptionList;
         private bool _activityActive;
         private bool _ediabasJobAbort;
         private string _ecuDir;
@@ -536,16 +537,31 @@ namespace BmwDeepObd
         private void UpdateInfoAdaptionList()
         {
             List<UdsFileReader.DataReader.DataInfo> dataInfoAdaptionList = null;
-            if (!string.IsNullOrEmpty(_ecuInfo.VagDataFileName))
+            List<UdsFileReader.UdsReader.ParseInfoAdp> parseInfoAdaptionList = null;
+            if (XmlToolActivity.IsUdsEcu(_ecuInfo))
             {
-                UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_ecuInfo.VagDataFileName);
-                // ReSharper disable once UseNullPropagation
-                if (udsReader != null)
+                string udsFileName = _ecuInfo.VagUdsFileName;
+                if (!string.IsNullOrEmpty(udsFileName))
                 {
-                    dataInfoAdaptionList = udsReader.DataReader.ExtractDataType(_ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Adaption);
+                    UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(udsFileName);
+                    if (udsReader != null)
+                    {
+                        parseInfoAdaptionList =  udsReader.GetAdpParseInfoList(udsFileName);
+                    }
                 }
             }
-
+            else
+            {
+                if (!string.IsNullOrEmpty(_ecuInfo.VagDataFileName))
+                {
+                    UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_ecuInfo.VagDataFileName);
+                    if (udsReader != null)
+                    {
+                        dataInfoAdaptionList = udsReader.DataReader.ExtractDataType(_ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Adaption);
+                    }
+                }
+            }
+            _parseInfoAdaptionList = parseInfoAdaptionList;
             _dataInfoAdaptionList = dataInfoAdaptionList;
         }
 
@@ -556,39 +572,75 @@ namespace BmwDeepObd
 
             _spinnerVagAdaptionChannelAdapter.Items.Clear();
 
-            bool resetChannelPresent = false;
-            int index = 0;
-            if (_dataInfoAdaptionList != null)
+            if (XmlToolActivity.IsUdsEcu(_ecuInfo))
             {
-                _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(GetString(Resource.String.vag_adaption_channel_select), -1));
-                foreach (UdsFileReader.DataReader.DataInfo dataInfo in _dataInfoAdaptionList)
+                int index = 0;
+                if (_parseInfoAdaptionList != null)
                 {
-                    if (dataInfo.Value1.HasValue && dataInfo.Value2.HasValue && dataInfo.Value2.Value == 0 && dataInfo.TextArray.Length > 0)
+                    _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(GetString(Resource.String.vag_adaption_channel_select), -1));
+                    foreach (UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp in _parseInfoAdaptionList)
                     {
-                        string text = string.Format(CultureInfo.InvariantCulture, "{0}: {1}", dataInfo.Value1.Value, dataInfo.TextArray[0]);
-                        _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(text, dataInfo.Value1.Value));
-
-                        if (dataInfo.Value1.Value == ResetChannelNumber)
+                        StringBuilder sbDispText = new StringBuilder();
+                        if (!string.IsNullOrEmpty(parseInfoAdp.DataIdString))
                         {
-                            resetChannelPresent = true;
+                            sbDispText.Append(parseInfoAdp.DataIdString);
                         }
-                        else
+                        if (!string.IsNullOrEmpty(parseInfoAdp.Name))
                         {
-                            if (dataInfo.Value1.Value == selectedChannel)
+                            if (sbDispText.Length > 0)
                             {
-                                selection = index;
+                                sbDispText.Append(" ");
                             }
+                            sbDispText.Append(parseInfoAdp.Name);
+                        }
+                        string displayText = sbDispText.ToString();
+                        _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(displayText, (int) parseInfoAdp.ServiceId));
+
+                        if (parseInfoAdp.ServiceId == selectedChannel)
+                        {
+                            selection = index;
                         }
 
                         index++;
                     }
                 }
             }
-
-            if (!resetChannelPresent)
+            else
             {
-                string text = string.Format(CultureInfo.InvariantCulture, "{0}: {1}", ResetChannelNumber, GetString(Resource.String.vag_adaption_channel_reset));
-                _spinnerVagAdaptionChannelAdapter.Items.Insert(1, new StringObjType(text, ResetChannelNumber));
+                bool resetChannelPresent = false;
+                int index = 0;
+                if (_dataInfoAdaptionList != null)
+                {
+                    _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(GetString(Resource.String.vag_adaption_channel_select), -1));
+                    foreach (UdsFileReader.DataReader.DataInfo dataInfo in _dataInfoAdaptionList)
+                    {
+                        if (dataInfo.Value1.HasValue && dataInfo.Value2.HasValue && dataInfo.Value2.Value == 0 && dataInfo.TextArray.Length > 0)
+                        {
+                            string text = string.Format(CultureInfo.InvariantCulture, "{0}: {1}", dataInfo.Value1.Value, dataInfo.TextArray[0]);
+                            _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(text, dataInfo.Value1.Value));
+
+                            if (dataInfo.Value1.Value == ResetChannelNumber)
+                            {
+                                resetChannelPresent = true;
+                            }
+                            else
+                            {
+                                if (dataInfo.Value1.Value == selectedChannel)
+                                {
+                                    selection = index;
+                                }
+                            }
+
+                            index++;
+                        }
+                    }
+                }
+
+                if (!resetChannelPresent)
+                {
+                    string text = string.Format(CultureInfo.InvariantCulture, "{0}: {1}", ResetChannelNumber, GetString(Resource.String.vag_adaption_channel_reset));
+                    _spinnerVagAdaptionChannelAdapter.Items.Insert(1, new StringObjType(text, ResetChannelNumber));
+                }
             }
 
             _spinnerVagAdaptionChannelAdapter.NotifyDataSetChanged();
