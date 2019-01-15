@@ -585,6 +585,10 @@ namespace BmwDeepObd
                     foreach (UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp in _parseInfoAdaptionList)
                     {
                         StringBuilder sbDispText = new StringBuilder();
+                        if (parseInfoAdp.AdaptionChannel.HasValue)
+                        {
+                            sbDispText.Append(string.Format(CultureInfo.InvariantCulture, "{0:X02}h: ", parseInfoAdp.AdaptionChannel.Value));
+                        }
                         if (!string.IsNullOrEmpty(parseInfoAdp.DataIdString))
                         {
                             sbDispText.Append(parseInfoAdp.DataIdString);
@@ -600,7 +604,7 @@ namespace BmwDeepObd
                         string displayText = sbDispText.ToString();
                         _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(displayText, index));
 
-                        if (parseInfoAdp.ServiceId == selectedChannel)
+                        if (index == selectedChannel)
                         {
                             selection = index;
                         }
@@ -655,10 +659,11 @@ namespace BmwDeepObd
 
         private void UpdateAdaption()
         {
+            bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
             if (_spinnerVagAdaptionChannel.SelectedItemPosition >= 0)
             {
                 int channel = (int)_spinnerVagAdaptionChannelAdapter.Items[_spinnerVagAdaptionChannel.SelectedItemPosition].Data;
-                if (channel >= 0)
+                if (channel >= 0 || isUdsEcu)
                 {
                     _instanceData.SelectedChannel = channel;
                 }
@@ -758,70 +763,104 @@ namespace BmwDeepObd
         {
             UpdateAdaptionText();
 
-            bool resetChannel = _instanceData.SelectedChannel == ResetChannelNumber;
-            string[] measTitles = new string[MaxMeasValues];
-            StringBuilder sbAdaptionComment = new StringBuilder();
-            if (_dataInfoAdaptionList != null)
+            bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
+            if (isUdsEcu)
             {
-                foreach (UdsFileReader.DataReader.DataInfo dataInfo in _dataInfoAdaptionList)
+                StringBuilder sbAdaptionComment = new StringBuilder();
+                if (_parseInfoAdaptionList != null)
                 {
-                    if (dataInfo.Value1.HasValue && dataInfo.Value2.HasValue &&
-                        dataInfo.Value1.Value == _instanceData.SelectedChannel && dataInfo.TextArray.Length > 0)
+                    if (_instanceData.SelectedChannel >= 0 && _instanceData.SelectedChannel < _parseInfoAdaptionList.Count)
                     {
-                        int index = dataInfo.Value2.Value;
-
-                        StringBuilder sbLine = new StringBuilder();
-                        foreach (string text in dataInfo.TextArray)
+                        UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp = _parseInfoAdaptionList[_instanceData.SelectedChannel];
+                        sbAdaptionComment.Append(string.Format(CultureInfo.InvariantCulture, "{0:00000}", parseInfoAdp.ServiceId));
+                        if (parseInfoAdp.DataTypeEntry.NameDetail != null)
                         {
-                            if (sbLine.Length > 0)
-                            {
-                                sbLine.Append(" ");
-                            }
-                            sbLine.Append(text);
-                        }
-
-                        if (index > 0 && index <= 4)
-                        {
-                            measTitles[index - 1] = sbLine.ToString();
-                        }
-                        else if (index > 4)
-                        {
-                            if (sbAdaptionComment.Length > 0)
-                            {
-                                sbAdaptionComment.Append("\r\n");
-                            }
-                            sbAdaptionComment.Append(sbLine);
+                            sbAdaptionComment.Append(" ");
+                            sbAdaptionComment.Append(parseInfoAdp.DataTypeEntry.NameDetail);
                         }
                     }
                 }
-            }
 
-            string adaptionComment = sbAdaptionComment.ToString();
-            if (resetChannel && string.IsNullOrWhiteSpace(adaptionComment))
-            {
-                adaptionComment = GetString(Resource.String.vag_adaption_channel_reset_info);
-            }
+                string adaptionComment = sbAdaptionComment.ToString();
+                _layoutVagAdaptionComments.Visibility = !string.IsNullOrWhiteSpace(adaptionComment) ? ViewStates.Visible : ViewStates.Gone;
+                _textVagViewAdaptionComments.Text = adaptionComment;
 
-            int selection = 0;
-            int itemIndex = 0;
-            foreach (StringObjType stringObjType in _spinnerVagAdaptionChannelAdapter.Items)
-            {
-                int channel = (int) stringObjType.Data;
-                if (channel == _instanceData.SelectedChannel && !resetChannel)
+                for (int i = 0; i < _textViewVagAdaptionMeasTitles.Length; i++)
                 {
-                    selection = itemIndex;
+                    _textViewVagAdaptionMeasTitles[i].Text = string.Empty;
+                    _textViewVagAdaptionMeasTitles[i].Visibility = ViewStates.Gone;
+                    _textViewAdaptionMeasValues[i].Visibility = ViewStates.Gone;
                 }
-                itemIndex++;
             }
-            _spinnerVagAdaptionChannel.SetSelection(selection);
-
-            _layoutVagAdaptionComments.Visibility = !string.IsNullOrWhiteSpace(adaptionComment) ? ViewStates.Visible : ViewStates.Gone;
-            _textVagViewAdaptionComments.Text = adaptionComment;
-
-            for (int i = 0; i < measTitles.Length; i++)
+            else
             {
-                _textViewVagAdaptionMeasTitles[i].Text =
-                    string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_adaption_meas_value_title), i + 1, measTitles[i] ?? string.Empty);
+                bool resetChannel = _instanceData.SelectedChannel == ResetChannelNumber;
+                string[] measTitles = new string[MaxMeasValues];
+                StringBuilder sbAdaptionComment = new StringBuilder();
+                if (_dataInfoAdaptionList != null)
+                {
+                    foreach (UdsFileReader.DataReader.DataInfo dataInfo in _dataInfoAdaptionList)
+                    {
+                        if (dataInfo.Value1.HasValue && dataInfo.Value2.HasValue &&
+                            dataInfo.Value1.Value == _instanceData.SelectedChannel && dataInfo.TextArray.Length > 0)
+                        {
+                            int index = dataInfo.Value2.Value;
+
+                            StringBuilder sbLine = new StringBuilder();
+                            foreach (string text in dataInfo.TextArray)
+                            {
+                                if (sbLine.Length > 0)
+                                {
+                                    sbLine.Append(" ");
+                                }
+                                sbLine.Append(text);
+                            }
+
+                            if (index > 0 && index <= 4)
+                            {
+                                measTitles[index - 1] = sbLine.ToString();
+                            }
+                            else if (index > 4)
+                            {
+                                if (sbAdaptionComment.Length > 0)
+                                {
+                                    sbAdaptionComment.Append("\r\n");
+                                }
+                                sbAdaptionComment.Append(sbLine);
+                            }
+                        }
+                    }
+                }
+
+                string adaptionComment = sbAdaptionComment.ToString();
+                if (resetChannel && string.IsNullOrWhiteSpace(adaptionComment))
+                {
+                    adaptionComment = GetString(Resource.String.vag_adaption_channel_reset_info);
+                }
+
+                int selection = 0;
+                int itemIndex = 0;
+                foreach (StringObjType stringObjType in _spinnerVagAdaptionChannelAdapter.Items)
+                {
+                    int channel = (int)stringObjType.Data;
+                    if (channel == _instanceData.SelectedChannel && !resetChannel)
+                    {
+                        selection = itemIndex;
+                    }
+                    itemIndex++;
+                }
+                _spinnerVagAdaptionChannel.SetSelection(selection);
+
+                _layoutVagAdaptionComments.Visibility = !string.IsNullOrWhiteSpace(adaptionComment) ? ViewStates.Visible : ViewStates.Gone;
+                _textVagViewAdaptionComments.Text = adaptionComment;
+
+                for (int i = 0; i < measTitles.Length; i++)
+                {
+                    _textViewVagAdaptionMeasTitles[i].Text =
+                        string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_adaption_meas_value_title), i + 1, measTitles[i] ?? string.Empty);
+                    _textViewVagAdaptionMeasTitles[i].Visibility = ViewStates.Visible;
+                    _textViewAdaptionMeasValues[i].Visibility = ViewStates.Visible;
+                }
             }
 
             _layoutVagAdaptionChannelNumber.Visibility = XmlToolActivity.IsUdsEcu(_ecuInfo) ? ViewStates.Gone : ViewStates.Visible;
@@ -847,6 +886,7 @@ namespace BmwDeepObd
             bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
             bool is1281Ecu = XmlToolActivity.Is1281Ecu(_ecuInfo);
             bool resetChannel = _instanceData.SelectedChannel == ResetChannelNumber;
+            bool validChannel = _instanceData.SelectedChannel >= 0;
             bool operationActive = _instanceData.TestAdaption || _instanceData.StoreAdaption || _instanceData.StoreAdaption;
 
             try
@@ -933,19 +973,28 @@ namespace BmwDeepObd
             _editTextVagEquipmentNumber.Enabled = isUdsEcu;
             _editTextVagEquipmentNumber.Text = codingTextEquipment;
 
-            if (is1281Ecu && resetChannel)
+            if (isUdsEcu)
             {
-                _buttonAdaptionRead.Enabled = false;
+                _buttonAdaptionRead.Enabled = !jobRunning && validChannel;
                 _buttonAdaptionTest.Enabled = false;
-                _buttonAdaptionStore.Enabled = !operationActive;
-                _buttonAdaptionStop.Enabled = jobRunning && !operationActive;
+                _buttonAdaptionStore.Enabled = validChannel && jobRunning && !operationActive && _instanceData.AdaptionValueTest != null;
             }
             else
             {
-                _buttonAdaptionRead.Enabled = !jobRunning;
-                _buttonAdaptionTest.Enabled = jobRunning && !operationActive && _instanceData.AdaptionValueStart != null && !resetChannel;
-                _buttonAdaptionStore.Enabled = jobRunning && !operationActive && _instanceData.AdaptionValueTest != null;
+                if (is1281Ecu && resetChannel)
+                {
+                    _buttonAdaptionRead.Enabled = false;
+                    _buttonAdaptionTest.Enabled = false;
+                    _buttonAdaptionStore.Enabled = !operationActive;
+                }
+                else
+                {
+                    _buttonAdaptionRead.Enabled = !jobRunning;
+                    _buttonAdaptionTest.Enabled = jobRunning && !operationActive && _instanceData.AdaptionValueStart != null && !resetChannel;
+                    _buttonAdaptionStore.Enabled = jobRunning && !operationActive && _instanceData.AdaptionValueTest != null;
+                }
             }
+            _buttonAdaptionTest.Visibility = isUdsEcu ? ViewStates.Gone : ViewStates.Visible;
             _buttonAdaptionStop.Enabled = jobRunning && !operationActive;
         }
 
