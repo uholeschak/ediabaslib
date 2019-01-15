@@ -34,6 +34,7 @@ namespace BmwDeepObd
             public UInt64? AdaptionValueStart { get; set; }
             public UInt64? AdaptionValueNew { get; set; }
             public UInt64? AdaptionValueTest { get; set; }
+            public byte[] AdaptionData { get; set; }
             public UInt64? CurrentWorkshopNumber { get; set; }
             public UInt64? CurrentImporterNumber { get; set; }
             public UInt64? CurrentEquipmentNumber { get; set; }
@@ -748,17 +749,6 @@ namespace BmwDeepObd
             }
         }
 
-        private bool IsShortAdaption()
-        {
-            if (_ecuInfo.VagSupportedFuncHash != null &&
-                _ecuInfo.VagSupportedFuncHash.Contains((UInt64)XmlToolActivity.SupportedFuncType.Adaption))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
         private void UpdateAdaptionInfo()
         {
             UpdateAdaptionText();
@@ -769,14 +759,18 @@ namespace BmwDeepObd
                 StringBuilder sbAdaptionComment = new StringBuilder();
                 if (_parseInfoAdaptionList != null)
                 {
-                    if (_instanceData.SelectedChannel >= 0 && _instanceData.SelectedChannel < _parseInfoAdaptionList.Count)
+                    int selectedChannel = _instanceData.SelectedChannel;
+                    if (selectedChannel >= 0 && selectedChannel < _parseInfoAdaptionList.Count)
                     {
-                        UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp = _parseInfoAdaptionList[_instanceData.SelectedChannel];
-                        sbAdaptionComment.Append(string.Format(CultureInfo.InvariantCulture, "{0:00000}", parseInfoAdp.ServiceId));
-                        if (parseInfoAdp.DataTypeEntry.NameDetail != null)
+                        UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp = _parseInfoAdaptionList[selectedChannel];
+                        if (parseInfoAdp != null)
                         {
-                            sbAdaptionComment.Append(" ");
-                            sbAdaptionComment.Append(parseInfoAdp.DataTypeEntry.NameDetail);
+                            sbAdaptionComment.Append(string.Format(CultureInfo.InvariantCulture, "{0:00000}", parseInfoAdp.ServiceId));
+                            if (parseInfoAdp.DataTypeEntry.NameDetail != null)
+                            {
+                                sbAdaptionComment.Append(" ");
+                                sbAdaptionComment.Append(parseInfoAdp.DataTypeEntry.NameDetail);
+                            }
                         }
                     }
                 }
@@ -894,17 +888,35 @@ namespace BmwDeepObd
                 adaptionChannelNumber = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.SelectedChannel);
                 if (jobRunning)
                 {
-                    if (_instanceData.AdaptionValueStart != null)
+                    if (isUdsEcu)
                     {
-                        adaptionValueStart = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.AdaptionValueStart.Value);
+                        if (_instanceData.AdaptionData != null)
+                        {
+                            int selectedChannel = _instanceData.SelectedChannel;
+                            if (selectedChannel >= 0 && selectedChannel < _parseInfoAdaptionList.Count)
+                            {
+                                UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp = _parseInfoAdaptionList[selectedChannel];
+                                if (parseInfoAdp != null)
+                                {
+                                    adaptionValueStart = parseInfoAdp.DataTypeEntry.ToString(_instanceData.AdaptionData, out double? stringDataValue);
+                                }
+                            }
+                        }
                     }
-                    if (_instanceData.AdaptionValueNew != null)
+                    else
                     {
-                        adaptionValueNew = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.AdaptionValueNew.Value);
-                    }
-                    if (_instanceData.AdaptionValueTest != null)
-                    {
-                        adaptionValueTest = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.AdaptionValueTest.Value);
+                        if (_instanceData.AdaptionValueStart != null)
+                        {
+                            adaptionValueStart = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.AdaptionValueStart.Value);
+                        }
+                        if (_instanceData.AdaptionValueNew != null)
+                        {
+                            adaptionValueNew = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.AdaptionValueNew.Value);
+                        }
+                        if (_instanceData.AdaptionValueTest != null)
+                        {
+                            adaptionValueTest = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.AdaptionValueTest.Value);
+                        }
                     }
                 }
                 if (_instanceData.CurrentWorkshopNumber.HasValue)
@@ -1115,6 +1127,7 @@ namespace BmwDeepObd
 
             EdiabasOpen();
 
+            bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
             bool is1281Ecu = XmlToolActivity.Is1281Ecu(_ecuInfo);
             bool resetChannel = _instanceData.SelectedChannel == ResetChannelNumber;
             UInt64? startValue = null;
@@ -1125,6 +1138,7 @@ namespace BmwDeepObd
             _instanceData.AdaptionValueStart = startValue;
             _instanceData.AdaptionValueNew = startValue;
             _instanceData.AdaptionValueTest = startValue;
+            _instanceData.AdaptionData = null;
             for (int i = 0; i < _instanceData.AdaptionValues.Length; i++)
             {
                 _instanceData.AdaptionValues[i] = null;
@@ -1151,12 +1165,30 @@ namespace BmwDeepObd
                     string repairShopCodeString = string.Format(CultureInfo.InvariantCulture, "{0:000000}{1:000}{2:00000}",
                         _instanceData.CurrentEquipmentNumber ?? 0, _instanceData.CurrentImporterNumber ?? 0, _instanceData.CurrentWorkshopNumber ?? 0);
                     int adaptionChannel = _instanceData.SelectedChannel;
+                    int serviceId = -1;
                     bool longAdaption = false;
                     string adaptionJob = string.Empty;
                     UInt64? adaptionValueType = null;
                     int adaptionValueLength = 2;
 
-                    if (is1281Ecu)
+                    if (isUdsEcu)
+                    {
+                        adaptionJob = XmlToolActivity.JobReadS22Uds;
+                        if (adaptionChannel >= 0 && adaptionChannel < _parseInfoAdaptionList.Count)
+                        {
+                            UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp = _parseInfoAdaptionList[adaptionChannel];
+                            if (parseInfoAdp != null)
+                            {
+                                serviceId = (int)parseInfoAdp.ServiceId;
+                            }
+                        }
+
+                        if (serviceId < 0)
+                        {
+                            executeFailed = true;
+                        }
+                    }
+                    else if (is1281Ecu)
                     {
                         adaptionJob = @"Anpassung_lesen";
                     }
@@ -1194,7 +1226,12 @@ namespace BmwDeepObd
                             UInt64? adaptionValueNew = _instanceData.AdaptionValueNew;
                             string adaptionJobArgs;
 
-                            if (is1281Ecu)
+                            if (isUdsEcu)
+                            {
+                                adaptionJob = XmlToolActivity.JobReadS22Uds;
+                                adaptionJobArgs = string.Format(CultureInfo.InvariantCulture, "{0}", serviceId);
+                            }
+                            else if (is1281Ecu)
                             {
                                 adaptionJob = @"Anpassung_lesen";
                                 adaptionJobArgs = string.Format(CultureInfo.InvariantCulture, "{0};WertEinmalLesen", adaptionChannel);
@@ -1270,6 +1307,7 @@ namespace BmwDeepObd
                             connected = true;
 
                             UInt64? adaptionValue = null;
+                            byte[] adaptionData = null;
                             string[] adaptionValues = new string[MaxMeasValues];
                             string[] adaptionUnits = new string[MaxMeasValues];
                             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
@@ -1281,86 +1319,103 @@ namespace BmwDeepObd
                                     // ReSharper disable once InlineOutVariableDeclaration
                                     EdiabasNet.ResultData resultData;
                                     Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                                    if (resultDict.TryGetValue("ANPASSUNG_WERT", out resultData))
+
+                                    if (isUdsEcu)
                                     {
-                                        if (resultData.OpData is Int64 value)
+                                        if (resultDict.TryGetValue("ERGEBNIS1WERT", out resultData))
                                         {
-                                            adaptionValue = (UInt64)value;
-                                        }
-                                    }
-                                    if (resultDict.TryGetValue("ANPASSWERT", out resultData))
-                                    {
-                                        if (resultData.OpData is Int64 value)
-                                        {
-                                            adaptionValue = (UInt64)value;
-                                        }
-                                        else if (resultData.OpData is byte[] valueBin)
-                                        {
-                                            UInt64 tempValue = 0;
-                                            foreach (byte data in valueBin)
+                                            if (resultData.OpData is byte[] data)
                                             {
-                                                tempValue <<= 8;
-                                                tempValue |= data;
+                                                adaptionData = data;
                                             }
-                                            adaptionValue = tempValue;
-                                            adaptionValueLength = valueBin.Length;
                                         }
                                     }
-                                    if (resultDict.TryGetValue("ANPASSWERTTYP", out resultData))
+                                    else
                                     {
-                                        if (resultData.OpData is Int64 value)
+                                        if (resultDict.TryGetValue("ANPASSUNG_WERT", out resultData))
                                         {
-                                            adaptionValueType = (UInt64)value;
+                                            if (resultData.OpData is Int64 value)
+                                            {
+                                                adaptionValue = (UInt64)value;
+                                            }
+                                        }
+                                        if (resultDict.TryGetValue("ANPASSWERT", out resultData))
+                                        {
+                                            if (resultData.OpData is Int64 value)
+                                            {
+                                                adaptionValue = (UInt64)value;
+                                            }
+                                            else if (resultData.OpData is byte[] valueBin)
+                                            {
+                                                UInt64 tempValue = 0;
+                                                foreach (byte data in valueBin)
+                                                {
+                                                    tempValue <<= 8;
+                                                    tempValue |= data;
+                                                }
+                                                adaptionValue = tempValue;
+                                                adaptionValueLength = valueBin.Length;
+                                            }
+                                        }
+                                        if (resultDict.TryGetValue("ANPASSWERTTYP", out resultData))
+                                        {
+                                            if (resultData.OpData is Int64 value)
+                                            {
+                                                adaptionValueType = (UInt64)value;
+                                            }
                                         }
                                     }
                                 }
 
-                                int dictOffset = is1281Ecu ? 2 : 1;
-                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                                if (!isUdsEcu)
                                 {
-                                    if (dictIndex < dictOffset)
+                                    int dictOffset = is1281Ecu ? 2 : 1;
+                                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
                                     {
-                                        dictIndex++;
-                                        continue;
-                                    }
+                                        if (dictIndex < dictOffset)
+                                        {
+                                            dictIndex++;
+                                            continue;
+                                        }
 
-                                    // ReSharper disable once InlineOutVariableDeclaration
-                                    EdiabasNet.ResultData resultData;
-                                    if (resultDictLocal.TryGetValue("MW_WERT", out resultData))
-                                    {
-                                        if (resultData.OpData is string valueText)
+                                        // ReSharper disable once InlineOutVariableDeclaration
+                                        EdiabasNet.ResultData resultData;
+                                        if (resultDictLocal.TryGetValue("MW_WERT", out resultData))
                                         {
-                                            if (dictIndex - dictOffset < adaptionValues.Length)
+                                            if (resultData.OpData is string valueText)
                                             {
-                                                adaptionValues[dictIndex - dictOffset] = valueText;
+                                                if (dictIndex - dictOffset < adaptionValues.Length)
+                                                {
+                                                    adaptionValues[dictIndex - dictOffset] = valueText;
+                                                }
+                                            }
+                                            else if (resultData.OpData is Int64 valueInt)
+                                            {
+                                                if (dictIndex - dictOffset < adaptionValues.Length)
+                                                {
+                                                    adaptionValues[dictIndex - dictOffset] = string.Format(CultureInfo.InvariantCulture, "{0}", valueInt);
+                                                }
+                                            }
+                                            else if (resultData.OpData is Double valueDouble)
+                                            {
+                                                if (dictIndex - dictOffset < adaptionValues.Length)
+                                                {
+                                                    adaptionValues[dictIndex - dictOffset] = string.Format(CultureInfo.InvariantCulture, "{0}", valueDouble);
+                                                }
                                             }
                                         }
-                                        else if (resultData.OpData is Int64 valueInt)
+                                        if (resultDictLocal.TryGetValue("MWEINH_TEXT", out resultData))
                                         {
-                                            if (dictIndex - dictOffset < adaptionValues.Length)
+                                            if (resultData.OpData is string unitText)
                                             {
-                                                adaptionValues[dictIndex - dictOffset] = string.Format(CultureInfo.InvariantCulture, "{0}", valueInt);
+                                                if (dictIndex - dictOffset < adaptionUnits.Length)
+                                                {
+                                                    adaptionUnits[dictIndex - dictOffset] = unitText;
+                                                }
                                             }
                                         }
-                                        else if (resultData.OpData is Double valueDouble)
-                                        {
-                                            if (dictIndex - dictOffset < adaptionValues.Length)
-                                            {
-                                                adaptionValues[dictIndex - dictOffset] = string.Format(CultureInfo.InvariantCulture, "{0}", valueDouble);
-                                            }
-                                        }
+                                        dictIndex++;
                                     }
-                                    if (resultDictLocal.TryGetValue("MWEINH_TEXT", out resultData))
-                                    {
-                                        if (resultData.OpData is string unitText)
-                                        {
-                                            if (dictIndex - dictOffset < adaptionUnits.Length)
-                                            {
-                                                adaptionUnits[dictIndex - dictOffset] = unitText;
-                                            }
-                                        }
-                                    }
-                                    dictIndex++;
                                 }
                             }
 
@@ -1404,6 +1459,8 @@ namespace BmwDeepObd
                                         _instanceData.AdaptionUnits[i] = adaptionUnits[i];
                                     }
                                 }
+
+                                _instanceData.AdaptionData = adaptionData;
 
                                 UpdateAdaptionText();
                             });
