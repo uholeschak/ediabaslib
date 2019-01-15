@@ -47,6 +47,7 @@ namespace UdsFileReader
         public const int DataTypeMaskSigned = 0x80;
         public const int DataTypeMaskEnum = 0x3F;
 
+        private readonly Dictionary<string, List<ParseInfoAdp>> _adpParseInfoDict = new Dictionary<string, List<ParseInfoAdp>>();
         private readonly Dictionary<string, Dictionary<string, ParseInfoMwb>> _mwbParseInfoDict = new Dictionary<string, Dictionary<string, ParseInfoMwb>>();
         private readonly Dictionary<string, List<ParseInfoBase>> _dtcMwbParseInfoDict = new Dictionary<string, List<ParseInfoBase>>();
         private readonly Dictionary<string, Dictionary<uint, ParseInfoDtc>> _dtcParseInfoDict = new Dictionary<string, Dictionary<uint, ParseInfoDtc>>();
@@ -3514,6 +3515,43 @@ namespace UdsFileReader
                 {
                     return segmentInfo;
                 }
+            }
+
+            return null;
+        }
+
+        public List<ParseInfoAdp> GetAdpParseInfoList(string fileName)
+        {
+            try
+            {
+                if (!_adpParseInfoDict.TryGetValue(fileName, out List<ParseInfoAdp> adpSegmentList))
+                {
+                    List<string> includeFiles = FileNameResolver.GetAllFiles(fileName);
+                    if (includeFiles == null)
+                    {
+                        return null;
+                    }
+                    List<ParseInfoBase> adpSegmentListExtract = ExtractFileSegment(includeFiles, SegmentType.Adp);
+                    if (adpSegmentListExtract == null)
+                    {
+                        return null;
+                    }
+                    adpSegmentList = new List<ParseInfoAdp>();
+                    foreach (ParseInfoBase parseInfo in adpSegmentListExtract)
+                    {
+                        if (parseInfo is ParseInfoAdp parseInfoAdp)
+                        {
+                            adpSegmentList.Add(parseInfoAdp);
+                        }
+                    }
+                    _adpParseInfoDict.Add(fileName, adpSegmentList);
+                }
+
+                return adpSegmentList;
+            }
+            catch (Exception)
+            {
+                // ignored
             }
 
             return null;
