@@ -26,19 +26,25 @@
                 android:id="@+id/spinnerVagAdaptionChannel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-            <TextView
-                android:id="@+id/textViewVagAdaptionChannelNumber"
-                android:text="@+string/vag_adaption_channel_number_title"
+            <LinearLayout
+                android:id="@+id/layoutVagAdaptionChannelNumber"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#666"
-                android:textColor="#fff" />
-            <EditText
-                android:id="@+id/editTextVagAdaptionChannelNumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:maxLines="1" />
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/textViewVagAdaptionChannelNumber"
+                    android:text="@+string/vag_adaption_channel_number_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#666"
+                    android:textColor="#fff" />
+                <EditText
+                    android:id="@+id/editTextVagAdaptionChannelNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1" />
+             </LinearLayout>
          </LinearLayout>
         <LinearLayout
             android:id="@+id/layoutVagAdaptionInfo"
