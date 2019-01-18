@@ -770,7 +770,7 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        if (_instanceData.CurrentWorkshopNumber.HasValue)
+                        if (_instanceData.CurrentWorkshopNumber.HasValue && _editTextVagWorkshopNumber.Enabled)
                         {
                             if (UInt64.TryParse(_editTextVagWorkshopNumber.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 valueWorkshop))
                             {
@@ -789,7 +789,7 @@ namespace BmwDeepObd
                             }
                         }
 
-                        if (_instanceData.CurrentImporterNumber.HasValue)
+                        if (_instanceData.CurrentImporterNumber.HasValue && _editTextVagImporterNumber.Enabled)
                         {
                             if (UInt64.TryParse(_editTextVagImporterNumber.Text, NumberStyles.Integer,
                                 CultureInfo.InvariantCulture, out UInt64 valueImporter))
@@ -809,7 +809,7 @@ namespace BmwDeepObd
                             }
                         }
 
-                        if (_instanceData.CurrentEquipmentNumber.HasValue)
+                        if (_instanceData.CurrentEquipmentNumber.HasValue && _editTextVagEquipmentNumber.Enabled)
                         {
                             if (UInt64.TryParse(_editTextVagEquipmentNumber.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 valueEquipment))
                             {
