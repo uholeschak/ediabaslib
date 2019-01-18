@@ -733,6 +733,23 @@ namespace UdsFileReader
 
             public string ToString(byte[] data, out double? stringDataValue)
             {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(ToString(data, out string unitText, out stringDataValue));
+                if (!string.IsNullOrEmpty(unitText))
+                {
+                    if (sb.Length > 0)
+                    {
+                        sb.Append(" ");
+                    }
+                    sb.Append(unitText);
+                }
+
+                return sb.ToString();
+            }
+
+            public string ToString(byte[] data, out string unitText, out double? stringDataValue)
+            {
+                unitText = null;
                 stringDataValue = null;
                 if (data.Length == 0)
                 {
@@ -962,15 +979,7 @@ namespace UdsFileReader
                         return string.Empty;
                 }
 
-                if (!string.IsNullOrEmpty(UnitText))
-                {
-                    if (sb.Length > 0)
-                    {
-                        sb.Append(" ");
-                    }
-                    sb.Append(UnitText);
-                }
-
+                unitText = UnitText;
                 return sb.ToString();
             }
         }

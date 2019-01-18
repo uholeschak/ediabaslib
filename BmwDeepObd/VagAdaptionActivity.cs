@@ -7,6 +7,7 @@ using Android.Content;
 using Android.Hardware.Usb;
 using Android.OS;
 using Android.Support.V7.App;
+using Android.Text;
 using Android.Text.Method;
 using Android.Views;
 using Android.Views.InputMethods;
@@ -162,6 +163,7 @@ namespace BmwDeepObd
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
 
             _ecuInfo = IntentEcuInfo;
+            bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
             UpdateInfoAdaptionList();
 
             SupportActionBar.Title = string.Format(GetString(Resource.String.vag_adaption_title_adaption), Intent.GetStringExtra(ExtraEcuName) ?? string.Empty);
@@ -249,6 +251,7 @@ namespace BmwDeepObd
             _textViewVagAdaptionValueNewTitle.SetOnTouchListener(this);
 
             _editTextVagAdaptionValueNew = FindViewById<EditText>(Resource.Id.editTextVagAdaptionValueNew);
+            _editTextVagAdaptionValueNew.InputType = isUdsEcu ? InputTypes.ClassText | InputTypes.TextFlagNoSuggestions :  InputTypes.ClassNumber;
             _editTextVagAdaptionValueNew.EditorAction += AdaptionEditorAction;
 
             _textViewVagAdaptionValueTestTitle = FindViewById<TextView>(Resource.Id.textViewVagAdaptionValueTestTitle);
@@ -743,6 +746,74 @@ namespace BmwDeepObd
                 }
             }
 
+            if (_layoutVagAdaptionRepairShopCode.Visibility == ViewStates.Visible)
+            {
+                try
+                {
+                    if (_instanceData.CurrentWorkshopNumber.HasValue && _editTextVagWorkshopNumber.Enabled)
+                    {
+                        if (UInt64.TryParse(_editTextVagWorkshopNumber.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 valueWorkshop))
+                        {
+                            if (valueWorkshop <= VagCodingActivity.WorkshopNumberMax)
+                            {
+                                if (_instanceData.CurrentWorkshopNumber.Value != valueWorkshop)
+                                {
+                                    _instanceData.CurrentWorkshopNumber = valueWorkshop;
+                                    dataChanged = true;
+                                }
+                            }
+                            else
+                            {
+                                dataChanged = true;
+                            }
+                        }
+                    }
+
+                    if (_instanceData.CurrentImporterNumber.HasValue && _editTextVagImporterNumber.Enabled)
+                    {
+                        if (UInt64.TryParse(_editTextVagImporterNumber.Text, NumberStyles.Integer,
+                            CultureInfo.InvariantCulture, out UInt64 valueImporter))
+                        {
+                            if (valueImporter <= VagCodingActivity.ImporterNumberMax)
+                            {
+                                if (_instanceData.CurrentImporterNumber.Value != valueImporter)
+                                {
+                                    _instanceData.CurrentImporterNumber = valueImporter;
+                                    dataChanged = true;
+                                }
+                            }
+                            else
+                            {
+                                dataChanged = true;
+                            }
+                        }
+                    }
+
+                    if (_instanceData.CurrentEquipmentNumber.HasValue && _editTextVagEquipmentNumber.Enabled)
+                    {
+                        if (UInt64.TryParse(_editTextVagEquipmentNumber.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 valueEquipment))
+                        {
+                            if (valueEquipment <= VagCodingActivity.EquipmentNumberMax)
+                            {
+                                if (_instanceData.CurrentEquipmentNumber.Value != valueEquipment)
+                                {
+                                    _instanceData.CurrentEquipmentNumber = valueEquipment;
+                                    dataChanged = true;
+                                }
+                            }
+                            else
+                            {
+                                dataChanged = true;
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
             if (dataChanged)
             {
                 UpdateAdaptionInfo();
@@ -864,7 +935,7 @@ namespace BmwDeepObd
             _layoutVagAdaptionEquipmentNumber.Visibility = _instanceData.CurrentEquipmentNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
         }
 
-        private void UpdateAdaptionText()
+        private void UpdateAdaptionText(bool cyclicUpdate = false)
         {
             string adaptionChannelNumber = string.Empty;
             string adaptionValueStart = string.Empty;
@@ -882,6 +953,7 @@ namespace BmwDeepObd
             bool resetChannel = _instanceData.SelectedChannel == ResetChannelNumber;
             bool validChannel = _instanceData.SelectedChannel >= 0;
             bool operationActive = _instanceData.TestAdaption || _instanceData.StoreAdaption || _instanceData.StoreAdaption;
+            bool validData = false;
 
             try
             {
@@ -898,7 +970,20 @@ namespace BmwDeepObd
                                 UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp = _parseInfoAdaptionList[selectedChannel];
                                 if (parseInfoAdp != null)
                                 {
-                                    adaptionValueStart = parseInfoAdp.DataTypeEntry.ToString(_instanceData.AdaptionData, out double? stringDataValue);
+                                    StringBuilder sb = new StringBuilder();
+                                    string valueString = parseInfoAdp.DataTypeEntry.ToString(_instanceData.AdaptionData, out string unitText, out double? _);
+                                    sb.Append(valueString);
+                                    if (!string.IsNullOrEmpty(unitText))
+                                    {
+                                        if (sb.Length > 0)
+                                        {
+                                            sb.Append(" ");
+                                        }
+                                        sb.Append(unitText);
+                                    }
+                                    adaptionValueStart = sb.ToString();
+                                    adaptionValueNew = valueString;
+                                    validData = !string.IsNullOrEmpty(valueString);
                                 }
                             }
                         }
@@ -912,6 +997,7 @@ namespace BmwDeepObd
                         if (_instanceData.AdaptionValueNew != null)
                         {
                             adaptionValueNew = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.AdaptionValueNew.Value);
+                            validData = true;
                         }
                         if (_instanceData.AdaptionValueTest != null)
                         {
@@ -945,7 +1031,7 @@ namespace BmwDeepObd
             _editTextVagAdaptionChannelNumber.Enabled = !jobRunning && !isUdsEcu;
             _editTextVagAdaptionChannelNumber.Text = adaptionChannelNumber;
             _textViewVagAdaptionValueCurrent.Text = adaptionValueStart;
-            _editTextVagAdaptionValueNew.Enabled = jobRunning && !resetChannel && _instanceData.AdaptionValueNew != null;
+            _editTextVagAdaptionValueNew.Enabled = jobRunning && !resetChannel && validData;
             if (_editTextVagAdaptionValueNew.Enabled)
             {
                 if (_editTextVagAdaptionValueNew.Text.Length == 0)
@@ -957,6 +1043,9 @@ namespace BmwDeepObd
             {
                 _editTextVagAdaptionValueNew.Text = adaptionValueNew;
             }
+
+            _textViewVagAdaptionValueTestTitle.Visibility = isUdsEcu ? ViewStates.Gone : ViewStates.Visible;
+            _textViewVagAdaptionValueTest.Visibility = _textViewVagAdaptionValueTestTitle.Visibility;
             _textViewVagAdaptionValueTest.Text = adaptionValueTest;
 
             for (int i = 0; i < _textViewAdaptionMeasValues.Length; i++)
@@ -973,17 +1062,20 @@ namespace BmwDeepObd
                 _textViewAdaptionMeasValues[i].Text = text;
             }
 
-            _textViewVagWorkshopNumberTitle.Text = workshopNumberTitle;
-            _editTextVagWorkshopNumber.Enabled = isUdsEcu;
-            _editTextVagWorkshopNumber.Text = codingTextWorkshop;
+            if (!cyclicUpdate)
+            {
+                _textViewVagWorkshopNumberTitle.Text = workshopNumberTitle;
+                _editTextVagWorkshopNumber.Enabled = isUdsEcu;
+                _editTextVagWorkshopNumber.Text = codingTextWorkshop;
 
-            _textViewVagImporterNumberTitle.Text = importerNumberTitle;
-            _editTextVagImporterNumber.Enabled = isUdsEcu;
-            _editTextVagImporterNumber.Text = codingTextImporter;
+                _textViewVagImporterNumberTitle.Text = importerNumberTitle;
+                _editTextVagImporterNumber.Enabled = isUdsEcu;
+                _editTextVagImporterNumber.Text = codingTextImporter;
 
-            _textViewVagEquipmentNumberTitle.Text = equipmentNumberTitle;
-            _editTextVagEquipmentNumber.Enabled = isUdsEcu;
-            _editTextVagEquipmentNumber.Text = codingTextEquipment;
+                _textViewVagEquipmentNumberTitle.Text = equipmentNumberTitle;
+                _editTextVagEquipmentNumber.Enabled = isUdsEcu;
+                _editTextVagEquipmentNumber.Text = codingTextEquipment;
+            }
 
             if (isUdsEcu)
             {
@@ -1462,7 +1554,7 @@ namespace BmwDeepObd
 
                                 _instanceData.AdaptionData = adaptionData;
 
-                                UpdateAdaptionText();
+                                UpdateAdaptionText(true);
                             });
                         }
                     }
@@ -1500,7 +1592,7 @@ namespace BmwDeepObd
                         _activityCommon.ShowAlert(GetString(resId), Resource.String.alert_title_error);
                     }
 
-                    UpdateAdaptionText();
+                    UpdateAdaptionText(true);
                 });
             });
             _jobThread.Start();
