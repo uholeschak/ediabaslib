@@ -23,6 +23,11 @@ You could buy the [ENET WiFi adapter](https://www.ebay.de/itm/253774721219) from
 If the link is outdated (what it is most of the time) all adapters are sold, in this case please simply wait for an update of the link.  
 For BMW pre F-models use the [Bluetooth adapter](Replacement_firmware_for_ELM327.md)
 
+## Adapter cable
+You could also use an ENET adapter cable, in this case you have to configure the Android LAN adapter with an Auto IP address,
+for example `169.254.1.10 / 255.255.0.0`.  
+This is required because the vehicle will not get a DHCP address and will fall back to Auto IP adress mode.
+
 ## Factory reset
 If the adapter gets unreachable after a misconfiguration there is a possibility to perform a factory reset.  
 You have to open the adapter and press the reset button after the adapter has booted.
