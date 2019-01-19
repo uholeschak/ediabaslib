@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace UdsFileReader
 {
@@ -454,7 +455,7 @@ namespace UdsFileReader
                             }
                             outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Data ID Name: {0}", parseInfoMwb.DataIdString));
 
-                            if (!PrintDataTypeEntry(outStream, parseInfoMwb.DataTypeEntry))
+                            if (!PrintDataTypeEntry(outStream, parseInfoMwb.DataTypeEntry, parseInfo))
                             {
                                 return false;
                             }
@@ -609,8 +610,13 @@ namespace UdsFileReader
             return sb.ToString();
         }
 
-        static bool PrintDataTypeEntry(StreamWriter outStream, UdsReader.DataTypeEntry dataTypeEntry)
+        static bool PrintDataTypeEntry(StreamWriter outStream, UdsReader.DataTypeEntry dataTypeEntry, UdsReader.ParseInfoBase parseInfo = null)
         {
+            string prefix = string.Empty;
+            if (parseInfo is UdsReader.ParseInfoAdp parseInfoAdp)
+            {
+                prefix = "ADP: ";
+            }
             StringBuilder sb = new StringBuilder();
             if (dataTypeEntry.NameDetailArray != null)
             {
@@ -631,6 +637,7 @@ namespace UdsFileReader
             }
 
             sb.Clear();
+            sb.Append(prefix);
             sb.Append(string.Format(CultureInfo.InvariantCulture, "Data type: {0}", UdsReader.DataTypeEntry.DataTypeIdToString(dataTypeEntry.DataTypeId)));
 
             if (dataTypeEntry.FixedEncodingId != null)
