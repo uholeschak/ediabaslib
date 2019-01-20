@@ -971,7 +971,7 @@ namespace BmwDeepObd
                                 if (parseInfoAdp != null)
                                 {
                                     StringBuilder sb = new StringBuilder();
-                                    string valueString = parseInfoAdp.DataTypeEntry.ToString(_instanceData.AdaptionData, out string unitText, out double? _);
+                                    string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, out string unitText, out double? _);
                                     sb.Append(valueString);
                                     if (!string.IsNullOrEmpty(unitText))
                                     {

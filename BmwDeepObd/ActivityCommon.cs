@@ -3043,7 +3043,7 @@ namespace BmwDeepObd
                 {
                     if (resultData.OpData.GetType() == typeof(byte[]))
                     {
-                        string resultText = parseInfoMwb.DataTypeEntry.ToString((byte[])resultData.OpData, out double? stringDataValue);
+                        string resultText = parseInfoMwb.DataTypeEntry.ToString(CultureInfo.InvariantCulture, (byte[])resultData.OpData, out double? stringDataValue);
                         if (stringDataValue.HasValue && !string.IsNullOrEmpty(displayInfo.Format))
                         {
                             dataValue = stringDataValue;

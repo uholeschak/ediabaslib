@@ -728,13 +728,13 @@ namespace UdsFileReader
 
             public string ToString(byte[] data)
             {
-                return ToString(data, out double? _);
+                return ToString(null, data, out double? _);
             }
 
-            public string ToString(byte[] data, out double? stringDataValue)
+            public string ToString(CultureInfo cultureInfo, byte[] data, out double? stringDataValue)
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append(ToString(data, out string unitText, out stringDataValue));
+                sb.Append(ToString(cultureInfo, data, out string unitText, out stringDataValue));
                 if (!string.IsNullOrEmpty(unitText))
                 {
                     if (sb.Length > 0)
@@ -747,240 +747,256 @@ namespace UdsFileReader
                 return sb.ToString();
             }
 
-            public string ToString(byte[] data, out string unitText, out double? stringDataValue)
+            public string ToString(CultureInfo cultureInfo, byte[] data, out string unitText, out double? stringDataValue)
             {
-                unitText = null;
-                stringDataValue = null;
-                if (data.Length == 0)
+                CultureInfo oldCulture = null;
+                try
                 {
-                    return string.Empty;
-                }
-                UInt32 bitOffset = BitOffset ?? 0;
-                UInt32 byteOffset = ByteOffset ?? 0;
-                int bitLength = data.Length * 8;
-                int byteLength = data.Length;
-                if (BitLength.HasValue)
-                {
-                    bitLength = (int)BitLength.Value;
-                    byteLength = (int) ((bitLength + bitOffset + 7) / 8);
-                }
-                if ((bitLength < 1) || (data.Length < byteOffset + byteLength))
-                {
-                    return string.Empty;
-                }
-                byte[] subData = new byte[byteLength];
-                Array.Copy(data, byteOffset, subData, 0, byteLength);
-                if (bitOffset > 0 || (bitLength & 0x7) != 0)
-                {
-                    BitArray bitArray = new BitArray(subData);
-                    if (bitOffset > bitArray.Length)
+                    if (cultureInfo != null)
+                    {
+                        oldCulture = CultureInfo.CurrentCulture;
+                        CultureInfo.CurrentCulture = cultureInfo;
+                    }
+                    unitText = null;
+                    stringDataValue = null;
+                    if (data.Length == 0)
                     {
                         return string.Empty;
                     }
-                    // shift bits to left
-                    for (int i = 0; i < bitArray.Length - bitOffset; i++)
+                    UInt32 bitOffset = BitOffset ?? 0;
+                    UInt32 byteOffset = ByteOffset ?? 0;
+                    int bitLength = data.Length * 8;
+                    int byteLength = data.Length;
+                    if (BitLength.HasValue)
                     {
-                        bitArray[i] = bitArray[(int)(i + bitOffset)];
+                        bitLength = (int)BitLength.Value;
+                        byteLength = (int) ((bitLength + bitOffset + 7) / 8);
                     }
-                    // clear unused bits
-                    for (int i = bitLength; i < bitArray.Length; i++)
+                    if ((bitLength < 1) || (data.Length < byteOffset + byteLength))
                     {
-                        bitArray[i] = false;
+                        return string.Empty;
                     }
-                    bitArray.CopyTo(subData, 0);
-                }
-
-                StringBuilder sb = new StringBuilder();
-                DataType dataType = (DataType) (DataTypeId & DataTypeMaskEnum);
-                switch (dataType)
-                {
-                    case DataType.FloatScaled:
-                    case DataType.HexScaled:
-                    case DataType.Integer1:
-                    case DataType.Integer2:
-                    case DataType.ValueName:
-                    case DataType.MuxTable:
+                    byte[] subData = new byte[byteLength];
+                    Array.Copy(data, byteOffset, subData, 0, byteLength);
+                    if (bitOffset > 0 || (bitLength & 0x7) != 0)
                     {
-                        UInt64 value = 0;
-                        if ((DataTypeId & DataTypeMaskSwapped) != 0)
+                        BitArray bitArray = new BitArray(subData);
+                        if (bitOffset > bitArray.Length)
                         {
-                            for (int i = 0; i < byteLength; i++)
-                            {
-                                value <<= 8;
-                                value |= subData[byteLength - i - 1];
-                            }
+                            return string.Empty;
                         }
-                        else
+                        // shift bits to left
+                        for (int i = 0; i < bitArray.Length - bitOffset; i++)
                         {
-                            for (int i = 0; i < byteLength; i++)
-                            {
-                                value <<= 8;
-                                value |= subData[i];
-                            }
+                            bitArray[i] = bitArray[(int)(i + bitOffset)];
                         }
-
-                        if (dataType == DataType.ValueName)
+                        // clear unused bits
+                        for (int i = bitLength; i < bitArray.Length; i++)
                         {
-                            if (NameValueList == null)
+                            bitArray[i] = false;
+                        }
+                        bitArray.CopyTo(subData, 0);
+                    }
+
+                    StringBuilder sb = new StringBuilder();
+                    DataType dataType = (DataType) (DataTypeId & DataTypeMaskEnum);
+                    switch (dataType)
+                    {
+                        case DataType.FloatScaled:
+                        case DataType.HexScaled:
+                        case DataType.Integer1:
+                        case DataType.Integer2:
+                        case DataType.ValueName:
+                        case DataType.MuxTable:
+                        {
+                            UInt64 value = 0;
+                            if ((DataTypeId & DataTypeMaskSwapped) != 0)
                             {
-                                return string.Empty;
+                                for (int i = 0; i < byteLength; i++)
+                                {
+                                    value <<= 8;
+                                    value |= subData[byteLength - i - 1];
+                                }
+                            }
+                            else
+                            {
+                                for (int i = 0; i < byteLength; i++)
+                                {
+                                    value <<= 8;
+                                    value |= subData[i];
+                                }
                             }
 
-                            foreach (ValueName valueName in NameValueList)
+                            if (dataType == DataType.ValueName)
                             {
-                                // ReSharper disable once ReplaceWithSingleAssignment.True
-                                bool match = true;
-                                if (valueName.MinValue.HasValue && (Int64)value < valueName.MinValue.Value)
+                                if (NameValueList == null)
                                 {
-                                    match = false;
-                                }
-                                if (valueName.MaxValue.HasValue && (Int64)value > valueName.MaxValue.Value)
-                                {
-                                    match = false;
-                                }
-                                if (match)
-                                {
-                                    if (valueName.NameArray != null && valueName.NameArray.Length > 0)
-                                    {
-                                        return valueName.NameArray[0];
-                                    }
                                     return string.Empty;
                                 }
-                            }
-                            return $"{GetTextMapText(UdsReader, 3455) ?? string.Empty}: {value}"; // Unbekannt
-                        }
 
-                        if (dataType == DataType.MuxTable)
-                        {
-                            if (MuxEntryList == null)
-                            {
-                                return string.Empty;
-                            }
-
-                            MuxEntry muxEntryDefault = null;
-                            foreach (MuxEntry muxEntry in MuxEntryList)
-                            {
-                                if (muxEntry.Default)
+                                foreach (ValueName valueName in NameValueList)
                                 {
-                                    muxEntryDefault = muxEntry;
-                                    continue;
+                                    // ReSharper disable once ReplaceWithSingleAssignment.True
+                                    bool match = true;
+                                    if (valueName.MinValue.HasValue && (Int64)value < valueName.MinValue.Value)
+                                    {
+                                        match = false;
+                                    }
+                                    if (valueName.MaxValue.HasValue && (Int64)value > valueName.MaxValue.Value)
+                                    {
+                                        match = false;
+                                    }
+                                    if (match)
+                                    {
+                                        if (valueName.NameArray != null && valueName.NameArray.Length > 0)
+                                        {
+                                            return valueName.NameArray[0];
+                                        }
+                                        return string.Empty;
+                                    }
                                 }
-                                // ReSharper disable once ReplaceWithSingleAssignment.True
-                                bool match = true;
-                                if (muxEntry.MinValue.HasValue && (Int64)value < muxEntry.MinValue.Value)
-                                {
-                                    match = false;
-                                }
-                                if (muxEntry.MaxValue.HasValue && (Int64)value > muxEntry.MaxValue.Value)
-                                {
-                                    match = false;
-                                }
-                                if (match)
-                                {
-                                    return muxEntry.DataTypeEntry.ToString(subData);
-                                }
+                                return $"{GetTextMapText(UdsReader, 3455) ?? string.Empty}: {value}"; // Unbekannt
                             }
 
-                            if (muxEntryDefault != null)
+                            if (dataType == DataType.MuxTable)
                             {
-                                return muxEntryDefault.DataTypeEntry.ToString(subData);
-                            }
-                            return $"{GetTextMapText(UdsReader, 3455) ?? string.Empty}: {value}"; // Unbekannt
-                        }
+                                if (MuxEntryList == null)
+                                {
+                                    return string.Empty;
+                                }
 
-                        double scaledValue;
-                        if ((DataTypeId & DataTypeMaskSigned) != 0)
-                        {
-                            UInt64 valueConv = value;
-                            UInt64 signMask = (UInt64)1 << (bitLength - 1);
-                            if ((signMask & value) != 0)
-                            {
-                                valueConv = (value ^ signMask) - signMask;  // sign extend
-                            }
-                            Int64 valueSigned = (Int64)valueConv;
+                                MuxEntry muxEntryDefault = null;
+                                foreach (MuxEntry muxEntry in MuxEntryList)
+                                {
+                                    if (muxEntry.Default)
+                                    {
+                                        muxEntryDefault = muxEntry;
+                                        continue;
+                                    }
+                                    // ReSharper disable once ReplaceWithSingleAssignment.True
+                                    bool match = true;
+                                    if (muxEntry.MinValue.HasValue && (Int64)value < muxEntry.MinValue.Value)
+                                    {
+                                        match = false;
+                                    }
+                                    if (muxEntry.MaxValue.HasValue && (Int64)value > muxEntry.MaxValue.Value)
+                                    {
+                                        match = false;
+                                    }
+                                    if (match)
+                                    {
+                                        return muxEntry.DataTypeEntry.ToString(subData);
+                                    }
+                                }
 
-                            if (dataType == DataType.Integer1 || dataType == DataType.Integer2)
+                                if (muxEntryDefault != null)
+                                {
+                                    return muxEntryDefault.DataTypeEntry.ToString(subData);
+                                }
+                                return $"{GetTextMapText(UdsReader, 3455) ?? string.Empty}: {value}"; // Unbekannt
+                            }
+
+                            double scaledValue;
+                            if ((DataTypeId & DataTypeMaskSigned) != 0)
                             {
-                                sb.Append($"{valueSigned}");
-                                stringDataValue = valueSigned;
+                                UInt64 valueConv = value;
+                                UInt64 signMask = (UInt64)1 << (bitLength - 1);
+                                if ((signMask & value) != 0)
+                                {
+                                    valueConv = (value ^ signMask) - signMask;  // sign extend
+                                }
+                                Int64 valueSigned = (Int64)valueConv;
+
+                                if (dataType == DataType.Integer1 || dataType == DataType.Integer2)
+                                {
+                                    sb.Append($"{valueSigned}");
+                                    stringDataValue = valueSigned;
+                                    break;
+                                }
+                                scaledValue = valueSigned;
+                            }
+                            else
+                            {
+                                if (dataType == DataType.Integer1 || dataType == DataType.Integer2)
+                                {
+                                    sb.Append($"{value}");
+                                    stringDataValue = value;
+                                    break;
+                                }
+                                scaledValue = value;
+                            }
+
+                            try
+                            {
+                                if (ScaleMult.HasValue)
+                                {
+                                    scaledValue *= ScaleMult.Value;
+                                }
+                                if (ScaleOffset.HasValue)
+                                {
+                                    scaledValue += ScaleOffset.Value;
+                                }
+                                if (ScaleDiv.HasValue)
+                                {
+                                    scaledValue /= ScaleDiv.Value;
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+
+                            if (dataType == DataType.HexScaled)
+                            {
+                                sb.Append($"{(UInt64)scaledValue:X}");
+                                stringDataValue = scaledValue;
                                 break;
                             }
-                            scaledValue = valueSigned;
-                        }
-                        else
-                        {
-                            if (dataType == DataType.Integer1 || dataType == DataType.Integer2)
-                            {
-                                sb.Append($"{value}");
-                                stringDataValue = value;
-                                break;
-                            }
-                            scaledValue = value;
-                        }
 
-                        try
-                        {
-                            if (ScaleMult.HasValue)
-                            {
-                                scaledValue *= ScaleMult.Value;
-                            }
-                            if (ScaleOffset.HasValue)
-                            {
-                                scaledValue += ScaleOffset.Value;
-                            }
-                            if (ScaleDiv.HasValue)
-                            {
-                                scaledValue /= ScaleDiv.Value;
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-
-                        if (dataType == DataType.HexScaled)
-                        {
-                            sb.Append($"{(UInt64)scaledValue:X}");
+                            sb.Append(scaledValue.ToString($"F{NumberOfDigits ?? 0}"));
                             stringDataValue = scaledValue;
                             break;
                         }
 
-                        sb.Append(scaledValue.ToString($"F{NumberOfDigits ?? 0}"));
-                        stringDataValue = scaledValue;
-                        break;
-                    }
-
-                    case DataType.Binary1:
-                    case DataType.Binary2:
-                    {
-                        foreach (byte value in subData)
+                        case DataType.Binary1:
+                        case DataType.Binary2:
                         {
-                            if (sb.Length > 0)
+                            foreach (byte value in subData)
                             {
-                                sb.Append(" ");
+                                if (sb.Length > 0)
+                                {
+                                    sb.Append(" ");
+                                }
+                                sb.Append(Convert.ToString(value, 2).PadLeft(8, '0'));
                             }
-                            sb.Append(Convert.ToString(value, 2).PadLeft(8, '0'));
+                            break;
                         }
-                        break;
+
+                        case DataType.HexBytes:
+                            sb.Append(BitConverter.ToString(subData).Replace("-", " "));
+                            break;
+
+                        case DataType.FixedEncoding:
+                            return FixedEncoding.ToString(UdsReader, subData);
+
+                        case DataType.String:
+                            sb.Append(DataReader.EncodingLatin1.GetString(subData));
+                            break;
+
+                        default:
+                            return string.Empty;
                     }
 
-                    case DataType.HexBytes:
-                        sb.Append(BitConverter.ToString(subData).Replace("-", " "));
-                        break;
-
-                    case DataType.FixedEncoding:
-                        return FixedEncoding.ToString(UdsReader, subData);
-
-                    case DataType.String:
-                        sb.Append(DataReader.EncodingLatin1.GetString(subData));
-                        break;
-
-                    default:
-                        return string.Empty;
+                    unitText = UnitText;
+                    return sb.ToString();
                 }
-
-                unitText = UnitText;
-                return sb.ToString();
+                finally
+                {
+                    if (oldCulture != null)
+                    {
+                        CultureInfo.CurrentCulture = oldCulture;
+                    }
+                }
             }
         }
 
