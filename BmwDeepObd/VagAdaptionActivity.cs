@@ -1592,7 +1592,10 @@ namespace BmwDeepObd
                         _activityCommon.ShowAlert(GetString(resId), Resource.String.alert_title_error);
                     }
 
-                    UpdateAdaptionText(true);
+                    _updateHandler?.Post(() =>
+                    {
+                        UpdateAdaptionText(true);
+                    });
                 });
             });
             _jobThread.Start();

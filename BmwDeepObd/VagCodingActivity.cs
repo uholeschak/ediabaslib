@@ -1616,7 +1616,10 @@ namespace BmwDeepObd
                             }
                         }
                         _activityCommon.ShowAlert(GetString(resId), Resource.String.alert_title_error);
-                        UpdateCodingInfo();
+                        _updateHandler?.Post(() =>
+                        {
+                            UpdateCodingInfo();
+                        });
                     }
                     else
                     {
@@ -1652,7 +1655,10 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            UpdateCodingInfo();
+                            _updateHandler?.Post(() =>
+                            {
+                                UpdateCodingInfo();
+                            });
                         }
                     }
                 });
