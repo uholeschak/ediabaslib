@@ -747,8 +747,52 @@ namespace UdsFileReader
                 return sb.ToString();
             }
 
-            public string ToString(CultureInfo cultureInfo, byte[] data, out string unitText, out double? stringDataValue)
+            public string ToString(CultureInfo cultureInfo, byte[] data, out string unitText, out double? stringDataValue, string newValueString = null)
             {
+                unitText = null;
+                stringDataValue = null;
+                if (data.Length == 0)
+                {
+                    return string.Empty;
+                }
+                UInt64? newValue = null;
+                double? newScaledValue = null;
+                byte[] newDataBytes = null;
+                UInt32 bitOffset = BitOffset ?? 0;
+                UInt32 byteOffset = ByteOffset ?? 0;
+                int bitLength = data.Length * 8;
+                int byteLength = data.Length;
+                if (BitLength.HasValue)
+                {
+                    bitLength = (int)BitLength.Value;
+                    byteLength = (int) ((bitLength + bitOffset + 7) / 8);
+                }
+                if ((bitLength < 1) || (data.Length < byteOffset + byteLength))
+                {
+                    return string.Empty;
+                }
+                byte[] subData = new byte[byteLength];
+                Array.Copy(data, byteOffset, subData, 0, byteLength);
+                if (bitOffset > 0 || (bitLength & 0x7) != 0)
+                {
+                    BitArray bitArray = new BitArray(subData);
+                    if (bitOffset > bitArray.Length)
+                    {
+                        return string.Empty;
+                    }
+                    // shift bits to left
+                    for (int i = 0; i < bitArray.Length - bitOffset; i++)
+                    {
+                        bitArray[i] = bitArray[(int)(i + bitOffset)];
+                    }
+                    // clear unused bits
+                    for (int i = bitLength; i < bitArray.Length; i++)
+                    {
+                        bitArray[i] = false;
+                    }
+                    bitArray.CopyTo(subData, 0);
+                }
+
                 CultureInfo oldCulture = null;
                 try
                 {
@@ -757,47 +801,6 @@ namespace UdsFileReader
                         oldCulture = CultureInfo.CurrentCulture;
                         CultureInfo.CurrentCulture = cultureInfo;
                     }
-                    unitText = null;
-                    stringDataValue = null;
-                    if (data.Length == 0)
-                    {
-                        return string.Empty;
-                    }
-                    UInt32 bitOffset = BitOffset ?? 0;
-                    UInt32 byteOffset = ByteOffset ?? 0;
-                    int bitLength = data.Length * 8;
-                    int byteLength = data.Length;
-                    if (BitLength.HasValue)
-                    {
-                        bitLength = (int)BitLength.Value;
-                        byteLength = (int) ((bitLength + bitOffset + 7) / 8);
-                    }
-                    if ((bitLength < 1) || (data.Length < byteOffset + byteLength))
-                    {
-                        return string.Empty;
-                    }
-                    byte[] subData = new byte[byteLength];
-                    Array.Copy(data, byteOffset, subData, 0, byteLength);
-                    if (bitOffset > 0 || (bitLength & 0x7) != 0)
-                    {
-                        BitArray bitArray = new BitArray(subData);
-                        if (bitOffset > bitArray.Length)
-                        {
-                            return string.Empty;
-                        }
-                        // shift bits to left
-                        for (int i = 0; i < bitArray.Length - bitOffset; i++)
-                        {
-                            bitArray[i] = bitArray[(int)(i + bitOffset)];
-                        }
-                        // clear unused bits
-                        for (int i = bitLength; i < bitArray.Length; i++)
-                        {
-                            bitArray[i] = false;
-                        }
-                        bitArray.CopyTo(subData, 0);
-                    }
-
                     StringBuilder sb = new StringBuilder();
                     DataType dataType = (DataType) (DataTypeId & DataTypeMaskEnum);
                     switch (dataType)
@@ -909,6 +912,17 @@ namespace UdsFileReader
 
                                 if (dataType == DataType.Integer1 || dataType == DataType.Integer2)
                                 {
+                                    if (newValueString != null)
+                                    {
+                                        try
+                                        {
+                                            newValue = (UInt64) Convert.ToInt64(newValueString);
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // ignored
+                                        }
+                                    }
                                     sb.Append($"{valueSigned}");
                                     stringDataValue = valueSigned;
                                     break;
@@ -919,6 +933,17 @@ namespace UdsFileReader
                             {
                                 if (dataType == DataType.Integer1 || dataType == DataType.Integer2)
                                 {
+                                    if (newValueString != null)
+                                    {
+                                        try
+                                        {
+                                            newValue = Convert.ToUInt64(newValueString);
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // ignored
+                                        }
+                                    }
                                     sb.Append($"{value}");
                                     stringDataValue = value;
                                     break;
@@ -948,11 +973,33 @@ namespace UdsFileReader
 
                             if (dataType == DataType.HexScaled)
                             {
+                                if (newValueString != null)
+                                {
+                                    try
+                                    {
+                                        newValue = Convert.ToUInt64(newValueString, 16);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // ignored
+                                    }
+                                }
                                 sb.Append($"{(UInt64)scaledValue:X}");
                                 stringDataValue = scaledValue;
                                 break;
                             }
 
+                            if (newValueString != null)
+                            {
+                                try
+                                {
+                                    newScaledValue = Convert.ToDouble(newValueString);
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
                             sb.Append(scaledValue.ToString($"F{NumberOfDigits ?? 0}"));
                             stringDataValue = scaledValue;
                             break;
@@ -967,12 +1014,43 @@ namespace UdsFileReader
                                 {
                                     sb.Append(" ");
                                 }
+                                if (newValueString != null)
+                                {
+                                    try
+                                    {
+                                        newValue = Convert.ToUInt64(newValueString, 2);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // ignored
+                                    }
+                                }
                                 sb.Append(Convert.ToString(value, 2).PadLeft(8, '0'));
                             }
                             break;
                         }
 
                         case DataType.HexBytes:
+                            if (newValueString != null)
+                            {
+                                string[] newValueArray = newValueString.Trim().Split(' ', ';', ',');
+                                try
+                                {
+                                    List<byte> binList = new List<byte>();
+                                    foreach (string arg in newValueArray)
+                                    {
+                                        if (!string.IsNullOrEmpty(arg))
+                                        {
+                                            binList.Add(Convert.ToByte(arg, 16));
+                                        }
+                                    }
+                                    newDataBytes = binList.ToArray();
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
                             sb.Append(BitConverter.ToString(subData).Replace("-", " "));
                             break;
 
@@ -980,6 +1058,17 @@ namespace UdsFileReader
                             return FixedEncoding.ToString(UdsReader, subData);
 
                         case DataType.String:
+                            if (newValueString != null)
+                            {
+                                try
+                                {
+                                    newDataBytes = DataReader.EncodingLatin1.GetBytes(newValueString);
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
                             sb.Append(DataReader.EncodingLatin1.GetString(subData));
                             break;
 
@@ -992,6 +1081,27 @@ namespace UdsFileReader
                 }
                 finally
                 {
+                    if (newDataBytes != null)
+                    {
+                        if (bitOffset > 0 || (bitLength & 0x7) != 0)
+                        {
+                            BitArray bitArray = new BitArray(newDataBytes);
+                            if (bitOffset <= bitArray.Length)
+                            {
+                                // shift bits to rigth
+                                for (int i = 0; i < bitArray.Length - bitOffset; i++)
+                                {
+                                    bitArray[(int)(i + bitOffset)] = bitArray[i];
+                                }
+                                // clear unused bits
+                                for (int i = 0; i < bitLength; i++)
+                                {
+                                    bitArray[i] = false;
+                                }
+                                bitArray.CopyTo(newDataBytes, 0);
+                            }
+                        }
+                    }
                     if (oldCulture != null)
                     {
                         CultureInfo.CurrentCulture = oldCulture;
