@@ -747,10 +747,16 @@ namespace UdsFileReader
                 return sb.ToString();
             }
 
-            public string ToString(CultureInfo cultureInfo, byte[] data, out string unitText, out double? stringDataValue, string newValueString = null)
+            public string ToString(CultureInfo cultureInfo, byte[] data, out string unitText, out double? stringDataValue)
+            {
+                return ToString(cultureInfo, data, null, out unitText, out stringDataValue, out byte[] _);
+            }
+
+            public string ToString(CultureInfo cultureInfo, byte[] data, string newValueString, out string unitText, out double? stringDataValue, out byte[] dataNew)
             {
                 unitText = null;
                 stringDataValue = null;
+                dataNew = null;
                 if (data.Length == 0)
                 {
                     return string.Empty;
@@ -1100,6 +1106,13 @@ namespace UdsFileReader
                                 }
                                 bitArray.CopyTo(newDataBytes, 0);
                             }
+                        }
+
+                        if (data.Length >= byteOffset + newDataBytes.Length)
+                        {
+                            dataNew = new byte[data.Length];
+                            Array.Copy(data, dataNew, data.Length);
+                            Array.Copy(newDataBytes, 0, dataNew, byteOffset, newDataBytes.Length);
                         }
                     }
                     if (oldCulture != null)
