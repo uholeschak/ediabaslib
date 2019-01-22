@@ -754,6 +754,16 @@ namespace UdsFileReader
 
             public string ToString(CultureInfo cultureInfo, byte[] data, string newValueString, out string unitText, out double? stringDataValue, out byte[] dataNew)
             {
+                string result = DataToString(cultureInfo, data, newValueString, out unitText, out stringDataValue, out dataNew);
+                if (dataNew != null)
+                {
+                    result = DataToString(cultureInfo, dataNew, null, out unitText, out stringDataValue, out byte[] _);
+                }
+                return result;
+            }
+
+            private string DataToString(CultureInfo cultureInfo, byte[] data, string newValueString, out string unitText, out double? stringDataValue, out byte[] dataNew)
+            {
                 unitText = null;
                 stringDataValue = null;
                 dataNew = null;

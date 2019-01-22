@@ -36,6 +36,7 @@ namespace BmwDeepObd
             public UInt64? AdaptionValueNew { get; set; }
             public UInt64? AdaptionValueTest { get; set; }
             public byte[] AdaptionData { get; set; }
+            public byte[] AdaptionDataNew { get; set; }
             public UInt64? CurrentWorkshopNumber { get; set; }
             public UInt64? CurrentImporterNumber { get; set; }
             public UInt64? CurrentEquipmentNumber { get; set; }
@@ -697,6 +698,7 @@ namespace BmwDeepObd
 
         private void ReadAdaptionEditors()
         {
+            bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
             bool dataChanged = false;
             if (_editTextVagAdaptionChannelNumber.Enabled)
             {
@@ -720,29 +722,62 @@ namespace BmwDeepObd
                 }
             }
 
-            if (_editTextVagAdaptionValueNew.Enabled && _instanceData.AdaptionValueNew.HasValue)
+            if (isUdsEcu)
             {
-                try
+                if (_editTextVagAdaptionValueNew.Enabled && _instanceData.AdaptionDataNew != null)
                 {
-                    if (UInt64.TryParse(_editTextVagAdaptionValueNew.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
+                    int selectedChannel = _instanceData.SelectedChannel;
+                    if (selectedChannel >= 0 && selectedChannel < _parseInfoAdaptionList.Count)
                     {
-                        if (value <= 0xFFFF)
+                        UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp = _parseInfoAdaptionList[selectedChannel];
+                        if (parseInfoAdp != null)
                         {
-                            if (_instanceData.AdaptionValueNew.Value != value)
+                            string newValueString = _editTextVagAdaptionValueNew.Text;
+                            string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, newValueString, 
+                                out string unitText, out double? _, out byte[] newData);
+                            if (newData != null && !string.IsNullOrEmpty(valueString))
                             {
-                                _instanceData.AdaptionValueNew = value;
-                                if (_editTextVagAdaptionValueNew.Enabled)
+                                _instanceData.AdaptionDataNew = newData;
+                                _editTextVagAdaptionValueNew.Text = valueString;
+                            }
+                            else
+                            {
+                                string valueStringRestore = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionDataNew, out string _, out double? _);
+                                if (!string.IsNullOrEmpty(valueStringRestore))
                                 {
-                                    _editTextVagAdaptionValueNew.Text = string.Empty;   // focre update
+                                    _editTextVagAdaptionValueNew.Text = valueStringRestore;
                                 }
-                                dataChanged = true;
                             }
                         }
                     }
                 }
-                catch (Exception)
+            }
+            else
+            {
+                if (_editTextVagAdaptionValueNew.Enabled && _instanceData.AdaptionValueNew.HasValue)
                 {
-                    // ignored
+                    try
+                    {
+                        if (UInt64.TryParse(_editTextVagAdaptionValueNew.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt64 value))
+                        {
+                            if (value <= 0xFFFF)
+                            {
+                                if (_instanceData.AdaptionValueNew.Value != value)
+                                {
+                                    _instanceData.AdaptionValueNew = value;
+                                    if (_editTextVagAdaptionValueNew.Enabled)
+                                    {
+                                        _editTextVagAdaptionValueNew.Text = string.Empty;   // force update
+                                    }
+                                    dataChanged = true;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }
             }
 
@@ -1231,6 +1266,7 @@ namespace BmwDeepObd
             _instanceData.AdaptionValueNew = startValue;
             _instanceData.AdaptionValueTest = startValue;
             _instanceData.AdaptionData = null;
+            _instanceData.AdaptionDataNew = null;
             for (int i = 0; i < _instanceData.AdaptionValues.Length; i++)
             {
                 _instanceData.AdaptionValues[i] = null;
@@ -1553,6 +1589,10 @@ namespace BmwDeepObd
                                 }
 
                                 _instanceData.AdaptionData = adaptionData;
+                                if (_instanceData.AdaptionDataNew == null && adaptionData != null)
+                                {
+                                    _instanceData.AdaptionDataNew = adaptionData;
+                                }
 
                                 UpdateAdaptionText(true);
                             });
