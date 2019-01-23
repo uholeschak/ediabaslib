@@ -1361,6 +1361,15 @@ namespace BmwDeepObd
                             {
                                 adaptionJob = XmlToolActivity.JobReadS22Uds;
                                 adaptionJobArgs = string.Format(CultureInfo.InvariantCulture, "{0}", serviceId);
+
+                                if (connected)
+                                {
+                                    if (!(testAdaption || storeAdaption || stopAdaption))
+                                    {
+                                        Thread.Sleep(500);
+                                        continue;
+                                    }
+                                }
                             }
                             else if (is1281Ecu)
                             {
