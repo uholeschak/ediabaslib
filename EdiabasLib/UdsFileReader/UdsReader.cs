@@ -1016,6 +1016,7 @@ namespace UdsFileReader
                                     // ignored
                                 }
                             }
+
                             sb.Append(scaledValue.ToString($"F{NumberOfDigits ?? 0}"));
                             stringDataValue = scaledValue;
                             break;
@@ -1048,6 +1049,7 @@ namespace UdsFileReader
                                     // ignored
                                 }
                             }
+
                             foreach (byte value in subData)
                             {
                                 if (sb.Length > 0)
@@ -1084,6 +1086,7 @@ namespace UdsFileReader
                                     // ignored
                                 }
                             }
+
                             sb.Append(BitConverter.ToString(subData).Replace("-", " "));
                             break;
 
@@ -1105,6 +1108,7 @@ namespace UdsFileReader
                                     // ignored
                                 }
                             }
+
                             sb.Append(DataReader.EncodingLatin1.GetString(subData));
                             break;
 
