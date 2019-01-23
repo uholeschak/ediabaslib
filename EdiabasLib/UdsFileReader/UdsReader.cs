@@ -1060,7 +1060,11 @@ namespace UdsFileReader
                                             binList.Add(Convert.ToByte(arg, 16));
                                         }
                                     }
-                                    newDataBytes = binList.ToArray();
+
+                                    if (binList.Count == subData.Length)
+                                    {
+                                        newDataBytes = binList.ToArray();
+                                    }
                                 }
                                 catch (Exception)
                                 {
@@ -1078,7 +1082,10 @@ namespace UdsFileReader
                             {
                                 try
                                 {
-                                    newDataBytes = DataReader.EncodingLatin1.GetBytes(newValueString);
+                                    newDataBytes = new byte[subData.Length];
+                                    Array.Fill(newDataBytes, (byte)' ');
+                                    int dataLength = newValueString.Length > newDataBytes.Length ? newDataBytes.Length : newValueString.Length;
+                                    DataReader.EncodingLatin1.GetBytes(newValueString, 0, dataLength, newDataBytes, 0);
                                 }
                                 catch (Exception)
                                 {
