@@ -35,6 +35,7 @@ namespace BmwDeepObd
             public UInt64? AdaptionValueStart { get; set; }
             public UInt64? AdaptionValueNew { get; set; }
             public UInt64? AdaptionValueTest { get; set; }
+            public bool UpdateAdaptionValueNew { get; set; }
             public byte[] AdaptionData { get; set; }
             public byte[] AdaptionDataNew { get; set; }
             public UInt64? CurrentWorkshopNumber { get; set; }
@@ -767,7 +768,7 @@ namespace BmwDeepObd
                                     _instanceData.AdaptionValueNew = value;
                                     if (_editTextVagAdaptionValueNew.Enabled)
                                     {
-                                        _editTextVagAdaptionValueNew.Text = string.Empty;   // force update
+                                        _instanceData.UpdateAdaptionValueNew = true;
                                     }
                                     dataChanged = true;
                                 }
@@ -1069,8 +1070,9 @@ namespace BmwDeepObd
             _editTextVagAdaptionValueNew.Enabled = jobRunning && !resetChannel && validData;
             if (_editTextVagAdaptionValueNew.Enabled)
             {
-                if (_editTextVagAdaptionValueNew.Text.Length == 0)
+                if (_instanceData.UpdateAdaptionValueNew)
                 {
+                    _instanceData.UpdateAdaptionValueNew = false;
                     _editTextVagAdaptionValueNew.Text = adaptionValueNew;
                 }
             }
@@ -1265,6 +1267,7 @@ namespace BmwDeepObd
             _instanceData.AdaptionValueStart = startValue;
             _instanceData.AdaptionValueNew = startValue;
             _instanceData.AdaptionValueTest = startValue;
+            _instanceData.UpdateAdaptionValueNew = true;
             _instanceData.AdaptionData = null;
             _instanceData.AdaptionDataNew = null;
             for (int i = 0; i < _instanceData.AdaptionValues.Length; i++)
