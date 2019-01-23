@@ -1177,24 +1177,22 @@ namespace UdsFileReader
                         }
                     }
 
-                    if (newDataBytes != null)
+                    if (newDataBytes != null && newDataBytes.Length == byteLength)
                     {
                         if (bitOffset > 0 || (bitLength & 0x7) != 0)
                         {
-                            BitArray bitArray = new BitArray(newDataBytes);
-                            if (bitOffset <= bitArray.Length)
+                            byte[] subDataOld = new byte[byteLength];
+                            Array.Copy(data, byteOffset, subDataOld, 0, byteLength);
+                            BitArray bitArrayOld = new BitArray(subDataOld);
+                            BitArray bitArrayNew = new BitArray(newDataBytes);
+                            if (bitOffset <= bitArrayNew.Length)
                             {
                                 // shift bits to rigth
-                                for (int i = 0; i < bitArray.Length - bitOffset; i++)
+                                for (int i = 0; i < bitArrayNew.Length - bitOffset; i++)
                                 {
-                                    bitArray[(int)(i + bitOffset)] = bitArray[i];
+                                    bitArrayOld[(int)(i + bitOffset)] = bitArrayNew[i];
                                 }
-                                // clear unused bits
-                                for (int i = 0; i < bitLength; i++)
-                                {
-                                    bitArray[i] = false;
-                                }
-                                bitArray.CopyTo(newDataBytes, 0);
+                                bitArrayOld.CopyTo(newDataBytes, 0);
                             }
                         }
 
