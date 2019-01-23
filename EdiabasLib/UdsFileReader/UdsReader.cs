@@ -993,7 +993,7 @@ namespace UdsFileReader
                                 {
                                     try
                                     {
-                                        newValue = Convert.ToUInt64(newValueString, 16);
+                                        newScaledValue = Convert.ToUInt64(newValueString, 16);
                                     }
                                     catch (Exception)
                                     {
@@ -1016,6 +1016,7 @@ namespace UdsFileReader
                                     // ignored
                                 }
                             }
+
                             sb.Append(scaledValue.ToString($"F{NumberOfDigits ?? 0}"));
                             stringDataValue = scaledValue;
                             break;
@@ -1048,6 +1049,7 @@ namespace UdsFileReader
                                     // ignored
                                 }
                             }
+
                             foreach (byte value in subData)
                             {
                                 if (sb.Length > 0)
@@ -1084,6 +1086,7 @@ namespace UdsFileReader
                                     // ignored
                                 }
                             }
+
                             sb.Append(BitConverter.ToString(subData).Replace("-", " "));
                             break;
 
@@ -1105,6 +1108,7 @@ namespace UdsFileReader
                                     // ignored
                                 }
                             }
+
                             sb.Append(DataReader.EncodingLatin1.GetString(subData));
                             break;
 
@@ -1117,6 +1121,62 @@ namespace UdsFileReader
                 }
                 finally
                 {
+                    if (newScaledValue.HasValue)
+                    {
+                        try
+                        {
+                            double tempValue = newScaledValue.Value;
+                            if (ScaleDiv.HasValue)
+                            {
+                                tempValue *= ScaleDiv.Value;
+                            }
+                            if (ScaleOffset.HasValue)
+                            {
+                                tempValue -= ScaleOffset.Value;
+                            }
+                            if (ScaleMult.HasValue)
+                            {
+                                tempValue /= ScaleMult.Value;
+                            }
+
+                            if ((DataTypeId & DataTypeMaskSigned) != 0)
+                            {
+                                Int64 valueSigned = (Int64)tempValue;
+                                newValue = (UInt64)valueSigned;
+                            }
+                            else
+                            {
+                                newValue = (UInt64)tempValue;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+
+                    if (newValue.HasValue)
+                    {
+                        newDataBytes = new byte[byteLength];
+                        UInt64 tempValue = newValue.Value;
+                        if ((DataTypeId & DataTypeMaskSwapped) != 0)
+                        {
+                            for (int i = 0; i < byteLength; i++)
+                            {
+                                newDataBytes[i] = (byte)tempValue;
+                                tempValue >>= 8;
+                            }
+                        }
+                        else
+                        {
+                            for (int i = 0; i < byteLength; i++)
+                            {
+                                newDataBytes[byteLength - i - 1] = (byte)tempValue;
+                                tempValue >>= 8;
+                            }
+                        }
+                    }
+
                     if (newDataBytes != null)
                     {
                         if (bitOffset > 0 || (bitLength & 0x7) != 0)
