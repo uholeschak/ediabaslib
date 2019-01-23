@@ -1024,22 +1024,35 @@ namespace UdsFileReader
                         case DataType.Binary1:
                         case DataType.Binary2:
                         {
+                            if (newValueString != null)
+                            {
+                                try
+                                {
+                                    string[] newValueArray = newValueString.Trim().Split(' ', ';', ',');
+                                    List<byte> binList = new List<byte>();
+                                    foreach (string arg in newValueArray)
+                                    {
+                                        if (!string.IsNullOrEmpty(arg))
+                                        {
+                                            binList.Add(Convert.ToByte(arg, 2));
+                                        }
+                                    }
+
+                                    if (binList.Count == subData.Length)
+                                    {
+                                        newDataBytes = binList.ToArray();
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
                             foreach (byte value in subData)
                             {
                                 if (sb.Length > 0)
                                 {
                                     sb.Append(" ");
-                                }
-                                if (newValueString != null)
-                                {
-                                    try
-                                    {
-                                        newValue = Convert.ToUInt64(newValueString, 2);
-                                    }
-                                    catch (Exception)
-                                    {
-                                        // ignored
-                                    }
                                 }
                                 sb.Append(Convert.ToString(value, 2).PadLeft(8, '0'));
                             }
