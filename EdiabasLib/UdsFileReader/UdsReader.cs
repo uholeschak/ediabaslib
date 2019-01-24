@@ -1158,17 +1158,17 @@ namespace UdsFileReader
 
                             if ((DataTypeId & DataTypeMaskSigned) != 0)
                             {
-                                Int64 valueSigned = (Int64)tempValue;
-                                if (tempValue > maxValueSigned || valueSigned > maxValueSigned)
+                                if (tempValue > maxValueSigned)
                                 {
-                                    newValue = maxValueUnsigned;
+                                    newValue = (UInt64)maxValueSigned;
                                 }
-                                else if (tempValue < minValueSigned || valueSigned < minValueSigned)
+                                else if (tempValue < minValueSigned)
                                 {
                                     newValue = (UInt64) minValueSigned;
                                 }
                                 else
                                 {
+                                    Int64 valueSigned = (Int64)tempValue;
                                     newValue = (UInt64)valueSigned;
                                 }
                             }
@@ -1196,9 +1196,24 @@ namespace UdsFileReader
 
                     if (newValue.HasValue)
                     {
-                        if (newValue.Value > maxValueUnsigned)
+                        if ((DataTypeId & DataTypeMaskSigned) != 0)
                         {
-                            newValue = maxValueUnsigned;
+                            Int64 valueSigned = (Int64)newValue.Value;
+                            if (valueSigned > maxValueSigned)
+                            {
+                                newValue = (UInt64)maxValueSigned;
+                            }
+                            else if (valueSigned < minValueSigned)
+                            {
+                                newValue = (UInt64)minValueSigned;
+                            }
+                        }
+                        else
+                        {
+                            if (newValue.Value > maxValueUnsigned)
+                            {
+                                newValue = maxValueUnsigned;
+                            }
                         }
 
                         newDataBytes = new byte[byteLength];
