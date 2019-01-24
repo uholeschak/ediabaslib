@@ -796,7 +796,7 @@ namespace UdsFileReader
                     {
                         return string.Empty;
                     }
-                    // shift bits to left
+                    // shift bits to the left
                     for (int i = 0; i < bitArray.Length - bitOffset; i++)
                     {
                         bitArray[i] = bitArray[(int)(i + bitOffset)];
@@ -1121,6 +1121,23 @@ namespace UdsFileReader
                 }
                 finally
                 {
+                    UInt64 maxValueUnsigned = UInt64.MaxValue;
+                    Int64 maxValueSigned = Int64.MaxValue;
+                    Int64 minValueSigned = Int64.MinValue;
+
+                    if (newScaledValue.HasValue || newValue.HasValue)
+                    {
+                        maxValueUnsigned = 0;
+                        for (int i = 0; i < bitLength; i++)
+                        {
+                            maxValueUnsigned <<= 1;
+                            maxValueUnsigned |= 0x01;
+                        }
+
+                        maxValueSigned = (Int64)(maxValueUnsigned >> 1);
+                        minValueSigned = ~maxValueSigned;
+                    }
+
                     if (newScaledValue.HasValue)
                     {
                         try
@@ -1142,11 +1159,33 @@ namespace UdsFileReader
                             if ((DataTypeId & DataTypeMaskSigned) != 0)
                             {
                                 Int64 valueSigned = (Int64)tempValue;
-                                newValue = (UInt64)valueSigned;
+                                if (tempValue > maxValueSigned || valueSigned > maxValueSigned)
+                                {
+                                    newValue = maxValueUnsigned;
+                                }
+                                else if (tempValue < minValueSigned || valueSigned < minValueSigned)
+                                {
+                                    newValue = (UInt64) minValueSigned;
+                                }
+                                else
+                                {
+                                    newValue = (UInt64)valueSigned;
+                                }
                             }
                             else
                             {
-                                newValue = (UInt64)tempValue;
+                                if (tempValue > maxValueUnsigned)
+                                {
+                                    newValue = maxValueUnsigned;
+                                }
+                                else if (tempValue < 0)
+                                {
+                                    newValue = 0;
+                                }
+                                else
+                                {
+                                    newValue = (UInt64)tempValue;
+                                }
                             }
                         }
                         catch (Exception)
@@ -1157,6 +1196,11 @@ namespace UdsFileReader
 
                     if (newValue.HasValue)
                     {
+                        if (newValue.Value > maxValueUnsigned)
+                        {
+                            newValue = maxValueUnsigned;
+                        }
+
                         newDataBytes = new byte[byteLength];
                         UInt64 tempValue = newValue.Value;
                         if ((DataTypeId & DataTypeMaskSwapped) != 0)
@@ -1187,7 +1231,7 @@ namespace UdsFileReader
                             BitArray bitArrayNew = new BitArray(newDataBytes);
                             if (bitOffset <= bitArrayNew.Length)
                             {
-                                // shift bits to rigth
+                                // shift bits to the rigth
                                 for (int i = 0; i < bitArrayNew.Length - bitOffset; i++)
                                 {
                                     bitArrayOld[(int)(i + bitOffset)] = bitArrayNew[i];
