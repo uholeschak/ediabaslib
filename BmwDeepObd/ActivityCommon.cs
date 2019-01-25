@@ -5046,31 +5046,31 @@ namespace BmwDeepObd
             return (((value >> 4) * 10) + (value & 0xF));
         }
 
-        public static Android.Text.InputTypes ConvertVagUdsDataTypeToInputTypes(UInt32 dataTypeId)
+        public static Android.Text.InputTypes ConvertVagUdsDataTypeToInputType(UInt32 dataTypeId)
         {
-            Android.Text.InputTypes inputTypes = Android.Text.InputTypes.ClassText | Android.Text.InputTypes.TextFlagNoSuggestions;
+            Android.Text.InputTypes inputType = Android.Text.InputTypes.ClassText | Android.Text.InputTypes.TextFlagNoSuggestions;
 
             UdsReader.DataType dataType = (UdsReader.DataType)(dataTypeId & UdsReader.DataTypeMaskEnum);
             switch (dataType)
             {
                 case UdsReader.DataType.FloatScaled:
-                    inputTypes = Android.Text.InputTypes.ClassNumber | Android.Text.InputTypes.NumberFlagDecimal;
+                    inputType = Android.Text.InputTypes.ClassNumber | Android.Text.InputTypes.NumberFlagDecimal;
                     break;
 
                 case UdsReader.DataType.Integer1:
                 case UdsReader.DataType.Integer2:
-                    inputTypes = Android.Text.InputTypes.ClassNumber;
+                    inputType = Android.Text.InputTypes.ClassNumber;
                     break;
             }
 
-            if ((inputTypes & Android.Text.InputTypes.MaskClass) == Android.Text.InputTypes.ClassNumber)
+            if ((inputType & Android.Text.InputTypes.MaskClass) == Android.Text.InputTypes.ClassNumber)
             {
                 if ((dataTypeId & UdsReader.DataTypeMaskSigned) != 0x00)
                 {
-                    inputTypes |= Android.Text.InputTypes.NumberFlagSigned;
+                    inputType |= Android.Text.InputTypes.NumberFlagSigned;
                 }
             }
-            return inputTypes;
+            return inputType;
         }
 
         public static bool CheckZipFile(string archiveFilename)

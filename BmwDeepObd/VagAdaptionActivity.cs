@@ -253,7 +253,6 @@ namespace BmwDeepObd
             _textViewVagAdaptionValueNewTitle.SetOnTouchListener(this);
 
             _editTextVagAdaptionValueNew = FindViewById<EditText>(Resource.Id.editTextVagAdaptionValueNew);
-            _editTextVagAdaptionValueNew.InputType = isUdsEcu ? InputTypes.ClassText | InputTypes.TextFlagNoSuggestions :  InputTypes.ClassNumber;
             _editTextVagAdaptionValueNew.EditorAction += AdaptionEditorAction;
 
             _textViewVagAdaptionValueTestTitle = FindViewById<TextView>(Resource.Id.textViewVagAdaptionValueTestTitle);
@@ -989,6 +988,7 @@ namespace BmwDeepObd
             bool resetChannel = _instanceData.SelectedChannel == ResetChannelNumber;
             bool validChannel = _instanceData.SelectedChannel >= 0;
             bool operationActive = _instanceData.TestAdaption || _instanceData.StoreAdaption || _instanceData.StoreAdaption;
+            InputTypes inputType = InputTypes.ClassNumber;
             bool validData = false;
 
             try
@@ -1019,6 +1019,7 @@ namespace BmwDeepObd
                                     }
                                     adaptionValueStart = sb.ToString();
                                     adaptionValueNew = valueString;
+                                    inputType = ActivityCommon.ConvertVagUdsDataTypeToInputType(parseInfoAdp.DataTypeEntry.DataTypeId);
                                     validData = !string.IsNullOrEmpty(valueString);
                                 }
                             }
@@ -1074,6 +1075,7 @@ namespace BmwDeepObd
                 {
                     _instanceData.UpdateAdaptionValueNew = false;
                     _editTextVagAdaptionValueNew.Text = adaptionValueNew;
+                    _editTextVagAdaptionValueNew.InputType = inputType;
                 }
             }
             else
