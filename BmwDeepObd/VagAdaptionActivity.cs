@@ -734,7 +734,7 @@ namespace BmwDeepObd
                             string newValueString = _editTextVagAdaptionValueNew.Text;
                             string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, newValueString, 
                                 out string unitText, out double? _, out byte[] newData);
-                            if (newData != null && !string.IsNullOrEmpty(valueString))
+                            if (newData != null && valueString != null)
                             {
                                 _instanceData.AdaptionDataNew = newData;
                                 _editTextVagAdaptionValueNew.Text = valueString;
@@ -742,7 +742,7 @@ namespace BmwDeepObd
                             else
                             {
                                 string valueStringRestore = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionDataNew, out string _, out double? _);
-                                if (!string.IsNullOrEmpty(valueStringRestore))
+                                if (valueStringRestore != null)
                                 {
                                     _editTextVagAdaptionValueNew.Text = valueStringRestore;
                                 }
@@ -1019,7 +1019,7 @@ namespace BmwDeepObd
                                     adaptionValueStart = sb.ToString();
                                     adaptionValueNew = valueString;
                                     inputType = ActivityCommon.ConvertVagUdsDataTypeToInputType(parseInfoAdp.DataTypeEntry.DataTypeId);
-                                    validData = !string.IsNullOrEmpty(valueString);
+                                    validData = valueString != null;
                                 }
                             }
                         }
