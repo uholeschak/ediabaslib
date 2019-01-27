@@ -165,7 +165,6 @@ namespace BmwDeepObd
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
 
             _ecuInfo = IntentEcuInfo;
-            bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
             UpdateInfoAdaptionList();
 
             SupportActionBar.Title = string.Format(GetString(Resource.String.vag_adaption_title_adaption), Intent.GetStringExtra(ExtraEcuName) ?? string.Empty);
@@ -1120,7 +1119,7 @@ namespace BmwDeepObd
             {
                 _buttonAdaptionRead.Enabled = !jobRunning && validChannel;
                 _buttonAdaptionTest.Enabled = false;
-                _buttonAdaptionStore.Enabled = validChannel && jobRunning && !operationActive && _instanceData.AdaptionValueTest != null;
+                _buttonAdaptionStore.Enabled = validChannel && jobRunning && !operationActive && _instanceData.AdaptionDataNew != null;
             }
             else
             {
@@ -1297,6 +1296,7 @@ namespace BmwDeepObd
 
                     string repairShopCodeString = string.Format(CultureInfo.InvariantCulture, "{0:000000}{1:000}{2:00000}",
                         _instanceData.CurrentEquipmentNumber ?? 0, _instanceData.CurrentImporterNumber ?? 0, _instanceData.CurrentWorkshopNumber ?? 0);
+                    string repairShopCodeDataString = BitConverter.ToString(GetRepairShopCodeData()).Replace("-", "");
                     int adaptionChannel = _instanceData.SelectedChannel;
                     int serviceId = -1;
                     bool longAdaption = false;
@@ -1357,12 +1357,38 @@ namespace BmwDeepObd
                             bool storeAdaption = _instanceData.StoreAdaption;
                             bool stopAdaption = _instanceData.StopAdaption;
                             UInt64? adaptionValueNew = _instanceData.AdaptionValueNew;
+                            byte[] adaptionDataNew = _instanceData.AdaptionDataNew;
                             string adaptionJobArgs;
+                            string writeJobProgDate = string.Empty;
+                            string writeJobProgDateArgs = string.Empty;
+                            string writeJobRscName = string.Empty;
+                            string writeJobRscArgs = string.Empty;
 
                             if (isUdsEcu)
                             {
                                 adaptionJob = XmlToolActivity.JobReadS22Uds;
                                 adaptionJobArgs = string.Format(CultureInfo.InvariantCulture, "{0}", serviceId);
+                                if (storeAdaption && adaptionDataNew != null)
+                                {
+                                    string adationDataString = BitConverter.ToString(adaptionDataNew).Replace("-", "");
+                                    adaptionJob = XmlToolActivity.JobWriteS2EUds;
+                                    adaptionJobArgs = string.Format(CultureInfo.InvariantCulture, "{0};{1}", serviceId, adationDataString);
+
+                                    byte[] progDate = _ecuInfo.VagProgDate;
+                                    if (progDate == null)
+                                    {
+                                        progDate = new byte[3];
+                                        DateTime dateTime = DateTime.Now;
+                                        progDate[0] = (byte)ActivityCommon.DecToBcd(dateTime.Year % 100);
+                                        progDate[1] = (byte)ActivityCommon.DecToBcd(dateTime.Month);
+                                        progDate[2] = (byte)ActivityCommon.DecToBcd(dateTime.Day);
+                                    }
+                                    writeJobProgDate = XmlToolActivity.JobWriteS2EUds;
+                                    writeJobProgDateArgs = "0xF199;" + BitConverter.ToString(progDate).Replace("-", "");
+
+                                    writeJobRscName = XmlToolActivity.JobWriteS2EUds;
+                                    writeJobRscArgs = "0xF198;" + repairShopCodeDataString;
+                                }
 
                                 if (connected)
                                 {
@@ -1418,6 +1444,34 @@ namespace BmwDeepObd
                                     }
                                 }
                                 adaptionJobArgs = repairShopCodeString + string.Format(CultureInfo.InvariantCulture, ";{0};{1}", adaptionChannel, adaptionCommand);
+                            }
+
+                            if (!executeFailed && !string.IsNullOrEmpty(writeJobProgDate))
+                            {
+                                _ediabas.ArgString = writeJobProgDateArgs;
+                                _ediabas.ArgBinaryStd = null;
+                                _ediabas.ResultsRequests = string.Empty;
+                                _ediabas.ExecuteJob(writeJobProgDate);
+
+                                jobStatus = CheckAdaptionResult();
+                                if (jobStatus != JobStatus.Ok)
+                                {
+                                    executeFailed = true;
+                                }
+                            }
+
+                            if (!executeFailed && !string.IsNullOrEmpty(writeJobRscName))
+                            {
+                                _ediabas.ArgString = writeJobRscArgs;
+                                _ediabas.ArgBinaryStd = null;
+                                _ediabas.ResultsRequests = string.Empty;
+                                _ediabas.ExecuteJob(writeJobRscName);
+
+                                jobStatus = CheckAdaptionResult();
+                                if (jobStatus != JobStatus.Ok)
+                                {
+                                    executeFailed = true;
+                                }
                             }
 
                             _ediabas.ArgString = adaptionJobArgs;
@@ -1573,7 +1627,15 @@ namespace BmwDeepObd
                             if (storeAdaption)
                             {
                                 _instanceData.StoreAdaption = false;
-                                _instanceData.StopAdaption = true;
+                                if (isUdsEcu)
+                                {
+                                    connected = false;
+                                    _instanceData.AdaptionDataNew = null;
+                                }
+                                else
+                                {
+                                    _instanceData.StopAdaption = true;
+                                }
                             }
 
                             if (!resetChannel && _instanceData.AdaptionValueStart == null && adaptionValue != null)
@@ -1602,10 +1664,13 @@ namespace BmwDeepObd
                                     }
                                 }
 
-                                _instanceData.AdaptionData = adaptionData;
-                                if (_instanceData.AdaptionDataNew == null && adaptionData != null)
+                                if (adaptionData != null)
                                 {
-                                    _instanceData.AdaptionDataNew = adaptionData;
+                                    _instanceData.AdaptionData = adaptionData;
+                                    if (_instanceData.AdaptionDataNew == null)
+                                    {
+                                        _instanceData.AdaptionDataNew = adaptionData;
+                                    }
                                 }
 
                                 UpdateAdaptionText(true);
