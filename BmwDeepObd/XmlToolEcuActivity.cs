@@ -447,16 +447,31 @@ namespace BmwDeepObd
             }
 
             bool adaptionEnabled = false;
-            if (_ecuInfo.VagSupportedFuncHash != null)
-            {
-                adaptionEnabled =
-                    _ecuInfo.VagSupportedFuncHash.Contains((UInt64) XmlToolActivity.SupportedFuncType.Adaption) ||
-                    _ecuInfo.VagSupportedFuncHash.Contains((UInt64) XmlToolActivity.SupportedFuncType.AdaptionLong) ||
-                    _ecuInfo.VagSupportedFuncHash.Contains((UInt64) XmlToolActivity.SupportedFuncType.AdaptionLong2);
-            }
-            if (XmlToolActivity.Is1281Ecu(_ecuInfo) || XmlToolActivity.IsUdsEcu(_ecuInfo))
+            if (XmlToolActivity.Is1281Ecu(_ecuInfo))
             {
                 adaptionEnabled = true;
+            }
+            else if (XmlToolActivity.IsUdsEcu(_ecuInfo))
+            {
+                UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_ecuInfo.VagUdsFileName);
+                if (udsReader != null)
+                {
+                    List<UdsFileReader.UdsReader.ParseInfoAdp> parseInfoAdaptionList = udsReader.GetAdpParseInfoList(_ecuInfo.VagUdsFileName);
+                    if (parseInfoAdaptionList?.Count > 0)
+                    {
+                        adaptionEnabled = true;
+                    }
+                }
+            }
+            else
+            {
+                if (_ecuInfo.VagSupportedFuncHash != null)
+                {
+                    adaptionEnabled =
+                        _ecuInfo.VagSupportedFuncHash.Contains((UInt64)XmlToolActivity.SupportedFuncType.Adaption) ||
+                        _ecuInfo.VagSupportedFuncHash.Contains((UInt64)XmlToolActivity.SupportedFuncType.AdaptionLong) ||
+                        _ecuInfo.VagSupportedFuncHash.Contains((UInt64)XmlToolActivity.SupportedFuncType.AdaptionLong2);
+                }
             }
 
             _buttonCoding2 = FindViewById<Button>(Resource.Id.buttonCoding2);
