@@ -1108,7 +1108,7 @@ namespace UdsFileReader
                                 }
                             }
 
-                            sb.Append(DataReader.EncodingLatin1.GetString(subData));
+                            sb.Append(DataReader.EncodingLatin1.GetString(subData).TrimEnd('\0', ' '));
                             break;
 
                         default:
