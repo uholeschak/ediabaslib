@@ -7136,17 +7136,23 @@ namespace CarSimulator
                     break;
                 }
                 lastRecTime = Stopwatch.GetTimestamp();
-                int recLength = _receiveData[0] & 0x3F;
+                int dataLength = _receiveData[0] & 0x3F;
+                int dataOffset = 3;
+                int recLength = dataLength;
                 if (recLength == 0)
                 {
                     // with length byte
                     if (_receiveData[3] == 0)
                     {
-                        recLength = (_receiveData[4] << 8) + _receiveData[5] + 6;
+                        dataLength = (_receiveData[4] << 8) + _receiveData[5];
+                        dataOffset = 6;
+                        recLength = dataLength + 6;
                     }
                     else
                     {
-                        recLength = _receiveData[3] + 4;
+                        dataLength = _receiveData[3];
+                        dataOffset = 4;
+                        recLength = dataLength + 4;
                     }
                 }
                 else
@@ -7342,6 +7348,37 @@ namespace CarSimulator
                                     found = true;
                                     Debug.WriteLine("Dummy service2E: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
                                     byte[] dummyResponse = { 0x83, _receiveData[1], _receiveData[2], 0x6E, _receiveData[4], _receiveData[5], 0x00 };   // positive write ACK
+
+                                    if (recLength > 3)
+                                    {
+                                        foreach (ResponseEntry responseEntry in _configData.ResponseList)
+                                        {
+                                            if (responseEntry.Request.Length == 7 && responseEntry.Request[1] == _receiveData[1] && responseEntry.Request[2] == _receiveData[2] &&
+                                                responseEntry.Request[3] == 0x22 && responseEntry.Request[4] == _receiveData[4] && responseEntry.Request[5] == _receiveData[5])
+                                            {
+                                                Debug.WriteLine("Found service 22 read entry");
+                                                byte[] responseTelDyn = responseEntry.ResponseDyn;
+                                                if (responseTelDyn != null &&
+                                                    responseTelDyn[0] == _receiveData[0] && responseTelDyn[3] == 0x62 &&
+                                                    responseTelDyn[4] == _receiveData[4] && responseTelDyn[5] == _receiveData[5] && recLength == responseTelDyn.Length)
+                                                {
+                                                    Debug.WriteLine("Updating read entry dyn");
+                                                    Array.Copy(_receiveData, dataOffset + 3, responseTelDyn, dataOffset + 3, dataLength - 3);
+                                                }
+
+                                                foreach (byte[] responseTel in responseEntry.ResponseMultiList)
+                                                {
+                                                    if (responseTel[0] == _receiveData[0] && responseTel[3] == 0x62 &&
+                                                        responseTel[4] == _receiveData[4] && responseTel[5] == _receiveData[5] && recLength == responseTel.Length)
+                                                    {
+                                                        Debug.WriteLine("Updating coding response multi");
+                                                        Array.Copy(_receiveData, dataOffset + 3, responseTel, dataOffset + 3, dataLength - 3);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
                                     ObdSend(dummyResponse);
                                 }
                                 else if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3] == 0x3B)
