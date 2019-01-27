@@ -1099,7 +1099,6 @@ namespace UdsFileReader
                                 try
                                 {
                                     newDataBytes = new byte[subData.Length];
-                                    Array.Fill(newDataBytes, (byte)' ');
                                     int dataLength = newValueString.Length > newDataBytes.Length ? newDataBytes.Length : newValueString.Length;
                                     DataReader.EncodingLatin1.GetBytes(newValueString, 0, dataLength, newDataBytes, 0);
                                 }
