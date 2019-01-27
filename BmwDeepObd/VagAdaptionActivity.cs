@@ -46,6 +46,7 @@ namespace BmwDeepObd
             public bool TestAdaption { get; set; }
             public bool StoreAdaption { get; set; }
             public bool StopAdaption { get; set; }
+            public bool AutoClose { get; set; }
         }
 
         // Intent extra
@@ -397,6 +398,8 @@ namespace BmwDeepObd
         {
             if (IsJobRunning())
             {
+                _instanceData.StopAdaption = true;
+                _instanceData.AutoClose = true;
                 return;
             }
             StoreResults();
@@ -411,6 +414,8 @@ namespace BmwDeepObd
                 case Android.Resource.Id.Home:
                     if (IsJobRunning())
                     {
+                        _instanceData.StopAdaption = true;
+                        _instanceData.AutoClose = true;
                         return true;
                     }
                     StoreResults();
@@ -1285,6 +1290,7 @@ namespace BmwDeepObd
                 _instanceData.StoreAdaption = false;
             }
             _instanceData.StopAdaption = false;
+            _instanceData.AutoClose = false;
 
             bool executeFailed = false;
             JobStatus jobStatus = JobStatus.Unknown;
@@ -1709,6 +1715,14 @@ namespace BmwDeepObd
                             resId = Resource.String.vag_coding_write_coding_failed;
                         }
                         _activityCommon.ShowAlert(GetString(resId), Resource.String.alert_title_error);
+                    }
+                    else
+                    {
+                        if (_instanceData.AutoClose)
+                        {
+                            Finish();
+                            return;
+                        }
                     }
 
                     _updateHandler?.Post(() =>
