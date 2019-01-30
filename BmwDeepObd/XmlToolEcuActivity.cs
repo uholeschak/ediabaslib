@@ -567,6 +567,7 @@ namespace BmwDeepObd
 
         public override void OnBackPressed()
         {
+            UpdateResultSettings(_selectedResult);
             NoSelectionWarn(accepted =>
             {
                 if (accepted)
@@ -1212,15 +1213,26 @@ namespace BmwDeepObd
             UpdateFormatFields(resultInfo, formatType == FormatType.User);
         }
 
-        private bool AnyResultsSelected()
+        private bool AnyResultsSelected(bool checkGrid)
         {
+            bool gridMode = checkGrid && _ecuInfo.DisplayMode == JobReader.PageInfo.DisplayModeType.Grid;
             foreach (JobInfo jobInfo in _ecuInfo.JobList)
             {
                 if (jobInfo.Selected)
                 {
-                    if (jobInfo.Results.Any(resultInfo => resultInfo.Selected))
+                    if (gridMode)
                     {
-                        return true;
+                        if (jobInfo.Results.Any(resultInfo => resultInfo.Selected && resultInfo.GridType != JobReader.DisplayInfo.GridModeType.Hidden))
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        if (jobInfo.Results.Any(resultInfo => resultInfo.Selected))
+                        {
+                            return true;
+                        }
                     }
                 }
             }
@@ -1230,10 +1242,19 @@ namespace BmwDeepObd
 
         private void NoSelectionWarn(AcceptDelegate handler)
         {
-            if (AnyResultsSelected())
+            if (AnyResultsSelected(true))
             {
                 handler(true);
                 return;
+            }
+
+            int resourceId = Resource.String.xml_tool_ecu_msg_no_selection;
+            if (_ecuInfo.DisplayMode == JobReader.PageInfo.DisplayModeType.Grid)
+            {
+                if (AnyResultsSelected(false))
+                {
+                    resourceId = Resource.String.xml_tool_ecu_msg_no_grip_selection;
+                }
             }
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
@@ -1244,7 +1265,7 @@ namespace BmwDeepObd
                 {
                     handler(false);
                 })
-                .SetMessage(Resource.String.xml_tool_ecu_msg_no_selection)
+                .SetMessage(resourceId)
                 .SetTitle(Resource.String.alert_title_question)
                 .Show();
         }
