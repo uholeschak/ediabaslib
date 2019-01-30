@@ -749,10 +749,30 @@ namespace UdsFileReader
 
             public string ToString(CultureInfo cultureInfo, byte[] data, out string unitText, out double? stringDataValue)
             {
-                return ToString(cultureInfo, data, null, out unitText, out stringDataValue, out byte[] _);
+                stringDataValue = null;
+                string result = ToString(cultureInfo, data, null, out unitText, out object dataValue, out byte[] _);
+
+                DataType dataType = (DataType)(DataTypeId & DataTypeMaskEnum);
+                if (dataType != DataType.ValueName)
+                {
+                    if (dataValue is double dataValueDouble)
+                    {
+                        stringDataValue = dataValueDouble;
+                    }
+                    else if (dataValue is UInt64 dataValueUint)
+                    {
+                        stringDataValue = dataValueUint;
+                    }
+                    else if (dataValue is Int64 dataValueInt)
+                    {
+                        stringDataValue = dataValueInt;
+                    }
+                }
+
+                return result;
             }
 
-            public string ToString(CultureInfo cultureInfo, byte[] data, string newValueString, out string unitText, out double? stringDataValue, out byte[] dataNew)
+            public string ToString(CultureInfo cultureInfo, byte[] data, string newValueString, out string unitText, out object stringDataValue, out byte[] dataNew)
             {
                 string result = DataToString(cultureInfo, data, newValueString, out unitText, out stringDataValue, out dataNew);
                 if (dataNew != null)
@@ -762,7 +782,7 @@ namespace UdsFileReader
                 return result;
             }
 
-            private string DataToString(CultureInfo cultureInfo, byte[] data, string newValueString, out string unitText, out double? stringDataValue, out byte[] dataNew)
+            private string DataToString(CultureInfo cultureInfo, byte[] data, string newValueString, out string unitText, out object stringDataValue, out byte[] dataNew)
             {
                 unitText = null;
                 stringDataValue = null;
@@ -869,6 +889,7 @@ namespace UdsFileReader
                                     {
                                         if (valueName.NameArray != null && valueName.NameArray.Length > 0)
                                         {
+                                            stringDataValue = value;
                                             return valueName.NameArray[0];
                                         }
                                         return string.Empty;
