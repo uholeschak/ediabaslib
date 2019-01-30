@@ -413,6 +413,7 @@
   <string name="xml_tool_execute_test_job">Executing job</string>
   <string name="xml_tool_read_test_job_failed">Executing job failed</string>
   <string name="xml_tool_ecu_msg_no_selection">You have selected no data to display.\nFor this select the desired jobs and results first from the list.\nDo you want to abort anyway?</string>
+  <string name="xml_tool_ecu_msg_no_grip_selection">You have activated the graphical display, but not selected any graphical design.\nNothing will be displayed.\nDo you want to abort anyway?</string>
   <string name="xml_tool_result_amount_limit">Depending on the ECU type the amount of results is limited.\nIf you select too many results no data will be transmitted.</string>
 
   <!-- XML ECU Tool Options Menu -->
