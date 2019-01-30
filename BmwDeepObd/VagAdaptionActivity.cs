@@ -738,7 +738,7 @@ namespace BmwDeepObd
                         {
                             string newValueString = _editTextVagAdaptionValueNew.Text;
                             string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, newValueString, 
-                                out string unitText, out double? _, out byte[] newData);
+                                out string unitText, out object _, out byte[] newData);
                             if (newData != null && valueString != null)
                             {
                                 _instanceData.AdaptionDataNew = newData;
