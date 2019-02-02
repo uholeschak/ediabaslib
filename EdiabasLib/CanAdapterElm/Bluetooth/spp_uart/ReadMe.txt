@@ -71,6 +71,7 @@ Compiling:
 - Special setting in original file:
   Bootmode none: Host interface(PSKEY_HOST_INTERFACE)=UART link running BCSP
   Bootmode 1: Host interface(PSKEY_HOST_INTERFACE)=VM access to UART
+  Always set bootmode 1 first, otherwise access to the chip is impossible afterwards!
 - Compile and flash: compile.bat flash
 - Clean: compile.bat clean
 - Build: compile.bat build
