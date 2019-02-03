@@ -772,9 +772,9 @@ namespace UdsFileReader
                 return result;
             }
 
-            public string ToString(CultureInfo cultureInfo, byte[] data, string newValueString, out string unitText, out object stringDataValue, out byte[] dataNew)
+            public string ToString(CultureInfo cultureInfo, byte[] data, object newValueObject, out string unitText, out object stringDataValue, out byte[] dataNew)
             {
-                string result = DataToString(cultureInfo, data, newValueString, out unitText, out stringDataValue, out dataNew);
+                string result = DataToString(cultureInfo, data, newValueObject, out unitText, out stringDataValue, out dataNew);
                 if (dataNew != null)
                 {
                     result = DataToString(cultureInfo, dataNew, null, out unitText, out stringDataValue, out byte[] _);
@@ -782,7 +782,7 @@ namespace UdsFileReader
                 return result;
             }
 
-            private string DataToString(CultureInfo cultureInfo, byte[] data, string newValueString, out string unitText, out object stringDataValue, out byte[] dataNew)
+            private string DataToString(CultureInfo cultureInfo, byte[] data, object newValueObject, out string unitText, out object stringDataValue, out byte[] dataNew)
             {
                 unitText = null;
                 stringDataValue = null;
@@ -791,6 +791,8 @@ namespace UdsFileReader
                 {
                     return string.Empty;
                 }
+
+                string newValueString = newValueObject as string;
                 UInt64? newValue = null;
                 double? newScaledValue = null;
                 byte[] newDataBytes = null;
@@ -871,6 +873,11 @@ namespace UdsFileReader
                                 if (NameValueList == null)
                                 {
                                     return string.Empty;
+                                }
+
+                                if (newValueObject is UInt64 newValueUlong)
+                                {
+                                    newValue = newValueUlong;
                                 }
 
                                 foreach (ValueName valueName in NameValueList)
