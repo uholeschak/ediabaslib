@@ -142,6 +142,10 @@
                 android:layout_height="wrap_content"
                 android:background="#666"
                 android:textColor="#fff" />
+            <android.widget.Spinner
+                android:id="@+id/spinnerVagAdaptionValueNew"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
             <EditText
                 android:id="@+id/editTextVagAdaptionValueNew"
                 android:layout_width="match_parent"
