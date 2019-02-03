@@ -94,6 +94,8 @@ namespace BmwDeepObd
         private TextView _textViewVagAdaptionValueCurrentTitle;
         private TextView _textViewVagAdaptionValueCurrent;
         private TextView _textViewVagAdaptionValueNewTitle;
+        private Spinner _spinnerVagAdaptionValueNew;
+        private StringObjAdapter _spinnerVagAdaptionValueNewAdapter;
         private EditText _editTextVagAdaptionValueNew;
         private TextView _textViewVagAdaptionValueTestTitle;
         private TextView _textViewVagAdaptionValueTest;
@@ -251,6 +253,12 @@ namespace BmwDeepObd
 
             _textViewVagAdaptionValueNewTitle = FindViewById<TextView>(Resource.Id.textViewVagAdaptionValueNewTitle);
             _textViewVagAdaptionValueNewTitle.SetOnTouchListener(this);
+
+            _spinnerVagAdaptionValueNew = FindViewById<Spinner>(Resource.Id.spinnerVagAdaptionValueNew);
+            _spinnerVagAdaptionValueNew.SetOnTouchListener(this);
+            _spinnerVagAdaptionValueNewAdapter = new StringObjAdapter(this);
+            _spinnerVagAdaptionValueNew.Adapter = _spinnerVagAdaptionValueNewAdapter;
+            _spinnerVagAdaptionValueNew.ItemSelected += AdaptionValueNewItemSelected;
 
             _editTextVagAdaptionValueNew = FindViewById<EditText>(Resource.Id.editTextVagAdaptionValueNew);
             _editTextVagAdaptionValueNew.EditorAction += AdaptionEditorAction;
@@ -685,6 +693,11 @@ namespace BmwDeepObd
             UpdateAdaptionInfo();
         }
 
+        private void AdaptionValueNewItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
+        {
+            HideKeyboard();
+        }
+
         private void AdaptionEditorAction(object sender, TextView.EditorActionEventArgs e)
         {
             switch (e.ActionId)
@@ -1025,6 +1038,39 @@ namespace BmwDeepObd
                                     adaptionValueNew = valueString;
                                     inputType = ActivityCommon.ConvertVagUdsDataTypeToInputType(parseInfoAdp.DataTypeEntry.DataTypeId);
                                     validData = valueString != null;
+                                    UdsFileReader.UdsReader.DataType dataType =
+                                        (UdsFileReader.UdsReader.DataType)(parseInfoAdp.DataTypeEntry.DataTypeId & UdsFileReader.UdsReader.DataTypeMaskEnum);
+                                    bool isValueName = dataType == UdsFileReader.UdsReader.DataType.ValueName;
+                                    if (isValueName && _instanceData.UpdateAdaptionValueNew)
+                                    {
+                                        byte[] testData = new byte[_instanceData.AdaptionData.Length];
+                                        Array.Copy(_instanceData.AdaptionData, testData, testData.Length);
+                                        _spinnerVagAdaptionValueNewAdapter.Items.Clear();
+                                        for (UInt64 testValue = 0;; testValue++)
+                                        {
+                                            string testValueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, testData, testValue,
+                                                out string _, out object testValueSet, out byte[] newData);
+                                            bool setDataValid = false;
+                                            if (testValueSet is UInt64 testValueSetUint)
+                                            {
+                                                if (newData != null && testValue == testValueSetUint)
+                                                {
+                                                    setDataValid = true;
+                                                }
+                                            }
+                                            if (!setDataValid)
+                                            {
+                                                break;
+                                            }
+                                            string text = string.Format(CultureInfo.InvariantCulture, "{0}", testValue);
+                                            if (!string.IsNullOrWhiteSpace(testValueString))
+                                            {
+                                                text += " :" + testValueString;
+                                            }
+                                            _spinnerVagAdaptionValueNewAdapter.Items.Add(new StringObjType(text, testValue));
+                                        }
+                                        _spinnerVagAdaptionValueNewAdapter.NotifyDataSetChanged();
+                                    }
                                 }
                             }
                         }
@@ -1072,7 +1118,22 @@ namespace BmwDeepObd
             _editTextVagAdaptionChannelNumber.Enabled = !jobRunning && !isUdsEcu;
             _editTextVagAdaptionChannelNumber.Text = adaptionChannelNumber;
             _textViewVagAdaptionValueCurrent.Text = adaptionValueStart;
-            _editTextVagAdaptionValueNew.Enabled = jobRunning && !resetChannel && validData;
+
+            bool enableAdaptionNew = jobRunning && !resetChannel && validData;
+            if (_spinnerVagAdaptionValueNewAdapter.Items.Count == 0)
+            {
+                _spinnerVagAdaptionValueNew.Visibility = ViewStates.Gone;
+                _editTextVagAdaptionValueNew.Visibility = ViewStates.Visible;
+                _spinnerVagAdaptionValueNew.Enabled = false;
+                _editTextVagAdaptionValueNew.Enabled = enableAdaptionNew;
+            }
+            else
+            {
+                _spinnerVagAdaptionValueNew.Visibility = ViewStates.Visible;
+                _editTextVagAdaptionValueNew.Visibility = ViewStates.Gone;
+                _spinnerVagAdaptionValueNew.Enabled = enableAdaptionNew;
+                _editTextVagAdaptionValueNew.Enabled = false;
+            }
             if (_editTextVagAdaptionValueNew.Enabled)
             {
                 if (_instanceData.UpdateAdaptionValueNew)
