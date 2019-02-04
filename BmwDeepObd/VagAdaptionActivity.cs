@@ -509,6 +509,22 @@ namespace BmwDeepObd
             return false;
         }
 
+        private bool IsValueName(UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp)
+        {
+            bool isValueName = false;
+            if (parseInfoAdp != null)
+            {
+                UdsFileReader.UdsReader.DataType dataType =
+                    (UdsFileReader.UdsReader.DataType)(parseInfoAdp.DataTypeEntry.DataTypeId & UdsFileReader.UdsReader.DataTypeMaskEnum);
+                if (dataType == UdsFileReader.UdsReader.DataType.ValueName)
+                {
+                    isValueName = true;
+                }
+            }
+
+            return isValueName;
+        }
+
         private void BroadcastReceived(Context context, Intent intent)
         {
             if (intent == null)
@@ -1024,7 +1040,8 @@ namespace BmwDeepObd
                                 if (parseInfoAdp != null)
                                 {
                                     StringBuilder sb = new StringBuilder();
-                                    string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, out string unitText, out double? _);
+                                    string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, null,
+                                        out string unitText, out object dataValueObject, out byte[] _);
                                     sb.Append(valueString);
                                     if (!string.IsNullOrEmpty(unitText))
                                     {
@@ -1038,11 +1055,24 @@ namespace BmwDeepObd
                                     adaptionValueNew = valueString;
                                     inputType = ActivityCommon.ConvertVagUdsDataTypeToInputType(parseInfoAdp.DataTypeEntry.DataTypeId);
                                     validData = valueString != null;
-                                    UdsFileReader.UdsReader.DataType dataType =
-                                        (UdsFileReader.UdsReader.DataType)(parseInfoAdp.DataTypeEntry.DataTypeId & UdsFileReader.UdsReader.DataTypeMaskEnum);
-                                    bool isValueName = dataType == UdsFileReader.UdsReader.DataType.ValueName;
+                                    bool isValueName = IsValueName(parseInfoAdp);
                                     if (isValueName && _instanceData.UpdateAdaptionValueNew)
                                     {
+                                        StringBuilder sbText = new StringBuilder();
+                                        if (dataValueObject is UInt64 dataValueUint)
+                                        {
+                                            sbText.Append(string.Format(CultureInfo.InvariantCulture, "{0}", dataValueUint));
+                                        }
+                                        if (!string.IsNullOrWhiteSpace(valueString))
+                                        {
+                                            if (sbText.Length > 0)
+                                            {
+                                                sbText.Append(": ");
+                                            }
+                                            sbText.Append(valueString);
+                                        }
+                                        adaptionValueNew = sbText.ToString();
+
                                         byte[] testData = new byte[_instanceData.AdaptionData.Length];
                                         Array.Copy(_instanceData.AdaptionData, testData, testData.Length);
                                         _spinnerVagAdaptionValueNewAdapter.Items.Clear();
@@ -1062,12 +1092,17 @@ namespace BmwDeepObd
                                             {
                                                 break;
                                             }
-                                            string text = string.Format(CultureInfo.InvariantCulture, "{0}", testValue);
+                                            StringBuilder sbItem = new StringBuilder();
+                                            sbItem.Append(string.Format(CultureInfo.InvariantCulture, "{0}", testValue));
                                             if (!string.IsNullOrWhiteSpace(testValueString))
                                             {
-                                                text += " :" + testValueString;
+                                                if (sbItem.Length > 0)
+                                                {
+                                                    sbItem.Append(": ");
+                                                }
+                                                sbItem.Append(testValueString);
                                             }
-                                            _spinnerVagAdaptionValueNewAdapter.Items.Add(new StringObjType(text, testValue));
+                                            _spinnerVagAdaptionValueNewAdapter.Items.Add(new StringObjType(sbItem.ToString(), testValue));
                                         }
                                         _spinnerVagAdaptionValueNewAdapter.NotifyDataSetChanged();
                                     }
