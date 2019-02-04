@@ -712,6 +712,7 @@ namespace BmwDeepObd
         private void AdaptionValueNewItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {
             HideKeyboard();
+            ReadAdaptionEditors();
         }
 
         private void AdaptionEditorAction(object sender, TextView.EditorActionEventArgs e)
@@ -757,7 +758,7 @@ namespace BmwDeepObd
 
             if (isUdsEcu)
             {
-                if (_editTextVagAdaptionValueNew.Enabled && _instanceData.AdaptionDataNew != null)
+                if ((_editTextVagAdaptionValueNew.Enabled || _spinnerVagAdaptionValueNew.Enabled) && _instanceData.AdaptionDataNew != null)
                 {
                     int selectedChannel = _instanceData.SelectedChannel;
                     if (selectedChannel >= 0 && selectedChannel < _parseInfoAdaptionList.Count)
@@ -765,22 +766,54 @@ namespace BmwDeepObd
                         UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp = _parseInfoAdaptionList[selectedChannel];
                         if (parseInfoAdp != null)
                         {
-                            string newValueString = _editTextVagAdaptionValueNew.Text;
-                            string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, newValueString, 
-                                out string unitText, out object _, out byte[] newData);
-                            if (newData != null && valueString != null)
+                            if (_editTextVagAdaptionValueNew.Enabled)
                             {
-                                _instanceData.AdaptionDataNew = newData;
-                                _editTextVagAdaptionValueNew.Text = valueString;
-                            }
-                            else
-                            {
-                                string valueStringRestore = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionDataNew, out string _, out double? _);
-                                if (valueStringRestore != null)
+                                string newValueString = _editTextVagAdaptionValueNew.Text;
+                                string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, newValueString,
+                                    out string _, out object _, out byte[] newData);
+                                if (newData != null && valueString != null)
                                 {
-                                    _editTextVagAdaptionValueNew.Text = valueStringRestore;
+                                    _instanceData.AdaptionDataNew = newData;
+                                    _editTextVagAdaptionValueNew.Text = valueString;
+                                }
+                                else
+                                {
+                                    string valueStringRestore = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionDataNew, out string _, out double? _);
+                                    if (valueStringRestore != null)
+                                    {
+                                        _editTextVagAdaptionValueNew.Text = valueStringRestore;
+                                    }
                                 }
                             }
+
+                            if (_spinnerVagAdaptionValueNew.Enabled)
+                            {
+                                try
+                                {
+                                    if (_spinnerVagAdaptionValueNew.SelectedItemPosition >= 0)
+                                    {
+                                        UInt64 selectedValue = (UInt64)_spinnerVagAdaptionValueNewAdapter.Items[_spinnerVagAdaptionValueNew.SelectedItemPosition].Data;
+                                        string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, selectedValue,
+                                            out string _, out object dataValueObject, out byte[] newData);
+                                        if (newData != null && valueString != null)
+                                        {
+                                            _instanceData.AdaptionDataNew = newData;
+                                            if (dataValueObject is UInt64 dataValueUint)
+                                            {
+                                                if (selectedValue != dataValueUint)
+                                                {
+                                                    dataChanged = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
+
                         }
                     }
                 }
@@ -1059,8 +1092,10 @@ namespace BmwDeepObd
                                     if (isValueName && _instanceData.UpdateAdaptionValueNew)
                                     {
                                         StringBuilder sbText = new StringBuilder();
+                                        UInt64? currentValue = null;
                                         if (dataValueObject is UInt64 dataValueUint)
                                         {
+                                            currentValue = dataValueUint;
                                             sbText.Append(string.Format(CultureInfo.InvariantCulture, "{0}", dataValueUint));
                                         }
                                         if (!string.IsNullOrWhiteSpace(valueString))
@@ -1073,9 +1108,11 @@ namespace BmwDeepObd
                                         }
                                         adaptionValueNew = sbText.ToString();
 
+                                        int selection = 0;
                                         byte[] testData = new byte[_instanceData.AdaptionData.Length];
                                         Array.Copy(_instanceData.AdaptionData, testData, testData.Length);
                                         _spinnerVagAdaptionValueNewAdapter.Items.Clear();
+                                        int index = 0;
                                         for (UInt64 testValue = 0;; testValue++)
                                         {
                                             string testValueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, testData, testValue,
@@ -1103,8 +1140,15 @@ namespace BmwDeepObd
                                                 sbItem.Append(testValueString);
                                             }
                                             _spinnerVagAdaptionValueNewAdapter.Items.Add(new StringObjType(sbItem.ToString(), testValue));
+                                            if (currentValue.HasValue && currentValue == testValue)
+                                            {
+                                                selection = index;
+                                            }
+
+                                            index++;
                                         }
                                         _spinnerVagAdaptionValueNewAdapter.NotifyDataSetChanged();
+                                        _spinnerVagAdaptionValueNew.SetSelection(selection);
                                     }
                                 }
                             }
