@@ -778,11 +778,9 @@ namespace BmwDeepObd
                                 }
                                 else
                                 {
-                                    string valueStringRestore = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionDataNew, out string _, out double? _);
-                                    if (valueStringRestore != null)
-                                    {
-                                        _editTextVagAdaptionValueNew.Text = valueStringRestore;
-                                    }
+                                    // restore old value
+                                    _instanceData.UpdateAdaptionValueNew = true;
+                                    dataChanged = true;
                                 }
                             }
 
@@ -795,16 +793,23 @@ namespace BmwDeepObd
                                         UInt64 selectedValue = (UInt64)_spinnerVagAdaptionValueNewAdapter.Items[_spinnerVagAdaptionValueNew.SelectedItemPosition].Data;
                                         string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, selectedValue,
                                             out string _, out object dataValueObject, out byte[] newData);
+                                        bool restoreValue = true;
                                         if (newData != null && valueString != null)
                                         {
-                                            _instanceData.AdaptionDataNew = newData;
                                             if (dataValueObject is UInt64 dataValueUint)
                                             {
-                                                if (selectedValue != dataValueUint)
+                                                if (selectedValue == dataValueUint)
                                                 {
-                                                    dataChanged = true;
+                                                    _instanceData.AdaptionDataNew = newData;
+                                                    restoreValue = false;
                                                 }
                                             }
+                                        }
+                                        if (restoreValue)
+                                        {
+                                            // restore old value
+                                            _instanceData.UpdateAdaptionValueNew = true;
+                                            dataChanged = true;
                                         }
                                     }
                                 }
@@ -813,7 +818,6 @@ namespace BmwDeepObd
                                     // ignored
                                 }
                             }
-
                         }
                     }
                 }
