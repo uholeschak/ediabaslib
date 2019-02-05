@@ -7340,7 +7340,12 @@ namespace CarSimulator
                                 {   // service 22
                                     found = true;
                                     Debug.WriteLine("Dummy service22: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
+#if true
                                     byte[] dummyResponse = { 0x83, _receiveData[1], _receiveData[2], 0x7F, _receiveData[3], 0x31, 0x00 };   // request out of range
+#else
+                                    byte[] dummyResponse = { 0x8C, _receiveData[1], _receiveData[2], 0x62, _receiveData[4], _receiveData[5],
+                                        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x00 };   // dummy string response
+#endif
                                     ObdSend(dummyResponse);
                                 }
                                 else if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3] == 0x2E)
