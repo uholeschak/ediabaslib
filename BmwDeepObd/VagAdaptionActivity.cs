@@ -525,6 +525,11 @@ namespace BmwDeepObd
             return isValueName;
         }
 
+        private bool IsResetChannel()
+        {
+            return !XmlToolActivity.IsUdsEcu(_ecuInfo) && _instanceData.SelectedChannel == ResetChannelNumber;
+        }
+
         private void BroadcastReceived(Context context, Intent intent)
         {
             if (intent == null)
@@ -964,7 +969,7 @@ namespace BmwDeepObd
             }
             else
             {
-                bool resetChannel = _instanceData.SelectedChannel == ResetChannelNumber;
+                bool resetChannel = IsResetChannel();
                 string[] measTitles = new string[MaxMeasValues];
                 StringBuilder sbAdaptionComment = new StringBuilder();
                 if (_dataInfoAdaptionList != null)
@@ -1055,7 +1060,7 @@ namespace BmwDeepObd
             bool jobRunning = IsJobRunning();
             bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
             bool is1281Ecu = XmlToolActivity.Is1281Ecu(_ecuInfo);
-            bool resetChannel = _instanceData.SelectedChannel == ResetChannelNumber;
+            bool resetChannel = IsResetChannel();
             bool validChannel = _instanceData.SelectedChannel >= 0;
             bool operationActive = _instanceData.TestAdaption || _instanceData.StoreAdaption || _instanceData.StoreAdaption;
             InputTypes inputType = InputTypes.ClassNumber;
@@ -1408,7 +1413,7 @@ namespace BmwDeepObd
 
             bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
             bool is1281Ecu = XmlToolActivity.Is1281Ecu(_ecuInfo);
-            bool resetChannel = _instanceData.SelectedChannel == ResetChannelNumber;
+            bool resetChannel = IsResetChannel();
             UInt64? startValue = null;
             if (resetChannel)
             {
