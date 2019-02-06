@@ -7356,31 +7356,60 @@ namespace CarSimulator
 
                                     if (recLength > 3)
                                     {
-                                        foreach (ResponseEntry responseEntry in _configData.ResponseList)
+                                        for (int retry = 0; retry < 2; retry++)
                                         {
-                                            if (responseEntry.Request.Length == 7 && responseEntry.Request[1] == _receiveData[1] && responseEntry.Request[2] == _receiveData[2] &&
-                                                responseEntry.Request[3] == 0x22 && responseEntry.Request[4] == _receiveData[4] && responseEntry.Request[5] == _receiveData[5])
+                                            bool entryFound = false;
+                                            foreach (ResponseEntry responseEntry in _configData.ResponseList)
                                             {
-                                                Debug.WriteLine("Found service 22 read entry");
-                                                byte[] responseTelDyn = responseEntry.ResponseDyn;
-                                                if (responseTelDyn != null &&
-                                                    responseTelDyn[0] == _receiveData[0] && responseTelDyn[3] == 0x62 &&
-                                                    responseTelDyn[4] == _receiveData[4] && responseTelDyn[5] == _receiveData[5] && recLength == responseTelDyn.Length)
+                                                if (responseEntry.Request.Length == 7 && responseEntry.Request[1] == _receiveData[1] && responseEntry.Request[2] == _receiveData[2] &&
+                                                    responseEntry.Request[3] == 0x22 && responseEntry.Request[4] == _receiveData[4] && responseEntry.Request[5] == _receiveData[5])
                                                 {
-                                                    Debug.WriteLine("Updating read entry dyn");
-                                                    Array.Copy(_receiveData, dataOffset + 3, responseTelDyn, dataOffset + 3, dataLength - 3);
-                                                }
-
-                                                foreach (byte[] responseTel in responseEntry.ResponseMultiList)
-                                                {
-                                                    if (responseTel[0] == _receiveData[0] && responseTel[3] == 0x62 &&
-                                                        responseTel[4] == _receiveData[4] && responseTel[5] == _receiveData[5] && recLength == responseTel.Length)
+                                                    Debug.WriteLine("Found service 22 read entry");
+                                                    entryFound = true;
+                                                    byte[] responseTelDyn = responseEntry.ResponseDyn;
+                                                    if (responseTelDyn != null &&
+                                                        responseTelDyn[0] == _receiveData[0] && responseTelDyn[3] == 0x62 &&
+                                                        responseTelDyn[4] == _receiveData[4] && responseTelDyn[5] == _receiveData[5] && recLength == responseTelDyn.Length)
                                                     {
-                                                        Debug.WriteLine("Updating coding response multi");
-                                                        Array.Copy(_receiveData, dataOffset + 3, responseTel, dataOffset + 3, dataLength - 3);
+                                                        Debug.WriteLine("Updating read entry dyn");
+                                                        Array.Copy(_receiveData, dataOffset + 3, responseTelDyn, dataOffset + 3, dataLength - 3);
+                                                    }
+
+                                                    foreach (byte[] responseTel in responseEntry.ResponseMultiList)
+                                                    {
+                                                        if (responseTel[0] == _receiveData[0] && responseTel[3] == 0x62 &&
+                                                            responseTel[4] == _receiveData[4] && responseTel[5] == _receiveData[5] && recLength == responseTel.Length)
+                                                        {
+                                                            Debug.WriteLine("Updating coding response multi");
+                                                            Array.Copy(_receiveData, dataOffset + 3, responseTel, dataOffset + 3, dataLength - 3);
+                                                        }
                                                     }
                                                 }
                                             }
+
+                                            if (entryFound)
+                                            {
+                                                break;
+                                            }
+
+                                            Debug.WriteLine("Generating service 22 read entry");
+                                            byte[] requestData = { 0x83, _receiveData[1], _receiveData[2], 0x22, _receiveData[4], _receiveData[5], 0x00 };
+                                            byte[] responseData = new byte[recLength];
+                                            Array.Copy(_receiveData, responseData, responseData.Length);
+                                            responseData[3] = 0x62;
+
+                                            byte[] configData = null;
+                                            foreach (ResponseEntry responseEntry in _configData.ResponseList)
+                                            {
+                                                if (responseEntry.Request[1] == _receiveData[1] && responseEntry.Request[2] == _receiveData[2])
+                                                {
+                                                    Debug.WriteLine("Found config data");
+                                                    configData = responseEntry.Config;
+                                                    break;
+                                                }
+                                            }
+
+                                            _configData.ResponseList.Add(new ResponseEntry(requestData, responseData, configData));
                                         }
                                     }
 
