@@ -89,7 +89,7 @@
       <ecu name="SZM" sgbd="d_bzm" />
       <ecu name="TCU" sgbd="d_tel" />
     </read_errors>
-    <code show_warnigs="true">
+    <code show_warnings="true">
       <![CDATA[
     class PageClass
     {

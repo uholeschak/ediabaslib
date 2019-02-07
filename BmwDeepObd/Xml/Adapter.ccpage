@@ -20,7 +20,7 @@
       <string name="adapter_config_ok">Konfiguration erfolgreich</string>
     </strings>
     <jobs sgbd="adapter_prg" />
-    <code show_warnigs="true">
+    <code show_warnings="true">
       <![CDATA[
     class PageClass
     {

@@ -44,7 +44,7 @@
       <string name="adapter_ignition_on">An</string>
     </strings>
     <jobs sgbd="adapter_prg" />
-    <code show_warnigs="true">
+    <code show_warnings="true">
       <![CDATA[
     class PageClass
     {

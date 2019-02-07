@@ -10,7 +10,7 @@
       <string name="tab_test">Test</string>
     </strings>
     <jobs />
-    <code show_warnigs="true">
+    <code show_warnings="true">
       <![CDATA[
     class PageClass
     {

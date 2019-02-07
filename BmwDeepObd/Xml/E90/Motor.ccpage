@@ -87,7 +87,7 @@
         <display name="label_motor_part_filt_dist_remain" result="STAT_PCBS_lDistanceOut_WERT" format="6.0R"/>
       </job>
     </jobs>
-    <code show_warnigs="true">
+    <code show_warnings="true">
       <![CDATA[
     class PageClass
     {
