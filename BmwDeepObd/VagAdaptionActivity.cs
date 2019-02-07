@@ -1081,10 +1081,13 @@ namespace BmwDeepObd
                                 UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp = _parseInfoAdaptionList[selectedChannel];
                                 if (parseInfoAdp != null)
                                 {
-                                    StringBuilder sb = new StringBuilder();
+                                    bool isValueName = IsValueName(parseInfoAdp);
                                     string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, null,
                                         out string unitText, out object dataValueObject, out byte[] _);
+
+                                    StringBuilder sb = new StringBuilder();
                                     sb.Append(valueString);
+
                                     if (!string.IsNullOrEmpty(unitText))
                                     {
                                         if (sb.Length > 0)
@@ -1093,29 +1096,18 @@ namespace BmwDeepObd
                                         }
                                         sb.Append(unitText);
                                     }
+
                                     adaptionValueStart = sb.ToString();
                                     adaptionValueNew = valueString;
                                     inputType = ActivityCommon.ConvertVagUdsDataTypeToInputType(parseInfoAdp.DataTypeEntry.DataTypeId);
                                     validData = valueString != null;
-                                    bool isValueName = IsValueName(parseInfoAdp);
                                     if (isValueName && _instanceData.UpdateAdaptionValueNew)
                                     {
-                                        StringBuilder sbText = new StringBuilder();
                                         UInt64? currentValue = null;
                                         if (dataValueObject is UInt64 dataValueUint)
                                         {
                                             currentValue = dataValueUint;
-                                            sbText.Append(string.Format(CultureInfo.InvariantCulture, "{0}", dataValueUint));
                                         }
-                                        if (!string.IsNullOrWhiteSpace(valueString))
-                                        {
-                                            if (sbText.Length > 0)
-                                            {
-                                                sbText.Append(": ");
-                                            }
-                                            sbText.Append(valueString);
-                                        }
-                                        adaptionValueNew = sbText.ToString();
 
                                         int selection = 0;
                                         byte[] testData = new byte[_instanceData.AdaptionData.Length];
@@ -1125,7 +1117,7 @@ namespace BmwDeepObd
                                         for (UInt64 testValue = 0;; testValue++)
                                         {
                                             string testValueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, testData, testValue,
-                                                out string _, out object testValueSet, out byte[] newData);
+                                                out string _, out object testValueSet, out byte[] newData, true);
                                             bool setDataValid = false;
                                             if (testValueSet is UInt64 testValueSetUint)
                                             {
@@ -1138,22 +1130,18 @@ namespace BmwDeepObd
                                             {
                                                 break;
                                             }
-                                            StringBuilder sbItem = new StringBuilder();
-                                            sbItem.Append(string.Format(CultureInfo.InvariantCulture, "{0}", testValue));
-                                            if (!string.IsNullOrWhiteSpace(testValueString))
-                                            {
-                                                if (sbItem.Length > 0)
-                                                {
-                                                    sbItem.Append(": ");
-                                                }
-                                                sbItem.Append(testValueString);
-                                            }
-                                            _spinnerVagAdaptionValueNewAdapter.Items.Add(new StringObjType(sbItem.ToString(), testValue));
-                                            if (currentValue.HasValue && currentValue == testValue)
-                                            {
-                                                selection = index;
-                                            }
 
+                                            if (!string.IsNullOrEmpty(testValueString))
+                                            {
+                                                StringBuilder sbItem = new StringBuilder();
+                                                sbItem.Append(string.Format(CultureInfo.InvariantCulture, "{0}: ", testValue));
+                                                sbItem.Append(testValueString);
+                                                _spinnerVagAdaptionValueNewAdapter.Items.Add(new StringObjType(sbItem.ToString(), testValue));
+                                                if (currentValue.HasValue && currentValue == testValue)
+                                                {
+                                                    selection = index;
+                                                }
+                                            }
                                             index++;
                                         }
                                         _spinnerVagAdaptionValueNewAdapter.NotifyDataSetChanged();
