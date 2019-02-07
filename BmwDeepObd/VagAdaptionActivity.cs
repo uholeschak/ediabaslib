@@ -1060,6 +1060,7 @@ namespace BmwDeepObd
             bool jobRunning = IsJobRunning();
             bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
             bool is1281Ecu = XmlToolActivity.Is1281Ecu(_ecuInfo);
+            UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp = null;
             bool isValueName = false;
             bool resetChannel = IsResetChannel();
             bool validChannel = _instanceData.SelectedChannel >= 0;
@@ -1070,85 +1071,93 @@ namespace BmwDeepObd
             try
             {
                 adaptionChannelNumber = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.SelectedChannel);
+                if (isUdsEcu)
+                {
+                    int selectedChannel = _instanceData.SelectedChannel;
+                    if (selectedChannel >= 0 && selectedChannel < _parseInfoAdaptionList.Count)
+                    {
+                        parseInfoAdp = _parseInfoAdaptionList[selectedChannel];
+                        if (parseInfoAdp != null)
+                        {
+                            isValueName = IsValueName(parseInfoAdp);
+                        }
+                    }
+                }
+
                 if (jobRunning)
                 {
                     if (isUdsEcu)
                     {
-                        int selectedChannel = _instanceData.SelectedChannel;
-                        if (selectedChannel >= 0 && selectedChannel < _parseInfoAdaptionList.Count)
+                        if (parseInfoAdp != null && _instanceData.AdaptionData != null)
                         {
-                            UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp = _parseInfoAdaptionList[selectedChannel];
-                            if (parseInfoAdp != null)
+                            string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, null,
+                                out string unitText, out object dataValueObject, out byte[] _);
+
+                            StringBuilder sb = new StringBuilder();
+                            sb.Append(valueString);
+
+                            if (!string.IsNullOrEmpty(unitText))
                             {
-                                isValueName = IsValueName(parseInfoAdp);
-                                if (_instanceData.AdaptionData != null)
+                                if (sb.Length > 0)
                                 {
-                                    string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, null,
-                                        out string unitText, out object dataValueObject, out byte[] _);
-
-                                    StringBuilder sb = new StringBuilder();
-                                    sb.Append(valueString);
-
-                                    if (!string.IsNullOrEmpty(unitText))
-                                    {
-                                        if (sb.Length > 0)
-                                        {
-                                            sb.Append(" ");
-                                        }
-                                        sb.Append(unitText);
-                                    }
-
-                                    adaptionValueStart = sb.ToString();
-                                    adaptionValueNew = valueString;
-                                    inputType = ActivityCommon.ConvertVagUdsDataTypeToInputType(parseInfoAdp.DataTypeEntry.DataTypeId);
-                                    validData = valueString != null;
-                                    if (isValueName && _instanceData.UpdateAdaptionValueNew)
-                                    {
-                                        UInt64? currentValue = null;
-                                        if (dataValueObject is UInt64 dataValueUint)
-                                        {
-                                            currentValue = dataValueUint;
-                                        }
-
-                                        int selection = 0;
-                                        byte[] testData = new byte[_instanceData.AdaptionData.Length];
-                                        Array.Copy(_instanceData.AdaptionData, testData, testData.Length);
-                                        _spinnerVagAdaptionValueNewAdapter.Items.Clear();
-                                        int index = 0;
-                                        for (UInt64 testValue = 0;; testValue++)
-                                        {
-                                            string testValueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, testData, testValue,
-                                                out string _, out object testValueSet, out byte[] newData, true);
-                                            bool setDataValid = false;
-                                            if (testValueSet is UInt64 testValueSetUint)
-                                            {
-                                                if (newData != null && testValue == testValueSetUint)
-                                                {
-                                                    setDataValid = true;
-                                                }
-                                            }
-                                            if (!setDataValid)
-                                            {
-                                                break;
-                                            }
-
-                                            if (!string.IsNullOrEmpty(testValueString))
-                                            {
-                                                StringBuilder sbItem = new StringBuilder();
-                                                sbItem.Append(string.Format(CultureInfo.InvariantCulture, "{0}: ", testValue));
-                                                sbItem.Append(testValueString);
-                                                _spinnerVagAdaptionValueNewAdapter.Items.Add(new StringObjType(sbItem.ToString(), testValue));
-                                                if (currentValue.HasValue && currentValue == testValue)
-                                                {
-                                                    selection = index;
-                                                }
-                                            }
-                                            index++;
-                                        }
-                                        _spinnerVagAdaptionValueNewAdapter.NotifyDataSetChanged();
-                                        _spinnerVagAdaptionValueNew.SetSelection(selection);
-                                    }
+                                    sb.Append(" ");
                                 }
+
+                                sb.Append(unitText);
+                            }
+
+                            adaptionValueStart = sb.ToString();
+                            adaptionValueNew = valueString;
+                            inputType = ActivityCommon.ConvertVagUdsDataTypeToInputType(parseInfoAdp.DataTypeEntry.DataTypeId);
+                            validData = valueString != null;
+                            if (isValueName && _instanceData.UpdateAdaptionValueNew)
+                            {
+                                UInt64? currentValue = null;
+                                if (dataValueObject is UInt64 dataValueUint)
+                                {
+                                    currentValue = dataValueUint;
+                                }
+
+                                int selection = 0;
+                                byte[] testData = new byte[_instanceData.AdaptionData.Length];
+                                Array.Copy(_instanceData.AdaptionData, testData, testData.Length);
+                                _spinnerVagAdaptionValueNewAdapter.Items.Clear();
+                                int index = 0;
+                                for (UInt64 testValue = 0;; testValue++)
+                                {
+                                    string testValueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, testData, testValue,
+                                        out string _, out object testValueSet, out byte[] newData, true);
+                                    bool setDataValid = false;
+                                    if (testValueSet is UInt64 testValueSetUint)
+                                    {
+                                        if (newData != null && testValue == testValueSetUint)
+                                        {
+                                            setDataValid = true;
+                                        }
+                                    }
+
+                                    if (!setDataValid)
+                                    {
+                                        break;
+                                    }
+
+                                    if (!string.IsNullOrEmpty(testValueString))
+                                    {
+                                        StringBuilder sbItem = new StringBuilder();
+                                        sbItem.Append(string.Format(CultureInfo.InvariantCulture, "{0}: ", testValue));
+                                        sbItem.Append(testValueString);
+                                        _spinnerVagAdaptionValueNewAdapter.Items.Add(new StringObjType(sbItem.ToString(), testValue));
+                                        if (currentValue.HasValue && currentValue == testValue)
+                                        {
+                                            selection = index;
+                                        }
+                                    }
+
+                                    index++;
+                                }
+
+                                _spinnerVagAdaptionValueNewAdapter.NotifyDataSetChanged();
+                                _spinnerVagAdaptionValueNew.SetSelection(selection);
                             }
                         }
                     }
