@@ -1060,6 +1060,8 @@ namespace BmwDeepObd
             bool jobRunning = IsJobRunning();
             bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
             bool is1281Ecu = XmlToolActivity.Is1281Ecu(_ecuInfo);
+            UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp = null;
+            bool isValueName = false;
             bool resetChannel = IsResetChannel();
             bool validChannel = _instanceData.SelectedChannel >= 0;
             bool operationActive = _instanceData.TestAdaption || _instanceData.StoreAdaption || _instanceData.StoreAdaption;
@@ -1069,97 +1071,93 @@ namespace BmwDeepObd
             try
             {
                 adaptionChannelNumber = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.SelectedChannel);
+                if (isUdsEcu)
+                {
+                    int selectedChannel = _instanceData.SelectedChannel;
+                    if (selectedChannel >= 0 && selectedChannel < _parseInfoAdaptionList.Count)
+                    {
+                        parseInfoAdp = _parseInfoAdaptionList[selectedChannel];
+                        if (parseInfoAdp != null)
+                        {
+                            isValueName = IsValueName(parseInfoAdp);
+                        }
+                    }
+                }
+
                 if (jobRunning)
                 {
                     if (isUdsEcu)
                     {
-                        if (_instanceData.AdaptionData != null)
+                        if (parseInfoAdp != null && _instanceData.AdaptionData != null)
                         {
-                            int selectedChannel = _instanceData.SelectedChannel;
-                            if (selectedChannel >= 0 && selectedChannel < _parseInfoAdaptionList.Count)
+                            string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, null,
+                                out string unitText, out object dataValueObject, out byte[] _);
+
+                            StringBuilder sb = new StringBuilder();
+                            sb.Append(valueString);
+
+                            if (!string.IsNullOrEmpty(unitText))
                             {
-                                UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp = _parseInfoAdaptionList[selectedChannel];
-                                if (parseInfoAdp != null)
+                                if (sb.Length > 0)
                                 {
-                                    StringBuilder sb = new StringBuilder();
-                                    string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, null,
-                                        out string unitText, out object dataValueObject, out byte[] _);
-                                    sb.Append(valueString);
-                                    if (!string.IsNullOrEmpty(unitText))
-                                    {
-                                        if (sb.Length > 0)
-                                        {
-                                            sb.Append(" ");
-                                        }
-                                        sb.Append(unitText);
-                                    }
-                                    adaptionValueStart = sb.ToString();
-                                    adaptionValueNew = valueString;
-                                    inputType = ActivityCommon.ConvertVagUdsDataTypeToInputType(parseInfoAdp.DataTypeEntry.DataTypeId);
-                                    validData = valueString != null;
-                                    bool isValueName = IsValueName(parseInfoAdp);
-                                    if (isValueName && _instanceData.UpdateAdaptionValueNew)
-                                    {
-                                        StringBuilder sbText = new StringBuilder();
-                                        UInt64? currentValue = null;
-                                        if (dataValueObject is UInt64 dataValueUint)
-                                        {
-                                            currentValue = dataValueUint;
-                                            sbText.Append(string.Format(CultureInfo.InvariantCulture, "{0}", dataValueUint));
-                                        }
-                                        if (!string.IsNullOrWhiteSpace(valueString))
-                                        {
-                                            if (sbText.Length > 0)
-                                            {
-                                                sbText.Append(": ");
-                                            }
-                                            sbText.Append(valueString);
-                                        }
-                                        adaptionValueNew = sbText.ToString();
-
-                                        int selection = 0;
-                                        byte[] testData = new byte[_instanceData.AdaptionData.Length];
-                                        Array.Copy(_instanceData.AdaptionData, testData, testData.Length);
-                                        _spinnerVagAdaptionValueNewAdapter.Items.Clear();
-                                        int index = 0;
-                                        for (UInt64 testValue = 0;; testValue++)
-                                        {
-                                            string testValueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, testData, testValue,
-                                                out string _, out object testValueSet, out byte[] newData);
-                                            bool setDataValid = false;
-                                            if (testValueSet is UInt64 testValueSetUint)
-                                            {
-                                                if (newData != null && testValue == testValueSetUint)
-                                                {
-                                                    setDataValid = true;
-                                                }
-                                            }
-                                            if (!setDataValid)
-                                            {
-                                                break;
-                                            }
-                                            StringBuilder sbItem = new StringBuilder();
-                                            sbItem.Append(string.Format(CultureInfo.InvariantCulture, "{0}", testValue));
-                                            if (!string.IsNullOrWhiteSpace(testValueString))
-                                            {
-                                                if (sbItem.Length > 0)
-                                                {
-                                                    sbItem.Append(": ");
-                                                }
-                                                sbItem.Append(testValueString);
-                                            }
-                                            _spinnerVagAdaptionValueNewAdapter.Items.Add(new StringObjType(sbItem.ToString(), testValue));
-                                            if (currentValue.HasValue && currentValue == testValue)
-                                            {
-                                                selection = index;
-                                            }
-
-                                            index++;
-                                        }
-                                        _spinnerVagAdaptionValueNewAdapter.NotifyDataSetChanged();
-                                        _spinnerVagAdaptionValueNew.SetSelection(selection);
-                                    }
+                                    sb.Append(" ");
                                 }
+
+                                sb.Append(unitText);
+                            }
+
+                            adaptionValueStart = sb.ToString();
+                            adaptionValueNew = valueString;
+                            inputType = ActivityCommon.ConvertVagUdsDataTypeToInputType(parseInfoAdp.DataTypeEntry.DataTypeId);
+                            validData = valueString != null;
+                            if (isValueName && _instanceData.UpdateAdaptionValueNew)
+                            {
+                                UInt64? currentValue = null;
+                                if (dataValueObject is UInt64 dataValueUint)
+                                {
+                                    currentValue = dataValueUint;
+                                }
+
+                                int selection = 0;
+                                byte[] testData = new byte[_instanceData.AdaptionData.Length];
+                                Array.Copy(_instanceData.AdaptionData, testData, testData.Length);
+                                _spinnerVagAdaptionValueNewAdapter.Items.Clear();
+                                int index = 0;
+                                for (UInt64 testValue = 0;; testValue++)
+                                {
+                                    string testValueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, testData, testValue,
+                                        out string _, out object testValueSet, out byte[] newData, true);
+                                    bool setDataValid = false;
+                                    if (testValueSet is UInt64 testValueSetUint)
+                                    {
+                                        if (newData != null && testValue == testValueSetUint)
+                                        {
+                                            setDataValid = true;
+                                        }
+                                    }
+
+                                    if (!setDataValid)
+                                    {
+                                        break;
+                                    }
+
+                                    if (!string.IsNullOrEmpty(testValueString))
+                                    {
+                                        StringBuilder sbItem = new StringBuilder();
+                                        sbItem.Append(string.Format(CultureInfo.InvariantCulture, "{0}: ", testValue));
+                                        sbItem.Append(testValueString);
+                                        _spinnerVagAdaptionValueNewAdapter.Items.Add(new StringObjType(sbItem.ToString(), testValue));
+                                        if (currentValue.HasValue && currentValue == testValue)
+                                        {
+                                            selection = index;
+                                        }
+                                    }
+
+                                    index++;
+                                }
+
+                                _spinnerVagAdaptionValueNewAdapter.NotifyDataSetChanged();
+                                _spinnerVagAdaptionValueNew.SetSelection(selection);
                             }
                         }
                     }
@@ -1180,6 +1178,13 @@ namespace BmwDeepObd
                         }
                     }
                 }
+                else
+                {
+                    // job not running
+                    _spinnerVagAdaptionValueNewAdapter.Items.Clear();
+                    _spinnerVagAdaptionValueNewAdapter.NotifyDataSetChanged();
+                }
+
                 if (_instanceData.CurrentWorkshopNumber.HasValue)
                 {
                     codingTextWorkshop = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.CurrentWorkshopNumber);
@@ -1208,20 +1213,21 @@ namespace BmwDeepObd
             _textViewVagAdaptionValueCurrent.Text = adaptionValueStart;
 
             bool enableAdaptionNew = jobRunning && !resetChannel && validData;
-            if (_spinnerVagAdaptionValueNewAdapter.Items.Count == 0)
-            {
-                _spinnerVagAdaptionValueNew.Visibility = ViewStates.Gone;
-                _editTextVagAdaptionValueNew.Visibility = ViewStates.Visible;
-                _spinnerVagAdaptionValueNew.Enabled = false;
-                _editTextVagAdaptionValueNew.Enabled = enableAdaptionNew;
-            }
-            else
+            if (isValueName)
             {
                 _spinnerVagAdaptionValueNew.Visibility = ViewStates.Visible;
                 _editTextVagAdaptionValueNew.Visibility = ViewStates.Gone;
                 _spinnerVagAdaptionValueNew.Enabled = enableAdaptionNew;
                 _editTextVagAdaptionValueNew.Enabled = false;
             }
+            else
+            {
+                _spinnerVagAdaptionValueNew.Visibility = ViewStates.Gone;
+                _editTextVagAdaptionValueNew.Visibility = ViewStates.Visible;
+                _spinnerVagAdaptionValueNew.Enabled = false;
+                _editTextVagAdaptionValueNew.Enabled = enableAdaptionNew;
+            }
+
             if (_editTextVagAdaptionValueNew.Enabled)
             {
                 if (_instanceData.UpdateAdaptionValueNew)
