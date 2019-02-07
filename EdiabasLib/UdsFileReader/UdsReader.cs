@@ -772,17 +772,17 @@ namespace UdsFileReader
                 return result;
             }
 
-            public string ToString(CultureInfo cultureInfo, byte[] data, object newValueObject, out string unitText, out object stringDataValue, out byte[] dataNew)
+            public string ToString(CultureInfo cultureInfo, byte[] data, object newValueObject, out string unitText, out object stringDataValue, out byte[] dataNew, bool hideInvalid = false)
             {
-                string result = DataToString(cultureInfo, data, newValueObject, out unitText, out stringDataValue, out dataNew);
+                string result = DataToString(cultureInfo, data, newValueObject, out unitText, out stringDataValue, out dataNew, hideInvalid);
                 if (dataNew != null)
                 {
-                    result = DataToString(cultureInfo, dataNew, null, out unitText, out stringDataValue, out byte[] _);
+                    result = DataToString(cultureInfo, dataNew, null, out unitText, out stringDataValue, out byte[] _, hideInvalid);
                 }
                 return result;
             }
 
-            private string DataToString(CultureInfo cultureInfo, byte[] data, object newValueObject, out string unitText, out object stringDataValue, out byte[] dataNew)
+            private string DataToString(CultureInfo cultureInfo, byte[] data, object newValueObject, out string unitText, out object stringDataValue, out byte[] dataNew, bool hideInvalid)
             {
                 unitText = null;
                 stringDataValue = null;
@@ -901,6 +901,11 @@ namespace UdsFileReader
                                         }
                                         return string.Empty;
                                     }
+                                }
+
+                                if (hideInvalid)
+                                {
+                                    return string.Empty;
                                 }
                                 return $"{GetTextMapText(UdsReader, 3455) ?? string.Empty}: {value}"; // Unbekannt
                             }
