@@ -1060,6 +1060,7 @@ namespace BmwDeepObd
             bool jobRunning = IsJobRunning();
             bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
             bool is1281Ecu = XmlToolActivity.Is1281Ecu(_ecuInfo);
+            bool isValueName = false;
             bool resetChannel = IsResetChannel();
             bool validChannel = _instanceData.SelectedChannel >= 0;
             bool operationActive = _instanceData.TestAdaption || _instanceData.StoreAdaption || _instanceData.StoreAdaption;
@@ -1073,15 +1074,15 @@ namespace BmwDeepObd
                 {
                     if (isUdsEcu)
                     {
-                        if (_instanceData.AdaptionData != null)
+                        int selectedChannel = _instanceData.SelectedChannel;
+                        if (selectedChannel >= 0 && selectedChannel < _parseInfoAdaptionList.Count)
                         {
-                            int selectedChannel = _instanceData.SelectedChannel;
-                            if (selectedChannel >= 0 && selectedChannel < _parseInfoAdaptionList.Count)
+                            UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp = _parseInfoAdaptionList[selectedChannel];
+                            if (parseInfoAdp != null)
                             {
-                                UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp = _parseInfoAdaptionList[selectedChannel];
-                                if (parseInfoAdp != null)
+                                isValueName = IsValueName(parseInfoAdp);
+                                if (_instanceData.AdaptionData != null)
                                 {
-                                    bool isValueName = IsValueName(parseInfoAdp);
                                     string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, null,
                                         out string unitText, out object dataValueObject, out byte[] _);
 
@@ -1168,6 +1169,13 @@ namespace BmwDeepObd
                         }
                     }
                 }
+                else
+                {
+                    // job not running
+                    _spinnerVagAdaptionValueNewAdapter.Items.Clear();
+                    _spinnerVagAdaptionValueNewAdapter.NotifyDataSetChanged();
+                }
+
                 if (_instanceData.CurrentWorkshopNumber.HasValue)
                 {
                     codingTextWorkshop = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.CurrentWorkshopNumber);
@@ -1196,20 +1204,21 @@ namespace BmwDeepObd
             _textViewVagAdaptionValueCurrent.Text = adaptionValueStart;
 
             bool enableAdaptionNew = jobRunning && !resetChannel && validData;
-            if (_spinnerVagAdaptionValueNewAdapter.Items.Count == 0)
-            {
-                _spinnerVagAdaptionValueNew.Visibility = ViewStates.Gone;
-                _editTextVagAdaptionValueNew.Visibility = ViewStates.Visible;
-                _spinnerVagAdaptionValueNew.Enabled = false;
-                _editTextVagAdaptionValueNew.Enabled = enableAdaptionNew;
-            }
-            else
+            if (isValueName)
             {
                 _spinnerVagAdaptionValueNew.Visibility = ViewStates.Visible;
                 _editTextVagAdaptionValueNew.Visibility = ViewStates.Gone;
                 _spinnerVagAdaptionValueNew.Enabled = enableAdaptionNew;
                 _editTextVagAdaptionValueNew.Enabled = false;
             }
+            else
+            {
+                _spinnerVagAdaptionValueNew.Visibility = ViewStates.Gone;
+                _editTextVagAdaptionValueNew.Visibility = ViewStates.Visible;
+                _spinnerVagAdaptionValueNew.Enabled = false;
+                _editTextVagAdaptionValueNew.Enabled = enableAdaptionNew;
+            }
+
             if (_editTextVagAdaptionValueNew.Enabled)
             {
                 if (_instanceData.UpdateAdaptionValueNew)
