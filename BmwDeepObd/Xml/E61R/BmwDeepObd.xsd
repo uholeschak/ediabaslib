@@ -525,7 +525,7 @@
         ]]>
       </xs:documentation>
     </xs:annotation>
-    <xs:attribute name="show_warnigs" type="xs:boolean" default="false" use="optional">
+    <xs:attribute name="show_warnings" type="xs:boolean" default="false" use="optional">
       <xs:annotation>
         <xs:documentation>
           Show warnings during compilation of user code.

@@ -90,7 +90,7 @@
         <display name="label_motor_accel" result="STAT_FAHRZEUGBESCHLEUNIGUNG_WERT" format="6.2R" />
       </job>
     </jobs>
-    <code show_warnigs="true">
+    <code show_warnings="true">
       <![CDATA[
     class PageClass
     {

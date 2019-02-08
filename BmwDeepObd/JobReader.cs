@@ -590,7 +590,13 @@ namespace BmwDeepObd
                             if (string.Compare(xnodePageChild.Name, "code", StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 classCode = xnodePageChild.InnerText;
-                                attrib = xnodePageChild.Attributes["show_warnigs"];
+                                attrib = xnodePageChild.Attributes["show_warnings"];
+                                // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
+                                if (attrib == null)
+                                {
+                                    // for backward compatibility
+                                    attrib = xnodePageChild.Attributes["show_warnigs"];
+                                }
                                 if (attrib != null)
                                 {
                                     try
