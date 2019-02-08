@@ -7340,12 +7340,29 @@ namespace CarSimulator
                                 {   // service 22
                                     found = true;
                                     Debug.WriteLine("Dummy service22: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
-#if true
-                                    byte[] dummyResponse = { 0x83, _receiveData[1], _receiveData[2], 0x7F, _receiveData[3], 0x31, 0x00 };   // request out of range
-#else
-                                    byte[] dummyResponse = { 0x80, _receiveData[1], _receiveData[2], 0x26, 0x62, _receiveData[4], _receiveData[5],
-                                        0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52, 0x53, 0x54, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x00 };   // dummy string response
-#endif
+
+                                    bool simulateData = false;
+                                    //bool simulateData = true;
+                                    int identifer = (_receiveData[4] << 8) + _receiveData[5];
+                                    if (identifer >= 0x0600 && identifer <= 0x06FF)
+                                    {
+                                        simulateData = false;
+                                    }
+                                    if (identifer >= 0x6000 && identifer <= 0x6FFF)
+                                    {
+                                        simulateData = false;
+                                    }
+
+                                    byte[] dummyResponse;
+                                    if (simulateData)
+                                    {
+                                        dummyResponse = new byte[] { 0x80, _receiveData[1], _receiveData[2], 0x26, 0x62, _receiveData[4], _receiveData[5],
+                                            0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52, 0x53, 0x54, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x00 };   // dummy string response
+                                    }
+                                    else
+                                    {
+                                        dummyResponse = new byte[] { 0x83, _receiveData[1], _receiveData[2], 0x7F, _receiveData[3], 0x31, 0x00 };   // request out of range
+                                    }
                                     ObdSend(dummyResponse);
                                 }
                                 else if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3] == 0x2E)
