@@ -798,8 +798,13 @@ namespace UdsFileReader
                 byte[] newDataBytes = null;
                 UInt32 bitOffset = BitOffset ?? 0;
                 UInt32 byteOffset = ByteOffset ?? 0;
-                int bitLength = data.Length * 8;
-                int byteLength = data.Length;
+                if (byteOffset > data.Length)
+                {
+                    return string.Empty;
+                }
+                int maxLength = data.Length - (int)byteOffset;
+                int bitLength = maxLength * 8;
+                int byteLength = maxLength;
                 if (BitLength.HasValue)
                 {
                     bitLength = (int)BitLength.Value;
