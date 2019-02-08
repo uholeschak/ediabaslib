@@ -27,11 +27,13 @@ namespace BmwDeepObd
         {
             public InstanceData()
             {
+                SelectedChannelText = string.Empty;
                 AdaptionValues = new string[MaxMeasValues];
                 AdaptionUnits = new string[MaxMeasValues];
             }
 
             public int SelectedChannel { get; set; }
+            public string SelectedChannelText { get; set; }
             public UInt64? AdaptionValueStart { get; set; }
             public UInt64? AdaptionValueNew { get; set; }
             public UInt64? AdaptionValueTest { get; set; }
@@ -700,10 +702,12 @@ namespace BmwDeepObd
             bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
             if (_spinnerVagAdaptionChannel.SelectedItemPosition >= 0)
             {
-                int channel = (int)_spinnerVagAdaptionChannelAdapter.Items[_spinnerVagAdaptionChannel.SelectedItemPosition].Data;
+                StringObjType item = _spinnerVagAdaptionChannelAdapter.Items[_spinnerVagAdaptionChannel.SelectedItemPosition];
+                int channel = (int)item.Data;
                 if (channel >= 0 || isUdsEcu)
                 {
                     _instanceData.SelectedChannel = channel;
+                    _instanceData.SelectedChannelText = item.Text;
                 }
             }
 
@@ -946,6 +950,11 @@ namespace BmwDeepObd
                         UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp = _parseInfoAdaptionList[selectedChannel];
                         if (parseInfoAdp != null)
                         {
+                            if (!string.IsNullOrEmpty(_instanceData.SelectedChannelText))
+                            {
+                                sbAdaptionComment.Append(_instanceData.SelectedChannelText);
+                                sbAdaptionComment.Append("\r\n");
+                            }
                             sbAdaptionComment.Append(string.Format(CultureInfo.InvariantCulture, "{0:00000}", parseInfoAdp.ServiceId));
                             if (parseInfoAdp.DataTypeEntry.NameDetail != null)
                             {
