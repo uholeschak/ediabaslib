@@ -40,7 +40,7 @@
       <string name="label_axis_valve_state">Zustand Ausgänge:</string>
     </strings>
     <jobs sgbd="d_ehc" />
-    <code show_warnigs="true">
+    <code show_warnings="true">
       <![CDATA[
     class PageClass
     {

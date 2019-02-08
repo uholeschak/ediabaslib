@@ -199,7 +199,7 @@ In the `ecu` node the property `name` is a link to a `string` node and `sgbd` is
 If the jobs and display output is getting more complex, user defined code will be required. In this case a C# class could be added to a `code` node, which defines a set of optional callback functions. If the `show_warnings` property is set to true, also warnings will be reported during compilation of the code.  
 **In the current Mono CSharp compiler there is a bug that reports an error, if initialized arrays are used in the user defined code. To prevent this, initialize the array (or list) in the constructor of `PageClass`!**
 ``` xml
-    <code show_warnigs="true">
+    <code show_warnings="true">
       <![CDATA[
     class PageClass
     {
@@ -312,7 +312,7 @@ Here is an example from the errors page, that adds a RPM value to the error mess
       <ecu name="CAS" sgbd="d_cas" />
       <ecu name="DDE" sgbd="d_motor" results="F_UW_KM;F_UW_ANZ" />
     </read_errors>
-    <code show_warnigs="true">
+    <code show_warnings="true">
       <![CDATA[
     class PageClass
     {
@@ -603,7 +603,7 @@ The resulting page will look like this:
 For interaction of the user code with other apps the broadcast `de.holeschak.bmw_deep_obd.Action.Command` could by processed by the function `BroadcastReceived`.  
 Here is an example from the axis page, that changes the axis direction with the broadcast.
 ``` xml
-    <code show_warnigs="true">
+    <code show_warnings="true">
       <![CDATA[
     class PageClass
     {
