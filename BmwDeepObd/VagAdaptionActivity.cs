@@ -956,9 +956,23 @@ namespace BmwDeepObd
                                 sbAdaptionComment.Append("\r\n");
                             }
                             sbAdaptionComment.Append(string.Format(CultureInfo.InvariantCulture, "{0:00000}", parseInfoAdp.ServiceId));
+                            if (parseInfoAdp.DataTypeEntry.BitLength.HasValue)
+                            {
+                                UInt32 bitLength = parseInfoAdp.DataTypeEntry.BitLength.Value;
+                                sbAdaptionComment.Append(", L=");
+                                if (bitLength % 8 != 0)
+                                {
+                                    sbAdaptionComment.Append(string.Format(CultureInfo.InvariantCulture, "{0} Bit", bitLength));
+                                }
+                                else
+                                {
+                                    UInt32 byteLength = (parseInfoAdp.DataTypeEntry.BitLength.Value + 7) / 8;
+                                    sbAdaptionComment.Append(string.Format(CultureInfo.InvariantCulture, "{0} Byte", byteLength));
+                                }
+                            }
                             if (parseInfoAdp.DataTypeEntry.NameDetail != null)
                             {
-                                sbAdaptionComment.Append(" ");
+                                sbAdaptionComment.Append("\r\n");
                                 sbAdaptionComment.Append(parseInfoAdp.DataTypeEntry.NameDetail);
                             }
                         }
