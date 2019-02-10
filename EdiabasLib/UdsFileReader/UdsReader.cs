@@ -1292,8 +1292,8 @@ namespace UdsFileReader
                             BitArray bitArrayNew = new BitArray(newDataBytes);
                             if (bitOffset <= bitArrayNew.Length)
                             {
-                                // shift bits to the rigth
-                                for (int i = 0; i < bitArrayNew.Length - bitOffset; i++)
+                                // insert new bit in the old data
+                                for (int i = 0; i < bitLength; i++)
                                 {
                                     bitArrayOld[(int)(i + bitOffset)] = bitArrayNew[i];
                                 }
