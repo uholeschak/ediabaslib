@@ -1473,13 +1473,13 @@ namespace UdsFileReader
 
         public class ParseInfoAdp : ParseInfoMwb
         {
-            public ParseInfoAdp(UInt32 serviceId, UInt32? adaptionChannel, string[] lineArray, UInt32 nameKey, string[] nameArray, DataTypeEntry dataTypeEntry) :
+            public ParseInfoAdp(UInt32 serviceId, UInt32? subItem, string[] lineArray, UInt32 nameKey, string[] nameArray, DataTypeEntry dataTypeEntry) :
                 base(serviceId, lineArray, nameKey, nameArray, dataTypeEntry)
             {
-                AdaptionChannel = adaptionChannel;
+                SubItem = subItem;
             }
 
-            public UInt32? AdaptionChannel { get; }
+            public UInt32? SubItem { get; }
         }
 
         public class ParseInfoDtc : ParseInfoBase
@@ -4474,15 +4474,15 @@ namespace UdsFileReader
                             return null;
                         }
 
-                        UInt32? adaptionChannel = null;
+                        UInt32? subItem = null;
                         if (lineArray[1].Length > 0)
                         {
-                            if (!UInt32.TryParse(lineArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 channel))
+                            if (!UInt32.TryParse(lineArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 item))
                             {
                                 return null;
                             }
 
-                            adaptionChannel = channel;
+                            subItem = item;
                         }
 
                         DataTypeEntry dataTypeEntry;
@@ -4494,7 +4494,7 @@ namespace UdsFileReader
                         {
                             return null;
                         }
-                        parseInfo = new ParseInfoAdp(serviceId, adaptionChannel, lineArray, nameKey, nameArray, dataTypeEntry);
+                        parseInfo = new ParseInfoAdp(serviceId, subItem, lineArray, nameKey, nameArray, dataTypeEntry);
                         break;
                     }
 
