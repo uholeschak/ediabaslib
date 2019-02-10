@@ -779,7 +779,7 @@ namespace BmwDeepObd
                             {
                                 string newValueString = _editTextVagAdaptionValueNew.Text;
                                 string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, newValueString,
-                                    out string _, out object _, out byte[] newData);
+                                    out string _, out object _, out UInt32? _, out byte[] newData);
                                 if (newData != null && valueString != null)
                                 {
                                     _instanceData.AdaptionDataNew = newData;
@@ -801,7 +801,7 @@ namespace BmwDeepObd
                                     {
                                         UInt64 selectedValue = (UInt64)_spinnerVagAdaptionValueNewAdapter.Items[_spinnerVagAdaptionValueNew.SelectedItemPosition].Data;
                                         string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, selectedValue,
-                                            out string _, out object dataValueObject, out byte[] newData);
+                                            out string _, out object dataValueObject, out UInt32? _, out byte[] newData);
                                         bool restoreValue = true;
                                         if (newData != null && valueString != null)
                                         {
@@ -955,21 +955,7 @@ namespace BmwDeepObd
                                 sbAdaptionComment.Append(_instanceData.SelectedChannelText);
                                 sbAdaptionComment.Append("\r\n");
                             }
-                            sbAdaptionComment.Append(string.Format(CultureInfo.InvariantCulture, "{0:00000}", parseInfoAdp.ServiceId));
-                            if (parseInfoAdp.DataTypeEntry.BitLength.HasValue)
-                            {
-                                UInt32 bitLength = parseInfoAdp.DataTypeEntry.BitLength.Value;
-                                sbAdaptionComment.Append(", L=");
-                                if (bitLength % 8 != 0)
-                                {
-                                    sbAdaptionComment.Append(string.Format(CultureInfo.InvariantCulture, "{0} Bit", bitLength));
-                                }
-                                else
-                                {
-                                    UInt32 byteLength = (parseInfoAdp.DataTypeEntry.BitLength.Value + 7) / 8;
-                                    sbAdaptionComment.Append(string.Format(CultureInfo.InvariantCulture, "{0} Byte", byteLength));
-                                }
-                            }
+                            sbAdaptionComment.Append(string.Format(CultureInfo.InvariantCulture, "Service ID: {0:00000}", parseInfoAdp.ServiceId));
                             if (parseInfoAdp.DataTypeEntry.NameDetail != null)
                             {
                                 sbAdaptionComment.Append("\r\n");
@@ -1071,6 +1057,7 @@ namespace BmwDeepObd
         private void UpdateAdaptionText(bool cyclicUpdate = false)
         {
             string adaptionChannelNumber = string.Empty;
+            string adaptionValueStartTitle = GetString(Resource.String.vag_adaption_value_current_title);
             string adaptionValueStart = string.Empty;
             string adaptionValueNew = string.Empty;
             string adaptionValueTest = string.Empty;
@@ -1114,7 +1101,7 @@ namespace BmwDeepObd
                         if (parseInfoAdp != null && _instanceData.AdaptionData != null)
                         {
                             string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, null,
-                                out string unitText, out object dataValueObject, out byte[] _);
+                                out string unitText, out object dataValueObject, out UInt32? usedBitLength, out byte[] _);
 
                             StringBuilder sb = new StringBuilder();
                             sb.Append(valueString);
@@ -1127,6 +1114,18 @@ namespace BmwDeepObd
                                 }
 
                                 sb.Append(unitText);
+                            }
+
+                            if (usedBitLength.HasValue)
+                            {
+                                if (usedBitLength.Value % 8 != 0)
+                                {
+                                    adaptionValueStartTitle += string.Format(CultureInfo.InvariantCulture, ", {0} Bit", usedBitLength.Value);
+                                }
+                                else
+                                {
+                                    adaptionValueStartTitle += string.Format(CultureInfo.InvariantCulture, ", {0} Byte", usedBitLength.Value / 8);
+                                }
                             }
 
                             adaptionValueStart = sb.ToString();
@@ -1149,7 +1148,7 @@ namespace BmwDeepObd
                                 for (UInt64 testValue = 0;; testValue++)
                                 {
                                     string testValueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, testData, testValue,
-                                        out string _, out object testValueSet, out byte[] newData, true);
+                                        out string _, out object testValueSet, out UInt32? _, out byte[] newData, true);
                                     bool setDataValid = false;
                                     if (testValueSet is UInt64 testValueSetUint)
                                     {
@@ -1233,6 +1232,7 @@ namespace BmwDeepObd
             _spinnerVagAdaptionChannel.Enabled = !jobRunning;
             _editTextVagAdaptionChannelNumber.Enabled = !jobRunning && !isUdsEcu;
             _editTextVagAdaptionChannelNumber.Text = adaptionChannelNumber;
+            _textViewVagAdaptionValueCurrentTitle.Text = adaptionValueStartTitle;
             _textViewVagAdaptionValueCurrent.Text = adaptionValueStart;
 
             bool enableAdaptionNew = jobRunning && !resetChannel && validData;
