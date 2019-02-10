@@ -625,13 +625,13 @@ namespace BmwDeepObd
                     foreach (UdsFileReader.UdsReader.ParseInfoAdp parseInfoAdp in _parseInfoAdaptionList)
                     {
                         StringBuilder sbDispText = new StringBuilder();
-                        if (parseInfoAdp.AdaptionChannel.HasValue)
-                        {
-                            sbDispText.Append(string.Format(CultureInfo.InvariantCulture, "{0:X02}h: ", parseInfoAdp.AdaptionChannel.Value));
-                        }
                         if (!string.IsNullOrEmpty(parseInfoAdp.DataIdString))
                         {
                             sbDispText.Append(parseInfoAdp.DataIdString);
+                            if (parseInfoAdp.SubItem.HasValue)
+                            {
+                                sbDispText.Append(string.Format(CultureInfo.InvariantCulture, "-{0}", parseInfoAdp.SubItem.Value));
+                            }
                         }
                         if (!string.IsNullOrEmpty(parseInfoAdp.Name))
                         {

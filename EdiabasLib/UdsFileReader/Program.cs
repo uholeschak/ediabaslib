@@ -448,9 +448,9 @@ namespace UdsFileReader
 
                             if (parseInfo is UdsReader.ParseInfoAdp parseInfoAdp)
                             {
-                                if (parseInfoAdp.AdaptionChannel.HasValue)
+                                if (parseInfoAdp.SubItem.HasValue)
                                 {
-                                    outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Adaption Channel: {0:X02}", parseInfoAdp.AdaptionChannel.Value));
+                                    outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Sub Item: {0:X02}", parseInfoAdp.SubItem.Value));
                                 }
                             }
                             outStream.WriteLine(string.Format(CultureInfo.InvariantCulture, "Data ID Name: {0}", parseInfoMwb.DataIdString));
