@@ -955,7 +955,9 @@ namespace BmwDeepObd
                                 sbAdaptionComment.Append(_instanceData.SelectedChannelText);
                                 sbAdaptionComment.Append("\r\n");
                             }
-                            sbAdaptionComment.Append(string.Format(CultureInfo.InvariantCulture, "Service ID: {0:00000}", parseInfoAdp.ServiceId));
+
+                            sbAdaptionComment.Append(GetString(Resource.String.vag_adaption_service_id));
+                            sbAdaptionComment.Append(string.Format(CultureInfo.InvariantCulture, " {0:00000}", parseInfoAdp.ServiceId));
                             if (parseInfoAdp.DataTypeEntry.NameDetail != null)
                             {
                                 sbAdaptionComment.Append("\r\n");
@@ -1165,10 +1167,7 @@ namespace BmwDeepObd
 
                                     if (!string.IsNullOrEmpty(testValueString))
                                     {
-                                        StringBuilder sbItem = new StringBuilder();
-                                        sbItem.Append(string.Format(CultureInfo.InvariantCulture, "{0}: ", testValue));
-                                        sbItem.Append(testValueString);
-                                        _spinnerVagAdaptionValueNewAdapter.Items.Add(new StringObjType(sbItem.ToString(), testValue));
+                                        _spinnerVagAdaptionValueNewAdapter.Items.Add(new StringObjType(testValueString, testValue));
                                         if (currentValue.HasValue && currentValue == testValue)
                                         {
                                             selection = index;
