@@ -628,10 +628,6 @@ namespace BmwDeepObd
                         if (!string.IsNullOrEmpty(parseInfoAdp.DataIdString))
                         {
                             sbDispText.Append(parseInfoAdp.DataIdString);
-                            if (parseInfoAdp.SubItem.HasValue)
-                            {
-                                sbDispText.Append(string.Format(CultureInfo.InvariantCulture, "-{0}", parseInfoAdp.SubItem.Value));
-                            }
                         }
                         if (!string.IsNullOrEmpty(parseInfoAdp.Name))
                         {
@@ -640,6 +636,10 @@ namespace BmwDeepObd
                                 sbDispText.Append(" ");
                             }
                             sbDispText.Append(parseInfoAdp.Name);
+                            if (parseInfoAdp.SubItem.HasValue)
+                            {
+                                sbDispText.Append(string.Format(CultureInfo.InvariantCulture, " / {0}", parseInfoAdp.SubItem.Value));
+                            }
                         }
                         string displayText = sbDispText.ToString();
                         _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(displayText, index));
