@@ -1290,7 +1290,7 @@ namespace UdsFileReader
                             Array.Copy(data, byteOffset, subDataOld, 0, byteLength);
                             BitArray bitArrayOld = new BitArray(subDataOld);
                             BitArray bitArrayNew = new BitArray(newDataBytes);
-                            if (bitOffset <= bitArrayNew.Length)
+                            if (bitOffset + bitLength <= bitArrayOld.Length)
                             {
                                 // insert new bit in the old data
                                 for (int i = 0; i < bitLength; i++)
