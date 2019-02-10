@@ -750,7 +750,7 @@ namespace UdsFileReader
             public string ToString(CultureInfo cultureInfo, byte[] data, out string unitText, out double? stringDataValue)
             {
                 stringDataValue = null;
-                string result = ToString(cultureInfo, data, null, out unitText, out object dataValue, out byte[] _);
+                string result = ToString(cultureInfo, data, null, out unitText, out object dataValue, out UInt32? _, out byte[] _);
 
                 DataType dataType = (DataType)(DataTypeId & DataTypeMaskEnum);
                 if (dataType != DataType.ValueName)
@@ -772,20 +772,21 @@ namespace UdsFileReader
                 return result;
             }
 
-            public string ToString(CultureInfo cultureInfo, byte[] data, object newValueObject, out string unitText, out object stringDataValue, out byte[] dataNew, bool hideInvalid = false)
+            public string ToString(CultureInfo cultureInfo, byte[] data, object newValueObject, out string unitText, out object stringDataValue, out UInt32? usedBitLength, out byte[] dataNew, bool hideInvalid = false)
             {
-                string result = DataToString(cultureInfo, data, newValueObject, out unitText, out stringDataValue, out dataNew, hideInvalid);
+                string result = DataToString(cultureInfo, data, newValueObject, out unitText, out stringDataValue, out usedBitLength, out dataNew, hideInvalid);
                 if (dataNew != null)
                 {
-                    result = DataToString(cultureInfo, dataNew, null, out unitText, out stringDataValue, out byte[] _, hideInvalid);
+                    result = DataToString(cultureInfo, dataNew, null, out unitText, out stringDataValue, out usedBitLength, out byte[] _, hideInvalid);
                 }
                 return result;
             }
 
-            private string DataToString(CultureInfo cultureInfo, byte[] data, object newValueObject, out string unitText, out object stringDataValue, out byte[] dataNew, bool hideInvalid)
+            private string DataToString(CultureInfo cultureInfo, byte[] data, object newValueObject, out string unitText, out object stringDataValue, out UInt32? usedBitLength, out byte[] dataNew, bool hideInvalid)
             {
                 unitText = null;
                 stringDataValue = null;
+                usedBitLength = null;
                 dataNew = null;
                 if (data.Length == 0)
                 {
@@ -814,6 +815,7 @@ namespace UdsFileReader
                 {
                     return string.Empty;
                 }
+
                 byte[] subData = new byte[byteLength];
                 Array.Copy(data, byteOffset, subData, 0, byteLength);
                 if (bitOffset > 0 || (bitLength & 0x7) != 0)
@@ -836,6 +838,8 @@ namespace UdsFileReader
                     bitArray.CopyTo(subData, 0);
                 }
 
+                usedBitLength = (UInt32)bitLength;
+
                 CultureInfo oldCulture = null;
                 try
                 {
@@ -855,6 +859,11 @@ namespace UdsFileReader
                         case DataType.ValueName:
                         case DataType.MuxTable:
                         {
+                            if (usedBitLength.Value > sizeof(UInt64) * 8)
+                            {
+                                usedBitLength = sizeof(UInt64) * 8;
+                            }
+
                             UInt64 value = 0;
                             if ((DataTypeId & DataTypeMaskSwapped) != 0)
                             {
