@@ -487,6 +487,7 @@
   <string name="vag_adaption_importer_number_title">Importeursnummer (dec): {0}-{1}</string>
   <string name="vag_adaption_equipment_number_title">Gerätenummer (dec): {0}-{1}</string>
   <string name="vag_adaption_operation_title">Vorgänge</string>
+  <string name="vag_adaption_service_id">Service ID:</string>
   <string name="vag_adaption_button_read">Lesen</string>
   <string name="vag_adaption_button_test">Testen</string>
   <string name="vag_adaption_button_store">Speichern</string>
