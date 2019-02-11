@@ -41,7 +41,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Добавлено кодирование для VAG\n- Поддержка длинных телеграмм BMW Fast\n- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Добавлена адаптация для VAG\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -126,7 +126,7 @@
   <string name="vag_uds_init">Загрузка VAG файлов</string>
   <string name="vag_uds_error">Ошибка при чтении VAG файлов</string>
 
-    <!-- Send trace file -->
+  <!-- Send trace file -->
   <string name="send_trace_file_request">Ошибка соединения.\nХотите отправить анонимный и сжатый Trace-файл (размер {0:fs0}) для улучшения качества продукта?</string>
   <string name="send_message_request">Ошибка соединения.\nХотите отправить анонимный файл для улучшения качества продукта?</string>
   <string name="send_trace_file">Послать Trace-файл</string>
@@ -430,15 +430,13 @@
   <string name="xml_tool_button_ediabas_tool">Ediabas утилита</string>
   <string name="xml_tool_button_coding">Кодировать</string>
   <string name="xml_tool_button_coding2">Кодировать 2</string>
-  <!--Translate-->
-  <string name="xml_tool_button_adaption">Adaption</string>
+  <string name="xml_tool_button_adaption">Адаптация</string>
   <string name="xml_tool_button_login">Авторизация</string>
   <string name="xml_tool_button_sec_access">Права доступа</string>
   <string name="xml_tool_execute_test_job">Выполнение Job</string>
   <string name="xml_tool_read_test_job_failed">Не удалось выполнить Job</string>
   <string name="xml_tool_ecu_msg_no_selection">Вы не выбрали данные для отображения.\nВыберите сначала нужные задания и результаты из списка.\nВы все равно хотите отменить?</string>
-  <!--Translate-->
-  <string name="xml_tool_ecu_msg_no_grip_selection">You have activated the graphical display, but not selected any graphical design.\nNothing will be displayed.\nDo you want to abort anyway?</string>
+  <string name="xml_tool_ecu_msg_no_grip_selection">Вы активировали графический дисплей, но не выбрали графическое представление.\nОтображение не будет выводится на экран\nДействительно хотите отменить?</string>
   <string name="xml_tool_result_amount_limit">Количество результатов ограничено типом ECU.\nДанные не будут переданы, если вы выберете слишком много результатов.</string>
 
   <!-- XML ECU Tool Options Menu -->
@@ -475,27 +473,26 @@
   <string name="vag_coding_sec_access_job_ok">Права доступа получены</string>
 
   <!-- Adaption Activity -->
-  <!--Translate-->
-  <string name="vag_adaption_title_adaption">Adaption ECU: {0}</string>
-  <string name="vag_adaption_channel_title">Documented channel</string>
-  <string name="vag_adaption_channel_select">Select adaption channel</string>
-  <string name="vag_adaption_channel_reset">Reset adaption values</string>
-  <string name="vag_adaption_channel_reset_info">Storing adaption channel 0 resets all adaption values</string>
-  <string name="vag_adaption_channel_number_title">Channel number</string>
+  <string name="vag_adaption_title_adaption">Адаптация ECU: {0}</string>
+  <string name="vag_adaption_channel_title">Документированный канал</string>
+  <string name="vag_adaption_channel_select">Выбор канала адаптации</string>
+  <string name="vag_adaption_channel_reset">Сброс адаптационных значений</string>
+  <string name="vag_adaption_channel_reset_info">Сохранение канала адаптации 0 сбрасывает все адаптированные значения</string>
+  <string name="vag_adaption_channel_number_title">Номер канала</string>
   <string name="vag_adaption_comments_title">Примечания</string>
-  <string name="vag_adaption_value_current_title">Current adaption value</string>
-  <string name="vag_adaption_value_new_title">New adaption value</string>
-  <string name="vag_adaption_value_test_title">Tested adaption value</string>
-  <string name="vag_adaption_meas_value_title">Value {0}: {1}</string>
+  <string name="vag_adaption_value_current_title">Текущее значение адаптации</string>
+  <string name="vag_adaption_value_new_title">Новое значение адаптации</string>
+  <string name="vag_adaption_value_test_title">Протестированное значение адаптации</string>
+  <string name="vag_adaption_meas_value_title">Значение {0}: {1}</string>
   <string name="vag_adaption_workshop_number_title">Номер мастерской (деc.): {0}-{1}</string>
   <string name="vag_adaption_importer_number_title">Номер импортёра (деc.): {0}-{1}</string>
   <string name="vag_adaption_equipment_number_title">Номер устройства (деc.): {0}-{1}</string>
-  <string name="vag_adaption_operation_title">Operations</string>
-  <string name="vag_adaption_service_id">Service ID:</string>
-  <string name="vag_adaption_button_read">Read</string>
-  <string name="vag_adaption_button_test">Test</string>
-  <string name="vag_adaption_button_store">Store</string>
-  <string name="vag_adaption_button_stop">Stop</string>
+  <string name="vag_adaption_operation_title">Операции</string>
+  <string name="vag_adaption_service_id">ID Сервиса:</string>
+  <string name="vag_adaption_button_read">Считать</string>
+  <string name="vag_adaption_button_test">Тестировать</string>
+  <string name="vag_adaption_button_store">Сохранить</string>
+  <string name="vag_adaption_button_stop">Остановить</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">CAN адаптер</string>
