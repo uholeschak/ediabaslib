@@ -7352,6 +7352,10 @@ namespace CarSimulator
                                     {
                                         simulateData = false;
                                     }
+                                    if (identifer >= 0xF100 && identifer <= 0xF1FF)
+                                    {
+                                        simulateData = false;
+                                    }
 
                                     byte[] dummyResponse;
                                     if (simulateData)
@@ -7373,6 +7377,13 @@ namespace CarSimulator
 
                                     if (recLength > 3)
                                     {
+                                        if (_receiveData[4] == 0xF1 && _receiveData[5] == 0x98)
+                                        {
+                                            Debug.WriteLine("Map RepairShopCode 0xF198 -> 0xF1A5");
+                                            _receiveData[4] = 0xF1;
+                                            _receiveData[5] = 0xA5;
+                                        }
+
                                         for (int retry = 0; retry < 2; retry++)
                                         {
                                             bool entryFound = false;
