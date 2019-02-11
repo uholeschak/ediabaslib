@@ -459,11 +459,9 @@
   <string name="vag_coding_execute_title">Выполнить операцию</string>
   <string name="vag_coding_button_execute">Выполнить</string>
   <string name="vag_coding_processing">Выполнение операции</string>
-  <!--Translate coding -> values -->
-  <string name="vag_coding_write_values_invalid">Если номер мастерской, номер импортера или номер устройства равен 0, то ECU может отклонить кодировку.\nХотите продолжить?</string>
+  <string name="vag_coding_write_values_invalid">Если номер мастерской, номер импортёра или номер устройства равен 0, то ECU может отклонить значения.\nХотите продолжить?</string>
   <string name="vag_coding_write_coding_illegal_arguments">Аргументы для операции находятся вне рабочего диапазона</string>
-  <!--Translate coding -> operation -->
-  <string name="vag_coding_write_coding_failed">Не удалось записать кодировку</string>
+  <string name="vag_coding_write_coding_failed">Ошибка выполнения операции</string>
   <string name="vag_coding_write_coding_access_denied">В доступе отказано, сначала вы должны авторизироваться</string>
   <string name="vag_coding_write_coding_ok">Кодирование успешно завершено</string>
   <string name="vag_coding_write_coding2_failed">Не удалось записать кодировку.\nЕсли код был неправильным, то вам необходимо оставить зажигание включённым как минимум на 10 минут, прежде чем пытаться снова!</string>
