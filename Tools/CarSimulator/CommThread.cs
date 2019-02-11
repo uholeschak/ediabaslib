@@ -7397,7 +7397,7 @@ namespace CarSimulator
                                                         if (responseTel[0] == _receiveData[0] && responseTel[3] == 0x62 &&
                                                             responseTel[4] == _receiveData[4] && responseTel[5] == _receiveData[5] && recLength == responseTel.Length)
                                                         {
-                                                            Debug.WriteLine("Updating coding response multi");
+                                                            Debug.WriteLine("Updating read response multi");
                                                             Array.Copy(_receiveData, dataOffset + 3, responseTel, dataOffset + 3, dataLength - 3);
                                                         }
                                                     }
