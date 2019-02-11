@@ -7450,6 +7450,13 @@ namespace CarSimulator
                                     byte[] dummyResponse = { 0x83, _receiveData[1], _receiveData[2], 0x7F, _receiveData[3], 0x12, 0x00 };   // sub function not supported
                                     ObdSend(dummyResponse);
                                 }
+                                else if (_receiveData.Length >= 6 && _receiveData[0] == 0x82 && _receiveData[3] == 0x11)
+                                {   // service 11
+                                    found = true;
+                                    Debug.WriteLine("Request reset: {0:X02}", _receiveData[4]);
+                                    byte[] dummyResponse = { 0x82, _receiveData[1], _receiveData[2], 0x51, _receiveData[4], 0x00 };   // positive ACK
+                                    ObdSend(dummyResponse);
+                                }
                                 else if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3] == 0x27)
                                 {   // service 27 (security access)
                                     found = true;
