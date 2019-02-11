@@ -1253,7 +1253,7 @@ namespace BmwDeepObd
             {
                 if (AnyResultsSelected(false))
                 {
-                    resourceId = Resource.String.xml_tool_ecu_msg_no_grip_selection;
+                    resourceId = Resource.String.xml_tool_ecu_msg_no_grid_selection;
                 }
             }
             new AlertDialog.Builder(this)

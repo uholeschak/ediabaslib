@@ -6556,7 +6556,7 @@ namespace BmwDeepObd
 			public const int xml_tool_ecu_min_value = 2131493261;
 			
 			// aapt resource value: 0x7f0c019b
-			public const int xml_tool_ecu_msg_no_grip_selection = 2131493275;
+			public const int xml_tool_ecu_msg_no_grid_selection = 2131493275;
 			
 			// aapt resource value: 0x7f0c019a
 			public const int xml_tool_ecu_msg_no_selection = 2131493274;
