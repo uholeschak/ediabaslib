@@ -1902,10 +1902,11 @@ namespace BmwDeepObd
                         }
                     }
 
-                    _updateHandler?.Post(() =>
+                    if (IsJobRunning())
                     {
-                        UpdateAdaptionText(true);
-                    });
+                        _jobThread.Join();
+                    }
+                    UpdateAdaptionText(true);
                 });
             });
             _jobThread.Start();
