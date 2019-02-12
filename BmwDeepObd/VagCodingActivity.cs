@@ -1655,10 +1655,11 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            _updateHandler?.Post(() =>
+                            if (IsJobRunning())
                             {
-                                UpdateCodingInfo();
-                            });
+                                _jobThread.Join();
+                            }
+                            UpdateCodingInfo();
                         }
                     }
                 });
