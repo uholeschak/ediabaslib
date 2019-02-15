@@ -1680,6 +1680,7 @@ namespace BmwDeepObd
 
                             if (storeAdaption && is1281Ecu)
                             {
+                                _instanceData.StoreAdaption = false;
                                 break;
                             }
 
@@ -1906,6 +1907,10 @@ namespace BmwDeepObd
                     {
                         _jobThread.Join();
                     }
+
+                    _instanceData.TestAdaption = false;
+                    _instanceData.StoreAdaption = false;
+                    _instanceData.StopAdaption = false;
                     UpdateAdaptionText(true);
                 });
             });
