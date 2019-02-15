@@ -7203,6 +7203,10 @@ namespace BmwDeepObd
                 return true;
             }
             Intent intent = new Intent();
+            intent.PutExtra(ExtraInterface, (int)_activityCommon.SelectedInterface);
+            intent.PutExtra(ExtraDeviceName, _instanceData.DeviceName);
+            intent.PutExtra(ExtraDeviceAddress, _instanceData.DeviceAddress);
+            intent.PutExtra(ExtraEnetIp, _activityCommon.SelectedEnetIp);
             intent.PutExtra(ExtraFileName, xmlFileName);
 
             // Set result and finish this Activity
