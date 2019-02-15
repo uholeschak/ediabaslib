@@ -639,6 +639,14 @@ namespace BmwDeepObd
                     _activityCommon.SetPreferredNetworkInterface();
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
+                        ActivityCommon.InterfaceType interfaceType = (ActivityCommon.InterfaceType)data.Extras.GetInt(XmlToolActivity.ExtraInterface, (int)ActivityCommon.InterfaceType.None);
+                        if (interfaceType != ActivityCommon.InterfaceType.None)
+                        {
+                            _activityCommon.SelectedInterface = interfaceType;
+                            _instanceData.DeviceName = data.Extras.GetString(XmlToolActivity.ExtraDeviceName);
+                            _instanceData.DeviceAddress = data.Extras.GetString(XmlToolActivity.ExtraDeviceAddress);
+                            _activityCommon.SelectedEnetIp = data.Extras.GetString(XmlToolActivity.ExtraEnetIp);
+                        }
                         _instanceData.ConfigFileName = data.Extras.GetString(XmlToolActivity.ExtraFileName);
                         ReadConfigFile();
                         UpdateOptionsMenu();
