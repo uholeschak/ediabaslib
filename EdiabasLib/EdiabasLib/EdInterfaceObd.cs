@@ -3351,7 +3351,7 @@ namespace EdiabasLib
             for (; ; )
             {
                 int timeout = (Nr78Dict.Count > 0) ? ParTimeoutNr78 : ParTimeoutStd;
-                //if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout: {0}", timeout);
+                //if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout: {0}, {1}", timeout, ParTimeoutTelEnd);
                 // header byte
                 int headLength = 4;
                 if (!ReceiveData(receiveData, 0, headLength, timeout, ParTimeoutTelEnd))
