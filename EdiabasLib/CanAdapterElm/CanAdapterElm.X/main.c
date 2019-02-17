@@ -86,7 +86,7 @@
 #define DEBUG_PIN           0   // enable debug pin
 #define ID_LOCATION         0x200000    // location of ID memory
 
-#define ADAPTER_VERSION     0x000C
+#define ADAPTER_VERSION     0x000D
 
 #if ADAPTER_TYPE == 0x02
 #define REQUIRES_BT_REC_TIMOUT
@@ -139,7 +139,7 @@
 #endif
 #endif
 
-#define MIN_BAUD    4000
+#define MIN_BAUD    980
 #define MAX_BAUD    25000
 
 #define IGNITION_STATE()    IGNITION
@@ -468,7 +468,15 @@ void kline_baud_cfg()
             baud_rate = 9600;
         }
         T2CONbits.TMR2ON = 0;
-        T2CONbits.T2CKPS = 1;       // prescaler 4
+        if (baud_rate < 4000)
+        {   // min baud rate 980
+            T2CONbits.T2CKPS = 2;       // prescaler 16
+            baud_rate <<= 2;
+        }
+        else
+        {   // min baud rate 3921
+            T2CONbits.T2CKPS = 1;       // prescaler 4
+        }
         T2CONbits.T2OUTPS = 0x0;    // postscaler 1
         PR2 = 16000000ul / 16 / baud_rate;
         kline_bit_delay = 0;
