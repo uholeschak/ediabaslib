@@ -871,6 +871,8 @@ namespace CarSimulator
                     case ConceptType.ConceptKwp1281:
                         baudRate = 10400;
                         //baudRate = 9600;
+                        //baudRate = 1200;
+                        //baudRate = 1000;
                         parity = Parity.None;
                         break;
 
@@ -886,6 +888,7 @@ namespace CarSimulator
                         //baudRate = 4000;
                         //baudRate = 2000;
                         //baudRate = 1200;
+                        //baudRate = 1000;
                         parity = Parity.None;
                         break;
                 }
