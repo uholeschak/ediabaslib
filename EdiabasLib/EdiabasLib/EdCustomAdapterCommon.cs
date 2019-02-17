@@ -795,14 +795,15 @@ namespace EdiabasLib
         public bool InterfaceReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog)
         {
             int timeoutOffset = _readTimeoutOffsetLong;
-            if (_readTimeoutOffsetShort >= 0)
+            if ((_readTimeoutOffsetShort >= 0) && (CurrentBaudRate >= 3000))
             {
                 if (((Stopwatch.GetTimestamp() - LastCommTick) < 100 * TickResolMs) && (timeout < 100))
                 {
                     timeoutOffset = _readTimeoutOffsetShort;
                 }
             }
-            //Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout offset {0}", timeoutOffset);
+
+            //Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout offset: {0}", timeoutOffset);
             timeout += timeoutOffset;
             timeoutTelEnd += timeoutOffset;
 
