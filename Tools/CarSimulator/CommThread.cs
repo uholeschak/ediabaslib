@@ -884,6 +884,8 @@ namespace CarSimulator
                         //baudRate = 9600;
                         //baudRate = 4800;
                         //baudRate = 4000;
+                        //baudRate = 2000;
+                        //baudRate = 1200;
                         parity = Parity.None;
                         break;
                 }
@@ -1161,6 +1163,12 @@ namespace CarSimulator
                         interByteTimeout = 30;
                         break;
                 }
+
+                if (_serialPort.BaudRate < 4000)
+                {
+                    interByteTimeout = 30;
+                }
+
                 int lastBytesToRead = 0;
                 int recLen = 0;
                 _receiveStopWatch.Reset();
@@ -1186,6 +1194,10 @@ namespace CarSimulator
                     {
                         if (_receiveStopWatch.ElapsedMilliseconds > interByteTimeout)
                         {
+                            if (offset > 0)
+                            {
+                                //Debug.WriteLine("Interbyte timeout: O={0}, L={1}, R={2}", offset, length, recLen);
+                            }
                             break;
                         }
                     }
