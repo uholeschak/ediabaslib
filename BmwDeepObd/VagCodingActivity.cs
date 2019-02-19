@@ -98,6 +98,7 @@ namespace BmwDeepObd
         private LinearLayout _layoutCodingButtons;
         private TextView _textViewVagCodingExecuteTitle;
         private Button _buttonCodingExecute;
+        private CheckBox _checkBoxEcuReset;
         private LinearLayout _layoutVagCodingAssitant;
         private ResultListAdapter _layoutVagCodingAssitantAdapter;
         private ListView _listViewVagCodingAssistant;
@@ -262,6 +263,9 @@ namespace BmwDeepObd
             {
                 ExecuteCodingRequest();
             };
+
+            _checkBoxEcuReset = FindViewById<CheckBox>(Resource.Id.checkBoxEcuReset);
+            _checkBoxEcuReset.SetOnTouchListener(this);
 
             _layoutVagCodingAssitant = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingAssitant);
             _layoutVagCodingAssitant.SetOnTouchListener(this);
@@ -867,6 +871,7 @@ namespace BmwDeepObd
             string workshopNumberTitle = string.Empty;
             string importerNumberTitle = string.Empty;
             string equipmentNumberTitle = string.Empty;
+            bool isJobRunning = IsJobRunning();
 
             if (_instanceData.CurrentCoding != null)
             {
@@ -939,7 +944,8 @@ namespace BmwDeepObd
             _editTextVagImporterNumber.Text = codingTextImporter;
             _textViewVagEquipmentNumberTitle.Text = equipmentNumberTitle;
             _editTextVagEquipmentNumber.Text = codingTextEquipment;
-            _buttonCodingExecute.Enabled = !IsJobRunning();
+            _checkBoxEcuReset.Enabled = !isJobRunning;
+            _buttonCodingExecute.Enabled = !isJobRunning;
         }
 
         private void UpdateCodingSelected(UdsFileReader.DataReader.DataInfoLongCoding dataInfoLongCoding, bool selectState)
@@ -992,6 +998,7 @@ namespace BmwDeepObd
         {
             UpdateCodingText();
 
+            bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
             bool shortCoding = IsShortCoding();
             StringBuilder sbCodingComment = new StringBuilder();
             List<TableResultItem> codingAssitantItems = new List<TableResultItem>();
@@ -1169,6 +1176,8 @@ namespace BmwDeepObd
             _layoutVagCodingWorkshop.Visibility = _instanceData.CurrentWorkshopNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagCodingImporterNumber.Visibility = _instanceData.CurrentImporterNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagCodingEquipmentNumber.Visibility = _instanceData.CurrentEquipmentNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
+
+            _checkBoxEcuReset.Visibility = isUdsEcu ? ViewStates.Visible : ViewStates.Gone;
 
             bool assistantChange = false;
             if (codingAssitantItems.Count == _layoutVagCodingAssitantAdapter.Items.Count)
@@ -1352,6 +1361,12 @@ namespace BmwDeepObd
             }
 
             EdiabasOpen();
+
+            bool ecuReset = false;
+            if (_checkBoxEcuReset.Visibility == ViewStates.Visible)
+            {
+                ecuReset = _checkBoxEcuReset.Checked;
+            }
 
             CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.vag_coding_processing));

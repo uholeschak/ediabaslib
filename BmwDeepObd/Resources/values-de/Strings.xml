@@ -456,6 +456,7 @@
   <string name="vag_coding_workshop_number_title">Betriebsnummer (dec): {0}-{1}</string>
   <string name="vag_coding_importer_number_title">Importeursnummer (dec): {0}-{1}</string>
   <string name="vag_coding_equipment_number_title">Gerätenummer (dec): {0}-{1}</string>
+  <string name="vag_coding_ecu_reset">ECU Reset</string>
   <string name="vag_coding_assistant_title">Kodierungs-Assistent</string>
   <string name="vag_coding_execute_title">Vorgang ausführen</string>
   <string name="vag_coding_button_execute">Ausführen</string>
