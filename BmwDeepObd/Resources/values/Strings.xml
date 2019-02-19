@@ -432,6 +432,7 @@
   <string name="vag_coding_workshop_number_title">Workshop code (dec): {0}-{1}</string>
   <string name="vag_coding_importer_number_title">Importer number (dec): {0}-{1}</string>
   <string name="vag_coding_equipment_number_title">Equipment number (dec): {0}-{1}</string>
+  <string name="vag_coding_ecu_reset">ECU Reset</string>
   <string name="vag_coding_assistant_title">Coding assistant</string>
   <string name="vag_coding_execute_title">Execute operation</string>
   <string name="vag_coding_button_execute">Execute</string>

@@ -455,6 +455,8 @@
   <string name="vag_coding_workshop_number_title">Номер мастерской (деc.): {0}-{1}</string>
   <string name="vag_coding_importer_number_title">Номер импортёра (деc.): {0}-{1}</string>
   <string name="vag_coding_equipment_number_title">Номер устройства (деc.): {0}-{1}</string>
+  <!--Translate-->
+  <string name="vag_coding_ecu_reset">ECU Reset</string>
   <string name="vag_coding_assistant_title">Помощник по кодированию</string>
   <string name="vag_coding_execute_title">Выполнить операцию</string>
   <string name="vag_coding_button_execute">Выполнить</string>

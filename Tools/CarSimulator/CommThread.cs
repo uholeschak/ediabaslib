@@ -7356,8 +7356,8 @@ namespace CarSimulator
                                     found = true;
                                     Debug.WriteLine("Dummy service22: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
 
-                                    bool simulateData = false;
-                                    //bool simulateData = true;
+                                    //bool simulateData = false;
+                                    bool simulateData = true;
                                     int identifer = (_receiveData[4] << 8) + _receiveData[5];
                                     if (identifer >= 0x0600 && identifer <= 0x06FF)
                                     {

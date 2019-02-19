@@ -162,6 +162,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/vag_coding_button_execute" />
+            <CheckBox
+                android:id="@+id/checkBoxEcuReset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/vag_coding_ecu_reset" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/layoutVagCodingAssitant"
