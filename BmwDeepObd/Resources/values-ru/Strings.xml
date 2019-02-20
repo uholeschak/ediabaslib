@@ -495,8 +495,10 @@
   <string name="vag_adaption_button_test">Тестировать</string>
   <string name="vag_adaption_button_store">Сохранить</string>
   <string name="vag_adaption_button_stop">Остановить</string>
+  <!--Translate-->
+  <string name="vag_adaption_ecu_reset">Perform ECU reset</string>
 
-  <!-- CAN Adapter Activity -->
+    <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">CAN адаптер</string>
   <string name="can_adapter_mode_name">Режим работы CAN</string>
   <string name="can_adapter_sep_time">Интервал между пакетами данных [мс]</string>
