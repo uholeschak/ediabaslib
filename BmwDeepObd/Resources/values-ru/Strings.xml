@@ -456,7 +456,7 @@
   <string name="vag_coding_importer_number_title">Номер импортёра (деc.): {0}-{1}</string>
   <string name="vag_coding_equipment_number_title">Номер устройства (деc.): {0}-{1}</string>
   <!--Translate-->
-  <string name="vag_coding_ecu_reset">ECU Reset</string>
+  <string name="vag_coding_ecu_reset">Perform ECU reset</string>
   <string name="vag_coding_assistant_title">Помощник по кодированию</string>
   <string name="vag_coding_execute_title">Выполнить операцию</string>
   <string name="vag_coding_button_execute">Выполнить</string>
@@ -465,6 +465,8 @@
   <string name="vag_coding_write_coding_illegal_arguments">Аргументы для операции находятся вне рабочего диапазона</string>
   <string name="vag_coding_write_coding_failed">Ошибка выполнения операции</string>
   <string name="vag_coding_write_coding_access_denied">В доступе отказано, сначала вы должны авторизироваться</string>
+  <!--Translate-->
+  <string name="vag_coding_write_coding_reset_failed">The ECU reset failed</string>
   <string name="vag_coding_write_coding_ok">Кодирование успешно завершено</string>
   <string name="vag_coding_write_coding2_failed">Не удалось записать кодировку.\nЕсли код был неправильным, то вам необходимо оставить зажигание включённым как минимум на 10 минут, прежде чем пытаться снова!</string>
   <string name="vag_coding_login_job_failed">Ошибка авторизации.\nЕсли код был неправильным, то вам необходимо выключить зажигание на 1-2 минуты, прежде чем пытаться снова!</string>
