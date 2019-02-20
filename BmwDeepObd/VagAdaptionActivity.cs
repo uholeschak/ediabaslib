@@ -1339,7 +1339,7 @@ namespace BmwDeepObd
             }
             _buttonAdaptionTest.Visibility = isUdsEcu ? ViewStates.Gone : ViewStates.Visible;
             _buttonAdaptionStop.Enabled = jobRunning && !operationActive;
-            _checkBoxEcuReset.Enabled = !operationActive;
+            _checkBoxEcuReset.Enabled = !jobRunning || _buttonAdaptionStore.Enabled;
         }
 
         private void HideKeyboard()
