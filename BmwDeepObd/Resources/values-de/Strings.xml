@@ -456,7 +456,7 @@
   <string name="vag_coding_workshop_number_title">Betriebsnummer (dec): {0}-{1}</string>
   <string name="vag_coding_importer_number_title">Importeursnummer (dec): {0}-{1}</string>
   <string name="vag_coding_equipment_number_title">Gerätenummer (dec): {0}-{1}</string>
-  <string name="vag_coding_ecu_reset">ECU Reset</string>
+  <string name="vag_coding_ecu_reset">ECU Reset durchführen</string>
   <string name="vag_coding_assistant_title">Kodierungs-Assistent</string>
   <string name="vag_coding_execute_title">Vorgang ausführen</string>
   <string name="vag_coding_button_execute">Ausführen</string>
@@ -465,6 +465,7 @@
   <string name="vag_coding_write_coding_illegal_arguments">Die Job Argumente sind außerhalb des gültigen Bereichs</string>
   <string name="vag_coding_write_coding_failed">Der Vorgang ist fehlgeschlagen</string>
   <string name="vag_coding_write_coding_access_denied">Zugriff verweigert, Sie müssen sich zuerst authentifizieren</string>
+  <string name="vag_coding_write_coding_reset_failed">Der ECU Reset ist fehlgeschlagen</string>
   <string name="vag_coding_write_coding_ok">Kodierung schreiben erfolgreich</string>
   <string name="vag_coding_write_coding2_failed">Kodierung schreiben fehlgeschlagen.\nWenn der Code falsch war, müssen Sie die Zündung für mindesten 10 Minuten eingeschaltet lassen, bevor Sie es erneut versuchen!</string>
   <string name="vag_coding_login_job_failed">Login fehlgeschlagen.\nWenn der Code falsch war, müssen Sie die Zündung für 1 bis 2 Minuten ausschalten, bevor Sie es erneut versuchen!</string>

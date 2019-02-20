@@ -63,6 +63,7 @@ namespace BmwDeepObd
             Ok,
             IllegalArguments,
             AccessDenied,
+            ResetFailed,
         }
 
         public static XmlToolActivity.EcuInfo IntentEcuInfo { get; set; }
@@ -1362,6 +1363,7 @@ namespace BmwDeepObd
 
             EdiabasOpen();
 
+            bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
             bool ecuReset = false;
             if (_checkBoxEcuReset.Visibility == ViewStates.Visible)
             {
@@ -1374,6 +1376,7 @@ namespace BmwDeepObd
             progress.Show();
 
             bool executeFailed = false;
+            bool finishRequired = false;
             JobStatus jobStatus = JobStatus.Unknown;
             _jobThread = new Thread(() =>
             {
@@ -1403,7 +1406,7 @@ namespace BmwDeepObd
                         codingValue = BitConverter.ToUInt64(dataArray, 0);
                     }
 
-                    if (_codingMode == CodingMode.SecurityAccess && XmlToolActivity.IsUdsEcu(_ecuInfo))
+                    if (_codingMode == CodingMode.SecurityAccess && isUdsEcu)
                     {
                         // send dummy request to open the connection first
                         _ediabas.ArgString = "0xF19E";  // ASAM data
@@ -1579,6 +1582,22 @@ namespace BmwDeepObd
                                 executeFailed = true;
                             }
                         }
+
+                        if (!executeFailed && ecuReset && isUdsEcu)
+                        {
+                            int dataOffset = XmlToolActivity.VagUdsRawDataOffset;
+                            byte[] resetRequest = { 0x11, 0x02 };
+                            _ediabas.EdInterfaceClass.TransmitData(resetRequest, out byte[] resetResponse);
+                            if (resetResponse == null || resetResponse.Length < dataOffset + 2 || resetResponse[dataOffset + 0] != 0x51)
+                            {
+                                executeFailed = true;
+                                jobStatus = JobStatus.ResetFailed;
+                            }
+                            else
+                            {
+                                finishRequired = true;
+                            }
+                        }
                     }
                 }
                 catch (Exception)
@@ -1606,6 +1625,10 @@ namespace BmwDeepObd
 
                             case JobStatus.AccessDenied:
                                 resId = Resource.String.vag_coding_write_coding_access_denied;
+                                break;
+
+                            case JobStatus.ResetFailed:
+                                resId = Resource.String.vag_coding_write_coding_reset_failed;
                                 break;
                         }
 
@@ -1659,7 +1682,7 @@ namespace BmwDeepObd
                             .SetTitle(Resource.String.alert_title_info)
                             .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
                             .Show();
-                        if (_codingMode == CodingMode.Coding)
+                        if (finishRequired || _codingMode == CodingMode.Coding)
                         {
                             alertDialog.DismissEvent += (sender, args) =>
                             {

@@ -432,7 +432,7 @@
   <string name="vag_coding_workshop_number_title">Workshop code (dec): {0}-{1}</string>
   <string name="vag_coding_importer_number_title">Importer number (dec): {0}-{1}</string>
   <string name="vag_coding_equipment_number_title">Equipment number (dec): {0}-{1}</string>
-  <string name="vag_coding_ecu_reset">ECU Reset</string>
+  <string name="vag_coding_ecu_reset">Perform ECU reset</string>
   <string name="vag_coding_assistant_title">Coding assistant</string>
   <string name="vag_coding_execute_title">Execute operation</string>
   <string name="vag_coding_button_execute">Execute</string>
@@ -441,6 +441,7 @@
   <string name="vag_coding_write_coding_illegal_arguments">The job arguments are out of range</string>
   <string name="vag_coding_write_coding_failed">The operation failed</string>
   <string name="vag_coding_write_coding_access_denied">Access denied, you have to use security access first</string>
+  <string name="vag_coding_write_coding_reset_failed">The ECU reset failed</string>
   <string name="vag_coding_write_coding_ok">Write coding successful</string>
   <string name="vag_coding_write_coding2_failed">Write coding failed.\nIf the code was incorrect, switch the ignition off for 1-2 minutes before trying it again!</string>
   <string name="vag_coding_login_job_failed">Login failed.\nIf the code was incorrect, switch the ignition off for 1-2 minutes before trying it again!</string>
