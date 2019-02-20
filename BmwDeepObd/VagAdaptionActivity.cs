@@ -43,6 +43,7 @@ namespace BmwDeepObd
             public UInt64? CurrentWorkshopNumber { get; set; }
             public UInt64? CurrentImporterNumber { get; set; }
             public UInt64? CurrentEquipmentNumber { get; set; }
+            public bool EcuReset { get; set; }
             public string[] AdaptionValues { get; set; }
             public string[] AdaptionUnits { get; set; }
             public bool TestAdaption { get; set; }
@@ -344,6 +345,10 @@ namespace BmwDeepObd
 
             _checkBoxEcuReset = FindViewById<CheckBox>(Resource.Id.checkBoxEcuReset);
             _checkBoxEcuReset.SetOnTouchListener(this);
+            _checkBoxEcuReset.Click += (sender, args) =>
+            {
+                ReadAdaptionEditors();
+            };
 
             UpdateAdaptionChannelList();
         }
@@ -936,6 +941,11 @@ namespace BmwDeepObd
                 }
             }
 
+            if (_checkBoxEcuReset.Visibility == ViewStates.Visible)
+            {
+                _instanceData.EcuReset = _checkBoxEcuReset.Checked;
+            }
+
             if (dataChanged)
             {
                 UpdateAdaptionInfo();
@@ -1329,7 +1339,7 @@ namespace BmwDeepObd
             }
             _buttonAdaptionTest.Visibility = isUdsEcu ? ViewStates.Gone : ViewStates.Visible;
             _buttonAdaptionStop.Enabled = jobRunning && !operationActive;
-            _checkBoxEcuReset.Enabled = !jobRunning;
+            _checkBoxEcuReset.Enabled = !operationActive;
         }
 
         private void HideKeyboard()
@@ -1478,12 +1488,6 @@ namespace BmwDeepObd
             }
             _instanceData.StopAdaption = false;
             _instanceData.AutoClose = false;
-
-            bool ecuReset = false;
-            if (_checkBoxEcuReset.Visibility == ViewStates.Visible)
-            {
-                ecuReset = _checkBoxEcuReset.Checked;
-            }
 
             bool executeFailed = false;
             JobStatus jobStatus = JobStatus.Unknown;
