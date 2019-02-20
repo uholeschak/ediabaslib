@@ -224,39 +224,50 @@
                     android:maxLines="1" />
             </LinearLayout>
         </LinearLayout>
-        <TextView
-            android:id="@+id/textViewVagAdaptionOperationTitle"
-            android:text="@+string/vag_adaption_operation_title"
+        <LinearLayout
+            android:id="@+id/layoutAdaptionOperation"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#666"
-            android:textColor="#fff" />
-        <org.apmem.tools.layouts.FlowLayout
-            android:id="@+id/layoutAdaptionButtons"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="left">
-            <Button
-                android:id="@+id/buttonAdaptionRead"
-                android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/textViewVagAdaptionOperationTitle"
+                android:text="@+string/vag_adaption_operation_title"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/vag_adaption_button_read" />
-            <Button
-                android:id="@+id/buttonAdaptionTest"
-                android:layout_width="wrap_content"
+                android:background="#666"
+                android:textColor="#fff" />
+            <org.apmem.tools.layouts.FlowLayout
+                android:id="@+id/layoutAdaptionButtons"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/vag_adaption_button_test" />
-            <Button
-                android:id="@+id/buttonAdaptionStore"
-                android:layout_width="wrap_content"
+                android:gravity="left">
+                <Button
+                    android:id="@+id/buttonAdaptionRead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/vag_adaption_button_read" />
+                <Button
+                    android:id="@+id/buttonAdaptionTest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/vag_adaption_button_test" />
+                <Button
+                    android:id="@+id/buttonAdaptionStore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/vag_adaption_button_store" />
+                <Button
+                    android:id="@+id/buttonAdaptionStop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/vag_adaption_button_stop" />
+            </org.apmem.tools.layouts.FlowLayout>
+            <CheckBox
+                android:id="@+id/checkBoxEcuReset"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/vag_adaption_button_store" />
-            <Button
-                android:id="@+id/buttonAdaptionStop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/vag_adaption_button_stop" />
-        </org.apmem.tools.layouts.FlowLayout>
+                android:text="@string/vag_adaption_ecu_reset" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

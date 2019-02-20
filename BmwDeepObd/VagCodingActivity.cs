@@ -872,7 +872,7 @@ namespace BmwDeepObd
             string workshopNumberTitle = string.Empty;
             string importerNumberTitle = string.Empty;
             string equipmentNumberTitle = string.Empty;
-            bool isJobRunning = IsJobRunning();
+            bool jobRunning = IsJobRunning();
 
             if (_instanceData.CurrentCoding != null)
             {
@@ -945,8 +945,8 @@ namespace BmwDeepObd
             _editTextVagImporterNumber.Text = codingTextImporter;
             _textViewVagEquipmentNumberTitle.Text = equipmentNumberTitle;
             _editTextVagEquipmentNumber.Text = codingTextEquipment;
-            _checkBoxEcuReset.Enabled = !isJobRunning;
-            _buttonCodingExecute.Enabled = !isJobRunning;
+            _checkBoxEcuReset.Enabled = !jobRunning;
+            _buttonCodingExecute.Enabled = !jobRunning;
         }
 
         private void UpdateCodingSelected(UdsFileReader.DataReader.DataInfoLongCoding dataInfoLongCoding, bool selectState)

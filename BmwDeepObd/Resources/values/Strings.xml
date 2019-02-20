@@ -470,8 +470,9 @@
   <string name="vag_adaption_button_test">Test</string>
   <string name="vag_adaption_button_store">Store</string>
   <string name="vag_adaption_button_stop">Stop</string>
+  <string name="vag_adaption_ecu_reset">Perform ECU reset</string>
 
-  <!-- CAN Adapter Activity -->
+    <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">CAN adapter</string>
   <string name="can_adapter_mode_name">CAN mode</string>
   <string name="can_adapter_sep_time">Separation time [ms]</string>

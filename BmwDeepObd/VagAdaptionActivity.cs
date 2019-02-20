@@ -111,11 +111,13 @@ namespace BmwDeepObd
         private LinearLayout _layoutVagAdaptionEquipmentNumber;
         private TextView _textViewVagEquipmentNumberTitle;
         private EditText _editTextVagEquipmentNumber;
+        private LinearLayout _layoutAdaptionOperation;
         private TextView _textViewVagAdaptionOperationTitle;
         private Button _buttonAdaptionRead;
         private Button _buttonAdaptionTest;
         private Button _buttonAdaptionStore;
         private Button _buttonAdaptionStop;
+        private CheckBox _checkBoxEcuReset;
         private ActivityCommon _activityCommon;
         private Handler _updateHandler;
         private XmlToolActivity.EcuInfo _ecuInfo;
@@ -301,6 +303,9 @@ namespace BmwDeepObd
             _editTextVagEquipmentNumber = FindViewById<EditText>(Resource.Id.editTextVagEquipmentNumber);
             _editTextVagEquipmentNumber.EditorAction += AdaptionEditorAction;
 
+            _layoutAdaptionOperation = FindViewById<LinearLayout>(Resource.Id.layoutAdaptionOperation);
+            _layoutAdaptionOperation.SetOnTouchListener(this);
+
             _textViewVagAdaptionOperationTitle = FindViewById<TextView>(Resource.Id.textViewVagAdaptionOperationTitle);
             _textViewVagAdaptionOperationTitle.SetOnTouchListener(this);
 
@@ -336,6 +341,9 @@ namespace BmwDeepObd
             {
                 _instanceData.StopAdaption = true;
             };
+
+            _checkBoxEcuReset = FindViewById<CheckBox>(Resource.Id.checkBoxEcuReset);
+            _checkBoxEcuReset.SetOnTouchListener(this);
 
             UpdateAdaptionChannelList();
         }
@@ -1054,6 +1062,7 @@ namespace BmwDeepObd
             _layoutVagAdaptionWorkshop.Visibility = _instanceData.CurrentWorkshopNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagAdaptionImporterNumber.Visibility = _instanceData.CurrentImporterNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
             _layoutVagAdaptionEquipmentNumber.Visibility = _instanceData.CurrentEquipmentNumber.HasValue ? ViewStates.Visible : ViewStates.Gone;
+            _checkBoxEcuReset.Visibility = isUdsEcu ? ViewStates.Visible : ViewStates.Gone;
         }
 
         private void UpdateAdaptionText(bool cyclicUpdate = false)
@@ -1320,6 +1329,7 @@ namespace BmwDeepObd
             }
             _buttonAdaptionTest.Visibility = isUdsEcu ? ViewStates.Gone : ViewStates.Visible;
             _buttonAdaptionStop.Enabled = jobRunning && !operationActive;
+            _checkBoxEcuReset.Enabled = !jobRunning;
         }
 
         private void HideKeyboard()
@@ -1468,6 +1478,12 @@ namespace BmwDeepObd
             }
             _instanceData.StopAdaption = false;
             _instanceData.AutoClose = false;
+
+            bool ecuReset = false;
+            if (_checkBoxEcuReset.Visibility == ViewStates.Visible)
+            {
+                ecuReset = _checkBoxEcuReset.Checked;
+            }
 
             bool executeFailed = false;
             JobStatus jobStatus = JobStatus.Unknown;
