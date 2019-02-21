@@ -36,7 +36,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>MPASMWIN</languageToolchain>
-        <languageToolchainVersion>5.81</languageToolchainVersion>
+        <languageToolchainVersion>5.82</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -137,7 +137,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>MPASMWIN</languageToolchain>
-        <languageToolchainVersion>5.81</languageToolchainVersion>
+        <languageToolchainVersion>5.82</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -238,7 +238,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>MPASMWIN</languageToolchain>
-        <languageToolchainVersion>5.81</languageToolchainVersion>
+        <languageToolchainVersion>5.82</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -339,7 +339,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>MPASMWIN</languageToolchain>
-        <languageToolchainVersion>5.81</languageToolchainVersion>
+        <languageToolchainVersion>5.82</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -440,7 +440,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>MPASMWIN</languageToolchain>
-        <languageToolchainVersion>5.81</languageToolchainVersion>
+        <languageToolchainVersion>5.82</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -541,7 +541,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>MPASMWIN</languageToolchain>
-        <languageToolchainVersion>5.81</languageToolchainVersion>
+        <languageToolchainVersion>5.82</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
