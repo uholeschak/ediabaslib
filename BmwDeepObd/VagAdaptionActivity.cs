@@ -71,6 +71,7 @@ namespace BmwDeepObd
             Ok,
             IllegalArguments,
             AccessDenied,
+            ResetFailed,
         }
 
         public static XmlToolActivity.EcuInfo IntentEcuInfo { get; set; }
@@ -1494,6 +1495,7 @@ namespace BmwDeepObd
             _checkBoxEcuReset.Checked = false;
 
             bool executeFailed = false;
+            bool finishUpdate = false;
             JobStatus jobStatus = JobStatus.Unknown;
             _jobThread = new Thread(() =>
             {
@@ -1690,6 +1692,22 @@ namespace BmwDeepObd
                             if (jobStatus != JobStatus.Ok)
                             {
                                 executeFailed = true;
+                            }
+
+                            if (!executeFailed && stopAdaption && isUdsEcu && _instanceData.EcuReset)
+                            {
+                                int dataOffset = XmlToolActivity.VagUdsRawDataOffset;
+                                byte[] resetRequest = { 0x11, 0x02 };
+                                _ediabas.EdInterfaceClass.TransmitData(resetRequest, out byte[] resetResponse);
+                                if (resetResponse == null || resetResponse.Length < dataOffset + 2 || resetResponse[dataOffset + 0] != 0x51)
+                                {
+                                    executeFailed = true;
+                                    jobStatus = JobStatus.ResetFailed;
+                                }
+                                else
+                                {
+                                    finishUpdate = true;
+                                }
                             }
 
                             if (executeFailed)
@@ -1911,6 +1929,10 @@ namespace BmwDeepObd
                             case JobStatus.AccessDenied:
                                 resId = Resource.String.vag_coding_write_coding_access_denied;
                                 break;
+
+                            case JobStatus.ResetFailed:
+                                resId = Resource.String.vag_coding_write_coding_reset_failed;
+                                break;
                         }
 
                         if (resId < 0)
@@ -1921,6 +1943,14 @@ namespace BmwDeepObd
                     }
                     else
                     {
+                        if (finishUpdate)
+                        {
+                            _ecuInfo.JobList = null;    // force update
+                            SetResult(Android.App.Result.Ok);
+                            Finish();
+                            return;
+                        }
+
                         if (_instanceData.AutoClose)
                         {
                             Finish();

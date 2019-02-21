@@ -1376,7 +1376,7 @@ namespace BmwDeepObd
             progress.Show();
 
             bool executeFailed = false;
-            bool finishRequired = false;
+            bool finishUpdate = false;
             JobStatus jobStatus = JobStatus.Unknown;
             _jobThread = new Thread(() =>
             {
@@ -1595,7 +1595,7 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                finishRequired = true;
+                                finishUpdate = true;
                             }
                         }
                     }
@@ -1682,7 +1682,7 @@ namespace BmwDeepObd
                             .SetTitle(Resource.String.alert_title_info)
                             .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
                             .Show();
-                        if (finishRequired || _codingMode == CodingMode.Coding)
+                        if (finishUpdate || _codingMode == CodingMode.Coding)
                         {
                             alertDialog.DismissEvent += (sender, args) =>
                             {

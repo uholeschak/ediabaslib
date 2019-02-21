@@ -583,6 +583,7 @@ namespace BmwDeepObd
             switch ((ActivityRequest) requestCode)
             {
                 case ActivityRequest.RequestVagCoding:
+                case ActivityRequest.RequestVagAdaption:
                     if (resultCode == Android.App.Result.Ok)
                     {
                         Finish();
