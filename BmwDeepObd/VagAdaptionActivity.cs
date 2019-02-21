@@ -43,13 +43,14 @@ namespace BmwDeepObd
             public UInt64? CurrentWorkshopNumber { get; set; }
             public UInt64? CurrentImporterNumber { get; set; }
             public UInt64? CurrentEquipmentNumber { get; set; }
-            public bool EcuReset { get; set; }
             public string[] AdaptionValues { get; set; }
             public string[] AdaptionUnits { get; set; }
             public bool TestAdaption { get; set; }
             public bool StoreAdaption { get; set; }
             public bool StopAdaption { get; set; }
             public bool AutoClose { get; set; }
+            public bool EcuReset { get; set; }
+            public bool AdaptionStored { get; set; }
         }
 
         // Intent extra
@@ -1339,7 +1340,7 @@ namespace BmwDeepObd
             }
             _buttonAdaptionTest.Visibility = isUdsEcu ? ViewStates.Gone : ViewStates.Visible;
             _buttonAdaptionStop.Enabled = jobRunning && !operationActive;
-            _checkBoxEcuReset.Enabled = !jobRunning || _buttonAdaptionStore.Enabled;
+            _checkBoxEcuReset.Enabled = _instanceData.AdaptionStored;
         }
 
         private void HideKeyboard()
@@ -1488,6 +1489,9 @@ namespace BmwDeepObd
             }
             _instanceData.StopAdaption = false;
             _instanceData.AutoClose = false;
+            _instanceData.EcuReset = false;
+            _instanceData.AdaptionStored = false;
+            _checkBoxEcuReset.Checked = false;
 
             bool executeFailed = false;
             JobStatus jobStatus = JobStatus.Unknown;
@@ -1835,6 +1839,7 @@ namespace BmwDeepObd
                                 {
                                     connected = false;
                                     _instanceData.AdaptionDataNew = null;
+                                    _instanceData.AdaptionStored = true;
                                 }
                                 else
                                 {
@@ -1931,6 +1936,10 @@ namespace BmwDeepObd
                     _instanceData.TestAdaption = false;
                     _instanceData.StoreAdaption = false;
                     _instanceData.StopAdaption = false;
+                    _instanceData.EcuReset = false;
+                    _instanceData.AdaptionStored = false;
+                    _checkBoxEcuReset.Checked = false;
+
                     UpdateAdaptionText(true);
                 });
             });
