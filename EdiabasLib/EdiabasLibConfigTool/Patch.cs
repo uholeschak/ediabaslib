@@ -17,7 +17,7 @@ namespace EdiabasLibConfigTool
     {
         public const string AdapterSsidEnet = @"Deep OBD BMW";
         public const string AdapterSsidElm = @"WiFi_OBDII";
-        public const string AdapterSsidEspLink = @"DeepObd";
+        public const string AdapterSsidEspLink = @"DeepOBD";
         private const string ApiDirName = @"Api32";
         private const string ApiDllName = @"api32.dll";
         private const string ApiDllBackupName = @"api32.backup.dll";
