@@ -143,5 +143,35 @@ namespace EdiabasLib
 #endif
         }
 
+#if Android
+        public static string ConvertIpAddress(int ipAddress)
+        {
+            if (Java.Nio.ByteOrder.NativeOrder().Equals(Java.Nio.ByteOrder.LittleEndian))
+            {
+                ipAddress = Java.Lang.Integer.ReverseBytes(ipAddress);
+            }
+            byte[] ipByteArray = Java.Math.BigInteger.ValueOf(ipAddress).ToByteArray();
+            try
+            {
+                Java.Net.InetAddress inetAddress = Java.Net.InetAddress.GetByAddress(ipByteArray);
+                string address = inetAddress.HostAddress;
+                if (address == null)
+                {
+                    string text = inetAddress.ToString();
+                    System.Text.RegularExpressions.Match match =
+                        System.Text.RegularExpressions.Regex.Match(text, @"\d+\.\d+\.\d+\.\d+$", System.Text.RegularExpressions.RegexOptions.Singleline);
+                    if (match.Success)
+                    {
+                        address = match.Value;
+                    }
+                }
+                return address;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+#endif
     }
 }

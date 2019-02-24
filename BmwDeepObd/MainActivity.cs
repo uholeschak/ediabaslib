@@ -1250,7 +1250,7 @@ namespace BmwDeepObd
 
                         case ActivityCommon.InterfaceType.DeepObdWifi:
                             portName = "DEEPOBDWIFI";
-                            connectParameter = new EdCustomWiFiInterface.ConnectParameterType(_activityCommon.MaConnectivity);
+                            connectParameter = new EdCustomWiFiInterface.ConnectParameterType(_activityCommon.MaConnectivity, _activityCommon.MaWifi);
                             break;
 
                         case ActivityCommon.InterfaceType.Ftdi:
