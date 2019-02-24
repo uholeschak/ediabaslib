@@ -23,7 +23,7 @@ This chapter describes how to replace the ELM327 Wifi V1.5 HW: V01W_M_V1.0 adapt
 * Disconnect GPIO0 from GND (all others stay), Power cycle the Elm327 adapter, connect to ESP_XXYYZZ wifi network.
 * Using browser, browse to 192.168.4.1, select preset pin assignment: ESP-01, Change
 * Goto Debug log page, select UART debug log: off; Goto uC Console, select Baud 38400 for `default` PIC firmware, 115200 for `esp8266` firmware.
-* Optionally change network name in Wifi Soft-AP page
+* Change the SSID at the WiFi Soft-AP page to `DeepOBD`, this is required for the EdiabsLibConfig tool to work correctly.
 
 ## Step2: Program the PIC18F25K80
 * Connect your PicKit 3/4 to MCLR, PGD, PGC, GND (Vss) and 5V (Vcc) (take care, do not apply power from PicKit 3/4)
