@@ -21,6 +21,8 @@ namespace EdiabasLibConfigTool
     {
         private const string ElmIp = @"192.168.0.10";
         private const int ElmPort = 35000;
+        private const string EspLinkIp = @"192.168.4.1";
+        private const int EspLinkPort = 23;
         private readonly FormMain _form;
         private BluetoothClient _btClient;
         private NetworkStream _dataStream;
@@ -118,8 +120,9 @@ namespace EdiabasLibConfigTool
                     WlanConnectionAttributes conn = wlanIface.CurrentConnection;
                     string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
                     string ipAddr = string.Empty;
-                    bool isElm = string.Compare(ssidString, Patch.AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) != 0;
-                    if (!isElm)
+                    bool isEnet = string.Compare(ssidString, Patch.AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0;
+                    bool isEspLink = string.Compare(ssidString, Patch.AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0;
+                    if (isEnet)
                     {
                         IPInterfaceProperties ipProp = wlanIface.NetworkInterface.GetIPProperties();
                         if (ipProp == null)
@@ -148,15 +151,7 @@ namespace EdiabasLibConfigTool
                         {
                             Thread.CurrentThread.CurrentCulture = cultureInfo;
                             Thread.CurrentThread.CurrentUICulture = cultureInfo;
-                            if (isElm)
-                            {
-                                TestOk = RunWifiTestElm(configure, out bool configRequired);
-                                if (TestOk && configRequired)
-                                {
-                                    ConfigPossible = true;
-                                }
-                            }
-                            else
+                            if (isEnet)
                             {
                                 TestOk = RunWifiTestEnetRetry(ipAddr);
                                 if (TestOk)
@@ -164,7 +159,14 @@ namespace EdiabasLibConfigTool
                                     ConfigPossible = true;
                                 }
                             }
-
+                            else
+                            {
+                                TestOk = RunWifiTestElm(isEspLink, configure, out bool configRequired);
+                                if (TestOk && configRequired)
+                                {
+                                    ConfigPossible = true;
+                                }
+                            }
                         }
                         finally
                         {
@@ -276,16 +278,24 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        private bool RunWifiTestElm(bool configure, out bool configRequired)
+        private bool RunWifiTestElm(bool isEspLink, bool configure, out bool configRequired)
         {
             configRequired = false;
             _form.UpdateStatusText(Resources.Strings.Connecting);
+
+            string ipAddress = ElmIp;
+            int port = ElmPort;
+            if (isEspLink)
+            {
+                ipAddress = EspLinkIp;
+                port = EspLinkPort;
+            }
 
             try
             {
                 using (TcpClient tcpClient = new TcpClient())
                 {
-                    IPEndPoint ipTcp = new IPEndPoint(IPAddress.Parse(ElmIp), ElmPort);
+                    IPEndPoint ipTcp = new IPEndPoint(IPAddress.Parse(ipAddress), port);
                     tcpClient.Connect(ipTcp);
                     _dataStream = tcpClient.GetStream();
                     return RunBtTest(configure, out configRequired);
