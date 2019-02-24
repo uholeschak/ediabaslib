@@ -40,3 +40,4 @@ You could test reading the ignition pin with the following command (hex values):
 `82 F1 F1 FE FE 60`  
 The response is (additionally to the echo):  
 `82 F1 F1 FE <state> <checksum>` with state bit 0 set to 1 if ignition is on.  
+Sending binary data with plink: `plink -raw 192.168.4.1 -P 23 < data.bin`  
