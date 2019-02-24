@@ -1709,7 +1709,7 @@ namespace BmwDeepObd
             if (wifiInfo != null && _maWifi.DhcpInfo != null &&
                 !string.IsNullOrEmpty(wifiInfo.SSID) && wifiInfo.SSID.Contains(AdapterSsid))
             {
-                return ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
+                return TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
             }
             return null;
         }
@@ -1723,7 +1723,7 @@ namespace BmwDeepObd
             WifiInfo wifiInfo = _maWifi.ConnectionInfo;
             if (wifiInfo != null && _maWifi.DhcpInfo != null)
             {
-                string adapterIp = ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
+                string adapterIp = TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
                 bool ipStandard = false;
                 bool ipEspLink = false;
                 if (string.Compare(adapterIp, EdElmWifiInterface.ElmIp, StringComparison.Ordinal) == 0)
@@ -1743,34 +1743,6 @@ namespace BmwDeepObd
                 return true;
             }
             return false;
-        }
-
-        public string ConvertIpAddress(int ipAddress)
-        {
-            if (Java.Nio.ByteOrder.NativeOrder().Equals(Java.Nio.ByteOrder.LittleEndian))
-            {
-                ipAddress = Java.Lang.Integer.ReverseBytes(ipAddress);
-            }
-            byte[] ipByteArray = Java.Math.BigInteger.ValueOf(ipAddress).ToByteArray();
-            try
-            {
-                Java.Net.InetAddress inetAddress = Java.Net.InetAddress.GetByAddress(ipByteArray);
-                string address = inetAddress.HostAddress;
-                if (address == null)
-                {
-                    string text = inetAddress.ToString();
-                    Match match = Regex.Match(text, @"\d+\.\d+\.\d+\.\d+$", RegexOptions.Singleline);
-                    if (match.Success)
-                    {
-                        address = match.Value;
-                    }
-                }
-                return address;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
         }
 
         public bool EnetAdapterConfig()
@@ -2842,7 +2814,7 @@ namespace BmwDeepObd
                 else if (SelectedInterface == InterfaceType.DeepObdWifi)
                 {
                     edInterfaceObd.ComPort = "DEEPOBDWIFI";
-                    connectParameter = new EdCustomWiFiInterface.ConnectParameterType(_maConnectivity);
+                    connectParameter = new EdCustomWiFiInterface.ConnectParameterType(_maConnectivity, _maWifi);
                 }
                 else
                 {
