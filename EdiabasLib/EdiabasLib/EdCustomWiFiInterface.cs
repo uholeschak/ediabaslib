@@ -99,6 +99,36 @@ namespace EdiabasLib
                         adapterPort = AdapterPortEspLink;
                     }
                 }
+#else
+                System.Net.NetworkInformation.NetworkInterface[] adapters = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
+                foreach (System.Net.NetworkInformation.NetworkInterface adapter in adapters)
+                {
+                    if (adapter.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up)
+                    {
+                        if (adapter.NetworkInterfaceType == System.Net.NetworkInformation.NetworkInterfaceType.Wireless80211)
+                        {
+                            System.Net.NetworkInformation.IPInterfaceProperties properties = adapter.GetIPProperties();
+                            if (properties?.DhcpServerAddresses != null)
+                            {
+                                foreach (IPAddress dhcpServerAddress in properties.DhcpServerAddresses)
+                                {
+                                    if (dhcpServerAddress.AddressFamily == AddressFamily.InterNetwork)
+                                    {
+                                        string serverIp = dhcpServerAddress.ToString();
+                                        Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DHCP server IP: {0}", serverIp);
+                                        if (string.Compare(serverIp, AdapterIpEspLink, StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ESP-Link detected");
+                                            adapterIp = AdapterIpEspLink;
+                                            adapterPort = AdapterPortEspLink;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
 #endif
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", adapterIp, adapterPort);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
