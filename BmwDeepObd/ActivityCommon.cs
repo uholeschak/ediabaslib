@@ -1731,9 +1731,12 @@ namespace BmwDeepObd
                     ipStandard = true;
                 }
 
-                if (string.Compare(adapterIp, EdCustomWiFiInterface.AdapterIpEspLink, StringComparison.Ordinal) == 0)
+                if (_selectedInterface == InterfaceType.DeepObdWifi)
                 {
-                    ipEspLink = true;
+                    if (string.Compare(adapterIp, EdCustomWiFiInterface.AdapterIpEspLink, StringComparison.Ordinal) == 0)
+                    {
+                        ipEspLink = true;
+                    }
                 }
 
                 if (!ipStandard && !ipEspLink)

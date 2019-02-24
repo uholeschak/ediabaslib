@@ -262,6 +262,9 @@
       <Link>HexFiles\Type5\CanAdapterElm.X.production.hex</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="Database\Database.zip" />
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\dist\esp8266\production\CanAdapterElm.X.production.hex">
+      <Link>HexFiles\Type16\CanAdapterElm.X.production.hex</Link>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
