@@ -22,7 +22,9 @@ namespace EdiabasLib
 
         public const string PortId = "DEEPOBDWIFI";
         public static string AdapterIp = "192.168.0.10";
+        public static string AdapterIpEspLink = "192.168.4.1";
         public static int AdapterPort = 35000;
+        public static int AdapterPortEspLink = 23;
         protected const int TcpReadTimeoutOffset = 1000;
         protected const int EchoTimeout = 1000;
         protected static int ConnectTimeout = 5000;

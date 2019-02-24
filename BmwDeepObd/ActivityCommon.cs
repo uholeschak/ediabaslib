@@ -1724,7 +1724,19 @@ namespace BmwDeepObd
             if (wifiInfo != null && _maWifi.DhcpInfo != null)
             {
                 string adapterIp = ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
-                if (string.Compare(adapterIp, EdElmWifiInterface.ElmIp, StringComparison.Ordinal) != 0)
+                bool ipStandard = false;
+                bool ipEspLink = false;
+                if (string.Compare(adapterIp, EdElmWifiInterface.ElmIp, StringComparison.Ordinal) == 0)
+                {
+                    ipStandard = true;
+                }
+
+                if (string.Compare(adapterIp, EdCustomWiFiInterface.AdapterIpEspLink, StringComparison.Ordinal) == 0)
+                {
+                    ipEspLink = true;
+                }
+
+                if (!ipStandard && !ipEspLink)
                 {
                     return false;
                 }
