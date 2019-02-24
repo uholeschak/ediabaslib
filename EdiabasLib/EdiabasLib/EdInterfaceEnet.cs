@@ -661,7 +661,7 @@ namespace EdiabasLib
                         if (adapter.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up)
                         {
                             System.Net.NetworkInformation.IPInterfaceProperties properties = adapter.GetIPProperties();
-                            if (properties.UnicastAddresses != null)
+                            if (properties?.UnicastAddresses != null)
                             {
                                 foreach (System.Net.NetworkInformation.UnicastIPAddressInformation ipAddressInfo in properties.UnicastAddresses)
                                 {
