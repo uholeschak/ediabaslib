@@ -56,7 +56,7 @@ namespace EdiabasLib
 #endif
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    TcpElmClient = new TcpClientWithTimeout(IPAddress.Parse(ElmIp), ElmPort, ConnectTimeout).Connect();
+                    TcpElmClient = new TcpClientWithTimeout(IPAddress.Parse(ElmIp), ElmPort, ConnectTimeout, true).Connect();
                 }, ConnManager);
                 TcpElmStream = TcpElmClient.GetStream();
                 _edElmInterface = new EdElmInterface(Ediabas, TcpElmStream, TcpElmStream);

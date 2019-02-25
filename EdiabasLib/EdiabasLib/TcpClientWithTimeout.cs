@@ -18,15 +18,19 @@ namespace EdiabasLib
         private readonly IPAddress _host;
         private readonly int _port;
         private readonly int _timeoutMilliseconds;
+        private readonly bool? _noDelay;
+        private readonly int? _sendBufferSize;
         private TcpClient _connection;
         private bool _connected;
         private Exception _exception;
 
-        public TcpClientWithTimeout(IPAddress host, int port, int timeoutMilliseconds)
+        public TcpClientWithTimeout(IPAddress host, int port, int timeoutMilliseconds, bool? noDelay = null, int ? sendBufferSize = null)
         {
             _host = host;
             _port = port;
             _timeoutMilliseconds = timeoutMilliseconds;
+            _noDelay = noDelay;
+            _sendBufferSize = sendBufferSize;
         }
 
         public TcpClient Connect()
@@ -70,6 +74,14 @@ namespace EdiabasLib
             try
             {
                 _connection = new TcpClient();
+                if (_noDelay.HasValue)
+                {
+                    _connection.NoDelay = _noDelay.Value;
+                }
+                if (_sendBufferSize.HasValue)
+                {
+                    _connection.SendBufferSize = _sendBufferSize.Value;
+                }
                 IPEndPoint ipTcp = new IPEndPoint(_host, _port);
                 _connection.Connect(ipTcp);
                 // record that it succeeded, for the main thread to return to the caller

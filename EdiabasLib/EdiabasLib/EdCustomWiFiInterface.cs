@@ -133,7 +133,7 @@ namespace EdiabasLib
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", adapterIp, adapterPort);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    TcpClient = new TcpClientWithTimeout(IPAddress.Parse(adapterIp), adapterPort, ConnectTimeout).Connect();
+                    TcpClient = new TcpClientWithTimeout(IPAddress.Parse(adapterIp), adapterPort, ConnectTimeout, true).Connect();
                 }, ConnManager);
                 TcpStream = TcpClient.GetStream();
             }
