@@ -20,13 +20,14 @@ This chapter describes how to replace the ELM327 Wifi V1.5 HW: V01W_M_V1.0 adapt
 * Power the Elm327 adapter
 * Flash ESP-link firmware to the ESP8266ex using the instructions for 8Mbit/1MByte flash from [ESP-link serial flashing](https://github.com/jeelabs/esp-link/blob/master/FLASHING.md#initial-serial-flashing)
 * Command line for flashing: `python.exe esptool.py --port COMX --baud 460800 write_flash -fs 1MB -ff 40m 0x00000 boot_v1.X.bin 0x01000 user1.bin 0xfc000 esp_init_data_default.bin 0xfe000 blank.bin`
-* Disconnect GPIO0 from GND (all others stay), Power cycle the Elm327 adapter, connect to ESP_XXYYZZ wifi network.
+* Disconnect GPIO0 from GND (all others stay), Power cycle the Elm327 adapter, connect to `ESP_XXYYZZ` WiFi network.
 * Using the browser, browse to `192.168.4.1`.
-* At the home screen in the pin assignment set UART pins to `normal`, all other `disabled` and RX pull-up enabled.  
+* At the _Home_ screen in the pin assignment set UART pins to `normal`, all other `disabled` and RX pull-up enabled.  
 * Optionally set the Hostname to `deepobd`.
-* Goto the Debug log page, select UART debug log: `off`.
-* Goto the uC Console, select Baud `38400` for `default` PIC firmware and `115200` for `esp8266` firmware.
-* Change the SSID at the WiFi Soft-AP page to `DeepOBD`, this is required for the EdiabsLibConfig tool to work correctly.
+* At the _Services_ page set _Syslog_ to `192.168.4.2`, this will generate some traffic to keep the connection open and remove the _SNTP_ server.
+* Goto the _Debug log_ page, select _UART debug log_: `off`.
+* Goto the _µC Console_, select _Baud_ `38400` for `default` PIC firmware and `115200` for `esp8266` firmware.
+* Change the _SSID_ at the _WiFi Soft-AP_ page to `DeepOBD`, this is required for the `EdiabasLibConfigTool.exe` to work correctly.
 
 ## Step2: Program the PIC18F25K80
 * Connect your PicKit 3/4 to MCLR, PGD, PGC, GND (Vss) and 5V (Vcc) (take care, do not apply power from PicKit 3/4)
@@ -36,8 +37,8 @@ This chapter describes how to replace the ELM327 Wifi V1.5 HW: V01W_M_V1.0 adapt
 
 ## Step3: Testing
 * Power the Elm327 adapter
-* Connect to ESP_XXYYZZ wifi network
-* Telnet/Putty to 192.168.4.1 port 23 (use a program that allows hex display, send and recieve)
+* Connect to `ESP_XXYYZZ` WiFi network
+* Telnet/Putty to 192.168.4.1 port 23 (use a program that allows hex display, send and receive)
 * When sending strings to the adapter you should at least get an echo from the adapter, otherwise there is a problem with the connections.  
 You could test reading the ignition pin with the following command (hex values):  
 `82 F1 F1 FE FE 60`  
