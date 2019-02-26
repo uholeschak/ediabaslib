@@ -21,7 +21,7 @@ This chapter describes how to replace the ELM327 Wifi V1.5 HW: V01W_M_V1.0 adapt
 * Flash ESP-link firmware to the ESP8266ex using the instructions for 8Mbit/1MByte flash from [ESP-link serial flashing](https://github.com/jeelabs/esp-link/blob/master/FLASHING.md#initial-serial-flashing)
 * Command line for flashing: `python.exe esptool.py --port COMX --baud 460800 write_flash -fs 1MB -ff 40m 0x00000 boot_v1.X.bin 0x01000 user1.bin 0xfc000 esp_init_data_default.bin 0xfe000 blank.bin`
 * Disconnect GPIO0 from GND (all others stay), Power cycle the Elm327 adapter, connect to ESP_XXYYZZ wifi network.
-* Using browser, browse to 192.168.4.1, select preset pin assignment: ESP-01, Change
+* Using browser, browse to 192.168.4.1, in the pin assignment set UART pins to `normal`, all other `disabled` and RX pull-up enabled.
 * Goto Debug log page, select UART debug log: off; Goto uC Console, select Baud 38400 for `default` PIC firmware, 115200 for `esp8266` firmware.
 * Change the SSID at the WiFi Soft-AP page to `DeepOBD`, this is required for the EdiabsLibConfig tool to work correctly.
 
