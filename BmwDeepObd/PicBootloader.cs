@@ -2805,7 +2805,6 @@ namespace BmwDeepObd
                 Comm.BootInfo bootInfo = comm.ReadBootloaderInfo(20);
                 if (bootInfo.MajorVersion == 0 && bootInfo.MinorVersion == 0)
                 {
-                    Thread.Sleep(100);
                     comm.ActivateBootloader();
                     Thread.Sleep(600);
                     bootInfo = comm.ReadBootloaderInfo();
