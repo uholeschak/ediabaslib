@@ -24,7 +24,7 @@ This chapter describes how to replace the ELM327 Wifi V1.5 HW: V01W_M_V1.0 adapt
 * Using the browser, browse to `192.168.4.1`.
 * At the _Home_ screen in the pin assignment set UART pins to `normal`, all other `disabled` and RX pull-up enabled.  
 * Optionally set the Hostname to `deepobd`.
-* At the _Services_ page set _Syslog_ to `192.168.4.2`, this will generate some traffic to keep the connection open and remove the _SNTP_ server.
+* At the _Services_ page remove the _SNTP_ server.
 * Goto the _Debug log_ page, select _UART debug log_: `off`.
 * Goto the _µC Console_, select _Baud_ `38400` for `default` PIC firmware and `115200` for `esp8266` firmware.
 * Change the _SSID_ at the _WiFi Soft-AP_ page to `DeepOBD`, this is required for the `EdiabasLibConfigTool.exe` to work correctly.
