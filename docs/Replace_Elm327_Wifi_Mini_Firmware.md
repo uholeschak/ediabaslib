@@ -28,7 +28,7 @@ This chapter describes how to replace the ELM327 Wifi V1.5 HW: V01W_M_V1.0 adapt
 * Goto the _Debug log_ page, select _UART debug log_: `off`.
 * Goto the _µC Console_, select _Baud_ `38400` for `default` PIC firmware and `115200` for `esp8266` firmware.
 * Change the _SSID_ at the _WiFi Soft-AP_ page to `DeepOBD`, this is required for the `EdiabasLibConfigTool.exe` to work correctly.
-* Optionally you could use preconfigured settings from the binaries: `python.exe esptool.py --port COMX --baud 460800 write_flash 0x7e000 userdata.bin 0xfd000 sysdata.bin`
+* Optionally you could use preconfigured settings from the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest): `python.exe esptool.py --port COMX --baud 460800 write_flash 0x7e000 userdata.bin 0xfd000 sysdata.bin`
 
 ## Step2: Program the PIC18F25K80
 * Connect your PicKit 3/4 to MCLR, PGD, PGC, GND (Vss) and 5V (Vcc) (take care, do not apply power from PicKit 3/4)
