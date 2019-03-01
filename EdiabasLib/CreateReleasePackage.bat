@@ -56,6 +56,9 @@ copy "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\hc04\production\*.hex" "!CANAD
 mkdir "!CANADAPTERELMPATH!spp_uart"
 copy "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\spp_uart\production\*.hex" "!CANADAPTERELMPATH!spp_uart"
 copy "!BATPATH!CanAdapterElm\Bluetooth\spp_uart\release\*.*" "!CANADAPTERELMPATH!spp_uart"
+mkdir "!CANADAPTERELMPATH!esp8266"
+copy "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\spp_uart\production\*.hex" "!CANADAPTERELMPATH!esp8266"
+copy "!BATPATH!CanAdapterElm\Esp8266\*.bin" "!CANADAPTERELMPATH!esp8266"
 
 mkdir "!ENETADAPTERPATH!"
 copy "!BATPATH!EnetAdapter\Release\mini.bin" "!ENETADAPTERPATH!"
