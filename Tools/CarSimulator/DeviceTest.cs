@@ -29,6 +29,9 @@ namespace CarSimulator
         public const string AdapterSsidElm = @"WiFi_OBDII";
         private const string ElmIp = @"192.168.0.10";
         private const int ElmPort = 35000;
+        public const string AdapterSsidEspLink = @"DeepOBD";
+        private const string EspLinkIp = @"192.168.4.1";
+        private const int EspLinkPort = 23;
 
         // ReSharper disable InconsistentNaming
         // ReSharper disable UnusedMember.Global
@@ -152,8 +155,9 @@ namespace CarSimulator
             return true;
         }
 
-        private bool ConnectWifiDevice(string comPort)
+        private bool ConnectWifiDevice(string comPort, out bool espLink)
         {
+            espLink = false;
             try
             {
                 foreach (WlanInterface wlanIface in _wlanClient.Interfaces)
@@ -164,6 +168,11 @@ namespace CarSimulator
                         string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
                         if (string.Compare(ssidString, AdapterSsidElm, StringComparison.OrdinalIgnoreCase) == 0)
                         {
+                            return true;
+                        }
+                        if (string.Compare(ssidString, AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            espLink = true;
                             return true;
                         }
                     }
@@ -180,7 +189,8 @@ namespace CarSimulator
                 {
                     if (!ap.IsConnected)
                     {
-                        if (string.Compare(ap.Name, AdapterSsidElm, StringComparison.OrdinalIgnoreCase) == 0)
+                        if ((string.Compare(ap.Name, AdapterSsidElm, StringComparison.OrdinalIgnoreCase) == 0) ||
+                            (string.Compare(ap.Name, AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0))
                         {
                             AuthRequest authRequest = new AuthRequest(ap);
                             ap.ConnectAsync(authRequest, true, success =>
@@ -243,15 +253,18 @@ namespace CarSimulator
                 if (wifi)
                 {
                     _form.UpdateTestStatusText("Connecting ...");
-                    if (!ConnectWifiDevice(comPort))
+                    if (!ConnectWifiDevice(comPort, out bool espLink))
                     {
                         return false;
                     }
                     try
                     {
+                        string ip = espLink ? EspLinkIp : ElmIp;
+                        int port = espLink ? EspLinkPort : ElmPort;
+
                         using (TcpClient tcpClient = new TcpClient())
                         {
-                            IPEndPoint ipTcp = new IPEndPoint(IPAddress.Parse(ElmIp), ElmPort);
+                            IPEndPoint ipTcp = new IPEndPoint(IPAddress.Parse(ip), port);
                             tcpClient.Connect(ipTcp);
                             _dataStream = tcpClient.GetStream();
                             if (!RunTest(comPort))
@@ -325,6 +338,10 @@ namespace CarSimulator
 
                 case 5:
                     adapterName = "SPP-UART";
+                    break;
+
+                case 16:
+                    adapterName = "ESP8622";
                     break;
 
                 default:
