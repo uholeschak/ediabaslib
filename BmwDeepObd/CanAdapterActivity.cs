@@ -118,6 +118,7 @@ namespace BmwDeepObd
             ActivityCommon.InterfaceType interfaceType = (ActivityCommon.InterfaceType) Intent.GetIntExtra(ExtraInterfaceType,
                 (int) ActivityCommon.InterfaceType.Bluetooth);
             ViewStates visibility = IsCustomAdapter(interfaceType) ? ViewStates.Visible : ViewStates.Gone;
+            ViewStates visibilityBt = IsCustomBtAdapter(interfaceType) ? ViewStates.Visible : ViewStates.Gone;
 
             _buttonRead = _barView.FindViewById<Button>(Resource.Id.buttonAdapterRead);
             _buttonRead.SetOnTouchListener(this);
@@ -177,16 +178,16 @@ namespace BmwDeepObd
             _spinnerCanAdapterBlockSize.Visibility = visibility;
 
             _textViewBtPinTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterBtPinTitle);
-            _textViewBtPinTitle.Visibility = visibility;
+            _textViewBtPinTitle.Visibility = visibilityBt;
 
             _editTextBtPin = FindViewById<EditText>(Resource.Id.editTextBtPin);
-            _editTextBtPin.Visibility = visibility;
+            _editTextBtPin.Visibility = visibilityBt;
 
             _textViewBtNameTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterBtNameTitle);
-            _textViewBtNameTitle.Visibility = visibility;
+            _textViewBtNameTitle.Visibility = visibilityBt;
 
             _editTextBtName = FindViewById<EditText>(Resource.Id.editTextBtName);
-            _editTextBtName.Visibility = visibility;
+            _editTextBtName.Visibility = visibilityBt;
 
             _textViewCanAdapterIgnitionStateTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterIgnitionStateTitle);
             _textViewCanAdapterIgnitionStateTitle.Visibility = visibility;
@@ -432,14 +433,14 @@ namespace BmwDeepObd
             bool mtcService = _activityCommon.MtcBtService;
             _buttonRead.Enabled = bEnabled;
             _buttonWrite.Enabled = bEnabled;
-            _editTextBtPin.Enabled = bEnabled && !mtcService && _btPin != null && _btPin.Length >= 4;
+            _editTextBtPin.Enabled = _editTextBtPin.Visibility == ViewStates.Visible && bEnabled && !mtcService && _btPin != null && _btPin.Length >= 4;
             int maxPinLength = (_btPin != null && _btPin.Length > 0) ? _btPin.Length : 4;
             _editTextBtPin.SetFilters(new Android.Text.IInputFilter[] { new Android.Text.InputFilterLengthFilter(maxPinLength) });
             if (!_editTextBtPin.Enabled && !mtcService)
             {
                 _editTextBtPin.Text = string.Empty;
             }
-            _editTextBtName.Enabled = bEnabled && !mtcService && _btName != null && _btName.Length > 0;
+            _editTextBtName.Enabled = _editTextBtName.Visibility == ViewStates.Visible && bEnabled && !mtcService && _btName != null && _btName.Length > 0;
             int maxTextLength = (_btName != null && _btName.Length > 0) ? _btName.Length : 16;
             _editTextBtName.SetFilters(new Android.Text.IInputFilter[] { new Android.Text.InputFilterLengthFilter(maxTextLength) });
             if (!_editTextBtName.Enabled && !mtcService)
@@ -1113,6 +1114,17 @@ namespace BmwDeepObd
             {
                 case ActivityCommon.InterfaceType.Bluetooth:
                 case ActivityCommon.InterfaceType.DeepObdWifi:
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsCustomBtAdapter(ActivityCommon.InterfaceType interfaceType)
+        {
+            switch (interfaceType)
+            {
+                case ActivityCommon.InterfaceType.Bluetooth:
                     return true;
             }
 
