@@ -1,7 +1,6 @@
 # Replace ELM327 BT V1.5 HW: V01_M_V2.3 adapter firmware (or equivalent)
 
 This chapter describes how to replace the ELM327 BT V1.5 HW: V01_M_V2.3 adapter PIC18F25K80 firmware and YC1021 BT settings.  
-**At the moment the firmware ist still untested and officially not supported by EdiabasLib!**
 
 ### Requirements:
 
@@ -16,15 +15,16 @@ This chapter describes how to replace the ELM327 BT V1.5 HW: V01_M_V2.3 adapter 
 ## Step1: Program the YC1021 BT settings
 * Connect your EZP2010 Eeprom programmer clip on to the SOIC8 (150mil) 24C32 eeprom chip, take note of orientation (red wire of clipon goes to red annotated 24C32 pin1)
 * Do a full read with eeprom powered from programmer (do not apply power from obd side).  
-  It is recommended that you disconnect pin 8 of the 24C32 chip first.  
-  It make take a few read tries to get the full dump correctly, if the first 0x80 bytes do not contain any 0xff your read is correct.
-* Edit the dump to your liking (for some chips a negative offset of -0xB is required for the addresses!)
+  It's recommended that you disconnect VCC pin 8 of the 24C32 chip first!  
+  It may take a few read tries to get the full dump correctly, if the first 0x80 bytes only contain 0xFF your read is correct.
+* Edit the dump to your liking (users have reported, that some chips require a negative offset -0xB for the addresses!)
   * BT address: 0xF93 (6 bytes, normally dont touch)
   * BLE address: 0xF99 (6 bytes, normally dont touch)
   * PinCode: 0xF9F, size + pinchars (max 15 chars)
   * BT 2.x name: 0xFAF, size + string (max 32 chars)
   * BLE name: 0xFD0, size + string (max 24 chars)
   * BaudRate: 0xFF0 (uint16_t, 2 bytes, low byte first); default value: 0x04E2 is 38400 baud (for `default` PIC firmware), change to 0x01A1 for 115200 baud (for `yc1021` firmware)
+* Optionally you could use preconfigured settings file `modified.bin` from the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest).
 * Write the changed binary back to the 24C32 eeprom (again powered from programmer, not from obd side).  
 
 ## Step2: Program the PIC18F25K80
