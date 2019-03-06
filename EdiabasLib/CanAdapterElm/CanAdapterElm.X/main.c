@@ -3533,11 +3533,15 @@ void main(void)
     LED_OBD_RX = 1;
     LED_OBD_TX = 1;
     // LED as output
-    //TRISBbits.TRISB4 = 0; // used by bootloader
+    // ignore bootloader pin
+#if ADAPTER_TYPE == 0x06
+    TRISBbits.TRISB4 = 0;
+#else
 #if defined(ALLOW_FACTORY_RESET)
     TRISBbits.TRISB5 = 1;
 #else
     TRISBbits.TRISB5 = 0;
+#endif
 #endif
     TRISBbits.TRISB6 = 0;
     TRISBbits.TRISB7 = 0;
