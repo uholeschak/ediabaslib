@@ -436,17 +436,9 @@ namespace BmwDeepObd
             _editTextBtPin.Enabled = _editTextBtPin.Visibility == ViewStates.Visible && bEnabled && !mtcService && _btPin != null && _btPin.Length >= 4;
             int maxPinLength = (_btPin != null && _btPin.Length > 0) ? _btPin.Length : 4;
             _editTextBtPin.SetFilters(new Android.Text.IInputFilter[] { new Android.Text.InputFilterLengthFilter(maxPinLength) });
-            if (!_editTextBtPin.Enabled && !mtcService)
-            {
-                _editTextBtPin.Text = string.Empty;
-            }
             _editTextBtName.Enabled = _editTextBtName.Visibility == ViewStates.Visible && bEnabled && !mtcService && _btName != null && _btName.Length > 0;
             int maxTextLength = (_btName != null && _btName.Length > 0) ? _btName.Length : 16;
             _editTextBtName.SetFilters(new Android.Text.IInputFilter[] { new Android.Text.InputFilterLengthFilter(maxTextLength) });
-            if (!_editTextBtName.Enabled && !mtcService)
-            {
-                _editTextBtName.Text = string.Empty;
-            }
 
             _textViewSerNum.Enabled = bEnabled;
 
@@ -509,24 +501,32 @@ namespace BmwDeepObd
                     _spinnerCanAdapterMode.SetSelection(indexMode);
                 }
 
+                string btPinText = string.Empty;
                 if ((_editTextBtPin.Enabled || mtcService) && _btPin != null)
                 {
                     string btPin = PinDataToString(_btPin);
-                    _editTextBtPin.Text = btPin.Length >= 4 ? btPin : "1234";
+                    btPinText = btPin.Length >= 4 ? btPin : "1234";
+                    if (mtcService && _btPin.Length == 0)
+                    {
+                        btPinText = string.Empty;   // adapter has no pin support
+                    }
                 }
+                _editTextBtPin.Text = btPinText;
 
+                string btNameText = string.Empty;
                 if ((_editTextBtName.Enabled || mtcService) && _btName != null)
                 {
                     try
                     {
                         int length = _btName.TakeWhile(value => value != 0x00).Count();
-                        _editTextBtName.Text = Encoding.UTF8.GetString(_btName, 0, length);
+                        btNameText = Encoding.UTF8.GetString(_btName, 0, length);
                     }
                     catch (Exception)
                     {
-                        _editTextBtName.Text = string.Empty;
+                        btNameText = string.Empty;
                     }
                 }
+                _editTextBtName.Text = btNameText;
 
                 string ignitionText = string.Empty;
                 if (_ignitionState >= 0 || _clampStatus >= 0)
