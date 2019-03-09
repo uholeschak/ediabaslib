@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Android.Content;
 using Android.OS;
@@ -176,6 +177,42 @@ namespace BmwDeepObd.FilePicker
             {
                 if (_allowDirChange)
                 {
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+                    {   // writing to external disk is only allowed in special directories.
+                        Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
+                        foreach (Java.IO.File file in externalFilesDirs)
+                        {
+                            if (file != null && file.IsDirectory && !string.IsNullOrEmpty(file.AbsolutePath))
+                            {
+                                StringBuilder sb = new StringBuilder();
+                                List<string> dirList = file.AbsolutePath.Split(Path.DirectorySeparatorChar).ToList();
+                                dirList.RemoveAll(string.IsNullOrWhiteSpace);
+                                if (dirList.Count >= 1)
+                                {
+                                    sb.Append(Path.DirectorySeparatorChar.ToString());
+                                    sb.Append(dirList[0]);
+                                    if (dirList.Count >= 3)
+                                    {
+                                        sb.Append(Path.DirectorySeparatorChar.ToString());
+                                        sb.Append("...");
+                                    }
+                                    if (dirList.Count >= 2)
+                                    {
+                                        sb.Append(Path.DirectorySeparatorChar.ToString());
+                                        sb.Append(dirList[dirList.Count - 1]);
+                                    }
+                                }
+
+                                string name = sb.ToString();
+                                if (string.IsNullOrEmpty(name))
+                                {
+                                    name = Path.DirectorySeparatorChar.ToString();
+                                }
+                                visibleThings.Add(new FileInfoEx(null, "->" + name, file.AbsolutePath));
+                            }
+                        }
+                    }
+
                     string rootDir = Path.GetDirectoryName(directory);
                     if (!string.IsNullOrEmpty(rootDir))
                     {
