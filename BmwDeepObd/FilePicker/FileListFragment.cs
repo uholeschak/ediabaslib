@@ -187,19 +187,27 @@ namespace BmwDeepObd.FilePicker
                                 StringBuilder sb = new StringBuilder();
                                 List<string> dirList = file.AbsolutePath.Split(Path.DirectorySeparatorChar).ToList();
                                 dirList.RemoveAll(string.IsNullOrWhiteSpace);
-                                if (dirList.Count >= 1)
+
+                                const int maxRootParts = 2;
+                                for (int i = 0; i < dirList.Count; i++)
                                 {
                                     sb.Append(Path.DirectorySeparatorChar.ToString());
-                                    sb.Append(dirList[0]);
-                                    if (dirList.Count >= 3)
+                                    sb.Append(dirList[i]);
+                                    if (i + 1 >= maxRootParts)
                                     {
-                                        sb.Append(Path.DirectorySeparatorChar.ToString());
-                                        sb.Append("...");
-                                    }
-                                    if (dirList.Count >= 2)
-                                    {
-                                        sb.Append(Path.DirectorySeparatorChar.ToString());
-                                        sb.Append(dirList[dirList.Count - 1]);
+                                        if (dirList.Count > maxRootParts + 2)
+                                        {
+                                            sb.Append(Path.DirectorySeparatorChar.ToString());
+                                            sb.Append("...");
+                                        }
+
+                                        if (dirList.Count > maxRootParts + 1)
+                                        {
+                                            sb.Append(Path.DirectorySeparatorChar.ToString());
+                                            sb.Append(dirList[dirList.Count - 1]);
+                                        }
+
+                                        break;
                                     }
                                 }
 
