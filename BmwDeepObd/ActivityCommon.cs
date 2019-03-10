@@ -2038,16 +2038,15 @@ namespace BmwDeepObd
             List<string> displayNames = new List<string>();
             foreach (string name in mediaNames)
             {
-                const int maxLength = 40;
                 string displayName = name;
                 try
                 {
                     FileSystemBlockInfo blockInfo = GetFileSystemBlockInfo(name);
-                    displayName = String.Format(new FileSizeFormatProvider(), "{0} ({1:fs1}/{2:fs1} {3})",
-                        name, blockInfo.AvailableSizeBytes, blockInfo.TotalSizeBytes, _context.GetString(Resource.String.free_space));
-                    if (displayName.Length > maxLength)
+                    string shortName = GetTruncatedPathName(name);
+                    if (!string.IsNullOrEmpty(shortName))
                     {
-                        displayName = "..." + displayName.Substring(displayName.Length - maxLength);
+                        displayName = String.Format(new FileSizeFormatProvider(), "{0} ({1:fs1}/{2:fs1} {3})",
+                            shortName, blockInfo.AvailableSizeBytes, blockInfo.TotalSizeBytes, _context.GetString(Resource.String.free_space));
                     }
                 }
                 catch (Exception)
@@ -6053,6 +6052,55 @@ namespace BmwDeepObd
             // 2.
             // Calculate total bytes of all files in a loop.
             return a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
+        }
+
+        public static string GetTruncatedPathName(string path, int maxRootParts = 2)
+        {
+            try
+            {
+                if (path == null)
+                {
+                    return string.Empty;
+                }
+
+                StringBuilder sb = new StringBuilder();
+                List<string> dirList = path.Split(Path.DirectorySeparatorChar).ToList();
+                dirList.RemoveAll(string.IsNullOrWhiteSpace);
+
+                for (int i = 0; i < dirList.Count; i++)
+                {
+                    sb.Append(Path.DirectorySeparatorChar.ToString());
+                    sb.Append(dirList[i]);
+                    if (i + 1 >= maxRootParts)
+                    {
+                        if (dirList.Count > maxRootParts + 2)
+                        {
+                            sb.Append(Path.DirectorySeparatorChar.ToString());
+                            sb.Append("...");
+                        }
+
+                        if (dirList.Count > maxRootParts + 1)
+                        {
+                            sb.Append(Path.DirectorySeparatorChar.ToString());
+                            sb.Append(dirList[dirList.Count - 1]);
+                        }
+
+                        break;
+                    }
+                }
+
+                string name = sb.ToString();
+                if (string.IsNullOrEmpty(name))
+                {
+                    name = Path.DirectorySeparatorChar.ToString();
+                }
+
+                return name;
+            }
+            catch (Exception )
+            {
+                return string.Empty;
+            }
         }
 
         private void NetworkStateChanged(bool wifi)

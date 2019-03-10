@@ -334,11 +334,15 @@ namespace BmwDeepObd
             {
                 return;
             }
-            const int maxLength = 40;
-            string displayName = string.IsNullOrEmpty(_activityCommon.CustomStorageMedia) ? GetString(Resource.String.default_media) : _activityCommon.CustomStorageMedia;
-            if (displayName.Length > maxLength)
+
+            string displayName = GetString(Resource.String.default_media);
+            if (!string.IsNullOrEmpty(_activityCommon.CustomStorageMedia))
             {
-                displayName = "..." + displayName.Substring(displayName.Length - maxLength);
+                string shortName = ActivityCommon.GetTruncatedPathName(_activityCommon.CustomStorageMedia);
+                if (!string.IsNullOrEmpty(shortName))
+                {
+                    displayName = shortName;
+                }
             }
             _buttonStorageLocation.Text = displayName;
 

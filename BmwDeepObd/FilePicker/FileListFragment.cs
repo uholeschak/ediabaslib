@@ -184,39 +184,11 @@ namespace BmwDeepObd.FilePicker
                         {
                             if (file != null && file.IsDirectory && !string.IsNullOrEmpty(file.AbsolutePath))
                             {
-                                StringBuilder sb = new StringBuilder();
-                                List<string> dirList = file.AbsolutePath.Split(Path.DirectorySeparatorChar).ToList();
-                                dirList.RemoveAll(string.IsNullOrWhiteSpace);
-
-                                const int maxRootParts = 2;
-                                for (int i = 0; i < dirList.Count; i++)
+                                string name = ActivityCommon.GetTruncatedPathName(file.AbsolutePath);
+                                if (!string.IsNullOrEmpty(name))
                                 {
-                                    sb.Append(Path.DirectorySeparatorChar.ToString());
-                                    sb.Append(dirList[i]);
-                                    if (i + 1 >= maxRootParts)
-                                    {
-                                        if (dirList.Count > maxRootParts + 2)
-                                        {
-                                            sb.Append(Path.DirectorySeparatorChar.ToString());
-                                            sb.Append("...");
-                                        }
-
-                                        if (dirList.Count > maxRootParts + 1)
-                                        {
-                                            sb.Append(Path.DirectorySeparatorChar.ToString());
-                                            sb.Append(dirList[dirList.Count - 1]);
-                                        }
-
-                                        break;
-                                    }
+                                    visibleThings.Add(new FileInfoEx(null, "->" + name, file.AbsolutePath));
                                 }
-
-                                string name = sb.ToString();
-                                if (string.IsNullOrEmpty(name))
-                                {
-                                    name = Path.DirectorySeparatorChar.ToString();
-                                }
-                                visibleThings.Add(new FileInfoEx(null, "->" + name, file.AbsolutePath));
                             }
                         }
                     }
