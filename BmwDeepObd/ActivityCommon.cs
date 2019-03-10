@@ -6054,7 +6054,7 @@ namespace BmwDeepObd
             return a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
         }
 
-        public static string GetTruncatedPathName(string path, int maxRootParts = 2)
+        public static string GetTruncatedPathName(string path, int maxLength = 30)
         {
             try
             {
@@ -6066,6 +6066,21 @@ namespace BmwDeepObd
                 StringBuilder sb = new StringBuilder();
                 List<string> dirList = path.Split(Path.DirectorySeparatorChar).ToList();
                 dirList.RemoveAll(string.IsNullOrWhiteSpace);
+
+                int maxRootParts = 1;
+                if (dirList.Count >= 1)
+                {
+                    int sumLength = dirList[dirList.Count - 1].Length + 1;
+                    for (int i = 0; i < dirList.Count - 1; i++)
+                    {
+                        sumLength += dirList[i].Length + 1;
+                        if (sumLength > maxLength)
+                        {
+                            break;
+                        }
+                        maxRootParts = i + 1;
+                    }
+                }
 
                 for (int i = 0; i < dirList.Count; i++)
                 {
