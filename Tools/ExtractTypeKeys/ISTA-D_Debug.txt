@@ -19,7 +19,7 @@ in IstaOperationStarter.Start() add:
 -------------------------------------------------------------------------------------
 
 Debugging:
-Disable debugger detection in dnSpy!
+Disable debugger detection in dnSpy (uncheck System.Diagnostics.Debugger option)!
 After message box has been shown, attach to process IstaOperation.exe
 
 Breakpoints in RheingoldDiagnostics.dll:
