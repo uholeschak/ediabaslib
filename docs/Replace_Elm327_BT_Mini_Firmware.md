@@ -13,7 +13,7 @@ This chapter describes how to replace the ELM327 BT V1.5 HW: V01_M_V2.3 adapter 
 [![ELM327 BT V1.5 HW: V01_M_V2.3 board programming connections big](elm327_BT_annotated_24c32_and_pic18f25k80_prog_connections_Small.png "ELM327 BT V1.5 HW: V01_M_V2.3 board programming connections")](elm327_BT_annotated_24c32_and_pic18f25k80_prog_connections_Big.png)
 
 ## Step1: Program the YC1021 BT settings
-* Connect your EZP2010 Eeprom programmer clip on to the SOIC8 (150mil) 24C32 eeprom chip, take note of orientation (red wire of clipon goes to red annotated 24C32 pin1)
+* Connect your EZP2010 or TL866II Plus Eeprom programmer clip on to the SOIC8 (150mil) 24C32 eeprom chip, take note of orientation (red wire of clipon goes to red annotated 24C32 pin1)
 * Do a full read with eeprom powered from programmer (do not apply power from obd side).  
   It's recommended that you disconnect VCC pin 8 of the 24C32 chip first!  
   It may take a few read tries to get the full dump correctly, if the first 0x80 bytes only contain 0xFF your read is correct.
