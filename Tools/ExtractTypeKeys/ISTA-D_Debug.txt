@@ -3,24 +3,27 @@ Debugging of ISTA-D:
 
 Decompile ISTA-D:
 =================
-copy files from "TesterGUI\bin\Release" to "TesterGUI\bin\ReleaseMod"
+Copy files from "TesterGUI\bin\Release" to "TesterGUI\bin\ReleaseMod"
 de4dot -r "TesterGUI\bin\Release" -ru -ro "TesterGUI\bin\ReleaseMod" --dont-rename
+The files in "TesterGUI\bin\Release" are not modified, "TesterGUI\bin\ReleaseMod" now contains the deobfuscated files.
 
 Debug ISTA-D with dnSpy-x86:
 ============================
-Modify IstaOperationController.dll:
-in IstaOperationStarter.Start() add:
+Modify IstaOperationController.dll (Edit -> Edit class, remove all references to other ISTA-D version first):
+in IstaOperationStarter.Start() add at the end of the function:
 -------------------------------------------------------------------------------------
 	if (Debugger.IsAttached)
 	{
-		MessageBox.Show("IstaOperation started. Attach to IstaOperation.exe now.");
+		System.Windows.Forms.MessageBox.Show("IstaOperation started. Attach to IstaOperation.exe now.");
 	}
 	return istaOperation;
 -------------------------------------------------------------------------------------
+File -> Save module
 
 Debugging:
 Disable debugger detection in dnSpy (uncheck System.Diagnostics.Debugger option)!
 After message box has been shown, attach to process IstaOperation.exe
 
 Breakpoints in RheingoldDiagnostics.dll:
-Logic.StartVehicleTest() or VehicleIdent.DoVehicleIdenStep1() and VehicleIdent.DoVehicleIdenStep2()
+BMW.Rheingold.RheingoldSessionController.Logic.StartVehicleTest() or
+BMW.Rheingold.Diagnostics.VehicleIdent.DoVehicleIdentStep1() and BMW.Rheingold.Diagnostics.VehicleIdent.DoVehicleIdentStep2()
