@@ -2328,17 +2328,20 @@ namespace BmwDeepObd
                     {
                         foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                         {
-                            double? dataValue = null;
-                            string result = ActivityCommon.FormatResult(pageInfo, displayInfo, resultDict, out Android.Graphics.Color? textColor);
+                            string result = ActivityCommon.FormatResult(pageInfo, displayInfo, resultDict, out Android.Graphics.Color? textColor, out double? dataValue);
                             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                             {
                                 if (ActivityCommon.VagUdsActive && !string.IsNullOrEmpty(pageInfo.JobsInfo.VagUdsFileName))
                                 {
                                     string udsFileName = Path.Combine(_instanceData.VagPath, pageInfo.JobsInfo.VagUdsFileName);
-                                    string resultUds = ActivityCommon.FormatResultVagUds(udsFileName, pageInfo, displayInfo, resultDict, out dataValue);
+                                    string resultUds = ActivityCommon.FormatResultVagUds(udsFileName, pageInfo, displayInfo, resultDict, out double? dataValueUds);
                                     if (!string.IsNullOrEmpty(resultUds))
                                     {
                                         result = resultUds;
+                                    }
+                                    if (dataValue == null)
+                                    {
+                                        dataValue = dataValueUds;
                                     }
                                 }
                             }
