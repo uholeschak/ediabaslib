@@ -2907,9 +2907,10 @@ namespace BmwDeepObd
             ediabas.ResolveSgbdFile(sgbdName);
         }
 
-        public static string FormatResult(JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, out Android.Graphics.Color? textColor)
+        public static string FormatResult(JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, out Android.Graphics.Color? textColor, out double? dataValue)
         {
             textColor = null;
+            dataValue = null;
             if (pageInfo == null)
             {
                 return string.Empty;
@@ -2918,12 +2919,14 @@ namespace BmwDeepObd
             MethodInfo formatResult = null;
             MethodInfo formatResultColor = null;
             MethodInfo formatResultMulti = null;
+            MethodInfo formatResultValue = null;
             if (pageInfo.ClassObject != null)
             {
                 Type pageType = pageInfo.ClassObject.GetType();
                 formatResult = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(string) });
                 formatResultColor = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() });
                 formatResultMulti = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() });
+                formatResultValue = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType(), typeof(double?).MakeByRefType() });
             }
             string result = string.Empty;
             if (displayInfo.Format == null)
@@ -2932,7 +2935,15 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        if (formatResultMulti != null)
+                        if (formatResultValue != null)
+                        {
+                            object[] args = { pageInfo, resultDict, displayInfo.Result, null, null };
+                            result = formatResultValue.Invoke(pageInfo.ClassObject, args) as string;
+                            textColor = args[3] as Android.Graphics.Color?;
+                            dataValue = args[4] as double?;
+                            //result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result, ref textColor);
+                        }
+                        else if (formatResultMulti != null)
                         {
                             object[] args = { pageInfo, resultDict, displayInfo.Result, null };
                             result = formatResultMulti.Invoke(pageInfo.ClassObject, args) as string;
