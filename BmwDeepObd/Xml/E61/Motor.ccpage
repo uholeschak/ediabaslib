@@ -30,6 +30,7 @@
       <string name="label_motor_pedal_value">Pedal value [%]:</string>
       <string name="label_motor_speed">Speed [km/h]:</string>
       <string name="label_motor_accel">Acceleration [m/s^2]:</string>
+      <string name="label_motor_oil_temp">Oil temperature: [°C]:</string>
     </strings>
     <strings lang="de">
       <string name="tab_motor">Motor</string>
@@ -58,6 +59,7 @@
       <string name="label_motor_pedal_value">Pedalwert [%]:</string>
       <string name="label_motor_speed">Geschwindigkeit [km/h]:</string>
       <string name="label_motor_accel">Beschleunigung [m/s^2]:</string>
+      <string name="label_motor_oil_temp">Öltemperatur [°C]:</string>
     </strings>
     <jobs sgbd="d_motor">
       <job name="STATUS_MESSWERTBLOCK_LESEN"
@@ -89,6 +91,9 @@
         <display name="label_motor_speed" result="STAT_GESCHWINDIGKEIT_WERT" format="6.2R" />
         <display name="label_motor_accel" result="STAT_FAHRZEUGBESCHLEUNIGUNG_WERT" format="6.2R" />
       </job>
+        <job name="OELSENSOR_LESEN">
+            <display name="label_motor_oil_temp" result="OEL_TEMP_WERT" format="" />
+        </job>
     </jobs>
     <code show_warnings="true">
       <![CDATA[
