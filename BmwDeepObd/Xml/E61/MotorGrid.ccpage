@@ -80,7 +80,7 @@
         <display name="label_motor_temp_before_cat" result="STAT_ABGASTEMPERATUR_VOR_KATALYSATOR_WERT" format="6.2R" />
         <display name="label_motor_part_filt_dist_since_regen" result="STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT" log_tag="part_filt_dist" />
         <display name="label_motor_exhaust_press" result="STAT_DIFFERENZDRUCK_UEBER_PARTIKELFILTER_WERT" format="6.2R" />
-        <display name="label_motor_oil_press_switch" result="STAT_OELDRUCKSCHALTER_EIN_WERT" />
+        <display name="label_motor_oil_press_switch" result="STAT_OELDRUCKSCHALTER_EIN_WERT" grid-type="simple-gauge-round" min-value="0" max-value="100" />
         <display name="label_motor_part_filt_request" result="STAT_REGENERATIONSANFORDERUNG_WERT" log_tag="part_filt_requ" />
         <display name="label_motor_part_filt_status" result="STAT_EGT_st_WERT" log_tag="part_filt_status" />
         <display name="label_motor_part_filt_unblocked" result="STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT" log_tag="part_filt_unblocked" />
@@ -94,7 +94,7 @@
       <![CDATA[
     class PageClass
     {
-        public string FormatResult(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor)
+        public string FormatResult(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor, ref double? dataValue)
         {
             string result = string.Empty;
             double value;
@@ -122,10 +122,12 @@
                     break;
 
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_OELDRUCKSCHALTER_EIN_WERT":
-                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) > 0.5) && found) ? "1" : "0";
-                    if (found && result == "1")
+                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) > 0.5) && found) ? "On" : "Off";
+                    dataValue = 0;
+                    if (found && result == "On")
                     {
                         textColor = Android.Graphics.Color.Red;
+                        dataValue = 100;
                     }
                     if (!found) result = string.Empty;
                     break;
