@@ -31,6 +31,8 @@
       <string name="label_motor_speed">Speed [km/h]</string>
       <string name="label_motor_accel">Acceleration [m/s^2]</string>
       <string name="label_motor_oil_temp">Oil temperature: [°C]:</string>
+      <string name="label_name_on">On</string>
+      <string name="label_name_off">Off</string>
     </strings>
     <strings lang="de">
       <string name="tab_motor_grid">Motor Graph</string>
@@ -60,6 +62,8 @@
       <string name="label_motor_speed">Geschwindigkeit [km/h]</string>
       <string name="label_motor_accel">Beschleunigung [m/s^2]</string>
       <string name="label_motor_oil_temp">Öltemperatur [°C]:</string>
+      <string name="label_name_on">An</string>
+      <string name="label_name_off">Aus</string>
     </strings>
     <jobs sgbd="d_motor">
       <job name="STATUS_MESSWERTBLOCK_LESEN"
@@ -102,6 +106,7 @@
         public string FormatResult(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor, ref double? dataValue)
         {
             string result = string.Empty;
+            string labelName;
             double value;
             bool found;
 
@@ -127,9 +132,10 @@
                     break;
 
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_OELDRUCKSCHALTER_EIN_WERT":
-                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) > 0.5) && found) ? "On" : "Off";
+                    labelName = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) > 0.5) && found) ? "label_name_on" : "label_name_off";
+                    result = ActivityMain.GetPageString(pageInfo, labelName);
                     dataValue = 0;
-                    if (found && result == "On")
+                    if (found && labelName == "label_name_on")
                     {
                         textColor = Android.Graphics.Color.Red;
                         dataValue = 100;
