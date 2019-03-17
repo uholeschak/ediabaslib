@@ -30,6 +30,7 @@
       <string name="label_motor_pedal_value">Pedal value [%]</string>
       <string name="label_motor_speed">Speed [km/h]</string>
       <string name="label_motor_accel">Acceleration [m/s^2]</string>
+      <string name="label_motor_oil_temp">Oil temperature: [°C]:</string>
     </strings>
     <strings lang="de">
       <string name="tab_motor_grid">Motor Graph</string>
@@ -58,6 +59,7 @@
       <string name="label_motor_pedal_value">Pedalwert [%]</string>
       <string name="label_motor_speed">Geschwindigkeit [km/h]</string>
       <string name="label_motor_accel">Beschleunigung [m/s^2]</string>
+      <string name="label_motor_oil_temp">Öltemperatur [°C]:</string>
     </strings>
     <jobs sgbd="d_motor">
       <job name="STATUS_MESSWERTBLOCK_LESEN"
@@ -80,7 +82,7 @@
         <display name="label_motor_temp_before_cat" result="STAT_ABGASTEMPERATUR_VOR_KATALYSATOR_WERT" format="6.2R" />
         <display name="label_motor_part_filt_dist_since_regen" result="STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT" log_tag="part_filt_dist" />
         <display name="label_motor_exhaust_press" result="STAT_DIFFERENZDRUCK_UEBER_PARTIKELFILTER_WERT" format="6.2R" />
-        <display name="label_motor_oil_press_switch" result="STAT_OELDRUCKSCHALTER_EIN_WERT" grid-type="simple-gauge-round" min-value="0" max-value="100" />
+        <display name="label_motor_oil_press_switch" result="STAT_OELDRUCKSCHALTER_EIN_WERT" grid-type="simple-gauge-square" min-value="0" max-value="100" />
         <display name="label_motor_part_filt_request" result="STAT_REGENERATIONSANFORDERUNG_WERT" log_tag="part_filt_requ" />
         <display name="label_motor_part_filt_status" result="STAT_EGT_st_WERT" log_tag="part_filt_status" />
         <display name="label_motor_part_filt_unblocked" result="STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT" log_tag="part_filt_unblocked" />
@@ -89,6 +91,9 @@
         <display name="label_motor_speed" result="STAT_GESCHWINDIGKEIT_WERT" format="6.2R" />
         <display name="label_motor_accel" result="STAT_FAHRZEUGBESCHLEUNIGUNG_WERT" format="6.2R" />
       </job>
+        <job name="OELSENSOR_LESEN">
+            <display name="label_motor_oil_temp" result="OEL_TEMP_WERT" grid-type="simple-gauge-square" min-value="-20" max-value="120" />
+        </job>
     </jobs>
     <code show_warnings="true">
       <![CDATA[
@@ -150,6 +155,21 @@
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_BREMSLICHTSCHALTER_EIN_WERT":
                     result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) > 0.5) && found) ? "1" : "0";
                     if (!found) result = string.Empty;
+                    break;
+
+                case "OELSENSOR_LESEN#OEL_TEMP_WERT":
+                    result = ActivityMain.GetResultString (resultDict, resultName, 0, out found);
+                    if (found)
+                    {
+                        if (Double.TryParse(result, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out value))
+                        {
+                            dataValue = value;
+                            if (value > 90)
+                            {
+                                textColor = Android.Graphics.Color.Red;
+                            }
+                        }
+                    }
                     break;
             }
             return result;
