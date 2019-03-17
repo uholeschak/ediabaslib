@@ -511,6 +511,7 @@
         <![CDATA[
         This block can contain C# user code that will be compiled after reading the xml.
         The class for the code must be always named PageClass.
+        The FormatResult() functions are only called, if there is no format property in the display node!
         It can contain the following pre-defined functions:
         public void CreateLayout(ActivityMain activity, JobReader.PageInfo pageInfo, LinearLayout pageLayout);
         public void DestroyLayout(JobReader.PageInfo pageInfo);
