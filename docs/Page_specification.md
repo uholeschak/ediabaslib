@@ -196,8 +196,8 @@ In the `ecu` node the property `name` is a link to a `string` node and `sgbd` is
 ![Erros E90](Page_specification_AppReadAllErrorsSmall.png)
 
 # User defined code
-If the jobs and display output is getting more complex, user defined code will be required. In this case a C# class could be added to a `code` node, which defines a set of optional callback functions. If the `show_warnings` property is set to true, also warnings will be reported during compilation of the code.  
-**In the current Mono CSharp compiler there is a bug that reports an error, if initialized arrays are used in the user defined code. To prevent this, initialize the array (or list) in the constructor of `PageClass`!**
+If the jobs and display output is getting more complex, user defined code will be required.  
+In this case a C# class could be added to a `code` node, which defines a set of optional callback functions. If the `show_warnings` property is set to true, also warnings will be reported during compilation of the code.  
 ``` xml
     <code show_warnings="true">
       <![CDATA[
@@ -235,6 +235,10 @@ If the jobs and display output is getting more complex, user defined code will b
         {
         }
 
+        public string FormatResult(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor, ref double? dataValue)
+        {
+        }
+
         public string FormatErrorResult(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, string defaultMessage)
         {
         }
@@ -252,9 +256,11 @@ If the jobs and display output is getting more complex, user defined code will b
 ```
 ## Formatting results (FormatResult)
 For special formatting of the result data, the callback `FormatResult` could be used. For each result of the EDIABAS results this function will be called with `resultName` set to the current result name. If the `display` node is a subnode of a `job` node the job name is prefixed with # as separator to the result name. If the `job` node contains an `id` attribute, the job name is `<id>#<result name>`. The function will be only called if there is **no** `format` property in the `display` node.  
-The `textColor` output could be also used for the gauge color. Here is an example from the motor page:
+The `textColor` output could be also used for the gauge color.  
+Especially for gauges there is the possibility to return custom values in `dataValue`, if scaling is required or the result has to be converted in a double value first.  
+Here is an example from the motor page:
 ``` cs
-        public string FormatResult(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor)
+        public string FormatResult(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor, ref double? dataValue)
         {
             string result = string.Empty;
             double value;
