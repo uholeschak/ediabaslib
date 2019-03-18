@@ -170,7 +170,7 @@ namespace BmwDeepObd
         private const string SharedAppName = ActivityCommon.AppNameSpace;
         private const string AppFolderName = ActivityCommon.AppNameSpace;
 #if OBB_MODE
-        private const string EcuDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Obb3.xml";
+        private const string EcuDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Obb4.xml";
         private const long EcuExtractSize = 2500000000;         // extracted ecu files size
         private const string InfoXmlName = "ObbInfo.xml";
         private const string ContentFileName = "Content.xml";
