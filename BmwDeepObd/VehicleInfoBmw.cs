@@ -868,7 +868,7 @@ namespace BmwDeepObd
 
         private static Dictionary<string, string> _typeKeyDict;
 
-        public static Dictionary<string, string> GetTypeKeyDict(EdiabasNet ediabas)
+        public static Dictionary<string, string> GetTypeKeyDict(EdiabasNet ediabas, string databaseDir)
         {
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Extract type key dict");
 
@@ -935,7 +935,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static string GetTypeKeyFromVin(string vin, EdiabasNet ediabas)
+        public static string GetTypeKeyFromVin(string vin, EdiabasNet ediabas, string databaseDir)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Type key from VIN: {0}", vin ?? "No VIN");
             if (vin == null)
@@ -1035,17 +1035,17 @@ namespace BmwDeepObd
             return null;
         }
 
-        public static string GetVehicleTypeFromVin(string vin, EdiabasNet ediabas)
+        public static string GetVehicleTypeFromVin(string vin, EdiabasNet ediabas, string databaseDir)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle type from VIN: {0}", vin ?? "No VIN");
-            string typeKey = GetTypeKeyFromVin(vin, ediabas);
+            string typeKey = GetTypeKeyFromVin(vin, ediabas, databaseDir);
             if (typeKey == null)
             {
                 return null;
             }
             if (_typeKeyDict == null)
             {
-                _typeKeyDict = GetTypeKeyDict(ediabas);
+                _typeKeyDict = GetTypeKeyDict(ediabas, databaseDir);
             }
             if (_typeKeyDict == null)
             {
