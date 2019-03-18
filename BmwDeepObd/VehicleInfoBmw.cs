@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using EdiabasLib;
 using ICSharpCode.SharpZipLib.Zip;
@@ -122,7 +121,7 @@ namespace BmwDeepObd
             }
         }
 
-        private const string DatabaseName = @".Database.Database.zip";
+        private const string DatabaseFileName = @"Database.zip";
 
         // ReSharper disable RedundantExplicitArrayCreation
         // ReSharper disable CoVariantArrayConversion
@@ -878,12 +877,8 @@ namespace BmwDeepObd
                 ZipFile zf = null;
                 try
                 {
-                    using (Stream fs = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(XmlToolActivity).Namespace + DatabaseName))
+                    using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, DatabaseFileName)))
                     {
-                        if (fs == null)
-                        {
-                            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Open database failed");
-                        }
                         zf = new ZipFile(fs);
                         foreach (ZipEntry zipEntry in zf)
                         {
@@ -962,12 +957,8 @@ namespace BmwDeepObd
                 ZipFile zf = null;
                 try
                 {
-                    using (Stream fs = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(XmlToolActivity).Namespace + DatabaseName))
+                    using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, DatabaseFileName)))
                     {
-                        if (fs == null)
-                        {
-                            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Open database failed");
-                        }
                         zf = new ZipFile(fs);
                         foreach (ZipEntry zipEntry in zf)
                         {
