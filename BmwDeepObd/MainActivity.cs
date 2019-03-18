@@ -144,6 +144,7 @@ namespace BmwDeepObd
             public string AppDataPath { get; set; }
             public string EcuPath { get; set; }
             public string VagPath { get; set; }
+            public string BmwPath { get; set; }
             public bool UserEcuFiles { get; set; }
             public bool TraceActive { get; set; }
             public bool TraceAppend { get; set; }
@@ -1568,6 +1569,10 @@ namespace BmwDeepObd
             if (string.IsNullOrEmpty(_instanceData.VagPath))
             {
                 _instanceData.VagPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir, ActivityCommon.VagBaseDir);
+            }
+            if (string.IsNullOrEmpty(_instanceData.BmwPath))
+            {
+                _instanceData.BmwPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir, ActivityCommon.BmwBaseDir);
             }
 
             string backgroundImageFile = Path.Combine(_instanceData.AppDataPath, "Images", "Background.jpg");
@@ -4187,6 +4192,7 @@ namespace BmwDeepObd
             Intent serverIntent = new Intent(this, typeof(XmlToolActivity));
             serverIntent.PutExtra(XmlToolActivity.ExtraInitDir, _instanceData.EcuPath);
             serverIntent.PutExtra(XmlToolActivity.ExtraVagDir, _instanceData.VagPath);
+            serverIntent.PutExtra(XmlToolActivity.ExtraBmwDir, _instanceData.BmwPath);
             serverIntent.PutExtra(XmlToolActivity.ExtraAppDataDir, _instanceData.AppDataPath);
             serverIntent.PutExtra(XmlToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
             serverIntent.PutExtra(XmlToolActivity.ExtraDeviceName, _instanceData.DeviceName);

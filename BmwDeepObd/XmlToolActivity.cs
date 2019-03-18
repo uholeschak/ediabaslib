@@ -561,6 +561,7 @@ namespace BmwDeepObd
         // Intent extra
         public const string ExtraInitDir = "init_dir";
         public const string ExtraVagDir = "vag_dir";
+        public const string ExtraBmwDir = "bmw_dir";
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceName = "device_name";
@@ -581,6 +582,7 @@ namespace BmwDeepObd
         private TextView _textViewCarInfo;
         private string _ecuDir;
         private string _vagDir;
+        private string _bmwDir;
         private string _appDataDir;
         private string _lastFileName = string.Empty;
         private string _datUkdDir = string.Empty;
@@ -674,6 +676,7 @@ namespace BmwDeepObd
 
             _ecuDir = Intent.GetStringExtra(ExtraInitDir);
             _vagDir = Intent.GetStringExtra(ExtraVagDir);
+            _bmwDir = Intent.GetStringExtra(ExtraBmwDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             if (!_activityRecreated)
             {

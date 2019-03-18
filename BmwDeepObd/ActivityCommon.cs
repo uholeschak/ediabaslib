@@ -227,6 +227,7 @@ namespace BmwDeepObd
         public const string DownloadDir = "Download";
         public const string EcuBaseDir = "Ecu";
         public const string VagBaseDir = "Vag";
+        public const string BmwBaseDir = "Bmw";
 #if OBB_MODE
         public const string EcuDirNameBmw = "EcuBmw";
         public const string EcuDirNameVag = "EcuVag";
