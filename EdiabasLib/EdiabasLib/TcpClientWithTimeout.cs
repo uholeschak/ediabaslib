@@ -94,7 +94,7 @@ namespace EdiabasLib
             }
         }
 
-        public static void ExecuteNetworkCommand(ExecuteNetworkDelegate command, object connManager)
+        public static void ExecuteNetworkCommand(ExecuteNetworkDelegate command, object connManager, bool checkEthernet = false)
         {
 #if Android
             if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Lollipop)
@@ -115,11 +115,18 @@ namespace EdiabasLib
                         Android.Net.NetworkInfo networkInfo = connectivityManager.GetNetworkInfo(network);
                         Android.Net.NetworkCapabilities networkCapabilities = connectivityManager.GetNetworkCapabilities(network);
                         // HasTransport support started also with Lollipop
-                        if (networkInfo != null && networkInfo.IsConnected &&
-                            networkCapabilities != null && networkCapabilities.HasTransport(Android.Net.TransportType.Wifi))
+                        if (networkInfo != null && networkInfo.IsConnected && networkCapabilities != null)
                         {
-                            bindNetwork = network;
-                            break;
+                            if (networkCapabilities.HasTransport(Android.Net.TransportType.Wifi))
+                            {
+                                bindNetwork = network;
+                                break;
+                            }
+                            if (checkEthernet && networkCapabilities.HasTransport(Android.Net.TransportType.Ethernet))
+                            {
+                                bindNetwork = network;
+                                break;
+                            }
                         }
                     }
                 }
