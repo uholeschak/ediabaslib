@@ -267,6 +267,8 @@
   <string name="enet_adapter_web_info">Пароль для веб интерфейса устойства по умолчанию root.\nЕсли устройство после его конфигурирования больше не реагирует - необходимо открыть устройство, перезагрузить его и нажать кнопку сброса.</string>
   <string name="enet_adapter_wifi_info">Если вы используете OBD BMW Wi-Fi устройство, выберите точку доступа с именем \'Deep OBD BMW\'. Пароль по умолчанию deepobdbmw.</string>
   <string name="enet_adapter_ssid_warn">Вы соединены не с Deep OBD BMW Wi-Fi устройством.\nВыбрать другую точку доступа?</string>
+  <!--Translate-->
+  <string name="enet_dhcp_fail">Your Ethernet connection has invalid settings.\nFor a direct vehicle connection configure the LAN adapter with an Auto-IP address, for example 169.254.1.10 / 255.255.0.0.</string>
 
   <!-- ELM327 Wi-Fi -->
   <string name="elmwifi_adapter_warn">Вы соединены не с ELM327 Wi-Fi устройством.\nВыбрать другую точку доступа?</string>

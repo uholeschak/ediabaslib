@@ -268,6 +268,7 @@
   <string name="enet_adapter_web_info">Das Default-Password für das Adapter-Webinterface ist root.\nFalls der Adapter nach der Konfiguration nicht mehr erreichbar ist, müssen Sie den Adapter öffnen und die Resetaste drücken, nachdem der Adapter gebootet hat.</string>
   <string name="enet_adapter_wifi_info">Wenn Sie einen Deep OBD BMW Wi-Fi Adapter verwenden, wählen Sie den Access Point mit dem Namen \'Deep OBD BMW\', das Default-Password ist deepobdbmw.</string>
   <string name="enet_adapter_ssid_warn">Sie sind nicht mit einem Deep OBD BMW Wi-Fi Adapter verbunden.\nWollen Sie einen anderen Access Point auswählen?</string>
+  <string name="enet_dhcp_fail">Ihre Ethernet Verbindung hat ungültige Einstellungen.\nFür eine direkte Fahrzeugverbindung konfigurieren Sie den LAN Adapter mit einer Auto-IP Addresse, z.B. 169.254.1.10 / 255.255.0.0.</string>
 
   <!-- ELM327 Wi-Fi -->
   <string name="elmwifi_adapter_warn">Sie sind nicht mit einem ELM327 Wi-Fi Adapter verbunden.\nWollen Sie einen anderen Access Point auswählen?</string>
