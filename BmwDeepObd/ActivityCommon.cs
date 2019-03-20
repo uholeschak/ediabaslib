@@ -1030,12 +1030,20 @@ namespace BmwDeepObd
                 case InterfaceType.Enet:
                 case InterfaceType.ElmWifi:
                 case InterfaceType.DeepObdWifi:
-                    NetworkInfo networkInfo = _maConnectivity?.ActiveNetworkInfo;
-                    if (networkInfo == null)
+                    if ((_maWifi != null) && _maWifi.IsWifiEnabled)
                     {
-                        return false;
+                        WifiInfo wifiInfo = _maWifi.ConnectionInfo;
+                        if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
+                        {
+                            return true;
+                        }
                     }
-                    return networkInfo.IsConnected;
+
+                    if (_selectedInterface == InterfaceType.Enet && IsValidEthernetConnection())
+                    {
+                        return true;
+                    }
+                    return false;
 
                 case InterfaceType.Ftdi:
                 {
@@ -1707,7 +1715,7 @@ namespace BmwDeepObd
                 return null;
             }
             WifiInfo wifiInfo = _maWifi.ConnectionInfo;
-            if (wifiInfo != null && _maWifi.DhcpInfo != null &&
+            if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0 &&
                 !string.IsNullOrEmpty(wifiInfo.SSID) && wifiInfo.SSID.Contains(AdapterSsid))
             {
                 return TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
@@ -1722,7 +1730,7 @@ namespace BmwDeepObd
                 return false;
             }
             WifiInfo wifiInfo = _maWifi.ConnectionInfo;
-            if (wifiInfo != null && _maWifi.DhcpInfo != null)
+            if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
             {
                 string adapterIp = TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
                 bool ipStandard = false;
@@ -1952,7 +1960,7 @@ namespace BmwDeepObd
                 if ((_maWifi != null) && _maWifi.IsWifiEnabled)
                 {
                     WifiInfo wifiInfo = _maWifi.ConnectionInfo;
-                    if (wifiInfo != null && _maWifi.DhcpInfo != null && !string.IsNullOrEmpty(wifiInfo.SSID))
+                    if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0 && !string.IsNullOrEmpty(wifiInfo.SSID))
                     {
                         enetSsid = wifiInfo.SSID;
                     }
