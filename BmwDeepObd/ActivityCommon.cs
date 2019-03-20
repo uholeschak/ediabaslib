@@ -460,7 +460,6 @@ namespace BmwDeepObd
         private Dictionary<string, string> _yandexCurrentLangDict;
         private Dictionary<string, List<string>> _vagDtcCodeDict;
         private string _lastEnetSsid = string.Empty;
-        private bool _ignoreDhcpFail;
         private bool? _lastInvertfaceAvailable;
         private bool _usbPermissionRequested;
 
@@ -659,7 +658,6 @@ namespace BmwDeepObd
                 if (_selectedInterface != value)
                 {
                     _lastEnetSsid = CommActive ? null : string.Empty;
-                    _ignoreDhcpFail = false;
                     _lastInvertfaceAvailable = null;
                 }
                 _selectedInterface = value;
@@ -1792,9 +1790,8 @@ namespace BmwDeepObd
             return false;
         }
 
-        public bool IsValidEthernetConnection(out bool dhcpFail)
+        public bool IsValidEthernetConnection()
         {
-            dhcpFail = false;
             try
             {
                 if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
@@ -1817,13 +1814,8 @@ namespace BmwDeepObd
                             {
                                 if (linkAddress.Address is Java.Net.Inet4Address inet4Address)
                                 {
-                                    if (inet4Address.IsAnyLocalAddress)
-                                    {
-                                        dhcpFail = true;
-                                    }
                                     if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
                                     {
-                                        dhcpFail = false;
                                         return true;
                                     }
                                 }
@@ -1971,38 +1963,7 @@ namespace BmwDeepObd
                 }
 
                 bool validSsid = enetSsid.Contains(AdapterSsid);
-                bool validEthernet = IsValidEthernetConnection(out bool dhcpFail);
-                if (!validEthernet && !validSsid && dhcpFail)
-                {
-                    if (!_ignoreDhcpFail)
-                    {
-                        bool ignoreDismiss = true;
-                        AlertDialog alertDialog = new AlertDialog.Builder(_context)
-                            .SetMessage(Resource.String.enet_dhcp_fail)
-                            .SetTitle(Resource.String.alert_title_warning)
-                            .SetPositiveButton(Resource.String.button_ok, (s, e) =>
-                            {
-                                ignoreDismiss = false;
-                            })
-                            .SetNegativeButton(Resource.String.button_abort, (s, e) => { })
-                            .Show();
-                        alertDialog.DismissEvent += (sender, args) =>
-                        {
-                            if (_disposed)
-                            {
-                                return;
-                            }
-                            if (!ignoreDismiss)
-                            {
-                                _ignoreDhcpFail = true;
-                                handler(true);
-                            }
-                        };
-
-                        result = true;
-                    }
-                    return result;
-                }
+                bool validEthernet = IsValidEthernetConnection();
 
                 if (!validEthernet && string.Compare(_lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
                 {
