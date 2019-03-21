@@ -1978,8 +1978,8 @@ namespace BmwDeepObd
                     _lastEnetSsid = enetSsid;
                     if (!validSsid)
                     {
-                        string message = _context.GetString(Resource.String.enet_adapter_ssid_warn) + "\n" +
-                                         _context.GetString(Resource.String.enet_ethernet_hint);
+                        string message = _context.GetString(Resource.String.enet_adapter_ssid_warn) +
+                                         "\n" + _context.GetString(Resource.String.enet_ethernet_hint);
                         bool ignoreDismiss = false;
                         AlertDialog alertDialog = new AlertDialog.Builder(_context)
                         .SetMessage(message)
@@ -2405,6 +2405,13 @@ namespace BmwDeepObd
                 case InterfaceType.Enet:
                 case InterfaceType.ElmWifi:
                 case InterfaceType.DeepObdWifi:
+                {
+                    string message = _context.GetString(Resource.String.wifi_enable);
+                    if (_selectedInterface == InterfaceType.Enet)
+                    {
+                        message += "\n" + _context.GetString(Resource.String.enet_ethernet_hint);
+                    }
+
                     _activateAlertDialog = new AlertDialog.Builder(_context)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
@@ -2424,10 +2431,11 @@ namespace BmwDeepObd
                             });
                         })
                         .SetCancelable(true)
-                        .SetMessage(Resource.String.wifi_enable)
+                        .SetMessage(message)
                         .SetTitle(Resource.String.alert_title_question)
                         .Show();
                     break;
+                }
 
                 default:
                     return false;
