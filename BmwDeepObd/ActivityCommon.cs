@@ -1978,9 +1978,11 @@ namespace BmwDeepObd
                     _lastEnetSsid = enetSsid;
                     if (!validSsid)
                     {
+                        string message = _context.GetString(Resource.String.enet_adapter_ssid_warn) + "\n" +
+                                         _context.GetString(Resource.String.enet_ethernet_hint);
                         bool ignoreDismiss = false;
                         AlertDialog alertDialog = new AlertDialog.Builder(_context)
-                        .SetMessage(Resource.String.enet_adapter_ssid_warn)
+                        .SetMessage(message)
                         .SetTitle(Resource.String.alert_title_warning)
                         .SetPositiveButton(Resource.String.button_yes, (s, e) =>
                         {
