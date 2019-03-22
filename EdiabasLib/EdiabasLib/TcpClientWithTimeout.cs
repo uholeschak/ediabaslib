@@ -118,6 +118,7 @@ namespace EdiabasLib
                         if (networkInfo != null && networkInfo.IsConnected && networkCapabilities != null)
                         {
                             bool linkValid = false;
+                            bool autoIp = false;
                             Android.Net.LinkProperties linkProperties = connectivityManager.GetLinkProperties(network);
                             foreach (Android.Net.LinkAddress linkAddress in linkProperties.LinkAddresses)
                             {
@@ -126,6 +127,8 @@ namespace EdiabasLib
                                     if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
                                     {
                                         linkValid = true;
+                                        autoIp = inet4Address.IsLinkLocalAddress;
+                                        break;
                                     }
                                 }
                             }
@@ -135,12 +138,21 @@ namespace EdiabasLib
                                 if (networkCapabilities.HasTransport(Android.Net.TransportType.Wifi))
                                 {
                                     bindNetwork = network;
-                                    /* no break, this prefers Ethernet if present */
                                 }
                                 if (checkEthernet && networkCapabilities.HasTransport(Android.Net.TransportType.Ethernet))
                                 {
-                                    bindNetwork = network;
-                                    break;
+                                    if (autoIp)
+                                    {
+                                        // prefer Ethernet auto ip
+                                        bindNetwork = network;
+                                        break;
+                                    }
+
+                                    if (bindNetwork == null)
+                                    {
+                                        // prefer Wifi
+                                        bindNetwork = network;
+                                    }
                                 }
                             }
                         }
