@@ -117,15 +117,31 @@ namespace EdiabasLib
                         // HasTransport support started also with Lollipop
                         if (networkInfo != null && networkInfo.IsConnected && networkCapabilities != null)
                         {
-                            if (networkCapabilities.HasTransport(Android.Net.TransportType.Wifi))
+                            bool linkValid = false;
+                            Android.Net.LinkProperties linkProperties = connectivityManager.GetLinkProperties(network);
+                            foreach (Android.Net.LinkAddress linkAddress in linkProperties.LinkAddresses)
                             {
-                                bindNetwork = network;
-                                break;
+                                if (linkAddress.Address is Java.Net.Inet4Address inet4Address)
+                                {
+                                    if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
+                                    {
+                                        linkValid = true;
+                                    }
+                                }
                             }
-                            if (checkEthernet && networkCapabilities.HasTransport(Android.Net.TransportType.Ethernet))
+
+                            if (linkValid)
                             {
-                                bindNetwork = network;
-                                break;
+                                if (networkCapabilities.HasTransport(Android.Net.TransportType.Wifi))
+                                {
+                                    bindNetwork = network;
+                                    /* no break, this prefers Ethernet if present */
+                                }
+                                if (checkEthernet && networkCapabilities.HasTransport(Android.Net.TransportType.Ethernet))
+                                {
+                                    bindNetwork = network;
+                                    break;
+                                }
                             }
                         }
                     }
