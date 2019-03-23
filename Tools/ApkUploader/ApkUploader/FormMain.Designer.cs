@@ -165,9 +165,9 @@
             this.labelObbFile.AutoSize = true;
             this.labelObbFile.Location = new System.Drawing.Point(12, 106);
             this.labelObbFile.Name = "labelObbFile";
-            this.labelObbFile.Size = new System.Drawing.Size(75, 13);
+            this.labelObbFile.Size = new System.Drawing.Size(203, 13);
             this.labelObbFile.TabIndex = 10;
-            this.labelObbFile.Text = "Obb file name:";
+            this.labelObbFile.Text = "Obb file name (use * to keep last version):";
             // 
             // textBoxObbFile
             // 
