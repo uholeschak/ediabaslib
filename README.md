@@ -14,7 +14,8 @@ Now a variant that can be used with cars from the VAG group has been released, b
 
 For testing there is a console application [EdiabasTest](docs/EdiabasTest_parameters.md) with command line parameters.
 
-**More informations could be found in the [Documentation](docs/Documentation.md) section.**
+**More informations could be found in the [Documentation](docs/Documentation.md) section.**  
+**These are expert tools, I have no time for detailed support. Please search the internet for _EDIABAS_, _Tool32_, _INPA_, _ISTA-D_, _ISTA-P_ e.g. or use forums to get help.**
 
 If you want to support the developement you could donate a small amount.  
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ)
