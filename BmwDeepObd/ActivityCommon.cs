@@ -219,6 +219,7 @@ namespace BmwDeepObd
         public delegate void WifiConnectedWarnDelegate();
         public delegate void InitUdsFinishDelegate(bool result);
         public const int UdsDtcStatusOverride = 0x2C;
+        public const BuildVersionCodes MinEthernetSettingsVersion = BuildVersionCodes.M;
         public const string MtcBtAppName = @"com.microntek.bluetooth";
         public const string DefaultLang = "en";
         public const string TraceFileName = "ifh.trc.zip";
@@ -1978,8 +1979,12 @@ namespace BmwDeepObd
                     _lastEnetSsid = enetSsid;
                     if (!validSsid)
                     {
-                        string message = _context.GetString(Resource.String.enet_adapter_ssid_warn) +
-                                         "\n" + _context.GetString(Resource.String.enet_ethernet_hint);
+                        string message = _context.GetString(Resource.String.enet_adapter_ssid_warn);
+                        if (Build.VERSION.SdkInt >= MinEthernetSettingsVersion)
+                        {
+                            message += "\n" + _context.GetString(Resource.String.enet_ethernet_hint);
+                        }
+
                         bool ignoreDismiss = false;
                         AlertDialog alertDialog = new AlertDialog.Builder(_context)
                         .SetMessage(message)
@@ -2407,7 +2412,7 @@ namespace BmwDeepObd
                 case InterfaceType.DeepObdWifi:
                 {
                     string message = _context.GetString(Resource.String.wifi_enable);
-                    if (_selectedInterface == InterfaceType.Enet)
+                    if (_selectedInterface == InterfaceType.Enet && Build.VERSION.SdkInt >= MinEthernetSettingsVersion)
                     {
                         message += "\n" + _context.GetString(Resource.String.enet_ethernet_hint);
                     }
