@@ -2,7 +2,7 @@
 <fragment xmlns="http://www.holeschak.de/BmwDeepObd"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
-  <page name ="tab_errors" fontsize="small">
+  <page name ="tab_errors" fontsize="small" no_update="true">
     <strings>
       <string name="tab_errors">Errors</string>
 
@@ -61,7 +61,7 @@
       <string name="SZM">SZM Schaltzentrum Mittelkonsole</string>
       <string name="TCU">TCU Telematic Control Unit</string>
     </strings>
-    <read_errors sgbd_functional ="e60.prg">
+    <read_errors sgbd_functional="e60.prg" >
       <ecu name="CAS" sgbd="d_cas" />
       <ecu name="DDE" sgbd="d_motor" results="F_UW_KM;F_UW_ANZ" />
       <ecu name="EKPS" sgbd="d_ekp" />

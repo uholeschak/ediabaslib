@@ -6180,6 +6180,25 @@ namespace BmwDeepObd
                     document.Root.Add(pageNode);
                 }
 
+                XAttribute pageNoUpdateAttr = pageNode.Attribute("no_update");
+                if (pageNoUpdateAttr != null)
+                {
+                    bool noUpdate = false;
+                    try
+                    {
+                        noUpdate = XmlConvert.ToBoolean(pageNoUpdateAttr.Value);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                    if (noUpdate)
+                    {
+                        return null;
+                    }
+                }
+
                 XAttribute pageNameAttr = pageNode.Attribute("name");
                 if (pageNameAttr == null)
                 {
@@ -6531,6 +6550,26 @@ namespace BmwDeepObd
                     pageNode = new XElement(ns + "page");
                     document.Root.Add(pageNode);
                 }
+
+                XAttribute pageNoUpdateAttr = pageNode.Attribute("no_update");
+                if (pageNoUpdateAttr != null)
+                {
+                    bool noUpdate = false;
+                    try
+                    {
+                        noUpdate = XmlConvert.ToBoolean(pageNoUpdateAttr.Value);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                    if (noUpdate)
+                    {
+                        return null;
+                    }
+                }
+
                 XAttribute pageNameAttr = pageNode.Attribute("name");
                 if (pageNameAttr == null)
                 {
