@@ -499,7 +499,7 @@
     <xs:attribute name="sgbd_functional" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>
-              Functional SGBD for this vehicle type. Used for global error reset.
+          Functional SGBD for this vehicle type. Used for global error reset.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -607,11 +607,20 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+
     <xs:attribute name="activate" type="xs:boolean" default="false" use="optional">
       <xs:annotation>
         <xs:documentation>
           Specifies if an activation button will be displayed on the page.
           Use this to prevent automatic job execution on page change.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="no_update" type="xs:boolean" default="false" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Setting this attribute prevents updating the page from the configuration generator.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
