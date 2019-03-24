@@ -456,7 +456,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\background.jpg" />
+    <AndroidResource Include="Resources\drawable-nodpi\background.jpg" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\menu\ediabas_tool_menu.xml" />
