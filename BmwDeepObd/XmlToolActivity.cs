@@ -92,6 +92,7 @@ namespace BmwDeepObd
                 Sgbd = sgbd;
                 Grp = grp;
                 Selected = false;
+                NoUpdate = false;
 
                 InitReadValues();
 
@@ -243,6 +244,8 @@ namespace BmwDeepObd
             public List<EcuInfoSubSys> SubSystems { get; set; }
 
             public bool Selected { get; set; }
+
+            public bool NoUpdate { get; set; }
 
             public string PageName { get; set; }
 
@@ -5903,6 +5906,21 @@ namespace BmwDeepObd
                 return;
             }
 
+            bool noUpdate = false;
+            XAttribute pageNoUpdateAttr = pageNode.Attribute("no_update");
+            if (pageNoUpdateAttr != null)
+            {
+                try
+                {
+                    noUpdate = XmlConvert.ToBoolean(pageNoUpdateAttr.Value);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+            ecuInfo.NoUpdate = noUpdate;
+
             XAttribute displayModeAttr = pageNode.Attribute("display-mode");
             if (displayModeAttr != null)
             {
@@ -6044,11 +6062,12 @@ namespace BmwDeepObd
             }
         }
 
-        private string ReadPageSgbd(XDocument document, out JobReader.PageInfo.DisplayModeType displayMode, out DisplayFontSize fontSize,
+        private string ReadPageSgbd(XDocument document, out bool noUpdate, out JobReader.PageInfo.DisplayModeType displayMode, out DisplayFontSize fontSize,
             out int gaugesPortrait, out int gaugesLandscape,
             out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict,
             out string vagDataFileName, out string vagUdsFileName)
         {
+            noUpdate = false;
             displayMode = JobReader.PageInfo.DisplayModeType.List;
             fontSize = DisplayFontSize.Small;
             gaugesPortrait = JobReader.GaugesPortraitDefault;
@@ -6067,6 +6086,20 @@ namespace BmwDeepObd
             {
                 return null;
             }
+
+            XAttribute pageNoUpdateAttr = pageNode.Attribute("no_update");
+            if (pageNoUpdateAttr != null)
+            {
+                try
+                {
+                    noUpdate = XmlConvert.ToBoolean(pageNoUpdateAttr.Value);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
             XAttribute displayModeAttr = pageNode.Attribute("display-mode");
             if (displayModeAttr != null)
             {
@@ -6075,6 +6108,7 @@ namespace BmwDeepObd
                     displayMode = JobReader.PageInfo.DisplayModeType.List;
                 }
             }
+
             XAttribute fontSizeAttr = pageNode.Attribute("fontsize");
             if (fontSizeAttr != null)
             {
@@ -6729,7 +6763,7 @@ namespace BmwDeepObd
                     }
                     try
                     {
-                        string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out JobReader.PageInfo.DisplayModeType displayMode, out DisplayFontSize fontSize,
+                        string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out bool noUpdate, out JobReader.PageInfo.DisplayModeType displayMode, out DisplayFontSize fontSize,
                             out int gaugesPortrait, out int gaugesLandscape,
                             out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict, out string vagDataFileName, out string vagUdsFileName);
                         if (!string.IsNullOrEmpty(sgbdName))
@@ -6737,7 +6771,8 @@ namespace BmwDeepObd
                             _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, displayMode, fontSize, gaugesPortrait, gaugesLandscape,
                                             mwTabFileName, mwTabEcuDict, vagDataFileName, vagUdsFileName)
                             {
-                                Selected = true
+                                Selected = true,
+                                NoUpdate = noUpdate
                             });
                         }
                     }
@@ -6787,7 +6822,7 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out JobReader.PageInfo.DisplayModeType displayMode, out DisplayFontSize fontSize,
+                                string sgbdName = ReadPageSgbd(XDocument.Load(xmlPageFile), out bool noUpdate, out JobReader.PageInfo.DisplayModeType displayMode, out DisplayFontSize fontSize,
                                     out int gaugesPortrait, out int gaugesLandscape,
                                     out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict, out string vagDataFileName, out string vagUdsFileName);
                                 if (!string.IsNullOrEmpty(sgbdName))
@@ -6795,7 +6830,8 @@ namespace BmwDeepObd
                                     _ecuList.Insert(0, new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, displayMode, fontSize, gaugesPortrait, gaugesLandscape,
                                                         mwTabFileName, mwTabEcuDict, vagDataFileName, vagUdsFileName)
                                     {
-                                        Selected = true
+                                        Selected = true,
+                                        NoUpdate = noUpdate
                                     });
                                 }
                             }
