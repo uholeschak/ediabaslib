@@ -42,7 +42,7 @@
 \nSie können gerne mitwirken oder Probleme melden.
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
 \n\nÄnderungen in dieser Version:\n</string>
-  <string name="version_last_changes">- BMW ECU Dateien aktualisiert\n-Ethernet Kabel Unterstützung\n- Erlaubt Anwender-Datenkonvertierung bei Graphen\n- Kleinere Probleme behoben</string>
+  <string name="version_last_changes">- Schreibschutzoption für Konfigurationen\n- BMW ECU Dateien aktualisiert\n- Ethernet Kabel Unterstützung\n- Erlaubt Anwender-Datenkonvertierung bei Graphen\n- Kleinere Probleme behoben</string>
   <string name="app_info_message">Deep OBD für BMW und VAG\nVersion: {0}\nId: {1}</string>
   <string name="vag_mode_info">Der VAG Modus ist noch experimentell.\nEs wird ein <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD Adapter</a> mit mindestens Firmwareversion 0.11 benötigt.\nIm Moment werden nur die Protokolle KWP2000, KWP1281, TP2.0 und UDS unterstützt.\nFür den neuen VAG Modus müssen die Konfiguration neu generiert werden.\nEs ist möglich den alten VAG Modus wieder in den globalen Einstellungen wählen.</string>
 
@@ -437,7 +437,7 @@
   <string name="xml_tool_button_sec_access">Zugriffsberechtigung</string>
   <string name="xml_tool_execute_test_job">Job wird ausgeführt</string>
   <string name="xml_tool_read_test_job_failed">Ausführen des Jobs fehlgeschlagen</string>
-  <string name="xml_tool_ecu_msg_save_lock">Das Speichern der Konfiguration wurde in der Konfigurationsdatei gesperrt.\nÄnderungen können nicht übernommen werden.</string>
+  <string name="xml_tool_ecu_msg_save_lock">Das Schreiben der Konfiguration wurde in der Konfigurationsdatei gesperrt.\nÄnderungen können nicht gespeichert werden.</string>
   <string name="xml_tool_ecu_msg_no_selection">Sie haben keine Daten für die Anzeige ausgewählt.\nWählen Sie hierfür zunächst die gewünschen Jobs und Ergebnisse aus der Liste.\nWollen Sie trotzdem abbrechen?</string>
   <string name="xml_tool_ecu_msg_no_grid_selection">Sie haben die graphische Anzeige aktiviert, aber keine graphische Darstellung ausgewählt.\nEs wird Nichts angezeigt.\nWollen Sie trotzdem abbrechen?</string>
   <string name="xml_tool_result_amount_limit">Abhängig vom ECU-Typ ist die Anzahl der Ergebnisse begrenzt.\nWenn sie zu viele Ergebnisse wählen, werden keine Daten übertragen.</string>
