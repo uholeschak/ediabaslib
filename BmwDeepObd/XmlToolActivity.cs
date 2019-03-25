@@ -7055,6 +7055,7 @@ namespace BmwDeepObd
         private void ReadAllXml(bool addUnusedEcus = false)
         {
             _instanceData.AddErrorsPage = true;
+            _instanceData.NoErrorsPageUpdate = false;
             string xmlFileDir = XmlFileDir();
             if (xmlFileDir == null)
             {
