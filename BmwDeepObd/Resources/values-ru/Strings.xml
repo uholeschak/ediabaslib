@@ -41,7 +41,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Обновлены файлы BMW ECU\n- Поддержка Ethernet кабеля\n-Позволяет пользователю преобразовывать данные для графического отображения\n- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Опция защиты изменения конфигураций\n- Обновлены файлы BMW ECU\n- Поддержка Ethernet кабеля\n-Позволяет пользователю преобразовывать данные для графического отображения\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -436,8 +436,7 @@
   <string name="xml_tool_button_sec_access">Права доступа</string>
   <string name="xml_tool_execute_test_job">Выполнение Job</string>
   <string name="xml_tool_read_test_job_failed">Не удалось выполнить Job</string>
-  <!--Translate-->
-  <string name="xml_tool_ecu_msg_save_lock">Writing the configuration has been disabled in the configuration file.\nStoring of the modifications is not possible.</string>
+  <string name="xml_tool_ecu_msg_save_lock">Запись конфигурации была заблокирована в файле конфигурации.\nИзменения не могут быть сохранены.</string>
   <string name="xml_tool_ecu_msg_no_selection">Вы не выбрали данные для отображения.\nВыберите сначала нужные задания и результаты из списка.\nВы все равно хотите отменить?</string>
   <string name="xml_tool_ecu_msg_no_grid_selection">Вы активировали графический дисплей, но не выбрали графическое представление.\nОтображение не будет выводится на экран\nДействительно хотите отменить?</string>
   <string name="xml_tool_result_amount_limit">Количество результатов ограничено типом ECU.\nДанные не будут переданы, если вы выберете слишком много результатов.</string>
