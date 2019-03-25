@@ -1243,6 +1243,19 @@ namespace BmwDeepObd
 
         private void NoSelectionWarn(AcceptDelegate handler)
         {
+            if (_ecuInfo.NoUpdate)
+            {
+                new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                    {
+                        handler(true);
+                    })
+                    .SetMessage(Resource.String.xml_tool_ecu_msg_save_lock)
+                    .SetTitle(Resource.String.alert_title_info)
+                    .Show();
+                return;
+            }
+
             if (AnyResultsSelected(true))
             {
                 handler(true);
