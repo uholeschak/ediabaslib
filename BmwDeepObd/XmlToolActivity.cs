@@ -6482,10 +6482,10 @@ namespace BmwDeepObd
                 return;
             }
 
+            bool noUpdate = false;
             XAttribute pageNoUpdateAttr = pageNode.Attribute("no_update");
             if (pageNoUpdateAttr != null)
             {
-                bool noUpdate = false;
                 try
                 {
                     noUpdate = XmlConvert.ToBoolean(pageNoUpdateAttr.Value);
@@ -6494,8 +6494,8 @@ namespace BmwDeepObd
                 {
                     // ignored
                 }
-                _instanceData.NoErrorsPageUpdate = noUpdate;
             }
+            _instanceData.NoErrorsPageUpdate = noUpdate;
 
             XElement stringsNode = GetDefaultStringsNode(ns, pageNode);
             XElement errorsNode = pageNode.Element(ns + "read_errors");
