@@ -316,6 +316,7 @@ namespace BmwDeepObd
             public InstanceData()
             {
                 AddErrorsPage = true;
+                NoErrorsPageUpdate = false;
                 EcuSearchAbortIndex = -1;
                 DeviceName = string.Empty;
                 DeviceAddress = string.Empty;
@@ -329,6 +330,7 @@ namespace BmwDeepObd
             public bool AutoStart { get; set; }
             public int AutoStartSearchStartIndex { get; set; }
             public bool AddErrorsPage { get; set; }
+            public bool NoErrorsPageUpdate { get; set; }
             public int ManualConfigIdx { get; set; }
             public int EcuSearchAbortIndex { get; set; }
             public string DeviceName { get; set; }
@@ -964,7 +966,7 @@ namespace BmwDeepObd
             IMenuItem addErrorsMenu = menu.FindItem(Resource.Id.menu_xml_tool_add_errors_page);
             if (addErrorsMenu != null)
             {
-                addErrorsMenu.SetEnabled(_ecuList.Count > 0);
+                addErrorsMenu.SetEnabled(_ecuList.Count > 0 && !_instanceData.NoErrorsPageUpdate);
                 addErrorsMenu.SetChecked(_instanceData.AddErrorsPage);
             }
 
@@ -6479,6 +6481,22 @@ namespace BmwDeepObd
             {
                 return;
             }
+
+            XAttribute pageNoUpdateAttr = pageNode.Attribute("no_update");
+            if (pageNoUpdateAttr != null)
+            {
+                bool noUpdate = false;
+                try
+                {
+                    noUpdate = XmlConvert.ToBoolean(pageNoUpdateAttr.Value);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+                _instanceData.NoErrorsPageUpdate = noUpdate;
+            }
+
             XElement stringsNode = GetDefaultStringsNode(ns, pageNode);
             XElement errorsNode = pageNode.Element(ns + "read_errors");
             if (errorsNode == null)
