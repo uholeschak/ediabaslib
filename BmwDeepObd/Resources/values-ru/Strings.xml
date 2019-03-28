@@ -57,7 +57,8 @@
   <string name="exp_down_button_resume">Продолжить загрузку</string>
   <string name="exp_down_button_cancel">Отменить</string>
   <string name="exp_down_button_cancel_verify">Отменить проверку</string>
-  <string name="exp_down_obb_missing">Приложение не было загружено из Google Play и файл расширения отсутствует.</string>
+  <!--Translate-->
+  <string name="exp_down_obb_missing">Приложение не было загружено из Google Play и файл расширения отсутствует.\nDownload the OBB file with an APK downloader from Google Play and copy it with the name:\n\'{0}\'\ninto the directory:\n\'{1}\'.\nThere is not support for this, using Google Play is the only recommended way.</string>
   <string name="exp_down_time_remaining">Необходимое время: {0}</string>
 
   <!-- Downloader library -->
