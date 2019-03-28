@@ -58,7 +58,7 @@
   <string name="exp_down_button_resume">Download fortsetzen</string>
   <string name="exp_down_button_cancel">Abbrechen</string>
   <string name="exp_down_button_cancel_verify">Überprüfung abbrechen</string>
-  <string name="exp_down_obb_missing">Die App wurde nicht von Google Play heruntergeladen und die Erweiterungsdatei fehlt.</string>
+  <string name="exp_down_obb_missing">Die App wurde nicht von Google Play heruntergeladen und die Erweiterungsdatei fehlt.\nLaden Sie die OBB-Datei mit einem APK Downloader von Google Play herunter und kopieren Sie diese mit dem Namen:\n\'{0}\'\nin das Verzeichnis:\n\'{1}\'.\nEs gibt dafür keinen Support, die Verwendung von Google Play ist der einzige empfohlene Weg.</string>
   <string name="exp_down_time_remaining">Verbleibende Zeit: {0}</string>
 
   <!-- Downloader library -->
@@ -498,7 +498,7 @@
   <string name="vag_adaption_button_stop">Stop</string>
   <string name="vag_adaption_ecu_reset">ECU Reset durchführen</string>
 
-    <!-- CAN Adapter Activity -->
+  <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">CAN Adapter</string>
   <string name="can_adapter_mode_name">CAN Betriebsart</string>
   <string name="can_adapter_sep_time">Telegrammabstand [ms]</string>

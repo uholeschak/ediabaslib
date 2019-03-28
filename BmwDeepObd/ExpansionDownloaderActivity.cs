@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -697,8 +698,34 @@ namespace BmwDeepObd
 
                 if (!IsFromGooglePlay())
                 {
+                    PackageInfo packageInfo = PackageManager.GetPackageInfo(PackageName, 0);
+                    int packageVersion = 0;
+                    if (packageInfo != null)
+                    {
+                        packageVersion = packageInfo.VersionCode;
+                    }
+                    string obbFileName = string.Format(CultureInfo.InvariantCulture, "main.{0}.{1}.obb", packageVersion, ActivityCommon.AppNameSpace);
+
+                    Java.IO.File[] obbDirs;
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+                    {
+                        obbDirs = GetObbDirs();
+                    }
+                    else
+                    {
+                        obbDirs = new[] { ObbDir };
+                    }
+
+                    string obbDirName = "-";
+                    if (obbDirs.Length > 0 && obbDirs[0] != null)
+                    {
+                        obbDirName = obbDirs[0].AbsolutePath;
+                    }
+
+                    string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.exp_down_obb_missing), obbFileName, obbDirName);
                     AlertDialog alertDialog = new AlertDialog.Builder(this)
-                        .SetMessage(Resource.String.exp_down_obb_missing)
+                        .SetMessage(message)
                         .SetTitle(Resource.String.alert_title_error)
                         .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
                         .Show();
