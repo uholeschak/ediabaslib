@@ -717,13 +717,28 @@ namespace BmwDeepObd
                         obbDirs = new[] { ObbDir };
                     }
 
-                    string obbDirName = "-";
-                    if (obbDirs.Length > 0 && obbDirs[0] != null)
+                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                    foreach (Java.IO.File dir in obbDirs)
                     {
-                        obbDirName = obbDirs[0].AbsolutePath;
+                        if (dir != null && !string.IsNullOrEmpty(dir.AbsolutePath))
+                        {
+                            if (sb.Length > 0)
+                            {
+                                sb.AppendLine();
+                            }
+                            sb.Append(@"'");
+                            sb.Append(dir.AbsolutePath);
+                            sb.Append(@"'");
+                        }
                     }
 
-                    string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.exp_down_obb_missing), obbFileName, obbDirName);
+                    string obbDirsName = sb.ToString();
+                    if (string.IsNullOrEmpty(obbDirsName))
+                    {
+                        obbDirsName = "-";
+                    }
+
+                    string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.exp_down_obb_missing), obbFileName, obbDirsName);
                     AlertDialog alertDialog = new AlertDialog.Builder(this)
                         .SetMessage(message)
                         .SetTitle(Resource.String.alert_title_error)
