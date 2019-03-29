@@ -57,7 +57,7 @@
   <string name="exp_down_button_resume">Resume Download</string>
   <string name="exp_down_button_cancel">Cancel</string>
   <string name="exp_down_button_cancel_verify">Cancel Verification</string>
-  <string name="exp_down_obb_missing">The app has not been downloaded from Google Play and the extension file is missing.\nDownload the OBB file with an APK downloader from Google Play and copy it with the name:\n\'{0}\'\ninto the directory:\n\'{1}\'.\nThere is not support for this, using Google Play is the only recommended way.</string>
+  <string name="exp_down_obb_missing">The app has not been downloaded from Google Play and the extension file is missing.\nDownload the OBB file with an APK downloader from Google Play and copy it with the name:\n\'{0}\'\ninto one of the directories:\n{1}\nThere is not support for this, using Google Play is the only recommended way.</string>
   <string name="exp_down_time_remaining">Time remaining: {0}</string>
 
   <!-- Downloader library (modfications) -->
