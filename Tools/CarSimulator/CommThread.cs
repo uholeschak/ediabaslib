@@ -1692,8 +1692,6 @@ namespace CarSimulator
                                     {
                                         if (ipAddressInfo.Address.AddressFamily == AddressFamily.InterNetwork)
                                         {
-                                            Debug.WriteLine(ipAddressInfo.Address.ToString());
-
                                             byte[] ipBytesRemote = ipEnd.Address.GetAddressBytes();
                                             byte[] ipBytesLocal = ipAddressInfo.Address.GetAddressBytes();
                                             byte[] maskBytes = ipAddressInfo.IPv4Mask.GetAddressBytes();
