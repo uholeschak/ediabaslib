@@ -1,4 +1,4 @@
-﻿//#define USE_UDP_SOCKET
+﻿#define USE_UDP_SOCKET
 //#define MAP_ISOTP_ECU
 #if DEBUG
 #define CAN_DEBUG
@@ -970,8 +970,8 @@ namespace CarSimulator
             // is required tp receive the UPD broadcasts
             _udpError = false;
 #if USE_UDP_SOCKET
-            _udpSocket =new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            IPEndPoint ipUdp = new IPEndPoint(IPAddress.Any, enetControlPort);
+            _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            IPEndPoint ipUdp = new IPEndPoint(IPAddress.Any, EnetControlPort);
             _udpSocket.Bind(ipUdp);
             StartUdpSocketListen();
 #else
@@ -1677,7 +1677,62 @@ namespace CarSimulator
                     {
                         identMessage[idx++] = (byte)('a' + i);
                     }
-                    udpSocketLocal.SendTo(identMessage, tempRemoteEp);
+
+                    if (tempRemoteEp is IPEndPoint ipEnd)
+                    {
+                        System.Net.NetworkInformation.NetworkInterface[] adapters = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
+                        foreach (System.Net.NetworkInformation.NetworkInterface adapter in adapters)
+                        {
+                            if (adapter.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up)
+                            {
+                                System.Net.NetworkInformation.IPInterfaceProperties properties = adapter.GetIPProperties();
+                                if (properties?.UnicastAddresses != null)
+                                {
+                                    foreach (System.Net.NetworkInformation.UnicastIPAddressInformation ipAddressInfo in properties.UnicastAddresses)
+                                    {
+                                        if (ipAddressInfo.Address.AddressFamily == AddressFamily.InterNetwork)
+                                        {
+                                            Debug.WriteLine(ipAddressInfo.Address.ToString());
+
+                                            byte[] ipBytesRemote = ipEnd.Address.GetAddressBytes();
+                                            byte[] ipBytesLocal = ipAddressInfo.Address.GetAddressBytes();
+                                            byte[] maskBytes = ipAddressInfo.IPv4Mask.GetAddressBytes();
+
+                                            for (int i = 0; i < ipBytesRemote.Length; i++)
+                                            {
+                                                ipBytesRemote[i] &= maskBytes[i];
+                                            }
+
+                                            for (int i = 0; i < ipBytesLocal.Length; i++)
+                                            {
+                                                ipBytesLocal[i] &= maskBytes[i];
+                                            }
+
+                                            IPAddress ipRemoteMask = new IPAddress(ipBytesRemote);
+                                            IPAddress ipLocalMask = new IPAddress(ipBytesLocal);
+                                            if (ipRemoteMask.Equals(ipLocalMask))
+                                            {
+                                                Debug.WriteLine("Local IP: {0} for Remote IP: {1}", ipAddressInfo.Address, ipEnd.Address);
+                                                try
+                                                {
+                                                    using (Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
+                                                    {
+                                                        IPEndPoint ipUdp = new IPEndPoint(ipAddressInfo.Address, EnetControlPort);
+                                                        sock.Bind(ipUdp);
+                                                        sock.SendTo(identMessage, tempRemoteEp);
+                                                    }
+                                                }
+                                                catch (Exception)
+                                                {
+                                                    // ignored
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
                 StartUdpSocketListen();
             }
