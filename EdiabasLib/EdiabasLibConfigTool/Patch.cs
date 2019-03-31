@@ -214,7 +214,8 @@ namespace EdiabasLibConfigTool
                 {
                     WlanConnectionAttributes conn = wlanIface.CurrentConnection;
                     string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
-                    if (string.Compare(ssidString, AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Compare(ssidString, AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0 ||
+                        ssidString.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase))
                     {
                         UpdateConfigNode(settingsNode, @"EnetRemoteHost", @"auto:all");
                         UpdateConfigNode(settingsNode, @"Interface", @"ENET");
