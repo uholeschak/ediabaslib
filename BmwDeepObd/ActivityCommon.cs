@@ -719,8 +719,8 @@ namespace BmwDeepObd
             _clipboardManager = context?.GetSystemService(Context.ClipboardService);
             _btAdapter = BluetoothAdapter.DefaultAdapter;
             _btUpdateHandler = new Handler();
-            _maWifi = (WifiManager)context?.GetSystemService(Context.WifiService);
-            _maConnectivity = (ConnectivityManager)context?.GetSystemService(Context.ConnectivityService);
+            _maWifi = (WifiManager)context?.ApplicationContext?.GetSystemService(Context.WifiService);
+            _maConnectivity = (ConnectivityManager)context?.ApplicationContext?.GetSystemService(Context.ConnectivityService);
             _usbManager = context?.GetSystemService(Context.UsbService) as UsbManager;
             _notificationManager = context?.GetSystemService(Context.NotificationService) as Android.App.NotificationManager;
             _powerManager = context?.GetSystemService(Context.PowerService) as PowerManager;
