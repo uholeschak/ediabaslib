@@ -93,7 +93,14 @@ namespace EdiabasLibConfigTool
                 AuthRequest authRequest = new AuthRequest(ap);
                 if (authRequest.IsPasswordRequired)
                 {
-                    authRequest.Password = _form.WifiPassword;
+                    if (ap.Name.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase))
+                    {
+                        authRequest.Password = Patch.PassordWifiEnetLink;
+                    }
+                    else
+                    {
+                        authRequest.Password = _form.WifiPassword;
+                    }
                 }
                 ap.ConnectAsync(authRequest, true, success =>
                 {
@@ -121,7 +128,7 @@ namespace EdiabasLibConfigTool
                     string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
                     string ipAddr = string.Empty;
                     bool isEnet = string.Compare(ssidString, Patch.AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0;
-                    bool isEnetLink = ssidString.ToUpperInvariant().Contains(Patch.AdapterSsidEnetLink);
+                    bool isEnetLink = ssidString.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase);
 
                     IPInterfaceProperties ipProp = wlanIface.NetworkInterface.GetIPProperties();
                     if (ipProp == null)

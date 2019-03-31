@@ -130,7 +130,7 @@
     <value>Поиск</value>
   </data>
   <data name="labelWiFiPassword.Text" xml:space="preserve">
-    <value>Wi-Fi Пароль:</value>
+    <value>Deep OBD Wi-Fi Пароль:</value>
   </data>
   <data name="columnHeaderAddress.Text" xml:space="preserve">
     <value>Адрес</value>

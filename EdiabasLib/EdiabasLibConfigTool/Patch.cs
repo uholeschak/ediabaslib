@@ -19,6 +19,7 @@ namespace EdiabasLibConfigTool
         public const string AdapterSsidElm = @"WiFi_OBDII";
         public const string AdapterSsidEspLink = @"DeepOBD";
         public const string AdapterSsidEnetLink = @"ENET-LINK_";
+        public const string PassordWifiEnetLink = @"12345678";
         private const string ApiDirName = @"Api32";
         private const string ApiDllName = @"api32.dll";
         private const string ApiDllBackupName = @"api32.backup.dll";
