@@ -243,7 +243,7 @@
   <!-- ENET adapter config -->
   <string name="enet_adapter_web_info">The default password for the adapter web interface is root.\nIf the adapter gets unreachable after configuration you have to open the adapter and press the reset button after the adapter has booted.</string>
   <string name="enet_adapter_wifi_info">If you are using a Deep OBD BMW Wi-Fi adapter select the access point with the name \'Deep OBD BMW\', the default password is deepobdbmw.</string>
-  <string name="enet_adapter_ssid_warn">You are not connected with a Deep OBD BMW Wi-Fi adapter.\nDo you want to select a different access point?</string>
+  <string name="enet_adapter_ssid_warn">You are not connected with a Deep OBD BMW Wi-Fi or oder Unichip ENET Wi-Fi adapter.\nDo you want to select a different access point?</string>
   <string name="enet_ethernet_hint">If you are using a direct Ethernet cable connection, you have configure the Android LAN adapter with an Auto IP address,\nfor example 169.254.1.10 / 255.255.0.0.</string>
 
   <!-- ELM327 Wi-Fi -->
