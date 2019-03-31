@@ -121,6 +121,7 @@ namespace EdiabasLibConfigTool
                     string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
                     string ipAddr = string.Empty;
                     bool isEnet = string.Compare(ssidString, Patch.AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0;
+                    bool isEnetLink = ssidString.ToUpperInvariant().Contains(Patch.AdapterSsidEnetLink);
 
                     IPInterfaceProperties ipProp = wlanIface.NetworkInterface.GetIPProperties();
                     if (ipProp == null)
@@ -135,7 +136,7 @@ namespace EdiabasLibConfigTool
                         return false;
                     }
 
-                    if (isEnet)
+                    if (isEnet || isEnetLink)
                     {
                         if (configure)
                         {
@@ -152,10 +153,10 @@ namespace EdiabasLibConfigTool
                         {
                             Thread.CurrentThread.CurrentCulture = cultureInfo;
                             Thread.CurrentThread.CurrentUICulture = cultureInfo;
-                            if (isEnet)
+                            if (isEnet || isEnetLink)
                             {
-                                TestOk = RunWifiTestEnetRetry(ipAddr);
-                                if (TestOk)
+                                TestOk = RunWifiTestEnetRetry(ipAddr, out bool configRequired);
+                                if (TestOk && configRequired)
                                 {
                                     ConfigPossible = true;
                                 }
@@ -220,11 +221,12 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        private bool RunWifiTestEnetRetry(string ipAddr)
+        private bool RunWifiTestEnetRetry(string ipAddr, out bool configRequired)
         {
+            configRequired = false;
             for (int i = 0; i < 2; i++)
             {
-                if (RunWifiTestEnet(ipAddr))
+                if (RunWifiTestEnet(ipAddr, out configRequired))
                 {
                     return true;
                 }
@@ -232,8 +234,9 @@ namespace EdiabasLibConfigTool
             return false;
         }
 
-        private bool RunWifiTestEnet(string ipAddr)
+        private bool RunWifiTestEnet(string ipAddr, out bool configRequired)
         {
+            configRequired = false;
             _form.UpdateStatusText(Resources.Strings.Connecting);
 
             StringBuilder sr = new StringBuilder();
@@ -241,10 +244,30 @@ namespace EdiabasLibConfigTool
             StreamReader reader = null;
             try
             {
-                WebRequest request = WebRequest.Create(string.Format("http://{0}", ipAddr));
-                response = request.GetResponse();
+                try
+                {
+                    WebRequest request = WebRequest.Create(string.Format("http://{0}", ipAddr));
+                    response = request.GetResponse();
+                }
+                catch (WebException ex)
+                {
+                    if (ex.Status == WebExceptionStatus.ProtocolError)
+                    {
+                        if (ex.Response is HttpWebResponse webResponse)
+                        {
+                            if (webResponse.StatusCode == HttpStatusCode.Unauthorized)
+                            {
+                                sr.Append(Resources.Strings.Connected);
+                                sr.Append("\r\n");
+                                sr.Append(Resources.Strings.TestOk);
+                                _form.UpdateStatusText(sr.ToString());
+                                return true;
+                            }
+                        }
+                    }
+                }
 
-                Stream dataStream = response.GetResponseStream();
+                Stream dataStream = response?.GetResponseStream();
                 if (dataStream == null)
                 {
                     _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
@@ -276,6 +299,7 @@ namespace EdiabasLibConfigTool
             sr.Append("\r\n");
             sr.Append(Resources.Strings.TestOk);
             _form.UpdateStatusText(sr.ToString());
+            configRequired = true;
             return true;
         }
 
