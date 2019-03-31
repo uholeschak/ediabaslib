@@ -13,6 +13,7 @@ using SimpleWifi;
 using SimpleWifi.Win32;
 using SimpleWifi.Win32.Interop;
 using System.ComponentModel;
+using System.Security.AccessControl;
 
 namespace EdiabasLibConfigTool
 {
@@ -23,6 +24,7 @@ namespace EdiabasLibConfigTool
         private readonly Wifi _wifi;
         private readonly WlanClient _wlanClient;
         private readonly Test _test;
+        private bool _lastActiveProbing;
         private string _ediabasDirBmw;
         private string _ediabasDirVag;
         private string _ediabasDirIstad;
@@ -115,6 +117,12 @@ namespace EdiabasLibConfigTool
                 sr.Append(Resources.Strings.WifiAdapterError);
             }
             GetDirectories();
+
+            _lastActiveProbing = GetEnableActiveProbing();
+            if (_lastActiveProbing)
+            {
+                SetEnableActiveProbing(false);
+            }
 
             _initMessage = sr.ToString();
             UpdateStatusText(string.Empty);
@@ -211,6 +219,51 @@ namespace EdiabasLibConfigTool
             {
                 // ignored
             }
+        }
+
+        private bool GetEnableActiveProbing()
+        {
+            try
+            {
+                using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\NlaSvc\Parameters\Internet"))
+                {
+                    int? activeProbing = key?.GetValue("EnableActiveProbing", null) as int?;
+                    if (activeProbing.HasValue && activeProbing.Value != 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool SetEnableActiveProbing(bool enable)
+        {
+            try
+            {
+                using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\NlaSvc\Parameters\Internet",
+                    RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryRights.SetValue))
+                {
+                    if (key != null)
+                    {
+                        int value = enable ? 1 : 0;
+                        key.SetValue("EnableActiveProbing", value);
+                        return true;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
         }
 
         private void AddWifiAdapters(ListView listView)
@@ -547,6 +600,11 @@ namespace EdiabasLibConfigTool
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
+            if (_lastActiveProbing)
+            {
+                SetEnableActiveProbing(true);
+            }
+
             _cli?.Dispose();
             _test?.Dispose();
             try
