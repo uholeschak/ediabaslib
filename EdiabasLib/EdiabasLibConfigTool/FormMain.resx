@@ -424,13 +424,13 @@
     <value>239, 396</value>
   </data>
   <data name="labelWiFiPassword.Size" type="System.Drawing.Size, System.Drawing">
-    <value>83, 13</value>
+    <value>138, 13</value>
   </data>
   <data name="labelWiFiPassword.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
   </data>
   <data name="labelWiFiPassword.Text" xml:space="preserve">
-    <value>Wi-Fi Password:</value>
+    <value>Deep OBD Wi-Fi Password:</value>
   </data>
   <data name="&gt;&gt;labelWiFiPassword.Name" xml:space="preserve">
     <value>labelWiFiPassword</value>
