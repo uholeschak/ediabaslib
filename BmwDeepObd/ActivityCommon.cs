@@ -224,7 +224,8 @@ namespace BmwDeepObd
         public const string DefaultLang = "en";
         public const string TraceFileName = "ifh.trc.zip";
         public const string EmulatorEnetIp = "192.168.10.244";
-        public const string AdapterSsid = "Deep OBD BMW";
+        public const string AdapterSsidDeepObd = "Deep OBD BMW";
+        public const string EnetLinkAdapterIp = "192.168.16.254";
         public const string DownloadDir = "Download";
         public const string EcuBaseDir = "Ecu";
         public const string VagBaseDir = "Vag";
@@ -1717,7 +1718,7 @@ namespace BmwDeepObd
             }
             WifiInfo wifiInfo = _maWifi.ConnectionInfo;
             if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0 &&
-                !string.IsNullOrEmpty(wifiInfo.SSID) && wifiInfo.SSID.Contains(AdapterSsid))
+                !string.IsNullOrEmpty(wifiInfo.SSID) && wifiInfo.SSID.Contains(AdapterSsidDeepObd))
             {
                 return TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
             }
@@ -1958,12 +1959,22 @@ namespace BmwDeepObd
                 }
                 bool result = false;
                 string enetSsid = "NoSsid";
+                bool validEnetLink = false;
                 if ((_maWifi != null) && _maWifi.IsWifiEnabled)
                 {
                     WifiInfo wifiInfo = _maWifi.ConnectionInfo;
-                    if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0 && !string.IsNullOrEmpty(wifiInfo.SSID))
+                    if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
                     {
-                        enetSsid = wifiInfo.SSID;
+                        if (!string.IsNullOrEmpty(wifiInfo.SSID))
+                        {
+                            enetSsid = wifiInfo.SSID;
+                        }
+
+                        string adapterIp = TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
+                        if (string.Compare(adapterIp, EnetLinkAdapterIp, StringComparison.Ordinal) == 0)
+                        {
+                            validEnetLink = true;
+                        }
                     }
                 }
                 if (_lastEnetSsid == null)
@@ -1971,10 +1982,10 @@ namespace BmwDeepObd
                     _lastEnetSsid = enetSsid;
                 }
 
-                bool validSsid = enetSsid.Contains(AdapterSsid);
+                bool validSsid = enetSsid.Contains(AdapterSsidDeepObd);
                 bool validEthernet = IsValidEthernetConnection();
 
-                if (!validEthernet && string.Compare(_lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
+                if (!validEthernet && !validEnetLink && string.Compare(_lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
                 {
                     _lastEnetSsid = enetSsid;
                     if (!validSsid)
