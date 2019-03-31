@@ -225,7 +225,8 @@ namespace EdiabasLibConfigTool
                         string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
                         if (string.Compare(ssidString, Patch.AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0 ||
                             string.Compare(ssidString, Patch.AdapterSsidElm, StringComparison.OrdinalIgnoreCase) == 0 ||
-                            string.Compare(ssidString, Patch.AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0)
+                            string.Compare(ssidString, Patch.AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0 ||
+                            ssidString.ToUpperInvariant().Contains(Patch.AdapterSsidEnetLink))
                         {
                             string bssString = conn.wlanAssociationAttributes.Dot11Bssid.ToString();
                             ListViewItem listViewItem =
@@ -250,7 +251,8 @@ namespace EdiabasLibConfigTool
                     {
                         if (string.Compare(ap.Name, Patch.AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0 ||
                             string.Compare(ap.Name, Patch.AdapterSsidElm, StringComparison.OrdinalIgnoreCase) == 0 || 
-                            string.Compare(ap.Name, Patch.AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0)
+                            string.Compare(ap.Name, Patch.AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0 ||
+                            ap.Name.ToUpperInvariant().Contains(Patch.AdapterSsidEnetLink))
                         {
                             ListViewItem listViewItem =
                                 new ListViewItem(new[] { Resources.Strings.DisconnectedAdapter, ap.Name })
