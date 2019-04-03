@@ -67,6 +67,7 @@ mkdir "!ENETADAPTERPATH!"
 copy "!BATPATH!EnetAdapter\Release\mini.bin" "!ENETADAPTERPATH!"
 copy "!BATPATH!EnetAdapter\Release\openwrt*.bin" "!ENETADAPTERPATH!"
 copy "!BATPATH!EnetAdapter\Release\*.img" "!ENETADAPTERPATH!"
+copy "!BATPATH!EnetAdapter\EnetWifiSettings.dat" "!ENETADAPTERPATH!"
 
 mkdir "!ANDROIDSAMPLEPATH!"
 xcopy /y /e "!BATPATH!..\BmwDeepObd\Xml\*.*" "!ANDROIDSAMPLEPATH!"
