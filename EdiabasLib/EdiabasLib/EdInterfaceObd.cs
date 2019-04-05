@@ -410,6 +410,10 @@ namespace EdiabasLib
                                 ParFinishFunc = FinishKwp2000;
                                 break;
 
+                            case 0xA4:      // TP1.6
+                                ParTransmitFunc = TransTp16;
+                                break;
+
                             case 0xA5:      // TP2.0
                                 ParTransmitFunc = TransTp20;
                                 ParFinishFunc = FinishTp20;
@@ -428,10 +432,6 @@ namespace EdiabasLib
                                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set ISO-TP protocol failed");
                                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                                 }
-                                break;
-
-                            case 0xA4:      // Protocol 8000
-                                ParTransmitFunc = Trans8000;
                                 break;
 
                             default:
@@ -2999,11 +2999,11 @@ namespace EdiabasLib
             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0011;
         }
 
-        private EdiabasNet.ErrorCodes Trans8000(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
+        private EdiabasNet.ErrorCodes TransTp16(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
             receiveLength = 0;
 
-            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Protocol 8000 unsupported");
+            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** TP1.6 unsupported");
             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0011;
         }
 
