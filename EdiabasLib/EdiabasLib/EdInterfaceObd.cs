@@ -430,6 +430,10 @@ namespace EdiabasLib
                                 }
                                 break;
 
+                            case 0xA4:      // Protocol 8000
+                                ParTransmitFunc = Trans8000;
+                                break;
+
                             default:
                                 ParTransmitFunc = TransUnsupported;
                                 break;
@@ -2992,6 +2996,14 @@ namespace EdiabasLib
             receiveLength = 0;
 
             EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Interface unsupported");
+            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0011;
+        }
+
+        private EdiabasNet.ErrorCodes Trans8000(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
+        {
+            receiveLength = 0;
+
+            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Protocol 8000 unsupported");
             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0011;
         }
 
