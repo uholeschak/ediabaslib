@@ -18,7 +18,7 @@ For testing there is a console application [EdiabasTest](docs/EdiabasTest_parame
 **These are expert tools, I have no time for detailed support. Please search the internet for _EDIABAS_, _Tool32_, _INPA_, _ISTA-D_, _ISTA-P_ e.g. or use forums to get help.**
 
 If you want to support the developement you could donate a small amount.  
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ)
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ){target="_blank"}
 
 # Binary Compatibility
 A binary compatible api32.dll wrapper is existing, it's possible to replace the existing EDIABAS api32.dll with the EdiabasLib api32.dll and the applications are still working (The dll requires [.NET framework 4.0](https://www.microsoft.com/de-de/download/details.aspx?id=17718) or higher and [VS2015 C++ runtime](https://www.microsoft.com/de-de/download/details.aspx?id=48145) to be installed)!  
