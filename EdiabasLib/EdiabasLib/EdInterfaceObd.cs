@@ -127,6 +127,8 @@ namespace EdiabasLib
         protected const int Kwp1281ErrorDelay = 150;
         protected const int Kwp1281ErrorRetries = 3;
         protected const int Kwp1281InitDelay = 2600;
+        protected const int Kwp1281InitLongDelay = 2600;
+        protected const int Kwp1281InitShortDelay = 1500;
         protected const byte Kwp1281EndOutput = 0x06;
         protected const byte Kwp1281Ack = 0x09;
         protected const byte Kwp1281Nack = 0x0A;
@@ -230,6 +232,7 @@ namespace EdiabasLib
         protected int ParEdicTesterPresentTime;
         protected int ParEdicTesterPresentTelLen;
         protected byte[] ParEdicTesterPresentTel = new byte[TransBufferSize];
+        protected int ParEdicInitDelay;
         protected int ParEdicAddRetries;
         protected int ParTesterPresentTime;
         protected int ParTesterPresentTelLen;
@@ -1360,7 +1363,8 @@ namespace EdiabasLib
                                     ParEdicTesterPresentTel[i] = (byte) CommParameterProtected[i + 49];
                                 }
                                 EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, ParEdicTesterPresentTel, 0, ParEdicTesterPresentTelLen, "EDIC tester present");
-                                ParEdicAddRetries = 3;
+                                ParEdicInitDelay = Kwp1281InitLongDelay;
+                                ParEdicAddRetries = 1;
                                 // copy Px values to standard timeouts
                                 ParTimeoutStd = ParEdicP2;
                                 ParTimeoutTelEnd = ParEdicP1;
@@ -2901,11 +2905,8 @@ namespace EdiabasLib
                     retries = 0;
                 }
             }
-            if (EdicSimulation)
-            {
-                retries += (UInt32)ParEdicAddRetries;
-            }
-            for (int i = 0; i < retries + 1; i++)
+
+            for (int i = 0; i < retries + 1 + (EdicSimulation ? ParEdicAddRetries : 0); i++)
             {
                 errorCode = ParTransmitFunc(sendData, sendDataLength, ref receiveData, out receiveLength);
                 if (errorCode == EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
@@ -3028,7 +3029,9 @@ namespace EdiabasLib
                 Kwp1281SendNack = false;
                 KeyBytesProtected = ByteArray0;
                 keyBytesList = new List<byte>();
-                long delayTime = ParEdicW1 + 1000;
+                long delayTime = ParEdicInitDelay;
+                ParEdicInitDelay = Kwp1281InitLongDelay;
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Delay time: {0}", delayTime);
                 while ((Stopwatch.GetTimestamp() - LastCommTick) < delayTime * TickResolMs)
                 {
                     Thread.Sleep(10);
@@ -3207,20 +3210,41 @@ namespace EdiabasLib
                 }
                 LastCommTick = Stopwatch.GetTimestamp();
 
+                string sgbdName = EdiabasProtected.SgbdFileName ?? string.Empty;
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "SGBD name: {0}", sgbdName);
+                bool prgFile = sgbdName.EndsWith(".prg", StringComparison.OrdinalIgnoreCase);
+                bool protocolMismatch = false;
                 EdiabasNet.ErrorCodes errorCode = EdiabasNet.ErrorCodes.EDIABAS_IFH_0014;   // concept not implemented
                 switch (KwpMode)
                 {
                     case KwpModes.Kwp2000:
+                        if (prgFile && sgbdName.Contains("1281"))
+                        {
+                            protocolMismatch = true;
+                        }
                         errorCode = InitKwp2000(ref keyBytesList);
                         break;
 
                     case KwpModes.Kwp1281:
+                        if (prgFile && sgbdName.Contains("2000"))
+                        {
+                            protocolMismatch = true;
+                        }
                         errorCode = InitKwp1281(ref keyBytesList);
                         break;
                 }
                 if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
                     return errorCode;
+                }
+
+                if (protocolMismatch)
+                {
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** SGBD protocol mismatch");
+                    EcuConnected = false;
+                    ParEdicAddRetries = 3;
+                    ParEdicInitDelay = Kwp1281InitShortDelay;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0010;   // no response
                 }
             }
             switch (KwpMode)
