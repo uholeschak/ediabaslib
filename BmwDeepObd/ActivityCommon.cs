@@ -241,7 +241,7 @@ namespace BmwDeepObd
         public const string AppNameSpace = "de.holeschak.bmw_deep_obd";
         public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
         public const string SettingBluetoothHciLog = "bluetooth_hci_log";
-        private const string MailInfoDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Mail.xml";
+        private const string MailInfoDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Mail.php";
 #if DEBUG
         private static readonly string Tag = typeof(ActivityCommon).FullName;
 #endif
@@ -3293,7 +3293,19 @@ namespace BmwDeepObd
                     string downloadDir = Path.Combine(appDataDir, DownloadDir);
                     string mailInfoFile = Path.Combine(downloadDir, "Mail.xml");
                     Directory.CreateDirectory(downloadDir);
-                    webClient.DownloadFile(MailInfoDownloadUrl, mailInfoFile);
+
+                    StringBuilder sbUrl = new StringBuilder();
+                    sbUrl.Append(MailInfoDownloadUrl);
+                    sbUrl.Append("?");
+                    sbUrl.Append("appid=");
+                    sbUrl.Append(System.Uri.EscapeDataString(AppId));
+                    sbUrl.Append("&appver=");
+                    sbUrl.Append(System.Uri.EscapeDataString(string.Format(CultureInfo.InvariantCulture, "{0}", packageInfo.VersionCode)));
+                    sbUrl.Append("&lang=");
+                    sbUrl.Append(System.Uri.EscapeDataString(GetCurrentLanguage()));
+                    string url = sbUrl.ToString();
+
+                    webClient.DownloadFile(new System.Uri(url), mailInfoFile);
 
                     if (!GetMailKeyWordsInfo(mailInfoFile, out string wordRegEx, out int maxWords))
                     {
