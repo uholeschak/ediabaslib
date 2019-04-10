@@ -171,7 +171,7 @@ namespace BmwDeepObd
         private const string SharedAppName = ActivityCommon.AppNameSpace;
         private const string AppFolderName = ActivityCommon.AppNameSpace;
 #if OBB_MODE
-        private const string EcuDownloadUrl = @"http://www.holeschak.de/BmwDeepObd/Obb4.xml";
+        private const string EcuDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Obb.php";
         private const long EcuExtractSize = 2500000000;         // extracted ecu files size
         private const string InfoXmlName = "ObbInfo.xml";
         private const string ContentFileName = "Content.xml";
@@ -3157,9 +3157,25 @@ namespace BmwDeepObd
                     }
                     // ReSharper disable once RedundantNameQualifier
                     string extension = Path.GetExtension(fileName);
-                    if (string.Compare(extension, ".xml", StringComparison.OrdinalIgnoreCase) == 0)
-                    {   // XML URL file
+                    bool isPhp = string.Compare(extension, ".php", StringComparison.OrdinalIgnoreCase) == 0;
+                    if (isPhp || string.Compare(extension, ".xml", StringComparison.OrdinalIgnoreCase) == 0)
+                    {   // XML or PHP URL file
                         _webClient.Credentials = null;
+                    }
+
+                    if (isPhp)
+                    {
+                        StringBuilder sbUrl = new StringBuilder();
+                        sbUrl.Append(url);
+                        sbUrl.Append("?");
+                        sbUrl.Append("appid=");
+                        sbUrl.Append(Uri.EscapeDataString(ActivityCommon.AppId));
+                        sbUrl.Append("&appver=");
+                        sbUrl.Append(Uri.EscapeDataString(string.Format(CultureInfo.InvariantCulture, "{0}", _currentVersionCode)));
+                        sbUrl.Append("&lang=");
+                        sbUrl.Append(Uri.EscapeDataString(ActivityCommon.GetCurrentLanguage()));
+
+                        url = sbUrl.ToString();
                     }
                     _webClient.DownloadFileAsync(new Uri(url), fileNameFull, downloadInfo);
                 }
@@ -3379,7 +3395,8 @@ namespace BmwDeepObd
                     XAttribute urlAttr = fileNode.Attribute("name");
                     if (!string.IsNullOrEmpty(urlAttr?.Value))
                     {
-                        if (string.Compare(baseName, urlAttr.Value, StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.Compare(baseName, urlAttr.Value, StringComparison.OrdinalIgnoreCase) == 0 ||
+                            string.Compare("*", urlAttr.Value, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             XAttribute keyAttr = fileNode.Attribute("key");
                             if (keyAttr != null)
