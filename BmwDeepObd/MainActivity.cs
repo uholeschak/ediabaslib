@@ -3213,13 +3213,14 @@ namespace BmwDeepObd
                 if (_downloadProgress != null)
                 {
                     bool error = false;
+                    string errorMessage = null;
                     _downloadProgress.ButtonAbort.Enabled = false;
                     if (downloadInfo != null)
                     {
 #if OBB_MODE
                         if (e.Error == null)
                         {
-                            string key = GetObbKey(downloadInfo.FileName);
+                            string key = GetObbKey(downloadInfo.FileName, out errorMessage);
                             try
                             {
                                 if (File.Exists(downloadInfo.FileName))
@@ -3237,6 +3238,7 @@ namespace BmwDeepObd
                                     new List<string> { Path.Combine(_instanceData.AppDataPath, "EcuVag") });
                                 return;
                             }
+
                             error = true;
                         }
 #else
@@ -3303,7 +3305,14 @@ namespace BmwDeepObd
 #endif
                     if ((!e.Cancelled && e.Error != null) || error)
                     {
-                        _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
+                        if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            _activityCommon.ShowAlert(errorMessage, Resource.String.alert_title_error);
+                        }
+                        else
+                        {
+                            _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
+                        }
                     }
                 }
                 if (downloadInfo != null)
@@ -3368,8 +3377,9 @@ namespace BmwDeepObd
         }
 
 #if OBB_MODE
-        private string GetObbKey(string xmlFile)
+        private string GetObbKey(string xmlFile, out string errorMessage)
         {
+            errorMessage = null;
             try
             {
                 if (!File.Exists(xmlFile))
@@ -3390,6 +3400,17 @@ namespace BmwDeepObd
                 {
                     return null;
                 }
+
+                foreach (XElement fileNode in xmlDoc.Root.Elements("error"))
+                {
+                    XAttribute messageAttr = fileNode.Attribute("message");
+                    if (!string.IsNullOrEmpty(messageAttr?.Value))
+                    {
+                        errorMessage = messageAttr.Value;
+                        return null;
+                    }
+                }
+
                 foreach (XElement fileNode in xmlDoc.Root.Elements("obb"))
                 {
                     XAttribute urlAttr = fileNode.Attribute("name");
