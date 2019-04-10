@@ -3258,6 +3258,7 @@ namespace BmwDeepObd
 
             Thread sendThread = new Thread(() =>
             {
+                string errorMessage = null;
                 try
                 {
                     bool cancelled = false;
@@ -3307,6 +3308,11 @@ namespace BmwDeepObd
 
                     webClient.DownloadFile(new System.Uri(url), mailInfoFile);
 
+                    errorMessage = GetMailErrorMessage(mailInfoFile);
+                    if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        throw new Exception("Error message present");
+                    }
                     if (!GetMailKeyWordsInfo(mailInfoFile, out string wordRegEx, out int maxWords))
                     {
                         throw new Exception("Invalid mail keywords info");
@@ -3517,6 +3523,14 @@ namespace BmwDeepObd
                             progress = null;
                             SetLock(LockType.None);
                         }
+
+                        string messageText = string.Empty;
+                        if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            messageText = errorMessage + "\r\n";
+                        }
+                        messageText += _context.GetString(Resource.String.send_trace_file_failed_retry);
+
                         new AlertDialog.Builder(_context)
                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                             {
@@ -3526,7 +3540,7 @@ namespace BmwDeepObd
                             {
                             })
                             .SetCancelable(true)
-                            .SetMessage(Resource.String.send_trace_file_failed_retry)
+                            .SetMessage(messageText)
                             .SetTitle(Resource.String.alert_title_error)
                             .Show();
                     });
@@ -3534,6 +3548,32 @@ namespace BmwDeepObd
             });
             sendThread.Start();
             return true;
+        }
+
+        private string GetMailErrorMessage(string xmlFile)
+        {
+            try
+            {
+                if (!File.Exists(xmlFile))
+                {
+                    return null;
+                }
+                XDocument xmlDoc = XDocument.Load(xmlFile);
+                XElement errorNode = xmlDoc.Root?.Element("error");
+                if (errorNode != null)
+                {
+                    XAttribute messageAttr = errorNode.Attribute("message");
+                    if (!string.IsNullOrEmpty(messageAttr?.Value))
+                    {
+                        return messageAttr.Value;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            return null;
         }
 
         private bool GetMailInfo(string xmlFile, out string host, out int port, out bool ssl, out string from, out string to, out string name, out string password)

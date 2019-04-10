@@ -3401,9 +3401,9 @@ namespace BmwDeepObd
                     return null;
                 }
 
-                foreach (XElement fileNode in xmlDoc.Root.Elements("error"))
+                foreach (XElement errorNode in xmlDoc.Root.Elements("error"))
                 {
-                    XAttribute messageAttr = fileNode.Attribute("message");
+                    XAttribute messageAttr = errorNode.Attribute("message");
                     if (!string.IsNullOrEmpty(messageAttr?.Value))
                     {
                         errorMessage = messageAttr.Value;
