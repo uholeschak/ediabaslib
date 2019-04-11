@@ -3174,6 +3174,10 @@ namespace BmwDeepObd
                         sbUrl.Append(Uri.EscapeDataString(string.Format(CultureInfo.InvariantCulture, "{0}", _currentVersionCode)));
                         sbUrl.Append("&lang=");
                         sbUrl.Append(Uri.EscapeDataString(ActivityCommon.GetCurrentLanguage()));
+                        sbUrl.Append("&android_ver=");
+                        sbUrl.Append(Uri.EscapeDataString(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)));
+                        sbUrl.Append("&fingerprint=");
+                        sbUrl.Append(Uri.EscapeDataString(Build.Fingerprint));
 
                         url = sbUrl.ToString();
                     }

@@ -3304,6 +3304,10 @@ namespace BmwDeepObd
                     sbUrl.Append(System.Uri.EscapeDataString(string.Format(CultureInfo.InvariantCulture, "{0}", packageInfo.VersionCode)));
                     sbUrl.Append("&lang=");
                     sbUrl.Append(System.Uri.EscapeDataString(GetCurrentLanguage()));
+                    sbUrl.Append("&android_ver=");
+                    sbUrl.Append(System.Uri.EscapeDataString(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)));
+                    sbUrl.Append("&fingerprint=");
+                    sbUrl.Append(System.Uri.EscapeDataString(Build.Fingerprint));
                     string url = sbUrl.ToString();
 
                     webClient.DownloadFile(new System.Uri(url), mailInfoFile);
