@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -354,6 +355,7 @@ namespace BmwDeepObd
             _webClient = new WebClient();
             _webClient.DownloadProgressChanged += DownloadProgressChanged;
             _webClient.DownloadFileCompleted += DownloadCompleted;
+            _webClient.UploadValuesCompleted += UploadValuesCompleted;
 
             _stopCommRequest = Intent.GetBooleanExtra(ExtraStopComm, false);
             _connectTypeRequest = ActivityCommon.AutoConnectHandling;
@@ -3165,23 +3167,21 @@ namespace BmwDeepObd
 
                     if (isPhp)
                     {
-                        StringBuilder sbUrl = new StringBuilder();
-                        sbUrl.Append(url);
-                        sbUrl.Append("?");
-                        sbUrl.Append("appid=");
-                        sbUrl.Append(Uri.EscapeDataString(ActivityCommon.AppId));
-                        sbUrl.Append("&appver=");
-                        sbUrl.Append(Uri.EscapeDataString(string.Format(CultureInfo.InvariantCulture, "{0}", _currentVersionCode)));
-                        sbUrl.Append("&lang=");
-                        sbUrl.Append(Uri.EscapeDataString(ActivityCommon.GetCurrentLanguage()));
-                        sbUrl.Append("&android_ver=");
-                        sbUrl.Append(Uri.EscapeDataString(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)));
-                        sbUrl.Append("&fingerprint=");
-                        sbUrl.Append(Uri.EscapeDataString(Build.Fingerprint));
+                        NameValueCollection nameValueCollection = new NameValueCollection
+                        {
+                            {"appid", ActivityCommon.AppId},
+                            {"appver", string.Format(CultureInfo.InvariantCulture, "{0}", _currentVersionCode)},
+                            {"lang", ActivityCommon.GetCurrentLanguage()},
+                            {"android_ver", string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)},
+                            {"fingerprint", Build.Fingerprint}
+                        };
 
-                        url = sbUrl.ToString();
+                        _webClient.UploadValuesAsync(new Uri(url), null, nameValueCollection, downloadInfo);
                     }
-                    _webClient.DownloadFileAsync(new Uri(url), fileNameFull, downloadInfo);
+                    else
+                    {
+                        _webClient.DownloadFileAsync(new Uri(url), fileNameFull, downloadInfo);
+                    }
                 }
                 catch (Exception)
                 {
@@ -3203,6 +3203,27 @@ namespace BmwDeepObd
                 }
             });
             downloadThread.Start();
+        }
+
+        private void UploadValuesCompleted(object sender, UploadValuesCompletedEventArgs e)
+        {
+            if (e.Error == null)
+            {
+                try
+                {
+                    DownloadInfo downloadInfo = e.UserState as DownloadInfo;
+                    byte[] response = e.Result;
+                    if (downloadInfo != null && response != null)
+                    {
+                        File.WriteAllBytes(downloadInfo.FileName, response);
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+            DownloadCompleted(sender, e);
         }
 
         private void DownloadCompleted(object sender, AsyncCompletedEventArgs e)
