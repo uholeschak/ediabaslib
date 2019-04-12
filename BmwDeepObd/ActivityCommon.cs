@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -3295,22 +3296,23 @@ namespace BmwDeepObd
                     string mailInfoFile = Path.Combine(downloadDir, "Mail.xml");
                     Directory.CreateDirectory(downloadDir);
 
-                    StringBuilder sbUrl = new StringBuilder();
-                    sbUrl.Append(MailInfoDownloadUrl);
-                    sbUrl.Append("?");
-                    sbUrl.Append("appid=");
-                    sbUrl.Append(System.Uri.EscapeDataString(AppId));
-                    sbUrl.Append("&appver=");
-                    sbUrl.Append(System.Uri.EscapeDataString(string.Format(CultureInfo.InvariantCulture, "{0}", packageInfo.VersionCode)));
-                    sbUrl.Append("&lang=");
-                    sbUrl.Append(System.Uri.EscapeDataString(GetCurrentLanguage()));
-                    sbUrl.Append("&android_ver=");
-                    sbUrl.Append(System.Uri.EscapeDataString(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)));
-                    sbUrl.Append("&fingerprint=");
-                    sbUrl.Append(System.Uri.EscapeDataString(Build.Fingerprint));
-                    string url = sbUrl.ToString();
-
-                    webClient.DownloadFile(new System.Uri(url), mailInfoFile);
+                    if (string.Compare(Path.GetExtension(MailInfoDownloadUrl), ".xml", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        webClient.DownloadFile(new System.Uri(MailInfoDownloadUrl), mailInfoFile);
+                    }
+                    else
+                    {
+                        NameValueCollection nameValueCollection = new NameValueCollection
+                        {
+                            {"appid", AppId},
+                            {"appver", string.Format(CultureInfo.InvariantCulture, "{0}", packageInfo.VersionCode)},
+                            {"lang", GetCurrentLanguage()},
+                            {"android_ver", string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)},
+                            {"fingerprint", Build.Fingerprint}
+                        };
+                        byte[] response = webClient.UploadValues(new System.Uri(MailInfoDownloadUrl), nameValueCollection);
+                        File.WriteAllBytes(mailInfoFile, response);
+                    }
 
                     errorMessage = GetMailErrorMessage(mailInfoFile);
                     if (!string.IsNullOrEmpty(errorMessage))
