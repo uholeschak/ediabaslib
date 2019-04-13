@@ -3167,13 +3167,27 @@ namespace BmwDeepObd
 
                     if (isPhp)
                     {
+                        string obbName = string.Empty;
+                        string installer = string.Empty;
+                        try
+                        {
+                            obbName = Path.GetFileName(_obbFileName) ?? string.Empty;
+                            installer = PackageManager.GetInstallerPackageName(PackageName);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
                         NameValueCollection nameValueCollection = new NameValueCollection
                         {
                             {"appid", ActivityCommon.AppId},
                             {"appver", string.Format(CultureInfo.InvariantCulture, "{0}", _currentVersionCode)},
                             {"lang", ActivityCommon.GetCurrentLanguage()},
                             {"android_ver", string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)},
-                            {"fingerprint", Build.Fingerprint}
+                            {"fingerprint", Build.Fingerprint},
+                            {"obb_name", obbName},
+                            {"installer", installer},
                         };
 
                         _webClient.UploadValuesAsync(new Uri(url), null, nameValueCollection, downloadInfo);
