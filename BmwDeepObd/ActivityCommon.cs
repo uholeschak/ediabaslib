@@ -456,6 +456,7 @@ namespace BmwDeepObd
         private AlertDialog _ftdiWarningAlertDialog;
         private CustomProgressDialog _translateProgress;
         private WebClient _translateWebClient;
+        private HttpClient _sendHttpClient;
         private bool _translateLockAquired;
         private List<string> _yandexLangList;
         private List<string> _yandexTransList;
@@ -848,6 +849,11 @@ namespace BmwDeepObd
                     {
                         _usbCheckTimer.Dispose();
                         _usbCheckTimer = null;
+                    }
+                    if (_sendHttpClient != null)
+                    {
+                        _sendHttpClient.Dispose();
+                        _sendHttpClient = null;
                     }
                     UnRegisterWifiCallback();
                     if (_context != null)
@@ -3396,25 +3402,27 @@ namespace BmwDeepObd
 
                     if (dbId != null)
                     {
-                        using (HttpClient httpClient = new HttpClient())
+                        if (_sendHttpClient == null)
                         {
-                            MultipartFormDataContent form = new MultipartFormDataContent();
-
-                            form.Add(new StringContent(dbId), "db_id");
-                            form.Add(new StringContent(sb.ToString()), "info_text");
-
-                            if (!string.IsNullOrEmpty(traceFile) && File.Exists(traceFile))
-                            {
-                                FileStream fileStream = new FileStream(traceFile, FileMode.Open);
-                                form.Add(new StreamContent(fileStream), "file",
-                                    Path.GetFileName(traceFile) ?? "trace.zip");
-                            }
-
-                            HttpResponseMessage response = httpClient.PostAsync(MailInfoDownloadUrl, form).Result;
-                            response.EnsureSuccessStatusCode();
-                            string responseXml = response.Content.ReadAsStringAsync().Result;
-                            File.WriteAllText(mailInfoFile, responseXml);
+                            _sendHttpClient = new HttpClient();
                         }
+
+                        MultipartFormDataContent form = new MultipartFormDataContent();
+
+                        form.Add(new StringContent(dbId), "db_id");
+                        form.Add(new StringContent(sb.ToString()), "info_text");
+
+                        if (!string.IsNullOrEmpty(traceFile) && File.Exists(traceFile))
+                        {
+                            FileStream fileStream = new FileStream(traceFile, FileMode.Open);
+                            form.Add(new StreamContent(fileStream), "file",
+                                Path.GetFileName(traceFile) ?? "trace.zip");
+                        }
+
+                        HttpResponseMessage response = _sendHttpClient.PostAsync(MailInfoDownloadUrl, form).Result;
+                        response.EnsureSuccessStatusCode();
+                        string responseXml = response.Content.ReadAsStringAsync().Result;
+                        File.WriteAllText(mailInfoFile, responseXml);
 
                         errorMessage = GetMailErrorMessage(mailInfoFile);
                         if (!string.IsNullOrEmpty(errorMessage))
