@@ -3469,101 +3469,115 @@ namespace BmwDeepObd
 
                         mail.Body = sb.ToString();
 
+                        using (ManualResetEvent finishEvent = new ManualResetEvent(false))
+                        {
 #pragma warning disable 618
-                        SmtpClient smtpClient = new SmtpClient
+                            using (SmtpClient smtpClient = new SmtpClient
 #pragma warning restore 618
-                        {
-                            DeliveryMethod = SmtpDeliveryMethod.Network,
-                        };
+                            {
+                                DeliveryMethod = SmtpDeliveryMethod.Network,
+                            })
+                            {
+                                smtpClient.Host = mailHost;
+                                smtpClient.Port = mailPort;
+                                smtpClient.EnableSsl = mailSsl;
+                                smtpClient.UseDefaultCredentials = false;
+                                if (string.IsNullOrEmpty(mailUser) || string.IsNullOrEmpty(mailPassword))
+                                {
+                                    smtpClient.Credentials = null;
+                                }
+                                else
+                                {
+                                    smtpClient.Credentials = new NetworkCredential(mailUser, mailPassword);
+                                }
+                                mail.From = new MailAddress(mailFrom);
+                                mail.To.Clear();
+                                mail.To.Add(new MailAddress(mailTo));
 
-                        smtpClient.Host = mailHost;
-                        smtpClient.Port = mailPort;
-                        smtpClient.EnableSsl = mailSsl;
-                        smtpClient.UseDefaultCredentials = false;
-                        if (string.IsNullOrEmpty(mailUser) || string.IsNullOrEmpty(mailPassword))
-                        {
-                            smtpClient.Credentials = null;
-                        }
-                        else
-                        {
-                            smtpClient.Credentials = new NetworkCredential(mailUser, mailPassword);
-                        }
-                        mail.From = new MailAddress(mailFrom);
-                        mail.To.Clear();
-                        mail.To.Add(new MailAddress(mailTo));
-                        smtpClient.SendCompleted += (s, e) =>
-                        {
-                            _activity?.RunOnUiThread(() =>
-                            {
-                                if (_disposed)
+                                ManualResetEvent finishEventLocal = finishEvent;
+                                smtpClient.SendCompleted += (s, e) =>
                                 {
-                                    return;
-                                }
-                                if (progress != null)
-                                {
-                                    progress.Dismiss();
-                                    progress.Dispose();
-                                    progress = null;
-                                    SetLock(LockType.None);
-                                }
-                                if (e.Cancelled || cancelled)
-                                {
-                                    return;
-                                }
-                                if (e.Error != null)
-                                {
-                                    new AlertDialog.Builder(_context)
-                                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                                        {
-                                            SendTraceFile(appDataDir, traceFile, message, packageInfo, classType, handler, deleteFile);
-                                        })
-                                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                                        {
-                                        })
-                                        .SetCancelable(true)
-                                        .SetMessage(Resource.String.send_trace_file_failed_retry)
-                                        .SetTitle(Resource.String.alert_title_error)
-                                        .Show();
-                                    return;
-                                }
-                                if (deleteFile)
-                                {
-                                    try
+                                    _activity?.RunOnUiThread(() =>
                                     {
-                                        if (!string.IsNullOrEmpty(traceFile))
+                                        if (_disposed)
                                         {
-                                            File.Delete(traceFile);
+                                            return;
                                         }
-                                    }
-                                    catch (Exception)
+                                        if (progress != null)
+                                        {
+                                            progress.Dismiss();
+                                            progress.Dispose();
+                                            progress = null;
+                                            SetLock(LockType.None);
+                                        }
+
+                                        finishEventLocal.Set();
+
+                                        if (e.Cancelled || cancelled)
+                                        {
+                                            return;
+                                        }
+                                        if (e.Error != null)
+                                        {
+                                            new AlertDialog.Builder(_context)
+                                                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                                {
+                                                    SendTraceFile(appDataDir, traceFile, message, packageInfo, classType, handler, deleteFile);
+                                                })
+                                                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                                {
+                                                })
+                                                .SetCancelable(true)
+                                                .SetMessage(Resource.String.send_trace_file_failed_retry)
+                                                .SetTitle(Resource.String.alert_title_error)
+                                                .Show();
+                                            return;
+                                        }
+                                        if (deleteFile)
+                                        {
+                                            try
+                                            {
+                                                if (!string.IsNullOrEmpty(traceFile))
+                                                {
+                                                    File.Delete(traceFile);
+                                                }
+                                            }
+                                            catch (Exception)
+                                            {
+                                                // ignored
+                                            }
+                                        }
+                                        handler?.Invoke(this, new EventArgs());
+                                    });
+                                };
+
+#pragma warning disable 618
+                                SmtpClient smtpClientLocal = smtpClient;
+#pragma warning restore 618
+                                _activity?.RunOnUiThread(() =>
+                                {
+                                    if (_disposed)
                                     {
-                                        // ignored
+                                        return;
                                     }
-                                }
-                                handler?.Invoke(this, new EventArgs());
-                            });
-                        };
-                        _activity?.RunOnUiThread(() =>
-                        {
-                            if (_disposed)
-                            {
-                                return;
+                                    progress.AbortClick = sender =>
+                                    {
+                                        cancelled = true;   // cancel flag in event seems to be missing
+                                        try
+                                        {
+                                            smtpClientLocal.SendAsyncCancel();
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // ignored
+                                        }
+                                    };
+                                    progress.ButtonAbort.Enabled = true;
+                                });
+                                smtpClient.SendAsync(mail, null);
+                                finishEvent.WaitOne();
                             }
-                            progress.AbortClick = sender =>
-                            {
-                                cancelled = true;   // cancel flag in event seems to be missing
-                                try
-                                {
-                                    smtpClient.SendAsyncCancel();
-                                }
-                                catch (Exception)
-                                {
-                                    // ignored
-                                }
-                            };
-                            progress.ButtonAbort.Enabled = true;
-                        });
-                        smtpClient.SendAsync(mail, null);
+                        }
                     }
                 }
                 catch (Exception)
