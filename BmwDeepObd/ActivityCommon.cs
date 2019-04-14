@@ -3270,27 +3270,6 @@ namespace BmwDeepObd
                     {
                         DeliveryMethod = SmtpDeliveryMethod.Network,
                     };
-                    MailMessage mail = new MailMessage()
-                    {
-                        Subject = "Deep OBD trace info",
-                        BodyEncoding = Encoding.UTF8
-                    };
-
-                    if (!string.IsNullOrEmpty(traceFile) && File.Exists(traceFile))
-                    {
-                        mail.Attachments.Add(new Attachment(traceFile));
-                    }
-
-                    if (SelectedInterface == InterfaceType.Bluetooth)
-                    {
-                        if (GetConfigHciSnoopLog(out bool enabledConfig) && ReadHciSnoopLogSettings(out bool enabledSettings, out string logFileName))
-                        {
-                            if (enabledConfig && enabledSettings && !string.IsNullOrEmpty(logFileName) && File.Exists(logFileName))
-                            {
-                                mail.Attachments.Add(new Attachment(logFileName));
-                            }
-                        }
-                    }
 
                     string downloadDir = Path.Combine(appDataDir, DownloadDir);
                     string mailInfoFile = Path.Combine(downloadDir, "Mail.xml");
@@ -3403,20 +3382,9 @@ namespace BmwDeepObd
                             }
                         }
                     }
-                    mail.Body = sb.ToString();
 
-                    string mailHost;
-                    int mailPort;
-                    bool mailSsl;
-                    string mailFrom;
-                    string mailTo;
-                    string mailUser;
-                    string mailPassword;
-                    if (!GetMailInfo(mailInfoFile, out mailHost, out mailPort, out mailSsl, out mailFrom, out mailTo,
-                        out mailUser, out mailPassword))
-                    {
-                        throw new Exception("Invalid mail info");
-                    }
+                    bool infoResult = GetMailInfo(mailInfoFile, out string dbId, out string mailHost, out int mailPort, out bool mailSsl,
+                        out string mailFrom, out string mailTo, out string mailUser, out string mailPassword);
                     try
                     {
                         File.Delete(mailInfoFile);
@@ -3425,94 +3393,116 @@ namespace BmwDeepObd
                     {
                         // ignored
                     }
-                    smtpClient.Host = mailHost;
-                    smtpClient.Port = mailPort;
-                    smtpClient.EnableSsl = mailSsl;
-                    smtpClient.UseDefaultCredentials = false;
-                    if (string.IsNullOrEmpty(mailUser) || string.IsNullOrEmpty(mailPassword))
+
+                    if (!infoResult)
                     {
-                        smtpClient.Credentials = null;
+                        throw new Exception("Invalid mail info");
                     }
-                    else
+
+                    if (dbId == null)
                     {
-                        smtpClient.Credentials = new NetworkCredential(mailUser, mailPassword);
-                    }
-                    mail.From = new MailAddress(mailFrom);
-                    mail.To.Clear();
-                    mail.To.Add(new MailAddress(mailTo));
-                    smtpClient.SendCompleted += (s, e) =>
-                    {
+                        MailMessage mail = new MailMessage()
+                        {
+                            Subject = "Deep OBD trace info",
+                            BodyEncoding = Encoding.UTF8
+                        };
+
+                        if (!string.IsNullOrEmpty(traceFile) && File.Exists(traceFile))
+                        {
+                            mail.Attachments.Add(new Attachment(traceFile));
+                        }
+
+                        mail.Body = sb.ToString();
+
+                        smtpClient.Host = mailHost;
+                        smtpClient.Port = mailPort;
+                        smtpClient.EnableSsl = mailSsl;
+                        smtpClient.UseDefaultCredentials = false;
+                        if (string.IsNullOrEmpty(mailUser) || string.IsNullOrEmpty(mailPassword))
+                        {
+                            smtpClient.Credentials = null;
+                        }
+                        else
+                        {
+                            smtpClient.Credentials = new NetworkCredential(mailUser, mailPassword);
+                        }
+                        mail.From = new MailAddress(mailFrom);
+                        mail.To.Clear();
+                        mail.To.Add(new MailAddress(mailTo));
+                        smtpClient.SendCompleted += (s, e) =>
+                        {
+                            _activity?.RunOnUiThread(() =>
+                            {
+                                if (_disposed)
+                                {
+                                    return;
+                                }
+                                if (progress != null)
+                                {
+                                    progress.Dismiss();
+                                    progress.Dispose();
+                                    progress = null;
+                                    SetLock(LockType.None);
+                                }
+                                if (e.Cancelled || cancelled)
+                                {
+                                    return;
+                                }
+                                if (e.Error != null)
+                                {
+                                    new AlertDialog.Builder(_context)
+                                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                        {
+                                            SendTraceFile(appDataDir, traceFile, message, packageInfo, classType, handler, deleteFile);
+                                        })
+                                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                        {
+                                        })
+                                        .SetCancelable(true)
+                                        .SetMessage(Resource.String.send_trace_file_failed_retry)
+                                        .SetTitle(Resource.String.alert_title_error)
+                                        .Show();
+                                    return;
+                                }
+                                if (deleteFile)
+                                {
+                                    try
+                                    {
+                                        if (!string.IsNullOrEmpty(traceFile))
+                                        {
+                                            File.Delete(traceFile);
+                                        }
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // ignored
+                                    }
+                                }
+                                handler?.Invoke(this, new EventArgs());
+                            });
+                        };
                         _activity?.RunOnUiThread(() =>
                         {
                             if (_disposed)
                             {
                                 return;
                             }
-                            if (progress != null)
+                            progress.AbortClick = sender =>
                             {
-                                progress.Dismiss();
-                                progress.Dispose();
-                                progress = null;
-                                SetLock(LockType.None);
-                            }
-                            if (e.Cancelled || cancelled)
-                            {
-                                return;
-                            }
-                            if (e.Error != null)
-                            {
-                                new AlertDialog.Builder(_context)
-                                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                                    {
-                                        SendTraceFile(appDataDir, traceFile, message, packageInfo, classType, handler, deleteFile);
-                                    })
-                                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                                    {
-                                    })
-                                    .SetCancelable(true)
-                                    .SetMessage(Resource.String.send_trace_file_failed_retry)
-                                    .SetTitle(Resource.String.alert_title_error)
-                                    .Show();
-                                return;
-                            }
-                            if (deleteFile)
-                            {
+                                cancelled = true;   // cancel flag in event seems to be missing
                                 try
                                 {
-                                    if (!string.IsNullOrEmpty(traceFile))
-                                    {
-                                        File.Delete(traceFile);
-                                    }
+                                    smtpClient.SendAsyncCancel();
                                 }
                                 catch (Exception)
                                 {
                                     // ignored
                                 }
-                            }
-                            handler?.Invoke(this, new EventArgs());
+                            };
+                            progress.ButtonAbort.Enabled = true;
                         });
-                    };
-                    _activity?.RunOnUiThread(() =>
-                    {
-                        if (_disposed)
-                        {
-                            return;
-                        }
-                        progress.AbortClick = sender =>
-                        {
-                            cancelled = true;   // cancel flag in event seems to be missing
-                            try
-                            {
-                                smtpClient.SendAsyncCancel();
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
-                        };
-                        progress.ButtonAbort.Enabled = true;
-                    });
-                    smtpClient.SendAsync(mail, null);
+                        smtpClient.SendAsync(mail, null);
+                    }
                 }
                 catch (Exception)
                 {
@@ -3582,8 +3572,9 @@ namespace BmwDeepObd
             return null;
         }
 
-        private bool GetMailInfo(string xmlFile, out string host, out int port, out bool ssl, out string from, out string to, out string name, out string password)
+        private bool GetMailInfo(string xmlFile, out string dbId, out string host, out int port, out bool ssl, out string from, out string to, out string name, out string password)
         {
+            dbId = null;
             host = null;
             port = 0;
             ssl = false;
@@ -3598,6 +3589,19 @@ namespace BmwDeepObd
                     return false;
                 }
                 XDocument xmlDoc = XDocument.Load(xmlFile);
+
+                XElement dbNode = xmlDoc.Root?.Element("db_info");
+                if (dbNode != null)
+                {
+                    XAttribute dbIdAttr = dbNode.Attribute("db_id");
+                    if (dbIdAttr == null)
+                    {
+                        return false;
+                    }
+                    dbId = dbIdAttr.Value;
+                    return true;
+                }
+
                 XElement emailNode = xmlDoc.Root?.Element("email");
                 XAttribute hostAttr = emailNode?.Attribute("host");
                 if (hostAttr == null)
