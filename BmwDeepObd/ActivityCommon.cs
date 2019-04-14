@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Mail;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -3260,19 +3261,13 @@ namespace BmwDeepObd
             Thread sendThread = new Thread(() =>
             {
                 string errorMessage = null;
+                string downloadDir = Path.Combine(appDataDir, DownloadDir);
+                string mailInfoFile = Path.Combine(downloadDir, "Mail.xml");
                 try
                 {
                     bool cancelled = false;
                     WebClient webClient = new WebClient();
-#pragma warning disable 618
-                    SmtpClient smtpClient = new SmtpClient
-#pragma warning restore 618
-                    {
-                        DeliveryMethod = SmtpDeliveryMethod.Network,
-                    };
 
-                    string downloadDir = Path.Combine(appDataDir, DownloadDir);
-                    string mailInfoFile = Path.Combine(downloadDir, "Mail.xml");
                     Directory.CreateDirectory(downloadDir);
 
                     if (string.Compare(Path.GetExtension(MailInfoDownloadUrl), ".xml", StringComparison.OrdinalIgnoreCase) == 0)
@@ -3399,7 +3394,58 @@ namespace BmwDeepObd
                         throw new Exception("Invalid mail info");
                     }
 
-                    if (dbId == null)
+                    if (dbId != null)
+                    {
+                        using (HttpClient httpClient = new HttpClient())
+                        {
+                            MultipartFormDataContent form = new MultipartFormDataContent();
+
+                            form.Add(new StringContent(dbId), "db_id");
+                            form.Add(new StringContent(sb.ToString()), "info_text");
+
+                            if (!string.IsNullOrEmpty(traceFile) && File.Exists(traceFile))
+                            {
+                                FileStream fileStream = new FileStream(traceFile, FileMode.Open);
+                                form.Add(new StreamContent(fileStream), "file",
+                                    Path.GetFileName(traceFile) ?? "trace.zip");
+                            }
+
+                            HttpResponseMessage response = httpClient.PostAsync(MailInfoDownloadUrl, form).Result;
+                            response.EnsureSuccessStatusCode();
+                            string responseXml = response.Content.ReadAsStringAsync().Result;
+                            File.WriteAllText(mailInfoFile, responseXml);
+                        }
+
+                        errorMessage = GetMailErrorMessage(mailInfoFile);
+                        if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            throw new Exception("Error message present");
+                        }
+
+                        if (progress != null)
+                        {
+                            progress.Dismiss();
+                            progress.Dispose();
+                            progress = null;
+                            SetLock(LockType.None);
+                        }
+
+                        if (deleteFile)
+                        {
+                            try
+                            {
+                                if (!string.IsNullOrEmpty(traceFile))
+                                {
+                                    File.Delete(traceFile);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+                    }
+                    else
                     {
                         MailMessage mail = new MailMessage()
                         {
@@ -3413,6 +3459,13 @@ namespace BmwDeepObd
                         }
 
                         mail.Body = sb.ToString();
+
+#pragma warning disable 618
+                        SmtpClient smtpClient = new SmtpClient
+#pragma warning restore 618
+                        {
+                            DeliveryMethod = SmtpDeliveryMethod.Network,
+                        };
 
                         smtpClient.Host = mailHost;
                         smtpClient.Port = mailPort;
@@ -3540,6 +3593,20 @@ namespace BmwDeepObd
                             .SetTitle(Resource.String.alert_title_error)
                             .Show();
                     });
+                }
+                finally
+                {
+                    try
+                    {
+                        if (File.Exists(mailInfoFile))
+                        {
+                            File.Delete(mailInfoFile);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }
             });
             sendThread.Start();
