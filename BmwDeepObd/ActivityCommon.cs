@@ -3420,6 +3420,32 @@ namespace BmwDeepObd
                                 Path.GetFileName(traceFile) ?? "trace.zip");
                         }
 
+                        CustomProgressDialog progressLocal = progress;
+                        _activity?.RunOnUiThread(() =>
+                        {
+                            if (_disposed)
+                            {
+                                return;
+                            }
+
+                            if (progressLocal != null)
+                            {
+                                progressLocal.AbortClick = sender =>
+                                {
+                                    cancelled = true;   // cancel flag in event seems to be missing
+                                    try
+                                    {
+                                        _sendHttpClient.CancelPendingRequests();
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // ignored
+                                    }
+                                };
+                                progressLocal.ButtonAbort.Enabled = true;
+                            }
+                        });
+
                         HttpResponseMessage response = _sendHttpClient.PostAsync(MailInfoDownloadUrl, form).Result;
                         response.EnsureSuccessStatusCode();
                         string responseXml = response.Content.ReadAsStringAsync().Result;
