@@ -3272,26 +3272,27 @@ namespace BmwDeepObd
                 try
                 {
                     bool cancelled = false;
-                    WebClient webClient = new WebClient();
-
-                    Directory.CreateDirectory(downloadDir);
-
-                    if (string.Compare(Path.GetExtension(MailInfoDownloadUrl), ".xml", StringComparison.OrdinalIgnoreCase) == 0)
+                    using (WebClient webClient = new WebClient())
                     {
-                        webClient.DownloadFile(new System.Uri(MailInfoDownloadUrl), mailInfoFile);
-                    }
-                    else
-                    {
-                        NameValueCollection nameValueCollection = new NameValueCollection
+                        Directory.CreateDirectory(downloadDir);
+
+                        if (string.Compare(Path.GetExtension(MailInfoDownloadUrl), ".xml", StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            {"appid", AppId},
-                            {"appver", string.Format(CultureInfo.InvariantCulture, "{0}", packageInfo.VersionCode)},
-                            {"lang", GetCurrentLanguage()},
-                            {"android_ver", string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)},
-                            {"fingerprint", Build.Fingerprint}
-                        };
-                        byte[] response = webClient.UploadValues(new System.Uri(MailInfoDownloadUrl), nameValueCollection);
-                        File.WriteAllBytes(mailInfoFile, response);
+                            webClient.DownloadFile(new System.Uri(MailInfoDownloadUrl), mailInfoFile);
+                        }
+                        else
+                        {
+                            NameValueCollection nameValueCollection = new NameValueCollection
+                            {
+                                {"appid", AppId},
+                                {"appver", string.Format(CultureInfo.InvariantCulture, "{0}", packageInfo.VersionCode)},
+                                {"lang", GetCurrentLanguage()},
+                                {"android_ver", string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)},
+                                {"fingerprint", Build.Fingerprint}
+                            };
+                            byte[] response = webClient.UploadValues(new System.Uri(MailInfoDownloadUrl), nameValueCollection);
+                            File.WriteAllBytes(mailInfoFile, response);
+                        }
                     }
 
                     errorMessage = GetMailErrorMessage(mailInfoFile);
