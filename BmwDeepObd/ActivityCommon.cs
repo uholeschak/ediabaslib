@@ -3272,28 +3272,27 @@ namespace BmwDeepObd
                 try
                 {
                     bool cancelled = false;
-                    using (WebClient webClient = new WebClient())
-                    {
-                        Directory.CreateDirectory(downloadDir);
 
-                        if (string.Compare(Path.GetExtension(MailInfoDownloadUrl), ".xml", StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            webClient.DownloadFile(new System.Uri(MailInfoDownloadUrl), mailInfoFile);
-                        }
-                        else
-                        {
-                            NameValueCollection nameValueCollection = new NameValueCollection
-                            {
-                                {"appid", AppId},
-                                {"appver", string.Format(CultureInfo.InvariantCulture, "{0}", packageInfo.VersionCode)},
-                                {"lang", GetCurrentLanguage()},
-                                {"android_ver", string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)},
-                                {"fingerprint", Build.Fingerprint}
-                            };
-                            byte[] response = webClient.UploadValues(new System.Uri(MailInfoDownloadUrl), nameValueCollection);
-                            File.WriteAllBytes(mailInfoFile, response);
-                        }
+                    if (_sendHttpClient == null)
+                    {
+                        _sendHttpClient = new HttpClient();
                     }
+
+                    MultipartFormDataContent formDownload = new MultipartFormDataContent();
+
+                    if (string.Compare(Path.GetExtension(MailInfoDownloadUrl), ".php", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        formDownload.Add(new StringContent(AppId), "appid");
+                        formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", packageInfo.VersionCode)), "appver");
+                        formDownload.Add(new StringContent(GetCurrentLanguage()), "lang");
+                        formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)), "android_ver");
+                        formDownload.Add(new StringContent(Build.Fingerprint), "fingerprint");
+                    }
+
+                    HttpResponseMessage responseDownload = _sendHttpClient.PostAsync(MailInfoDownloadUrl, formDownload).Result;
+                    responseDownload.EnsureSuccessStatusCode();
+                    string responseDownloadXml = responseDownload.Content.ReadAsStringAsync().Result;
+                    File.WriteAllText(mailInfoFile, responseDownloadXml);
 
                     errorMessage = GetMailErrorMessage(mailInfoFile);
                     if (!string.IsNullOrEmpty(errorMessage))
@@ -3403,21 +3402,15 @@ namespace BmwDeepObd
 
                     if (dbId != null)
                     {
-                        if (_sendHttpClient == null)
-                        {
-                            _sendHttpClient = new HttpClient();
-                        }
+                        MultipartFormDataContent formUpload = new MultipartFormDataContent();
 
-                        MultipartFormDataContent form = new MultipartFormDataContent();
-
-                        form.Add(new StringContent(dbId), "db_id");
-                        form.Add(new StringContent(sb.ToString()), "info_text");
+                        formUpload.Add(new StringContent(dbId), "db_id");
+                        formUpload.Add(new StringContent(sb.ToString()), "info_text");
 
                         if (!string.IsNullOrEmpty(traceFile) && File.Exists(traceFile))
                         {
                             FileStream fileStream = new FileStream(traceFile, FileMode.Open);
-                            form.Add(new StreamContent(fileStream), "file",
-                                Path.GetFileName(traceFile) ?? "trace.zip");
+                            formUpload.Add(new StreamContent(fileStream), "file", Path.GetFileName(traceFile) ?? "trace.zip");
                         }
 
                         CustomProgressDialog progressLocal = progress;
@@ -3446,10 +3439,10 @@ namespace BmwDeepObd
                             }
                         });
 
-                        HttpResponseMessage response = _sendHttpClient.PostAsync(MailInfoDownloadUrl, form).Result;
-                        response.EnsureSuccessStatusCode();
-                        string responseXml = response.Content.ReadAsStringAsync().Result;
-                        File.WriteAllText(mailInfoFile, responseXml);
+                        HttpResponseMessage responseUpload = _sendHttpClient.PostAsync(MailInfoDownloadUrl, formUpload).Result;
+                        responseUpload.EnsureSuccessStatusCode();
+                        string responseUploadXml = responseUpload.Content.ReadAsStringAsync().Result;
+                        File.WriteAllText(mailInfoFile, responseUploadXml);
 
                         errorMessage = GetMailErrorMessage(mailInfoFile);
                         if (!string.IsNullOrEmpty(errorMessage))
