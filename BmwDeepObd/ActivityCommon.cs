@@ -3384,7 +3384,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    bool infoResult = GetMailInfo(mailInfoFile, out string dbId, out string mailHost, out int mailPort, out bool mailSsl,
+                    bool infoResult = GetMailInfo(mailInfoFile, out string dbId, out string commitId, out string mailHost, out int mailPort, out bool mailSsl,
                         out string mailFrom, out string mailTo, out string mailUser, out string mailPassword);
                     try
                     {
@@ -3405,6 +3405,7 @@ namespace BmwDeepObd
                         MultipartFormDataContent formUpload = new MultipartFormDataContent();
 
                         formUpload.Add(new StringContent(dbId), "db_id");
+                        formUpload.Add(new StringContent(commitId ?? string.Empty), "commit_id");
                         formUpload.Add(new StringContent(sb.ToString()), "info_text");
 
                         if (!string.IsNullOrEmpty(traceFile) && File.Exists(traceFile))
@@ -3681,9 +3682,10 @@ namespace BmwDeepObd
             return null;
         }
 
-        private bool GetMailInfo(string xmlFile, out string dbId, out string host, out int port, out bool ssl, out string from, out string to, out string name, out string password)
+        private bool GetMailInfo(string xmlFile, out string dbId, out string commitId, out string host, out int port, out bool ssl, out string from, out string to, out string name, out string password)
         {
             dbId = null;
+            commitId = null;
             host = null;
             port = 0;
             ssl = false;
@@ -3708,6 +3710,13 @@ namespace BmwDeepObd
                         return false;
                     }
                     dbId = dbIdAttr.Value;
+
+                    XAttribute commitIdAttr = dbNode.Attribute("commit_id");
+                    if (commitIdAttr == null)
+                    {
+                      return false;
+                    }
+                    commitId = commitIdAttr.Value;
                     return true;
                 }
 
