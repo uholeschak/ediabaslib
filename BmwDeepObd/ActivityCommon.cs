@@ -3308,6 +3308,18 @@ namespace BmwDeepObd
                         throw new Exception("Invalid mail line info");
                     }
 
+                    string obbName = string.Empty;
+                    string installer = string.Empty;
+                    try
+                    {
+                      obbName = Path.GetFileName(ExpansionDownloaderActivity.GetObbFilename(_activity)) ?? string.Empty;
+                      installer = PackageManager.GetInstallerPackageName(_activity.PackageName);
+                    }
+                    catch (Exception)
+                    {
+                      // ignored
+                    }
+
                     StringBuilder sb = new StringBuilder();
                     sb.Append("Deep OBD Trace info");
                     sb.Append(string.Format("\nDate: {0:u}", DateTime.Now));
@@ -3329,6 +3341,8 @@ namespace BmwDeepObd
                     sb.Append(string.Format("\nApp version name: {0}", packageInfo.VersionName));
                     sb.Append(string.Format("\nApp version code: {0}", packageInfo.VersionCode));
                     sb.Append(string.Format("\nApp id: {0}", AppId));
+                    sb.Append(string.Format("\nOBB: {0}", obbName));
+                    sb.Append(string.Format("\nInstaller: {0}", installer));
                     sb.Append(string.Format("\nEnable translation: {0}", EnableTranslation));
                     sb.Append(string.Format("\nManufacturer: {0}", ManufacturerName()));
                     sb.Append(string.Format("\nClass name: {0}", classType.FullName));
