@@ -3630,12 +3630,15 @@ namespace BmwDeepObd
                             SetLock(LockType.None);
                         }
 
-                        string messageText = string.Empty;
+                        string messageText;
                         if (!string.IsNullOrEmpty(errorMessage))
                         {
-                            messageText = errorMessage + ".\r\n";
+                            messageText = errorMessage + ".\r\n" + _context.GetString(Resource.String.send_trace_file_failed_message);
                         }
-                        messageText += _context.GetString(Resource.String.send_trace_file_failed_retry);
+                        else
+                        {
+                            messageText = _context.GetString(Resource.String.send_trace_file_failed_retry);
+                        }
 
                         new AlertDialog.Builder(_context)
                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>

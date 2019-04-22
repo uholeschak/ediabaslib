@@ -134,6 +134,7 @@
   <string name="compress_trace_file_failed">Trace-Datei komprimieren fehlgeschlagen.</string>
   <string name="send_trace_file_failed">Trace-Datei senden fehlgeschlagen.</string>
   <string name="send_trace_file_failed_retry">Trace-Datei senden fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.\nWollen Sie das Senden wiederholen?</string>
+  <string name="send_trace_file_failed_message">Wollen Sie das Senden wiederholen?</string>
 
   <!-- Translate -->
   <string name="translate_text">Text wird übersetzt</string>
