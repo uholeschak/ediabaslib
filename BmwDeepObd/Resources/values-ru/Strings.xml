@@ -134,6 +134,7 @@
   <string name="compress_trace_file_failed">Не удалось сжать Trace-файл.</string>
   <string name="send_trace_file_failed">Не удалось отправить Trace-файл.</string>
   <string name="send_trace_file_failed_retry">Не удалось отправить Trace-файл.\nПожалуйста, проверьте подключение к сети.\nХотите повторить отправку?</string>
+  <string name="send_trace_file_failed_message">Хотите повторить отправку?</string>
 
   <!-- Translate -->
   <string name="translate_text">Перевод текста</string>
