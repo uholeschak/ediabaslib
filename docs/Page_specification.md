@@ -12,6 +12,7 @@ Table of contents:
 * [Grouping pages](#grouping-pages)
 * [The configuration file](#the-configuration-file)
 * [Broadcasts](#broadcasts)
+* [Special jobs](#special-jobs)
 
 ## Simple jobs
 If only some EDIABAS jobs with fixed arguments are required for one display page, the XML code is relative simple. Below is the example code to display climate data for a E61 vehicle:
@@ -705,3 +706,11 @@ The following intent data is defined:
   * `new_page:<page_name>`: Switches to the new page (configuration) with the name `<page_name>`. `<page_name>` is the name in the node `<page name ="page_name">`.
 
 The broadcast could be also received by the [`BroadcastReceived`](#receiving-broadcasts-broadcastreceived) user function.
+
+# Special jobs
+There are some job, that require special handling:
+* With `STATUS_MESSWERTBLOCK_LESEN` or `STATUS_BLOCK_LESEN` multiples values could be requested simultanously.  
+  The job requires the entries from the table `MESSWERTETAB` or `SG_FUNKTIONEN` with column `ARG` as arument.  
+  The first argument `JA` or `NEIN` specifies if the last ECU request is reused.  
+  The number of arguments is limited by the ECU, the typical limit is 10.
+* For reading `STATUS_MESSWERTBLOCK_X` the corresponding `MESSWERTBLOCK_X_SCHREIBEN` is to be called first once (`MS450DS0.PRG` only).
