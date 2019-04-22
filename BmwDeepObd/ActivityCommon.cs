@@ -3633,7 +3633,7 @@ namespace BmwDeepObd
                         string messageText = string.Empty;
                         if (!string.IsNullOrEmpty(errorMessage))
                         {
-                            messageText = errorMessage + "\r\n";
+                            messageText = errorMessage + ".\r\n";
                         }
                         messageText += _context.GetString(Resource.String.send_trace_file_failed_retry);
 
