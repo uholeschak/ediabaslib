@@ -3487,6 +3487,7 @@ namespace BmwDeepObd
                                 // ignored
                             }
                         }
+                        handler?.Invoke(this, new EventArgs());
                     }
                     else
                     {
