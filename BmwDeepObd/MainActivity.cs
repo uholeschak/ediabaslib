@@ -3273,8 +3273,40 @@ namespace BmwDeepObd
                             }
                             if (key != null)
                             {
+#if DEBUG
+                                bool yesSelected = false;
+                                AlertDialog altertDialog = new AlertDialog.Builder(this)
+                                    .SetPositiveButton(Resource.String.button_yes, (s, a) =>
+                                    {
+                                        yesSelected = true;
+                                        ExtractZipFile(_obbFileName, downloadInfo.TargetDir, downloadInfo.InfoXml, key, false,
+                                            new List<string> { Path.Combine(_instanceData.AppDataPath, "EcuVag") });
+                                    })
+                                    .SetNegativeButton(Resource.String.button_no, (s, a) =>
+                                    {
+                                    })
+                                    .SetCancelable(true)
+                                    .SetMessage(string.Format("OBB key: {0}\nContinue?", key))
+                                    .SetTitle(Resource.String.alert_title_info)
+                                    .Show();
+                                altertDialog.DismissEvent += (o, eventArgs) =>
+                                {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+                                    if (!yesSelected)
+                                    {
+                                        _downloadProgress.Dismiss();
+                                        _downloadProgress.Dispose();
+                                        _downloadProgress = null;
+                                        UpdateLockState();
+                                    }
+                                };
+#else
                                 ExtractZipFile(_obbFileName, downloadInfo.TargetDir, downloadInfo.InfoXml, key, false,
                                     new List<string> { Path.Combine(_instanceData.AppDataPath, "EcuVag") });
+#endif
                                 return;
                             }
 
