@@ -333,6 +333,10 @@ namespace BmwDeepObd
             ActivityCommon.ActivityMainCurrent = this;
             _activityCommon = new ActivityCommon(this, () =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 if (_activityActive)
                 {
                     UpdateOptionsMenu();
@@ -885,6 +889,10 @@ namespace BmwDeepObd
                 case Resource.Id.menu_send_trace:
                     SendTraceFileAlways((sender, args) =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
                         UpdateOptionsMenu();
                     });
                     return true;
@@ -919,6 +927,10 @@ namespace BmwDeepObd
                 case Resource.Id.menu_submenu_help:
                     _activityCommon.ShowWifiConnectedWarning(() =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
                         StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://github.com/uholeschak/ediabaslib/blob/master/docs/Deep_OBD_for_BMW_and_VAG.md")));
                     });
                     return true;
@@ -980,6 +992,10 @@ namespace BmwDeepObd
             {
                 if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, _instanceData.AppDataPath, (s, args) =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
                         _instanceData.AutoStart = true;
                     }))
                 {
@@ -992,6 +1008,10 @@ namespace BmwDeepObd
             {
                 if (_activityCommon.ShowConnectWarning(retry =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     if (retry)
                     {
                         ButtonConnectClick(sender, e);
@@ -1007,6 +1027,10 @@ namespace BmwDeepObd
             {
                 if (_activityCommon.InitUdsReaderThread(_instanceData.VagPath, result =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     if (result)
                     {
                         ButtonConnectClick(sender, e);
@@ -1152,6 +1176,10 @@ namespace BmwDeepObd
         {
             if (!_activityCommon.RequestInterfaceEnable((sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 UpdateOptionsMenu();
                 UpdateDisplay();
                 if (firstStart)
@@ -2262,6 +2290,10 @@ namespace BmwDeepObd
                                     TableResultItem newResultItem = new TableResultItem(message, null, errorReport.EcuName, newEcu && validResponse, selected);
                                     newResultItem.CheckChangeEvent += item =>
                                     {
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
                                         UpdateButtonErrorReset(buttonErrorReset, resultListAdapter.Items);
                                     };
                                     newResultItem.CheckEnable = !ActivityCommon.ErrorResetActive;
@@ -2899,6 +2931,10 @@ namespace BmwDeepObd
                         int lastPercent = -1;
                         if (!ActivityCommon.VerifyContent(Path.Combine(ecuBaseDir, ContentFileName), false, percent =>
                         {
+                            if (_activityCommon == null)
+                            {
+                                return true;
+                            }
                             if (lastPercent != percent)
                             {
                                 lastPercent = percent;
@@ -3117,6 +3153,10 @@ namespace BmwDeepObd
                 _downloadProgress = new CustomProgressDialog(this);
                 _downloadProgress.AbortClick = sender => 
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     if (_webClient.IsBusy)
                     {
                         _webClient.CancelAsync();
@@ -3376,6 +3416,7 @@ namespace BmwDeepObd
 #endif
                     if ((!e.Cancelled && e.Error != null) || error)
                     {
+                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                         if (!string.IsNullOrEmpty(errorMessage))
                         {
                             _activityCommon.ShowAlert(errorMessage, Resource.String.alert_title_error);
@@ -3574,6 +3615,10 @@ namespace BmwDeepObd
             _downloadProgress.Max = 100;
             _downloadProgress.AbortClick = sender =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 _extractZipCanceled = true;
             };
             _downloadProgress.Show();
@@ -3660,6 +3705,10 @@ namespace BmwDeepObd
                     ActivityCommon.ExtractZipFile(fileName, targetDirectory, key, ignoreFolders,
                         (percent, decrypt) =>
                         {
+                            if (_activityCommon == null)
+                            {
+                                return true;
+                            }
                             if (lastZipPercent != percent)
                             {
                                 lastZipPercent = percent;
@@ -3682,6 +3731,10 @@ namespace BmwDeepObd
                     int lastVerifyPercent = -1;
                     if (!ActivityCommon.VerifyContent(Path.Combine(targetDirectory, ContentFileName), true, percent =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return true;
+                        }
                         if (lastVerifyPercent != percent)
                         {
                             lastVerifyPercent = percent;
@@ -3891,6 +3944,10 @@ namespace BmwDeepObd
                     .Show();
                 _downloadEcuAlertDialog.DismissEvent += (sender, args) =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     if (!_instanceData.StorageRequirementsAccepted)
                     {
                         Finish();
@@ -3915,7 +3972,14 @@ namespace BmwDeepObd
                     .SetMessage(message)
                     .SetTitle(Resource.String.alert_title_question)
                     .Show();
-                _downloadEcuAlertDialog.DismissEvent += (sender, args) => { _downloadEcuAlertDialog = null; };
+                _downloadEcuAlertDialog.DismissEvent += (sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    _downloadEcuAlertDialog = null;
+                };
                 return false;
             }
 #else
@@ -3940,7 +4004,14 @@ namespace BmwDeepObd
                     .SetMessage(message)
                     .SetTitle(Resource.String.alert_title_question)
                     .Show();
-                _downloadEcuAlertDialog.DismissEvent += (sender, args) => { _downloadEcuAlertDialog = null; };
+                _downloadEcuAlertDialog.DismissEvent += (sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    _downloadEcuAlertDialog = null; 
+                };
                 return false;
             }
 
@@ -3962,7 +4033,14 @@ namespace BmwDeepObd
                         .SetMessage(message)
                         .SetTitle(Resource.String.alert_title_question)
                         .Show();
-                    _downloadEcuAlertDialog.DismissEvent += (sender, args) => { _downloadEcuAlertDialog = null; };
+                    _downloadEcuAlertDialog.DismissEvent += (sender, args) =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        _downloadEcuAlertDialog = null;
+                    };
                 }
             }
 #endif
@@ -4066,6 +4144,10 @@ namespace BmwDeepObd
         {
             _activityCommon.SelectManufacturer((sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                 {
                     _activityCommon.SelectedInterface = ActivityCommon.InterfaceType.Bluetooth;
@@ -4101,6 +4183,10 @@ namespace BmwDeepObd
                     .Show();
                 _configSelectAlertDialog.DismissEvent += (sender, args) =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     _configSelectAlertDialog = null;
                 };
                 return;
@@ -4131,6 +4217,10 @@ namespace BmwDeepObd
                 .Show();
             _configSelectAlertDialog.DismissEvent += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 _configSelectAlertDialog = null;
             };
         }
@@ -4160,6 +4250,10 @@ namespace BmwDeepObd
             builder.SetView(listView);
             builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 SparseBooleanArray sparseArray = listView.CheckedItemPositions;
                 for (int i = 0; i < sparseArray.Size(); i++)
                 {
@@ -4220,6 +4314,10 @@ namespace BmwDeepObd
 
             if (_activityCommon.ShowConnectWarning(retry =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 if (retry)
                 {
                     AdapterConfig();
@@ -4250,6 +4348,10 @@ namespace BmwDeepObd
             }
             _activityCommon.SelectEnetIp((sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 UpdateOptionsMenu();
             });
         }
@@ -4289,6 +4391,10 @@ namespace BmwDeepObd
 
             if (_activityCommon.InitUdsReaderThread(_instanceData.VagPath, result =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 if (result)
                 {
                     StartXmlTool();
