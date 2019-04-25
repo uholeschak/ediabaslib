@@ -1122,6 +1122,10 @@ namespace BmwDeepObd
                     }
                     SendTraceFileAlways((sender, args) =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
                         UpdateOptionsMenu();
                     });
                     return true;

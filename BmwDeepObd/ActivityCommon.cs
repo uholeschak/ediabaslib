@@ -3630,6 +3630,7 @@ namespace BmwDeepObd
                             progress = null;
                             SetLock(LockType.None);
                         }
+                        handler?.Invoke(this, new EventArgs());
 
                         string messageText;
                         if (!string.IsNullOrEmpty(errorMessage))
