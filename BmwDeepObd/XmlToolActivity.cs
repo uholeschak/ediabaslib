@@ -62,6 +62,7 @@ namespace BmwDeepObd
             SysName
         }
 
+        // ReSharper disable UnusedMember.Global
         public enum SupportedFuncType
         {
             ActuatorDiag = 0x0003,      // func 0x0102
@@ -70,6 +71,7 @@ namespace BmwDeepObd
             AdaptionLong = 0x03F2,      // func 0x010A
             AdaptionLong2 = 0x07DA,     // func 0x0113
         }
+        // ReSharper restore UnusedMember.Global
 
         public enum DisplayFontSize
         {
@@ -668,6 +670,10 @@ namespace BmwDeepObd
 
             _activityCommon = new ActivityCommon(this, () =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 if (_activityActive)
                 {
                     UpdateOptionsMenu();
@@ -741,6 +747,10 @@ namespace BmwDeepObd
             _activityActive = true;
             if (!_activityCommon.RequestEnableTranslate((sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 HandleStartDialogs();
             }))
             {
@@ -816,6 +826,10 @@ namespace BmwDeepObd
         {
             if (!SendTraceFile((sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 base.OnBackPressed();
             }))
             {
@@ -1156,6 +1170,10 @@ namespace BmwDeepObd
                 case Resource.Id.menu_submenu_help:
                     _activityCommon.ShowWifiConnectedWarning(() =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
                         StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md")));
                     });
                     return true;
@@ -1167,6 +1185,10 @@ namespace BmwDeepObd
         {
             if (!SendTraceFile((sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 Finish();
             }))
             {
@@ -1299,6 +1321,10 @@ namespace BmwDeepObd
             {
                 if (TranslateEcuText((sender, args) =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     UpdateDisplay();
                 }))
                 {
@@ -1613,6 +1639,10 @@ namespace BmwDeepObd
             }
             _activityCommon.SelectInterface((sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 EdiabasClose();
                 UpdateOptionsMenu();
                 SelectInterfaceEnable();
@@ -1623,6 +1653,10 @@ namespace BmwDeepObd
         {
             _activityCommon.RequestInterfaceEnable((sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 UpdateOptionsMenu();
             });
         }
@@ -1648,6 +1682,10 @@ namespace BmwDeepObd
             builder.SetView(listView);
             builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 SparseBooleanArray sparseArray = listView.CheckedItemPositions;
                 for (int i = 0; i < sparseArray.Size(); i++)
                 {
@@ -1731,6 +1769,10 @@ namespace BmwDeepObd
             builder.SetView(listView);
             builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                 {
                     _instanceData.ManualConfigIdx = listView.CheckedItemPosition >= 0 ? listView.CheckedItemPosition : 0;
@@ -1782,6 +1824,10 @@ namespace BmwDeepObd
             detectMenuMenu?.SetVisible(ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw);
             popupEdit.MenuItemClick += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 switch (args.Item.ItemId)
                 {
                     case Resource.Id.menu_xml_tool_edit_detect:
@@ -1870,6 +1916,10 @@ namespace BmwDeepObd
 
             popupContext.MenuItemClick += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 switch (args.Item.ItemId)
                 {
                     case Resource.Id.menu_xml_tool_move_top:
@@ -1928,6 +1978,10 @@ namespace BmwDeepObd
 
             if (_activityCommon.ShowConnectWarning(retry =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 if (retry)
                 {
                     AdapterConfig();
@@ -1957,6 +2011,10 @@ namespace BmwDeepObd
             }
             _activityCommon.SelectEnetIp((sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 UpdateOptionsMenu();
             });
         }
@@ -1972,6 +2030,10 @@ namespace BmwDeepObd
             {
                 if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, _appDataDir, (sender, args) =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     _instanceData.AutoStart = true;
                     _instanceData.AutoStartSearchStartIndex = searchStartIndex;
                 }))
@@ -1981,6 +2043,10 @@ namespace BmwDeepObd
             }
             if (_activityCommon.ShowConnectWarning(retry =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 if (retry)
                 {
                     PerformAnalyze(searchStartIndex);
@@ -3593,6 +3659,11 @@ namespace BmwDeepObd
             {
                 if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, _appDataDir, (sender, args) =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        // ReSharper disable once RedundantJumpStatement
+                        return;
+                    }
                     // no auto start
                 }))
                 {
@@ -3601,6 +3672,10 @@ namespace BmwDeepObd
             }
             if (_activityCommon.ShowConnectWarning(retry =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 if (retry)
                 {
                     PerformJobsRead(ecuInfo);
@@ -3802,6 +3877,10 @@ namespace BmwDeepObd
                                         }
                                         SelectMwTabFromListInfo(mwTabFileNames, name =>
                                         {
+                                            if (_activityCommon == null)
+                                            {
+                                                return;
+                                            }
                                             if (string.IsNullOrEmpty(name))
                                             {
                                                 ReadJobThreadDone(ecuInfo, progress, true);
@@ -4373,6 +4452,10 @@ namespace BmwDeepObd
             _translateEnabled = true;
             if (!TranslateEcuText((sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 SelectJobs(ecuInfo);
             }))
             {
