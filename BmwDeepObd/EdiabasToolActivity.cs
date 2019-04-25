@@ -669,6 +669,10 @@ namespace BmwDeepObd
                 case Resource.Id.menu_submenu_help:
                     _activityCommon.ShowWifiConnectedWarning(() =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
                         StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://github.com/uholeschak/ediabaslib/blob/master/docs/EdiabasTool.md")));
                     });
                     return true;
@@ -829,6 +833,10 @@ namespace BmwDeepObd
                 }
                 if (TranslateEcuText((sender, args) =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     UpdateDisplay();
                     UpdateTranslationText();
                 }))
@@ -895,6 +903,10 @@ namespace BmwDeepObd
             }
             _activityCommon.SelectInterface((sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 EdiabasClose();
                 _instanceData.SgbdFileName = string.Empty;
                 UpdateOptionsMenu();
@@ -906,6 +918,10 @@ namespace BmwDeepObd
         {
             _activityCommon.RequestInterfaceEnable((sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 UpdateOptionsMenu();
             });
         }
@@ -933,6 +949,10 @@ namespace BmwDeepObd
             builder.SetView(listView);
             builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 SparseBooleanArray sparseArray = listView.CheckedItemPositions;
                 for (int i = 0; i < sparseArray.Size(); i++)
                 {
@@ -974,6 +994,10 @@ namespace BmwDeepObd
 
             if (_activityCommon.ShowConnectWarning(retry =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 if (retry)
                 {
                     AdapterConfig();
@@ -1009,6 +1033,10 @@ namespace BmwDeepObd
             }
             _activityCommon.SelectEnetIp((sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 UpdateOptionsMenu();
             });
         }
