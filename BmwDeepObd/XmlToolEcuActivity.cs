@@ -570,6 +570,10 @@ namespace BmwDeepObd
             UpdateResultSettings(_selectedResult);
             NoSelectionWarn(accepted =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 if (accepted)
                 {
                     StoreResults();
@@ -629,6 +633,10 @@ namespace BmwDeepObd
                 case Android.Resource.Id.Home:
                     NoSelectionWarn(accepted =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
                         if (accepted)
                         {
                             StoreResults();
