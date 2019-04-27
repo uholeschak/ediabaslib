@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -779,6 +778,10 @@ namespace BmwDeepObd
             {
                 _mtcServiceConnection = new MtcServiceConnection(_context, connected =>
                 {
+                    if (_disposed)
+                    {
+                        return;
+                    }
                     try
                     {
                         if (connected)
@@ -2027,6 +2030,10 @@ namespace BmwDeepObd
                             ignoreDismiss = true;
                             ShowWifiSettings((sender, args) =>
                             {
+                                if (_disposed)
+                                {
+                                    return;
+                                }
                                 handler(false);
                             });
                         })
@@ -2182,7 +2189,14 @@ namespace BmwDeepObd
             {
             });
             _selectMediaAlertDialog = builder.Show();
-            _selectMediaAlertDialog.DismissEvent += (sender, args) => { _selectMediaAlertDialog = null; };
+            _selectMediaAlertDialog.DismissEvent += (sender, args) =>
+            {
+                if (_disposed)
+                {
+                    return;
+                }
+                _selectMediaAlertDialog = null;
+            };
         }
 
         public void SelectInterface(EventHandler<DialogClickEventArgs> handler)
@@ -2241,7 +2255,14 @@ namespace BmwDeepObd
                 {
                 });
             _selectInterfaceAlertDialog = builder.Show();
-            _selectInterfaceAlertDialog.DismissEvent += (sender, args) => { _selectInterfaceAlertDialog = null; };
+            _selectInterfaceAlertDialog.DismissEvent += (sender, args) =>
+            {
+                if (_disposed)
+                {
+                    return;
+                }
+                _selectInterfaceAlertDialog = null;
+            };
         }
 
         public void SelectManufacturer(EventHandler<DialogClickEventArgs> handler)
@@ -2323,7 +2344,14 @@ namespace BmwDeepObd
             {
             });
             _selectManufacturerAlertDialog = builder.Show();
-            _selectManufacturerAlertDialog.DismissEvent += (sender, args) => { _selectManufacturerAlertDialog = null; };
+            _selectManufacturerAlertDialog.DismissEvent += (sender, args) =>
+            {
+                if (_disposed)
+                {
+                    return;
+                }
+                _selectManufacturerAlertDialog = null;
+            };
         }
 
         public void EnableInterface()
@@ -2348,6 +2376,10 @@ namespace BmwDeepObd
                             {   // some device don't send the update event
                                 _btUpdateHandler.PostDelayed(() =>
                                 {
+                                    if (_disposed)
+                                    {
+                                        return;
+                                    }
                                     if (_btUpdateHandler == null)
                                     {
                                         return;
@@ -2464,6 +2496,10 @@ namespace BmwDeepObd
                             EnableInterface();
                             ShowWifiSettings((o, eventArgs) =>
                             {
+                                if (_disposed)
+                                {
+                                    return;
+                                }
                                 _activateAlertDialog = null;
                                 handler(sender, args);
                             });
@@ -2730,6 +2766,10 @@ namespace BmwDeepObd
                                 .Show();
                             _ftdiWarningAlertDialog.DismissEvent += (sender, args) =>
                             {
+                                if (_disposed)
+                                {
+                                    return;
+                                }
                                 _ftdiWarningAlertDialog = null;
                             };
                         }
@@ -3425,7 +3465,7 @@ namespace BmwDeepObd
                         if (!string.IsNullOrEmpty(traceFile) && File.Exists(traceFile))
                         {
                             FileStream fileStream = new FileStream(traceFile, FileMode.Open);
-                            formUpload.Add(new StreamContent(fileStream), "file", Path.GetFileName(traceFile) ?? "trace.zip");
+                            formUpload.Add(new StreamContent(fileStream), "file", Path.GetFileName(traceFile));
                         }
 
                         CustomProgressDialog progressLocal = progress;
@@ -3532,6 +3572,10 @@ namespace BmwDeepObd
                                 ManualResetEvent finishEventLocal = finishEvent;
                                 smtpClient.SendCompleted += (s, e) =>
                                 {
+                                    if (_disposed)
+                                    {
+                                        return;
+                                    }
                                     _activity?.RunOnUiThread(() =>
                                     {
                                         if (_disposed)
@@ -4950,6 +4994,10 @@ namespace BmwDeepObd
                     }
                     _translateWebClient.DownloadStringCompleted += (sender, args) =>
                     {
+                        if (_disposed)
+                        {
+                            return;
+                        }
                         if (!args.Cancelled && (args.Error == null))
                         {
                             if (_yandexLangList == null)
