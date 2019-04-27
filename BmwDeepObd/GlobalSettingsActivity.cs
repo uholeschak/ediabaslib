@@ -371,6 +371,10 @@ namespace BmwDeepObd
             }
             _activityCommon.SelectMedia((s, a) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 UpdateDisplay();
             });
         }

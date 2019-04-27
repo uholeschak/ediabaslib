@@ -489,6 +489,10 @@ namespace BmwDeepObd
 
             RunOnUiThread(() => 
             {
+                if (!_activityActive)
+                {
+                    return;
+                }
                 _progressBar.Indeterminate = false;
                 OnDownloadProgress(new DownloadProgressInfo(ObbFileSize, ObbFileSize, 0, 0));
                 _pauseButton.Visibility = ViewStates.Visible;
@@ -672,6 +676,10 @@ namespace BmwDeepObd
         {
             if (_permissionsExternalStorage.All(permisson => ContextCompat.CheckSelfPermission(this, permisson) == Permission.Granted))
             {
+                if (!_activityActive)
+                {
+                    return;
+                }
                 StoragePermissonGranted();
                 return;
             }
@@ -746,6 +754,10 @@ namespace BmwDeepObd
                         .Show();
                     alertDialog.DismissEvent += (sender, args) =>
                     {
+                        if (!_activityActive)
+                        {
+                            return;
+                        }
                         Finish();
                     };
                     return;
