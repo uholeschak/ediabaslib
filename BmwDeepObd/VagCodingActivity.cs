@@ -1235,6 +1235,10 @@ namespace BmwDeepObd
                 {
                     _updateHandler.Post(() =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
                         UpdateCodingInfo(true);
                     });
                 }
@@ -1656,6 +1660,10 @@ namespace BmwDeepObd
                         _activityCommon.ShowAlert(GetString(resId), Resource.String.alert_title_error);
                         _updateHandler?.Post(() =>
                         {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
                             UpdateCodingInfo();
                         });
                     }
@@ -1686,6 +1694,10 @@ namespace BmwDeepObd
                         {
                             alertDialog.DismissEvent += (sender, args) =>
                             {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
                                 _ecuInfo.JobList = null;    // force update
                                 SetResult(Android.App.Result.Ok);
                                 Finish();

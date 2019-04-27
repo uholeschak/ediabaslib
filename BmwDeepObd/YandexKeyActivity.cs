@@ -74,6 +74,10 @@ namespace BmwDeepObd
             {
                 _activityCommon.ShowWifiConnectedWarning(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/get/?service=trnsl")));
                 });
             };
@@ -84,6 +88,10 @@ namespace BmwDeepObd
             {
                 _activityCommon.ShowWifiConnectedWarning(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/")));
                 });
             };
@@ -114,6 +122,10 @@ namespace BmwDeepObd
                 ActivityCommon.YandexApiKey = _editTextYandexApiKey.Text.Trim();
                 if (!_activityCommon.TranslateStrings(new List<string> {"Dieser Text wurde erfolgreich \x00fcbersetzt"}, list =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
                     if (list != null && list.Count > 0)
                     {
                         _textViewYandexApiKeyTestResult.Text = list[0];
@@ -179,6 +191,10 @@ namespace BmwDeepObd
         {
             if (StoreYandexKey((sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 base.OnBackPressed();
             }))
             {
@@ -194,6 +210,10 @@ namespace BmwDeepObd
                 case Android.Resource.Id.Home:
                     if (StoreYandexKey((sender, args) =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
                         Finish();
                     }))
                     {

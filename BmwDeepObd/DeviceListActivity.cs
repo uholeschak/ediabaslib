@@ -126,6 +126,10 @@ namespace BmwDeepObd
             },
             (context, intent) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
                 if (intent != null && intent.Action == GlobalBroadcastReceiver.NotificationBroadcastAction)
                 {
                     if (intent.HasExtra(GlobalBroadcastReceiver.BtScanFinished))
@@ -722,6 +726,10 @@ namespace BmwDeepObd
                                     .Show();
                                 _alertInfoDialog.DismissEvent += (sender, args) =>
                                 {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
                                     _alertInfoDialog = null;
                                 };
                                 break;
@@ -741,6 +749,10 @@ namespace BmwDeepObd
                                 .Show();
                             _alertInfoDialog.DismissEvent += (sender, args) =>
                             {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
                                 _alertInfoDialog = null;
                             };
                             break;
@@ -792,6 +804,10 @@ namespace BmwDeepObd
                                 _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(),
                                     PackageManager.GetPackageInfo(PackageName, 0), GetType(), (o, eventArgs) =>
                                     {
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
                                         if (yesSelected)
                                         {
                                             ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.RawTag, deviceName);
@@ -912,6 +928,10 @@ namespace BmwDeepObd
                                 .Show();
                             _alertInfoDialog.DismissEvent += (sender, args) =>
                             {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
                                 _alertInfoDialog = null;
                             };
                             break;
