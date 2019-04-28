@@ -3146,6 +3146,7 @@ namespace BmwDeepObd
                 return;
             }
 
+            string certInfo = _activityCommon.GetCertificateInfo();
             ActivityCommon.ResetUdsReader();
 
             if (_downloadProgress == null)
@@ -3230,7 +3231,6 @@ namespace BmwDeepObd
                             {"installer", installer},
                         };
 
-                        string certInfo = _activityCommon.GetCertificateInfo();
                         if (!string.IsNullOrEmpty(certInfo))
                         {
                             nameValueCollection.Add("cert", certInfo);
