@@ -3230,6 +3230,12 @@ namespace BmwDeepObd
                             {"installer", installer},
                         };
 
+                        string certInfo = _activityCommon.GetCertificateInfo();
+                        if (!string.IsNullOrEmpty(certInfo))
+                        {
+                            nameValueCollection.Add("cert", certInfo);
+                        }
+
                         _webClient.UploadValuesAsync(new Uri(url), null, nameValueCollection, downloadInfo);
                     }
                     else
