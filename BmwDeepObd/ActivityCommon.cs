@@ -3211,6 +3211,76 @@ namespace BmwDeepObd
             return File.Exists(traceFile);
         }
 
+        public string GetCertificateInfo()
+        {
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                Signature[] signatures;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
+                {
+                    PackageInfo packageInfo = _context.PackageManager.GetPackageInfo(_context.PackageName, PackageInfoFlags.SigningCertificates);
+                    signatures = packageInfo?.SigningInfo?.GetApkContentsSigners();
+                }
+                else
+                {
+                    PackageInfo packageInfo = _context.PackageManager.GetPackageInfo(_context.PackageName, PackageInfoFlags.Signatures);
+                    signatures = packageInfo?.Signatures?.ToArray();
+                }
+                if (signatures != null)
+                {
+                    foreach (Signature signature in signatures)
+                    {
+                        try
+                        {
+                            byte[] signatureArray = signature.ToByteArray();
+                            using (MD5 md5 = MD5.Create())
+                            {
+                                string hash = BitConverter.ToString(md5.ComputeHash(signatureArray)).Replace("-", "");
+                                if (sb.Length > 0)
+                                {
+                                    sb.Append("\n");
+                                }
+                                sb.Append("Hash: ");
+                                sb.Append(hash);
+                            }
+
+                            using (Stream certStream = new MemoryStream(signatureArray))
+                            {
+                                using (Java.Security.Cert.CertificateFactory certFactory = Java.Security.Cert.CertificateFactory.GetInstance("X.509"))
+                                {
+                                    using (Java.Security.Cert.X509Certificate x509Cert = (Java.Security.Cert.X509Certificate)certFactory.GenerateCertificate(certStream))
+                                    {
+                                        sb.Append("\n");
+                                        sb.Append("Subject: ");
+                                        sb.Append(x509Cert.SubjectDN.ToString());
+
+                                        sb.Append("\n");
+                                        sb.Append("Issuer: ");
+                                        sb.Append(x509Cert.IssuerDN.ToString());
+
+                                        sb.Append("\n");
+                                        sb.Append("Serial: ");
+                                        sb.Append(x509Cert.SerialNumber);
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                }
+
+                return sb.ToString();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public bool RequestSendTraceFile(string appDataDir, string traceDir, PackageInfo packageInfo, Type classType, EventHandler<EventArgs> handler = null)
         {
             try
@@ -3327,6 +3397,12 @@ namespace BmwDeepObd
                         formDownload.Add(new StringContent(GetCurrentLanguage()), "lang");
                         formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)), "android_ver");
                         formDownload.Add(new StringContent(Build.Fingerprint), "fingerprint");
+
+                        string certInfo = GetCertificateInfo();
+                        if (!string.IsNullOrEmpty(certInfo))
+                        {
+                            formDownload.Add(new StringContent(certInfo), "cert");
+                        }
                     }
 
                     HttpResponseMessage responseDownload = _sendHttpClient.PostAsync(MailInfoDownloadUrl, formDownload).Result;
@@ -5465,7 +5541,7 @@ namespace BmwDeepObd
                         {
                             crypto.Key = sha256.ComputeHash(Encoding.ASCII.GetBytes(key));
                         }
-                        using (var md5 = MD5.Create())
+                        using (MD5 md5 = MD5.Create())
                         {
                             crypto.IV = md5.ComputeHash(Encoding.ASCII.GetBytes(key));
                         }
