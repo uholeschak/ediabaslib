@@ -3215,7 +3215,7 @@ namespace BmwDeepObd
         {
             try
             {
-                return _context.PackageManager.GetPackageInfo(_context.PackageName, 0);
+                return _packageManager?.GetPackageInfo(_context.PackageName, 0);
             }
             catch (Exception)
             {
@@ -3231,12 +3231,12 @@ namespace BmwDeepObd
                 Signature[] signatures;
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
                 {
-                    PackageInfo packageInfo = _context.PackageManager.GetPackageInfo(_context.PackageName, PackageInfoFlags.SigningCertificates);
+                    PackageInfo packageInfo = _packageManager?.GetPackageInfo(_context.PackageName, PackageInfoFlags.SigningCertificates);
                     signatures = packageInfo?.SigningInfo?.GetApkContentsSigners();
                 }
                 else
                 {
-                    PackageInfo packageInfo = _context.PackageManager.GetPackageInfo(_context.PackageName, PackageInfoFlags.Signatures);
+                    PackageInfo packageInfo = _packageManager?.GetPackageInfo(_context.PackageName, PackageInfoFlags.Signatures);
                     signatures = packageInfo?.Signatures?.ToArray();
                 }
                 if (signatures != null)
@@ -3381,6 +3381,8 @@ namespace BmwDeepObd
             }
 
             PackageInfo packageInfo = GetPackageInfo();
+            string certInfo = GetCertificateInfo();
+
             CustomProgressDialog progress = new CustomProgressDialog(_context);
             progress.SetMessage(_context.GetString(Resource.String.send_trace_file));
             progress.ButtonAbort.Enabled = false;
@@ -3412,7 +3414,6 @@ namespace BmwDeepObd
                         formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)), "android_ver");
                         formDownload.Add(new StringContent(Build.Fingerprint), "fingerprint");
 
-                        string certInfo = GetCertificateInfo();
                         if (!string.IsNullOrEmpty(certInfo))
                         {
                             formDownload.Add(new StringContent(certInfo), "cert");
