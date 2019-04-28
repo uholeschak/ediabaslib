@@ -938,7 +938,7 @@ namespace BmwDeepObd
                 case Resource.Id.menu_info:
                 {
                     string message = string.Format(GetString(Resource.String.app_info_message),
-                        PackageManager.GetPackageInfo(PackageName, 0).VersionName, ActivityCommon.AppId);
+                        _activityCommon.GetPackageInfo()?.VersionName ?? string.Empty , ActivityCommon.AppId);
                     new AlertDialog.Builder(this)
                         .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                         .SetPositiveButton(Resource.String.button_copy, (sender, args) =>
@@ -1719,7 +1719,7 @@ namespace BmwDeepObd
 
             if (_instanceData.CommErrorsOccured && _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
             {
-                _activityCommon.RequestSendTraceFile(_instanceData.AppDataPath, _instanceData.TraceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType());
+                _activityCommon.RequestSendTraceFile(_instanceData.AppDataPath, _instanceData.TraceDir, GetType());
             }
         }
 
@@ -1732,7 +1732,7 @@ namespace BmwDeepObd
             }
             if (_instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
             {
-                return _activityCommon.SendTraceFile(_instanceData.AppDataPath, _instanceData.TraceDir, PackageManager.GetPackageInfo(PackageName, 0), GetType(), handler);
+                return _activityCommon.SendTraceFile(_instanceData.AppDataPath, _instanceData.TraceDir, GetType(), handler);
             }
             return false;
         }

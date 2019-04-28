@@ -776,7 +776,7 @@ namespace BmwDeepObd
                                     }
                                     _alertInfoDialog = null;
                                     _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(),
-                                        PackageManager.GetPackageInfo(PackageName, 0), GetType(), (o, eventArgs) => { });
+                                        GetType(), (o, eventArgs) => { });
                                 };
                                 break;
                             }
@@ -802,7 +802,7 @@ namespace BmwDeepObd
                                 }
                                 _alertInfoDialog = null;
                                 _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(),
-                                    PackageManager.GetPackageInfo(PackageName, 0), GetType(), (o, eventArgs) =>
+                                    GetType(), (o, eventArgs) =>
                                     {
                                         if (_activityCommon == null)
                                         {
@@ -895,7 +895,7 @@ namespace BmwDeepObd
                                     return;
                                 }
                                 _alertInfoDialog = null;
-                                _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), PackageManager.GetPackageInfo(PackageName, 0), GetType(), (o, eventArgs) =>
+                                _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), GetType(), (o, eventArgs) =>
                                 {
                                     if (yesSelected)
                                     {

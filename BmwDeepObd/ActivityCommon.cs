@@ -3211,6 +3211,18 @@ namespace BmwDeepObd
             return File.Exists(traceFile);
         }
 
+        public PackageInfo GetPackageInfo()
+        {
+            try
+            {
+                return _context.PackageManager.GetPackageInfo(_context.PackageName, 0);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public string GetCertificateInfo()
         {
             try
@@ -3281,7 +3293,7 @@ namespace BmwDeepObd
             }
         }
 
-        public bool RequestSendTraceFile(string appDataDir, string traceDir, PackageInfo packageInfo, Type classType, EventHandler<EventArgs> handler = null)
+        public bool RequestSendTraceFile(string appDataDir, string traceDir, Type classType, EventHandler<EventArgs> handler = null)
         {
             try
             {
@@ -3295,7 +3307,7 @@ namespace BmwDeepObd
                 new AlertDialog.Builder(_context)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
-                        SendTraceFile(appDataDir, traceFile, null, packageInfo, classType, handler, true);
+                        SendTraceFile(appDataDir, traceFile, null, classType, handler, true);
                     })
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
@@ -3313,7 +3325,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool SendTraceFile(string appDataDir, string traceDir, PackageInfo packageInfo, Type classType, EventHandler<EventArgs> handler = null)
+        public bool SendTraceFile(string appDataDir, string traceDir, Type classType, EventHandler<EventArgs> handler = null)
         {
             try
             {
@@ -3322,7 +3334,7 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-                SendTraceFile(appDataDir, traceFile, null, packageInfo, classType, handler, true);
+                SendTraceFile(appDataDir, traceFile, null, classType, handler, true);
             }
             catch (Exception)
             {
@@ -3331,7 +3343,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool RequestSendMessage(string appDataDir, string message, PackageInfo packageInfo, Type classType, EventHandler<EventArgs> handler = null)
+        public bool RequestSendMessage(string appDataDir, string message, Type classType, EventHandler<EventArgs> handler = null)
         {
             try
             {
@@ -3342,7 +3354,7 @@ namespace BmwDeepObd
                 new AlertDialog.Builder(_context)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
-                        SendTraceFile(appDataDir, null, message, packageInfo, classType, handler);
+                        SendTraceFile(appDataDir, null, message, classType, handler);
                     })
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
@@ -3360,13 +3372,15 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool SendTraceFile(string appDataDir, string traceFile, string message, PackageInfo packageInfo, Type classType, EventHandler<EventArgs> handler, bool deleteFile = false)
+        public bool SendTraceFile(string appDataDir, string traceFile, string message, Type classType, EventHandler<EventArgs> handler, bool deleteFile = false)
         {
             if ((string.IsNullOrEmpty(traceFile) || !File.Exists(traceFile)) &&
                 string.IsNullOrEmpty(message))
             {
                 return false;
             }
+
+            PackageInfo packageInfo = GetPackageInfo();
             CustomProgressDialog progress = new CustomProgressDialog(_context);
             progress.SetMessage(_context.GetString(Resource.String.send_trace_file));
             progress.ButtonAbort.Enabled = false;
@@ -3393,7 +3407,7 @@ namespace BmwDeepObd
                     if (string.Compare(Path.GetExtension(MailInfoDownloadUrl), ".php", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         formDownload.Add(new StringContent(AppId), "appid");
-                        formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", packageInfo.VersionCode)), "appver");
+                        formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", packageInfo?.VersionCode)), "appver");
                         formDownload.Add(new StringContent(GetCurrentLanguage()), "lang");
                         formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)), "android_ver");
                         formDownload.Add(new StringContent(Build.Fingerprint), "fingerprint");
@@ -3454,8 +3468,8 @@ namespace BmwDeepObd
                     sb.Append(string.Format("\nAndroid brand: {0}", Build.Brand ?? string.Empty));
                     sb.Append(string.Format("\nAndroid hardware: {0}", Build.Hardware ?? string.Empty));
                     sb.Append(string.Format("\nAndroid user: {0}", Build.User ?? string.Empty));
-                    sb.Append(string.Format("\nApp version name: {0}", packageInfo.VersionName));
-                    sb.Append(string.Format("\nApp version code: {0}", packageInfo.VersionCode));
+                    sb.Append(string.Format("\nApp version name: {0}", packageInfo?.VersionName ?? string.Empty));
+                    sb.Append(string.Format("\nApp version code: {0}", packageInfo?.VersionCode));
                     sb.Append(string.Format("\nApp id: {0}", AppId));
                     sb.Append(string.Format("\nOBB: {0}", obbName));
                     sb.Append(string.Format("\nInstaller: {0}", installer));
@@ -3677,7 +3691,7 @@ namespace BmwDeepObd
                                             new AlertDialog.Builder(_context)
                                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                                 {
-                                                    SendTraceFile(appDataDir, traceFile, message, packageInfo, classType, handler, deleteFile);
+                                                    SendTraceFile(appDataDir, traceFile, message, classType, handler, deleteFile);
                                                 })
                                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                                 {
@@ -3765,7 +3779,7 @@ namespace BmwDeepObd
                         new AlertDialog.Builder(_context)
                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                             {
-                                SendTraceFile(appDataDir, traceFile, message, packageInfo, classType, handler, deleteFile);
+                                SendTraceFile(appDataDir, traceFile, message, classType, handler, deleteFile);
                             })
                             .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                             {
