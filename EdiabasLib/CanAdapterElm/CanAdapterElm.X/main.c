@@ -16,6 +16,9 @@
 #if _HTC_EDITION_ != 2
 #error Compiler is not PRO mode, generated code will be too slow
 #endif
+#if __XC8_VERSION != 1330
+#error Timing is optimized for XC8 1.33
+#endif
 
 // #pragma config statements should precede project file includes.
 // Use project enums instead of #define for ON and OFF.
