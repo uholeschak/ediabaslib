@@ -31,7 +31,10 @@ using Android.Text.Method;
 using Android.Views;
 using System.Xml.Serialization;
 using UdsFileReader;
-
+// ReSharper disable StringLiteralTypo
+// ReSharper disable IdentifierTypo
+// ReSharper disable UnusedMember.Global
+// ReSharper disable ConvertToAutoPropertyWhenPossible
 // ReSharper disable InlineOutVariableDeclaration
 
 namespace BmwDeepObd
@@ -3547,6 +3550,7 @@ namespace BmwDeepObd
 
                     if (dbId != null)
                     {
+                        // ReSharper disable once UseObjectOrCollectionInitializer
                         MultipartFormDataContent formUpload = new MultipartFormDataContent();
 
                         formUpload.Add(new StringContent(dbId), "db_id");
