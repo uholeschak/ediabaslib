@@ -5826,7 +5826,10 @@ namespace BmwDeepObd
 
                 try
                 {
-                    ZipEntry newEntry = new ZipEntry(archiveName);
+                    ZipEntry newEntry = new ZipEntry(archiveName)
+                    {
+                        Size = inStream.Length
+                    };
                     zipStream.PutNextEntry(newEntry);
                     byte[] buffer = new byte[4096];
                     StreamUtils.Copy(inStream, zipStream, buffer);
