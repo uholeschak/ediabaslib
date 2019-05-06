@@ -5378,6 +5378,7 @@ namespace EdiabasLib
                                     _zipStream.SetLevel(8);
                                     ICSharpCode.SharpZipLib.Zip.ZipEntry newEntry =
                                         new ICSharpCode.SharpZipLib.Zip.ZipEntry(traceFileName);
+                                    _zipStream.UseZip64 = ICSharpCode.SharpZipLib.Zip.UseZip64.Off;
                                     _zipStream.PutNextEntry(newEntry);
 
                                     // copy old zip content to new one
