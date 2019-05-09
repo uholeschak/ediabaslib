@@ -44,4 +44,5 @@ The source for the firmware could be found in the subdirectory `CanAdapterElm`. 
   * `usbspi.dll`: Driver for programming the BC417b processor. For more information see the [`ReadMe.txt`](../EdiabasLib/CanAdapterElm/Bluetooth/spp_uart/ReadMe.txt) file.
 
 There are two firmware files, the complete file (`CanAdapterElm.X.production.unified.hex`) and the update file (`CanAdapterElm.X.production.hex`) without bootloader, that is only needed by _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_.  
-The latest firmware version will be always included in _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_.
+The latest firmware version will be always included in _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_.  
+You could get the compiled firmware files also from the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package.
