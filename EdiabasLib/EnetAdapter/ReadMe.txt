@@ -71,6 +71,9 @@ as admin:
 netsh interface ip set address "Ethernet 2" static 192.168.100.10 255.255.255.0 192.168.100.10
 ------------------------------
 
+miniweb:
+--------
+copy openwrt-15.05-ramips-rt305x-a5-v11-squashfs-sysupgrade.bin to the miniweb htdocs directory
 start miniweb.exe
 telnet 192.168.100.1
 cd /tmp
