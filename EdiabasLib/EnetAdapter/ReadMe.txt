@@ -76,6 +76,5 @@ miniweb:
 copy openwrt-15.05-ramips-rt305x-a5-v11-squashfs-sysupgrade.bin to the miniweb htdocs directory
 start miniweb.exe
 telnet 192.168.100.1
-cd /tmp
-wget http://192.168.100.10:8000/openwrt-15.05-ramips-rt305x-a5-v11-squashfs-sysupgrade.bin
+wget -P /tmp http://192.168.100.10:8000/openwrt-15.05-ramips-rt305x-a5-v11-squashfs-sysupgrade.bin
 sysupgrade -v -n /tmp/openwrt-15.05-ramips-rt305x-a5-v11-squashfs-sysupgrade.bin
