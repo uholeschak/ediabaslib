@@ -1123,11 +1123,17 @@ namespace EdiabasLib
                 {
                     return false;
                 }
+                if (DataBuffer[5] != 0x01)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Invalid data telegram type: {0:X02}", DataBuffer[5]);
+                    return false;
+                }
                 // ReSharper disable RedundantCast
                 int dataLen = (((int)DataBuffer[0] << 24) | ((int)DataBuffer[1] << 16) | ((int)DataBuffer[2] << 8) | DataBuffer[3]) - 2;
                 // ReSharper restore RedundantCast
                 if ((dataLen < 1) || ((dataLen + 8) > recLen) || (dataLen > 0xFFFF))
                 {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Invalid data length: {0}", dataLen);
                     return false;
                 }
                 // create BMW-FAST telegram
