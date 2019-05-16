@@ -225,36 +225,42 @@ namespace ApkUploader
             return null;
         }
 
-        private bool ReadPrivateCredentials(out string userName, out string password)
+        private bool ReadAppInfoCredentials(out string url, out string userName, out string password)
         {
+            url = null;
             userName = null;
             password = null;
             try
             {
-                string xmlFile = Path.Combine(_apkPath, "private_credentials.xml");
+                string xmlFile = Path.Combine(_apkPath, "appinfo_credentials.xml");
                 if (!File.Exists(xmlFile))
                 {
                     return false;
                 }
 
                 XDocument xmlDoc = XDocument.Load(xmlFile);
-                XElement credetialsNode = xmlDoc.Root?.Element("credentials");
-                if (credetialsNode != null)
+                XElement credentialsNode = xmlDoc.Root?.Element("credentials");
+                if (credentialsNode != null)
                 {
-                    XAttribute nameAttr = credetialsNode.Attribute("name");
+                    XAttribute urlAttr = credentialsNode.Attribute("url");
+                    if (string.IsNullOrEmpty(urlAttr?.Value))
+                    {
+                        return false;
+                    }
+                    url = urlAttr.Value;
+
+                    XAttribute nameAttr = credentialsNode.Attribute("name");
                     if (string.IsNullOrEmpty(nameAttr?.Value))
                     {
                         return false;
                     }
-
                     userName = nameAttr.Value;
 
-                    XAttribute passwordAttr = credetialsNode.Attribute("password");
+                    XAttribute passwordAttr = credentialsNode.Attribute("password");
                     if (string.IsNullOrEmpty(passwordAttr?.Value))
                     {
                         return false;
                     }
-
                     password = passwordAttr.Value;
                 }
             }
@@ -1076,7 +1082,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool SetAppInfo(int versionCode, string track, List<UpdateInfo> apkChanges, string userName, string password)
+        private bool SetAppInfo(int versionCode, string track, List<UpdateInfo> apkChanges, string url, string userName, string password)
         {
             if (_serviceThread != null)
             {
@@ -1132,7 +1138,7 @@ namespace ApkUploader
                                 }
                             }
 
-                            HttpResponseMessage responseAppInfo = httpClient.PostAsync("https://holeschak.de/Private/SetAppInfo.php", formAppInfo).Result;
+                            HttpResponseMessage responseAppInfo = httpClient.PostAsync(url, formAppInfo).Result;
                             responseAppInfo.EnsureSuccessStatusCode();
                             string responseAppInfoXml = responseAppInfo.Content.ReadAsStringAsync().Result;
                             sb.AppendLine("Response:");
@@ -1292,6 +1298,7 @@ namespace ApkUploader
         {
             List<UpdateInfo> apkChanges = null;
             int? versionCode = 0;
+            string url = string.Empty;
             string userName = string.Empty;
             string password = string.Empty;
             if (!string.IsNullOrWhiteSpace(textBoxResourceFolder.Text))
@@ -1310,14 +1317,14 @@ namespace ApkUploader
                     return;
                 }
 
-                if (!ReadPrivateCredentials(out userName, out password))
+                if (!ReadAppInfoCredentials(out url, out userName, out password))
                 {
-                    UpdateStatus("Reading private credentials failed!");
+                    UpdateStatus("Reading app info credentials failed!");
                     return;
                 }
             }
 
-            SetAppInfo(versionCode.Value, comboBoxTrackAssign.Text, apkChanges, userName, password);
+            SetAppInfo(versionCode.Value, comboBoxTrackAssign.Text, apkChanges, url, userName, password);
         }
 
         private void buttonSelectApk_Click(object sender, EventArgs e)
