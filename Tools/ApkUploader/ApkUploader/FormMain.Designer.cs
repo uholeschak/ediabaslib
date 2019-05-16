@@ -57,6 +57,7 @@
             this.labelVersion = new System.Windows.Forms.Label();
             this.buttonUpdateChanges = new System.Windows.Forms.Button();
             this.checkBoxUpdateName = new System.Windows.Forms.CheckBox();
+            this.buttonSetAppInfo = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxStatus
@@ -324,6 +325,16 @@
             this.checkBoxUpdateName.Text = "Update name";
             this.checkBoxUpdateName.UseVisualStyleBackColor = true;
             // 
+            // buttonSetAppInfo
+            // 
+            this.buttonSetAppInfo.Location = new System.Drawing.Point(375, 41);
+            this.buttonSetAppInfo.Name = "buttonSetAppInfo";
+            this.buttonSetAppInfo.Size = new System.Drawing.Size(115, 23);
+            this.buttonSetAppInfo.TabIndex = 20;
+            this.buttonSetAppInfo.Text = "Set App Info";
+            this.buttonSetAppInfo.UseVisualStyleBackColor = true;
+            this.buttonSetAppInfo.Click += new System.EventHandler(this.ButtonSetAppInfo_Click);
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -331,6 +342,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(912, 569);
+            this.Controls.Add(this.buttonSetAppInfo);
             this.Controls.Add(this.checkBoxUpdateName);
             this.Controls.Add(this.buttonUpdateChanges);
             this.Controls.Add(this.labelVersion);
@@ -399,6 +411,7 @@
         private System.Windows.Forms.Label labelVersion;
         private System.Windows.Forms.Button buttonUpdateChanges;
         private System.Windows.Forms.CheckBox checkBoxUpdateName;
+        private System.Windows.Forms.Button buttonSetAppInfo;
     }
 }
 

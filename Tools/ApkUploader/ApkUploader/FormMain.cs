@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -176,8 +179,9 @@ namespace ApkUploader
             return null;
         }
 
-        private string ReadAppVersion(string resourceDir)
+        private string ReadAppVersion(string resourceDir, out int? versionCode)
         {
+            versionCode = null;
             try
             {
                 string parentDir = Directory.GetParent(resourceDir).FullName;
@@ -195,6 +199,15 @@ namespace ApkUploader
                     return string.Empty;
                 }
 
+                XAttribute verCodeAttr = xmlDoc.Root.Attribute(android + "versionCode");
+                if (verCodeAttr != null)
+                {
+                    if (Int32.TryParse(verCodeAttr.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int value))
+                    {
+                        versionCode = value;
+                    }
+                }
+
                 XAttribute verNameAttr = xmlDoc.Root.Attribute(android + "versionName");
                 if (verNameAttr == null)
                 {
@@ -209,6 +222,47 @@ namespace ApkUploader
             }
 
             return null;
+        }
+
+        private bool ReadPrivateCredentials(out string userName, out string password)
+        {
+            userName = null;
+            password = null;
+            try
+            {
+                string xmlFile = Path.Combine(_apkPath, "private_credentials.xml");
+                if (!File.Exists(xmlFile))
+                {
+                    return false;
+                }
+
+                XDocument xmlDoc = XDocument.Load(xmlFile);
+                XElement credetialsNode = xmlDoc.Root?.Element("credentials");
+                if (credetialsNode != null)
+                {
+                    XAttribute nameAttr = credetialsNode.Attribute("name");
+                    if (string.IsNullOrEmpty(nameAttr?.Value))
+                    {
+                        return false;
+                    }
+
+                    userName = nameAttr.Value;
+
+                    XAttribute passwordAttr = credetialsNode.Attribute("password");
+                    if (string.IsNullOrEmpty(passwordAttr?.Value))
+                    {
+                        return false;
+                    }
+
+                    password = passwordAttr.Value;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private async Task<UserCredential> GetCredatials()
@@ -1020,6 +1074,64 @@ namespace ApkUploader
             return true;
         }
 
+        private bool SetAppInfo(int versionCode, string track, List<UpdateInfo> apkChanges, string userName, string password)
+        {
+            if (_serviceThread != null)
+            {
+                return false;
+            }
+            UpdateStatus(string.Empty);
+            _serviceThread = new Thread(() =>
+            {
+                UpdateStatus(string.Empty);
+                StringBuilder sb = new StringBuilder();
+                try
+                {
+                    using (HttpClientHandler httpClientHandler = new HttpClientHandler())
+                    {
+                        httpClientHandler.Credentials = new NetworkCredential(userName, password);
+                        using (HttpClient httpClient = new HttpClient(httpClientHandler))
+                        {
+                            MultipartFormDataContent formAppInfo = new MultipartFormDataContent();
+
+                            formAppInfo.Add(new StringContent(PackageName), "package_name");
+                            formAppInfo.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", versionCode)), "app_ver");
+                            formAppInfo.Add(new StringContent(track), "track");
+
+                            if (apkChanges != null)
+                            {
+                                foreach (UpdateInfo updateInfo in apkChanges)
+                                {
+                                    if (updateInfo.Language.Length >= 2)
+                                    {
+                                        string lang = updateInfo.Language.Substring(0, 2).ToLowerInvariant();
+                                        formAppInfo.Add(new StringContent(updateInfo.Changes), "info_" + lang);
+                                    }
+                                }
+                            }
+
+                            HttpResponseMessage responseAppInfo = httpClient.PostAsync("https://holeschak.de/Private/SetAppInfo.php", formAppInfo).Result;
+                            responseAppInfo.EnsureSuccessStatusCode();
+                            string responseAppInfoXml = responseAppInfo.Content.ReadAsStringAsync().Result;
+                            sb.AppendLine(responseAppInfoXml);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    sb.AppendLine($"Exception: {e.Message}");
+                }
+                finally
+                {
+                    _serviceThread = null;
+                    UpdateStatus(sb.ToString());
+                }
+            });
+            _serviceThread.Start();
+
+            return true;
+        }
+
         private void FormMain_Load(object sender, EventArgs e)
         {
             textBoxVersion.Text = Properties.Settings.Default.VersionAssign;
@@ -1098,8 +1210,8 @@ namespace ApkUploader
 
                 if (checkBoxUpdateName.Checked)
                 {
-                    appVersion = ReadAppVersion(textBoxResourceFolder.Text);
-                    if (appVersion == null)
+                    appVersion = ReadAppVersion(textBoxResourceFolder.Text, out int? versionCode);
+                    if (appVersion == null || versionCode == null)
                     {
                         UpdateStatus("Reading app version failed!");
                         return;
@@ -1142,8 +1254,8 @@ namespace ApkUploader
                     return;
                 }
 
-                appVersion = ReadAppVersion(textBoxResourceFolder.Text);
-                if (appVersion == null)
+                appVersion = ReadAppVersion(textBoxResourceFolder.Text, out int? versionCode);
+                if (appVersion == null || versionCode == null)
                 {
                     UpdateStatus("Reading app version failed!");
                     return;
@@ -1151,6 +1263,38 @@ namespace ApkUploader
             }
 
             UploadApk(textBoxApkFile.Text, textBoxObbFile.Text, comboBoxTrackAssign.Text, apkChanges, appVersion);
+        }
+
+        private void ButtonSetAppInfo_Click(object sender, EventArgs e)
+        {
+            List<UpdateInfo> apkChanges = null;
+            int? versionCode = 0;
+            string userName = string.Empty;
+            string password = string.Empty;
+            if (!string.IsNullOrWhiteSpace(textBoxResourceFolder.Text))
+            {
+                apkChanges = ReadUpdateInfo(textBoxResourceFolder.Text);
+                if (apkChanges == null)
+                {
+                    UpdateStatus("Reading resources failed!");
+                    return;
+                }
+
+                string appVersion = ReadAppVersion(textBoxResourceFolder.Text, out versionCode);
+                if (appVersion == null || versionCode == null)
+                {
+                    UpdateStatus("Reading app version failed!");
+                    return;
+                }
+
+                if (!ReadPrivateCredentials(out userName, out password))
+                {
+                    UpdateStatus("Reading private credentials failed!");
+                    return;
+                }
+            }
+
+            SetAppInfo(versionCode.Value, comboBoxTrackAssign.Text, apkChanges, userName, password);
         }
 
         private void buttonSelectApk_Click(object sender, EventArgs e)
