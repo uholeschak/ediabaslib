@@ -1142,8 +1142,52 @@ namespace ApkUploader
                             HttpResponseMessage responseAppInfo = httpClient.PostAsync(url, formAppInfo).Result;
                             responseAppInfo.EnsureSuccessStatusCode();
                             string responseAppInfoXml = responseAppInfo.Content.ReadAsStringAsync().Result;
-                            sb.AppendLine("Response:");
-                            sb.AppendLine(responseAppInfoXml);
+
+                            try
+                            {
+                                XDocument xmlDoc = XDocument.Parse(responseAppInfoXml);
+                                if (xmlDoc.Root == null)
+                                {
+                                    throw new Exception("XML invalid");
+                                }
+
+                                bool valid = false;
+
+                                XElement statusNode = xmlDoc.Root?.Element("status");
+                                if (statusNode != null)
+                                {
+                                    XAttribute okAttr = statusNode.Attribute("ok");
+                                    if (string.Compare(okAttr?.Value ?? string.Empty, "true", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        valid = true;
+                                    }
+                                    else
+                                    {
+                                        sb.AppendLine("Invalid status");
+                                    }
+                                }
+
+                                XElement errorNode = xmlDoc.Root?.Element("error");
+                                if (errorNode != null)
+                                {
+                                    valid = false;
+                                    XAttribute messageAttr = errorNode.Attribute("message");
+                                    if (string.IsNullOrEmpty(messageAttr?.Value))
+                                    {
+                                        sb.AppendLine($"Error: {messageAttr?.Value}");
+                                    }
+                                }
+
+                                if (valid)
+                                {
+                                    sb.AppendLine("App info updated");
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                sb.AppendLine("Response invalid:");
+                                sb.AppendLine(responseAppInfoXml);
+                            }
                         }
                     }
                 }
