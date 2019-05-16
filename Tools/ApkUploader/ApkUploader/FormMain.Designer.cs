@@ -138,7 +138,7 @@
             this.buttonSelectApk.Location = new System.Drawing.Point(870, 81);
             this.buttonSelectApk.Name = "buttonSelectApk";
             this.buttonSelectApk.Size = new System.Drawing.Size(30, 23);
-            this.buttonSelectApk.TabIndex = 10;
+            this.buttonSelectApk.TabIndex = 21;
             this.buttonSelectApk.Text = "...";
             this.buttonSelectApk.UseVisualStyleBackColor = true;
             this.buttonSelectApk.Click += new System.EventHandler(this.buttonSelectApk_Click);
@@ -159,7 +159,7 @@
             this.textBoxApkFile.Location = new System.Drawing.Point(12, 83);
             this.textBoxApkFile.Name = "textBoxApkFile";
             this.textBoxApkFile.Size = new System.Drawing.Size(852, 20);
-            this.textBoxApkFile.TabIndex = 9;
+            this.textBoxApkFile.TabIndex = 20;
             // 
             // labelObbFile
             // 
@@ -177,7 +177,7 @@
             this.textBoxObbFile.Location = new System.Drawing.Point(12, 122);
             this.textBoxObbFile.Name = "textBoxObbFile";
             this.textBoxObbFile.Size = new System.Drawing.Size(852, 20);
-            this.textBoxObbFile.TabIndex = 11;
+            this.textBoxObbFile.TabIndex = 22;
             // 
             // buttonSelectObb
             // 
@@ -185,7 +185,7 @@
             this.buttonSelectObb.Location = new System.Drawing.Point(870, 120);
             this.buttonSelectObb.Name = "buttonSelectObb";
             this.buttonSelectObb.Size = new System.Drawing.Size(30, 23);
-            this.buttonSelectObb.TabIndex = 12;
+            this.buttonSelectObb.TabIndex = 23;
             this.buttonSelectObb.Text = "...";
             this.buttonSelectObb.UseVisualStyleBackColor = true;
             this.buttonSelectObb.Click += new System.EventHandler(this.buttonSelectObb_Click);
@@ -215,7 +215,7 @@
             this.textBoxResourceFolder.Location = new System.Drawing.Point(12, 161);
             this.textBoxResourceFolder.Name = "textBoxResourceFolder";
             this.textBoxResourceFolder.Size = new System.Drawing.Size(852, 20);
-            this.textBoxResourceFolder.TabIndex = 13;
+            this.textBoxResourceFolder.TabIndex = 24;
             // 
             // buttonSelectResourceFolder
             // 
@@ -223,7 +223,7 @@
             this.buttonSelectResourceFolder.Location = new System.Drawing.Point(870, 159);
             this.buttonSelectResourceFolder.Name = "buttonSelectResourceFolder";
             this.buttonSelectResourceFolder.Size = new System.Drawing.Size(30, 23);
-            this.buttonSelectResourceFolder.TabIndex = 14;
+            this.buttonSelectResourceFolder.TabIndex = 25;
             this.buttonSelectResourceFolder.Text = "...";
             this.buttonSelectResourceFolder.UseVisualStyleBackColor = true;
             this.buttonSelectResourceFolder.Click += new System.EventHandler(this.buttonSelectResourceFolder_Click);
@@ -246,7 +246,7 @@
             this.comboBoxTrackUnassign.Location = new System.Drawing.Point(764, 43);
             this.comboBoxTrackUnassign.Name = "comboBoxTrackUnassign";
             this.comboBoxTrackUnassign.Size = new System.Drawing.Size(100, 21);
-            this.comboBoxTrackUnassign.TabIndex = 18;
+            this.comboBoxTrackUnassign.TabIndex = 33;
             // 
             // comboBoxTrackAssign
             // 
@@ -256,7 +256,7 @@
             this.comboBoxTrackAssign.Location = new System.Drawing.Point(764, 14);
             this.comboBoxTrackAssign.Name = "comboBoxTrackAssign";
             this.comboBoxTrackAssign.Size = new System.Drawing.Size(100, 21);
-            this.comboBoxTrackAssign.TabIndex = 16;
+            this.comboBoxTrackAssign.TabIndex = 31;
             // 
             // labelTrackUnassign
             // 
@@ -293,7 +293,7 @@
             this.textBoxVersion.Location = new System.Drawing.Point(604, 14);
             this.textBoxVersion.Name = "textBoxVersion";
             this.textBoxVersion.Size = new System.Drawing.Size(49, 20);
-            this.textBoxVersion.TabIndex = 15;
+            this.textBoxVersion.TabIndex = 30;
             // 
             // labelVersion
             // 
@@ -321,7 +321,7 @@
             this.checkBoxUpdateName.Name = "checkBoxUpdateName";
             this.checkBoxUpdateName.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.checkBoxUpdateName.Size = new System.Drawing.Size(130, 24);
-            this.checkBoxUpdateName.TabIndex = 17;
+            this.checkBoxUpdateName.TabIndex = 32;
             this.checkBoxUpdateName.Text = "Update name";
             this.checkBoxUpdateName.UseVisualStyleBackColor = true;
             // 
@@ -330,7 +330,7 @@
             this.buttonSetAppInfo.Location = new System.Drawing.Point(375, 41);
             this.buttonSetAppInfo.Name = "buttonSetAppInfo";
             this.buttonSetAppInfo.Size = new System.Drawing.Size(115, 23);
-            this.buttonSetAppInfo.TabIndex = 20;
+            this.buttonSetAppInfo.TabIndex = 9;
             this.buttonSetAppInfo.Text = "Set App Info";
             this.buttonSetAppInfo.UseVisualStyleBackColor = true;
             this.buttonSetAppInfo.Click += new System.EventHandler(this.ButtonSetAppInfo_Click);

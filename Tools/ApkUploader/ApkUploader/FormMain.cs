@@ -82,6 +82,7 @@ namespace ApkUploader
             buttonUploadApk.Enabled = enable;
             buttonChangeTrack.Enabled = enable;
             buttonAssignTrack.Enabled = enable;
+            buttonSetAppInfo.Enabled = enable;
             buttonClose.Enabled = enable;
             comboBoxTrackAssign.Enabled = enable;
             comboBoxTrackUnassign.Enabled = enable;
@@ -1074,6 +1075,7 @@ namespace ApkUploader
             return true;
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private bool SetAppInfo(int versionCode, string track, List<UpdateInfo> apkChanges, string userName, string password)
         {
             if (_serviceThread != null)
@@ -1087,6 +1089,26 @@ namespace ApkUploader
                 StringBuilder sb = new StringBuilder();
                 try
                 {
+                    sb.AppendLine($"version: {versionCode}");
+                    UpdateStatus(sb.ToString());
+
+                    if (!string.IsNullOrEmpty(track))
+                    {
+                        sb.AppendLine($"track: {track}");
+                        UpdateStatus(sb.ToString());
+                    }
+
+                    if (apkChanges != null)
+                    {
+                        sb.Append("Changes info for languages present: ");
+                        foreach (UpdateInfo updateInfo in apkChanges)
+                        {
+                            sb.Append($"{updateInfo.Language} ");
+                        }
+                        sb.AppendLine();
+                        UpdateStatus(sb.ToString());
+                    }
+
                     using (HttpClientHandler httpClientHandler = new HttpClientHandler())
                     {
                         httpClientHandler.Credentials = new NetworkCredential(userName, password);
@@ -1113,6 +1135,7 @@ namespace ApkUploader
                             HttpResponseMessage responseAppInfo = httpClient.PostAsync("https://holeschak.de/Private/SetAppInfo.php", formAppInfo).Result;
                             responseAppInfo.EnsureSuccessStatusCode();
                             string responseAppInfoXml = responseAppInfo.Content.ReadAsStringAsync().Result;
+                            sb.AppendLine("Response:");
                             sb.AppendLine(responseAppInfoXml);
                         }
                     }
