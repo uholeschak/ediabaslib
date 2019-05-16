@@ -1120,6 +1120,7 @@ namespace ApkUploader
                         httpClientHandler.Credentials = new NetworkCredential(userName, password);
                         using (HttpClient httpClient = new HttpClient(httpClientHandler))
                         {
+                            // ReSharper disable once UseObjectOrCollectionInitializer
                             MultipartFormDataContent formAppInfo = new MultipartFormDataContent();
 
                             formAppInfo.Add(new StringContent(PackageName), "package_name");
