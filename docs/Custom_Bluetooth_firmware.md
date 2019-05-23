@@ -4,7 +4,7 @@ It's also possible to configure the device via the Bluetooth interface, to activ
 In contrast to the UART interface the commands via Bluetooth interface must be send in one telegram.  
 The firmware supports the following commands:
 * `AT`: Simply responds with `OK`.
-* `AT+ORGL`: Performs a factory reset. The default values are: Baud rate=115200 8N1, Name=Deep OBD BMW, Pin=1234. The settings will become active immediately.
+* `AT+ORGL`: Performs a factory reset. The default values are: Baud rate=`115200 8N1`, Name=`Deep OBD`, Pin=`1234`. The settings will become active immediately.
 * `AT+RESET`: Resets the Bluetooth firmware without changing any values.
 * `AT+CONF`: Switch the Bluetooth interface to configuration mode. This must be the first command after connecting, otherwise the devices switches to transparent data mode.
 * `AT+DATA`: Switch the Bluetooth interface to transparent data mode. This command is only valid for the Bluetooth interface.
