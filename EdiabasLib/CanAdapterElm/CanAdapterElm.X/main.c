@@ -99,7 +99,7 @@
 #define ALLOW_BT_CONFIG
 #define ALLOW_FACTORY_RESET
 #define REQUIRES_BT_FACTORY
-#define REQUIRES_BT_CRFL
+#define REQUIRES_BT_CRLF
 //#define REQUIRES_BT_ASSIGN
 #define REQUIRES_BT_NAME_0
 #define BT_COMMAND_PAUSE 50         // bluetooth command pause
@@ -112,7 +112,7 @@
 #define ALLOW_BT_CONFIG
 #define ALLOW_FACTORY_RESET
 //#define REQUIRES_BT_FACTORY
-//#define REQUIRES_BT_CRFL
+//#define REQUIRES_BT_CRLF
 //#define REQUIRES_BT_ASSIGN
 //#define REQUIRES_BT_NAME_0
 #define BT_COMMAND_PAUSE 500        // bluetooth command pause
@@ -124,7 +124,7 @@
 #define ALLOW_BT_CONFIG
 #define ALLOW_FACTORY_RESET
 //#define REQUIRES_BT_FACTORY
-#define REQUIRES_BT_CRFL
+#define REQUIRES_BT_CRLF
 #define REQUIRES_BT_ASSIGN
 //#define REQUIRES_BT_NAME_0
 #define BT_COMMAND_PAUSE 50         // bluetooth command pause
@@ -1724,7 +1724,7 @@ bool set_bt_pin()
         }
         temp_buffer[len++] = value;
     }
-#if defined(REQUIRES_BT_CRFL)
+#if defined(REQUIRES_BT_CRLF)
     temp_buffer[len++] = '\r';
     temp_buffer[len++] = '\n';
 #endif
@@ -1755,7 +1755,7 @@ bool set_bt_name()
         }
         temp_buffer[len++] = value;
     }
-#if defined(REQUIRES_BT_CRFL)
+#if defined(REQUIRES_BT_CRLF)
 #if defined(REQUIRES_BT_NAME_0)
     temp_buffer[len++] = 0x00;
 #endif
@@ -3811,7 +3811,7 @@ void interrupt high_priority high_isr (void)
                             case 1:
                                 if (rec_data == 'K')
                                 {
-#if defined(REQUIRES_BT_CRFL)
+#if defined(REQUIRES_BT_CRLF)
                                     rec_chksum++;
 #else
                                     T1CONbits.TMR1ON = 0;   // stop timer
@@ -3822,7 +3822,7 @@ void interrupt high_priority high_isr (void)
                                 }
                                 rec_chksum = 0;
                                 break;
-#if defined(REQUIRES_BT_CRFL)
+#if defined(REQUIRES_BT_CRLF)
                             case 2:
                                 if (rec_data == '\r')
                                 {
