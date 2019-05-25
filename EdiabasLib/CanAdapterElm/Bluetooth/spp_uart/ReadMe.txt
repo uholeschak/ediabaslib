@@ -76,8 +76,8 @@ Compiling:
 - Clean: compile.bat clean
 - Build: compile.bat build
 
-6 MB Flash
+6 Mbit Flash
 ----------
-For 6 MB flahes the compact firmware is required, for this select:
+For 6 Mbit flahes the compact firmware is required, for this select:
 Project Properties -> Build System -> General -> Firmware -> Compact
 Additionally a 4.7K pullup resistor to 3.3V is required for the TX line!
