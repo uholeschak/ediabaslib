@@ -3766,6 +3766,7 @@ void interrupt high_priority high_isr (void)
 {
     if (PIE1bits.RCIE && PIR1bits.RCIF)
     {   // receive interrupt
+        uint8_t rec_data = RCREG;
         if (RCSTA & 0x06)
         {   // receive error -> reset flags
             RCSTAbits.CREN = 0;
@@ -3773,7 +3774,6 @@ void interrupt high_priority high_isr (void)
         }
         else
         {
-            uint8_t rec_data = RCREG;
             // restart timeout timer
 #if defined(REQUIRES_BT_REC_TIMOUT)
             rec_timeout_count = 0;
