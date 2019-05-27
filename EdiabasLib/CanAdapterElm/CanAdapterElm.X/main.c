@@ -89,7 +89,7 @@
 #define DEBUG_PIN           0   // enable debug pin
 #define ID_LOCATION         0x200000    // location of ID memory
 
-#define ADAPTER_VERSION     0x000D
+#define ADAPTER_VERSION     0x000E
 
 #if ADAPTER_TYPE == 0x02
 #define REQUIRES_BT_REC_TIMOUT
