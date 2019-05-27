@@ -368,7 +368,7 @@ namespace EdiabasLibConfigTool
             sr.Append(Resources.Strings.FirmwareVersion);
             sr.Append(string.Format(" {0}.{1}", firmware[2], firmware[3]));
             int version = (firmware[2] << 8) + firmware[3];
-            if (version < 13)
+            if (version < 14)
             {
                 sr.Append("\r\n");
                 sr.Append(Resources.Strings.FirmwareTooOld);
