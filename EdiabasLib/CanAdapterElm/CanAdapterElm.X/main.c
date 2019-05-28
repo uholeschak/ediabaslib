@@ -168,10 +168,12 @@
 #define KLINE_IN PORTCbits.RC1
 #define IGNITION PORTCbits.RC4
 
-#define TIMER0_RESOL        15625ul         // 16526 Hz
-#define TIMER1_RELOAD       (0x10000-500)   // 1 ms
-#define UART_LONG_TEL       100             // limit for long telegram (start of Bluetooth telegram gaps)
-#define UART_LONG_TIMOUT    100             // long timeout for Bluetooth telegram gaps [ms]
+#define TIMER0_RESOL            15625ul         // 16526 Hz
+#define TIMER1_RELOAD           (0x10000-500)   // 1 ms
+#define UART_LONG_TEL           100             // limit for long telegram (start of Bluetooth telegram gaps)
+#define UART_LONG_TIMOUT        100             // long timeout for Bluetooth telegram gaps [ms]
+#define BT_CONFIG_RETRIES_DEF   4               // bt_config retries default
+#define BT_CONFIG_RETRIES_BAUD  2               // bt_config retries baud change
 
 // K-LINE flags 1
 #define KLINEF1_PARITY_MASK     0x7
@@ -1651,7 +1653,7 @@ bool send_bt_config(uint8_t *buffer, uint16_t count, uint8_t retries)
 bool set_bt_default()
 {
     static const char bt_default[] = "AT+DEFAULT\r\n";
-    return send_bt_config((uint8_t *) bt_default, sizeof(bt_default) - 1, 3);
+    return send_bt_config((uint8_t *) bt_default, sizeof(bt_default) - 1, BT_CONFIG_RETRIES_DEF);
 }
 
 bool set_bt_baud()
@@ -1666,14 +1668,14 @@ bool set_bt_baud()
     SPBRG1 = 415;        // 9600 @ 16MHz
     RCSTAbits.SPEN = 1;
 
-    send_bt_config((uint8_t *) bt_baud, sizeof(bt_baud) - 1, 2);
+    send_bt_config((uint8_t *) bt_baud, sizeof(bt_baud) - 1, BT_CONFIG_RETRIES_BAUD);
 
     RCSTAbits.SPEN = 0;
     SPBRGH1 = old_baudh;
     SPBRG1 = old_baudl;
     RCSTAbits.SPEN = 1;
 
-    return send_bt_config((uint8_t *) bt_baud, sizeof(bt_baud) - 1, 2);
+    return send_bt_config((uint8_t *) bt_baud, sizeof(bt_baud) - 1, BT_CONFIG_RETRIES_BAUD);
 }
 
 bool set_bt_init()
@@ -1687,7 +1689,7 @@ bool set_bt_init()
     for (uint8_t i = 0; i < sizeof(bt_init)/sizeof(bt_init[0]); i++)
     {
         const char *pinit = bt_init[i];
-        if (!send_bt_config((uint8_t *) pinit, strlen(pinit), 3))
+        if (!send_bt_config((uint8_t *) pinit, strlen(pinit), BT_CONFIG_RETRIES_DEF))
         {
             result = false;
         }
@@ -1729,7 +1731,7 @@ bool set_bt_pin()
     temp_buffer[len++] = '\n';
 #endif
 
-    return send_bt_config(temp_buffer, len, 3);
+    return send_bt_config(temp_buffer, len, BT_CONFIG_RETRIES_DEF);
 }
 
 bool set_bt_name()
@@ -1763,7 +1765,7 @@ bool set_bt_name()
     temp_buffer[len++] = '\n';
 #endif
 
-    return send_bt_config(temp_buffer, len, 3);
+    return send_bt_config(temp_buffer, len, BT_CONFIG_RETRIES_DEF);
 }
 
 bool init_bt()
