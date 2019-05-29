@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2026
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLib", "EdiabasLib\EdiabasLib.csproj", "{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}"
 EndProject
@@ -75,6 +75,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{7B9636BF-0
 		..\docs\ENET_WiFi_Adapter_WebInterfaceSmall.png = ..\docs\ENET_WiFi_Adapter_WebInterfaceSmall.png
 		..\docs\GlobalSettings.md = ..\docs\GlobalSettings.md
 		..\docs\GlobalSettings_AppGlobalSettingsSmall.png = ..\docs\GlobalSettings_AppGlobalSettingsSmall.png
+		..\docs\hc04-pinout.jpg = ..\docs\hc04-pinout.jpg
 		..\docs\Page_specification.md = ..\docs\Page_specification.md
 		..\docs\Page_specification_AdapterConfigSmall.png = ..\docs\Page_specification_AdapterConfigSmall.png
 		..\docs\Page_specification_AppClimateSmall.png = ..\docs\Page_specification_AppClimateSmall.png
@@ -84,6 +85,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{7B9636BF-0
 		..\docs\README_BluetoothAdapterTopSmall.png = ..\docs\README_BluetoothAdapterTopSmall.png
 		..\docs\README_EnetAdapterClosedSmall.png = ..\docs\README_EnetAdapterClosedSmall.png
 		..\docs\Replace_Elm327_BT_Mini_Firmware.md = ..\docs\Replace_Elm327_BT_Mini_Firmware.md
+		..\docs\Replace_ELM327_HC04_Firmware.md = ..\docs\Replace_ELM327_HC04_Firmware.md
 		..\docs\Replace_Elm327_Wifi_Mini_Firmware.md = ..\docs\Replace_Elm327_Wifi_Mini_Firmware.md
 		..\docs\Replacement_firmware_for_ELM327.md = ..\docs\Replacement_firmware_for_ELM327.md
 		..\docs\Replacement_firmware_for_ELM327_BluetoothAdapterBottomSmall.png = ..\docs\Replacement_firmware_for_ELM327_BluetoothAdapterBottomSmall.png
