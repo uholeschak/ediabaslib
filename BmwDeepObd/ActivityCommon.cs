@@ -457,7 +457,7 @@ namespace BmwDeepObd
         private AlertDialog _selectManufacturerAlertDialog;
         private AlertDialog _ftdiWarningAlertDialog;
         private CustomProgressDialog _translateProgress;
-        private WebClient _translateWebClient;
+        private HttpClient _translateHttpClient;
         private HttpClient _sendHttpClient;
         private bool _translateLockAquired;
         private List<string> _yandexLangList;
@@ -856,9 +856,28 @@ namespace BmwDeepObd
                         _usbCheckTimer.Dispose();
                         _usbCheckTimer = null;
                     }
+                    if (_translateHttpClient != null)
+                    {
+                        try
+                        {
+                            _translateHttpClient.Dispose();
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                        _translateHttpClient = null;
+                    }
                     if (_sendHttpClient != null)
                     {
-                        _sendHttpClient.Dispose();
+                        try
+                        {
+                            _sendHttpClient.Dispose();
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                         _sendHttpClient = null;
                     }
                     UnRegisterWifiCallback();
@@ -5031,9 +5050,16 @@ namespace BmwDeepObd
                 _translateProgress.SetMessage(_context.GetString(Resource.String.translate_text));
                 _translateProgress.AbortClick = sender =>
                 {
-                    if (_translateWebClient != null && _translateWebClient.IsBusy)
+                    if (_translateHttpClient != null)
                     {
-                        _translateWebClient.CancelAsync();
+                        try
+                        {
+                            _translateHttpClient.CancelPendingRequests();
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                     }
                 };
                 _translateProgress.Indeterminate = false;
@@ -5051,7 +5077,10 @@ namespace BmwDeepObd
                 try
                 {
                     int stringCount = 0;
-                    _translateWebClient = new WebClient();
+                    if (_translateHttpClient == null)
+                    {
+                        _translateHttpClient = new HttpClient();
+                    }
                     StringBuilder sbUrl = new StringBuilder();
                     if (_yandexLangList == null)
                     {
@@ -5087,18 +5116,42 @@ namespace BmwDeepObd
                             }
                         }
                     }
-                    _translateWebClient.DownloadStringCompleted += (sender, args) =>
+
+                    HttpResponseMessage responseTrabslate = _translateHttpClient.GetAsync(sbUrl.ToString()).Result;
+                    bool success = responseTrabslate.IsSuccessStatusCode;
+                    string responseTranslateXml = responseTrabslate.Content.ReadAsStringAsync().Result;
+                    if (success)
                     {
-                        if (_disposed)
+                        if (_yandexLangList == null)
                         {
-                            return;
-                        }
-                        if (!args.Cancelled && (args.Error == null))
-                        {
-                            if (_yandexLangList == null)
+                            _yandexLangList = GetLanguages(responseTranslateXml);
+                            if (_yandexLangList != null)
                             {
-                                _yandexLangList = GetLanguages(args.Result);
-                                if (_yandexLangList != null)
+                                _activity?.RunOnUiThread(() =>
+                                {
+                                    if (_disposed)
+                                    {
+                                        return;
+                                    }
+                                    TranslateStrings(stringList, handler, disableCache);
+                                });
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            List<string> transList = GetTranslations(responseTranslateXml);
+                            if (transList != null && transList.Count == stringCount)
+                            {
+                                if (_yandexTransList == null)
+                                {
+                                    _yandexTransList = transList;
+                                }
+                                else
+                                {
+                                    _yandexTransList.AddRange(transList);
+                                }
+                                if (_yandexTransList.Count < _yandexReducedStringList.Count)
                                 {
                                     _activity?.RunOnUiThread(() =>
                                     {
@@ -5113,156 +5166,110 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                List<string> transList = GetTranslations(args.Result);
-                                if (transList != null && transList.Count == stringCount)
-                                {
-                                    if (_yandexTransList == null)
-                                    {
-                                        _yandexTransList = transList;
-                                    }
-                                    else
-                                    {
-                                        _yandexTransList.AddRange(transList);
-                                    }
-                                    if (_yandexTransList.Count < _yandexReducedStringList.Count)
-                                    {
-                                        _activity?.RunOnUiThread(() =>
-                                        {
-                                            if (_disposed)
-                                            {
-                                                return;
-                                            }
-                                            TranslateStrings(stringList, handler, disableCache);
-                                        });
-                                        return;
-                                    }
-                                }
-                                else
-                                {
-                                    // error
-                                    _yandexTransList = null;
-                                }
+                                // error
+                                _yandexTransList = null;
                             }
+                        }
+                    }
+                    else
+                    {
+                        // error
+                        _yandexTransList = null;
+                    }
+                    _activity?.RunOnUiThread(() =>
+                    {
+                        if (_disposed)
+                        {
+                            return;
+                        }
+                        if (_translateProgress != null)
+                        {
+                            _translateProgress.Dismiss();
+                            _translateProgress.Dispose();
+                            _translateProgress = null;
+                            if (_translateLockAquired)
+                            {
+                                SetLock(LockType.None);
+                                _translateLockAquired = false;
+                            }
+                        }
+                        if ((_yandexLangList == null) || (_yandexTransList == null))
+                        {
+                            string errorMessage = string.Empty;
+                            if (!success)
+                            {
+                                errorMessage = GetTranslationError(responseTranslateXml, out int _);
+                            }
+
+                            string message = string.IsNullOrEmpty(errorMessage) ?
+                                _context.GetString(Resource.String.translate_failed) : string.Format(_context.GetString(Resource.String.translate_failed_message), errorMessage);
+                            bool yesSelected = false;
+                            AlertDialog altertDialog = new AlertDialog.Builder(_context)
+                                .SetPositiveButton(Resource.String.button_yes, (s, a) =>
+                                {
+                                    yesSelected = true;
+                                    TranslateStrings(stringList, handler, disableCache);
+                                })
+                                .SetNegativeButton(Resource.String.button_no, (s, a) =>
+                                {
+                                })
+                                .SetCancelable(true)
+                                .SetMessage(message)
+                                .SetTitle(Resource.String.alert_title_error)
+                                .Show();
+                            altertDialog.DismissEvent += (o, eventArgs) =>
+                            {
+                                if (_disposed)
+                                {
+                                    return;
+                                }
+                                if (!yesSelected)
+                                {
+                                    handler(null);
+                                }
+                            };
                         }
                         else
                         {
-                            // error
-                            _yandexTransList = null;
-                        }
-                        _activity?.RunOnUiThread(() =>
-                        {
-                            if (_disposed)
+                            if (disableCache)
                             {
-                                return;
-                            }
-                            if (_translateProgress != null)
-                            {
-                                _translateProgress.Dismiss();
-                                _translateProgress.Dispose();
-                                _translateProgress = null;
-                                if (_translateLockAquired)
-                                {
-                                    SetLock(LockType.None);
-                                    _translateLockAquired = false;
-                                }
-                            }
-                            if ((_yandexLangList == null) || (_yandexTransList == null))
-                            {
-                                string errorMessage = string.Empty;
-                                if (!args.Cancelled && (args.Error != null))
-                                {
-                                    try
-                                    {
-                                        WebException webException = args.Error as WebException;
-                                        Stream responseStream = webException?.Response?.GetResponseStream();
-                                        if (responseStream != null)
-                                        {
-                                            string responseText;
-                                            using (var reader = new StreamReader(responseStream))
-                                            {
-                                                responseText = reader.ReadToEnd();
-                                            }
-                                            // ReSharper disable once NotAccessedVariable
-                                            int errorCode;
-                                            errorMessage = GetTranslationError(responseText, out errorCode);
-                                        }
-                                    }
-                                    catch (Exception)
-                                    {
-                                        // stream error occured
-                                    }
-                                }
-
-                                string message = string.IsNullOrEmpty(errorMessage) ?
-                                    _context.GetString(Resource.String.translate_failed) : string.Format(_context.GetString(Resource.String.translate_failed_message), errorMessage);
-                                bool yesSelected = false;
-                                AlertDialog altertDialog = new AlertDialog.Builder(_context)
-                                    .SetPositiveButton(Resource.String.button_yes, (s, a) =>
-                                    {
-                                        yesSelected = true;
-                                        TranslateStrings(stringList, handler, disableCache);
-                                    })
-                                    .SetNegativeButton(Resource.String.button_no, (s, a) =>
-                                    {
-                                    })
-                                    .SetCancelable(true)
-                                    .SetMessage(message)
-                                    .SetTitle(Resource.String.alert_title_error)
-                                    .Show();
-                                altertDialog.DismissEvent += (o, eventArgs) =>
-                                {
-                                    if (_disposed)
-                                    {
-                                        return;
-                                    }
-                                    if (!yesSelected)
-                                    {
-                                        handler(null);
-                                    }
-                                };
+                                handler(_yandexReducedStringList.Count == _yandexTransList.Count
+                                    ? _yandexTransList : null);
                             }
                             else
                             {
-                                if (disableCache)
+                                // add translation to cache
+                                if (_yandexReducedStringList.Count == _yandexTransList.Count)
                                 {
-                                    handler(_yandexReducedStringList.Count == _yandexTransList.Count
-                                        ? _yandexTransList : null);
-                                }
-                                else
-                                {
-                                    // add translation to cache
-                                    if (_yandexReducedStringList.Count == _yandexTransList.Count)
+                                    for (int i = 0; i < _yandexTransList.Count; i++)
                                     {
-                                        for (int i = 0; i < _yandexTransList.Count; i++)
+                                        string key = _yandexReducedStringList[i];
+                                        if (!_yandexCurrentLangDict.ContainsKey(key))
                                         {
-                                            string key = _yandexReducedStringList[i];
-                                            if (!_yandexCurrentLangDict.ContainsKey(key))
-                                            {
-                                                _yandexCurrentLangDict.Add(key, _yandexTransList[i]);
-                                            }
+                                            _yandexCurrentLangDict.Add(key, _yandexTransList[i]);
                                         }
                                     }
-                                    // create full list
-                                    List<string> transListFull = new List<string>();
-                                    foreach (string text in stringList)
-                                    {
-                                        string translation;
-                                        if (_yandexCurrentLangDict.TryGetValue(text, out translation))
-                                        {
-                                            transListFull.Add(translation);
-                                        }
-                                        else
-                                        {
-                                            // should not happen
-                                            transListFull = null;
-                                            break;
-                                        }
-                                    }
-                                    handler(transListFull);
                                 }
+                                // create full list
+                                List<string> transListFull = new List<string>();
+                                foreach (string text in stringList)
+                                {
+                                    string translation;
+                                    if (_yandexCurrentLangDict.TryGetValue(text, out translation))
+                                    {
+                                        transListFull.Add(translation);
+                                    }
+                                    else
+                                    {
+                                        // should not happen
+                                        transListFull = null;
+                                        break;
+                                    }
+                                }
+                                handler(transListFull);
                             }
-                        });
-                    };
+                        }
+                    });
                     _activity?.RunOnUiThread(() =>
                     {
                         if (_disposed)
@@ -5274,9 +5281,6 @@ namespace BmwDeepObd
                             _translateProgress.ButtonAbort.Enabled = true;
                         }
                     });
-                    ServicePointManager.ServerCertificateValidationCallback =
-                        (sender, certificate, chain, errors) => true;
-                    _translateWebClient.DownloadStringAsync(new System.Uri(sbUrl.ToString()));
                 }
                 catch (Exception)
                 {
