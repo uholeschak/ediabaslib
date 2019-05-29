@@ -235,13 +235,8 @@ namespace BmwDeepObd
         public const string EcuBaseDir = "Ecu";
         public const string VagBaseDir = "Vag";
         public const string BmwBaseDir = "Bmw";
-#if OBB_MODE
         public const string EcuDirNameBmw = "EcuBmw";
         public const string EcuDirNameVag = "EcuVag";
-#else
-        public const string EcuDirNameBmw = "Ecu";
-        public const string EcuDirNameVag = "EcuVag";
-#endif
         public const string AppNameSpace = "de.holeschak.bmw_deep_obd";
         public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
         public const string SettingBluetoothHciLog = "bluetooth_hci_log";
