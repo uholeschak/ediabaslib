@@ -3490,7 +3490,7 @@ namespace BmwDeepObd
                     sb.Append(string.Format("\nApp version code: {0}", packageInfo?.VersionCode));
                     sb.Append(string.Format("\nApp id: {0}", AppId));
                     sb.Append(string.Format("\nOBB: {0}", obbName));
-                    sb.Append(string.Format("\nInstaller: {0}", installer));
+                    sb.Append(string.Format("\nInstaller: {0}", installer ?? string.Empty));
                     sb.Append(string.Format("\nEnable translation: {0}", EnableTranslation));
                     sb.Append(string.Format("\nManufacturer: {0}", ManufacturerName()));
                     sb.Append(string.Format("\nClass name: {0}", classType.FullName));

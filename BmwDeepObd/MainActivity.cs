@@ -2,13 +2,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -75,15 +73,12 @@ namespace BmwDeepObd
 
         private class DownloadInfo
         {
-            public DownloadInfo(string fileName, string downloadDir, string targetDir, XElement infoXml = null)
+            public DownloadInfo(string downloadDir, string targetDir, XElement infoXml = null)
             {
-                FileName = fileName;
                 DownloadDir = downloadDir;
                 TargetDir = targetDir;
                 InfoXml = infoXml;
             }
-
-            public string FileName { get; }
 
             public string TargetDir { get; }
 
@@ -180,11 +175,10 @@ namespace BmwDeepObd
         private TabsFragmentPagerAdapter _fragmentPagerAdapter;
         private readonly ConnectButtonInfo _connectButtonInfo = new ConnectButtonInfo();
         private ImageView _imageBackground;
-        private WebClient _webClient;
+        private HttpClient _httpClient;
         private CustomProgressDialog _downloadProgress;
         private CustomProgressDialog _compileProgress;
         private bool _extractZipCanceled;
-        private long _downloadFileSize;
         private string _obbFileName;
         private AlertDialog _startAlertDialog;
         private AlertDialog _configSelectAlertDialog;
@@ -270,10 +264,10 @@ namespace BmwDeepObd
 
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
 
-            _webClient = new WebClient();
-            _webClient.DownloadProgressChanged += DownloadProgressChanged;
-            _webClient.DownloadFileCompleted += DownloadCompleted;
-            _webClient.UploadValuesCompleted += UploadValuesCompleted;
+            if (_httpClient == null)
+            {
+                _httpClient = new HttpClient();
+            }
 
             _stopCommRequest = Intent.GetBooleanExtra(ExtraStopComm, false);
             _connectTypeRequest = ActivityCommon.AutoConnectHandling;
@@ -451,14 +445,17 @@ namespace BmwDeepObd
                 StopEdiabasThread(true);
             }
             DisconnectEdiabasEvents();
-            if (_webClient != null)
+            if (_httpClient != null)
             {
-                if (_webClient.IsBusy)
+                try
                 {
-                    _webClient.CancelAsync();
+                    _httpClient.Dispose();
                 }
-                _webClient.Dispose();
-                _webClient = null;
+                catch (Exception)
+                {
+                    // ignored
+                }
+                _httpClient = null;
             }
             _extractZipCanceled = true;
             if (_activityCommon != null)
@@ -3013,7 +3010,7 @@ namespace BmwDeepObd
             EditGlobalSettings(GlobalSettingsActivity.SelectionStorageLocation);
         }
 
-        private void DownloadFile(string url, string downloadDir, string unzipTargetDir = null, long fileSize = -1)
+        private void DownloadFile(string url, string downloadDir, string unzipTargetDir = null)
         {
             if (string.IsNullOrEmpty(_obbFileName))
             {
@@ -3042,9 +3039,16 @@ namespace BmwDeepObd
                     {
                         return;
                     }
-                    if (_webClient.IsBusy)
+                    if (_httpClient != null)
                     {
-                        _webClient.CancelAsync();
+                        try
+                        {
+                            _httpClient.CancelPendingRequests();
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                     }
                     _downloadProgress?.Dismiss();
                     _downloadProgress = null;
@@ -3052,12 +3056,9 @@ namespace BmwDeepObd
                 };
             }
             _downloadProgress.SetMessage(GetString(Resource.String.downloading_file));
-            _downloadProgress.Indeterminate = false;
-            _downloadProgress.Progress = 0;
-            _downloadProgress.Max = 100;
+            _downloadProgress.Indeterminate = true;
+            _downloadProgress.ButtonAbort.Enabled = false;
             _downloadProgress.Show();
-            _downloadProgress.ButtonAbort.Enabled = false;    // early abort crashes!
-            _downloadFileSize = fileSize;
             UpdateLockState();
             _activityCommon.SetPreferredNetworkInterface();
 
@@ -3066,23 +3067,18 @@ namespace BmwDeepObd
                 try
                 {
                     string fileName = Path.GetFileName(url) ?? string.Empty;
-                    string fileNameFull = Path.Combine(downloadDir, fileName);
                     DownloadInfo downloadInfo = null;
                     if (!string.IsNullOrEmpty(unzipTargetDir))
                     {
                         XElement xmlInfo = new XElement("Info");
                         xmlInfo.Add(new XAttribute("Url", url));
                         xmlInfo.Add(new XAttribute("Name", Path.GetFileName(_obbFileName) ?? string.Empty));
-                        downloadInfo = new DownloadInfo(fileNameFull, downloadDir, unzipTargetDir, xmlInfo);
+                        downloadInfo = new DownloadInfo(downloadDir, unzipTargetDir, xmlInfo);
                     }
                     // ReSharper disable once RedundantNameQualifier
                     string extension = Path.GetExtension(fileName);
                     bool isPhp = string.Compare(extension, ".php", StringComparison.OrdinalIgnoreCase) == 0;
-                    if (isPhp || string.Compare(extension, ".xml", StringComparison.OrdinalIgnoreCase) == 0)
-                    {   // XML or PHP URL file
-                        _webClient.Credentials = null;
-                    }
-
+                    HttpResponseMessage responseDownload;
                     if (isPhp)
                     {
                         string obbName = string.Empty;
@@ -3097,28 +3093,32 @@ namespace BmwDeepObd
                             // ignored
                         }
 
-                        NameValueCollection nameValueCollection = new NameValueCollection
+                        MultipartFormDataContent formDownload = new MultipartFormDataContent
                         {
-                            {"appid", ActivityCommon.AppId},
-                            {"appver", string.Format(CultureInfo.InvariantCulture, "{0}", _currentVersionCode)},
-                            {"lang", ActivityCommon.GetCurrentLanguage()},
-                            {"android_ver", string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)},
-                            {"fingerprint", Build.Fingerprint},
-                            {"obb_name", obbName},
-                            {"installer", installer},
+                            { new StringContent(ActivityCommon.AppId), "appid" },
+                            { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", _currentVersionCode)), "appver" },
+                            { new StringContent(ActivityCommon.GetCurrentLanguage()), "lang" },
+                            { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)), "android_ver" },
+                            { new StringContent(Build.Fingerprint), "fingerprint" },
+                            { new StringContent(obbName), "obb_name" },
+                            { new StringContent(installer ?? string.Empty), "installer" }
                         };
 
                         if (!string.IsNullOrEmpty(certInfo))
                         {
-                            nameValueCollection.Add("cert", certInfo);
+                            formDownload.Add(new StringContent(certInfo), "cert");
                         }
 
-                        _webClient.UploadValuesAsync(new Uri(url), null, nameValueCollection, downloadInfo);
+                        responseDownload = _httpClient.PostAsync(url, formDownload).Result;
                     }
                     else
                     {
-                        _webClient.DownloadFileAsync(new Uri(url), fileNameFull, downloadInfo);
+                        responseDownload = _httpClient.GetAsync(url).Result;
                     }
+
+                    bool success = responseDownload.IsSuccessStatusCode;
+                    string responseDownloadXml = responseDownload.Content.ReadAsStringAsync().Result;
+                    DownloadCompleted(success, responseDownloadXml, downloadInfo);
                 }
                 catch (Exception)
                 {
@@ -3142,28 +3142,7 @@ namespace BmwDeepObd
             downloadThread.Start();
         }
 
-        private void UploadValuesCompleted(object sender, UploadValuesCompletedEventArgs e)
-        {
-            if (e.Error == null)
-            {
-                try
-                {
-                    DownloadInfo downloadInfo = e.UserState as DownloadInfo;
-                    byte[] response = e.Result;
-                    if (downloadInfo != null && response != null)
-                    {
-                        File.WriteAllBytes(downloadInfo.FileName, response);
-                    }
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-            }
-            DownloadCompleted(sender, e);
-        }
-
-        private void DownloadCompleted(object sender, AsyncCompletedEventArgs e)
+        private void DownloadCompleted(bool success, string responseXml, DownloadInfo downloadInfo)
         {
             RunOnUiThread(() =>
             {
@@ -3171,7 +3150,6 @@ namespace BmwDeepObd
                 {
                     return;
                 }
-                DownloadInfo downloadInfo = e.UserState as DownloadInfo;
                 if (_downloadProgress != null)
                 {
                     bool error = false;
@@ -3179,20 +3157,9 @@ namespace BmwDeepObd
                     _downloadProgress.ButtonAbort.Enabled = false;
                     if (downloadInfo != null)
                     {
-                        if (e.Error == null)
+                        if (success)
                         {
-                            string key = GetObbKey(downloadInfo.FileName, out errorMessage);
-                            try
-                            {
-                                if (File.Exists(downloadInfo.FileName))
-                                {
-                                    File.Delete(downloadInfo.FileName);
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
+                            string key = GetObbKey(responseXml, out errorMessage);
                             if (key != null)
                             {
 #if DEBUG
@@ -3239,7 +3206,7 @@ namespace BmwDeepObd
                     _downloadProgress.Dispose();
                     _downloadProgress = null;
                     UpdateLockState();
-                    if ((!e.Cancelled && e.Error != null) || error)
+                    if (!success || error)
                     {
                         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                         if (!string.IsNullOrEmpty(errorMessage))
@@ -3252,55 +3219,15 @@ namespace BmwDeepObd
                         }
                     }
                 }
-                if (downloadInfo != null)
-                {
-                    try
-                    {
-                        if (File.Exists(downloadInfo.FileName))
-                        {
-                            File.Delete(downloadInfo.FileName);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                }
             });
         }
 
-        private void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {
-            RunOnUiThread(() =>
-            {
-                if (_activityCommon == null)
-                {
-                    return;
-                }
-                if (_downloadProgress != null && e != null)
-                {
-                    if (e.TotalBytesToReceive < 0 && _downloadFileSize > 0)
-                    {
-                        _downloadProgress.Progress = (int)(e.BytesReceived * 100 / _downloadFileSize);
-                    }
-                    else
-                    {
-                        _downloadProgress.Progress = e.ProgressPercentage;
-                    }
-                    if (_webClient != null && _webClient.IsBusy)
-                    {
-                        _downloadProgress.ButtonAbort.Enabled = true;
-                    }
-                }
-            });
-        }
-
-        private string GetObbKey(string xmlFile, out string errorMessage)
+        private string GetObbKey(string xmlResult, out string errorMessage)
         {
             errorMessage = null;
             try
             {
-                if (!File.Exists(xmlFile))
+                if (string.IsNullOrEmpty(xmlResult))
                 {
                     return null;
                 }
@@ -3313,7 +3240,7 @@ namespace BmwDeepObd
                 {
                     return null;
                 }
-                XDocument xmlDoc = XDocument.Load(xmlFile);
+                XDocument xmlDoc = XDocument.Parse(xmlResult);
                 if (xmlDoc.Root == null)
                 {
                     return null;
