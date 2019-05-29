@@ -23,7 +23,7 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;Android;OBB_MODE</DefineConstants>
+    <DefineConstants>DEBUG;Android</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -65,7 +65,7 @@
     <DevInstrumentationEnabled>False</DevInstrumentationEnabled>
     <DebugSymbols>False</DebugSymbols>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
-    <DefineConstants>Android;OBB_MODE</DefineConstants>
+    <DefineConstants>Android</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AndroidFlowLayout, Version=1.9.1.0, Culture=neutral, processorArchitecture=MSIL">

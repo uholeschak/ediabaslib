@@ -61,9 +61,6 @@ namespace BmwDeepObd
             RequestSelectConfig,
             RequestXmlTool,
             RequestEdiabasTool,
-#if !OBB_MODE
-            RequestSelectEcuZip,
-#endif
             RequestYandexKey,
             RequestGlobalSettings,
         }
@@ -96,27 +93,6 @@ namespace BmwDeepObd
 
             public XElement InfoXml { get; }
         }
-
-#if !OBB_MODE
-        private class DownloadUrlInfo
-        {
-            public DownloadUrlInfo(string url, long fileSize, string name, string password)
-            {
-                Url = url;
-                FileSize = fileSize;
-                Name = name;
-                Password = password;
-            }
-
-            public string Url { get; }
-
-            public long FileSize { get; }
-
-            public string Name { get; }
-
-            public string Password { get; }
-        }
-#endif
 
         class ConnectButtonInfo
         {
@@ -171,20 +147,10 @@ namespace BmwDeepObd
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const string SharedAppName = ActivityCommon.AppNameSpace;
         private const string AppFolderName = ActivityCommon.AppNameSpace;
-#if OBB_MODE
         private const string EcuDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Obb.php";
         private const long EcuExtractSize = 2500000000;         // extracted ecu files size
         private const string InfoXmlName = "ObbInfo.xml";
         private const string ContentFileName = "Content.xml";
-#else
-        private const string EcuDownloadUrlBmw = @"http://www.holeschak.de/BmwDeepObd/Ecu3.xml";
-        private const string EcuDownloadUrlVag = @"http://www.holeschak.de/BmwDeepObd/EcuVag1.xml";
-        private const string InfoXmlName = "Info.xml";
-        private const long EcuZipSizeBmw = 130000000;           // BMW ecu zip file size
-        private const long EcuExtractSizeBmw = 1200000000;      // BMW extracted ecu files size
-        private const long EcuZipSizeVag = 53000000;            // VAG ecu zip file size
-        private const long EcuExtractSizeVag = 910000000;       // VAG extracted ecu files size
-#endif
         private const int CpuLoadCritical = 70;
         private const int RequestPermissionExternalStorage = 0;
         private readonly string[] _permissionsExternalStorage =
@@ -220,9 +186,6 @@ namespace BmwDeepObd
         private bool _extractZipCanceled;
         private long _downloadFileSize;
         private string _obbFileName;
-#if !OBB_MODE
-        private List<DownloadUrlInfo> _downloadUrlInfoList;
-#endif
         private AlertDialog _startAlertDialog;
         private AlertDialog _configSelectAlertDialog;
         private AlertDialog _downloadEcuAlertDialog;
@@ -237,60 +200,11 @@ namespace BmwDeepObd
                 switch (ActivityCommon.SelectedManufacturer)
                 {
                     case ActivityCommon.ManufacturerType.Bmw:
-#if OBB_MODE
                         return Path.Combine(ActivityCommon.EcuBaseDir, ActivityCommon.EcuDirNameBmw);
-#else
-                        return EcuDirNameBmw;
-#endif
                 }
-#if OBB_MODE
                 return Path.Combine(ActivityCommon.EcuBaseDir, ActivityCommon.EcuDirNameVag);
-#else
-                return EcuDirNameVag;
-#endif
             }
         }
-
-#if !OBB_MODE
-        private string ManufacturerEcuDownloadUrl
-        {
-            get
-            {
-                switch (ActivityCommon.SelectedManufacturer)
-                {
-                    case ActivityCommon.ManufacturerType.Bmw:
-                        return EcuDownloadUrlBmw;
-                }
-                return EcuDownloadUrlVag;
-            }
-        }
-
-        private long ManufacturerEcuZipSize
-        {
-            get
-            {
-                switch (ActivityCommon.SelectedManufacturer)
-                {
-                    case ActivityCommon.ManufacturerType.Bmw:
-                        return EcuZipSizeBmw;
-                }
-                return EcuZipSizeVag;
-            }
-        }
-
-        private long ManufacturerEcuExtractSize
-        {
-            get
-            {
-                switch (ActivityCommon.SelectedManufacturer)
-                {
-                    case ActivityCommon.ManufacturerType.Bmw:
-                        return EcuExtractSizeBmw;
-                }
-                return EcuExtractSizeVag;
-            }
-        }
-#endif
 
         public void OnTabReselected(TabLayout.Tab tab)
         {
@@ -663,22 +577,7 @@ namespace BmwDeepObd
                 case ActivityRequest.RequestEdiabasTool:
                     _activityCommon.SetPreferredNetworkInterface();
                     break;
-#if !OBB_MODE
-                case ActivityRequest.RequestSelectEcuZip:
-                    if (data != null && resultCode == Android.App.Result.Ok)
-                    {
-                        string zipFile = data.Extras.GetString(XmlToolActivity.ExtraFileName);
-                        string fileName = Path.GetFileName(zipFile) ?? string.Empty;
-                        string ecuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
 
-                        XElement xmlInfo = new XElement("Info");
-                        xmlInfo.Add(new XAttribute("Url", zipFile));
-                        xmlInfo.Add(new XAttribute("Name", fileName));
-
-                        ExtractZipFile(zipFile, ecuPath, xmlInfo, null);
-                    }
-                    break;
-#endif
                 case ActivityRequest.RequestYandexKey:
                     ActivityCommon.EnableTranslation = !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey);
                     UpdateOptionsMenu();
@@ -779,11 +678,7 @@ namespace BmwDeepObd
             IMenuItem downloadEcu = menu.FindItem(Resource.Id.menu_download_ecu);
             if (downloadEcu != null)
             {
-#if OBB_MODE
                 downloadEcu.SetTitle(Resource.String.menu_extract_ecu);
-#else
-                downloadEcu.SetTitle(Resource.String.menu_download_ecu);
-#endif
                 downloadEcu.SetEnabled(!commActive);
             }
 
@@ -1574,17 +1469,6 @@ namespace BmwDeepObd
                 else
                 {
                     _instanceData.AppDataPath = ActivityCommon.ExternalWritePath;
-#if !OBB_MODE
-                    if (!ValidEcuFiles(_instanceData.EcuPath))
-                    {
-                        string userEcuPath = Path.Combine(_instanceData.AppDataPath, "../../../..", AppFolderName, ManufacturerEcuDirName);
-                        if (ValidEcuFiles(userEcuPath))
-                        {
-                            _instanceData.EcuPath = userEcuPath;
-                            _instanceData.UserEcuFiles = true;
-                        }
-                    }
-#endif
                 }
             }
             else
@@ -2921,7 +2805,7 @@ namespace BmwDeepObd
                         }
                     });
                 }
-#if OBB_MODE
+
                 string ecuBaseDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir);
                 if (_instanceData.VerifyEcuFiles)
                 {
@@ -2966,7 +2850,7 @@ namespace BmwDeepObd
                         }
                     }
                 }
-#endif
+
                 RunOnUiThread(() =>
                 {
                     if (_activityCommon == null)
@@ -3166,9 +3050,6 @@ namespace BmwDeepObd
                     _downloadProgress = null;
                     UpdateLockState();
                 };
-#if !OBB_MODE
-                _downloadUrlInfoList = null;
-#endif
             }
             _downloadProgress.SetMessage(GetString(Resource.String.downloading_file));
             _downloadProgress.Indeterminate = false;
@@ -3191,11 +3072,7 @@ namespace BmwDeepObd
                     {
                         XElement xmlInfo = new XElement("Info");
                         xmlInfo.Add(new XAttribute("Url", url));
-#if OBB_MODE
                         xmlInfo.Add(new XAttribute("Name", Path.GetFileName(_obbFileName) ?? string.Empty));
-#else
-                        xmlInfo.Add(new XAttribute("Name", fileName));
-#endif
                         downloadInfo = new DownloadInfo(fileNameFull, downloadDir, unzipTargetDir, xmlInfo);
                     }
                     // ReSharper disable once RedundantNameQualifier
@@ -3302,7 +3179,6 @@ namespace BmwDeepObd
                     _downloadProgress.ButtonAbort.Enabled = false;
                     if (downloadInfo != null)
                     {
-#if OBB_MODE
                         if (e.Error == null)
                         {
                             string key = GetObbKey(downloadInfo.FileName, out errorMessage);
@@ -3358,68 +3234,11 @@ namespace BmwDeepObd
 
                             error = true;
                         }
-#else
-                        if (e.Error == null)
-                        {
-                            string extension = Path.GetExtension(downloadInfo.FileName) ?? string.Empty;
-                            if (string.Compare(extension, ".xml", StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                // XML URL file
-                                _downloadUrlInfoList = GetDownloadUrls(downloadInfo.FileName);
-                                if ((_downloadUrlInfoList == null) || (_downloadUrlInfoList.Count < 1))
-                                {
-                                    error = true;
-                                }
-                                try
-                                {
-                                    if (File.Exists(downloadInfo.FileName))
-                                    {
-                                        File.Delete(downloadInfo.FileName);
-                                    }
-                                }
-                                catch (Exception)
-                                {
-                                    // ignored
-                                }
-                                if (!error)
-                                {
-                                    StartDownload(downloadInfo);
-                                    return;
-                                }
-                            }
-                            else if (string.Compare(extension, ".zip", StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                // zip file
-                                if (!ActivityCommon.CheckZipFile(downloadInfo.FileName))
-                                {   // zip file corrupted, try next server
-                                    if (!e.Cancelled && (_downloadUrlInfoList != null) && (_downloadUrlInfoList.Count >= 1))
-                                    {
-                                        StartDownload(downloadInfo);
-                                        return;
-                                    }
-                                }
-                                _downloadProgress.ButtonAbort.Enabled = false;
-                                ExtractZipFile(downloadInfo.FileName, downloadInfo.TargetDir, downloadInfo.InfoXml, null, true);
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            if (!e.Cancelled && (_downloadUrlInfoList != null) && (_downloadUrlInfoList.Count >= 1))
-                            {
-                                StartDownload(downloadInfo);
-                                return;
-                            }
-                        }
-#endif
                     }
                     _downloadProgress.Dismiss();
                     _downloadProgress.Dispose();
                     _downloadProgress = null;
                     UpdateLockState();
-#if !OBB_MODE
-                    _downloadUrlInfoList = null;
-#endif
                     if ((!e.Cancelled && e.Error != null) || error)
                     {
                         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
@@ -3450,24 +3269,6 @@ namespace BmwDeepObd
             });
         }
 
-#if !OBB_MODE
-        private void StartDownload(DownloadInfo downloadInfo)
-        {
-            DownloadUrlInfo urlInfo = _downloadUrlInfoList[0];
-            _downloadUrlInfoList.RemoveAt(0);
-            _webClient.UseDefaultCredentials = false;
-            if (string.IsNullOrEmpty(urlInfo.Name) || string.IsNullOrEmpty(urlInfo.Password))
-            {
-                _webClient.Credentials = null;
-            }
-            else
-            {
-                _webClient.Credentials = new NetworkCredential(urlInfo.Name, urlInfo.Password);
-            }
-            DownloadFile(urlInfo.Url, downloadInfo.DownloadDir, downloadInfo.TargetDir, urlInfo.FileSize);
-        }
-#endif
-
         private void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             RunOnUiThread(() =>
@@ -3494,7 +3295,6 @@ namespace BmwDeepObd
             });
         }
 
-#if OBB_MODE
         private string GetObbKey(string xmlFile, out string errorMessage)
         {
             errorMessage = null;
@@ -3554,57 +3354,6 @@ namespace BmwDeepObd
                 return null;
             }
         }
-#else
-        private List<DownloadUrlInfo> GetDownloadUrls(string xmlFile)
-        {
-            List<DownloadUrlInfo> urlInfo = new List<DownloadUrlInfo>();
-            try
-            {
-                if (!File.Exists(xmlFile))
-                {
-                    return null;
-                }
-                XDocument xmlDoc = XDocument.Load(xmlFile);
-                if (xmlDoc.Root == null)
-                {
-                    return null;
-                }
-                foreach (XElement fileNode in xmlDoc.Root.Elements("file_v2"))
-                {
-                    XAttribute urlAttr = fileNode.Attribute("url");
-                    if (!string.IsNullOrEmpty(urlAttr?.Value))
-                    {
-                        // ReSharper disable once PossibleNullReferenceException
-                        string url = urlAttr.Value;
-                        string name = null;
-                        string password = null;
-                        long fileSize = -1;
-                        XAttribute sizeAttr = fileNode.Attribute("file_size");
-                        if (sizeAttr != null)
-                        {
-                            fileSize = System.Xml.XmlConvert.ToInt64(sizeAttr.Value);
-                        }
-                        XAttribute usernameAttr = fileNode.Attribute("username");
-                        if (usernameAttr != null)
-                        {
-                            name = usernameAttr.Value;
-                        }
-                        XAttribute passwordAttr = fileNode.Attribute("password");
-                        if (passwordAttr != null)
-                        {
-                            password = passwordAttr.Value;
-                        }
-                        urlInfo.Add(new DownloadUrlInfo(url, fileSize, name, password));
-                    }
-                }
-                return urlInfo;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-#endif
 
         private void ExtractZipFile(string fileName, string targetDirectory, XElement infoXml, string key, bool removeFile = false, List<string> removeDirs = null)
         {
@@ -3733,7 +3482,7 @@ namespace BmwDeepObd
                             }
                             return _extractZipCanceled;
                         });
-#if OBB_MODE
+
                     int lastVerifyPercent = -1;
                     if (!ActivityCommon.VerifyContent(Path.Combine(targetDirectory, ContentFileName), true, percent =>
                     {
@@ -3763,7 +3512,7 @@ namespace BmwDeepObd
                     {
                         extractFailed = true;
                     }
-#endif
+
                     // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                     if (!extractFailed)
                     {
@@ -3827,11 +3576,7 @@ namespace BmwDeepObd
                 ActivityCommon.FileSystemBlockInfo blockInfo = ActivityCommon.GetFileSystemBlockInfo(_instanceData.AppDataPath);
                 long ecuDirSize = ActivityCommon.GetDirectorySize(ecuPath);
                 double freeSpace = blockInfo.AvailableSizeBytes + ecuDirSize;
-#if OBB_MODE
                 long requiredSize = EcuExtractSize;
-#else
-                long requiredSize = ManufacturerEcuExtractSize + ManufacturerEcuZipSize;
-#endif
                 if (freeSpace < requiredSize)
                 {
                     string message = string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_download_free_space), requiredSize);
@@ -3853,7 +3598,7 @@ namespace BmwDeepObd
             {
                 // ignored
             }
-#if OBB_MODE
+
             if (extraMessage)
             {
                 string message = string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_extract_confirm), EcuExtractSize);
@@ -3876,55 +3621,7 @@ namespace BmwDeepObd
                 DownloadFile(EcuDownloadUrl, Path.Combine(_instanceData.AppDataPath, ActivityCommon.DownloadDir),
                     Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir));
             }
-#else
-            if (extraMessage)
-            {
-                string message = string.Format(GetString(Resource.String.download_manual), ManufacturerEcuDownloadUrl.Replace(".xml", ".zip"));
-
-                AlertDialog alertDialog = new AlertDialog.Builder(this)
-                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                    {
-                        ManualEcuFilesInstall();
-                    })
-                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                    {
-                        DownloadFile(ManufacturerEcuDownloadUrl, Path.Combine(_instanceData.AppDataPath, ActivityCommon.DownloadDir), ecuPath);
-                    })
-                    .SetMessage(ActivityCommon.FromHtml(message))
-                    .SetTitle(Resource.String.alert_title_question)
-                    .Show();
-                TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
-                if (messageView != null)
-                {
-                    messageView.MovementMethod = new LinkMovementMethod();
-                }
-            }
-            else
-            {
-                DownloadFile(ManufacturerEcuDownloadUrl, Path.Combine(_instanceData.AppDataPath, ActivityCommon.DownloadDir), ecuPath);
-            }
-#endif
         }
-
-#if !OBB_MODE
-        private void ManualEcuFilesInstall()
-        {
-            string downloadsDir = _instanceData.AppDataPath;
-            Java.IO.File directoryDownloads = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads);
-            if (!string.IsNullOrEmpty(directoryDownloads?.AbsolutePath))
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                downloadsDir = directoryDownloads.AbsolutePath;
-            }
-
-            Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
-            serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.select_ecu_zip));
-            serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, downloadsDir);
-            serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".zip");
-            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectEcuZip);
-            ActivityCommon.ActivityStartedFromMain = true;
-        }
-#endif
 
         // ReSharper disable once UnusedParameter.Local
         private bool CheckForEcuFiles(bool checkPackage = false)
@@ -3933,7 +3630,7 @@ namespace BmwDeepObd
             {
                 return true;
             }
-#if OBB_MODE
+
             if (!_instanceData.StorageRequirementsAccepted)
             {
                 string message = string.Format(new FileSizeFormatProvider(), GetString(Resource.String.storage_requirements), EcuExtractSize);
@@ -3988,68 +3685,6 @@ namespace BmwDeepObd
                 };
                 return false;
             }
-#else
-            if (!ValidEcuFiles(_instanceData.EcuPath))
-            {
-                string message = GetString(Resource.String.ecu_not_found) + "\n" +
-                    string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_download), ManufacturerEcuZipSize) + "\n" +
-                    string.Format(GetString(Resource.String.manufacturer_select), _activityCommon.ManufacturerName());
-
-                _downloadEcuAlertDialog = new AlertDialog.Builder(this)
-                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                    {
-                        DownloadEcuFiles(true);
-                    })
-                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                    {
-                    })
-                    .SetNeutralButton(Resource.String.button_abort, (sender, args) =>
-                    {
-                        SelectManufacturerInfo();
-                    })
-                    .SetMessage(message)
-                    .SetTitle(Resource.String.alert_title_question)
-                    .Show();
-                _downloadEcuAlertDialog.DismissEvent += (sender, args) =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-                    _downloadEcuAlertDialog = null; 
-                };
-                return false;
-            }
-
-            if (checkPackage && !_instanceData.UserEcuFiles)
-            {
-                if (!ValidEcuPackage(_instanceData.EcuPath))
-                {
-                    string message = GetString(Resource.String.ecu_package) + "\n" +
-                        string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_download), ManufacturerEcuZipSize);
-
-                    _downloadEcuAlertDialog = new AlertDialog.Builder(this)
-                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                        {
-                            DownloadEcuFiles(true);
-                        })
-                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                        {
-                        })
-                        .SetMessage(message)
-                        .SetTitle(Resource.String.alert_title_question)
-                        .Show();
-                    _downloadEcuAlertDialog.DismissEvent += (sender, args) =>
-                    {
-                        if (_activityCommon == null)
-                        {
-                            return;
-                        }
-                        _downloadEcuAlertDialog = null;
-                    };
-                }
-            }
-#endif
             return true;
         }
 
@@ -4077,7 +3712,7 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-#if OBB_MODE
+
                 if (ActivityCommon.VagFilesRequired())
                 {
                     if (!Directory.Exists(Path.Combine(path, ActivityCommon.EcuDirNameVag)))
@@ -4092,7 +3727,7 @@ namespace BmwDeepObd
                         return false;
                     }
                 }
-#endif
+
                 string xmlInfoName = Path.Combine(path, InfoXmlName);
                 if (!File.Exists(xmlInfoName))
                 {
@@ -4104,12 +3739,8 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-#if OBB_MODE
                 if (string.IsNullOrEmpty(_obbFileName) ||
                     string.Compare(Path.GetFileNameWithoutExtension(nameAttr.Value), Path.GetFileNameWithoutExtension(_obbFileName), StringComparison.OrdinalIgnoreCase) != 0)
-#else
-                if (string.Compare(Path.GetFileNameWithoutExtension(nameAttr.Value), Path.GetFileNameWithoutExtension(ManufacturerEcuDownloadUrl), StringComparison.OrdinalIgnoreCase) != 0)
-#endif
                 {
                     return false;
                 }
