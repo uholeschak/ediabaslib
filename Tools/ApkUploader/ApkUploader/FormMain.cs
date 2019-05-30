@@ -562,6 +562,11 @@ namespace ApkUploader
                 UpdateStatus("Both tracks identical");
                 return false;
             }
+            if (string.IsNullOrWhiteSpace(fromTrack) || string.IsNullOrWhiteSpace(toTrack))
+            {
+                UpdateStatus("Empty track");
+                return false;
+            }
             _cts = new CancellationTokenSource();
             _serviceThread = new Thread(async () =>
             {
