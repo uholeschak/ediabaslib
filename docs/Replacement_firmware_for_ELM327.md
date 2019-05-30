@@ -46,3 +46,5 @@ The source for the firmware could be found in the subdirectory `CanAdapterElm`. 
 There are two firmware files, the complete file (`CanAdapterElm.X.production.unified.hex`) and the update file (`CanAdapterElm.X.production.hex`) without bootloader, that is only needed by _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_.  
 The latest firmware version will be always included in _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_.  
 You could get the compiled firmware files also from the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package.
+
+Here is a special instruction for [flashing an ELM327 with HC04 firmware](Replace_ELM327_HC04_Firmware.md).
