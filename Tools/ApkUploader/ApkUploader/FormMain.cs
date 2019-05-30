@@ -1220,6 +1220,7 @@ namespace ApkUploader
             {
                 comboBoxTrackAssign.Items.Add(track);
             }
+            comboBoxTrackAssign.Items.Add("");
             comboBoxTrackAssign.SelectedItem = Properties.Settings.Default.TrackAssign;
             if (comboBoxTrackAssign.SelectedIndex < 0)
             {
