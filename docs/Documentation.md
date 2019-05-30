@@ -4,6 +4,7 @@
 * [Ediabas result types and formats](EDIABAS_result_types_and_formats.md)
 * [Supported adapter types](AdapterTypes.md)
 * [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md)
+	* [Flash ELM327 with HC04 firmware](Replace_ELM327_HC04_Firmware.md)
 	* [Open Source Bluetooth firmware](Custom_Bluetooth_firmware.md)
 	* [Bluetooth YC1021 firmware](Replace_Elm327_BT_Mini_Firmware.md)
 	* [ELM WiFi ESP8266ex firmware](Replace_Elm327_Wifi_Mini_Firmware.md)
