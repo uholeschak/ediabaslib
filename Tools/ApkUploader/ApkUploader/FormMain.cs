@@ -387,7 +387,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UpdateAppInfo(StringBuilder sb, long versionCode, string track, List<UpdateInfo> apkChanges = null)
+        private bool UpdateAppInfo(StringBuilder sb, long versionCode, string appVersion, string track, List<UpdateInfo> apkChanges = null)
         {
             try
             {
@@ -404,12 +404,18 @@ namespace ApkUploader
                     return false;
                 }
 
-                sb.AppendLine($"version: {versionCode}");
+                sb.AppendLine($"Version code: {versionCode}");
                 UpdateStatus(sb.ToString());
+
+                if (!string.IsNullOrEmpty(appVersion))
+                {
+                    sb.AppendLine($"Version name: {appVersion}");
+                    UpdateStatus(sb.ToString());
+                }
 
                 if (!string.IsNullOrEmpty(track))
                 {
-                    sb.AppendLine($"track: {track}");
+                    sb.AppendLine($"Track: {track}");
                     UpdateStatus(sb.ToString());
                 }
 
@@ -434,6 +440,10 @@ namespace ApkUploader
 
                         formAppInfo.Add(new StringContent(PackageName), "package_name");
                         formAppInfo.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", versionCode)), "app_ver");
+                        if (!string.IsNullOrEmpty(appVersion))
+                        {
+                            formAppInfo.Add(new StringContent(appVersion), "app_ver_name");
+                        }
                         formAppInfo.Add(new StringContent(track), "track");
 
                         if (apkChanges != null)
@@ -759,7 +769,7 @@ namespace ApkUploader
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
 
-                        UpdateAppInfo(sb, currentVersion, toTrack);
+                        UpdateAppInfo(sb, currentVersion, null, toTrack);
                     }
                 }
                 catch (Exception e)
@@ -873,7 +883,7 @@ namespace ApkUploader
 
                         if (versionAssign.HasValue)
                         {
-                            UpdateAppInfo(sb, versionAssign.Value, track);
+                            UpdateAppInfo(sb, versionAssign.Value, null, track);
                         }
                         else
                         {
@@ -882,7 +892,7 @@ namespace ApkUploader
                                 if (trackReleaseOld.VersionCodes[0] != null)
                                 {
                                     long versionCode = trackReleaseOld.VersionCodes[0].Value;
-                                    UpdateAppInfo(sb, versionCode, string.Empty);
+                                    UpdateAppInfo(sb, versionCode, null, string.Empty);
                                 }
                             }
                         }
@@ -905,7 +915,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UpdateChanges(string track, List<UpdateInfo> apkChanges, string appName)
+        private bool UpdateChanges(string track, List<UpdateInfo> apkChanges, string appVersion)
         {
             if (_serviceThread != null)
             {
@@ -926,9 +936,9 @@ namespace ApkUploader
                 StringBuilder sb = new StringBuilder();
                 try
                 {
-                    if (!string.IsNullOrEmpty(appName))
+                    if (!string.IsNullOrEmpty(appVersion))
                     {
-                        sb.AppendLine($"App name: {appName}");
+                        sb.AppendLine($"App version name: {appVersion}");
                         UpdateStatus(sb.ToString());
                     }
 
@@ -976,7 +986,7 @@ namespace ApkUploader
                             releaseNotes.Add(localizedText);
                         }
 
-                        string trackName = appName;
+                        string trackName = appVersion;
                         if (string.IsNullOrEmpty(trackName))
                         {
                             trackName = trackRelease.Name;
@@ -1006,7 +1016,7 @@ namespace ApkUploader
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
 
-                        UpdateAppInfo(sb, currentVersion, track, apkChanges);
+                        UpdateAppInfo(sb, currentVersion, appVersion, track, apkChanges);
                     }
                 }
                 catch (Exception e)
@@ -1026,7 +1036,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UploadApk(string apkFileName, string expansionFileName, string track, List<UpdateInfo> apkChanges, string appName)
+        private bool UploadApk(string apkFileName, string expansionFileName, string track, List<UpdateInfo> apkChanges, string appVersion)
         {
             if (_serviceThread != null)
             {
@@ -1076,9 +1086,9 @@ namespace ApkUploader
                         UpdateStatus(sb.ToString());
                     }
 
-                    if (!string.IsNullOrEmpty(appName))
+                    if (!string.IsNullOrEmpty(appVersion))
                     {
-                        sb.AppendLine($"App name: {appName}");
+                        sb.AppendLine($"App version name: {appVersion}");
                         UpdateStatus(sb.ToString());
                     }
 
@@ -1194,7 +1204,7 @@ namespace ApkUploader
                             }
                         }
 
-                        string trackName = appName;
+                        string trackName = appVersion;
                         if (string.IsNullOrEmpty(trackName))
                         {
                             trackName = versionCode.ToString();
@@ -1224,7 +1234,7 @@ namespace ApkUploader
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
 
-                        UpdateAppInfo(sb, versionCode.Value, track, apkChanges);
+                        UpdateAppInfo(sb, versionCode.Value, appVersion, track, apkChanges);
                     }
                 }
                 catch (Exception e)
@@ -1244,7 +1254,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool SetAppInfo(int versionCode, string track, List<UpdateInfo> apkChanges)
+        private bool SetAppInfo(int versionCode, string appVersion, string track, List<UpdateInfo> apkChanges)
         {
             if (_serviceThread != null)
             {
@@ -1257,7 +1267,7 @@ namespace ApkUploader
                 StringBuilder sb = new StringBuilder();
                 try
                 {
-                    UpdateAppInfo(sb, versionCode, track, apkChanges);
+                    UpdateAppInfo(sb, versionCode, appVersion, track, apkChanges);
                 }
                 finally
                 {
@@ -1407,6 +1417,7 @@ namespace ApkUploader
         private void ButtonSetAppInfo_Click(object sender, EventArgs e)
         {
             List<UpdateInfo> apkChanges = null;
+            string appVersion = null;
             int? versionCode = 0;
             if (!string.IsNullOrWhiteSpace(textBoxResourceFolder.Text))
             {
@@ -1417,7 +1428,7 @@ namespace ApkUploader
                     return;
                 }
 
-                string appVersion = ReadAppVersion(textBoxResourceFolder.Text, out versionCode);
+                appVersion = ReadAppVersion(textBoxResourceFolder.Text, out versionCode);
                 if (appVersion == null || versionCode == null)
                 {
                     UpdateStatus("Reading app version failed!");
@@ -1425,7 +1436,7 @@ namespace ApkUploader
                 }
             }
 
-            SetAppInfo(versionCode.Value, comboBoxTrackAssign.Text, apkChanges);
+            SetAppInfo(versionCode.Value, appVersion, comboBoxTrackAssign.Text, apkChanges);
         }
 
         private void buttonSelectApk_Click(object sender, EventArgs e)
