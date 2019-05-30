@@ -1223,6 +1223,8 @@ namespace ApkUploader
                         AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
+
+                        UpdateAppInfo(sb, versionCode.Value, track, apkChanges);
                     }
                 }
                 catch (Exception e)
