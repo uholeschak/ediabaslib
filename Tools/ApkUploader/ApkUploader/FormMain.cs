@@ -387,7 +387,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UpdateAppInfo(StringBuilder sb, int versionCode, string track, List<UpdateInfo> apkChanges)
+        private bool UpdateAppInfo(StringBuilder sb, int versionCode, string track, List<UpdateInfo> apkChanges = null)
         {
             try
             {
@@ -705,6 +705,12 @@ namespace ApkUploader
                             throw new Exception("Invalid release count");
                         }
                         TrackRelease trackRelease = trackResponse.Releases[0];
+                        if (trackRelease.VersionCodes == null)
+                        {
+                            sb.AppendLine("No version codes present");
+                            UpdateStatus(sb.ToString());
+                            throw new Exception("Invalid versions");
+                        }
                         if (trackRelease.VersionCodes.Count != 1 || !trackRelease.VersionCodes[0].HasValue)
                         {
                             sb.AppendLine($"Invalid version count: {trackRelease.VersionCodes.Count}");
@@ -745,6 +751,8 @@ namespace ApkUploader
                         AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
+
+                        UpdateAppInfo(sb, (int) currentVersion, toTrack);
                     }
                 }
                 catch (Exception e)
