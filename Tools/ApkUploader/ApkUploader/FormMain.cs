@@ -458,7 +458,7 @@ namespace ApkUploader
                             }
                         }
 
-                        HttpResponseMessage responseAppInfo = httpClient.PostAsync(url, formAppInfo).Result;
+                        HttpResponseMessage responseAppInfo = httpClient.PostAsync(url, formAppInfo, _cts.Token).Result;
                         responseAppInfo.EnsureSuccessStatusCode();
                         string responseAppInfoXml = responseAppInfo.Content.ReadAsStringAsync().Result;
 
@@ -1261,6 +1261,7 @@ namespace ApkUploader
                 return false;
             }
             UpdateStatus(string.Empty);
+            _cts = new CancellationTokenSource();
             _serviceThread = new Thread(() =>
             {
                 UpdateStatus(string.Empty);
@@ -1272,6 +1273,7 @@ namespace ApkUploader
                 finally
                 {
                     _serviceThread = null;
+                    _cts.Dispose();
                     UpdateStatus(sb.ToString());
                 }
             });
