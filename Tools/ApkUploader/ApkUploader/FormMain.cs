@@ -387,6 +387,116 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool UpdateAppInfo(StringBuilder sb, int versionCode, string track, List<UpdateInfo> apkChanges, string url, string userName, string password)
+        {
+            try
+            {
+                sb.AppendLine($"version: {versionCode}");
+                UpdateStatus(sb.ToString());
+
+                if (!string.IsNullOrEmpty(track))
+                {
+                    sb.AppendLine($"track: {track}");
+                    UpdateStatus(sb.ToString());
+                }
+
+                if (apkChanges != null)
+                {
+                    sb.Append("Changes info for languages present: ");
+                    foreach (UpdateInfo updateInfo in apkChanges)
+                    {
+                        sb.Append($"{updateInfo.Language} ");
+                    }
+                    sb.AppendLine();
+                    UpdateStatus(sb.ToString());
+                }
+
+                using (HttpClientHandler httpClientHandler = new HttpClientHandler())
+                {
+                    httpClientHandler.Credentials = new NetworkCredential(userName, password);
+                    using (HttpClient httpClient = new HttpClient(httpClientHandler))
+                    {
+                        // ReSharper disable once UseObjectOrCollectionInitializer
+                        MultipartFormDataContent formAppInfo = new MultipartFormDataContent();
+
+                        formAppInfo.Add(new StringContent(PackageName), "package_name");
+                        formAppInfo.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", versionCode)), "app_ver");
+                        formAppInfo.Add(new StringContent(track), "track");
+
+                        if (apkChanges != null)
+                        {
+                            foreach (UpdateInfo updateInfo in apkChanges)
+                            {
+                                if (updateInfo.Language.Length >= 2)
+                                {
+                                    string lang = updateInfo.Language.Substring(0, 2).ToLowerInvariant();
+                                    formAppInfo.Add(new StringContent(updateInfo.Changes), "info_" + lang);
+                                }
+                            }
+                        }
+
+                        HttpResponseMessage responseAppInfo = httpClient.PostAsync(url, formAppInfo).Result;
+                        responseAppInfo.EnsureSuccessStatusCode();
+                        string responseAppInfoXml = responseAppInfo.Content.ReadAsStringAsync().Result;
+
+                        try
+                        {
+                            XDocument xmlDoc = XDocument.Parse(responseAppInfoXml);
+                            if (xmlDoc.Root == null)
+                            {
+                                throw new Exception("XML invalid");
+                            }
+
+                            bool valid = false;
+
+                            XElement statusNode = xmlDoc.Root?.Element("status");
+                            if (statusNode != null)
+                            {
+                                XAttribute okAttr = statusNode.Attribute("ok");
+                                if (string.Compare(okAttr?.Value ?? string.Empty, "true", StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    valid = true;
+                                }
+                                else
+                                {
+                                    sb.AppendLine("Invalid status");
+                                }
+                            }
+
+                            XElement errorNode = xmlDoc.Root?.Element("error");
+                            if (errorNode != null)
+                            {
+                                valid = false;
+                                XAttribute messageAttr = errorNode.Attribute("message");
+                                if (string.IsNullOrEmpty(messageAttr?.Value))
+                                {
+                                    sb.AppendLine($"Error: {messageAttr?.Value}");
+                                }
+                            }
+
+                            if (valid)
+                            {
+                                sb.AppendLine("App info updated");
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            sb.AppendLine("Response invalid:");
+                            sb.AppendLine(responseAppInfoXml);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                sb.AppendLine($"Exception: {e.Message}");
+                return false;
+            }
+
+            return true;
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private bool ListApks()
         {
             if (_serviceThread != null)
@@ -1106,105 +1216,7 @@ namespace ApkUploader
                 StringBuilder sb = new StringBuilder();
                 try
                 {
-                    sb.AppendLine($"version: {versionCode}");
-                    UpdateStatus(sb.ToString());
-
-                    if (!string.IsNullOrEmpty(track))
-                    {
-                        sb.AppendLine($"track: {track}");
-                        UpdateStatus(sb.ToString());
-                    }
-
-                    if (apkChanges != null)
-                    {
-                        sb.Append("Changes info for languages present: ");
-                        foreach (UpdateInfo updateInfo in apkChanges)
-                        {
-                            sb.Append($"{updateInfo.Language} ");
-                        }
-                        sb.AppendLine();
-                        UpdateStatus(sb.ToString());
-                    }
-
-                    using (HttpClientHandler httpClientHandler = new HttpClientHandler())
-                    {
-                        httpClientHandler.Credentials = new NetworkCredential(userName, password);
-                        using (HttpClient httpClient = new HttpClient(httpClientHandler))
-                        {
-                            // ReSharper disable once UseObjectOrCollectionInitializer
-                            MultipartFormDataContent formAppInfo = new MultipartFormDataContent();
-
-                            formAppInfo.Add(new StringContent(PackageName), "package_name");
-                            formAppInfo.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", versionCode)), "app_ver");
-                            formAppInfo.Add(new StringContent(track), "track");
-
-                            if (apkChanges != null)
-                            {
-                                foreach (UpdateInfo updateInfo in apkChanges)
-                                {
-                                    if (updateInfo.Language.Length >= 2)
-                                    {
-                                        string lang = updateInfo.Language.Substring(0, 2).ToLowerInvariant();
-                                        formAppInfo.Add(new StringContent(updateInfo.Changes), "info_" + lang);
-                                    }
-                                }
-                            }
-
-                            HttpResponseMessage responseAppInfo = httpClient.PostAsync(url, formAppInfo).Result;
-                            responseAppInfo.EnsureSuccessStatusCode();
-                            string responseAppInfoXml = responseAppInfo.Content.ReadAsStringAsync().Result;
-
-                            try
-                            {
-                                XDocument xmlDoc = XDocument.Parse(responseAppInfoXml);
-                                if (xmlDoc.Root == null)
-                                {
-                                    throw new Exception("XML invalid");
-                                }
-
-                                bool valid = false;
-
-                                XElement statusNode = xmlDoc.Root?.Element("status");
-                                if (statusNode != null)
-                                {
-                                    XAttribute okAttr = statusNode.Attribute("ok");
-                                    if (string.Compare(okAttr?.Value ?? string.Empty, "true", StringComparison.OrdinalIgnoreCase) == 0)
-                                    {
-                                        valid = true;
-                                    }
-                                    else
-                                    {
-                                        sb.AppendLine("Invalid status");
-                                    }
-                                }
-
-                                XElement errorNode = xmlDoc.Root?.Element("error");
-                                if (errorNode != null)
-                                {
-                                    valid = false;
-                                    XAttribute messageAttr = errorNode.Attribute("message");
-                                    if (string.IsNullOrEmpty(messageAttr?.Value))
-                                    {
-                                        sb.AppendLine($"Error: {messageAttr?.Value}");
-                                    }
-                                }
-
-                                if (valid)
-                                {
-                                    sb.AppendLine("App info updated");
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                sb.AppendLine("Response invalid:");
-                                sb.AppendLine(responseAppInfoXml);
-                            }
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    sb.AppendLine($"Exception: {e.Message}");
+                    UpdateAppInfo(sb, versionCode, track, apkChanges, url, userName, password);
                 }
                 finally
                 {
