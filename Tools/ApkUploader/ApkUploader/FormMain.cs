@@ -863,6 +863,22 @@ namespace ApkUploader
                         AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
+
+                        if (versionAssign.HasValue)
+                        {
+                            UpdateAppInfo(sb, versionAssign.Value, track);
+                        }
+                        else
+                        {
+                            if (trackReleaseOld?.VersionCodes != null && trackReleaseOld.VersionCodes.Count > 0)
+                            {
+                                if (trackReleaseOld.VersionCodes[0] != null)
+                                {
+                                    long versionCode = trackReleaseOld.VersionCodes[0].Value;
+                                    UpdateAppInfo(sb, (int)versionCode, string.Empty);
+                                }
+                            }
+                        }
                     }
                 }
                 catch (Exception e)
@@ -1381,9 +1397,6 @@ namespace ApkUploader
         {
             List<UpdateInfo> apkChanges = null;
             int? versionCode = 0;
-            string url = string.Empty;
-            string userName = string.Empty;
-            string password = string.Empty;
             if (!string.IsNullOrWhiteSpace(textBoxResourceFolder.Text))
             {
                 apkChanges = ReadUpdateInfo(textBoxResourceFolder.Text);
