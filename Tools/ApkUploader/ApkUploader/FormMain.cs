@@ -387,10 +387,16 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UpdateAppInfo(StringBuilder sb, int versionCode, string track, List<UpdateInfo> apkChanges, string url, string userName, string password)
+        private bool UpdateAppInfo(StringBuilder sb, int versionCode, string track, List<UpdateInfo> apkChanges)
         {
             try
             {
+                if (!ReadAppInfoCredentials(out string url, out string userName, out string password))
+                {
+                    UpdateStatus("Reading app info credentials failed!");
+                    return false;
+                }
+
                 sb.AppendLine($"version: {versionCode}");
                 UpdateStatus(sb.ToString());
 
@@ -1203,7 +1209,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool SetAppInfo(int versionCode, string track, List<UpdateInfo> apkChanges, string url, string userName, string password)
+        private bool SetAppInfo(int versionCode, string track, List<UpdateInfo> apkChanges)
         {
             if (_serviceThread != null)
             {
@@ -1216,7 +1222,7 @@ namespace ApkUploader
                 StringBuilder sb = new StringBuilder();
                 try
                 {
-                    UpdateAppInfo(sb, versionCode, track, apkChanges, url, userName, password);
+                    UpdateAppInfo(sb, versionCode, track, apkChanges);
                 }
                 finally
                 {
@@ -1385,15 +1391,9 @@ namespace ApkUploader
                     UpdateStatus("Reading app version failed!");
                     return;
                 }
-
-                if (!ReadAppInfoCredentials(out url, out userName, out password))
-                {
-                    UpdateStatus("Reading app info credentials failed!");
-                    return;
-                }
             }
 
-            SetAppInfo(versionCode.Value, comboBoxTrackAssign.Text, apkChanges, url, userName, password);
+            SetAppInfo(versionCode.Value, comboBoxTrackAssign.Text, apkChanges);
         }
 
         private void buttonSelectApk_Click(object sender, EventArgs e)
