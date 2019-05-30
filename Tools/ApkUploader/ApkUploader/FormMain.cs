@@ -387,10 +387,17 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UpdateAppInfo(StringBuilder sb, int versionCode, string track, List<UpdateInfo> apkChanges = null)
+        private bool UpdateAppInfo(StringBuilder sb, long versionCode, string track, List<UpdateInfo> apkChanges = null)
         {
             try
             {
+                if (sb.Length > 0)
+                {
+                    sb.AppendLine();
+                }
+                sb.AppendLine("Updating app info");
+                UpdateStatus(sb.ToString());
+
                 if (!ReadAppInfoCredentials(out string url, out string userName, out string password))
                 {
                     UpdateStatus("Reading app info credentials failed!");
@@ -752,7 +759,7 @@ namespace ApkUploader
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
 
-                        UpdateAppInfo(sb, (int) currentVersion, toTrack);
+                        UpdateAppInfo(sb, currentVersion, toTrack);
                     }
                 }
                 catch (Exception e)
@@ -875,7 +882,7 @@ namespace ApkUploader
                                 if (trackReleaseOld.VersionCodes[0] != null)
                                 {
                                     long versionCode = trackReleaseOld.VersionCodes[0].Value;
-                                    UpdateAppInfo(sb, (int)versionCode, string.Empty);
+                                    UpdateAppInfo(sb, versionCode, string.Empty);
                                 }
                             }
                         }
@@ -998,6 +1005,8 @@ namespace ApkUploader
                         AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
+
+                        UpdateAppInfo(sb, currentVersion, track, apkChanges);
                     }
                 }
                 catch (Exception e)
