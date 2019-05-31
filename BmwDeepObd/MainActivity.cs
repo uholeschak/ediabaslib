@@ -3050,9 +3050,6 @@ namespace BmwDeepObd
                             // ignored
                         }
                     }
-                    _downloadProgress?.Dismiss();
-                    _downloadProgress = null;
-                    UpdateLockState();
                 };
             }
             _downloadProgress.SetMessage(GetString(Resource.String.downloading_file));
@@ -3078,7 +3075,7 @@ namespace BmwDeepObd
                     // ReSharper disable once RedundantNameQualifier
                     string extension = Path.GetExtension(fileName);
                     bool isPhp = string.Compare(extension, ".php", StringComparison.OrdinalIgnoreCase) == 0;
-                    HttpResponseMessage responseDownload;
+                    System.Threading.Tasks.Task<HttpResponseMessage> taskDownload;
                     if (isPhp)
                     {
                         string obbName = string.Empty;
@@ -3109,18 +3106,31 @@ namespace BmwDeepObd
                             formDownload.Add(new StringContent(certInfo), "cert");
                         }
 
-                        responseDownload = _httpClient.PostAsync(url, formDownload).Result;
+                        taskDownload = _httpClient.PostAsync(url, formDownload);
                     }
                     else
                     {
-                        responseDownload = _httpClient.GetAsync(url).Result;
+                        taskDownload = _httpClient.GetAsync(url);
                     }
 
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        if (_downloadProgress != null)
+                        {
+                            _downloadProgress.ButtonAbort.Enabled = true;
+                        }
+                    });
+
+                    HttpResponseMessage responseDownload = taskDownload.Result;
                     bool success = responseDownload.IsSuccessStatusCode;
                     string responseDownloadXml = responseDownload.Content.ReadAsStringAsync().Result;
                     DownloadCompleted(success, responseDownloadXml, downloadInfo);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     RunOnUiThread(() =>
                     {
@@ -3135,7 +3145,12 @@ namespace BmwDeepObd
                             _downloadProgress = null;
                             UpdateLockState();
                         }
-                        _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
+
+                        bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
+                        if (!cancelled)
+                        {
+                            _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
+                        }
                     });
                 }
             });
