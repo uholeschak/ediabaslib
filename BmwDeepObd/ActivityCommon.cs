@@ -3397,6 +3397,11 @@ namespace BmwDeepObd
                 return false;
             }
 
+            if (_sendHttpClient == null)
+            {
+                _sendHttpClient = new HttpClient();
+            }
+
             PackageInfo packageInfo = GetPackageInfo();
             string certInfo = GetCertificateInfo();
 
@@ -3415,11 +3420,6 @@ namespace BmwDeepObd
                 try
                 {
                     bool cancelledClicked = false;
-
-                    if (_sendHttpClient == null)
-                    {
-                        _sendHttpClient = new HttpClient();
-                    }
 
                     MultipartFormDataContent formDownload = new MultipartFormDataContent();
 
@@ -5015,6 +5015,12 @@ namespace BmwDeepObd
             {
                 return false;
             }
+
+            if (_translateHttpClient == null)
+            {
+                _translateHttpClient = new HttpClient();
+            }
+
             if (_translateProgress == null)
             {
                 _yandexTransList = null;
@@ -5077,10 +5083,6 @@ namespace BmwDeepObd
                 try
                 {
                     int stringCount = 0;
-                    if (_translateHttpClient == null)
-                    {
-                        _translateHttpClient = new HttpClient();
-                    }
                     StringBuilder sbUrl = new StringBuilder();
                     if (_yandexLangList == null)
                     {
