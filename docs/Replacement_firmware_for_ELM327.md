@@ -13,7 +13,7 @@ There is now a replacement firmware available for ELM327L based Bluetooth and Wi
 ![Bluetooth adapter top](Replacement_firmware_for_ELM327_BluetoothAdapterTopSmall.png) ![Bluetooth adapter bottom](Replacement_firmware_for_ELM327_BluetoothAdapterBottomSmall.png)
 
 ## Buy an adapter
-You could buy the [Bluetooth and WiFi adapter](https://www.ebay.de/itm/254244065117) at EBAY.  
+You could buy the [Bluetooth and WiFi adapter](https://www.ebay.de/itm/254249541599) at EBAY.  
 **Because of customs problems no adapters are available at the moment!**  
 If the link is outdated (what it is most of the time) all adapters are sold, in this case please simply wait for an update of the link.  
 Vehicles `E36`, `E38`, `E39`, `E46`, `E52`, `E53`, `E83` , `E85` and `E86` additionally require a connection between OBD pin 7 and 8 (or a pin7-pin8 adapter) to access all ECUs.  
