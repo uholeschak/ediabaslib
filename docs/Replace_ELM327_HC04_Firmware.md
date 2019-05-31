@@ -22,7 +22,10 @@ From right to left:
 
 ## Step1: Get the needed software:
 
-1. Download the PicKit3 Software (standalone) and extract it somewhere
+**Recommended:** Download [MPLAB X IDE](https://www.microchip.com/mplab/mplab-x-ide) and install it, start MPLAB X IPE and select device `PIC18F25K80`.
+The you could ignore all steps below!
+
+1. Download the [PICkit3 Programmer Application](https://microchipdeveloper.com/pickit3:scripttool) and extract it somewhere
 2. Edit the `PICkit3.ini` in the folder of Pickkit 3  and add the following lines to the end of it:
 ```
 TMEN:
@@ -30,7 +33,7 @@ REVS: Y
 ```
 3. Download the File `PKPlusDeviceFile.dat` from https://sourceforge.net/projects/pickit3plus/
 4. Delete original `PK2DeviceFile.dat` in the Pickkit 3 folder, and rename `PKPlusDeviceFile.dat` to `PK2DeviceFile.dat` 
-5. Download the binary package from https://github.com/uholeschak/ediabaslib/releases
+5. Download the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest)
 
 ## Step2: Program the PIC18F25K80
 * Connect your PicKit 3/4 to the ELM327 (see photo above)
