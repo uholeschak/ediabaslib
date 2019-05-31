@@ -5164,9 +5164,38 @@ namespace BmwDeepObd
                         }
                     }
 
-                    HttpResponseMessage responseTrabslate = _translateHttpClient.GetAsync(sbUrl.ToString()).Result;
-                    bool success = responseTrabslate.IsSuccessStatusCode;
-                    string responseTranslateXml = responseTrabslate.Content.ReadAsStringAsync().Result;
+                    System.Threading.Tasks.Task<HttpResponseMessage> taskTranslate = _translateHttpClient.GetAsync(sbUrl.ToString());
+
+                    _activity?.RunOnUiThread(() =>
+                    {
+                        if (_disposed)
+                        {
+                            return;
+                        }
+
+                        if (_translateProgress != null)
+                        {
+                            _translateProgress.ButtonAbort.Enabled = true;
+                        }
+                    });
+
+                    HttpResponseMessage responseTranslate = taskTranslate.Result;
+                    bool success = responseTranslate.IsSuccessStatusCode;
+                    string responseTranslateXml = responseTranslate.Content.ReadAsStringAsync().Result;
+
+                    _activity?.RunOnUiThread(() =>
+                    {
+                        if (_disposed)
+                        {
+                            return;
+                        }
+
+                        if (_translateProgress != null)
+                        {
+                            _translateProgress.ButtonAbort.Enabled = false;
+                        }
+                    });
+
                     if (success)
                     {
                         if (_yandexLangList == null)
