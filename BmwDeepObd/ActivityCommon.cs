@@ -3437,10 +3437,50 @@ namespace BmwDeepObd
                         }
                     }
 
-                    HttpResponseMessage responseDownload = _sendHttpClient.PostAsync(MailInfoDownloadUrl, formDownload).Result;
+                    System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _sendHttpClient.PostAsync(MailInfoDownloadUrl, formDownload);
+
+                    CustomProgressDialog progressLocal = progress;
+                    _activity?.RunOnUiThread(() =>
+                    {
+                        if (_disposed)
+                        {
+                            return;
+                        }
+
+                        if (progressLocal != null)
+                        {
+                            progressLocal.AbortClick = sender =>
+                            {
+                                try
+                                {
+                                    _sendHttpClient.CancelPendingRequests();
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            };
+                            progressLocal.ButtonAbort.Enabled = true;
+                        }
+                    });
+
+                    HttpResponseMessage responseDownload = taskDownload.Result;
                     responseDownload.EnsureSuccessStatusCode();
                     string responseDownloadXml = responseDownload.Content.ReadAsStringAsync().Result;
                     File.WriteAllText(mailInfoFile, responseDownloadXml);
+
+                    _activity?.RunOnUiThread(() =>
+                    {
+                        if (_disposed)
+                        {
+                            return;
+                        }
+
+                        if (progressLocal != null)
+                        {
+                            progressLocal.ButtonAbort.Enabled = false;
+                        }
+                    });
 
                     errorMessage = GetMailErrorMessage(mailInfoFile);
                     if (!string.IsNullOrEmpty(errorMessage))
@@ -3461,7 +3501,7 @@ namespace BmwDeepObd
                     try
                     {
                       obbName = Path.GetFileName(ExpansionDownloaderActivity.GetObbFilename(_activity)) ?? string.Empty;
-                      installer = PackageManager.GetInstallerPackageName(_activity.PackageName);
+                      installer = PackageManager.GetInstallerPackageName(_activity?.PackageName);
                     }
                     catch (Exception)
                     {
@@ -3579,7 +3619,6 @@ namespace BmwDeepObd
 
                         System.Threading.Tasks.Task<HttpResponseMessage> taskUpload = _sendHttpClient.PostAsync(MailInfoDownloadUrl, formUpload);
 
-                        CustomProgressDialog progressLocal = progress;
                         _activity?.RunOnUiThread(() =>
                         {
                             if (_disposed)
@@ -3589,17 +3628,6 @@ namespace BmwDeepObd
 
                             if (progressLocal != null)
                             {
-                                progressLocal.AbortClick = sender =>
-                                {
-                                    try
-                                    {
-                                        _sendHttpClient.CancelPendingRequests();
-                                    }
-                                    catch (Exception)
-                                    {
-                                        // ignored
-                                    }
-                                };
                                 progressLocal.ButtonAbort.Enabled = true;
                             }
                         });
@@ -3608,6 +3636,19 @@ namespace BmwDeepObd
                         responseUpload.EnsureSuccessStatusCode();
                         string responseUploadXml = responseUpload.Content.ReadAsStringAsync().Result;
                         File.WriteAllText(mailInfoFile, responseUploadXml);
+
+                        _activity?.RunOnUiThread(() =>
+                        {
+                            if (_disposed)
+                            {
+                                return;
+                            }
+
+                            if (progressLocal != null)
+                            {
+                                progressLocal.ButtonAbort.Enabled = false;
+                            }
+                        });
 
                         errorMessage = GetMailErrorMessage(mailInfoFile);
                         if (!string.IsNullOrEmpty(errorMessage))
@@ -3749,19 +3790,23 @@ namespace BmwDeepObd
                                     {
                                         return;
                                     }
-                                    progress.AbortClick = sender =>
+
+                                    if (progressLocal != null)
                                     {
-                                        cancelledClicked = true;   // cancel flag in event seems to be missing
-                                        try
+                                        progressLocal.AbortClick = sender =>
                                         {
-                                            smtpClientLocal.SendAsyncCancel();
-                                        }
-                                        catch (Exception)
-                                        {
-                                            // ignored
-                                        }
-                                    };
-                                    progress.ButtonAbort.Enabled = true;
+                                            cancelledClicked = true;   // cancel flag in event seems to be missing
+                                            try
+                                            {
+                                                smtpClientLocal.SendAsyncCancel();
+                                            }
+                                            catch (Exception)
+                                            {
+                                                // ignored
+                                            }
+                                        };
+                                        progressLocal.ButtonAbort.Enabled = true;
+                                    }
                                 });
                                 smtpClient.SendAsync(mail, null);
                                 finishEvent.WaitOne();
