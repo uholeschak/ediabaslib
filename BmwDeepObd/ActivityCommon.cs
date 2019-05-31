@@ -5277,7 +5277,7 @@ namespace BmwDeepObd
                         }
                     });
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     _activity?.RunOnUiThread(() =>
                     {
@@ -5296,31 +5296,36 @@ namespace BmwDeepObd
                                 _translateLockAquired = false;
                             }
                         }
-                        bool yesSelected = false;
-                        AlertDialog altertDialog = new AlertDialog.Builder(_context)
-                            .SetPositiveButton(Resource.String.button_yes, (s, a) =>
-                            {
-                                yesSelected = true;
-                                TranslateStrings(stringList, handler, disableCache);
-                            })
-                            .SetNegativeButton(Resource.String.button_no, (s, a) =>
-                            {
-                            })
-                            .SetCancelable(true)
-                            .SetMessage(Resource.String.translate_failed)
-                            .SetTitle(Resource.String.alert_title_error)
-                            .Show();
-                        altertDialog.DismissEvent += (o, eventArgs) =>
+
+                        bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
+                        if (!cancelled)
                         {
-                            if (_disposed)
+                            bool yesSelected = false;
+                            AlertDialog altertDialog = new AlertDialog.Builder(_context)
+                                .SetPositiveButton(Resource.String.button_yes, (s, a) =>
+                                {
+                                    yesSelected = true;
+                                    TranslateStrings(stringList, handler, disableCache);
+                                })
+                                .SetNegativeButton(Resource.String.button_no, (s, a) =>
+                                {
+                                })
+                                .SetCancelable(true)
+                                .SetMessage(Resource.String.translate_failed)
+                                .SetTitle(Resource.String.alert_title_error)
+                                .Show();
+                            altertDialog.DismissEvent += (o, eventArgs) =>
                             {
-                                return;
-                            }
-                            if (!yesSelected)
-                            {
-                                handler(null);
-                            }
-                        };
+                                if (_disposed)
+                                {
+                                    return;
+                                }
+                                if (!yesSelected)
+                                {
+                                    handler(null);
+                                }
+                            };
+                        }
                     });
                 }
             });
