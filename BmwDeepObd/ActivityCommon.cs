@@ -3414,7 +3414,7 @@ namespace BmwDeepObd
                 string mailInfoFile = Path.Combine(downloadDir, "Mail.xml");
                 try
                 {
-                    bool cancelled = false;
+                    bool cancelledClicked = false;
 
                     if (_sendHttpClient == null)
                     {
@@ -3577,6 +3577,8 @@ namespace BmwDeepObd
                             formUpload.Add(new StreamContent(fileStream), "file", Path.GetFileName(traceFile));
                         }
 
+                        System.Threading.Tasks.Task<HttpResponseMessage> taskUpload = _sendHttpClient.PostAsync(MailInfoDownloadUrl, formUpload);
+
                         CustomProgressDialog progressLocal = progress;
                         _activity?.RunOnUiThread(() =>
                         {
@@ -3589,7 +3591,6 @@ namespace BmwDeepObd
                             {
                                 progressLocal.AbortClick = sender =>
                                 {
-                                    cancelled = true;   // cancel flag in event seems to be missing
                                     try
                                     {
                                         _sendHttpClient.CancelPendingRequests();
@@ -3603,7 +3604,7 @@ namespace BmwDeepObd
                             }
                         });
 
-                        HttpResponseMessage responseUpload = _sendHttpClient.PostAsync(MailInfoDownloadUrl, formUpload).Result;
+                        HttpResponseMessage responseUpload = taskUpload.Result;
                         responseUpload.EnsureSuccessStatusCode();
                         string responseUploadXml = responseUpload.Content.ReadAsStringAsync().Result;
                         File.WriteAllText(mailInfoFile, responseUploadXml);
@@ -3701,7 +3702,7 @@ namespace BmwDeepObd
 
                                         finishEventLocal.Set();
 
-                                        if (e.Cancelled || cancelled)
+                                        if (e.Cancelled || cancelledClicked)
                                         {
                                             return;
                                         }
@@ -3750,7 +3751,7 @@ namespace BmwDeepObd
                                     }
                                     progress.AbortClick = sender =>
                                     {
-                                        cancelled = true;   // cancel flag in event seems to be missing
+                                        cancelledClicked = true;   // cancel flag in event seems to be missing
                                         try
                                         {
                                             smtpClientLocal.SendAsyncCancel();
@@ -3768,7 +3769,7 @@ namespace BmwDeepObd
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     _activity?.RunOnUiThread(() =>
                     {
@@ -3785,28 +3786,32 @@ namespace BmwDeepObd
                         }
                         handler?.Invoke(this, new EventArgs());
 
-                        string messageText;
-                        if (!string.IsNullOrEmpty(errorMessage))
+                        bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
+                        if (!cancelled)
                         {
-                            messageText = errorMessage + "\r\n" + _context.GetString(Resource.String.send_trace_file_failed_message);
-                        }
-                        else
-                        {
-                            messageText = _context.GetString(Resource.String.send_trace_file_failed_retry);
-                        }
+                            string messageText;
+                            if (!string.IsNullOrEmpty(errorMessage))
+                            {
+                                messageText = errorMessage + "\r\n" + _context.GetString(Resource.String.send_trace_file_failed_message);
+                            }
+                            else
+                            {
+                                messageText = _context.GetString(Resource.String.send_trace_file_failed_retry);
+                            }
 
-                        new AlertDialog.Builder(_context)
-                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                            {
-                                SendTraceFile(appDataDir, traceFile, message, classType, handler, deleteFile);
-                            })
-                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                            {
-                            })
-                            .SetCancelable(true)
-                            .SetMessage(messageText)
-                            .SetTitle(Resource.String.alert_title_error)
-                            .Show();
+                            new AlertDialog.Builder(_context)
+                                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                {
+                                    SendTraceFile(appDataDir, traceFile, message, classType, handler, deleteFile);
+                                })
+                                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                {
+                                })
+                                .SetCancelable(true)
+                                .SetMessage(messageText)
+                                .SetTitle(Resource.String.alert_title_error)
+                                .Show();
+                        }
                     });
                 }
                 finally
