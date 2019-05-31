@@ -33,12 +33,11 @@ REVS: Y
 ```
 3. Download the File `PKPlusDeviceFile.dat` from https://sourceforge.net/projects/pickit3plus/
 4. Delete original `PK2DeviceFile.dat` in the Pickkit 3 folder, and rename `PKPlusDeviceFile.dat` to `PK2DeviceFile.dat` 
-5. Download the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest)
 
 ## Step2: Program the PIC18F25K80
 * Connect your PicKit 3/4 to the ELM327 (see photo above)
 * Connect 12V to the ODB port (pin 4 and 16): https://www.obd-2.de/stecker-belegungen.html
-* Take `CanAdaapterElm.X.production.unified.hex` from `hc04` folder of the binary package
+* Take `CanAdaapterElm.X.production.unified.hex` from `hc04` folder of the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package
 * Start Pickkit Software, try to read the device. Do not continue until you get a proper hex file
 * Try to flash the device. If it fails with the error "Cannot flash Device-ID", then edit it using Tools->Testmemory to the value in the original hex-file
 
