@@ -1066,6 +1066,13 @@ namespace BmwDeepObd
 
         private void HandleStartDialogs(bool firstStart)
         {
+            if (firstStart)
+            {
+                _activityCommon.UpdateCheck((success, message) =>
+                {
+
+                });
+            }
             if (!_activityCommon.RequestInterfaceEnable((sender, args) =>
             {
                 if (_activityCommon == null)

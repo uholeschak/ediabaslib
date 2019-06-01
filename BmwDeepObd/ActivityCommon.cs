@@ -219,6 +219,7 @@ namespace BmwDeepObd
         public delegate void BcReceiverUpdateDisplayDelegate();
         public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
         public delegate void TranslateDelegate(List<string> transList);
+        public delegate void UpdateCheckDelegate(bool success, string message);
         public delegate void EnetSsidWarnDelegate(bool retry);
         public delegate void WifiConnectedWarnDelegate();
         public delegate void InitUdsFinishDelegate(bool result);
@@ -241,6 +242,7 @@ namespace BmwDeepObd
         public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
         public const string SettingBluetoothHciLog = "bluetooth_hci_log";
         private const string MailInfoDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Mail.php";
+        private const string UpdateCheckUrl = @"https://www.holeschak.de/BmwDeepObd/Update.php";
 #if DEBUG
         private static readonly string Tag = typeof(ActivityCommon).FullName;
 #endif
@@ -454,6 +456,7 @@ namespace BmwDeepObd
         private CustomProgressDialog _translateProgress;
         private HttpClient _translateHttpClient;
         private HttpClient _sendHttpClient;
+        private HttpClient _updateHttpClient;
         private bool _translateLockAquired;
         private List<string> _yandexLangList;
         private List<string> _yandexTransList;
@@ -851,6 +854,7 @@ namespace BmwDeepObd
                         _usbCheckTimer.Dispose();
                         _usbCheckTimer = null;
                     }
+
                     if (_translateHttpClient != null)
                     {
                         try
@@ -863,6 +867,7 @@ namespace BmwDeepObd
                         }
                         _translateHttpClient = null;
                     }
+
                     if (_sendHttpClient != null)
                     {
                         try
@@ -875,6 +880,20 @@ namespace BmwDeepObd
                         }
                         _sendHttpClient = null;
                     }
+
+                    if (_updateHttpClient != null)
+                    {
+                        try
+                        {
+                            _updateHttpClient.Dispose();
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                        _updateHttpClient = null;
+                    }
+
                     UnRegisterWifiCallback();
                     if (_context != null)
                     {
@@ -4044,6 +4063,75 @@ namespace BmwDeepObd
             {
                 return false;
             }
+            return true;
+        }
+
+        public bool UpdateCheck(UpdateCheckDelegate handler)
+        {
+            try
+            {
+                if (handler == null)
+                {
+                    return false;
+                }
+
+                if (_updateHttpClient == null)
+                {
+                    _updateHttpClient = new HttpClient();
+                }
+
+                PackageInfo packageInfo = GetPackageInfo();
+                string certInfo = GetCertificateInfo();
+
+                string installer = string.Empty;
+                try
+                {
+                    installer = PackageManager.GetInstallerPackageName(_activity.PackageName);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
+                MultipartFormDataContent formUpdate = new MultipartFormDataContent
+                {
+                    { new StringContent(_activity.PackageName), "package_name" },
+                    { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", packageInfo?.VersionCode)), "app_ver" },
+                    { new StringContent(AppId), "app_id" },
+                    { new StringContent("release"), "track" },
+                    { new StringContent(GetCurrentLanguage()), "lang" },
+                    { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)), "android_ver" },
+                    { new StringContent(Build.Fingerprint), "fingerprint" },
+                    { new StringContent(installer ?? string.Empty), "installer" }
+                };
+
+                if (!string.IsNullOrEmpty(certInfo))
+                {
+                    formUpdate.Add(new StringContent(certInfo), "cert");
+                }
+
+                System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _updateHttpClient.PostAsync(UpdateCheckUrl, formUpdate);
+                taskDownload.ContinueWith((task, o) =>
+                {
+                    UpdateCheckDelegate handlerLocal = o as UpdateCheckDelegate;
+                    try
+                    {
+                        HttpResponseMessage responseUpdate = task.Result;
+                        responseUpdate.EnsureSuccessStatusCode();
+                        string responseTranslateXml = responseUpdate.Content.ReadAsStringAsync().Result;
+                        handlerLocal?.Invoke(true, responseTranslateXml);
+                    }
+                    catch (Exception)
+                    {
+                        handlerLocal?.Invoke(false, null);
+                    }
+                }, handler, System.Threading.Tasks.TaskContinuationOptions.None);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
             return true;
         }
 
