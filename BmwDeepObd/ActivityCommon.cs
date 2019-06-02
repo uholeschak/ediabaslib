@@ -4075,7 +4075,7 @@ namespace BmwDeepObd
                     { new StringContent(_activity.PackageName), "package_name" },
                     { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", packageInfo?.VersionCode)), "app_ver" },
                     { new StringContent(AppId), "app_id" },
-                    { new StringContent("release"), "track" },
+                    { new StringContent("production"), "track" },
                     { new StringContent(GetCurrentLanguage()), "lang" },
                     { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)), "android_ver" },
                     { new StringContent(Build.Fingerprint), "fingerprint" },
