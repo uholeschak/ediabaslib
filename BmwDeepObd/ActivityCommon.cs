@@ -219,7 +219,7 @@ namespace BmwDeepObd
         public delegate void BcReceiverUpdateDisplayDelegate();
         public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
         public delegate void TranslateDelegate(List<string> transList);
-        public delegate void UpdateCheckDelegate(bool success, string message);
+        public delegate void UpdateCheckDelegate(bool success, bool updateAvailable, string message);
         public delegate void EnetSsidWarnDelegate(bool retry);
         public delegate void WifiConnectedWarnDelegate();
         public delegate void InitUdsFinishDelegate(bool result);
@@ -3434,7 +3434,6 @@ namespace BmwDeepObd
             Thread sendThread = new Thread(() =>
             {
                 string errorMessage = null;
-                string downloadDir = Path.Combine(appDataDir, DownloadDir);
                 try
                 {
                     bool cancelledClicked = false;
@@ -3613,12 +3612,12 @@ namespace BmwDeepObd
 
                     if (dbId != null)
                     {
-                        // ReSharper disable once UseObjectOrCollectionInitializer
-                        MultipartFormDataContent formUpload = new MultipartFormDataContent();
-
-                        formUpload.Add(new StringContent(dbId), "db_id");
-                        formUpload.Add(new StringContent(commitId ?? string.Empty), "commit_id");
-                        formUpload.Add(new StringContent(sb.ToString()), "info_text");
+                        MultipartFormDataContent formUpload = new MultipartFormDataContent
+                        {
+                            { new StringContent(dbId), "db_id" },
+                            { new StringContent(commitId ?? string.Empty), "commit_id" },
+                            { new StringContent(sb.ToString()), "info_text" }
+                        };
 
                         if (!string.IsNullOrEmpty(traceFile) && File.Exists(traceFile))
                         {
@@ -4093,12 +4092,38 @@ namespace BmwDeepObd
                     {
                         HttpResponseMessage responseUpdate = task.Result;
                         responseUpdate.EnsureSuccessStatusCode();
-                        string responseTranslateXml = responseUpdate.Content.ReadAsStringAsync().Result;
-                        handlerLocal?.Invoke(true, responseTranslateXml);
+                        string responseUpdateXml = responseUpdate.Content.ReadAsStringAsync().Result;
+                        bool success = GetUpdateInfo(responseUpdateXml, out string appVer, out string appVerName, out string infoText, out string errorMessage);
+                        bool updateAvailable = false;
+                        StringBuilder sbMessage = new StringBuilder();
+
+                        if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            sbMessage.Append(errorMessage);
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(appVer))
+                            {
+                                updateAvailable = true;
+                                sbMessage.Append("App update available.");
+                                if (!string.IsNullOrEmpty(appVerName))
+                                {
+                                    sbMessage.Append("\r\nApp update available.");
+                                    sbMessage.Append(string.Format("\r\nVersion: {0}", appVerName));
+                                }
+                                if (!string.IsNullOrEmpty(infoText))
+                                {
+                                    sbMessage.Append("\r\nUpdate information:\r\n");
+                                    sbMessage.Append(infoText);
+                                }
+                            }
+                        }
+                        handlerLocal?.Invoke(success, updateAvailable, sbMessage.ToString());
                     }
                     catch (Exception)
                     {
-                        handlerLocal?.Invoke(false, null);
+                        handlerLocal?.Invoke(false, false, null);
                     }
                 }, handler, System.Threading.Tasks.TaskContinuationOptions.None);
             }
@@ -4108,6 +4133,66 @@ namespace BmwDeepObd
             }
 
             return true;
+        }
+
+        private bool GetUpdateInfo(string xmlResult, out string appVer, out string appVerName, out string infoText, out string errorMessage)
+        {
+            appVer = null;
+            appVerName = null;
+            infoText = null;
+            errorMessage = null;
+            try
+            {
+                if (string.IsNullOrEmpty(xmlResult))
+                {
+                    return false;
+                }
+
+                XDocument xmlDoc = XDocument.Parse(xmlResult);
+                if (xmlDoc.Root == null)
+                {
+                    return false;
+                }
+
+                XElement errorNode = xmlDoc.Root?.Element("error");
+                if (errorNode != null)
+                {
+                    XAttribute messageAttr = errorNode.Attribute("message");
+                    if (!string.IsNullOrEmpty(messageAttr?.Value))
+                    {
+                        errorMessage = messageAttr.Value;
+                        return true;
+                    }
+                }
+
+                XElement updateNode = xmlDoc.Root?.Element("update");
+                if (updateNode != null)
+                {
+                    XAttribute appVerAttr = updateNode.Attribute("app_ver");
+                    if (!string.IsNullOrEmpty(appVerAttr?.Value))
+                    {
+                        appVer = appVerAttr.Value;
+                    }
+
+                    XAttribute appVerNameAttr = updateNode.Attribute("app_ver_name");
+                    if (!string.IsNullOrEmpty(appVerNameAttr?.Value))
+                    {
+                        appVerName = appVerNameAttr.Value;
+                    }
+
+                    XAttribute infoAttr = updateNode.Attribute("info");
+                    if (!string.IsNullOrEmpty(infoAttr?.Value))
+                    {
+                        infoText = infoAttr.Value;
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public static string GetCurrentLanguage()
