@@ -42,6 +42,9 @@ namespace BmwDeepObd
         private RadioButton _radioButtonStartOffline;
         private RadioButton _radioButtonStartConnect;
         private RadioButton _radioButtonStartConnectClose;
+        private RadioButton _radioButtonUpdateOff;
+        private RadioButton _radioButtonUpdate1Day;
+        private RadioButton _radioButtonUpdate1Week;
         private CheckBox _checkBoxDoubleClickForAppExit;
         private CheckBox _checkBoxSendDataBroadcast;
         private TextView _textViewCaptionCpuUsage;
@@ -92,6 +95,10 @@ namespace BmwDeepObd
             _radioButtonStartOffline = FindViewById<RadioButton>(Resource.Id.radioButtonStartOffline);
             _radioButtonStartConnect = FindViewById<RadioButton>(Resource.Id.radioButtonStartConnect);
             _radioButtonStartConnectClose = FindViewById<RadioButton>(Resource.Id.radioButtonStartConnectClose);
+
+            _radioButtonUpdateOff = FindViewById<RadioButton>(Resource.Id.radioButtonUpdateOff);
+            _radioButtonUpdate1Day = FindViewById<RadioButton>(Resource.Id.radioButtonUpdate1Day);
+            _radioButtonUpdate1Week = FindViewById<RadioButton>(Resource.Id.radioButtonUpdate1Week);
 
             _checkBoxDoubleClickForAppExit = FindViewById<CheckBox>(Resource.Id.checkBoxDoubleClickForAppExit);
             _checkBoxSendDataBroadcast = FindViewById<CheckBox>(Resource.Id.checkBoxSendDataBroadcast);
@@ -237,6 +244,19 @@ namespace BmwDeepObd
                     break;
             }
 
+            if (ActivityCommon.UpdateCheckDelay == TimeSpan.TicksPerDay * 7)
+            {
+                _radioButtonUpdate1Week.Checked = true;
+            }
+            else if (ActivityCommon.UpdateCheckDelay < 0)
+            {
+                _radioButtonUpdateOff.Checked = true;
+            }
+            else
+            {
+                _radioButtonUpdate1Day.Checked = true;
+            }
+
             _checkBoxDoubleClickForAppExit.Checked = ActivityCommon.DoubleClickForAppExit;
             _checkBoxSendDataBroadcast.Checked = ActivityCommon.SendDataBroadcast;
             _checkBoxCheckCpuUsage.Checked = ActivityCommon.CheckCpuUsage;
@@ -319,6 +339,21 @@ namespace BmwDeepObd
                 autoConnectType = ActivityCommon.AutoConnectType.ConnectClose;
             }
             ActivityCommon.AutoConnectHandling = autoConnectType;
+
+            long updateCheckDelay = ActivityCommon.UpdateCheckDelayDefault;
+            if (_radioButtonUpdateOff.Checked)
+            {
+                updateCheckDelay = -1;
+            }
+            else if (_radioButtonUpdate1Day.Checked)
+            {
+                updateCheckDelay = TimeSpan.TicksPerDay;
+            }
+            else if (_radioButtonUpdate1Week.Checked)
+            {
+                updateCheckDelay = TimeSpan.TicksPerDay * 7;
+            }
+            ActivityCommon.UpdateCheckDelay = updateCheckDelay;
 
             ActivityCommon.DoubleClickForAppExit = _checkBoxDoubleClickForAppExit.Checked;
             ActivityCommon.SendDataBroadcast = _checkBoxSendDataBroadcast.Checked;

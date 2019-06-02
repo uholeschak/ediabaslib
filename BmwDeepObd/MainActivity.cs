@@ -585,6 +585,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestGlobalSettings:
+                    UpdateCheck();
                     StoreSettings();
                     UpdateDirectories();
                     UpdateOptionsMenu();
@@ -1097,8 +1098,14 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool UpdateCheck()
         {
+            if (ActivityCommon.UpdateCheckDelay < 0)
+            {
+                _instanceData.UpdateCheckTime = DateTime.MinValue.Ticks;
+                return false;
+            }
+
             TimeSpan timeDiff = new TimeSpan(DateTime.Now.Ticks - _instanceData.UpdateCheckTime);
-            if (timeDiff.TotalHours < 24)
+            if (timeDiff.Ticks < ActivityCommon.UpdateCheckDelay)
             {
                 return false;
             }
@@ -1370,6 +1377,7 @@ namespace BmwDeepObd
                         _instanceData.DataLogAppend = prefs.GetBoolean("DataLogAppend", _instanceData.DataLogAppend);
                     }
                     ActivityCommon.AutoConnectHandling = (ActivityCommon.AutoConnectType)prefs.GetInt("AutoConnect", (int)ActivityCommon.AutoConnectType.Offline);
+                    ActivityCommon.UpdateCheckDelay = prefs.GetLong("UpdateCheckDelay", ActivityCommon.UpdateCheckDelayDefault);
                     ActivityCommon.DoubleClickForAppExit = prefs.GetBoolean("DoubleClickForExit", ActivityCommon.DoubleClickForAppExit);
                     ActivityCommon.SendDataBroadcast = prefs.GetBoolean("SendDataBroadcast", ActivityCommon.SendDataBroadcast);
                     ActivityCommon.CheckCpuUsage = prefs.GetBoolean("CheckCpuUsage", true);
@@ -1414,6 +1422,7 @@ namespace BmwDeepObd
                 prefsEdit.PutBoolean("DataLogActive", _instanceData.DataLogActive);
                 prefsEdit.PutBoolean("DataLogAppend", _instanceData.DataLogAppend);
                 prefsEdit.PutInt("AutoConnect", (int)ActivityCommon.AutoConnectHandling);
+                prefsEdit.PutLong("UpdateCheckDelay", ActivityCommon.UpdateCheckDelay);
                 prefsEdit.PutBoolean("DoubleClickForExit", ActivityCommon.DoubleClickForAppExit);
                 prefsEdit.PutBoolean("SendDataBroadcast", ActivityCommon.SendDataBroadcast);
                 prefsEdit.PutBoolean("CheckCpuUsage", ActivityCommon.CheckCpuUsage);

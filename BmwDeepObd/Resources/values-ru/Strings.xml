@@ -47,7 +47,7 @@
 
   <!-- Update info -->
   <!--Translate-->
-  <string name="update_header">A newer app version is available at Google Play.</string>
+  <string name="update_header">An update is available at Google Play.</string>
   <string name="update_version">App version: {0}</string>
   <string name="update_info">Update information:</string>
   <string name="update_display">Do you want to display the update?</string>
@@ -304,6 +304,11 @@
   <string name="settings_start_offline">Нет связи с автомобилем</string>
   <string name="settings_start_connect">Автоматическое подключение к автомобилю</string>
   <string name="settings_start_connect_close">Завершить автоматическое подключение к автомобилю и приложение (только при активном Broadcast)</string>
+  <!--Translate-->
+  <string name="settings_caption_update">Update check</string>
+  <string name="settings_update_off">Never</string>
+  <string name="settings_update_1day">Every day</string>
+  <string name="settings_update_1week">Every week</string>
   <string name="settings_caption_app_exit">Выход из приложения</string>
   <string name="settings_double_click_for_app_exit">Для выхода из приложения требуется двойное нажатие</string>
   <string name="settings_caption_broadcast">Broadcast</string>
