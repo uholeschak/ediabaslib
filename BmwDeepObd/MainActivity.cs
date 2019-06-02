@@ -3629,7 +3629,11 @@ namespace BmwDeepObd
                 _instanceData.UpdateAvailable = false;
                 string message = _instanceData.UpdateMessage;
                 _downloadEcuAlertDialog = new AlertDialog.Builder(this)
-                    .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                    {
+                        StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://play.google.com/store/apps/details?id=" + PackageName)));
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
                     })
                     .SetMessage(message)
