@@ -1359,7 +1359,13 @@ namespace BmwDeepObd
                     _instanceData.ConfigFileName = prefs.GetString("ConfigFile", string.Empty);
                     _instanceData.UpdateCheckTime = prefs.GetLong("UpdateCheckTime", DateTime.MinValue.Ticks);
                     _instanceData.LastVersionCode = prefs.GetInt("VersionCode", -1);
-                    _instanceData.StorageRequirementsAccepted = _instanceData.LastVersionCode == _currentVersionCode && prefs.GetBoolean("StorageAccepted", false);
+                    _instanceData.StorageRequirementsAccepted = prefs.GetBoolean("StorageAccepted", false);
+
+                    if (_instanceData.LastVersionCode != _currentVersionCode)
+                    {
+                        _instanceData.StorageRequirementsAccepted = false;
+                        _instanceData.UpdateCheckTime = 0;
+                    }
 
                     ActivityCommon.BtNoEvents = prefs.GetBoolean("BtNoEvents", false);
                     ActivityCommon.EnableTranslation = prefs.GetBoolean("EnableTranslation", false);
