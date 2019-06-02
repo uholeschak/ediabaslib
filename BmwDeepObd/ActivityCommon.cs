@@ -3435,7 +3435,6 @@ namespace BmwDeepObd
             {
                 string errorMessage = null;
                 string downloadDir = Path.Combine(appDataDir, DownloadDir);
-                string mailInfoFile = Path.Combine(downloadDir, "Mail.xml");
                 try
                 {
                     bool cancelledClicked = false;
@@ -3486,7 +3485,6 @@ namespace BmwDeepObd
                     HttpResponseMessage responseDownload = taskDownload.Result;
                     responseDownload.EnsureSuccessStatusCode();
                     string responseDownloadXml = responseDownload.Content.ReadAsStringAsync().Result;
-                    File.WriteAllText(mailInfoFile, responseDownloadXml);
 
                     _activity?.RunOnUiThread(() =>
                     {
@@ -3501,16 +3499,16 @@ namespace BmwDeepObd
                         }
                     });
 
-                    errorMessage = GetMailErrorMessage(mailInfoFile);
+                    errorMessage = GetMailErrorMessage(responseDownloadXml);
                     if (!string.IsNullOrEmpty(errorMessage))
                     {
                         throw new Exception("Error message present");
                     }
-                    if (!GetMailKeyWordsInfo(mailInfoFile, out string wordRegEx, out int maxWords))
+                    if (!GetMailKeyWordsInfo(responseDownloadXml, out string wordRegEx, out int maxWords))
                     {
                         throw new Exception("Invalid mail keywords info");
                     }
-                    if (!GetMailLinesInfo(mailInfoFile, out string linesRegEx))
+                    if (!GetMailLinesInfo(responseDownloadXml, out string linesRegEx))
                     {
                         throw new Exception("Invalid mail line info");
                     }
@@ -3605,16 +3603,8 @@ namespace BmwDeepObd
                         }
                     }
 
-                    bool infoResult = GetMailInfo(mailInfoFile, out string dbId, out string commitId, out string mailHost, out int mailPort, out bool mailSsl,
+                    bool infoResult = GetMailInfo(responseDownloadXml, out string dbId, out string commitId, out string mailHost, out int mailPort, out bool mailSsl,
                         out string mailFrom, out string mailTo, out string mailUser, out string mailPassword);
-                    try
-                    {
-                        File.Delete(mailInfoFile);
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
 
                     if (!infoResult)
                     {
@@ -3654,7 +3644,6 @@ namespace BmwDeepObd
                         HttpResponseMessage responseUpload = taskUpload.Result;
                         responseUpload.EnsureSuccessStatusCode();
                         string responseUploadXml = responseUpload.Content.ReadAsStringAsync().Result;
-                        File.WriteAllText(mailInfoFile, responseUploadXml);
 
                         _activity?.RunOnUiThread(() =>
                         {
@@ -3669,7 +3658,7 @@ namespace BmwDeepObd
                             }
                         });
 
-                        errorMessage = GetMailErrorMessage(mailInfoFile);
+                        errorMessage = GetMailErrorMessage(responseUploadXml);
                         if (!string.IsNullOrEmpty(errorMessage))
                         {
                             throw new Exception("Error message present");
@@ -3878,34 +3867,20 @@ namespace BmwDeepObd
                         }
                     });
                 }
-                finally
-                {
-                    try
-                    {
-                        if (File.Exists(mailInfoFile))
-                        {
-                            File.Delete(mailInfoFile);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                }
             });
             sendThread.Start();
             return true;
         }
 
-        private string GetMailErrorMessage(string xmlFile)
+        private string GetMailErrorMessage(string mailXml)
         {
             try
             {
-                if (!File.Exists(xmlFile))
+                if (string.IsNullOrEmpty(mailXml))
                 {
                     return null;
                 }
-                XDocument xmlDoc = XDocument.Load(xmlFile);
+                XDocument xmlDoc = XDocument.Parse(mailXml);
                 XElement errorNode = xmlDoc.Root?.Element("error");
                 if (errorNode != null)
                 {
@@ -3923,7 +3898,7 @@ namespace BmwDeepObd
             return null;
         }
 
-        private bool GetMailInfo(string xmlFile, out string dbId, out string commitId, out string host, out int port, out bool ssl, out string from, out string to, out string name, out string password)
+        private bool GetMailInfo(string mailXml, out string dbId, out string commitId, out string host, out int port, out bool ssl, out string from, out string to, out string name, out string password)
         {
             dbId = null;
             commitId = null;
@@ -3936,11 +3911,11 @@ namespace BmwDeepObd
             password = null;
             try
             {
-                if (!File.Exists(xmlFile))
+                if (string.IsNullOrEmpty(mailXml))
                 {
                     return false;
                 }
-                XDocument xmlDoc = XDocument.Load(xmlFile);
+                XDocument xmlDoc = XDocument.Parse(mailXml);
 
                 XElement dbNode = xmlDoc.Root?.Element("db_info");
                 if (dbNode != null)
@@ -4010,17 +3985,17 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool GetMailKeyWordsInfo(string xmlFile, out string regEx, out int maxWords)
+        private bool GetMailKeyWordsInfo(string mailXml, out string regEx, out int maxWords)
         {
             regEx = null;
             maxWords = 0;
             try
             {
-                if (!File.Exists(xmlFile))
+                if (string.IsNullOrEmpty(mailXml))
                 {
                     return false;
                 }
-                XDocument xmlDoc = XDocument.Load(xmlFile);
+                XDocument xmlDoc = XDocument.Parse(mailXml);
                 XElement keyWordsNode = xmlDoc.Root?.Element("keywords");
                 XAttribute regexAttr = keyWordsNode?.Attribute("regex");
                 if (regexAttr == null)
@@ -4041,16 +4016,16 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool GetMailLinesInfo(string xmlFile, out string regEx)
+        private bool GetMailLinesInfo(string mailXml, out string regEx)
         {
             regEx = null;
             try
             {
-                if (!File.Exists(xmlFile))
+                if (string.IsNullOrEmpty(mailXml))
                 {
                     return false;
                 }
-                XDocument xmlDoc = XDocument.Load(xmlFile);
+                XDocument xmlDoc = XDocument.Parse(mailXml);
                 XElement keyWordsNode = xmlDoc.Root?.Element("lineinfo");
                 XAttribute regexAttr = keyWordsNode?.Attribute("regex");
                 if (regexAttr == null)
