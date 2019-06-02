@@ -4109,7 +4109,6 @@ namespace BmwDeepObd
                                 sbMessage.Append("App update available.");
                                 if (!string.IsNullOrEmpty(appVerName))
                                 {
-                                    sbMessage.Append("\r\nApp update available.");
                                     sbMessage.Append(string.Format("\r\nVersion: {0}", appVerName));
                                 }
                                 if (!string.IsNullOrEmpty(infoText))
