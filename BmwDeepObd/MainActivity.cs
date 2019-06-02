@@ -1068,7 +1068,7 @@ namespace BmwDeepObd
         {
             if (firstStart)
             {
-                _activityCommon.UpdateCheck((success, message) =>
+                _activityCommon.UpdateCheck((success, updateAvailable, message) =>
                 {
 
                 });
