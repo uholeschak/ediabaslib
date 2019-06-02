@@ -175,6 +175,33 @@
                 android:text="@string/settings_start_connect_close" />
         </RadioGroup>
         <TextView
+            android:text="@+string/settings_caption_update"
+            android:id="@+id/textViewCaptionUpdate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#666"
+            android:textColor="#fff" />
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RadioButton
+                android:id="@+id/radioButtonUpdateOff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_update_off" />
+            <RadioButton
+                android:id="@+id/radioButtonUpdate1Day"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_update_1day" />
+            <RadioButton
+                android:id="@+id/radioButtonUpdate1Week"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_update_1week" />
+        </RadioGroup>
+        <TextView
             android:text="@+string/settings_caption_app_exit"
             android:id="@+id/textViewCaptionAppExit"
             android:layout_width="match_parent"

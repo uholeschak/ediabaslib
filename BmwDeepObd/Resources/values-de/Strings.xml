@@ -47,7 +47,7 @@
   <string name="vag_mode_info">Der VAG Modus ist noch experimentell.\nEs wird ein <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD Adapter</a> mit mindestens Firmwareversion 0.11 benötigt.\nIm Moment werden nur die Protokolle KWP2000, KWP1281, TP2.0 und UDS unterstützt.\nFür den neuen VAG Modus müssen die Konfiguration neu generiert werden.\nEs ist möglich den alten VAG Modus wieder in den globalen Einstellungen wählen.</string>
 
   <!-- Update info -->
-  <string name="update_header">Eine neuere App-Version ist bei Google Play verfügbar.</string>
+  <string name="update_header">Eine Update ist bei Google Play verfügbar.</string>
   <string name="update_version">App-Version: {0}</string>
   <string name="update_info">Update Informationen:</string>
   <string name="update_display">Wollen Sie das Update anzeigen?</string>
@@ -303,6 +303,10 @@
   <string name="settings_start_offline">Keine Verbindungsaufbau zum Fahrzeug</string>
   <string name="settings_start_connect">Automatischer Verbindungsaufbau zum Fahrzeug</string>
   <string name="settings_start_connect_close">Automatischer Verbindungsaufbau zum Fahrzeug und App beenden (nur wenn der Broadcast aktiv ist)</string>
+  <string name="settings_caption_update">Update-Prüfung</string>
+  <string name="settings_update_off">Niemals</string>
+  <string name="settings_update_1day">Jeden Tag</string>
+  <string name="settings_update_1week">Jede Woche</string>
   <string name="settings_caption_app_exit">App beenden</string>
   <string name="settings_double_click_for_app_exit">Doppelklick notwendig um App zu beenden</string>
   <string name="settings_caption_broadcast">Broadcast</string>

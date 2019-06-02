@@ -225,6 +225,7 @@ namespace BmwDeepObd
         public delegate void InitUdsFinishDelegate(bool result);
         public const int UdsDtcStatusOverride = 0x2C;
         public const BuildVersionCodes MinEthernetSettingsVersion = BuildVersionCodes.M;
+        public const long UpdateCheckDelayDefault = TimeSpan.TicksPerDay;
         public const string MtcBtAppName = @"com.microntek.bluetooth";
         public const string DefaultLang = "en";
         public const string TraceFileName = "ifh.trc.zip";
@@ -631,6 +632,8 @@ namespace BmwDeepObd
         public static bool StoreDataLogSettings { get; set; }
 
         public static AutoConnectType AutoConnectHandling { get; set; }
+
+        public static long UpdateCheckDelay { get; set; }
 
         public static bool DoubleClickForAppExit { get; set; }
 
