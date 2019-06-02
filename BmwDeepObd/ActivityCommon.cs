@@ -219,7 +219,7 @@ namespace BmwDeepObd
         public delegate void BcReceiverUpdateDisplayDelegate();
         public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
         public delegate void TranslateDelegate(List<string> transList);
-        public delegate void UpdateCheckDelegate(bool success, bool updateAvailable, string message);
+        public delegate void UpdateCheckDelegate(bool success, bool updateAvailable, Int64? appVer, string message);
         public delegate void EnetSsidWarnDelegate(bool retry);
         public delegate void WifiConnectedWarnDelegate();
         public delegate void InitUdsFinishDelegate(bool result);
@@ -4096,7 +4096,7 @@ namespace BmwDeepObd
                         HttpResponseMessage responseUpdate = task.Result;
                         responseUpdate.EnsureSuccessStatusCode();
                         string responseUpdateXml = responseUpdate.Content.ReadAsStringAsync().Result;
-                        bool success = GetUpdateInfo(responseUpdateXml, out string appVer, out string appVerName, out string infoText, out string errorMessage);
+                        bool success = GetUpdateInfo(responseUpdateXml, out Int64? appVer, out string appVerName, out string infoText, out string errorMessage);
                         bool updateAvailable = false;
                         StringBuilder sbMessage = new StringBuilder();
 
@@ -4106,7 +4106,7 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            if (!string.IsNullOrEmpty(appVer))
+                            if (appVer.HasValue)
                             {
                                 updateAvailable = true;
                                 sbMessage.Append(_context.GetString(Resource.String.update_header));
@@ -4126,11 +4126,11 @@ namespace BmwDeepObd
                                 sbMessage.Append(_context.GetString(Resource.String.update_display));
                             }
                         }
-                        handlerLocal?.Invoke(success, updateAvailable, sbMessage.ToString());
+                        handlerLocal?.Invoke(success, updateAvailable, appVer, sbMessage.ToString());
                     }
                     catch (Exception)
                     {
-                        handlerLocal?.Invoke(false, false, null);
+                        handlerLocal?.Invoke(false, false, null, null);
                     }
                 }, handler, System.Threading.Tasks.TaskContinuationOptions.None);
             }
@@ -4142,7 +4142,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool GetUpdateInfo(string xmlResult, out string appVer, out string appVerName, out string infoText, out string errorMessage)
+        private bool GetUpdateInfo(string xmlResult, out Int64? appVer, out string appVerName, out string infoText, out string errorMessage)
         {
             appVer = null;
             appVerName = null;
@@ -4178,7 +4178,10 @@ namespace BmwDeepObd
                     XAttribute appVerAttr = updateNode.Attribute("app_ver");
                     if (!string.IsNullOrEmpty(appVerAttr?.Value))
                     {
-                        appVer = appVerAttr.Value;
+                        if (Int64.TryParse(appVerAttr.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int64 appVerValue))
+                        {
+                            appVer = appVerValue;
+                        }
                     }
 
                     XAttribute appVerNameAttr = updateNode.Attribute("app_ver_name");

@@ -1110,7 +1110,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            bool result = _activityCommon.UpdateCheck((success, updateAvailable, message) =>
+            bool result = _activityCommon.UpdateCheck((success, updateAvailable, appVer, message) =>
             {
                 if (success)
                 {
