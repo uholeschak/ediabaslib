@@ -4106,16 +4106,21 @@ namespace BmwDeepObd
                             if (!string.IsNullOrEmpty(appVer))
                             {
                                 updateAvailable = true;
-                                sbMessage.Append("App update available.");
+                                sbMessage.Append(_context.GetString(Resource.String.update_header));
                                 if (!string.IsNullOrEmpty(appVerName))
                                 {
-                                    sbMessage.Append(string.Format("\r\nVersion: {0}", appVerName));
+                                    sbMessage.Append("\r\n");
+                                    sbMessage.Append(string.Format(_context.GetString(Resource.String.update_version), appVerName));
                                 }
                                 if (!string.IsNullOrEmpty(infoText))
                                 {
-                                    sbMessage.Append("\r\nUpdate information:\r\n");
+                                    sbMessage.Append("\r\n");
+                                    sbMessage.Append(_context.GetString(Resource.String.update_info));
+                                    sbMessage.Append("\r\n");
                                     sbMessage.Append(infoText);
                                 }
+                                sbMessage.Append("\r\n");
+                                sbMessage.Append(_context.GetString(Resource.String.update_display));
                             }
                         }
                         handlerLocal?.Invoke(success, updateAvailable, sbMessage.ToString());
