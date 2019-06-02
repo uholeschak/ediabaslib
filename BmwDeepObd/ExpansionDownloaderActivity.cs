@@ -313,11 +313,11 @@ namespace BmwDeepObd
         /// <summary>
         /// Is package downloaded form google play
         /// </summary>
-        public bool IsFromGooglePlay()
+        public static bool IsFromGooglePlay(Context context)
         {
             try
             {
-                String installer = PackageManager.GetInstallerPackageName(PackageName);
+                String installer = context.PackageManager.GetInstallerPackageName(context.PackageName);
                 if (string.IsNullOrEmpty(installer))
                 {
                     return false;
@@ -402,7 +402,7 @@ namespace BmwDeepObd
 
         public static string GetObbFilename(Context context)
         {
-            Regex regex = new Regex(@"^main\.([0-9]+)\." + ActivityCommon.AppNameSpace + @"\.obb$", RegexOptions.IgnoreCase);
+            Regex regex = new Regex(@"^main\.([0-9]+)\." + context.PackageName + @"\.obb$", RegexOptions.IgnoreCase);
             PackageInfo packageInfo = context.PackageManager.GetPackageInfo(context.PackageName, 0);
             int packageVersion = -1;
             if (packageInfo != null)
@@ -704,7 +704,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (!IsFromGooglePlay())
+                if (!IsFromGooglePlay(this))
                 {
                     PackageInfo packageInfo = PackageManager.GetPackageInfo(PackageName, 0);
                     int packageVersion = 0;
@@ -712,7 +712,7 @@ namespace BmwDeepObd
                     {
                         packageVersion = packageInfo.VersionCode;
                     }
-                    string obbFileName = string.Format(CultureInfo.InvariantCulture, "main.{0}.{1}.obb", packageVersion, ActivityCommon.AppNameSpace);
+                    string obbFileName = string.Format(CultureInfo.InvariantCulture, "main.{0}.{1}.obb", packageVersion, PackageName);
 
                     Java.IO.File[] obbDirs;
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
