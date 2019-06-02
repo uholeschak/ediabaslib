@@ -137,6 +137,7 @@ namespace BmwDeepObd
             public string TraceDir { get; set; }
             public bool UpdateAvailable { get; set; }
             public string UpdateMessage { get; set; }
+            public long UpdateCheckTime { get; set; }
 
             public ActivityCommon.InterfaceType SelectedInterface { get; set; }
         }
@@ -1070,22 +1071,7 @@ namespace BmwDeepObd
         {
             if (firstStart)
             {
-                _activityCommon.UpdateCheck((success, updateAvailable, message) =>
-                {
-                    if (success)
-                    {
-                        RunOnUiThread(() =>
-                        {
-                            if (_activityCommon == null)
-                            {
-                                return;
-                            }
-
-                            _instanceData.UpdateAvailable = updateAvailable;
-                            _instanceData.UpdateMessage = message;
-                        });
-                    }
-                });
+                UpdateCheck();
             }
             if (!_activityCommon.RequestInterfaceEnable((sender, args) =>
             {
@@ -1106,6 +1092,37 @@ namespace BmwDeepObd
                     CheckForEcuFiles(true);
                 }
             }
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool UpdateCheck()
+        {
+            TimeSpan timeDiff = new TimeSpan(DateTime.Now.Ticks - _instanceData.UpdateCheckTime);
+            if (timeDiff.TotalHours < 24)
+            {
+                return false;
+            }
+
+            bool result = _activityCommon.UpdateCheck((success, updateAvailable, message) =>
+            {
+                if (success)
+                {
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        _instanceData.UpdateAvailable = updateAvailable;
+                        _instanceData.UpdateMessage = message;
+                        _instanceData.UpdateCheckTime = DateTime.Now.Ticks;
+                        StoreSettings();
+                    });
+                }
+            });
+
+            return result;
         }
 
         private bool UseCommService()
@@ -1332,6 +1349,7 @@ namespace BmwDeepObd
                     _instanceData.DeviceName = prefs.GetString("DeviceName", string.Empty);
                     _instanceData.DeviceAddress = prefs.GetString("DeviceAddress", string.Empty);
                     _instanceData.ConfigFileName = prefs.GetString("ConfigFile", string.Empty);
+                    _instanceData.UpdateCheckTime = prefs.GetLong("UpdateCheckTime", DateTime.MinValue.Ticks);
                     _instanceData.LastVersionCode = prefs.GetInt("VersionCode", -1);
                     _instanceData.StorageRequirementsAccepted = _instanceData.LastVersionCode == _currentVersionCode && prefs.GetBoolean("StorageAccepted", false);
 
@@ -1378,6 +1396,7 @@ namespace BmwDeepObd
                 prefsEdit.PutString("DeviceAddress", _instanceData.DeviceAddress);
                 prefsEdit.PutString("EnetIp", _activityCommon.SelectedEnetIp);
                 prefsEdit.PutString("ConfigFile", _instanceData.ConfigFileName);
+                prefsEdit.PutLong("UpdateCheckTime", _instanceData.UpdateCheckTime);
                 prefsEdit.PutString("StorageMedia", _activityCommon.CustomStorageMedia ?? string.Empty);
                 prefsEdit.PutInt("VersionCode", _currentVersionCode);
                 prefsEdit.PutBoolean("StorageAccepted", _instanceData.StorageRequirementsAccepted);
