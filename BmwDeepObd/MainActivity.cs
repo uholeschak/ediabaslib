@@ -135,6 +135,8 @@ namespace BmwDeepObd
             public bool VagInfoShown { get; set; }
             public string DataLogDir { get; set; }
             public string TraceDir { get; set; }
+            public bool UpdateAvailable { get; set; }
+            public string UpdateMessage { get; set; }
 
             public ActivityCommon.InterfaceType SelectedInterface { get; set; }
         }
@@ -1070,7 +1072,19 @@ namespace BmwDeepObd
             {
                 _activityCommon.UpdateCheck((success, updateAvailable, message) =>
                 {
+                    if (success)
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
 
+                            _instanceData.UpdateAvailable = updateAvailable;
+                            _instanceData.UpdateMessage = message;
+                        });
+                    }
                 });
             }
             if (!_activityCommon.RequestInterfaceEnable((sender, args) =>
@@ -3609,6 +3623,30 @@ namespace BmwDeepObd
                 };
                 return false;
             }
+
+            if (_instanceData.UpdateAvailable && !string.IsNullOrEmpty(_instanceData.UpdateMessage))
+            {
+                _instanceData.UpdateAvailable = false;
+                string message = _instanceData.UpdateMessage;
+                _downloadEcuAlertDialog = new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                    {
+                    })
+                    .SetMessage(message)
+                    .SetTitle(Resource.String.alert_title_info)
+                    .Show();
+                _downloadEcuAlertDialog.DismissEvent += (sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    _downloadEcuAlertDialog = null;
+                    CheckForEcuFiles(checkPackage);
+                };
+                return false;
+            }
+
             if (!ValidEcuFiles(_instanceData.EcuPath) || !ValidEcuPackage(Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir)))
             {
                 string message = string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_extract), EcuExtractSize);
