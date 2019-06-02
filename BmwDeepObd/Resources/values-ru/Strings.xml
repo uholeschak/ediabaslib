@@ -47,7 +47,7 @@
 
   <!-- Update info -->
   <!--Translate-->
-  <string name="update_header">A newer app version is available in Google Play.</string>
+  <string name="update_header">A newer app version is available at Google Play.</string>
   <string name="update_version">App version: {0}</string>
   <string name="update_info">Update information:</string>
   <string name="update_display">Do you want to display the update?</string>

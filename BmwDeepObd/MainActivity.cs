@@ -1116,8 +1116,9 @@ namespace BmwDeepObd
 
                         _instanceData.UpdateAvailable = updateAvailable;
                         _instanceData.UpdateMessage = message;
-                        _instanceData.UpdateCheckTime = DateTime.Now.Ticks;
-                        StoreSettings();
+                        DisplayUpdateInfo((sender, args) =>
+                        {
+                        });
                     });
                 }
             });
@@ -3608,7 +3609,7 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedParameter.Local
         private bool CheckForEcuFiles(bool checkPackage = false)
         {
-            if (!_activityActive || !_instanceData.StorageAccessGranted || (_downloadEcuAlertDialog != null))
+            if (!_activityActive || !_instanceData.StorageAccessGranted || _downloadEcuAlertDialog != null)
             {
                 return true;
             }
@@ -3640,6 +3641,54 @@ namespace BmwDeepObd
                     _downloadEcuAlertDialog = null;
                     CheckForEcuFiles(checkPackage);
                 };
+                return false;
+            }
+
+            if (DisplayUpdateInfo((sender, args) =>
+            {
+                CheckForEcuFiles(checkPackage);
+            }))
+            {
+                return false;
+            }
+
+            if (!ValidEcuFiles(_instanceData.EcuPath) || !ValidEcuPackage(Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir)))
+            {
+                string message = string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_extract), EcuExtractSize);
+
+                _downloadEcuAlertDialog = new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                    {
+                        DownloadEcuFiles();
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                    {
+                    })
+                    .SetMessage(message)
+                    .SetTitle(Resource.String.alert_title_question)
+                    .Show();
+                _downloadEcuAlertDialog.DismissEvent += (sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    _downloadEcuAlertDialog = null;
+                };
+                return false;
+            }
+            return true;
+        }
+
+        private bool DisplayUpdateInfo(EventHandler<EventArgs> handler)
+        {
+            if (!_activityActive || _downloadEcuAlertDialog != null)
+            {
+                return false;
+            }
+
+            if (ActivityCommon.CommActive)
+            {
                 return false;
             }
 
@@ -3685,37 +3734,14 @@ namespace BmwDeepObd
                         return;
                     }
                     _downloadEcuAlertDialog = null;
-                    CheckForEcuFiles(checkPackage);
+                    handler?.Invoke(this, new EventArgs());
                 };
-                return false;
-            }
 
-            if (!ValidEcuFiles(_instanceData.EcuPath) || !ValidEcuPackage(Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir)))
-            {
-                string message = string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_extract), EcuExtractSize);
-
-                _downloadEcuAlertDialog = new AlertDialog.Builder(this)
-                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                    {
-                        DownloadEcuFiles();
-                    })
-                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                    {
-                    })
-                    .SetMessage(message)
-                    .SetTitle(Resource.String.alert_title_question)
-                    .Show();
-                _downloadEcuAlertDialog.DismissEvent += (sender, args) =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-                    _downloadEcuAlertDialog = null;
-                };
-                return false;
+                _instanceData.UpdateCheckTime = DateTime.Now.Ticks;
+                StoreSettings();
+                return true;
             }
-            return true;
+            return false;
         }
 
         private bool ValidEcuFiles(string path)
