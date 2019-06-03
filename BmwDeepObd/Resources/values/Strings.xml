@@ -15,6 +15,7 @@
   <string name="button_accept">Accept</string>
   <string name="button_decline">Decline</string>
   <string name="button_donate">Donate</string>
+  <string name="button_skip">Skip</string>
   <string name="back_button_twice_for_exit">Press button twice in order to exit</string>
   <string name="no_ext_storage">No external storage available</string>
   <string name="access_denied_ext_storage">Access to the external storage is required to execute this app</string>
@@ -49,7 +50,7 @@
   <string name="update_header">An update is available at Google Play.</string>
   <string name="update_version">App version: {0}</string>
   <string name="update_info">Update information:</string>
-  <string name="update_display">Do you want to display the update?</string>
+  <string name="update_show">Do you want to show the update?\nYou could also skip this app version.</string>
 
   <!-- Expansion downloader -->
   <string name="exp_down_paused_cellular">Would you like to enable downloading over cellular connections? Depending on your data plan, this may cost you money.</string>

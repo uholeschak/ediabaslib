@@ -16,6 +16,7 @@
   <string name="button_accept">Akzeptieren</string>
   <string name="button_decline">Ablehnen</string>
   <string name="button_donate">Spenden</string>
+  <string name="button_skip">Überspringen</string>
   <string name="back_button_twice_for_exit">Die Schaltfläche zwei mal drücken zum Beenden</string>
   <string name="no_ext_storage">Kein externer Speicher verfügbar</string>
   <string name="access_denied_ext_storage">Zugriff auf den externen Speicher ist notwendig um die App auszuführen</string>
@@ -50,7 +51,7 @@
   <string name="update_header">Eine Update ist bei Google Play verfügbar.</string>
   <string name="update_version">App-Version: {0}</string>
   <string name="update_info">Update Informationen:</string>
-  <string name="update_display">Wollen Sie das Update anzeigen?</string>
+  <string name="update_show">Wollen Sie das Update anzeigen?\nSie können auch diese App-Version überspringen.</string>
 
   <!-- Expansion downloader -->
   <string name="exp_down_paused_cellular">Wollen Sie den Download über eine Mobilfunkverbindung aktivieren? Dies kann zuätzlich Kosten verursachen.</string>
