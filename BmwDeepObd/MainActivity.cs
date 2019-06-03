@@ -136,8 +136,10 @@ namespace BmwDeepObd
             public string DataLogDir { get; set; }
             public string TraceDir { get; set; }
             public bool UpdateAvailable { get; set; }
+            public int UpdateVersionCode { get; set; }
             public string UpdateMessage { get; set; }
             public long UpdateCheckTime { get; set; }
+            public int UpdateSkipVersion { get; set; }
 
             public ActivityCommon.InterfaceType SelectedInterface { get; set; }
         }
@@ -1101,6 +1103,7 @@ namespace BmwDeepObd
             if (ActivityCommon.UpdateCheckDelay < 0)
             {
                 _instanceData.UpdateCheckTime = DateTime.MinValue.Ticks;
+                _instanceData.UpdateSkipVersion = -1;
                 return false;
             }
 
@@ -1121,11 +1124,15 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        _instanceData.UpdateAvailable = updateAvailable;
-                        _instanceData.UpdateMessage = message;
-                        DisplayUpdateInfo((sender, args) =>
+                        if (appVer.HasValue)
                         {
-                        });
+                            _instanceData.UpdateAvailable = updateAvailable;
+                            _instanceData.UpdateVersionCode = appVer.Value;
+                            _instanceData.UpdateMessage = message;
+                            DisplayUpdateInfo((sender, args) =>
+                            {
+                            });
+                        }
                     });
                 }
             });
@@ -1358,6 +1365,7 @@ namespace BmwDeepObd
                     _instanceData.DeviceAddress = prefs.GetString("DeviceAddress", string.Empty);
                     _instanceData.ConfigFileName = prefs.GetString("ConfigFile", string.Empty);
                     _instanceData.UpdateCheckTime = prefs.GetLong("UpdateCheckTime", DateTime.MinValue.Ticks);
+                    _instanceData.UpdateSkipVersion = prefs.GetInt("UpdateSkipVersion", -1);
                     _instanceData.LastVersionCode = prefs.GetInt("VersionCode", -1);
                     _instanceData.StorageRequirementsAccepted = prefs.GetBoolean("StorageAccepted", false);
 
@@ -1365,6 +1373,7 @@ namespace BmwDeepObd
                     {
                         _instanceData.StorageRequirementsAccepted = false;
                         _instanceData.UpdateCheckTime = 0;
+                        _instanceData.UpdateSkipVersion = -1;
                     }
 
                     ActivityCommon.BtNoEvents = prefs.GetBoolean("BtNoEvents", false);
@@ -1412,6 +1421,7 @@ namespace BmwDeepObd
                 prefsEdit.PutString("EnetIp", _activityCommon.SelectedEnetIp);
                 prefsEdit.PutString("ConfigFile", _instanceData.ConfigFileName);
                 prefsEdit.PutLong("UpdateCheckTime", _instanceData.UpdateCheckTime);
+                prefsEdit.PutInt("UpdateSkipVersion", _instanceData.UpdateSkipVersion);
                 prefsEdit.PutString("StorageMedia", _activityCommon.CustomStorageMedia ?? string.Empty);
                 prefsEdit.PutInt("VersionCode", _currentVersionCode);
                 prefsEdit.PutBoolean("StorageAccepted", _instanceData.StorageRequirementsAccepted);
@@ -3707,10 +3717,17 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (_instanceData.UpdateAvailable && !string.IsNullOrEmpty(_instanceData.UpdateMessage))
+            string message = _instanceData.UpdateMessage;
+            if (_instanceData.UpdateAvailable && !string.IsNullOrEmpty(message))
             {
                 _instanceData.UpdateAvailable = false;
-                string message = _instanceData.UpdateMessage;
+                if (_instanceData.UpdateSkipVersion >= 0 && _instanceData.UpdateVersionCode == _instanceData.UpdateSkipVersion)
+                {
+                    _instanceData.UpdateCheckTime = DateTime.Now.Ticks;
+                    StoreSettings();
+                    return false;
+                }
+
                 _downloadEcuAlertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
@@ -3739,6 +3756,11 @@ namespace BmwDeepObd
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
                     })
+                    .SetNeutralButton(Resource.String.button_skip, (sender, args) =>
+                    {
+                        _instanceData.UpdateSkipVersion = _instanceData.UpdateVersionCode;
+                        StoreSettings();
+                    })
                     .SetMessage(message)
                     .SetTitle(Resource.String.alert_title_info)
                     .Show();
@@ -3753,6 +3775,7 @@ namespace BmwDeepObd
                 };
 
                 _instanceData.UpdateCheckTime = DateTime.Now.Ticks;
+                _instanceData.UpdateSkipVersion = -1;
                 StoreSettings();
                 return true;
             }

@@ -16,6 +16,8 @@
   <string name="button_accept">Принять</string>
   <string name="button_decline">Отклонить</string>
   <string name="button_donate">Пожертвовать</string>
+  <!--Translate-->
+  <string name="button_skip">Skip</string>
   <string name="back_button_twice_for_exit">Дважды нажмите кнопку, чтобы выйти</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения</string>
@@ -50,7 +52,7 @@
   <string name="update_header">An update is available at Google Play.</string>
   <string name="update_version">App version: {0}</string>
   <string name="update_info">Update information:</string>
-  <string name="update_display">Do you want to display the update?</string>
+  <string name="update_show">Do you want to show the update?\nYou could also skip this app version.</string>
 
   <!-- Expansion downloader -->
   <string name="exp_down_paused_cellular">Хотите активировать загрузку через мобильное соединение? Это может привести к дополнительным расходам.</string>
