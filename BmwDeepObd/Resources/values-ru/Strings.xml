@@ -16,8 +16,7 @@
   <string name="button_accept">Принять</string>
   <string name="button_decline">Отклонить</string>
   <string name="button_donate">Пожертвовать</string>
-  <!--Translate-->
-  <string name="button_skip">Skip</string>
+  <string name="button_skip">Пропустить</string>
   <string name="back_button_twice_for_exit">Дважды нажмите кнопку, чтобы выйти</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения</string>
@@ -43,16 +42,15 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Обновление прошивки адаптера\n- Автоматическая проверка обновлений\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
   <!-- Update info -->
-  <!--Translate-->
-  <string name="update_header">An update is available at Google Play.</string>
-  <string name="update_version">App version: {0}</string>
-  <string name="update_info">Update information:</string>
-  <string name="update_show">Do you want to show the update?\nYou could also skip this app version.</string>
+  <string name="update_header">Обновление доступно в Google Play.</string>
+  <string name="update_version">Версия приложения: {0}</string>
+  <string name="update_info">Информация по обновлению:</string>
+  <string name="update_show">Показывать обновление?\nВы также можете пропустить эту версию приложения.</string>
 
   <!-- Expansion downloader -->
   <string name="exp_down_paused_cellular">Хотите активировать загрузку через мобильное соединение? Это может привести к дополнительным расходам.</string>
@@ -66,8 +64,7 @@
   <string name="exp_down_button_resume">Продолжить загрузку</string>
   <string name="exp_down_button_cancel">Отменить</string>
   <string name="exp_down_button_cancel_verify">Отменить проверку</string>
-  <!--Translate-->
-  <string name="exp_down_obb_missing">Приложение не было загружено из Google Play и файл расширения отсутствует.\nDownload the OBB file with an APK downloader from Google Play and copy it with the name:\n\'{0}\'\ninto one of the directories:\n{1}\nThere is not support for this, using Google Play is the only recommended way.</string>
+  <string name="exp_down_obb_missing">Приложение не было загружено из Google Play и файл расширения отсутствует.\nЗагрузите OBB-файл при помощи APK-загрузчика и скопируйте его с именем:\n\'{0}\'\nв папку:\n{1}\nВ данном случае поддержка отсутствует, использование Google Play - единственный рекомендуемый способ.</string>
   <string name="exp_down_time_remaining">Необходимое время: {0}</string>
 
   <!-- Downloader library -->
@@ -306,11 +303,10 @@
   <string name="settings_start_offline">Нет связи с автомобилем</string>
   <string name="settings_start_connect">Автоматическое подключение к автомобилю</string>
   <string name="settings_start_connect_close">Завершить автоматическое подключение к автомобилю и приложение (только при активном Broadcast)</string>
-  <!--Translate-->
-  <string name="settings_caption_update">Update check</string>
-  <string name="settings_update_off">Never</string>
-  <string name="settings_update_1day">Every day</string>
-  <string name="settings_update_1week">Every week</string>
+  <string name="settings_caption_update">Проверка обновления</string>
+  <string name="settings_update_off">Не проверять</string>
+  <string name="settings_update_1day">Каждый день</string>
+  <string name="settings_update_1week">Каждую неделю</string>
   <string name="settings_caption_app_exit">Выход из приложения</string>
   <string name="settings_double_click_for_app_exit">Для выхода из приложения требуется двойное нажатие</string>
   <string name="settings_caption_broadcast">Broadcast</string>
