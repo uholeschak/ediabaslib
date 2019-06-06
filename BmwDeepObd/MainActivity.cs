@@ -254,6 +254,7 @@ namespace BmwDeepObd
                 {
                     UpdateOptionsMenu();
                     UpdateDisplay();
+                    UpdateCheck();
                 }
             }, BroadcastReceived);
             _activityCommon.RegisterInternetCellular();
