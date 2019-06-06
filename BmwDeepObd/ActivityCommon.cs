@@ -458,6 +458,7 @@ namespace BmwDeepObd
         private HttpClient _translateHttpClient;
         private HttpClient _sendHttpClient;
         private HttpClient _updateHttpClient;
+        private bool _updateCheckActive;
         private bool _translateLockAquired;
         private List<string> _yandexLangList;
         private List<string> _yandexTransList;
@@ -4047,6 +4048,11 @@ namespace BmwDeepObd
         {
             try
             {
+                if (_updateCheckActive)
+                {
+                    return false;
+                }
+
                 if (handler == null)
                 {
                     return false;
@@ -4092,9 +4098,11 @@ namespace BmwDeepObd
                 }
 
                 System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _updateHttpClient.PostAsync(UpdateCheckUrl, formUpdate);
+                _updateCheckActive = true;
                 taskDownload.ContinueWith((task, o) =>
                 {
                     UpdateCheckDelegate handlerLocal = o as UpdateCheckDelegate;
+                    _updateCheckActive = false;
                     try
                     {
                         HttpResponseMessage responseUpdate = task.Result;
@@ -4141,6 +4149,7 @@ namespace BmwDeepObd
             }
             catch (Exception)
             {
+                _updateCheckActive = false;
                 return false;
             }
 
