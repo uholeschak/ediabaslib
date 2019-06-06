@@ -4043,7 +4043,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool UpdateCheck(UpdateCheckDelegate handler)
+        public bool UpdateCheck(UpdateCheckDelegate handler, int skipVersion)
         {
             try
             {
@@ -4084,6 +4084,11 @@ namespace BmwDeepObd
                 if (!string.IsNullOrEmpty(certInfo))
                 {
                     formUpdate.Add(new StringContent(certInfo), "cert");
+                }
+
+                if (skipVersion >= 0)
+                {
+                    formUpdate.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", skipVersion)), "app_ver_ignore");
                 }
 
                 System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _updateHttpClient.PostAsync(UpdateCheckUrl, formUpdate);

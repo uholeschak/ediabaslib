@@ -1135,7 +1135,7 @@ namespace BmwDeepObd
                         }
                     });
                 }
-            });
+            }, _instanceData.UpdateSkipVersion);
 
             return result;
         }
