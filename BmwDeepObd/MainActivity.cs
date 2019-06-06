@@ -2187,7 +2187,16 @@ namespace BmwDeepObd
                                                 }
                                             }
                                         }
+
                                         srMessage.Append("\r\n");
+                                        string textErrorCode = FormatResultInt64(errorReport.ErrorDict, "F_ORT_NR", "{0:X04}");
+                                        if (!string.IsNullOrEmpty(textErrorCode))
+                                        {
+                                            srMessage.Append(GetString(Resource.String.error_code));
+                                            srMessage.Append(": ");
+                                            srMessage.Append(textErrorCode);
+                                            srMessage.Append("\r\n");
+                                        }
                                         srMessage.Append(text1);
                                         srMessage.Append(", ");
                                         srMessage.Append(text2);
