@@ -1125,6 +1125,9 @@ namespace BmwDeepObd
                             return;
                         }
 
+                        _instanceData.UpdateCheckTime = DateTime.Now.Ticks;
+                        StoreSettings();
+
                         if (appVer.HasValue)
                         {
                             _instanceData.UpdateAvailable = updateAvailable;
@@ -3724,8 +3727,6 @@ namespace BmwDeepObd
                 _instanceData.UpdateAvailable = false;
                 if (_instanceData.UpdateSkipVersion >= 0 && _instanceData.UpdateVersionCode == _instanceData.UpdateSkipVersion)
                 {
-                    _instanceData.UpdateCheckTime = DateTime.Now.Ticks;
-                    StoreSettings();
                     return false;
                 }
 
@@ -3775,7 +3776,6 @@ namespace BmwDeepObd
                     handler?.Invoke(this, new EventArgs());
                 };
 
-                _instanceData.UpdateCheckTime = DateTime.Now.Ticks;
                 _instanceData.UpdateSkipVersion = -1;
                 StoreSettings();
                 return true;
