@@ -37,8 +37,7 @@
             android:id="@+id/textViewCaptionBtEnable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCaptionBackground"
-            android:textColor="@color/colorCaptionText" />
+            style="@style/TextViewInnerCaption" />
         <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,8 +63,7 @@
             android:id="@+id/textViewCaptionBtDisable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCaptionBackground"
-            android:textColor="@color/colorCaptionText" />
+            style="@style/TextViewInnerCaption" />
         <CheckBox
             android:id="@+id/checkBoxDisableBtAtExit"
             android:layout_width="match_parent"
@@ -76,8 +74,7 @@
             android:id="@+id/textViewCaptionLockComm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCaptionBackground"
-            android:textColor="@color/colorCaptionText" />
+            style="@style/TextViewInnerCaption" />
         <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -108,8 +105,7 @@
             android:id="@+id/textViewCaptionLockLogging"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCaptionBackground"
-            android:textColor="@color/colorCaptionText" />
+            style="@style/TextViewInnerCaption" />
         <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -140,8 +136,7 @@
             android:id="@+id/textViewCaptionLogfiles"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCaptionBackground"
-            android:textColor="@color/colorCaptionText" />
+            style="@style/TextViewInnerCaption" />
         <CheckBox
             android:id="@+id/checkBoxStoreDataLogSettings"
             android:layout_width="match_parent"
@@ -152,8 +147,7 @@
             android:id="@+id/textViewCaptionAppStart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCaptionBackground"
-            android:textColor="@color/colorCaptionText" />
+            style="@style/TextViewInnerCaption" />
         <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -179,8 +173,7 @@
             android:id="@+id/textViewCaptionUpdate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCaptionBackground"
-            android:textColor="@color/colorCaptionText" />
+            style="@style/TextViewInnerCaption" />
         <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -206,8 +199,7 @@
             android:id="@+id/textViewCaptionAppExit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCaptionBackground"
-            android:textColor="@color/colorCaptionText" />
+            style="@style/TextViewInnerCaption" />
         <CheckBox
             android:id="@+id/checkBoxDoubleClickForAppExit"
             android:layout_width="match_parent"
@@ -218,8 +210,7 @@
             android:id="@+id/textViewCaptionBroadcast"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCaptionBackground"
-            android:textColor="@color/colorCaptionText" />
+            style="@style/TextViewInnerCaption" />
         <CheckBox
             android:id="@+id/checkBoxSendDataBroadcast"
             android:layout_width="match_parent"
@@ -230,8 +221,7 @@
             android:id="@+id/textViewCaptionCpuUsage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCaptionBackground"
-            android:textColor="@color/colorCaptionText" />
+            style="@style/TextViewInnerCaption" />
         <CheckBox
             android:id="@+id/checkBoxCheckCpuUsage"
             android:layout_width="match_parent"
@@ -242,8 +232,7 @@
             android:id="@+id/textViewCaptionCheckEcuFiles"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCaptionBackground"
-            android:textColor="@color/colorCaptionText" />
+            style="@style/TextViewInnerCaption" />
         <CheckBox
             android:id="@+id/checkBoxCheckEcuFiles"
             android:layout_width="match_parent"
@@ -254,8 +243,7 @@
             android:id="@+id/textViewCaptionOldVagMode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCaptionBackground"
-            android:textColor="@color/colorCaptionText" />
+            style="@style/TextViewInnerCaption" />
         <CheckBox
             android:id="@+id/checkBoxOldVagMode"
             android:layout_width="match_parent"
@@ -266,8 +254,7 @@
             android:id="@+id/textViewCaptionStorage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCaptionBackground"
-            android:textColor="@color/colorCaptionText" />
+            style="@style/TextViewInnerCaption" />
         <Button
             android:id="@+id/buttonStorageLocation"
             android:layout_width="match_parent"
@@ -277,8 +264,7 @@
             android:id="@+id/textViewCaptionDebug"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCaptionBackground"
-            android:textColor="@color/colorCaptionText" />
+            style="@style/TextViewInnerCaption" />
         <CheckBox
             android:id="@+id/checkBoxCollectDebugInfo"
             android:layout_width="match_parent"

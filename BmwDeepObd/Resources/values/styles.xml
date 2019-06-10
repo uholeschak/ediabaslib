@@ -8,4 +8,8 @@
     <item name="android:divider">#635D63</item>
     <item name="android:dividerHeight">1px</item>
   </style>
+  <style name="TextViewInnerCaption" parent="TextAppearance.AppCompat">
+    <item name="android:background">@color/colorCaptionBackground</item>
+    <item name="android:textColor">@color/colorCaptionText</item>
+  </style>
 </resources>
