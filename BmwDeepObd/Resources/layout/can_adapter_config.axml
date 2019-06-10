@@ -12,8 +12,8 @@
             android:text="@+string/can_adapter_mode_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#666"
-            android:textColor="#fff" />
+            android:background="@color/colorCaptionBackground"
+            android:textColor="@color/colorCaptionText" />
         <Spinner
             android:id="@+id/spinnerCanAdapterMode"
             android:layout_width="match_parent"
@@ -23,8 +23,8 @@
             android:text="@+string/can_adapter_sep_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#666"
-            android:textColor="#fff" />
+            android:background="@color/colorCaptionBackground"
+            android:textColor="@color/colorCaptionText" />
         <Spinner
             android:id="@+id/spinnerCanAdapterSepTime"
             android:layout_width="match_parent"
@@ -34,8 +34,8 @@
             android:text="@+string/can_adapter_block_size"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#666"
-            android:textColor="#fff" />
+            android:background="@color/colorCaptionBackground"
+            android:textColor="@color/colorCaptionText" />
         <Spinner
             android:id="@+id/spinnerCanAdapterBlockSize"
             android:layout_width="match_parent"
@@ -45,8 +45,8 @@
             android:text="@+string/can_adapter_bt_pin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#666"
-            android:textColor="#fff" />
+            android:background="@color/colorCaptionBackground"
+            android:textColor="@color/colorCaptionText" />
         <EditText
             android:id="@+id/editTextBtPin"
             android:layout_width="match_parent"
@@ -59,8 +59,8 @@
             android:text="@+string/can_adapter_bt_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#666"
-            android:textColor="#fff" />
+            android:background="@color/colorCaptionBackground"
+            android:textColor="@color/colorCaptionText" />
         <EditText
             android:id="@+id/editTextBtName"
             android:layout_width="match_parent"
@@ -73,8 +73,8 @@
             android:text="@+string/can_adapter_ignition_state"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#666"
-            android:textColor="#fff" />
+            android:background="@color/colorCaptionBackground"
+            android:textColor="@color/colorCaptionText" />
         <TextView
             android:id="@+id/textViewCanAdapterIgnitionState"
             android:layout_width="match_parent"
@@ -84,8 +84,8 @@
             android:text="@+string/can_adapter_bat_voltage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#666"
-            android:textColor="#fff" />
+            android:background="@color/colorCaptionBackground"
+            android:textColor="@color/colorCaptionText" />
         <TextView
             android:id="@+id/textViewCanAdapterBatVoltage"
             android:layout_width="match_parent"
@@ -95,8 +95,8 @@
             android:text="@+string/can_adapter_fw_version"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#666"
-            android:textColor="#fff" />
+            android:background="@color/colorCaptionBackground"
+            android:textColor="@color/colorCaptionText" />
         <TextView
             android:id="@+id/textViewCanAdapterFwVersion"
             android:layout_width="match_parent"
@@ -106,8 +106,8 @@
             android:text="@+string/can_adapter_ser_num"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#666"
-            android:textColor="#fff" />
+            android:background="@color/colorCaptionBackground"
+            android:textColor="@color/colorCaptionText" />
         <TextView
             android:id="@+id/textViewCanAdapterSerNum"
             android:layout_width="match_parent"

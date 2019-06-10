@@ -10,8 +10,8 @@
         android:id="@+id/textViewJobs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#666"
-        android:textColor="#fff" />
+        android:background="@color/colorCaptionBackground"
+        android:textColor="@color/colorCaptionText" />
     <android.widget.Spinner
         android:id="@+id/spinnerJobs"
         android:layout_width="match_parent"
@@ -21,8 +21,8 @@
         android:id="@+id/textViewArgs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#666"
-        android:textColor="#fff" />
+        android:background="@color/colorCaptionBackground"
+        android:textColor="@color/colorCaptionText" />
     <CheckBox
       android:id="@+id/checkBoxBinArgs"
       android:layout_width="match_parent"
@@ -39,8 +39,8 @@
         android:id="@+id/textViewResukts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#666"
-        android:textColor="#fff" />
+        android:background="@color/colorCaptionBackground"
+        android:textColor="@color/colorCaptionText" />
     <android.widget.Spinner
         android:id="@+id/spinnerResults"
         android:layout_width="match_parent"
@@ -50,8 +50,8 @@
         android:id="@+id/textViewInfos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#666"
-        android:textColor="#fff" />
+        android:background="@color/colorCaptionBackground"
+        android:textColor="@color/colorCaptionText" />
     <ListView
         android:id="@+id/infoList"
         android:layout_width="match_parent"
