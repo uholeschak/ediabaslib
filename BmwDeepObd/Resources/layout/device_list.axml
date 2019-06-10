@@ -20,8 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/title_paired_devices"
-            android:background="#666"
-            android:textColor="#fff"
+            android:background="@color/colorCaptionBackground"
+            android:textColor="@color/colorCaptionText"
             android:paddingLeft="5dp" />
         <ListView
             android:id="@+id/paired_devices"
@@ -40,8 +40,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/title_other_devices"
-            android:background="#666"
-            android:textColor="#fff"
+            android:background="@color/colorCaptionBackground"
+            android:textColor="@color/colorCaptionText"
             android:paddingLeft="5dp" />
         <ListView
             android:id="@+id/new_devices"
