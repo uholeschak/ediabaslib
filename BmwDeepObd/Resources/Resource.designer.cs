@@ -7729,6 +7729,9 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0a00f8
 			public const int TextAppearance_Widget_AppCompat_Toolbar_Title = 2131362040;
 			
+			// aapt resource value: 0x7f0a01fb
+			public const int TextViewInnerCaption = 2131362299;
+			
 			// aapt resource value: 0x7f0a00f9
 			public const int Theme_AppCompat = 2131362041;
 			
