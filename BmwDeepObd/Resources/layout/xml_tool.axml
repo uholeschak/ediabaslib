@@ -7,8 +7,7 @@
         android:id="@+id/textViewCarInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorCaptionBackground"
-        android:textColor="@color/colorCaptionText" />
+        style="@style/TextViewInnerCaption" />
     <ListView
         android:id="@+id/listEcu"
         android:layout_width="match_parent"

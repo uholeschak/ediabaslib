@@ -17,8 +17,7 @@
             android:text="@+string/yandex_key_copy_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCaptionBackground"
-            android:textColor="@color/colorCaptionText" />
+            style="@style/TextViewInnerCaption" />
         <Button
             android:id="@+id/buttonYandexKeyCreate"
             android:layout_width="match_parent"
@@ -36,8 +35,7 @@
             android:text="@+string/yandex_key_paste_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCaptionBackground"
-            android:textColor="@color/colorCaptionText" />
+            style="@style/TextViewInnerCaption" />
         <Button
             android:id="@+id/buttonYandexKeyPaste"
             android:layout_width="match_parent"
@@ -55,8 +53,7 @@
             android:text="@+string/yandex_key_test_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCaptionBackground"
-            android:textColor="@color/colorCaptionText" />
+            style="@style/TextViewInnerCaption" />
         <Button
             android:id="@+id/buttonYandexKeyTest"
             android:layout_width="match_parent"
