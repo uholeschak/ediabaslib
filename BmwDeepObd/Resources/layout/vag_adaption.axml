@@ -20,8 +20,7 @@
                 android:text="@+string/vag_adaption_channel_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorCaptionBackground"
-                android:textColor="@color/colorCaptionText" />
+                style="@style/TextViewInnerCaption" />
             <android.widget.Spinner
                 android:id="@+id/spinnerVagAdaptionChannel"
                 android:layout_width="match_parent"
@@ -36,8 +35,7 @@
                     android:text="@+string/vag_adaption_channel_number_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorCaptionBackground"
-                    android:textColor="@color/colorCaptionText" />
+                    style="@style/TextViewInnerCaption" />
                 <EditText
                     android:id="@+id/editTextVagAdaptionChannelNumber"
                     android:layout_width="match_parent"
@@ -61,8 +59,7 @@
                     android:text="@+string/vag_adaption_comments_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorCaptionBackground"
-                    android:textColor="@color/colorCaptionText" />
+                    style="@style/TextViewInnerCaption" />
                 <TextView
                     android:id="@+id/textVagViewAdaptionComments"
                     android:layout_width="match_parent"
@@ -81,8 +78,7 @@
                     android:id="@+id/textViewVagAdaptionMeas1Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorCaptionBackground"
-                    android:textColor="@color/colorCaptionText" />
+                    style="@style/TextViewInnerCaption" />
                 <TextView
                     android:id="@+id/textViewAdaptionMeas1Value"
                     android:layout_width="match_parent"
@@ -91,8 +87,7 @@
                     android:id="@+id/textViewVagAdaptionMeas2Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorCaptionBackground"
-                    android:textColor="@color/colorCaptionText" />
+                    style="@style/TextViewInnerCaption" />
                 <TextView
                     android:id="@+id/textViewAdaptionMeas2Value"
                     android:layout_width="match_parent"
@@ -101,8 +96,7 @@
                     android:id="@+id/textViewVagAdaptionMeas3Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorCaptionBackground"
-                    android:textColor="@color/colorCaptionText" />
+                    style="@style/TextViewInnerCaption" />
                 <TextView
                     android:id="@+id/textViewAdaptionMeas3Value"
                     android:layout_width="match_parent"
@@ -111,8 +105,7 @@
                     android:id="@+id/textViewVagAdaptionMeas4Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorCaptionBackground"
-                    android:textColor="@color/colorCaptionText" />
+                    style="@style/TextViewInnerCaption" />
                 <TextView
                     android:id="@+id/textViewAdaptionMeas4Value"
                     android:layout_width="match_parent"
@@ -129,8 +122,7 @@
                 android:text="@+string/vag_adaption_value_current_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorCaptionBackground"
-                android:textColor="@color/colorCaptionText" />
+                style="@style/TextViewInnerCaption" />
             <TextView
                 android:id="@+id/textViewVagAdaptionValueCurrent"
                 android:layout_width="match_parent"
@@ -140,8 +132,7 @@
                 android:text="@+string/vag_adaption_value_new_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorCaptionBackground"
-                android:textColor="@color/colorCaptionText" />
+                style="@style/TextViewInnerCaption" />
             <android.widget.Spinner
                 android:id="@+id/spinnerVagAdaptionValueNew"
                 android:layout_width="match_parent"
@@ -157,8 +148,7 @@
                 android:text="@+string/vag_adaption_value_test_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorCaptionBackground"
-                android:textColor="@color/colorCaptionText" />
+                style="@style/TextViewInnerCaption" />
             <TextView
                 android:id="@+id/textViewVagAdaptionValueTest"
                 android:layout_width="match_parent"
@@ -178,8 +168,7 @@
                     android:id="@+id/textViewVagWorkshopNumberTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorCaptionBackground"
-                    android:textColor="@color/colorCaptionText" />
+                    style="@style/TextViewInnerCaption" />
                 <EditText
                     android:id="@+id/editTextVagWorkshopNumber"
                     android:layout_width="match_parent"
@@ -196,8 +185,7 @@
                     android:id="@+id/textViewVagImporterNumberTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorCaptionBackground"
-                    android:textColor="@color/colorCaptionText" />
+                    style="@style/TextViewInnerCaption" />
                 <EditText
                     android:id="@+id/editTextVagImporterNumber"
                     android:layout_width="match_parent"
@@ -214,8 +202,7 @@
                     android:id="@+id/textViewVagEquipmentNumberTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorCaptionBackground"
-                    android:textColor="@color/colorCaptionText" />
+                    style="@style/TextViewInnerCaption" />
                 <EditText
                     android:id="@+id/editTextVagEquipmentNumber"
                     android:layout_width="match_parent"
@@ -234,8 +221,7 @@
                 android:text="@+string/vag_adaption_operation_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorCaptionBackground"
-                android:textColor="@color/colorCaptionText" />
+                style="@style/TextViewInnerCaption" />
             <org.apmem.tools.layouts.FlowLayout
                 android:id="@+id/layoutAdaptionButtons"
                 android:orientation="horizontal"
