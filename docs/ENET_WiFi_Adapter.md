@@ -18,10 +18,13 @@ It is based on the hardware of an [A5-V11 3G/4G Router](https://wiki.openwrt.org
 
 ![ENET adapter closed](ENET_WiFi_Adapter_EnetAdapter2ClosedSmall.png) ![Web interface](ENET_WiFi_Adapter_WebInterfaceSmall.png) 
 
+## Buy WiFi Adapter
+You could buy the [ENET WiFi adapter](https://www.ebay.de/itm/254266029480) at EBAY.
+
 ## Alternative WiFi adapter
 There is alternative commercial [Unichip ENET WiFi adapter](http://www.unichip-tec.com/bmw_enet_wifi_wireless_esys.html) available.  
 It's recommended to changed the settings of the adapter to the values of the `EnetWifiSettings.dat` configuration file.
-You could buy the proconfigured [ENET WiFi adapter](https://www.ebay.de/itm/254221032469) at EBAY (When selling private I could reduce the price by 10 EUR).  
+You could buy the preconfigured [ENET WiFi adapter](https://www.ebay.de/itm/254221032469) at EBAY (When selling private I could reduce the price by 10 EUR).  
 For BMW pre F-models use the [Bluetooth adapter](Replacement_firmware_for_ELM327.md)
 
 ## Adapter cable
