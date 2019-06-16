@@ -18,7 +18,7 @@ It is based on the hardware of an [A5-V11 3G/4G Router](https://wiki.openwrt.org
 
 ![ENET adapter closed](ENET_WiFi_Adapter_EnetAdapter2ClosedSmall.png) ![Web interface](ENET_WiFi_Adapter_WebInterfaceSmall.png) 
 
-## Buy WiFi Adapter
+## Buy WiFi adapter
 You could buy the [ENET WiFi adapter](https://www.ebay.de/itm/254266029480) at EBAY.
 
 ## Alternative WiFi adapter
