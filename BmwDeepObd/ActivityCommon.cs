@@ -4224,6 +4224,56 @@ namespace BmwDeepObd
             return Java.Util.Locale.Default.Language ?? DefaultLang;
         }
 
+        public static double? ReadBatteryVoltage(EdiabasNet ediabas)
+        {
+            try
+            {
+                if (ediabas == null)
+                {
+                    return null;
+                }
+                if (ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
+                {
+                    string comPort = edInterfaceObd.ComPort;
+                    if (comPort.StartsWith(EdBluetoothInterface.PortId, StringComparison.OrdinalIgnoreCase))
+                    {
+                        string portData = comPort.Remove(0, EdBluetoothInterface.PortId.Length);
+                        string addr = portData.Remove(0, 1);
+                        string[] stringList = addr.Split('#', ';');
+                        if (stringList.Length > 1)
+                        {   // RAW or ELM
+                            return null;
+                        }
+                    }
+                    else if (comPort.StartsWith(EdCustomWiFiInterface.PortId, StringComparison.OrdinalIgnoreCase))
+                    {
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+
+                if (!ediabas.EdInterfaceClass.TransmitData(new byte[] { 0x82, 0xF1, 0xF1, 0xFC, 0xFC }, out byte[] response))
+                {
+                    return null;
+                }
+                if ((response.Length != 6) || (response[3] != 0xFC))
+                {
+                    return null;
+                }
+                return response[4] / 10;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public static int TelLengthKwp2000(byte[] dataBuffer, int offset, out int dataLength, out int dataOffset)
         {
             int bufferLen = dataBuffer.Length - offset;
