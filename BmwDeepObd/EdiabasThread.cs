@@ -283,7 +283,7 @@ namespace BmwDeepObd
                 JobPageInfo = pageInfo;
                 _lastPageInfo = null;
                 _lastUpdateTime = Stopwatch.GetTimestamp();
-                _lastBatteryUpdateTime = Stopwatch.GetTimestamp();
+                _lastBatteryUpdateTime = Stopwatch.GetTimestamp() - (100000 * TickResolMs);
                 _vagPath = vagPath;
                 _logDir = logDir;
                 _appendLog = appendLog;

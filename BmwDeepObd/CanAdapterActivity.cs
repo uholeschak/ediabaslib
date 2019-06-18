@@ -38,6 +38,7 @@ namespace BmwDeepObd
         public class InstanceData
         {
             public bool FwUpdateShown { get; set; }
+            public bool BatteryWarningShown { get; set; }
         }
 
         private InstanceData _instanceData = new InstanceData();
@@ -558,7 +559,16 @@ namespace BmwDeepObd
                 string voltageText = string.Empty;
                 if (_adapterType > 1 && _batteryVoltage >= 0)
                 {
-                    voltageText = string.Format(ActivityMain.Culture, "{0,4:0.0}V", (double)_batteryVoltage / 10);
+                    double batteryVoltage = (double) _batteryVoltage / 10;
+                    voltageText = string.Format(ActivityMain.Culture, "{0,4:0.0}V", batteryVoltage);
+
+                    if (!_instanceData.BatteryWarningShown)
+                    {
+                        if (_activityCommon.ShowBatteryWarning(batteryVoltage))
+                        {
+                            _instanceData.BatteryWarningShown = true;
+                        }
+                    }
                 }
                 _textViewBatteryVoltage.Text = voltageText;
 

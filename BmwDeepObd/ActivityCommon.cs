@@ -454,6 +454,7 @@ namespace BmwDeepObd
         private AlertDialog _selectInterfaceAlertDialog;
         private AlertDialog _selectManufacturerAlertDialog;
         private AlertDialog _ftdiWarningAlertDialog;
+        private AlertDialog _batteryVoltageAlertDialog;
         private CustomProgressDialog _translateProgress;
         private HttpClient _translateHttpClient;
         private HttpClient _sendHttpClient;
@@ -2826,6 +2827,39 @@ namespace BmwDeepObd
                     }
                 }
             }
+        }
+
+        public bool ShowBatteryWarning(double? batteryVoltage)
+        {
+            if (!batteryVoltage.HasValue || batteryVoltage.Value <= 15.0)
+            {
+                return false;
+            }
+
+            if (_batteryVoltageAlertDialog == null)
+            {
+                string voltageText = string.Format(ActivityMain.Culture, "{0,4:0.0}", batteryVoltage.Value);
+                string message = string.Format(_activity.GetString(Resource.String.battery_voltage_warn), voltageText);
+                _batteryVoltageAlertDialog = new AlertDialog.Builder(_context)
+                    .SetNeutralButton(Resource.String.button_ok, (sender, args) =>
+                    {
+                    })
+                    .SetCancelable(true)
+                    .SetMessage(message)
+                    .SetTitle(Resource.String.alert_title_warning)
+                    .Show();
+                _batteryVoltageAlertDialog.DismissEvent += (sender, args) =>
+                {
+                    if (_disposed)
+                    {
+                        return;
+                    }
+                    _batteryVoltageAlertDialog = null;
+                };
+                return true;
+            }
+
+            return false;
         }
 
         public LockType GetLock()
