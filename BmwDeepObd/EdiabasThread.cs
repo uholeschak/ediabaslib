@@ -172,6 +172,7 @@ namespace BmwDeepObd
         public List<string> ErrorResetList { get; set; }
         public string ErrorResetSgbdFunc { get; set; }
         public bool ErrorResetActive { get; private set; }
+        public double? BatteryVoltage { get; private set; }
 
         public EdiabasNet Ediabas { get; private set; }
 
@@ -190,6 +191,7 @@ namespace BmwDeepObd
         private bool _ediabasJobAbort;
         private JobReader.PageInfo _lastPageInfo;
         private long _lastUpdateTime;
+        private long _lastBatteryUpdateTime;
         private string _vagPath;
         private string _logDir;
         private bool _appendLog;
@@ -281,6 +283,7 @@ namespace BmwDeepObd
                 JobPageInfo = pageInfo;
                 _lastPageInfo = null;
                 _lastUpdateTime = Stopwatch.GetTimestamp();
+                _lastBatteryUpdateTime = Stopwatch.GetTimestamp();
                 _vagPath = vagPath;
                 _logDir = logDir;
                 _appendLog = appendLog;
@@ -540,6 +543,16 @@ namespace BmwDeepObd
 
         private bool CommEdiabas(JobReader.PageInfo pageInfo)
         {
+            if (Stopwatch.GetTimestamp() - _lastBatteryUpdateTime > 10000 * TickResolMs)
+            {
+                double? batteryVoltage = ActivityCommon.ReadBatteryVoltage(Ediabas);
+                _lastBatteryUpdateTime = Stopwatch.GetTimestamp();
+                lock (DataLock)
+                {
+                    BatteryVoltage = batteryVoltage;
+                }
+            }
+
             if (pageInfo == null)
             {
                 lock (DataLock)
@@ -1142,6 +1155,7 @@ namespace BmwDeepObd
             ErrorResetList = null;
             ErrorResetSgbdFunc = null;
             ErrorResetActive = false;
+            BatteryVoltage = null;
             ResultPageInfo = null;
             UpdateProgress = 0;
 
