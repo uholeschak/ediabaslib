@@ -4078,7 +4078,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool UpdateCheck(UpdateCheckDelegate handler, int skipVersion)
+        public bool UpdateCheck(UpdateCheckDelegate handler, ActivityMain.InstanceData instanceData)
         {
             try
             {
@@ -4126,9 +4126,18 @@ namespace BmwDeepObd
                     formUpdate.Add(new StringContent(certInfo), "cert");
                 }
 
-                if (skipVersion >= 0)
+                if (instanceData != null)
                 {
-                    formUpdate.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", skipVersion)), "app_ver_ignore");
+                    if (instanceData.UpdateSkipVersion >= 0)
+                    {
+                        formUpdate.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", instanceData.UpdateSkipVersion)), "app_ver_ignore");
+                    }
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append(string.Format("\nBattery warnings: {0}", instanceData.BatteryWarnings));
+                    sb.Append(string.Format("\nBattery warning voltage: {0}", instanceData.BatteryWarningVoltage));
+                    sb.Append(string.Format("\nAdapter ID: {0}", instanceData.LastAdapterId));
+                    formUpdate.Add(new StringContent(sb.ToString()), "info_text");
                 }
 
                 System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _updateHttpClient.PostAsync(UpdateCheckUrl, formUpdate);
