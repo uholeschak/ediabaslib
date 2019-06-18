@@ -110,6 +110,7 @@ namespace BmwDeepObd
                 ConfigFileName = string.Empty;
                 CheckCpuUsage = true;
                 VerifyEcuFiles = true;
+                LastAdapterId = string.Empty;
             }
 
             public LastAppState LastAppState { get; set; }
@@ -128,6 +129,9 @@ namespace BmwDeepObd
             public int LastVersionCode { get; set; }
             public bool StorageRequirementsAccepted { get; set; }
             public bool BatteryWarningShown { get; set; }
+            public long BatteryWarnings { get; set; }
+            public double BatteryWarningVoltage { get; set; }
+            public string LastAdapterId { get; set; }
             public bool CheckCpuUsage { get; set; }
             public bool VerifyEcuFiles { get; set; }
             public bool CommErrorsOccured { get; set; }
@@ -1373,12 +1377,17 @@ namespace BmwDeepObd
                     _instanceData.UpdateSkipVersion = prefs.GetInt("UpdateSkipVersion", -1);
                     _instanceData.LastVersionCode = prefs.GetInt("VersionCode", -1);
                     _instanceData.StorageRequirementsAccepted = prefs.GetBoolean("StorageAccepted", false);
+                    _instanceData.BatteryWarnings = prefs.GetLong("BatteryWarnings", 0);
+                    _instanceData.BatteryWarningVoltage = prefs.GetFloat("BatteryWarningVoltage", 0);
+                    _instanceData.LastAdapterId = prefs.GetString("LastAdapterId", string.Empty);
 
                     if (_instanceData.LastVersionCode != _currentVersionCode)
                     {
                         _instanceData.StorageRequirementsAccepted = false;
                         _instanceData.UpdateCheckTime = 0;
                         _instanceData.UpdateSkipVersion = -1;
+                        _instanceData.BatteryWarnings = 0;
+                        _instanceData.BatteryWarningVoltage = 0;
                     }
 
                     ActivityCommon.BtNoEvents = prefs.GetBoolean("BtNoEvents", false);
@@ -1430,6 +1439,9 @@ namespace BmwDeepObd
                 prefsEdit.PutString("StorageMedia", _activityCommon.CustomStorageMedia ?? string.Empty);
                 prefsEdit.PutInt("VersionCode", _currentVersionCode);
                 prefsEdit.PutBoolean("StorageAccepted", _instanceData.StorageRequirementsAccepted);
+                prefsEdit.PutLong("BatteryWarnings", _instanceData.BatteryWarnings);
+                prefsEdit.PutFloat("BatteryWarningVoltage", (float)_instanceData.BatteryWarningVoltage);
+                prefsEdit.PutString("LastAdapterId", _instanceData.LastAdapterId ?? string.Empty);
                 prefsEdit.PutBoolean("BtNoEvents", ActivityCommon.BtNoEvents);
                 prefsEdit.PutBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
                 prefsEdit.PutString("YandexApiKey", ActivityCommon.YandexApiKey ?? string.Empty);
@@ -1788,15 +1800,24 @@ namespace BmwDeepObd
 
             if (dynamicValid && !_instanceData.BatteryWarningShown)
             {
-                double? batteryVoltage = null;
+                double? batteryVoltage;
+                byte[] adapterId;
                 lock (EdiabasThread.DataLock)
                 {
                     batteryVoltage = ActivityCommon.EdiabasThread.BatteryVoltage;
+                    adapterId = ActivityCommon.EdiabasThread.AdapterId;
+                }
+
+                if (adapterId != null && adapterId.Length > 0)
+                {
+                    _instanceData.LastAdapterId = BitConverter.ToString(adapterId).Replace("-", "");
                 }
 
                 if (_activityCommon.ShowBatteryWarning(batteryVoltage))
                 {
                     _instanceData.BatteryWarningShown = true;
+                    _instanceData.BatteryWarnings++;
+                    _instanceData.BatteryWarningVoltage = batteryVoltage ?? 0;
                 }
             }
 
@@ -3126,6 +3147,7 @@ namespace BmwDeepObd
 
             if (_downloadProgress == null)
             {
+                // ReSharper disable once UseObjectOrCollectionInitializer
                 _downloadProgress = new CustomProgressDialog(this);
                 _downloadProgress.AbortClick = sender => 
                 {
