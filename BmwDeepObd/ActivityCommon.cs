@@ -655,6 +655,12 @@ namespace BmwDeepObd
 
         public static bool EnableTranslateRequested { get; set; }
 
+        public static long BatteryWarnings { get; set; }
+
+        public static double BatteryWarningVoltage { get; set; }
+
+        public static string LastAdapterId { get; set; }
+
         public static ActivityMain ActivityMainCurrent { get; set; }
 
         public static EdiabasThread EdiabasThread { get; set; }
@@ -4078,7 +4084,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool UpdateCheck(UpdateCheckDelegate handler, ActivityMain.InstanceData instanceData)
+        public bool UpdateCheck(UpdateCheckDelegate handler, int updateSkipVersion)
         {
             try
             {
@@ -4126,19 +4132,16 @@ namespace BmwDeepObd
                     formUpdate.Add(new StringContent(certInfo), "cert");
                 }
 
-                if (instanceData != null)
+                if (updateSkipVersion >= 0)
                 {
-                    if (instanceData.UpdateSkipVersion >= 0)
-                    {
-                        formUpdate.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", instanceData.UpdateSkipVersion)), "app_ver_ignore");
-                    }
-
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append(string.Format("Adapter ID: {0}", instanceData.LastAdapterId));
-                    sb.Append(string.Format("\nBattery warnings: {0}", instanceData.BatteryWarnings));
-                    sb.Append(string.Format("\nBattery warning voltage: {0}", instanceData.BatteryWarningVoltage));
-                    formUpdate.Add(new StringContent(sb.ToString()), "info_text");
+                    formUpdate.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", updateSkipVersion)), "app_ver_ignore");
                 }
+
+                StringBuilder sb = new StringBuilder();
+                sb.Append(string.Format("Adapter ID: {0}", LastAdapterId));
+                sb.Append(string.Format("\nBattery warnings: {0}", BatteryWarnings));
+                sb.Append(string.Format("\nBattery warning voltage: {0}", BatteryWarningVoltage));
+                formUpdate.Add(new StringContent(sb.ToString()), "info_text");
 
                 System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _updateHttpClient.PostAsync(UpdateCheckUrl, formUpdate);
                 _updateCheckActive = true;
