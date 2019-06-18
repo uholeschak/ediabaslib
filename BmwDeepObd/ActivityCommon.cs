@@ -4134,9 +4134,9 @@ namespace BmwDeepObd
                     }
 
                     StringBuilder sb = new StringBuilder();
+                    sb.Append(string.Format("Adapter ID: {0}", instanceData.LastAdapterId));
                     sb.Append(string.Format("\nBattery warnings: {0}", instanceData.BatteryWarnings));
                     sb.Append(string.Format("\nBattery warning voltage: {0}", instanceData.BatteryWarningVoltage));
-                    sb.Append(string.Format("\nAdapter ID: {0}", instanceData.LastAdapterId));
                     formUpdate.Add(new StringContent(sb.ToString()), "info_text");
                 }
 
