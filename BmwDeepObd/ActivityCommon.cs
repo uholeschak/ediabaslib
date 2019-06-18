@@ -4258,13 +4258,15 @@ namespace BmwDeepObd
             return Java.Util.Locale.Default.Language ?? DefaultLang;
         }
 
-        public static double? ReadBatteryVoltage(EdiabasNet ediabas)
+        public static bool ReadBatteryVoltage(EdiabasNet ediabas, out double? batteryVoltage, out byte[] adapterId)
         {
+            batteryVoltage = null;
+            adapterId = null;
             try
             {
                 if (ediabas == null)
                 {
-                    return null;
+                    return false;
                 }
                 if (ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
                 {
@@ -4276,7 +4278,7 @@ namespace BmwDeepObd
                         string[] stringList = addr.Split('#', ';');
                         if (stringList.Length > 1)
                         {   // RAW or ELM
-                            return null;
+                            return false;
                         }
                     }
                     else if (comPort.StartsWith(EdCustomWiFiInterface.PortId, StringComparison.OrdinalIgnoreCase))
@@ -4284,27 +4286,41 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        return null;
+                        return false;
+                    }
+
+                    if (!edInterfaceObd.Connected)
+                    {
+                        return false;
                     }
                 }
                 else
                 {
-                    return null;
+                    return false;
                 }
 
-                if (!ediabas.EdInterfaceClass.TransmitData(new byte[] { 0x82, 0xF1, 0xF1, 0xFC, 0xFC }, out byte[] response))
+                if (ediabas.EdInterfaceClass.TransmitData(new byte[] { 0x82, 0xF1, 0xF1, 0xFC, 0xFC }, out byte[] responseVoltage))
                 {
-                    return null;
+                    if ((responseVoltage.Length == 6) && (responseVoltage[3] == 0xFC))
+                    {
+                        batteryVoltage = (double)responseVoltage[4] / 10;
+                    }
                 }
-                if ((response.Length != 6) || (response[3] != 0xFC))
+
+                if (ediabas.EdInterfaceClass.TransmitData(new byte[] { 0x82, 0xF1, 0xF1, 0xFB, 0xFB }, out byte[] responseId))
                 {
-                    return null;
+                    if ((responseId.Length >= 5) && (responseId[3] == 0xFB))
+                    {
+                        adapterId = new byte[responseId.Length - 5];
+                        Array.Copy(responseId, 4, adapterId, 0, adapterId.Length);
+                    }
                 }
-                return response[4] / 10;
+
+                return true;
             }
             catch (Exception)
             {
-                return null;
+                return false;
             }
         }
 
