@@ -2831,7 +2831,7 @@ namespace BmwDeepObd
 
         public bool ShowBatteryWarning(double? batteryVoltage)
         {
-            if (!batteryVoltage.HasValue || batteryVoltage.Value <= 15.0)
+            if (!batteryVoltage.HasValue || batteryVoltage.Value <= 15.5)
             {
                 return false;
             }
