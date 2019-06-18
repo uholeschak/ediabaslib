@@ -127,6 +127,7 @@ namespace BmwDeepObd
             public string ConfigFileName { get; set; }
             public int LastVersionCode { get; set; }
             public bool StorageRequirementsAccepted { get; set; }
+            public bool BatteryWarningShown { get; set; }
             public bool CheckCpuUsage { get; set; }
             public bool VerifyEcuFiles { get; set; }
             public bool CommErrorsOccured { get; set; }
@@ -1783,6 +1784,20 @@ namespace BmwDeepObd
             if (pageInfo != null)
             {
                 dynamicFragment = (Fragment)pageInfo.InfoObject;
+            }
+
+            if (dynamicValid && !_instanceData.BatteryWarningShown)
+            {
+                double? batteryVoltage = null;
+                lock (EdiabasThread.DataLock)
+                {
+                    batteryVoltage = ActivityCommon.EdiabasThread.BatteryVoltage;
+                }
+
+                if (_activityCommon.ShowBatteryWarning(batteryVoltage))
+                {
+                    _instanceData.BatteryWarningShown = true;
+                }
             }
 
             if (dynamicFragment?.View != null)

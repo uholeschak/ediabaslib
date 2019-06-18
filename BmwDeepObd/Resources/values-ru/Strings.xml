@@ -283,6 +283,10 @@
   <!-- Deep OBD Wi-Fi -->
   <string name="deepobdwifi_adapter_warn">Вы соединены не с Deep OBD Wi-Fi устройством.\nВыбрать другую точку доступа?</string>
 
+  <!-- Battery voltage -->
+  <!--Translate-->
+  <string name="battery_voltage_warn">The battery voltage is very high ({0}V),\nthis could destroy the OBD adapter.\nPlease check the vehicle voltage regulator.</string>
+
   <!--  GlobalSettingsActivity -->
   <string name="settings_title">Глобальные настройки</string>
   <string name="settings_caption_bluetooth_enable">Включение Bluetooth</string>

@@ -284,6 +284,9 @@
   <!-- Deep OBD Wi-Fi -->
   <string name="deepobdwifi_adapter_warn">Sie sind nicht mit einem Deep OBD Wi-Fi Adapter verbunden.\nWollen Sie einen anderen Access Point auswählen?</string>
 
+  <!-- Battery voltage -->
+  <string name="battery_voltage_warn">Die Batteriespannung ist sehr hoch ({0}V),\ndies kann den OBD Adapter zerstören.\nÜberprüfen Sie bitte den Spannungsregler Ihres Fahrzeugs.</string>
+
   <!--  GlobalSettingsActivity -->
   <string name="settings_title">Globale Einstellungen</string>
   <string name="settings_caption_bluetooth_enable">Bluetooth einschalten</string>
