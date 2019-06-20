@@ -1379,7 +1379,7 @@ namespace BmwDeepObd
                     ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", string.Empty);
                     ActivityCommon.BatteryWarnings = prefs.GetLong("BatteryWarnings", 0);
                     ActivityCommon.BatteryWarningVoltage = prefs.GetFloat("BatteryWarningVoltage", 0);
-                    ActivityCommon.LastAdapterId = prefs.GetString("LastAdapterId", string.Empty);
+                    ActivityCommon.LastAdapterSerial = prefs.GetString("LastAdapterSerial", string.Empty);
                     ActivityCommon.AppId = prefs.GetString("AppId", string.Empty);
                     ActivityCommon.SelectedManufacturer = (ActivityCommon.ManufacturerType)prefs.GetInt("Manufacturer", (int)ActivityCommon.ManufacturerType.Bmw);
                     ActivityCommon.BtEnbaleHandling = (ActivityCommon.BtEnableType)prefs.GetInt("BtEnable", (int)ActivityCommon.BtEnableType.Ask);
@@ -1440,7 +1440,7 @@ namespace BmwDeepObd
                 prefsEdit.PutString("YandexApiKey", ActivityCommon.YandexApiKey ?? string.Empty);
                 prefsEdit.PutLong("BatteryWarnings", ActivityCommon.BatteryWarnings);
                 prefsEdit.PutFloat("BatteryWarningVoltage", (float)ActivityCommon.BatteryWarningVoltage);
-                prefsEdit.PutString("LastAdapterId", ActivityCommon.LastAdapterId ?? string.Empty);
+                prefsEdit.PutString("LastAdapterSerial", ActivityCommon.LastAdapterSerial ?? string.Empty);
                 prefsEdit.PutString("AppId", ActivityCommon.AppId);
                 prefsEdit.PutInt("Manufacturer", (int) ActivityCommon.SelectedManufacturer);
                 prefsEdit.PutInt("BtEnable", (int)ActivityCommon.BtEnbaleHandling);
@@ -1797,23 +1797,16 @@ namespace BmwDeepObd
             if (dynamicValid && !_instanceData.BatteryWarningShown)
             {
                 double? batteryVoltage;
-                byte[] adapterId;
+                byte[] adapterSerial;
                 lock (EdiabasThread.DataLock)
                 {
                     batteryVoltage = ActivityCommon.EdiabasThread.BatteryVoltage;
-                    adapterId = ActivityCommon.EdiabasThread.AdapterId;
+                    adapterSerial = ActivityCommon.EdiabasThread.AdapterSerial;
                 }
 
-                if (adapterId != null && adapterId.Length > 0)
-                {
-                    ActivityCommon.LastAdapterId = BitConverter.ToString(adapterId).Replace("-", "");
-                }
-
-                if (_activityCommon.ShowBatteryWarning(batteryVoltage))
+                if (_activityCommon.ShowBatteryWarning(batteryVoltage, adapterSerial))
                 {
                     _instanceData.BatteryWarningShown = true;
-                    ActivityCommon.BatteryWarnings++;
-                    ActivityCommon.BatteryWarningVoltage = batteryVoltage ?? 0;
                 }
             }
 
