@@ -4,7 +4,6 @@ using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
-using IO.Sule.Gaugelibrary;
 
 namespace BmwDeepObd
 {
