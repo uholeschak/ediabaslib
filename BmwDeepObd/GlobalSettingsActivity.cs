@@ -50,6 +50,7 @@ namespace BmwDeepObd
         private TextView _textViewCaptionCpuUsage;
         private CheckBox _checkBoxCheckCpuUsage;
         private CheckBox _checkBoxCheckEcuFiles;
+        private CheckBox _checkBoxShowBatteryVoltageWarning;
         private CheckBox _checkBoxOldVagMode;
         private Button _buttonStorageLocation;
         private CheckBox _checkBoxCollectDebugInfo;
@@ -110,6 +111,7 @@ namespace BmwDeepObd
             _checkBoxCheckCpuUsage.Visibility = viewStateCpuUsage;
 
             _checkBoxCheckEcuFiles = FindViewById<CheckBox>(Resource.Id.checkBoxCheckEcuFiles);
+            _checkBoxShowBatteryVoltageWarning = FindViewById<CheckBox>(Resource.Id.checkBoxShowBatteryVoltageWarning);
             _checkBoxOldVagMode = FindViewById<CheckBox>(Resource.Id.checkBoxOldVagMode);
 
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);
@@ -261,6 +263,7 @@ namespace BmwDeepObd
             _checkBoxSendDataBroadcast.Checked = ActivityCommon.SendDataBroadcast;
             _checkBoxCheckCpuUsage.Checked = ActivityCommon.CheckCpuUsage;
             _checkBoxCheckEcuFiles.Checked = ActivityCommon.CheckEcuFiles;
+            _checkBoxShowBatteryVoltageWarning.Checked = ActivityCommon.ShowBatteryVoltageWarning;
             _checkBoxOldVagMode.Checked = ActivityCommon.OldVagMode;
             _checkBoxCollectDebugInfo.Checked = ActivityCommon.CollectDebugInfo;
             UpdateDisplay();
@@ -359,6 +362,7 @@ namespace BmwDeepObd
             ActivityCommon.SendDataBroadcast = _checkBoxSendDataBroadcast.Checked;
             ActivityCommon.CheckCpuUsage = _checkBoxCheckCpuUsage.Checked;
             ActivityCommon.CheckEcuFiles = _checkBoxCheckEcuFiles.Checked;
+            ActivityCommon.ShowBatteryVoltageWarning = _checkBoxShowBatteryVoltageWarning.Checked;
             ActivityCommon.OldVagMode = _checkBoxOldVagMode.Checked;
             ActivityCommon.CollectDebugInfo = _checkBoxCollectDebugInfo.Checked;
         }

@@ -562,6 +562,10 @@ namespace BmwDeepObd
                     double batteryVoltage = (double) _batteryVoltage / 10;
                     voltageText = string.Format(ActivityMain.Culture, "{0,4:0.0}V", batteryVoltage);
 
+                    if (!ActivityCommon.ShowBatteryVoltageWarning)
+                    {
+                        _instanceData.BatteryWarningShown = false;
+                    }
                     if (!_instanceData.BatteryWarningShown)
                     {
                         if (_activityCommon.ShowBatteryWarning(batteryVoltage, _serNum))

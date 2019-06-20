@@ -1377,6 +1377,7 @@ namespace BmwDeepObd
                     ActivityCommon.BtNoEvents = prefs.GetBoolean("BtNoEvents", false);
                     ActivityCommon.EnableTranslation = prefs.GetBoolean("EnableTranslation", false);
                     ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", string.Empty);
+                    ActivityCommon.ShowBatteryVoltageWarning = prefs.GetBoolean("ShowBatteryWarning", true);
                     ActivityCommon.BatteryWarnings = prefs.GetLong("BatteryWarnings", 0);
                     ActivityCommon.BatteryWarningVoltage = prefs.GetFloat("BatteryWarningVoltage", 0);
                     ActivityCommon.LastAdapterSerial = prefs.GetString("LastAdapterSerial", string.Empty);
@@ -1438,6 +1439,7 @@ namespace BmwDeepObd
                 prefsEdit.PutBoolean("BtNoEvents", ActivityCommon.BtNoEvents);
                 prefsEdit.PutBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
                 prefsEdit.PutString("YandexApiKey", ActivityCommon.YandexApiKey ?? string.Empty);
+                prefsEdit.PutBoolean("ShowBatteryWarning", ActivityCommon.ShowBatteryVoltageWarning);
                 prefsEdit.PutLong("BatteryWarnings", ActivityCommon.BatteryWarnings);
                 prefsEdit.PutFloat("BatteryWarningVoltage", (float)ActivityCommon.BatteryWarningVoltage);
                 prefsEdit.PutString("LastAdapterSerial", ActivityCommon.LastAdapterSerial ?? string.Empty);
@@ -1794,6 +1796,10 @@ namespace BmwDeepObd
                 dynamicFragment = (Fragment)pageInfo.InfoObject;
             }
 
+            if (!ActivityCommon.ShowBatteryVoltageWarning)
+            {
+                _instanceData.BatteryWarningShown = false;
+            }
             if (dynamicValid && !_instanceData.BatteryWarningShown)
             {
                 double? batteryVoltage;

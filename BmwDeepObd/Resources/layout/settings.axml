@@ -239,6 +239,17 @@
             android:layout_height="wrap_content"
             android:text="@string/settings_check_ecu_files" />
         <TextView
+            android:text="@+string/settings_caption_battery_voltage_warning"
+            android:id="@+id/textViewCaptionBatteryVoltageWarning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextViewInnerCaption" />
+        <CheckBox
+            android:id="@+id/checkBoxShowBatteryVoltageWarning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_show_battery_voltage_warning" />
+        <TextView
             android:text="@+string/settings_caption_old_vag_mode"
             android:id="@+id/textViewCaptionOldVagMode"
             android:layout_width="match_parent"
