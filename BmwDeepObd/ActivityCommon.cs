@@ -2857,8 +2857,12 @@ namespace BmwDeepObd
                 string voltageText = string.Format(ActivityMain.Culture, "{0,4:0.0}", batteryVoltage.Value);
                 string message = string.Format(_activity.GetString(Resource.String.battery_voltage_warn), voltageText);
                 _batteryVoltageAlertDialog = new AlertDialog.Builder(_context)
-                    .SetNeutralButton(Resource.String.button_ok, (sender, args) =>
+                    .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
                     {
+                    })
+                    .SetNegativeButton(Resource.String.button_hide, (sender, args) =>
+                    {
+                        ShowBatteryVoltageWarning = false;
                     })
                     .SetCancelable(true)
                     .SetMessage(message)
