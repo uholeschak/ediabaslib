@@ -10,28 +10,6 @@
         android:layout_height="match_parent"
         android:focusable="true"
         android:focusableInTouchMode="true">
-        <io.sule.gaugelibrary.GaugeView
-            android:id="@+id/gauge_view1"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            app:showOuterShadow="false"
-            app:showOuterBorder="false"
-            app:showOuterRim="false"
-            app:showInnerRim="false"
-            app:showNeedle="true"
-            app:showScale="true"
-            app:showRanges="true"
-            app:showText="false"
-            app:outerShadowWidth="0"
-            app:outerBorderWidth="0"
-            app:outerRimWidth="0"
-            app:innerRimWidth="0"
-            app:innerRimBorderWidth="0"
-            app:innerCircleColor="#ccc"
-            app:outerCircleColor="#ccc"
-            app:textValue="%" />
         <TextView
             android:text="@+string/settings_caption_bluetooth_enable"
             android:id="@+id/textViewCaptionBtEnable"

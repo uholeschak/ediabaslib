@@ -71,10 +71,6 @@ namespace BmwDeepObd
 
             _activityCommon = new ActivityCommon(this);
 
-            GaugeView gaugeView = FindViewById<GaugeView>(Resource.Id.gauge_view1);
-            gaugeView.SetTargetValue(50);
-            gaugeView.Visibility = ViewStates.Gone;
-
             _radioButtonAskForBtEnable = FindViewById<RadioButton>(Resource.Id.radioButtonAskForBtEnable);
             _radioButtonAlwaysEnableBt = FindViewById<RadioButton>(Resource.Id.radioButtonAlwaysEnableBt);
             _radioButtonNoBtHandling = FindViewById<RadioButton>(Resource.Id.radioButtonNoBtHandling);
