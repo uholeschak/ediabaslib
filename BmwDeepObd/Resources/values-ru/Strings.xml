@@ -318,6 +318,9 @@
   <string name="settings_caption_cpu_usage">Загрузка процессора</string>
   <string name="settings_check_cpu_usage">Проверка загрузки процессора при запуске</string>
   <string name="settings_caption_check_ecu_files">Проверка ECU файлов</string>
+  <!--Translate-->
+  <string name="settings_caption_battery_voltage_warning">Battery voltage warning</string>
+  <string name="settings_show_battery_voltage_warning">Show over voltage warning</string>
   <string name="settings_caption_old_vag_mode">VAG режим</string>
   <string name="settings_old_vag_mode">Использовать старый режим VAG</string>
   <string name="settings_check_ecu_files">Проверка ECU файлов при запуске</string>

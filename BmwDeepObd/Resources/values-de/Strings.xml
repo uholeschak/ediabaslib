@@ -319,6 +319,8 @@
   <string name="settings_check_cpu_usage">CPU Auslastung am Start prüfen</string>
   <string name="settings_caption_check_ecu_files">ECU Dateien überprüfen</string>
   <string name="settings_check_ecu_files">ECU Dateien beim Start überprüfen</string>
+  <string name="settings_caption_battery_voltage_warning">Batteriespannungs-Warnung</string>
+  <string name="settings_show_battery_voltage_warning">Überspannungswarnung anzeigen</string>
   <string name="settings_caption_old_vag_mode">VAG Modus</string>
   <string name="settings_old_vag_mode">Alten VAG Modus verwenden</string>
   <string name="settings_caption_storage">Speichermedium</string>

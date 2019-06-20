@@ -655,6 +655,8 @@ namespace BmwDeepObd
 
         public static bool EnableTranslateRequested { get; set; }
 
+        public static bool ShowBatteryVoltageWarning { get; set; }
+
         public static long BatteryWarnings { get; set; }
 
         public static double BatteryWarningVoltage { get; set; }
@@ -2847,11 +2849,11 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (_batteryVoltageAlertDialog == null)
-            {
-                BatteryWarnings++;
-                BatteryWarningVoltage = batteryVoltage.Value;
+            BatteryWarnings++;
+            BatteryWarningVoltage = batteryVoltage.Value;
 
+            if (ShowBatteryVoltageWarning && _batteryVoltageAlertDialog == null)
+            {
                 string voltageText = string.Format(ActivityMain.Culture, "{0,4:0.0}", batteryVoltage.Value);
                 string message = string.Format(_activity.GetString(Resource.String.battery_voltage_warn), voltageText);
                 _batteryVoltageAlertDialog = new AlertDialog.Builder(_context)
