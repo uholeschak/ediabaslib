@@ -564,7 +564,7 @@ namespace BmwDeepObd
 
                     if (!_instanceData.BatteryWarningShown)
                     {
-                        if (_activityCommon.ShowBatteryWarning(batteryVoltage))
+                        if (_activityCommon.ShowBatteryWarning(batteryVoltage, _serNum))
                         {
                             _instanceData.BatteryWarningShown = true;
                         }

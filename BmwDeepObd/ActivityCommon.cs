@@ -659,7 +659,7 @@ namespace BmwDeepObd
 
         public static double BatteryWarningVoltage { get; set; }
 
-        public static string LastAdapterId { get; set; }
+        public static string LastAdapterSerial { get; set; }
 
         public static ActivityMain ActivityMainCurrent { get; set; }
 
@@ -2835,8 +2835,13 @@ namespace BmwDeepObd
             }
         }
 
-        public bool ShowBatteryWarning(double? batteryVoltage)
+        public bool ShowBatteryWarning(double? batteryVoltage, byte[] adapterSerial)
         {
+            if (adapterSerial != null && adapterSerial.Length > 0)
+            {
+                LastAdapterSerial = BitConverter.ToString(adapterSerial).Replace("-", "");
+            }
+
             if (!batteryVoltage.HasValue || batteryVoltage.Value <= 15.5)
             {
                 return false;
@@ -2844,6 +2849,9 @@ namespace BmwDeepObd
 
             if (_batteryVoltageAlertDialog == null)
             {
+                BatteryWarnings++;
+                BatteryWarningVoltage = batteryVoltage.Value;
+
                 string voltageText = string.Format(ActivityMain.Culture, "{0,4:0.0}", batteryVoltage.Value);
                 string message = string.Format(_activity.GetString(Resource.String.battery_voltage_warn), voltageText);
                 _batteryVoltageAlertDialog = new AlertDialog.Builder(_context)
@@ -4138,7 +4146,7 @@ namespace BmwDeepObd
                 }
 
                 StringBuilder sb = new StringBuilder();
-                sb.Append(string.Format("Adapter ID: {0}", LastAdapterId));
+                sb.Append(string.Format("Adapter serial: {0}", LastAdapterSerial));
                 sb.Append(string.Format("\nBattery warnings: {0}", BatteryWarnings));
                 sb.Append(string.Format("\nBattery warning voltage: {0}", BatteryWarningVoltage));
                 formUpdate.Add(new StringContent(sb.ToString()), "info_text");
@@ -4270,10 +4278,10 @@ namespace BmwDeepObd
             return Java.Util.Locale.Default.Language ?? DefaultLang;
         }
 
-        public static bool ReadBatteryVoltage(EdiabasNet ediabas, out double? batteryVoltage, out byte[] adapterId)
+        public static bool ReadBatteryVoltage(EdiabasNet ediabas, out double? batteryVoltage, out byte[] adapterSerial)
         {
             batteryVoltage = null;
-            adapterId = null;
+            adapterSerial = null;
             try
             {
                 if (ediabas == null)
@@ -4323,8 +4331,8 @@ namespace BmwDeepObd
                 {
                     if ((responseId.Length >= 5) && (responseId[3] == 0xFB))
                     {
-                        adapterId = new byte[responseId.Length - 5];
-                        Array.Copy(responseId, 4, adapterId, 0, adapterId.Length);
+                        adapterSerial = new byte[responseId.Length - 5];
+                        Array.Copy(responseId, 4, adapterSerial, 0, adapterSerial.Length);
                     }
                 }
 

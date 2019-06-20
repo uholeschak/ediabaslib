@@ -173,7 +173,7 @@ namespace BmwDeepObd
         public string ErrorResetSgbdFunc { get; set; }
         public bool ErrorResetActive { get; private set; }
         public double? BatteryVoltage { get; private set; }
-        public byte[] AdapterId { get; private set; }
+        public byte[] AdapterSerial { get; private set; }
 
         public EdiabasNet Ediabas { get; private set; }
 
@@ -546,13 +546,13 @@ namespace BmwDeepObd
         {
             if (Stopwatch.GetTimestamp() - _lastBatteryUpdateTime > 10000 * TickResolMs)
             {
-                if (ActivityCommon.ReadBatteryVoltage(Ediabas, out double? batteryVoltage, out byte[] adapterId))
+                if (ActivityCommon.ReadBatteryVoltage(Ediabas, out double? batteryVoltage, out byte[] adapterSerial))
                 {
                     _lastBatteryUpdateTime = Stopwatch.GetTimestamp();
                     lock (DataLock)
                     {
                         BatteryVoltage = batteryVoltage;
-                        AdapterId = adapterId;
+                        AdapterSerial = adapterSerial;
                     }
                 }
             }
@@ -1160,7 +1160,7 @@ namespace BmwDeepObd
             ErrorResetSgbdFunc = null;
             ErrorResetActive = false;
             BatteryVoltage = null;
-            AdapterId = null;
+            AdapterSerial = null;
             ResultPageInfo = null;
             UpdateProgress = 0;
 
