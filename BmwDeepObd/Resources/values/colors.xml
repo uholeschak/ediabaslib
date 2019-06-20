@@ -2,4 +2,5 @@
 <resources>
   <color name="colorCaptionBackground">#666666</color>
   <color name="colorCaptionText">#ffffff</color>
+  <color name="colorListViewDivider">#000000</color>
 </resources>
