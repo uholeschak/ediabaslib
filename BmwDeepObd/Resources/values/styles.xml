@@ -3,6 +3,10 @@
   <style name="MyTheme" parent="Theme.AppCompat">
     <item name="dropDownListViewStyle">@style/SpinnerDividerStyle</item>
     <item name="android:dropDownListViewStyle">@style/SpinnerDividerStyle</item>
+    <item name="gaugePointStartColor">@color/colorGaugePoint</item>
+    <item name="gaugePointEndColor">@color/colorGaugePoint</item>
+    <item name="gaugeStrokeColor">@color/colorGaugeStroke</item>
+    <item name="gaugeDividerColor">@color/colorGaugeDivider</item>
   </style>
   <style name="SpinnerDividerStyle" parent="style/Widget.AppCompat.ListView.DropDown">
     <item name="android:divider">#635D63</item>
