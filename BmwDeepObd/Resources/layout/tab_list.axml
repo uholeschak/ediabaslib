@@ -13,9 +13,8 @@
             android:id="@+id/resultList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@color/colorListViewDivider"
-            android:dividerHeight="0px"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            style="@style/ListViewNoDividerStyle" />
         <GridView
             android:id="@+id/resultGrid"
             android:layout_width="match_parent"
