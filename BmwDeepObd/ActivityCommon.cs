@@ -2844,7 +2844,7 @@ namespace BmwDeepObd
                 LastAdapterSerial = BitConverter.ToString(adapterSerial).Replace("-", "");
             }
 
-            if (!batteryVoltage.HasValue || batteryVoltage.Value <= 15.5)
+            if (!batteryVoltage.HasValue || batteryVoltage.Value < 16.0)
             {
                 return false;
             }
