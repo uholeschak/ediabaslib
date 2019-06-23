@@ -13,7 +13,7 @@
     <item name="android:dividerHeight">1px</item>
   </style>
   <style name="ListViewNoDividerStyle" parent="style/Widget.AppCompat.ListView">
-    <item name="android:divider">@color/colorListViewDivider</item>
+    <item name="android:divider">?attr/android:colorBackground</item>
     <item name="android:dividerHeight">0px</item>
   </style>
   <style name="TextViewInnerCaption" parent="TextAppearance.AppCompat">
