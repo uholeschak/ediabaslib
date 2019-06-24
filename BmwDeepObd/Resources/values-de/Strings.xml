@@ -129,7 +129,7 @@
   <string name="extract_file">Dateien entpacken</string>
   <string name="verify_files">Dateien überprüfen</string>
   <string name="extract_failed">Das Entpacken der Dateien ist fehlgeschlagen.\nDie Zip-Datei scheint beschädigt zu sein.\nIn den meisten Fällen ist der Grund ein defektes Speichermedium.</string>
-  <string name="extract_failed_io">Das Speichern der extrahierten Dateien ist fehlgeschlagen.\nIst kein Speicher mehr auf dem Gerät verfügbar?</string>
+  <string name="extract_failed_io">Das Speichern der extrahierten Dateien ist fehlgeschlagen.\nIst kein Speicher mehr auf dem Gerät verfügbar?\nEs wird empfohlen alle Dateischutz-Software (z.B. Antivirus) zu deinstallieren.</string>
 
   <!-- Init VAG UDS -->
   <string name="vag_uds_init">VAG Dateien lesen</string>

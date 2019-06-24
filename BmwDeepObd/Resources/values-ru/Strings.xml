@@ -129,7 +129,8 @@
   <string name="extract_file">Разархивировать файлы</string>
   <string name="verify_files">Проверка файлов</string>
   <string name="extract_failed">Не удалось разархивировать файлы.\nВозможно поврежден Zip-файл.\nВ большинстве случаев причиной является дефектный носитель данных.</string>
-  <string name="extract_failed_io">Не удалось сохранить разархивированные файлы.\nНа данном устройстве недостаточно свободаной памяти?</string>
+  <!--Translate-->
+  <string name="extract_failed_io">Не удалось сохранить разархивированные файлы.\nНа данном устройстве недостаточно свободаной памяти?\nIt\'s recommended to uninstall all file protection software (e.g. antivirus).</string>
 
   <!-- Init VAG UDS -->
   <string name="vag_uds_init">Загрузка VAG файлов</string>
