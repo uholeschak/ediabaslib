@@ -17,8 +17,7 @@
   <string name="button_decline">Отклонить</string>
   <string name="button_donate">Пожертвовать</string>
   <string name="button_skip">Пропустить</string>
-  <!--Translate-->
-  <string name="button_hide">Hide</string>
+  <string name="button_hide">Скрыть</string>
   <string name="back_button_twice_for_exit">Дважды нажмите кнопку, чтобы выйти</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения</string>
@@ -44,7 +43,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Предупреждение о перенапряжении аккумуляторной батареи\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -129,8 +128,7 @@
   <string name="extract_file">Разархивировать файлы</string>
   <string name="verify_files">Проверка файлов</string>
   <string name="extract_failed">Не удалось разархивировать файлы.\nВозможно поврежден Zip-файл.\nВ большинстве случаев причиной является дефектный носитель данных.</string>
-  <!--Translate-->
-  <string name="extract_failed_io">Не удалось сохранить разархивированные файлы.\nНа данном устройстве недостаточно свободаной памяти?\nIt\'s recommended to uninstall all file protection software (e.g. antivirus).</string>
+  <string name="extract_failed_io">Не удалось сохранить разархивированные файлы.\nНа данном устройстве недостаточно свободаной памяти?\nРекомендуется удалить всё программное обеспечение для защиты файлов (например, антивирус).</string>
 
   <!-- Init VAG UDS -->
   <string name="vag_uds_init">Загрузка VAG файлов</string>
@@ -287,8 +285,7 @@
   <string name="deepobdwifi_adapter_warn">Вы соединены не с Deep OBD Wi-Fi устройством.\nВыбрать другую точку доступа?</string>
 
   <!-- Battery voltage -->
-  <!--Translate-->
-  <string name="battery_voltage_warn">The battery voltage is very high ({0}V),\nthis could destroy the OBD adapter.\nPlease check the vehicle voltage regulator.</string>
+  <string name="battery_voltage_warn">Очень высокое напряжение аккумулятора ({0}V),\nэто может привезти к  разрушению OBD-адаптера.\nПожалуйста, проверьте регулятор напряжения вашего автомобиля.</string>
 
   <!--  GlobalSettingsActivity -->
   <string name="settings_title">Глобальные настройки</string>
@@ -321,9 +318,8 @@
   <string name="settings_caption_cpu_usage">Загрузка процессора</string>
   <string name="settings_check_cpu_usage">Проверка загрузки процессора при запуске</string>
   <string name="settings_caption_check_ecu_files">Проверка ECU файлов</string>
-  <!--Translate-->
-  <string name="settings_caption_battery_voltage_warning">Battery voltage warning</string>
-  <string name="settings_show_battery_voltage_warning">Show over voltage warning</string>
+  <string name="settings_caption_battery_voltage_warning">Предупреждение о напряжении батареи</string>
+  <string name="settings_show_battery_voltage_warning">Показать предупреждение о перенапряжении</string>
   <string name="settings_caption_old_vag_mode">VAG режим</string>
   <string name="settings_old_vag_mode">Использовать старый режим VAG</string>
   <string name="settings_check_ecu_files">Проверка ECU файлов при запуске</string>
