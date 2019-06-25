@@ -3638,6 +3638,16 @@ namespace BmwDeepObd
                         }
                     }
 
+                    if (!string.IsNullOrEmpty(LastAdapterSerial))
+                    {
+                        sb.Append(string.Format("Adapter serial: {0}", LastAdapterSerial));
+                    }
+                    if (BatteryWarnings > 0)
+                    {
+                        sb.Append(string.Format("\nBattery warnings: {0}", BatteryWarnings));
+                        sb.Append(string.Format("\nBattery warning voltage: {0}", BatteryWarningVoltage));
+                    }
+
                     if (!string.IsNullOrEmpty(message))
                     {
                         sb.Append("\nInformation:\n");
@@ -4152,9 +4162,15 @@ namespace BmwDeepObd
                 }
 
                 StringBuilder sb = new StringBuilder();
-                sb.Append(string.Format("Adapter serial: {0}", LastAdapterSerial));
-                sb.Append(string.Format("\nBattery warnings: {0}", BatteryWarnings));
-                sb.Append(string.Format("\nBattery warning voltage: {0}", BatteryWarningVoltage));
+                if (!string.IsNullOrEmpty(LastAdapterSerial))
+                {
+                    sb.Append(string.Format("Adapter serial: {0}", LastAdapterSerial));
+                }
+                if (BatteryWarnings > 0)
+                {
+                    sb.Append(string.Format("\nBattery warnings: {0}", BatteryWarnings));
+                    sb.Append(string.Format("\nBattery warning voltage: {0}", BatteryWarningVoltage));
+                }
                 formUpdate.Add(new StringContent(sb.ToString()), "info_text");
 
                 System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _updateHttpClient.PostAsync(UpdateCheckUrl, formUpdate);
