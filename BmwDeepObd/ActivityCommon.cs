@@ -3608,6 +3608,15 @@ namespace BmwDeepObd
                     sb.Append(string.Format("\nEnable translation: {0}", EnableTranslation));
                     sb.Append(string.Format("\nManufacturer: {0}", ManufacturerName()));
                     sb.Append(string.Format("\nClass name: {0}", classType.FullName));
+                    if (!string.IsNullOrEmpty(LastAdapterSerial))
+                    {
+                        sb.Append(string.Format("\nAdapter serial: {0}", LastAdapterSerial));
+                    }
+                    if (BatteryWarnings > 0)
+                    {
+                        sb.Append(string.Format("\nBattery warnings: {0}", BatteryWarnings));
+                        sb.Append(string.Format("\nBattery warning voltage: {0}", BatteryWarningVoltage));
+                    }
 
                     if (MtcBtService)
                     {
@@ -3636,16 +3645,6 @@ namespace BmwDeepObd
                         {
                             sb.Append("\nMTC service not bound");
                         }
-                    }
-
-                    if (!string.IsNullOrEmpty(LastAdapterSerial))
-                    {
-                        sb.Append(string.Format("Adapter serial: {0}", LastAdapterSerial));
-                    }
-                    if (BatteryWarnings > 0)
-                    {
-                        sb.Append(string.Format("\nBattery warnings: {0}", BatteryWarnings));
-                        sb.Append(string.Format("\nBattery warning voltage: {0}", BatteryWarningVoltage));
                     }
 
                     if (!string.IsNullOrEmpty(message))
@@ -4164,11 +4163,19 @@ namespace BmwDeepObd
                 StringBuilder sb = new StringBuilder();
                 if (!string.IsNullOrEmpty(LastAdapterSerial))
                 {
+                    if (sb.Length > 0)
+                    {
+                        sb.Append("\n");
+                    }
                     sb.Append(string.Format("Adapter serial: {0}", LastAdapterSerial));
                 }
                 if (BatteryWarnings > 0)
                 {
-                    sb.Append(string.Format("\nBattery warnings: {0}", BatteryWarnings));
+                    if (sb.Length > 0)
+                    {
+                        sb.Append("\n");
+                    }
+                    sb.Append(string.Format("Battery warnings: {0}", BatteryWarnings));
                     sb.Append(string.Format("\nBattery warning voltage: {0}", BatteryWarningVoltage));
                 }
                 formUpdate.Add(new StringContent(sb.ToString()), "info_text");
