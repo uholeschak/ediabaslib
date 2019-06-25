@@ -9,8 +9,8 @@
     <item name="gaugeDividerColor">@color/colorGaugeDivider</item>
   </style>
   <style name="SpinnerDividerStyle" parent="style/Widget.AppCompat.ListView.DropDown">
-    <item name="android:divider">#635D63</item>
-    <item name="android:dividerHeight">1px</item>
+    <item name="android:divider">?attr/dividerHorizontal</item>
+    <item name="android:dividerHeight">3px</item>
   </style>
   <style name="ListViewNoDividerStyle" parent="style/Widget.AppCompat.ListView">
     <item name="android:divider">?attr/android:colorBackground</item>
