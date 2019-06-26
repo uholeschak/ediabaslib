@@ -254,7 +254,15 @@ namespace BmwDeepObd
             base.OnResume();
 
             _activityActive = true;
-            _downloaderServiceConnection?.Connect(this);
+            try
+            {
+                _downloaderServiceConnection?.Connect(this);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
             RequestStoragePermissions();
         }
 
@@ -265,7 +273,15 @@ namespace BmwDeepObd
         {
             base.OnStop();
 
-            _downloaderServiceConnection?.Disconnect(this);
+            try
+            {
+                _downloaderServiceConnection?.Disconnect(this);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
             _activityActive = false;
         }
 
