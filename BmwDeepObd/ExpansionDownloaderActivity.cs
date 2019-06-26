@@ -591,6 +591,15 @@ namespace BmwDeepObd
 #endif
                 e.PrintStackTrace();
             }
+#pragma warning disable 168
+            catch (Exception ex)
+#pragma warning restore 168
+            {
+                // ignored
+#if DEBUG
+                Android.Util.Log.Debug(Tag, "Exception: ", ex.Message);
+#endif
+            }
 
             return result;
         }
