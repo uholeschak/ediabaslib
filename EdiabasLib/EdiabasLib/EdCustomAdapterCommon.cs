@@ -722,6 +722,11 @@ namespace EdiabasLib
 
         public int? InterfaceAdapterVersion()
         {
+            if (RawMode)
+            {
+                return null;
+            }
+
             if (!UpdateAdapterInfo())
             {
                 return null;
@@ -736,6 +741,11 @@ namespace EdiabasLib
 
         public byte[] InterfaceAdapterSerial()
         {
+            if (RawMode)
+            {
+                return null;
+            }
+
             if (!UpdateAdapterInfo())
             {
                 return null;
@@ -745,6 +755,11 @@ namespace EdiabasLib
 
         public double? InterfaceAdapterVoltage()
         {
+            if (RawMode)
+            {
+                return null;
+            }
+
             if (!UpdateAdapterInfo(true))
             {
                 return null;

@@ -414,21 +414,37 @@ namespace EdiabasLib
 
         public static bool InterfaceHasAutoKwp1281()
         {
+            if (_elm327Device)
+            {
+                return false;
+            }
             return CustomAdapter.InterfaceHasAutoKwp1281();
         }
 
         public static int? InterfaceAdapterVersion()
         {
+            if (_elm327Device)
+            {
+                return null;
+            }
             return CustomAdapter.InterfaceAdapterVersion();
         }
 
         public static byte[] InterfaceAdapterSerial()
         {
+            if (_elm327Device)
+            {
+                return null;
+            }
             return CustomAdapter.InterfaceAdapterSerial();
         }
 
         public static double? InterfaceAdapterVoltage()
         {
+            if (_elm327Device)
+            {
+                return null;
+            }
             return CustomAdapter.InterfaceAdapterVoltage();
         }
 
