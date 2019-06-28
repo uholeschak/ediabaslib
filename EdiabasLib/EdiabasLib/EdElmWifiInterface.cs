@@ -201,6 +201,21 @@ namespace EdiabasLib
             return false;
         }
 
+        public static int? InterfaceAdapterVersion()
+        {
+            return null;
+        }
+
+        public static byte[] InterfaceAdapterSerial()
+        {
+            return null;
+        }
+
+        public static double? InterfaceAdapterVoltage()
+        {
+            return null;
+        }
+
         public static bool InterfaceHasIgnitionStatus()
         {
             return false;

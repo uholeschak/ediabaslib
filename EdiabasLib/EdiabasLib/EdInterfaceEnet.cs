@@ -313,6 +313,30 @@ namespace EdiabasLib
             }
         }
 
+        public override int? AdapterVersion
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public override byte[] AdapterSerial
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public override double? AdapterVoltage
+        {
+            get
+            {
+                return null;
+            }
+        }
+
         public override Int64 GetPort(UInt32 index)
         {
             return 0;

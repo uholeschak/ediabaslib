@@ -4319,25 +4319,6 @@ namespace BmwDeepObd
                 }
                 if (ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
                 {
-                    string comPort = edInterfaceObd.ComPort;
-                    if (comPort.StartsWith(EdBluetoothInterface.PortId, StringComparison.OrdinalIgnoreCase))
-                    {
-                        string portData = comPort.Remove(0, EdBluetoothInterface.PortId.Length);
-                        string addr = portData.Remove(0, 1);
-                        string[] stringList = addr.Split('#', ';');
-                        if (stringList.Length > 1)
-                        {   // RAW or ELM
-                            return false;
-                        }
-                    }
-                    else if (comPort.StartsWith(EdCustomWiFiInterface.PortId, StringComparison.OrdinalIgnoreCase))
-                    {
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
                     if (!edInterfaceObd.Connected)
                     {
                         return false;
@@ -4348,22 +4329,9 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (ediabas.EdInterfaceClass.TransmitData(new byte[] { 0x82, 0xF1, 0xF1, 0xFC, 0xFC }, out byte[] responseVoltage))
-                {
-                    if ((responseVoltage.Length == 6) && (responseVoltage[3] == 0xFC))
-                    {
-                        batteryVoltage = (double)responseVoltage[4] / 10;
-                    }
-                }
-
-                if (ediabas.EdInterfaceClass.TransmitData(new byte[] { 0x82, 0xF1, 0xF1, 0xFB, 0xFB }, out byte[] responseId))
-                {
-                    if ((responseId.Length >= 5) && (responseId[3] == 0xFB))
-                    {
-                        adapterSerial = new byte[responseId.Length - 5];
-                        Array.Copy(responseId, 4, adapterSerial, 0, adapterSerial.Length);
-                    }
-                }
+                // read voltage first, this updated the adapter data
+                batteryVoltage = ediabas.EdInterfaceClass.AdapterVoltage;
+                adapterSerial = ediabas.EdInterfaceClass.AdapterSerial;
 
                 return true;
             }
