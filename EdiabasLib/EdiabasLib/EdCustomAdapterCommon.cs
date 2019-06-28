@@ -42,6 +42,7 @@ namespace EdiabasLib
         // ReSharper restore InconsistentNaming
 
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
+        public static readonly double AdapterVoltageScale = 0.1;
 
         public delegate void SendDataDelegate(byte[] buffer, int length);
         public delegate bool ReceiveDataDelegate(byte[] buffer, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog);
@@ -96,6 +97,8 @@ namespace EdiabasLib
         public int AdapterVersion { get; set; }
 
         public byte[] AdapterSerial { get; set; }
+
+        public int AdapterVoltage { get; set; }
 
         public long LastCommTick { get; set; }
 
@@ -152,6 +155,7 @@ namespace EdiabasLib
             AdapterType = -1;
             AdapterVersion = -1;
             AdapterSerial = null;
+            AdapterVoltage = -1;
         }
 
         public void Init()
@@ -163,6 +167,7 @@ namespace EdiabasLib
             AdapterType = -1;
             AdapterVersion = -1;
             AdapterSerial = null;
+            AdapterVoltage = -1;
             ReconnectRequired = false;
             LastCommTick = DateTime.MinValue.Ticks;
         }
@@ -559,9 +564,10 @@ namespace EdiabasLib
             }
             AdapterType = -1;
             AdapterSerial = null;
+            AdapterVoltage = -1;
             try
             {
-                for (int telType = 0; telType < 2; telType++)
+                for (int telType = 0; telType < 3; telType++)
                 {
                     int respLen = 0;
                     byte[] testTel = null;
@@ -579,6 +585,15 @@ namespace EdiabasLib
                             }
                             respLen = 13;
                             testTel = new byte[] { 0x82, 0xF1, 0xF1, 0xFB, 0xFB, 0x5A };
+                            break;
+
+                        case 2:
+                            if (AdapterType < 0x0002)
+                            {   // no voltage support
+                                break;
+                            }
+                            respLen = 6;
+                            testTel = new byte[] { 0x82, 0xF1, 0xF1, 0xFC, 0xFC, 0x5C };
                             break;
                     }
 
@@ -622,6 +637,10 @@ namespace EdiabasLib
                                 case 1:
                                     AdapterSerial = responseList.GetRange(testTel.Length + 4, 8).ToArray();
                                     break;
+
+                                case 2:
+                                    AdapterVoltage = responseList[testTel.Length + 4];
+                                    break;
                             }
                             break;
                         }
@@ -653,6 +672,10 @@ namespace EdiabasLib
                 if (AdapterSerial != null)
                 {
                     Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "AdapterSerial: {0}", BitConverter.ToString(AdapterSerial).Replace("-", ""));
+                }
+                if (AdapterVoltage >= 0)
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "AdapterVoltage: {0,4:0.0}", AdapterVoltage * AdapterVoltageScale);
                 }
             }
 
@@ -695,6 +718,43 @@ namespace EdiabasLib
                 return false;
             }
             return true;
+        }
+
+        public int? InterfaceAdapterVersion()
+        {
+            if (!UpdateAdapterInfo())
+            {
+                return null;
+            }
+
+            if (AdapterVersion < 0)
+            {
+                return null;
+            }
+            return AdapterVersion;
+        }
+
+        public byte[] InterfaceAdapterSerial()
+        {
+            if (!UpdateAdapterInfo())
+            {
+                return null;
+            }
+            return AdapterSerial;
+        }
+
+        public double? InterfaceAdapterVoltage()
+        {
+            if (!UpdateAdapterInfo(true))
+            {
+                return null;
+            }
+
+            if (AdapterVoltage < 0)
+            {
+                return null;
+            }
+            return AdapterVoltage * AdapterVoltageScale;
         }
 
         public bool InterfaceSendData(byte[] sendData, int length, bool setDtr, double dtrTimeCorr)

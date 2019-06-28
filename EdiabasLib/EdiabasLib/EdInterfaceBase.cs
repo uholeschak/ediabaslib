@@ -177,6 +177,12 @@ namespace EdiabasLib
 
         public abstract Int64 IgnitionVoltage { get; }
 
+        public abstract int? AdapterVersion { get; }
+
+        public abstract byte[] AdapterSerial { get; }
+
+        public abstract double? AdapterVoltage { get; }
+
         public abstract Int64 GetPort(UInt32 index);
 
         public abstract bool Connected { get; }

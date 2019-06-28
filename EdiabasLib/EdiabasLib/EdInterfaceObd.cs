@@ -86,6 +86,9 @@ namespace EdiabasLib
         public delegate bool InterfaceHasPreciseTimeoutDelegate();
         public delegate bool InterfaceHasAutoBaudRateDelegate();
         public delegate bool InterfaceHasAutoKwp1281Delegate();
+        public delegate int? InterfaceAdapterVersionDelegate();
+        public delegate byte[] InterfaceAdapterSerialDelegate();
+        public delegate double? InterfaceAdapterVoltageDelegate();
         public delegate bool InterfaceHasIgnitionStatusDelegate();
         public delegate bool InterfaceSendDataDelegate(byte[] sendData, int length, bool setDtr, double dtrTimeCorr);
         public delegate bool InterfaceReceiveDataDelegate(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog);
@@ -161,6 +164,9 @@ namespace EdiabasLib
         protected InterfaceHasAutoBaudRateDelegate InterfaceHasAutoBaudRateFuncInt;
         protected InterfaceHasAutoKwp1281Delegate InterfaceHasAutoKwp1281FuncProtected;
         protected InterfaceHasAutoKwp1281Delegate InterfaceHasAutoKwp1281FuncInt;
+        protected InterfaceAdapterVersionDelegate InterfaceAdapterVersionFuncInt;
+        protected InterfaceAdapterSerialDelegate InterfaceAdapterSerialFuncInt;
+        protected InterfaceAdapterVoltageDelegate InterfaceAdapterVoltageFuncInt;
         protected InterfaceHasIgnitionStatusDelegate InterfaceHasIgnitionStatusFuncProtected;
         protected InterfaceHasIgnitionStatusDelegate InterfaceHasIgnitionStatusFuncInt;
         protected InterfaceSendDataDelegate InterfaceSendDataFuncProtected;
@@ -1022,6 +1028,42 @@ namespace EdiabasLib
             }
         }
 
+        public override int? AdapterVersion
+        {
+            get
+            {
+                if (!Connected || InterfaceAdapterVersionFuncUse == null)
+                {
+                    return null;
+                }
+                return InterfaceAdapterVersionFuncUse();
+            }
+        }
+
+        public override byte[] AdapterSerial
+        {
+            get
+            {
+                if (!Connected || InterfaceAdapterSerialFuncUse == null)
+                {
+                    return null;
+                }
+                return InterfaceAdapterSerialFuncUse();
+            }
+        }
+
+        public override double? AdapterVoltage
+        {
+            get
+            {
+                if (!Connected || InterfaceAdapterVoltageFuncUse == null)
+                {
+                    return null;
+                }
+                return InterfaceAdapterVoltageFuncUse();
+            }
+        }
+
         public override Int64 GetPort(UInt32 index)
         {
             return 0;
@@ -1117,6 +1159,9 @@ namespace EdiabasLib
                 InterfaceHasPreciseTimeoutFuncInt = null;
                 InterfaceHasAutoBaudRateFuncInt = null;
                 InterfaceHasAutoKwp1281FuncInt = null;
+                InterfaceAdapterVersionFuncInt = null;
+                InterfaceAdapterSerialFuncInt = null;
+                InterfaceAdapterVoltageFuncInt = null;
                 InterfaceHasIgnitionStatusFuncInt = null;
                 InterfaceSendDataFuncInt = EdFtdiInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdFtdiInterface.InterfaceReceiveData;
@@ -1140,6 +1185,9 @@ namespace EdiabasLib
                 InterfaceHasPreciseTimeoutFuncInt = EdBluetoothInterface.InterfaceHasPreciseTimeout;
                 InterfaceHasAutoBaudRateFuncInt = EdBluetoothInterface.InterfaceHasAutoBaudRate;
                 InterfaceHasAutoKwp1281FuncInt = EdBluetoothInterface.InterfaceHasAutoKwp1281;
+                InterfaceAdapterVersionFuncInt = EdBluetoothInterface.InterfaceAdapterVersion;
+                InterfaceAdapterSerialFuncInt = EdBluetoothInterface.InterfaceAdapterSerial;
+                InterfaceAdapterVoltageFuncInt = EdBluetoothInterface.InterfaceAdapterVoltage;
                 InterfaceHasIgnitionStatusFuncInt = EdBluetoothInterface.InterfaceHasIgnitionStatus;
                 InterfaceSendDataFuncInt = EdBluetoothInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdBluetoothInterface.InterfaceReceiveData;
@@ -1162,6 +1210,9 @@ namespace EdiabasLib
                 InterfaceHasPreciseTimeoutFuncInt = EdElmWifiInterface.InterfaceHasPreciseTimeout;
                 InterfaceHasAutoBaudRateFuncInt = EdElmWifiInterface.InterfaceHasAutoBaudRate;
                 InterfaceHasAutoKwp1281FuncInt = EdElmWifiInterface.InterfaceHasAutoKwp1281;
+                InterfaceAdapterVersionFuncInt = EdElmWifiInterface.InterfaceAdapterVersion;
+                InterfaceAdapterSerialFuncInt = EdElmWifiInterface.InterfaceAdapterSerial;
+                InterfaceAdapterVoltageFuncInt = EdElmWifiInterface.InterfaceAdapterVoltage;
                 InterfaceHasIgnitionStatusFuncInt = EdElmWifiInterface.InterfaceHasIgnitionStatus;
                 InterfaceSendDataFuncInt = EdElmWifiInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdElmWifiInterface.InterfaceReceiveData;
@@ -1184,6 +1235,9 @@ namespace EdiabasLib
                 InterfaceHasPreciseTimeoutFuncInt = EdCustomWiFiInterface.InterfaceHasPreciseTimeout;
                 InterfaceHasAutoBaudRateFuncInt = EdCustomWiFiInterface.InterfaceHasAutoBaudRate;
                 InterfaceHasAutoKwp1281FuncInt = EdCustomWiFiInterface.InterfaceHasAutoKwp1281;
+                InterfaceAdapterVersionFuncInt = EdCustomWiFiInterface.InterfaceAdapterVersion;
+                InterfaceAdapterSerialFuncInt = EdCustomWiFiInterface.InterfaceAdapterSerial;
+                InterfaceAdapterVoltageFuncInt = EdCustomWiFiInterface.InterfaceAdapterVoltage;
                 InterfaceHasIgnitionStatusFuncInt = EdCustomWiFiInterface.InterfaceHasIgnitionStatus;
                 InterfaceSendDataFuncInt = EdCustomWiFiInterface.InterfaceSendData;
                 InterfaceReceiveDataFuncInt = EdCustomWiFiInterface.InterfaceReceiveData;
@@ -1206,6 +1260,9 @@ namespace EdiabasLib
                 InterfaceHasPreciseTimeoutFuncInt = null;
                 InterfaceHasAutoBaudRateFuncInt = null;
                 InterfaceHasAutoKwp1281FuncInt = null;
+                InterfaceAdapterVersionFuncInt = null;
+                InterfaceAdapterSerialFuncInt = null;
+                InterfaceAdapterVoltageFuncInt = null;
                 InterfaceHasIgnitionStatusFuncInt = null;
                 InterfaceSendDataFuncInt = null;
                 InterfaceReceiveDataFuncInt = null;
@@ -2065,6 +2122,30 @@ namespace EdiabasLib
             get
             {
                 return InterfaceHasAutoKwp1281FuncProtected ?? InterfaceHasAutoKwp1281FuncInt;
+            }
+        }
+
+        protected InterfaceAdapterVersionDelegate InterfaceAdapterVersionFuncUse
+        {
+            get
+            {
+                return InterfaceAdapterVersionFuncInt;
+            }
+        }
+
+        protected InterfaceAdapterSerialDelegate InterfaceAdapterSerialFuncUse
+        {
+            get
+            {
+                return InterfaceAdapterSerialFuncInt;
+            }
+        }
+
+        protected InterfaceAdapterVoltageDelegate InterfaceAdapterVoltageFuncUse
+        {
+            get
+            {
+                return InterfaceAdapterVoltageFuncInt;
             }
         }
 
