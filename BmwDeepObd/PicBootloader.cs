@@ -2827,8 +2827,7 @@ namespace BmwDeepObd
                 }
 
                 if (deviceId.Id == 0x0309)
-                {
-                    // PIC18F25K80 (Flash size 0x10000)
+                {   // PIC18F26K80 (Flash size 0x10000)
                     deviceId.Id = 0x030C;
                 }
 
