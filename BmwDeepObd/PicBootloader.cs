@@ -2826,6 +2826,11 @@ namespace BmwDeepObd
                     deviceId = comm.ReadDeviceId((Device.Families)bootInfo.FamilyId);
                 }
 
+                if (deviceId.Id == 0x0309)
+                {   // PIC18F26K80 (Flash size 0x10000)
+                    deviceId.Id = 0x030C;
+                }
+
                 if (!LoadDevice(device, (int) deviceId.Id, (Device.Families) bootInfo.FamilyId))
                 {
                     return false;
