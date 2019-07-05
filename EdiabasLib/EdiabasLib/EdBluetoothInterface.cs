@@ -297,6 +297,21 @@ namespace EdiabasLib
             return CustomAdapter.InterfaceHasAutoKwp1281();
         }
 
+        public static int? InterfaceAdapterVersion()
+        {
+            return CustomAdapter.InterfaceAdapterVersion();
+        }
+
+        public static byte[] InterfaceAdapterSerial()
+        {
+            return CustomAdapter.InterfaceAdapterSerial();
+        }
+
+        public static double? InterfaceAdapterVoltage()
+        {
+            return CustomAdapter.InterfaceAdapterVoltage();
+        }
+
         public static bool InterfaceHasIgnitionStatus()
         {
             return true;
