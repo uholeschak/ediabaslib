@@ -344,6 +344,10 @@ namespace CarSimulator
                     adapterName = "YC1021";
                     break;
 
+                case 7:
+                    adapterName = "SPP-UART 2";
+                    break;
+
                 case 16:
                     adapterName = "ESP8622";
                     break;
