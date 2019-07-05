@@ -218,7 +218,7 @@ BootloaderBreakCheck:
     clrf    ANCON1, BANKED
     ; enable port B pull up
     banksel WPUB
-#if ADAPTER_TYPE == 0x06
+#if (ADAPTER_TYPE == 0x06) || (ADAPTER_TYPE == 0x07)
     ; use PB5 for bootloader detection
     movlw   b'00100000'
 #else
@@ -315,7 +315,7 @@ CalcCheckum:
     xorwf   CRCH, w
     bnz     BootloadMode
 
-#if ADAPTER_TYPE == 0x06
+#if (ADAPTER_TYPE == 0x06) || (ADAPTER_TYPE == 0x07)
     ; test if PB5 is low
     btfss   PORTB, 5
 #else
@@ -428,7 +428,7 @@ BootloadMode:
     bcf     TRISB, TRISB0
 #endif
     ; [UH] switch on both LED
-#if ADAPTER_TYPE == 0x06
+#if (ADAPTER_TYPE == 0x06) || (ADAPTER_TYPE == 0x07)
     bcf     LATB, LATB4
     bcf     LATB, LATB6
     bcf     TRISB, TRISB4
