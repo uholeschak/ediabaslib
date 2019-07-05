@@ -119,8 +119,8 @@
 #define BT_RESPONSE_TIMEOUT 1500    // bluetooth command response timeout
 #define BT_PIN_LENGTH 4
 #define BT_NAME_LENGTH 14
-#elif ADAPTER_TYPE == 0x05
-//SPP_UART
+#elif (ADAPTER_TYPE == 0x05) || (ADAPTER_TYPE == 0x07)
+//SPP_UART or SPP_UART2 (LEDs like YC1021)
 #define ALLOW_BT_CONFIG
 #define ALLOW_FACTORY_RESET
 //#define REQUIRES_BT_FACTORY
@@ -133,7 +133,7 @@
 #define BT_NAME_LENGTH 31
 #elif ADAPTER_TYPE == 0x06
 // ELM327 BT v1.5 Mini YiChip YC1021
-// has LED_OBD_TX = pa6, LED_OBD_RX = pa4, LED_RS_TX = pa7, LED_RS_RX = pa5
+// has LED_OBD_TX = pa4, LED_OBD_RX = pa6, LED_RS_TX = pa7, LED_RS_RX = pa5
 // with reprogrammed YC1021 Eeprom 115200 @ 16MHz without problems
 #elif ADAPTER_TYPE == 0x10
 // ELM327 Wifi v1.5 Mini ESP8266ex
@@ -149,11 +149,11 @@
 
 #define KLINE_OUT LATBbits.LATB0
 #define LLINE_OUT LATBbits.LATB1
-#if ADAPTER_TYPE == 0x06
+#if (ADAPTER_TYPE == 0x06) || (ADAPTER_TYPE == 0x07)
 #define LED_RS_RX LATBbits.LATB5
 #define LED_RS_TX LATBbits.LATB7
-#define LED_OBD_RX LATBbits.LATB4
-#define LED_OBD_TX LATBbits.LATB6
+#define LED_OBD_RX LATBbits.LATB6
+#define LED_OBD_TX LATBbits.LATB4
 #elif ADAPTER_TYPE == 0x10
 #define LED_RS_RX LATBbits.LATB4
 #define LED_RS_TX LATBbits.LATB6
@@ -3539,7 +3539,7 @@ void main(void)
     LED_OBD_TX = 1;
     // LED as output
     // ignore bootloader pin
-#if ADAPTER_TYPE == 0x06
+#if (ADAPTER_TYPE == 0x06) || (ADAPTER_TYPE == 0x07)
     TRISBbits.TRISB4 = 0;
 #else
 #if defined(ALLOW_FACTORY_RESET)
