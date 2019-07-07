@@ -38,7 +38,7 @@ The source for the firmware could be found in the subdirectory `CanAdapterElm`. 
 * `default`: Unmodified ELM327L Bluetooth chip (Baud rate 38400)
 * `bc04`: BC-04 Bluetooth chip with BK3231 processor
 * `hc04`: HC-04 Bluetooth chip with BC417 processor
-* `spp_uart`: [OpenSource Bluetooth firmware](Custom_Bluetooth_firmware.md) with BC417 processor (recommended for Android car radios with Rockchip platform)
+* `spp_uart` and `spp_uart2` (with modified LED configuration): [OpenSource Bluetooth firmware](Custom_Bluetooth_firmware.md) with BC417 processor (recommended for Android car radios with Rockchip platform)
   * `spp_uart.xpv` and `spp_uart.xdv`: Firmware for BC417b processor
   * `usbspi.dll`: Driver for programming the BC417b processor. For more information see the [`ReadMe.txt`](../EdiabasLib/CanAdapterElm/Bluetooth/spp_uart/ReadMe.txt) file.
 
