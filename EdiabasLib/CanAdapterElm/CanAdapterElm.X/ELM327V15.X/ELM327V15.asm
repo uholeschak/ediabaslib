@@ -139,6 +139,8 @@ p__100	addwf	PCL						; entry from: 1AECh
 		rrcf	40h
 		goto	p__C42
 		nop
+		DE 0FFh, 0FFh, 0FFh, 0FFh
+
 		addwf	PCL
 		subfwb	41h,W
 		goto	p__C1E
