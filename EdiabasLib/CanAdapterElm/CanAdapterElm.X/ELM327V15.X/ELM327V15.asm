@@ -228,8 +228,9 @@ p__100	addwf	PCL						; entry from: 1AECh
 		infsnz	53h,W
 		goto	p_1546
 		nop
-		addwf	PCL
+		DE 0FFh, 0FFh
 
+		addwf	PCL
 p__302	goto	p__E9E					; entry from: 11Ah,138h,13Eh,14Ah,150h,156h,162h,168h,16Eh,174h,180h,186h,192h,198h,1A4h,1B0h,1B6h,1C8h,1CEh,1DAh,1E0h,1E6h,3BAh,3C4h
 		rlncf	43h
 		goto	p__D92
