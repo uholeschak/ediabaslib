@@ -14,124 +14,23 @@
 		ORG 0
 		nop
 		goto	p_1654
-		btfsc	1Ch,7
-		goto	p_1280
-p____E	movlw	70h						; entry from: 18h
-		goto	p__6CC
-		bra		p____E
-		rrncf	41h,f,BANKED
-		addwfc	54h,W
-		dcfsnz	41h,W
-		movf	45h
-		DE 54h		;WARNING: unknown instruction!
-		rrncf	4Fh
-		infsnz	44h,W,BANKED
-		addwfc	49h,W
-		movwf	74h,BANKED
-		movf	20h
-		rrcf	53h
-		rrcf	33h
-		infsnz	20h,W,BANKED
-		btg		6Eh,2
-		btg		65h,1
-		btg		70h,1
-		btg		65h,2
-		btg		65h,1
-		nop
-		subfwb	42h,W,BANKED
-		rlncf	46h
-		movf	45h
-		rlncf	20h
-		dcfsnz	55h,W
-		DE 4Ch		;WARNING: unknown instruction!
-		subfwb	42h,W,BANKED
-		addwfc	53h,W
-		subfwb	42h,W,BANKED
-		subwfb	53h,W,BANKED
-		nop
-		subfwb	42h,W,BANKED
-		addwfc	53h,W
-		movf	45h
-		dcfsnz	52h,f,BANKED
-		DE 52h		;WARNING: unknown instruction!
-		subfwb	42h,W,BANKED
-		addwfc	53h,W
-		dcfsnz	49h
-		subfwb	49h,W
-		addwfc	3Ah,W
-		nop
-		rrncf	43h,W,BANKED
-		addwfc	4Eh,W
-		movf	45h
-		dcfsnz	52h,f,BANKED
-		DE 52h		;WARNING: unknown instruction!
-		rlncf	3Ch,W
-		subfwb	41h,W
-		addwfc	41h,W
-		movf	45h
-		dcfsnz	52h,f,BANKED
-		DE 52h		;WARNING: unknown instruction!
-		dcfsnz	45h,W
-		rrcf	4Dh,f,BANKED
-		rlcf	32h,f,BANKED
-		btg		20h,3
-		decfsz	31h
-		DE 35h		;WARNING: unknown instruction!
-		DE 3Fh		;WARNING: unknown instruction!
-		rrncf	46h
-		rlncf	20h,W,BANKED
-		movf	52h
-		movf	4Fh
-		nop
-		dcfsnz	55h
-		rrncf	41h
-		rlncf	4Ch,W,BANKED
-		subfwb	20h,W
-		addwfc	4Fh,W
-		dcfsnz	43h,f,BANKED
-		dcfsnz	4Eh
-		rrncf	45h,f,BANKED
-		DE 54h		;WARNING: unknown instruction!
-		dcfsnz	4Eh,f,BANKED
-		rlncf	20h,W
-		subfwb	41h,W
-		DE 41h		;WARNING: unknown instruction!
-		infsnz	4Fh,f,BANKED
-		nop
-		DE 3Eh		;WARNING: unknown instruction!
-		rlncf	53h,W,BANKED
-		movf	41h
-		infsnz	43h,W
-		dcfsnz	49h
-		decfsz	47h
-		decfsz	2Eh
-		nop
-		subfwb	53h,W
-		movf	4Fh,W
-		rlncf	50h,W,BANKED
-		DE 44h		;WARNING: unknown instruction!
-		rrncf	3Eh,W,BANKED
-		addwfc	54h,W
-		rrncf	4Dh,W,BANKED
-		nop
-		movf	3Ch
-		addwfc	58h,W
-		movf	45h
-		dcfsnz	52h,f,BANKED
-		DE 52h		;WARNING: unknown instruction!
-		subfwb	4Ch
-		movf	20h
-		movf	45h,f,BANKED
-		subfwb	45h,W
-		nop
-		rrcf	30h,W,BANKED
-		rrcf	32h,f,BANKED
-		rlcf	34h,W,BANKED
-		rlcf	36h,f,BANKED
-		swapf	38h,W,BANKED
-		rrncf	41h
-		rlncf	43h,W
-		rlncf	45h
+		DE 0FFh, 0FFh, 01Ch, 0BEh, 040h, 0EFh, 009h, 0F0h, 070h, 00Eh
+		DE 066h, 0EFh, 003h, 0F0h, 0FFh, 0FFh, 0FFh, 0FFh, 0FAh, 0D7h, 041h, 043h, 054h, 020h, 041h, 04Ch
+		DE 045h, 052h, 054h, 000h, 04Fh, 042h, 044h, 049h, 049h, 020h, 074h, 06Fh, 020h, 052h, 053h, 032h
+		DE 033h, 032h, 020h, 049h, 06Eh, 074h, 065h, 072h, 070h, 072h, 065h, 074h, 065h, 072h, 000h, 000h
+		DE 042h, 055h, 046h, 046h, 045h, 052h, 020h, 046h, 055h, 04Ch, 04Ch, 000h, 042h, 055h, 053h, 020h
+		DE 042h, 055h, 053h, 059h, 000h, 000h, 042h, 055h, 053h, 020h, 045h, 052h, 052h, 04Fh, 052h, 000h
+		DE 042h, 055h, 053h, 020h, 049h, 04Eh, 049h, 054h, 03Ah, 020h, 000h, 000h, 043h, 041h, 04Eh, 020h
+		DE 045h, 052h, 052h, 04Fh, 052h, 000h, 03Ch, 044h, 041h, 054h, 041h, 020h, 045h, 052h, 052h, 04Fh
+		DE 052h, 000h, 045h, 04Ch, 04Dh, 033h, 032h, 037h, 020h, 076h, 031h, 02Eh, 035h, 000h, 03Fh, 000h
+		DE 046h, 042h, 020h, 045h, 052h, 052h, 04Fh, 052h, 000h, 000h, 055h, 04Eh, 041h, 042h, 04Ch, 045h
+		DE 020h, 054h, 04Fh, 020h, 043h, 04Fh, 04Eh, 04Eh, 045h, 043h, 054h, 000h, 04Eh, 04Fh, 020h, 044h
+		DE 041h, 054h, 041h, 000h, 04Fh, 04Bh, 000h, 000h, 03Eh, 000h, 053h, 045h, 041h, 052h, 043h, 048h
+		DE 049h, 04Eh, 047h, 02Eh, 02Eh, 02Eh, 000h, 000h, 053h, 054h, 04Fh, 050h, 050h, 045h, 044h, 000h
+		DE 03Eh, 041h, 054h, 020h, 04Dh, 041h, 000h, 000h, 03Ch, 052h, 058h, 020h, 045h, 052h, 052h, 04Fh
+		DE 052h, 000h, 04Ch, 056h, 020h, 052h, 045h, 053h, 045h, 054h, 000h, 000h, 0FFh, 0FFh, 0FFh, 0FFh
+		DE 030h, 031h, 032h, 033h, 034h, 035h, 036h, 037h, 038h, 039h, 041h, 042h, 043h, 044h, 045h, 046h
+
 p__100	addwf	PCL						; entry from: 1AECh
 		DE 5Ah		;WARNING: unknown instruction!
 		clrf	0D1h,BANKED
