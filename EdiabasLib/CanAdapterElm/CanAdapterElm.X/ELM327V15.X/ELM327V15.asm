@@ -436,12 +436,12 @@ p__492	call	p__B28					; entry from: 16FAh
 		bsf		EECON1,2
 p__4BC	clrf	42h						; entry from: 4E4h
 		clrf	43h
-		setf	73h
+		setf	EEDATA
 		movlw	55h
 		movwf	7Eh
 		movlw	0AAh
 		movwf	7Eh
-		bsf		7Fh,1
+		bsf		EECON1,1
 
 p__4CC	decfsz	43h						; entry from: 4CEh,4DCh
 		bra		p__4CC
