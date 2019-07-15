@@ -7116,15 +7116,15 @@ p_3E1E	rlncf	96h,W,BANKED			; entry from: 1FD4h,34E2h,353Ch,3764h,3B02h,3B2Ch
 		movwf	41h
 		clrf	42h
 p_3E26	call	p__5D4					; entry from: 3E36h
-		btfss	60h,3
+		btfss	RXB0CON,3
 		retlw	0
-		btfsc	71h,0
+		btfsc	COMSTAT,0
 		bra		p_3E38
 		dcfsnz	42h
 		decfsz	41h
 		bra		p_3E26
-p_3E38	bcf		60h,3					; entry from: 3E30h
-		bcf		77h,5
+p_3E38	bcf		RXB0CON,3					; entry from: 3E30h
+		bcf		PIR5,5
 		call	p_3CB0
 		pop
 		retlw	6
