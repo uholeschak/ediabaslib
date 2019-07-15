@@ -874,7 +874,7 @@ p__7FC	clrf	STKPTR					; entry from: 470h,766h,784h,7A4h,7D6h
 		movwf	FSR1H
 		btfss	3Eh,0
 		bra		p__818
-		movf	6Eh,W
+		movf	CANSTAT,W
 		andlw	0E0h
 		xorlw	60h
 		btfsc	STATUS,2
@@ -896,11 +896,11 @@ p__82E	btfss	18h,0					; entry from: 3812h,389Ch,38D4h,38DEh,392Eh,3968h,39A8h
 p__834	rcall	p__7F2					; entry from: 0E70h,0E8Ch,11BEh,11CEh,11E8h,3898h,38CCh
 		bra		p__720
 
-p__838	movwf	74h						; entry from: 98Eh,99Ah,0C4Ah,0C62h,1382h,13A4h,1422h,142Eh,1470h
-		bcf		7Fh,7
-		bcf		7Fh,6
-		bsf		7Fh,0
-		movf	73h,W
+p__838	movwf	EEADR						; entry from: 98Eh,99Ah,0C4Ah,0C62h,1382h,13A4h,1422h,142Eh,1470h
+		bcf		EECON1,7
+		bcf		EECON1,6
+		bsf		EECON1,0
+		movf	EEDATA,W
 		return	
 
 p__844	movlw	0BAh					; entry from: 1C46h,1DBEh,2D02h,2D52h
