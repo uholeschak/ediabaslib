@@ -6189,21 +6189,21 @@ p_35F2	btfss	0B3h,0,BANKED			; entry from: 35B2h,3678h
 		bcf		0Fh,1
 		bra		p_35AA
 
-p_35FE	movff	0F61h,1					; entry from: 35C6h,35CEh
-		movff	0F62h,2
-		movff	0F63h,3
-		movff	0F64h,4
-		movff	0F66h,5
-		movff	0F67h,6
-		movff	0F68h,7
-		movff	0F69h,8
-		movff	0F6Ah,9
-		movff	0F6Bh,0Ah
-		movff	0F6Ch,0Bh
-		movff	0F6Dh,0Ch
-		movff	0F65h,36h
+p_35FE	movff	RXB0SIDH,1					; entry from: 35C6h,35CEh
+		movff	RXB0SIDL,2
+		movff	RXB0EIDH,3
+		movff	RXB0EIDL,4
+		movff	RXB0D0,5
+		movff	RXB0D1,6
+		movff	RXB0D2,7
+		movff	RXB0D3,8
+		movff	RXB0D4,9
+		movff	RXB0D5,0Ah
+		movff	RXB0D6,0Bh
+		movff	RXB0D7,0Ch
+		movff	RXB0DLC,36h
 		movff	PIR3,44h
-		bcf		60h,7
+		bcf		RXB0CON,7
 		clrf	PIR3
 		bcf		LATB,6
 		clrf	1Eh
@@ -6216,7 +6216,7 @@ p_35FE	movff	0F61h,1					; entry from: 35C6h,35CEh
 		movwf	36h
 		bcf		0Fh,0
 		bcf		11h,1
-		movf	71h,W
+		movf	COMSTAT,W
 		andlw	7Fh
 		bnz		p_3660
 		btfsc	44h,7
@@ -6224,7 +6224,7 @@ p_35FE	movff	0F61h,1					; entry from: 35C6h,35CEh
 		clrf	98h,BANKED
 		bra		p_36A6
 
-p_3660	clrf	71h						; entry from: 3656h,365Ah
+p_3660	clrf	COMSTAT						; entry from: 3656h,365Ah
 		bsf		0Fh,0
 		bsf		11h,1
 		incfsz	98h,W,BANKED
@@ -6237,7 +6237,7 @@ p_3672	movlw	5						; entry from: 35E2h
 		cpfsgt	98h,BANKED
 		bra		p_35AA
 		bra		p_35F2
-p_367A	btfsc	71h,0					; entry from: 3670h
+p_367A	btfsc	COMSTAT,0					; entry from: 3670h
 		bra		p_3684
 		movlw	40h
 		cpfsgt	98h,BANKED
