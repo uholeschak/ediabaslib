@@ -432,8 +432,8 @@ p__492	call	p__B28					; entry from: 16FAh
 		movwf	41h
 		movlw	0Ch
 		iorlw	1
-		movwf	74h
-		bsf		7Fh,2
+		movwf	EEADR
+		bsf		EECON1,2
 p__4BC	clrf	42h						; entry from: 4E4h
 		clrf	43h
 		setf	73h
