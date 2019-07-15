@@ -7269,7 +7269,7 @@ p_4046	rrcf	ADRESH					; entry from: 4040h
 		movlw	3
 		andwf	ADRESH
 		retlw	0
-		movf	7Dh,W
+		movf	SPBRGH1,W
 		rcall	p_405E
 		movf	SPBRG1,W
 		rcall	p_405E
