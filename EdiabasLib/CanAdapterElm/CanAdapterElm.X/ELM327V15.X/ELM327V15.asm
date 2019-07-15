@@ -2806,14 +2806,14 @@ p_1842	call	p__724					; entry from: 1836h,183Ch
 p_185E	bcf		34h,3					; entry from: 1858h
 		clrf	0B3h,BANKED
 		btfsc	3Eh,0
-		btfsc	6Eh,7
+		btfsc	CANSTAT,7
 		bra		p_187E
-		movf	6Eh,W
+		movf	CANSTAT,W
 		andlw	0E0h
 		bnz		p_1876
-		btfsc	71h,5
+		btfsc	COMSTAT,5
 		bra		p_1876
-		btfss	71h,0
+		btfss	COMSTAT,0
 		bra		p_187E
 
 p_1876	call	p_3CCE					; entry from: 186Ch,1870h
