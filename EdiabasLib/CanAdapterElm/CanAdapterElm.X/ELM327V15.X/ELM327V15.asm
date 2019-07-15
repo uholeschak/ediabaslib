@@ -1665,15 +1665,15 @@ p__E4C	bcf		STATUS,0				; entry from: 0E5Ah
 		bra		p__E4C
 		movf	78h,W,BANKED
 		return	
-p__E60	movf	6Eh,W					; entry from: 130h
+p__E60	movf	CANSTAT,W					; entry from: 130h
 		andlw	0E0h
 		bnz		p__E6E
-		movff	0E42h,0B1h
-		movff	0E41h,0B2h
+		movff	TXERRCNT,0B1h
+		movff	RXERRCNT,0B2h
 p__E6E	movlw	54h						; entry from: 0E64h
 		call	p__834
 		movf	0B1h,W,BANKED
-		btfss	71h,5
+		btfss	COMSTAT,5
 		bra		p__E82
 		movlw	4Fh
 		call	p__7F2
@@ -1736,9 +1736,9 @@ p__ECC	call	p__99E					; entry from: 0EB4h,0EB8h
 		btfsc	STATUS,0
 		addlw	1
 		movwf	0C8h,BANKED
-p__F00	bsf		7Fh,2					; entry from: 0ECAh
+p__F00	bsf		EECON1,2					; entry from: 0ECAh
 		movlw	8
-		movwf	74h
+		movwf	EEADR
 		movf	0C8h,W,BANKED
 		call	p__A00
 		movf	0C9h,W,BANKED
@@ -1747,7 +1747,7 @@ p__F00	bsf		7Fh,2					; entry from: 0ECAh
 		call	p__A00
 		movf	0CBh,W,BANKED
 		call	p__A00
-		bcf		7Fh,2
+		bcf		EECON1,2
 		bra		p__E9E
 p__F22	movlw	31h						; entry from: 210h
 		cpfseq	65h,BANKED
