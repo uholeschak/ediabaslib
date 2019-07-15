@@ -6667,7 +6667,7 @@ p_3A3A	bsf		0B3h,3,BANKED			; entry from: 3A2Ch
 		cpfslt	0BBh,BANKED
 		movwf	0BBh,BANKED
 		bsf		0B3h,5,BANKED
-		movf	6Eh,W
+		movf	CANSTAT,W
 		andlw	0E0h
 		btfsc	STATUS,2
 		bcf		0B3h,5,BANKED
