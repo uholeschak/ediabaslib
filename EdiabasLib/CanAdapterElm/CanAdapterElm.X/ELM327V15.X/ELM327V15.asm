@@ -6053,18 +6053,18 @@ p_34B0	movff	1,2Fh					; entry from: 333Ah,34A2h,34A8h
 		btfss	97h,2,BANKED
 		btfss	37h,7
 		bsf		30h,3
-		movf	6Eh,W
+		movf	CANSTAT,W
 		andlw	0E0h
 		bnz		p_34D8
-		btfsc	71h,5
+		btfsc	COMSTAT,5
 		bra		p_34D6
-		btfss	71h,0
+		btfss	COMSTAT,0
 		bra		p_34DC
 p_34D6	rcall	p_3CCE					; entry from: 34D0h
 p_34D8	movlw	0						; entry from: 34CCh
 		rcall	p_3CD0
 p_34DC	call	p_3CC4					; entry from: 34D4h
-		btfsc	60h,3
+		btfsc	RXB0CON,3
 		call	p_3E1E
 		btfsc	36h,6
 		bra		p_34F0
@@ -6072,7 +6072,7 @@ p_34DC	call	p_3CC4					; entry from: 34D4h
 		btfss	35h,5
 		btfsc	37h,6
 p_34F0	movf	36h,W					; entry from: 34E8h
-		movwf	65h
+		movwf	RXB0DLC
 		addlw	4
 		movwf	0
 		bcf		0,6
@@ -6094,12 +6094,12 @@ p_3530	bcf		LATB,7					; entry from: 3B62h
 		clrf	1Dh
 		call	p_3CC4
 		movlw	8
-		movwf	60h
+		movwf	RXB0CON
 		call	p_3E1E
 		goto	p_3CB0
 
 p_3544	bsf		0B3h,5,BANKED			; entry from: 21A8h,21AEh,21B4h,21BAh,21C0h,21C6h,21CCh
-		movf	6Eh,W
+		movf	CANSTAT,W
 		andlw	0E0h
 		bnz		p_3552
 		bcf		0B3h,5,BANKED
@@ -6122,12 +6122,12 @@ p_3552	btfss	0B3h,1,BANKED			; entry from: 354Ah
 p_3572	clrf	0B3h,BANKED				; entry from: 355Ah,356Ch
 p_3574	bcf		1Bh,4					; entry from: 3554h
 		bcf		34h,1
-		bcf		77h,5
+		bcf		PIR5,5
 		call	p__63E
 		movf	98h,f,BANKED
 		btfsc	STATUS,2
 		bcf		35h,1
-		movf	6Eh,W
+		movf	CANSTAT,W
 		andlw	0E0h
 		bz		p_35AA
 		btfss	34h,3
@@ -6138,7 +6138,7 @@ p_3574	bcf		1Bh,4					; entry from: 3554h
 		call	p__ADA
 		bra		p_35A8
 p_359A	movlw	60h						; entry from: 358Ch
-		xorwf	6Eh,W
+		xorwf	CANSTAT,W
 		andlw	0E0h
 		bz		p_35AA
 p_35A2	movlw	60h						; entry from: 35F0h
@@ -6152,25 +6152,25 @@ p_35AA	rcall	p_3CB0					; entry from: 3588h,35A0h,35D4h,35E8h,35FCh,3676h,3692h,
 		bra		p_35F2
 		btfsc	19h,7
 		retlw	1
-		btfsc	71h,0
-		bcf		77h,5
+		btfsc	COMSTAT,0
+		bcf		PIR5,5
 		btfsc	34h,1
 		bra		p_35C8
-		btfss	60h,7
+		btfss	RXB0CON,7
 		bra		p_35C8
 		bsf		34h,1
 		bra		p_35FE
 
 p_35C8	bcf		34h,1					; entry from: 35BEh,35C2h
 		rcall	p_3CBA
-		btfsc	60h,7
+		btfsc	RXB0CON,7
 		bra		p_35FE
-		btfsc	77h,7
+		btfsc	PIR5,7
 		btfsc	3Eh,6
 		bra		p_35AA
 		incfsz	98h,W,BANKED
 		incf	98h,f,BANKED
-		bcf		77h,7
+		bcf		PIR5,7
 		call	p__63E
 		btfss	3Eh,3
 		bra		p_3672
