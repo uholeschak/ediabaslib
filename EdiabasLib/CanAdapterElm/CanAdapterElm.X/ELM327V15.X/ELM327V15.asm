@@ -2251,29 +2251,29 @@ p_1380	movwf	0CCh,BANKED				; entry from: 1534h
 		xorwf	0CDh,W,BANKED
 		btfsc	STATUS,2
 		bra		p_1462
-		bsf		7Fh,2
+		bsf		EECON1,2
 		movf	0CDh,W,BANKED
 		call	p__A00
-		bcf		7Fh,2
+		bcf		EECON1,2
 		bra		p_1462
 p_1398	movlw	30h						; entry from: 137Ah
 		movwf	41h
 		movlw	0Ch
 		iorlw	1
-		movwf	74h
-		bsf		7Fh,2
+		movwf	EEADR
+		bsf		EECON1,2
 p_13A4	call	p__838					; entry from: 13BCh
 		xorwf	0CDh,W,BANKED
 		bz		p_13B4
 		movf	0CDh,W,BANKED
 		call	p__A00
 		bra		p_13B6
-p_13B4	incf	74h						; entry from: 13AAh
-p_13B6	incf	74h,W					; entry from: 13B2h
-		movwf	74h
+p_13B4	incf	EEADR						; entry from: 13AAh
+p_13B6	incf	EEADR,W					; entry from: 13B2h
+		movwf	EEADR
 		decfsz	41h
 		bra		p_13A4
-		bcf		7Fh,2
+		bcf		EECON1,2
 		bra		p_1462
 
 p_13C2	movf	65h,W,BANKED			; entry from: 12E6h,12FAh,1312h
