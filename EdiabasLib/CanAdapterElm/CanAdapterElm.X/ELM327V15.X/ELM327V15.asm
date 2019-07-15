@@ -6736,16 +6736,16 @@ p_3AEE	movf	0BDh,W,BANKED			; entry from: 3AE4h
 		bra		p_3B18
 		bsf		0B3h,1,BANKED
 		rcall	p_3CC4
-		btfsc	60h,3
+		btfsc	RXB0CON,3
 		rcall	p_3E1E
 		movlw	13h
-		movwf	66h
+		movwf	RXB0D0
 		movf	0B6h,W,BANKED
-		movwf	67h
+		movwf	RXB0D1
 		movf	0B7h,W,BANKED
-		movwf	68h
+		movwf	RXB0D2
 		movf	0B8h,W,BANKED
-		movwf	69h
+		movwf	RXB0D3
 		rcall	p_3B3C
 		bra		p_37C4
 p_3B18	clrf	0BDh,BANKED				; entry from: 3AFAh
@@ -6757,25 +6757,25 @@ p_3B18	clrf	0BDh,BANKED				; entry from: 3AFAh
 		bra		p_37C4
 
 p_3B28	rcall	p_3CC4					; entry from: 3AC4h,3B20h
-		btfsc	60h,3
+		btfsc	RXB0CON,3
 		rcall	p_3E1E
 		movlw	11h
-		movwf	66h
+		movwf	RXB0D0
 		movff	0BBh,0F67h
 		movff	0B9h,0F68h
-		setf	69h
-p_3B3C	setf	6Ah						; entry from: 3B14h
-		movff	3Ah,0F6Bh
-		movff	39h,0F6Ch
-		movff	38h,0F6Dh
+		setf	RXB0D3
+p_3B3C	setf	RXB0D4						; entry from: 3B14h
+		movff	3Ah,RXB0D5
+		movff	39h,RXB0D6
+		movff	38h,RXB0D7
 		movlw	0E7h
-		movwf	61h
+		movwf	RXB0SIDH
 		movlw	68h
-		movwf	62h
-		movff	0B5h,0F63h
-		movff	14h,0F64h
+		movwf	RXB0SIDL
+		movff	0B5h,RXB0EIDH
+		movff	14h,RXB0EIDL
 		movlw	8
-		movwf	65h
+		movwf	RXB0DLC
 		call	p__63E
 		bra		p_3530
 
