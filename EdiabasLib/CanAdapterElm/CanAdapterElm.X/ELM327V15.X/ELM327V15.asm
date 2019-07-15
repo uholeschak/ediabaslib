@@ -6340,33 +6340,33 @@ p_3756	call	p__63E					; entry from: 372Eh,3744h,374Ch
 		btfss	37h,7
 		bsf		30h,3
 		rcall	p_3CC4
-		btfsc	60h,3
+		btfsc	RXB0CON,3
 		rcall	p_3E1E
 		movlw	8
 		btfss	35h,5
 		btfsc	37h,6
 		movlw	3
-		movwf	65h
+		movwf	RXB0DLC
 		movff	2Fh,0F61h
 		movff	30h,0F62h
 		movff	31h,0F63h
 		movff	32h,0F64h
 		movlw	30h
-		movwf	66h
-		clrf	67h
-		clrf	68h
+		movwf	RXB0D0
+		clrf	RXB0D1
+		clrf	RXB0D2
 		movf	95h,W,BANKED
-		movwf	69h
-		movwf	6Ah
-		movwf	6Bh
-		movwf	6Ch
-		movwf	6Dh
+		movwf	RXB0D3
+		movwf	RXB0D4
+		movwf	RXB0D5
+		movwf	RXB0D6
+		movwf	RXB0D7
 		movf	0A6h,f,BANKED
 		bz		p_37B8
 		movf	0B0h,W,BANKED
 		btfss	35h,5
 		btfsc	37h,6
-		movwf	65h
+		movwf	RXB0DLC
 		movff	0ABh,0F66h
 		movff	0ACh,0F67h
 		movff	0ADh,0F68h
@@ -6374,7 +6374,7 @@ p_3756	call	p__63E					; entry from: 372Eh,3744h,374Ch
 		movff	0AFh,0F6Ah
 		call	p__63E
 p_37B8	movlw	8						; entry from: 3796h
-		movwf	60h
+		movwf	RXB0CON
 		bsf		10h,7
 		rcall	p_3CB0
 		bra		p_37C4
