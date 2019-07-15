@@ -6779,9 +6779,9 @@ p_3B3C	setf	RXB0D4						; entry from: 3B14h
 		call	p__63E
 		bra		p_3530
 
-p_3B64	bsf		6Fh,4					; entry from: 21F6h,21FCh,2202h,2208h,220Eh,2214h,221Ah
+p_3B64	bsf		CANCON,4					; entry from: 21F6h,21FCh,2202h,2208h,220Eh,2214h,221Ah
 		movlw	30h
-		xorwf	6Eh,W
+		xorwf	CANSTAT,W
 		andlw	0E0h
 		btfss	STATUS,2
 		rcall	p_3CCE
@@ -6793,10 +6793,10 @@ p_3B64	bsf		6Fh,4					; entry from: 21F6h,21FCh,2202h,2208h,220Eh,2214h,221Ah
 		retlw	0
 
 p_3B7C	rcall	p_3CBA					; entry from: 187Ah,352Ah,35A6h,368Eh,3DD8h
-		bcf		60h,7
+		bcf		RXB0CON,7
 		call	p_3CB0
-		bcf		60h,7
-		clrf	71h
+		bcf		RXB0CON,7
+		clrf	COMSTAT
 		retlw	0
 
 p_3B8A	movf	96h,W,BANKED			; entry from: 32ECh,335Ah
@@ -6812,7 +6812,7 @@ p_3B92	btfsc	PORTB,3					; entry from: 3B9Ah
 p_3B9E	rcall	p_3CCE					; entry from: 3B94h
 		clrf	PIE3
 		movlw	20h
-		movwf	70h
+		movwf	CIOCON
 		goto	p_4000
 		nop
 
