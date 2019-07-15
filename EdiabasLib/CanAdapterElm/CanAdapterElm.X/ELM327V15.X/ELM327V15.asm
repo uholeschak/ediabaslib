@@ -6821,10 +6821,10 @@ p_3B9E	rcall	p_3CCE					; entry from: 3B94h
 p_3BC2	bsf		3Eh,0					; entry from: 4024h
 		rcall	p_3CBA
 		movlw	0
-		movwf	60h
+		movwf	RXB0CON
 		rcall	p_3CB0
 		movlw	4
-		movwf	60h
+		movwf	RXB0CON
 		retlw	0
 
 p_3BD2	btfss	37h,5					; entry from: 3C94h,3CA8h,3D88h,3DB0h,3DCEh
