@@ -6963,7 +6963,7 @@ p_3CD0	movwf	43h						; entry from: 34DAh,3570h,35A4h,368Ch,3AA0h,3DD6h
 		retlw	0
 		movff	TXERRCNT,0B1h
 		movff	RXERRCNT,0B2h
-		movf	6Eh,W
+		movf	CANSTAT,W
 		andlw	0E0h
 		xorlw	60h
 		bnz		p_3CEE
@@ -6973,13 +6973,13 @@ p_3CEE	movf	43h,W					; entry from: 3CE8h
 		rcall	p_3CF4
 		retlw	0
 
-p_3CF4	movwf	6Fh						; entry from: 3CECh,3CF0h
+p_3CF4	movwf	CANCON						; entry from: 3CECh,3CF0h
 		rlncf	96h,W,BANKED
 		movwf	42h
 		clrf	41h
 p_3CFC	call	p__5D4					; entry from: 3D0Eh
-		movf	6Eh,W
-		xorwf	6Fh,W
+		movf	CANSTAT,W
+		xorwf	CANCON,W
 		andlw	0E0h
 		btfsc	STATUS,2
 		retlw	0
@@ -6989,13 +6989,13 @@ p_3CFC	call	p__5D4					; entry from: 3D0Eh
 		pop
 		bsf		LATB,2
 		movlw	30h
-		movwf	6Fh
+		movwf	CANCON
 		rlncf	96h,W,BANKED
 		addlw	60h
 		movwf	42h
 p_3D1E	call	p__5D4					; entry from: 3D2Eh
 		movlw	30h
-		xorwf	6Eh,W
+		xorwf	CANSTAT,W
 		andlw	0E0h
 		bz		p_3D38
 		dcfsnz	41h
