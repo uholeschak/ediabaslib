@@ -927,36 +927,36 @@ p__866	btfsc	0D2h,6,BANKED			; entry from: 85Ch
 		bra		p__85E
 
 p__86E	clrf	3Dh						; entry from: 9CCh,0AA2h,0AB2h
-		clrf	74h
-		bcf		7Fh,7
-		bcf		7Fh,6
+		clrf	EEADR
+		bcf		EECON1,7
+		bcf		EECON1,6
 		movlw	8
 		movwf	41h
 p__87A	rrncf	3Dh						; entry from: 886h
-		bsf		7Fh,0
-		tstfsz	73h
+		bsf		EECON1,0
+		tstfsz	EEDATA
 		bsf		3Dh,7
-		incf	74h
+		incf	EEADR
 		decfsz	41h
 		bra		p__87A
 		bcf		3Eh,7
 		btfsc	3Dh,7
 		bsf		3Eh,7
 		bcf		3Dh,7
-		bsf		7Fh,0
-		movff	0F73h,0C8h
-		incf	74h
+		bsf		EECON1,0
+		movff	EEDATA,0C8h
+		incf	EEADR
 		nop
-		bsf		7Fh,0
-		movff	0F73h,0C9h
-		incf	74h
+		bsf		EECON1,0
+		movff	EEDATA,0C9h
+		incf	EEADR
 		nop
-		bsf		7Fh,0
-		movff	0F73h,0CAh
-		incf	74h
+		bsf		EECON1,0
+		movff	EEDATA,0CAh
+		incf	EEADR
 		nop
-		bsf		7Fh,0
-		movff	0F73h,0CBh
+		bsf		EECON1,0
+		movff	EEDATA,0CBh
 		movlw	0Ch
 		cpfsgt	3Dh
 		return	
