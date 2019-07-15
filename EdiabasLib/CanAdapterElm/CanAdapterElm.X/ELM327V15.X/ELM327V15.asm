@@ -2623,7 +2623,7 @@ p_168A	movlw	0F9h					; entry from: 1686h
 p_16B0	movlw	8						; entry from: 16A6h
 p_16B2	movwf	TRISB					; entry from: 16AEh
 		movlw	0
-		movwf	CCPR2L
+		movwf	CCP1CON
 		movlw	9Ah
 		movwf	0CDh,BANKED
 		movlw	28h
@@ -2647,8 +2647,8 @@ p_16DE	lfsr	1,200h					; entry from: 16D6h
 		lfsr	0,0
 		clrf	TBLPTRH
 		movlw	80h
-		movwf	7Fh
-		bsf		6Fh,7
+		movwf	EECON1
+		bsf		CANCON,7
 		clrf	97h,BANKED
 		btfss	0D0h,1,BANKED
 		bra		p_1706
@@ -2679,7 +2679,7 @@ p_171E	movwf	LATB					; entry from: 172Ch
 		movwf	LATB
 p_1730	btfss	TXSTA1,1				; entry from: 171Ah
 		call	p__B2A
-		clrf	7Dh
+		clrf	SPBRGH1
 		nop
 		nop
 		movf	0CFh,W,BANKED
@@ -2691,11 +2691,11 @@ p_1730	btfss	TXSTA1,1				; entry from: 171Ah
 		movwf	0CFh,BANKED
 		decf	0CFh,W,BANKED
 		bra		p_1754
-		incf	7Dh
+		incf	SPBRGH1
 		movlw	0A0h
 p_1754	movwf	SPBRG1					; entry from: 174Eh
 		movlw	8
-		movwf	EECON2
+		movwf	BAUDCON1
 		movlw	25h
 		movwf	TXSTA1
 		movlw	90h
