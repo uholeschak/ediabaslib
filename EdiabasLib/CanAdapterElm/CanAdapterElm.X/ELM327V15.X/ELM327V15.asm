@@ -6813,6 +6813,10 @@ p_3B9E	rcall	p_3CCE					; entry from: 3B94h
 		movwf	70h
 		goto	p_4000
 		nop
+		DE 0FFh, 0FFh, 0FFh, 0FFh
+		DE 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
+		DE 0FFh, 0FFh
+
 p_3BC2	bsf		3Eh,0					; entry from: 4024h
 		rcall	p_3CBA
 		movlw	0
