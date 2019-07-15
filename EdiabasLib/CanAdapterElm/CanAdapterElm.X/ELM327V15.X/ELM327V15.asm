@@ -1073,7 +1073,7 @@ p__98C	iorlw	1						; entry from: 8C4h,8CAh,8D0h,8D8h,8E0h,8E8h,8F0h,8F6h,8FEh,9
 		bz		p__998
 		movf	0CDh,W,BANKED
 		return	
-p__998	decf	74h,W					; entry from: 992h
+p__998	decf	EEADR,W					; entry from: 992h
 		goto	p__838
 
 p__99E	movlw	1						; entry from: 0ECCh,148Ah,4038h
@@ -1101,8 +1101,8 @@ p__9C4	movff	3Dh,44h					; entry from: 184Ch
 		movf	3Dh,W
 		xorwf	44h,W
 		bz		p__9FC
-		bsf		7Fh,2
-		clrf	74h
+		bsf		EECON1,2
+		clrf	EEADR
 		movlw	8
 		movwf	41h
 		movlw	0FFh
@@ -1112,7 +1112,7 @@ p__9E4	btfss	44h,0					; entry from: 9EEh
 		rrncf	44h
 		decfsz	41h
 		bra		p__9E4
-		bcf		7Fh,2
+		bcf		EECON1,2
 		bcf		3Eh,7
 		btfsc	44h,7
 		bsf		3Eh,7
@@ -1120,20 +1120,20 @@ p__9E4	btfss	44h,0					; entry from: 9EEh
 p__9FC	bcf		3Dh,7					; entry from: 9D8h
 		return	
 
-p__A00	movwf	73h						; entry from: 9E8h,0C88h,0C94h,0C96h,0C98h,0C9Ah,0F08h,0F0Eh,0F14h,0F1Ah,1390h,13AEh
+p__A00	movwf	EEDATA						; entry from: 9E8h,0C88h,0C94h,0C96h,0C98h,0C9Ah,0F08h,0F0Eh,0F14h,0F1Ah,1390h,13AEh
 		movlw	55h
-		movwf	7Eh
+		movwf	EECON2
 		movlw	0AAh
-		movwf	7Eh
-		bsf		7Fh,1
+		movwf	EECON2
+		bsf		EECON1,1
 		movlw	0Ch
 		rcall	p__B12
 p__A10	rcall	p__5D4					; entry from: 0A18h
 		btfsc	0Fh,1
 		bra		p__4D4
-		btfsc	7Fh,1
+		btfsc	EECON1,1
 		bra		p__A10
-		incf	74h
+		incf	EEADR
 		retlw	0FFh
 
 p__A1E	movf	8Ch,W,BANKED			; entry from: 3B6h,3BCh,17D2h
@@ -1446,20 +1446,20 @@ p__C72	rcall	p__C58					; entry from: 31Eh
 		movlw	65h
 		movwf	FSR0L
 		movlw	70h
-		movwf	74h
-		bsf		7Fh,2
+		movwf	EEADR
+		bsf		EECON1,2
 p__C86	movf	POSTINC0,W				; entry from: 0C8Ch
 		rcall	p__A00
 		decfsz	41h
 		bra		p__C86
 		movlw	6Ch
-		movwf	74h
+		movwf	EEADR
 		movlw	0FFh
 		rcall	p__A00
 		rcall	p__A00
 		rcall	p__A00
 		rcall	p__A00
-		bcf		7Fh,2
+		bcf		EECON1,2
 		bra		p__E9E
 p__CA0	bcf		10h,4					; entry from: 11Eh
 		bcf		34h,6
@@ -1531,7 +1531,7 @@ p__D30	call	p__5D4					; entry from: 0D1Ah,0D28h
 		bra		p__D14
 		btfss	6Dh,0,BANKED
 		bra		p__D50
-		clrf	7Dh
+		clrf	SPBRGH1
 		decf	41h,W
 		movwf	SPBRG1
 		movlw	82h
