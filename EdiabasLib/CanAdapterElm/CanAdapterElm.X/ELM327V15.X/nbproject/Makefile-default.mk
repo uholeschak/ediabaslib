@@ -98,7 +98,11 @@ ${OBJECTDIR}/ELM327V15.o: ELM327V15.asm  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/ELM327V15.o.d 
 	@${RM} ${OBJECTDIR}/ELM327V15.o 
-	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/ELM327V15.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG -d__MPLAB_DEBUGGER_PK3=1 -q -p$(MP_PROCESSOR_OPTION)  -l\"${OBJECTDIR}/ELM327V15.lst\" -e\"${OBJECTDIR}/ELM327V15.err\" $(ASM_OPTIONS)    -o\"${OBJECTDIR}/ELM327V15.o\" \"ELM327V15.asm\" 
+	@${FIXDEPS} dummy.d -e "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/ELM327V15.X/ELM327V15.ERR" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG -d__MPLAB_DEBUGGER_PK3=1 -q -p$(MP_PROCESSOR_OPTION)  $(ASM_OPTIONS)    \"D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/ELM327V15.X/ELM327V15.asm\" 
+	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/ELM327V15.X/ELM327V15.O ${OBJECTDIR}/ELM327V15.o
+	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/ELM327V15.X/ELM327V15.ERR ${OBJECTDIR}/ELM327V15.o.err
+	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/ELM327V15.X/ELM327V15.LST ${OBJECTDIR}/ELM327V15.o.lst
+	@${RM}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/ELM327V15.X/ELM327V15.HEX 
 	@${DEP_GEN} -d "${OBJECTDIR}/ELM327V15.o"
 	@${FIXDEPS} "${OBJECTDIR}/ELM327V15.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
 	
@@ -107,7 +111,11 @@ ${OBJECTDIR}/ELM327V15.o: ELM327V15.asm  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/ELM327V15.o.d 
 	@${RM} ${OBJECTDIR}/ELM327V15.o 
-	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/ELM327V15.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION)  -l\"${OBJECTDIR}/ELM327V15.lst\" -e\"${OBJECTDIR}/ELM327V15.err\" $(ASM_OPTIONS)    -o\"${OBJECTDIR}/ELM327V15.o\" \"ELM327V15.asm\" 
+	@${FIXDEPS} dummy.d -e "D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/ELM327V15.X/ELM327V15.ERR" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION)  $(ASM_OPTIONS)    \"D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/ELM327V15.X/ELM327V15.asm\" 
+	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/ELM327V15.X/ELM327V15.O ${OBJECTDIR}/ELM327V15.o
+	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/ELM327V15.X/ELM327V15.ERR ${OBJECTDIR}/ELM327V15.o.err
+	@${MV}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/ELM327V15.X/ELM327V15.LST ${OBJECTDIR}/ELM327V15.o.lst
+	@${RM}  D:/Projects/EdiabasLib/EdiabasLib/CanAdapterElm/CanAdapterElm.X/ELM327V15.X/ELM327V15.HEX 
 	@${DEP_GEN} -d "${OBJECTDIR}/ELM327V15.o"
 	@${FIXDEPS} "${OBJECTDIR}/ELM327V15.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
 	

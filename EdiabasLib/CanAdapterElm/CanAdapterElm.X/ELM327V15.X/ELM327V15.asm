@@ -3,6 +3,8 @@
 		LIST      P=18F25K80		; modify this
 		#include "p18f25k80.inc"		; and this
 
+		#define BASE_ADDR 00000h
+
 		__CONFIG 300000h, 1314h
 		__CONFIG 300002h, 1E46h
 		__CONFIG 300004h, 8900h
@@ -139,8 +141,8 @@ p__100	addwf	PCL						; entry from: 1AECh
 		rrcf	40h
 		goto	p__C42
 		nop
-		DE 0FFh, 0FFh, 0FFh, 0FFh
 
+		ORG BASE_ADDR + 00200h
 		addwf	PCL
 		subfwb	41h,W
 		goto	p__C1E
@@ -228,8 +230,8 @@ p__100	addwf	PCL						; entry from: 1AECh
 		infsnz	53h,W
 		goto	p_1546
 		nop
-		DE 0FFh, 0FFh
 
+		ORG BASE_ADDR + 00300h
 		addwf	PCL
 p__302	goto	p__E9E					; entry from: 11Ah,138h,13Eh,14Ah,150h,156h,162h,168h,16Eh,174h,180h,186h,192h,198h,1A4h,1B0h,1B6h,1C8h,1CEh,1DAh,1E0h,1E6h,3BAh,3C4h
 		rlncf	43h
@@ -6813,10 +6815,9 @@ p_3B9E	rcall	p_3CCE					; entry from: 3B94h
 		movwf	70h
 		goto	p_4000
 		nop
-		DE 0FFh, 0FFh, 0FFh, 0FFh
-		DE 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
-		DE 0FFh, 0FFh
 
+		ORG BASE_ADDR + 03BC0h
+		DE 0FFh, 0FFh
 p_3BC2	bsf		3Eh,0					; entry from: 4024h
 		rcall	p_3CBA
 		movlw	0
@@ -7230,20 +7231,8 @@ p_3F26	movff	9Dh,96h					; entry from: 2260h,3F1Ah,3F20h
 		movf	9Ch,W,BANKED
 		goto	p_3D4A
 		nop
-		DE 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
-		DE 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
-		DE 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
-		DE 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
-		DE 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
-		DE 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
-		DE 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
-		DE 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
-		DE 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
-		DE 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
-		DE 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
-		DE 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
-		DE 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
 
+		ORG BASE_ADDR + 04000h
 p_4000	decf	96h,W,BANKED			; entry from: 3BA6h
 		btfss	97h,2,BANKED
 		iorlw	80h
