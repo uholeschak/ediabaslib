@@ -440,9 +440,9 @@ p__4BC	clrf	42h						; entry from: 4E4h
 		clrf	43h
 		setf	EEDATA
 		movlw	55h
-		movwf	7Eh
+		movwf	EECON2
 		movlw	0AAh
-		movwf	7Eh
+		movwf	EECON2
 		bsf		EECON1,1
 
 p__4CC	decfsz	43h						; entry from: 4CEh,4DCh
@@ -452,13 +452,13 @@ p__4CC	decfsz	43h						; entry from: 4CEh,4DCh
 p__4D4	movlw	81h						; entry from: 0A14h
 		movwf	0D1h,BANKED
 		reset
-p__4DA	btfsc	7Fh,1					; entry from: 4D2h
+p__4DA	btfsc	EECON1,1					; entry from: 4D2h
 		bra		p__4CC
-		incf	74h
-		incf	74h
+		incf	EEADR
+		incf	EEADR
 		decfsz	41h
 		bra		p__4BC
-		bcf		7Fh,2
+		bcf		EECON1,2
 		movlw	3Ch
 		movwf	41h
 p__4EC	movlw	0E8h					; entry from: 512h
@@ -874,7 +874,7 @@ p__7FC	clrf	STKPTR					; entry from: 470h,766h,784h,7A4h,7D6h
 		movwf	FSR1H
 		btfss	3Eh,0
 		bra		p__818
-		movf	6Eh,W
+		movf	CANSTAT,W
 		andlw	0E0h
 		xorlw	60h
 		btfsc	STATUS,2
@@ -896,11 +896,11 @@ p__82E	btfss	18h,0					; entry from: 3812h,389Ch,38D4h,38DEh,392Eh,3968h,39A8h
 p__834	rcall	p__7F2					; entry from: 0E70h,0E8Ch,11BEh,11CEh,11E8h,3898h,38CCh
 		bra		p__720
 
-p__838	movwf	74h						; entry from: 98Eh,99Ah,0C4Ah,0C62h,1382h,13A4h,1422h,142Eh,1470h
-		bcf		7Fh,7
-		bcf		7Fh,6
-		bsf		7Fh,0
-		movf	73h,W
+p__838	movwf	EEADR						; entry from: 98Eh,99Ah,0C4Ah,0C62h,1382h,13A4h,1422h,142Eh,1470h
+		bcf		EECON1,7
+		bcf		EECON1,6
+		bsf		EECON1,0
+		movf	EEDATA,W
 		return	
 
 p__844	movlw	0BAh					; entry from: 1C46h,1DBEh,2D02h,2D52h
@@ -927,36 +927,36 @@ p__866	btfsc	0D2h,6,BANKED			; entry from: 85Ch
 		bra		p__85E
 
 p__86E	clrf	3Dh						; entry from: 9CCh,0AA2h,0AB2h
-		clrf	74h
-		bcf		7Fh,7
-		bcf		7Fh,6
+		clrf	EEADR
+		bcf		EECON1,7
+		bcf		EECON1,6
 		movlw	8
 		movwf	41h
 p__87A	rrncf	3Dh						; entry from: 886h
-		bsf		7Fh,0
-		tstfsz	73h
+		bsf		EECON1,0
+		tstfsz	EEDATA
 		bsf		3Dh,7
-		incf	74h
+		incf	EEADR
 		decfsz	41h
 		bra		p__87A
 		bcf		3Eh,7
 		btfsc	3Dh,7
 		bsf		3Eh,7
 		bcf		3Dh,7
-		bsf		7Fh,0
-		movff	0F73h,0C8h
-		incf	74h
+		bsf		EECON1,0
+		movff	EEDATA,0C8h
+		incf	EEADR
 		nop
-		bsf		7Fh,0
-		movff	0F73h,0C9h
-		incf	74h
+		bsf		EECON1,0
+		movff	EEDATA,0C9h
+		incf	EEADR
 		nop
-		bsf		7Fh,0
-		movff	0F73h,0CAh
-		incf	74h
+		bsf		EECON1,0
+		movff	EEDATA,0CAh
+		incf	EEADR
 		nop
-		bsf		7Fh,0
-		movff	0F73h,0CBh
+		bsf		EECON1,0
+		movff	EEDATA,0CBh
 		movlw	0Ch
 		cpfsgt	3Dh
 		return	
@@ -1073,7 +1073,7 @@ p__98C	iorlw	1						; entry from: 8C4h,8CAh,8D0h,8D8h,8E0h,8E8h,8F0h,8F6h,8FEh,9
 		bz		p__998
 		movf	0CDh,W,BANKED
 		return	
-p__998	decf	74h,W					; entry from: 992h
+p__998	decf	EEADR,W					; entry from: 992h
 		goto	p__838
 
 p__99E	movlw	1						; entry from: 0ECCh,148Ah,4038h
@@ -1101,8 +1101,8 @@ p__9C4	movff	3Dh,44h					; entry from: 184Ch
 		movf	3Dh,W
 		xorwf	44h,W
 		bz		p__9FC
-		bsf		7Fh,2
-		clrf	74h
+		bsf		EECON1,2
+		clrf	EEADR
 		movlw	8
 		movwf	41h
 		movlw	0FFh
@@ -1112,7 +1112,7 @@ p__9E4	btfss	44h,0					; entry from: 9EEh
 		rrncf	44h
 		decfsz	41h
 		bra		p__9E4
-		bcf		7Fh,2
+		bcf		EECON1,2
 		bcf		3Eh,7
 		btfsc	44h,7
 		bsf		3Eh,7
@@ -1120,20 +1120,20 @@ p__9E4	btfss	44h,0					; entry from: 9EEh
 p__9FC	bcf		3Dh,7					; entry from: 9D8h
 		return	
 
-p__A00	movwf	73h						; entry from: 9E8h,0C88h,0C94h,0C96h,0C98h,0C9Ah,0F08h,0F0Eh,0F14h,0F1Ah,1390h,13AEh
+p__A00	movwf	EEDATA						; entry from: 9E8h,0C88h,0C94h,0C96h,0C98h,0C9Ah,0F08h,0F0Eh,0F14h,0F1Ah,1390h,13AEh
 		movlw	55h
-		movwf	7Eh
+		movwf	EECON2
 		movlw	0AAh
-		movwf	7Eh
-		bsf		7Fh,1
+		movwf	EECON2
+		bsf		EECON1,1
 		movlw	0Ch
 		rcall	p__B12
 p__A10	rcall	p__5D4					; entry from: 0A18h
 		btfsc	0Fh,1
 		bra		p__4D4
-		btfsc	7Fh,1
+		btfsc	EECON1,1
 		bra		p__A10
-		incf	74h
+		incf	EEADR
 		retlw	0FFh
 
 p__A1E	movf	8Ch,W,BANKED			; entry from: 3B6h,3BCh,17D2h
@@ -1446,20 +1446,20 @@ p__C72	rcall	p__C58					; entry from: 31Eh
 		movlw	65h
 		movwf	FSR0L
 		movlw	70h
-		movwf	74h
-		bsf		7Fh,2
+		movwf	EEADR
+		bsf		EECON1,2
 p__C86	movf	POSTINC0,W				; entry from: 0C8Ch
 		rcall	p__A00
 		decfsz	41h
 		bra		p__C86
 		movlw	6Ch
-		movwf	74h
+		movwf	EEADR
 		movlw	0FFh
 		rcall	p__A00
 		rcall	p__A00
 		rcall	p__A00
 		rcall	p__A00
-		bcf		7Fh,2
+		bcf		EECON1,2
 		bra		p__E9E
 p__CA0	bcf		10h,4					; entry from: 11Eh
 		bcf		34h,6
@@ -1531,7 +1531,7 @@ p__D30	call	p__5D4					; entry from: 0D1Ah,0D28h
 		bra		p__D14
 		btfss	6Dh,0,BANKED
 		bra		p__D50
-		clrf	7Dh
+		clrf	SPBRGH1
 		decf	41h,W
 		movwf	SPBRG1
 		movlw	82h
@@ -1665,15 +1665,15 @@ p__E4C	bcf		STATUS,0				; entry from: 0E5Ah
 		bra		p__E4C
 		movf	78h,W,BANKED
 		return	
-p__E60	movf	6Eh,W					; entry from: 130h
+p__E60	movf	CANSTAT,W					; entry from: 130h
 		andlw	0E0h
 		bnz		p__E6E
-		movff	0E42h,0B1h
-		movff	0E41h,0B2h
+		movff	TXERRCNT,0B1h
+		movff	RXERRCNT,0B2h
 p__E6E	movlw	54h						; entry from: 0E64h
 		call	p__834
 		movf	0B1h,W,BANKED
-		btfss	71h,5
+		btfss	COMSTAT,5
 		bra		p__E82
 		movlw	4Fh
 		call	p__7F2
@@ -1736,9 +1736,9 @@ p__ECC	call	p__99E					; entry from: 0EB4h,0EB8h
 		btfsc	STATUS,0
 		addlw	1
 		movwf	0C8h,BANKED
-p__F00	bsf		7Fh,2					; entry from: 0ECAh
+p__F00	bsf		EECON1,2					; entry from: 0ECAh
 		movlw	8
-		movwf	74h
+		movwf	EEADR
 		movf	0C8h,W,BANKED
 		call	p__A00
 		movf	0C9h,W,BANKED
@@ -1747,7 +1747,7 @@ p__F00	bsf		7Fh,2					; entry from: 0ECAh
 		call	p__A00
 		movf	0CBh,W,BANKED
 		call	p__A00
-		bcf		7Fh,2
+		bcf		EECON1,2
 		bra		p__E9E
 p__F22	movlw	31h						; entry from: 210h
 		cpfseq	65h,BANKED
@@ -2091,7 +2091,7 @@ p_1222	call	p__B1A					; entry from: 1204h
 		movlw	82h
 		btfsc	PIR1,5
 		goto	p__6CC
-		bsf		EECON2,1
+		bsf		BAUDCON1,1
 		bsf		PIE1,5
 		bsf		INTCON,7
 		movlw	2
@@ -2128,7 +2128,7 @@ p_1274	btfss	PORTC,4					; entry from: 127Eh
 p_127E	bra		p_1274					; entry from: 127Ah
 p_1280	bcf		INTCON,7				; entry from: 0Ah
 		bcf		PIE1,5
-		bcf		EECON2,1
+		bcf		BAUDCON1,1
 		clrf	OSCCON
 p_1288	btfss	OSCCON,3				; entry from: 128Ah
 		bra		p_1288
@@ -2251,29 +2251,29 @@ p_1380	movwf	0CCh,BANKED				; entry from: 1534h
 		xorwf	0CDh,W,BANKED
 		btfsc	STATUS,2
 		bra		p_1462
-		bsf		7Fh,2
+		bsf		EECON1,2
 		movf	0CDh,W,BANKED
 		call	p__A00
-		bcf		7Fh,2
+		bcf		EECON1,2
 		bra		p_1462
 p_1398	movlw	30h						; entry from: 137Ah
 		movwf	41h
 		movlw	0Ch
 		iorlw	1
-		movwf	74h
-		bsf		7Fh,2
+		movwf	EEADR
+		bsf		EECON1,2
 p_13A4	call	p__838					; entry from: 13BCh
 		xorwf	0CDh,W,BANKED
 		bz		p_13B4
 		movf	0CDh,W,BANKED
 		call	p__A00
 		bra		p_13B6
-p_13B4	incf	74h						; entry from: 13AAh
-p_13B6	incf	74h,W					; entry from: 13B2h
-		movwf	74h
+p_13B4	incf	EEADR						; entry from: 13AAh
+p_13B6	incf	EEADR,W					; entry from: 13B2h
+		movwf	EEADR
 		decfsz	41h
 		bra		p_13A4
-		bcf		7Fh,2
+		bcf		EECON1,2
 		bra		p_1462
 
 p_13C2	movf	65h,W,BANKED			; entry from: 12E6h,12FAh,1312h
@@ -2623,7 +2623,7 @@ p_168A	movlw	0F9h					; entry from: 1686h
 p_16B0	movlw	8						; entry from: 16A6h
 p_16B2	movwf	TRISB					; entry from: 16AEh
 		movlw	0
-		movwf	CCPR2L
+		movwf	CCP1CON
 		movlw	9Ah
 		movwf	0CDh,BANKED
 		movlw	28h
@@ -2647,8 +2647,8 @@ p_16DE	lfsr	1,200h					; entry from: 16D6h
 		lfsr	0,0
 		clrf	TBLPTRH
 		movlw	80h
-		movwf	7Fh
-		bsf		6Fh,7
+		movwf	EECON1
+		bsf		CANCON,7
 		clrf	97h,BANKED
 		btfss	0D0h,1,BANKED
 		bra		p_1706
@@ -2679,7 +2679,7 @@ p_171E	movwf	LATB					; entry from: 172Ch
 		movwf	LATB
 p_1730	btfss	TXSTA1,1				; entry from: 171Ah
 		call	p__B2A
-		clrf	7Dh
+		clrf	SPBRGH1
 		nop
 		nop
 		movf	0CFh,W,BANKED
@@ -2691,11 +2691,11 @@ p_1730	btfss	TXSTA1,1				; entry from: 171Ah
 		movwf	0CFh,BANKED
 		decf	0CFh,W,BANKED
 		bra		p_1754
-		incf	7Dh
+		incf	SPBRGH1
 		movlw	0A0h
 p_1754	movwf	SPBRG1					; entry from: 174Eh
 		movlw	8
-		movwf	EECON2
+		movwf	BAUDCON1
 		movlw	25h
 		movwf	TXSTA1
 		movlw	90h
@@ -2806,14 +2806,14 @@ p_1842	call	p__724					; entry from: 1836h,183Ch
 p_185E	bcf		34h,3					; entry from: 1858h
 		clrf	0B3h,BANKED
 		btfsc	3Eh,0
-		btfsc	6Eh,7
+		btfsc	CANSTAT,7
 		bra		p_187E
-		movf	6Eh,W
+		movf	CANSTAT,W
 		andlw	0E0h
 		bnz		p_1876
-		btfsc	71h,5
+		btfsc	COMSTAT,5
 		bra		p_1876
-		btfss	71h,0
+		btfss	COMSTAT,0
 		bra		p_187E
 
 p_1876	call	p_3CCE					; entry from: 186Ch,1870h
@@ -3682,7 +3682,7 @@ p_1FBE	btfsc	0Fh,0					; entry from: 1FA0h
 p_1FCA	btfss	10h,7					; entry from: 1FC0h
 		bra		p_1FDC
 		call	p_3CC4
-		btfsc	60h,3
+		btfsc	RXB0CON,3
 		call	p_3E1E
 		call	p_3CB0
 p_1FDC	btfss	19h,7					; entry from: 1FCCh
@@ -6053,18 +6053,18 @@ p_34B0	movff	1,2Fh					; entry from: 333Ah,34A2h,34A8h
 		btfss	97h,2,BANKED
 		btfss	37h,7
 		bsf		30h,3
-		movf	6Eh,W
+		movf	CANSTAT,W
 		andlw	0E0h
 		bnz		p_34D8
-		btfsc	71h,5
+		btfsc	COMSTAT,5
 		bra		p_34D6
-		btfss	71h,0
+		btfss	COMSTAT,0
 		bra		p_34DC
 p_34D6	rcall	p_3CCE					; entry from: 34D0h
 p_34D8	movlw	0						; entry from: 34CCh
 		rcall	p_3CD0
 p_34DC	call	p_3CC4					; entry from: 34D4h
-		btfsc	60h,3
+		btfsc	RXB0CON,3
 		call	p_3E1E
 		btfsc	36h,6
 		bra		p_34F0
@@ -6072,7 +6072,7 @@ p_34DC	call	p_3CC4					; entry from: 34D4h
 		btfss	35h,5
 		btfsc	37h,6
 p_34F0	movf	36h,W					; entry from: 34E8h
-		movwf	65h
+		movwf	RXB0DLC
 		addlw	4
 		movwf	0
 		bcf		0,6
@@ -6094,12 +6094,12 @@ p_3530	bcf		LATB,7					; entry from: 3B62h
 		clrf	1Dh
 		call	p_3CC4
 		movlw	8
-		movwf	60h
+		movwf	RXB0CON
 		call	p_3E1E
 		goto	p_3CB0
 
 p_3544	bsf		0B3h,5,BANKED			; entry from: 21A8h,21AEh,21B4h,21BAh,21C0h,21C6h,21CCh
-		movf	6Eh,W
+		movf	CANSTAT,W
 		andlw	0E0h
 		bnz		p_3552
 		bcf		0B3h,5,BANKED
@@ -6122,12 +6122,12 @@ p_3552	btfss	0B3h,1,BANKED			; entry from: 354Ah
 p_3572	clrf	0B3h,BANKED				; entry from: 355Ah,356Ch
 p_3574	bcf		1Bh,4					; entry from: 3554h
 		bcf		34h,1
-		bcf		77h,5
+		bcf		PIR5,5
 		call	p__63E
 		movf	98h,f,BANKED
 		btfsc	STATUS,2
 		bcf		35h,1
-		movf	6Eh,W
+		movf	CANSTAT,W
 		andlw	0E0h
 		bz		p_35AA
 		btfss	34h,3
@@ -6138,7 +6138,7 @@ p_3574	bcf		1Bh,4					; entry from: 3554h
 		call	p__ADA
 		bra		p_35A8
 p_359A	movlw	60h						; entry from: 358Ch
-		xorwf	6Eh,W
+		xorwf	CANSTAT,W
 		andlw	0E0h
 		bz		p_35AA
 p_35A2	movlw	60h						; entry from: 35F0h
@@ -6152,25 +6152,25 @@ p_35AA	rcall	p_3CB0					; entry from: 3588h,35A0h,35D4h,35E8h,35FCh,3676h,3692h,
 		bra		p_35F2
 		btfsc	19h,7
 		retlw	1
-		btfsc	71h,0
-		bcf		77h,5
+		btfsc	COMSTAT,0
+		bcf		PIR5,5
 		btfsc	34h,1
 		bra		p_35C8
-		btfss	60h,7
+		btfss	RXB0CON,7
 		bra		p_35C8
 		bsf		34h,1
 		bra		p_35FE
 
 p_35C8	bcf		34h,1					; entry from: 35BEh,35C2h
 		rcall	p_3CBA
-		btfsc	60h,7
+		btfsc	RXB0CON,7
 		bra		p_35FE
-		btfsc	77h,7
+		btfsc	PIR5,7
 		btfsc	3Eh,6
 		bra		p_35AA
 		incfsz	98h,W,BANKED
 		incf	98h,f,BANKED
-		bcf		77h,7
+		bcf		PIR5,7
 		call	p__63E
 		btfss	3Eh,3
 		bra		p_3672
@@ -6189,21 +6189,21 @@ p_35F2	btfss	0B3h,0,BANKED			; entry from: 35B2h,3678h
 		bcf		0Fh,1
 		bra		p_35AA
 
-p_35FE	movff	0F61h,1					; entry from: 35C6h,35CEh
-		movff	0F62h,2
-		movff	0F63h,3
-		movff	0F64h,4
-		movff	0F66h,5
-		movff	0F67h,6
-		movff	0F68h,7
-		movff	0F69h,8
-		movff	0F6Ah,9
-		movff	0F6Bh,0Ah
-		movff	0F6Ch,0Bh
-		movff	0F6Dh,0Ch
-		movff	0F65h,36h
+p_35FE	movff	RXB0SIDH,1					; entry from: 35C6h,35CEh
+		movff	RXB0SIDL,2
+		movff	RXB0EIDH,3
+		movff	RXB0EIDL,4
+		movff	RXB0D0,5
+		movff	RXB0D1,6
+		movff	RXB0D2,7
+		movff	RXB0D3,8
+		movff	RXB0D4,9
+		movff	RXB0D5,0Ah
+		movff	RXB0D6,0Bh
+		movff	RXB0D7,0Ch
+		movff	RXB0DLC,36h
 		movff	PIR3,44h
-		bcf		60h,7
+		bcf		RXB0CON,7
 		clrf	PIR3
 		bcf		LATB,6
 		clrf	1Eh
@@ -6216,7 +6216,7 @@ p_35FE	movff	0F61h,1					; entry from: 35C6h,35CEh
 		movwf	36h
 		bcf		0Fh,0
 		bcf		11h,1
-		movf	71h,W
+		movf	COMSTAT,W
 		andlw	7Fh
 		bnz		p_3660
 		btfsc	44h,7
@@ -6224,7 +6224,7 @@ p_35FE	movff	0F61h,1					; entry from: 35C6h,35CEh
 		clrf	98h,BANKED
 		bra		p_36A6
 
-p_3660	clrf	71h						; entry from: 3656h,365Ah
+p_3660	clrf	COMSTAT						; entry from: 3656h,365Ah
 		bsf		0Fh,0
 		bsf		11h,1
 		incfsz	98h,W,BANKED
@@ -6237,7 +6237,7 @@ p_3672	movlw	5						; entry from: 35E2h
 		cpfsgt	98h,BANKED
 		bra		p_35AA
 		bra		p_35F2
-p_367A	btfsc	71h,0					; entry from: 3670h
+p_367A	btfsc	COMSTAT,0					; entry from: 3670h
 		bra		p_3684
 		movlw	40h
 		cpfsgt	98h,BANKED
@@ -6340,33 +6340,33 @@ p_3756	call	p__63E					; entry from: 372Eh,3744h,374Ch
 		btfss	37h,7
 		bsf		30h,3
 		rcall	p_3CC4
-		btfsc	60h,3
+		btfsc	RXB0CON,3
 		rcall	p_3E1E
 		movlw	8
 		btfss	35h,5
 		btfsc	37h,6
 		movlw	3
-		movwf	65h
+		movwf	RXB0DLC
 		movff	2Fh,0F61h
 		movff	30h,0F62h
 		movff	31h,0F63h
 		movff	32h,0F64h
 		movlw	30h
-		movwf	66h
-		clrf	67h
-		clrf	68h
+		movwf	RXB0D0
+		clrf	RXB0D1
+		clrf	RXB0D2
 		movf	95h,W,BANKED
-		movwf	69h
-		movwf	6Ah
-		movwf	6Bh
-		movwf	6Ch
-		movwf	6Dh
+		movwf	RXB0D3
+		movwf	RXB0D4
+		movwf	RXB0D5
+		movwf	RXB0D6
+		movwf	RXB0D7
 		movf	0A6h,f,BANKED
 		bz		p_37B8
 		movf	0B0h,W,BANKED
 		btfss	35h,5
 		btfsc	37h,6
-		movwf	65h
+		movwf	RXB0DLC
 		movff	0ABh,0F66h
 		movff	0ACh,0F67h
 		movff	0ADh,0F68h
@@ -6374,7 +6374,7 @@ p_3756	call	p__63E					; entry from: 372Eh,3744h,374Ch
 		movff	0AFh,0F6Ah
 		call	p__63E
 p_37B8	movlw	8						; entry from: 3796h
-		movwf	60h
+		movwf	RXB0CON
 		bsf		10h,7
 		rcall	p_3CB0
 		bra		p_37C4
@@ -6667,7 +6667,7 @@ p_3A3A	bsf		0B3h,3,BANKED			; entry from: 3A2Ch
 		cpfslt	0BBh,BANKED
 		movwf	0BBh,BANKED
 		bsf		0B3h,5,BANKED
-		movf	6Eh,W
+		movf	CANSTAT,W
 		andlw	0E0h
 		btfsc	STATUS,2
 		bcf		0B3h,5,BANKED
@@ -6736,16 +6736,16 @@ p_3AEE	movf	0BDh,W,BANKED			; entry from: 3AE4h
 		bra		p_3B18
 		bsf		0B3h,1,BANKED
 		rcall	p_3CC4
-		btfsc	60h,3
+		btfsc	RXB0CON,3
 		rcall	p_3E1E
 		movlw	13h
-		movwf	66h
+		movwf	RXB0D0
 		movf	0B6h,W,BANKED
-		movwf	67h
+		movwf	RXB0D1
 		movf	0B7h,W,BANKED
-		movwf	68h
+		movwf	RXB0D2
 		movf	0B8h,W,BANKED
-		movwf	69h
+		movwf	RXB0D3
 		rcall	p_3B3C
 		bra		p_37C4
 p_3B18	clrf	0BDh,BANKED				; entry from: 3AFAh
@@ -6757,31 +6757,31 @@ p_3B18	clrf	0BDh,BANKED				; entry from: 3AFAh
 		bra		p_37C4
 
 p_3B28	rcall	p_3CC4					; entry from: 3AC4h,3B20h
-		btfsc	60h,3
+		btfsc	RXB0CON,3
 		rcall	p_3E1E
 		movlw	11h
-		movwf	66h
+		movwf	RXB0D0
 		movff	0BBh,0F67h
 		movff	0B9h,0F68h
-		setf	69h
-p_3B3C	setf	6Ah						; entry from: 3B14h
-		movff	3Ah,0F6Bh
-		movff	39h,0F6Ch
-		movff	38h,0F6Dh
+		setf	RXB0D3
+p_3B3C	setf	RXB0D4						; entry from: 3B14h
+		movff	3Ah,RXB0D5
+		movff	39h,RXB0D6
+		movff	38h,RXB0D7
 		movlw	0E7h
-		movwf	61h
+		movwf	RXB0SIDH
 		movlw	68h
-		movwf	62h
-		movff	0B5h,0F63h
-		movff	14h,0F64h
+		movwf	RXB0SIDL
+		movff	0B5h,RXB0EIDH
+		movff	14h,RXB0EIDL
 		movlw	8
-		movwf	65h
+		movwf	RXB0DLC
 		call	p__63E
 		bra		p_3530
 
-p_3B64	bsf		6Fh,4					; entry from: 21F6h,21FCh,2202h,2208h,220Eh,2214h,221Ah
+p_3B64	bsf		CANCON,4					; entry from: 21F6h,21FCh,2202h,2208h,220Eh,2214h,221Ah
 		movlw	30h
-		xorwf	6Eh,W
+		xorwf	CANSTAT,W
 		andlw	0E0h
 		btfss	STATUS,2
 		rcall	p_3CCE
@@ -6793,10 +6793,10 @@ p_3B64	bsf		6Fh,4					; entry from: 21F6h,21FCh,2202h,2208h,220Eh,2214h,221Ah
 		retlw	0
 
 p_3B7C	rcall	p_3CBA					; entry from: 187Ah,352Ah,35A6h,368Eh,3DD8h
-		bcf		60h,7
+		bcf		RXB0CON,7
 		call	p_3CB0
-		bcf		60h,7
-		clrf	71h
+		bcf		RXB0CON,7
+		clrf	COMSTAT
 		retlw	0
 
 p_3B8A	movf	96h,W,BANKED			; entry from: 32ECh,335Ah
@@ -6812,7 +6812,7 @@ p_3B92	btfsc	PORTB,3					; entry from: 3B9Ah
 p_3B9E	rcall	p_3CCE					; entry from: 3B94h
 		clrf	PIE3
 		movlw	20h
-		movwf	70h
+		movwf	CIOCON
 		goto	p_4000
 		nop
 
@@ -6821,10 +6821,10 @@ p_3B9E	rcall	p_3CCE					; entry from: 3B94h
 p_3BC2	bsf		3Eh,0					; entry from: 4024h
 		rcall	p_3CBA
 		movlw	0
-		movwf	60h
+		movwf	RXB0CON
 		rcall	p_3CB0
 		movlw	4
-		movwf	60h
+		movwf	RXB0CON
 		retlw	0
 
 p_3BD2	btfss	37h,5					; entry from: 3C94h,3CA8h,3D88h,3DB0h,3DCEh
@@ -6936,34 +6936,34 @@ p_3C82	rcall	p_3CCE					; entry from: 32F6h,34AAh
 		bcf		34h,2
 		retlw	0
 
-p_3CB0	movf	6Fh,W					; entry from: 1FD8h,3540h,35AAh,3642h,37BEh,3B80h,3BCAh,3E3Ch
+p_3CB0	movf	CANCON,W					; entry from: 1FD8h,3540h,35AAh,3642h,37BEh,3B80h,3BCAh,3E3Ch
 		andlw	0E1h
 		iorlw	0
-		movwf	6Fh
+		movwf	CANCON
 		retlw	0
 
-p_3CBA	movf	6Fh,W					; entry from: 35CAh,3B7Ch,3BC4h
+p_3CBA	movf	CANCON,W					; entry from: 35CAh,3B7Ch,3BC4h
 		andlw	0E1h
 		iorlw	0Ah
-		movwf	6Fh
+		movwf	CANCON
 		retlw	0
 
-p_3CC4	movf	6Fh,W					; entry from: 1FCEh,34DCh,3534h,3760h,3AFEh,3B28h
+p_3CC4	movf	CANCON,W					; entry from: 1FCEh,34DCh,3534h,3760h,3AFEh,3B28h
 		andlw	0E1h
 		iorlw	8
-		movwf	6Fh
+		movwf	CANCON
 		retlw	0
 
 p_3CCE	movlw	80h						; entry from: 814h,1876h,33BAh,34D6h,3560h,35EAh,3684h,3A70h,3B6Eh,3B9Eh,3C82h,3D5Ch,3E44h
 
 p_3CD0	movwf	43h						; entry from: 34DAh,3570h,35A4h,368Ch,3AA0h,3DD6h
-		xorwf	6Eh,W
+		xorwf	CANSTAT,W
 		andlw	0E0h
 		btfsc	STATUS,2
 		retlw	0
-		movff	0E42h,0B1h
-		movff	0E41h,0B2h
-		movf	6Eh,W
+		movff	TXERRCNT,0B1h
+		movff	RXERRCNT,0B2h
+		movf	CANSTAT,W
 		andlw	0E0h
 		xorlw	60h
 		bnz		p_3CEE
@@ -6973,13 +6973,13 @@ p_3CEE	movf	43h,W					; entry from: 3CE8h
 		rcall	p_3CF4
 		retlw	0
 
-p_3CF4	movwf	6Fh						; entry from: 3CECh,3CF0h
+p_3CF4	movwf	CANCON						; entry from: 3CECh,3CF0h
 		rlncf	96h,W,BANKED
 		movwf	42h
 		clrf	41h
 p_3CFC	call	p__5D4					; entry from: 3D0Eh
-		movf	6Eh,W
-		xorwf	6Fh,W
+		movf	CANSTAT,W
+		xorwf	CANCON,W
 		andlw	0E0h
 		btfsc	STATUS,2
 		retlw	0
@@ -6989,13 +6989,13 @@ p_3CFC	call	p__5D4					; entry from: 3D0Eh
 		pop
 		bsf		LATB,2
 		movlw	30h
-		movwf	6Fh
+		movwf	CANCON
 		rlncf	96h,W,BANKED
 		addlw	60h
 		movwf	42h
 p_3D1E	call	p__5D4					; entry from: 3D2Eh
 		movlw	30h
-		xorwf	6Eh,W
+		xorwf	CANSTAT,W
 		andlw	0E0h
 		bz		p_3D38
 		dcfsnz	41h
@@ -7116,15 +7116,15 @@ p_3E1E	rlncf	96h,W,BANKED			; entry from: 1FD4h,34E2h,353Ch,3764h,3B02h,3B2Ch
 		movwf	41h
 		clrf	42h
 p_3E26	call	p__5D4					; entry from: 3E36h
-		btfss	60h,3
+		btfss	RXB0CON,3
 		retlw	0
-		btfsc	71h,0
+		btfsc	COMSTAT,0
 		bra		p_3E38
 		dcfsnz	42h
 		decfsz	41h
 		bra		p_3E26
-p_3E38	bcf		60h,3					; entry from: 3E30h
-		bcf		77h,5
+p_3E38	bcf		RXB0CON,3					; entry from: 3E30h
+		bcf		PIR5,5
 		call	p_3CB0
 		pop
 		retlw	6
