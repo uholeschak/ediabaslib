@@ -3682,7 +3682,7 @@ p_1FBE	btfsc	0Fh,0					; entry from: 1FA0h
 p_1FCA	btfss	10h,7					; entry from: 1FC0h
 		bra		p_1FDC
 		call	p_3CC4
-		btfsc	60h,3
+		btfsc	RXB0CON,3
 		call	p_3E1E
 		call	p_3CB0
 p_1FDC	btfss	19h,7					; entry from: 1FCCh
