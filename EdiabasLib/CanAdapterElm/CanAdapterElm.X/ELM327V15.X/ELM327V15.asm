@@ -5,18 +5,66 @@
 
 		#define BASE_ADDR 00000h
 
-		CONFIG1L = 014h
-		CONFIG1H = 013h
-		CONFIG2L = 046h
-		CONFIG2H = 01Eh
-		CONFIG3H = 089h
-		CONFIG4L = 081h
-		CONFIG5L = 00Fh
-		CONFIG5H = 0C0h
-		CONFIG6L = 00Fh
-		CONFIG6H = 0E0h
-		CONFIG7L = 00Fh
-		CONFIG7H = 040h
+		; CONFIG1L
+		CONFIG RETEN = ON       ; VREG Sleep Enable bit (Ultra low-power regulator is Enabled (Controlled by SRETEN bit))
+		CONFIG INTOSCSEL = HIGH ; LF-INTOSC Low-power Enable bit (LF-INTOSC in High-power mode during Sleep)
+		CONFIG SOSCSEL = DIG    ; SOSC Power Selection and mode Configuration bits (Digital (SCLKI) mode)
+		CONFIG XINST = OFF      ; Extended Instruction Set (Disabled)
+
+		; CONFIG1H
+		CONFIG FOSC = HS1       ; Oscillator (HS oscillator (Medium power, 4 MHz - 16 MHz))
+		CONFIG PLLCFG = ON      ; PLL x4 Enable bit (Enabled)
+		CONFIG FCMEN = OFF      ; Fail-Safe Clock Monitor (Disabled)
+		CONFIG IESO = OFF       ; Internal External Oscillator Switch Over Mode (Disabled)
+
+		; CONFIG2L
+		CONFIG PWRTEN = ON      ; Power Up Timer (Enabled)
+		CONFIG BOREN = SBORDIS  ; Brown Out Detect (Enabled in hardware, SBOREN disabled)
+		CONFIG BORV = 0         ; Brown-out Reset Voltage bits (3.0V)
+		CONFIG BORPWR = HIGH    ; BORMV Power level (BORMV set to high power level)
+
+		; CONFIG2H
+		CONFIG WDTEN = ON       ; Watchdog Timer (WDT controlled by SWDTEN bit setting)
+		CONFIG WDTPS = 128      ; Watchdog Postscaler (1:128)
+
+		; CONFIG3H
+		CONFIG CANMX = PORTB    ; ECAN Mux bit (ECAN TX and RX pins are located on RB2 and RB3, respectively)
+		CONFIG MSSPMSK = MSK7   ; MSSP address masking (7 Bit address masking mode)
+		CONFIG MCLRE = ON       ; Master Clear Enable (MCLR Enabled, RE3 Disabled)
+
+		; CONFIG4L
+		CONFIG STVREN = ON      ; Stack Overflow Reset (Enabled)
+		CONFIG BBSIZ = BB1K     ; Boot Block Size (1K word Boot Block size)
+
+		; CONFIG5L
+		CONFIG CP0 = OFF        ; Code Protect 00800-01FFF (Disabled)
+		CONFIG CP1 = OFF        ; Code Protect 02000-03FFF (Disabled)
+		CONFIG CP2 = OFF        ; Code Protect 04000-05FFF (Disabled)
+		CONFIG CP3 = OFF        ; Code Protect 06000-07FFF (Disabled)
+
+		; CONFIG5H
+		CONFIG CPB = OFF        ; Code Protect Boot (Disabled)
+		CONFIG CPD = OFF        ; Data EE Read Protect (Disabled)
+
+		; CONFIG6L
+		CONFIG WRT0 = OFF       ; Table Write Protect 00800-01FFF (Disabled)
+		CONFIG WRT1 = OFF       ; Table Write Protect 02000-03FFF (Disabled)
+		CONFIG WRT2 = OFF       ; Table Write Protect 04000-05FFF (Disabled)
+		CONFIG WRT3 = OFF       ; Table Write Protect 06000-07FFF (Disabled)
+
+		; CONFIG6H
+		CONFIG WRTC = ON        ; Config. Write Protect (Enabled)
+		CONFIG WRTB = ON        ; Table Write Protect Boot (Enabled)
+		CONFIG WRTD = OFF       ; Data EE Write Protect (Disabled)
+
+		; CONFIG7L
+		CONFIG EBTR0 = OFF      ; Table Read Protect 00800-01FFF (Disabled)
+		CONFIG EBTR1 = OFF      ; Table Read Protect 02000-03FFF (Disabled)
+		CONFIG EBTR2 = OFF      ; Table Read Protect 04000-05FFF (Disabled)
+		CONFIG EBTR3 = OFF      ; Table Read Protect 06000-07FFF (Disabled)
+
+		; CONFIG7H
+		CONFIG EBTRB = OFF      ; Table Read Protect Boot (Disabled)
 
 		ORG 0
 		nop
