@@ -69,8 +69,17 @@
 		ORG 0
 		nop
 		goto	p_1654
-		DE 0FFh, 0FFh, 01Ch, 0BEh, 040h, 0EFh, 009h, 0F0h, 070h, 00Eh
-		DE 066h, 0EFh, 003h, 0F0h, 0FFh, 0FFh, 0FFh, 0FFh, 0FAh, 0D7h, 041h, 043h, 054h, 020h, 041h, 04Ch
+
+		ORG 008h
+		btfsc	1Ch,7
+		goto	p_1280
+p____E	movlw	70h						; entry from: 18h
+		goto	p__6CC
+
+		ORG 018h
+		bra		p____E
+
+		DE 041h, 043h, 054h, 020h, 041h, 04Ch
 		DE 045h, 052h, 054h, 000h, 04Fh, 042h, 044h, 049h, 049h, 020h, 074h, 06Fh, 020h, 052h, 053h, 032h
 		DE 033h, 032h, 020h, 049h, 06Eh, 074h, 065h, 072h, 070h, 072h, 065h, 074h, 065h, 072h, 000h, 000h
 		DE 042h, 055h, 046h, 046h, 045h, 052h, 020h, 046h, 055h, 04Ch, 04Ch, 000h, 042h, 055h, 053h, 020h
