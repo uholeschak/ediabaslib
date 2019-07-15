@@ -440,9 +440,9 @@ p__4BC	clrf	42h						; entry from: 4E4h
 		clrf	43h
 		setf	EEDATA
 		movlw	55h
-		movwf	7Eh
+		movwf	EECON2
 		movlw	0AAh
-		movwf	7Eh
+		movwf	EECON2
 		bsf		EECON1,1
 
 p__4CC	decfsz	43h						; entry from: 4CEh,4DCh
@@ -452,13 +452,13 @@ p__4CC	decfsz	43h						; entry from: 4CEh,4DCh
 p__4D4	movlw	81h						; entry from: 0A14h
 		movwf	0D1h,BANKED
 		reset
-p__4DA	btfsc	7Fh,1					; entry from: 4D2h
+p__4DA	btfsc	EECON1,1					; entry from: 4D2h
 		bra		p__4CC
-		incf	74h
-		incf	74h
+		incf	EEADR
+		incf	EEADR
 		decfsz	41h
 		bra		p__4BC
-		bcf		7Fh,2
+		bcf		EECON1,2
 		movlw	3Ch
 		movwf	41h
 p__4EC	movlw	0E8h					; entry from: 512h
