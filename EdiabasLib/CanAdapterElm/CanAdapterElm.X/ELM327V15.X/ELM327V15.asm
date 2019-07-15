@@ -2091,7 +2091,7 @@ p_1222	call	p__B1A					; entry from: 1204h
 		movlw	82h
 		btfsc	PIR1,5
 		goto	p__6CC
-		bsf		EECON2,1
+		bsf		BAUDCON1,1
 		bsf		PIE1,5
 		bsf		INTCON,7
 		movlw	2
@@ -2128,7 +2128,7 @@ p_1274	btfss	PORTC,4					; entry from: 127Eh
 p_127E	bra		p_1274					; entry from: 127Ah
 p_1280	bcf		INTCON,7				; entry from: 0Ah
 		bcf		PIE1,5
-		bcf		EECON2,1
+		bcf		BAUDCON1,1
 		clrf	OSCCON
 p_1288	btfss	OSCCON,3				; entry from: 128Ah
 		bra		p_1288
