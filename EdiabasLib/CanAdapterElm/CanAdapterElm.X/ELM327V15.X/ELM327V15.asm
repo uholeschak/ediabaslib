@@ -6936,33 +6936,33 @@ p_3C82	rcall	p_3CCE					; entry from: 32F6h,34AAh
 		bcf		34h,2
 		retlw	0
 
-p_3CB0	movf	6Fh,W					; entry from: 1FD8h,3540h,35AAh,3642h,37BEh,3B80h,3BCAh,3E3Ch
+p_3CB0	movf	CANCON,W					; entry from: 1FD8h,3540h,35AAh,3642h,37BEh,3B80h,3BCAh,3E3Ch
 		andlw	0E1h
 		iorlw	0
-		movwf	6Fh
+		movwf	CANCON
 		retlw	0
 
-p_3CBA	movf	6Fh,W					; entry from: 35CAh,3B7Ch,3BC4h
+p_3CBA	movf	CANCON,W					; entry from: 35CAh,3B7Ch,3BC4h
 		andlw	0E1h
 		iorlw	0Ah
-		movwf	6Fh
+		movwf	CANCON
 		retlw	0
 
-p_3CC4	movf	6Fh,W					; entry from: 1FCEh,34DCh,3534h,3760h,3AFEh,3B28h
+p_3CC4	movf	CANCON,W					; entry from: 1FCEh,34DCh,3534h,3760h,3AFEh,3B28h
 		andlw	0E1h
 		iorlw	8
-		movwf	6Fh
+		movwf	CANCON
 		retlw	0
 
 p_3CCE	movlw	80h						; entry from: 814h,1876h,33BAh,34D6h,3560h,35EAh,3684h,3A70h,3B6Eh,3B9Eh,3C82h,3D5Ch,3E44h
 
 p_3CD0	movwf	43h						; entry from: 34DAh,3570h,35A4h,368Ch,3AA0h,3DD6h
-		xorwf	6Eh,W
+		xorwf	CANSTAT,W
 		andlw	0E0h
 		btfsc	STATUS,2
 		retlw	0
-		movff	0E42h,0B1h
-		movff	0E41h,0B2h
+		movff	TXERRCNT,0B1h
+		movff	RXERRCNT,0B2h
 		movf	6Eh,W
 		andlw	0E0h
 		xorlw	60h
