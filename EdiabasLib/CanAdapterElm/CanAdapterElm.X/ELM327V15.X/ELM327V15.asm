@@ -296,88 +296,22 @@ p__100	addwf	PCL						; entry from: 1AECh
 		ORG BASE_ADDR + 00300h
 		addwf	PCL
 p__302	goto	p__E9E					; entry from: 11Ah,138h,13Eh,14Ah,150h,156h,162h,168h,16Eh,174h,180h,186h,192h,198h,1A4h,1B0h,1B6h,1C8h,1CEh,1DAh,1E0h,1E6h,3BAh,3C4h
-		rlncf	43h
-		goto	p__D92
-		dcfsnz	43h,W,BANKED
-		goto	p__DD8
-		nop
-		movf	43h
-		goto	p__E24
-		nop
-		rrcf	40h,f,BANKED
-		goto	p__C72
-		nop
-		subfwb	41h,W,BANKED
-		dcfsnz	54h,f,BANKED
-		nop
-		rrncf	53h,W,BANKED
-		addwfc	45h,W
-		rrcf	4Ah,W,BANKED
-		rlcf	38h,W,BANKED
-		addwfc	30h,W
-		subfwb	50h,f,BANKED
-		DE 4Dh		;WARNING: unknown instruction!
-		rrncf	53h,W,BANKED
-		addwfc	45h,W
-		rrcf	4Ah,W,BANKED
-		rlcf	38h,W,BANKED
-		addwfc	30h,W
-		movf	56h,W
-		DE 57h		;WARNING: unknown instruction!
-		movf	49h,f,BANKED
-		addwfc	4Fh,W
-		rrcf	39h,W,BANKED
-		rrcf	34h,W,BANKED
-		rrcf	2Dh
-		nop
-		movf	49h,f,BANKED
-		addwfc	4Fh,W
-		rlcf	31h,W
-		rrcf	32h,f,BANKED
-		decfsz	30h,W,BANKED
-		addwfc	34h,W
-		infsnz	28h,f,BANKED
-		movf	57h,W
-		rlcf	20h,W,BANKED
-		rrncf	42h,W,BANKED
-		rlncf	55h,W
-		DE 29h		;WARNING: unknown instruction!
-		movf	49h,f,BANKED
-		addwfc	4Fh,W
-		rlcf	31h,W
-		rrcf	32h,f,BANKED
-		decfsz	30h,W,BANKED
-		addwfc	34h,W
-		infsnz	28h,f,BANKED
-		movf	57h,W
-		rlncf	20h
-		movf	41h,f,BANKED
-		incf	54h,W,BANKED
-		nop
-		movf	49h,f,BANKED
-		addwfc	4Fh,W
-		rlcf	31h,W,BANKED
-		rlcf	37h
-		decfsz	35h,W,BANKED
-		DE 34h		;WARNING: unknown instruction!
-		rrncf	53h,W,BANKED
-		addwfc	45h,W
-		rrcf	4Ah,W,BANKED
-		rrcf	39h,f,BANKED
-		DE 39h		;WARNING: unknown instruction!
-		movf	55h,f,BANKED
-		movf	45h
-		DE 31h		;WARNING: unknown instruction!
-		movf	55h,f,BANKED
-		movf	45h
-		DE 32h		;WARNING: unknown instruction!
-		incf	20h,W
-		rrncf	43h,W,BANKED
-		addwfc	4Eh,W
-		nop
-		movf	45h
-		rlcf	52h,f,BANKED
-		DE 31h		;WARNING: unknown instruction!
+
+		ORG BASE_ADDR + 00306h
+		DE 043h, 046h, 0C9h, 0EFh, 006h, 0F0h, 043h, 04Dh, 0ECh, 0EFh
+		DE 006h, 0F0h, 000h, 000h, 043h, 052h, 012h, 0EFh, 007h, 0F0h, 000h, 000h, 040h, 033h, 039h, 0EFh
+		DE 006h, 0F0h, 000h, 000h, 041h, 055h, 054h, 04Fh, 000h, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h
+		DE 038h, 035h, 030h, 020h, 050h, 057h, 04Dh, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h, 038h, 035h
+		DE 030h, 020h, 056h, 050h, 057h, 000h, 049h, 053h, 04Fh, 020h, 039h, 031h, 034h, 031h, 02Dh, 032h
+		DE 000h, 000h, 049h, 053h, 04Fh, 020h, 031h, 034h, 032h, 033h, 030h, 02Dh, 034h, 020h, 028h, 04Bh
+		DE 057h, 050h, 020h, 035h, 042h, 041h, 055h, 044h, 029h, 000h, 049h, 053h, 04Fh, 020h, 031h, 034h
+		DE 032h, 033h, 030h, 02Dh, 034h, 020h, 028h, 04Bh, 057h, 050h, 020h, 046h, 041h, 053h, 054h, 029h
+		DE 000h, 000h, 049h, 053h, 04Fh, 020h, 031h, 035h, 037h, 036h, 035h, 02Dh, 034h, 000h, 053h, 041h
+		DE 045h, 020h, 04Ah, 031h, 039h, 033h, 039h, 000h, 055h, 053h, 045h, 052h, 031h, 000h, 055h, 053h
+		DE 045h, 052h, 032h, 000h, 020h, 028h, 043h, 041h, 04Eh, 020h, 000h, 000h, 045h, 052h, 052h, 037h
+		DE 031h, 000h
+
+		ORG BASE_ADDR + 003B2h
 p__3B2	btfss	17h,7					; entry from: 110h
 		bra		p__3BC
 		call	p__A1E
