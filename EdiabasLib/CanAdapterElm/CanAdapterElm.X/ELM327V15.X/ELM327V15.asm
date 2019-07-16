@@ -79,7 +79,7 @@ p____E	movlw	70h						; entry from: 18h
 		ORG 018h
 		bra		p____E
 
-		ORG BASE_ADDR + 0001Ah
+		ORG 0001Ah
 		DE 041h, 043h, 054h, 020h, 041h, 04Ch
 		DE 045h, 052h, 054h, 000h, 04Fh, 042h, 044h, 049h, 049h, 020h, 074h, 06Fh, 020h, 052h, 053h, 032h
 		DE 033h, 032h, 020h, 049h, 06Eh, 074h, 065h, 072h, 070h, 072h, 065h, 074h, 065h, 072h, 000h, 000h
@@ -96,7 +96,7 @@ p____E	movlw	70h						; entry from: 18h
 		DE 052h, 000h, 04Ch, 056h, 020h, 052h, 045h, 053h, 045h, 054h, 000h, 000h, 0FFh, 0FFh, 0FFh, 0FFh
 		DE 030h, 031h, 032h, 033h, 034h, 035h, 036h, 037h, 038h, 039h, 041h, 042h, 043h, 044h, 045h, 046h
 
-		ORG BASE_ADDR + 00100h
+		ORG 00100h
 p__100	addwf	PCL						; entry from: 1AECh
 		DE 05Ah, 000h, 0D1h, 06Bh
 		reset
@@ -183,7 +183,7 @@ p__100	addwf	PCL						; entry from: 1AECh
 		goto	p__C42
 		DE 000h, 000h
 
-		ORG BASE_ADDR + 00200h
+		ORG 00200h
 		addwf	PCL
 		DE 041h, 054h
 		goto	p__C1E
@@ -272,7 +272,7 @@ p__100	addwf	PCL						; entry from: 1AECh
 		goto	p_1546
 		DE 000h, 000h
 
-		ORG BASE_ADDR + 00300h
+		ORG 00300h
 		addwf	PCL
 p__302	goto	p__E9E					; entry from: 11Ah,138h,13Eh,14Ah,150h,156h,162h,168h,16Eh,174h,180h,186h,192h,198h,1A4h,1B0h,1B6h,1C8h,1CEh,1DAh,1E0h,1E6h,3BAh,3C4h
 		DE 043h, 046h
@@ -297,7 +297,6 @@ p__302	goto	p__E9E					; entry from: 11Ah,138h,13Eh,14Ah,150h,156h,162h,168h,16E
 		DE 045h, 052h, 032h, 000h, 020h, 028h, 043h, 041h, 04Eh, 020h, 000h, 000h, 045h, 052h, 052h, 037h
 		DE 031h, 000h
 
-		ORG BASE_ADDR + 003B2h
 p__3B2	btfss	17h,7					; entry from: 110h
 		bra		p__3BC
 		call	p__A1E
@@ -306,6 +305,7 @@ p__3BC	call	p__A1E					; entry from: 3B4h
 		call	p__724
 		bra		p__302
 
+		ORG BASE_ADDR + 003C6h
 p__3C6	clrf	2Fh						; entry from: 0FF2h,14EEh
 		clrf	30h
 		movlw	3
@@ -6798,8 +6798,7 @@ p_3B9E	rcall	p_3CCE					; entry from: 3B94h
 		goto	p_4000
 		nop
 
-		ORG BASE_ADDR + 03BC0h
-		DE 0FFh, 0FFh
+		ORG BASE_ADDR + 03BC2h
 p_3BC2	bsf		3Eh,0					; entry from: 4024h
 		rcall	p_3CBA
 		movlw	0
