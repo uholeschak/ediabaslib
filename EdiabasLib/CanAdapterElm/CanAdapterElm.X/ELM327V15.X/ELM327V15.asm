@@ -144,14 +144,43 @@ p__100	addwf	PCL						; entry from: 1AECh
 		bra		p__302
 		DE 04Ch, 050h
 		goto	p_11F8
-		DE 04Dh, 030h
-		DE 017h, 09Ah, 0B7h, 0D0h, 04Dh, 031h, 017h, 08Ah, 0B4h, 0D0h, 04Dh, 041h, 04Dh, 0EFh, 009h, 0F0h
-		DE 04Eh, 04Ch, 017h, 098h, 0AEh, 0D0h, 050h, 043h, 070h, 0EFh, 009h, 0F0h, 052h, 030h, 017h, 096h
-		DE 0A8h, 0D0h, 052h, 031h, 017h, 086h, 0A5h, 0D0h, 052h, 044h, 037h, 0EFh, 00Ah, 0F0h, 052h, 056h
-		DE 045h, 0EFh, 00Ah, 0F0h, 053h, 030h, 018h, 080h, 09Ch, 0D0h, 053h, 031h, 018h, 090h, 099h, 0D0h
-		DE 053h, 049h, 0B7h, 0EFh, 00Ah, 0F0h, 053h, 053h, 010h, 08Ah, 093h, 0D0h, 056h, 030h, 035h, 09Ah
-		DE 090h, 0D0h, 056h, 031h, 035h, 08Ah, 08Dh, 0D0h, 057h, 053h, 028h, 0EFh, 00Bh, 0F0h, 040h, 031h
-		DE 01Eh, 0EFh, 006h, 0F0h, 040h, 032h, 021h, 0EFh, 006h, 0F0h, 000h, 000h
+		DE 04Dh, 030h, 017h, 09Ah
+		bra		p__302
+		DE 04Dh, 031h, 017h, 08Ah
+		bra		p__302
+		DE 04Dh, 041h
+		goto	p_129A
+		DE 04Eh, 04Ch, 017h, 098h
+		bra		p__302
+		DE 050h, 043h
+		goto	p_12E0
+		DE 052h, 030h, 017h, 096h
+		bra		p__302
+		DE 052h, 031h, 017h, 086h
+		bra		p__302
+		DE 052h, 044h
+		goto	p_146E
+		DE 052h, 056h
+		goto	p_148A
+		DE 053h, 030h, 018h, 080h
+		bra		p__302
+		DE 053h, 031h, 018h, 090h
+		bra		p__302
+		DE 053h, 049h
+		goto	p_156E
+		DE 053h, 053h, 010h, 08Ah
+		bra		p__302
+		DE 056h, 030h, 035h, 09Ah
+		bra		p__302
+		DE 056h, 031h, 035h, 08Ah
+		bra		p__302
+		DE 057h, 053h
+		goto	p_1650
+		DE 040h, 031h
+		goto	p__C3C
+		DE 040h, 032h
+		goto	p__C42
+		DE 000h, 000h
 
 		ORG BASE_ADDR + 00200h
 		addwf	PCL
