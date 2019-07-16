@@ -47,6 +47,21 @@
         <archiverTool>
         </archiverTool>
         <loading>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="default"
+                        AC="false"
+                        BL="false"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=default"
+                        DBC="${MAKE}  -f Makefile CONF=default TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/default&quot; &quot;dist/default&quot;"
+                        OP="dist/default/production/bootloader.production.hex"
+                        DOP="dist/default/debug/bootloader.debug.cof"
+                        FL="dist/default/production/bootloader.production.hex"
+                        PD="dist/default/production/bootloader.production.cof"
+                        DD="dist/default/debug/bootloader.debug.cof">
+          </makeArtifact>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
@@ -58,7 +73,7 @@
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
-        <makeCustomizationPostStep>hexmate +-FILL=0xFFFD@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.hex" "dist/default/production/ELM327V15.X.production.hex"</makeCustomizationPostStep>
+        <makeCustomizationPostStep>hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.hex" "dist/default/production/ELM327V15.X.production.hex"</makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
