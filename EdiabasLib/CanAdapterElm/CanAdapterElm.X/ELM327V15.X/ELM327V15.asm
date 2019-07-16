@@ -4,6 +4,7 @@
 		#include "p18f25k80.inc"		; and this
 
 		#define BASE_ADDR 03000h
+		#define DATA_OFFSET BASE_ADDR
 		#define TABLE_OFFSET BASE_ADDR
 
 		; CONFIG1L
@@ -80,7 +81,7 @@ p____E	movlw	70h						; entry from: 18h
 		ORG 018h
 		bra		p____E
 
-		ORG 0001Ah
+		ORG DATA_OFFSET + 0001Ah
 		DE 041h, 043h, 054h, 020h, 041h, 04Ch
 		DE 045h, 052h, 054h, 000h, 04Fh, 042h, 044h, 049h, 049h, 020h, 074h, 06Fh, 020h, 052h, 053h, 032h
 		DE 033h, 032h, 020h, 049h, 06Eh, 074h, 065h, 072h, 070h, 072h, 065h, 074h, 065h, 072h, 000h, 000h
@@ -702,7 +703,12 @@ p__6CC	movwf	3Fh						; entry from: 10h,9BAh,1238h,17ECh
 		rcall	p__704
 		movlw	52h
 		rcall	p__704
+#if DATA_OFFSET == 0
 		clrf	TBLPTRH
+#else
+		movlw	high(DATA_OFFSET) + 0
+		movwf	TBLPTRH
+#endif
 		clrf	TBLPTRU
 		swapf	3Fh,W
 		rcall	p__712
@@ -1785,13 +1791,23 @@ p__F7C	movlw	9						; entry from: 0F64h
 		bra		p__F9E
 
 p__F94	call	p__730					; entry from: 0F48h,0F7Ah
+#if DATA_OFFSET == 0
 		clrf	TBLPTRH
+#else
+		movlw	high(DATA_OFFSET) + 0
+		movwf	TBLPTRH
+#endif
 		bra		p__E9A
 p__F9C	movlw	82h						; entry from: 0F80h
 p__F9E	call	p__730					; entry from: 0F92h
 		movlw	0A4h
 		call	p__730
+#if DATA_OFFSET == 0
 		clrf	TBLPTRH
+#else
+		movlw	high(DATA_OFFSET) + 0
+		movwf	TBLPTRH
+#endif
 		call	p_2220
 		btfss	37h,7
 		bra		p__FBC
@@ -2628,7 +2644,12 @@ p_16CE	movwf	PORTC					; entry from: 16C8h
 p_16DE	lfsr	1,200h					; entry from: 16D6h
 		lfsr	2,200h
 		lfsr	0,0
+#if DATA_OFFSET == 0
 		clrf	TBLPTRH
+#else
+		movlw	high(DATA_OFFSET) + 0
+		movwf	TBLPTRH
+#endif
 		movlw	80h
 		movwf	EECON1
 		bsf		CANCON,7
@@ -3088,7 +3109,12 @@ p_1ACE	tblrd*+							; entry from: 1AF6h
 		cpfseq	64h,BANKED
 		bra		p_1AF2
 p_1AE2	movff	TBLPTRH,PCLATH			; entry from: 1ADCh
+#if DATA_OFFSET == 0
 		clrf	TBLPTRH
+#else
+		movlw	high(DATA_OFFSET) + 0
+		movwf	TBLPTRH
+#endif
 		movlw	2
 		subwf	TBLPTRL,W
 		goto	p__100
@@ -3096,7 +3122,12 @@ p_1AF0	incf	TBLPTRL					; entry from: 1AD6h
 p_1AF2	movlw	4						; entry from: 1AE0h
 		addwf	TBLPTRL
 		bra		p_1ACE
+#if DATA_OFFSET == 0
 p_1AF8	clrf	TBLPTRH					; entry from: 1AD2h
+#else
+p_1AF8	movlw	high(DATA_OFFSET) + 0			; entry from: 1AD2h
+		movwf	TBLPTRH
+#endif
 
 p_1AFA	goto	p__EAC					; entry from: 18E6h,19A2h,1A30h,1A46h,1A4Ch,1A52h
 
