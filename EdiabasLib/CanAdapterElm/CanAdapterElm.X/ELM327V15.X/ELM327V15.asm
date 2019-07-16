@@ -98,8 +98,6 @@ p____E	movlw	70h						; entry from: 18h
 
 		ORG BASE_ADDR + 00100h
 p__100	addwf	PCL						; entry from: 1AECh
-
-		ORG BASE_ADDR + 00102h
 		DE 05Ah, 000h, 0D1h, 06Bh, 0FFh, 000h, 049h, 000h, 015h, 0EFh, 00Ch, 0F0h, 044h, 000h
 		DE 0D9h, 0EFh, 001h, 0F0h, 000h, 000h, 041h, 04Ch, 017h, 088h, 0F3h, 0D0h, 041h, 052h, 050h, 0EFh
 		DE 006h, 0F0h, 042h, 044h, 055h, 0EFh, 006h, 0F0h, 042h, 049h, 062h, 0EFh, 006h, 0F0h, 043h, 053h
@@ -119,99 +117,26 @@ p__100	addwf	PCL						; entry from: 1AECh
 
 		ORG BASE_ADDR + 00200h
 		addwf	PCL
-		subfwb	41h,W
-		goto	p__C1E
-		rlncf	43h,W,BANKED
-		goto	p__D76
-		dcfsnz	44h,W,BANKED
-		goto	p__F22
-		movf	44h,W
-		goto	p_101A
-		rlncf	49h,f,BANKED
-		goto	p_1184
-		subfwb	4Bh,f,BANKED
-		goto	p_11AA
-		movf	50h,W
-		goto	p_13F4
-		subfwb	52h,W
-		goto	p_147A
-		movf	53h,W
-		goto	p_15AE
-		movf	54h,W
-		goto	p_15AE
-		nop
-		rrncf	43h,W,BANKED
-		goto	p__D5C
-		rlncf	43h
-		goto	p__DAC
-		movf	43h,W
-		goto	p__DF2
-		rrncf	49h
-		goto	p_110C
-		rlncf	49h
-		goto	p_1148
-		movf	4Dh
-		goto	p_12BA
-		subfwb	4Dh,W
-		goto	p_12C2
-		rrncf	52h,W,BANKED
-		goto	p_157E
-		movf	53h,W
-		goto	p_15DE
-		rrncf	54h,W,BANKED
-		goto	p_15A6
-		movf	54h,W
-		goto	p_15DE
-		rlncf	53h,W
-		goto	p_152E
-		movf	53h
-		goto	p_157E
-		subfwb	53h,W
-		goto	p_1586
-		subfwb	53h,f,BANKED
-		goto	p_1592
-		nop
-		movf	42h
-		goto	p__CD8
-		rlncf	43h
-		goto	p__D80
-		dcfsnz	43h,W,BANKED
-		goto	p__DC6
-		rlncf	43h,W,BANKED
-		goto	p_1536
-		infsnz	49h,W,BANKED
-		goto	p_112C
-		infsnz	53h,W
-		goto	p_1558
-		nop
-		movf	43h
-		goto	p__E02
-		subfwb	43h
-		goto	p__EB2
-		movf	4Dh,W
-		goto	p_12A2
-		rrncf	50h
-		goto	p_12CE
-		movf	50h,W
-		goto	p_12E6
-		nop
-		movf	50h,W
-		goto	p_12FA
-		nop
-		movf	4Dh,W
-		goto	p_12AC
-		movf	50h,W
-		goto	p_1312
-		infsnz	53h,W
-		goto	p_1546
-		nop
+		DE 041h, 054h, 00Fh, 0EFh, 006h, 0F0h, 043h, 045h, 0BBh, 0EFh, 006h, 0F0h, 044h, 04Dh
+		DE 091h, 0EFh, 007h, 0F0h, 044h, 050h, 00Dh, 0EFh, 008h, 0F0h, 049h, 047h, 0C2h, 0EFh, 008h, 0F0h
+		DE 04Bh, 057h, 0D5h, 0EFh, 008h, 0F0h, 050h, 050h, 0FAh, 0EFh, 009h, 0F0h, 052h, 054h, 03Dh, 0EFh
+		DE 00Ah, 0F0h, 053h, 050h, 0D7h, 0EFh, 00Ah, 0F0h, 054h, 050h, 0D7h, 0EFh, 00Ah, 0F0h, 000h, 000h
+		DE 043h, 041h, 0AEh, 0EFh, 006h, 0F0h, 043h, 046h, 0D6h, 0EFh, 006h, 0F0h, 043h, 050h, 0F9h, 0EFh
+		DE 006h, 0F0h, 049h, 042h, 086h, 0EFh, 008h, 0F0h, 049h, 046h, 0A4h, 0EFh, 008h, 0F0h, 04Dh, 052h
+		DE 05Dh, 0EFh, 009h, 0F0h, 04Dh, 054h, 061h, 0EFh, 009h, 0F0h, 052h, 041h, 0BFh, 0EFh, 00Ah, 0F0h
+		DE 053h, 050h, 0EFh, 0EFh, 00Ah, 0F0h, 054h, 041h, 0D3h, 0EFh, 00Ah, 0F0h, 054h, 050h, 0EFh, 0EFh
+		DE 00Ah, 0F0h, 053h, 044h, 097h, 0EFh, 00Ah, 0F0h, 053h, 052h, 0BFh, 0EFh, 00Ah, 0F0h, 053h, 054h
+		DE 0C3h, 0EFh, 00Ah, 0F0h, 053h, 057h, 0C9h, 0EFh, 00Ah, 0F0h, 000h, 000h, 042h, 052h, 06Ch, 0EFh
+		DE 006h, 0F0h, 043h, 046h, 0C0h, 0EFh, 006h, 0F0h, 043h, 04Dh, 0E3h, 0EFh, 006h, 0F0h, 043h, 045h
+		DE 09Bh, 0EFh, 00Ah, 0F0h, 049h, 049h, 096h, 0EFh, 008h, 0F0h, 053h, 048h, 0ACh, 0EFh, 00Ah, 0F0h
+		DE 000h, 000h, 043h, 052h, 001h, 0EFh, 007h, 0F0h, 043h, 056h, 059h, 0EFh, 007h, 0F0h, 04Dh, 050h
+		DE 051h, 0EFh, 009h, 0F0h, 050h, 042h, 067h, 0EFh, 009h, 0F0h, 050h, 050h, 073h, 0EFh, 009h, 0F0h
+		DE 000h, 000h, 050h, 050h, 07Dh, 0EFh, 009h, 0F0h, 000h, 000h, 04Dh, 050h, 056h, 0EFh, 009h, 0F0h
+		DE 050h, 050h, 089h, 0EFh, 009h, 0F0h, 053h, 048h, 0A3h, 0EFh, 00Ah, 0F0h, 000h, 000h
 
 		ORG BASE_ADDR + 00300h
 		addwf	PCL
-p__302	goto	p__E9E					; entry from: 11Ah,138h,13Eh,14Ah,150h,156h,162h,168h,16Eh,174h,180h,186h,192h,198h,1A4h,1B0h,1B6h,1C8h,1CEh,1DAh,1E0h,1E6h,3BAh,3C4h
-
-		ORG BASE_ADDR + 00306h
-		DE 043h, 046h, 0C9h, 0EFh, 006h, 0F0h, 043h, 04Dh, 0ECh, 0EFh
+		DE 04Fh, 0EFh, 007h, 0F0h, 043h, 046h, 0C9h, 0EFh, 006h, 0F0h, 043h, 04Dh, 0ECh, 0EFh
 		DE 006h, 0F0h, 000h, 000h, 043h, 052h, 012h, 0EFh, 007h, 0F0h, 000h, 000h, 040h, 033h, 039h, 0EFh
 		DE 006h, 0F0h, 000h, 000h, 041h, 055h, 054h, 04Fh, 000h, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h
 		DE 038h, 035h, 030h, 020h, 050h, 057h, 04Dh, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h, 038h, 035h
@@ -222,17 +147,10 @@ p__302	goto	p__E9E					; entry from: 11Ah,138h,13Eh,14Ah,150h,156h,162h,168h,16E
 		DE 000h, 000h, 049h, 053h, 04Fh, 020h, 031h, 035h, 037h, 036h, 035h, 02Dh, 034h, 000h, 053h, 041h
 		DE 045h, 020h, 04Ah, 031h, 039h, 033h, 039h, 000h, 055h, 053h, 045h, 052h, 031h, 000h, 055h, 053h
 		DE 045h, 052h, 032h, 000h, 020h, 028h, 043h, 041h, 04Eh, 020h, 000h, 000h, 045h, 052h, 052h, 037h
-		DE 031h, 000h
+		DE 031h, 000h, 017h, 0AEh, 003h, 0D0h, 00Fh, 0ECh, 005h, 0F0h, 0A3h, 0D7h, 00Fh, 0ECh, 005h, 0F0h
+		DE 092h, 0ECh, 003h, 0F0h, 09Eh, 0D7h
 
-		ORG BASE_ADDR + 003B2h
-p__3B2	btfss	17h,7					; entry from: 110h
-		bra		p__3BC
-		call	p__A1E
-		bra		p__302
-p__3BC	call	p__A1E					; entry from: 3B4h
-		call	p__724
-		bra		p__302
-
+		ORG BASE_ADDR + 003C6h
 p__3C6	clrf	2Fh						; entry from: 0FF2h,14EEh
 		clrf	30h
 		movlw	3
