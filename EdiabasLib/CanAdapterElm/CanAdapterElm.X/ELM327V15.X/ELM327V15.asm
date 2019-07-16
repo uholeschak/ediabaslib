@@ -3,6 +3,7 @@
 		LIST      P=18F25K80		; modify this
 		#include "p18f25k80.inc"		; and this
 
+		#define CODE_OFFSET 00000h
 		#define BASE_ADDR 01000h
 		#define DATA_OFFSET BASE_ADDR
 		#define TABLE_OFFSET BASE_ADDR
@@ -68,236 +69,236 @@
 		; CONFIG7H
 		CONFIG EBTRB = OFF      ; Table Read Protect Boot (Disabled)
 
-		ORG 0
+		ORG CODE_OFFSET + 0
 		nop
 		goto	p_1654
 
-		ORG 008h
+		ORG CODE_OFFSET + 008h
 		btfsc	1Ch,7
 		goto	p_1280
 p____E	movlw	70h						; entry from: 18h
 		goto	p__6CC
 
-		ORG 018h
+		ORG CODE_OFFSET + 018h
 		bra		p____E
 
 		ORG DATA_OFFSET + 0001Ah
-		DE 041h, 043h, 054h, 020h, 041h, 04Ch
-		DE 045h, 052h, 054h, 000h, 04Fh, 042h, 044h, 049h, 049h, 020h, 074h, 06Fh, 020h, 052h, 053h, 032h
-		DE 033h, 032h, 020h, 049h, 06Eh, 074h, 065h, 072h, 070h, 072h, 065h, 074h, 065h, 072h, 000h, 000h
-		DE 042h, 055h, 046h, 046h, 045h, 052h, 020h, 046h, 055h, 04Ch, 04Ch, 000h, 042h, 055h, 053h, 020h
-		DE 042h, 055h, 053h, 059h, 000h, 000h, 042h, 055h, 053h, 020h, 045h, 052h, 052h, 04Fh, 052h, 000h
-		DE 042h, 055h, 053h, 020h, 049h, 04Eh, 049h, 054h, 03Ah, 020h, 000h, 000h, 043h, 041h, 04Eh, 020h
-		DE 045h, 052h, 052h, 04Fh, 052h, 000h, 03Ch, 044h, 041h, 054h, 041h, 020h, 045h, 052h, 052h, 04Fh
-		DE 052h, 000h, 045h, 04Ch, 04Dh, 033h, 032h, 037h, 020h, 076h, 031h, 02Eh, 035h, 000h, 03Fh, 000h
-		DE 046h, 042h, 020h, 045h, 052h, 052h, 04Fh, 052h, 000h, 000h, 055h, 04Eh, 041h, 042h, 04Ch, 045h
-		DE 020h, 054h, 04Fh, 020h, 043h, 04Fh, 04Eh, 04Eh, 045h, 043h, 054h, 000h, 04Eh, 04Fh, 020h, 044h
-		DE 041h, 054h, 041h, 000h, 04Fh, 04Bh, 000h, 000h, 03Eh, 000h, 053h, 045h, 041h, 052h, 043h, 048h
-		DE 049h, 04Eh, 047h, 02Eh, 02Eh, 02Eh, 000h, 000h, 053h, 054h, 04Fh, 050h, 050h, 045h, 044h, 000h
-		DE 03Eh, 041h, 054h, 020h, 04Dh, 041h, 000h, 000h, 03Ch, 052h, 058h, 020h, 045h, 052h, 052h, 04Fh
-		DE 052h, 000h, 04Ch, 056h, 020h, 052h, 045h, 053h, 045h, 054h, 000h, 000h, 0FFh, 0FFh, 0FFh, 0FFh
-		DE 030h, 031h, 032h, 033h, 034h, 035h, 036h, 037h, 038h, 039h, 041h, 042h, 043h, 044h, 045h, 046h
+		DB 041h, 043h, 054h, 020h, 041h, 04Ch
+		DB 045h, 052h, 054h, 000h, 04Fh, 042h, 044h, 049h, 049h, 020h, 074h, 06Fh, 020h, 052h, 053h, 032h
+		DB 033h, 032h, 020h, 049h, 06Eh, 074h, 065h, 072h, 070h, 072h, 065h, 074h, 065h, 072h, 000h, 000h
+		DB 042h, 055h, 046h, 046h, 045h, 052h, 020h, 046h, 055h, 04Ch, 04Ch, 000h, 042h, 055h, 053h, 020h
+		DB 042h, 055h, 053h, 059h, 000h, 000h, 042h, 055h, 053h, 020h, 045h, 052h, 052h, 04Fh, 052h, 000h
+		DB 042h, 055h, 053h, 020h, 049h, 04Eh, 049h, 054h, 03Ah, 020h, 000h, 000h, 043h, 041h, 04Eh, 020h
+		DB 045h, 052h, 052h, 04Fh, 052h, 000h, 03Ch, 044h, 041h, 054h, 041h, 020h, 045h, 052h, 052h, 04Fh
+		DB 052h, 000h, 045h, 04Ch, 04Dh, 033h, 032h, 037h, 020h, 076h, 031h, 02Eh, 035h, 000h, 03Fh, 000h
+		DB 046h, 042h, 020h, 045h, 052h, 052h, 04Fh, 052h, 000h, 000h, 055h, 04Eh, 041h, 042h, 04Ch, 045h
+		DB 020h, 054h, 04Fh, 020h, 043h, 04Fh, 04Eh, 04Eh, 045h, 043h, 054h, 000h, 04Eh, 04Fh, 020h, 044h
+		DB 041h, 054h, 041h, 000h, 04Fh, 04Bh, 000h, 000h, 03Eh, 000h, 053h, 045h, 041h, 052h, 043h, 048h
+		DB 049h, 04Eh, 047h, 02Eh, 02Eh, 02Eh, 000h, 000h, 053h, 054h, 04Fh, 050h, 050h, 045h, 044h, 000h
+		DB 03Eh, 041h, 054h, 020h, 04Dh, 041h, 000h, 000h, 03Ch, 052h, 058h, 020h, 045h, 052h, 052h, 04Fh
+		DB 052h, 000h, 04Ch, 056h, 020h, 052h, 045h, 053h, 045h, 054h, 000h, 000h, 0FFh, 0FFh, 0FFh, 0FFh
+		DB 030h, 031h, 032h, 033h, 034h, 035h, 036h, 037h, 038h, 039h, 041h, 042h, 043h, 044h, 045h, 046h
 
 		ORG TABLE_OFFSET + 00100h
 p__100	addwf	PCL						; entry from: 1AECh
-		DE 05Ah, 000h, 0D1h, 06Bh
+		DB 05Ah, 000h, 0D1h, 06Bh
 		reset
-		DE 049h, 000h
+		DB 049h, 000h
 		goto	p_182A
-		DE 044h, 000h
+		DB 044h, 000h
 		goto	p__3B2
-		DE 000h, 000h
-		DE 041h, 04Ch, 017h, 088h
+		DB 000h, 000h
+		DB 041h, 04Ch, 017h, 088h
 		bra		p__302
-		DE 041h, 052h
+		DB 041h, 052h
 		goto	p__CA0
-		DE 042h, 044h
+		DB 042h, 044h
 		goto	p__CAA
-		DE 042h, 049h
+		DB 042h, 049h
 		goto	p__CC4
-		DE 043h, 053h
+		DB 043h, 053h
 		goto	p__E60
-		DE 044h, 030h, 018h, 09Ah
+		DB 044h, 030h, 018h, 09Ah
 		bra		p__302
-		DE 044h, 031h, 018h, 08Ah
+		DB 044h, 031h, 018h, 08Ah
 		bra		p__302
-		DE 044h, 050h
+		DB 044h, 050h
 		goto	p__F40
-		DE 045h, 030h, 017h, 094h
+		DB 045h, 030h, 017h, 094h
 		bra		p__302
-		DE 045h, 031h, 017h, 084h
+		DB 045h, 031h, 017h, 084h
 		bra		p__302
-		DE 046h, 045h, 0D2h, 06Bh
+		DB 046h, 045h, 0D2h, 06Bh
 		bra		p__302
-		DE 046h, 049h
+		DB 046h, 049h
 		goto	p_1104
-		DE 048h, 030h, 017h, 092h
+		DB 048h, 030h, 017h, 092h
 		bra		p__302
-		DE 048h, 031h, 017h, 082h
+		DB 048h, 031h, 017h, 082h
 		bra		p__302
-		DE 04Ah, 045h, 035h, 094h
+		DB 04Ah, 045h, 035h, 094h
 		bra		p__302
-		DE 04Ah, 053h, 035h, 084h
+		DB 04Ah, 053h, 035h, 084h
 		bra		p__302
-		DE 04Bh, 057h
+		DB 04Bh, 057h
 		goto	p_11BC
-		DE 04Ch, 030h, 017h, 09Eh
+		DB 04Ch, 030h, 017h, 09Eh
 		bra		p__302
-		DE 04Ch, 031h, 017h, 08Eh
+		DB 04Ch, 031h, 017h, 08Eh
 		bra		p__302
-		DE 04Ch, 050h
+		DB 04Ch, 050h
 		goto	p_11F8
-		DE 04Dh, 030h, 017h, 09Ah
+		DB 04Dh, 030h, 017h, 09Ah
 		bra		p__302
-		DE 04Dh, 031h, 017h, 08Ah
+		DB 04Dh, 031h, 017h, 08Ah
 		bra		p__302
-		DE 04Dh, 041h
+		DB 04Dh, 041h
 		goto	p_129A
-		DE 04Eh, 04Ch, 017h, 098h
+		DB 04Eh, 04Ch, 017h, 098h
 		bra		p__302
-		DE 050h, 043h
+		DB 050h, 043h
 		goto	p_12E0
-		DE 052h, 030h, 017h, 096h
+		DB 052h, 030h, 017h, 096h
 		bra		p__302
-		DE 052h, 031h, 017h, 086h
+		DB 052h, 031h, 017h, 086h
 		bra		p__302
-		DE 052h, 044h
+		DB 052h, 044h
 		goto	p_146E
-		DE 052h, 056h
+		DB 052h, 056h
 		goto	p_148A
-		DE 053h, 030h, 018h, 080h
+		DB 053h, 030h, 018h, 080h
 		bra		p__302
-		DE 053h, 031h, 018h, 090h
+		DB 053h, 031h, 018h, 090h
 		bra		p__302
-		DE 053h, 049h
+		DB 053h, 049h
 		goto	p_156E
-		DE 053h, 053h, 010h, 08Ah
+		DB 053h, 053h, 010h, 08Ah
 		bra		p__302
-		DE 056h, 030h, 035h, 09Ah
+		DB 056h, 030h, 035h, 09Ah
 		bra		p__302
-		DE 056h, 031h, 035h, 08Ah
+		DB 056h, 031h, 035h, 08Ah
 		bra		p__302
-		DE 057h, 053h
+		DB 057h, 053h
 		goto	p_1650
-		DE 040h, 031h
+		DB 040h, 031h
 		goto	p__C3C
-		DE 040h, 032h
+		DB 040h, 032h
 		goto	p__C42
-		DE 000h, 000h
+		DB 000h, 000h
 
 		ORG TABLE_OFFSET + 00200h
 		addwf	PCL
-		DE 041h, 054h
+		DB 041h, 054h
 		goto	p__C1E
-		DE 043h, 045h
+		DB 043h, 045h
 		goto	p__D76
-		DE 044h, 04Dh
+		DB 044h, 04Dh
 		goto	p__F22
-		DE 044h, 050h
+		DB 044h, 050h
 		goto	p_101A
-		DE 049h, 047h
+		DB 049h, 047h
 		goto	p_1184
-		DE 04Bh, 057h
+		DB 04Bh, 057h
 		goto	p_11AA
-		DE 050h, 050h
+		DB 050h, 050h
 		goto	p_13F4
-		DE 052h, 054h
+		DB 052h, 054h
 		goto	p_147A
-		DE 053h, 050h
+		DB 053h, 050h
 		goto	p_15AE
-		DE 054h, 050h
+		DB 054h, 050h
 		goto	p_15AE
-		DE 000h, 000h
-		DE 043h, 041h
+		DB 000h, 000h
+		DB 043h, 041h
 		goto	p__D5C
-		DE 043h, 046h
+		DB 043h, 046h
 		goto	p__DAC
-		DE 043h, 050h
+		DB 043h, 050h
 		goto	p__DF2
-		DE 049h, 042h
+		DB 049h, 042h
 		goto	p_110C
-		DE 049h, 046h
+		DB 049h, 046h
 		goto	p_1148
-		DE 04Dh, 052h
+		DB 04Dh, 052h
 		goto	p_12BA
-		DE 04Dh, 054h
+		DB 04Dh, 054h
 		goto	p_12C2
-		DE 052h, 041h
+		DB 052h, 041h
 		goto	p_157E
-		DE 053h, 050h
+		DB 053h, 050h
 		goto	p_15DE
-		DE 054h, 041h
+		DB 054h, 041h
 		goto	p_15A6
-		DE 054h, 050h
+		DB 054h, 050h
 		goto	p_15DE
-		DE 053h, 044h
+		DB 053h, 044h
 		goto	p_152E
-		DE 053h, 052h
+		DB 053h, 052h
 		goto	p_157E
-		DE 053h, 054h
+		DB 053h, 054h
 		goto	p_1586
-		DE 053h, 057h
+		DB 053h, 057h
 		goto	p_1592
-		DE 000h, 000h
-		DE 042h, 052h
+		DB 000h, 000h
+		DB 042h, 052h
 		goto	p__CD8
-		DE 043h, 046h
+		DB 043h, 046h
 		goto	p__D80
-		DE 043h, 04Dh
+		DB 043h, 04Dh
 		goto	p__DC6
-		DE 043h, 045h
+		DB 043h, 045h
 		goto	p_1536
-		DE 049h, 049h
+		DB 049h, 049h
 		goto	p_112C
-		DE 053h, 048h
+		DB 053h, 048h
 		goto	p_1558
-		DE 000h, 000h
-		DE 043h, 052h
+		DB 000h, 000h
+		DB 043h, 052h
 		goto	p__E02
-		DE 043h, 056h
+		DB 043h, 056h
 		goto	p__EB2
-		DE 04Dh, 050h
+		DB 04Dh, 050h
 		goto	p_12A2
-		DE 050h, 042h
+		DB 050h, 042h
 		goto	p_12CE
-		DE 050h, 050h
+		DB 050h, 050h
 		goto	p_12E6
-		DE 000h, 000h
-		DE 050h, 050h
+		DB 000h, 000h
+		DB 050h, 050h
 		goto	p_12FA
-		DE 000h, 000h
-		DE 04Dh, 050h
+		DB 000h, 000h
+		DB 04Dh, 050h
 		goto	p_12AC
-		DE 050h, 050h
+		DB 050h, 050h
 		goto	p_1312
-		DE 053h, 048h
+		DB 053h, 048h
 		goto	p_1546
-		DE 000h, 000h
+		DB 000h, 000h
 
 		ORG TABLE_OFFSET + 00300h
 		addwf	PCL
 p__302	goto	p__E9E					; entry from: 11Ah,138h,13Eh,14Ah,150h,156h,162h,168h,16Eh,174h,180h,186h,192h,198h,1A4h,1B0h,1B6h,1C8h,1CEh,1DAh,1E0h,1E6h,3BAh,3C4h
-		DE 043h, 046h
+		DB 043h, 046h
 		goto	p__D92
-		DE 043h, 04Dh
+		DB 043h, 04Dh
 		goto	p__DD8
-		DE 000h, 000h
-		DE 043h, 052h
+		DB 000h, 000h
+		DB 043h, 052h
 		goto	p__E24
-		DE 000h, 000h
-		DE 040h, 033h
+		DB 000h, 000h
+		DB 040h, 033h
 		goto	p__C72
-		DE 000h, 000h
-		DE 041h, 055h, 054h, 04Fh, 000h, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h
-		DE 038h, 035h, 030h, 020h, 050h, 057h, 04Dh, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h, 038h, 035h
-		DE 030h, 020h, 056h, 050h, 057h, 000h, 049h, 053h, 04Fh, 020h, 039h, 031h, 034h, 031h, 02Dh, 032h
-		DE 000h, 000h, 049h, 053h, 04Fh, 020h, 031h, 034h, 032h, 033h, 030h, 02Dh, 034h, 020h, 028h, 04Bh
-		DE 057h, 050h, 020h, 035h, 042h, 041h, 055h, 044h, 029h, 000h, 049h, 053h, 04Fh, 020h, 031h, 034h
-		DE 032h, 033h, 030h, 02Dh, 034h, 020h, 028h, 04Bh, 057h, 050h, 020h, 046h, 041h, 053h, 054h, 029h
-		DE 000h, 000h, 049h, 053h, 04Fh, 020h, 031h, 035h, 037h, 036h, 035h, 02Dh, 034h, 000h, 053h, 041h
-		DE 045h, 020h, 04Ah, 031h, 039h, 033h, 039h, 000h, 055h, 053h, 045h, 052h, 031h, 000h, 055h, 053h
-		DE 045h, 052h, 032h, 000h, 020h, 028h, 043h, 041h, 04Eh, 020h, 000h, 000h, 045h, 052h, 052h, 037h
-		DE 031h, 000h
+		DB 000h, 000h
+		DB 041h, 055h, 054h, 04Fh, 000h, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h
+		DB 038h, 035h, 030h, 020h, 050h, 057h, 04Dh, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h, 038h, 035h
+		DB 030h, 020h, 056h, 050h, 057h, 000h, 049h, 053h, 04Fh, 020h, 039h, 031h, 034h, 031h, 02Dh, 032h
+		DB 000h, 000h, 049h, 053h, 04Fh, 020h, 031h, 034h, 032h, 033h, 030h, 02Dh, 034h, 020h, 028h, 04Bh
+		DB 057h, 050h, 020h, 035h, 042h, 041h, 055h, 044h, 029h, 000h, 049h, 053h, 04Fh, 020h, 031h, 034h
+		DB 032h, 033h, 030h, 02Dh, 034h, 020h, 028h, 04Bh, 057h, 050h, 020h, 046h, 041h, 053h, 054h, 029h
+		DB 000h, 000h, 049h, 053h, 04Fh, 020h, 031h, 035h, 037h, 036h, 035h, 02Dh, 034h, 000h, 053h, 041h
+		DB 045h, 020h, 04Ah, 031h, 039h, 033h, 039h, 000h, 055h, 053h, 045h, 052h, 031h, 000h, 055h, 053h
+		DB 045h, 052h, 032h, 000h, 020h, 028h, 043h, 041h, 04Eh, 020h, 000h, 000h, 045h, 052h, 052h, 037h
+		DB 031h, 000h
 
 p__3B2	btfss	17h,7					; entry from: 110h
 		bra		p__3BC
