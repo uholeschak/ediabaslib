@@ -119,10 +119,31 @@ p__100	addwf	PCL						; entry from: 1AECh
 		DE 044h, 030h
 		bcf		18h,5
 		bra		p__302
-		DE 044h, 031h, 018h, 08Ah, 0E1h, 0D0h
-		DE 044h, 050h, 0A0h, 0EFh, 007h, 0F0h, 045h, 030h, 017h, 094h, 0DBh, 0D0h, 045h, 031h, 017h, 084h
-		DE 0D8h, 0D0h, 046h, 045h, 0D2h, 06Bh, 0D5h, 0D0h, 046h, 049h, 082h, 0EFh, 008h, 0F0h, 048h, 030h
-		DE 017h, 092h, 0CFh, 0D0h, 048h, 031h, 017h, 082h, 0CCh, 0D0h, 04Ah, 045h, 035h, 094h, 0C9h, 0D0h
+		DE 044h, 031h
+		bsf		18h,5
+		bra		p__302
+		DE 044h, 050h
+		goto	p__F40
+		DE 045h, 030h
+		bcf		17h,2
+		bra		p__302
+		DE 045h, 031h
+		bsf		17h,2
+		bra		p__302
+		DE 046h, 045h
+		clrf	0D2h,BANKED
+		bra		p__302
+		DE 046h, 049h
+		goto	p_1104
+		DE 048h, 030h
+		bcf		17h,1
+		bra		p__302
+		DE 048h, 031h
+		bsf		17h,1
+		bra		p__302
+		DE 04Ah, 045h
+		bcf		35h,2
+		bra		p__302
 		DE 04Ah, 053h, 035h, 084h, 0C6h, 0D0h, 04Bh, 057h, 0DEh, 0EFh, 008h, 0F0h, 04Ch, 030h, 017h, 09Eh
 		DE 0C0h, 0D0h, 04Ch, 031h, 017h, 08Eh, 0BDh, 0D0h, 04Ch, 050h, 0FCh, 0EFh, 008h, 0F0h, 04Dh, 030h
 		DE 017h, 09Ah, 0B7h, 0D0h, 04Dh, 031h, 017h, 08Ah, 0B4h, 0D0h, 04Dh, 041h, 04Dh, 0EFh, 009h, 0F0h
