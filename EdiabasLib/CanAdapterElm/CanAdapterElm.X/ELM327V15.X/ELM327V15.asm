@@ -4,6 +4,7 @@
 		#include "p18f25k80.inc"		; and this
 
 		#define BASE_ADDR 03000h
+		#define TABLE_OFFSET BASE_ADDR
 
 		; CONFIG1L
 		CONFIG RETEN = ON       ; VREG Sleep Enable bit (Ultra low-power regulator is Enabled (Controlled by SRETEN bit))
@@ -96,7 +97,7 @@ p____E	movlw	70h						; entry from: 18h
 		DE 052h, 000h, 04Ch, 056h, 020h, 052h, 045h, 053h, 045h, 054h, 000h, 000h, 0FFh, 0FFh, 0FFh, 0FFh
 		DE 030h, 031h, 032h, 033h, 034h, 035h, 036h, 037h, 038h, 039h, 041h, 042h, 043h, 044h, 045h, 046h
 
-		ORG 00100h
+		ORG TABLE_OFFSET + 00100h
 p__100	addwf	PCL						; entry from: 1AECh
 		DE 05Ah, 000h, 0D1h, 06Bh
 		reset
@@ -183,7 +184,7 @@ p__100	addwf	PCL						; entry from: 1AECh
 		goto	p__C42
 		DE 000h, 000h
 
-		ORG 00200h
+		ORG TABLE_OFFSET + 00200h
 		addwf	PCL
 		DE 041h, 054h
 		goto	p__C1E
@@ -272,7 +273,7 @@ p__100	addwf	PCL						; entry from: 1AECh
 		goto	p_1546
 		DE 000h, 000h
 
-		ORG 00300h
+		ORG TABLE_OFFSET + 00300h
 		addwf	PCL
 p__302	goto	p__E9E					; entry from: 11Ah,138h,13Eh,14Ah,150h,156h,162h,168h,16Eh,174h,180h,186h,192h,198h,1A4h,1B0h,1B6h,1C8h,1CEh,1DAh,1E0h,1E6h,3BAh,3C4h
 		DE 043h, 046h
@@ -1744,7 +1745,7 @@ p__F32	call	p_2220					; entry from: 12B8h
 		bra		p__EAC
 		clrf	11h
 		goto	p_1D68
-p__F40	movlw	3						; entry from: 142h
+p__F40	movlw	high(TABLE_OFFSET) + 3						; entry from: 142h
 		movwf	TBLPTRH
 		movlw	24h
 		movf	3Dh
@@ -3033,7 +3034,7 @@ p_1A6A	movlw	0FCh					; entry from: 1A58h,1A5Eh
 		xorlw	53h
 		btfsc	STATUS,2
 		goto	p_1040
-p_1A7A	movlw	1						; entry from: 1A6Eh
+p_1A7A	movlw	high(TABLE_OFFSET) + 1						; entry from: 1A6Eh
 		movwf	TBLPTRH
 		movlw	3
 		subwf	60h,W,BANKED
