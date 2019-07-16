@@ -3,7 +3,7 @@
 		LIST      P=18F25K80		; modify this
 		#include "p18f25k80.inc"		; and this
 
-		#define BASE_ADDR 00000h
+		#define BASE_ADDR 03000h
 
 		; CONFIG1L
 		CONFIG RETEN = ON       ; VREG Sleep Enable bit (Ultra low-power regulator is Enabled (Controlled by SRETEN bit))
