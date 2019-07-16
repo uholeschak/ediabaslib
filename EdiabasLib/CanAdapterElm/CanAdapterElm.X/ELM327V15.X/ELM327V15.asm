@@ -134,8 +134,17 @@ p__100	addwf	PCL						; entry from: 1AECh
 		bra		p__302
 		DE 04Ah, 045h, 035h, 094h
 		bra		p__302
-		DE 04Ah, 053h, 035h, 084h, 0C6h, 0D0h, 04Bh, 057h, 0DEh, 0EFh, 008h, 0F0h, 04Ch, 030h, 017h, 09Eh
-		DE 0C0h, 0D0h, 04Ch, 031h, 017h, 08Eh, 0BDh, 0D0h, 04Ch, 050h, 0FCh, 0EFh, 008h, 0F0h, 04Dh, 030h
+		DE 04Ah, 053h, 035h, 084h
+		bra		p__302
+		DE 04Bh, 057h
+		goto	p_11BC
+		DE 04Ch, 030h, 017h, 09Eh
+		bra		p__302
+		DE 04Ch, 031h, 017h, 08Eh
+		bra		p__302
+		DE 04Ch, 050h
+		goto	p_11F8
+		DE 04Dh, 030h
 		DE 017h, 09Ah, 0B7h, 0D0h, 04Dh, 031h, 017h, 08Ah, 0B4h, 0D0h, 04Dh, 041h, 04Dh, 0EFh, 009h, 0F0h
 		DE 04Eh, 04Ch, 017h, 098h, 0AEh, 0D0h, 050h, 043h, 070h, 0EFh, 009h, 0F0h, 052h, 030h, 017h, 096h
 		DE 0A8h, 0D0h, 052h, 031h, 017h, 086h, 0A5h, 0D0h, 052h, 044h, 037h, 0EFh, 00Ah, 0F0h, 052h, 056h
