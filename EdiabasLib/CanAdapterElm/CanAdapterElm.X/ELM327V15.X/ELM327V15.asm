@@ -98,9 +98,19 @@ p____E	movlw	70h						; entry from: 18h
 
 		ORG BASE_ADDR + 00100h
 p__100	addwf	PCL						; entry from: 1AECh
-		DE 05Ah, 000h, 0D1h, 06Bh, 0FFh, 000h, 049h, 000h, 015h, 0EFh, 00Ch, 0F0h, 044h, 000h
-		DE 0D9h, 0EFh, 001h, 0F0h, 000h, 000h, 041h, 04Ch, 017h, 088h, 0F3h, 0D0h, 041h, 052h, 050h, 0EFh
-		DE 006h, 0F0h, 042h, 044h, 055h, 0EFh, 006h, 0F0h, 042h, 049h, 062h, 0EFh, 006h, 0F0h, 043h, 053h
+		DE 05Ah, 000h
+		clrf	0D1h,BANKED
+		reset
+		DE 049h, 000h
+		goto	p_182A
+		DE 044h, 000h
+		goto	p__3B2
+		DE 000h, 000h, 041h, 04Ch
+		bsf		17h,4
+		bra		p__302
+		DE 041h, 052h
+		goto	p__CA0
+		DE 042h, 044h, 055h, 0EFh, 006h, 0F0h, 042h, 049h, 062h, 0EFh, 006h, 0F0h, 043h, 053h
 		DE 030h, 0EFh, 007h, 0F0h, 044h, 030h, 018h, 09Ah, 0E4h, 0D0h, 044h, 031h, 018h, 08Ah, 0E1h, 0D0h
 		DE 044h, 050h, 0A0h, 0EFh, 007h, 0F0h, 045h, 030h, 017h, 094h, 0DBh, 0D0h, 045h, 031h, 017h, 084h
 		DE 0D8h, 0D0h, 046h, 045h, 0D2h, 06Bh, 0D5h, 0D0h, 046h, 049h, 082h, 0EFh, 008h, 0F0h, 048h, 030h
@@ -136,7 +146,8 @@ p__100	addwf	PCL						; entry from: 1AECh
 
 		ORG BASE_ADDR + 00300h
 		addwf	PCL
-		DE 04Fh, 0EFh, 007h, 0F0h, 043h, 046h, 0C9h, 0EFh, 006h, 0F0h, 043h, 04Dh, 0ECh, 0EFh
+p__302	goto	p__E9E					; entry from: 11Ah,138h,13Eh,14Ah,150h,156h,162h,168h,16Eh,174h,180h,186h,192h,198h,1A4h,1B0h,1B6h,1C8h,1CEh,1DAh,1E0h,1E6h,3BAh,3C4h
+		DE 043h, 046h, 0C9h, 0EFh, 006h, 0F0h, 043h, 04Dh, 0ECh, 0EFh
 		DE 006h, 0F0h, 000h, 000h, 043h, 052h, 012h, 0EFh, 007h, 0F0h, 000h, 000h, 040h, 033h, 039h, 0EFh
 		DE 006h, 0F0h, 000h, 000h, 041h, 055h, 054h, 04Fh, 000h, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h
 		DE 038h, 035h, 030h, 020h, 050h, 057h, 04Dh, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h, 038h, 035h
@@ -147,10 +158,17 @@ p__100	addwf	PCL						; entry from: 1AECh
 		DE 000h, 000h, 049h, 053h, 04Fh, 020h, 031h, 035h, 037h, 036h, 035h, 02Dh, 034h, 000h, 053h, 041h
 		DE 045h, 020h, 04Ah, 031h, 039h, 033h, 039h, 000h, 055h, 053h, 045h, 052h, 031h, 000h, 055h, 053h
 		DE 045h, 052h, 032h, 000h, 020h, 028h, 043h, 041h, 04Eh, 020h, 000h, 000h, 045h, 052h, 052h, 037h
-		DE 031h, 000h, 017h, 0AEh, 003h, 0D0h, 00Fh, 0ECh, 005h, 0F0h, 0A3h, 0D7h, 00Fh, 0ECh, 005h, 0F0h
-		DE 092h, 0ECh, 003h, 0F0h, 09Eh, 0D7h
+		DE 031h, 000h
 
-		ORG BASE_ADDR + 003C6h
+		ORG BASE_ADDR + 003B2h
+p__3B2	btfss	17h,7					; entry from: 110h
+		bra		p__3BC
+		call	p__A1E
+		bra		p__302
+p__3BC	call	p__A1E					; entry from: 3B4h
+		call	p__724
+		bra		p__302
+
 p__3C6	clrf	2Fh						; entry from: 0FF2h,14EEh
 		clrf	30h
 		movlw	3
