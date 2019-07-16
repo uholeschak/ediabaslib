@@ -98,12 +98,9 @@ p____E	movlw	70h						; entry from: 18h
 
 		ORG BASE_ADDR + 00100h
 p__100	addwf	PCL						; entry from: 1AECh
-		DE 5Ah		;WARNING: unknown instruction!
-		clrf	0D1h,BANKED
-		reset
 
-		ORG BASE_ADDR + 00108h
-		DE 049h, 000h, 015h, 0EFh, 00Ch, 0F0h, 044h, 000h
+		ORG BASE_ADDR + 00102h
+		DE 05Ah, 000h, 0D1h, 06Bh, 0FFh, 000h, 049h, 000h, 015h, 0EFh, 00Ch, 0F0h, 044h, 000h
 		DE 0D9h, 0EFh, 001h, 0F0h, 000h, 000h, 041h, 04Ch, 017h, 088h, 0F3h, 0D0h, 041h, 052h, 050h, 0EFh
 		DE 006h, 0F0h, 042h, 044h, 055h, 0EFh, 006h, 0F0h, 042h, 049h, 062h, 0EFh, 006h, 0F0h, 043h, 053h
 		DE 030h, 0EFh, 007h, 0F0h, 044h, 030h, 018h, 09Ah, 0E4h, 0D0h, 044h, 031h, 018h, 08Ah, 0E1h, 0D0h
