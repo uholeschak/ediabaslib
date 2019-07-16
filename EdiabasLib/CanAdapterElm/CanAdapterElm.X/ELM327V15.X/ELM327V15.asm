@@ -69,6 +69,10 @@
 		; CONFIG7H
 		CONFIG EBTRB = OFF      ; Table Read Protect Boot (Disabled)
 
+		ORG 07FFA
+		DATA 00015h	; adapter version
+		DATA 00002h	; adapter type
+
 		ORG CODE_OFFSET + 0
 		nop
 		goto	p_1654
