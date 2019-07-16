@@ -79,6 +79,7 @@ p____E	movlw	70h						; entry from: 18h
 		ORG 018h
 		bra		p____E
 
+		ORG BASE_ADDR + 0001Ah
 		DE 041h, 043h, 054h, 020h, 041h, 04Ch
 		DE 045h, 052h, 054h, 000h, 04Fh, 042h, 044h, 049h, 049h, 020h, 074h, 06Fh, 020h, 052h, 053h, 032h
 		DE 033h, 032h, 020h, 049h, 06Eh, 074h, 065h, 072h, 070h, 072h, 065h, 074h, 065h, 072h, 000h, 000h
@@ -95,6 +96,7 @@ p____E	movlw	70h						; entry from: 18h
 		DE 052h, 000h, 04Ch, 056h, 020h, 052h, 045h, 053h, 045h, 054h, 000h, 000h, 0FFh, 0FFh, 0FFh, 0FFh
 		DE 030h, 031h, 032h, 033h, 034h, 035h, 036h, 037h, 038h, 039h, 041h, 042h, 043h, 044h, 045h, 046h
 
+		ORG BASE_ADDR + 00100h
 p__100	addwf	PCL						; entry from: 1AECh
 		DE 5Ah		;WARNING: unknown instruction!
 		clrf	0D1h,BANKED
