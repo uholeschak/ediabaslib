@@ -69,7 +69,7 @@
 		; CONFIG7H
 		CONFIG EBTRB = OFF      ; Table Read Protect Boot (Disabled)
 
-		ORG 07FFA
+		ORG 07FFAh
 		DATA 00015h	; adapter version
 		DATA 00002h	; adapter type
 
