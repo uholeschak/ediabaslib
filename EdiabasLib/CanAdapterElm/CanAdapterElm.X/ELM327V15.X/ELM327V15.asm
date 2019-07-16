@@ -275,9 +275,18 @@ p__100	addwf	PCL						; entry from: 1AECh
 		ORG BASE_ADDR + 00300h
 		addwf	PCL
 p__302	goto	p__E9E					; entry from: 11Ah,138h,13Eh,14Ah,150h,156h,162h,168h,16Eh,174h,180h,186h,192h,198h,1A4h,1B0h,1B6h,1C8h,1CEh,1DAh,1E0h,1E6h,3BAh,3C4h
-		DE 043h, 046h, 0C9h, 0EFh, 006h, 0F0h, 043h, 04Dh, 0ECh, 0EFh
-		DE 006h, 0F0h, 000h, 000h, 043h, 052h, 012h, 0EFh, 007h, 0F0h, 000h, 000h, 040h, 033h, 039h, 0EFh
-		DE 006h, 0F0h, 000h, 000h, 041h, 055h, 054h, 04Fh, 000h, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h
+		DE 043h, 046h
+		goto	p__D92
+		DE 043h, 04Dh
+		goto	p__DD8
+		DE 000h, 000h
+		DE 043h, 052h
+		goto	p__E24
+		DE 000h, 000h
+		DE 040h, 033h
+		goto	p__C72
+		DE 000h, 000h
+		DE 041h, 055h, 054h, 04Fh, 000h, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h
 		DE 038h, 035h, 030h, 020h, 050h, 057h, 04Dh, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h, 038h, 035h
 		DE 030h, 020h, 056h, 050h, 057h, 000h, 049h, 053h, 04Fh, 020h, 039h, 031h, 034h, 031h, 02Dh, 032h
 		DE 000h, 000h, 049h, 053h, 04Fh, 020h, 031h, 034h, 032h, 033h, 030h, 02Dh, 034h, 020h, 028h, 04Bh
