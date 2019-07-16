@@ -101,110 +101,24 @@ p__100	addwf	PCL						; entry from: 1AECh
 		DE 5Ah		;WARNING: unknown instruction!
 		clrf	0D1h,BANKED
 		reset
-		DE 49h		;WARNING: unknown instruction!
-		goto	p_182A
-		DE 44h		;WARNING: unknown instruction!
-		goto	p__3B2
-		nop
-		dcfsnz	41h,W
-		bsf		17h,4
-		bra		p__302
-		movf	41h
-		goto	p__CA0
-		rlncf	42h,W
-		goto	p__CAA
-		infsnz	42h,W,BANKED
-		goto	p__CC4
-		movf	43h,f,BANKED
-		goto	p__E60
-		rrcf	44h,W
-		bcf		18h,5
-		bra		p__302
-		rrcf	44h,W,BANKED
-		bsf		18h,5
-		bra		p__302
-		movf	44h,W
-		goto	p__F40
-		rrcf	45h,W
-		bcf		17h,2
-		bra		p__302
-		rrcf	45h,W,BANKED
-		bsf		17h,2
-		bra		p__302
-		rlncf	46h,W,BANKED
-		clrf	0D2h,BANKED
-		bra		p__302
-		infsnz	46h,W,BANKED
-		goto	p_1104
-		rrcf	48h,W
-		bcf		17h,1
-		bra		p__302
-		rrcf	48h,W,BANKED
-		bsf		17h,1
-		bra		p__302
-		rlncf	4Ah,W,BANKED
-		bcf		35h,2
-		bra		p__302
-		movf	4Ah,f,BANKED
-		bsf		35h,2
-		bra		p__302
-		subfwb	4Bh,f,BANKED
-		goto	p_11BC
-		rrcf	4Ch,W
-		bcf		17h,7
-		bra		p__302
-		rrcf	4Ch,W,BANKED
-		bsf		17h,7
-		bra		p__302
-		movf	4Ch,W
-		goto	p_11F8
-		rrcf	4Dh,W
-		bcf		17h,5
-		bra		p__302
-		rrcf	4Dh,W,BANKED
-		bsf		17h,5
-		bra		p__302
-		rrncf	4Dh,W,BANKED
-		goto	p_129A
-		dcfsnz	4Eh,W
-		bcf		17h,4
-		bra		p__302
-		rrncf	50h,f,BANKED
-		goto	p_12E0
-		rrcf	52h,W
-		bcf		17h,3
-		bra		p__302
-		rrcf	52h,W,BANKED
-		bsf		17h,3
-		bra		p__302
-		rlncf	52h,W
-		goto	p_146E
-		subfwb	52h
-		goto	p_148A
-		rrcf	53h,W
-		bsf		18h,0
-		bra		p__302
-		rrcf	53h,W,BANKED
-		bcf		18h,0
-		bra		p__302
-		infsnz	53h,W,BANKED
-		goto	p_156E
-		movf	53h,f,BANKED
-		bsf		10h,5
-		bra		p__302
-		rrcf	56h,W
-		bcf		35h,5
-		bra		p__302
-		rrcf	56h,W,BANKED
-		bsf		35h,5
-		bra		p__302
-		movf	57h,f,BANKED
-		goto	p_1650
-		rrcf	40h,W,BANKED
-		goto	p__C3C
-		rrcf	40h
-		goto	p__C42
-		nop
+
+		ORG BASE_ADDR + 00108h
+		DE 049h, 000h, 015h, 0EFh, 00Ch, 0F0h, 044h, 000h
+		DE 0D9h, 0EFh, 001h, 0F0h, 000h, 000h, 041h, 04Ch, 017h, 088h, 0F3h, 0D0h, 041h, 052h, 050h, 0EFh
+		DE 006h, 0F0h, 042h, 044h, 055h, 0EFh, 006h, 0F0h, 042h, 049h, 062h, 0EFh, 006h, 0F0h, 043h, 053h
+		DE 030h, 0EFh, 007h, 0F0h, 044h, 030h, 018h, 09Ah, 0E4h, 0D0h, 044h, 031h, 018h, 08Ah, 0E1h, 0D0h
+		DE 044h, 050h, 0A0h, 0EFh, 007h, 0F0h, 045h, 030h, 017h, 094h, 0DBh, 0D0h, 045h, 031h, 017h, 084h
+		DE 0D8h, 0D0h, 046h, 045h, 0D2h, 06Bh, 0D5h, 0D0h, 046h, 049h, 082h, 0EFh, 008h, 0F0h, 048h, 030h
+		DE 017h, 092h, 0CFh, 0D0h, 048h, 031h, 017h, 082h, 0CCh, 0D0h, 04Ah, 045h, 035h, 094h, 0C9h, 0D0h
+		DE 04Ah, 053h, 035h, 084h, 0C6h, 0D0h, 04Bh, 057h, 0DEh, 0EFh, 008h, 0F0h, 04Ch, 030h, 017h, 09Eh
+		DE 0C0h, 0D0h, 04Ch, 031h, 017h, 08Eh, 0BDh, 0D0h, 04Ch, 050h, 0FCh, 0EFh, 008h, 0F0h, 04Dh, 030h
+		DE 017h, 09Ah, 0B7h, 0D0h, 04Dh, 031h, 017h, 08Ah, 0B4h, 0D0h, 04Dh, 041h, 04Dh, 0EFh, 009h, 0F0h
+		DE 04Eh, 04Ch, 017h, 098h, 0AEh, 0D0h, 050h, 043h, 070h, 0EFh, 009h, 0F0h, 052h, 030h, 017h, 096h
+		DE 0A8h, 0D0h, 052h, 031h, 017h, 086h, 0A5h, 0D0h, 052h, 044h, 037h, 0EFh, 00Ah, 0F0h, 052h, 056h
+		DE 045h, 0EFh, 00Ah, 0F0h, 053h, 030h, 018h, 080h, 09Ch, 0D0h, 053h, 031h, 018h, 090h, 099h, 0D0h
+		DE 053h, 049h, 0B7h, 0EFh, 00Ah, 0F0h, 053h, 053h, 010h, 08Ah, 093h, 0D0h, 056h, 030h, 035h, 09Ah
+		DE 090h, 0D0h, 056h, 031h, 035h, 08Ah, 08Dh, 0D0h, 057h, 053h, 028h, 0EFh, 00Bh, 0F0h, 040h, 031h
+		DE 01Eh, 0EFh, 006h, 0F0h, 040h, 032h, 021h, 0EFh, 006h, 0F0h, 000h, 000h
 
 		ORG BASE_ADDR + 00200h
 		addwf	PCL
