@@ -104,7 +104,8 @@ p__100	addwf	PCL						; entry from: 1AECh
 		goto	p_182A
 		DE 044h, 000h
 		goto	p__3B2
-		DE 000h, 000h, 041h, 04Ch, 017h, 088h
+		DE 000h, 000h
+		DE 041h, 04Ch, 017h, 088h
 		bra		p__302
 		DE 041h, 052h
 		goto	p__CA0
@@ -184,22 +185,92 @@ p__100	addwf	PCL						; entry from: 1AECh
 
 		ORG BASE_ADDR + 00200h
 		addwf	PCL
-		DE 041h, 054h, 00Fh, 0EFh, 006h, 0F0h, 043h, 045h, 0BBh, 0EFh, 006h, 0F0h, 044h, 04Dh
-		DE 091h, 0EFh, 007h, 0F0h, 044h, 050h, 00Dh, 0EFh, 008h, 0F0h, 049h, 047h, 0C2h, 0EFh, 008h, 0F0h
-		DE 04Bh, 057h, 0D5h, 0EFh, 008h, 0F0h, 050h, 050h, 0FAh, 0EFh, 009h, 0F0h, 052h, 054h, 03Dh, 0EFh
-		DE 00Ah, 0F0h, 053h, 050h, 0D7h, 0EFh, 00Ah, 0F0h, 054h, 050h, 0D7h, 0EFh, 00Ah, 0F0h, 000h, 000h
-		DE 043h, 041h, 0AEh, 0EFh, 006h, 0F0h, 043h, 046h, 0D6h, 0EFh, 006h, 0F0h, 043h, 050h, 0F9h, 0EFh
-		DE 006h, 0F0h, 049h, 042h, 086h, 0EFh, 008h, 0F0h, 049h, 046h, 0A4h, 0EFh, 008h, 0F0h, 04Dh, 052h
-		DE 05Dh, 0EFh, 009h, 0F0h, 04Dh, 054h, 061h, 0EFh, 009h, 0F0h, 052h, 041h, 0BFh, 0EFh, 00Ah, 0F0h
-		DE 053h, 050h, 0EFh, 0EFh, 00Ah, 0F0h, 054h, 041h, 0D3h, 0EFh, 00Ah, 0F0h, 054h, 050h, 0EFh, 0EFh
-		DE 00Ah, 0F0h, 053h, 044h, 097h, 0EFh, 00Ah, 0F0h, 053h, 052h, 0BFh, 0EFh, 00Ah, 0F0h, 053h, 054h
-		DE 0C3h, 0EFh, 00Ah, 0F0h, 053h, 057h, 0C9h, 0EFh, 00Ah, 0F0h, 000h, 000h, 042h, 052h, 06Ch, 0EFh
-		DE 006h, 0F0h, 043h, 046h, 0C0h, 0EFh, 006h, 0F0h, 043h, 04Dh, 0E3h, 0EFh, 006h, 0F0h, 043h, 045h
-		DE 09Bh, 0EFh, 00Ah, 0F0h, 049h, 049h, 096h, 0EFh, 008h, 0F0h, 053h, 048h, 0ACh, 0EFh, 00Ah, 0F0h
-		DE 000h, 000h, 043h, 052h, 001h, 0EFh, 007h, 0F0h, 043h, 056h, 059h, 0EFh, 007h, 0F0h, 04Dh, 050h
-		DE 051h, 0EFh, 009h, 0F0h, 050h, 042h, 067h, 0EFh, 009h, 0F0h, 050h, 050h, 073h, 0EFh, 009h, 0F0h
-		DE 000h, 000h, 050h, 050h, 07Dh, 0EFh, 009h, 0F0h, 000h, 000h, 04Dh, 050h, 056h, 0EFh, 009h, 0F0h
-		DE 050h, 050h, 089h, 0EFh, 009h, 0F0h, 053h, 048h, 0A3h, 0EFh, 00Ah, 0F0h, 000h, 000h
+		DE 041h, 054h
+		goto	p__C1E
+		DE 043h, 045h
+		goto	p__D76
+		DE 044h, 04Dh
+		goto	p__F22
+		DE 044h, 050h
+		goto	p_101A
+		DE 049h, 047h
+		goto	p_1184
+		DE 04Bh, 057h
+		goto	p_11AA
+		DE 050h, 050h
+		goto	p_13F4
+		DE 052h, 054h
+		goto	p_147A
+		DE 053h, 050h
+		goto	p_15AE
+		DE 054h, 050h
+		goto	p_15AE
+		DE 000h, 000h
+		DE 043h, 041h
+		goto	p__D5C
+		DE 043h, 046h
+		goto	p__DAC
+		DE 043h, 050h
+		goto	p__DF2
+		DE 049h, 042h
+		goto	p_110C
+		DE 049h, 046h
+		goto	p_1148
+		DE 04Dh, 052h
+		goto	p_12BA
+		DE 04Dh, 054h
+		goto	p_12C2
+		DE 052h, 041h
+		goto	p_157E
+		DE 053h, 050h
+		goto	p_15DE
+		DE 054h, 041h
+		goto	p_15A6
+		DE 054h, 050h
+		goto	p_15DE
+		DE 053h, 044h
+		goto	p_152E
+		DE 053h, 052h
+		goto	p_157E
+		DE 053h, 054h
+		goto	p_1586
+		DE 053h, 057h
+		goto	p_1592
+		DE 000h, 000h
+		DE 042h, 052h
+		goto	p__CD8
+		DE 043h, 046h
+		goto	p__D80
+		DE 043h, 04Dh
+		goto	p__DC6
+		DE 043h, 045h
+		goto	p_1536
+		DE 049h, 049h
+		goto	p_112C
+		DE 053h, 048h
+		goto	p_1558
+		DE 000h, 000h
+		DE 043h, 052h
+		goto	p__E02
+		DE 043h, 056h
+		goto	p__EB2
+		DE 04Dh, 050h
+		goto	p_12A2
+		DE 050h, 042h
+		goto	p_12CE
+		DE 050h, 050h
+		goto	p_12E6
+		DE 000h, 000h
+		DE 050h, 050h
+		goto	p_12FA
+		DE 000h, 000h
+		DE 04Dh, 050h
+		goto	p_12AC
+		DE 050h, 050h
+		goto	p_1312
+		DE 053h, 048h
+		goto	p_1546
+		DE 000h, 000h
 
 		ORG BASE_ADDR + 00300h
 		addwf	PCL
