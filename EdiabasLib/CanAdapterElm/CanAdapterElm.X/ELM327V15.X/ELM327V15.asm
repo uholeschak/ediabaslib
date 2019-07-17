@@ -7,7 +7,7 @@
 		#define BASE_ADDR 01000h
 		#define DATA_OFFSET BASE_ADDR
 		#define TABLE_OFFSET BASE_ADDR
-		
+
 		#if ADAPTER_TYPE == 0x02
 		    #define DEFAULT_BAUD 68h	;38400
 		#else
