@@ -102,8 +102,8 @@ ifneq ($(INFORMATION_MESSAGE), )
 endif
 	${MAKE}  -f nbproject/Makefile-default.mk dist/${CND_CONF}/${IMAGE_TYPE}/ELM327V15.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
 	@echo "--------------------------------------"
-	@echo "User defined post-build step: [hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.hex" "dist/default/production/ELM327V15.X.production.hex" && IF EXIST "dist/default/production/ELM327V15.X.production.unified.hex" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.unified.hex" "dist/default/production/ELM327V15.X.production.unified.hex"]"
-	@hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.hex" "dist/default/production/ELM327V15.X.production.hex" && IF EXIST "dist/default/production/ELM327V15.X.production.unified.hex" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.unified.hex" "dist/default/production/ELM327V15.X.production.unified.hex"
+	@echo "User defined post-build step: [hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} && IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"]"
+	@hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} && IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"
 	@echo "--------------------------------------"
 
 MP_PROCESSOR_OPTION=18f25k80
