@@ -102,8 +102,8 @@ ifneq ($(INFORMATION_MESSAGE), )
 endif
 	${MAKE}  -f nbproject/Makefile-default.mk dist/${CND_CONF}/${IMAGE_TYPE}/ELM327V15.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
 	@echo "--------------------------------------"
-	@echo "User defined post-build step: [hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.hex" "dist/default/production/ELM327V15.X.production.hex"]"
-	@hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.hex" "dist/default/production/ELM327V15.X.production.hex"
+	@echo "User defined post-build step: [hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.hex" "dist/default/production/ELM327V15.X.production.hex" && IF EXIST "dist/default/production/ELM327V15.X.production.combined.hex" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.combined.hex" "dist/default/production/ELM327V15.X.production.combined.hex"]"
+	@hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.hex" "dist/default/production/ELM327V15.X.production.hex" && IF EXIST "dist/default/production/ELM327V15.X.production.combined.hex" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.combined.hex" "dist/default/production/ELM327V15.X.production.combined.hex"
 	@echo "--------------------------------------"
 
 MP_PROCESSOR_OPTION=18f25k80

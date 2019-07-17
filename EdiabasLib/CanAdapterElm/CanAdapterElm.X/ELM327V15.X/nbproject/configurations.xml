@@ -73,7 +73,7 @@
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
-        <makeCustomizationPostStep>hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.hex" "dist/default/production/ELM327V15.X.production.hex"</makeCustomizationPostStep>
+        <makeCustomizationPostStep>hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.hex" "dist/default/production/ELM327V15.X.production.hex" &amp;&amp; IF EXIST "dist/default/production/ELM327V15.X.production.combined.hex" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.combined.hex" "dist/default/production/ELM327V15.X.production.combined.hex"</makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
