@@ -3,7 +3,7 @@
 		LIST      P=18F25K80		; modify this
 		#include "p18f25k80.inc"		; and this
 
-		#define CODE_OFFSET 00000h
+		#define CODE_OFFSET 00800h
 		#define BASE_ADDR 01000h
 		#define DATA_OFFSET BASE_ADDR
 		#define TABLE_OFFSET BASE_ADDR

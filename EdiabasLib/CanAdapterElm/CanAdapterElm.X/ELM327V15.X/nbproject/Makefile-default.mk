@@ -102,8 +102,8 @@ ifneq ($(INFORMATION_MESSAGE), )
 endif
 	${MAKE}  -f nbproject/Makefile-default.mk dist/${CND_CONF}/${IMAGE_TYPE}/ELM327V15.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
 	@echo "--------------------------------------"
-	@echo "User defined post-build step: [hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.hex" "dist/default/production/ELM327V15.X.production.hex" && IF EXIST "dist/default/production/ELM327V15.X.production.unified.hex" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.unified.hex" "dist/default/production/ELM327V15.X.production.unified.hex"]"
-	@hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.hex" "dist/default/production/ELM327V15.X.production.hex" && IF EXIST "dist/default/production/ELM327V15.X.production.unified.hex" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.unified.hex" "dist/default/production/ELM327V15.X.production.unified.hex"
+	@echo "User defined post-build step: [hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.hex" "dist/default/production/ELM327V15.X.production.hex" && IF EXIST "dist/default/production/ELM327V15.X.production.unified.hex" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.unified.hex" "dist/default/production/ELM327V15.X.production.unified.hex"]"
+	@hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.hex" "dist/default/production/ELM327V15.X.production.hex" && IF EXIST "dist/default/production/ELM327V15.X.production.unified.hex" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist/default/production/ELM327V15.X.production.unified.hex" "dist/default/production/ELM327V15.X.production.unified.hex"
 	@echo "--------------------------------------"
 
 MP_PROCESSOR_OPTION=18f25k80
@@ -145,18 +145,27 @@ dist/${CND_CONF}/${IMAGE_TYPE}/ELM327V15.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJ
 	@${MKDIR} dist/${CND_CONF}/${IMAGE_TYPE} 
 	${MP_LD} $(MP_EXTRA_LD_PRE)   -p$(MP_PROCESSOR_OPTION)  -w -x -u_DEBUG -z__ICD2RAM=1 -m"${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"   -z__MPLAB_BUILD=1  -z__MPLAB_DEBUG=1 -z__MPLAB_DEBUGGER_PK3=1 $(MP_LINKER_DEBUG_OPTION) -odist/${CND_CONF}/${IMAGE_TYPE}/ELM327V15.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}     
 else
-dist/${CND_CONF}/${IMAGE_TYPE}/ELM327V15.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk    
+dist/${CND_CONF}/${IMAGE_TYPE}/ELM327V15.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk    ../bootloader/dist/default/production/bootloader.production.hex
 	@${MKDIR} dist/${CND_CONF}/${IMAGE_TYPE} 
 	${MP_LD} $(MP_EXTRA_LD_PRE)   -p$(MP_PROCESSOR_OPTION)  -w  -m"${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"   -z__MPLAB_BUILD=1  -odist/${CND_CONF}/${IMAGE_TYPE}/ELM327V15.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}     
+	@echo "Creating unified hex file"
+	@"C:/Program Files (x86)/Microchip/MPLABX/v5.20/mplab_platform/platform/../mplab_ide/modules/../../bin/hexmate" --edf="C:/Program Files (x86)/Microchip/MPLABX/v5.20/mplab_platform/platform/../mplab_ide/modules/../../dat/en_msgs.txt" dist/${CND_CONF}/${IMAGE_TYPE}/ELM327V15.X.${IMAGE_TYPE}.hex ../bootloader/dist/default/production/bootloader.production.hex -odist/${CND_CONF}/production/ELM327V15.X.production.unified.hex
+
 endif
 
 
 # Subprojects
 .build-subprojects:
+ifeq ($(TYPE_IMAGE), DEBUG_RUN)
+	cd /D ../bootloader && ${MAKE}  -f Makefile CONF=default TYPE_IMAGE=DEBUG_RUN
+else
+	cd /D ../bootloader && ${MAKE}  -f Makefile CONF=default
+endif
 
 
 # Subprojects
 .clean-subprojects:
+	cd /D ../bootloader && rm -rf "build/default" "dist/default"
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
