@@ -70,8 +70,8 @@
 		CONFIG EBTRB = OFF      ; Table Read Protect Boot (Disabled)
 
 		ORG 07FFAh
-		DATA 00015h	; adapter version
-		DATA 00002h	; adapter type
+		DATA 00015h		; adapter version
+		DATA ADAPTER_TYPE	; adapter type
 
 		ORG CODE_OFFSET + 0
 		nop
@@ -989,7 +989,11 @@ p__8F8	movlw	0Ah						; entry from: 1776h
 		movwf	0CDh,BANKED
 		movlw	20h
 		bra		p__98C
+#if ADAPTER_TYPE == 0x02
 p__900	movlw	68h						; entry from: 1740h
+#else
+p__900	movlw	23h						; entry from: 1740h
+#endif
 		movwf	0CDh,BANKED
 		movlw	24h
 		bra		p__98C
