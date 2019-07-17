@@ -7,6 +7,12 @@
 		#define BASE_ADDR 01000h
 		#define DATA_OFFSET BASE_ADDR
 		#define TABLE_OFFSET BASE_ADDR
+		
+		#if ADAPTER_TYPE == 0x02
+		    #define DEFAULT_BAUD 68h	;38400
+		#else
+		    #define DEFAULT_BAUD 23h	;115200
+		#endif
 
 		; CONFIG1L
 		CONFIG RETEN = ON       ; VREG Sleep Enable bit (Ultra low-power regulator is Enabled (Controlled by SRETEN bit))
@@ -989,11 +995,7 @@ p__8F8	movlw	0Ah						; entry from: 1776h
 		movwf	0CDh,BANKED
 		movlw	20h
 		bra		p__98C
-#if ADAPTER_TYPE == 0x02
-p__900	movlw	68h						; entry from: 1740h
-#else
-p__900	movlw	23h						; entry from: 1740h
-#endif
+p__900	movlw	DEFAULT_BAUD					; entry from: 1740h
 		movwf	0CDh,BANKED
 		movlw	24h
 		bra		p__98C
