@@ -328,6 +328,7 @@ CheckAppVector:
     ; Read instruction at the application reset vector location. 
     ; If we read 0xFFFF, assume that the application firmware has
     ; not been programmed yet, so don't try going into application mode.
+    movlw   low(AppVector)
     movwf   TBLPTRL
     movlw   high(AppVector)
     movwf   TBLPTRH
