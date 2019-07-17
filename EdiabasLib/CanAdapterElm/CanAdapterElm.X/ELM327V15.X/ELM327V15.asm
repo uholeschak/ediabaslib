@@ -7,6 +7,7 @@
 		#define BASE_ADDR 01000h
 		#define DATA_OFFSET BASE_ADDR
 		#define TABLE_OFFSET BASE_ADDR
+		#define EEPROM_PAGE 3
 
 		#if ADAPTER_TYPE == 0x02
 		    #define DEFAULT_BAUD 68h	;38400
@@ -2595,6 +2596,10 @@ p_1654	clrf	OSCCON					; entry from: 2
 		iorlw	0A0h
 		btfsc	STKPTR,6
 		iorlw	60h
+#if EEPROM_PAGE != 0
+		movlw	EEPROM_PAGE
+		movwf	EEADRH
+#endif
 p_1666	movlb	0						; entry from: 1652h
 		movwf	0D0h,BANKED
 		clrf	STKPTR
