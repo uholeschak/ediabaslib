@@ -8,6 +8,7 @@
 		#define DATA_OFFSET BASE_ADDR
 		#define TABLE_OFFSET BASE_ADDR
 		#define EEPROM_PAGE 3
+		#define	WDT_RESET   1
 
 		#if ADAPTER_TYPE == 0x02
 		    #define DEFAULT_BAUD 68h	;38400
@@ -112,8 +113,13 @@ p____E	movlw	70h						; entry from: 18h
 
 		ORG TABLE_OFFSET + 00100h
 p__100	addwf	PCL						; entry from: 1AECh
-		DB 05Ah, 000h, 0D1h, 06Bh
+		DB 05Ah, 000h
+#if WDT_RESET
+		goto	p_reset
+#else
+		DB 0D1h, 06Bh
 		reset
+#endif
 		DB 049h, 000h
 		goto	p_182A
 		DB 044h, 000h
@@ -447,7 +453,11 @@ p__4CC	decfsz	43h						; entry from: 4CEh,4DCh
 		bra		p__4DA
 p__4D4	movlw	81h						; entry from: 0A14h
 		movwf	0D1h,BANKED
+#if WDT_RESET
+		goto	p_reset
+#else
 		reset
+#endif
 p__4DA	btfsc	EECON1,1					; entry from: 4D2h
 		bra		p__4CC
 		incf	EEADR
@@ -7260,6 +7270,11 @@ p_3F26	movff	9Dh,96h					; entry from: 2260h,3F1Ah,3F20h
 		movf	9Ch,W,BANKED
 		goto	p_3D4A
 		nop
+
+#if WDT_RESET
+p_reset		bsf     WDTCON, SWDTEN
+reset_loop	bra	reset_loop
+#endif
 
 		ORG BASE_ADDR + 04000h
 p_4000	decf	96h,W,BANKED			; entry from: 3BA6h
