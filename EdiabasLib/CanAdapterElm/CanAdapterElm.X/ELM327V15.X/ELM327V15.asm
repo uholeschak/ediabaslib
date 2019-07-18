@@ -343,16 +343,17 @@ p__302	goto	p__E9E					; entry from: 11Ah,138h,13Eh,14Ah,150h,156h,162h,168h,16E
 		DB 000h, 000h
 text_table2
 		DATA "AUTO", 0
-		DB 053h, 041h, 045h, 020h, 04Ah, 031h
-		DB 038h, 035h, 030h, 020h, 050h, 057h, 04Dh, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h, 038h, 035h
-		DB 030h, 020h, 056h, 050h, 057h, 000h, 049h, 053h, 04Fh, 020h, 039h, 031h, 034h, 031h, 02Dh, 032h
-		DB 000h, 000h, 049h, 053h, 04Fh, 020h, 031h, 034h, 032h, 033h, 030h, 02Dh, 034h, 020h, 028h, 04Bh
-		DB 057h, 050h, 020h, 035h, 042h, 041h, 055h, 044h, 029h, 000h, 049h, 053h, 04Fh, 020h, 031h, 034h
-		DB 032h, 033h, 030h, 02Dh, 034h, 020h, 028h, 04Bh, 057h, 050h, 020h, 046h, 041h, 053h, 054h, 029h
-		DB 000h, 000h, 049h, 053h, 04Fh, 020h, 031h, 035h, 037h, 036h, 035h, 02Dh, 034h, 000h, 053h, 041h
-		DB 045h, 020h, 04Ah, 031h, 039h, 033h, 039h, 000h, 055h, 053h, 045h, 052h, 031h, 000h, 055h, 053h
-		DB 045h, 052h, 032h, 000h, 020h, 028h, 043h, 041h, 04Eh, 020h, 000h, 000h, 045h, 052h, 052h, 037h
-		DB 031h, 000h
+		DATA "SAE J1850 PWM"
+		DATA "SAE J1850 VPW"
+		DATA "ISO 9141-2", 0
+		DATA "ISO 14230-4 (KWP 5BAUD)"
+		DATA "ISO 14230-4 (KWP FAST)", 0
+		DATA "ISO 15765-4"
+		DATA "SAE J1939"
+		DATA "USER1"
+		DATA "USER2"
+		DATA " (CAN ", 0
+		DATA "ERR71"
 
 p__3B2	btfss	17h,7					; entry from: 110h
 		bra		p__3BC
