@@ -108,18 +108,23 @@ p____E	movlw	70h						; entry from: 18h
 		bra		p____E
 
 		ORG DATA_OFFSET + 0001Ah
-		DB 041h, 043h, 054h, 020h, 041h, 04Ch
-		DB 045h, 052h, 054h, 000h, 04Fh, 042h, 044h, 049h, 049h, 020h, 074h, 06Fh, 020h, 052h, 053h, 032h
-		DB 033h, 032h, 020h, 049h, 06Eh, 074h, 065h, 072h, 070h, 072h, 065h, 074h, 065h, 072h, 000h, 000h
-		DB 042h, 055h, 046h, 046h, 045h, 052h, 020h, 046h, 055h, 04Ch, 04Ch, 000h, 042h, 055h, 053h, 020h
-		DB 042h, 055h, 053h, 059h, 000h, 000h, 042h, 055h, 053h, 020h, 045h, 052h, 052h, 04Fh, 052h, 000h
-		DB 042h, 055h, 053h, 020h, 049h, 04Eh, 049h, 054h, 03Ah, 020h, 000h, 000h, 043h, 041h, 04Eh, 020h
-		DB 045h, 052h, 052h, 04Fh, 052h, 000h, 03Ch, 044h, 041h, 054h, 041h, 020h, 045h, 052h, 052h, 04Fh
-		DB 052h, 000h, 045h, 04Ch, 04Dh, 033h, 032h, 037h, 020h, 076h, 031h, 02Eh, 035h, 000h, 03Fh, 000h
-		DB 046h, 042h, 020h, 045h, 052h, 052h, 04Fh, 052h, 000h, 000h, 055h, 04Eh, 041h, 042h, 04Ch, 045h
-		DB 020h, 054h, 04Fh, 020h, 043h, 04Fh, 04Eh, 04Eh, 045h, 043h, 054h, 000h, 04Eh, 04Fh, 020h, 044h
-		DB 041h, 054h, 041h, 000h, 04Fh, 04Bh, 000h, 000h, 03Eh, 000h, 053h, 045h, 041h, 052h, 043h, 048h
-		DB 049h, 04Eh, 047h, 02Eh, 02Eh, 02Eh, 000h, 000h, 053h, 054h, 04Fh, 050h, 050h, 045h, 044h, 000h
+		DATA "ACT ALERT"
+		DATA "OBDII to RS232 Interpreter", 0
+		DATA "BUFFER FULL"
+		DATA "BUS BUSY", 0
+		DATA "BUS ERROR"
+		DATA "BUS INIT: ", 0
+		DATA "CAN ERROR"
+		DATA "<DATA ERROR"
+		DATA "ELM327 v1.5"
+		DATA "?"
+		DATA "FB ERROR", 0
+		DATA "UNABLE TO CONNECT"
+		DATA "NO DATA"
+		DATA "OK", 0
+		DATA ">"
+		DATA "SEARCHING...", 0
+		DATA "STOPPED"
 		DB 03Eh, 041h, 054h, 020h, 04Dh, 041h, 000h, 000h, 03Ch, 052h, 058h, 020h, 045h, 052h, 052h, 04Fh
 		DB 052h, 000h, 04Ch, 056h, 020h, 052h, 045h, 053h, 045h, 054h, 000h, 000h, 0FFh, 0FFh, 0FFh, 0FFh
 		DB 030h, 031h, 032h, 033h, 034h, 035h, 036h, 037h, 038h, 039h, 041h, 042h, 043h, 044h, 045h, 046h
