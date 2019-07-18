@@ -130,7 +130,7 @@ p__100	addwf	PCL						; entry from: 1AECh
 #if WDT_RESET
 		goto	p_reset
 #else
-		DB 0D1h, 06Bh
+		clrf	0D1h,BANKED
 		reset
 #endif
 		DB 049h, 000h
