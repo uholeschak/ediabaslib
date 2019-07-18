@@ -330,19 +330,20 @@ p__100	addwf	PCL						; entry from: 1AECh
 		ORG TABLE_OFFSET + 00300h
 		addwf	PCL
 p__302	goto	p__E9E					; entry from: 11Ah,138h,13Eh,14Ah,150h,156h,162h,168h,16Eh,174h,180h,186h,192h,198h,1A4h,1B0h,1B6h,1C8h,1CEh,1DAh,1E0h,1E6h,3BAh,3C4h
-		DB 043h, 046h
+		DB "C", "F"
 		goto	p__D92
-		DB 043h, 04Dh
+		DB "C", "M"
 		goto	p__DD8
 		DB 000h, 000h
-		DB 043h, 052h
+		DB "C", "R"
 		goto	p__E24
 		DB 000h, 000h
-		DB 040h, 033h
+		DB "@", "3"
 		goto	p__C72
 		DB 000h, 000h
 text_table2
-		DB 041h, 055h, 054h, 04Fh, 000h, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h
+		DATA "AUTO", 0
+		DB 053h, 041h, 045h, 020h, 04Ah, 031h
 		DB 038h, 035h, 030h, 020h, 050h, 057h, 04Dh, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h, 038h, 035h
 		DB 030h, 020h, 056h, 050h, 057h, 000h, 049h, 053h, 04Fh, 020h, 039h, 031h, 034h, 031h, 02Dh, 032h
 		DB 000h, 000h, 049h, 053h, 04Fh, 020h, 031h, 034h, 032h, 033h, 030h, 02Dh, 034h, 020h, 028h, 04Bh
