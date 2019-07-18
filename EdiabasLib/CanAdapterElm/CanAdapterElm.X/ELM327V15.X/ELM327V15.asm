@@ -138,7 +138,8 @@ p__100	addwf	PCL						; entry from: 1AECh
 		DB 044h, 000h
 		goto	p__3B2
 		DB 000h, 000h
-		DB 041h, 04Ch, 017h, 088h
+		DB 041h, 04Ch
+		bsf		17h,4
 		bra		p__302
 		DB 041h, 052h
 		goto	p__CA0
@@ -148,65 +149,86 @@ p__100	addwf	PCL						; entry from: 1AECh
 		goto	p__CC4
 		DB 043h, 053h
 		goto	p__E60
-		DB 044h, 030h, 018h, 09Ah
+		DB 044h, 030h
+		bcf		18h,5
 		bra		p__302
-		DB 044h, 031h, 018h, 08Ah
+		DB 044h, 031h
+		bsf		18h,5
 		bra		p__302
 		DB 044h, 050h
 		goto	p__F40
-		DB 045h, 030h, 017h, 094h
+		DB 045h, 030h
+		bcf		17h,2
 		bra		p__302
-		DB 045h, 031h, 017h, 084h
+		DB 045h, 031h
+		bsf		17h,2
 		bra		p__302
-		DB 046h, 045h, 0D2h, 06Bh
+		DB 046h, 045h
+		clrf	0D2h,BANKED
 		bra		p__302
 		DB 046h, 049h
 		goto	p_1104
-		DB 048h, 030h, 017h, 092h
+		DB 048h, 030h
+		bcf		17h,1
 		bra		p__302
-		DB 048h, 031h, 017h, 082h
+		DB 048h, 031h
+		bsf		17h,1
 		bra		p__302
-		DB 04Ah, 045h, 035h, 094h
+		DB 04Ah, 045h
+		bcf		35h,2
 		bra		p__302
-		DB 04Ah, 053h, 035h, 084h
+		DB 04Ah, 053h
+		bsf		35h,2
 		bra		p__302
 		DB 04Bh, 057h
 		goto	p_11BC
-		DB 04Ch, 030h, 017h, 09Eh
+		DB 04Ch, 030h
+		bcf		17h,7
 		bra		p__302
-		DB 04Ch, 031h, 017h, 08Eh
+		DB 04Ch, 031h
+		bsf		17h,7
 		bra		p__302
 		DB 04Ch, 050h
 		goto	p_11F8
-		DB 04Dh, 030h, 017h, 09Ah
+		DB 04Dh, 030h
+		bcf		17h,5
 		bra		p__302
-		DB 04Dh, 031h, 017h, 08Ah
+		DB 04Dh, 031h
+		bsf		17h,5
 		bra		p__302
 		DB 04Dh, 041h
 		goto	p_129A
-		DB 04Eh, 04Ch, 017h, 098h
+		DB 04Eh, 04Ch
+		bcf		17h,4
 		bra		p__302
 		DB 050h, 043h
 		goto	p_12E0
-		DB 052h, 030h, 017h, 096h
+		DB 052h, 030h
+		bcf		17h,3
 		bra		p__302
-		DB 052h, 031h, 017h, 086h
+		DB 052h, 031h
+		bsf		17h,3
 		bra		p__302
 		DB 052h, 044h
 		goto	p_146E
 		DB 052h, 056h
 		goto	p_148A
-		DB 053h, 030h, 018h, 080h
+		DB 053h, 030h
+		bsf		18h,0
 		bra		p__302
-		DB 053h, 031h, 018h, 090h
+		DB 053h, 031h
+		bcf		18h,0
 		bra		p__302
 		DB 053h, 049h
 		goto	p_156E
-		DB 053h, 053h, 010h, 08Ah
+		DB 053h, 053h
+		bsf		10h,5
 		bra		p__302
-		DB 056h, 030h, 035h, 09Ah
+		DB 056h, 030h
+		bcf		35h,5
 		bra		p__302
-		DB 056h, 031h, 035h, 08Ah
+		DB 056h, 031h
+		bsf		35h,5
 		bra		p__302
 		DB 057h, 053h
 		goto	p_1650
