@@ -240,90 +240,90 @@ p__100	addwf	PCL						; entry from: 1AECh
 
 		ORG TABLE_OFFSET + 00200h
 		addwf	PCL
-		DB 041h, 054h
+		DB "A", "T"
 		goto	p__C1E
-		DB 043h, 045h
+		DB "C", "E"
 		goto	p__D76
-		DB 044h, 04Dh
+		DB "D", "M"
 		goto	p__F22
-		DB 044h, 050h
+		DB "D", "P"
 		goto	p_101A
-		DB 049h, 047h
+		DB "I", "G"
 		goto	p_1184
-		DB 04Bh, 057h
+		DB "K", "W"
 		goto	p_11AA
-		DB 050h, 050h
+		DB "P", "P"
 		goto	p_13F4
-		DB 052h, 054h
+		DB "R", "T"
 		goto	p_147A
-		DB 053h, 050h
+		DB "S", "P"
 		goto	p_15AE
-		DB 054h, 050h
+		DB "T", "P"
 		goto	p_15AE
 		DB 000h, 000h
-		DB 043h, 041h
+		DB "C", "A"
 		goto	p__D5C
-		DB 043h, 046h
+		DB "C", "F"
 		goto	p__DAC
-		DB 043h, 050h
+		DB "C", "P"
 		goto	p__DF2
-		DB 049h, 042h
+		DB "I", "B"
 		goto	p_110C
-		DB 049h, 046h
+		DB "I", "F"
 		goto	p_1148
-		DB 04Dh, 052h
+		DB "M", "R"
 		goto	p_12BA
-		DB 04Dh, 054h
+		DB "M", "T"
 		goto	p_12C2
-		DB 052h, 041h
+		DB "R", "A"
 		goto	p_157E
-		DB 053h, 050h
+		DB "S", "P"
 		goto	p_15DE
-		DB 054h, 041h
+		DB "T", "A"
 		goto	p_15A6
-		DB 054h, 050h
+		DB "T", "P"
 		goto	p_15DE
-		DB 053h, 044h
+		DB "S", "D"
 		goto	p_152E
-		DB 053h, 052h
+		DB "S", "R"
 		goto	p_157E
-		DB 053h, 054h
+		DB "S", "T"
 		goto	p_1586
-		DB 053h, 057h
+		DB "S", "W"
 		goto	p_1592
 		DB 000h, 000h
-		DB 042h, 052h
+		DB "B", "R"
 		goto	p__CD8
-		DB 043h, 046h
+		DB "C", "F"
 		goto	p__D80
-		DB 043h, 04Dh
+		DB "C", "M"
 		goto	p__DC6
-		DB 043h, 045h
+		DB "C", "E"
 		goto	p_1536
-		DB 049h, 049h
+		DB "I", "I"
 		goto	p_112C
-		DB 053h, 048h
+		DB "S", "H"
 		goto	p_1558
 		DB 000h, 000h
-		DB 043h, 052h
+		DB "C", "R"
 		goto	p__E02
-		DB 043h, 056h
+		DB "C", "V"
 		goto	p__EB2
-		DB 04Dh, 050h
+		DB "M", "P"
 		goto	p_12A2
-		DB 050h, 042h
+		DB "P", "B"
 		goto	p_12CE
-		DB 050h, 050h
+		DB "P", "P"
 		goto	p_12E6
 		DB 000h, 000h
-		DB 050h, 050h
+		DB "P", "P"
 		goto	p_12FA
 		DB 000h, 000h
-		DB 04Dh, 050h
+		DB "M", "P"
 		goto	p_12AC
-		DB 050h, 050h
+		DB "P", "P"
 		goto	p_1312
-		DB 053h, 048h
+		DB "S", "H"
 		goto	p_1546
 		DB 000h, 000h
 
