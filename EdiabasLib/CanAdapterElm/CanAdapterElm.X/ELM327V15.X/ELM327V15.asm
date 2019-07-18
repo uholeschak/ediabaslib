@@ -125,11 +125,12 @@ p____E	movlw	70h						; entry from: 18h
 		DATA ">"
 		DATA "SEARCHING...", 0
 		DATA "STOPPED"
-		DB 03Eh, 041h, 054h, 020h, 04Dh, 041h, 000h, 000h, 03Ch, 052h, 058h, 020h, 045h, 052h, 052h, 04Fh
-		DB 052h, 000h, 04Ch, 056h, 020h, 052h, 045h, 053h, 045h, 054h, 000h, 000h, 0FFh, 0FFh, 0FFh, 0FFh
-		DB 030h, 031h, 032h, 033h, 034h, 035h, 036h, 037h, 038h, 039h, 041h, 042h, 043h, 044h, 045h, 046h
+		DATA ">AT MA", 0
+		DATA "<RX ERROR"
+		DATA "LV RESET", 0
 
-		ORG TABLE_OFFSET + 00100h
+		ORG TABLE_OFFSET + 000F0h
+		DATA "0123456789ABCDEF"
 p__100	addwf	PCL						; entry from: 1AECh
 		DB "Z", 000h
 #if WDT_RESET
