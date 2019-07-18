@@ -126,30 +126,30 @@ p____E	movlw	70h						; entry from: 18h
 
 		ORG TABLE_OFFSET + 00100h
 p__100	addwf	PCL						; entry from: 1AECh
-		DB 05Ah, 000h
+		DB "Z", 000h
 #if WDT_RESET
 		goto	p_reset
 #else
 		clrf	0D1h,BANKED
 		reset
 #endif
-		DB 049h, 000h
+		DB "I", 000h
 		goto	p_182A
-		DB 044h, 000h
+		DB "D", 000h
 		goto	p__3B2
 		DB 000h, 000h
-		DB 041h, 04Ch
+		DB "A", "L"
 		bsf		17h,4
 		bra		p__302
-		DB 041h, 052h
+		DB "A", "R"
 		goto	p__CA0
-		DB 042h, 044h
+		DB "B", "D"
 		goto	p__CAA
-		DB 042h, 049h
+		DB "B", "I"
 		goto	p__CC4
-		DB 043h, 053h
+		DB "C", "S"
 		goto	p__E60
-		DB 044h, 030h
+		DB "D", "0"
 		bcf		18h,5
 		bra		p__302
 		DB 044h, 031h
@@ -341,6 +341,7 @@ p__302	goto	p__E9E					; entry from: 11Ah,138h,13Eh,14Ah,150h,156h,162h,168h,16E
 		DB 040h, 033h
 		goto	p__C72
 		DB 000h, 000h
+text_table2
 		DB 041h, 055h, 054h, 04Fh, 000h, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h
 		DB 038h, 035h, 030h, 020h, 050h, 057h, 04Dh, 000h, 053h, 041h, 045h, 020h, 04Ah, 031h, 038h, 035h
 		DB 030h, 020h, 056h, 050h, 057h, 000h, 049h, 053h, 04Fh, 020h, 039h, 031h, 034h, 031h, 02Dh, 032h
@@ -1810,7 +1811,7 @@ p__F32	call	p_2220					; entry from: 12B8h
 		goto	p_1D68
 p__F40	movlw	high(TABLE_OFFSET) + 3						; entry from: 142h
 		movwf	TBLPTRH
-		movlw	24h
+		movlw	low(text_table2)
 		movf	3Dh
 		bz		p__F94
 		btfss	3Eh,7
