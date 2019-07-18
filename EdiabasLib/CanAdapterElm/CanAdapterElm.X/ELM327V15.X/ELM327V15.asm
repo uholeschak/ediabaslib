@@ -152,89 +152,89 @@ p__100	addwf	PCL						; entry from: 1AECh
 		DB "D", "0"
 		bcf		18h,5
 		bra		p__302
-		DB 044h, 031h
+		DB "D", "1"
 		bsf		18h,5
 		bra		p__302
-		DB 044h, 050h
+		DB "D", "P"
 		goto	p__F40
-		DB 045h, 030h
+		DB "E", "0"
 		bcf		17h,2
 		bra		p__302
-		DB 045h, 031h
+		DB "E", "1"
 		bsf		17h,2
 		bra		p__302
-		DB 046h, 045h
+		DB "F", "E"
 		clrf	0D2h,BANKED
 		bra		p__302
-		DB 046h, 049h
+		DB "F", "I"
 		goto	p_1104
-		DB 048h, 030h
+		DB "H", "0"
 		bcf		17h,1
 		bra		p__302
-		DB 048h, 031h
+		DB "H", "1"
 		bsf		17h,1
 		bra		p__302
-		DB 04Ah, 045h
+		DB "J", "E"
 		bcf		35h,2
 		bra		p__302
-		DB 04Ah, 053h
+		DB "J", "S"
 		bsf		35h,2
 		bra		p__302
-		DB 04Bh, 057h
+		DB "K", "W"
 		goto	p_11BC
-		DB 04Ch, 030h
+		DB "L", "0"
 		bcf		17h,7
 		bra		p__302
-		DB 04Ch, 031h
+		DB "L", "1"
 		bsf		17h,7
 		bra		p__302
-		DB 04Ch, 050h
+		DB "L", "P"
 		goto	p_11F8
-		DB 04Dh, 030h
+		DB "M", "0"
 		bcf		17h,5
 		bra		p__302
-		DB 04Dh, 031h
+		DB "M", "1"
 		bsf		17h,5
 		bra		p__302
-		DB 04Dh, 041h
+		DB "M", "A"
 		goto	p_129A
-		DB 04Eh, 04Ch
+		DB "N", "L"
 		bcf		17h,4
 		bra		p__302
-		DB 050h, 043h
+		DB "P", "C"
 		goto	p_12E0
-		DB 052h, 030h
+		DB "R", "0"
 		bcf		17h,3
 		bra		p__302
-		DB 052h, 031h
+		DB "R", "1"
 		bsf		17h,3
 		bra		p__302
-		DB 052h, 044h
+		DB "R", "D"
 		goto	p_146E
-		DB 052h, 056h
+		DB "R", "V"
 		goto	p_148A
-		DB 053h, 030h
+		DB "S", "0"
 		bsf		18h,0
 		bra		p__302
-		DB 053h, 031h
+		DB "S", "1"
 		bcf		18h,0
 		bra		p__302
-		DB 053h, 049h
+		DB "S", "I"
 		goto	p_156E
-		DB 053h, 053h
+		DB "S", "S"
 		bsf		10h,5
 		bra		p__302
-		DB 056h, 030h
+		DB "V", "0"
 		bcf		35h,5
 		bra		p__302
-		DB 056h, 031h
+		DB "V", "1"
 		bsf		35h,5
 		bra		p__302
-		DB 057h, 053h
+		DB "W", "S"
 		goto	p_1650
-		DB 040h, 031h
+		DB "@", "1"
 		goto	p__C3C
-		DB 040h, 032h
+		DB "@", "2"
 		goto	p__C42
 		DB 000h, 000h
 
