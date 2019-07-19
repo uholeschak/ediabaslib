@@ -11,7 +11,7 @@
 		    #define TABLE_OFFSET BASE_ADDR
 		    #define EEPROM_PAGE 0
 		    #define WDT_RESET   0
-		    #define DEFAULT_BAUD 68h		;38400
+		    #define DEFAULT_BAUD 068h		;38400
 		#else
 		    #define CODE_OFFSET 00800h
 		    #define BASE_ADDR 01000h
@@ -21,9 +21,9 @@
 		    #define WDT_RESET   1
 
 		    #if ADAPTER_TYPE == 0x02
-			#define DEFAULT_BAUD 68h	;38400
+			#define DEFAULT_BAUD 068h	;38400
 		    #else
-			#define DEFAULT_BAUD 23h	;115200
+			#define DEFAULT_BAUD 023h	;115200
 		    #endif
 		#endif
 
@@ -87,6 +87,17 @@
 
 		; CONFIG7H
 		CONFIG EBTRB = OFF      ; Table Read Protect Boot (Disabled)
+
+		; EEPROM
+		ORG 0F00000h + (EEPROM_PAGE * 0100h)
+		DB 0FFh, 000h, 000h, 000h, 000h, 000h, 000h, 0FFh, 006h, 0AEh, 002h, 06Ah, 0FFh, 0FFh, 0FFh, 0FFh
+		DB 0FFh, 0FFh, 032h, 0FFh, 001h, 0FFh, 0FFh, 0FFh, 0F1h, 0FFh, 009h, 0FFh, 0FFh, 0FFh, 000h, 0FFh
+		DB 00Ah, 0FFh, 0FFh, 0FFh, DEFAULT_BAUD, 0FFh, 00Dh, 0FFh, 09Ah, 0FFh, 0FFh, 0FFh, 00Dh, 0FFh, 000h, 0FFh
+		DB 0FFh, 0FFh, 032h, 0FFh, 0FFh, 0FFh, 00Ah, 0FFh, 0FFh, 0FFh, 092h, 0FFh, 000h, 0FFh, 028h, 0FFh
+		DB 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
+		DB 0FFh, 0FFh, 0FFh, 0FFh, 000h, 0FFh, 000h, 0FFh, 000h, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
+		DB 038h, 0FFh, 002h, 0FFh, 0E0h, 0FFh, 004h, 0FFh, 080h, 0FFh, 00Ah, 0FFh, 000h, 000h, 000h, 000h
+		DB 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 000h, 0FFh, 0FFh
 
 		#if ORIGINAL == 0
 		ORG 07FFAh
