@@ -972,6 +972,7 @@ p__82E	btfss	18h,0					; entry from: 3812h,389Ch,38D4h,38DEh,392Eh,3968h,39A8h
 p__834	rcall	p__7F2					; entry from: 0E70h,0E8Ch,11BEh,11CEh,11E8h,3898h,38CCh
 		bra		p__720
 
+; read eeprom
 p__838	movwf	EEADR						; entry from: 98Eh,99Ah,0C4Ah,0C62h,1382h,13A4h,1422h,142Eh,1470h
 		bcf		EECON1,7
 		bcf		EECON1,6
@@ -1196,6 +1197,7 @@ p__9E4	btfss	44h,0					; entry from: 9EEh
 p__9FC	bcf		3Dh,7					; entry from: 9D8h
 		return	
 
+; write eeprom
 p__A00	movwf	EEDATA						; entry from: 9E8h,0C88h,0C94h,0C96h,0C98h,0C9Ah,0F08h,0F0Eh,0F14h,0F1Ah,1390h,13AEh
 		movlw	55h
 		movwf	EECON2
@@ -1514,6 +1516,21 @@ p__C60	movf	42h,W					; entry from: 0C6Eh
 		cpfseq	42h
 		bra		p__C60
 		return	
+#if SW_VERSION != 0
+p__C72	movlw	0
+		movwf	FSR0H
+		movlw	65h
+		movwf	FSR0L
+		movf	POSTINC0,W
+		sublw	"B"
+		btfss	STATUS,Z
+		bra		p__EAC	    ; print ?
+		movf	POSTINC0,W
+		sublw	"L"
+		btfss	STATUS,Z
+		bra		p__EAC	    ; print ?
+		reset
+#else
 p__C72	rcall	p__C58					; entry from: 31Eh
 		btfss	STATUS,2
 		bra		p__EAC
@@ -1537,6 +1554,7 @@ p__C86	movf	POSTINC0,W				; entry from: 0C8Ch
 		rcall	p__A00
 		bcf		EECON1,2
 		bra		p__E9E
+#endif
 p__CA0	bcf		10h,4					; entry from: 11Eh
 		bcf		34h,6
 		bcf		34h,5
@@ -1765,6 +1783,7 @@ p__E82	call	p__74C					; entry from: 0E78h
 
 p__E9A	goto	p_1830					; entry from: 0C56h,0CC2h,0F9Ah,1018h,102Eh
 
+; print OK
 p__E9E	movlw	0B4h					; entry from: 302h,0C28h,0C3Ah,0C9Eh,0CA8h,0CD6h,0CE8h,0D2Eh,0D6Ah,0D74h,0D7Eh,0DAAh,0DBAh,0DC4h,0DF0h,0E00h,0F20h,1076h,109Eh,10B8h,1102h,1462h
 		goto	p_182C
 
@@ -1773,6 +1792,7 @@ p__EA4	movf	78h,W,BANKED			; entry from: 0D80h,0D92h,0DC6h,0DD8h,0DF2h,0E02h,0E2
 		return	
 		pop
 
+; print ?
 p__EAC	movlw	8Eh						; entry from: 0C36h,0C46h,0C76h,0CC8h,0CF0h,0CF6h,0D70h,0D7Ah,0DC0h,0E08h,0E2Ah,0F26h,0F38h,146Ah,1AFAh
 		goto	p_182C
 p__EB2	rcall	p__EA4					; entry from: 2CAh
