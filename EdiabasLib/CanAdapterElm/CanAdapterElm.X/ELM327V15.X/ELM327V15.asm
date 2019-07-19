@@ -5,6 +5,7 @@
 		#define ORIGINAL    0
 
 		#if ORIGINAL
+		    #define SW_VERSION 000h
 		    #define CODE_OFFSET 00000h
 		    #define BASE_ADDR 00000h
 		    #define DATA_OFFSET BASE_ADDR
@@ -13,6 +14,7 @@
 		    #define WDT_RESET   0
 		    #define DEFAULT_BAUD 068h		;38400
 		#else
+		    #define SW_VERSION 001h
 		    #define CODE_OFFSET 00800h
 		    #define BASE_ADDR 01000h
 		    #define DATA_OFFSET BASE_ADDR
@@ -96,8 +98,16 @@
 		DB 0FFh, 0FFh, 032h, 0FFh, 0FFh, 0FFh, 00Ah, 0FFh, 0FFh, 0FFh, 092h, 0FFh, 000h, 0FFh, 028h, 0FFh
 		DB 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
 		DB 0FFh, 0FFh, 0FFh, 0FFh, 000h, 0FFh, 000h, 0FFh, 000h, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
-		DB 038h, 0FFh, 002h, 0FFh, 0E0h, 0FFh, 004h, 0FFh, 080h, 0FFh, 00Ah, 0FFh, 000h, 000h, 000h, 000h
-		DB 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 000h, 0FFh, 0FFh
+		DB 038h, 0FFh, 002h, 0FFh, 0E0h, 0FFh, 004h, 0FFh, 080h, 0FFh, 00Ah, 0FFh
+		#if SW_VERSION == 0
+		DB 000h, 000h, 000h, 000h
+		DB 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh,
+		#else
+		DB 0FFh, 0FFh, 0FFh, 0FFh
+		DB "D", "E", "E", "P", "O", "B", "D", " ", 030h + (SW_VERSION / 16), 030h + (SW_VERSION % 16)
+		DB 030h + (ADAPTER_TYPE / 16), 030h + (ADAPTER_TYPE % 16)
+		#endif
+		DB 0FFh, 000h, 0FFh, 0FFh
 
 		#if ORIGINAL == 0
 		ORG 07FFAh
