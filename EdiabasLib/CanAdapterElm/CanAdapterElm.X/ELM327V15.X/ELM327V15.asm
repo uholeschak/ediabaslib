@@ -91,8 +91,12 @@
 		CONFIG EBTRB = OFF      ; Table Read Protect Boot (Disabled)
 
 		; EEPROM
+		#if SW_VERSION == 0
 		ORG 0F00000h + (EEPROM_PAGE * 0100h)
-		DB 0FFh, 000h, 000h, 000h, 000h, 000h, 000h, 0FFh, 006h, 0AEh, 002h, 06Ah, 0FFh, 0FFh, 0FFh, 0FFh
+		#else
+		ORG 0000400h
+		#endif
+eep_start	DB 0FFh, 000h, 000h, 000h, 000h, 000h, 000h, 0FFh, 006h, 0AEh, 002h, 06Ah, 0FFh, 0FFh, 0FFh, 0FFh
 		DB 0FFh, 0FFh, 032h, 0FFh, 001h, 0FFh, 0FFh, 0FFh, 0F1h, 0FFh, 009h, 0FFh, 0FFh, 0FFh, 000h, 0FFh
 		DB 00Ah, 0FFh, 0FFh, 0FFh, DEFAULT_BAUD, 0FFh, 00Dh, 0FFh, 09Ah, 0FFh, 0FFh, 0FFh, 00Dh, 0FFh, 000h, 0FFh
 		DB 0FFh, 0FFh, 032h, 0FFh, 0FFh, 0FFh, 00Ah, 0FFh, 0FFh, 0FFh, 092h, 0FFh, 000h, 0FFh, 028h, 0FFh
@@ -108,6 +112,25 @@
 		DB 030h + (ADAPTER_TYPE / 16), 030h + (ADAPTER_TYPE % 16)
 		#endif
 		DB 0FFh, 000h, 0FFh, 0FFh
+
+		#if SW_VERSION != 0
+eep_end
+eep_copy	movlw   low(eep_start)
+		movwf   TBLPTRL
+		movlw   high(eep_start)
+		movwf   TBLPTRH
+		movlw   upper(eep_start)
+		movwf   TBLPTRU
+		movlw	000h
+		movwf	EEADR
+eep_loop	tblrd   *+
+	        movf    TABLAT, W
+		call	p__A00
+		movf    EEADR, W
+		xorlw	low(eep_end - eep_start)
+		bnz	eep_loop
+		return
+		#endif
 
 		#if ORIGINAL == 0
 		ORG 07FFAh
@@ -2694,6 +2717,9 @@ p_1654	clrf	OSCCON					; entry from: 2
 #if EEPROM_PAGE != 0
 		movlw	EEPROM_PAGE
 		movwf	EEADRH
+#endif
+#if SW_VERSION != 0
+		call	eep_copy
 #endif
 p_1666	movlb	0						; entry from: 1652h
 		movwf	0D0h,BANKED
