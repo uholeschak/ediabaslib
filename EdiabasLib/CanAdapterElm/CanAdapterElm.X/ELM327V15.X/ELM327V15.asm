@@ -1522,14 +1522,14 @@ p__C72	movlw	0
 		movlw	65h
 		movwf	FSR0L
 		movf	POSTINC0,W
-		sublw	"B"
-		btfss	STATUS,Z
-		bra		p__EAC	    ; print ?
+		xorlw	"B"
+		bnz		no_bl
 		movf	POSTINC0,W
-		sublw	"L"
-		btfss	STATUS,Z
-		bra		p__EAC	    ; print ?
+		xorlw	"L"
+		bnz		no_bl
 		reset
+no_bl		bra		p__EAC	    ; print ?
+		nop
 #else
 p__C72	rcall	p__C58					; entry from: 31Eh
 		btfss	STATUS,2
