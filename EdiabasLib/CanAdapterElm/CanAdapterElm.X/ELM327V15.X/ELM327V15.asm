@@ -91,11 +91,11 @@
 		CONFIG EBTRB = OFF      ; Table Read Protect Boot (Disabled)
 
 		; EEPROM
-		#if SW_VERSION == 0
+#if SW_VERSION == 0
 		ORG 0F00000h + (EEPROM_PAGE * 0100h)
-		#else
+#else
 		ORG 0000400h
-		#endif
+#endif
 eep_start	DB 0FFh, 000h, 000h, 000h, 000h, 000h, 000h, 0FFh, 006h, 0AEh, 002h, 06Ah, 0FFh, 0FFh, 0FFh, 0FFh
 		DB 0FFh, 0FFh, 032h, 0FFh, 001h, 0FFh, 0FFh, 0FFh, 0F1h, 0FFh, 009h, 0FFh, 0FFh, 0FFh, 000h, 0FFh
 		DB 00Ah, 0FFh, 0FFh, 0FFh, DEFAULT_BAUD, 0FFh, 00Dh, 0FFh, 09Ah, 0FFh, 0FFh, 0FFh, 00Dh, 0FFh, 000h, 0FFh
@@ -103,55 +103,56 @@ eep_start	DB 0FFh, 000h, 000h, 000h, 000h, 000h, 000h, 0FFh, 006h, 0AEh, 002h, 0
 		DB 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
 		DB 0FFh, 0FFh, 0FFh, 0FFh, 000h, 0FFh, 000h, 0FFh, 000h, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh
 		DB 038h, 0FFh, 002h, 0FFh, 0E0h, 0FFh, 004h, 0FFh, 080h, 0FFh, 00Ah, 0FFh
-		#if SW_VERSION == 0
+#if SW_VERSION == 0
 		DB 000h, 000h, 000h, 000h
 		DB 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh, 0FFh,
-		#else
+#else
 		DB 0FFh, 0FFh, 0FFh, 0FFh
 		DB "D", "E", "E", "P", "O", "B", "D", " ", 030h + (SW_VERSION / 16), 030h + (SW_VERSION % 16)
 		DB 030h + (ADAPTER_TYPE / 16), 030h + (ADAPTER_TYPE % 16)
-		#endif
+#endif
 		DB 0FFh, 000h, 0FFh, 0FFh
 
-		#if SW_VERSION != 0
+#if SW_VERSION != 0
 eep_end
 eep_copy	movlw	024h
 		movwf	EEADR
 		call	p__838
 		xorlw	DEFAULT_BAUD
-		bnz	eep_diff
+		bnz	eep_init
 
 		movlw	078h
 		movwf	EEADR
 		call	p__838
 		xorlw	030h + (SW_VERSION / 16)
-		bnz	eep_diff
+		bnz	eep_init
 
 		movlw	079h
 		movwf	EEADR
 		call	p__838
 		xorlw	030h + (SW_VERSION % 16)
-		bnz	eep_diff
+		bnz	eep_init
 
 		movlw	07Ah
 		movwf	EEADR
 		call	p__838
 		xorlw	030h + (ADAPTER_TYPE / 16)
-		bnz	eep_diff
+		bnz	eep_init
 
 		movlw	07Bh
 		movwf	EEADR
 		call	p__838
 		xorlw	030h + (ADAPTER_TYPE % 16)
-		bnz	eep_diff
+		bnz	eep_init
 		return
 
-eep_diff	movlw   low(eep_start)
+eep_init	movlw   low(eep_start)
 		movwf   TBLPTRL
 		movlw   high(eep_start)
 		movwf   TBLPTRH
 		movlw   upper(eep_start)
 		movwf   TBLPTRU
+		bsf	EECON1,2
 		movlw	000h
 		movwf	EEADR
 eep_loop	tblrd   *+
@@ -160,14 +161,15 @@ eep_loop	tblrd   *+
 		movf    EEADR, W
 		xorlw	low(eep_end - eep_start)
 		bnz	eep_loop
+		bcf	EECON1,2
 		return
-		#endif
+#endif
 
-		#if ORIGINAL == 0
+#if ORIGINAL == 0
 		ORG 07FFAh
 		DATA 00015h		; adapter version
 		DATA ADAPTER_TYPE	; adapter type
-		#endif
+#endif
 
 		ORG CODE_OFFSET + 0
 		nop
@@ -1576,14 +1578,21 @@ p__C72	movlw	0
 		movlw	65h
 		movwf	FSR0L
 		movf	POSTINC0,W
+		xorlw	"E"
+		bz		eep_chk
+		xorlw	"E"
 		xorlw	"B"
-		bnz		no_bl
+		bnz		cmd_err
 		movf	POSTINC0,W
 		xorlw	"L"
-		bnz		no_bl
+		bnz		cmd_err
 		reset
-no_bl		bra		p__EAC	    ; print ?
-		nop
+eep_chk		movf	POSTINC0,W
+		xorlw	"E"
+		bnz		cmd_err
+		call		eep_init
+		goto		p_reset
+cmd_err		bra		p__EAC	    ; print ?
 #else
 p__C72	rcall	p__C58					; entry from: 31Eh
 		btfss	STATUS,2
