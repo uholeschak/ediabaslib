@@ -162,6 +162,10 @@ eep_loop	tblrd   *+
 		xorlw	low(eep_end - eep_start)
 		bnz	eep_loop
 		bcf	EECON1,2
+
+		movlw	high(DATA_OFFSET) + 0
+		movwf	TBLPTRH
+		clrf	TBLPTRU
 		return
 #endif
 
@@ -1591,7 +1595,7 @@ eep_chk		movf	POSTINC0,W
 		xorlw	"E"
 		bnz		cmd_err
 		call		eep_init
-		goto		p_reset
+		bra		p__E9E	    ; print OK
 cmd_err		bra		p__EAC	    ; print ?
 #else
 p__C72	rcall	p__C58					; entry from: 31Eh
