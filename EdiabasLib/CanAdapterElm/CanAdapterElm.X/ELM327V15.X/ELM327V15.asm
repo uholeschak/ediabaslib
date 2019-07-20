@@ -115,7 +115,38 @@ eep_start	DB 0FFh, 000h, 000h, 000h, 000h, 000h, 000h, 0FFh, 006h, 0AEh, 002h, 0
 
 		#if SW_VERSION != 0
 eep_end
-eep_copy	movlw   low(eep_start)
+eep_copy	movlw	024h
+		movwf	EEADR
+		call	p__838
+		xorlw	DEFAULT_BAUD
+		bnz	eep_diff
+
+		movlw	078h
+		movwf	EEADR
+		call	p__838
+		xorlw	030h + (SW_VERSION / 16)
+		bnz	eep_diff
+
+		movlw	079h
+		movwf	EEADR
+		call	p__838
+		xorlw	030h + (SW_VERSION % 16)
+		bnz	eep_diff
+
+		movlw	07Ah
+		movwf	EEADR
+		call	p__838
+		xorlw	030h + (ADAPTER_TYPE / 16)
+		bnz	eep_diff
+
+		movlw	07Bh
+		movwf	EEADR
+		call	p__838
+		xorlw	030h + (ADAPTER_TYPE % 16)
+		bnz	eep_diff
+		return
+
+eep_diff	movlw   low(eep_start)
 		movwf   TBLPTRL
 		movlw   high(eep_start)
 		movwf   TBLPTRH
