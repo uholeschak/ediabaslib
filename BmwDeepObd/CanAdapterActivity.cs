@@ -13,6 +13,7 @@ using System.IO;
 using System.Net.Sockets;
 using Android.Content;
 using Android.Hardware.Usb;
+// ReSharper disable IdentifierTypo
 
 namespace BmwDeepObd
 {
@@ -48,6 +49,7 @@ namespace BmwDeepObd
         private Button _buttonRead;
         private Button _buttonWrite;
         private LinearLayout _layoutCanAdapter;
+        private TextView _textViewCanAdapterModeTitle;
         private Spinner _spinnerCanAdapterMode;
         private StringObjAdapter _spinnerCanAdapterModeAdapter;
         private TextView _textViewCanAdapterSepTimeTitle;
@@ -118,8 +120,20 @@ namespace BmwDeepObd
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
             ActivityCommon.InterfaceType interfaceType = (ActivityCommon.InterfaceType) Intent.GetIntExtra(ExtraInterfaceType,
                 (int) ActivityCommon.InterfaceType.Bluetooth);
-            ViewStates visibility = IsCustomAdapter(interfaceType) ? ViewStates.Visible : ViewStates.Gone;
-            ViewStates visibilityBt = IsCustomBtAdapter(interfaceType) ? ViewStates.Visible : ViewStates.Gone;
+            ViewStates visibility = IsCustomAdapter(interfaceType, _deviceAddress) ? ViewStates.Visible : ViewStates.Gone;
+            ViewStates visibilityBt = IsCustomBtAdapter(interfaceType, _deviceAddress) ? ViewStates.Visible : ViewStates.Gone;
+            bool customElmAdapter = IsCustomElmAdapter(interfaceType, _deviceAddress);
+            bool rawAdapter = IsRawAdapter(interfaceType, _deviceAddress);
+
+            ViewStates visibilityFw;
+            if (customElmAdapter || rawAdapter)
+            {
+                visibilityFw = ViewStates.Visible;
+            }
+            else
+            {
+                visibilityFw = visibility;
+            }
 
             _buttonRead = _barView.FindViewById<Button>(Resource.Id.buttonAdapterRead);
             _buttonRead.SetOnTouchListener(this);
@@ -135,9 +149,13 @@ namespace BmwDeepObd
             {
                 PerformWrite();
             };
+            _buttonWrite.Visibility = (customElmAdapter || rawAdapter) ? ViewStates.Gone : ViewStates.Visible;
 
             _layoutCanAdapter = FindViewById<LinearLayout>(Resource.Id.layoutCanAdapter);
             _layoutCanAdapter.SetOnTouchListener(this);
+
+            _textViewCanAdapterModeTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterModeTitle);
+            _textViewCanAdapterModeTitle.Visibility = (customElmAdapter || rawAdapter) ? ViewStates.Gone : ViewStates.Visible;
 
             _spinnerCanAdapterMode = FindViewById<Spinner>(Resource.Id.spinnerCanAdapterMode);
             _spinnerCanAdapterMode.SetOnTouchListener(this);
@@ -147,6 +165,7 @@ namespace BmwDeepObd
             _spinnerCanAdapterModeAdapter.Items.Add(new StringObjType(GetString(Resource.String.button_can_adapter_can_100), AdapterMode.Can100));
             _spinnerCanAdapterModeAdapter.Items.Add(new StringObjType(GetString(Resource.String.button_can_adapter_can_off), AdapterMode.CanOff));
             _spinnerCanAdapterModeAdapter.NotifyDataSetChanged();
+            _spinnerCanAdapterMode.Visibility = (customElmAdapter || rawAdapter) ? ViewStates.Gone : ViewStates.Visible;
 
             _textViewCanAdapterSepTimeTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterSepTimeTitle);
             _textViewCanAdapterSepTimeTitle.Visibility = visibility;
@@ -218,7 +237,7 @@ namespace BmwDeepObd
             _textViewSerNum.Visibility = ViewStates.Gone;
 #endif
             _buttonFwUpdate = FindViewById<Button>(Resource.Id.buttonCanAdapterFwUpdate);
-            _buttonFwUpdate.Visibility = visibility;
+            _buttonFwUpdate.Visibility = visibilityFw;
             _buttonFwUpdate.Click += (sender, args) =>
             {
                 PerformUpdateMessage();
@@ -472,7 +491,7 @@ namespace BmwDeepObd
                 }
 
                 // moved down because of expert mode setting
-                if (IsCustomAdapter(_activityCommon.SelectedInterface))
+                if (IsCustomAdapter(_activityCommon.SelectedInterface, _deviceAddress))
                 {
                     if (_canMode == (int)AdapterMode.Can100)
                     {
@@ -630,7 +649,7 @@ namespace BmwDeepObd
 
         private void PerformRead()
         {
-            if (!IsCustomAdapter(_activityCommon.SelectedInterface))
+            if (!IsCustomAdapter(_activityCommon.SelectedInterface, _deviceAddress))
             {
                 UpdateDisplay();
                 return;
@@ -900,7 +919,7 @@ namespace BmwDeepObd
                 try
                 {
                     commFailed = !InterfacePrepare();
-                    if (IsCustomAdapter(_activityCommon.SelectedInterface))
+                    if (IsCustomAdapter(_activityCommon.SelectedInterface, _deviceAddress))
                     {
                         // block size
                         if (!commFailed)
@@ -974,7 +993,7 @@ namespace BmwDeepObd
                     }
                     if (commFailed)
                     {
-                        _activityCommon.ShowAlert(IsCustomAdapter(_activityCommon.SelectedInterface)
+                        _activityCommon.ShowAlert(IsCustomAdapter(_activityCommon.SelectedInterface, _deviceAddress)
                             ? GetString(Resource.String.can_adapter_comm_error)
                             : GetString(Resource.String.can_adapter_comm_error_std), Resource.String.alert_title_error);
                         EdiabasClose();
@@ -1122,11 +1141,13 @@ namespace BmwDeepObd
             UpdateDisplay();
         }
 
-        private static bool IsCustomAdapter(ActivityCommon.InterfaceType interfaceType)
+        private static bool IsCustomAdapter(ActivityCommon.InterfaceType interfaceType, string deviceAddress)
         {
             switch (interfaceType)
             {
                 case ActivityCommon.InterfaceType.Bluetooth:
+                    return IsCustomBtAdapter(interfaceType, deviceAddress);
+
                 case ActivityCommon.InterfaceType.DeepObdWifi:
                     return true;
             }
@@ -1134,12 +1155,65 @@ namespace BmwDeepObd
             return false;
         }
 
-        private static bool IsCustomBtAdapter(ActivityCommon.InterfaceType interfaceType)
+        private static bool IsCustomBtAdapter(ActivityCommon.InterfaceType interfaceType, string deviceAddress)
         {
             switch (interfaceType)
             {
                 case ActivityCommon.InterfaceType.Bluetooth:
-                    return true;
+                    if (deviceAddress == null)
+                    {
+                        return false;
+                    }
+                    string[] stringList = deviceAddress.Split('#', ';');
+                    return stringList.Length == 0;
+            }
+
+            return false;
+        }
+
+        private static bool IsCustomElmAdapter(ActivityCommon.InterfaceType interfaceType, string deviceAddress)
+        {
+            switch (interfaceType)
+            {
+                case ActivityCommon.InterfaceType.Bluetooth:
+                    if (deviceAddress == null)
+                    {
+                        return false;
+                    }
+                    string[] stringList = deviceAddress.Split('#', ';');
+                    if (stringList.Length > 0)
+                    {
+                        if (string.Compare(stringList[1], EdBluetoothInterface.ElmDeepObdTag, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+            }
+
+            return false;
+        }
+
+        private static bool IsRawAdapter(ActivityCommon.InterfaceType interfaceType, string deviceAddress)
+        {
+            switch (interfaceType)
+            {
+                case ActivityCommon.InterfaceType.Bluetooth:
+                    if (deviceAddress == null)
+                    {
+                        return false;
+                    }
+                    string[] stringList = deviceAddress.Split('#', ';');
+                    if (stringList.Length > 0)
+                    {
+                        if (string.Compare(stringList[1], EdBluetoothInterface.RawTag, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
             }
 
             return false;
