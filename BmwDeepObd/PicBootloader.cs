@@ -23,6 +23,7 @@ namespace BmwDeepObd
         private static readonly FirmwareInfo[] FirmwareInfos =
         {
             new FirmwareInfo("Type2.CanAdapterElm.X.production.hex", 0x030C, Device.Families.PIC18),
+            new FirmwareInfo("Type2.ELM327V15.X.production.hex", 0x030C, Device.Families.PIC18, true),
             new FirmwareInfo("Type3.CanAdapterElm.X.production.hex", 0x030C, Device.Families.PIC18),
             new FirmwareInfo("Type4.CanAdapterElm.X.production.hex", 0x030C, Device.Families.PIC18),
             new FirmwareInfo("Type5.CanAdapterElm.X.production.hex", 0x030C, Device.Families.PIC18),
@@ -33,30 +34,34 @@ namespace BmwDeepObd
 
         private class FirmwareInfo
         {
-            public FirmwareInfo(string fileName, uint deviceId, Device.Families familyId)
+            public FirmwareInfo(string fileName, uint deviceId, Device.Families familyId, bool elmFirmware = false)
             {
                 FileName = fileName;
                 DeviceId = deviceId;
                 FamilyId = familyId;
+                ElmFirmware = elmFirmware;
             }
 
             public string FileName { get; }
             public uint DeviceId { get; }
             public Device.Families FamilyId { get; }
+            public bool ElmFirmware { get; }
         }
 
         private class FirmwareDetail
         {
-            public FirmwareDetail(FirmwareInfo firmwareInfo, uint adapterType, uint adapterVersion)
+            public FirmwareDetail(FirmwareInfo firmwareInfo, uint adapterType, uint adapterVersion, bool elmFirmware)
             {
                 FirmwareInfo = firmwareInfo;
                 AdapterType = adapterType;
                 AdapterVersion = adapterVersion;
+                ElmFirmware = elmFirmware;
             }
 
             public FirmwareInfo FirmwareInfo { get; }
             public uint AdapterType { get; }
             public uint AdapterVersion { get; }
+            public bool ElmFirmware { get; }
         }
 
         private class Crc
@@ -1886,8 +1891,24 @@ namespace BmwDeepObd
                 return (int)((bits * 1000) / bps);
             }
 
-            public void ActivateBootloader()
+            public void ActivateBootloader(bool elmMode)
             {
+                if (elmMode)
+                {
+                    System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
+                    byte[] bootCmdElm = enc.GetBytes("\r");
+                    _outStream.Write(bootCmdElm, 0, bootCmdElm.Length);
+                    Thread.Sleep(500);
+
+                    bootCmdElm = enc.GetBytes("AT@3BL2345678901\r");
+                    _outStream.Write(bootCmdElm, 0, bootCmdElm.Length);
+
+                    while (_inStream.IsDataAvailable())
+                    {
+                        _inStream.ReadByte();
+                    }
+                    return;
+                }
                 byte[] bootCmd = { 0x82, 0xF1, 0xF1, 0xFF, 0xFF, 0x62 };
                 _outStream.Write(bootCmd, 0, bootCmd.Length);
             }
@@ -2800,14 +2821,14 @@ namespace BmwDeepObd
             return true;
         }
 
-        public static bool EnterBootloaderMode(Device device, Comm comm)
+        public static bool EnterBootloaderMode(Device device, Comm comm, bool elmMode)
         {
             try
             {
                 Comm.BootInfo bootInfo = comm.ReadBootloaderInfo(20);
                 if (bootInfo.MajorVersion == 0 && bootInfo.MinorVersion == 0)
                 {
-                    comm.ActivateBootloader();
+                    comm.ActivateBootloader(elmMode);
                     Thread.Sleep(600);
                     bootInfo = comm.ReadBootloaderInfo();
                 }
@@ -2927,7 +2948,7 @@ namespace BmwDeepObd
                                 {
                                     adapterVersion = (deviceData.ProgramMemory[(device.EndFlash - 6)] & 0xFF) + ((deviceData.ProgramMemory[(device.EndFlash - 5)] & 0xFF) << 8);
                                 }
-                                _firmwareList.Add(new FirmwareDetail(firmwareInfo, adapterType, adapterVersion));
+                                _firmwareList.Add(new FirmwareDetail(firmwareInfo, adapterType, adapterVersion, firmwareInfo.ElmFirmware));
                             }
                         }
                     }
@@ -2935,12 +2956,12 @@ namespace BmwDeepObd
             }
         }
 
-        public static int GetFirmwareVersion(uint adapterType)
+        public static int GetFirmwareVersion(uint adapterType, bool elmFirmware = false)
         {
             CreateFirmwareList();
             foreach (FirmwareDetail firmwareDetail in _firmwareList)
             {
-                if (firmwareDetail.AdapterType == adapterType)
+                if (firmwareDetail.AdapterType == adapterType && firmwareDetail.ElmFirmware == elmFirmware)
                 {
                     return (int)firmwareDetail.AdapterVersion;
                 }
@@ -2948,18 +2969,18 @@ namespace BmwDeepObd
             return -1;
         }
 
-        public static bool FwUpdate(Stream inStream, Stream outStream)
+        public static bool FwUpdate(Stream inStream, Stream outStream, bool elmMode = false, bool elmFirmware = false)
         {
             CreateFirmwareList();
             Comm comm = new Comm(inStream, outStream);
             Device device = new Device();
-            if (!EnterBootloaderMode(device, comm))
+            if (!EnterBootloaderMode(device, comm, elmMode))
             {
                 return false;
             }
             // get the firmware file
             Stream hexFile = (from firmwareDetail in _firmwareList
-                              where firmwareDetail.AdapterType == device.AdapterType
+                              where firmwareDetail.AdapterType == device.AdapterType && firmwareDetail.ElmFirmware == elmFirmware
                               select Assembly.GetExecutingAssembly().GetManifestResourceStream(
                               typeof (XmlToolActivity).Namespace + ".HexFiles." + firmwareDetail.FirmwareInfo.FileName)).FirstOrDefault();
             if (hexFile == null)
