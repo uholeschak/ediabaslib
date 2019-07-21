@@ -31,6 +31,7 @@ namespace EdiabasLib
         public static readonly EdElmInterface.ElmInitEntry[] Elm327InitCommands = EdElmInterface.Elm327InitCommands;
         public const string PortId = "BLUETOOTH";
         public const string Elm327Tag = "ELM327";
+        public const string ElmDeepObdTag = "ELMDEEPOBD";
         public const string RawTag = "RAW";
         private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private const int ReadTimeoutOffsetLong = 1000;
@@ -99,7 +100,8 @@ namespace EdiabasLib
                     device = bluetoothAdapter.GetRemoteDevice(stringList[0]);
                     if (stringList.Length > 1)
                     {
-                        if (string.Compare(stringList[1], Elm327Tag, StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.Compare(stringList[1], Elm327Tag, StringComparison.OrdinalIgnoreCase) == 0 ||
+                            string.Compare(stringList[1], ElmDeepObdTag, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             _elm327Device = true;
                         }
