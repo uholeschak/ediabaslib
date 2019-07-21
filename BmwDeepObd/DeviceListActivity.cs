@@ -850,11 +850,11 @@ namespace BmwDeepObd
                             _alertInfoDialog = new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
-                                    ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName, true);
+                                    ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.ElmDeepObdTag, deviceName, true);
                                 })
                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                 {
-                                    ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
+                                    ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.ElmDeepObdTag, deviceName);
                                 })
                                 .SetCancelable(true)
                                 .SetMessage(Resource.String.adapter_elm_firmware)
