@@ -1743,8 +1743,9 @@ namespace BmwDeepObd
                     string[] stringList = deviceAddress.Split('#', ';');
                     if (stringList.Length > 1)
                     {
-                        if (string.Compare(stringList[1], EdBluetoothInterface.RawTag, StringComparison.OrdinalIgnoreCase) == 0)
-                        {   // allow flashing of corrupted Deep OBD adapters
+                        if (string.Compare(stringList[1], EdBluetoothInterface.ElmDeepObdTag, StringComparison.OrdinalIgnoreCase) == 0 ||
+                            string.Compare(stringList[1], EdBluetoothInterface.RawTag, StringComparison.OrdinalIgnoreCase) == 0)
+                        {   // allow firmware change or flashing of corrupted Deep OBD adapters
                             return true;
                         }
                         return false;

@@ -1204,6 +1204,7 @@ namespace BmwDeepObd
                             if (customFirmware)
                             {
                                 adapterType = AdapterType.Elm327Custom;
+                                break;
                             }
 
                             if (!Elm327CheckCan(bluetoothInStream, bluetoothOutStream, out bool canSupport))
