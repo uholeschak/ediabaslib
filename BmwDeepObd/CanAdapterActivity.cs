@@ -27,6 +27,7 @@ namespace BmwDeepObd
         // Intent extra
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraInterfaceType = "interface_type";
+        public const string ExtraInvalidateAdapter = "invalidate_adapter";
 
         private enum AdapterMode
         {
@@ -1149,12 +1150,35 @@ namespace BmwDeepObd
                             ? GetString(Resource.String.can_adapter_fw_update_failed)
                             : GetString(Resource.String.can_adapter_fw_update_conn_failed);
                     }
-                    _activityCommon.ShowAlert(message, updateOk ? Resource.String.alert_title_info : Resource.String.alert_title_error);
+
                     UpdateDisplay();
-                    if (updateOk)
+                    AlertDialog alertDialog = new AlertDialog.Builder(this)
+                        .SetMessage(message)
+                        .SetTitle(updateOk ? Resource.String.alert_title_info : Resource.String.alert_title_error)
+                        .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
+                        .Show();
+                    alertDialog.DismissEvent += (sender, args) =>
                     {
-                        PerformRead();
-                    }
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        if (updateOk)
+                        {
+                            if (changeFirmware)
+                            {
+                                Intent intent = new Intent();
+                                intent.PutExtra(ExtraInvalidateAdapter, true);
+                                SetResult(Android.App.Result.Ok, intent);
+                                Finish();
+                            }
+                            else
+                            {
+                                PerformRead();
+                            }
+                        }
+                    };
                 });
             });
             _adapterThread.Start();
