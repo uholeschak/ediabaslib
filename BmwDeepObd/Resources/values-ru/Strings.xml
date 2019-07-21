@@ -553,4 +553,6 @@
   <string name="button_can_adapter_can_100">K-CAN (не стандарт)</string>
   <string name="button_can_adapter_can_off">K-LINE (до 3/2007)</string>
   <string name="button_can_adapter_fw_update">Обновление прошивки</string>
+  <!--Translate-->
+  <string name="button_can_adapter_fw_change">Firmware change</string>
 </resources>

@@ -529,4 +529,5 @@
   <string name="button_can_adapter_can_100">K-CAN (no standard)</string>
   <string name="button_can_adapter_can_off">K-LINE (before 3/2007)</string>
   <string name="button_can_adapter_fw_update">Firmware update</string>
+  <string name="button_can_adapter_fw_change">Firmware change</string>
 </resources>

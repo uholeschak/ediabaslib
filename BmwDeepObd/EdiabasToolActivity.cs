@@ -32,7 +32,7 @@ namespace BmwDeepObd
         {
             RequestSelectSgbd,
             RequestSelectDevice,
-            RequestCanAdapterConfig,
+            RequestAdapterConfig,
             RequestYandexKey,
         }
 
@@ -377,7 +377,17 @@ namespace BmwDeepObd
                     _instanceData.AutoStart = false;
                     break;
 
-                case ActivityRequest.RequestCanAdapterConfig:
+                case ActivityRequest.RequestAdapterConfig:
+                    if (data != null && resultCode == Android.App.Result.Ok)
+                    {
+                        bool invalidateAdapter = data.Extras.GetBoolean(CanAdapterActivity.ExtraInvalidateAdapter, false);
+                        if (invalidateAdapter)
+                        {
+                            _instanceData.DeviceName = string.Empty;
+                            _instanceData.DeviceAddress = string.Empty;
+                            UpdateOptionsMenu();
+                        }
+                    }
                     break;
 
                 case ActivityRequest.RequestYandexKey:
@@ -1016,7 +1026,7 @@ namespace BmwDeepObd
             Intent serverIntent = new Intent(this, typeof(CanAdapterActivity));
             serverIntent.PutExtra(CanAdapterActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
             serverIntent.PutExtra(CanAdapterActivity.ExtraInterfaceType, (int)_activityCommon.SelectedInterface);
-            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestCanAdapterConfig);
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestAdapterConfig);
         }
 
         private void EditYandexKey()

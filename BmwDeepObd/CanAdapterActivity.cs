@@ -27,6 +27,7 @@ namespace BmwDeepObd
         // Intent extra
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraInterfaceType = "interface_type";
+        public const string ExtraInvalidateAdapter = "invalidate_adapter";
 
         private enum AdapterMode
         {
@@ -71,9 +72,11 @@ namespace BmwDeepObd
         private TextView _textViewSerNumTitle;
         private TextView _textViewSerNum;
         private Button _buttonFwUpdate;
+        private Button _buttonFwUpdateChange;
         private CheckBox _checkBoxExpert;
         private bool _activityActive;
         private string _deviceAddress = string.Empty;
+        private ActivityCommon.InterfaceType _interfaceType;
         private int _blockSize = -1;
         private int _separationTime = -1;
         private int _canMode = -1;
@@ -118,22 +121,11 @@ namespace BmwDeepObd
             SetResult(Android.App.Result.Canceled);
 
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
-            ActivityCommon.InterfaceType interfaceType = (ActivityCommon.InterfaceType) Intent.GetIntExtra(ExtraInterfaceType,
-                (int) ActivityCommon.InterfaceType.Bluetooth);
-            ViewStates visibility = IsCustomAdapter(interfaceType, _deviceAddress) ? ViewStates.Visible : ViewStates.Gone;
-            ViewStates visibilityBt = IsCustomBtAdapter(interfaceType, _deviceAddress) ? ViewStates.Visible : ViewStates.Gone;
-            bool customElmAdapter = IsCustomElmAdapter(interfaceType, _deviceAddress);
-            bool rawAdapter = IsRawAdapter(interfaceType, _deviceAddress);
-
-            ViewStates visibilityFw;
-            if (customElmAdapter || rawAdapter)
-            {
-                visibilityFw = ViewStates.Visible;
-            }
-            else
-            {
-                visibilityFw = visibility;
-            }
+            _interfaceType = (ActivityCommon.InterfaceType) Intent.GetIntExtra(ExtraInterfaceType, (int) ActivityCommon.InterfaceType.Bluetooth);
+            ViewStates visibility = IsCustomAdapter(_interfaceType, _deviceAddress) ? ViewStates.Visible : ViewStates.Gone;
+            ViewStates visibilityBt = IsCustomBtAdapter(_interfaceType, _deviceAddress) ? ViewStates.Visible : ViewStates.Gone;
+            bool customElmAdapter = IsCustomElmAdapter(_interfaceType, _deviceAddress);
+            bool rawAdapter = IsRawAdapter(_interfaceType, _deviceAddress);
 
             _buttonRead = _barView.FindViewById<Button>(Resource.Id.buttonAdapterRead);
             _buttonRead.SetOnTouchListener(this);
@@ -236,12 +228,22 @@ namespace BmwDeepObd
             _textViewSerNumTitle.Visibility = ViewStates.Gone;
             _textViewSerNum.Visibility = ViewStates.Gone;
 #endif
+            ViewStates visibilityFwUpdate = rawAdapter ? ViewStates.Visible : visibility;
             _buttonFwUpdate = FindViewById<Button>(Resource.Id.buttonCanAdapterFwUpdate);
-            _buttonFwUpdate.Visibility = visibilityFw;
+            _buttonFwUpdate.Visibility = visibilityFwUpdate;
             _buttonFwUpdate.Click += (sender, args) =>
             {
                 PerformUpdateMessage();
             };
+
+            ViewStates visibilityFwChange = customElmAdapter ? ViewStates.Visible : visibility;
+            _buttonFwUpdateChange = FindViewById<Button>(Resource.Id.buttonCanAdapterFwChange);
+            _buttonFwUpdateChange.Visibility = visibilityFwChange;
+            _buttonFwUpdateChange.Click += (sender, args) =>
+            {
+                PerformUpdateMessage(true);
+            };
+
             _checkBoxExpert = FindViewById<CheckBox>(Resource.Id.checkBoxCanAdapterExpert);
             _checkBoxExpert.Visibility = visibility;
             _checkBoxExpert.Click += (sender, args) =>
@@ -253,7 +255,7 @@ namespace BmwDeepObd
             {
             }, BroadcastReceived)
             {
-                SelectedInterface = interfaceType
+                SelectedInterface = _interfaceType
             };
 
             UpdateDisplay();
@@ -427,7 +429,7 @@ namespace BmwDeepObd
                     break;
 
                 case UsbManager.ActionUsbDeviceDetached:
-                    if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Ftdi)
+                    if (_interfaceType == ActivityCommon.InterfaceType.Ftdi)
                     {
                         if (intent.GetParcelableExtra(UsbManager.ExtraDevice) is UsbDevice usbDevice &&
                             EdFtdiInterface.IsValidUsbDevice(usbDevice))
@@ -446,9 +448,11 @@ namespace BmwDeepObd
 
         private void UpdateDisplay()
         {
+            bool elmMode = IsCustomElmAdapter(_interfaceType, _deviceAddress);
             bool requestFwUpdate = false;
             bool bEnabled = !IsJobRunning();
             bool fwUpdateEnabled = bEnabled;
+            bool fwChangeEnabled = elmMode;
             bool expertMode = _checkBoxExpert.Checked;
             bool mtcService = _activityCommon.MtcBtService;
             _buttonRead.Enabled = bEnabled;
@@ -491,7 +495,7 @@ namespace BmwDeepObd
                 }
 
                 // moved down because of expert mode setting
-                if (IsCustomAdapter(_activityCommon.SelectedInterface, _deviceAddress))
+                if (IsCustomAdapter(_interfaceType, _deviceAddress))
                 {
                     if (_canMode == (int)AdapterMode.Can100)
                     {
@@ -613,6 +617,15 @@ namespace BmwDeepObd
                         versionText += "--";
                     }
                     fwUpdateEnabled = fwUpdateVersion >= 0 && ((_fwVersion != fwUpdateVersion) || ActivityCommon.CollectDebugInfo);
+
+                    if (!elmMode)
+                    {
+                        int fwUpdateVersionElm = PicBootloader.GetFirmwareVersion((uint)_adapterType, true);
+                        if (fwUpdateVersionElm > 0)
+                        {
+                            fwChangeEnabled = true;
+                        }
+                    }
                 }
                 _textViewFwVersion.Text = versionText;
 
@@ -621,7 +634,9 @@ namespace BmwDeepObd
                     _textViewSerNum.Text = (_serNum == null) ? string.Empty : BitConverter.ToString(_serNum).Replace("-", "");
                 }
             }
+
             _buttonFwUpdate.Enabled = fwUpdateEnabled;
+            _buttonFwUpdateChange.Enabled = fwChangeEnabled;
             _spinnerCanAdapterMode.Enabled = bEnabled;
             _spinnerCanAdapterSepTime.Enabled = bEnabled && expertMode;
             _spinnerCanAdapterBlockSize.Enabled = bEnabled && expertMode;
@@ -649,7 +664,7 @@ namespace BmwDeepObd
 
         private void PerformRead()
         {
-            if (!IsCustomAdapter(_activityCommon.SelectedInterface, _deviceAddress))
+            if (!IsCustomAdapter(_interfaceType, _deviceAddress))
             {
                 UpdateDisplay();
                 return;
@@ -919,7 +934,7 @@ namespace BmwDeepObd
                 try
                 {
                     commFailed = !InterfacePrepare();
-                    if (IsCustomAdapter(_activityCommon.SelectedInterface, _deviceAddress))
+                    if (IsCustomAdapter(_interfaceType, _deviceAddress))
                     {
                         // block size
                         if (!commFailed)
@@ -993,7 +1008,7 @@ namespace BmwDeepObd
                     }
                     if (commFailed)
                     {
-                        _activityCommon.ShowAlert(IsCustomAdapter(_activityCommon.SelectedInterface, _deviceAddress)
+                        _activityCommon.ShowAlert(IsCustomAdapter(_interfaceType, _deviceAddress)
                             ? GetString(Resource.String.can_adapter_comm_error)
                             : GetString(Resource.String.can_adapter_comm_error_std), Resource.String.alert_title_error);
                         EdiabasClose();
@@ -1020,9 +1035,9 @@ namespace BmwDeepObd
             UpdateDisplay();
         }
 
-        private void PerformUpdateMessage()
+        private void PerformUpdateMessage(bool changeFirmware = false)
         {
-            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
+            if (_interfaceType == ActivityCommon.InterfaceType.Bluetooth)
             {
                 if (!ActivityCommon.IsBtReliable() || _activityCommon.MtcBtService)
                 {
@@ -1033,7 +1048,7 @@ namespace BmwDeepObd
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
-                    PerformUpdate();
+                    PerformUpdate(changeFirmware);
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                 {
@@ -1044,7 +1059,7 @@ namespace BmwDeepObd
                 .Show();
         }
 
-        private void PerformUpdate()
+        private void PerformUpdate(bool changeFirmware)
         {
             EdiabasInit();
             CustomProgressDialog progress = new CustomProgressDialog(this);
@@ -1056,6 +1071,12 @@ namespace BmwDeepObd
             {
                 bool updateOk = false;
                 bool connectOk = false;
+                bool elmMode = IsCustomElmAdapter(_interfaceType, _deviceAddress);
+                bool elmFirmware = false;
+                if (changeFirmware)
+                {
+                    elmFirmware = !elmMode;
+                }
                 try
                 {
                     connectOk = InterfacePrepare();
@@ -1063,7 +1084,7 @@ namespace BmwDeepObd
                     Stream outStream = null;
                     if (connectOk)
                     {
-                        switch (_activityCommon.SelectedInterface)
+                        switch (_interfaceType)
                         {
                             case ActivityCommon.InterfaceType.Bluetooth:
                             {
@@ -1099,7 +1120,7 @@ namespace BmwDeepObd
 
                     if (connectOk)
                     {
-                        updateOk = PicBootloader.FwUpdate(inStream, outStream);
+                        updateOk = PicBootloader.FwUpdate(inStream, outStream, elmMode, elmFirmware);
                     }
                 }
                 catch (Exception)
@@ -1129,12 +1150,35 @@ namespace BmwDeepObd
                             ? GetString(Resource.String.can_adapter_fw_update_failed)
                             : GetString(Resource.String.can_adapter_fw_update_conn_failed);
                     }
-                    _activityCommon.ShowAlert(message, updateOk ? Resource.String.alert_title_info : Resource.String.alert_title_error);
+
                     UpdateDisplay();
-                    if (updateOk)
+                    AlertDialog alertDialog = new AlertDialog.Builder(this)
+                        .SetMessage(message)
+                        .SetTitle(updateOk ? Resource.String.alert_title_info : Resource.String.alert_title_error)
+                        .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
+                        .Show();
+                    alertDialog.DismissEvent += (sender, args) =>
                     {
-                        PerformRead();
-                    }
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        if (updateOk)
+                        {
+                            if (changeFirmware)
+                            {
+                                Intent intent = new Intent();
+                                intent.PutExtra(ExtraInvalidateAdapter, true);
+                                SetResult(Android.App.Result.Ok, intent);
+                                Finish();
+                            }
+                            else
+                            {
+                                PerformRead();
+                            }
+                        }
+                    };
                 });
             });
             _adapterThread.Start();
@@ -1165,7 +1209,7 @@ namespace BmwDeepObd
                         return false;
                     }
                     string[] stringList = deviceAddress.Split('#', ';');
-                    return stringList.Length == 0;
+                    return stringList.Length <= 1;
             }
 
             return false;
@@ -1181,7 +1225,7 @@ namespace BmwDeepObd
                         return false;
                     }
                     string[] stringList = deviceAddress.Split('#', ';');
-                    if (stringList.Length > 0)
+                    if (stringList.Length > 1)
                     {
                         if (string.Compare(stringList[1], EdBluetoothInterface.ElmDeepObdTag, StringComparison.OrdinalIgnoreCase) == 0)
                         {
@@ -1205,7 +1249,7 @@ namespace BmwDeepObd
                         return false;
                     }
                     string[] stringList = deviceAddress.Split('#', ';');
-                    if (stringList.Length > 0)
+                    if (stringList.Length > 1)
                     {
                         if (string.Compare(stringList[1], EdBluetoothInterface.RawTag, StringComparison.OrdinalIgnoreCase) == 0)
                         {

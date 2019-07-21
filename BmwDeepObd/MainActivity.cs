@@ -547,6 +547,16 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestAdapterConfig:
+                    if (data != null && resultCode == Android.App.Result.Ok)
+                    {
+                        bool invalidateAdapter = data.Extras.GetBoolean(CanAdapterActivity.ExtraInvalidateAdapter, false);
+                        if (invalidateAdapter)
+                        {
+                            _instanceData.DeviceName = string.Empty;
+                            _instanceData.DeviceAddress = string.Empty;
+                            UpdateOptionsMenu();
+                        }
+                    }
                     break;
 
                 case ActivityRequest.RequestSelectConfig:
