@@ -1197,6 +1197,15 @@ namespace BmwDeepObd
                         case AdapterType.Elm327:
                         case AdapterType.Elm327FakeOpt:
                         {
+                            if (!Elm327CheckCustomFirmware(bluetoothInStream, bluetoothOutStream, out bool customFirmware))
+                            {
+                                LogString("*** ELM firmware detection failed");
+                            }
+                            if (customFirmware)
+                            {
+                                adapterType = AdapterType.Elm327Custom;
+                            }
+
                             if (!Elm327CheckCan(bluetoothInStream, bluetoothOutStream, out bool canSupport))
                             {
                                 LogString("*** ELM CAN detection failed");
@@ -1207,16 +1216,6 @@ namespace BmwDeepObd
                             {
                                 LogString("*** ELM no vehicle CAN support");
                                 adapterType = AdapterType.Elm327NoCan;
-                            }
-
-                            if (!Elm327CheckCustomFirmware(bluetoothInStream, bluetoothOutStream, out bool customFirmware))
-                            {
-                                LogString("*** ELM firmware detection failed");
-                            }
-
-                            if (customFirmware)
-                            {
-                                adapterType = AdapterType.Elm327Custom;
                             }
                             break;
                         }
@@ -1357,7 +1356,6 @@ namespace BmwDeepObd
                 bluetoothInStream.ReadByte();
             }
 
-            Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"AT@2");  // sync streams
             if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"AT@2", false))
             {
                 LogString("*** ELM read device identifier failed");
