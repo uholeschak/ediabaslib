@@ -274,6 +274,15 @@
     <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\default\production\ELM327V15.X.production.hex">
       <Link>HexFiles\Type2\ELM327V15.X.production.hex</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\spp_uart\production\ELM327V15.X.production.hex">
+      <Link>HexFiles\Type5\ELM327V15.X.production.hex</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\spp_uart2\production\ELM327V15.X.production.hex">
+      <Link>HexFiles\Type7\ELM327V15.X.production.hex</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\yc1021\production\ELM327V15.X.production.hex">
+      <Link>HexFiles\Type6\ELM327V15.X.production.hex</Link>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
