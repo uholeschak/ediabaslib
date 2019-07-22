@@ -61,51 +61,6 @@
                         PD="dist/default/production/bootloader.production.cof"
                         DD="dist/default/debug/bootloader.debug.cof">
           </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="esp8266"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=esp8266"
-                        DBC="${MAKE}  -f Makefile CONF=esp8266 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/esp8266&quot; &quot;dist/esp8266&quot;"
-                        OP="dist/esp8266/production/bootloader.production.hex"
-                        DOP="dist/esp8266/debug/bootloader.debug.cof"
-                        FL="dist/esp8266/production/bootloader.production.hex"
-                        PD="dist/esp8266/production/bootloader.production.cof"
-                        DD="dist/esp8266/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="yc1021"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=yc1021"
-                        DBC="${MAKE}  -f Makefile CONF=yc1021 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/yc1021&quot; &quot;dist/yc1021&quot;"
-                        OP="dist/yc1021/production/bootloader.production.hex"
-                        DOP="dist/yc1021/debug/bootloader.debug.cof"
-                        FL="dist/yc1021/production/bootloader.production.hex"
-                        PD="dist/yc1021/production/bootloader.production.cof"
-                        DD="dist/yc1021/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="spp_uart2"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=spp_uart2"
-                        DBC="${MAKE}  -f Makefile CONF=spp_uart2 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/spp_uart2&quot; &quot;dist/spp_uart2&quot;"
-                        OP="dist/spp_uart2/production/bootloader.production.hex"
-                        DOP="dist/spp_uart2/debug/bootloader.debug.cof"
-                        FL="dist/spp_uart2/production/bootloader.production.hex"
-                        PD="dist/spp_uart2/production/bootloader.production.cof"
-                        DD="dist/spp_uart2/debug/bootloader.debug.cof">
-          </makeArtifact>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
@@ -530,51 +485,6 @@
                         FL="dist/bc04/production/bootloader.production.hex"
                         PD="dist/bc04/production/bootloader.production.cof"
                         DD="dist/bc04/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="esp8266"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=esp8266"
-                        DBC="${MAKE}  -f Makefile CONF=esp8266 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/esp8266&quot; &quot;dist/esp8266&quot;"
-                        OP="dist/esp8266/production/bootloader.production.hex"
-                        DOP="dist/esp8266/debug/bootloader.debug.cof"
-                        FL="dist/esp8266/production/bootloader.production.hex"
-                        PD="dist/esp8266/production/bootloader.production.cof"
-                        DD="dist/esp8266/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="yc1021"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=yc1021"
-                        DBC="${MAKE}  -f Makefile CONF=yc1021 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/yc1021&quot; &quot;dist/yc1021&quot;"
-                        OP="dist/yc1021/production/bootloader.production.hex"
-                        DOP="dist/yc1021/debug/bootloader.debug.cof"
-                        FL="dist/yc1021/production/bootloader.production.hex"
-                        PD="dist/yc1021/production/bootloader.production.cof"
-                        DD="dist/yc1021/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="spp_uart2"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=spp_uart2"
-                        DBC="${MAKE}  -f Makefile CONF=spp_uart2 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/spp_uart2&quot; &quot;dist/spp_uart2&quot;"
-                        OP="dist/spp_uart2/production/bootloader.production.hex"
-                        DOP="dist/spp_uart2/debug/bootloader.debug.cof"
-                        FL="dist/spp_uart2/production/bootloader.production.hex"
-                        PD="dist/spp_uart2/production/bootloader.production.cof"
-                        DD="dist/spp_uart2/debug/bootloader.debug.cof">
           </makeArtifact>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
           <parseOnProdLoad>false</parseOnProdLoad>
@@ -1001,51 +911,6 @@
                         PD="dist/hc04/production/bootloader.production.cof"
                         DD="dist/hc04/debug/bootloader.debug.cof">
           </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="esp8266"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=esp8266"
-                        DBC="${MAKE}  -f Makefile CONF=esp8266 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/esp8266&quot; &quot;dist/esp8266&quot;"
-                        OP="dist/esp8266/production/bootloader.production.hex"
-                        DOP="dist/esp8266/debug/bootloader.debug.cof"
-                        FL="dist/esp8266/production/bootloader.production.hex"
-                        PD="dist/esp8266/production/bootloader.production.cof"
-                        DD="dist/esp8266/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="yc1021"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=yc1021"
-                        DBC="${MAKE}  -f Makefile CONF=yc1021 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/yc1021&quot; &quot;dist/yc1021&quot;"
-                        OP="dist/yc1021/production/bootloader.production.hex"
-                        DOP="dist/yc1021/debug/bootloader.debug.cof"
-                        FL="dist/yc1021/production/bootloader.production.hex"
-                        PD="dist/yc1021/production/bootloader.production.cof"
-                        DD="dist/yc1021/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="spp_uart2"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=spp_uart2"
-                        DBC="${MAKE}  -f Makefile CONF=spp_uart2 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/spp_uart2&quot; &quot;dist/spp_uart2&quot;"
-                        OP="dist/spp_uart2/production/bootloader.production.hex"
-                        DOP="dist/spp_uart2/debug/bootloader.debug.cof"
-                        FL="dist/spp_uart2/production/bootloader.production.hex"
-                        PD="dist/spp_uart2/production/bootloader.production.cof"
-                        DD="dist/spp_uart2/debug/bootloader.debug.cof">
-          </makeArtifact>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
@@ -1471,51 +1336,6 @@
                         PD="dist/spp_uart/production/bootloader.production.cof"
                         DD="dist/spp_uart/debug/bootloader.debug.cof">
           </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="esp8266"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=esp8266"
-                        DBC="${MAKE}  -f Makefile CONF=esp8266 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/esp8266&quot; &quot;dist/esp8266&quot;"
-                        OP="dist/esp8266/production/bootloader.production.hex"
-                        DOP="dist/esp8266/debug/bootloader.debug.cof"
-                        FL="dist/esp8266/production/bootloader.production.hex"
-                        PD="dist/esp8266/production/bootloader.production.cof"
-                        DD="dist/esp8266/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="yc1021"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=yc1021"
-                        DBC="${MAKE}  -f Makefile CONF=yc1021 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/yc1021&quot; &quot;dist/yc1021&quot;"
-                        OP="dist/yc1021/production/bootloader.production.hex"
-                        DOP="dist/yc1021/debug/bootloader.debug.cof"
-                        FL="dist/yc1021/production/bootloader.production.hex"
-                        PD="dist/yc1021/production/bootloader.production.cof"
-                        DD="dist/yc1021/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="spp_uart2"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=spp_uart2"
-                        DBC="${MAKE}  -f Makefile CONF=spp_uart2 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/spp_uart2&quot; &quot;dist/spp_uart2&quot;"
-                        OP="dist/spp_uart2/production/bootloader.production.hex"
-                        DOP="dist/spp_uart2/debug/bootloader.debug.cof"
-                        FL="dist/spp_uart2/production/bootloader.production.hex"
-                        PD="dist/spp_uart2/production/bootloader.production.cof"
-                        DD="dist/spp_uart2/debug/bootloader.debug.cof">
-          </makeArtifact>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
@@ -1928,38 +1748,8 @@
         <loading>
           <makeArtifact PL="bootloader"
                         CT="1"
-                        CN="default"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=default"
-                        DBC="${MAKE}  -f Makefile CONF=default TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/default&quot; &quot;dist/default&quot;"
-                        OP="dist/default/production/bootloader.production.hex"
-                        DOP="dist/default/debug/bootloader.debug.cof"
-                        FL="dist/default/production/bootloader.production.hex"
-                        PD="dist/default/production/bootloader.production.cof"
-                        DD="dist/default/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="esp8266"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=esp8266"
-                        DBC="${MAKE}  -f Makefile CONF=esp8266 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/esp8266&quot; &quot;dist/esp8266&quot;"
-                        OP="dist/esp8266/production/bootloader.production.hex"
-                        DOP="dist/esp8266/debug/bootloader.debug.cof"
-                        FL="dist/esp8266/production/bootloader.production.hex"
-                        PD="dist/esp8266/production/bootloader.production.cof"
-                        DD="dist/esp8266/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
                         CN="yc1021"
-                        AC="true"
+                        AC="false"
                         BL="true"
                         WD="bootloader"
                         BC="${MAKE}  -f Makefile CONF=yc1021"
@@ -1970,21 +1760,6 @@
                         FL="dist/yc1021/production/bootloader.production.hex"
                         PD="dist/yc1021/production/bootloader.production.cof"
                         DD="dist/yc1021/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="spp_uart2"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=spp_uart2"
-                        DBC="${MAKE}  -f Makefile CONF=spp_uart2 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/spp_uart2&quot; &quot;dist/spp_uart2&quot;"
-                        OP="dist/spp_uart2/production/bootloader.production.hex"
-                        DOP="dist/spp_uart2/debug/bootloader.debug.cof"
-                        FL="dist/spp_uart2/production/bootloader.production.hex"
-                        PD="dist/spp_uart2/production/bootloader.production.cof"
-                        DD="dist/spp_uart2/debug/bootloader.debug.cof">
           </makeArtifact>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
           <parseOnProdLoad>false</parseOnProdLoad>
@@ -2089,7 +1864,6 @@
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
-        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
@@ -2399,23 +2173,8 @@
         <loading>
           <makeArtifact PL="bootloader"
                         CT="1"
-                        CN="default"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=default"
-                        DBC="${MAKE}  -f Makefile CONF=default TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/default&quot; &quot;dist/default&quot;"
-                        OP="dist/default/production/bootloader.production.hex"
-                        DOP="dist/default/debug/bootloader.debug.cof"
-                        FL="dist/default/production/bootloader.production.hex"
-                        PD="dist/default/production/bootloader.production.cof"
-                        DD="dist/default/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
                         CN="esp8266"
-                        AC="true"
+                        AC="false"
                         BL="true"
                         WD="bootloader"
                         BC="${MAKE}  -f Makefile CONF=esp8266"
@@ -2426,36 +2185,6 @@
                         FL="dist/esp8266/production/bootloader.production.hex"
                         PD="dist/esp8266/production/bootloader.production.cof"
                         DD="dist/esp8266/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="yc1021"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=yc1021"
-                        DBC="${MAKE}  -f Makefile CONF=yc1021 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/yc1021&quot; &quot;dist/yc1021&quot;"
-                        OP="dist/yc1021/production/bootloader.production.hex"
-                        DOP="dist/yc1021/debug/bootloader.debug.cof"
-                        FL="dist/yc1021/production/bootloader.production.hex"
-                        PD="dist/yc1021/production/bootloader.production.cof"
-                        DD="dist/yc1021/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="spp_uart2"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=spp_uart2"
-                        DBC="${MAKE}  -f Makefile CONF=spp_uart2 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/spp_uart2&quot; &quot;dist/spp_uart2&quot;"
-                        OP="dist/spp_uart2/production/bootloader.production.hex"
-                        DOP="dist/spp_uart2/debug/bootloader.debug.cof"
-                        FL="dist/spp_uart2/production/bootloader.production.hex"
-                        PD="dist/spp_uart2/production/bootloader.production.cof"
-                        DD="dist/spp_uart2/debug/bootloader.debug.cof">
           </makeArtifact>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
           <parseOnProdLoad>false</parseOnProdLoad>
@@ -2869,53 +2598,8 @@
         <loading>
           <makeArtifact PL="bootloader"
                         CT="1"
-                        CN="spp_uart"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=spp_uart"
-                        DBC="${MAKE}  -f Makefile CONF=spp_uart TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/spp_uart&quot; &quot;dist/spp_uart&quot;"
-                        OP="dist/spp_uart/production/bootloader.production.hex"
-                        DOP="dist/spp_uart/debug/bootloader.debug.cof"
-                        FL="dist/spp_uart/production/bootloader.production.hex"
-                        PD="dist/spp_uart/production/bootloader.production.cof"
-                        DD="dist/spp_uart/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="esp8266"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=esp8266"
-                        DBC="${MAKE}  -f Makefile CONF=esp8266 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/esp8266&quot; &quot;dist/esp8266&quot;"
-                        OP="dist/esp8266/production/bootloader.production.hex"
-                        DOP="dist/esp8266/debug/bootloader.debug.cof"
-                        FL="dist/esp8266/production/bootloader.production.hex"
-                        PD="dist/esp8266/production/bootloader.production.cof"
-                        DD="dist/esp8266/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
-                        CN="yc1021"
-                        AC="true"
-                        BL="false"
-                        WD="bootloader"
-                        BC="${MAKE}  -f Makefile CONF=yc1021"
-                        DBC="${MAKE}  -f Makefile CONF=yc1021 TYPE_IMAGE=DEBUG_RUN"
-                        CC="rm -rf &quot;build/yc1021&quot; &quot;dist/yc1021&quot;"
-                        OP="dist/yc1021/production/bootloader.production.hex"
-                        DOP="dist/yc1021/debug/bootloader.debug.cof"
-                        FL="dist/yc1021/production/bootloader.production.hex"
-                        PD="dist/yc1021/production/bootloader.production.cof"
-                        DD="dist/yc1021/debug/bootloader.debug.cof">
-          </makeArtifact>
-          <makeArtifact PL="bootloader"
-                        CT="1"
                         CN="spp_uart2"
-                        AC="true"
+                        AC="false"
                         BL="true"
                         WD="bootloader"
                         BC="${MAKE}  -f Makefile CONF=spp_uart2"
