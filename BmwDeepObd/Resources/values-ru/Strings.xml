@@ -554,5 +554,6 @@
   <string name="button_can_adapter_can_off">K-LINE (до 3/2007)</string>
   <string name="button_can_adapter_fw_update">Обновление прошивки</string>
   <!--Translate-->
-  <string name="button_can_adapter_fw_change">Firmware change</string>
+  <string name="button_can_adapter_fw_change_elm">Flash ELM327 firmware</string>
+  <string name="button_can_adapter_fw_change_custom">Flash replacement firmware</string>
 </resources>

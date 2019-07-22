@@ -239,6 +239,8 @@ namespace BmwDeepObd
             ViewStates visibilityFwChange = customElmAdapter ? ViewStates.Visible : visibility;
             _buttonFwUpdateChange = FindViewById<Button>(Resource.Id.buttonCanAdapterFwChange);
             _buttonFwUpdateChange.Visibility = visibilityFwChange;
+            _buttonFwUpdateChange.Text =
+                GetString(customElmAdapter ? Resource.String.button_can_adapter_fw_change_custom : Resource.String.button_can_adapter_fw_change_elm);
             _buttonFwUpdateChange.Click += (sender, args) =>
             {
                 PerformUpdateMessage(true);
@@ -618,7 +620,7 @@ namespace BmwDeepObd
                     }
                     fwUpdateEnabled = fwUpdateVersion >= 0 && ((_fwVersion != fwUpdateVersion) || ActivityCommon.CollectDebugInfo);
 
-                    if (!elmMode)
+                    if (!elmMode && _interfaceType == ActivityCommon.InterfaceType.Bluetooth)
                     {
                         int fwUpdateVersionElm = PicBootloader.GetFirmwareVersion((uint)_adapterType, true);
                         if (fwUpdateVersionElm > 0)

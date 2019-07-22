@@ -553,5 +553,6 @@
   <string name="button_can_adapter_can_100">K-CAN (kein Standard)</string>
   <string name="button_can_adapter_can_off">K-LINE (vor 3/2007)</string>
   <string name="button_can_adapter_fw_update">Firmware aktualisieren</string>
-  <string name="button_can_adapter_fw_change">Firmware ändern</string>
+  <string name="button_can_adapter_fw_change_elm">ELM327 Firmware flashen</string>
+  <string name="button_can_adapter_fw_change_custom">Ersatzfirmware flashen</string>
 </resources>
