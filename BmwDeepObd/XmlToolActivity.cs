@@ -2123,187 +2123,204 @@ namespace BmwDeepObd
                 }
                 if (detectedVin != null && !_ediabasJobAbort)
                 {
-                    _ediabas.EdInterfaceClass.EnableTransmitCache = true;
-                    int index = 0;
-                    foreach (string fileName in ecuFileNameList)
+                    for (int retries = 0; retries < 2; retries++)
                     {
-                        try
+                        _ediabas.EdInterfaceClass.EnableTransmitCache = true;
+                        int index = 0;
+                        foreach (string fileName in ecuFileNameList)
                         {
-                            if (_ediabasJobAbort)
+                            try
                             {
-                                ecuListBest = null;
-                                break;
-                            }
-                            int invalidEcuCount = 0;
-                            int localIndex = index;
-                            RunOnUiThread(() =>
-                            {
-                                if (_activityCommon == null)
+                                if (_ediabasJobAbort)
                                 {
-                                    return;
-                                }
-                                if (progress != null && ecuFileNameList.Count > 1)
-                                {
-                                    progress.Progress = 100 * localIndex / ecuFileNameList.Count;
-                                }
-                            });
-
-                            ActivityCommon.ResolveSgbdFile(_ediabas, fileName);
-
-                            _ediabas.ArgString = string.Empty;
-                            _ediabas.ArgBinaryStd = null;
-                            _ediabas.ResultsRequests = string.Empty;
-                            _ediabas.ExecuteJob("IDENT_FUNKTIONAL");
-
-                            List<EcuInfo> ecuList = new List<EcuInfo>();
-                            List<long> invalidAddrList = new List<long>();
-                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                            if (resultSets != null && resultSets.Count >= 2)
-                            {
-                                int dictIndex = 0;
-                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
-                                {
-                                    if (dictIndex == 0)
-                                    {
-                                        dictIndex++;
-                                        continue;
-                                    }
-                                    bool ecuDataPresent = false;
-                                    string ecuName = string.Empty;
-                                    Int64 ecuAdr = -1;
-                                    string ecuDesc = string.Empty;
-                                    string ecuSgbd = string.Empty;
-                                    string ecuGroup = string.Empty;
-                                    Int64 dateYear = 0;
-                                    // ReSharper disable once InlineOutVariableDeclaration
-                                    EdiabasNet.ResultData resultData;
-                                    if (resultDict.TryGetValue("ECU_GROBNAME", out resultData))
-                                    {
-                                        if (resultData.OpData is string)
-                                        {
-                                            ecuName = (string)resultData.OpData;
-                                        }
-                                    }
-                                    if (resultDict.TryGetValue("ID_SG_ADR", out resultData))
-                                    {
-                                        if (resultData.OpData is Int64)
-                                        {
-                                            ecuAdr = (Int64)resultData.OpData;
-                                        }
-                                    }
-                                    if (resultDict.TryGetValue("ECU_NAME", out resultData))
-                                    {
-                                        if (resultData.OpData is string)
-                                        {
-                                            ecuDesc = (string)resultData.OpData;
-                                        }
-                                    }
-                                    if (resultDict.TryGetValue("ECU_SGBD", out resultData))
-                                    {
-                                        ecuDataPresent = true;
-                                        if (resultData.OpData is string)
-                                        {
-                                            ecuSgbd = (string)resultData.OpData;
-                                        }
-                                    }
-                                    if (resultDict.TryGetValue("ECU_GRUPPE", out resultData))
-                                    {
-                                        ecuDataPresent = true;
-                                        if (resultData.OpData is string)
-                                        {
-                                            ecuGroup = (string)resultData.OpData;
-                                        }
-                                    }
-                                    if (resultDict.TryGetValue("ID_DATUM_JAHR", out resultData))
-                                    {
-                                        if (resultData.OpData is Int64)
-                                        {
-                                            dateYear = (Int64)resultData.OpData;
-                                        }
-                                    }
-                                    if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && !string.IsNullOrEmpty(ecuSgbd))
-                                    {
-                                        if (ecuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
-                                        {
-                                            // address not existing
-                                            ecuList.Add(new EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup));
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (ecuDataPresent)
-                                        {
-                                            if (!ecuName.StartsWith("VIRTSG", StringComparison.OrdinalIgnoreCase) && (dateYear != 0))
-                                            {
-                                                invalidAddrList.Add(ecuAdr);
-                                            }
-                                        }
-                                    }
-                                    dictIndex++;
-                                }
-                                // ReSharper disable once LoopCanBeConvertedToQuery
-                                foreach (long addr in invalidAddrList)
-                                {
-                                    if (ecuList.All(ecuInfo => ecuInfo.Address != addr))
-                                    {
-                                        invalidEcuCount++;
-                                    }
-                                }
-                            }
-
-                            _ediabas.ArgString = string.Empty;
-                            _ediabas.ArgBinaryStd = null;
-                            _ediabas.ResultsRequests = string.Empty;
-                            bool readVinOk = false;
-                            foreach (string vinJob in ReadVinJobs)
-                            {
-                                try
-                                {
-                                    _ediabas.ExecuteJob(vinJob);
-                                    readVinOk = true;
+                                    ecuListBest = null;
                                     break;
                                 }
-                                catch (Exception)
+                                int invalidEcuCount = 0;
+                                int localIndex = index;
+                                int fileNameListCount = ecuFileNameList.Count;
+                                RunOnUiThread(() =>
                                 {
-                                    // ignored
-                                }
-                            }
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+                                    if (progress != null && fileNameListCount > 1)
+                                    {
+                                        progress.Progress = 100 * localIndex / fileNameListCount;
+                                    }
+                                });
 
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detect result: count={0}, invalid={1}, vinok={2}", ecuList.Count, invalidEcuCount, readVinOk);
-                            int invalidVinCount = readVinOk ? 0 : 1;
-                            bool acceptEcu = false;
-                            if (ecuListBest == null)
-                            {
-                                acceptEcu = true;
-                            }
-                            else
-                            {
-                                if (ecuListBest.Count < ecuList.Count)
+                                ActivityCommon.ResolveSgbdFile(_ediabas, fileName);
+
+                                _ediabas.ArgString = string.Empty;
+                                _ediabas.ArgBinaryStd = null;
+                                _ediabas.ResultsRequests = string.Empty;
+                                _ediabas.ExecuteJob("IDENT_FUNKTIONAL");
+
+                                List<EcuInfo> ecuList = new List<EcuInfo>();
+                                List<long> invalidAddrList = new List<long>();
+                                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                                if (resultSets != null && resultSets.Count >= 2)
+                                {
+                                    int dictIndex = 0;
+                                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                                    {
+                                        if (dictIndex == 0)
+                                        {
+                                            dictIndex++;
+                                            continue;
+                                        }
+                                        bool ecuDataPresent = false;
+                                        string ecuName = string.Empty;
+                                        Int64 ecuAdr = -1;
+                                        string ecuDesc = string.Empty;
+                                        string ecuSgbd = string.Empty;
+                                        string ecuGroup = string.Empty;
+                                        Int64 dateYear = 0;
+                                        // ReSharper disable once InlineOutVariableDeclaration
+                                        EdiabasNet.ResultData resultData;
+                                        if (resultDict.TryGetValue("ECU_GROBNAME", out resultData))
+                                        {
+                                            if (resultData.OpData is string)
+                                            {
+                                                ecuName = (string)resultData.OpData;
+                                            }
+                                        }
+                                        if (resultDict.TryGetValue("ID_SG_ADR", out resultData))
+                                        {
+                                            if (resultData.OpData is Int64)
+                                            {
+                                                ecuAdr = (Int64)resultData.OpData;
+                                            }
+                                        }
+                                        if (resultDict.TryGetValue("ECU_NAME", out resultData))
+                                        {
+                                            if (resultData.OpData is string)
+                                            {
+                                                ecuDesc = (string)resultData.OpData;
+                                            }
+                                        }
+                                        if (resultDict.TryGetValue("ECU_SGBD", out resultData))
+                                        {
+                                            ecuDataPresent = true;
+                                            if (resultData.OpData is string)
+                                            {
+                                                ecuSgbd = (string)resultData.OpData;
+                                            }
+                                        }
+                                        if (resultDict.TryGetValue("ECU_GRUPPE", out resultData))
+                                        {
+                                            ecuDataPresent = true;
+                                            if (resultData.OpData is string)
+                                            {
+                                                ecuGroup = (string)resultData.OpData;
+                                            }
+                                        }
+                                        if (resultDict.TryGetValue("ID_DATUM_JAHR", out resultData))
+                                        {
+                                            if (resultData.OpData is Int64)
+                                            {
+                                                dateYear = (Int64)resultData.OpData;
+                                            }
+                                        }
+                                        if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && !string.IsNullOrEmpty(ecuSgbd))
+                                        {
+                                            if (ecuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
+                                            {
+                                                // address not existing
+                                                ecuList.Add(new EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup));
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (ecuDataPresent)
+                                            {
+                                                if (!ecuName.StartsWith("VIRTSG", StringComparison.OrdinalIgnoreCase) && (dateYear != 0))
+                                                {
+                                                    invalidAddrList.Add(ecuAdr);
+                                                }
+                                            }
+                                        }
+                                        dictIndex++;
+                                    }
+                                    // ReSharper disable once LoopCanBeConvertedToQuery
+                                    foreach (long addr in invalidAddrList)
+                                    {
+                                        if (ecuList.All(ecuInfo => ecuInfo.Address != addr))
+                                        {
+                                            invalidEcuCount++;
+                                        }
+                                    }
+                                }
+
+                                _ediabas.ArgString = string.Empty;
+                                _ediabas.ArgBinaryStd = null;
+                                _ediabas.ResultsRequests = string.Empty;
+                                bool readVinOk = false;
+                                foreach (string vinJob in ReadVinJobs)
+                                {
+                                    try
+                                    {
+                                        _ediabas.ExecuteJob(vinJob);
+                                        readVinOk = true;
+                                        break;
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // ignored
+                                    }
+                                }
+
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detect result: count={0}, invalid={1}, vinok={2}", ecuList.Count, invalidEcuCount, readVinOk);
+                                int invalidVinCount = readVinOk ? 0 : 1;
+                                bool acceptEcu = false;
+                                if (ecuListBest == null)
                                 {
                                     acceptEcu = true;
                                 }
                                 else
                                 {
-                                    if (ecuListBest.Count == ecuList.Count && (bestInvalidCount + bestInvalidVinCount) > (invalidEcuCount + invalidVinCount))
+                                    if (ecuListBest.Count < ecuList.Count)
                                     {
                                         acceptEcu = true;
                                     }
+                                    else
+                                    {
+                                        if (ecuListBest.Count == ecuList.Count && (bestInvalidCount + bestInvalidVinCount) > (invalidEcuCount + invalidVinCount))
+                                        {
+                                            acceptEcu = true;
+                                        }
+                                    }
+                                }
+                                if (acceptEcu)
+                                {
+                                    _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Selected ECU");
+                                    ecuListBest = ecuList;
+                                    ecuFileNameBest = fileName;
+                                    bestInvalidCount = invalidEcuCount;
+                                    bestInvalidVinCount = invalidVinCount;
                                 }
                             }
-                            if (acceptEcu)
+                            catch (Exception)
                             {
-                                _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Selected ECU");
-                                ecuListBest = ecuList;
-                                ecuFileNameBest = fileName;
-                                bestInvalidCount = invalidEcuCount;
-                                bestInvalidVinCount = invalidVinCount;
+                                // ignored
                             }
+                            index++;
                         }
-                        catch (Exception)
+
+                        if (ecuListBest != null)
                         {
-                            // ignored
+                            break;
                         }
-                        index++;
+
+                        if (ecuFileNameList.Count > 1)
+                        {
+                            break;
+                        }
+
+                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No response, retry with statistic approach");
+                        ecuFileNameList = EcuFileNames.ToList();
                     }
                 }
                 if (ecuListBest != null)
