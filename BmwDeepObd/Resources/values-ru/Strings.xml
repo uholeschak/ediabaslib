@@ -518,8 +518,7 @@
   <string name="vag_adaption_ecu_reset">Выполнить ECU сброс</string>
 
   <!-- CAN Adapter Activity -->
-  <!--Translate-->
-  <string name="can_adapter_title">Adapter configuration</string>
+  <string name="can_adapter_title">Настройки устройства</string>
   <string name="can_adapter_mode_name">Режим работы CAN</string>
   <string name="can_adapter_sep_time">Интервал между пакетами данных [мс]</string>
   <string name="can_adapter_block_size">Размер блока данных</string>
