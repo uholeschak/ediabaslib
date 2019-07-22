@@ -1,1 +1,4 @@
+/Makefile-genesis.properties
 /private/
+*.mk
+*.bash
