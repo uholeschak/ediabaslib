@@ -43,7 +43,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Предупреждение о перенапряжении аккумуляторной батареи\n- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Для некоторых типов адаптеров возможно прошить программное обеспечение ELM327\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -187,8 +187,7 @@
   <string name="fake_elm_try">Вы всё-таки хотите попробовать использовать адаптер?</string>
   <string formatted="false" name="recommened_adapter_type">Рекомендуется ELM327 устройство v1.4b, v1.5 или оригинальной версии v2.1,&lt;br&gt;которое базируется на процессоре PIC18F25K80 (не на MCP2515 чипе).&lt;br&gt;По ссылке &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt; можете найти улучшенную прошивку.</string>
   <string formatted="false" name="adapter_elm_replacement">ELM327 устройства медленные и поддерживают только D-CAN (автомобили начиная с 3/2007).&lt;br&gt;Вы можете купить улучшенную прошивку&lt;br&gt;&lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt;.</string>
-  <!--Translate-->
-  <string name="adapter_elm_firmware">It\'s recommend to update the ELM327 firmware with the replacement firmware.\nDo you want to open the adapter configuration page for firmware update?</string>
+  <string name="adapter_elm_firmware">Рекомендуется прошить альтернативное программное обеспечение ELM327.\nОткрыть конфигурацию адаптера для обновления программного обеспечения?</string>
   <string name="adapter_cfg_required">Устройство, возможно, требуется настроить.\nХотите получить доступ к конфигурации устройства?</string>
   <string name="adapter_fw_update">Доступно обновление для этого устройства.\nХотите получить доступ к конфигурации устройства, чтобы установить обновление?</string>
   <string name="bt_device_connected">(Подключено)</string>
@@ -545,8 +544,7 @@
   <string name="can_adapter_fw_update_conn_failed">Не удалось подключиться к адаптеру</string>
   <string name="can_adapter_fw_update_failed">Не удалось обновление прошивки</string>
   <string name="can_adapter_fw_update_ok">Обновление прошивки успешно завершено</string>
-  <!--Translate-->
-  <string name="can_adapter_fw_update_ok_detect">The firmware was update successful,\nyou have to detect the adapter again.</string>
+  <string name="can_adapter_fw_update_ok_detect">Обновление программного обеспечения прошло успешно,\nвам нужно заново идентифицировать адаптер.</string>
   <string name="can_adapter_bt_not_reliable">Как известно, ваше Android-устройство ненадёжно при работе с Bluetooth.\nПожалуйста, используйте другое устройство.</string>
   <string name="button_can_adapter_read">Считать</string>
   <string name="button_can_adapter_write">Сохранить</string>
@@ -555,7 +553,6 @@
   <string name="button_can_adapter_can_100">K-CAN (не стандарт)</string>
   <string name="button_can_adapter_can_off">K-LINE (до 3/2007)</string>
   <string name="button_can_adapter_fw_update">Обновление прошивки</string>
-  <!--Translate-->
-  <string name="button_can_adapter_fw_change_elm">Flash ELM327 firmware</string>
-  <string name="button_can_adapter_fw_change_custom">Flash replacement firmware</string>
+  <string name="button_can_adapter_fw_change_elm">Прошить программное обеспечение ELM327</string>
+  <string name="button_can_adapter_fw_change_custom">Прошить альтернативное программное обеспечение ELM327</string>
 </resources>
