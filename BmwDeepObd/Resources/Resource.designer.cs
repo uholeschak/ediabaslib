@@ -5469,8 +5469,11 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0c0201
 			public const int button_can_adapter_can_off = 2131493377;
 			
+			// aapt resource value: 0x7f0c0204
+			public const int button_can_adapter_fw_change_custom = 2131493380;
+			
 			// aapt resource value: 0x7f0c0203
-			public const int button_can_adapter_fw_change = 2131493379;
+			public const int button_can_adapter_fw_change_elm = 2131493379;
 			
 			// aapt resource value: 0x7f0c0202
 			public const int button_can_adapter_fw_update = 2131493378;
