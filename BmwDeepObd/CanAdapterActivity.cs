@@ -110,13 +110,6 @@ namespace BmwDeepObd
             _contentView = FindViewById<View>(Android.Resource.Id.Content);
 
             _barView = LayoutInflater.Inflate(Resource.Layout.bar_can_adapter, null);
-            ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
-                ViewGroup.LayoutParams.MatchParent,
-                ViewGroup.LayoutParams.WrapContent);
-            barLayoutParams.Gravity = barLayoutParams.Gravity &
-                (int)(~(GravityFlags.HorizontalGravityMask | GravityFlags.VerticalGravityMask)) |
-                (int)(GravityFlags.Left | GravityFlags.CenterVertical);
-            SupportActionBar.SetCustomView(_barView, barLayoutParams);
 
             SetResult(Android.App.Result.Canceled);
 
@@ -126,6 +119,17 @@ namespace BmwDeepObd
             ViewStates visibilityBt = IsCustomBtAdapter(_interfaceType, _deviceAddress) ? ViewStates.Visible : ViewStates.Gone;
             bool customElmAdapter = IsCustomElmAdapter(_interfaceType, _deviceAddress);
             bool rawAdapter = IsRawAdapter(_interfaceType, _deviceAddress);
+
+            if (!(customElmAdapter || rawAdapter))
+            {
+                ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
+                    ViewGroup.LayoutParams.MatchParent,
+                    ViewGroup.LayoutParams.WrapContent);
+                barLayoutParams.Gravity = barLayoutParams.Gravity &
+                                          (int)(~(GravityFlags.HorizontalGravityMask | GravityFlags.VerticalGravityMask)) |
+                                          (int)(GravityFlags.Left | GravityFlags.CenterVertical);
+                SupportActionBar.SetCustomView(_barView, barLayoutParams);
+            }
 
             _buttonRead = _barView.FindViewById<Button>(Resource.Id.buttonAdapterRead);
             _buttonRead.SetOnTouchListener(this);

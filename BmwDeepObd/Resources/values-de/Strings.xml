@@ -518,7 +518,7 @@
   <string name="vag_adaption_ecu_reset">ECU Reset durchführen</string>
 
   <!-- CAN Adapter Activity -->
-  <string name="can_adapter_title">CAN Adapter</string>
+  <string name="can_adapter_title">Adapter Konfiguration</string>
   <string name="can_adapter_mode_name">CAN Betriebsart</string>
   <string name="can_adapter_sep_time">Telegrammabstand [ms]</string>
   <string name="can_adapter_block_size">Blockgröße</string>
