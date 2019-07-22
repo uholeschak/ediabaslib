@@ -545,6 +545,8 @@
   <string name="can_adapter_fw_update_conn_failed">Не удалось подключиться к адаптеру</string>
   <string name="can_adapter_fw_update_failed">Не удалось обновление прошивки</string>
   <string name="can_adapter_fw_update_ok">Обновление прошивки успешно завершено</string>
+  <!--Translate-->
+  <string name="can_adapter_fw_update_ok_detect">The firmware was update successful,\nyou have to detect the adapter again.</string>
   <string name="can_adapter_bt_not_reliable">Как известно, ваше Android-устройство ненадёжно при работе с Bluetooth.\nПожалуйста, используйте другое устройство.</string>
   <string name="button_can_adapter_read">Считать</string>
   <string name="button_can_adapter_write">Сохранить</string>
