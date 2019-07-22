@@ -5457,32 +5457,32 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0c00d8
 			public const int button_active = 2131493080;
 			
+			// aapt resource value: 0x7f0c0201
+			public const int button_can_adapter_can_100 = 2131493377;
+			
 			// aapt resource value: 0x7f0c0200
-			public const int button_can_adapter_can_100 = 2131493376;
+			public const int button_can_adapter_can_500 = 2131493376;
 			
 			// aapt resource value: 0x7f0c01ff
-			public const int button_can_adapter_can_500 = 2131493375;
-			
-			// aapt resource value: 0x7f0c01fe
-			public const int button_can_adapter_can_auto = 2131493374;
-			
-			// aapt resource value: 0x7f0c0201
-			public const int button_can_adapter_can_off = 2131493377;
-			
-			// aapt resource value: 0x7f0c0204
-			public const int button_can_adapter_fw_change_custom = 2131493380;
-			
-			// aapt resource value: 0x7f0c0203
-			public const int button_can_adapter_fw_change_elm = 2131493379;
+			public const int button_can_adapter_can_auto = 2131493375;
 			
 			// aapt resource value: 0x7f0c0202
-			public const int button_can_adapter_fw_update = 2131493378;
+			public const int button_can_adapter_can_off = 2131493378;
 			
-			// aapt resource value: 0x7f0c01fc
-			public const int button_can_adapter_read = 2131493372;
+			// aapt resource value: 0x7f0c0205
+			public const int button_can_adapter_fw_change_custom = 2131493381;
+			
+			// aapt resource value: 0x7f0c0204
+			public const int button_can_adapter_fw_change_elm = 2131493380;
+			
+			// aapt resource value: 0x7f0c0203
+			public const int button_can_adapter_fw_update = 2131493379;
 			
 			// aapt resource value: 0x7f0c01fd
-			public const int button_can_adapter_write = 2131493373;
+			public const int button_can_adapter_read = 2131493373;
+			
+			// aapt resource value: 0x7f0c01fe
+			public const int button_can_adapter_write = 2131493374;
 			
 			// aapt resource value: 0x7f0c004f
 			public const int button_connected = 2131492943;
@@ -5565,8 +5565,8 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0c01e5
 			public const int can_adapter_bt_name = 2131493349;
 			
-			// aapt resource value: 0x7f0c01fb
-			public const int can_adapter_bt_not_reliable = 2131493371;
+			// aapt resource value: 0x7f0c01fc
+			public const int can_adapter_bt_not_reliable = 2131493372;
 			
 			// aapt resource value: 0x7f0c01e4
 			public const int can_adapter_bt_pin = 2131493348;
@@ -5594,6 +5594,9 @@ namespace BmwDeepObd
 			
 			// aapt resource value: 0x7f0c01fa
 			public const int can_adapter_fw_update_ok = 2131493370;
+			
+			// aapt resource value: 0x7f0c01fb
+			public const int can_adapter_fw_update_ok_detect = 2131493371;
 			
 			// aapt resource value: 0x7f0c01f5
 			public const int can_adapter_fw_update_present = 2131493365;

@@ -1148,7 +1148,9 @@ namespace BmwDeepObd
                     string message;
                     if (updateOk)
                     {
-                        message = GetString(Resource.String.can_adapter_fw_update_ok);
+                        message = changeFirmware
+                            ? GetString(Resource.String.can_adapter_fw_update_ok_detect)
+                            : GetString(Resource.String.can_adapter_fw_update_ok);
                     }
                     else
                     {
