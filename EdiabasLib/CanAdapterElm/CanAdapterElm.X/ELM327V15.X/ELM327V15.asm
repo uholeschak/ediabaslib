@@ -94,7 +94,7 @@
 #if SW_VERSION == 0
 		ORG 0F00000h + (EEPROM_PAGE * 0100h)
 #else
-		ORG 0000400h
+		ORG CODE_OFFSET + 0000100h
 #endif
 eep_start	DB 0FFh, 000h, 000h, 000h, 000h, 000h, 000h, 0FFh, 006h, 0AEh, 002h, 06Ah, 0FFh, 0FFh, 0FFh, 0FFh
 		DB 0FFh, 0FFh, 032h, 0FFh, 001h, 0FFh, 0FFh, 0FFh, 0F1h, 0FFh, 009h, 0FFh, 0FFh, 0FFh, 000h, 0FFh
