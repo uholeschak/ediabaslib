@@ -1160,6 +1160,12 @@ namespace BmwDeepObd
                     }
 
                     UpdateDisplay();
+
+                    if (updateOk && changeFirmware)
+                    {
+                        EdiabasClose();
+                    }
+
                     AlertDialog alertDialog = new AlertDialog.Builder(this)
                         .SetMessage(message)
                         .SetTitle(updateOk ? Resource.String.alert_title_info : Resource.String.alert_title_error)
