@@ -545,7 +545,7 @@
   <string name="can_adapter_fw_update_conn_failed">Verbindung zum Adapter fehlgeschlagen</string>
   <string name="can_adapter_fw_update_failed">Firmware Aktualisierung fehlgeschlagen</string>
   <string name="can_adapter_fw_update_ok">Firmware Aktualisierung erfolgreich</string>
-  <string name="can_adapter_fw_update_ok_detect">Die Firmware Aktualisierung war erfolgreich,\nSie müssen den Adapter wieder neu erkennen.</string>
+  <string name="can_adapter_fw_update_ok_detect">Die Firmware Aktualisierung war erfolgreich.\nSie sollten den Adapter neu starten, danach müssen sie ihn wieder neu erkennen.</string>
   <string name="can_adapter_bt_not_reliable">Ihr Android Gerät ist dafür bekannt, dass die Bluetooth-Verbindung nicht zuverlässig ist.\nBitte verwenden Sie ein anderes Gerät.</string>
   <string name="button_can_adapter_read">Lesen</string>
   <string name="button_can_adapter_write">Schreiben</string>
