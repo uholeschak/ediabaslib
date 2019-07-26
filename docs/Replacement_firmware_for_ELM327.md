@@ -6,6 +6,7 @@ There is now a replacement firmware available for ELM327L based Bluetooth and Wi
 * Contains a bootstrap loader that allows firmware update without opening the device.
 * Firmware updates are possible with _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_, if the repacement firmware [has already been programmed](#programming-of-the-processor).
 * Reduced power consumption due to use of sleep mode.
+* Flashing of a modified [ELM327 firmware](#elm327-firmware) is possible.
 * Two firmware versions are available:
   * Unmodified Bluetooth and WiFi adapter: Baud rate 38400.
   * Modified Bluetooth adapter (recommended) with replaced [OpenSource Bluetooth firmware](Custom_Bluetooth_firmware.md): Baud rate 115200 and alterable Bluetooth pin (16 digits) and name (31 chars).
@@ -47,3 +48,8 @@ The latest firmware version will be always included in _[Deep OBD for BMW and VA
 You could get the compiled firmware files also from the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package.
 
 Here is a special instruction for [flashing an ELM327 with HC04 firmware](Replace_ELM327_HC04_Firmware.md).
+
+## ELM327 firmware
+It's possible to flash a modified ELM327 V1.4 (V1.5) firmware with _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_ (at the moment this is only available for Bluetooth adapters).  
+In this case you could use the adapter with any ELM327 compatible software.  
+Afterwards flashing of the replacement firmware again is possible also.
