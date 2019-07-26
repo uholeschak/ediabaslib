@@ -825,7 +825,14 @@ namespace BmwDeepObd
                     UpdateDisplay();
                     if (commFailed)
                     {
-                        _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_comm_error), Resource.String.alert_title_error);
+                        int resId = Resource.String.can_adapter_comm_error;
+                        byte[] adapterSerial = _ediabas.EdInterfaceClass.AdapterSerial;
+                        bool blackListed = EdCustomAdapterCommon.IsAdapterBlacklisted(adapterSerial);
+                        if (blackListed)
+                        {
+                            resId = Resource.String.can_adapter_blacklisted;
+                        }
+                        _activityCommon.ShowAlert(GetString(resId), Resource.String.alert_title_error);
                         EdiabasClose();
                     }
                 });
@@ -1014,9 +1021,14 @@ namespace BmwDeepObd
                     }
                     if (commFailed)
                     {
-                        _activityCommon.ShowAlert(IsCustomAdapter(_interfaceType, _deviceAddress)
-                            ? GetString(Resource.String.can_adapter_comm_error)
-                            : GetString(Resource.String.can_adapter_comm_error_std), Resource.String.alert_title_error);
+                        int resId = IsCustomAdapter(_interfaceType, _deviceAddress) ? Resource.String.can_adapter_comm_error : Resource.String.can_adapter_comm_error_std;
+                        byte[] adapterSerial = _ediabas.EdInterfaceClass.AdapterSerial;
+                        bool blackListed = EdCustomAdapterCommon.IsAdapterBlacklisted(adapterSerial);
+                        if (blackListed)
+                        {
+                            resId = Resource.String.can_adapter_blacklisted;
+                        }
+                        _activityCommon.ShowAlert(GetString(resId), Resource.String.alert_title_error);
                         EdiabasClose();
                     }
                     else
