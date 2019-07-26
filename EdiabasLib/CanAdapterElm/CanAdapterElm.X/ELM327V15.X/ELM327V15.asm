@@ -115,7 +115,10 @@ eep_start	DB 0FFh, 000h, 000h, 000h, 000h, 000h, 000h, 0FFh, 006h, 0AEh, 002h, 0
 
 #if SW_VERSION != 0
 eep_end
-eep_copy	movlw	024h
+eep_copy	btfss	RCON,RI
+		goto	p_reset		; perform wd reset after software reset
+
+		movlw	024h
 		movwf	EEADR
 		call	p__838
 		xorlw	DEFAULT_BAUD
