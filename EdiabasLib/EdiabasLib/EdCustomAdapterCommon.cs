@@ -44,6 +44,12 @@ namespace EdiabasLib
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         public static readonly double AdapterVoltageScale = 0.1;
 
+        public static List<byte[]> AdapterBlackList = new List<byte[]>
+        {
+            new byte[] { 0x9D, 0x34, 0xFE, 0x1A, 0x83, 0x24, 0xE9, 0x72 },
+            //new byte[] { 0x31, 0x01, 0x0E, 0x9C, 0xD5, 0x03, 0x79, 0xF6 },
+        };
+
         public delegate void SendDataDelegate(byte[] buffer, int length);
         public delegate bool ReceiveDataDelegate(byte[] buffer, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog);
         public delegate void DiscardInBufferDelegate();
@@ -494,6 +500,23 @@ namespace EdiabasLib
             return sum;
         }
 
+        public static bool IsAdapterBlacklisted(byte[] adapterSerial)
+        {
+            if (adapterSerial == null)
+            {
+                return false;
+            }
+
+            foreach (byte[] serial in AdapterBlackList)
+            {
+                if (adapterSerial.SequenceEqual(serial))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public byte CalcParityFlags()
         {
             byte flags = 0x00;
@@ -779,6 +802,15 @@ namespace EdiabasLib
 
             try
             {
+                if (AdapterSerial != null)
+                {
+                    if (IsAdapterBlacklisted(AdapterSerial))
+                    {
+                        Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Adapter is blacklisted!");
+                        return false;
+                    }
+                }
+
                 if ((CurrentProtocol == EdInterfaceObd.Protocol.Tp20) ||
                     (CurrentProtocol == EdInterfaceObd.Protocol.IsoTp))
                 {

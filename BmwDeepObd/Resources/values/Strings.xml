@@ -507,6 +507,7 @@
   <string name="can_adapter_expert">Expert mode</string>
   <string name="can_adapter_comm_error">A communication error occured</string>
   <string name="can_adapter_comm_error_std">A communication error occured.\nAdapter configuration is only possible,\nif the adapter LED is active after power on.</string>
+  <string name="can_adapter_blacklisted">The adapter is invalid.</string>
   <string name="can_adapter_ignition_on">Ignition on</string>
   <string name="can_adapter_ignition_off">Ignition off</string>
   <string name="can_adapter_ignition_no_status">No status available</string>

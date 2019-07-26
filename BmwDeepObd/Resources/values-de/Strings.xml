@@ -531,6 +531,7 @@
   <string name="can_adapter_expert">Expertenmodus</string>
   <string name="can_adapter_comm_error">Es ist ein Kommunikationsfehler aufgetreten</string>
   <string name="can_adapter_comm_error_std">Es ist ein Kommunikationsfehler aufgetreten.\nDie Adapterkonfiguration ist nur möglich,\nwenn die Adapter LED nach dem Einschalten aktiv ist.</string>
+  <string name="can_adapter_blacklisted">Der Adapter ist ungültig.</string>
   <string name="can_adapter_ignition_on">Zündung an</string>
   <string name="can_adapter_ignition_off">Zündung aus</string>
   <string name="can_adapter_ignition_no_status">Kein Status verfügbar</string>
