@@ -5150,52 +5150,55 @@ namespace BmwDeepObd
 			public const int result_customgauge_square = 2130903119;
 			
 			// aapt resource value: 0x7f030050
-			public const int result_list = 2130903120;
+			public const int result_customgauge_text = 2130903120;
 			
 			// aapt resource value: 0x7f030051
-			public const int select_dialog_item_material = 2130903121;
+			public const int result_list = 2130903121;
 			
 			// aapt resource value: 0x7f030052
-			public const int select_dialog_multichoice_material = 2130903122;
+			public const int select_dialog_item_material = 2130903122;
 			
 			// aapt resource value: 0x7f030053
-			public const int select_dialog_singlechoice_material = 2130903123;
+			public const int select_dialog_multichoice_material = 2130903123;
 			
 			// aapt resource value: 0x7f030054
-			public const int settings = 2130903124;
+			public const int select_dialog_singlechoice_material = 2130903124;
 			
 			// aapt resource value: 0x7f030055
-			public const int status_bar_ongoing_event_progress_bar = 2130903125;
+			public const int settings = 2130903125;
 			
 			// aapt resource value: 0x7f030056
-			public const int string_list = 2130903126;
+			public const int status_bar_ongoing_event_progress_bar = 2130903126;
 			
 			// aapt resource value: 0x7f030057
-			public const int support_simple_spinner_dropdown_item = 2130903127;
+			public const int string_list = 2130903127;
 			
 			// aapt resource value: 0x7f030058
-			public const int tab_activate = 2130903128;
+			public const int support_simple_spinner_dropdown_item = 2130903128;
 			
 			// aapt resource value: 0x7f030059
-			public const int tab_errors = 2130903129;
+			public const int tab_activate = 2130903129;
 			
 			// aapt resource value: 0x7f03005a
-			public const int tab_list = 2130903130;
+			public const int tab_errors = 2130903130;
 			
 			// aapt resource value: 0x7f03005b
-			public const int vag_adaption = 2130903131;
+			public const int tab_list = 2130903131;
 			
 			// aapt resource value: 0x7f03005c
-			public const int vag_coding = 2130903132;
+			public const int vag_adaption = 2130903132;
 			
 			// aapt resource value: 0x7f03005d
-			public const int xml_tool = 2130903133;
+			public const int vag_coding = 2130903133;
 			
 			// aapt resource value: 0x7f03005e
-			public const int xml_tool_ecu = 2130903134;
+			public const int xml_tool = 2130903134;
 			
 			// aapt resource value: 0x7f03005f
-			public const int yandex_key_select = 2130903135;
+			public const int xml_tool_ecu = 2130903135;
+			
+			// aapt resource value: 0x7f030060
+			public const int yandex_key_select = 2130903136;
 			
 			static Layout()
 			{
