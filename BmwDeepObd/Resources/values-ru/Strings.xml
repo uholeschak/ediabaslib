@@ -530,7 +530,7 @@
   <string name="can_adapter_expert">Режим эксперта</string>
   <string name="can_adapter_comm_error">Ошибка соединения</string>
   <string name="can_adapter_comm_error_std">Ошибка соединения.\nКонфигурация адаптера возможна только во время, когда светодиод адаптера активен после включения.</string>
-  <string name="can_adapter_blacklisted">Адаптер неверен.</string>
+  <string name="can_adapter_blacklisted">Неверный адаптер.</string>
   <string name="can_adapter_ignition_on">Зажигание включено</string>
   <string name="can_adapter_ignition_off">Зажигание выключено</string>
   <string name="can_adapter_ignition_no_status">Статус недоступен</string>
