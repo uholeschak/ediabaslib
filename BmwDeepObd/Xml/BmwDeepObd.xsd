@@ -136,6 +136,13 @@
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>
+      <xs:enumeration value="text">
+        <xs:annotation>
+          <xs:documentation>
+            Displays only text and no gauge
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
       <xs:enumeration value="simple-gauge-square">
         <xs:annotation>
           <xs:documentation>

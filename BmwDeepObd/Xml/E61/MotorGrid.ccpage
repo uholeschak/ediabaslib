@@ -71,8 +71,8 @@
            args="NEIN;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED;ISBLS;IFPWG;IVKMH;IAFZG">
         <display name="label_motor_bat_voltage" result="STAT_UBATT_WERT" grid-type="simple-gauge-square" min-value="0" max-value="20" />
         <display name="label_motor_temp" result="STAT_CTSCD_tClntLin_WERT" format="6.2R" grid-type="simple-gauge-square" min-value="-100" max-value="100" />
-        <display name="label_motor_air_mass" result="STAT_LUFTMASSE_WERT" format="7.2R" />
-        <display name="label_motor_intake_air_temp" result="STAT_LADELUFTTEMPERATUR_WERT" format="6.2R" />
+        <display name="label_motor_air_mass" result="STAT_LUFTMASSE_WERT" format="7.2R" grid-type="text" />
+        <display name="label_motor_intake_air_temp" result="STAT_LADELUFTTEMPERATUR_WERT" format="6.2R" grid-type="text" />
         <display name="label_motor_ambient_temp" result="STAT_UMGEBUNGSTEMPERATUR_WERT" format="6.2R" grid-type="simple-gauge-round" min-value="-50" max-value="50" />
         <display name="label_motor_boost_press_set" result="STAT_LADEDRUCK_SOLL_WERT" format="6.2R" />
         <display name="label_motor_boost_press_act" result="STAT_LADEDRUCK_WERT" format="6.2R" />

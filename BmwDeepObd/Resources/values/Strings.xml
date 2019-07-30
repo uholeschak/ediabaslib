@@ -416,6 +416,7 @@
   <string name="xml_tool_ecu_log_tag">Tag for data logging</string>
   <string name="xml_tool_ecu_grid_type">Grahical design</string>
   <string name="xml_tool_ecu_grid_type_hidden">Hidden</string>
+  <string name="xml_tool_ecu_grid_type_text">Text only</string>
   <string name="xml_tool_ecu_grid_type_simple_square">Simple gauge square</string>
   <string name="xml_tool_ecu_grid_type_simple_round">Simple gauge round</string>
   <string name="xml_tool_ecu_grid_type_simple_dot">Simple gauge with dot</string>
