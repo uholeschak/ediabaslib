@@ -2413,6 +2413,10 @@ namespace BmwDeepObd
                                         int resourceId = Resource.Layout.result_customgauge_square;
                                         switch (displayInfo.GridType)
                                         {
+                                            case JobReader.DisplayInfo.GridModeType.Text:
+                                                resourceId = Resource.Layout.result_customgauge_text;
+                                                break;
+
                                             case JobReader.DisplayInfo.GridModeType.Simple_Gauge_Square:
                                                 resourceId = Resource.Layout.result_customgauge_square;
                                                 break;

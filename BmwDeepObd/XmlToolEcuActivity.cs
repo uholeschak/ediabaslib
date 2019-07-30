@@ -1597,6 +1597,7 @@ namespace BmwDeepObd
 
                 _spinnerGridTypeAdapter.Items.Clear();
                 _spinnerGridTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_grid_type_hidden), JobReader.DisplayInfo.GridModeType.Hidden));
+                _spinnerGridTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_grid_type_text), JobReader.DisplayInfo.GridModeType.Text));
                 if (!resultBinary && !resultString)
                 {
                     _spinnerGridTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_grid_type_simple_square), JobReader.DisplayInfo.GridModeType.Simple_Gauge_Square));

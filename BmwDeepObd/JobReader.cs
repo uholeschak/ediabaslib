@@ -24,6 +24,7 @@ namespace BmwDeepObd
             public enum GridModeType
             {
                 Hidden,
+                Text,
                 // ReSharper disable InconsistentNaming
                 Simple_Gauge_Square,
                 Simple_Gauge_Round,

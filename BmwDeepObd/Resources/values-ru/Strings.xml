@@ -439,6 +439,8 @@
   <string name="xml_tool_ecu_log_tag">Тег для протоколированных данных</string>
   <string name="xml_tool_ecu_grid_type">Графический дизайн</string>
   <string name="xml_tool_ecu_grid_type_hidden">Скрытый</string>
+  <!--Translate-->
+  <string name="xml_tool_ecu_grid_type_text">Text only</string>
   <string name="xml_tool_ecu_grid_type_simple_square">Простое квадратное отображение</string>
   <string name="xml_tool_ecu_grid_type_simple_round">Простое округлённое отображение</string>
   <string name="xml_tool_ecu_grid_type_simple_dot">Простое отображение с точкой</string>
