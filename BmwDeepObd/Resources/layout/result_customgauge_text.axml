@@ -10,8 +10,6 @@
         android:layout_height="120dp"
         android:layout_alignParentTop="true"
         android:gravity="center"
-        android:maxLines="1"
-        android:maxLength="8"
         android:ellipsize="end"
         android:text="0"
         android:textSize="30dp"
@@ -22,7 +20,6 @@
         android:layout_height="80dp"
         android:layout_below="@+id/gauge_value"
         android:gravity="center"
-        android:maxLines="1"
         android:ellipsize="end"
         android:text="name"
         android:textSize="20dp" />
