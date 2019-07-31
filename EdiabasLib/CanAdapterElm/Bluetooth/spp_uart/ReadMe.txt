@@ -81,3 +81,5 @@ Compiling:
 For 6 Mbit flahes the compact firmware is required, for this select:
 Project Properties -> Build System -> General -> Firmware -> Compact
 Additionally a 4.7K pullup resistor to 3.3V is required for the TX line!
+
+When changing the settings in the project, build once with the IDE to update the makefile!
