@@ -35,7 +35,7 @@ namespace BmwDeepObd
                 MwTabEntry = mwTabEntry;
                 Selected = false;
                 Format = string.Empty;
-                GridType = JobReader.DisplayInfo.GridModeType.Hidden;
+                GridType = JobReader.DisplayInfo.GridModeType.Text;
                 MinValue = 0;
                 MaxValue = 100;
                 DisplayText = displayName;
