@@ -2459,6 +2459,11 @@ namespace BmwDeepObd
                                     resultChanged = true;
                                     break;
                                 }
+                                if (string.CompareOrdinal(resultNew.ValueText ?? string.Empty, resultOld.ValueText ?? string.Empty) != 0)
+                                {
+                                    resultChanged = true;
+                                    break;
+                                }
                                 if (Math.Abs(resultNew.Value - resultOld.Value) > 0.000001)
                                 {
                                     resultChanged = true;
