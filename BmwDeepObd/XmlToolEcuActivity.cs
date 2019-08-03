@@ -1231,7 +1231,9 @@ namespace BmwDeepObd
                 {
                     if (gridMode)
                     {
-                        if (jobInfo.Results.Any(resultInfo => resultInfo.Selected && resultInfo.GridType != JobReader.DisplayInfo.GridModeType.Hidden))
+                        if (jobInfo.Results.Any(resultInfo => resultInfo.Selected &&
+                                                              resultInfo.GridType != JobReader.DisplayInfo.GridModeType.Hidden &&
+                                                              resultInfo.GridType != JobReader.DisplayInfo.GridModeType.Text))
                         {
                             return true;
                         }
