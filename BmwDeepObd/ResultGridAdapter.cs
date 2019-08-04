@@ -63,13 +63,12 @@ namespace BmwDeepObd
                     int strokeWidth = string.Compare(customGauge.StrokeCap, "BUTT", StringComparison.OrdinalIgnoreCase) == 0 ? 20 : 10;
                     customGauge.StrokeWidth = (float)strokeWidth * gaugeInnerSize / GaugeBaseSize;
                     customGauge.Init();
-                    Android.Graphics.Color gaugeColor = Android.Graphics.Color.White;
                     if (item.GaugeColor.HasValue)
                     {
-                        gaugeColor = item.GaugeColor.Value;
+                        Android.Graphics.Color gaugeColor = item.GaugeColor.Value;
+                        customGauge.PointStartColor = gaugeColor;
+                        customGauge.PointEndColor = gaugeColor;
                     }
-                    customGauge.PointStartColor = gaugeColor;
-                    customGauge.PointEndColor = gaugeColor;
 
                     int gaugeScale = customGauge.EndValue;
                     double range = item.MaxValue - item.MinValue;
