@@ -1918,11 +1918,11 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0b0056
 			public const int colorCaptionBackground = 2131427414;
 			
-			// aapt resource value: 0x7f0b0058
-			public const int colorCaptionBackgroundLight = 2131427416;
-			
 			// aapt resource value: 0x7f0b0057
-			public const int colorCaptionText = 2131427415;
+			public const int colorCaptionBackgroundLight = 2131427415;
+			
+			// aapt resource value: 0x7f0b0058
+			public const int colorCaptionText = 2131427416;
 			
 			// aapt resource value: 0x7f0b0059
 			public const int colorCaptionTextLight = 2131427417;
