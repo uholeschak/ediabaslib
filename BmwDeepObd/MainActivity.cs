@@ -112,6 +112,7 @@ namespace BmwDeepObd
                 VerifyEcuFiles = true;
             }
 
+            public ActivityCommon.ThemeType LastThemeType { get; set; }
             public LastAppState LastAppState { get; set; }
             public string AppDataPath { get; set; }
             public string EcuPath { get; set; }
@@ -601,8 +602,14 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestGlobalSettings:
-                    UpdateCheck();
                     StoreSettings();
+                    if (_instanceData.LastThemeType != ActivityCommon.SelectedTheme)
+                    {
+                        Finish();
+                        StartActivity(Intent);
+                        break;
+                    }
+                    UpdateCheck();
                     UpdateDirectories();
                     UpdateOptionsMenu();
                     UpdateDisplay();
@@ -1366,6 +1373,7 @@ namespace BmwDeepObd
             {
                 ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
                 ActivityCommon.SelectedTheme = (ActivityCommon.ThemeType)prefs.GetInt("Theme", (int)ActivityCommon.ThemeType.Dark);
+                _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
             }
             catch (Exception)
             {
