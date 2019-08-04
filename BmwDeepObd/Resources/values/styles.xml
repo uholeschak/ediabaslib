@@ -3,6 +3,8 @@
   <style name="MyTheme" parent="Theme.AppCompat">
     <item name="dropDownListViewStyle">@style/SpinnerDividerStyle</item>
     <item name="android:dropDownListViewStyle">@style/SpinnerDividerStyle</item>
+    <item name="captionBackgroundColor">@color/colorCaptionBackground</item>
+    <item name="captionTextColor">@color/colorCaptionText</item>
     <item name="gaugePointStartColor">@color/colorGaugePoint</item>
     <item name="gaugePointEndColor">@color/colorGaugePoint</item>
     <item name="gaugeStrokeColor">@color/colorGaugeStroke</item>
@@ -11,6 +13,8 @@
   <style name="MyThemeLight" parent="Theme.AppCompat.Light">
     <item name="dropDownListViewStyle">@style/SpinnerDividerStyle</item>
     <item name="android:dropDownListViewStyle">@style/SpinnerDividerStyle</item>
+    <item name="captionBackgroundColor">@color/colorCaptionBackgroundLight</item>
+    <item name="captionTextColor">@color/colorCaptionTextLight</item>
     <item name="gaugePointStartColor">@color/colorGaugePoint</item>
     <item name="gaugePointEndColor">@color/colorGaugePoint</item>
     <item name="gaugeStrokeColor">@color/colorGaugeStroke</item>
@@ -25,7 +29,7 @@
     <item name="android:dividerHeight">0px</item>
   </style>
   <style name="TextViewInnerCaption" parent="TextAppearance.AppCompat">
-    <item name="android:background">@color/colorCaptionBackground</item>
-    <item name="android:textColor">@color/colorCaptionText</item>
+    <item name="android:background">?attr/captionBackgroundColor</item>
+    <item name="android:textColor">?attr/captionTextColor</item>
   </style>
 </resources>
