@@ -291,6 +291,9 @@
 
   <!--  GlobalSettingsActivity -->
   <string name="settings_title">Globale Einstellungen</string>
+  <string name="settings_caption_theme">Theme</string>
+  <string name="settings_theme_dark">Dunkel</string>
+  <string name="settings_theme_light">Hell</string>
   <string name="settings_caption_bluetooth_enable">Bluetooth einschalten</string>
   <string name="settings_always_enable_bt">Immer Bluetooth einschalten ohne Nachfrage</string>
   <string name="settings_ask_for_bt_enable">Nachfragen ob Bluetooth eingeschaltet werden soll</string>

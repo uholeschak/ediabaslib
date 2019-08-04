@@ -11,6 +11,27 @@
         android:focusable="true"
         android:focusableInTouchMode="true">
         <TextView
+            android:text="@+string/settings_caption_theme"
+            android:id="@+id/textViewCaptionTheme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextViewInnerCaption" />
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RadioButton
+                android:id="@+id/radioButtonThemeDark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_theme_dark" />
+            <RadioButton
+                android:id="@+id/radioButtonThemeLight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_theme_light" />
+        </RadioGroup>
+        <TextView
             android:text="@+string/settings_caption_bluetooth_enable"
             android:id="@+id/textViewCaptionBtEnable"
             android:layout_width="match_parent"
