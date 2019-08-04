@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <resources>
   <color name="colorCaptionBackground">#666666</color>
-  <color name="colorCaptionBackgroundLight">#33333333</color>
+  <color name="colorCaptionBackgroundLight">#999999</color>
   <color name="colorCaptionText">#ffffff</color>
   <color name="colorCaptionTextLight">#000000</color>
   <color name="colorGaugePoint">#ffffff</color>
   <color name="colorGaugePointLight">#000000</color>
   <color name="colorGaugeStroke">#444444</color>
-  <color name="colorGaugeStrokeLight">#555555</color>
+  <color name="colorGaugeStrokeLight">#bbbbbb</color>
   <color name="colorGaugeDivider">#666666</color>
-  <color name="colorGaugeDividerLight">#333333</color>
+  <color name="colorGaugeDividerLight">#999999</color>
 </resources>
