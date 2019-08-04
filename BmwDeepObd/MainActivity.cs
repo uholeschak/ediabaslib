@@ -602,14 +602,15 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestGlobalSettings:
-                    StoreSettings();
                     if (_instanceData.LastThemeType != ActivityCommon.SelectedTheme)
                     {
+                        StoreSettings();
                         Finish();
                         StartActivity(Intent);
                         break;
                     }
                     UpdateCheck();
+                    StoreSettings();
                     UpdateDirectories();
                     UpdateOptionsMenu();
                     UpdateDisplay();
