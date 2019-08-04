@@ -15,10 +15,10 @@
     <item name="android:dropDownListViewStyle">@style/SpinnerDividerStyle</item>
     <item name="captionBackgroundColor">@color/colorCaptionBackgroundLight</item>
     <item name="captionTextColor">@color/colorCaptionTextLight</item>
-    <item name="gaugePointStartColor">@color/colorGaugePoint</item>
-    <item name="gaugePointEndColor">@color/colorGaugePoint</item>
-    <item name="gaugeStrokeColor">@color/colorGaugeStroke</item>
-    <item name="gaugeDividerColor">@color/colorGaugeDivider</item>
+    <item name="gaugePointStartColor">@color/colorGaugePointLight</item>
+    <item name="gaugePointEndColor">@color/colorGaugePointLight</item>
+    <item name="gaugeStrokeColor">@color/colorGaugeStrokeLight</item>
+    <item name="gaugeDividerColor">@color/colorGaugeDividerLight</item>
   </style>
   <style name="SpinnerDividerStyle" parent="style/Widget.AppCompat.ListView.DropDown">
     <item name="android:divider">?attr/dividerHorizontal</item>
