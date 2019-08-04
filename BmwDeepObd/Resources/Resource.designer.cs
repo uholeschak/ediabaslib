@@ -7414,11 +7414,14 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0a0003
 			public const int CardView_Light = 2131361795;
 			
-			// aapt resource value: 0x7f0a01fb
-			public const int ListViewNoDividerStyle = 2131362299;
+			// aapt resource value: 0x7f0a01fc
+			public const int ListViewNoDividerStyle = 2131362300;
 			
 			// aapt resource value: 0x7f0a01f9
 			public const int MyTheme = 2131362297;
+			
+			// aapt resource value: 0x7f0a01fa
+			public const int MyThemeLight = 2131362298;
 			
 			// aapt resource value: 0x7f0a01f5
 			public const int NotificationText = 2131362293;
@@ -7525,8 +7528,8 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0a0020
 			public const int RtlUnderlay_Widget_AppCompat_ActionButton_Overflow = 2131361824;
 			
-			// aapt resource value: 0x7f0a01fa
-			public const int SpinnerDividerStyle = 2131362298;
+			// aapt resource value: 0x7f0a01fb
+			public const int SpinnerDividerStyle = 2131362299;
 			
 			// aapt resource value: 0x7f0a00c7
 			public const int TextAppearance_AppCompat = 2131361991;
@@ -7780,8 +7783,8 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0a00f8
 			public const int TextAppearance_Widget_AppCompat_Toolbar_Title = 2131362040;
 			
-			// aapt resource value: 0x7f0a01fc
-			public const int TextViewInnerCaption = 2131362300;
+			// aapt resource value: 0x7f0a01fd
+			public const int TextViewInnerCaption = 2131362301;
 			
 			// aapt resource value: 0x7f0a00f9
 			public const int Theme_AppCompat = 2131362041;

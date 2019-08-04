@@ -167,6 +167,12 @@ namespace BmwDeepObd
             }
         }
 
+        public enum ThemeType
+        {
+            Dark,
+            Light,
+        }
+
         public enum InterfaceType
         {
             None,
@@ -621,6 +627,8 @@ namespace BmwDeepObd
 
         public static bool BtNoEvents { get; set; }
 
+        public static ThemeType SelectedTheme { get; set; }
+
         public static ManufacturerType SelectedManufacturer { get; set; }
 
         public static BtEnableType BtEnbaleHandling { get; set; }
@@ -668,6 +676,22 @@ namespace BmwDeepObd
         public static EdiabasThread EdiabasThread { get; set; }
 
         public static JobReader JobReader { get; }
+
+        public static int SelectedThemeId
+        {
+            get
+            {
+                switch (SelectedTheme)
+                {
+                    case ThemeType.Dark:
+                        return Resource.Style.MyTheme;
+
+                    case ThemeType.Light:
+                        return Resource.Style.MyThemeLight;
+                }
+                return Resource.Style.MyTheme;
+            }
+        }
 
         public InterfaceType SelectedInterface
         {

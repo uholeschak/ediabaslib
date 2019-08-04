@@ -227,6 +227,8 @@ namespace BmwDeepObd
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            GetThemeSettings();
+            SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
             if (savedInstanceState != null)
             {
@@ -1358,8 +1360,23 @@ namespace BmwDeepObd
             }
         }
 
+        private void GetThemeSettings()
+        {
+            try
+            {
+                ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
+                ActivityCommon.SelectedTheme = (ActivityCommon.ThemeType)prefs.GetInt("Theme", (int)ActivityCommon.ThemeType.Dark);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
         private void GetSettings()
         {
+            GetThemeSettings();
+
             try
             {
                 _currentVersionCode = PackageManager.GetPackageInfo(PackageName, 0).VersionCode;
@@ -1454,6 +1471,7 @@ namespace BmwDeepObd
                 prefsEdit.PutFloat("BatteryWarningVoltage", (float)ActivityCommon.BatteryWarningVoltage);
                 prefsEdit.PutString("LastAdapterSerial", ActivityCommon.LastAdapterSerial ?? string.Empty);
                 prefsEdit.PutString("AppId", ActivityCommon.AppId);
+                prefsEdit.PutInt("Theme", (int)ActivityCommon.SelectedTheme);
                 prefsEdit.PutInt("Manufacturer", (int) ActivityCommon.SelectedManufacturer);
                 prefsEdit.PutInt("BtEnable", (int)ActivityCommon.BtEnbaleHandling);
                 prefsEdit.PutInt("BtDisable", (int) ActivityCommon.BtDisableHandling);
