@@ -25,6 +25,8 @@ namespace BmwDeepObd
 
         private string _selection;
         private ActivityCommon _activityCommon;
+        private RadioButton _radioButtonThemeDark;
+        private RadioButton _radioButtonThemeLight;
         private RadioButton _radioButtonAskForBtEnable;
         private RadioButton _radioButtonAlwaysEnableBt;
         private RadioButton _radioButtonNoBtHandling;
@@ -70,6 +72,9 @@ namespace BmwDeepObd
             _selection = Intent.GetStringExtra(ExtraSelection);
 
             _activityCommon = new ActivityCommon(this);
+
+            _radioButtonThemeDark = FindViewById<RadioButton>(Resource.Id.radioButtonThemeDark);
+            _radioButtonThemeLight = FindViewById<RadioButton>(Resource.Id.radioButtonThemeLight);
 
             _radioButtonAskForBtEnable = FindViewById<RadioButton>(Resource.Id.radioButtonAskForBtEnable);
             _radioButtonAlwaysEnableBt = FindViewById<RadioButton>(Resource.Id.radioButtonAlwaysEnableBt);
@@ -171,6 +176,17 @@ namespace BmwDeepObd
 
         private void ReadSettings()
         {
+            switch (ActivityCommon.SelectedTheme)
+            {
+                case ActivityCommon.ThemeType.Light:
+                    _radioButtonThemeLight.Checked = true;
+                    break;
+
+                default:
+                    _radioButtonThemeDark.Checked = true;
+                    break;
+            }
+
             switch (ActivityCommon.BtEnbaleHandling)
             {
                 case ActivityCommon.BtEnableType.Ask:
@@ -267,6 +283,17 @@ namespace BmwDeepObd
 
         private void StoreSettings()
         {
+            ActivityCommon.ThemeType themeType = ActivityCommon.SelectedTheme;
+            if (_radioButtonThemeDark.Checked)
+            {
+                themeType = ActivityCommon.ThemeType.Dark;
+            }
+            else if (_radioButtonThemeLight.Checked)
+            {
+                themeType = ActivityCommon.ThemeType.Light;
+            }
+            ActivityCommon.SelectedTheme = themeType;
+
             ActivityCommon.BtEnableType enableType = ActivityCommon.BtEnbaleHandling;
             if (_radioButtonAskForBtEnable.Checked)
             {
