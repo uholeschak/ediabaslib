@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <resources>
   <color name="colorCaptionBackground">#666666</color>
-  <color name="colorCaptionText">#ffffff</color>
   <color name="colorCaptionBackgroundLight">#33333333</color>
-  <color name="colorCaptionTextLight">#666666</color>
+  <color name="colorCaptionText">#ffffff</color>
+  <color name="colorCaptionTextLight">#000000</color>
   <color name="colorGaugePoint">#ffffff</color>
   <color name="colorGaugeStroke">#444444</color>
   <color name="colorGaugeDivider">#666666</color>
