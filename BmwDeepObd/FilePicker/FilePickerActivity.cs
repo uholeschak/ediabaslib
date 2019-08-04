@@ -24,6 +24,7 @@ namespace BmwDeepObd.FilePicker
 
         protected override void OnCreate(Bundle bundle)
         {
+            SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(bundle);
 
             SupportActionBar.SetHomeButtonEnabled(true);

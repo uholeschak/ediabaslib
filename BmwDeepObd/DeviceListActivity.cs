@@ -106,6 +106,7 @@ namespace BmwDeepObd
 
         protected override void OnCreate (Bundle savedInstanceState)
         {
+            SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate (savedInstanceState);
 
             SupportActionBar.SetHomeButtonEnabled(true);
