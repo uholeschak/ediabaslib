@@ -3,4 +3,6 @@
   <declare-styleable name="Theme">
     <attr name="android.widget.Spinner" format="reference" />
   </declare-styleable>
+  <attr name="captionBackgroundColor" format="color" />
+  <attr name="captionTextColor" format="color" />
 </resources>
