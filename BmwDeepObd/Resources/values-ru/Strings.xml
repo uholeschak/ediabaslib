@@ -290,10 +290,9 @@
 
   <!--  GlobalSettingsActivity -->
   <string name="settings_title">Глобальные настройки</string>
-  <!--Translate-->
-  <string name="settings_caption_theme">Theme</string>
-  <string name="settings_theme_dark">Dark</string>
-  <string name="settings_theme_light">Light</string>
+  <string name="settings_caption_theme">Темы</string>
+  <string name="settings_theme_dark">Темная</string>
+  <string name="settings_theme_light">Светлая</string>
   <string name="settings_caption_bluetooth_enable">Включение Bluetooth</string>
   <string name="settings_always_enable_bt">Всегда включать Bluetooth без запроса</string>
   <string name="settings_ask_for_bt_enable">Запрос для включения Bluetooth</string>
@@ -443,8 +442,7 @@
   <string name="xml_tool_ecu_log_tag">Тег для протоколированных данных</string>
   <string name="xml_tool_ecu_grid_type">Графический дизайн</string>
   <string name="xml_tool_ecu_grid_type_hidden">Скрытый</string>
-  <!--Translate-->
-  <string name="xml_tool_ecu_grid_type_text">Text only</string>
+  <string name="xml_tool_ecu_grid_type_text">Только текст</string>
   <string name="xml_tool_ecu_grid_type_simple_square">Простое квадратное отображение</string>
   <string name="xml_tool_ecu_grid_type_simple_round">Простое округлённое отображение</string>
   <string name="xml_tool_ecu_grid_type_simple_dot">Простое отображение с точкой</string>
@@ -463,8 +461,7 @@
   <string name="xml_tool_read_test_job_failed">Не удалось выполнить Job</string>
   <string name="xml_tool_ecu_msg_save_lock">Запись конфигурации была заблокирована в файле конфигурации.\nИзменения не могут быть сохранены.</string>
   <string name="xml_tool_ecu_msg_no_selection">Вы не выбрали данные для отображения.\nВыберите сначала нужные задания и результаты из списка.\nВы все равно хотите отменить?</string>
-  <!--Translate-->
-  <string name="xml_tool_ecu_msg_no_grid_selection">Вы активировали графический дисплей, но не выбрали графическое представление.\nNo gauge will be displayed.\nDo you want continue anyway?</string>
+  <string name="xml_tool_ecu_msg_no_grid_selection">Вы активировали графический дисплей, но не выбрали графическое представление.\nГрафическое представление будет недоступно.\nПродолжить?</string>
   <string name="xml_tool_result_amount_limit">Количество результатов ограничено типом ECU.\nДанные не будут переданы, если вы выберете слишком много результатов.</string>
 
   <!-- XML ECU Tool Options Menu -->
