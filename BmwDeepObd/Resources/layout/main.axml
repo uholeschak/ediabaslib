@@ -15,7 +15,7 @@
         <ImageView
             android:id="@+id/imageBackground"
             android:src="@drawable/background"
-            android:background="?attr/android:colorBackground"
+            android:background="@android:color/transparent"
             android:scaleType="fitCenter"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
