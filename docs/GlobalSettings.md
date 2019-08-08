@@ -1,5 +1,8 @@
 # Global settings
 This page allows to change some global app settings.  
+* _Theme_ options:
+  * _Dark_: Dark theme is selected.
+  * _Light_: Light theme is selected.
 * _Bluetooth enable_ options:
   * _Ask for Bluetooth enable_: Ask every time if Bluetooth should be enabled.
   * _Always enable Bluetooth without request_: Always enable Bluetooth, never ask.
@@ -21,12 +24,18 @@ This page allows to change some global app settings.
   This option is only active if _Send data broadcasts_ has been selected and the service is active.
 * _App exit_ options:
   * _Double click required for app exit_: A double click on the back button is required to exit the app.
+* _Update check_ options:
+  * _Never_: Never check for updates.
+  * _Every day_: Check for updates once every day.
+  * _Every week_: Check for updates once every week.
 * _Broadcast_ options:
   * _Send data broadcasts_: Data is broadcasted to other apps (see [Broadcasts](Page_specification.md#broadcasts)).
 * _CPU usage_ options:
   * _Check cpu usage at start_: Check CPU usage at program startup. This requires some time. I high CPU use could cause communication problems.
 * _Check ECU files_ options:
   * _Check ECU files at startup_: Check if all ECU files are present and have the correct size. This is time consuming. If you are are sure the ECU files will not get damaged you could disable this option.
+* _Battery voltage warning_ options:
+  * _Show over voltage warning_: Show adapter overvoltage warning for adapter protection.
 * _VAG mode_ options:
   * _Use old VAG mode_: Use the old VAG mode instead of the new implementation. This is only recommended only of you want to use existing configuration files.
 * _Storage media_ options:
