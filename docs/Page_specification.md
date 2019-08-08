@@ -110,6 +110,7 @@ Within the `jobs` node multiple `job` nodes specify the EDIABAS jobs to execute.
 * `result`: Allows to specify the required results. If omitted, all results will be generated, which may require more processing time.
 * `grid-type`: If the `display-mode` ist switched to `grid`, the type of display element could be specified here:
     * `hidden`: Nothing will be displayed.
+    * `text`: Text only, no gauge will be displayed.
     * `simple-gauge-square`: A simple gauge with a square border will be displayed.
     * `simple-gauge-round`: A simple gauge with a round border will be displayed.
     * `simple-gauge-dot`: A simple gauge with a round border and a dot instead of a bar graph will be displayed.
