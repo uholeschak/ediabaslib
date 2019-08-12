@@ -3547,8 +3547,8 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f09019f
 			public const int checkBoxDisplayTypeGrid = 2131296671;
 			
-			// aapt resource value: 0x7f090132
-			public const int checkBoxDoubleClickForAppExit = 2131296562;
+			// aapt resource value: 0x7f09012e
+			public const int checkBoxDoubleClickForAppExit = 2131296558;
 			
 			// aapt resource value: 0x7f09017f
 			public const int checkBoxEcuReset = 2131296639;
@@ -4213,14 +4213,14 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f090116
 			public const int radioButtonThemeLight = 2131296534;
 			
-			// aapt resource value: 0x7f09012f
-			public const int radioButtonUpdate1Day = 2131296559;
+			// aapt resource value: 0x7f090131
+			public const int radioButtonUpdate1Day = 2131296561;
+			
+			// aapt resource value: 0x7f090132
+			public const int radioButtonUpdate1Week = 2131296562;
 			
 			// aapt resource value: 0x7f090130
-			public const int radioButtonUpdate1Week = 2131296560;
-			
-			// aapt resource value: 0x7f09012e
-			public const int radioButtonUpdateOff = 2131296558;
+			public const int radioButtonUpdateOff = 2131296560;
 			
 			// aapt resource value: 0x7f09014c
 			public const int resultGrid = 2131296588;
@@ -4534,8 +4534,8 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f0900b6
 			public const int textViewCanAdapterSerNumTitle = 2131296438;
 			
-			// aapt resource value: 0x7f090131
-			public const int textViewCaptionAppExit = 2131296561;
+			// aapt resource value: 0x7f09012d
+			public const int textViewCaptionAppExit = 2131296557;
 			
 			// aapt resource value: 0x7f090129
 			public const int textViewCaptionAppStart = 2131296553;
@@ -4579,8 +4579,8 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7f090114
 			public const int textViewCaptionTheme = 2131296532;
 			
-			// aapt resource value: 0x7f09012d
-			public const int textViewCaptionUpdate = 2131296557;
+			// aapt resource value: 0x7f09012f
+			public const int textViewCaptionUpdate = 2131296559;
 			
 			// aapt resource value: 0x7f090198
 			public const int textViewCarInfo = 2131296664;
