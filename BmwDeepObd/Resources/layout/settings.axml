@@ -168,6 +168,17 @@
                 android:text="@string/settings_start_connect_close" />
         </RadioGroup>
         <TextView
+            android:text="@+string/settings_caption_app_exit"
+            android:id="@+id/textViewCaptionAppExit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextViewInnerCaption" />
+        <CheckBox
+            android:id="@+id/checkBoxDoubleClickForAppExit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_double_click_for_app_exit" />
+        <TextView
             android:text="@+string/settings_caption_update"
             android:id="@+id/textViewCaptionUpdate"
             android:layout_width="match_parent"
@@ -193,17 +204,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/settings_update_1week" />
         </RadioGroup>
-        <TextView
-            android:text="@+string/settings_caption_app_exit"
-            android:id="@+id/textViewCaptionAppExit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/TextViewInnerCaption" />
-        <CheckBox
-            android:id="@+id/checkBoxDoubleClickForAppExit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/settings_double_click_for_app_exit" />
         <TextView
             android:text="@+string/settings_caption_broadcast"
             android:id="@+id/textViewCaptionBroadcast"
