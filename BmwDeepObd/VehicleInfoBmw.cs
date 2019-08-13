@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using EdiabasLib;
 using ICSharpCode.SharpZipLib.Zip;
 
@@ -866,6 +869,93 @@ namespace BmwDeepObd
         // ReSharper restore RedundantExplicitArrayCreation
 
         private static Dictionary<string, string> _typeKeyDict;
+
+        public static ReadOnlyCollection<IEcuLogisticsEntry> ReadEcuLogisticsXml(string xmlName)
+        {
+            try
+            {
+                List<IEcuLogisticsEntry> ecuLogisticsList = new List<IEcuLogisticsEntry>();
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(
+                    typeof(XmlToolActivity).Namespace + ".VehicleInfo." + xmlName))
+                {
+                    if (stream == null)
+                    {
+                        return null;
+                    }
+
+                    XDocument xmlDoc = XDocument.Load(stream);
+                    if (xmlDoc.Root == null)
+                    {
+                        return null;
+                    }
+                    XNamespace ns = xmlDoc.Root.GetDefaultNamespace();
+                    XElement logisticsList = xmlDoc.Root.Element(ns + "EcuLogisticsList");
+                    if (logisticsList == null)
+                    {
+                        return null;
+                    }
+
+                    foreach (XElement ecuLogisticsNode in logisticsList.Elements(ns + "EcuLogisticsEntry"))
+                    {
+                        int diagAddress = 0;
+                        string name = string.Empty;
+                        string groupSgbd = string.Empty;
+                        int column = 0;
+                        int row = 0;
+
+                        XAttribute diagAddrAttrib = ecuLogisticsNode.Attribute("DiagAddress");
+                        if (diagAddrAttrib != null)
+                        {
+                            if (!Int32.TryParse(diagAddrAttrib.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out diagAddress))
+                            {
+                                diagAddress = 0;
+                            }
+                        }
+
+                        XAttribute nameAttrib = ecuLogisticsNode.Attribute("Name");
+                        if (nameAttrib != null)
+                        {
+                            name = nameAttrib.Value;
+                        }
+
+                        XElement groupSgbdNode = ecuLogisticsNode.Element(ns + "GroupSgbd");
+                        if (groupSgbdNode != null)
+                        {
+                            groupSgbd = groupSgbdNode.Value;
+                        }
+
+                        XElement columnNode = ecuLogisticsNode.Element(ns + "Column");
+                        if (columnNode != null)
+                        {
+                            if (!Int32.TryParse(columnNode.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out column))
+                            {
+                                column = 0;
+                            }
+                        }
+
+                        XElement rowNode = ecuLogisticsNode.Element(ns + "Row");
+                        if (rowNode != null)
+                        {
+                            if (!Int32.TryParse(rowNode.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out row))
+                            {
+                                row = 0;
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(groupSgbd))
+                        {
+                            ecuLogisticsList.Add(new EcuLogisticsEntry(diagAddress, name, BusType.IBUS, groupSgbd, column, row));
+                        }
+                    }
+                }
+
+                return new ReadOnlyCollection<IEcuLogisticsEntry>(ecuLogisticsList);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
 
         public static Dictionary<string, string> GetTypeKeyDict(EdiabasNet ediabas, string databaseDir)
         {
