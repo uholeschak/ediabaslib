@@ -899,6 +899,7 @@ namespace BmwDeepObd
                     {
                         int diagAddress = 0;
                         string name = string.Empty;
+                        BusType busType = BusType.ROOT;
                         string groupSgbd = string.Empty;
                         int column = 0;
                         int row = 0;
@@ -916,6 +917,15 @@ namespace BmwDeepObd
                         if (nameAttrib != null)
                         {
                             name = nameAttrib.Value;
+                        }
+
+                        XElement busNode = ecuLogisticsNode.Element(ns + "Bus");
+                        if (busNode != null)
+                        {
+                            if (!Enum.TryParse(busNode.Value, true, out busType))
+                            {
+                                busType = BusType.ROOT;
+                            }
                         }
 
                         XElement groupSgbdNode = ecuLogisticsNode.Element(ns + "GroupSgbd");
@@ -944,7 +954,7 @@ namespace BmwDeepObd
 
                         if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(groupSgbd))
                         {
-                            ecuLogisticsList.Add(new EcuLogisticsEntry(diagAddress, name, BusType.IBUS, groupSgbd, column, row));
+                            ecuLogisticsList.Add(new EcuLogisticsEntry(diagAddress, name, busType, groupSgbd, column, row));
                         }
                     }
                 }
