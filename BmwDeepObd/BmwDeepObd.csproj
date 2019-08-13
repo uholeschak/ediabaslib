@@ -571,6 +571,31 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-nodpi\background.png" />
   </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="VehicleInfo\E36EcuCharacteristics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="VehicleInfo\E38EcuCharacteristics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="VehicleInfo\E39EcuCharacteristics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="VehicleInfo\E46EcuCharacteristics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="VehicleInfo\E52EcuCharacteristics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="VehicleInfo\E53EcuCharacteristics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="VehicleInfo\E83EcuCharacteristics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="VehicleInfo\E85EcuCharacteristics.xml" />
+  </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Verwenden Sie die Wiederherstellung von NuGet-Paketen, um die fehlenden Dateien herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
