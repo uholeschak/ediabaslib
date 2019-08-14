@@ -9,6 +9,11 @@ using System.Xml.Linq;
 using EdiabasLib;
 using ICSharpCode.SharpZipLib.Zip;
 
+// ReSharper disable UnusedMemberInSuper.Global
+// ReSharper disable UnusedMember.Global
+// ReSharper disable IdentifierTypo
+// ReSharper disable StringLiteralTypo
+
 namespace BmwDeepObd
 {
     public class VehicleInfoBmw
@@ -124,11 +129,27 @@ namespace BmwDeepObd
             }
         }
 
+        public class EcuLogisticsData
+        {
+            public EcuLogisticsData(string xmlName, ReadOnlyCollection<IEcuLogisticsEntry> staticEntry)
+            {
+                XmlName = xmlName;
+                StaticEntry = staticEntry;
+                UsageEntry = null;
+            }
+
+            public string XmlName { get; }
+            public ReadOnlyCollection<IEcuLogisticsEntry> StaticEntry { get; }
+            public ReadOnlyCollection<IEcuLogisticsEntry> UsageEntry { get; set; }
+        }
+
         private const string DatabaseFileName = @"Database.zip";
 
         // ReSharper disable RedundantExplicitArrayCreation
         // ReSharper disable CoVariantArrayConversion
 
+        public static EcuLogisticsData EcuLogisticsDataE36 =
+            new EcuLogisticsData("E36EcuCharacteristics.xml", EcuLogisticsE36);
         public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE36 =
             new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
             {
@@ -221,6 +242,8 @@ namespace BmwDeepObd
                 new EcuLogisticsEntry(245, "LKM", BusType.KBUS, "D_00f5|d_szm", 4, 2)
             });
 
+        public static EcuLogisticsData EcuLogisticsDataE38 =
+            new EcuLogisticsData("E38EcuCharacteristics.xml", EcuLogisticsE38);
         public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE38 =
             new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
             {
@@ -313,6 +336,8 @@ namespace BmwDeepObd
                 new EcuLogisticsEntry(245, "LKM", BusType.IBUS, "D_00f5|d_szm", 4, 2)
             });
 
+        public static EcuLogisticsData EcuLogisticsDataE39 =
+            new EcuLogisticsData("E39EcuCharacteristics.xml", EcuLogisticsE39);
         public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE39 =
             new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
             {
@@ -405,6 +430,8 @@ namespace BmwDeepObd
                 new EcuLogisticsEntry(245, "LKM", BusType.KBUS, "D_00f5|d_szm", 4, 2)
             });
 
+        public static EcuLogisticsData EcuLogisticsDataE46 =
+            new EcuLogisticsData("E46EcuCharacteristics.xml", EcuLogisticsE46);
         public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE46 =
             new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
             {
@@ -497,6 +524,8 @@ namespace BmwDeepObd
                 new EcuLogisticsEntry(245, "LKM", BusType.KBUS, "D_00f5|d_szm", 4, 2)
             });
 
+        public static EcuLogisticsData EcuLogisticsDataE52 =
+            new EcuLogisticsData("E52EcuCharacteristics.xml", EcuLogisticsE52);
         public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE52 =
             new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
             {
@@ -589,6 +618,8 @@ namespace BmwDeepObd
                 new EcuLogisticsEntry(245, "LKM", BusType.KBUS, "D_00f5|d_szm", 4, 2)
             });
 
+        public static EcuLogisticsData EcuLogisticsDataE53 =
+            new EcuLogisticsData("E53EcuCharacteristics.xml", EcuLogisticsE53);
         public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE53 =
             new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
             {
@@ -681,6 +712,8 @@ namespace BmwDeepObd
                 new EcuLogisticsEntry(245, "LKM", BusType.KBUS, "D_00f5|d_szm", 4, 2)
             });
 
+        public static EcuLogisticsData EcuLogisticsDataE83 =
+            new EcuLogisticsData("E83EcuCharacteristics.xml", EcuLogisticsE83);
         public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE83 =
             new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
             {
@@ -772,6 +805,8 @@ namespace BmwDeepObd
                 new EcuLogisticsEntry(234, "DSP_BT", BusType.UNKNOWN, "D_00ea", -1, -1)
             });
 
+        public static EcuLogisticsData EcuLogisticsDataE85 =
+            new EcuLogisticsData("E85EcuCharacteristics.xml", EcuLogisticsE85);
         public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE85 =
             new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
             {
@@ -865,10 +900,41 @@ namespace BmwDeepObd
                 new EcuLogisticsEntry(245, "LKM", BusType.KBUS, "D_00f5|d_szm", 4, 2)
             });
 
+        public static ReadOnlyCollection<EcuLogisticsData> EcuLogisticsList = new ReadOnlyCollection<EcuLogisticsData>(new EcuLogisticsData[]
+        {
+            EcuLogisticsDataE36,
+            EcuLogisticsDataE38,
+            EcuLogisticsDataE39,
+            EcuLogisticsDataE46,
+            EcuLogisticsDataE52,
+            EcuLogisticsDataE83,
+            EcuLogisticsDataE85,
+        });
+
         // ReSharper restore CoVariantArrayConversion
         // ReSharper restore RedundantExplicitArrayCreation
 
         private static Dictionary<string, string> _typeKeyDict;
+
+        private static bool EcuLogisticsCreated;
+
+        public static void CreateEcuLogistics()
+        {
+            if (EcuLogisticsCreated)
+            {
+                return;
+            }
+
+            foreach (EcuLogisticsData ecuLogisticsData in EcuLogisticsList)
+            {
+                if (ecuLogisticsData.UsageEntry == null)
+                {
+                    ecuLogisticsData.UsageEntry = ReadEcuLogisticsXml(ecuLogisticsData.XmlName) ?? ecuLogisticsData.StaticEntry;
+                }
+            }
+
+            EcuLogisticsCreated = true;
+        }
 
         public static ReadOnlyCollection<IEcuLogisticsEntry> ReadEcuLogisticsXml(string xmlName)
         {
