@@ -1344,7 +1344,11 @@ namespace BmwDeepObd
             string typeUpper = vehicleType.ToUpperInvariant();
             if (typeUpper.StartsWith("F") || typeUpper.StartsWith("G") || typeUpper.StartsWith("I"))
             {
-                // F25, F95, F96, F97, F98, G01, G02, G05, G06, G07, G08
+                // F25, F40, F44, F90, F91, F92, F93, F95, F96, F97, F98
+                // G01, G02, G05, G06, G07, G08, G30
+                // G11, G12, G14, G15, G16
+                // G20, G21, G22, G23, G28, G29
+                // G31, G32, G38
                 return "f01";
             }
             switch (typeUpper)
