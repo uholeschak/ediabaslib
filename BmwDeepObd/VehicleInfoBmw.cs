@@ -1342,9 +1342,9 @@ namespace BmwDeepObd
             // Mapping could be found in: VehicleLogistics
             // static BaseEcuCharacteristics.GetCharacteristics(Vehicle vecInfo)
             string typeUpper = vehicleType.ToUpperInvariant();
-            if (typeUpper.StartsWith("F") || typeUpper.StartsWith("I"))
+            if (typeUpper.StartsWith("F") || typeUpper.StartsWith("G") || typeUpper.StartsWith("I"))
             {
-                // F25
+                // F25, F95, F96, F97, F98, G01, G02, G05, G06, G07, G08
                 return "f01";
             }
             switch (typeUpper)
