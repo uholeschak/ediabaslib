@@ -1289,6 +1289,7 @@ namespace BmwDeepObd
             return null;
         }
 
+        // from RheingoldCoreFramework.dll FA.ExtractEreihe
         public static string GetVehicleTypeFromBrName(string brName, EdiabasNet ediabas)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle type from BR name: {0}", brName ?? "No name");
