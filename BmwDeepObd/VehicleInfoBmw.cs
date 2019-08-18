@@ -1483,6 +1483,11 @@ namespace BmwDeepObd
                 case "K60":
                     return "x_ks01";
 
+                case "RR1":
+                case "RR3":
+                    //return "rr1";     // date < 01.06.2012
+                    return "rr1_2020";
+
                 case "R55":
                 case "R56":
                 case "R57":
