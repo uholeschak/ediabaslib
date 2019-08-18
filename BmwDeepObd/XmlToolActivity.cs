@@ -346,6 +346,7 @@ namespace BmwDeepObd
             public string SgbdFunctional { get; set; }
             public string Vin { get; set; }
             public string VehicleType { get; set; }
+            public string CDate { get; set; }
             public bool CommErrorsOccured { get; set; }
         }
 
@@ -1263,6 +1264,7 @@ namespace BmwDeepObd
             _instanceData.SgbdFunctional = string.Empty;
             _instanceData.Vin = string.Empty;
             _instanceData.VehicleType = string.Empty;
+            _instanceData.CDate = string.Empty;
         }
 
         private void ClearEcuList()
@@ -1373,6 +1375,11 @@ namespace BmwDeepObd
                     {
                         sb.Append("/");
                         sb.Append(_instanceData.VehicleType);
+                    }
+                    if (!string.IsNullOrEmpty(_instanceData.CDate))
+                    {
+                        sb.Append("/");
+                        sb.Append(_instanceData.CDate);
                     }
                     sb.Append(")");
                 }
@@ -2110,8 +2117,9 @@ namespace BmwDeepObd
                 string ecuFileNameBest = null;
                 List<string> ecuFileNameList;
 
-                string groupSgbd = DetectVehicleBmwFast(progress, out string detectedVin, out string vehicleType);
+                string groupSgbd = DetectVehicleBmwFast(progress, out string detectedVin, out string vehicleType, out string cDate);
                 _instanceData.VehicleType = vehicleType;
+                _instanceData.CDate = cDate;
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if (!string.IsNullOrEmpty(groupSgbd))
                 {
@@ -2532,11 +2540,12 @@ namespace BmwDeepObd
             _jobThread.Start();
         }
 
-        private string DetectVehicleBmwFast(CustomProgressDialog progress, out string detectedVin, out string detectedVehicleType)
+        private string DetectVehicleBmwFast(CustomProgressDialog progress, out string detectedVin, out string detectedVehicleType, out string detectCDate)
         {
             _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Try to detect vehicle BMW fast");
             detectedVin = null;
             detectedVehicleType = null;
+            detectCDate = null;
             HashSet<string> invalidSgbdSet = new HashSet<string>();
 
             try
@@ -2759,6 +2768,10 @@ namespace BmwDeepObd
                     vehicleType = VehicleInfoBmw.GetVehicleTypeFromVin(detectedVin, _ediabas, _bmwDir);
                 }
                 detectedVehicleType = vehicleType;
+                if (cDate.HasValue)
+                {
+                    detectCDate = cDate.Value.ToString("yyyy-MM", CultureInfo.InvariantCulture);
+                }
                 string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, detectedVin, cDate, _ediabas);
                 if (string.IsNullOrEmpty(groupSgbd))
                 {
