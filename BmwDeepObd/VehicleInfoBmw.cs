@@ -1339,10 +1339,10 @@ namespace BmwDeepObd
                 return null;
             }
 
-            string vinType = string.Empty;
+            string vinTypeUpper = string.Empty;
             if (!string.IsNullOrEmpty(vin) && vin.Length >= 17)
             {
-                vinType = vin.Substring(3, 4);
+                vinTypeUpper = vin.Substring(3, 4).ToUpperInvariant();
             }
 
             // Mapping could be found in: VehicleLogistics
@@ -1407,7 +1407,7 @@ namespace BmwDeepObd
 
                 case "K18": // VIN "0C04", "0C14" BN2020 else BN2000
                     if (!string.IsNullOrEmpty(vin) &&
-                        (vinType.StartsWith("0C04", StringComparison.OrdinalIgnoreCase) || vinType.StartsWith("0C14", StringComparison.OrdinalIgnoreCase)))
+                        (vinTypeUpper.Equals("0C04", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0C14", StringComparison.OrdinalIgnoreCase)))
                     {
                         return "x_k001";
                     }
@@ -1415,7 +1415,7 @@ namespace BmwDeepObd
 
                 case "K19": // VIN "0C05", "0C15" BN2020 else BN2000
                     if (!string.IsNullOrEmpty(vin) &&
-                        (vinType.StartsWith("0C05", StringComparison.OrdinalIgnoreCase) || vinType.StartsWith("0C15", StringComparison.OrdinalIgnoreCase)))
+                        (vinTypeUpper.Equals("0C05", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0C15", StringComparison.OrdinalIgnoreCase)))
                     {
                         return "x_k001";
                     }
@@ -1423,7 +1423,7 @@ namespace BmwDeepObd
 
                 case "K21": // VIN "0A06", "0A16" BN2000 else BN2020
                     if (!string.IsNullOrEmpty(vin) &&
-                        (vinType.StartsWith("0A06", StringComparison.OrdinalIgnoreCase) || vinType.StartsWith("0A16", StringComparison.OrdinalIgnoreCase)))
+                        (vinTypeUpper.Equals("0A06", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0A16", StringComparison.OrdinalIgnoreCase)))
                     {
                         return "MRK24";
                     }
