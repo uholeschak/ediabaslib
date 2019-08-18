@@ -1342,17 +1342,6 @@ namespace BmwDeepObd
             // Mapping could be found in: VehicleLogistics
             // static BaseEcuCharacteristics.GetCharacteristics(Vehicle vecInfo)
             string typeUpper = vehicleType.ToUpperInvariant();
-            if (typeUpper.StartsWith("F") || typeUpper.StartsWith("G") || typeUpper.StartsWith("I") || typeUpper.StartsWith("J"))
-            {
-                // F25, F40, F44, F90, F91, F92, F93, F95, F96, F97, F98
-                // G01, G02, G05, G06, G07, G08, G30
-                // G11, G12, G14, G15, G16
-                // G20, G21, G22, G23, G28, G29
-                // G31, G32, G38
-                // I01, I12, I15
-                // J29
-                return "f01";
-            }
             switch (typeUpper)
             {
                 case "E60":
@@ -1390,6 +1379,9 @@ namespace BmwDeepObd
                 case "H91":
                     return "MRKH24";
 
+                case "GT1":
+                    return "MRK24";
+
                 case "R55":
                 case "R56":
                 case "R57":
@@ -1398,6 +1390,18 @@ namespace BmwDeepObd
                 case "R60":
                 case "R61":
                     return "r56";
+            }
+
+            if (typeUpper.StartsWith("F") || typeUpper.StartsWith("G") || typeUpper.StartsWith("I") || typeUpper.StartsWith("J"))
+            {
+                // F25, F40, F44, F90, F91, F92, F93, F95, F96, F97, F98
+                // G01, G02, G05, G06, G07, G08, G30
+                // G11, G12, G14, G15, G16
+                // G20, G21, G22, G23, G28, G29
+                // G31, G32, G38
+                // I01, I12, I15
+                // J29
+                return "f01";
             }
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type unknown");
             return null;
