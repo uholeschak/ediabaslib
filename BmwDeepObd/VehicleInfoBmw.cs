@@ -1390,6 +1390,11 @@ namespace BmwDeepObd
                 case "R60":
                 case "R61":
                     return "r56";
+
+                case "RR11":
+                case "RR12":
+                case "RR31":
+                    return "f01";
             }
 
             if (typeUpper.StartsWith("F") || typeUpper.StartsWith("G") || typeUpper.StartsWith("I") || typeUpper.StartsWith("J"))
