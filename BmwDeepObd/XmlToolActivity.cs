@@ -2620,6 +2620,7 @@ namespace BmwDeepObd
                     return null;
                 }
                 string vehicleType = null;
+                DateTime? cDate = null;
 
                 foreach (Tuple<string, string, string> job in ReadIdentJobsBmwFast)
                 {
@@ -2690,9 +2691,27 @@ namespace BmwDeepObd
                                                     {
                                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle type: {0}", vtype);
                                                         vehicleType = vtype;
-                                                        break;
                                                     }
                                                 }
+                                            }
+
+                                            if (resultDictFa.TryGetValue("C_DATE", out EdiabasNet.ResultData resultDataCDate))
+                                            {
+                                                string cDateStr = resultDataCDate.OpData as string;
+                                                if (!string.IsNullOrEmpty(cDateStr))
+                                                {
+                                                    if (DateTime.TryParseExact(cDateStr, "MMyy", null, DateTimeStyles.None, out DateTime dateTime))
+                                                    {
+                                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected construction date: {0}",
+                                                            dateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                                                        cDate = dateTime;
+                                                    }
+                                                }
+                                            }
+
+                                            if (vehicleType != null)
+                                            {
+                                                break;
                                             }
                                         }
                                     }
@@ -2740,7 +2759,7 @@ namespace BmwDeepObd
                     vehicleType = VehicleInfoBmw.GetVehicleTypeFromVin(detectedVin, _ediabas, _bmwDir);
                 }
                 detectedVehicleType = vehicleType;
-                string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, detectedVin, _ediabas);
+                string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, detectedVin, cDate, _ediabas);
                 if (string.IsNullOrEmpty(groupSgbd))
                 {
                     _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No group SGBD found");
