@@ -1385,23 +1385,46 @@ namespace BmwDeepObd
                 case "H91":
                     return "MRKH24";
 
+                case "247":
+                case "247E":
+                case "248":
+                case "259":
+                case "259C":
+                case "259E":
+                case "259R":
+                case "259S":
                 case "A67":
+                case "C01":
+                case "E169":
+                case "E189":
                 case "GT1":
+                case "K14":
+                case "K15":
+                case "K16":
                 case "K25":
                 case "K26":
                 case "K27":
                 case "K28":
                 case "K29":
+                case "K30":
                 case "K40":
+                case "K41":
                 case "K42":
                 case "K43":
                 case "K44":
+                case "K569":
+                case "K589":
+                case "K599":
                 case "K70":
                 case "K71":
                 case "K72":
                 case "K73":
                 case "K75":
                 case "MRK24":
+                case "R13":
+                case "R21":
+                case "R22":
+                case "R28":
                 case "V98":
                     return "MRK24";
 
