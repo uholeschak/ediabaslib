@@ -1331,7 +1331,7 @@ namespace BmwDeepObd
             return brName.Substring(0, 1) + brName.Substring(2, 2);
         }
 
-        public static string GetGroupSgbdFromVehicleType(string vehicleType, EdiabasNet ediabas)
+        public static string GetGroupSgbdFromVehicleType(string vehicleType, string vin, EdiabasNet ediabas)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group SGBD from vehicle type: {0}", vehicleType ?? "No type");
             if (vehicleType == null)
@@ -1379,8 +1379,49 @@ namespace BmwDeepObd
                 case "H91":
                     return "MRKH24";
 
+                case "A67":
                 case "GT1":
+                case "K25":
+                case "K26":
+                case "K27":
+                case "K28":
+                case "K29":
+                case "K40":
+                case "K42":
+                case "K43":
+                case "K44":
+                case "K70":
+                case "K71":
+                case "K72":
+                case "K73":
+                case "K75":
+                case "MRK24":
+                case "V98":
                     return "MRK24";
+
+                case "K18": // VIN "0C04", "0C14" BN2020 else BN2000
+                    if (!string.IsNullOrEmpty(vin) &&
+                        (vin.StartsWith("0C04", StringComparison.OrdinalIgnoreCase) || vin.StartsWith("0C14", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        return "x_k001";
+                    }
+                    return "MRK24";
+
+                case "K19": // VIN "0C05", "0C15" BN2020 else BN2000
+                    if (!string.IsNullOrEmpty(vin) &&
+                        (vin.StartsWith("0C05", StringComparison.OrdinalIgnoreCase) || vin.StartsWith("0C15", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        return "x_k001";
+                    }
+                    return "MRK24";
+
+                case "K21": // VIN "0A06", "0A16" BN2000 else BN2020
+                    if (!string.IsNullOrEmpty(vin) &&
+                        (vin.StartsWith("0A06", StringComparison.OrdinalIgnoreCase) || vin.StartsWith("0A16", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        return "MRK24";
+                    }
+                    return "x_k001";
 
                 case "K22":
                 case "K23":

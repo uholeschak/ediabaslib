@@ -2740,7 +2740,7 @@ namespace BmwDeepObd
                     vehicleType = VehicleInfoBmw.GetVehicleTypeFromVin(detectedVin, _ediabas, _bmwDir);
                 }
                 detectedVehicleType = vehicleType;
-                string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, _ediabas);
+                string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, detectedVin, _ediabas);
                 if (string.IsNullOrEmpty(groupSgbd))
                 {
                     _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No group SGBD found");
