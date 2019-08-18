@@ -1331,9 +1331,14 @@ namespace BmwDeepObd
             return brName.Substring(0, 1) + brName.Substring(2, 2);
         }
 
-        public static string GetGroupSgbdFromVehicleType(string vehicleType, string vin, EdiabasNet ediabas)
+        public static string GetGroupSgbdFromVehicleType(string vehicleType, string vin, DateTime? cDate, EdiabasNet ediabas)
         {
-            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group SGBD from vehicle type: {0}, VIN: {1}", vehicleType ?? "No type", vin ?? "No VIN");
+            string cDateStr = "No date";
+            if (cDate.HasValue)
+            {
+                cDateStr = cDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            }
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group SGBD from vehicle type: {0}, VIN: {1}, CDate: {2}", vehicleType ?? "No type", vin ?? "No VIN", cDateStr);
             if (vehicleType == null)
             {
                 return null;
@@ -1485,7 +1490,10 @@ namespace BmwDeepObd
 
                 case "RR1":
                 case "RR3":
-                    //return "rr1";     // date < 01.06.2012
+                    if (cDate.HasValue && cDate.Value < new DateTime(2012, 06, 01))
+                    {
+                        return "rr1";
+                    }
                     return "rr1_2020";
 
                 case "R55":
