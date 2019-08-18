@@ -1382,6 +1382,37 @@ namespace BmwDeepObd
                 case "GT1":
                     return "MRK24";
 
+                case "K22":
+                case "K23":
+                case "K32":
+                case "K33":
+                case "K47":
+                case "K48":
+                case "K49":
+                case "K50":
+                case "K51":
+                case "K52":
+                case "K53":
+                case "K54":
+                case "K61":
+                case "K67":
+                case "K69":
+                case "K80":
+                case "K81":
+                case "K82":
+                case "K83":
+                case "K84":
+                case "V99":
+                case "X_K001":
+                    return "x_k001";
+
+                case "K02":
+                case "K03":
+                case "K08":
+                case "K09":
+                case "K60":
+                    return "x_ks01";
+
                 case "R55":
                 case "R56":
                 case "R57":
