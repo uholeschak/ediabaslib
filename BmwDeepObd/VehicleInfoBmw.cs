@@ -1514,6 +1514,7 @@ namespace BmwDeepObd
 
             if (typeUpper.StartsWith("F") || typeUpper.StartsWith("G") || typeUpper.StartsWith("I") || typeUpper.StartsWith("J"))
             {
+                // F01, F02, F03, F04, F06, F07, F10, F11, F12, F13, F15, F16, F18,
                 // F25, F40, F44, F90, F91, F92, F93, F95, F96, F97, F98
                 // G01, G02, G05, G06, G07, G08, G30
                 // G11, G12, G14, G15, G16
