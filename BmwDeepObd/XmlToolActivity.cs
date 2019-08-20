@@ -2447,8 +2447,9 @@ namespace BmwDeepObd
                 bool pin78ConnRequire = false;
                 if (!_ediabasJobAbort && ecuListBest == null)
                 {
-                    ecuListBest = DetectVehicleDs2(progress, out detectedVin, out vehicleType, out pin78ConnRequire);
+                    ecuListBest = DetectVehicleDs2(progress, out detectedVin, out vehicleType, out cDate, out pin78ConnRequire);
                     _instanceData.VehicleType = vehicleType;
+                    _instanceData.CDate = cDate;
                     if (ecuListBest != null)
                     {
                         _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
@@ -2787,11 +2788,12 @@ namespace BmwDeepObd
             }
         }
 
-        private List<EcuInfo> DetectVehicleDs2(CustomProgressDialog progress, out string detectedVin, out string detectedVehicleType, out bool pin78ConnRequire)
+        private List<EcuInfo> DetectVehicleDs2(CustomProgressDialog progress, out string detectedVin, out string detectedVehicleType, out string detectCDate, out bool pin78ConnRequire)
         {
             _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Try to detect DS2 vehicle");
             detectedVin = null;
             detectedVehicleType = null;
+            detectCDate = null;
             pin78ConnRequire = false;
             try
             {
@@ -2995,6 +2997,13 @@ namespace BmwDeepObd
                         }
                         index++;
                     }
+                }
+
+                int modelYear = VehicleInfoBmw.GetModelYearFromVin(detectedVin);
+                if (modelYear >= 0)
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Model year: {0}", modelYear);
+                    detectCDate = string.Format(CultureInfo.InvariantCulture, "{0:0000}", modelYear);
                 }
 
                 string vehicleType = null;
