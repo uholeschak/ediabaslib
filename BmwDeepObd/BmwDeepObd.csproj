@@ -66,6 +66,7 @@
     <DebugSymbols>False</DebugSymbols>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <DefineConstants>Android</DefineConstants>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AndroidFlowLayout, Version=1.9.1.0, Culture=neutral, processorArchitecture=MSIL">
