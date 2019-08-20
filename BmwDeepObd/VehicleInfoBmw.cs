@@ -1217,6 +1217,71 @@ namespace BmwDeepObd
             }
         }
 
+        public static int GetModelYearFromVin(string vin)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(vin) || vin.Length < 10)
+                {
+                    return -1;
+                }
+
+                char yearCode = vin.ToUpperInvariant()[9];
+                if (yearCode == '0')
+                {
+                    return -1;
+                }
+                if (Int32.TryParse(yearCode.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out Int32 value))
+                {
+                    if (value >= 1 && value <= 0xF)
+                    {
+                        return value + 2000;
+                    }
+                }
+                if (yearCode >= 'G' && yearCode <= 'Z')
+                {
+                    if (yearCode > 'P')
+                    {
+                        if (yearCode >= 'R')
+                        {
+                            if (yearCode <= 'T')
+                            {
+                                return yearCode + 1942;
+                            }
+                            if (yearCode >= 'V')
+                            {
+                                return yearCode + 1941;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (yearCode == 'P')
+                        {
+                            return yearCode + 1943;
+                        }
+                        if (yearCode >= 'G')
+                        {
+                            if (yearCode <= 'H')
+                            {
+                                return yearCode + 1945;
+                            }
+                            if (yearCode >= 'J' && yearCode <= 'N')
+                            {
+                                return yearCode + 1944;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return -1;
+        }
+
         public static string GetTypeKeyFromVin(string vin, EdiabasNet ediabas, string databaseDir)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Type key from VIN: {0}", vin ?? "No VIN");
