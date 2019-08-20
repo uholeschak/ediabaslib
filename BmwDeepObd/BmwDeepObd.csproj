@@ -571,7 +571,9 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-nodpi\background.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="VehicleInfo\R50EcuCharacteristics.xml" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="VehicleInfo\E36EcuCharacteristics.xml" />
   </ItemGroup>
