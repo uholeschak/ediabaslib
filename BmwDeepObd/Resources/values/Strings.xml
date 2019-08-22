@@ -31,6 +31,7 @@
   <string name="ecu_package">Updated ECU files are available for this application.</string>
   <string name="ecu_download">Do you want to download the ECU files now (File size approx. {0:fs1})?</string>
   <string name="storage_requirements">This is an expert tool.\nNo liability for malfunction or damage at the vehicle.\nThis app requires a fast storage memory with a minimum free space of {0:fs1}.\nThe usage of the app is not allowed if this requirement is not accepted.</string>
+  <string name="config_match_vehicle">Only use configurations that exactly match the vehicle.\nGenerate configurations with the configuration generator, there is no support for using foreign configurations.</string>
   <string name="ecu_extract">The ECU files have to be extracted (Size approx. {0:fs1}),\nthis requires the download of update information.\nIf the extraction is very slow please use a faster storage media.\nDo you want to continue?</string>
   <string name="ecu_extract_confirm">To extract the ECU files (Size approx. {0:fs1})\nthe download of update information is required.\nIf the extraction is very slow please use a faster storage media.\nDo you want to continue?</string>
   <string name="manufacturer_select">The current manufacturer is {0}, to choose a different one select \'abort\'.</string>
