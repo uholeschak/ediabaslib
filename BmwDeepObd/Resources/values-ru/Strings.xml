@@ -32,6 +32,8 @@
   <string name="ecu_package">Для этого приложения доступны обновлённые ECU файлы.</string>
   <string name="ecu_download">Хотите загрузить ECU файлы (размер файла примерно {0:fs1})?</string>
   <string name="storage_requirements">Эта программа разработана для экспертов.\nМы не несём ответственности в случае неисправности или повреждения транспортного средства.\nДля этого приложения требуется более быстрое устройство хранения данных со свободным пространством не менее {0:fs1}.\nИспользование этого приложения не допускается, если условие не будет принято.</string>  <string name="ecu_extract">Необходимо распаковать файлы ECU (приблизительный размер {0:fs1}),\nдля этого требуется загрузить информацию об обновлении.\nЕсли распаковка происходит очень медленно, используйте более быстрый носитель данных.\nПродолжить?</string>
+  <!--Translate-->
+  <string name="config_match_vehicle">Only use configurations that exactly match the vehicle.\nGenerate configurations with the configuration generator, there is no support for using foreign configurations.</string>
   <string name="ecu_extract_confirm">Для распаковки файлов ECU (Размер около{0:fs1})\nтребуется загрузка информации об обновлении.\nЕсли распаковка происходит очень медленно, используйте более быстрый носитель данных.\nХотите продолжить? </string>
   <string name="manufacturer_select">Выбранный производитель {0}. Для выбора другого нажмите \'Отменить\'.</string>
   <string name="error_no_error">Ошибки отсутствуют</string>

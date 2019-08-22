@@ -129,6 +129,7 @@ namespace BmwDeepObd
             public int LastVersionCode { get; set; }
             public bool StorageRequirementsAccepted { get; set; }
             public bool BatteryWarningShown { get; set; }
+            public bool ConfigMatchVehicleShown { get; set; }
             public bool CheckCpuUsage { get; set; }
             public bool VerifyEcuFiles { get; set; }
             public bool CommErrorsOccured { get; set; }
@@ -4181,6 +4182,30 @@ namespace BmwDeepObd
             {
                 return;
             }
+
+            if (_instanceData.ConfigMatchVehicleShown)
+            {
+                SelectConfigFileIntent();
+                return;
+            }
+
+            _instanceData.ConfigMatchVehicleShown = true;
+            new AlertDialog.Builder(this)
+                .SetPositiveButton(Resource.String.button_ok, (s, a) =>
+                {
+                    SelectConfigFileIntent();
+                })
+                .SetNegativeButton(Resource.String.button_abort, (s, a) =>
+                {
+                })
+                .SetCancelable(true)
+                .SetMessage(Resource.String.config_match_vehicle)
+                .SetTitle(Resource.String.alert_title_info)
+                .Show();
+        }
+
+        private void SelectConfigFileIntent()
+        {
             // Launch the FilePickerActivity to select a configuration
             Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
             string initDir = _instanceData.AppDataPath;
