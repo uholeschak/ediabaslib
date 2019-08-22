@@ -3597,10 +3597,12 @@ namespace BmwDeepObd
 
                     string obbName = string.Empty;
                     string installer = string.Empty;
+                    string radioVersion = string.Empty;
                     try
                     {
                       obbName = Path.GetFileName(ExpansionDownloaderActivity.GetObbFilename(_activity)) ?? string.Empty;
                       installer = PackageManager.GetInstallerPackageName(_activity?.PackageName);
+                      radioVersion = Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich ? Build.Radio : Build.RadioVersion;
                     }
                     catch (Exception)
                     {
@@ -3625,6 +3627,7 @@ namespace BmwDeepObd
                     sb.Append(string.Format("\nAndroid brand: {0}", Build.Brand ?? string.Empty));
                     sb.Append(string.Format("\nAndroid hardware: {0}", Build.Hardware ?? string.Empty));
                     sb.Append(string.Format("\nAndroid user: {0}", Build.User ?? string.Empty));
+                    sb.Append(string.Format("\nRadio version: {0}", radioVersion ?? string.Empty));
                     sb.Append(string.Format("\nApp version name: {0}", packageInfo?.VersionName ?? string.Empty));
                     sb.Append(string.Format("\nApp version code: {0}", packageInfo?.VersionCode));
                     sb.Append(string.Format("\nApp id: {0}", AppId));
