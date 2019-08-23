@@ -36,6 +36,7 @@ Pinout: http://www.instructables.com/id/AT-command-mode-of-HC-05-Bluetooth-modul
 | MISO   | 9           | DSR#          | D5            | SPI_MISO | 18        |
 | GND    | 7, 18, 21   | GND           | --            | GND      | 21        |
 
+Tested with devices: BC417, BC358, BC352239
 
 Test connection:
 ----------------
