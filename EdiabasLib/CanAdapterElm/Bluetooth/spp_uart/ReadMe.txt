@@ -72,6 +72,7 @@ Compiling:
   Bootmode none: Host interface(PSKEY_HOST_INTERFACE)=UART link running BCSP
   Bootmode 1: Host interface(PSKEY_HOST_INTERFACE)=VM access to UART
   Always set bootmode 1 first, otherwise access to the chip is impossible afterwards!
+- It's recommended to erase the user areas with PsTool.exe to get the default settings.
 - Compile and flash: compile.bat flash
 - Clean: compile.bat clean
 - Build: compile.bat build
