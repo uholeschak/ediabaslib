@@ -36,6 +36,7 @@ Pinout: http://www.instructables.com/id/AT-command-mode-of-HC-05-Bluetooth-modul
 | MISO   | 9           | DSR#          | D5            | SPI_MISO | 18        |
 | GND    | 7, 18, 21   | GND           | --            | GND      | 21        |
 
+Tested with devices: BC417, BC358, BC352239
 
 Test connection:
 ----------------
@@ -68,10 +69,11 @@ Compiling:
 - Replace the firmware in C:\Programs\BlueLab41\firmware\vm\unified\coyote with the downloaded version (backup old firmware first!)
 - Open command promt in source directory
 - Flash release with BlueFlashCmd.exe first, otherwise the parmeters will be set incorrectly!
-- Special setting in original file:
+- Use the PsTool.exe to set the correct host interface in bootmode 1:
   Bootmode none: Host interface(PSKEY_HOST_INTERFACE)=UART link running BCSP
   Bootmode 1: Host interface(PSKEY_HOST_INTERFACE)=VM access to UART
   Always set bootmode 1 first, otherwise access to the chip is impossible afterwards!
+- It's recommended to erase the user areas with erase.psr to get the default settings.
 - Compile and flash: compile.bat flash
 - Clean: compile.bat clean
 - Build: compile.bat build
