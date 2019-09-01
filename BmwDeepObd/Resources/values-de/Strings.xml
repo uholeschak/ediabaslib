@@ -133,7 +133,7 @@
   <string name="extract_failed_io">Das Speichern der extrahierten Dateien ist fehlgeschlagen.\nIst kein Speicher mehr auf dem Gerät verfügbar?\nEs wird empfohlen alle Dateischutz-Software (z.B. Antivirus) zu deinstallieren.</string>
 
   <!-- Job reader -->
-  <string name="job_reader_read_xml_failed">Das Lesen der Konfigurationsdatei ist fehlgeschlagen:</string>
+  <string name="job_reader_read_xml_failed">Das Lesen der Konfigurationsdatei ist fehlgeschlagen.</string>
   <string name="job_reader_file_name_invalid">Der Dateiname ist ungültig.</string>
 
   <!-- Init VAG UDS -->

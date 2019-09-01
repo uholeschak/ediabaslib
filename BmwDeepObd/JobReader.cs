@@ -625,7 +625,13 @@ namespace BmwDeepObd
             }
             catch (Exception ex)
             {
-                errorMessage = EdiabasNet.GetExceptionText(ex);
+                errorMessage = string.Empty;
+                string fileName = Path.GetFileName(xmlName);
+                if (!string.IsNullOrEmpty(fileName))
+                {
+                    errorMessage = fileName + ":\r\n";
+                }
+                errorMessage += EdiabasNet.GetExceptionText(ex) ?? string.Empty;
                 return false;
             }
         }
