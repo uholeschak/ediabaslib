@@ -25,7 +25,7 @@ From right to left:
 
 **Option 2:**
 1. Download and install the [PICkit™ 3 Programming App and Scripting Tool v3.10](https://microchipdeveloper.com/pickit3:scripttool)
-2. Edit the `PICkit3.ini` in the folder where the tool was installed and add the following lines to the end of it:
+2. Edit the `PICkit3.ini` in the folder where the tool has been installed and add the following lines to the end of it:
 ```
 TMEN:
 REVS: Y 
