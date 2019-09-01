@@ -40,7 +40,7 @@ You could use the Bluetooth adapter on a windows PC with INPA, Tool32 or ISTA-D 
 ![EdiabasLib Config Tool](Replacement_firmware_for_ELM327_ConfigToolBluetoothSmall.png)
 
 ## Programming ELM327 adapter with Deep OBD firmware
-First programming of PIC18F25K80 microcontroller should be done with PICkit 3 programmer. Here is instruction for [flashing ELM327 adapter with Deep OBD firmware](Replace_ELM327_HC04_Firmware.md).
+First programming of PIC18F25K80 microcontroller should be done with a PICkit 3 programmer. Here is instruction for [flashing ELM327 adapter with Deep OBD firmware](Replace_ELM327_HC04_Firmware.md).
 
 The source for the firmware could be found in the subdirectory `CanAdapterElm`. The subdirectory names below are the Bluetooth chip types:
 * `default`: For unmodified ELM327L adapter with any Bluetooth chip. Baud rate 38400
