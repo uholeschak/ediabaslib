@@ -14,8 +14,9 @@ There is now a replacement firmware available for ELM327L based Bluetooth and Wi
 ![Bluetooth adapter top](Replacement_firmware_for_ELM327_BluetoothAdapterTopSmall.png) ![Bluetooth adapter bottom](Replacement_firmware_for_ELM327_BluetoothAdapterBottomSmall.png)
 
 ## Buy a standard Bluetooth adapter
-It is required to buy adapters based on PIC18F25K80 microcontroller.  
-Search for `PIC18F25K80 ELM327` on Aliexpress. It's best to buy it with a Bluetooth module based on a _CSR BC417_ chip. The ones with _BK3231_ chip are supported too.
+It is required to buy adapters based on a PIC18F25K80 microcontroller.  
+Search for `PIC18F25K80 ELM327` on Aliexpress. It's best to buy it with a Bluetooth module based on a _CSR BC417_ chip. The ones with _BK3231_ chip are supported too.  
+For programming the firmware see: [programming](#programming-elm327-adapter-with-deep-obd-firmware)
 
 ## Buy a preprogrammed adapter
 You could buy the preprogrammed [Bluetooth or WiFi adapter](https://www.ebay.de/itm/254347042515) also at EBAY.  
