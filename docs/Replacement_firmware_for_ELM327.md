@@ -13,9 +13,14 @@ There is now a replacement firmware available for ELM327L based Bluetooth and Wi
 
 ![Bluetooth adapter top](Replacement_firmware_for_ELM327_BluetoothAdapterTopSmall.png) ![Bluetooth adapter bottom](Replacement_firmware_for_ELM327_BluetoothAdapterBottomSmall.png)
 
-## Buy Bluetooth adapter
-It is required to buy adapter based on PIC18F25K80 microcontroller. Search for "PIC18F25K80 ELM327" on aliexpress. Best to buy is with bluetooth module based on CSR BC417 chip. The ones with BK3231 chip are supported too.
- 
+## Buy a standard Bluetooth adapter
+It is required to buy adapters based on PIC18F25K80 microcontroller.  
+Search for `PIC18F25K80 ELM327` on Aliexpress. It's best to buy it with a Bluetooth module based on a _CSR BC417_ chip. The ones with _BK3231_ chip are supported too.
+
+## Buy a preprogrammed adapter
+You could buy the preprogrammed [Bluetooth or WiFi adapter](https://www.ebay.de/itm/254333815316) also at EBAY.  
+If the link is outdated (what it is most of the time) all adapters are sold, in this case please simply wait for an update of the link.  
+
 Vehicles `E36`, `E38`, `E39`, `E46`, `E52`, `E53`, `E83` , `E85` and `E86` additionally require a connection between OBD pin 7 and 8 (or a pin7-pin8 adapter) to access all ECUs.  
 For vehicles with OBD I socket in the engine bay additionally the pin 8 of the OBD II socket has to be connected at the vehicle side ([`OBD1-OBD2.pdf`](OBD1-OBD2.pdf))!  
 For BMW F-models use the [ENET WiFi Adapter](ENET_WiFi_Adapter.md).
