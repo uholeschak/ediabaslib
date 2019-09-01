@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.XPath;
+using EdiabasLib;
 
 namespace BmwDeepObd
 {
@@ -236,7 +237,7 @@ namespace BmwDeepObd
 
         public JobReader(string xmlName)
         {
-            ReadXml(xmlName);
+            ReadXml(xmlName, out string _);
         }
 
         public void Clear()
@@ -244,8 +245,9 @@ namespace BmwDeepObd
             _pageList.Clear();
         }
 
-        public bool ReadXml(string xmlName)
+        public bool ReadXml(string xmlName, out string errorMessage)
         {
+            errorMessage = null;
             _pageList.Clear();
             if (string.IsNullOrEmpty(xmlName))
             {
@@ -621,8 +623,9 @@ namespace BmwDeepObd
                 }
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                errorMessage = EdiabasNet.GetExceptionText(ex);
                 return false;
             }
         }

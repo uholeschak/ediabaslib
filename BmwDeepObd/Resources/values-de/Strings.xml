@@ -132,11 +132,15 @@
   <string name="extract_failed">Das Entpacken der Dateien ist fehlgeschlagen.\nDie Zip-Datei scheint beschädigt zu sein.\nIn den meisten Fällen ist der Grund ein defektes Speichermedium.</string>
   <string name="extract_failed_io">Das Speichern der extrahierten Dateien ist fehlgeschlagen.\nIst kein Speicher mehr auf dem Gerät verfügbar?\nEs wird empfohlen alle Dateischutz-Software (z.B. Antivirus) zu deinstallieren.</string>
 
+  <!-- Job reader -->
+  <string name="job_reader_read_xml_failed">Das Lesen der Konfigurationsdatei ist fehlgeschlagen:</string>
+  <string name="job_reader_file_name_invalid">Der Dateiname ist ungültig.</string>
+
   <!-- Init VAG UDS -->
   <string name="vag_uds_init">VAG Dateien lesen</string>
   <string name="vag_uds_error">VAG Dateien lesen fehlgeschlagen</string>
 
-    <!-- Send trace file -->
+  <!-- Send trace file -->
   <string name="send_trace_file_request">Es sind Kommunikationsfehler aufgetreten.\nWollen Sie eine komprimierte und anonyme Trace-Datei (Größe {0:fs0}) senden um Produktverbesserungen zu ermöglichen?</string>
   <string name="send_message_request">Es sind Kommunikationsfehler aufgetreten.\nWollen Sie anonyme Daten senden um Produktverbesserungen zu ermöglichen?</string>
   <string name="send_trace_file">Trace-Datei senden</string>
