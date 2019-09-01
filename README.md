@@ -34,8 +34,8 @@ Additionally an Android application _[Deep OBD for BMW and VAG](docs/Deep_OBD_fo
 Download app from Google Play: [https://play.google.com/store/apps/details?id=de.holeschak.bmw_deep_obd](https://play.google.com/store/apps/details?id=de.holeschak.bmw_deep_obd)  
 _Deep OBD for BMW and VAG_ supports several OBD II adapters:
 * Standard FTDI based USB "INPA compatible" D-CAN/K-Line adapters (all protocols)
-* ELM327 based Bluetooth and WiFi adapters. Recommended ELM327 versions are 1.4b, 1.5 and origin 2.1, which are based on PIC18F2480 processor (no MCP2515 chip) (D-CAN protocol only)
-* ELM327 based adapters with [Replacement firmware for ELM327](docs/Replacement_firmware_for_ELM327.md)  D-CAN and K-Line (all protocols, including VAG KWP2000, KWP1281 and TP2.0). Programmed adapters are now available.
+* ELM327 Bluetooth and WiFi adapters based on PIC18F2480 microcontroller (no MCP2515 chip). Recommended ELM327 versions are 1.4b, 1.5 and origin 2.1. (D-CAN protocol only)
+* ELM327 Bluetooth adapters based on PIC18F25K80 microcontroller with [Replacement firmware for ELM327](docs/Replacement_firmware_for_ELM327.md) D-CAN and K-Line (all protocols, including VAG KWP2000, KWP1281 and TP2.0). Programmed adapters are now available.
 
 More details could be found here: [Supported adapter types](docs/AdapterTypes.md)
 
