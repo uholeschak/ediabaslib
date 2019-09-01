@@ -18,7 +18,7 @@ It is required to buy adapters based on PIC18F25K80 microcontroller.
 Search for `PIC18F25K80 ELM327` on Aliexpress. It's best to buy it with a Bluetooth module based on a _CSR BC417_ chip. The ones with _BK3231_ chip are supported too.
 
 ## Buy a preprogrammed adapter
-You could buy the preprogrammed [Bluetooth or WiFi adapter](https://www.ebay.de/itm/254333815316) also at EBAY.  
+You could buy the preprogrammed [Bluetooth or WiFi adapter](https://www.ebay.de/itm/254347042515) also at EBAY.  
 If the link is outdated (what it is most of the time) all adapters are sold, in this case please simply wait for an update of the link.  
 
 Vehicles `E36`, `E38`, `E39`, `E46`, `E52`, `E53`, `E83` , `E85` and `E86` additionally require a connection between OBD pin 7 and 8 (or a pin7-pin8 adapter) to access all ECUs.  
