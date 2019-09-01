@@ -12,12 +12,7 @@ This document describes how to replace ELM327 adapter firmware
 
 [![ELM327 HC04](hc04-pinout.jpg "ELM327")](hc04-pinout.jpg)
 
-From right to left:
-`MCLR` (orange)
-`5V` (green)
-`GND` (yellow)
-`PGD` (purple)
-`PGC` (blue)
+From right to left: `MCLR` (orange), `5V` (green), `GND` (yellow), `PGD` (purple), `PGC` (blue)
 
 ## Step1: Get the needed software:
 
