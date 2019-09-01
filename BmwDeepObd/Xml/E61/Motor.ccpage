@@ -90,7 +90,7 @@
         <display name="label_motor_pedal_value" result="STAT_FAHRERWUNSCH_PEDAL_WERT" format="6.2R" />
         <display name="label_motor_speed" result="STAT_GESCHWINDIGKEIT_WERT" format="6.2R" />
         <display name="label_motor_accel" result="STAT_FAHRZEUGBESCHLEUNIGUNG_WERT" format="6.2R" />
-      </job>
+      </_job>
         <job name="OELSENSOR_LESEN">
             <display name="label_motor_oil_temp" result="OEL_TEMP_WERT" format="" />
         </job>

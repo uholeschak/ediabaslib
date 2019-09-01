@@ -134,7 +134,7 @@
 
   <!-- Job reader -->
   <!--Transate-->
-  <string name="job_reader_read_xml_failed">Reading of the configuration file failed:</string>
+  <string name="job_reader_read_xml_failed">Reading of the configuration file failed.</string>
   <string name="job_reader_file_name_invalid">The file name is invalid.</string>
 
   <!-- Init VAG UDS -->
