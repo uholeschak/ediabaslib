@@ -13,9 +13,14 @@ There is now a replacement firmware available for ELM327L based Bluetooth and Wi
 
 ![Bluetooth adapter top](Replacement_firmware_for_ELM327_BluetoothAdapterTopSmall.png) ![Bluetooth adapter bottom](Replacement_firmware_for_ELM327_BluetoothAdapterBottomSmall.png)
 
-## Buying adapter
-It is a must to buy adapter based on PIC18F25K80 microcontroller. Search for "PIC18F25K80 ELM327" on aliexpress. Best to buy is with bluetooth module based on CSR BC417 chip. The ones with BK3231 chip are supported too.
- 
+## Buy a standard Bluetooth adapter
+It is required to buy adapters based on PIC18F25K80 microcontroller.  
+Search for `PIC18F25K80 ELM327` on Aliexpress. It's best to buy it with a Bluetooth module based on a _CSR BC417_ chip. The ones with _BK3231_ chip are supported too.
+
+## Buy a preprogrammed adapter
+You could buy the preprogrammed [Bluetooth or WiFi adapter](https://www.ebay.de/itm/254333815316) also at EBAY.  
+If the link is outdated (what it is most of the time) all adapters are sold, in this case please simply wait for an update of the link.  
+
 Vehicles `E36`, `E38`, `E39`, `E46`, `E52`, `E53`, `E83` , `E85` and `E86` additionally require a connection between OBD pin 7 and 8 (or a pin7-pin8 adapter) to access all ECUs.  
 For vehicles with OBD I socket in the engine bay additionally the pin 8 of the OBD II socket has to be connected at the vehicle side ([`OBD1-OBD2.pdf`](OBD1-OBD2.pdf))!  
 For BMW F-models use the [ENET WiFi Adapter](ENET_WiFi_Adapter.md).
@@ -37,18 +42,18 @@ You could use the Bluetooth adapter on a windows PC with INPA, Tool32 or ISTA-D 
 First programming of PIC18F25K80 microcontroller should be done with PICkit 3 programmer. Here is instruction for [flashing ELM327 adapter with Deep OBD firmware](Replace_ELM327_HC04_Firmware.md).
 
 The source for the firmware could be found in the subdirectory `CanAdapterElm`. The subdirectory names below are the Bluetooth chip types:
-* `default`: for unmodified ELM327L adapter with any Bluetooth chip. Baud rate 38400
-* `bc04`: for adapter with BK3231 Bluetooth chip
-* `hc04`: for adapter with BC417 Bluetooth chip
+* `default`: For unmodified ELM327L adapter with any Bluetooth chip. Baud rate 38400
+* `bc04`: For adapter with BK3231 Bluetooth chip
+* `hc04`: For adapter with BC417 Bluetooth chip
 * `spp_uart` and `spp_uart2` (with modified LED configuration): [OpenSource Bluetooth firmware](Custom_Bluetooth_firmware.md) for adapters with BC417 Bluetooth chip (recommended for Android car radios with Rockchip platform)
   * `spp_uart.xpv` and `spp_uart.xdv`: Firmware for Bluetooth module with BC417 chipset
-  * `usbspi.dll`: replacement library for BlueSuite and BlueLab for programming CSR BC03/BC04 Bluetooth chipsets via FT232R breakout board. For more information see the [`ReadMe.txt`](../EdiabasLib/CanAdapterElm/Bluetooth/spp_uart/ReadMe.txt) file.
+  * `usbspi.dll`: This is a replacement library for _BlueSuite_ and _BlueLab_ for programming CSR BC03/BC04 Bluetooth chipsets via FT232R breakout boards. For more information see the [`ReadMe.txt`](../EdiabasLib/CanAdapterElm/Bluetooth/spp_uart/ReadMe.txt) file.
 
 There are two firmware files, the complete file (`CanAdapterElm.X.production.unified.hex`) and the update file (`CanAdapterElm.X.production.hex`) without bootloader, that is only needed by _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_.  
 The latest firmware version will be always included in _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_.  
 Also you can get compiled firmware files from the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package.
 
 ## ELM327 V1.5 firmware
-There is improved ELM327 V1.5 firmware available. It switches adapter to the mode compatible with any ELM327 software. 
+There is improved ELM327 V1.5 firmware available. It switches adapter to a mode compatible with most ELM327 softwares. 
 Flashing can be done over bluetooth with _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_ (at the moment this is only available for Bluetooth adapters).
-Afterwards you can flash Deep OBD replacement firmware over bluetooth again.
+Afterwards you can flash the Deep OBD replacement firmware over Bluetooth firmware again.
