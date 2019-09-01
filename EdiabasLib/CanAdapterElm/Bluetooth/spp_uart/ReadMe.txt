@@ -1,11 +1,11 @@
 Programming CSR BC03 and BC04 chips:
 ------------------------------------
 - Install CSR BlueSuite
-- Get usbspi.dll from zip of latest release https://github.com/lorf/csr-spi-ftdi/releases (tested on 0.5.3)
-- Copy with replace \lib-win32\usbspi.dll to C:\Program Files (x86)\CSR\BlueSuite X.X.X
+- Get usbspi.dll from zip of latest binary release package: https://github.com/lorf/csr-spi-ftdi/releases (tested on 0.5.3)
+- Copy and replace \lib-win32\usbspi.dll to C:\Program Files (x86)\CSR\BlueSuite X.X.X
 - Download Zadig from: http://zadig.akeo.ie/
 - Disconnect all other FTDI devices from the PC, otherwise the drivers will be modified!
-- Open Options>List All Devices, select FTDI breakout board from the listbox and Replace Driver to libusbK
+- Open Options -> List All Devices, select FTDI breakout board from the listbox and Replace Driver to libusbK
 
 Device connection:
 ------------------
@@ -21,13 +21,13 @@ Pinout: http://www.instructables.com/id/AT-command-mode-of-HC-05-Bluetooth-modul
 
 Tested with chips: BC352, BC358, BC417
 
-Test connection and making backup:
+Test connection and create backup:
 ----------------------------------
 - Open command prompt in C:\Program Files (x86)\CSR\BlueSuite X.X.X
 - If there are communication problems add: -trans SPIMAXCLOCK=100 
-e2cmd info
-BlueFlashCmd.exe identify
-- Make backup of the flash: BlueFlashCmd.exe dump backup
+- Test: e2cmd info
+- Test: BlueFlashCmd.exe identify
+- Create backup of the flash: BlueFlashCmd.exe dump <backup file name>
 
 Changing a parameter:
 ---------------------
@@ -45,11 +45,11 @@ Compiling and flashing:
 - Install BlueLab 4.1 to C:\Programs\BlueLab41
 - In the directory C:\Programs\BlueLab41\tools\bin replace usbspi.dll
 - If you have cyt_8unified_fl_bt3.0_23i_0911261257_encr56_oem_prod.zip (BlueCore4-External Unified 23i firmware for OEMs, 56-bit encryption), replace the firmware in C:\Programs\BlueLab41\firmware\vm\unified\coyote with it
-- For modules woth 4 or 6 Mbit Flash chips, select Project Properties -> Build System -> General -> Firmware -> Compact. 
+- For modules with 4 or 6 Mbit flash chips, select Project Properties -> Build System -> General -> Firmware -> Compact. 
 - Press F7 to build with IDE and create a makefile
 - Open command promt in source directory and to compile and flash, enter: 
 compile.bat flash
-- After flashing is finished, run PsTool.exe and set correct host interface for bootmode 1:
+- After flashing is finished, run PsTool.exe and set the correct host interface for bootmode 1:
   Bootmode 1: Host interface(PSKEY_HOST_INTERFACE)=VM access to UART
   Bootmode none: Host interface(PSKEY_HOST_INTERFACE)=UART link running BCSP
   Always set bootmode 1 first, otherwise access to the chip is impossible afterwards!
@@ -57,6 +57,6 @@ compile.bat flash
 
 Restoring backup if something went wrong:
 -----------------------------------------
-BlueFlashCmd.exe backup
+BlueFlashCmd.exe <backup file name>
 
-Note: Additionally, 4.7K pullup resistor to 3.3V maybe required for TX line on some modules!
+Note: An additional 4.7K pullup resistor to 3.3V maybe required at the TX line for some modules and compact firmware!
