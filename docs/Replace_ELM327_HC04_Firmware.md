@@ -4,7 +4,7 @@ This document describes how to replace ELM327 adapter firmware
 
 ### Hardware Requirements:
 
-* ELM327 with PIC18F25K80 chip. For the best models to buy from aliexpress, refer to https://github.com/uholeschak/ediabaslib/issues/39
+* ELM327 adapter with PIC18F25K80 chip. For the best models to buy from aliexpress, search PIC18F25K80 ELM37 and refer to https://github.com/uholeschak/ediabaslib/issues/39
 * PICkit 3 or 4 programmer
 * 12V power supply to power ELM327 adapter via OBD2 connector
 
@@ -15,28 +15,29 @@ This document describes how to replace ELM327 adapter firmware
 From right to left:
 `MCLR` (orange)
 `5V` (green)
-`GND` (yellow) 
-`PGD` (purple)  
+`GND` (yellow)
+`PGD` (purple)
 `PGC` (blue)
 
 ## Step1: Get the needed software:
 
-**Recommended:** Download [MPLAB X IDE](https://www.microchip.com/mplab/mplab-x-ide) and install it, start MPLAB X IPE and select device `PIC18F25K80`.
-The you could ignore all steps below!
+**Option 1 (Recommended):** Download [MPLAB X IDE](https://www.microchip.com/mplab/mplab-x-ide) and install it, start MPLAB X IPE and select device `PIC18F25K80`. Go to the Step2.
 
-1. Download the [PICkit3 Programmer Application](https://microchipdeveloper.com/pickit3:scripttool) and extract it somewhere
-2. Edit the `PICkit3.ini` in the folder of PICkit 3 and add the following lines to the end of it:
+**Option 2:**
+1. Download and install the [PICkit™ 3 Programming App and Scripting Tool v3.10](https://microchipdeveloper.com/pickit3:scripttool)
+2. Edit the `PICkit3.ini` in the folder where the tool was installed and add the following lines to the end of it:
 ```
 TMEN:
 REVS: Y 
 ```
 3. Download the File `PKPlusDeviceFile.dat` from https://sourceforge.net/projects/pickit3plus/
-4. Delete original `PK2DeviceFile.dat` in the Pickkit 3 folder, and rename `PKPlusDeviceFile.dat` to `PK2DeviceFile.dat` 
+4. Delete original `PK2DeviceFile.dat` in the tool folder, and rename `PKPlusDeviceFile.dat` to `PK2DeviceFile.dat`
+5. Start PICkit 3 v3.01
 
 ## Step2: Program PIC18F25K80
-* Connect your PicKit 3/4 to the test points on the board of ELM327 adapter (see photo above)
-* Connect 12V (pin 16) and GND (pin 4) to ELM327 ODB2 connector: https://www.obd-2.de/stecker-belegungen.html
-* Start PICkit software, try to read hex file from PIC18F25K80. Do not continue until you get a proper hex file
+* Connect your PICkit 3/4 to the test points on the board of ELM327 adapter (see photo above)
+* Connect 12V (pin 16) and GND (pin 4) from power supply to ELM327 ODB2 connector: https://www.obd-2.de/stecker-belegungen.html
+* Try to read hex file from PIC18F25K80. Do not continue until you get a proper hex file
 * Take `CanAdaapterElm.X.production.unified.hex` from `hc04` folder of the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package
 * Try to flash CanAdaapterElm.X.production.unified.hex. If it fails with the error "Cannot flash Device-ID", then edit it using Tools->Testmemory to the value in the original hex-file
 
