@@ -2844,17 +2844,36 @@ namespace BmwDeepObd
                 _updateHandler.Post(CreateActionBarTabs);
                 return;
             }
+
+            bool failed = false;
             ActivityCommon.JobReader.Clear();
             if (_instanceData.LastAppState != LastAppState.Compile)
             {
-                ActivityCommon.JobReader.ReadXml(_instanceData.ConfigFileName);
+                if (!ActivityCommon.JobReader.ReadXml(_instanceData.ConfigFileName, out string errorMessage))
+                {
+                    failed = true;
+                    string message = GetString(Resource.String.job_reader_read_xml_failed) + "\r\n";
+                    if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        message += errorMessage;
+                    }
+                    else
+                    {
+                        message += GetString(Resource.String.job_reader_file_name_invalid);
+                    }
+                    _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                }
             }
+
             UpdateJobReaderSettings();
             _activityCommon.ClearTranslationCache();
             _translationList = null;
             _translatedList = null;
             UpdateDirectories();
-            RequestConfigSelect();
+            if (!failed)
+            {
+                RequestConfigSelect();
+            }
             CompileCode();
         }
 
