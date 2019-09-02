@@ -57,6 +57,6 @@ The latest firmware version will be always included in _[Deep OBD for BMW and VA
 Also you can get compiled firmware files from the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package.
 
 ## ELM327 V1.5 firmware
-There is improved ELM327 V1.5 firmware available. It switches adapter to a mode compatible with most ELM327 softwares. 
+There is improved ELM327 V1.5 (V1.4 with patched version number) firmware available. It switches adapter to a mode compatible with most ELM327 softwares. 
 Flashing can be done over bluetooth with _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_ (at the moment this is only available for Bluetooth adapters).
 Afterwards you can flash the Deep OBD replacement firmware over Bluetooth firmware again.
