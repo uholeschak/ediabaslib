@@ -2878,6 +2878,13 @@ namespace BmwDeepObd
                             }
                         }
                     }
+
+                    if (ActivityCommon.ScanAllEcus)
+                    {
+                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Scall all ECUs requested, ignoring detected groups");
+                        groupFiles = null;
+                    }
+
                     if (string.IsNullOrEmpty(groupFiles))
                     {
                         _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "KD data empty, using fallback");
