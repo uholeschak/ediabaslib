@@ -655,6 +655,8 @@ namespace BmwDeepObd
 
         public static bool OldVagMode { get; set; }
 
+        public static bool ScanAllEcus { get; set; }
+
         public static bool CollectDebugInfo { get; set; }
 
         public static string YandexApiKey { get; set; }
