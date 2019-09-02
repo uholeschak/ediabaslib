@@ -1437,6 +1437,7 @@ namespace BmwDeepObd
                     ActivityCommon.CheckCpuUsage = prefs.GetBoolean("CheckCpuUsage", true);
                     ActivityCommon.CheckEcuFiles = prefs.GetBoolean("CheckEcuFiles", true);
                     ActivityCommon.OldVagMode = prefs.GetBoolean("OldVagMode", false);
+                    ActivityCommon.ScanAllEcus = prefs.GetBoolean("ScanAllEcus", false);
                     ActivityCommon.CollectDebugInfo = prefs.GetBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
                     ActivityCommon.StaticDataInitialized = true;
 
@@ -1497,6 +1498,7 @@ namespace BmwDeepObd
                 prefsEdit.PutBoolean("CheckCpuUsage", ActivityCommon.CheckCpuUsage);
                 prefsEdit.PutBoolean("CheckEcuFiles", ActivityCommon.CheckEcuFiles);
                 prefsEdit.PutBoolean("OldVagMode", ActivityCommon.OldVagMode);
+                prefsEdit.PutBoolean("ScanAllEcus", ActivityCommon.ScanAllEcus);
                 prefsEdit.PutBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
                 prefsEdit.Commit();
             }

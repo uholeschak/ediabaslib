@@ -333,6 +333,8 @@
   <string name="settings_show_battery_voltage_warning">Überspannungswarnung anzeigen</string>
   <string name="settings_caption_old_vag_mode">VAG Modus</string>
   <string name="settings_old_vag_mode">Alten VAG Modus verwenden</string>
+  <string name="settings_caption_scan_all_ecus">ECU Erkennung</string>
+  <string name="settings_scan_all_ecus">Bei BMW Fahrzeugen mit DS2 Protokoll immer alle ECUs scannen (langsam)</string>
   <string name="settings_caption_storage">Speichermedium</string>
   <string name="settings_caption_debug">Debuggen</string>
   <string name="settings_collect_debug_info">Debug-Informationen für Trace-Datei sammeln</string>
