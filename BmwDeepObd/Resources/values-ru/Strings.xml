@@ -333,6 +333,9 @@
   <string name="settings_show_battery_voltage_warning">Показать предупреждение о перенапряжении</string>
   <string name="settings_caption_old_vag_mode">VAG режим</string>
   <string name="settings_old_vag_mode">Использовать старый режим VAG</string>
+  <!--Translate-->
+  <string name="settings_caption_scan_all_ecus">ECU detection</string>
+  <string name="settings_scan_all_ecus">For BMW vehicles with DS2 protocol always scan all ECUs (slow)</string>
   <string name="settings_check_ecu_files">Проверка ECU файлов при запуске</string>
   <string name="settings_caption_storage">Носитель памяти</string>
   <string name="settings_caption_debug">Отладить</string>

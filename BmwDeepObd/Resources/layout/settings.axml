@@ -260,6 +260,17 @@
             android:layout_height="wrap_content"
             android:text="@string/settings_old_vag_mode" />
         <TextView
+            android:text="@+string/settings_caption_scan_all_ecus"
+            android:id="@+id/textViewCaptionScallAllEcus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextViewInnerCaption" />
+        <CheckBox
+            android:id="@+id/checkBoxScanAllEcus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_scan_all_ecus" />
+        <TextView
             android:text="@+string/settings_caption_storage"
             android:id="@+id/textViewCaptionStorage"
             android:layout_width="match_parent"

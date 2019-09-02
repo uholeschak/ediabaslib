@@ -53,6 +53,7 @@ namespace BmwDeepObd
         private CheckBox _checkBoxCheckEcuFiles;
         private CheckBox _checkBoxShowBatteryVoltageWarning;
         private CheckBox _checkBoxOldVagMode;
+        private CheckBox _checkBoxScanAllEcus;
         private Button _buttonStorageLocation;
         private CheckBox _checkBoxCollectDebugInfo;
         private CheckBox _checkBoxHciSnoopLog;
@@ -114,6 +115,7 @@ namespace BmwDeepObd
             _checkBoxCheckEcuFiles = FindViewById<CheckBox>(Resource.Id.checkBoxCheckEcuFiles);
             _checkBoxShowBatteryVoltageWarning = FindViewById<CheckBox>(Resource.Id.checkBoxShowBatteryVoltageWarning);
             _checkBoxOldVagMode = FindViewById<CheckBox>(Resource.Id.checkBoxOldVagMode);
+            _checkBoxScanAllEcus = FindViewById<CheckBox>(Resource.Id.checkBoxScanAllEcus);
 
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);
             _buttonStorageLocation.Click += (sender, args) =>
@@ -278,6 +280,7 @@ namespace BmwDeepObd
             _checkBoxCheckEcuFiles.Checked = ActivityCommon.CheckEcuFiles;
             _checkBoxShowBatteryVoltageWarning.Checked = ActivityCommon.ShowBatteryVoltageWarning;
             _checkBoxOldVagMode.Checked = ActivityCommon.OldVagMode;
+            _checkBoxScanAllEcus.Checked = ActivityCommon.ScanAllEcus;
             _checkBoxCollectDebugInfo.Checked = ActivityCommon.CollectDebugInfo;
             UpdateDisplay();
         }
@@ -389,6 +392,7 @@ namespace BmwDeepObd
             ActivityCommon.CheckEcuFiles = _checkBoxCheckEcuFiles.Checked;
             ActivityCommon.ShowBatteryVoltageWarning = _checkBoxShowBatteryVoltageWarning.Checked;
             ActivityCommon.OldVagMode = _checkBoxOldVagMode.Checked;
+            ActivityCommon.ScanAllEcus = _checkBoxScanAllEcus.Checked;
             ActivityCommon.CollectDebugInfo = _checkBoxCollectDebugInfo.Checked;
         }
 
