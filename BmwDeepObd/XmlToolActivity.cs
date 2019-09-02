@@ -7544,7 +7544,7 @@ namespace BmwDeepObd
 
                 }
 
-                string resultName = result.MwTabEntry.ValueIndex.HasValue ? string.Format(Culture, "{0}#MW_Wert", result.MwTabEntry.ValueIndexTrans, result.Name) : "1#ERGEBNIS1WERT";
+                string resultName = result.MwTabEntry.ValueIndex.HasValue ? string.Format(Culture, "{0}#MW_Wert", result.MwTabEntry.ValueIndexTrans) : "1#ERGEBNIS1WERT";
                 return (from node in jobNode.Elements(ns + "display")
                         let resultAttrib = node.Attribute("result")
                         where resultAttrib != null
