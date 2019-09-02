@@ -38,6 +38,9 @@ This page allows to change some global app settings.
   * _Show over voltage warning_: Show adapter overvoltage warning for adapter protection.
 * _VAG mode_ options:
   * _Use old VAG mode_: Use the old VAG mode instead of the new implementation. This is only recommended only of you want to use existing configuration files.
+* _ECU detection_ options:
+  * _For BMW vehicles with DS2 protocol always scan all ECUs (slow)_: If the vehicle has been retrofitted the car database may be incorrect and not all ECUs may be detected.  
+  This option allows to ignore the car database and all ECUs are scanned, which is very time consuming.
 * _Storage media_ options:
   * _Default or storage location_: If the default storage media for the ECU files is not appropriate, a different media could be selected here.  
   The application storage directory on the media will be always fixed to _de.holeschak.bmw_deep_obd_.
