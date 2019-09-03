@@ -32,8 +32,7 @@
   <string name="ecu_package">Для этого приложения доступны обновлённые ECU файлы.</string>
   <string name="ecu_download">Хотите загрузить ECU файлы (размер файла примерно {0:fs1})?</string>
   <string name="storage_requirements">Эта программа разработана для экспертов.\nМы не несём ответственности в случае неисправности или повреждения транспортного средства.\nДля этого приложения требуется более быстрое устройство хранения данных со свободным пространством не менее {0:fs1}.\nИспользование этого приложения не допускается, если условие не будет принято.</string>  <string name="ecu_extract">Необходимо распаковать файлы ECU (приблизительный размер {0:fs1}),\nдля этого требуется загрузить информацию об обновлении.\nЕсли распаковка происходит очень медленно, используйте более быстрый носитель данных.\nПродолжить?</string>
-  <!--Translate-->
-  <string name="config_match_vehicle">Only use configurations that exactly match the vehicle.\nGenerate configurations with the configuration generator, there is no support for using foreign configurations.</string>
+  <string name="config_match_vehicle">Используйте только те конфигурации, которые точно соответствуют автомобилю.\nСоздавайте конфигурации с помощью генератора конфигураций, поддержка использования сторонних конфигураций отсутствует.</string>
   <string name="ecu_extract_confirm">Для распаковки файлов ECU (Размер около{0:fs1})\nтребуется загрузка информации об обновлении.\nЕсли распаковка происходит очень медленно, используйте более быстрый носитель данных.\nХотите продолжить? </string>
   <string name="manufacturer_select">Выбранный производитель {0}. Для выбора другого нажмите \'Отменить\'.</string>
   <string name="error_no_error">Ошибки отсутствуют</string>
@@ -45,7 +44,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Добавлена возможность переключения на светлую тему\n- Добавлен текстовый элемент в графическом отображении\n- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Улучшена обработка ошибок\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -333,9 +332,8 @@
   <string name="settings_show_battery_voltage_warning">Показать предупреждение о перенапряжении</string>
   <string name="settings_caption_old_vag_mode">VAG режим</string>
   <string name="settings_old_vag_mode">Использовать старый режим VAG</string>
-  <!--Translate-->
-  <string name="settings_caption_scan_all_ecus">ECU detection</string>
-  <string name="settings_scan_all_ecus">For BMW vehicles with DS2 protocol always scan all ECUs (slow)</string>
+  <string name="settings_caption_scan_all_ecus">Распознавание ECU</string>
+  <string name="settings_scan_all_ecus">Для автомобилей BMW с протоколом DS2 всегда сканировать все ECU (медленно)</string>
   <string name="settings_check_ecu_files">Проверка ECU файлов при запуске</string>
   <string name="settings_caption_storage">Носитель памяти</string>
   <string name="settings_caption_debug">Отладить</string>
