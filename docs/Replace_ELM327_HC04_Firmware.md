@@ -16,7 +16,7 @@ From left to right: `MCLR` (orange), `5V` (green), `GND` (yellow), `PGD` (purple
 
 ## Step1: Get the needed software:
 
-**Option 1 (Recommended):** 
+**Option 1 (Recommended):**
 1. Download [MPLAB X IDE](https://www.microchip.com/mplab/mplab-x-ide) and install it, start MPLAB X IPE and select device `PIC18F25K80`.
 2. Go to the Step2.
 
@@ -25,7 +25,7 @@ From left to right: `MCLR` (orange), `5V` (green), `GND` (yellow), `PGD` (purple
 2. Edit the `PICkit3.ini` in the folder where the tool has been installed and add the following lines to the end of it:
 ```
 TMEN:
-REVS: Y 
+REVS: Y
 ```
 3. Download the File `PKPlusDeviceFile.dat` from https://sourceforge.net/projects/pickit3plus/
 4. Delete original `PK2DeviceFile.dat` in the tool folder, and rename `PKPlusDeviceFile.dat` to `PK2DeviceFile.dat`
