@@ -2849,7 +2849,7 @@ namespace BmwDeepObd
 
             bool failed = false;
             ActivityCommon.JobReader.Clear();
-            if (_instanceData.LastAppState != LastAppState.Compile)
+            if (_instanceData.LastAppState != LastAppState.Compile && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
             {
                 if (!ActivityCommon.JobReader.ReadXml(_instanceData.ConfigFileName, out string errorMessage))
                 {
