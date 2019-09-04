@@ -12,18 +12,20 @@ This document describes how to replace ELM327 adapter firmware
 
 [![ELM327 HC04](hc04-pinout.jpg "ELM327")](hc04-pinout.jpg)
 
-From right to left: `MCLR` (orange), `5V` (green), `GND` (yellow), `PGD` (purple), `PGC` (blue)
+From left to right: `MCLR` (orange), `5V` (green), `GND` (yellow), `PGD` (purple), `PGC` (blue)
 
 ## Step1: Get the needed software:
 
-**Option 1 (Recommended):** Download [MPLAB X IDE](https://www.microchip.com/mplab/mplab-x-ide) and install it, start MPLAB X IPE and select device `PIC18F25K80`. Go to the Step2.
+**Option 1 (Recommended):**
+1. Download [MPLAB X IDE](https://www.microchip.com/mplab/mplab-x-ide) and install it, start MPLAB X IPE and select device `PIC18F25K80`.
+2. Go to the Step2.
 
 **Option 2:**
 1. Download and install the [PICkit™ 3 Programming App and Scripting Tool v3.10](https://microchipdeveloper.com/pickit3:scripttool)
 2. Edit the `PICkit3.ini` in the folder where the tool has been installed and add the following lines to the end of it:
 ```
 TMEN:
-REVS: Y 
+REVS: Y
 ```
 3. Download the File `PKPlusDeviceFile.dat` from https://sourceforge.net/projects/pickit3plus/
 4. Delete original `PK2DeviceFile.dat` in the tool folder, and rename `PKPlusDeviceFile.dat` to `PK2DeviceFile.dat`
@@ -43,4 +45,4 @@ REVS: Y
 Try to read ignition pin state with the following command (hex values):  
 `82 F1 F1 FE FE 60`
 The response should be:
-`82 F1 F1 FE FE 60 82 F1 F1 FE <state> <checksum>` where bit 0 of <state> will be set to 1 if ignition is on.
+`82 F1 F1 FE FE 60 82 F1 F1 FE <state> <checksum>` where bit 0 of `<state>` will be set to 1 if ignition is on.
