@@ -358,7 +358,16 @@ namespace BmwDeepObd
                 Android.Util.Log.Info(Tag, string.Format("AutoConnect: {0}", autoConnect));
 #endif
                 bool oldOffline = _mtcOffline;
-                _mtcOffline = !autoConnect && btState == 0;
+                bool newOffline = false;
+                if (!autoConnect)
+                {
+                    mtcServiceConnection.SetAutoConnect(true);
+                    if (!mtcServiceConnection.GetAutoConnect())
+                    {
+                        newOffline = true;
+                    }
+                }
+                _mtcOffline = newOffline;
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("MTC offline: {0}", _mtcOffline));
 #endif
