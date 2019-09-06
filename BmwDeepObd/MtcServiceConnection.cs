@@ -59,6 +59,7 @@ namespace BmwDeepObd
             try
             {
                 Init();
+                SyncMatchList();
                 _bound = true;
             }
 #pragma warning disable 168
@@ -76,7 +77,7 @@ namespace BmwDeepObd
             }
             else
             {
-                ApiVersion = 2;
+                ApiVersion = 3; //2;
             }
             _connectedHandler?.Invoke(Bound);
 #if DEBUG
@@ -111,87 +112,97 @@ namespace BmwDeepObd
 
         public long GetNowDevAddr()
         {
-            return CommandGetLong(7);
+            return CommandGetLong(ApiVersion > 2 ? 11 : 7);
         }
 
         public string GetNowDevName()
         {
-            return CommandGetString(8);
+            return CommandGetString(ApiVersion > 2 ? 12 : 8);
         }
 
         public void SetAutoConnect(bool auto)
         {
-            CommandSetInt(22, auto ? 1 : 0);
+            CommandSetInt(ApiVersion > 2 ? 31 : 22, auto ? 1 : 0);
         }
 
         public bool GetAutoConnect()
         {
-            return CommandGetInt(23) != 0;
+            return CommandGetInt(ApiVersion > 2 ? 32 : 23) != 0;
         }
 
         public void SetAutoAnswer(bool auto)
         {
-            CommandSetInt(24, auto ? 1 : 0);
+            CommandSetInt(ApiVersion > 2 ? 33 : 24, auto ? 1 : 0);
         }
 
         public bool GetAutoAnswer()
         {
-            return CommandGetInt(25) != 0;
+            return CommandGetInt(ApiVersion > 2 ? 34 : 25) != 0;
         }
 
         public void ConnectBt(string mac)
         {
-            CommandMac(26, mac);
+            CommandMac(ApiVersion > 2 ? 35 : 26, mac);
         }
 
         public void DisconnectBt(string mac)
         {
-            CommandMac(27, mac);
+            CommandMac(ApiVersion > 2 ? 36 : 27, mac);
         }
 
         public void ConnectObd(string mac)
         {
-            CommandMac(28, mac);
+            CommandMac(ApiVersion > 2 ? 37 : 28, mac);
         }
 
         public void DisconnectObd(string mac)
         {
-            CommandMac(29, mac);
+            CommandMac(ApiVersion > 2 ? 38 : 29, mac);
         }
 
         public void DeleteObd(string mac)
         {
-            CommandMac(30, mac);
+            CommandMac(ApiVersion > 2 ? 39 : 30, mac);
         }
 
         public void DeleteBt(string mac)
         {
-            CommandMac(31, mac);
+            CommandMac(ApiVersion > 2 ? 40 : 31, mac);
+        }
+
+        public void SyncMatchList()
+        {
+            CommandVoid(ApiVersion > 2 ? 41 : 32);
         }
 
         public IList<string> GetMatchList()
         {
-            return CommandGetList(33);
+            return CommandGetList(ApiVersion > 2 ? 42 : 33);
         }
 
         public IList<string> GetDeviceList()
         {
-            return CommandGetList(34);
+            return CommandGetList(ApiVersion > 2 ? 43 : 34);
         }
 
         public void ScanStart()
         {
-            CommandVoid(42);
+            CommandVoid(ApiVersion > 2 ? 51 : 42);
         }
 
         public void ScanStop()
         {
-            CommandVoid(43);
+            CommandVoid(ApiVersion > 2 ? 52 : 43);
         }
 
         public int GetObdState()
         {
-            return CommandGetInt(48);
+            return CommandGetInt(ApiVersion > 2 ? 57 : 48);
+        }
+
+        public int RequestBtInfo()
+        {
+            return CommandGetInt(ApiVersion > 2 ? 58 : 49);
         }
 
         private void CommandVoid(int code)
