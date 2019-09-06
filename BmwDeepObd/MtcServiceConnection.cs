@@ -56,9 +56,27 @@ namespace BmwDeepObd
                 _bound = false;
                 return;
             }
+
             try
             {
                 Init();
+                if (name?.ClassName != null && String.Compare(name.ClassName, ServiceClsV1, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    ApiVersion = 1;
+                }
+                else
+                {
+                    ApiVersion = 2;
+                    int dataSize = CommandGetDataSize(57);
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("Command 57 data size: {0}", dataSize));
+#endif
+                    if (dataSize == 8)
+                    {
+                        ApiVersion = 3;
+                    }
+                }
+
                 SyncMatchList();
                 _bound = true;
             }
@@ -70,15 +88,9 @@ namespace BmwDeepObd
                 Android.Util.Log.Info(Tag, string.Format("MTC init exception: {0}", ex.Message));
 #endif
                 _bound = false;
+                ApiVersion = 0;
             }
-            if (name?.ClassName != null && String.Compare(name.ClassName, ServiceClsV1, StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                ApiVersion = 1;
-            }
-            else
-            {
-                ApiVersion = 3; //2;
-            }
+
             _connectedHandler?.Invoke(Bound);
 #if DEBUG
             Android.Util.Log.Info(Tag, string.Format("MTC Service connected: {0}, ClassName: {1}, Version: {2}", Bound, name?.ClassName ?? string.Empty, ApiVersion));
@@ -198,11 +210,6 @@ namespace BmwDeepObd
         public int GetObdState()
         {
             return CommandGetInt(ApiVersion > 2 ? 57 : 48);
-        }
-
-        public int RequestBtInfo()
-        {
-            return CommandGetInt(ApiVersion > 2 ? 58 : 49);
         }
 
         private void CommandVoid(int code)
@@ -409,6 +416,32 @@ namespace BmwDeepObd
                 Android.Util.Log.Info(Tag, sb.ToString());
 #endif
                 return result;
+            }
+            finally
+            {
+                data.Recycle();
+                reply.Recycle();
+            }
+        }
+
+        private int CommandGetDataSize(int code)
+        {
+            if (_binder == null)
+            {
+                throw new RemoteException("Not bound");
+            }
+            Parcel data = Parcel.Obtain();
+            Parcel reply = Parcel.Obtain();
+            try
+            {
+                data.WriteInterfaceToken(InterfaceToken);
+                _binder.Transact(code, data, reply, 0);
+                reply.ReadException();
+                int dataSize = reply.DataSize();
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("DataSize({0}): 0x{1:X02}", code, dataSize));
+#endif
+                return dataSize;
             }
             finally
             {
