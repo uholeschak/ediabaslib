@@ -67,11 +67,12 @@ namespace BmwDeepObd
                 else
                 {
                     ApiVersion = 2;
+                    int intSize = Java.Lang.Integer.Size / 8;
                     int dataSize = CommandGetDataSize(57);
 #if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("Command 57 data size: {0}", dataSize));
+                    Android.Util.Log.Info(Tag, string.Format("Command 57 data size: {0}, int size: {1}", dataSize, intSize));
 #endif
-                    if (dataSize == 8)
+                    if (dataSize >= intSize)
                     {
                         ApiVersion = 3;
                     }
