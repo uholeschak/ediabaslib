@@ -180,6 +180,8 @@
   <string name="none_found">Устройство не найдено</string>
   <string name="bt_not_enabled">Bluetooth не активирован</string>
   <string name="bt_mtc_service_error">Bluetooth подключён, но обмен данными отсутствует.\nИспользуется ограниченный режим. Пожалуйста, соедините устройства через меню телефона.</string>
+  <!--Translate-->
+  <string name="bt_mtc_antenna_info">For Android radios it\'s recommended to connect an additional antenna cable to the internal Bluetooth module and lead it through the enclosure.\nThe antenna cable should have a length of 15.5 mm for modules with antenna cable and 16.0 mm for modules without antenna cable.</string>
   <string name="title_paired_devices">Авторизированные устройства</string>
   <string name="title_other_devices">Другие доступные устройства</string>
   <string name="button_scan">Поиск устройств</string>

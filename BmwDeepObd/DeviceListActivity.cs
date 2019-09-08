@@ -71,6 +71,13 @@ namespace BmwDeepObd
             DeleteDevice,       // delete device
         }
 
+        public class InstanceData
+        {
+            public bool MtcAntennaInfoShown { get; set; }
+            public bool MtcErrorShown { get; set; }
+            public bool MtcOffline { get; set; }
+        }
+
         private static readonly Java.Util.UUID SppUuid = Java.Util.UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const int ResponseTimeout = 1000;
@@ -85,6 +92,7 @@ namespace BmwDeepObd
         public const string ExtraCallAdapterConfig = "adapter_configuration";
 
         // Member fields
+        private InstanceData _instanceData = new InstanceData();
         private BluetoothAdapter _btAdapter;
         private Timer _deviceUpdateTimer;
         private static ArrayAdapter<string> _pairedDevicesArrayAdapter;
@@ -94,8 +102,6 @@ namespace BmwDeepObd
         private ProgressBar _progressBar;
         private Button _scanButton;
         private ActivityCommon _activityCommon;
-        private bool _mtcErrorDisplayed;
-        private bool _mtcOffline;
         private string _appDataDir;
         private readonly StringBuilder _sbLog = new StringBuilder();
         private readonly AutoResetEvent _connectedEvent = new AutoResetEvent(false);
@@ -108,6 +114,10 @@ namespace BmwDeepObd
         {
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate (savedInstanceState);
+            if (savedInstanceState != null)
+            {
+                _instanceData = ActivityCommon.GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
+            }
 
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
@@ -210,6 +220,12 @@ namespace BmwDeepObd
             {
                 UpdatePairedDevices();
             }
+        }
+
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            ActivityCommon.StoreInstanceState(outState, _instanceData);
+            base.OnSaveInstanceState(outState);
         }
 
         protected override void OnStart()
@@ -350,14 +366,14 @@ namespace BmwDeepObd
             {
                 FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
 
-                sbyte btState = mtcServiceConnection.GetBtState();
                 bool autoConnect = mtcServiceConnection.GetAutoConnect();
 #if DEBUG
+                sbyte btState = mtcServiceConnection.GetBtState();
                 Android.Util.Log.Info(Tag, string.Format("UpdateMtcDevices: api={0}, time={1:yyyy-MM-dd HH:mm:ss}", mtcServiceConnection.ApiVersion, DateTime.Now));
                 Android.Util.Log.Info(Tag, string.Format("BtState: {0}", btState));
                 Android.Util.Log.Info(Tag, string.Format("AutoConnect: {0}", autoConnect));
 #endif
-                bool oldOffline = _mtcOffline;
+                bool oldOffline = _instanceData.MtcOffline;
                 bool newOffline = false;
                 if (!autoConnect)
                 {
@@ -367,15 +383,15 @@ namespace BmwDeepObd
                         newOffline = true;
                     }
                 }
-                _mtcOffline = newOffline;
+                _instanceData.MtcOffline = newOffline;
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("MTC offline: {0}", _mtcOffline));
 #endif
-                if (_mtcOffline)
+                if (_instanceData.MtcOffline)
                 {
-                    if (!_mtcErrorDisplayed)
+                    if (!_instanceData.MtcErrorShown)
                     {
-                        _mtcErrorDisplayed = true;
+                        _instanceData.MtcErrorShown = true;
                         _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_service_error), Resource.String.alert_title_warning);
                     }
                     UpdatePairedDevices();
@@ -383,7 +399,13 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (oldOffline != _mtcOffline)
+                if (!_instanceData.MtcAntennaInfoShown)
+                {
+                    _instanceData.MtcAntennaInfoShown = true;
+                    _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_antenna_info), Resource.String.alert_title_info);
+                }
+
+                if (oldOffline != _instanceData.MtcOffline)
                 {
                     ShowScanState(false);
                 }
@@ -519,7 +541,7 @@ namespace BmwDeepObd
         /// <param name="enabled">True if scanning is enabled</param>
         private void ShowScanState(bool enabled)
         {
-            if (_activityCommon.MtcBtServiceBound && _mtcOffline)
+            if (_activityCommon.MtcBtServiceBound && _instanceData.MtcOffline)
             {
                 _progressBar.Visibility = ViewStates.Invisible;
                 SetTitle(Resource.String.select_device);
@@ -1517,7 +1539,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (_activityCommon.MtcBtServiceBound && !_mtcOffline)
+                if (_activityCommon.MtcBtServiceBound && !_instanceData.MtcOffline)
                 {
                     SelectMtcDeviceAction(name, address, paired);
                 }
