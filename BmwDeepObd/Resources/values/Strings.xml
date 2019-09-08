@@ -156,6 +156,7 @@
   <string name="none_found">No devices found</string>
   <string name="bt_not_enabled">Bluetooth is not enabled</string>
   <string name="bt_mtc_service_error">The Bluetooth service is connected, but delivers no data.\nA restricted mode will be used, please pair the devices in the phone menu.</string>
+  <string name="bt_mtc_antenna_info">For Android radios it\'s recommended to connect an additional antenna cable to the internal Bluetooth module and lead it through the enclosure.\nThe antenna cable should have a length of 15.5 mm for modules with antenna cable and 16.0 mm for modules without antenna cable.</string>
   <string name="title_paired_devices">Paired devices</string>
   <string name="title_other_devices">Other available devices</string>
   <string name="button_scan">Scan for devices</string>
