@@ -3677,10 +3677,39 @@ namespace BmwDeepObd
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(message))
+                    try
                     {
-                        sb.Append("\nInformation:\n");
-                        sb.Append(message);
+                        StringBuilder sbProps = new StringBuilder();
+                        Java.Util.Properties sysProps = Java.Lang.JavaSystem.Properties;
+                        if (sysProps != null)
+                        {
+                            foreach (string propKey in sysProps.StringPropertyNames())
+                            {
+                                if (!propKey.StartsWith("java.", StringComparison.OrdinalIgnoreCase) &&
+                                    !propKey.StartsWith("line.", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    string propValue = sysProps.GetProperty(propKey);
+                                    if (!string.IsNullOrWhiteSpace(propValue))
+                                    {
+                                        sbProps.Append("\n- '");
+                                        sbProps.Append(propKey);
+                                        sbProps.Append("': '");
+                                        sbProps.Append(propValue);
+                                        sbProps.Append("'");
+                                    }
+                                }
+                            }
+
+                            if (sbProps.Length > 0)
+                            {
+                                sb.Append("\nSystem properties:");
+                                sb.Append(sbProps);
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
                     }
 
                     if (!string.IsNullOrEmpty(traceFile))
@@ -3697,6 +3726,12 @@ namespace BmwDeepObd
                                 sb.Append(entry.Value);
                             }
                         }
+                    }
+
+                    if (!string.IsNullOrEmpty(message))
+                    {
+                        sb.Append("\nInformation:\n");
+                        sb.Append(message);
                     }
 
                     bool infoResult = GetMailInfo(responseDownloadXml, out string dbId, out string commitId, out string mailHost, out int mailPort, out bool mailSsl,
