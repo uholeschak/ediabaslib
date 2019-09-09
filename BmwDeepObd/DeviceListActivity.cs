@@ -399,11 +399,13 @@ namespace BmwDeepObd
                     return;
                 }
 
+#if false
                 if (!_instanceData.MtcAntennaInfoShown)
                 {
                     _instanceData.MtcAntennaInfoShown = true;
                     _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_antenna_info), Resource.String.alert_title_info);
                 }
+#endif
 
                 if (oldOffline != _instanceData.MtcOffline)
                 {
