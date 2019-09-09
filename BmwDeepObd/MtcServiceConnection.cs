@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 
 namespace BmwDeepObd
@@ -67,12 +68,7 @@ namespace BmwDeepObd
                 else
                 {
                     ApiVersion = 2;
-                    int intSize = Java.Lang.Integer.Size / 8;
-                    int dataSize = CommandGetDataSize(57);
-#if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("Command 57 data size: {0}, int size: {1}", dataSize, intSize));
-#endif
-                    if (dataSize >= intSize)
+                    if (IsHct3())
                     {
                         ApiVersion = 3;
                     }
@@ -107,6 +103,41 @@ namespace BmwDeepObd
 #if DEBUG
             Android.Util.Log.Info(Tag, "MTC Service disconnected");
 #endif
+        }
+
+        private bool IsHct3()
+        {
+            try
+            {
+                IList<PackageInfo> installedPackages = _context?.PackageManager.GetInstalledPackages(PackageInfoFlags.MatchSystemOnly);
+                if (installedPackages == null)
+                {
+                    return false;
+                }
+
+                foreach (PackageInfo packageInfo in installedPackages)
+                {
+                    ApplicationInfo appInfo = packageInfo.ApplicationInfo;
+                    if (appInfo != null)
+                    {
+                        string sourceDir = appInfo.PublicSourceDir;
+                        if (!string.IsNullOrEmpty(sourceDir))
+                        {
+                            string fileName = System.IO.Path.GetFileName(sourceDir);
+                            if (!string.IsNullOrEmpty(fileName) && fileName.Contains("HCT3", StringComparison.OrdinalIgnoreCase))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public void Init()
@@ -425,6 +456,7 @@ namespace BmwDeepObd
             }
         }
 
+        // ReSharper disable once UnusedMember.Local
         private int CommandGetDataSize(int code)
         {
             if (_binder == null)
