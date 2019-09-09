@@ -3704,6 +3704,7 @@ namespace BmwDeepObd
                             {
                                 sb.Append("\nSystem properties:");
                                 sb.Append(sbProps);
+                                sb.Append("\n");
                             }
                         }
                     }
