@@ -385,7 +385,7 @@ namespace BmwDeepObd
                 }
                 _instanceData.MtcOffline = newOffline;
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("MTC offline: {0}", _mtcOffline));
+                Android.Util.Log.Info(Tag, string.Format("MTC offline: {0}", _instanceData.MtcOffline));
 #endif
                 if (_instanceData.MtcOffline)
                 {
