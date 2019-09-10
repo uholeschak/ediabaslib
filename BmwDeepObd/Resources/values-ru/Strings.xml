@@ -269,6 +269,8 @@
 
   <!-- Bluetooth -->
   <string name="mtc_disconnect_warn">Для стабильной связи с адаптером, соедините радио с любым имеющимся смартфоном.\nХотите продолжить без подключения смартфона?</string>
+  <!--Translate-->
+  <string name="mtc_not_bound_warn">The Bluetooth service is not active, please try to start the app again later.\nDo you want to continue anyway?</string>
 
   <!-- Wi-Fi-->
   <string name="connected_with_wifi_adapter">В настоящее время вы подключены к Wi-Fi адаптеру.\nДля получения доступа в интернет необходимо отключить адаптер.\nОтключить Wi-Fi?</string>
