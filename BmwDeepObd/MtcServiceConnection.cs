@@ -16,6 +16,7 @@ namespace BmwDeepObd
         public const string ServiceClsV1 = @"android.microntek.mtcser.BTSerialService";
         public const string ServiceClsV2 = @"android.microntek.mtcser.BlueToothService";
         public delegate void ServiceConnectedDelegate(bool connected);
+        private static bool? _isHct3;
         // ReSharper disable once NotAccessedField.Local
         private readonly Context _context;
         private readonly ServiceConnectedDelegate _connectedHandler;
@@ -107,12 +108,19 @@ namespace BmwDeepObd
 
         private bool IsHct3()
         {
+            if (_isHct3.HasValue)
+            {
+                return _isHct3.Value;
+            }
+
+            _isHct3 = false;
+
             try
             {
                 IList<PackageInfo> installedPackages = _context?.PackageManager.GetInstalledPackages(PackageInfoFlags.MatchSystemOnly);
                 if (installedPackages == null)
                 {
-                    return false;
+                    return _isHct3.Value;
                 }
 
                 foreach (PackageInfo packageInfo in installedPackages)
@@ -127,18 +135,19 @@ namespace BmwDeepObd
                             string fileName = System.IO.Path.GetFileName(sourceDir);
                             if (!string.IsNullOrEmpty(fileName) && fileName.Contains("HCT3", StringComparison.OrdinalIgnoreCase))
                             {
-                                return true;
+                                _isHct3 = true;
+                                break;
                             }
                         }
                     }
                 }
-
-                return false;
             }
             catch (Exception)
             {
-                return false;
+                // ignored
             }
+
+            return _isHct3.Value;
         }
 
         public void Init()
