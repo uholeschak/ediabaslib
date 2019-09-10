@@ -620,8 +620,7 @@ namespace BmwDeepObd
 
         public static bool ActivityStartedFromMain { get; set; }
 
-        // default is true, to disable warning at startup
-        public static bool MtcBtConnectState { get; set; } = true;
+        public static bool MtcBtConnectState { get; set; }
 
         public static bool BtInitiallyEnabled { get; set; }
 
@@ -1976,17 +1975,29 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-                if (MtcBtConnected)
+
+                bool bound = MtcBtServiceBound;
+                if (bound)
                 {
-                    return false;
+                    if (MtcBtConnected)
+                    {
+                        return false;
+                    }
+                    if (MtcBtDisconnectWarnShown)
+                    {
+                        return false;
+                    }
                 }
-                if (MtcBtDisconnectWarnShown)
+
+                int msgId = Resource.String.mtc_disconnect_warn;
+                if (!bound)
                 {
-                    return false;
+                    msgId = Resource.String.mtc_not_bound_warn;
                 }
+
                 bool ignoreDismiss = false;
                 AlertDialog alertDialog = new AlertDialog.Builder(_context)
-                    .SetMessage(Resource.String.mtc_disconnect_warn)
+                    .SetMessage(msgId)
                     .SetTitle(Resource.String.alert_title_warning)
                     .SetPositiveButton(Resource.String.button_yes, (s, e) =>
                     {
@@ -2007,7 +2018,11 @@ namespace BmwDeepObd
                         handler(true);
                     }
                 };
-                MtcBtDisconnectWarnShown = true;
+
+                if (bound)
+                {
+                    MtcBtDisconnectWarnShown = true;
+                }
                 return true;
             }
             if (_selectedInterface == InterfaceType.ElmWifi || _selectedInterface == InterfaceType.DeepObdWifi)

@@ -244,6 +244,7 @@
 
   <!-- Bluetooth -->
   <string name="mtc_disconnect_warn">For a stable communication with the adapter it is recommended to pair any additional smartphone with the radio.\nDo you want to continue anyway?</string>
+  <string name="mtc_not_bound_warn">The Bluetooth service is not active, please try to start the app again later.\nDo you want to continue anyway?</string>
 
   <!-- Wi-Fi-->
   <string name="connected_with_wifi_adapter">You are currently connected to a Wi-Fi adapter.\nFor internet access disconnection of the adapter is required.\nDo you want to disable Wi-Fi now?</string>
