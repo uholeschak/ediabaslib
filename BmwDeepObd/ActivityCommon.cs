@@ -3713,6 +3713,46 @@ namespace BmwDeepObd
                         // ignored
                     }
 
+                    try
+                    {
+                        StringBuilder sbPackages = new StringBuilder();
+                        IList<PackageInfo> installedPackages = _packageManager?.GetInstalledPackages(PackageInfoFlags.MatchSystemOnly);
+                        if (installedPackages != null)
+                        {
+                            foreach (PackageInfo packageInfoLocal in installedPackages)
+                            {
+                                ApplicationInfo appInfo = packageInfoLocal.ApplicationInfo;
+                                if (appInfo != null)
+                                {
+                                    string sourceDir = appInfo.PublicSourceDir;
+                                    if (!string.IsNullOrEmpty(appInfo.PackageName) && !string.IsNullOrEmpty(sourceDir))
+                                    {
+                                        string fileName = Path.GetFileName(sourceDir);
+                                        if (!string.IsNullOrEmpty(fileName))
+                                        {
+                                            sbPackages.Append("\n- '");
+                                            sbPackages.Append(appInfo.PackageName);
+                                            sbPackages.Append("': '");
+                                            sbPackages.Append(fileName);
+                                            sbPackages.Append("'");
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (sbPackages.Length > 0)
+                            {
+                                sb.Append("\nSystem packages:");
+                                sb.Append(sbPackages);
+                                sb.Append("\n");
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
                     if (!string.IsNullOrEmpty(traceFile))
                     {
                         Dictionary<string, int> wordDict = ExtractKeyWords(traceFile, wordRegEx, maxWords, linesRegEx, null);
