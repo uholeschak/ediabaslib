@@ -3740,8 +3740,9 @@ namespace BmwDeepObd
                                 if (appInfo != null)
                                 {
                                     string sourceDir = appInfo.PublicSourceDir;
-                                    if (!string.IsNullOrEmpty(sourceDir) && !string.IsNullOrEmpty(appInfo.PackageName) &&
-                                        appInfo.PackageName.Contains("microntek", StringComparison.OrdinalIgnoreCase))
+                                    string packageName = appInfo.PackageName;
+                                    if (!string.IsNullOrEmpty(sourceDir) && !string.IsNullOrEmpty(packageName) &&
+                                        (packageName.Contains("microntek", StringComparison.OrdinalIgnoreCase) || packageName.Contains("hct", StringComparison.OrdinalIgnoreCase)))
                                     {
                                         string fileName = Path.GetFileName(sourceDir);
                                         if (!string.IsNullOrEmpty(fileName))
