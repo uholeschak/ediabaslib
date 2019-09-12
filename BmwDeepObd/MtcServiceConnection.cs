@@ -224,7 +224,7 @@ namespace BmwDeepObd
                 }
 
                 byte btModuleIdx = cfgArray[4 + 4 + 4 + 24 + 16 + 7];
-                if (btModuleIdx == 0 || btModuleIdx >= BtModulesNames.Length)
+                if (btModuleIdx >= BtModulesNames.Length)
                 {
                     return null;
                 }
