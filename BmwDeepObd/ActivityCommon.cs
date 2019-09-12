@@ -3670,6 +3670,11 @@ namespace BmwDeepObd
                             sb.Append(string.Format("\nMTC API Version: {0}", _mtcServiceConnection.ApiVersion));
                             try
                             {
+                                string btModuleName = _mtcServiceConnection.CarManagerGetBtModuleName();
+                                if (!string.IsNullOrEmpty(btModuleName))
+                                {
+                                    sb.Append(string.Format("\nMTC BT module name: {0}", btModuleName));
+                                }
                                 IList<string> matchList = _mtcServiceConnection.GetMatchList();
                                 foreach (string device in matchList)
                                 {
