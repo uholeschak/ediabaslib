@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
@@ -157,7 +158,8 @@ namespace BmwDeepObd
             {
                 Java.Lang.Class carManager = Java.Lang.Class.ForName(@"android.microntek.CarManager");
                 Java.Lang.Object carManagerInst = carManager.NewInstance();
-                Java.Lang.Reflect.Method methodGetParameters = carManager.GetDeclaredMethod(@"getParameters", Java.Lang.Class.FromType(typeof(Java.Lang.String)));
+                Java.Lang.Reflect.Method methodGetParameters =
+                    carManager.GetDeclaredMethod(@"getParameters", Java.Lang.Class.FromType(typeof(Java.Lang.String)));
                 if (methodGetParameters == null)
                 {
                     return null;
@@ -167,6 +169,20 @@ namespace BmwDeepObd
                 Java.Lang.String paramString = paramResult.JavaCast<Java.Lang.String>();
 
                 return paramString.ToString();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static byte[] CarManagerGetCfg(bool user)
+        {
+            try
+            {
+                string cfgString = CarManagerGetParameters(user ? @"cfg_user=" : @"cfg_factory=");
+                string[] cfgArray = cfgString?.Split(',');
+                return cfgArray?.Select(byte.Parse).ToArray();
             }
             catch (Exception)
             {
