@@ -27,6 +27,8 @@ namespace BmwDeepObd
         // ReSharper disable once NotAccessedField.Local
         private readonly Context _context;
         private readonly ServiceConnectedDelegate _connectedHandler;
+        private Java.Lang.Class _carManager;
+        private Java.Lang.Object _carManagerInst;
         private IBinder _binder;
         private bool _bound;
         public bool Bound
@@ -157,20 +159,36 @@ namespace BmwDeepObd
             return _isHct3.Value;
         }
 
-        public static string CarManagerGetParameters(string args)
+        public string CarManagerGetParameters(string args)
         {
             try
             {
-                Java.Lang.Class carManager = Java.Lang.Class.ForName(@"android.microntek.CarManager");
-                Java.Lang.Object carManagerInst = carManager.NewInstance();
+                if (_carManager == null)
+                {
+                    _carManager = Java.Lang.Class.ForName(@"android.microntek.CarManager");
+                }
+                if (_carManager == null)
+                {
+                    return null;
+                }
+
+                if (_carManagerInst == null)
+                {
+                    _carManagerInst = _carManager.NewInstance();
+                }
+                if (_carManagerInst == null)
+                {
+                    return null;
+                }
+
                 Java.Lang.Reflect.Method methodGetParameters =
-                    carManager.GetDeclaredMethod(@"getParameters", Java.Lang.Class.FromType(typeof(Java.Lang.String)));
+                    _carManager.GetDeclaredMethod(@"getParameters", Java.Lang.Class.FromType(typeof(Java.Lang.String)));
                 if (methodGetParameters == null)
                 {
                     return null;
                 }
 
-                Java.Lang.Object paramResult = methodGetParameters.Invoke(carManagerInst, new Java.Lang.String(args));
+                Java.Lang.Object paramResult = methodGetParameters.Invoke(_carManagerInst, new Java.Lang.String(args));
                 Java.Lang.String paramString = paramResult.JavaCast<Java.Lang.String>();
 
                 return paramString.ToString();
@@ -181,7 +199,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static byte[] CarManagerGetCfg(bool user)
+        public byte[] CarManagerGetCfg(bool user)
         {
             try
             {
@@ -195,7 +213,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static string CarManagerGetBtModuleName()
+        public string CarManagerGetBtModuleName()
         {
             try
             {
@@ -205,8 +223,8 @@ namespace BmwDeepObd
                     return null;
                 }
 
-                byte btModuleIdx = cfgArray[4 + 4 + 4 + 24 + 16 + 8];
-                if (btModuleIdx >= BtModulesNames.Length)
+                byte btModuleIdx = cfgArray[4 + 4 + 4 + 24 + 16 + 7];
+                if (btModuleIdx == 0 || btModuleIdx >= BtModulesNames.Length)
                 {
                     return null;
                 }
