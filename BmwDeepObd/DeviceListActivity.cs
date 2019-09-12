@@ -399,15 +399,17 @@ namespace BmwDeepObd
                     return;
                 }
 
-                string btModuleName = mtcServiceConnection.CarManagerGetBtModuleName();
-                if (!string.IsNullOrEmpty(btModuleName) &&
-                    string.Compare(btModuleName, "WQ_BC6", StringComparison.OrdinalIgnoreCase) == 0)
+                if (!_instanceData.MtcAntennaInfoShown)
                 {
-                    if (!_instanceData.MtcAntennaInfoShown)
+                    string btModuleName = mtcServiceConnection.CarManagerGetBtModuleName();
+                    if (!string.IsNullOrEmpty(btModuleName) &&
+                        string.Compare(btModuleName, "WQ_BC6", StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        _instanceData.MtcAntennaInfoShown = true;
-                        _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_antenna_info), Resource.String.alert_title_info);
+                        _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_antenna_info),
+                            Resource.String.alert_title_info);
                     }
+                    // check only once
+                    _instanceData.MtcAntennaInfoShown = true;
                 }
 
                 if (oldOffline != _instanceData.MtcOffline)
