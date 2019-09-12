@@ -190,6 +190,24 @@ namespace BmwDeepObd
             }
         }
 
+        public static int CarManagerGetBtModuleType()
+        {
+            try
+            {
+                byte[] cfgArray = CarManagerGetCfg(false);
+                if (cfgArray == null || cfgArray.Length != 128)
+                {
+                    return -1;
+                }
+
+                return cfgArray[4 + 4 + 4 + 24 + 16 + 8];
+            }
+            catch (Exception)
+            {
+                return -1;
+            }
+        }
+
         public void Init()
         {
             CommandVoid(1);
