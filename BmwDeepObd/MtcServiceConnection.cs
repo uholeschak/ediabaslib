@@ -17,6 +17,11 @@ namespace BmwDeepObd
         public const string ServicePkg = @"android.microntek.mtcser";
         public const string ServiceClsV1 = @"android.microntek.mtcser.BTSerialService";
         public const string ServiceClsV2 = @"android.microntek.mtcser.BlueToothService";
+        public static string[] BtModulesNames =
+        {
+            "NO", "MD725", "WQ_BC5", "WQ_BC6", "WQ_BC8", "Parrot_FC6000T", "SD-968", "SD-BC6", "SD-GT936", "IVT-i145",
+            "SD-8350"
+        };
         public delegate void ServiceConnectedDelegate(bool connected);
         private static bool? _isHct3;
         // ReSharper disable once NotAccessedField.Local
@@ -190,21 +195,27 @@ namespace BmwDeepObd
             }
         }
 
-        public static int CarManagerGetBtModuleType()
+        public static string CarManagerGetBtModuleName()
         {
             try
             {
                 byte[] cfgArray = CarManagerGetCfg(false);
                 if (cfgArray == null || cfgArray.Length != 128)
                 {
-                    return -1;
+                    return null;
                 }
 
-                return cfgArray[4 + 4 + 4 + 24 + 16 + 8];
+                byte btModuleIdx = cfgArray[4 + 4 + 4 + 24 + 16 + 8];
+                if (btModuleIdx >= BtModulesNames.Length)
+                {
+                    return null;
+                }
+
+                return BtModulesNames[btModuleIdx];
             }
             catch (Exception)
             {
-                return -1;
+                return null;
             }
         }
 
