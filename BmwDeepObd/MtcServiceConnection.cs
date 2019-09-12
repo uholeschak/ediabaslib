@@ -157,24 +157,13 @@ namespace BmwDeepObd
             {
                 Java.Lang.Class carManager = Java.Lang.Class.ForName(@"android.microntek.CarManager");
                 Java.Lang.Object carManagerInst = carManager.NewInstance();
-                Java.Lang.Reflect.Method[] methods = carManager.GetDeclaredMethods();
-                Java.Lang.Reflect.Method methodGetParameters = null;
-                foreach (Java.Lang.Reflect.Method method in methods)
-                {
-                    if (string.Compare(method.Name, "getParameters", StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        methodGetParameters = method;
-                        break;
-                    }
-                }
-
+                Java.Lang.Reflect.Method methodGetParameters = carManager.GetDeclaredMethod(@"getParameters", Java.Lang.Class.FromType(typeof(Java.Lang.String)));
                 if (methodGetParameters == null)
                 {
                     return null;
                 }
 
-                Java.Lang.Object[] pars = { new Java.Lang.String(args) };
-                Java.Lang.Object paramResult = methodGetParameters.Invoke(carManagerInst, pars);
+                Java.Lang.Object paramResult = methodGetParameters.Invoke(carManagerInst, new Java.Lang.String(args));
                 Java.Lang.String paramString = paramResult.JavaCast<Java.Lang.String>();
 
                 return paramString.ToString();
