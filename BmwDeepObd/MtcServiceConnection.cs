@@ -224,12 +224,24 @@ namespace BmwDeepObd
                 }
 
                 byte btModuleIdx = cfgArray[4 + 4 + 4 + 24 + 16 + 7];
-                if (btModuleIdx >= BtModulesNames.Length)
+                if (btModuleIdx == 0 || btModuleIdx >= BtModulesNames.Length)
                 {
                     return null;
                 }
 
                 return BtModulesNames[btModuleIdx];
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public string CarManagerGetMcuVersion()
+        {
+            try
+            {
+                return CarManagerGetParameters("sta_mcu_version=");
             }
             catch (Exception)
             {
