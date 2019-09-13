@@ -73,6 +73,7 @@ namespace BmwDeepObd
 
         public class InstanceData
         {
+            public string MtcBtModuleName { get; set; }
             public bool MtcAntennaInfoShown { get; set; }
             public bool MtcErrorShown { get; set; }
             public bool MtcOffline { get; set; }
@@ -399,17 +400,17 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (!_instanceData.MtcAntennaInfoShown)
+                if (_instanceData.MtcBtModuleName == null)
                 {
                     string btModuleName = mtcServiceConnection.CarManagerGetBtModuleName();
-                    if (!string.IsNullOrEmpty(btModuleName) &&
-                        string.Compare(btModuleName, "WQ_BC6", StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_antenna_info),
-                            Resource.String.alert_title_info);
-                    }
-                    // check only once
+                    _instanceData.MtcBtModuleName = btModuleName ?? string.Empty;
+                }
+
+                if (!_instanceData.MtcAntennaInfoShown && !string.IsNullOrEmpty(_instanceData.MtcBtModuleName) &&
+                    string.Compare(_instanceData.MtcBtModuleName, "WQ_BC6", StringComparison.OrdinalIgnoreCase) == 0)
+                {
                     _instanceData.MtcAntennaInfoShown = true;
+                    _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_antenna_info), Resource.String.alert_title_info);
                 }
 
                 if (oldOffline != _instanceData.MtcOffline)
