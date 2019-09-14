@@ -29,7 +29,8 @@ namespace BmwDeepObd
             "SD-BC6",
             "SD-GT936",
             "IVT-i145",
-            "SD-8350"
+            "SD-8350",
+            "WQ_RF210"
         };
         public delegate void ServiceConnectedDelegate(bool connected);
         private static bool? _isHct3;
