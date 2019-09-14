@@ -101,6 +101,7 @@ namespace BmwDeepObd
         private Receiver _receiver;
         private AlertDialog _alertInfoDialog;
         private ProgressBar _progressBar;
+        private TextView _textViewTitlePairedDevices;
         private Button _scanButton;
         private ActivityCommon _activityCommon;
         private string _appDataDir;
@@ -159,6 +160,7 @@ namespace BmwDeepObd
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
 
             _progressBar = FindViewById<ProgressBar>(Resource.Id.progress_bar);
+            _textViewTitlePairedDevices = FindViewById<TextView>(Resource.Id.title_paired_devices);
             // Initialize the button to perform device discovery
             _scanButton = FindViewById<Button>(Resource.Id.button_scan);
             _scanButton.Click += (sender, e) =>
@@ -404,6 +406,20 @@ namespace BmwDeepObd
                 {
                     string btModuleName = mtcServiceConnection.CarManagerGetBtModuleName();
                     _instanceData.MtcBtModuleName = btModuleName ?? string.Empty;
+                }
+
+                StringBuilder sbTitle = new StringBuilder();
+                sbTitle.Append(GetString(Resource.String.title_paired_devices));
+                if (!string.IsNullOrEmpty(_instanceData.MtcBtModuleName))
+                {
+                    sbTitle.Append(" ");
+                    sbTitle.Append(string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bt_module_name), _instanceData.MtcBtModuleName));
+                }
+
+                string titlePairedDevices = sbTitle.ToString();
+                if (_textViewTitlePairedDevices.Text != titlePairedDevices)
+                {
+                    _textViewTitlePairedDevices.Text = titlePairedDevices;
                 }
 
                 if (!_instanceData.MtcAntennaInfoShown && !string.IsNullOrEmpty(_instanceData.MtcBtModuleName) &&
