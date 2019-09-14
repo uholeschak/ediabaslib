@@ -249,6 +249,18 @@ namespace BmwDeepObd
             }
         }
 
+        public string CarManagerGetMcuDate()
+        {
+            try
+            {
+                return CarManagerGetParameters("sta_mcu_date=");
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public void Init()
         {
             CommandVoid(1);

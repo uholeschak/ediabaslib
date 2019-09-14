@@ -3682,6 +3682,12 @@ namespace BmwDeepObd
                                     sb.Append(string.Format("\nMTC MCU version: {0}", mcuVersion));
                                 }
 
+                                string mcuDate = _mtcServiceConnection.CarManagerGetMcuDate();
+                                if (!string.IsNullOrEmpty(mcuDate))
+                                {
+                                    sb.Append(string.Format("\nMTC MCU date: {0}", mcuDate));
+                                }
+
                                 IList<string> matchList = _mtcServiceConnection.GetMatchList();
                                 foreach (string device in matchList)
                                 {
