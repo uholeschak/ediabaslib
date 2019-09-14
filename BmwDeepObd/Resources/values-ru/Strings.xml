@@ -182,6 +182,7 @@
   <string name="bt_mtc_service_error">Bluetooth подключён, но обмен данными отсутствует.\nИспользуется ограниченный режим. Пожалуйста, соедините устройства через меню телефона.</string>
   <!--Translate-->
   <string name="bt_mtc_antenna_info">For some Android radios it\'s recommended to replace the antenna cable of the internal Bluetooth module and lead it through the enclosure.\nThe antenna cable should have a length of 15.5 mm.</string>
+  <string name="bt_module_name">(Bluetooth module: {0})</string>
   <string name="title_paired_devices">Авторизированные устройства</string>
   <string name="title_other_devices">Другие доступные устройства</string>
   <string name="button_scan">Поиск устройств</string>
