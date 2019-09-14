@@ -19,7 +19,16 @@ namespace BmwDeepObd
         public const string ServiceClsV2 = @"android.microntek.mtcser.BlueToothService";
         public static string[] BtModulesNames =
         {
-            "NO", "MD725", "WQ_BC5", "WQ_BC6", "WQ_BC8", "Parrot_FC6000T", "SD-968", "SD-BC6", "SD-GT936", "IVT-i145",
+            "NO",
+            "MD725",
+            "WQ_BC5",
+            "WQ_BC6",
+            "WQ_BC8",
+            "Parrot_FC6000T",
+            "SD-968",
+            "SD-BC6",
+            "SD-GT936",
+            "IVT-i145",
             "SD-8350"
         };
         public delegate void ServiceConnectedDelegate(bool connected);
