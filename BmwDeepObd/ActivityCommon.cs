@@ -444,6 +444,7 @@ namespace BmwDeepObd
         private PowerManager.WakeLock _wakeLockScreenDim;
         private PowerManager.WakeLock _wakeLockCpu;
         private readonly Tuple<LockType, PowerManager.WakeLock>[] _lockArray;
+        private bool _internetCellularRegistered;
         private CellularCallback _cellularCallback;
         private WifiCallback _wifiCallback;
         private Network _mobileNetwork;
@@ -706,6 +707,11 @@ namespace BmwDeepObd
                 }
                 _selectedInterface = value;
                 SetPreferredNetworkInterface();
+
+                if (_activity is ActivityMain)
+                {
+                    UpdateRegisterInternetCellular();
+                }
             }
         }
 
@@ -1076,6 +1082,19 @@ namespace BmwDeepObd
 
             }
             return string.Empty;
+        }
+
+        public bool IsNetworkAdapter()
+        {
+            switch (_selectedInterface)
+            {
+                case InterfaceType.Enet:
+                case InterfaceType.ElmWifi:
+                case InterfaceType.DeepObdWifi:
+                    return true;
+            }
+
+            return false;
         }
 
         public bool IsInterfaceEnabled()
@@ -1541,6 +1560,31 @@ namespace BmwDeepObd
             }
         }
 
+        public bool UpdateRegisterInternetCellular()
+        {
+            bool registerRequired = IsNetworkAdapter();
+            if (registerRequired == _internetCellularRegistered)
+            {
+                return true;
+            }
+
+            if (!registerRequired)
+            {
+                if (_internetCellularRegistered)
+                {
+                    UnRegisterInternetCellular();
+                }
+                return true;
+            }
+
+            if (!_internetCellularRegistered)
+            {
+                RegisterInternetCellular();
+            }
+
+            return true;
+        }
+
         public bool RegisterInternetCellular()
         {
             if (_maConnectivity == null)
@@ -1566,6 +1610,7 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
+                _internetCellularRegistered = true;
                 return true;
             }
             UnRegisterInternetCellular();
@@ -1583,6 +1628,7 @@ namespace BmwDeepObd
             {
                 return false;
             }
+            _internetCellularRegistered = true;
             return true;
         }
 
@@ -1592,6 +1638,8 @@ namespace BmwDeepObd
             {
                 return false;
             }
+
+            _internetCellularRegistered = false;
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
                 if (_networkTimer != null)
@@ -1692,15 +1740,7 @@ namespace BmwDeepObd
 
         public bool SetPreferredNetworkInterface(bool hipri = true)
         {
-            bool forceMobile = false;
-            switch (_selectedInterface)
-            {
-                case InterfaceType.Enet:
-                case InterfaceType.ElmWifi:
-                case InterfaceType.DeepObdWifi:
-                    forceMobile = true;
-                    break;
-            }
+            bool forceMobile = IsNetworkAdapter();
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
