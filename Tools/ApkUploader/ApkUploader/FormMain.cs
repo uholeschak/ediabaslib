@@ -648,13 +648,6 @@ namespace ApkUploader
                                                     sb.AppendLine($"Tester group: {group}");
                                                 }
                                             }
-                                            if (testers.GooglePlusCommunities != null)
-                                            {
-                                                foreach (string community in testers.GooglePlusCommunities)
-                                                {
-                                                    sb.AppendLine($"Tester community: {community}");
-                                                }
-                                            }
                                         }
                                         catch (Exception)
                                         {
