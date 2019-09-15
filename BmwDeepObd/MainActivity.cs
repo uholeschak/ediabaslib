@@ -262,11 +262,11 @@ namespace BmwDeepObd
                     UpdateCheck();
                 }
             }, BroadcastReceived);
-            _activityCommon.RegisterInternetCellular();
             if (_activityRecreated && _instanceData != null)
             {
                 _activityCommon.SelectedInterface = _instanceData.SelectedInterface;
             }
+            _activityCommon.UpdateRegisterInternetCellular();
 
             GetSettings();
             StoreLastAppState(LastAppState.Init);
