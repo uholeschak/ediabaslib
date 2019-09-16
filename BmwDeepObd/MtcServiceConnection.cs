@@ -32,6 +32,7 @@ namespace BmwDeepObd
             "SD-8350",
             "WQ_RF210"
         };
+
         public delegate void ServiceConnectedDelegate(bool connected);
         private static bool? _isHct3;
         // ReSharper disable once NotAccessedField.Local
@@ -129,6 +130,9 @@ namespace BmwDeepObd
         {
             if (_isHct3.HasValue)
             {
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("IsHct3 cache: {0}", _isHct3.Value));
+#endif
                 return _isHct3.Value;
             }
 
@@ -152,10 +156,15 @@ namespace BmwDeepObd
                             !string.IsNullOrEmpty(appInfo.PackageName) && appInfo.PackageName.Contains("microntek", StringComparison.OrdinalIgnoreCase))
                         {
                             string fileName = System.IO.Path.GetFileName(sourceDir);
+#if DEBUG
+                            Android.Util.Log.Info(Tag, string.Format("IsHct3: package name='{0}', file name='{1}'", appInfo.PackageName, fileName));
+#endif
                             if (!string.IsNullOrEmpty(fileName) && fileName.Contains("HCT3", StringComparison.OrdinalIgnoreCase))
                             {
                                 _isHct3 = true;
+#if !DEBUG
                                 break;
+#endif
                             }
                         }
                     }
@@ -165,7 +174,9 @@ namespace BmwDeepObd
             {
                 // ignored
             }
-
+#if DEBUG
+            Android.Util.Log.Info(Tag, string.Format("IsHct3: {0}", _isHct3.Value));
+#endif
             return _isHct3.Value;
         }
 
@@ -239,7 +250,11 @@ namespace BmwDeepObd
                     return null;
                 }
 
-                return BtModulesNames[btModuleIdx];
+                string result = BtModulesNames[btModuleIdx];
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("BT module name: {0}", result));
+#endif
+                return result;
             }
             catch (Exception)
             {
@@ -251,7 +266,11 @@ namespace BmwDeepObd
         {
             try
             {
-                return CarManagerGetParameters("sta_mcu_version=");
+                string result = CarManagerGetParameters("sta_mcu_version=");
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("STA MCU version: {0}", result));
+#endif
+                return result;
             }
             catch (Exception)
             {
@@ -263,7 +282,11 @@ namespace BmwDeepObd
         {
             try
             {
-                return CarManagerGetParameters("sta_mcu_date=");
+                string result = CarManagerGetParameters("sta_mcu_date=");
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("STA MCU date: {0}", result));
+#endif
+                return result;
             }
             catch (Exception)
             {
