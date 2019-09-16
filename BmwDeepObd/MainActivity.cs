@@ -1732,7 +1732,8 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            if (_instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
+            if (ActivityCommon.CollectDebugInfo ||
+                (_instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir)))
             {
                 return _activityCommon.SendTraceFile(_instanceData.AppDataPath, _instanceData.TraceDir, GetType(), handler);
             }
