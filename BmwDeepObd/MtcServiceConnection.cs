@@ -94,7 +94,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                SyncMatchList();
+                //SyncMatchList();  // this command crashes on some devices!
                 _bound = true;
             }
 #pragma warning disable 168
