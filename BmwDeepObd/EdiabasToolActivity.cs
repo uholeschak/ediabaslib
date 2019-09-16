@@ -796,7 +796,8 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool SendTraceFileAlways(EventHandler<EventArgs> handler)
         {
-            if (_instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
+            if (ActivityCommon.CollectDebugInfo ||
+                (_instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir)))
             {
                 if (!EdiabasClose())
                 {

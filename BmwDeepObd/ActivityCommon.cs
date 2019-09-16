@@ -3379,6 +3379,10 @@ namespace BmwDeepObd
 
         public static bool IsTraceFilePresent(string traceDir)
         {
+            if (CollectDebugInfo)
+            {
+                return true;
+            }
             if (string.IsNullOrEmpty(traceDir))
             {
                 return false;
@@ -3505,12 +3509,18 @@ namespace BmwDeepObd
         {
             try
             {
-                string traceFile = Path.Combine(traceDir, TraceFileName);
-                if (!File.Exists(traceFile))
+                string message = null;
+                string traceFile = null;
+                if (!string.IsNullOrEmpty(traceDir))
                 {
-                    return false;
+                    traceFile = Path.Combine(traceDir, TraceFileName);
                 }
-                SendTraceFile(appDataDir, traceFile, null, classType, handler, true);
+                if (string.IsNullOrEmpty(traceFile) ||!File.Exists(traceFile))
+                {
+                    traceFile = null;
+                    message = "No Trace file";
+                }
+                SendTraceFile(appDataDir, traceFile, message, classType, handler, true);
             }
             catch (Exception)
             {
@@ -3798,7 +3808,9 @@ namespace BmwDeepObd
                                     string sourceDir = appInfo.PublicSourceDir;
                                     string packageName = appInfo.PackageName;
                                     if (!string.IsNullOrEmpty(sourceDir) && !string.IsNullOrEmpty(packageName) &&
-                                        (packageName.Contains("microntek", StringComparison.OrdinalIgnoreCase) || packageName.Contains("hct", StringComparison.OrdinalIgnoreCase)))
+                                        (CollectDebugInfo ||
+                                         packageName.Contains("microntek", StringComparison.OrdinalIgnoreCase) ||
+                                         packageName.Contains("hct", StringComparison.OrdinalIgnoreCase)))
                                     {
                                         string fileName = Path.GetFileName(sourceDir);
                                         if (!string.IsNullOrEmpty(fileName))
