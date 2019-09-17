@@ -577,6 +577,10 @@ namespace BmwDeepObd
 
         public MtcServiceConnection MtcServiceConnection => _mtcServiceConnection;
 
+        public bool MtcServiceStarted { get; private set; }
+
+        public long MtcServiceStartTime { get; private set; }
+
         public bool MtcBtDisconnectWarnShown { get; set; }
 
         public static object GlobalLockObject => LockObject;
@@ -1209,6 +1213,9 @@ namespace BmwDeepObd
                         return false;
                     }
                 }
+
+                MtcServiceStartTime = Stopwatch.GetTimestamp();
+                MtcServiceStarted = true;
             }
             catch (Exception)
             {
@@ -1231,6 +1238,7 @@ namespace BmwDeepObd
             {
                 _context.UnbindService(_mtcServiceConnection);
                 _mtcServiceConnection.Bound = false;
+                MtcServiceStarted = false;
             }
             catch (Exception)
             {
@@ -2014,6 +2022,11 @@ namespace BmwDeepObd
             if (_selectedInterface == InterfaceType.Bluetooth)
             {
                 if (!MtcBtService)
+                {
+                    return false;
+                }
+
+                if (!MtcServiceStarted || (Stopwatch.GetTimestamp() - MtcServiceStartTime < 2000 * TickResolMs))
                 {
                     return false;
                 }
