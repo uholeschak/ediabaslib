@@ -237,6 +237,7 @@
     <Compile Include="ResultGridAdapter.cs" />
     <Compile Include="StringAdapter.cs" />
     <Compile Include="StringObjAdapter.cs" />
+    <Compile Include="TextInputDialog.cs" />
     <Compile Include="VagAdaptionActivity.cs" />
     <Compile Include="VagCodingActivity.cs" />
     <Compile Include="VehicleInfoBmw.cs" />
@@ -598,6 +599,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="VehicleInfo\E85EcuCharacteristics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\text_input.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
