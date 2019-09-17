@@ -147,7 +147,6 @@ namespace BmwDeepObd
             public ActivityCommon.InterfaceType SelectedInterface { get; set; }
         }
 
-        private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const string SharedAppName = ActivityCommon.AppNameSpace;
         private const string AppFolderName = ActivityCommon.AppNameSpace;
         private const string EcuDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Obb.php";
@@ -502,7 +501,7 @@ namespace BmwDeepObd
             if (_backPressed)
             {
                 _backPressed = false;
-                if (Stopwatch.GetTimestamp() - _lastBackPressedTime < 2000 * TickResolMs)
+                if (Stopwatch.GetTimestamp() - _lastBackPressedTime < 2000 * ActivityCommon.TickResolMs)
                 {
                     _instanceData.CheckCpuUsage = true;
                     base.OnBackPressed();
@@ -3067,7 +3066,7 @@ namespace BmwDeepObd
                         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                         if (_compileProgress != null)
                         {
-                            if (cpuUsage >= 0 && Stopwatch.GetTimestamp() - startTime > 1000 * TickResolMs)
+                            if (cpuUsage >= 0 && Stopwatch.GetTimestamp() - startTime > 1000 * ActivityCommon.TickResolMs)
                             {
                                 progressUpdated = true;
                                 _compileProgress.SetMessage(GetString(Resource.String.compile_start));

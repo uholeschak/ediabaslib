@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -250,6 +251,7 @@ namespace BmwDeepObd
         public const string SettingBluetoothHciLog = "bluetooth_hci_log";
         private const string MailInfoDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Mail.php";
         private const string UpdateCheckUrl = @"https://www.holeschak.de/BmwDeepObd/Update.php";
+        public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
 #if DEBUG
         private static readonly string Tag = typeof(ActivityCommon).FullName;
 #endif

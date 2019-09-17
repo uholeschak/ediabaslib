@@ -80,7 +80,6 @@ namespace BmwDeepObd
         }
 
         private static readonly Java.Util.UUID SppUuid = Java.Util.UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
-        private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const int ResponseTimeout = 1000;
 
         // Return Intent extra
@@ -1136,7 +1135,7 @@ namespace BmwDeepObd
 
                         return AdapterType.Custom;
                     }
-                    if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * TickResolMs)
+                    if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * ActivityCommon.TickResolMs)
                     {
                         if (responseList.Count >= customData.Length)
                         {
@@ -1340,7 +1339,7 @@ namespace BmwDeepObd
                     LogString("AdapterSerial: " + BitConverter.ToString(adapterSerial).Replace("-", ""));
                     break;
                 }
-                if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * TickResolMs)
+                if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * ActivityCommon.TickResolMs)
                 {
                     LogString("*** Id data timeout");
                     return false;
@@ -1518,7 +1517,7 @@ namespace BmwDeepObd
                 {
                     break;
                 }
-                if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * TickResolMs)
+                if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * ActivityCommon.TickResolMs)
                 {
                     LogString("*** ELM response timeout");
                     break;
