@@ -199,6 +199,9 @@
   <string name="adapter_elm_firmware">Рекомендуется прошить альтернативное программное обеспечение ELM327.\nОткрыть конфигурацию адаптера для обновления программного обеспечения?</string>
   <string name="adapter_cfg_required">Устройство, возможно, требуется настроить.\nХотите получить доступ к конфигурации устройства?</string>
   <string name="adapter_fw_update">Доступно обновление для этого устройства.\nХотите получить доступ к конфигурации устройства, чтобы установить обновление?</string>
+  <!--Translate-->
+  <string name="bt_device_enter_mac">Enter OBD adapter Bluetooth address in the specified format</string>
+  <string name="bt_device_mac_invalid">The Bluetooth address has not the correct format</string>
   <string name="bt_device_connected">(Подключено)</string>
   <string name="bt_device_menu_tite">Выберите одну из нижеперечисленных опций для этого устройства</string>
   <string name="bt_device_select">Выбрать OBD адаптер</string>
