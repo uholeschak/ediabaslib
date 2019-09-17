@@ -178,7 +178,6 @@ namespace BmwDeepObd
         public EdiabasNet Ediabas { get; private set; }
 
         public static readonly Object DataLock = new Object();
-        private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const char DataLogSeparator = '\t';
         public const string NotificationBroadcastInfo = ActivityCommon.AppNameSpace + ".Notification.Info";
         private readonly string _resourceDatalogDate;
@@ -284,7 +283,7 @@ namespace BmwDeepObd
                 JobPageInfo = pageInfo;
                 _lastPageInfo = null;
                 _lastUpdateTime = Stopwatch.GetTimestamp();
-                _lastBatteryUpdateTime = Stopwatch.GetTimestamp() - (100000 * TickResolMs);
+                _lastBatteryUpdateTime = Stopwatch.GetTimestamp() - (100000 * ActivityCommon.TickResolMs);
                 _vagPath = vagPath;
                 _logDir = logDir;
                 _appendLog = appendLog;
@@ -544,7 +543,7 @@ namespace BmwDeepObd
 
         private bool CommEdiabas(JobReader.PageInfo pageInfo)
         {
-            if (Stopwatch.GetTimestamp() - _lastBatteryUpdateTime > 10000 * TickResolMs)
+            if (Stopwatch.GetTimestamp() - _lastBatteryUpdateTime > 10000 * ActivityCommon.TickResolMs)
             {
                 if (ActivityCommon.ReadBatteryVoltage(Ediabas, out double? batteryVoltage, out byte[] adapterSerial))
                 {
@@ -1175,7 +1174,7 @@ namespace BmwDeepObd
 
         private void DataUpdatedEvent()
         {
-            while (Stopwatch.GetTimestamp() - _lastUpdateTime < 100 * TickResolMs)
+            while (Stopwatch.GetTimestamp() - _lastUpdateTime < 100 * ActivityCommon.TickResolMs)
             {
                 if (AbortEdiabasJob())
                 {
