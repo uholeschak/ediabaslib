@@ -174,7 +174,7 @@
   <string name="adapter_elm_firmware">It\'s recommend to update the ELM327 firmware with the replacement firmware.\nDo you want to open the adapter configuration page for firmware update?</string>
   <string name="adapter_cfg_required">The adapter may require configuration.\nDo you want to open the adapter configuration page?</string>
   <string name="adapter_fw_update">There is a firmware update available for this adapter.\nDo you want to open the adapter configuration page for update installation?</string>
-  <string name="bt_device_enter_mac">Enter OBD adapter Bluetooth address in the specified format</string>
+  <string name="bt_device_enter_mac">Enter the Bluetooth address of an already paired OBD adapter in the specified format</string>
   <string name="bt_device_mac_invalid">The Bluetooth address has not the correct format</string>
   <string name="bt_device_connected">(Connected)</string>
   <string name="bt_device_menu_tite">Choose an operation for this device</string>
