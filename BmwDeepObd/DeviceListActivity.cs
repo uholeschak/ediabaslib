@@ -338,7 +338,8 @@ namespace BmwDeepObd
                     }
                 }
             }
-            else
+
+            if (_pairedDevicesArrayAdapter.Count == 0)
             {
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if (_btAdapter.IsEnabled)
@@ -467,6 +468,10 @@ namespace BmwDeepObd
                         }
                     }
                 }
+                if (_pairedDevicesArrayAdapter.Count == 0)
+                {
+                    _pairedDevicesArrayAdapter.Add(Resources.GetText(Resource.String.none_paired));
+                }
 
                 if (deviceList != null)
                 {
@@ -487,10 +492,10 @@ namespace BmwDeepObd
                             _newDevicesArrayAdapter.Add(name + "\n" + address);
                         }
                     }
-                    if (_newDevicesArrayAdapter.Count == 0)
-                    {
-                        _newDevicesArrayAdapter.Add(Resources.GetText(Resource.String.none_found));
-                    }
+                }
+                if (_newDevicesArrayAdapter.Count == 0)
+                {
+                    _newDevicesArrayAdapter.Add(Resources.GetText(Resource.String.none_found));
                 }
             }
 #pragma warning disable 168
@@ -1559,28 +1564,7 @@ namespace BmwDeepObd
                 string info = textView.Text;
                 if (!ExtractDeviceInfo(info, out string name, out string address))
                 {
-                    if (_activityCommon.MtcBtService)
-                    {
-                        TextInputDialog textInputDialog = new TextInputDialog(this);
-                        textInputDialog.Message = GetString(Resource.String.bt_device_enter_mac);
-                        textInputDialog.Text = "00:19:5D:24:B7:64";
-                        textInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
-                        {
-                            address = textInputDialog.Text.Trim().ToUpperInvariant();
-                            Regex regexMac = new Regex(@"^([0-9A-F]{2}[:]){5}([0-9A-F]{2})$", RegexOptions.IgnoreCase);
-                            if (!regexMac.IsMatch(address))
-                            {
-                                _activityCommon.ShowAlert(GetString(Resource.String.bt_device_mac_invalid), Resource.String.alert_title_error);
-                                return;
-                            }
-                            name = address;
-                            DetectAdapter(address, name);
-                        });
-                        textInputDialog.SetNegativeButton(Resource.String.button_abort, (s, arg) =>
-                        {
-                        });
-                        textInputDialog.Show();
-                    }
+                    MtcManualAddressEntry();
                     return;
                 }
 
@@ -1593,6 +1577,37 @@ namespace BmwDeepObd
                     DetectAdapter(address, name);
                 }
             }
+        }
+
+        /// <summary>
+        /// Manual Bluettoth address entry in MTC mode
+        /// </summary>
+        private void MtcManualAddressEntry()
+        {
+            if (!_activityCommon.MtcBtService)
+            {
+                return;
+            }
+
+            TextInputDialog textInputDialog = new TextInputDialog(this);
+            textInputDialog.Message = GetString(Resource.String.bt_device_enter_mac);
+            textInputDialog.Text = "00:19:5D:24:B7:64";
+            textInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
+            {
+                string address = textInputDialog.Text.Trim().ToUpperInvariant();
+                Regex regexMac = new Regex(@"^([0-9A-F]{2}[:]){5}([0-9A-F]{2})$", RegexOptions.IgnoreCase);
+                if (!regexMac.IsMatch(address))
+                {
+                    _activityCommon.ShowAlert(GetString(Resource.String.bt_device_mac_invalid), Resource.String.alert_title_error);
+                    return;
+                }
+                string name = address;
+                DetectAdapter(address, name);
+            });
+            textInputDialog.SetNegativeButton(Resource.String.button_abort, (s, arg) =>
+            {
+            });
+            textInputDialog.Show();
         }
 
         /// <summary>
