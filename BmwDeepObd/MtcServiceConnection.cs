@@ -294,6 +294,18 @@ namespace BmwDeepObd
             }
         }
 
+        public byte[] CommandTest(int code)
+        {
+            try
+            {
+                return CommandGetRawData(code);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public void Init()
         {
             CommandVoid(1);
@@ -610,34 +622,7 @@ namespace BmwDeepObd
             }
         }
 
-        // ReSharper disable once UnusedMember.Local
-        private int CommandGetDataSize(int code)
-        {
-            if (_binder == null)
-            {
-                throw new RemoteException("Not bound");
-            }
-            Parcel data = Parcel.Obtain();
-            Parcel reply = Parcel.Obtain();
-            try
-            {
-                data.WriteInterfaceToken(InterfaceToken);
-                _binder.Transact(code, data, reply, 0);
-                reply.ReadException();
-                int dataSize = reply.DataSize();
-#if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("DataSize({0}): 0x{1:X02}", code, dataSize));
-#endif
-                return dataSize;
-            }
-            finally
-            {
-                data.Recycle();
-                reply.Recycle();
-            }
-        }
-
-        private byte[] CommandGetDataArray(int code)
+        private byte[] CommandGetRawData(int code)
         {
             if (_binder == null)
             {

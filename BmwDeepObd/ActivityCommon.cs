@@ -3761,6 +3761,23 @@ namespace BmwDeepObd
                                 {
                                     sb.Append(string.Format("\nMTC found device: {0}", device));
                                 }
+
+                                if (CollectDebugInfo)
+                                {
+                                    int maxCommand = _mtcServiceConnection.ApiVersion >= 3 ? 30 : 21;
+                                    for (int command = 1; command < maxCommand; command++)
+                                    {
+                                        sb.Append(string.Format("\nMTC command test: {0} =", command));
+                                        byte[] dataArray = _mtcServiceConnection.CommandTest(command);
+                                        if (dataArray != null)
+                                        {
+                                            foreach (byte value in dataArray)
+                                            {
+                                                sb.Append(string.Format(" {0:X02}", value));
+                                            }
+                                        }
+                                    }
+                                }
                             }
                             catch (Exception)
                             {
