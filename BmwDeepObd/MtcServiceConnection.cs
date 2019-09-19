@@ -637,5 +637,39 @@ namespace BmwDeepObd
             }
         }
 
+        private byte[] CommandGetDataArray(int code)
+        {
+            if (_binder == null)
+            {
+                throw new RemoteException("Not bound");
+            }
+            Parcel data = Parcel.Obtain();
+            Parcel reply = Parcel.Obtain();
+            try
+            {
+                data.WriteInterfaceToken(InterfaceToken);
+                _binder.Transact(code, data, reply, 0);
+                reply.ReadException();
+                byte[] dataArray = reply.Marshall();
+#if DEBUG
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                sb.Append(string.Format("DataArray({0}): {1}=", code, dataArray?.Length));
+                if (dataArray != null)
+                {
+                    foreach (byte value in dataArray)
+                    {
+                        sb.Append(string.Format("{0:X02} ", value));
+                    }
+                }
+                Android.Util.Log.Info(Tag, sb.ToString());
+#endif
+                return dataArray;
+            }
+            finally
+            {
+                data.Recycle();
+                reply.Recycle();
+            }
+        }
     }
 }
