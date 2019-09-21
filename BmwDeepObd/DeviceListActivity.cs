@@ -504,7 +504,7 @@ namespace BmwDeepObd
             {
                 // ignored
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("UpdateMtcDevices exception: {0}", ex.Message));
+                Android.Util.Log.Info(Tag, string.Format("UpdateMtcDevices exception: {0}", (ex.Message ?? string.Empty)));
 #endif
             }
         }
@@ -525,7 +525,7 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            string mac = device.Substring(offset, 12);
+            string mac = device.Substring(offset, 12).ToUpperInvariant();
             StringBuilder sb = new StringBuilder();
             address = string.Empty;
             for (int i = 0; i < 12; i += 2)
@@ -710,7 +710,7 @@ namespace BmwDeepObd
                             }
                             catch (Exception ex)
                             {
-                                LogString("*** Connect exception: " + ex.Message);
+                                LogString("*** Connect exception: " + (ex.Message ?? string.Empty));
                                 adapterType = AdapterType.ConnectionFailed;
                             }
                             finally
@@ -749,7 +749,7 @@ namespace BmwDeepObd
                             }
                             catch (Exception ex)
                             {
-                                LogString("*** Connect exception: " + ex.Message);
+                                LogString("*** Connect exception: " + (ex.Message ?? string.Empty));
                                 adapterType = AdapterType.ConnectionFailed;
                             }
                             finally
@@ -758,10 +758,20 @@ namespace BmwDeepObd
                             }
                         }
                     }
+                    else
+                    {
+                        LogString("*** GetRemoteDevice failed");
+                    }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    LogString("*** General exception: " + (ex.Message ?? string.Empty));
                     adapterType = AdapterType.ConnectionFailed;
+                }
+
+                if (_sbLog.Length == 0)
+                {
+                    LogString("Empty log");
                 }
 
                 RunOnUiThread(() =>
@@ -792,6 +802,8 @@ namespace BmwDeepObd
                                         return;
                                     }
                                     _alertInfoDialog = null;
+                                    _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(),
+                                        GetType(), (o, eventArgs) => { });
                                 };
                                 break;
                             }
@@ -1285,7 +1297,7 @@ namespace BmwDeepObd
             }
             catch (Exception ex)
             {
-                LogString("*** Exception: " + ex.Message);
+                LogString("*** Exception: " + (ex.Message ?? string.Empty));
                 return AdapterType.ConnectionFailed;
             }
             LogString("Adapter type: " + adapterType);
