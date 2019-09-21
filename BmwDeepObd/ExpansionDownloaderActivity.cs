@@ -597,7 +597,7 @@ namespace BmwDeepObd
             {
                 // ignored
 #if DEBUG
-                Android.Util.Log.Debug(Tag, "Exception: ", ex.Message);
+                Android.Util.Log.Debug(Tag, "Exception: ", ex.Message ?? string.Empty);
 #endif
             }
 
