@@ -34,7 +34,7 @@ namespace BmwDeepObd
         };
 
         public delegate void ServiceConnectedDelegate(bool connected);
-        private static bool? _isHct3;
+        private static int? _hct3ApiVer;
         // ReSharper disable once NotAccessedField.Local
         private readonly Context _context;
         private readonly ServiceConnectedDelegate _connectedHandler;
@@ -57,6 +57,8 @@ namespace BmwDeepObd
         public bool Connected => _binder != null;
 
         public int ApiVersion { get; private set; }
+
+        public int ApiOffset => ApiVersion > 3 ? 1 : 0;
 
         public MtcServiceConnection(Context context, ServiceConnectedDelegate connectedHandler = null)
         {
@@ -89,9 +91,10 @@ namespace BmwDeepObd
                 else
                 {
                     ApiVersion = 2;
-                    if (IsHct3())
+                    int hct3ApiVer = Hct3ApiVer();
+                    if (hct3ApiVer != 0)
                     {
-                        ApiVersion = 3;
+                        ApiVersion = hct3ApiVer;
                     }
                 }
 
@@ -126,24 +129,24 @@ namespace BmwDeepObd
 #endif
         }
 
-        private bool IsHct3()
+        private int Hct3ApiVer()
         {
-            if (_isHct3.HasValue)
+            if (_hct3ApiVer.HasValue)
             {
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("IsHct3 cache: {0}", _isHct3.Value));
+                Android.Util.Log.Info(Tag, string.Format("Hct3ApiVer cache: {0}", _hct3ApiVer.Value));
 #endif
-                return _isHct3.Value;
+                return _hct3ApiVer.Value;
             }
 
-            _isHct3 = false;
+            _hct3ApiVer = 0;
 
             try
             {
                 IList<PackageInfo> installedPackages = _context?.PackageManager.GetInstalledPackages(PackageInfoFlags.MatchSystemOnly);
                 if (installedPackages == null)
                 {
-                    return _isHct3.Value;
+                    return _hct3ApiVer.Value;
                 }
 
                 foreach (PackageInfo packageInfo in installedPackages)
@@ -157,14 +160,19 @@ namespace BmwDeepObd
                         {
                             string fileName = System.IO.Path.GetFileName(sourceDir);
 #if DEBUG
-                            Android.Util.Log.Info(Tag, string.Format("IsHct3: package name='{0}', file name='{1}'", appInfo.PackageName, fileName));
+                            Android.Util.Log.Info(Tag, string.Format("Hct3ApiVer: package name='{0}', file name='{1}'", appInfo.PackageName, fileName));
 #endif
                             if (!string.IsNullOrEmpty(fileName) && fileName.Contains("HCT3", StringComparison.OrdinalIgnoreCase))
                             {
-                                _isHct3 = true;
-#if !DEBUG
-                                break;
-#endif
+                                if (_hct3ApiVer.Value == 0)
+                                {
+                                    _hct3ApiVer = 3;
+                                }
+
+                                if (fileName.Contains("HCT3C", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    _hct3ApiVer = 4;
+                                }
                             }
                         }
                     }
@@ -175,9 +183,9 @@ namespace BmwDeepObd
                 // ignored
             }
 #if DEBUG
-            Android.Util.Log.Info(Tag, string.Format("IsHct3: {0}", _isHct3.Value));
+            Android.Util.Log.Info(Tag, string.Format("Hct3ApiVer: {0}", _hct3ApiVer.Value));
 #endif
-            return _isHct3.Value;
+            return _hct3ApiVer.Value;
         }
 
         public string CarManagerGetParameters(string args)
@@ -332,82 +340,82 @@ namespace BmwDeepObd
 
         public void SetAutoConnect(bool auto)
         {
-            CommandSetInt(ApiVersion > 2 ? 31 : 22, auto ? 1 : 0);
+            CommandSetInt(ApiVersion > 2 ? 31 + ApiOffset : 22, auto ? 1 : 0);
         }
 
         public bool GetAutoConnect()
         {
-            return CommandGetInt(ApiVersion > 2 ? 32 : 23) != 0;
+            return CommandGetInt(ApiVersion > 2 ? 32 + ApiOffset : 23) != 0;
         }
 
         public void SetAutoAnswer(bool auto)
         {
-            CommandSetInt(ApiVersion > 2 ? 33 : 24, auto ? 1 : 0);
+            CommandSetInt(ApiVersion > 2 ? 33 + ApiOffset : 24, auto ? 1 : 0);
         }
 
         public bool GetAutoAnswer()
         {
-            return CommandGetInt(ApiVersion > 2 ? 34 : 25) != 0;
+            return CommandGetInt(ApiVersion > 2 ? 34 + ApiOffset : 25) != 0;
         }
 
         public void ConnectBt(string mac)
         {
-            CommandMac(ApiVersion > 2 ? 35 : 26, mac);
+            CommandMac(ApiVersion > 2 ? 35 + ApiOffset : 26, mac);
         }
 
         public void DisconnectBt(string mac)
         {
-            CommandMac(ApiVersion > 2 ? 36 : 27, mac);
+            CommandMac(ApiVersion > 2 ? 36 + ApiOffset : 27, mac);
         }
 
         public void ConnectObd(string mac)
         {
-            CommandMac(ApiVersion > 2 ? 37 : 28, mac);
+            CommandMac(ApiVersion > 2 ? 37 + ApiOffset : 28, mac);
         }
 
         public void DisconnectObd(string mac)
         {
-            CommandMac(ApiVersion > 2 ? 38 : 29, mac);
+            CommandMac(ApiVersion > 2 ? 38 + ApiOffset : 29, mac);
         }
 
         public void DeleteObd(string mac)
         {
-            CommandMac(ApiVersion > 2 ? 39 : 30, mac);
+            CommandMac(ApiVersion > 2 ? 39 + ApiOffset : 30, mac);
         }
 
         public void DeleteBt(string mac)
         {
-            CommandMac(ApiVersion > 2 ? 40 : 31, mac);
+            CommandMac(ApiVersion > 2 ? 40 + ApiOffset : 31, mac);
         }
 
         public void SyncMatchList()
         {
-            CommandVoid(ApiVersion > 2 ? 41 : 32);
+            CommandVoid(ApiVersion > 2 ? 41 + ApiOffset : 32);
         }
 
         public IList<string> GetMatchList()
         {
-            return CommandGetList(ApiVersion > 2 ? 42 : 33);
+            return CommandGetList(ApiVersion > 2 ? 42 + ApiOffset : 33);
         }
 
         public IList<string> GetDeviceList()
         {
-            return CommandGetList(ApiVersion > 2 ? 43 : 34);
+            return CommandGetList(ApiVersion > 2 ? 43 + ApiOffset : 34);
         }
 
         public void ScanStart()
         {
-            CommandVoid(ApiVersion > 2 ? 51 : 42);
+            CommandVoid(ApiVersion > 2 ? 51 + ApiOffset : 42);
         }
 
         public void ScanStop()
         {
-            CommandVoid(ApiVersion > 2 ? 52 : 43);
+            CommandVoid(ApiVersion > 2 ? 52 + ApiOffset : 43);
         }
 
         public int GetObdState()
         {
-            return CommandGetInt(ApiVersion > 2 ? 57 : 48);
+            return CommandGetInt(ApiVersion > 2 ? 57 + ApiOffset : 48);
         }
 
         private void CommandVoid(int code)

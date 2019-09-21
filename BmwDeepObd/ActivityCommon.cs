@@ -3764,9 +3764,14 @@ namespace BmwDeepObd
 
                                 if (CollectDebugInfo)
                                 {
-                                    int maxCommand = _mtcServiceConnection.ApiVersion >= 3 ? 30 : 21;
-                                    for (int command = 1; command < maxCommand; command++)
+                                    // getHistoryList
+                                    int lastCommand = _mtcServiceConnection.ApiVersion >= 3 ? 44 + _mtcServiceConnection.ApiOffset : 35;
+                                    for (int command = 1; command <= lastCommand; command++)
                                     {
+                                        if (command >= lastCommand - 15 && command <= lastCommand - 4)
+                                        {   // setModulePassword - syncMatchList
+                                            continue;
+                                        }
                                         sb.Append(string.Format("\nMTC command test: {0} =", command));
                                         byte[] dataArray = _mtcServiceConnection.CommandTest(command);
                                         if (dataArray != null)
