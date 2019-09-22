@@ -97,7 +97,7 @@ namespace EdiabasLib
                         InterfaceDisconnect();
                         return false;
                     }
-                    device = bluetoothAdapter.GetRemoteDevice(stringList[0]);
+                    device = bluetoothAdapter.GetRemoteDevice(stringList[0].ToUpperInvariant());
                     if (stringList.Length > 1)
                     {
                         if (string.Compare(stringList[1], Elm327Tag, StringComparison.OrdinalIgnoreCase) == 0 ||
