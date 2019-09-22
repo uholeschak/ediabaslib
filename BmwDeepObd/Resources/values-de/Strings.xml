@@ -270,7 +270,7 @@
   <string name="select_manufacturer_vw">VW</string>
 
   <!-- Bluetooth -->
-  <string name="mtc_disconnect_warn">Für eine stabile Kommunikation mit dem Adapter wird empfolen, irgendein zuätzliches Smartphone mit dem Radio zu koppeln.\nWollen Sie trotzdem fortfahren?</string>
+  <string name="mtc_disconnect_warn">Für eine stabile Kommunikation mit dem Adapter wird empfohlen, irgendein zuätzliches Smartphone mit dem Radio zu koppeln.\nWollen Sie trotzdem fortfahren?</string>
   <string name="mtc_not_bound_warn">Der Bluetooth Service ist nicht aktiv, versuchen Sie die App später noch einmal zu starten.\nWollen Sie trotzdem fortfahren?</string>
 
   <!-- Wi-Fi-->
