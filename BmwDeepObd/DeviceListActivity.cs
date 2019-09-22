@@ -525,7 +525,7 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            string mac = device.Substring(offset, 12).ToUpperInvariant();
+            string mac = device.Substring(offset, 12);
             StringBuilder sb = new StringBuilder();
             address = string.Empty;
             for (int i = 0; i < 12; i += 2)
@@ -663,7 +663,7 @@ namespace BmwDeepObd
                 AdapterType adapterType = AdapterType.Unknown;
                 try
                 {
-                    BluetoothDevice device = _btAdapter.GetRemoteDevice(deviceAddress);
+                    BluetoothDevice device = _btAdapter.GetRemoteDevice(deviceAddress.ToUpperInvariant());
                     if (device != null)
                     {
                         int connectTimeout = _activityCommon.MtcBtService ? 1000 : 2000;
@@ -1607,8 +1607,7 @@ namespace BmwDeepObd
             textInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
             {
                 string address = textInputDialog.Text.Trim().ToUpperInvariant();
-                Regex regexMac = new Regex(@"^([0-9A-F]{2}[:]){5}([0-9A-F]{2})$", RegexOptions.IgnoreCase);
-                if (!regexMac.IsMatch(address))
+                if (!BluetoothAdapter.CheckBluetoothAddress(address))
                 {
                     _activityCommon.ShowAlert(GetString(Resource.String.bt_device_mac_invalid), Resource.String.alert_title_error);
                     return;
