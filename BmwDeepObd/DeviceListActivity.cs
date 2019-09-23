@@ -45,7 +45,7 @@ namespace BmwDeepObd
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                 Android.Content.PM.ConfigChanges.Orientation |
                 Android.Content.PM.ConfigChanges.ScreenSize)]
-    public class DeviceListActivity : AppCompatActivity
+    public class DeviceListActivity : AppCompatActivity, View.IOnClickListener
     {
         enum AdapterType
         {
@@ -95,8 +95,12 @@ namespace BmwDeepObd
         private InstanceData _instanceData = new InstanceData();
         private BluetoothAdapter _btAdapter;
         private Timer _deviceUpdateTimer;
-        private static ArrayAdapter<string> _pairedDevicesArrayAdapter;
-        private static ArrayAdapter<string> _newDevicesArrayAdapter;
+        private ListView _pairedListView;
+        private ArrayAdapter<string> _pairedDevicesArrayAdapter;
+        private View _pairedViewClick;
+        private ListView _newDevicesListView;
+        private ArrayAdapter<string> _newDevicesArrayAdapter;
+        private View _newDevicesViewClick;
         private Receiver _receiver;
         private AlertDialog _alertInfoDialog;
         private ProgressBar _progressBar;
@@ -180,20 +184,25 @@ namespace BmwDeepObd
             _newDevicesArrayAdapter = new ArrayAdapter<string> (this, Resource.Layout.device_name);
 
             // Find and set up the ListView for paired devices
-            var pairedListView = FindViewById<ListView> (Resource.Id.paired_devices);
-            pairedListView.Adapter = _pairedDevicesArrayAdapter;
-            pairedListView.ItemClick += (sender, args) =>
+            _pairedListView = FindViewById<ListView> (Resource.Id.paired_devices);
+            _pairedListView.Adapter = _pairedDevicesArrayAdapter;
+            _pairedListView.ItemClick += (sender, args) =>
             {
                 DeviceListClick(sender, args, true);
             };
+            _pairedViewClick = FindViewById<View>(Resource.Id.paired_devices_click);
+            _pairedViewClick.SetOnClickListener(this);
 
             // Find and set up the ListView for newly discovered devices
-            var newDevicesListView = FindViewById<ListView> (Resource.Id.new_devices);
-            newDevicesListView.Adapter = _newDevicesArrayAdapter;
-            newDevicesListView.ItemClick += (sender, args) =>
+            _newDevicesListView = FindViewById<ListView> (Resource.Id.new_devices);
+            _newDevicesListView.Adapter = _newDevicesArrayAdapter;
+            //pairedListView.SetOnClickListener(this);
+            _newDevicesListView.ItemClick += (sender, args) =>
             {
                 DeviceListClick(sender, args, false);
             };
+            _newDevicesViewClick = FindViewById<View>(Resource.Id.new_devices_click);
+            _newDevicesViewClick.SetOnClickListener(this);
 
             // Register for broadcasts when a device is discovered
             _receiver = new Receiver (this);
@@ -296,6 +305,11 @@ namespace BmwDeepObd
             UnregisterReceiver (_receiver);
             _activityCommon.Dispose();
             _activityCommon = null;
+        }
+
+        public void OnClick(View v)
+        {
+            MtcManualAddressEntry();
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
@@ -1811,16 +1825,16 @@ namespace BmwDeepObd
                                 {
                                     // check for multiple entries
                                     int index = -1;
-                                    for (int i = 0; i < _newDevicesArrayAdapter.Count; i++)
+                                    for (int i = 0; i < _chat._newDevicesArrayAdapter.Count; i++)
                                     {
-                                        string item = _newDevicesArrayAdapter.GetItem(i);
-                                        if (!ExtractDeviceInfo(_newDevicesArrayAdapter.GetItem(i), out string _, out string address))
+                                        string item = _chat._newDevicesArrayAdapter.GetItem(i);
+                                        if (!ExtractDeviceInfo(_chat._newDevicesArrayAdapter.GetItem(i), out string _, out string address))
                                         {
                                             return;
                                         }
                                         if (string.Compare(address, device.Address, StringComparison.OrdinalIgnoreCase) == 0)
                                         {
-                                            _newDevicesArrayAdapter.Remove(item);
+                                            _chat._newDevicesArrayAdapter.Remove(item);
                                             index = i;
                                             break;
                                         }
@@ -1828,11 +1842,11 @@ namespace BmwDeepObd
                                     string newName = device.Name + "\n" + device.Address;
                                     if (index < 0)
                                     {
-                                        _newDevicesArrayAdapter.Add(newName);
+                                        _chat._newDevicesArrayAdapter.Add(newName);
                                     }
                                     else
                                     {
-                                        _newDevicesArrayAdapter.Insert(newName, index);
+                                        _chat._newDevicesArrayAdapter.Insert(newName, index);
                                     }
                                 }
                             }
@@ -1842,9 +1856,9 @@ namespace BmwDeepObd
                         case BluetoothAdapter.ActionDiscoveryFinished:
                             // When discovery is finished, change the Activity title
                             _chat.ShowScanState(false);
-                            if (_newDevicesArrayAdapter.Count == 0)
+                            if (_chat._newDevicesArrayAdapter.Count == 0)
                             {
-                                _newDevicesArrayAdapter.Add(_chat.Resources.GetText(Resource.String.none_found));
+                                _chat._newDevicesArrayAdapter.Add(_chat.Resources.GetText(Resource.String.none_found));
                             }
                             break;
 
