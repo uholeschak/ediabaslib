@@ -16,6 +16,10 @@
 #include <pio.h>
 #include <ps.h>
 #include <boot.h>
+#include <app/bluestack/types.h>
+#include <app/bluestack/bluetooth.h>
+#include <app/bluestack/l2cap_prim.h>
+#include <app/bluestack/rfcomm_prim.h>
 
 #ifdef DEBUG_ENABLED
 #define DEBUG(x) {printf x;}
@@ -209,6 +213,11 @@ static void app_handler(Task task, MessageId id, Message message)
                     theSppApp.spp = cfm->spp;
                     theSppApp.spp_sink = cfm->sink;
                     theSppApp.spp_mode = sppDataModeInit;
+
+                    /* CONTROL_MODEM_DV_MASK: DCD */
+                    /* CONTROL_MODEM_RTR_MASK: CTS */
+                    /* CONTROL_MODEM_RTC_MASK: DSR */
+                    ConnectionRfcommControlSignalRequest(&theSppApp.task, theSppApp.spp_sink, 0, CONTROL_MODEM_DV_MASK | CONTROL_MODEM_RTR_MASK | CONTROL_MODEM_RTC_MASK);
                     setSppState(sppDevConnected);
                     ConnectionWriteScanEnable(hci_scan_enable_off);
                 }
