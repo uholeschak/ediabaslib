@@ -662,6 +662,11 @@ namespace BmwDeepObd
         /// <param name="deviceName">Device Bleutooth name</param>
         private void DetectAdapter(string deviceAddress, string deviceName)
         {
+            if (string.IsNullOrEmpty(deviceAddress) || string.IsNullOrEmpty(deviceName))
+            {
+                return;
+            }
+
             CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.detect_adapter));
             progress.ButtonAbort.Visibility = ViewStates.Gone;
@@ -669,6 +674,9 @@ namespace BmwDeepObd
 
             _sbLog.Clear();
             _deviceConnected = false;
+
+            LogString("Device address: " + deviceAddress);
+            LogString("Device name: " + deviceName);
 
             _activityCommon.ConnectMtcBtDevice(deviceAddress);
 
@@ -683,6 +691,7 @@ namespace BmwDeepObd
                         int connectTimeout = _activityCommon.MtcBtService ? 1000 : 2000;
                         _connectDeviceAddress = device.Address;
                         BluetoothSocket bluetoothSocket = null;
+                        LogString("Bond state: " + device.BondState);
 
                         adapterType = AdapterType.ConnectionFailed;
                         if (adapterType == AdapterType.ConnectionFailed)
