@@ -435,14 +435,14 @@ namespace BmwDeepObd
                 {
                     _textViewTitlePairedDevices.Text = titlePairedDevices;
                 }
-
+#if false
                 if (!_instanceData.MtcAntennaInfoShown && !string.IsNullOrEmpty(_instanceData.MtcBtModuleName) &&
                     string.Compare(_instanceData.MtcBtModuleName, "WQ_BC6", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     _instanceData.MtcAntennaInfoShown = true;
                     _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_antenna_info), Resource.String.alert_title_info);
                 }
-
+#endif
                 if (oldOffline != _instanceData.MtcOffline)
                 {
                     ShowScanState(false);
