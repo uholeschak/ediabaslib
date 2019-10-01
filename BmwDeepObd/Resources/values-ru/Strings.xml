@@ -44,7 +44,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Улучшена обработка ошибок\n- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Обновление для Rockchip API\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -180,9 +180,8 @@
   <string name="none_found">Устройство не найдено</string>
   <string name="bt_not_enabled">Bluetooth не активирован</string>
   <string name="bt_mtc_service_error">Bluetooth подключён, но обмен данными отсутствует.\nИспользуется ограниченный режим. Пожалуйста, соедините устройства через меню телефона.</string>
-  <!--Translate-->
-  <string name="bt_mtc_antenna_info">For some Android radios it\'s recommended to replace the antenna cable of the internal Bluetooth module and lead it through the enclosure.\nThe antenna cable should have a length of 15.5 cm. For modules without cable a length of 16.0 cm seems to be optimal.</string>
-  <string name="bt_module_name">(Bluetooth module: {0})</string>
+  <string name="bt_mtc_antenna_info">Для некоторых Android-Радио рекомендуется заменить антенный кабель внутреннего модуля Bluetooth и вывести его из корпуса.\nАнтенный кабель должен иметь длину 15,5 см. Для модулей без кабелей - кажущаяся оптимальная длина составляет 16,0 см.</string>
+  <string name="bt_module_name">(Модуль Bluetooth: {0})</string>
   <string name="title_paired_devices">Авторизированные устройства</string>
   <string name="title_other_devices">Другие доступные устройства</string>
   <string name="button_scan">Поиск устройств</string>
@@ -199,9 +198,8 @@
   <string name="adapter_elm_firmware">Рекомендуется прошить альтернативное программное обеспечение ELM327.\nОткрыть конфигурацию адаптера для обновления программного обеспечения?</string>
   <string name="adapter_cfg_required">Устройство, возможно, требуется настроить.\nХотите получить доступ к конфигурации устройства?</string>
   <string name="adapter_fw_update">Доступно обновление для этого устройства.\nХотите получить доступ к конфигурации устройства, чтобы установить обновление?</string>
-  <!--Translate-->
-  <string name="bt_device_enter_mac">Enter the Bluetooth address of an already paired OBD adapter in the specified format</string>
-  <string name="bt_device_mac_invalid">The Bluetooth address has not the correct format</string>
+  <string name="bt_device_enter_mac">Введите Bluetooth-адрес уже подключённого адаптера OBD в указанном формате</string>
+  <string name="bt_device_mac_invalid">Неправильный формат Bluetooth-адреса</string>
   <string name="bt_device_connected">(Подключено)</string>
   <string name="bt_device_menu_tite">Выберите одну из нижеперечисленных опций для этого устройства</string>
   <string name="bt_device_select">Выбрать OBD адаптер</string>
@@ -272,8 +270,7 @@
 
   <!-- Bluetooth -->
   <string name="mtc_disconnect_warn">Для стабильной связи с адаптером, соедините радио с любым имеющимся смартфоном.\nХотите продолжить без подключения смартфона?</string>
-  <!--Translate-->
-  <string name="mtc_not_bound_warn">The Bluetooth service is not active, please try to start the app again later.\nDo you want to continue anyway?</string>
+  <string name="mtc_not_bound_warn">Bluetooth не активен, попробуйте запустить приложение позже.\nВсё равно хотите продолжить?</string>
 
   <!-- Wi-Fi-->
   <string name="connected_with_wifi_adapter">В настоящее время вы подключены к Wi-Fi адаптеру.\nДля получения доступа в интернет необходимо отключить адаптер.\nОтключить Wi-Fi?</string>
