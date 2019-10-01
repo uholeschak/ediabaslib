@@ -2767,7 +2767,7 @@ namespace BmwDeepObd
                 {
                 })
                 .SetCancelable(true)
-                .SetMessage(Resource.String.bt_device_select)
+                .SetMessage(Resource.String.bt_device_not_selected)
                 .SetTitle(Resource.String.alert_title_question)
                 .Show();
             return false;
