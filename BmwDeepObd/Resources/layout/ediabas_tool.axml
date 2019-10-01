@@ -6,7 +6,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true">
     <TextView
-        android:text="@+string/tool_job_jobs"
+        android:text="@string/tool_job_jobs"
         android:id="@+id/textViewJobs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <TextView
-        android:text="@+string/tool_job_arguments"
+        android:text="@string/tool_job_arguments"
         android:id="@+id/textViewArgs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
         android:inputType="text|textNoSuggestions"
         android:maxLines="1" />
     <TextView
-        android:text="@+string/tool_job_results"
+        android:text="@string/tool_job_results"
         android:id="@+id/textViewResukts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <TextView
-        android:text="@+string/tool_job_infos"
+        android:text="@string/tool_job_infos"
         android:id="@+id/textViewInfos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
