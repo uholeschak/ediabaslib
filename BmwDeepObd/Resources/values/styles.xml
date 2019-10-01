@@ -20,11 +20,11 @@
     <item name="gaugeStrokeColor">@color/colorGaugeStrokeLight</item>
     <item name="gaugeDividerColor">@color/colorGaugeDividerLight</item>
   </style>
-  <style name="SpinnerDividerStyle" parent="style/Widget.AppCompat.ListView.DropDown">
+  <style name="SpinnerDividerStyle" parent="Widget.AppCompat.ListView.DropDown">
     <item name="android:divider">?attr/dividerHorizontal</item>
     <item name="android:dividerHeight">3px</item>
   </style>
-  <style name="ListViewNoDividerStyle" parent="style/Widget.AppCompat.ListView">
+  <style name="ListViewNoDividerStyle" parent="Widget.AppCompat.ListView">
     <item name="android:divider">?attr/android:colorBackground</item>
     <item name="android:dividerHeight">0px</item>
   </style>
