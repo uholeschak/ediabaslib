@@ -2026,7 +2026,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (!MtcServiceStarted || (Stopwatch.GetTimestamp() - MtcServiceStartTime < 2000 * TickResolMs))
+                if (!MtcServiceStarted || (Stopwatch.GetTimestamp() - MtcServiceStartTime < 1000 * TickResolMs))
                 {
                     return false;
                 }
