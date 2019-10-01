@@ -9,7 +9,7 @@
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/textViewCanAdapterModeTitle"
-            android:text="@+string/can_adapter_mode_name"
+            android:text="@string/can_adapter_mode_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
@@ -19,7 +19,7 @@
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/textViewCanAdapterSepTimeTitle"
-            android:text="@+string/can_adapter_sep_time"
+            android:text="@string/can_adapter_sep_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/textViewCanAdapterBlockSizeTitle"
-            android:text="@+string/can_adapter_block_size"
+            android:text="@string/can_adapter_block_size"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/textViewCanAdapterBtPinTitle"
-            android:text="@+string/can_adapter_bt_pin"
+            android:text="@string/can_adapter_bt_pin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
@@ -52,7 +52,7 @@
             android:maxLines="1" />
         <TextView
             android:id="@+id/textViewCanAdapterBtNameTitle"
-            android:text="@+string/can_adapter_bt_name"
+            android:text="@string/can_adapter_bt_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
@@ -65,7 +65,7 @@
             android:maxLines="1" />
         <TextView
             android:id="@+id/textViewCanAdapterIgnitionStateTitle"
-            android:text="@+string/can_adapter_ignition_state"
+            android:text="@string/can_adapter_ignition_state"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/textViewCanAdapterBatVoltageTitle"
-            android:text="@+string/can_adapter_bat_voltage"
+            android:text="@string/can_adapter_bat_voltage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/textViewCanAdapterFwVersionTitle"
-            android:text="@+string/can_adapter_fw_version"
+            android:text="@string/can_adapter_fw_version"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
@@ -95,7 +95,7 @@
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/textViewCanAdapterSerNumTitle"
-            android:text="@+string/can_adapter_ser_num"
+            android:text="@string/can_adapter_ser_num"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />

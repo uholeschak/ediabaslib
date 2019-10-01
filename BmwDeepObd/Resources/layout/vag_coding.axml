@@ -17,7 +17,7 @@
             android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/textViewVagCodingSubsystem"
-                android:text="@+string/vag_coding_subsystem_title"
+                android:text="@string/vag_coding_subsystem_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/TextViewInnerCaption" />
@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/textViewVagCodingCommentsTitle"
-                    android:text="@+string/vag_coding_comments_title"
+                    android:text="@string/vag_coding_comments_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/TextViewInnerCaption" />
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/textViewVagCodingRawTitle"
-                android:text="@+string/vag_coding_raw_title"
+                android:text="@string/vag_coding_raw_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/TextViewInnerCaption" />
@@ -145,7 +145,7 @@
             android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/textViewVagCodingExecuteTitle"
-                android:text="@+string/vag_coding_execute_title"
+                android:text="@string/vag_coding_execute_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/TextViewInnerCaption" />
@@ -167,7 +167,7 @@
             android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/textViewVagCodingAssistant"
-                android:text="@+string/vag_coding_assistant_title"
+                android:text="@string/vag_coding_assistant_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/TextViewInnerCaption" />

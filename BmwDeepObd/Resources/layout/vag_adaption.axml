@@ -17,7 +17,7 @@
             android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/textViewVagAdaptionChannel"
-                android:text="@+string/vag_adaption_channel_title"
+                android:text="@string/vag_adaption_channel_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/TextViewInnerCaption" />
@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/textViewVagAdaptionChannelNumber"
-                    android:text="@+string/vag_adaption_channel_number_title"
+                    android:text="@string/vag_adaption_channel_number_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/TextViewInnerCaption" />
@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/textViewVagAdaptionCommentsTitle"
-                    android:text="@+string/vag_adaption_comments_title"
+                    android:text="@string/vag_adaption_comments_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/TextViewInnerCaption" />
@@ -119,7 +119,7 @@
             android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/textViewVagAdaptionValueCurrentTitle"
-                android:text="@+string/vag_adaption_value_current_title"
+                android:text="@string/vag_adaption_value_current_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/TextViewInnerCaption" />
@@ -129,7 +129,7 @@
                 android:layout_height="wrap_content" />
             <TextView
                 android:id="@+id/textViewVagAdaptionValueNewTitle"
-                android:text="@+string/vag_adaption_value_new_title"
+                android:text="@string/vag_adaption_value_new_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/TextViewInnerCaption" />
@@ -145,7 +145,7 @@
                 android:maxLines="1" />
             <TextView
                 android:id="@+id/textViewVagAdaptionValueTestTitle"
-                android:text="@+string/vag_adaption_value_test_title"
+                android:text="@string/vag_adaption_value_test_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/TextViewInnerCaption" />
@@ -218,7 +218,7 @@
             android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/textViewVagAdaptionOperationTitle"
-                android:text="@+string/vag_adaption_operation_title"
+                android:text="@string/vag_adaption_operation_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/TextViewInnerCaption" />

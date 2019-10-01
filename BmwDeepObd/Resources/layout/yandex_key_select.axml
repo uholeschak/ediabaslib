@@ -9,12 +9,12 @@
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/textViewYandexKeyDesc"
-            android:text="@+string/yandex_key_desc"
+            android:text="@string/yandex_key_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/textViewYandexKeyCopyTitle"
-            android:text="@+string/yandex_key_copy_title"
+            android:text="@string/yandex_key_copy_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
@@ -32,7 +32,7 @@
             android:layout_gravity="center" />
         <TextView
             android:id="@+id/textViewYandexKeyPasteTitle"
-            android:text="@+string/yandex_key_paste_title"
+            android:text="@string/yandex_key_paste_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
@@ -50,7 +50,7 @@
             android:maxLines="1" />
         <TextView
             android:id="@+id/textViewYandexKeyTestTitle"
-            android:text="@+string/yandex_key_test_title"
+            android:text="@string/yandex_key_test_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
