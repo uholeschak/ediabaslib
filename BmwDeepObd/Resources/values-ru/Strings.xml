@@ -26,7 +26,7 @@
   <string name="bt_not_available">Bluetooth недоступен.</string>
   <string name="wifi_not_available">Wi-Fi недоступен.</string>
   <string name="config_select">Отсутствует правильная конфигурация.\nХотите создать или выбрать конфигурацию?</string>
-  <string name="bt_device_select">Bluetooth устройство не выбрано.\nХотите выбрать устройство?</string>
+  <string name="bt_device_not_selected">Bluetooth устройство не выбрано.\nХотите выбрать устройство?</string>
   <string name="ecu_download_free_space">На этом устройстве недостаточно свободной памяти ({0:fs1}) для сохранения ECU файла.\nХотите выбрать другой носитель памяти?</string>
   <string name="ecu_not_found">ECU файлы не найдены.</string>
   <string name="ecu_package">Для этого приложения доступны обновлённые ECU файлы.</string>
@@ -229,7 +229,6 @@
   <string name="menu_xml_tool">Генератор конфигураций</string>
   <string name="menu_ediabas_tool">Ediabas утилита</string>
   <string name="menu_download_ecu">Скачать ECU файл.</string>
-  <string name="verify_files">Проверка файлов</string>
   <string name="menu_submenu_log">Протокол данных</string>
   <string name="menu_send_trace">Отправить журнал данных</string>
   <string name="menu_global_settings">Глобальные настройки</string>
