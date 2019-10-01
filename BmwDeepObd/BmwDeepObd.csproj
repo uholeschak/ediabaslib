@@ -67,6 +67,7 @@
     <DefineConstants>Android</DefineConstants>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
     <AndroidLinkTool>proguard</AndroidLinkTool>
+    <AndroidDexTool>dx</AndroidDexTool>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AndroidFlowLayout, Version=1.9.1.0, Culture=neutral, processorArchitecture=MSIL">
