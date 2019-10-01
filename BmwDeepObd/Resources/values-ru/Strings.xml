@@ -132,9 +132,8 @@
   <string name="extract_failed_io">Не удалось сохранить разархивированные файлы.\nНа данном устройстве недостаточно свободаной памяти?\nРекомендуется удалить всё программное обеспечение для защиты файлов (например, антивирус).</string>
 
   <!-- Job reader -->
-  <!--Transate-->
-  <string name="job_reader_read_xml_failed">Reading of the configuration file failed.</string>
-  <string name="job_reader_file_name_invalid">The file name is invalid.</string>
+  <string name="job_reader_read_xml_failed">Ошибка чтения файла конфигурации.</string>
+  <string name="job_reader_file_name_invalid">Имя файла неверно.</string>
 
   <!-- Init VAG UDS -->
   <string name="vag_uds_init">Загрузка VAG файлов</string>
