@@ -1249,6 +1249,7 @@ namespace BmwDeepObd
 
         public bool ConnectMtcBtDevice(string deviceAddress)
         {
+#if false
             if (SelectedInterface == InterfaceType.Bluetooth)
             {
                 try
@@ -1265,6 +1266,7 @@ namespace BmwDeepObd
                     // ignored
                 }
             }
+#endif
             return false;
         }
 
