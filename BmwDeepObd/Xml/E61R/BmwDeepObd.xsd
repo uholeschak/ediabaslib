@@ -272,6 +272,14 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="display-order" type="xs:integer" default="0" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The display order index.
+          If ommited the default value is 0.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute name="grid-type" type="grid-mode-type" default="hidden" use="optional">
       <xs:annotation>
         <xs:documentation>
