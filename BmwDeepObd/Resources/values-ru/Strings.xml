@@ -450,6 +450,8 @@
   <string name="xml_tool_ecu_results">Job результат</string>
   <string name="xml_tool_ecu_show_all_results">Показывать все результаты</string>
   <string name="xml_tool_ecu_display_text">Выведенный текст</string>
+  <!--Translate-->
+  <string name="xml_tool_ecu_display_order">Display order</string>
   <string name="xml_tool_ecu_log_tag">Тег для протоколированных данных</string>
   <string name="xml_tool_ecu_grid_type">Графический дизайн</string>
   <string name="xml_tool_ecu_grid_type_hidden">Скрытый</string>

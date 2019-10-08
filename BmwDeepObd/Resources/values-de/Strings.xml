@@ -452,6 +452,7 @@
   <string name="xml_tool_ecu_results">Job Ergebnis</string>
   <string name="xml_tool_ecu_show_all_results">Alle Ergebnisse anzeigen</string>
   <string name="xml_tool_ecu_display_text">Anzeigetext</string>
+  <string name="xml_tool_ecu_display_order">Anzeigereihenfolge</string>
   <string name="xml_tool_ecu_log_tag">Tag für Datenaufzeichnung</string>
   <string name="xml_tool_ecu_grid_type">Graphische Darstellung</string>
   <string name="xml_tool_ecu_grid_type_hidden">Verborgen</string>

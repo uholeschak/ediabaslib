@@ -161,6 +161,18 @@
                 android:id="@+id/editTextDisplayText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLines="1" />
+            <TextView
+                android:id="@+id/textViewDisplayOrderTitle"
+                android:text="@string/xml_tool_ecu_display_order"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextViewInnerCaption" />
+            <EditText
+                android:id="@+id/editTextDisplayOrder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:inputType="text"
                 android:maxLines="1" />
             <TextView
