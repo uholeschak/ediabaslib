@@ -6171,6 +6171,19 @@ namespace BmwDeepObd
                                 result.Format = formatAttr.Value;
                             }
 
+                            XAttribute dispOrderAttr = displayNode.Attribute("display-order");
+                            if (dispOrderAttr != null)
+                            {
+                                try
+                                {
+                                    result.DisplayOrder = XmlConvert.ToUInt32(dispOrderAttr.Value);
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
+
                             XAttribute gridTypeAttr = displayNode.Attribute("grid-type");
                             if (gridTypeAttr != null)
                             {
@@ -6609,8 +6622,9 @@ namespace BmwDeepObd
                             if (displayNodeOld != null)
                             {
                                 displayNodeNew.ReplaceAttributes(from el in displayNodeOld.Attributes()
-                                                                 where el.Name != "result" && el.Name != "format" && el.Name != "grid-type" &&
-                                                                 el.Name != "min-value" && el.Name != "max-value" && el.Name != "log_tag"
+                                                                 where el.Name != "result" && el.Name != "format" && el.Name != "display-order" &&
+                                                                       el.Name != "grid-type" && el.Name != "min-value" && el.Name != "max-value" &&
+                                                                       el.Name != "log_tag"
                                                                  select new XAttribute(el));
                             }
                         }
@@ -6637,6 +6651,7 @@ namespace BmwDeepObd
                         displayNodeNew.Add(new XAttribute("format", result.Format));
                         if (result.GridType != JobReader.DisplayInfo.GridModeType.Hidden)
                         {
+                            displayNodeNew.Add(new XAttribute("display-order", result.DisplayOrder));
                             displayNodeNew.Add(new XAttribute("grid-type", result.GridType.ToString().ToLowerInvariant().Replace("_", "-")));
                             displayNodeNew.Add(new XAttribute("min-value", result.MinValue));
                             displayNodeNew.Add(new XAttribute("max-value", result.MaxValue));

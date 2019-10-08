@@ -11,11 +11,12 @@ namespace BmwDeepObd
     {
         public class DisplayInfo
         {
-            public DisplayInfo(string name, string result, string format, GridModeType gridType, double minValue, double maxValue, string logTag)
+            public DisplayInfo(string name, string result, string format, UInt32 displayOrder, GridModeType gridType, double minValue, double maxValue, string logTag)
             {
                 Name = name;
                 Result = result;
                 Format = format;
+                DisplayOrder = displayOrder;
                 GridType = gridType;
                 MinValue = minValue;
                 MaxValue = maxValue;
@@ -38,6 +39,8 @@ namespace BmwDeepObd
             public string Result { get; }
 
             public string Format { get; }
+
+            public double DisplayOrder { get; }
 
             public GridModeType GridType { get; }
 
@@ -643,6 +646,7 @@ namespace BmwDeepObd
                 string name = string.Empty;
                 string result = string.Empty;
                 string format = null;
+                UInt32 displayOrder = 0;
                 DisplayInfo.GridModeType gridType = DisplayInfo.GridModeType.Hidden;
                 double minValue = 0;
                 double maxValue = 100;
@@ -655,6 +659,20 @@ namespace BmwDeepObd
                     if (attrib != null) result = attrib.Value;
                     attrib = xmlNode.Attributes["format"];
                     if (attrib != null) format = attrib.Value;
+
+                    attrib = xmlNode.Attributes["display-order"];
+                    if (attrib != null)
+                    {
+                        try
+                        {
+                            displayOrder = XmlConvert.ToUInt32(attrib.Value);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+
                     attrib = xmlNode.Attributes["grid-type"];
                     if (attrib != null)
                     {
@@ -697,7 +715,7 @@ namespace BmwDeepObd
                     {
                         result = prefix + result;
                     }
-                    displayList.Add(new DisplayInfo(name, result, format, gridType, minValue, maxValue, logTag));
+                    displayList.Add(new DisplayInfo(name, result, format, displayOrder, gridType, minValue, maxValue, logTag));
                 }
             }
         }
