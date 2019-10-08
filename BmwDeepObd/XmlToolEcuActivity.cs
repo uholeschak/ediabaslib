@@ -1195,7 +1195,7 @@ namespace BmwDeepObd
             if (resultInfo != null)
             {
                 resultInfo.DisplayText = _editTextDisplayText.Text;
-                if (UInt32.TryParse(_editTextMinValue.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 displayOrder))
+                if (UInt32.TryParse(_editTextDisplayOrder.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 displayOrder))
                 {
                     resultInfo.DisplayOrder = displayOrder;
                 }
