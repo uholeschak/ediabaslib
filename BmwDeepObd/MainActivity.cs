@@ -3443,7 +3443,7 @@ namespace BmwDeepObd
                 foreach (XElement errorNode in xmlDoc.Root.Elements("error"))
                 {
                     XAttribute messageAttr = errorNode.Attribute("message");
-                    if (!string.IsNullOrEmpty(messageAttr?.Value))
+                    if (messageAttr != null && !string.IsNullOrEmpty(messageAttr.Value))
                     {
                         errorMessage = messageAttr.Value;
                         return null;
@@ -3453,7 +3453,7 @@ namespace BmwDeepObd
                 foreach (XElement fileNode in xmlDoc.Root.Elements("obb"))
                 {
                     XAttribute urlAttr = fileNode.Attribute("name");
-                    if (!string.IsNullOrEmpty(urlAttr?.Value))
+                    if (urlAttr != null && !string.IsNullOrEmpty(urlAttr.Value))
                     {
                         if (string.Compare(baseName, urlAttr.Value, StringComparison.OrdinalIgnoreCase) == 0 ||
                             string.Compare("*", urlAttr.Value, StringComparison.OrdinalIgnoreCase) == 0)

@@ -428,8 +428,9 @@
   <string name="xml_tool_ecu_results">Job result</string>
   <string name="xml_tool_ecu_show_all_results">Show all results</string>
   <string name="xml_tool_ecu_display_text">Display text</string>
+  <string name="xml_tool_ecu_display_order">Display order</string>
   <string name="xml_tool_ecu_log_tag">Tag for data logging</string>
-  <string name="xml_tool_ecu_grid_type">Grahical design</string>
+  <string name="xml_tool_ecu_grid_type">Graphical design</string>
   <string name="xml_tool_ecu_grid_type_hidden">Hidden</string>
   <string name="xml_tool_ecu_grid_type_text">Text only</string>
   <string name="xml_tool_ecu_grid_type_simple_square">Simple gauge square</string>

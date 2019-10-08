@@ -39,6 +39,7 @@ namespace BmwDeepObd
                 MinValue = 0;
                 MaxValue = 100;
                 DisplayText = displayName;
+                DisplayOrder = 0;
                 LogTag = name;
             }
 
@@ -69,6 +70,8 @@ namespace BmwDeepObd
             public double MaxValue { get; set; }
 
             public string DisplayText { get; set; }
+
+            public UInt32 DisplayOrder { get; set; }
 
             public string LogTag { get; set; }
         }
@@ -162,6 +165,7 @@ namespace BmwDeepObd
         private TextView _textViewResultCommentsTitle;
         private TextView _textViewResultComments;
         private EditText _editTextDisplayText;
+        private EditText _editTextDisplayOrder;
         private TextView _textViewGridType;
         private Spinner _spinnerGridType;
         private StringObjAdapter _spinnerGridTypeAdapter;
@@ -351,6 +355,7 @@ namespace BmwDeepObd
             _textViewResultCommentsTitle = FindViewById<TextView>(Resource.Id.textViewResultCommentsTitle);
             _textViewResultComments = FindViewById<TextView>(Resource.Id.textViewResultComments);
             _editTextDisplayText = FindViewById<EditText>(Resource.Id.editTextDisplayText);
+            _editTextDisplayOrder = FindViewById<EditText>(Resource.Id.editTextDisplayOrder);
 
             _textViewGridType = FindViewById<TextView>(Resource.Id.textViewGridType);
 
@@ -1190,6 +1195,10 @@ namespace BmwDeepObd
             if (resultInfo != null)
             {
                 resultInfo.DisplayText = _editTextDisplayText.Text;
+                if (UInt32.TryParse(_editTextMinValue.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out UInt32 displayOrder))
+                {
+                    resultInfo.DisplayOrder = displayOrder;
+                }
                 if (_spinnerGridType.SelectedItemPosition >= 0)
                 {
                     _selectedResult.GridType = (JobReader.DisplayInfo.GridModeType)_spinnerGridTypeAdapter.Items[_spinnerGridType.SelectedItemPosition].Data;
@@ -1594,6 +1603,7 @@ namespace BmwDeepObd
                 }
                 _textViewResultComments.Text = stringBuilderComments.ToString();
                 _editTextDisplayText.Text = _selectedResult.DisplayText;
+                _editTextDisplayOrder.Text = _selectedResult.DisplayOrder.ToString(CultureInfo.InvariantCulture);
 
                 bool resultBinary = IsResultBinary(_selectedResult);
                 bool resultString = IsResultString(_selectedResult);
