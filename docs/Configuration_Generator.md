@@ -36,6 +36,7 @@ The page has the following properties:
 * _Job list_: Here all available jobs are listed. Only if the job has a check mark it will be executed later. In the area _Comments for job_ the comments for the selected job will be shown.
 * _Job result_: Here one ore more job results could be selected (with a check mark) that will be displayed later on the page) For the currently selected result the data type and comment will be shown below.
 * _Display text_: This is the text that will be displayed on the page beside the job result.
+* _Display oder_: Here the index of the display order could be specified. If omitted the default value is 0. If two values are identical, the original order is retained.
 * _Graphical design_: If _Display type_ is set to _Graphical display_ this settings will get visible. The following design types are available:
     * _Hidden_: The result will not be displayed. If the result value type is not `integer` or `real` this is the only option.
     * _Simple gauge square_: A simple gauge with square border will be displayed.
