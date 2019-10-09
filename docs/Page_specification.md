@@ -108,6 +108,7 @@ Within the `jobs` node multiple `job` nodes specify the EDIABAS jobs to execute.
 * `args_first`: Allows to specify semicolon separated job arguments for the first job call.
 * `args`: Allows to specify semicolon separated job arguments. If this is the first call and `args_first` is present `args_first` will be used instead.
 * `result`: Allows to specify the required results. If omitted, all results will be generated, which may require more processing time.
+* `display-order`: Allows to specify the index of the display order. If omitted the default value is 0. If two values are identical, the original order is retained.
 * `grid-type`: If the `display-mode` ist switched to `grid`, the type of display element could be specified here:
     * `hidden`: Nothing will be displayed.
     * `text`: Text only, no gauge will be displayed.
