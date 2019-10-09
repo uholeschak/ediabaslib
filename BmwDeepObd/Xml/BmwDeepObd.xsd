@@ -200,7 +200,7 @@
     <xs:attribute name="ecu_path" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>
-          Relative or absolute path of the ecu files to use. If ommited the standard ecu path will be used (recommended).
+          Relative or absolute path of the ecu files to use. If omitted the standard ecu path will be used (recommended).
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -222,7 +222,7 @@
       <xs:annotation>
         <xs:documentation>
           Name of the selected manufacturer
-          If ommited BMW is the default.
+          If omitted BMW is the default.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -230,7 +230,7 @@
       <xs:annotation>
         <xs:documentation>
           Name of the selected communication interface.
-          If ommited bluetooth is the default.
+          If omitted bluetooth is the default.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -238,7 +238,7 @@
           <xs:annotation>
               <xs:documentation>
                   Index of the last search abort (VAG only). A values of -1 specifies no abort.
-                  If ommited -1 is the default.
+                  If omitted -1 is the default.
               </xs:documentation>
           </xs:annotation>
       </xs:attribute>
@@ -268,7 +268,7 @@
         <xs:documentation>
           Format of the output value.
           The format specifier must have an EDIABAS apiResultText format.
-          If ommited the function FormatResult() will be called.
+          If omitted the function FormatResult() will be called.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -276,7 +276,7 @@
       <xs:annotation>
         <xs:documentation>
           The display order index.
-          If ommited the default value is 0.
+          If omitted the default value is 0.
           If two values are identical, the original order is retained.
         </xs:documentation>
       </xs:annotation>
@@ -285,7 +285,7 @@
       <xs:annotation>
         <xs:documentation>
           Type of display element in grid mode.
-          If ommited the entry is hidden.
+          If omitted the entry is hidden.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -293,7 +293,7 @@
       <xs:annotation>
         <xs:documentation>
           Minimum value for gauge display.
-          If ommited the default value is 0.
+          If omitted the default value is 0.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -301,7 +301,7 @@
       <xs:annotation>
         <xs:documentation>
           Maximum value for gauge display.
-          If ommited the default value is 100.
+          If omitted the default value is 100.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
