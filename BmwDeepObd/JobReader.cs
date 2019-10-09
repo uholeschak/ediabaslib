@@ -11,8 +11,9 @@ namespace BmwDeepObd
     {
         public class DisplayInfo
         {
-            public DisplayInfo(string name, string result, string format, UInt32 displayOrder, GridModeType gridType, double minValue, double maxValue, string logTag)
+            public DisplayInfo(int originalPosition, string name, string result, string format, UInt32 displayOrder, GridModeType gridType, double minValue, double maxValue, string logTag)
             {
+                OriginalPosition = originalPosition;
                 Name = name;
                 Result = result;
                 Format = format;
@@ -34,13 +35,15 @@ namespace BmwDeepObd
                 // ReSharper restore InconsistentNaming
             }
 
+            public int OriginalPosition { get; }
+
             public string Name { get; }
 
             public string Result { get; }
 
             public string Format { get; }
 
-            public double DisplayOrder { get; }
+            public UInt32 DisplayOrder { get; }
 
             public GridModeType GridType { get; }
 
@@ -202,6 +205,39 @@ namespace BmwDeepObd
             public object InfoObject { get; set; }
 
             public object ClassObject { get; set; }
+        }
+
+        class DisplayInfoComparer : IComparer<DisplayInfo>
+        {
+            public int Compare(DisplayInfo x, DisplayInfo y)
+            {
+                if (x == null || y == null)
+                {
+                    return 0;
+                }
+
+                if (x.DisplayOrder > y.DisplayOrder)
+                {
+                    return 1;
+                }
+
+                if (x.DisplayOrder < y.DisplayOrder)
+                {
+                    return -1;
+                }
+
+                if (x.OriginalPosition > y.OriginalPosition)
+                {
+                    return 1;
+                }
+
+                if (x.OriginalPosition < y.OriginalPosition)
+                {
+                    return -1;
+                }
+
+                return 0;
+            }
         }
 
         public const int GaugesPortraitDefault = 2;
@@ -715,8 +751,11 @@ namespace BmwDeepObd
                     {
                         result = prefix + result;
                     }
-                    displayList.Add(new DisplayInfo(name, result, format, displayOrder, gridType, minValue, maxValue, logTag));
+                    displayList.Add(new DisplayInfo(displayList.Count, name, result, format, displayOrder, gridType, minValue, maxValue, logTag));
                 }
+
+                DisplayInfoComparer dic = new DisplayInfoComparer();
+                displayList.Sort(dic);
             }
         }
     }
