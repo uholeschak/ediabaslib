@@ -27,6 +27,7 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using Android.Content.PM;
+using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Android.Text.Method;
 using Android.Views;
@@ -1814,25 +1815,27 @@ namespace BmwDeepObd
         {
             try
             {
-                if (_notificationManager != null && _context != null)
+                if (_notificationManager == null || _context == null)
                 {
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                    {
-                        Android.App.NotificationChannel notificationChannelLow = new Android.App.NotificationChannel(
-                            NotificationChannelIdLow,
-                            _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Low);
-                        _notificationManager.CreateNotificationChannel(notificationChannelLow);
+                    return false;
+                }
 
-                        Android.App.NotificationChannel notificationChannelDefault = new Android.App.NotificationChannel(
-                            NotificationChannelIdDefault,
-                            _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Default);
-                        _notificationManager.CreateNotificationChannel(notificationChannelDefault);
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                {
+                    Android.App.NotificationChannel notificationChannelLow = new Android.App.NotificationChannel(
+                        NotificationChannelIdLow,
+                        _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Low);
+                    _notificationManager.CreateNotificationChannel(notificationChannelLow);
 
-                        Android.App.NotificationChannel notificationChannelHigh = new Android.App.NotificationChannel(
-                            NotificationChannelIdHigh,
-                            _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.High);
-                        _notificationManager.CreateNotificationChannel(notificationChannelHigh);
-                    }
+                    Android.App.NotificationChannel notificationChannelDefault = new Android.App.NotificationChannel(
+                        NotificationChannelIdDefault,
+                        _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Default);
+                    _notificationManager.CreateNotificationChannel(notificationChannelDefault);
+
+                    Android.App.NotificationChannel notificationChannelHigh = new Android.App.NotificationChannel(
+                        NotificationChannelIdHigh,
+                        _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.High);
+                    _notificationManager.CreateNotificationChannel(notificationChannelHigh);
                 }
 
                 return true;
@@ -1847,15 +1850,48 @@ namespace BmwDeepObd
         {
             try
             {
-                if (_notificationManager != null && _context != null)
+                if (_notificationManager == null)
                 {
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                    {
-                        _notificationManager.DeleteNotificationChannel(NotificationChannelIdLow);
-                        _notificationManager.DeleteNotificationChannel(NotificationChannelIdDefault);
-                        _notificationManager.DeleteNotificationChannel(NotificationChannelIdHigh);
-                    }
+                    return false;
                 }
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                {
+                    _notificationManager.DeleteNotificationChannel(NotificationChannelIdLow);
+                    _notificationManager.DeleteNotificationChannel(NotificationChannelIdDefault);
+                    _notificationManager.DeleteNotificationChannel(NotificationChannelIdHigh);
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool ShowNotification(int id, string title, string message)
+        {
+            try
+            {
+                if (_notificationManager == null || _context == null)
+                {
+                    return false;
+                }
+
+                Intent notificationIntent = new Intent(_context, typeof(ActivityMain));
+                notificationIntent.SetFlags(ActivityFlags.NewTask);
+                Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetActivity(_context, 0, notificationIntent, Android.App.PendingIntentFlags.UpdateCurrent);
+
+                Android.App.Notification notification = new NotificationCompat.Builder(_context, NotificationChannelIdDefault)
+                    .SetContentTitle(title)
+                    .SetContentText(message)
+                    .SetSmallIcon(Resource.Drawable.ic_stat_obd)
+                    .SetContentIntent(pendingIntent)
+                    .SetAutoCancel(true)
+                    .Build();
+
+                _notificationManager.Notify(id, notification);
 
                 return true;
             }

@@ -155,7 +155,7 @@ namespace BmwDeepObd
         {
             try
             {
-                var notification = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelIdLow)
+                Android.App.Notification notification = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelIdLow)
                     .SetContentTitle(Resources.GetString(Resource.String.app_name))
                     .SetContentText(Resources.GetString(Resource.String.service_notification))
                     .SetSmallIcon(Resource.Drawable.ic_stat_obd)
@@ -257,13 +257,13 @@ namespace BmwDeepObd
         /// <returns>The content intent.</returns>
         private Android.App.PendingIntent BuildIntentToShowMainActivity()
         {
-            var notificationIntent = new Intent(this, typeof(ActivityMain));
+            Intent notificationIntent = new Intent(this, typeof(ActivityMain));
             notificationIntent.SetAction(ActionMainActivity);
             //notificationIntent.SetFlags(ActivityFlags.SingleTop /*| ActivityFlags.ClearTask*/);
             notificationIntent.SetFlags(ActivityFlags.NewTask);
             notificationIntent.PutExtra(ActivityMain.ExtraStopComm, false);
 
-            var pendingIntent = Android.App.PendingIntent.GetActivity(this, 0, notificationIntent, Android.App.PendingIntentFlags.UpdateCurrent);
+            Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetActivity(this, 0, notificationIntent, Android.App.PendingIntentFlags.UpdateCurrent);
             return pendingIntent;
         }
 
