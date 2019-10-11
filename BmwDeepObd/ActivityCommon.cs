@@ -249,6 +249,9 @@ namespace BmwDeepObd
         public const string AppNameSpace = "de.holeschak.bmw_deep_obd";
         public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
         public const string SettingBluetoothHciLog = "bluetooth_hci_log";
+        public const string NotificationChannelIdLow = "NotificationChannelLow";
+        public const string NotificationChannelIdDefault = "NotificationChannelDefault";
+        public const string NotificationChannelIdHigh = "NotificationChannelHigh";
         private const string MailInfoDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Mail.php";
         private const string UpdateCheckUrl = @"https://www.holeschak.de/BmwDeepObd/Update.php";
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
@@ -777,6 +780,27 @@ namespace BmwDeepObd
             _maConnectivity = (ConnectivityManager)context?.ApplicationContext?.GetSystemService(Context.ConnectivityService);
             _usbManager = context?.GetSystemService(Context.UsbService) as UsbManager;
             _notificationManager = context?.GetSystemService(Context.NotificationService) as Android.App.NotificationManager;
+            if (_notificationManager != null && context != null)
+            {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                {
+                    Android.App.NotificationChannel notificationChannelLow = new Android.App.NotificationChannel(
+                        NotificationChannelIdLow,
+                        context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Low);
+                    _notificationManager.CreateNotificationChannel(notificationChannelLow);
+
+                    Android.App.NotificationChannel notificationChannelDefault = new Android.App.NotificationChannel(
+                        NotificationChannelIdDefault,
+                        context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Default);
+                    _notificationManager.CreateNotificationChannel(notificationChannelDefault);
+
+                    Android.App.NotificationChannel notificationChannelHigh = new Android.App.NotificationChannel(
+                        NotificationChannelIdHigh,
+                        context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.High);
+                    _notificationManager.CreateNotificationChannel(notificationChannelHigh);
+                }
+            }
+
             _powerManager = context?.GetSystemService(Context.PowerService) as PowerManager;
             if (_powerManager != null)
             {
