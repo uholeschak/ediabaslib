@@ -780,27 +780,6 @@ namespace BmwDeepObd
             _maConnectivity = (ConnectivityManager)context?.ApplicationContext?.GetSystemService(Context.ConnectivityService);
             _usbManager = context?.GetSystemService(Context.UsbService) as UsbManager;
             _notificationManager = context?.GetSystemService(Context.NotificationService) as Android.App.NotificationManager;
-            if (_notificationManager != null && context != null)
-            {
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                {
-                    Android.App.NotificationChannel notificationChannelLow = new Android.App.NotificationChannel(
-                        NotificationChannelIdLow,
-                        context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Low);
-                    _notificationManager.CreateNotificationChannel(notificationChannelLow);
-
-                    Android.App.NotificationChannel notificationChannelDefault = new Android.App.NotificationChannel(
-                        NotificationChannelIdDefault,
-                        context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Default);
-                    _notificationManager.CreateNotificationChannel(notificationChannelDefault);
-
-                    Android.App.NotificationChannel notificationChannelHigh = new Android.App.NotificationChannel(
-                        NotificationChannelIdHigh,
-                        context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.High);
-                    _notificationManager.CreateNotificationChannel(notificationChannelHigh);
-                }
-            }
-
             _powerManager = context?.GetSystemService(Context.PowerService) as PowerManager;
             if (_powerManager != null)
             {
@@ -1829,6 +1808,61 @@ namespace BmwDeepObd
                 return false;
             }
             return true;
+        }
+
+        public bool RegisterNotificationChannels()
+        {
+            try
+            {
+                if (_notificationManager != null && _context != null)
+                {
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    {
+                        Android.App.NotificationChannel notificationChannelLow = new Android.App.NotificationChannel(
+                            NotificationChannelIdLow,
+                            _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Low);
+                        _notificationManager.CreateNotificationChannel(notificationChannelLow);
+
+                        Android.App.NotificationChannel notificationChannelDefault = new Android.App.NotificationChannel(
+                            NotificationChannelIdDefault,
+                            _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Default);
+                        _notificationManager.CreateNotificationChannel(notificationChannelDefault);
+
+                        Android.App.NotificationChannel notificationChannelHigh = new Android.App.NotificationChannel(
+                            NotificationChannelIdHigh,
+                            _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.High);
+                        _notificationManager.CreateNotificationChannel(notificationChannelHigh);
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool UnregisterNotificationChannels()
+        {
+            try
+            {
+                if (_notificationManager != null && _context != null)
+                {
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    {
+                        _notificationManager.DeleteNotificationChannel(NotificationChannelIdLow);
+                        _notificationManager.DeleteNotificationChannel(NotificationChannelIdDefault);
+                        _notificationManager.DeleteNotificationChannel(NotificationChannelIdHigh);
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public bool AllowAdapterConfig(string deviceAddress)
