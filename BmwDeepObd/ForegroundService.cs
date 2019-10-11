@@ -36,6 +36,7 @@ namespace BmwDeepObd
             _stopHandler = new Handler();
             _activityCommon = new ActivityCommon(this, null, BroadcastReceived);
             _activityCommon.SetLock(ActivityCommon.LockType.Cpu);
+            _activityCommon.RegisterNotificationChannels();
 
             lock (ActivityCommon.GlobalLockObject)
             {

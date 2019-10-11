@@ -265,6 +265,7 @@ namespace BmwDeepObd
             {
                 _activityCommon.SelectedInterface = _instanceData.SelectedInterface;
             }
+            _activityCommon.RegisterNotificationChannels();
             _activityCommon.UpdateRegisterInternetCellular();
 
             GetSettings();
