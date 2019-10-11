@@ -14,7 +14,6 @@ namespace BmwDeepObd
         private static readonly string Tag = typeof(ForegroundService).FullName;
 #endif
         public const int ServiceRunningNotificationId = 10000;
-        public const string ServiceNotificationChannelId = "ServiceNotificationDefault";
         public const string BroadcastMessageKey = "broadcast_message";
         public const string BroadcastStopComm = "stop_communication";
         public const string NotificationBroadcastAction = ActivityCommon.AppNameSpace + ".Notification.Action";
@@ -37,16 +36,7 @@ namespace BmwDeepObd
             _stopHandler = new Handler();
             _activityCommon = new ActivityCommon(this, null, BroadcastReceived);
             _activityCommon.SetLock(ActivityCommon.LockType.Cpu);
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-            {
-                if (_activityCommon.NotificationManager != null)
-                {
-                    Android.App.NotificationChannel notificationChannel = new Android.App.NotificationChannel(
-                        ServiceNotificationChannelId,
-                        Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Low);
-                    _activityCommon.NotificationManager.CreateNotificationChannel(notificationChannel);
-                }
-            }
+
             lock (ActivityCommon.GlobalLockObject)
             {
                 EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
@@ -164,7 +154,7 @@ namespace BmwDeepObd
         {
             try
             {
-                var notification = new NotificationCompat.Builder(this, ServiceNotificationChannelId)
+                var notification = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelIdLow)
                     .SetContentTitle(Resources.GetString(Resource.String.app_name))
                     .SetContentText(Resources.GetString(Resource.String.service_notification))
                     .SetSmallIcon(Resource.Drawable.ic_stat_obd)
