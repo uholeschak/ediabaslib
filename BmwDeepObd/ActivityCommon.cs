@@ -250,9 +250,11 @@ namespace BmwDeepObd
         public const string AppNameSpace = "de.holeschak.bmw_deep_obd";
         public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
         public const string SettingBluetoothHciLog = "bluetooth_hci_log";
+        public const string NotificationChannelIdMin = "NotificationChannelMin";
         public const string NotificationChannelIdLow = "NotificationChannelLow";
         public const string NotificationChannelIdDefault = "NotificationChannelDefault";
         public const string NotificationChannelIdHigh = "NotificationChannelHigh";
+        public const string NotificationChannelIdMax = "NotificationChannelMax";
         private const string MailInfoDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Mail.php";
         private const string UpdateCheckUrl = @"https://www.holeschak.de/BmwDeepObd/Update.php";
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
@@ -1822,6 +1824,11 @@ namespace BmwDeepObd
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
+                    Android.App.NotificationChannel notificationChannelMin = new Android.App.NotificationChannel(
+                        NotificationChannelIdMin,
+                        _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Min);
+                    _notificationManager.CreateNotificationChannel(notificationChannelMin);
+
                     Android.App.NotificationChannel notificationChannelLow = new Android.App.NotificationChannel(
                         NotificationChannelIdLow,
                         _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Low);
@@ -1836,6 +1843,11 @@ namespace BmwDeepObd
                         NotificationChannelIdHigh,
                         _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.High);
                     _notificationManager.CreateNotificationChannel(notificationChannelHigh);
+
+                    Android.App.NotificationChannel notificationChannelMax = new Android.App.NotificationChannel(
+                        NotificationChannelIdMax,
+                        _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Max);
+                    _notificationManager.CreateNotificationChannel(notificationChannelMax);
                 }
 
                 return true;
@@ -1857,9 +1869,11 @@ namespace BmwDeepObd
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
+                    _notificationManager.DeleteNotificationChannel(NotificationChannelIdMin);
                     _notificationManager.DeleteNotificationChannel(NotificationChannelIdLow);
                     _notificationManager.DeleteNotificationChannel(NotificationChannelIdDefault);
                     _notificationManager.DeleteNotificationChannel(NotificationChannelIdHigh);
+                    _notificationManager.DeleteNotificationChannel(NotificationChannelIdMax);
                 }
 
                 return true;
@@ -1870,28 +1884,68 @@ namespace BmwDeepObd
             }
         }
 
-        public bool ShowNotification(int id, string title, string message)
+        public bool ShowNotification(int id, int priority, string title, string message)
         {
             try
             {
-                if (_notificationManager == null || _context == null)
+                if (_notificationManager == null || _context == null || id == ForegroundService.ServiceRunningNotificationId)
                 {
                     return false;
+                }
+
+                string notificationChannel = NotificationChannelIdDefault;
+                switch (priority)
+                {
+                    case NotificationCompat.PriorityMin:
+                        notificationChannel = NotificationChannelIdMin;
+                        break;
+
+                    case NotificationCompat.PriorityLow:
+                        notificationChannel = NotificationChannelIdLow;
+                        break;
+
+                    case NotificationCompat.PriorityHigh:
+                        notificationChannel = NotificationChannelIdHigh;
+                        break;
+
+                    case NotificationCompat.PriorityMax:
+                        notificationChannel = NotificationChannelIdMax;
+                        break;
                 }
 
                 Intent notificationIntent = new Intent(_context, typeof(ActivityMain));
                 notificationIntent.SetFlags(ActivityFlags.NewTask);
                 Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetActivity(_context, 0, notificationIntent, Android.App.PendingIntentFlags.UpdateCurrent);
 
-                Android.App.Notification notification = new NotificationCompat.Builder(_context, NotificationChannelIdDefault)
+                Android.App.Notification notification = new NotificationCompat.Builder(_context, notificationChannel)
                     .SetContentTitle(title)
                     .SetContentText(message)
                     .SetSmallIcon(Resource.Drawable.ic_stat_obd)
+                    .SetPriority(priority)
                     .SetContentIntent(pendingIntent)
                     .SetAutoCancel(true)
                     .Build();
 
                 _notificationManager.Notify(id, notification);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool HideNotification(int id)
+        {
+            try
+            {
+                if (_notificationManager == null || _context == null || id == ForegroundService.ServiceRunningNotificationId)
+                {
+                    return false;
+                }
+
+                _notificationManager.Cancel(id);
 
                 return true;
             }
@@ -4275,7 +4329,7 @@ namespace BmwDeepObd
                 if (errorNode != null)
                 {
                     XAttribute messageAttr = errorNode.Attribute("message");
-                    if (!string.IsNullOrEmpty(messageAttr?.Value))
+                    if (messageAttr != null && !string.IsNullOrEmpty(messageAttr.Value))
                     {
                         return messageAttr.Value;
                     }
@@ -4583,10 +4637,11 @@ namespace BmwDeepObd
                 }
 
                 XElement errorNode = xmlDoc.Root?.Element("error");
+                // ReSharper disable once UseNullPropagation
                 if (errorNode != null)
                 {
                     XAttribute messageAttr = errorNode.Attribute("message");
-                    if (!string.IsNullOrEmpty(messageAttr?.Value))
+                    if (messageAttr != null && !string.IsNullOrEmpty(messageAttr.Value))
                     {
                         errorMessage = messageAttr.Value;
                         return true;
@@ -4597,7 +4652,7 @@ namespace BmwDeepObd
                 if (updateNode != null)
                 {
                     XAttribute appVerAttr = updateNode.Attribute("app_ver");
-                    if (!string.IsNullOrEmpty(appVerAttr?.Value))
+                    if (appVerAttr != null && !string.IsNullOrEmpty(appVerAttr.Value))
                     {
                         if (int.TryParse(appVerAttr.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int appVerValue))
                         {
@@ -4606,13 +4661,13 @@ namespace BmwDeepObd
                     }
 
                     XAttribute appVerNameAttr = updateNode.Attribute("app_ver_name");
-                    if (!string.IsNullOrEmpty(appVerNameAttr?.Value))
+                    if (appVerNameAttr != null && !string.IsNullOrEmpty(appVerNameAttr.Value))
                     {
                         appVerName = appVerNameAttr.Value;
                     }
 
                     XAttribute infoAttr = updateNode.Attribute("info");
-                    if (!string.IsNullOrEmpty(infoAttr?.Value))
+                    if (infoAttr != null && !string.IsNullOrEmpty(infoAttr.Value))
                     {
                         infoText = infoAttr.Value;
                     }
@@ -6556,6 +6611,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                // ReSharper disable once AssignNullToNotNullAttribute
                 bool vagUdsDirPresent = Directory.Exists(Path.Combine(baseDir, VagBaseDir));
                 bool vagEcuDirPresent = Directory.Exists(Path.Combine(baseDir, EcuDirNameVag));
                 if (vagUdsDirPresent && !vagEcuDirPresent)
