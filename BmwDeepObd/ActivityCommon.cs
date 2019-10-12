@@ -483,7 +483,6 @@ namespace BmwDeepObd
         private readonly Dictionary<string, Dictionary<string, string>> _yandexTransDict;
         private Dictionary<string, string> _yandexCurrentLangDict;
         private Dictionary<string, List<string>> _vagDtcCodeDict;
-        private HashSet<int> _notificationIdSet = new HashSet<int>();
         private string _lastEnetSsid = string.Empty;
         private bool? _lastInvertfaceAvailable;
         private bool _usbPermissionRequested;
@@ -1894,9 +1893,16 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (!update && _notificationIdSet.Contains(id))
+                if (!update)
                 {
-                    return false;
+                    Android.Service.Notification.StatusBarNotification[] notifications = _notificationManager.GetActiveNotifications();
+                    foreach (Android.Service.Notification.StatusBarNotification statusBarNotification in notifications)
+                    {
+                        if (statusBarNotification.Id == id)
+                        {
+                            return false;
+                        }
+                    }
                 }
 
                 string notificationChannel = NotificationChannelIdDefault;
@@ -1934,8 +1940,6 @@ namespace BmwDeepObd
 
                 _notificationManager.Notify(id, notification);
 
-                _notificationIdSet.Add(id);
-
                 return true;
             }
             catch (Exception)
@@ -1955,10 +1959,6 @@ namespace BmwDeepObd
 
                 _notificationManager.Cancel(id);
 
-                if (_notificationIdSet.Contains(id))
-                {
-                    _notificationIdSet.Remove(id);
-                }
                 return true;
             }
             catch (Exception)
