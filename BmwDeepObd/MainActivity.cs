@@ -265,7 +265,6 @@ namespace BmwDeepObd
             {
                 _activityCommon.SelectedInterface = _instanceData.SelectedInterface;
             }
-            _activityCommon.RegisterNotificationChannels();
             _activityCommon.UpdateRegisterInternetCellular();
 
             GetSettings();
@@ -2837,6 +2836,16 @@ namespace BmwDeepObd
                 }
             }
             return result;
+        }
+
+        public bool ShowNotification(int id, int priority, string title, string message, bool update = false)
+        {
+            return _activityCommon.ShowNotification(id, priority, title, message, update);
+        }
+
+        public bool HideNotification(int id)
+        {
+            return _activityCommon.HideNotification(id);
         }
 
         private void ReadConfigFile()

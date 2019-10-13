@@ -783,6 +783,7 @@ namespace BmwDeepObd
             _maConnectivity = (ConnectivityManager)context?.ApplicationContext?.GetSystemService(Context.ConnectivityService);
             _usbManager = context?.GetSystemService(Context.UsbService) as UsbManager;
             _notificationManager = context?.GetSystemService(Context.NotificationService) as Android.App.NotificationManager;
+            RegisterNotificationChannels();
             _powerManager = context?.GetSystemService(Context.PowerService) as PowerManager;
             if (_powerManager != null)
             {
