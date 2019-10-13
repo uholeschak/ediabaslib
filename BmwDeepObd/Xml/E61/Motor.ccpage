@@ -4,6 +4,8 @@
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
   <page name ="tab_motor" fontsize="small" logfile="motor-{D}.log">
     <strings>
+      <string name="notification_title_battery">Battery</string>
+      <string name="notification_voltage_low">Voltage too low!</string>
       <string name="tab_motor">Motor</string>
       <string name="label_motor_air_mass">Air mass [kg/h]:</string>
       <string name="label_motor_air_mass_act">Air mass act [mg/pass]:</string>
@@ -33,6 +35,8 @@
       <string name="label_motor_oil_temp">Oil temperature: [°C]:</string>
     </strings>
     <strings lang="de">
+      <string name="notification_title_battery">Batterie</string>
+      <string name="notification_voltage_low">Spannung zu niedrig!</string>
       <string name="tab_motor">Motor</string>
       <string name="label_motor_air_mass">Luftmasse [kg/h]:</string>
       <string name="label_motor_air_mass_act">Luftmasse ist [mg/Hub]:</string>
@@ -99,6 +103,24 @@
       <![CDATA[
     class PageClass
     {
+        public void ProcessResults(Context context, JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
+        {
+            double value;
+            bool found;
+
+            value = ActivityMain.GetResultDouble(resultDict, "STATUS_MESSWERTBLOCK_LESEN#STAT_UBATT_WERT", 0, out found);
+            if (found && value < 11.5)
+            {
+                ActivityMain.ShowNotification(context, 0, 2,
+                  ActivityMain.GetPageString(pageInfo, "notification_title_battery"),
+                  ActivityMain.GetPageString(pageInfo, "notification_voltage_low"));
+            }
+            else
+            {
+                ActivityMain.HideNotification(context, 0);
+            }
+        }
+
         public string FormatResult(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor)
         {
             string result = string.Empty;
