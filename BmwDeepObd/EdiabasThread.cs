@@ -408,6 +408,32 @@ namespace BmwDeepObd
             return result;
         }
 
+        private void ProcessResults(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
+        {
+            if (pageInfo.ClassObject != null)
+            {
+                Type pageType = pageInfo.ClassObject.GetType();
+                MethodInfo processResult = pageType.GetMethod("ProcessResults", new[] { typeof(Context), typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>) });
+
+                if (processResult != null)
+                {
+                    try
+                    {
+                        Context activeContext = ActiveContext;
+                        if (activeContext != null)
+                        {
+                            object[] args = { activeContext, pageInfo, resultDict };
+                            processResult.Invoke(pageInfo.ClassObject, args);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+            }
+        }
+
         private void LogData(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
         {
             if (_swDataLog == null)
@@ -1083,6 +1109,7 @@ namespace BmwDeepObd
                 return false;
             }
 
+            ProcessResults(pageInfo, resultDict);
             LogData(pageInfo, resultDict);
             SendInfoBroadcast(pageInfo, resultDict);
 

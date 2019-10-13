@@ -194,6 +194,8 @@ namespace BmwDeepObd
         private List<string> _translationList;
         private List<string> _translatedList;
 
+        public ActivityCommon ActivityCommon => _activityCommon;
+
         private string ManufacturerEcuDirName
         {
             get
@@ -2839,23 +2841,38 @@ namespace BmwDeepObd
             return result;
         }
 
-        public static bool ShowNotification(int id, int priority, string title, string message, bool update = false)
+        private static ActivityCommon GetActivityCommon(Context context)
         {
-            ActivityMain activityMain = ActivityCommon.ActivityMainCurrent;
-            if (activityMain != null && activityMain._activityActive)
+            ActivityCommon activityCommon = null;
+            if (context is ActivityMain mainActivity)
             {
-                return activityMain._activityCommon.ShowNotification(id, priority, title, message, update);
+                activityCommon = mainActivity.ActivityCommon;
+            }
+            else if (context is ForegroundService foregroundService)
+            {
+                activityCommon = foregroundService.ActivityCommon;
+            }
+
+            return activityCommon;
+        }
+
+        public static bool ShowNotification(Context context, int id, int priority, string title, string message, bool update = false)
+        {
+            ActivityCommon activityCommon = GetActivityCommon(context);
+            if (activityCommon != null)
+            {
+                return activityCommon.ShowNotification(id, priority, title, message, update);
             }
 
             return false;
         }
 
-        public static bool HideNotification(int id)
+        public static bool HideNotification(Context context, int id)
         {
-            ActivityMain activityMain = ActivityCommon.ActivityMainCurrent;
-            if (activityMain != null && activityMain._activityActive)
+            ActivityCommon activityCommon = GetActivityCommon(context);
+            if (activityCommon != null)
             {
-                return activityMain._activityCommon.HideNotification(id);
+                return activityCommon.HideNotification(id);
             }
 
             return false;
