@@ -4095,13 +4095,13 @@ namespace CarSimulator
 
             if (VariableValues)
             {
-                if (_batteryVoltage > 1000)
+                if (_batteryVoltage > 800)
                 {
                     _batteryVoltage--;
                 }
                 else
                 {
-                    _batteryVoltage = 1500;
+                    _batteryVoltage = 1600;
                 }
             }
             else
