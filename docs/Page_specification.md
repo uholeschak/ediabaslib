@@ -6,6 +6,7 @@ Table of contents:
 * [User defined code](#user-defined-code)
 	* [Formatting results (FormatResult)](#formatting-results-formatresult)
 	* [Formatting error results (FormatErrorResult)](#formatting-error-results-formaterrorresult)
+	* [Processing results (ProcessResults)](#processing-results-processresults)
 	* [Control output of the page (UpdateResultList)](#control-output-of-the-page-updateresultlist)
 	* [Executing own jobs (ExecuteJob)](#executing-own-jobs-executejob)
 	* [Adding controls to the layout](#adding-controls-to-the-layout)
@@ -248,6 +249,10 @@ In this case a C# class could be added to a `code` node, which defines a set of 
         {
         }
 
+        public void ProcessResults(Context context, JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
+        {
+        }
+
         public void UpdateResultList(JobReader.PageInfo pageInfo, Dictionary<string, EdiabasNet.ResultData> resultDict, List<TableResultItem> resultList)
         {
         }
@@ -354,6 +359,57 @@ Here is an example from the errors page, that adds a RPM value to the error mess
                 }
             }
             return message;
+        }
+    }
+      ]]>
+  </code>
+```
+## Processing results (ProcessResults)
+For general processing of the result data, the callback `ProcessResults` could be used.  
+In this example a notification is displayed if the battery voltage is too low.  
+It uses the following functions to display the notifications:
+``` c#
+public static bool ShowNotification(Context context, int id, int priority, string title, string message, bool update = false);
+public static bool HideNotification(Context context, int id);
+```
+The function arguments are:
+* `context`: The current application context.
+* `id`: The notification id. It should be a value in the range of 0 and 9999. The same value must be used for `ShowNotification` and `HideNotification`.
+* `priority`: The notification priority in the range of -2 to 2.
+* `title`: The notification title.
+* `title`: The notification message.
+* `update`: If the notfication is already displayed it will be not updated by default. When this value is `true` the current notification is updated.
+
+``` xml
+    <strings>
+      <string name="notification_title_battery">Battery</string>
+      <string name="notification_voltage_low">Voltage too low!</string>
+    </strings>
+    <strings lang="de">
+      <string name="notification_title_battery">Batterie</string>
+      <string name="notification_voltage_low">Spannung zu niedrig!</string>
+    </strings>
+
+    <code show_warnings="true">
+      <![CDATA[
+    class PageClass
+    {
+        public void ProcessResults(Context context, JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
+        {
+            double value;
+            bool found;
+
+            value = ActivityMain.GetResultDouble(resultDict, "STATUS_MESSWERTBLOCK_LESEN#STAT_UBATT_WERT", 0, out found);
+            if (found && value < 11.5)
+            {
+                ActivityMain.ShowNotification(context, 0, 2,
+                  ActivityMain.GetPageString(pageInfo, "notification_title_battery"),
+                  ActivityMain.GetPageString(pageInfo, "notification_voltage_low"));
+            }
+            else
+            {
+                ActivityMain.HideNotification(context, 0);
+            }
         }
     }
       ]]>
