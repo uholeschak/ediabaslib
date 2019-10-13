@@ -450,6 +450,7 @@ namespace BmwDeepObd
         {
             base.OnDestroy();
 
+            ActivityCommon.ActivityMainCurrent = null;
             if (!UseCommService())
             {
                 StopEdiabasThread(true);
@@ -2838,14 +2839,26 @@ namespace BmwDeepObd
             return result;
         }
 
-        public bool ShowNotification(int id, int priority, string title, string message, bool update = false)
+        public static bool ShowNotification(int id, int priority, string title, string message, bool update = false)
         {
-            return _activityCommon.ShowNotification(id, priority, title, message, update);
+            ActivityMain activityMain = ActivityCommon.ActivityMainCurrent;
+            if (activityMain != null && activityMain._activityActive)
+            {
+                return activityMain._activityCommon.ShowNotification(id, priority, title, message, update);
+            }
+
+            return false;
         }
 
-        public bool HideNotification(int id)
+        public static bool HideNotification(int id)
         {
-            return _activityCommon.HideNotification(id);
+            ActivityMain activityMain = ActivityCommon.ActivityMainCurrent;
+            if (activityMain != null && activityMain._activityActive)
+            {
+                return activityMain._activityCommon.HideNotification(id);
+            }
+
+            return false;
         }
 
         private void ReadConfigFile()
