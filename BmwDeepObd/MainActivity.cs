@@ -3129,6 +3129,7 @@ namespace BmwDeepObd
                             string classCode = @"
                                 using Android.Views;
                                 using Android.Widget;
+                                using Android.Content;
                                 using EdiabasLib;
                                 using BmwDeepObd;
                                 using System;
