@@ -372,13 +372,13 @@ It uses the following functions to display the notifications:
 public static bool ShowNotification(Context context, int id, int priority, string title, string message, bool update = false);
 public static bool HideNotification(Context context, int id);
 ```
-The function arguments are:
+The functions arguments are:
 * `context`: The current application context.
 * `id`: The notification id. It should be a value in the range of 0 and 9999. The same value must be used for `ShowNotification` and `HideNotification`.
 * `priority`: The notification priority in the range of -2 to 2.
 * `title`: The notification title.
 * `title`: The notification message.
-* `update`: If the notfication is already displayed it will be not updated by default. When this value is `true` the current notification is updated.
+* `update`: If the notfication is already displayed, it will be not updated by default. When this value is `true` the current notification is updated.
 
 ``` xml
     <strings>
