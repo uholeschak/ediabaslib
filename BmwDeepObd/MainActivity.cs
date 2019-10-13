@@ -130,6 +130,7 @@ namespace BmwDeepObd
             public bool StorageRequirementsAccepted { get; set; }
             public bool BatteryWarningShown { get; set; }
             public bool ConfigMatchVehicleShown { get; set; }
+            public bool DataLogTemporaryShown { get; set; }
             public bool CheckCpuUsage { get; set; }
             public bool VerifyEcuFiles { get; set; }
             public bool CommErrorsOccured { get; set; }
@@ -2856,6 +2857,7 @@ namespace BmwDeepObd
             return activityCommon;
         }
 
+        // ReSharper disable once UnusedMember.Global
         public static bool ShowNotification(Context context, int id, int priority, string title, string message, bool update = false)
         {
             ActivityCommon activityCommon = GetActivityCommon(context);
@@ -2867,6 +2869,7 @@ namespace BmwDeepObd
             return false;
         }
 
+        // ReSharper disable once UnusedMember.Global
         public static bool HideNotification(Context context, int id)
         {
             ActivityCommon activityCommon = GetActivityCommon(context);
@@ -4155,10 +4158,20 @@ namespace BmwDeepObd
                             {
                                 _activityCommon.ShowAlert(GetString(Resource.String.datalog_no_tags), Resource.String.alert_title_warning);
                             }
+                            else if (value && !ActivityCommon.StoreDataLogSettings && !_instanceData.DataLogTemporaryShown)
+                            {
+                                _instanceData.DataLogTemporaryShown = true;
+                                _activityCommon.ShowAlert(GetString(Resource.String.datalog_temporary), Resource.String.alert_title_info);
+                            }
                             _instanceData.DataLogActive = value;
                             break;
 
                         case 3:
+                            if (value && !ActivityCommon.StoreDataLogSettings && !_instanceData.DataLogTemporaryShown)
+                            {
+                                _instanceData.DataLogTemporaryShown = true;
+                                _activityCommon.ShowAlert(GetString(Resource.String.datalog_temporary), Resource.String.alert_title_info);
+                            }
                             _instanceData.DataLogAppend = value;
                             break;
                     }
