@@ -27,6 +27,8 @@ namespace BmwDeepObd
         private ActivityCommon _activityCommon;
         private Handler _stopHandler;
 
+        public ActivityCommon ActivityCommon => _activityCommon;
+
         public override void OnCreate()
         {
             base.OnCreate();
