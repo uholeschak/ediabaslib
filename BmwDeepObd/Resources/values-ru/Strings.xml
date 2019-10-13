@@ -239,6 +239,8 @@
   <string name="datalog_enable_datalog">Протоколировать данные</string>
   <string name="datalog_append_datalog">Прикрепить протокол</string>
   <string name="datalog_no_tags">Отсутствуют метки записи данных.\nДля активации записи данных, необходимо указать метки записи на странице ECU генератора конфигурации.</string>
+  <!--Translate-->
+  <string name="datalog_temporary">The data logging is only temporary.\nTo store the setting, activate the option \'Store log data settings\' in the global settings.</string>
   <string name="datalog_date">Дата</string>
 
   <!-- FilePicker -->
