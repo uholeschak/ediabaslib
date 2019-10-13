@@ -55,6 +55,8 @@ namespace BmwDeepObd
         private CheckBox _checkBoxOldVagMode;
         private CheckBox _checkBoxScanAllEcus;
         private Button _buttonStorageLocation;
+        private TextView _textViewCaptionNotifications;
+        private Button _buttonManageNotifications;
         private CheckBox _checkBoxCollectDebugInfo;
         private CheckBox _checkBoxHciSnoopLog;
         private Button _buttonHciSnoopLog;
@@ -122,6 +124,16 @@ namespace BmwDeepObd
             {
                 SelectMedia();
             };
+
+            ViewStates viewStateNotifications = Build.VERSION.SdkInt >= BuildVersionCodes.O ? ViewStates.Visible : ViewStates.Gone;
+            _textViewCaptionNotifications = FindViewById<TextView>(Resource.Id.textViewCaptionNotifications);
+            _buttonManageNotifications = FindViewById<Button>(Resource.Id.buttonManageNotifications);
+            _buttonManageNotifications.Click += (sender, args) =>
+            {
+                ShowNotificationSettings();
+            };
+            _textViewCaptionNotifications.Visibility = viewStateNotifications;
+            _buttonManageNotifications.Visibility = viewStateNotifications;
 
             _checkBoxCollectDebugInfo = FindViewById<CheckBox>(Resource.Id.checkBoxCollectDebugInfo);
 
@@ -458,6 +470,27 @@ namespace BmwDeepObd
                 case SelectionStorageLocation:
                     SelectMedia();
                     break;
+            }
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool ShowNotificationSettings()
+        {
+            try
+            {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                {
+                    Intent intent = new Intent(Android.Provider.Settings.ActionAppNotificationSettings);
+                    intent.PutExtra(Android.Provider.Settings.ExtraAppPackage, PackageName);
+                    StartActivity(intent);
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 

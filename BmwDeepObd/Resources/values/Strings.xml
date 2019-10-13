@@ -317,6 +317,8 @@
   <string name="settings_caption_scan_all_ecus">ECU detection</string>
   <string name="settings_scan_all_ecus">For BMW vehicles with DS2 protocol always scan all ECUs (slow)</string>
   <string name="settings_caption_storage">Storage media</string>
+  <string name="settings_caption_notifications">Notifications</string>
+  <string name="settings_notification_settings">Notification settings</string>
   <string name="settings_caption_debug">Debugging</string>
   <string name="settings_collect_debug_info">Collect debug information for trace files</string>
   <string name="settings_hci_snoop_log">Bluetooth HCI snoop log file:\n{0}</string>

@@ -339,6 +339,9 @@
   <string name="settings_scan_all_ecus">Для автомобилей BMW с протоколом DS2 всегда сканировать все ECU (медленно)</string>
   <string name="settings_check_ecu_files">Проверка ECU файлов при запуске</string>
   <string name="settings_caption_storage">Носитель памяти</string>
+  <!--Translate-->
+  <string name="settings_caption_notifications">Notifications</string>
+  <string name="settings_notification_settings">Notification settings</string>
   <string name="settings_caption_debug">Отладить</string>
   <string name="settings_collect_debug_info">Собрать отладочную информацию для файла трассировки</string>
   <string name="settings_hci_snoop_log">Файл журнала отслеживания Bluetooth HCI:\n{0}</string>
