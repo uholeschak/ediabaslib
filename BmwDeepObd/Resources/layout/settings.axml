@@ -281,6 +281,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView
+            android:text="@string/settings_caption_notifications"
+            android:id="@+id/textViewCaptionNotifications"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextViewInnerCaption" />
+        <Button
+            android:text="@string/settings_notification_settings"
+            android:id="@+id/buttonManageNotifications"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
             android:text="@string/settings_caption_debug"
             android:id="@+id/textViewCaptionDebug"
             android:layout_width="match_parent"
