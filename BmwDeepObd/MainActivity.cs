@@ -810,10 +810,19 @@ namespace BmwDeepObd
 #if true
                     StartEdiabasTool();
 #else
-                    if (!string.IsNullOrEmpty(_instanceData.ConfigFileName))
                     {
-                        StartEditXml(_instanceData.ConfigFileName);
+                        JobReader.PageInfo pageInfo = GetSelectedPage();
+                        string xmlFileName = _instanceData.ConfigFileName;
+                        if (pageInfo != null && !string.IsNullOrEmpty(pageInfo.XmlFileName))
+                        {
+                            xmlFileName = pageInfo.XmlFileName;
+                        }
+                        if (!string.IsNullOrEmpty(xmlFileName))
+                        {
+                            StartEditXml(xmlFileName);
+                        }
                     }
+
 #endif
                     return true;
 
