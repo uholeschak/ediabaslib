@@ -61,6 +61,7 @@ namespace BmwDeepObd
             RequestEdiabasTool,
             RequestYandexKey,
             RequestGlobalSettings,
+            RequestEditXml,
         }
 
         public enum LastAppState
@@ -249,6 +250,9 @@ namespace BmwDeepObd
             _tabLayout.SetupWithViewPager(_viewPager);
             _tabLayout.AddOnTabSelectedListener(this);
             _tabLayout.Visibility = ViewStates.Gone;
+
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.SetVmPolicy(builder.Build());
 
             ActivityCommon.ActivityMainCurrent = this;
             _activityCommon = new ActivityCommon(this, () =>
@@ -620,6 +624,10 @@ namespace BmwDeepObd
                     UpdateDisplay();
                     CheckForEcuFiles();
                     break;
+
+                case ActivityRequest.RequestEditXml:
+                    ReadConfigFile();
+                    break;
             }
         }
 
@@ -799,7 +807,14 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_ediabas_tool:
+#if true
                     StartEdiabasTool();
+#else
+                    if (!string.IsNullOrEmpty(_instanceData.ConfigFileName))
+                    {
+                        StartEditXml(_instanceData.ConfigFileName);
+                    }
+#endif
                     return true;
 
                 case Resource.Id.menu_download_ecu:
@@ -4353,6 +4368,30 @@ namespace BmwDeepObd
             serverIntent.PutExtra(EdiabasToolActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestEdiabasTool);
             ActivityCommon.ActivityStartedFromMain = true;
+        }
+
+        private bool StartEditXml(string fileName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    return false;
+                }
+
+                Intent viewIntent = new Intent(Intent.ActionView);
+                Android.Net.Uri fileUri = Android.Net.Uri.FromFile(new Java.IO.File(fileName));
+                string mimeType = Android.Webkit.MimeTypeMap.Singleton.GetMimeTypeFromExtension("xml");
+                viewIntent.SetDataAndType(fileUri, mimeType);
+                viewIntent.SetFlags(ActivityFlags.NewTask);
+                Intent chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_xml_editor));
+                StartActivityForResult(chooseIntent, (int)ActivityRequest.RequestEditXml);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public class TabsFragmentPagerAdapter : FragmentStatePagerAdapter
