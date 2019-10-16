@@ -148,8 +148,9 @@ namespace BmwDeepObd
 
         public class PageInfo
         {
-            public PageInfo(string name, float weight, DisplayModeType displayMode, int textResId, int gaugesPortrait, int gaugesLandscape, string logFile, bool jobActivate, string classCode, bool codeShowWarnings, JobsInfo jobsInfo, ErrorsInfo errorsInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
+            public PageInfo(string xmlFileName, string name, float weight, DisplayModeType displayMode, int textResId, int gaugesPortrait, int gaugesLandscape, string logFile, bool jobActivate, string classCode, bool codeShowWarnings, JobsInfo jobsInfo, ErrorsInfo errorsInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
             {
+                XmlFileName = xmlFileName;
                 Name = name;
                 Weight = weight;
                 DisplayMode = displayMode;
@@ -173,6 +174,8 @@ namespace BmwDeepObd
                 List,
                 Grid,
             }
+
+            public string XmlFileName { get; }
 
             public string Name { get; }
 
@@ -411,6 +414,7 @@ namespace BmwDeepObd
                     foreach (XmlNode xnodePage in xnodePages)
                     {
                         string pageName = string.Empty;
+                        string xmlFileName = string.Empty;
                         float pageWeight = -1;
                         int textResId = 0;
                         int gaugesPortrait = GaugesPortraitDefault;
@@ -420,6 +424,8 @@ namespace BmwDeepObd
                         bool jobActivate = false;
                         if (xnodePage.Attributes != null)
                         {
+                            attrib = xnodePage.Attributes["include_filename"];
+                            if (attrib != null) xmlFileName = attrib.Value;
                             attrib = xnodePage.Attributes["name"];
                             if (attrib != null) pageName = attrib.Value;
                             attrib = xnodePage.Attributes["weight"];
@@ -657,7 +663,7 @@ namespace BmwDeepObd
                         if (string.IsNullOrEmpty(pageName)) continue;
                         if (string.IsNullOrWhiteSpace(classCode)) classCode = null;
 
-                        _pageList.Add(new PageInfo(pageName, pageWeight, displayMode, textResId, gaugesPortrait, gaugesLandscape, logFile, jobActivate, classCode, codeShowWarnings, jobsInfo, errorsInfo, displayList, stringList));
+                        _pageList.Add(new PageInfo(xmlFileName, pageName, pageWeight, displayMode, textResId, gaugesPortrait, gaugesLandscape, logFile, jobActivate, classCode, codeShowWarnings, jobsInfo, errorsInfo, displayList, stringList));
                     }
                 }
                 return true;
