@@ -35,6 +35,7 @@
   <string name="ecu_extract">The ECU files have to be extracted (Size approx. {0:fs1}),\nthis requires the download of update information.\nIf the extraction is very slow please use a faster storage media.\nDo you want to continue?</string>
   <string name="ecu_extract_confirm">To extract the ECU files (Size approx. {0:fs1})\nthe download of update information is required.\nIf the extraction is very slow please use a faster storage media.\nDo you want to continue?</string>
   <string name="manufacturer_select">The current manufacturer is {0}, to choose a different one select \'abort\'.</string>
+  <string name="choose_xml_editor">Choose an XML editor.</string>
   <string name="error_no_error">No errors present</string>
   <string name="error_reading_errors">Reading error memory: {0}%</string>
   <string name="error_no_response">No response</string>
