@@ -4383,6 +4383,7 @@ namespace BmwDeepObd
             ActivityCommon.ActivityStartedFromMain = true;
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private bool StartEditXml(string fileName)
         {
             try
@@ -4397,7 +4398,18 @@ namespace BmwDeepObd
                 string mimeType = Android.Webkit.MimeTypeMap.Singleton.GetMimeTypeFromExtension("xml");
                 viewIntent.SetDataAndType(fileUri, mimeType);
                 viewIntent.SetFlags(ActivityFlags.NewTask);
-                Intent chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_xml_editor));
+                Intent chooseIntent;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1)
+                {
+                    Intent receiver = new Intent(Android.App.Application.Context, typeof(ChooseReceiver));
+                    Android.App.PendingIntent pendingIntent =
+                        Android.App.PendingIntent.GetBroadcast(Android.App.Application.Context, 0, receiver, Android.App.PendingIntentFlags.UpdateCurrent);
+                    chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_xml_editor), pendingIntent.IntentSender);
+                }
+                else
+                {
+                    chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_xml_editor));
+                }
                 StartActivityForResult(chooseIntent, (int)ActivityRequest.RequestEditXml);
                 return true;
             }
@@ -4594,6 +4606,25 @@ namespace BmwDeepObd
                 // action bar is clicked and the host activity did not handle the click.
                 ((ActivityMain)Context).ButtonConnectClick(((ActivityMain)Context)._connectButtonInfo.Button, new EventArgs());
                 return true;
+            }
+        }
+
+        [BroadcastReceiver(Exported = false)]
+        public class ChooseReceiver : BroadcastReceiver
+        {
+            public override void OnReceive(Context context, Intent intent)
+            {
+                try
+                {
+                    if (intent?.GetParcelableExtra(Intent.ExtraChosenComponent) is ComponentName clickedComponent)
+                    {
+                        string packageName = clickedComponent.PackageName;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
         }
     }
