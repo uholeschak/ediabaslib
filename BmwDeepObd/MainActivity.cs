@@ -694,17 +694,26 @@ namespace BmwDeepObd
                 enetIpMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet);
             }
 
-            IMenuItem selCfgMenu = menu.FindItem(Resource.Id.menu_sel_cfg);
-            if (selCfgMenu != null)
+            IMenuItem cfgSubmenu = menu.FindItem(Resource.Id.menu_cfg_submenu);
+            cfgSubmenu?.SetEnabled(!commActive);
+
+            IMenuItem cfgSelMenu = menu.FindItem(Resource.Id.menu_cfg_sel);
+            if (cfgSelMenu != null)
             {
                 string fileName = string.Empty;
                 if (!string.IsNullOrEmpty(_instanceData.ConfigFileName))
                 {
                     fileName = Path.GetFileNameWithoutExtension(_instanceData.ConfigFileName);
                 }
-                selCfgMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_sel_cfg), fileName));
-                selCfgMenu.SetEnabled(!commActive);
+                cfgSelMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_cfg_sel), fileName));
+                cfgSelMenu.SetEnabled(!commActive);
             }
+
+            IMenuItem cfgEditMenu = menu.FindItem(Resource.Id.menu_cfg_edit);
+            cfgEditMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
+
+            IMenuItem cfgPageEditMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit);
+            cfgPageEditMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(GetSelectedPage()?.XmlFileName));
 
             IMenuItem xmlToolMenu = menu.FindItem(Resource.Id.menu_xml_tool);
             xmlToolMenu?.SetEnabled(!commActive);
@@ -798,8 +807,16 @@ namespace BmwDeepObd
                     EnetIpConfig();
                     return true;
 
-                case Resource.Id.menu_sel_cfg:
+                case Resource.Id.menu_cfg_sel:
                     SelectConfigFile();
+                    return true;
+
+                case Resource.Id.menu_cfg_edit:
+                    StartEditXml(_instanceData.ConfigFileName);
+                    return true;
+
+                case Resource.Id.menu_cfg_page_edit:
+                    StartEditXml(GetSelectedPage()?.XmlFileName);
                     return true;
 
                 case Resource.Id.menu_xml_tool:
@@ -807,23 +824,7 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_ediabas_tool:
-#if true
                     StartEdiabasTool();
-#else
-                    {
-                        JobReader.PageInfo pageInfo = GetSelectedPage();
-                        string xmlFileName = _instanceData.ConfigFileName;
-                        if (pageInfo != null && !string.IsNullOrEmpty(pageInfo.XmlFileName))
-                        {
-                            xmlFileName = pageInfo.XmlFileName;
-                        }
-                        if (!string.IsNullOrEmpty(xmlFileName))
-                        {
-                            StartEditXml(xmlFileName);
-                        }
-                    }
-
-#endif
                     return true;
 
                 case Resource.Id.menu_download_ecu:
