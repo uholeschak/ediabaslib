@@ -36,9 +36,21 @@
           <item android:id="@+id/menu_enet_ip"
                 android:icon="@android:drawable/ic_menu_manage"
                 android:title="@string/menu_enet_ip" />
-          <item android:id="@+id/menu_sel_cfg"
+          <item android:id="@+id/menu_cfg_submenu"
                 android:icon="@android:drawable/ic_menu_manage"
-                android:title="@string/menu_sel_cfg" />
+                android:title="@string/menu_cfg_submenu">
+            <menu>
+              <item android:id="@+id/menu_cfg_sel"
+                    android:icon="@android:drawable/ic_menu_manage"
+                    android:title="@string/menu_cfg_sel" />
+              <item android:id="@+id/menu_cfg_edit"
+                    android:icon="@android:drawable/ic_menu_edit"
+                    android:title="@string/menu_cfg_edit"/>
+              <item android:id="@+id/menu_cfg_page_edit"
+                    android:icon="@android:drawable/ic_menu_edit"
+                    android:title="@string/menu_cfg_page_edit"/>
+            </menu>
+          </item>
           <item android:id="@+id/menu_xml_tool"
                 android:icon="@android:drawable/ic_menu_manage"
                 android:title="@string/menu_xml_tool" />
