@@ -700,12 +700,15 @@ namespace BmwDeepObd
             IMenuItem cfgSelMenu = menu.FindItem(Resource.Id.menu_cfg_sel);
             if (cfgSelMenu != null)
             {
-                string fileName = string.Empty;
                 if (!string.IsNullOrEmpty(_instanceData.ConfigFileName))
                 {
-                    fileName = Path.GetFileNameWithoutExtension(_instanceData.ConfigFileName);
+                    string fileName = Path.GetFileNameWithoutExtension(_instanceData.ConfigFileName) ?? string.Empty;
+                    cfgSelMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_cfg_sel), fileName));
                 }
-                cfgSelMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_cfg_sel), fileName));
+                else
+                {
+                    cfgSelMenu.SetTitle(Resource.String.menu_cfg_sel);
+                }
                 cfgSelMenu.SetEnabled(!commActive);
             }
 
