@@ -41,7 +41,7 @@
                 android:title="@string/menu_cfg_submenu">
             <menu>
               <item android:id="@+id/menu_cfg_sel"
-                    android:icon="@android:drawable/ic_menu_manage"
+                    android:icon="@android:drawable/ic_menu_search"
                     android:title="@string/menu_cfg_sel" />
               <item android:id="@+id/menu_cfg_edit"
                     android:icon="@android:drawable/ic_menu_edit"
@@ -49,6 +49,9 @@
               <item android:id="@+id/menu_cfg_page_edit"
                     android:icon="@android:drawable/ic_menu_edit"
                     android:title="@string/menu_cfg_page_edit"/>
+              <item android:id="@+id/menu_cfg_edit_reset"
+                    android:icon="@android:drawable/ic_menu_manage"
+                    android:title="@string/menu_cfg_edit_reset"/>
             </menu>
           </item>
           <item android:id="@+id/menu_xml_tool"
