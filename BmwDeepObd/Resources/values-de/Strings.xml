@@ -228,6 +228,7 @@
   <string name="menu_cfg_sel">Auswählen</string>
   <string name="menu_cfg_edit">Editieren</string>
   <string name="menu_cfg_page_edit">Aktuelle Seite editieren</string>
+  <string name="menu_cfg_edit_reset">Gewählten Editor zurücksetzen</string>
   <string name="menu_xml_tool">Konfigurationsgenerator</string>
   <string name="menu_ediabas_tool">Ediabas Tool</string>
   <string name="menu_download_ecu">ECU Dateien herunterladen</string>

@@ -166,6 +166,7 @@ namespace BmwDeepObd
 
         public const string ExtraStopComm = "stop_communication";
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
+        public static bool StoreXmlEditor = Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1;
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
         private bool _updateOptionsMenu;
@@ -720,6 +721,13 @@ namespace BmwDeepObd
             IMenuItem cfgPageEditMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit);
             cfgPageEditMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(GetSelectedPage()?.XmlFileName));
 
+            IMenuItem cfgEditResetMenu = menu.FindItem(Resource.Id.menu_cfg_edit_reset);
+            if (cfgEditResetMenu != null)
+            {
+                cfgEditResetMenu.SetEnabled(!string.IsNullOrEmpty(_instanceData.XmlEditorPackageName) && !string.IsNullOrEmpty(_instanceData.XmlEditorClassName));
+                cfgEditResetMenu.SetVisible(StoreXmlEditor);
+            }
+
             IMenuItem xmlToolMenu = menu.FindItem(Resource.Id.menu_xml_tool);
             xmlToolMenu?.SetEnabled(!commActive);
 
@@ -822,6 +830,12 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_cfg_page_edit:
                     StartEditXml(GetSelectedPage()?.XmlFileName);
+                    return true;
+
+                case Resource.Id.menu_cfg_edit_reset:
+                    _instanceData.XmlEditorPackageName = string.Empty;
+                    _instanceData.XmlEditorClassName = string.Empty;
+                    UpdateOptionsMenu();
                     return true;
 
                 case Resource.Id.menu_xml_tool:
@@ -1711,6 +1725,7 @@ namespace BmwDeepObd
                     {
                         _instanceData.XmlEditorPackageName = packageName;
                         _instanceData.XmlEditorClassName = className;
+                        UpdateOptionsMenu();
                     }
                     break;
             }
@@ -4415,7 +4430,7 @@ namespace BmwDeepObd
                 viewIntent.SetDataAndType(fileUri, mimeType);
                 viewIntent.SetFlags(ActivityFlags.NewTask);
 
-                if (!string.IsNullOrEmpty(_instanceData.XmlEditorPackageName) && !string.IsNullOrEmpty(_instanceData.XmlEditorClassName))
+                if (StoreXmlEditor && !string.IsNullOrEmpty(_instanceData.XmlEditorPackageName) && !string.IsNullOrEmpty(_instanceData.XmlEditorClassName))
                 {
                     try
                     {
@@ -4427,11 +4442,12 @@ namespace BmwDeepObd
                     {
                         _instanceData.XmlEditorPackageName = string.Empty;
                         _instanceData.XmlEditorClassName = string.Empty;
+                        UpdateOptionsMenu();
                     }
                 }
 
                 Intent chooseIntent;
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1)
+                if (StoreXmlEditor)
                 {
                     Intent receiver = new Intent(Android.App.Application.Context, typeof(ChooseReceiver));
                     Android.App.PendingIntent pendingIntent =
