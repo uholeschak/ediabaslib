@@ -146,6 +146,7 @@ namespace BmwDeepObd
             public long UpdateCheckTime { get; set; }
             public int UpdateSkipVersion { get; set; }
             public string XmlEditorPackageName { get; set; }
+            public string XmlEditorClassName { get; set; }
 
             public ActivityCommon.InterfaceType SelectedInterface { get; set; }
         }
@@ -1701,9 +1702,11 @@ namespace BmwDeepObd
 
                 case ActivityCommon.ActionPackageName:
                     string packageName = intent.GetStringExtra(ActivityCommon.BroadcastXmlEditorPackageName);
-                    if (!string.IsNullOrEmpty(packageName))
+                    string className = intent.GetStringExtra(ActivityCommon.BroadcastXmlEditorClassName);
+                    if (!string.IsNullOrEmpty(packageName) && !string.IsNullOrEmpty(className))
                     {
                         _instanceData.XmlEditorPackageName = packageName;
+                        _instanceData.XmlEditorClassName = className;
                     }
                     break;
             }
@@ -4407,19 +4410,29 @@ namespace BmwDeepObd
                 string mimeType = Android.Webkit.MimeTypeMap.Singleton.GetMimeTypeFromExtension("xml");
                 viewIntent.SetDataAndType(fileUri, mimeType);
                 viewIntent.SetFlags(ActivityFlags.NewTask);
-                Intent chooseIntent;
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1)
+
+                if (!string.IsNullOrEmpty(_instanceData.XmlEditorPackageName) && !string.IsNullOrEmpty(_instanceData.XmlEditorClassName))
                 {
-                    Intent receiver = new Intent(Android.App.Application.Context, typeof(ChooseReceiver));
-                    Android.App.PendingIntent pendingIntent =
-                        Android.App.PendingIntent.GetBroadcast(Android.App.Application.Context, 0, receiver, Android.App.PendingIntentFlags.UpdateCurrent);
-                    chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_xml_editor), pendingIntent.IntentSender);
+                    viewIntent.SetComponent(new ComponentName(_instanceData.XmlEditorPackageName, _instanceData.XmlEditorClassName));
+                    StartActivityForResult(viewIntent, (int)ActivityRequest.RequestEditXml);
                 }
                 else
                 {
-                    chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_xml_editor));
+                    Intent chooseIntent;
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1)
+                    {
+                        Intent receiver = new Intent(Android.App.Application.Context, typeof(ChooseReceiver));
+                        Android.App.PendingIntent pendingIntent =
+                            Android.App.PendingIntent.GetBroadcast(Android.App.Application.Context, 0, receiver, Android.App.PendingIntentFlags.UpdateCurrent);
+                        chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_xml_editor), pendingIntent.IntentSender);
+                    }
+                    else
+                    {
+                        chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_xml_editor));
+                    }
+                    StartActivityForResult(chooseIntent, (int)ActivityRequest.RequestEditXml);
                 }
-                StartActivityForResult(chooseIntent, (int)ActivityRequest.RequestEditXml);
+
                 return true;
             }
             catch (Exception)
@@ -4628,10 +4641,12 @@ namespace BmwDeepObd
                     if (intent?.GetParcelableExtra(Intent.ExtraChosenComponent) is ComponentName clickedComponent)
                     {
                         string packageName = clickedComponent.PackageName;
-                        if (!string.IsNullOrEmpty(packageName))
+                        string className = clickedComponent.ClassName;
+                        if (!string.IsNullOrEmpty(packageName) && !string.IsNullOrEmpty(className))
                         {
                             Intent broadcastIntent = new Intent(ActivityCommon.ActionPackageName);
                             broadcastIntent.PutExtra(ActivityCommon.BroadcastXmlEditorPackageName, packageName);
+                            broadcastIntent.PutExtra(ActivityCommon.BroadcastXmlEditorClassName, className);
                             LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
                         }
                     }

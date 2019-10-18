@@ -251,6 +251,7 @@ namespace BmwDeepObd
         public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
         public const string ActionPackageName = AppNameSpace + ".Action.PackageName";
         public const string BroadcastXmlEditorPackageName = "XmlEditorPackageName";
+        public const string BroadcastXmlEditorClassName = "XmlEditorClassName";
         public const string SettingBluetoothHciLog = "bluetooth_hci_log";
         public const string NotificationChannelIdMin = "NotificationChannelMin";
         public const string NotificationChannelIdLow = "NotificationChannelLow";
