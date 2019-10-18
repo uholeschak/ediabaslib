@@ -145,6 +145,7 @@ namespace BmwDeepObd
             public string UpdateMessage { get; set; }
             public long UpdateCheckTime { get; set; }
             public int UpdateSkipVersion { get; set; }
+            public string XmlEditorPackageName { get; set; }
 
             public ActivityCommon.InterfaceType SelectedInterface { get; set; }
         }
@@ -1695,6 +1696,14 @@ namespace BmwDeepObd
                         {
                             StopEdiabasThread(false);
                         }
+                    }
+                    break;
+
+                case ActivityCommon.ActionPackageName:
+                    string packageName = intent.GetStringExtra(ActivityCommon.BroadcastXmlEditorPackageName);
+                    if (!string.IsNullOrEmpty(packageName))
+                    {
+                        _instanceData.XmlEditorPackageName = packageName;
                     }
                     break;
             }
@@ -4619,6 +4628,12 @@ namespace BmwDeepObd
                     if (intent?.GetParcelableExtra(Intent.ExtraChosenComponent) is ComponentName clickedComponent)
                     {
                         string packageName = clickedComponent.PackageName;
+                        if (!string.IsNullOrEmpty(packageName))
+                        {
+                            Intent broadcastIntent = new Intent(ActivityCommon.ActionPackageName);
+                            broadcastIntent.PutExtra(ActivityCommon.BroadcastXmlEditorPackageName, packageName);
+                            LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                        }
                     }
                 }
                 catch (Exception)

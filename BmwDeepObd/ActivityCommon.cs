@@ -249,6 +249,8 @@ namespace BmwDeepObd
         public const string EcuDirNameVag = "EcuVag";
         public const string AppNameSpace = "de.holeschak.bmw_deep_obd";
         public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
+        public const string ActionPackageName = AppNameSpace + ".Action.PackageName";
+        public const string BroadcastXmlEditorPackageName = "XmlEditorPackageName";
         public const string SettingBluetoothHciLog = "bluetooth_hci_log";
         public const string NotificationChannelIdMin = "NotificationChannelMin";
         public const string NotificationChannelIdLow = "NotificationChannelLow";
@@ -817,6 +819,7 @@ namespace BmwDeepObd
 
                 _bcReceiver = new Receiver(this);
                 LocalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
+                LocalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ActionPackageName));
                 context.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.ActionBroadcastCommand));
                 context.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
                 context.RegisterReceiver(_bcReceiver, new IntentFilter(GlobalBroadcastReceiver.NotificationBroadcastAction));
