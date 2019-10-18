@@ -1443,6 +1443,8 @@ namespace BmwDeepObd
                     _instanceData.UpdateSkipVersion = prefs.GetInt("UpdateSkipVersion", -1);
                     _instanceData.LastVersionCode = prefs.GetInt("VersionCode", -1);
                     _instanceData.StorageRequirementsAccepted = prefs.GetBoolean("StorageAccepted", false);
+                    _instanceData.XmlEditorPackageName = prefs.GetString("XmlEditorPackageName", string.Empty);
+                    _instanceData.XmlEditorClassName = prefs.GetString("XmlEditorClassName", string.Empty);
 
                     ActivityCommon.BtNoEvents = prefs.GetBoolean("BtNoEvents", false);
                     ActivityCommon.EnableTranslation = prefs.GetBoolean("EnableTranslation", false);
@@ -1507,6 +1509,8 @@ namespace BmwDeepObd
                 prefsEdit.PutString("StorageMedia", _activityCommon.CustomStorageMedia ?? string.Empty);
                 prefsEdit.PutInt("VersionCode", _currentVersionCode);
                 prefsEdit.PutBoolean("StorageAccepted", _instanceData.StorageRequirementsAccepted);
+                prefsEdit.PutString("XmlEditorPackageName", _instanceData.XmlEditorPackageName ?? string.Empty);
+                prefsEdit.PutString("XmlEditorClassName", _instanceData.XmlEditorClassName ?? string.Empty);
                 prefsEdit.PutBoolean("BtNoEvents", ActivityCommon.BtNoEvents);
                 prefsEdit.PutBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
                 prefsEdit.PutString("YandexApiKey", ActivityCommon.YandexApiKey ?? string.Empty);
@@ -4413,25 +4417,32 @@ namespace BmwDeepObd
 
                 if (!string.IsNullOrEmpty(_instanceData.XmlEditorPackageName) && !string.IsNullOrEmpty(_instanceData.XmlEditorClassName))
                 {
-                    viewIntent.SetComponent(new ComponentName(_instanceData.XmlEditorPackageName, _instanceData.XmlEditorClassName));
-                    StartActivityForResult(viewIntent, (int)ActivityRequest.RequestEditXml);
+                    try
+                    {
+                        viewIntent.SetComponent(new ComponentName(_instanceData.XmlEditorPackageName, _instanceData.XmlEditorClassName));
+                        StartActivityForResult(viewIntent, (int)ActivityRequest.RequestEditXml);
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        _instanceData.XmlEditorPackageName = string.Empty;
+                        _instanceData.XmlEditorClassName = string.Empty;
+                    }
+                }
+
+                Intent chooseIntent;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1)
+                {
+                    Intent receiver = new Intent(Android.App.Application.Context, typeof(ChooseReceiver));
+                    Android.App.PendingIntent pendingIntent =
+                        Android.App.PendingIntent.GetBroadcast(Android.App.Application.Context, 0, receiver, Android.App.PendingIntentFlags.UpdateCurrent);
+                    chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_xml_editor), pendingIntent.IntentSender);
                 }
                 else
                 {
-                    Intent chooseIntent;
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1)
-                    {
-                        Intent receiver = new Intent(Android.App.Application.Context, typeof(ChooseReceiver));
-                        Android.App.PendingIntent pendingIntent =
-                            Android.App.PendingIntent.GetBroadcast(Android.App.Application.Context, 0, receiver, Android.App.PendingIntentFlags.UpdateCurrent);
-                        chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_xml_editor), pendingIntent.IntentSender);
-                    }
-                    else
-                    {
-                        chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_xml_editor));
-                    }
-                    StartActivityForResult(chooseIntent, (int)ActivityRequest.RequestEditXml);
+                    chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_xml_editor));
                 }
+                StartActivityForResult(chooseIntent, (int)ActivityRequest.RequestEditXml);
 
                 return true;
             }
