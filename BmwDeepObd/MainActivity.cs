@@ -846,6 +846,7 @@ namespace BmwDeepObd
                     _instanceData.ConfigFileName = string.Empty;
                     CreateActionBarTabs();
                     UpdateOptionsMenu();
+                    UpdateDisplay();
                     return true;
 
                 case Resource.Id.menu_xml_tool:
