@@ -728,6 +728,9 @@ namespace BmwDeepObd
                 cfgEditResetMenu.SetVisible(StoreXmlEditor);
             }
 
+            IMenuItem cfgCloseMenu = menu.FindItem(Resource.Id.menu_cfg_close);
+            cfgCloseMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
+
             IMenuItem xmlToolMenu = menu.FindItem(Resource.Id.menu_xml_tool);
             xmlToolMenu?.SetEnabled(!commActive);
 
@@ -835,6 +838,13 @@ namespace BmwDeepObd
                 case Resource.Id.menu_cfg_edit_reset:
                     _instanceData.XmlEditorPackageName = string.Empty;
                     _instanceData.XmlEditorClassName = string.Empty;
+                    UpdateOptionsMenu();
+                    return true;
+
+                case Resource.Id.menu_cfg_close:
+                    ActivityCommon.JobReader.Clear();
+                    _instanceData.ConfigFileName = string.Empty;
+                    CreateActionBarTabs();
                     UpdateOptionsMenu();
                     return true;
 

@@ -230,6 +230,7 @@
   <string name="menu_cfg_edit">Edit</string>
   <string name="menu_cfg_page_edit">Edit current page</string>
   <string name="menu_cfg_edit_reset">Reset XML editor</string>
+  <string name="menu_cfg_close">Close</string>
   <string name="menu_xml_tool">Генератор конфигураций</string>
   <string name="menu_ediabas_tool">Ediabas утилита</string>
   <string name="menu_download_ecu">Скачать ECU файл.</string>
