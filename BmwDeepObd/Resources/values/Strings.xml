@@ -204,7 +204,7 @@
   <string name="menu_cfg_sel">Select</string>
   <string name="menu_cfg_edit">Edit</string>
   <string name="menu_cfg_page_edit">Edit current page</string>
-  <string name="menu_cfg_edit_reset">Reset selected editor</string>
+  <string name="menu_cfg_edit_reset">Reset XML editor</string>
   <string name="menu_xml_tool">Configuration generator</string>
   <string name="menu_ediabas_tool">Ediabas tool</string>
   <string name="menu_download_ecu">Download ECU files</string>
