@@ -52,6 +52,9 @@
               <item android:id="@+id/menu_cfg_edit_reset"
                     android:icon="@android:drawable/ic_menu_manage"
                     android:title="@string/menu_cfg_edit_reset"/>
+              <item android:id="@+id/menu_cfg_close"
+                    android:icon="@android:drawable/ic_menu_close_clear_cancel"
+                    android:title="@string/menu_cfg_close"/>
             </menu>
           </item>
           <item android:id="@+id/menu_xml_tool"
