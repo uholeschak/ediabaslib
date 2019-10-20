@@ -227,6 +227,7 @@
   <string name="menu_cfg_submenu">Konfiguration</string>
   <string name="menu_cfg_sel">Auswählen</string>
   <string name="menu_cfg_edit">Editieren</string>
+  <string name="menu_cfg_pages_edit">Seitenliste editieren</string>
   <string name="menu_cfg_page_edit">Aktuelle Seite editieren</string>
   <string name="menu_cfg_edit_reset">XML Editor zurücksetzen</string>
   <string name="menu_cfg_close">Schließen</string>

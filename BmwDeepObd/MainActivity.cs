@@ -718,6 +718,9 @@ namespace BmwDeepObd
             IMenuItem cfgEditMenu = menu.FindItem(Resource.Id.menu_cfg_edit);
             cfgEditMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
 
+            IMenuItem cfgPagesEditMenu = menu.FindItem(Resource.Id.menu_cfg_pages_edit);
+            cfgPagesEditMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName) && !string.IsNullOrEmpty(ActivityCommon.JobReader.XmlFileNamePages));
+
             IMenuItem cfgPageEditMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit);
             cfgPageEditMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(GetSelectedPage()?.XmlFileName));
 
@@ -829,6 +832,10 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_cfg_edit:
                     StartEditXml(_instanceData.ConfigFileName);
+                    return true;
+
+                case Resource.Id.menu_cfg_pages_edit:
+                    StartEditXml(ActivityCommon.JobReader.XmlFileNamePages);
                     return true;
 
                 case Resource.Id.menu_cfg_page_edit:
