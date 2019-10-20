@@ -61,6 +61,7 @@ namespace BmwDeepObd
             RequestEdiabasTool,
             RequestYandexKey,
             RequestGlobalSettings,
+            RequestEditConfig,
             RequestEditXml,
         }
 
@@ -628,6 +629,17 @@ namespace BmwDeepObd
                     CheckForEcuFiles();
                     break;
 
+                case ActivityRequest.RequestEditConfig:
+                    if (data != null && resultCode == Android.App.Result.Ok)
+                    {
+                        string fileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
+                        if (!string.IsNullOrEmpty(fileName))
+                        {
+                            StartEditXml(fileName);
+                        }
+                    }
+                    break;
+
                 case ActivityRequest.RequestEditXml:
                     ReadConfigFile();
                     break;
@@ -723,6 +735,9 @@ namespace BmwDeepObd
 
             IMenuItem cfgPageEditMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit);
             cfgPageEditMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(GetSelectedPage()?.XmlFileName));
+
+            IMenuItem cfgSelectEditMenu = menu.FindItem(Resource.Id.menu_cfg_select_edit);
+            cfgSelectEditMenu?.SetEnabled(!commActive);
 
             IMenuItem cfgEditResetMenu = menu.FindItem(Resource.Id.menu_cfg_edit_reset);
             if (cfgEditResetMenu != null)
@@ -840,6 +855,10 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_cfg_page_edit:
                     StartEditXml(GetSelectedPage()?.XmlFileName);
+                    return true;
+
+                case Resource.Id.menu_cfg_select_edit:
+                    EditConfigFileIntent();
                     return true;
 
                 case Resource.Id.menu_cfg_edit_reset:
@@ -4376,6 +4395,28 @@ namespace BmwDeepObd
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
             serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".cccfg");
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectConfig);
+            ActivityCommon.ActivityStartedFromMain = true;
+        }
+
+        private void EditConfigFileIntent()
+        {
+            // Launch the FilePickerActivity to select a configuration
+            Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
+            string initDir = _instanceData.AppDataPath;
+            try
+            {
+                if (!string.IsNullOrEmpty(_instanceData.ConfigFileName))
+                {
+                    initDir = Path.GetDirectoryName(_instanceData.ConfigFileName);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
+            serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".cccfg;.ccpages;.ccpage");
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestEditConfig);
             ActivityCommon.ActivityStartedFromMain = true;
         }
 
