@@ -46,6 +46,9 @@
               <item android:id="@+id/menu_cfg_edit"
                     android:icon="@android:drawable/ic_menu_edit"
                     android:title="@string/menu_cfg_edit"/>
+              <item android:id="@+id/menu_cfg_pages_edit"
+                    android:icon="@android:drawable/ic_menu_edit"
+                    android:title="@string/menu_cfg_pages_edit"/>
               <item android:id="@+id/menu_cfg_page_edit"
                     android:icon="@android:drawable/ic_menu_edit"
                     android:title="@string/menu_cfg_page_edit"/>
