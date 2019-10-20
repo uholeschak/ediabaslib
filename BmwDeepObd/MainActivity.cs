@@ -4462,6 +4462,7 @@ namespace BmwDeepObd
                     {
                         viewIntent.SetComponent(new ComponentName(_instanceData.XmlEditorPackageName, _instanceData.XmlEditorClassName));
                         StartActivityForResult(viewIntent, (int)ActivityRequest.RequestEditXml);
+                        ActivityCommon.ActivityStartedFromMain = true;
                         return true;
                     }
                     catch (Exception)
@@ -4485,6 +4486,7 @@ namespace BmwDeepObd
                     chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_xml_editor));
                 }
                 StartActivityForResult(chooseIntent, (int)ActivityRequest.RequestEditXml);
+                ActivityCommon.ActivityStartedFromMain = true;
 
                 return true;
             }
