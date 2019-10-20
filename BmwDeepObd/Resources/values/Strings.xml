@@ -158,6 +158,7 @@
   <string name="bt_not_enabled">Bluetooth is not enabled</string>
   <string name="bt_mtc_service_error">The Bluetooth service is connected, but delivers no data.\nA restricted mode will be used, please pair the devices in the phone menu.</string>
   <string name="bt_mtc_antenna_info">For some Android radios it\'s recommended to replace the antenna cable of the internal Bluetooth module and lead it through the enclosure.\nThe antenna cable should have a length of 15.5 cm. For modules without cable a length of 16.0 cm seems to be optimal.</string>
+  <string name="bt_mtc_module_error">Android devices with Bluetooth module SD-G936 seem to have communication problems with the OBD adapters.\nConnection will probably not work correctly.</string>
   <string name="bt_module_name">(Bluetooth module: {0})</string>
   <string name="title_paired_devices">Paired devices</string>
   <string name="title_other_devices">Other available devices</string>

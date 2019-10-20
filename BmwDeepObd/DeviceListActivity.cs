@@ -75,6 +75,7 @@ namespace BmwDeepObd
         {
             public string MtcBtModuleName { get; set; }
             public bool MtcAntennaInfoShown { get; set; }
+            public bool MtcBtModuleErrorShown { get; set; }
             public bool MtcErrorShown { get; set; }
             public bool MtcOffline { get; set; }
         }
@@ -443,6 +444,13 @@ namespace BmwDeepObd
                     _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_antenna_info), Resource.String.alert_title_info);
                 }
 #endif
+                if (!_instanceData.MtcBtModuleErrorShown && !string.IsNullOrEmpty(_instanceData.MtcBtModuleName) &&
+                    string.Compare(_instanceData.MtcBtModuleName, "SD-GT936", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    _instanceData.MtcBtModuleErrorShown = true;
+                    _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_module_error), Resource.String.alert_title_warning);
+                }
+
                 if (oldOffline != _instanceData.MtcOffline)
                 {
                     ShowScanState(false);
