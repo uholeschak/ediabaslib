@@ -842,11 +842,7 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_cfg_close:
-                    ActivityCommon.JobReader.Clear();
-                    _instanceData.ConfigFileName = string.Empty;
-                    CreateActionBarTabs();
-                    UpdateOptionsMenu();
-                    UpdateDisplay();
+                    ClearConfiguration();
                     return true;
 
                 case Resource.Id.menu_xml_tool:
@@ -4107,16 +4103,11 @@ namespace BmwDeepObd
                 {
                     _activityCommon.SelectedInterface = ActivityCommon.InterfaceType.Bluetooth;
                 }
-                ActivityCommon.JobReader.Clear();
-                _instanceData.ConfigFileName = string.Empty;
-                CreateActionBarTabs();
-                UpdateDirectories();
+                ClearConfiguration();
                 if (CheckForEcuFiles())
                 {
                     RequestConfigSelect();
                 }
-                UpdateOptionsMenu();
-                UpdateDisplay();
             });
         }
 
@@ -4178,6 +4169,16 @@ namespace BmwDeepObd
                 }
                 _configSelectAlertDialog = null;
             };
+        }
+
+        private void ClearConfiguration()
+        {
+            ActivityCommon.JobReader.Clear();
+            _instanceData.ConfigFileName = string.Empty;
+            CreateActionBarTabs();
+            UpdateDirectories();
+            UpdateOptionsMenu();
+            UpdateDisplay();
         }
 
         private void SelectDataLogging()

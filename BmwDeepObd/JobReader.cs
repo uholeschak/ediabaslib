@@ -252,6 +252,7 @@ namespace BmwDeepObd
         private bool _logTagsPresent;
         private string _interfaceName = string.Empty;
         private string _manufacturerName = string.Empty;
+        private string _xmlFileNamePages = string.Empty;
         private ActivityCommon.ManufacturerType _manufacturerType = ActivityCommon.ManufacturerType.Bmw;
         private ActivityCommon.InterfaceType _interfaceType = ActivityCommon.InterfaceType.None;
 
@@ -269,6 +270,8 @@ namespace BmwDeepObd
 
         public string InterfaceName => _interfaceName;
 
+        public string XmlFileNamePages => _xmlFileNamePages;
+
         public ActivityCommon.ManufacturerType Manufacturer => _manufacturerType;
 
         public ActivityCommon.InterfaceType Interface => _interfaceType;
@@ -285,12 +288,18 @@ namespace BmwDeepObd
         public void Clear()
         {
             _pageList.Clear();
+            _ecuPath = string.Empty;
+            _logPath = string.Empty;
+            _logTagsPresent = false;
+            _manufacturerName = string.Empty;
+            _interfaceName = string.Empty;
+            _xmlFileNamePages = string.Empty;
         }
 
         public bool ReadXml(string xmlName, out string errorMessage)
         {
             errorMessage = null;
-            _pageList.Clear();
+            Clear();
             if (string.IsNullOrEmpty(xmlName))
             {
                 return false;
@@ -300,11 +309,6 @@ namespace BmwDeepObd
                 return false;
             }
             string xmlDir = Path.GetDirectoryName(xmlName);
-            _ecuPath = string.Empty;
-            _logPath = string.Empty;
-            _logTagsPresent = false;
-            _manufacturerName = string.Empty;
-            _interfaceName = string.Empty;
 
             try
             {
@@ -408,10 +412,17 @@ namespace BmwDeepObd
                     _interfaceType = ActivityCommon.InterfaceType.Bluetooth;
                 }
 
-                XmlNodeList xnodePages = xdocConfig.SelectNodes(string.Format("/{0}configuration/{0}pages/{0}page", prefix), namespaceManager);
-                if (xnodePages != null)
+                XmlNode xnodePages = xdocConfig.SelectSingleNode(string.Format("/{0}configuration/{0}pages", prefix), namespaceManager);
+                if (xnodePages?.Attributes != null)
                 {
-                    foreach (XmlNode xnodePage in xnodePages)
+                    attrib = xnodePages.Attributes["include_filename"];
+                    if (attrib != null) _xmlFileNamePages = attrib.Value;
+                }
+
+                XmlNodeList xnodesPage = xdocConfig.SelectNodes(string.Format("/{0}configuration/{0}pages/{0}page", prefix), namespaceManager);
+                if (xnodesPage != null)
+                {
+                    foreach (XmlNode xnodePage in xnodesPage)
                     {
                         string pageName = string.Empty;
                         string xmlFileName = string.Empty;
