@@ -4449,6 +4449,13 @@ namespace BmwDeepObd
                 viewIntent.SetDataAndType(fileUri, mimeType);
                 viewIntent.SetFlags(ActivityFlags.NewTask);
 
+                IList<ResolveInfo> activities = _activityCommon.PackageManager?.QueryIntentActivities(viewIntent, PackageInfoFlags.MatchDefaultOnly);
+                if (activities == null || activities.Count == 0)
+                {
+                    _activityCommon.ShowAlert(GetString(Resource.String.no_xml_editor_installed), Resource.String.alert_title_error);
+                    return false;
+                }
+
                 if (StoreXmlEditor && !string.IsNullOrEmpty(_instanceData.XmlEditorPackageName) && !string.IsNullOrEmpty(_instanceData.XmlEditorClassName))
                 {
                     try
