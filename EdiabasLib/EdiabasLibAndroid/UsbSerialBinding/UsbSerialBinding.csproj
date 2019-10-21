@@ -10,7 +10,7 @@
     <RootNamespace>UsbSerialBinding</RootNamespace>
     <AssemblyName>UsbSerialBinding</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v10.0</TargetFrameworkVersion>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>UsbSerialBinding.snk</AssemblyOriginatorKeyFile>
     <AndroidCodegenTarget>XAJavaInterop1</AndroidCodegenTarget>
