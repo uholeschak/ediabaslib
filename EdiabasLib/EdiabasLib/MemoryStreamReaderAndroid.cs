@@ -56,6 +56,7 @@ namespace EdiabasLib
                         (string.Compare(dirName, _dirDictName, StringComparison.Ordinal) != 0))
                     {
                         Dictionary<string, string> dirDict = GetDirDict(dirName);
+                        // ReSharper disable once JoinNullCheckWithUsage
                         if (dirDict == null)
                         {
                             throw new FileNotFoundException();
@@ -63,14 +64,23 @@ namespace EdiabasLib
                         _dirDictName = dirName;
                         _dirDict = dirDict;
                         RemoveDirectoryObserver();
-                        _directoryObserver = new DirectoryObserver(dirName);
+                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                        if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
+                        {
+                            _directoryObserver = new DirectoryObserver(dirName);
+                        }
+                        else
+                        {
+                            _directoryObserver = new DirectoryObserver(new Java.IO.File(dirName));
+                        }
                         _directoryObserver.StartWatching();
                     }
-                    string realName;
-                    if (!_dirDict.TryGetValue(fileName.ToUpperInvariant(), out realName))
+
+                    if (!_dirDict.TryGetValue(fileName.ToUpperInvariant(), out string realName))
                     {
                         throw new FileNotFoundException();
                     }
+
                     path = Path.Combine(dirName, realName);
                     if (!File.Exists(path))
                     {
@@ -343,6 +353,13 @@ namespace EdiabasLib
                 FileObserverEvents.Create | FileObserverEvents.Delete | FileObserverEvents.DeleteSelf | FileObserverEvents.MoveSelf);
 
             public DirectoryObserver(String rootPath)
+#pragma warning disable 618
+                : base(rootPath, Events)
+#pragma warning restore 618
+            {
+            }
+
+            public DirectoryObserver(Java.IO.File rootPath)
                 : base(rootPath, Events)
             {
             }
