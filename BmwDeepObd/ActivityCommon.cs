@@ -2168,7 +2168,16 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    _maWifi?.SetWifiEnabled(false);
+                    if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
+                    {
+#pragma warning disable 618
+                        _maWifi?.SetWifiEnabled(false);
+#pragma warning restore 618
+                    }
+                    else
+                    {
+                        _context.StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
+                    }
                 }
                 catch (Exception)
                 {
@@ -2383,9 +2392,14 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        if (_maWifi != null && !_maWifi.IsWifiEnabled)
+                        if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
                         {
-                            _maWifi.SetWifiEnabled(true);
+                            if (_maWifi != null && !_maWifi.IsWifiEnabled)
+                            {
+#pragma warning disable 618
+                                _maWifi.SetWifiEnabled(true);
+#pragma warning restore 618
+                            }
                         }
                         _context.StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
                     }
@@ -2407,9 +2421,14 @@ namespace BmwDeepObd
             }
             try
             {
-                if (_maWifi != null && !_maWifi.IsWifiEnabled)
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
                 {
-                    _maWifi.SetWifiEnabled(true);
+                    if (_maWifi != null && !_maWifi.IsWifiEnabled)
+                    {
+#pragma warning disable 618
+                        _maWifi.SetWifiEnabled(true);
+#pragma warning restore 618
+                    }
                 }
                 _context.StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
             }
@@ -2725,7 +2744,16 @@ namespace BmwDeepObd
                         _lastEnetSsid = string.Empty;
                         try
                         {
-                            _maWifi.SetWifiEnabled(true);
+                            if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
+                            {
+#pragma warning disable 618
+                                _maWifi.SetWifiEnabled(true);
+#pragma warning restore 618
+                            }
+                            else
+                            {
+                                _context.StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
+                            }
                         }
                         catch (Exception)
                         {
