@@ -458,7 +458,7 @@ namespace BmwDeepObd
         private bool _internetCellularRegistered;
         private CellularCallback _cellularCallback;
         private WifiCallback _wifiCallback;
-        private Network _mobileNetwork;
+        private Network _activeCellularNetwork;
         private Handler _btUpdateHandler;
         private Timer _usbCheckTimer;
         private Timer _networkTimer;
@@ -1787,15 +1787,9 @@ namespace BmwDeepObd
             }
 
             Network defaultNetwork = null;
-            if (forceMobile && _mobileNetwork != null)
+            if (forceMobile && _activeCellularNetwork != null)
             {
-                NetworkInfo networkInfo = _maConnectivity.GetNetworkInfo(_mobileNetwork);
-                NetworkCapabilities networkCapabilities = _maConnectivity.GetNetworkCapabilities(_mobileNetwork);
-                if (networkInfo != null && networkInfo.IsConnected &&
-                    networkCapabilities != null && networkCapabilities.HasTransport(Android.Net.TransportType.Cellular))
-                {
-                    defaultNetwork = _mobileNetwork;
-                }
+                defaultNetwork = _activeCellularNetwork;
             }
             //Android.Util.Log.WriteLine(Android.Util.LogPriority.Debug, "Network", (defaultNetwork != null) ? "Mobile selected" : "Mobile not selected");
             try
@@ -7538,7 +7532,7 @@ namespace BmwDeepObd
                 NetworkCapabilities networkCapabilities = _activityCommon._maConnectivity.GetNetworkCapabilities(network);
                 if (networkCapabilities != null && networkCapabilities.HasTransport(Android.Net.TransportType.Cellular))
                 {
-                    _activityCommon._mobileNetwork = network;
+                    _activityCommon._activeCellularNetwork = network;
                     _activityCommon.SetPreferredNetworkInterface();
                 }
             }
@@ -7548,7 +7542,7 @@ namespace BmwDeepObd
                 NetworkCapabilities networkCapabilities = _activityCommon._maConnectivity.GetNetworkCapabilities(network);
                 if (networkCapabilities != null && networkCapabilities.HasTransport(Android.Net.TransportType.Cellular))
                 {
-                    _activityCommon._mobileNetwork = null;
+                    _activityCommon._activeCellularNetwork = null;
                     _activityCommon.SetPreferredNetworkInterface();
                 }
             }
