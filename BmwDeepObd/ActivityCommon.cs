@@ -433,6 +433,7 @@ namespace BmwDeepObd
         private bool? _mtcBtService;
         private bool? _mtcBtManager;
         private static readonly object LockObject = new object();
+        private readonly object NetworkLockObject = new object();
         private static int _instanceCount;
         private static string _externalPath;
         private static string _externalWritePath;
@@ -458,7 +459,10 @@ namespace BmwDeepObd
         private bool _internetCellularRegistered;
         private CellularCallback _cellularCallback;
         private WifiCallback _wifiCallback;
+        private EthernetCallback _ethernetCallback;
         private Network _activeCellularNetwork;
+        private Network _activeWifiNetwork;
+        private Network _activeEthernetNetwork;
         private Handler _btUpdateHandler;
         private Timer _usbCheckTimer;
         private Timer _networkTimer;
@@ -824,7 +828,7 @@ namespace BmwDeepObd
                 context.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.ActionBroadcastCommand));
                 context.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
                 context.RegisterReceiver(_bcReceiver, new IntentFilter(GlobalBroadcastReceiver.NotificationBroadcastAction));
-                RegisterWifiNetworkCallback();
+                RegisterWifiEnetNetworkCallback();
                 if (UsbSupport)
                 {   // usb handling
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
@@ -955,7 +959,7 @@ namespace BmwDeepObd
                         _updateHttpClient = null;
                     }
 
-                    UnRegisterWifiCallback();
+                    UnRegisterWifiEnetCallback();
                     if (_context != null)
                     {
                         if (_gbcReceiver != null)
@@ -1694,10 +1698,15 @@ namespace BmwDeepObd
                 }
                 _cellularCallback = null;
             }
+
+            lock (NetworkLockObject)
+            {
+                _activeCellularNetwork = null;
+            }
             return true;
         }
 
-        public bool RegisterWifiNetworkCallback()
+        public bool RegisterWifiEnetNetworkCallback()
         {
             if (_maConnectivity == null)
             {
@@ -1717,17 +1726,23 @@ namespace BmwDeepObd
                 }
                 return true;
             }
-            UnRegisterWifiCallback();
+
+            UnRegisterWifiEnetCallback();
             try
             {
-                NetworkRequest.Builder builder = new NetworkRequest.Builder();
-                builder.AddCapability(NetCapability.Internet);
-                builder.AddTransportType(Android.Net.TransportType.Wifi);
-                builder.AddTransportType(Android.Net.TransportType.Ethernet);
-                NetworkRequest networkRequest = builder.Build();
+                NetworkRequest.Builder builderWifi = new NetworkRequest.Builder();
+                builderWifi.AddCapability(NetCapability.Internet);
+                builderWifi.AddTransportType(Android.Net.TransportType.Wifi);
+                NetworkRequest networkWifiRequest = builderWifi.Build();
                 _wifiCallback = new WifiCallback(this);
-                _maConnectivity.RequestNetwork(networkRequest, _wifiCallback);
-                _maConnectivity.RegisterNetworkCallback(networkRequest, _wifiCallback);
+                _maConnectivity.RequestNetwork(networkWifiRequest, _wifiCallback);
+
+                NetworkRequest.Builder builderEthernet = new NetworkRequest.Builder();
+                builderEthernet.AddCapability(NetCapability.Internet);
+                builderEthernet.AddTransportType(Android.Net.TransportType.Ethernet);
+                NetworkRequest networkEthernetRequest = builderEthernet.Build();
+                _ethernetCallback = new EthernetCallback(this);
+                _maConnectivity.RegisterNetworkCallback(networkEthernetRequest, _ethernetCallback);
             }
             catch (Exception)
             {
@@ -1736,7 +1751,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool UnRegisterWifiCallback()
+        public bool UnRegisterWifiEnetCallback()
         {
             if (_maConnectivity == null)
             {
@@ -1746,6 +1761,7 @@ namespace BmwDeepObd
             {
                 return true;
             }
+
             if (_wifiCallback != null)
             {
                 try
@@ -1758,6 +1774,26 @@ namespace BmwDeepObd
                 }
                 _wifiCallback = null;
             }
+
+            if (_ethernetCallback != null)
+            {
+                try
+                {
+                    _maConnectivity.UnregisterNetworkCallback(_ethernetCallback);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+                _ethernetCallback = null;
+            }
+
+            lock (NetworkLockObject)
+            {
+                _activeWifiNetwork = null;
+                _activeEthernetNetwork = null;
+            }
+
             return true;
         }
 
@@ -1787,10 +1823,16 @@ namespace BmwDeepObd
             }
 
             Network defaultNetwork = null;
-            if (forceMobile && _activeCellularNetwork != null)
+            Network cellularNetwork;
+            lock (NetworkLockObject)
             {
-                defaultNetwork = _activeCellularNetwork;
+                cellularNetwork = _activeCellularNetwork;
             }
+            if (forceMobile && cellularNetwork != null)
+            {
+                defaultNetwork = cellularNetwork;
+            }
+
             //Android.Util.Log.WriteLine(Android.Util.LogPriority.Debug, "Network", (defaultNetwork != null) ? "Mobile selected" : "Mobile not selected");
             try
             {
@@ -2114,27 +2156,23 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-                Network[] networks = _maConnectivity?.GetAllNetworks();
-                if (networks != null)
+
+                Network network;
+                lock (NetworkLockObject)
                 {
-                    foreach (Network network in networks)
+                    network = _activeEthernetNetwork;
+                }
+
+                if (network != null)
+                {
+                    LinkProperties linkProperties = _maConnectivity.GetLinkProperties(network);
+                    foreach (LinkAddress linkAddress in linkProperties.LinkAddresses)
                     {
-                        NetworkInfo networkInfo = _maConnectivity.GetNetworkInfo(network);
-                        NetworkCapabilities networkCapabilities = _maConnectivity.GetNetworkCapabilities(network);
-                        // HasTransport support started also with Lollipop
-                        if (networkInfo != null && networkInfo.IsConnected &&
-                            networkCapabilities != null && networkCapabilities.HasTransport(Android.Net.TransportType.Ethernet))
+                        if (linkAddress.Address is Java.Net.Inet4Address inet4Address)
                         {
-                            LinkProperties linkProperties = _maConnectivity.GetLinkProperties(network);
-                            foreach (LinkAddress linkAddress in linkProperties.LinkAddresses)
+                            if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
                             {
-                                if (linkAddress.Address is Java.Net.Inet4Address inet4Address)
-                                {
-                                    if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
-                                    {
-                                        return true;
-                                    }
-                                }
+                                return true;
                             }
                         }
                     }
@@ -7529,22 +7567,20 @@ namespace BmwDeepObd
 
             public override void OnAvailable(Network network)
             {
-                NetworkCapabilities networkCapabilities = _activityCommon._maConnectivity.GetNetworkCapabilities(network);
-                if (networkCapabilities != null && networkCapabilities.HasTransport(Android.Net.TransportType.Cellular))
+                lock (_activityCommon.NetworkLockObject)
                 {
                     _activityCommon._activeCellularNetwork = network;
-                    _activityCommon.SetPreferredNetworkInterface();
                 }
+                _activityCommon.SetPreferredNetworkInterface();
             }
 
             public override void OnLost(Network network)
             {
-                NetworkCapabilities networkCapabilities = _activityCommon._maConnectivity.GetNetworkCapabilities(network);
-                if (networkCapabilities != null && networkCapabilities.HasTransport(Android.Net.TransportType.Cellular))
+                lock (_activityCommon.NetworkLockObject)
                 {
                     _activityCommon._activeCellularNetwork = null;
-                    _activityCommon.SetPreferredNetworkInterface();
                 }
+                _activityCommon.SetPreferredNetworkInterface();
             }
         }
 
@@ -7559,11 +7595,49 @@ namespace BmwDeepObd
 
             public override void OnAvailable(Network network)
             {
+                lock (_activityCommon.NetworkLockObject)
+                {
+                    _activityCommon._activeWifiNetwork = network;
+                }
                 _activityCommon.NetworkStateChanged(true);
             }
 
             public override void OnLost(Network network)
             {
+                lock (_activityCommon.NetworkLockObject)
+                {
+                    _activityCommon._activeWifiNetwork = null;
+                }
+                _activityCommon.NetworkStateChanged(true);
+            }
+        }
+
+        public class EthernetCallback : ConnectivityManager.NetworkCallback
+        {
+            private readonly ActivityCommon _activityCommon;
+
+            public EthernetCallback(ActivityCommon activityCommon)
+            {
+                _activityCommon = activityCommon;
+            }
+
+            public override void OnAvailable(Network network)
+            {
+                lock (_activityCommon.NetworkLockObject)
+                {
+                    _activityCommon._activeEthernetNetwork = network;
+                }
+
+                _activityCommon.NetworkStateChanged(true);
+            }
+
+            public override void OnLost(Network network)
+            {
+                lock (_activityCommon.NetworkLockObject)
+                {
+                    _activityCommon._activeEthernetNetwork = null;
+                }
+
                 _activityCommon.NetworkStateChanged(true);
             }
         }
