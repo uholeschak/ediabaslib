@@ -460,9 +460,9 @@ namespace BmwDeepObd
         private CellularCallback _cellularCallback;
         private WifiCallback _wifiCallback;
         private EthernetCallback _ethernetCallback;
-        private Network _activeCellularNetwork;
-        private Network _activeWifiNetwork;
-        private Network _activeEthernetNetwork;
+        private readonly List<Network> _activeCellularNetworks = new List<Network>();
+        private readonly List<Network> _activeWifiNetworks = new List<Network>();
+        private readonly List<Network> _activeEthernetNetworks = new List<Network>();
         private Handler _btUpdateHandler;
         private Timer _usbCheckTimer;
         private Timer _networkTimer;
@@ -1701,7 +1701,7 @@ namespace BmwDeepObd
 
             lock (NetworkLockObject)
             {
-                _activeCellularNetwork = null;
+                _activeCellularNetworks.Clear();
             }
             return true;
         }
@@ -1790,8 +1790,8 @@ namespace BmwDeepObd
 
             lock (NetworkLockObject)
             {
-                _activeWifiNetwork = null;
-                _activeEthernetNetwork = null;
+                _activeWifiNetworks.Clear();
+                _activeEthernetNetworks.Clear();
             }
 
             return true;
@@ -1823,11 +1823,15 @@ namespace BmwDeepObd
             }
 
             Network defaultNetwork = null;
-            Network cellularNetwork;
+            Network cellularNetwork = null;
             lock (NetworkLockObject)
             {
-                cellularNetwork = _activeCellularNetwork;
+                if (_activeCellularNetworks.Count > 0)
+                {
+                    cellularNetwork = _activeCellularNetworks[0];
+                }
             }
+
             if (forceMobile && cellularNetwork != null)
             {
                 defaultNetwork = cellularNetwork;
@@ -2157,33 +2161,32 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                Network network;
+                bool result = false;
                 lock (NetworkLockObject)
                 {
-                    network = _activeEthernetNetwork;
-                }
-
-                if (network != null)
-                {
-                    LinkProperties linkProperties = _maConnectivity.GetLinkProperties(network);
-                    foreach (LinkAddress linkAddress in linkProperties.LinkAddresses)
+                    foreach (Network network in _activeEthernetNetworks)
                     {
-                        if (linkAddress.Address is Java.Net.Inet4Address inet4Address)
+                        LinkProperties linkProperties = _maConnectivity.GetLinkProperties(network);
+                        foreach (LinkAddress linkAddress in linkProperties.LinkAddresses)
                         {
-                            if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
+                            if (linkAddress.Address is Java.Net.Inet4Address inet4Address)
                             {
-                                return true;
+                                if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
+                                {
+                                    result = true;
+                                    break;
+                                }
                             }
                         }
                     }
                 }
+
+                return result;
             }
             catch (Exception)
             {
                 return false;
             }
-
-            return false;
         }
 
         public bool ShowWifiConnectedWarning(WifiConnectedWarnDelegate handler)
@@ -4403,6 +4406,7 @@ namespace BmwDeepObd
                 }
                 XDocument xmlDoc = XDocument.Parse(mailXml);
                 XElement errorNode = xmlDoc.Root?.Element("error");
+                // ReSharper disable once UseNullPropagation
                 if (errorNode != null)
                 {
                     XAttribute messageAttr = errorNode.Attribute("message");
@@ -7569,7 +7573,11 @@ namespace BmwDeepObd
             {
                 lock (_activityCommon.NetworkLockObject)
                 {
-                    _activityCommon._activeCellularNetwork = network;
+                    _activityCommon._activeCellularNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
+                    _activityCommon._activeCellularNetworks.Insert(0, network);
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("Added cellular network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._activeCellularNetworks.Count));
+#endif
                 }
                 _activityCommon.SetPreferredNetworkInterface();
             }
@@ -7578,7 +7586,10 @@ namespace BmwDeepObd
             {
                 lock (_activityCommon.NetworkLockObject)
                 {
-                    _activityCommon._activeCellularNetwork = null;
+                    _activityCommon._activeCellularNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("Removed cellular network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._activeCellularNetworks.Count));
+#endif
                 }
                 _activityCommon.SetPreferredNetworkInterface();
             }
@@ -7597,7 +7608,11 @@ namespace BmwDeepObd
             {
                 lock (_activityCommon.NetworkLockObject)
                 {
-                    _activityCommon._activeWifiNetwork = network;
+                    _activityCommon._activeWifiNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
+                    _activityCommon._activeWifiNetworks.Insert(0, network);
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("Added WiFi network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._activeWifiNetworks.Count));
+#endif
                 }
                 _activityCommon.NetworkStateChanged(true);
             }
@@ -7606,7 +7621,10 @@ namespace BmwDeepObd
             {
                 lock (_activityCommon.NetworkLockObject)
                 {
-                    _activityCommon._activeWifiNetwork = null;
+                    _activityCommon._activeWifiNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("Removed WiFi network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._activeWifiNetworks.Count));
+#endif
                 }
                 _activityCommon.NetworkStateChanged(true);
             }
@@ -7625,7 +7643,11 @@ namespace BmwDeepObd
             {
                 lock (_activityCommon.NetworkLockObject)
                 {
-                    _activityCommon._activeEthernetNetwork = network;
+                    _activityCommon._activeEthernetNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
+                    _activityCommon._activeEthernetNetworks.Insert(0, network);
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("Added ethernet network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._activeEthernetNetworks.Count));
+#endif
                 }
 
                 _activityCommon.NetworkStateChanged(true);
@@ -7635,7 +7657,10 @@ namespace BmwDeepObd
             {
                 lock (_activityCommon.NetworkLockObject)
                 {
-                    _activityCommon._activeEthernetNetwork = null;
+                    _activityCommon._activeEthernetNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("Removed ethernet network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._activeEthernetNetworks.Count));
+#endif
                 }
 
                 _activityCommon.NetworkStateChanged(true);
