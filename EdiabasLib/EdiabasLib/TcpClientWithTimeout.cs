@@ -113,7 +113,7 @@ namespace EdiabasLib
             }
         }
 
-        public static void ExecuteNetworkCommand(ExecuteNetworkDelegate command, object connManager, bool checkEthernet = false)
+        public static void ExecuteNetworkCommand(ExecuteNetworkDelegate command, object networkDataObject, bool checkEthernet = false)
         {
 #if Android
             if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Lollipop)
@@ -122,7 +122,8 @@ namespace EdiabasLib
                 return;
             }
             Android.Net.Network bindNetwork = null;
-            Android.Net.ConnectivityManager connectivityManager = connManager as Android.Net.ConnectivityManager;
+            NetworkData networkData = networkDataObject as NetworkData;
+            Android.Net.ConnectivityManager connectivityManager = networkData?.ConnectivityManager;
             // ReSharper disable once UseNullPropagation
             if (connectivityManager != null)
             {

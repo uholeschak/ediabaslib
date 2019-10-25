@@ -10,12 +10,12 @@ namespace EdiabasLib
 #if Android
         public class ConnectParameterType
         {
-            public ConnectParameterType(Android.Net.ConnectivityManager connectivityManager)
+            public ConnectParameterType(TcpClientWithTimeout.NetworkData networkData)
             {
-                ConnectivityManager = connectivityManager;
+                NetworkData = networkData;
             }
 
-            public Android.Net.ConnectivityManager ConnectivityManager { get; }
+            public TcpClientWithTimeout.NetworkData NetworkData { get; }
         }
 #endif
 
@@ -29,7 +29,7 @@ namespace EdiabasLib
         protected static int ConnectTimeout = 5000;
         protected static string ConnectPort;
         protected static object ConnectParameter;
-        protected static object ConnManager;
+        protected static object NetworkData;
         private static EdElmInterface _edElmInterface;
 
         static EdElmWifiInterface()
@@ -48,16 +48,17 @@ namespace EdiabasLib
             {
                 ConnectPort = port;
                 ConnectParameter = parameter;
+                NetworkData = null;
 #if Android
                 if (ConnectParameter is ConnectParameterType connectParameter)
                 {
-                    ConnManager = connectParameter.ConnectivityManager;
+                    NetworkData = connectParameter.NetworkData;
                 }
 #endif
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     TcpElmClient = new TcpClientWithTimeout(IPAddress.Parse(ElmIp), ElmPort, ConnectTimeout, true).Connect();
-                }, ConnManager);
+                }, NetworkData);
                 TcpElmStream = TcpElmClient.GetStream();
                 _edElmInterface = new EdElmInterface(Ediabas, TcpElmStream, TcpElmStream);
                 if (!_edElmInterface.Elm327Init())
