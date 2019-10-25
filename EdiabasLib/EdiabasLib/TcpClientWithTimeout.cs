@@ -24,6 +24,25 @@ namespace EdiabasLib
         private bool _connected;
         private Exception _exception;
 
+#if Android
+        public class NetworkData
+        {
+            public NetworkData(Android.Net.ConnectivityManager connectivityManager)
+            {
+                ConnectivityManager = connectivityManager;
+                LockObject = new object();
+                ActiveCellularNetworks = new System.Collections.Generic.List<Android.Net.Network>();
+                ActiveWifiNetworks = new System.Collections.Generic.List<Android.Net.Network>();
+                ActiveEthernetNetworks = new System.Collections.Generic.List<Android.Net.Network>();
+            }
+
+            public Android.Net.ConnectivityManager ConnectivityManager { get; }
+            public object LockObject { get; }
+            public System.Collections.Generic.List<Android.Net.Network> ActiveCellularNetworks { get; }
+            public System.Collections.Generic.List<Android.Net.Network> ActiveWifiNetworks { get; }
+            public System.Collections.Generic.List<Android.Net.Network> ActiveEthernetNetworks { get; }
+        }
+#endif
         public TcpClientWithTimeout(IPAddress host, int port, int timeoutMilliseconds, bool? noDelay = null, int ? sendBufferSize = null)
         {
             _host = host;

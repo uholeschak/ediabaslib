@@ -433,7 +433,6 @@ namespace BmwDeepObd
         private bool? _mtcBtService;
         private bool? _mtcBtManager;
         private static readonly object LockObject = new object();
-        private readonly object NetworkLockObject = new object();
         private static int _instanceCount;
         private static string _externalPath;
         private static string _externalWritePath;
@@ -460,9 +459,7 @@ namespace BmwDeepObd
         private CellularCallback _cellularCallback;
         private WifiCallback _wifiCallback;
         private EthernetCallback _ethernetCallback;
-        private readonly List<Network> _activeCellularNetworks = new List<Network>();
-        private readonly List<Network> _activeWifiNetworks = new List<Network>();
-        private readonly List<Network> _activeEthernetNetworks = new List<Network>();
+        private readonly TcpClientWithTimeout.NetworkData _networkData;
         private Handler _btUpdateHandler;
         private Timer _usbCheckTimer;
         private Timer _networkTimer;
@@ -788,6 +785,7 @@ namespace BmwDeepObd
             _btUpdateHandler = new Handler();
             _maWifi = (WifiManager)context?.ApplicationContext?.GetSystemService(Context.WifiService);
             _maConnectivity = (ConnectivityManager)context?.ApplicationContext?.GetSystemService(Context.ConnectivityService);
+            _networkData = new TcpClientWithTimeout.NetworkData(_maConnectivity);
             _usbManager = context?.GetSystemService(Context.UsbService) as UsbManager;
             _notificationManager = context?.GetSystemService(Context.NotificationService) as Android.App.NotificationManager;
             RegisterNotificationChannels();
@@ -1699,9 +1697,9 @@ namespace BmwDeepObd
                 _cellularCallback = null;
             }
 
-            lock (NetworkLockObject)
+            lock (_networkData.LockObject)
             {
-                _activeCellularNetworks.Clear();
+                _networkData.ActiveCellularNetworks.Clear();
             }
             return true;
         }
@@ -1788,10 +1786,10 @@ namespace BmwDeepObd
                 _ethernetCallback = null;
             }
 
-            lock (NetworkLockObject)
+            lock (_networkData.LockObject)
             {
-                _activeWifiNetworks.Clear();
-                _activeEthernetNetworks.Clear();
+                _networkData.ActiveWifiNetworks.Clear();
+                _networkData.ActiveEthernetNetworks.Clear();
             }
 
             return true;
@@ -1824,11 +1822,11 @@ namespace BmwDeepObd
 
             Network defaultNetwork = null;
             Network cellularNetwork = null;
-            lock (NetworkLockObject)
+            lock (_networkData.LockObject)
             {
-                if (_activeCellularNetworks.Count > 0)
+                if (_networkData.ActiveCellularNetworks.Count > 0)
                 {
-                    cellularNetwork = _activeCellularNetworks[0];
+                    cellularNetwork = _networkData.ActiveCellularNetworks[0];
                 }
             }
 
@@ -2162,9 +2160,9 @@ namespace BmwDeepObd
                 }
 
                 bool result = false;
-                lock (NetworkLockObject)
+                lock (_networkData.LockObject)
                 {
-                    foreach (Network network in _activeEthernetNetworks)
+                    foreach (Network network in _networkData.ActiveEthernetNetworks)
                     {
                         LinkProperties linkProperties = _maConnectivity.GetLinkProperties(network);
                         foreach (LinkAddress linkAddress in linkProperties.LinkAddresses)
@@ -7571,12 +7569,12 @@ namespace BmwDeepObd
 
             public override void OnAvailable(Network network)
             {
-                lock (_activityCommon.NetworkLockObject)
+                lock (_activityCommon._networkData.LockObject)
                 {
-                    _activityCommon._activeCellularNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
-                    _activityCommon._activeCellularNetworks.Insert(0, network);
+                    _activityCommon._networkData.ActiveCellularNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
+                    _activityCommon._networkData.ActiveCellularNetworks.Insert(0, network);
 #if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("Added cellular network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._activeCellularNetworks.Count));
+                    Android.Util.Log.Info(Tag, string.Format("Added cellular network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._networkData.ActiveCellularNetworks.Count));
 #endif
                 }
                 _activityCommon.SetPreferredNetworkInterface();
@@ -7584,11 +7582,11 @@ namespace BmwDeepObd
 
             public override void OnLost(Network network)
             {
-                lock (_activityCommon.NetworkLockObject)
+                lock (_activityCommon._networkData.LockObject)
                 {
-                    _activityCommon._activeCellularNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
+                    _activityCommon._networkData.ActiveCellularNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
 #if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("Removed cellular network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._activeCellularNetworks.Count));
+                    Android.Util.Log.Info(Tag, string.Format("Removed cellular network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._networkData.ActiveCellularNetworks.Count));
 #endif
                 }
                 _activityCommon.SetPreferredNetworkInterface();
@@ -7606,12 +7604,12 @@ namespace BmwDeepObd
 
             public override void OnAvailable(Network network)
             {
-                lock (_activityCommon.NetworkLockObject)
+                lock (_activityCommon._networkData.LockObject)
                 {
-                    _activityCommon._activeWifiNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
-                    _activityCommon._activeWifiNetworks.Insert(0, network);
+                    _activityCommon._networkData.ActiveWifiNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
+                    _activityCommon._networkData.ActiveWifiNetworks.Insert(0, network);
 #if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("Added WiFi network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._activeWifiNetworks.Count));
+                    Android.Util.Log.Info(Tag, string.Format("Added WiFi network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._networkData.ActiveWifiNetworks.Count));
 #endif
                 }
                 _activityCommon.NetworkStateChanged(true);
@@ -7619,11 +7617,11 @@ namespace BmwDeepObd
 
             public override void OnLost(Network network)
             {
-                lock (_activityCommon.NetworkLockObject)
+                lock (_activityCommon._networkData.LockObject)
                 {
-                    _activityCommon._activeWifiNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
+                    _activityCommon._networkData.ActiveWifiNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
 #if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("Removed WiFi network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._activeWifiNetworks.Count));
+                    Android.Util.Log.Info(Tag, string.Format("Removed WiFi network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._networkData.ActiveWifiNetworks.Count));
 #endif
                 }
                 _activityCommon.NetworkStateChanged(true);
@@ -7641,12 +7639,12 @@ namespace BmwDeepObd
 
             public override void OnAvailable(Network network)
             {
-                lock (_activityCommon.NetworkLockObject)
+                lock (_activityCommon._networkData.LockObject)
                 {
-                    _activityCommon._activeEthernetNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
-                    _activityCommon._activeEthernetNetworks.Insert(0, network);
+                    _activityCommon._networkData.ActiveEthernetNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
+                    _activityCommon._networkData.ActiveEthernetNetworks.Insert(0, network);
 #if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("Added ethernet network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._activeEthernetNetworks.Count));
+                    Android.Util.Log.Info(Tag, string.Format("Added ethernet network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._networkData.ActiveEthernetNetworks.Count));
 #endif
                 }
 
@@ -7655,11 +7653,11 @@ namespace BmwDeepObd
 
             public override void OnLost(Network network)
             {
-                lock (_activityCommon.NetworkLockObject)
+                lock (_activityCommon._networkData.LockObject)
                 {
-                    _activityCommon._activeEthernetNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
+                    _activityCommon._networkData.ActiveEthernetNetworks.RemoveAll(x => x.GetHashCode() == network.GetHashCode());
 #if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("Removed ethernet network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._activeEthernetNetworks.Count));
+                    Android.Util.Log.Info(Tag, string.Format("Removed ethernet network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._networkData.ActiveEthernetNetworks.Count));
 #endif
                 }
 
