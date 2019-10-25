@@ -127,58 +127,61 @@ namespace EdiabasLib
             // ReSharper disable once UseNullPropagation
             if (connectivityManager != null)
             {
-                Android.Net.Network[] networks = connectivityManager.GetAllNetworks();
-                if (networks != null)
+                System.Collections.Generic.List<Android.Net.Network> networkList = new System.Collections.Generic.List<Android.Net.Network>();
+                lock (networkData.LockObject)
                 {
-                    foreach (Android.Net.Network network in networks)
+                    networkList.AddRange(networkData.ActiveWifiNetworks);
+                    networkList.AddRange(networkData.ActiveEthernetNetworks);
+                }
+
+                foreach (Android.Net.Network network in networkList)
+                {
+                    Android.Net.NetworkCapabilities networkCapabilities = connectivityManager.GetNetworkCapabilities(network);
+                    // HasTransport support started also with Lollipop
+                    if (networkCapabilities != null)
                     {
-                        Android.Net.NetworkInfo networkInfo = connectivityManager.GetNetworkInfo(network);
-                        Android.Net.NetworkCapabilities networkCapabilities = connectivityManager.GetNetworkCapabilities(network);
-                        // HasTransport support started also with Lollipop
-                        if (networkInfo != null && networkInfo.IsConnected && networkCapabilities != null)
+                        bool linkValid = false;
+                        bool autoIp = false;
+                        Android.Net.LinkProperties linkProperties = connectivityManager.GetLinkProperties(network);
+                        foreach (Android.Net.LinkAddress linkAddress in linkProperties.LinkAddresses)
                         {
-                            bool linkValid = false;
-                            bool autoIp = false;
-                            Android.Net.LinkProperties linkProperties = connectivityManager.GetLinkProperties(network);
-                            foreach (Android.Net.LinkAddress linkAddress in linkProperties.LinkAddresses)
+                            if (linkAddress.Address is Java.Net.Inet4Address inet4Address)
                             {
-                                if (linkAddress.Address is Java.Net.Inet4Address inet4Address)
+                                if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
                                 {
-                                    if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
-                                    {
-                                        linkValid = true;
-                                        autoIp = inet4Address.IsLinkLocalAddress;
-                                        break;
-                                    }
+                                    linkValid = true;
+                                    autoIp = inet4Address.IsLinkLocalAddress;
+                                    break;
                                 }
                             }
+                        }
 
-                            if (linkValid)
+                        if (linkValid)
+                        {
+                            if (networkCapabilities.HasTransport(Android.Net.TransportType.Wifi))
                             {
-                                if (networkCapabilities.HasTransport(Android.Net.TransportType.Wifi))
+                                bindNetwork = network;
+                            }
+                            if (checkEthernet && networkCapabilities.HasTransport(Android.Net.TransportType.Ethernet))
+                            {
+                                if (autoIp)
                                 {
+                                    // prefer Ethernet auto ip
                                     bindNetwork = network;
+                                    break;
                                 }
-                                if (checkEthernet && networkCapabilities.HasTransport(Android.Net.TransportType.Ethernet))
-                                {
-                                    if (autoIp)
-                                    {
-                                        // prefer Ethernet auto ip
-                                        bindNetwork = network;
-                                        break;
-                                    }
 
-                                    if (bindNetwork == null)
-                                    {
-                                        // prefer Wifi
-                                        bindNetwork = network;
-                                    }
+                                if (bindNetwork == null)
+                                {
+                                    // prefer Wifi
+                                    bindNetwork = network;
                                 }
                             }
                         }
                     }
                 }
             }
+
             if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.M)
             {
 #pragma warning disable 618
