@@ -11,13 +11,13 @@ namespace EdiabasLib
 #if Android
         public class ConnectParameterType
         {
-            public ConnectParameterType(Android.Net.ConnectivityManager connectivityManager, Android.Net.Wifi.WifiManager wifiManager)
+            public ConnectParameterType(TcpClientWithTimeout.NetworkData networkData, Android.Net.Wifi.WifiManager wifiManager)
             {
-                ConnectivityManager = connectivityManager;
+                NetworkData = networkData;
                 WifiManager = wifiManager;
             }
 
-            public Android.Net.ConnectivityManager ConnectivityManager { get; }
+            public TcpClientWithTimeout.NetworkData NetworkData { get; }
             public Android.Net.Wifi.WifiManager WifiManager { get; }
         }
 #endif
@@ -38,7 +38,7 @@ namespace EdiabasLib
         protected static NetworkStream TcpStream;
         protected static string ConnectPort;
         protected static object ConnectParameter;
-        protected static object ConnManager;
+        protected static object NetworkData;
         protected static object WifiManager;
 
         // ReSharper disable once UnusedMember.Global
@@ -79,12 +79,12 @@ namespace EdiabasLib
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "WiFi connect: {0}", port);
                 string adapterIp = AdapterIp;
                 int adapterPort = AdapterPort;
-                ConnManager = null;
+                NetworkData = null;
                 WifiManager = null;
 #if Android
                 if (ConnectParameter is ConnectParameterType connectParameter)
                 {
-                    ConnManager = connectParameter.ConnectivityManager;
+                    NetworkData = connectParameter.NetworkData;
                     WifiManager = connectParameter.WifiManager;
                 }
 
@@ -134,7 +134,7 @@ namespace EdiabasLib
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     TcpClient = new TcpClientWithTimeout(IPAddress.Parse(adapterIp), adapterPort, ConnectTimeout, true).Connect();
-                }, ConnManager);
+                }, NetworkData);
                 TcpStream = TcpClient.GetStream();
             }
             catch (Exception ex)

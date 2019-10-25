@@ -745,6 +745,8 @@ namespace BmwDeepObd
 
         public ConnectivityManager MaConnectivity => _maConnectivity;
 
+        public TcpClientWithTimeout.NetworkData NetworkData => _networkData;
+
         public UsbManager UsbManager => _usbManager;
 
         // ReSharper disable once ConvertToAutoProperty
@@ -3029,7 +3031,7 @@ namespace BmwDeepObd
             {
                 EdInterfaceEnet edInterface = new EdInterfaceEnet
                 {
-                    ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_maConnectivity)
+                    ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData)
                 };
                 List<IPAddress> detectedVehicles = edInterface.DetectedVehicles("auto:all");
                 edInterface.Dispose();
@@ -3377,17 +3379,17 @@ namespace BmwDeepObd
                 else if (SelectedInterface == InterfaceType.ElmWifi)
                 {
                     edInterfaceObd.ComPort = "ELM327WIFI";
-                    connectParameter = new EdElmWifiInterface.ConnectParameterType(_maConnectivity);
+                    connectParameter = new EdElmWifiInterface.ConnectParameterType(_networkData);
                 }
                 else if (SelectedInterface == InterfaceType.DeepObdWifi)
                 {
                     edInterfaceObd.ComPort = "DEEPOBDWIFI";
-                    connectParameter = new EdCustomWiFiInterface.ConnectParameterType(_maConnectivity, _maWifi);
+                    connectParameter = new EdCustomWiFiInterface.ConnectParameterType(_networkData, _maWifi);
                 }
                 else
                 {
                     edInterfaceObd.ComPort = "BLUETOOTH:" + btDeviceAddress;
-                    connectParameter = new EdBluetoothInterface.ConnectParameterType(_maConnectivity, MtcBtService, () => _context);
+                    connectParameter = new EdBluetoothInterface.ConnectParameterType(_networkData, MtcBtService, () => _context);
                     ConnectMtcBtDevice(btDeviceAddress);
                 }
             }
@@ -3399,7 +3401,7 @@ namespace BmwDeepObd
                     remoteHost = EmulatorEnetIp;
                 }
                 edInterfaceEnet.RemoteHost = remoteHost;
-                connectParameter = new EdInterfaceEnet.ConnectParameterType(_maConnectivity);
+                connectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData);
             }
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
         }

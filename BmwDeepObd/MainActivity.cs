@@ -1309,13 +1309,13 @@ namespace BmwDeepObd
                     {
                         case ActivityCommon.InterfaceType.Bluetooth:
                             portName = "BLUETOOTH:" + _instanceData.DeviceAddress;
-                            connectParameter = new EdBluetoothInterface.ConnectParameterType(_activityCommon.MaConnectivity, _activityCommon.MtcBtService,
+                            connectParameter = new EdBluetoothInterface.ConnectParameterType(_activityCommon.NetworkData, _activityCommon.MtcBtService,
                                 () => ActivityCommon.EdiabasThread.ActiveContext);
                             _activityCommon.ConnectMtcBtDevice(_instanceData.DeviceAddress);
                             break;
 
                         case ActivityCommon.InterfaceType.Enet:
-                            connectParameter = new EdInterfaceEnet.ConnectParameterType(_activityCommon.MaConnectivity);
+                            connectParameter = new EdInterfaceEnet.ConnectParameterType(_activityCommon.NetworkData);
                             if (_activityCommon.Emulator)
                             {
                                 // broadcast is not working with emulator
@@ -1327,12 +1327,12 @@ namespace BmwDeepObd
 
                         case ActivityCommon.InterfaceType.ElmWifi:
                             portName = "ELM327WIFI";
-                            connectParameter = new EdElmWifiInterface.ConnectParameterType(_activityCommon.MaConnectivity);
+                            connectParameter = new EdElmWifiInterface.ConnectParameterType(_activityCommon.NetworkData);
                             break;
 
                         case ActivityCommon.InterfaceType.DeepObdWifi:
                             portName = "DEEPOBDWIFI";
-                            connectParameter = new EdCustomWiFiInterface.ConnectParameterType(_activityCommon.MaConnectivity, _activityCommon.MaWifi);
+                            connectParameter = new EdCustomWiFiInterface.ConnectParameterType(_activityCommon.NetworkData, _activityCommon.MaWifi);
                             break;
 
                         case ActivityCommon.InterfaceType.Ftdi:

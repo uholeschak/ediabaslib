@@ -14,18 +14,18 @@ namespace EdiabasLib
         {
             public delegate Android.Content.Context GetContextDelegate();
 
-            public ConnectParameterType(Android.Net.ConnectivityManager connectivityManager, bool mtcBtService, GetContextDelegate getContextHandler)
+            public ConnectParameterType(TcpClientWithTimeout.NetworkData networkData, bool mtcBtService, GetContextDelegate getContextHandler)
             {
-                GetContextHandler = getContextHandler;
-                ConnectivityManager = connectivityManager;
+                NetworkData = networkData;
                 MtcBtService = mtcBtService;
+                GetContextHandler = getContextHandler;
             }
 
-            public GetContextDelegate GetContextHandler { get; }
-
-            public Android.Net.ConnectivityManager ConnectivityManager { get; }
+            public TcpClientWithTimeout.NetworkData NetworkData { get; }
 
             public bool MtcBtService { get; }
+
+            public GetContextDelegate GetContextHandler { get; }
         }
 
         public static readonly EdElmInterface.ElmInitEntry[] Elm327InitCommands = EdElmInterface.Elm327InitCommands;
