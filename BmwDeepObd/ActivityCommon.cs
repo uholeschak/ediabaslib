@@ -2332,7 +2332,7 @@ namespace BmwDeepObd
             {
                 if (IsEmulator())
                 {
-                    return true;
+                    return false;
                 }
                 bool result = false;
                 string enetSsid = "NoSsid";
