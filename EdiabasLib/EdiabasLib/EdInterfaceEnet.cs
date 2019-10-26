@@ -829,12 +829,11 @@ namespace EdiabasLib
                         if (UdpRecIpListList != null)
                         {
                             IPAddress ipAddress = ((IPEndPoint) tempRemoteEp).Address;
-
                             if (!UdpRecIpListList.Any(x => x.Equals(ipAddress)))
                             {
                                 UdpRecIpListList.Add(ipAddress);
-                                listCount = UdpRecIpListList.Count;
                             }
+                            listCount = UdpRecIpListList.Count;
                         }
                     }
                     if ((UdpMaxResponses >= 1) && (listCount >= UdpMaxResponses))
