@@ -829,7 +829,7 @@ namespace EdiabasLib
                         if (UdpRecIpListList != null)
                         {
                             IPAddress ipAddress = ((IPEndPoint) tempRemoteEp).Address;
-                            if (!UdpRecIpListList.Any(x => x.Equals(ipAddress)))
+                            if (!UdpRecIpListList.Any(x => x.GetAddressBytes().SequenceEqual(ipAddress.GetAddressBytes())))
                             {
                                 UdpRecIpListList.Add(ipAddress);
                             }
