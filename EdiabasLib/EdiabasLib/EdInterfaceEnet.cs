@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Collections.Generic;
+using System.Linq;
+
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
 // ReSharper disable UseNullPropagation
@@ -826,8 +828,13 @@ namespace EdiabasLib
                     {
                         if (UdpRecIpListList != null)
                         {
-                            UdpRecIpListList.Add(((IPEndPoint)tempRemoteEp).Address);
-                            listCount = UdpRecIpListList.Count;
+                            IPAddress ipAddress = ((IPEndPoint) tempRemoteEp).Address;
+
+                            if (!UdpRecIpListList.Any(x => x.Equals(ipAddress)))
+                            {
+                                UdpRecIpListList.Add(ipAddress);
+                                listCount = UdpRecIpListList.Count;
+                            }
                         }
                     }
                     if ((UdpMaxResponses >= 1) && (listCount >= UdpMaxResponses))
