@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -113,7 +114,7 @@ namespace EdiabasLib
             }
         }
 
-        public static void ExecuteNetworkCommand(ExecuteNetworkDelegate command, object networkDataObject, bool checkEthernet = false)
+        public static void ExecuteNetworkCommand(ExecuteNetworkDelegate command, IPAddress ipAddr, object networkDataObject)
         {
 #if Android
             if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Lollipop)
@@ -124,8 +125,9 @@ namespace EdiabasLib
             Android.Net.Network bindNetwork = null;
             NetworkData networkData = networkDataObject as NetworkData;
             Android.Net.ConnectivityManager connectivityManager = networkData?.ConnectivityManager;
+            Java.Net.InetAddress inetAddr = Java.Net.InetAddress.GetByName(ipAddr.ToString());
             // ReSharper disable once UseNullPropagation
-            if (connectivityManager != null)
+            if (connectivityManager != null && inetAddr is Java.Net.Inet4Address inet4Addr)
             {
                 System.Collections.Generic.List<Android.Net.Network> networkList = new System.Collections.Generic.List<Android.Net.Network>();
                 lock (networkData.LockObject)
@@ -141,41 +143,56 @@ namespace EdiabasLib
                     if (networkCapabilities != null)
                     {
                         bool linkValid = false;
-                        bool autoIp = false;
                         Android.Net.LinkProperties linkProperties = connectivityManager.GetLinkProperties(network);
                         foreach (Android.Net.LinkAddress linkAddress in linkProperties.LinkAddresses)
                         {
-                            if (linkAddress.Address is Java.Net.Inet4Address inet4Address)
+                            if (linkAddress.Address is Java.Net.Inet4Address linkInet4Address)
                             {
-                                if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
+                                if (linkInet4Address.IsSiteLocalAddress || linkInet4Address.IsLinkLocalAddress)
                                 {
-                                    linkValid = true;
-                                    autoIp = inet4Address.IsLinkLocalAddress;
-                                    break;
+                                    Java.Net.NetworkInterface networkInterface = Java.Net.NetworkInterface.GetByInetAddress(linkInet4Address);
+                                    if (networkInterface != null)
+                                    {
+                                        foreach (Java.Net.InterfaceAddress interfaceAddress in networkInterface.InterfaceAddresses)
+                                        {
+                                            if (interfaceAddress.Address is Java.Net.Inet4Address)
+                                            {
+                                                byte[] linkAddrBytes = interfaceAddress.Address.GetAddress();
+                                                byte[] inet4AddrBytes = inet4Addr.GetAddress();
+                                                if (linkAddrBytes.Length == inet4AddrBytes.Length)
+                                                {
+                                                    for (int bit = interfaceAddress.NetworkPrefixLength; bit < linkAddrBytes.Length * 8; bit++)
+                                                    {
+                                                        int index = bit >> 3;
+                                                        byte mask = (byte) (0x80 >> (bit & 0x07));
+                                                        linkAddrBytes[index] |= mask;
+                                                        inet4AddrBytes[index] |= mask;
+                                                    }
+                                                }
+
+                                                if (linkAddrBytes.SequenceEqual(inet4AddrBytes))
+                                                {
+                                                    linkValid = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        if (linkValid)
+                                        {
+                                            break;
+                                        }
+                                    }
                                 }
                             }
                         }
 
                         if (linkValid)
                         {
-                            if (networkCapabilities.HasTransport(Android.Net.TransportType.Wifi))
+                            if (networkCapabilities.HasTransport(Android.Net.TransportType.Wifi) || networkCapabilities.HasTransport(Android.Net.TransportType.Ethernet))
                             {
                                 bindNetwork = network;
-                            }
-                            if (checkEthernet && networkCapabilities.HasTransport(Android.Net.TransportType.Ethernet))
-                            {
-                                if (autoIp)
-                                {
-                                    // prefer Ethernet auto ip
-                                    bindNetwork = network;
-                                    break;
-                                }
-
-                                if (bindNetwork == null)
-                                {
-                                    // prefer Wifi
-                                    bindNetwork = network;
-                                }
+                                break;
                             }
                         }
                     }

@@ -134,7 +134,7 @@ namespace EdiabasLib
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     TcpClient = new TcpClientWithTimeout(IPAddress.Parse(adapterIp), adapterPort, ConnectTimeout, true).Connect();
-                }, NetworkData);
+                }, IPAddress.Parse(adapterIp), NetworkData);
                 TcpStream = TcpClient.GetStream();
             }
             catch (Exception ex)
