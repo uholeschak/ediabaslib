@@ -1120,74 +1120,88 @@ namespace BmwDeepObd
 
         public bool IsInterfaceEnabled()
         {
-            switch (_selectedInterface)
+            try
             {
-                case InterfaceType.Bluetooth:
-                    if (_btAdapter == null)
-                    {
-                        return false;
-                    }
-                    return _btAdapter.IsEnabled;
+                switch (_selectedInterface)
+                {
+                    case InterfaceType.Bluetooth:
+                        if (_btAdapter == null)
+                        {
+                            return false;
+                        }
+                        return _btAdapter.IsEnabled;
 
-                case InterfaceType.Enet:
-                case InterfaceType.ElmWifi:
-                case InterfaceType.DeepObdWifi:
-                    if (_maWifi == null)
-                    {
-                        return false;
-                    }
-                    return _maWifi.IsWifiEnabled;
+                    case InterfaceType.Enet:
+                    case InterfaceType.ElmWifi:
+                    case InterfaceType.DeepObdWifi:
+                        if (_maWifi == null)
+                        {
+                            return false;
+                        }
+                        return _maWifi.IsWifiEnabled;
 
-                case InterfaceType.Ftdi:
-                    return true;
+                    case InterfaceType.Ftdi:
+                        return true;
+                }
+                return false;
             }
-            return false;
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public bool IsInterfaceAvailable()
         {
-            switch (_selectedInterface)
+            try
             {
-                case InterfaceType.Bluetooth:
-                    if (_btAdapter == null)
-                    {
-                        return false;
-                    }
-                    return _btAdapter.IsEnabled;
+                switch (_selectedInterface)
+                {
+                    case InterfaceType.Bluetooth:
+                        if (_btAdapter == null)
+                        {
+                            return false;
+                        }
+                        return _btAdapter.IsEnabled;
 
-                case InterfaceType.Enet:
-                case InterfaceType.ElmWifi:
-                case InterfaceType.DeepObdWifi:
-                    if ((_maWifi != null) && _maWifi.IsWifiEnabled)
-                    {
-                        WifiInfo wifiInfo = _maWifi.ConnectionInfo;
-                        if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
+                    case InterfaceType.Enet:
+                    case InterfaceType.ElmWifi:
+                    case InterfaceType.DeepObdWifi:
+                        if ((_maWifi != null) && _maWifi.IsWifiEnabled)
+                        {
+                            WifiInfo wifiInfo = _maWifi.ConnectionInfo;
+                            if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
+                            {
+                                return true;
+                            }
+                        }
+
+                        if (_selectedInterface == InterfaceType.Enet && IsValidEthernetConnection())
                         {
                             return true;
                         }
-                    }
+                        return false;
 
-                    if (_selectedInterface == InterfaceType.Enet && IsValidEthernetConnection())
+                    case InterfaceType.Ftdi:
                     {
+                        List<IUsbSerialDriver> availableDrivers = EdFtdiInterface.GetDriverList(_usbManager);
+                        if (availableDrivers.Count <= 0)
+                        {
+                            return false;
+                        }
+                        if (!_usbManager.HasPermission(availableDrivers[0].Device))
+                        {
+                            return false;
+                        }
                         return true;
                     }
-                    return false;
-
-                case InterfaceType.Ftdi:
-                {
-                    List<IUsbSerialDriver> availableDrivers = EdFtdiInterface.GetDriverList(_usbManager);
-                    if (availableDrivers.Count <= 0)
-                    {
-                        return false;
-                    }
-                    if (!_usbManager.HasPermission(availableDrivers[0].Device))
-                    {
-                        return false;
-                    }
-                    return true;
                 }
+                return false;
             }
-            return false;
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public bool StartForegroundService()
