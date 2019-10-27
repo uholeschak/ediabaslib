@@ -424,7 +424,7 @@ namespace EdiabasLib
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     TcpDiagClient = new TcpClientWithTimeout(TcpHostIp, DiagnosticPort, ConnectTimeout,true).Connect();
-                }, NetworkData, true);
+                }, TcpHostIp, NetworkData);
                 TcpDiagStream = TcpDiagClient.GetStream();
                 TcpDiagRecLen = 0;
                 LastTcpDiagRecTime = DateTime.MinValue.Ticks;
@@ -668,7 +668,7 @@ namespace EdiabasLib
                                                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                                                 {
                                                     UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
-                                                }, NetworkData, true);
+                                                }, ipUdpIdent.Address, NetworkData);
                                                 broadcastSend = true;
                                             }
                                             catch (Exception)
@@ -740,7 +740,7 @@ namespace EdiabasLib
                         TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                         {
                             UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
-                        }, NetworkData, true);
+                        }, ipUdpIdent.Address, NetworkData);
                         broadcastSend = true;
                     }
                     catch (Exception)
@@ -898,7 +898,7 @@ namespace EdiabasLib
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     TcpControlClient = TcpDiagClient = new TcpClientWithTimeout(TcpHostIp, ControlPort, ConnectTimeout, true).Connect();
-                }, NetworkData, true);
+                }, TcpHostIp, NetworkData);
                 TcpControlStream = TcpControlClient.GetStream();
             }
             catch (Exception)
