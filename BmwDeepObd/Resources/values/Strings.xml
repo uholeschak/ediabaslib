@@ -62,13 +62,13 @@
   <string name="exp_down_button_resume_cellular">Resume download</string>
   <string name="exp_down_button_wifi_settings">Wi-Fi settings</string>
   <string name="exp_down_verifying_download">Verifying Download</string>
-  <string name="exp_down_validation_complete">XAPK File Validation Complete.  Select OK to start the movie.</string>
+  <string name="exp_down_validation_complete">XAPK File Validation Complete.</string>
   <string name="exp_down_validation_failed">XAPK File Validation Failed.</string>
   <string name="exp_down_button_pause">Pause Download</string>
   <string name="exp_down_button_resume">Resume Download</string>
   <string name="exp_down_button_cancel">Cancel</string>
   <string name="exp_down_button_cancel_verify">Cancel Verification</string>
-  <string name="exp_down_obb_missing">Приложение не было загружено из Google Play и файл расширения отсутствует.\nЗагрузите OBB-файл при помощи APK загрузчика из Google Play и скопируйте его с именем\'{0}\'\nв один из каталогов:\n{1}\nПоддержка для этого отсутствует, использование Google Play - единственный рекомендуемый способ.</string>
+  <string name="exp_down_obb_missing">The app has not been downloaded from Google Play and the expansion file is missing.\nDownload the OBB file with an APK downloader from Google Play and copy it with the name:\n\'{0}\'\nin one of the directories:\n{1}\nThere is no support, the usage of Google Play is the only recommend way.</string>
   <string name="exp_down_time_remaining">Time remaining: {0}</string>
 
   <!-- Downloader library (modfications) -->
