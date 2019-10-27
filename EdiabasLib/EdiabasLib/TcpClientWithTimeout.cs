@@ -187,11 +187,8 @@ namespace EdiabasLib
 
                         if (linkValid)
                         {
-                            if (networkCapabilities.HasTransport(Android.Net.TransportType.Wifi) || networkCapabilities.HasTransport(Android.Net.TransportType.Ethernet))
-                            {
-                                bindNetwork = network;
-                                break;
-                            }
+                            bindNetwork = network;
+                            break;
                         }
                     }
                 }
