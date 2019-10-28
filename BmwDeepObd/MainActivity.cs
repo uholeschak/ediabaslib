@@ -1501,6 +1501,7 @@ namespace BmwDeepObd
                     ActivityCommon.BatteryWarningVoltage = prefs.GetFloat("BatteryWarningVoltage", 0);
                     ActivityCommon.LastAdapterSerial = prefs.GetString("LastAdapterSerial", string.Empty);
                     ActivityCommon.AppId = prefs.GetString("AppId", string.Empty);
+                    ActivityCommon.SelectedInternetConnection = (ActivityCommon.InternetConnectionType)prefs.GetInt("InternetConnection", (int)ActivityCommon.InternetConnectionType.Cellular);
                     ActivityCommon.SelectedManufacturer = (ActivityCommon.ManufacturerType)prefs.GetInt("Manufacturer", (int)ActivityCommon.ManufacturerType.Bmw);
                     ActivityCommon.BtEnbaleHandling = (ActivityCommon.BtEnableType)prefs.GetInt("BtEnable", (int)ActivityCommon.BtEnableType.Ask);
                     ActivityCommon.BtDisableHandling = (ActivityCommon.BtDisableType)prefs.GetInt("BtDisable", (int)ActivityCommon.BtDisableType.DisableIfByApp);
@@ -1567,6 +1568,7 @@ namespace BmwDeepObd
                 prefsEdit.PutString("LastAdapterSerial", ActivityCommon.LastAdapterSerial ?? string.Empty);
                 prefsEdit.PutString("AppId", ActivityCommon.AppId);
                 prefsEdit.PutInt("Theme", (int)ActivityCommon.SelectedTheme);
+                prefsEdit.PutInt("InternetConnection", (int)ActivityCommon.SelectedInternetConnection);
                 prefsEdit.PutInt("Manufacturer", (int) ActivityCommon.SelectedManufacturer);
                 prefsEdit.PutInt("BtEnable", (int)ActivityCommon.BtEnbaleHandling);
                 prefsEdit.PutInt("BtDisable", (int) ActivityCommon.BtDisableHandling);
