@@ -1143,6 +1143,10 @@ namespace BmwDeepObd
                     case InterfaceType.Enet:
                     case InterfaceType.ElmWifi:
                     case InterfaceType.DeepObdWifi:
+                        if (IsEmulator())
+                        {
+                            return true;
+                        }
                         if (_maWifi == null)
                         {
                             return false;
@@ -1176,6 +1180,10 @@ namespace BmwDeepObd
                     case InterfaceType.Enet:
                     case InterfaceType.ElmWifi:
                     case InterfaceType.DeepObdWifi:
+                        if (IsEmulator())
+                        {
+                            return true;
+                        }
                         if ((_maWifi != null) && _maWifi.IsWifiEnabled)
                         {
                             WifiInfo wifiInfo = _maWifi.ConnectionInfo;
