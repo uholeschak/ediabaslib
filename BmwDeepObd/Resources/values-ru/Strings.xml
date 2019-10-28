@@ -317,6 +317,11 @@
   <string name="settings_caption_theme">Темы</string>
   <string name="settings_theme_dark">Темная</string>
   <string name="settings_theme_light">Светлая</string>
+  <!--Translate-->
+  <string name="settings_caption_internet">For OBD network adapter internet connection via</string>
+  <string name="settings_internet_cellular">Mobile network</string>
+  <string name="settings_internet_wifi">Wi-Fi</string>
+  <string name="settings_internet_ethernet">Ethernet</string>
   <string name="settings_caption_bluetooth_enable">Включение Bluetooth</string>
   <string name="settings_always_enable_bt">Всегда включать Bluetooth без запроса</string>
   <string name="settings_ask_for_bt_enable">Запрос для включения Bluetooth</string>

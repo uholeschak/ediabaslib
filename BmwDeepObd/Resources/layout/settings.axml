@@ -32,6 +32,32 @@
                 android:text="@string/settings_theme_light" />
         </RadioGroup>
         <TextView
+            android:text="@string/settings_caption_internet"
+            android:id="@+id/textViewCaptionInternet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextViewInnerCaption" />
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RadioButton
+                android:id="@+id/radioButtonInternetCellular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_internet_cellular" />
+            <RadioButton
+                android:id="@+id/radioButtonInternetWifi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_internet_wifi" />
+            <RadioButton
+                android:id="@+id/radioButtonInternetEthernet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_internet_ethernet" />
+        </RadioGroup>
+        <TextView
             android:text="@string/settings_caption_bluetooth_enable"
             android:id="@+id/textViewCaptionBtEnable"
             android:layout_width="match_parent"

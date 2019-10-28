@@ -315,6 +315,10 @@
   <string name="settings_caption_theme">Theme</string>
   <string name="settings_theme_dark">Dunkel</string>
   <string name="settings_theme_light">Hell</string>
+  <string name="settings_caption_internet">Für OBD Netzwerkadapter Internetverbindung über</string>
+  <string name="settings_internet_cellular">Mobiles Netzwerk</string>
+  <string name="settings_internet_wifi">Wi-Fi</string>
+  <string name="settings_internet_ethernet">Ethernet</string>
   <string name="settings_caption_bluetooth_enable">Bluetooth einschalten</string>
   <string name="settings_always_enable_bt">Immer Bluetooth einschalten ohne Nachfrage</string>
   <string name="settings_ask_for_bt_enable">Nachfragen ob Bluetooth eingeschaltet werden soll</string>
