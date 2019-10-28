@@ -185,6 +185,13 @@ namespace BmwDeepObd
             Ftdi,
         }
 
+        public enum InternetConnectionType
+        {
+            Cellular,
+            Wifi,
+            Ethernet,
+        }
+
         public enum ManufacturerType
         {
             Bmw,
@@ -644,6 +651,8 @@ namespace BmwDeepObd
         public static bool BtNoEvents { get; set; }
 
         public static ThemeType SelectedTheme { get; set; }
+
+        public static InternetConnectionType SelectedInternetConnection { get; set; }
 
         public static ManufacturerType SelectedManufacturer { get; set; }
 
@@ -1837,18 +1846,40 @@ namespace BmwDeepObd
             }
 
             Network defaultNetwork = null;
-            Network cellularNetwork = null;
+            Network bindNetwork = null;
             lock (_networkData.LockObject)
             {
-                if (_networkData.ActiveCellularNetworks.Count > 0)
+                List<Network> networkList = new List<Network>();
+
+                switch (SelectedInternetConnection)
                 {
-                    cellularNetwork = _networkData.ActiveCellularNetworks[0];
+                    case InternetConnectionType.Wifi:
+                        networkList.AddRange(_networkData.ActiveWifiNetworks);
+                        break;
+
+                    case InternetConnectionType.Ethernet:
+                        networkList.AddRange(_networkData.ActiveEthernetNetworks);
+                        break;
+
+                    default:
+                        networkList.AddRange(_networkData.ActiveCellularNetworks);
+                        break;
+                }
+
+                foreach (Network network in networkList)
+                {
+                    LinkProperties linkProperties = _maConnectivity.GetLinkProperties(network);
+                    if (linkProperties != null)
+                    {
+                        bindNetwork = network;
+                        break;
+                    }
                 }
             }
 
-            if (forceMobile && cellularNetwork != null)
+            if (forceMobile && bindNetwork != null)
             {
-                defaultNetwork = cellularNetwork;
+                defaultNetwork = bindNetwork;
             }
 
             //Android.Util.Log.WriteLine(Android.Util.LogPriority.Debug, "Network", (defaultNetwork != null) ? "Mobile selected" : "Mobile not selected");
