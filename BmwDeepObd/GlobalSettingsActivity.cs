@@ -27,6 +27,9 @@ namespace BmwDeepObd
         private ActivityCommon _activityCommon;
         private RadioButton _radioButtonThemeDark;
         private RadioButton _radioButtonThemeLight;
+        private RadioButton _radioButtonInternetCellular;
+        private RadioButton _radioButtonInternetWifi;
+        private RadioButton _radioButtonInternetEthernet;
         private RadioButton _radioButtonAskForBtEnable;
         private RadioButton _radioButtonAlwaysEnableBt;
         private RadioButton _radioButtonNoBtHandling;
@@ -78,6 +81,10 @@ namespace BmwDeepObd
 
             _radioButtonThemeDark = FindViewById<RadioButton>(Resource.Id.radioButtonThemeDark);
             _radioButtonThemeLight = FindViewById<RadioButton>(Resource.Id.radioButtonThemeLight);
+
+            _radioButtonInternetCellular = FindViewById<RadioButton>(Resource.Id.radioButtonInternetCellular);
+            _radioButtonInternetWifi = FindViewById<RadioButton>(Resource.Id.radioButtonInternetWifi);
+            _radioButtonInternetEthernet = FindViewById<RadioButton>(Resource.Id.radioButtonInternetEthernet);
 
             _radioButtonAskForBtEnable = FindViewById<RadioButton>(Resource.Id.radioButtonAskForBtEnable);
             _radioButtonAlwaysEnableBt = FindViewById<RadioButton>(Resource.Id.radioButtonAlwaysEnableBt);
@@ -201,6 +208,21 @@ namespace BmwDeepObd
                     break;
             }
 
+            switch (ActivityCommon.SelectedInternetConnection)
+            {
+                case ActivityCommon.InternetConnectionType.Wifi:
+                    _radioButtonInternetWifi.Checked = true;
+                    break;
+
+                case ActivityCommon.InternetConnectionType.Ethernet:
+                    _radioButtonInternetEthernet.Checked = true;
+                    break;
+
+                default:
+                    _radioButtonInternetCellular.Checked = true;
+                    break;
+            }
+
             switch (ActivityCommon.BtEnbaleHandling)
             {
                 case ActivityCommon.BtEnableType.Ask:
@@ -309,6 +331,21 @@ namespace BmwDeepObd
                 themeType = ActivityCommon.ThemeType.Light;
             }
             ActivityCommon.SelectedTheme = themeType;
+
+            ActivityCommon.InternetConnectionType internetConnectionType = ActivityCommon.SelectedInternetConnection;
+            if (_radioButtonInternetCellular.Checked)
+            {
+                internetConnectionType = ActivityCommon.InternetConnectionType.Cellular;
+            }
+            else if (_radioButtonInternetWifi.Checked)
+            {
+                internetConnectionType = ActivityCommon.InternetConnectionType.Wifi;
+            }
+            else if (_radioButtonInternetEthernet.Checked)
+            {
+                internetConnectionType = ActivityCommon.InternetConnectionType.Ethernet;
+            }
+            ActivityCommon.SelectedInternetConnection = internetConnectionType;
 
             ActivityCommon.BtEnableType enableType = ActivityCommon.BtEnbaleHandling;
             if (_radioButtonAskForBtEnable.Checked)

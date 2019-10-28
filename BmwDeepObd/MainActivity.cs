@@ -276,9 +276,11 @@ namespace BmwDeepObd
             {
                 _activityCommon.SelectedInterface = _instanceData.SelectedInterface;
             }
-            _activityCommon.UpdateRegisterInternetCellular();
 
             GetSettings();
+            _activityCommon.UpdateRegisterInternetCellular();
+            _activityCommon.SetPreferredNetworkInterface();
+
             StoreLastAppState(LastAppState.Init);
 
             _updateHandler = new Handler();
@@ -614,6 +616,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestGlobalSettings:
+                    _activityCommon.SetPreferredNetworkInterface();
                     if (_instanceData.LastThemeType != ActivityCommon.SelectedTheme)
                     {
                         StoreSettings();
@@ -717,6 +720,7 @@ namespace BmwDeepObd
             {
                 if (!string.IsNullOrEmpty(_instanceData.ConfigFileName))
                 {
+                    // ReSharper disable once ConstantNullCoalescingCondition
                     string fileName = Path.GetFileNameWithoutExtension(_instanceData.ConfigFileName) ?? string.Empty;
                     cfgSelMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_cfg_sel), fileName));
                 }
