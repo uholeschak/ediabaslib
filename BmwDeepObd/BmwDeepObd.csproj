@@ -294,67 +294,67 @@
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <None Include="Properties\AndroidManifest.xml" />
-    <AndroidResource Include="Resources\layout\file_picker.axml" />
-    <AndroidResource Include="Resources\layout\file_picker_list_item.axml" />
-    <AndroidResource Include="Resources\layout\ediabas_tool.axml">
+    <AndroidResource Include="Resources\layout\file_picker.xml" />
+    <AndroidResource Include="Resources\layout\file_picker_list_item.xml" />
+    <AndroidResource Include="Resources\layout\ediabas_tool.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\job_list.axml">
+    <AndroidResource Include="Resources\layout\job_list.xml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\ediabas_result_list.axml">
+    <AndroidResource Include="Resources\layout\ediabas_result_list.xml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\bar_ediabas_tool.axml">
+    <AndroidResource Include="Resources\layout\bar_ediabas_tool.xml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\ecu_select_list.axml">
+    <AndroidResource Include="Resources\layout\ecu_select_list.xml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\xml_tool.axml">
+    <AndroidResource Include="Resources\layout\xml_tool.xml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\bar_xml_tool.axml">
+    <AndroidResource Include="Resources\layout\bar_xml_tool.xml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\xml_tool_ecu.axml">
+    <AndroidResource Include="Resources\layout\xml_tool_ecu.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\job_select_list.axml">
+    <AndroidResource Include="Resources\layout\job_select_list.xml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\string_list.axml">
+    <AndroidResource Include="Resources\layout\string_list.xml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\can_adapter_config.axml">
+    <AndroidResource Include="Resources\layout\can_adapter_config.xml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\bar_can_adapter.axml">
+    <AndroidResource Include="Resources\layout\bar_can_adapter.xml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\connect_action_provider.axml" />
-    <AndroidResource Include="Resources\layout\tab_errors.axml">
+    <AndroidResource Include="Resources\layout\connect_action_provider.xml" />
+    <AndroidResource Include="Resources\layout\tab_errors.xml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\yandex_key_select.axml">
+    <AndroidResource Include="Resources\layout\yandex_key_select.xml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\settings.axml">
+    <AndroidResource Include="Resources\layout\settings.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\result_customgauge_square.axml">
+    <AndroidResource Include="Resources\layout\result_customgauge_square.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\result_customgauge_round.axml">
+    <AndroidResource Include="Resources\layout\result_customgauge_round.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\result_customgauge_dot.axml">
+    <AndroidResource Include="Resources\layout\result_customgauge_dot.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\custom_progress.axml">
+    <AndroidResource Include="Resources\layout\custom_progress.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\downloader.axml" />
+    <AndroidResource Include="Resources\layout\downloader.xml" />
     <None Include="Xml\AdapterCustom.ccpage">
       <SubType>Designer</SubType>
     </None>
@@ -387,11 +387,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\device_list.axml" />
+    <AndroidResource Include="Resources\layout\device_list.xml" />
     <AndroidResource Include="Resources\menu\option_menu.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\device_name.axml" />
+    <AndroidResource Include="Resources\layout\device_name.xml" />
     <AndroidResource Include="Resources\drawable-ldpi\icon.png" />
     <AndroidResource Include="Resources\drawable-mdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-hdpi\icon.png" />
@@ -401,14 +401,14 @@
     <AndroidResource Include="Resources\values-de\Strings.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\result_list.axml" />
-    <AndroidResource Include="Resources\layout\tab_list.axml">
+    <AndroidResource Include="Resources\layout\result_list.xml" />
+    <AndroidResource Include="Resources\layout\tab_list.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\tab_activate.axml">
+    <AndroidResource Include="Resources\layout\tab_activate.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\main.axml">
+    <AndroidResource Include="Resources\layout\main.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -548,19 +548,19 @@
     <AndroidResource Include="Resources\menu\xml_ecu_tool_menu.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\vag_coding.axml">
+    <AndroidResource Include="Resources\layout\vag_coding.xml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\number_input.axml">
+    <AndroidResource Include="Resources\layout\number_input.xml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\vag_adaption.axml">
+    <AndroidResource Include="Resources\layout\vag_adaption.xml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -571,7 +571,7 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\result_customgauge_text.axml">
+    <AndroidResource Include="Resources\layout\result_customgauge_text.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -606,12 +606,12 @@
     <EmbeddedResource Include="VehicleInfo\E85EcuCharacteristics.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\text_input.axml">
+    <AndroidResource Include="Resources\layout\text_input.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\trace_info.axml">
+    <AndroidResource Include="Resources\layout\trace_info.xml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
