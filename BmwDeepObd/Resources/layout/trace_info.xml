@@ -12,11 +12,18 @@
     android:layout_height="wrap_content"
     android:padding="10dp" />
   <TextView
+    android:id="@+id/textViewSendInfo"
+    android:text="@string/send_trace_send_info"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp" />
+  <TextView
     android:id="@+id/textViewMessage"
     android:text="@string/send_trace_email"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp" />
+    android:padding="10dp"
+    style="@style/TextViewInnerCaption" />
   <EditText
     android:id="@+id/editTextEmailAddress"
     android:layout_width="match_parent"
@@ -28,17 +35,12 @@
     android:text="@string/send_trace_info"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp" />
+    android:padding="10dp"
+    style="@style/TextViewInnerCaption" />
   <EditText
     android:id="@+id/editTextInfo"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:inputType="textMultiLine"
     android:lines="10" />
-  <TextView
-    android:id="@+id/textViewSendInfo"
-    android:text="@string/send_trace_send_info"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="10dp" />
 </LinearLayout>

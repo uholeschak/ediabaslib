@@ -151,10 +151,10 @@
   <string name="send_trace_file_failed_retry">Не удалось отправить Trace-файл.\nПожалуйста, проверьте подключение к сети.\nХотите повторить отправку?</string>
   <string name="send_trace_file_failed_message">Хотите повторить отправку?</string>
   <!--Translate-->
-  <string name="send_trace_message">Optional information</string>
-  <string name="send_trace_email">E-mail</string>
-  <string name="send_trace_info">Additional information (e.g. vehicle and adapter type, edge conditions)</string>
-  <string name="send_trace_send_info">Do you want to send the optional information for feedback and to help improving the code?</string>
+  <string name="send_trace_message">Send optional information</string>
+  <string name="send_trace_email">E-mail:</string>
+  <string name="send_trace_info">Additional information (e.g. vehicle and adapter type, edge conditions):</string>
+  <string name="send_trace_send_info">Do you want to send the following optional information, to help improving the software?</string>
 
   <!-- Translate -->
   <string name="translate_text">Перевод текста</string>
