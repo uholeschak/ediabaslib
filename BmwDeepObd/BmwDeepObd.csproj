@@ -240,6 +240,7 @@
     <Compile Include="StringAdapter.cs" />
     <Compile Include="StringObjAdapter.cs" />
     <Compile Include="TextInputDialog.cs" />
+    <Compile Include="TraceInfoInputDialog.cs" />
     <Compile Include="VagAdaptionActivity.cs" />
     <Compile Include="VagCodingActivity.cs" />
     <Compile Include="VehicleInfoBmw.cs" />
