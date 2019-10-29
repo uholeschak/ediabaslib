@@ -33,8 +33,8 @@
     android:id="@+id/editTextInfo"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:inputType="text"
-    android:maxLines="10" />
+    android:inputType="textMultiLine"
+    android:lines="10" />
   <TextView
     android:id="@+id/textViewSendInfo"
     android:text="@string/send_trace_send_info"
