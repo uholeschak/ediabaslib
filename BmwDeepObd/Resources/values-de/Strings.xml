@@ -152,7 +152,7 @@
   <string name="send_trace_file_failed_message">Wollen Sie das Senden wiederholen?</string>
   <string name="send_trace_message">Optionale Informationen senden</string>
   <string name="send_trace_email">E-Mail:</string>
-  <string name="send_trace_info">Zuätzliche Informationen (z.B. Fahrzeug- und Adaptertyp, Randbedingungen):</string>
+  <string name="send_trace_info">Zusätzliche Informationen (z.B. Fahrzeug- und Adaptertyp, Randbedingungen):</string>
   <string name="send_trace_send_info">Wollen Sie die folgenden optionalen Information senden, um zu helfen das Programm zu verbessern?</string>
 
   <!-- Translate -->
