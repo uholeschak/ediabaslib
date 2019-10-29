@@ -150,6 +150,10 @@
   <string name="send_trace_file_failed">Trace-Datei senden fehlgeschlagen.</string>
   <string name="send_trace_file_failed_retry">Trace-Datei senden fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.\nWollen Sie das Senden wiederholen?</string>
   <string name="send_trace_file_failed_message">Wollen Sie das Senden wiederholen?</string>
+  <string name="send_trace_message">Optionale Informationen</string>
+  <string name="send_trace_email">E-Mail</string>
+  <string name="send_trace_info">Zuätzliche Informationen (z.B. Fahrzeug- und Adaptertyp, Randbedingungen)</string>
+  <string name="send_trace_send_info">Do you want to send the optional information for feedback and to help improving the code?</string>
 
   <!-- Translate -->
   <string name="translate_text">Text wird übersetzt</string>
