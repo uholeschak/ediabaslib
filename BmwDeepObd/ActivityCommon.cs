@@ -4037,11 +4037,15 @@ namespace BmwDeepObd
                     {
                         if (!string.IsNullOrWhiteSpace(EmailAddress))
                         {
-                            sb.Append(string.Format("\nEmail address: {0}", EmailAddress));
+                            sb.Append(string.Format("\nEmail address: {0}", EmailAddress.Trim()));
                         }
-                        if (!string.IsNullOrWhiteSpace(TraceInfo))
+                        if (!string.IsNullOrEmpty(TraceInfo))
                         {
-                            sb.Append(string.Format("\nAdditional info: '{0}'", TraceInfo.Replace("\n", " ").Replace("\r", "").Trim()));
+                            string infoText = TraceInfo.Replace("\n", " ").Replace("\r", "").Trim();
+                            if (!string.IsNullOrWhiteSpace(infoText))
+                            {
+                                sb.Append(string.Format("\nAdditional info: '{0}'", infoText));
+                            }
                         }
                     }
                     if (!string.IsNullOrEmpty(LastAdapterSerial))
