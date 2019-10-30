@@ -1504,6 +1504,8 @@ namespace BmwDeepObd
                     ActivityCommon.BatteryWarnings = prefs.GetLong("BatteryWarnings", 0);
                     ActivityCommon.BatteryWarningVoltage = prefs.GetFloat("BatteryWarningVoltage", 0);
                     ActivityCommon.LastAdapterSerial = prefs.GetString("LastAdapterSerial", string.Empty);
+                    ActivityCommon.EmailAddress = prefs.GetString("EmailAddress", string.Empty);
+                    ActivityCommon.TraceInfo = prefs.GetString("TraceInfo", string.Empty);
                     ActivityCommon.AppId = prefs.GetString("AppId", string.Empty);
                     ActivityCommon.SelectedInternetConnection = (ActivityCommon.InternetConnectionType)prefs.GetInt("InternetConnection", (int)ActivityCommon.InternetConnectionType.Cellular);
                     ActivityCommon.SelectedManufacturer = (ActivityCommon.ManufacturerType)prefs.GetInt("Manufacturer", (int)ActivityCommon.ManufacturerType.Bmw);
@@ -1570,6 +1572,8 @@ namespace BmwDeepObd
                 prefsEdit.PutLong("BatteryWarnings", ActivityCommon.BatteryWarnings);
                 prefsEdit.PutFloat("BatteryWarningVoltage", (float)ActivityCommon.BatteryWarningVoltage);
                 prefsEdit.PutString("LastAdapterSerial", ActivityCommon.LastAdapterSerial ?? string.Empty);
+                prefsEdit.PutString("EmailAddress", ActivityCommon.EmailAddress ?? string.Empty);
+                prefsEdit.PutString("TraceInfo", ActivityCommon.TraceInfo ?? string.Empty);
                 prefsEdit.PutString("AppId", ActivityCommon.AppId);
                 prefsEdit.PutInt("Theme", (int)ActivityCommon.SelectedTheme);
                 prefsEdit.PutInt("InternetConnection", (int)ActivityCommon.SelectedInternetConnection);

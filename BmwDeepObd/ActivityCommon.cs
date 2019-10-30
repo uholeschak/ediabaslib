@@ -698,6 +698,10 @@ namespace BmwDeepObd
 
         public static string LastAdapterSerial { get; set; }
 
+        public static string EmailAddress { get; set; }
+
+        public static string TraceInfo { get; set; }
+
         public static ActivityMain ActivityMainCurrent { get; set; }
 
         public static EdiabasThread EdiabasThread { get; set; }
@@ -3785,7 +3789,7 @@ namespace BmwDeepObd
                 new AlertDialog.Builder(_context)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
-                        SendTraceFile(appDataDir, traceFile, null, classType, handler, true);
+                        SendTraceFileInfoDlg(appDataDir, traceFile, null, classType, handler, true);
                     })
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
@@ -3818,7 +3822,7 @@ namespace BmwDeepObd
                     traceFile = null;
                     message = "No Trace file";
                 }
-                SendTraceFile(appDataDir, traceFile, message, classType, handler, true);
+                SendTraceFileInfoDlg(appDataDir, traceFile, message, classType, handler, true);
             }
             catch (Exception)
             {
@@ -3838,7 +3842,7 @@ namespace BmwDeepObd
                 new AlertDialog.Builder(_context)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
-                        SendTraceFile(appDataDir, null, message, classType, handler);
+                        SendTraceFileInfoDlg(appDataDir, null, message, classType, handler);
                     })
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
@@ -3856,7 +3860,38 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool SendTraceFile(string appDataDir, string traceFile, string message, Type classType, EventHandler<EventArgs> handler, bool deleteFile = false)
+        public bool SendTraceFileInfoDlg(string appDataDir, string traceFile, string message, Type classType, EventHandler<EventArgs> handler, bool deleteFile = false)
+        {
+            try
+            {
+                TraceInfoInputDialog traceInfoInputDialog = new TraceInfoInputDialog(_context);
+                traceInfoInputDialog.EmailAddress = EmailAddress;
+                traceInfoInputDialog.InfoText = TraceInfo;
+                traceInfoInputDialog.SetPositiveButton(Resource.String.button_yes, (s, arg) =>
+                {
+                    EmailAddress = traceInfoInputDialog.EmailAddress;
+                    TraceInfo = traceInfoInputDialog.InfoText;
+                    SendTraceFile(appDataDir, traceFile, message, true, classType, handler, deleteFile);
+                });
+                traceInfoInputDialog.SetNegativeButton(Resource.String.button_no, (s, arg) =>
+                {
+                    SendTraceFile(appDataDir, traceFile, message, false, classType, handler, deleteFile);
+                });
+                traceInfoInputDialog.SetNeutralButton(Resource.String.button_abort, (s, arg) =>
+                {
+                    handler?.Invoke(this, new EventArgs());
+                });
+                traceInfoInputDialog.SetCancelable(false);
+                traceInfoInputDialog.Show();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool SendTraceFile(string appDataDir, string traceFile, string message, bool optionalInfo, Type classType, EventHandler<EventArgs> handler, bool deleteFile = false)
         {
             if ((string.IsNullOrEmpty(traceFile) || !File.Exists(traceFile)) &&
                 string.IsNullOrEmpty(message))
@@ -3998,6 +4033,17 @@ namespace BmwDeepObd
                     sb.Append(string.Format("\nEnable translation: {0}", EnableTranslation));
                     sb.Append(string.Format("\nManufacturer: {0}", ManufacturerName()));
                     sb.Append(string.Format("\nClass name: {0}", classType.FullName));
+                    if (optionalInfo)
+                    {
+                        if (!string.IsNullOrWhiteSpace(EmailAddress))
+                        {
+                            sb.Append(string.Format("\nEmail address: {0}", EmailAddress));
+                        }
+                        if (!string.IsNullOrWhiteSpace(TraceInfo))
+                        {
+                            sb.Append(string.Format("\nAdditional info: '{0}'", TraceInfo.Replace("\n", " ").Replace("\r", "").Trim()));
+                        }
+                    }
                     if (!string.IsNullOrEmpty(LastAdapterSerial))
                     {
                         sb.Append(string.Format("\nAdapter serial: {0}", LastAdapterSerial));
@@ -4337,7 +4383,7 @@ namespace BmwDeepObd
                                             new AlertDialog.Builder(_context)
                                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                                 {
-                                                    SendTraceFile(appDataDir, traceFile, message, classType, handler, deleteFile);
+                                                    SendTraceFileInfoDlg(appDataDir, traceFile, message, classType, handler, deleteFile);
                                                 })
                                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                                 {
@@ -4432,7 +4478,7 @@ namespace BmwDeepObd
                             new AlertDialog.Builder(_context)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
-                                    SendTraceFile(appDataDir, traceFile, message, classType, handler, deleteFile);
+                                    SendTraceFileInfoDlg(appDataDir, traceFile, message, classType, handler, deleteFile);
                                 })
                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                 {
