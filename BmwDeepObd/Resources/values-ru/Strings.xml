@@ -35,9 +35,8 @@
   <string name="config_match_vehicle">Используйте только те конфигурации, которые точно соответствуют автомобилю.\nСоздавайте конфигурации с помощью генератора конфигураций, поддержка использования сторонних конфигураций отсутствует.</string>
   <string name="ecu_extract_confirm">Для распаковки файлов ECU (Размер около{0:fs1})\nтребуется загрузка информации об обновлении.\nЕсли распаковка происходит очень медленно, используйте более быстрый носитель данных.\nХотите продолжить? </string>
   <string name="manufacturer_select">Выбранный производитель {0}. Для выбора другого нажмите \'Отменить\'.</string>
-  <!--Translate-->
-  <string name="no_xml_editor_installed">Please install a XML editor first.</string>
-  <string name="choose_xml_editor">Choose an XML editor.</string>
+  <string name="no_xml_editor_installed">Пожалуйста, установите сначала XML редактор.</string>
+  <string name="choose_xml_editor">Выберите XML редактор.</string>
   <string name="error_no_error">Ошибки отсутствуют</string>
   <string name="error_reading_errors">Считывание ошибок: {0}%</string>
   <string name="error_no_response">Нет подтверждения</string>
@@ -47,7 +46,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Произвольный выбор интернет соединения\n- Поддержка Android Q\n- Возможность редактировать XML файлы\n- Добавлено отображение уведомлений\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -150,11 +149,10 @@
   <string name="send_trace_file_failed">Не удалось отправить Trace-файл.</string>
   <string name="send_trace_file_failed_retry">Не удалось отправить Trace-файл.\nПожалуйста, проверьте подключение к сети.\nХотите повторить отправку?</string>
   <string name="send_trace_file_failed_message">Хотите повторить отправку?</string>
-  <!--Translate-->
-  <string name="send_trace_message">Send optional information</string>
-  <string name="send_trace_email">E-mail:</string>
-  <string name="send_trace_info">Additional information (e.g. vehicle and adapter type, edge conditions):</string>
-  <string name="send_trace_send_info">Do you want to send the following optional information, to help improving the software?</string>
+  <string name="send_trace_message">Отсылать дополнительную информацию</string>
+  <string name="send_trace_email">Электронная почта:</string>
+  <string name="send_trace_info">Дополнительная информация (например тип автомобиля и адаптера, ограничения):</string>
+  <string name="send_trace_send_info">Хотите отправить следующую дополнительную информацию, чтобы помочь улучшить программу?</string>
 
   <!-- Translate -->
   <string name="translate_text">Перевод текста</string>
@@ -188,9 +186,7 @@
   <string name="bt_not_enabled">Bluetooth не активирован</string>
   <string name="bt_mtc_service_error">Bluetooth подключён, но обмен данными отсутствует.\nИспользуется ограниченный режим. Пожалуйста, соедините устройства через меню телефона.</string>
   <string name="bt_mtc_antenna_info">Для некоторых Android-Радио рекомендуется заменить антенный кабель внутреннего модуля Bluetooth и вывести его из корпуса.\nАнтенный кабель должен иметь длину 15,5 см. Для модулей без кабелей - кажущаяся оптимальная длина составляет 16,0 см.</string>
-  <!--Translate-->
-  <string name="bt_mtc_module_error">Android devices with Bluetooth module SD-G936 seem to have communication problems with the OBD adapters.\nConnection will probably not work correctly.</string>
-  <string name="bt_module_name">(Модуль Bluetooth: {0})</string>
+  <string name="bt_mtc_module_error">Устройства Android с модулем Bluetooth SD-G936, похоже, имеют проблемы коммуникации с адаптерами OBD.\nСоединение, вероятно, не будет работать правильно.</string>  <string name="bt_module_name">(Модуль Bluetooth: {0})</string>
   <string name="title_paired_devices">Авторизированные устройства</string>
   <string name="title_other_devices">Другие доступные устройства</string>
   <string name="button_scan">Поиск устройств</string>
@@ -233,14 +229,13 @@
   <string name="menu_adapter_config">Настройки устройства</string>
   <string name="menu_enet_ip">ENET IP</string>
   <string name="menu_cfg_submenu">Конфигурация</string>
-  <!--Translate-->
-  <string name="menu_cfg_sel">Select</string>
-  <string name="menu_cfg_edit">Edit</string>
-  <string name="menu_cfg_pages_edit">Edit pages list</string>
-  <string name="menu_cfg_page_edit">Edit current page</string>
-  <string name="menu_cfg_select_edit">Edit other file</string>
-  <string name="menu_cfg_edit_reset">Reset XML editor</string>
-  <string name="menu_cfg_close">Close</string>
+  <string name="menu_cfg_sel">Выбрать</string>
+  <string name="menu_cfg_edit">Редактировать</string>
+  <string name="menu_cfg_pages_edit">Редактировать список страниц</string>
+  <string name="menu_cfg_page_edit">Редактировать текущую страницу</string>
+  <string name="menu_cfg_select_edit">Редактировать другой файл</string>
+  <string name="menu_cfg_edit_reset">Сбросить XML редактор</string>
+  <string name="menu_cfg_close">Закрыть</string>
   <string name="menu_xml_tool">Генератор конфигураций</string>
   <string name="menu_ediabas_tool">Ediabas утилита</string>
   <string name="menu_download_ecu">Скачать ECU файл.</string>
@@ -257,8 +252,7 @@
   <string name="datalog_enable_datalog">Протоколировать данные</string>
   <string name="datalog_append_datalog">Прикрепить протокол</string>
   <string name="datalog_no_tags">Отсутствуют метки записи данных.\nДля активации записи данных, необходимо указать метки записи на странице ECU генератора конфигурации.</string>
-  <!--Translate-->
-  <string name="datalog_temporary">The data logging is only temporary.\nTo store the setting, activate the option \'Store log data settings\' in the global settings.</string>
+  <string name="datalog_temporary">Запись данных временная.\nЧтобы сохранить настройку, активируйте опцию \'Сохранить настройки данных журнала\' в глобальных настройках.</string>
   <string name="datalog_date">Дата</string>
 
   <!-- FilePicker -->
@@ -322,9 +316,8 @@
   <string name="settings_caption_theme">Темы</string>
   <string name="settings_theme_dark">Темная</string>
   <string name="settings_theme_light">Светлая</string>
-  <!--Translate-->
-  <string name="settings_caption_internet">For OBD network adapter internet connection via</string>
-  <string name="settings_internet_cellular">Mobile network</string>
+  <string name="settings_caption_internet">Подключение сетевого адаптера OBD к интернет соединению через</string>
+  <string name="settings_internet_cellular">Мобильную сеть</string>
   <string name="settings_internet_wifi">Wi-Fi</string>
   <string name="settings_internet_ethernet">Ethernet</string>
   <string name="settings_caption_bluetooth_enable">Включение Bluetooth</string>
@@ -364,9 +357,8 @@
   <string name="settings_scan_all_ecus">Для автомобилей BMW с протоколом DS2 всегда сканировать все ECU (медленно)</string>
   <string name="settings_check_ecu_files">Проверка ECU файлов при запуске</string>
   <string name="settings_caption_storage">Носитель памяти</string>
-  <!--Translate-->
-  <string name="settings_caption_notifications">Notifications</string>
-  <string name="settings_notification_settings">Notification settings</string>
+  <string name="settings_caption_notifications">Уведомления</string>
+  <string name="settings_notification_settings">Настройки уведомлений</string>
   <string name="settings_caption_debug">Отладить</string>
   <string name="settings_collect_debug_info">Собрать отладочную информацию для файла трассировки</string>
   <string name="settings_hci_snoop_log">Файл журнала отслеживания Bluetooth HCI:\n{0}</string>
@@ -478,8 +470,7 @@
   <string name="xml_tool_ecu_results">Job результат</string>
   <string name="xml_tool_ecu_show_all_results">Показывать все результаты</string>
   <string name="xml_tool_ecu_display_text">Выведенный текст</string>
-  <!--Translate-->
-  <string name="xml_tool_ecu_display_order">Display order</string>
+  <string name="xml_tool_ecu_display_order">Порядок отображения</string>
   <string name="xml_tool_ecu_log_tag">Тег для протоколированных данных</string>
   <string name="xml_tool_ecu_grid_type">Графический дизайн</string>
   <string name="xml_tool_ecu_grid_type_hidden">Скрытый</string>
