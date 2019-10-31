@@ -3,7 +3,7 @@ This page allows to change some global app settings.
 * _Theme_ options:
   * _Dark_: Dark theme is selected.
   * _Light_: Light theme is selected.
-* _For OBD network adapter internet connection via_ (Wi-Fi or Ethernet OBD II adapters) options:
+* _For OBD network adapter internet connection via_ (Wi-Fi or Ethernet OBD II adapters, only Android 21 or higher) options:
   * _Mobile network_: Internet connection via mobile network is selected.
   * _Wi-Fi_: Internet connection via Wi-Fi is selected.
   * _Ethernet_: Internet connection via Ethernet is selected.
