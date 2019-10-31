@@ -27,6 +27,8 @@ namespace BmwDeepObd
         private ActivityCommon _activityCommon;
         private RadioButton _radioButtonThemeDark;
         private RadioButton _radioButtonThemeLight;
+        private TextView _textViewCaptionInternet;
+        private RadioGroup _radioGroupInternet;
         private RadioButton _radioButtonInternetCellular;
         private RadioButton _radioButtonInternetWifi;
         private RadioButton _radioButtonInternetEthernet;
@@ -81,6 +83,12 @@ namespace BmwDeepObd
 
             _radioButtonThemeDark = FindViewById<RadioButton>(Resource.Id.radioButtonThemeDark);
             _radioButtonThemeLight = FindViewById<RadioButton>(Resource.Id.radioButtonThemeLight);
+
+            ViewStates viewStateInternet = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ? ViewStates.Visible : ViewStates.Gone;
+            _textViewCaptionInternet = FindViewById<TextView>(Resource.Id.textViewCaptionInternet);
+            _radioGroupInternet = FindViewById<RadioGroup>(Resource.Id.radioGroupInternet);
+            _textViewCaptionInternet.Visibility = viewStateInternet;
+            _radioGroupInternet.Visibility = viewStateInternet;
 
             _radioButtonInternetCellular = FindViewById<RadioButton>(Resource.Id.radioButtonInternetCellular);
             _radioButtonInternetWifi = FindViewById<RadioButton>(Resource.Id.radioButtonInternetWifi);
@@ -333,17 +341,24 @@ namespace BmwDeepObd
             ActivityCommon.SelectedTheme = themeType;
 
             ActivityCommon.InternetConnectionType internetConnectionType = ActivityCommon.SelectedInternetConnection;
-            if (_radioButtonInternetCellular.Checked)
+            if (_radioGroupInternet.Visibility == ViewStates.Visible)
+            {
+                if (_radioButtonInternetCellular.Checked)
+                {
+                    internetConnectionType = ActivityCommon.InternetConnectionType.Cellular;
+                }
+                else if (_radioButtonInternetWifi.Checked)
+                {
+                    internetConnectionType = ActivityCommon.InternetConnectionType.Wifi;
+                }
+                else if (_radioButtonInternetEthernet.Checked)
+                {
+                    internetConnectionType = ActivityCommon.InternetConnectionType.Ethernet;
+                }
+            }
+            else
             {
                 internetConnectionType = ActivityCommon.InternetConnectionType.Cellular;
-            }
-            else if (_radioButtonInternetWifi.Checked)
-            {
-                internetConnectionType = ActivityCommon.InternetConnectionType.Wifi;
-            }
-            else if (_radioButtonInternetEthernet.Checked)
-            {
-                internetConnectionType = ActivityCommon.InternetConnectionType.Ethernet;
             }
             ActivityCommon.SelectedInternetConnection = internetConnectionType;
 
