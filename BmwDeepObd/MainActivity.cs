@@ -2625,8 +2625,8 @@ namespace BmwDeepObd
                                 resultGridAdapter.Items.Add(resultItem);
                             }
                             resultGridAdapter.NotifyDataSetChanged();
-                            gridViewResult.SetColumnWidth(gaugeSize);
                         }
+                        gridViewResult.SetColumnWidth(gaugeSize);
                     }
                     else
                     {
