@@ -98,13 +98,18 @@ namespace BmwDeepObd
             {
                 try
                 {
+                    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)textViewGaugeValue.LayoutParameters;
                     if (customGauge != null)
                     {
-                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)textViewGaugeValue.LayoutParameters;
                         layoutParams.BottomMargin = 80 * gaugeInnerSize / GaugeBaseSize;
-                        textViewGaugeValue.LayoutParameters = layoutParams;
+                    }
+                    else
+                    {
+                        layoutParams.Height = item.GaugeSize * 120 / GaugeBaseSize;
+                        layoutParams.Width = item.GaugeSize;
                     }
 
+                    textViewGaugeValue.LayoutParameters = layoutParams;
                     textViewGaugeValue.SetTextSize(ComplexUnitType.Px, (float)30 * gaugeInnerSize / GaugeBaseSize);
                     textViewGaugeValue.Text = item.ValueText;
                 }
@@ -119,13 +124,18 @@ namespace BmwDeepObd
             {
                 try
                 {
+                    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)textViewGaugeName.LayoutParameters;
                     if (customGauge != null)
                     {
-                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) textViewGaugeName.LayoutParameters;
                         layoutParams.TopMargin = -30 * gaugeInnerSize / GaugeBaseSize;
-                        textViewGaugeName.LayoutParameters = layoutParams;
+                    }
+                    else
+                    {
+                        layoutParams.Height = item.GaugeSize * 80 / GaugeBaseSize;
+                        layoutParams.Width = item.GaugeSize;
                     }
 
+                    textViewGaugeName.LayoutParameters = layoutParams;
                     textViewGaugeName.SetTextSize(ComplexUnitType.Px, (float)20 * gaugeInnerSize / GaugeBaseSize);
                     textViewGaugeName.Text = item.Name;
                 }
