@@ -105,8 +105,8 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        layoutParams.Width = item.GaugeSize;
                         layoutParams.Height = item.GaugeSize * 120 / GaugeBaseSize;
+                        layoutParams.Width = item.GaugeSize;
                     }
 
                     textViewGaugeValue.LayoutParameters = layoutParams;
@@ -131,8 +131,8 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        layoutParams.Width = item.GaugeSize;
                         layoutParams.Height = item.GaugeSize * 80 / GaugeBaseSize;
+                        layoutParams.Width = item.GaugeSize;
                     }
 
                     textViewGaugeName.LayoutParameters = layoutParams;
