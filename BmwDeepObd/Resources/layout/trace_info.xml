@@ -30,6 +30,7 @@
       android:id="@+id/editTextEmailAddress"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:imeOptions="actionDone"
       android:inputType="textEmailAddress"
       android:maxLines="1" />
     <TextView
@@ -42,8 +43,9 @@
       android:id="@+id/editTextInfo"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:imeOptions="actionDone"
       android:gravity="left|bottom"
-      android:inputType="textMultiLine"
-      android:lines="10" />
+      android:inputType="textAutoCorrect|textCapSentences|textImeMultiLine"
+      android:maxLines="1" />
   </LinearLayout>
 </ScrollView>

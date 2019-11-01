@@ -1,7 +1,7 @@
-﻿using System;
-using Android.Content;
+﻿using Android.Content;
 using Android.Support.V7.App;
 using Android.Views;
+using Android.Views.InputMethods;
 using Android.Widget;
 
 namespace BmwDeepObd
@@ -10,6 +10,7 @@ namespace BmwDeepObd
     {
         private Android.App.Activity _activity;
         private AlertDialog _dialog;
+        private InputMethodManager _imm;
         private View _view;
         private TextView _textViewMessage;
         private EditText _editTextEmailAddress;
@@ -86,14 +87,40 @@ namespace BmwDeepObd
         {
             SetCancelable(false);
             _activity = context as Android.App.Activity;
+
             if (_activity != null)
             {
                 _view = _activity.LayoutInflater.Inflate(Resource.Layout.trace_info, null);
                 SetView(_view);
 
+                _imm = (InputMethodManager)_activity.GetSystemService(Context.InputMethodService);
+
                 _textViewMessage = _view.FindViewById<TextView>(Resource.Id.textViewMessage);
+
                 _editTextEmailAddress = _view.FindViewById<EditText>(Resource.Id.editTextEmailAddress);
+                _editTextEmailAddress.EditorAction += TextEditorAction;
+
                 _editTextInfo = _view.FindViewById<EditText>(Resource.Id.editTextInfo);
+                _editTextInfo.EditorAction += TextEditorAction;
+            }
+        }
+
+        private void HideKeyboard()
+        {
+            _imm?.HideSoftInputFromWindow(_view.WindowToken, HideSoftInputFlags.None);
+        }
+
+        private void TextEditorAction(object sender, TextView.EditorActionEventArgs e)
+        {
+            switch (e.ActionId)
+            {
+                case ImeAction.Go:
+                case ImeAction.Send:
+                case ImeAction.Next:
+                case ImeAction.Done:
+                case ImeAction.Previous:
+                    HideKeyboard();
+                    break;
             }
         }
 
