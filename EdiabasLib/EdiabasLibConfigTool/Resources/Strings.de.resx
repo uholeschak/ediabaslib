@@ -270,4 +270,7 @@ mit EdiabasLib unterstützt.</value>
   <data name="PatchCopyRuntime" xml:space="preserve">
     <value>Keine VC Runtime-Dateien installiert, Dateien werden lokal kopiert.</value>
   </data>
+  <data name="ElmAdapterConnected" xml:space="preserve">
+    <value>Der Adapter verwendet die ELM327 Firmware, es wird nur die Ersatzfirmware unterstützt.</value>
+  </data>
 </root>

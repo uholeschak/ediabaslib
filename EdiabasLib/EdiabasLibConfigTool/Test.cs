@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
@@ -357,6 +358,42 @@ namespace EdiabasLibConfigTool
             StringBuilder sr = new StringBuilder();
             sr.Append(Resources.Strings.Connected);
             byte[] firmware = AdapterCommandCustom(0xFD, new byte[] { 0xFD });
+            if (firmware == null)
+            {
+                for (int retry = 0; retry < 2; retry++)
+                {
+                    if (Elm327SendCommand("ATI", false))
+                    {
+                        Regex elmVerRegEx = new Regex(@"ELM327\s+v(\d)\.(\d)", RegexOptions.IgnoreCase);
+                        string response = GetElm327Reponse();
+                        if (response != null)
+                        {
+                            MatchCollection matchesVer = elmVerRegEx.Matches(response);
+                            int elmVerH = -1;
+                            int elmVerL = -1;
+                            if ((matchesVer.Count == 1) && (matchesVer[0].Groups.Count == 3))
+                            {
+                                if (!Int32.TryParse(matchesVer[0].Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out elmVerH))
+                                {
+                                    elmVerH = -1;
+                                }
+                                if (!Int32.TryParse(matchesVer[0].Groups[2].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out elmVerL))
+                                {
+                                    elmVerL = -1;
+                                }
+                            }
+
+                            if (elmVerH >= 0 && elmVerL >= 0)
+                            {
+                                sr.Append("\r\n");
+                                sr.Append(Resources.Strings.ElmAdapterConnected);
+                                _form.UpdateStatusText(sr.ToString());
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
             if ((firmware == null) || (firmware.Length < 4))
             {
                 sr.Append("\r\n");
@@ -669,6 +706,104 @@ namespace EdiabasLibConfigTool
                 sum += data[i];
             }
             return sum;
+        }
+
+        private bool Elm327SendCommand(string command, bool readAnswer = true)
+        {
+            if (_dataStream == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                byte[] sendData = Encoding.UTF8.GetBytes(command + "\r");
+                _dataStream.Write(sendData, 0, sendData.Length);
+
+                if (readAnswer)
+                {
+                    string answer = GetElm327Reponse();
+                    if (answer == null)
+                    {
+                        return false;
+                    }
+                    // check for OK
+                    if (!answer.Contains("OK\r"))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private string GetElm327Reponse()
+        {
+            if (_dataStream == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                string response = null;
+                StringBuilder stringBuilder = new StringBuilder();
+                _dataStream.ReadTimeout = 1000;
+                for (; ; )
+                {
+                    int data;
+                    try
+                    {
+                        data = _dataStream.ReadByte();
+                    }
+                    catch (Exception)
+                    {
+                        data = -1;
+                    }
+
+                    if (data < 0)
+                    {
+                        while (_dataStream.DataAvailable)
+                        {
+                            try
+                            {
+                                _dataStream.ReadByte();
+                            }
+                            catch (Exception)
+                            {
+                                break;
+                            }
+                        }
+                        return null;
+                    }
+
+                    if (data >= 0 && data != 0x00)
+                    {
+                        // remove 0x00
+                        stringBuilder.Append(Convert.ToChar(data));
+                    }
+                    if (data == 0x3E)
+                    {
+                        // prompt
+                        response = stringBuilder.ToString();
+                        break;
+                    }
+                    if (stringBuilder.Length > 500)
+                    {
+                        break;
+                    }
+                }
+
+                return response;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }
