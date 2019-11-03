@@ -259,6 +259,15 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The adapter is using the ELM327 firmware, please flash the replacement firmware with the app first. ähnelt.
+        /// </summary>
+        internal static string FlashReplacementFirmware {
+            get {
+                return ResourceManager.GetString("FlashReplacementFirmware", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die HTTP response invalid ähnelt.
         /// </summary>
         internal static string HttpResponseIncorrect {

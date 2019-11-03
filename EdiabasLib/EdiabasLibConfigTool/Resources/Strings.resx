@@ -282,4 +282,7 @@ are supported with EdiabasLib.</value>
   <data name="ElmAdapterConnected" xml:space="preserve">
     <value>The adapter is using the ELM327 firmware, only the replacement firmware is supported.</value>
   </data>
+  <data name="FlashReplacementFirmware" xml:space="preserve">
+    <value>The adapter is using the ELM327 firmware, please flash the replacement firmware with the app first.</value>
+  </data>
 </root>

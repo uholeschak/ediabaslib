@@ -385,6 +385,21 @@ namespace EdiabasLibConfigTool
 
                             if (elmVerH >= 0 && elmVerL >= 0)
                             {
+                                if (Elm327SendCommand(@"AT@2", false))
+                                {
+                                    string answer = GetElm327Reponse();
+                                    if (answer != null)
+                                    {
+                                        if (answer.Contains("DEEPOBD"))
+                                        {
+                                            sr.Append("\r\n");
+                                            sr.Append(Resources.Strings.ElmAdapterConnected);
+                                            _form.UpdateStatusText(sr.ToString());
+                                            return false;
+                                        }
+                                    }
+                                }
+
                                 sr.Append("\r\n");
                                 sr.Append(Resources.Strings.ElmAdapterConnected);
                                 _form.UpdateStatusText(sr.ToString());
