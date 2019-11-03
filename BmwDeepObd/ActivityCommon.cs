@@ -3864,6 +3864,7 @@ namespace BmwDeepObd
         {
             try
             {
+                // ReSharper disable once UseObjectOrCollectionInitializer
                 TraceInfoInputDialog traceInfoInputDialog = new TraceInfoInputDialog(_context);
                 traceInfoInputDialog.EmailAddress = EmailAddress;
                 traceInfoInputDialog.InfoText = TraceInfo;
@@ -3881,7 +3882,6 @@ namespace BmwDeepObd
                 {
                     handler?.Invoke(this, new EventArgs());
                 });
-                traceInfoInputDialog.SetCancelable(false);
                 traceInfoInputDialog.Show();
             }
             catch (Exception)

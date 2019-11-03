@@ -1634,6 +1634,7 @@ namespace BmwDeepObd
 
             TextInputDialog textInputDialog = new TextInputDialog(this);
             textInputDialog.Message = GetString(Resource.String.bt_device_enter_mac);
+            textInputDialog.MessageDetail = string.Empty;
             textInputDialog.Text = "00:19:5D:24:B7:64";
             textInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
             {
