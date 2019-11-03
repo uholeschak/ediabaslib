@@ -12,6 +12,7 @@ namespace BmwDeepObd
         private AlertDialog _dialog;
         private View _view;
         private TextView _textViewMessage;
+        private TextView _textViewMessageDetail;
         private EditText _editTextText;
 
         public string Message
@@ -29,6 +30,26 @@ namespace BmwDeepObd
                 if (_textViewMessage != null)
                 {
                     _textViewMessage.Text = value;
+                }
+            }
+        }
+
+        public string MessageDetail
+        {
+            get
+            {
+                if (_textViewMessageDetail != null)
+                {
+                    return _textViewMessageDetail.Text;
+                }
+                return string.Empty;
+            }
+            set
+            {
+                if (_textViewMessageDetail != null)
+                {
+                    _textViewMessageDetail.Text = value;
+                    _textViewMessageDetail.Visibility = string.IsNullOrWhiteSpace(value) ? ViewStates.Gone : ViewStates.Visible;
                 }
             }
         }
@@ -72,6 +93,7 @@ namespace BmwDeepObd
                 SetView(_view);
 
                 _textViewMessage = _view.FindViewById<TextView>(Resource.Id.textViewMessage);
+                _textViewMessageDetail = _view.FindViewById<TextView>(Resource.Id.textViewMessageDetail);
                 _editTextText = _view.FindViewById<EditText>(Resource.Id.editTextText);
             }
         }
