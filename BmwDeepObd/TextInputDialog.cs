@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.Support.V7.App;
 using Android.Views;
+using Android.Views.InputMethods;
 using Android.Widget;
 
 namespace BmwDeepObd
@@ -10,6 +11,7 @@ namespace BmwDeepObd
     {
         private Android.App.Activity _activity;
         private AlertDialog _dialog;
+        private InputMethodManager _imm;
         private View _view;
         private TextView _textViewMessage;
         private TextView _textViewMessageDetail;
@@ -92,9 +94,32 @@ namespace BmwDeepObd
                 _view = _activity.LayoutInflater.Inflate(Resource.Layout.text_input, null);
                 SetView(_view);
 
+                _imm = (InputMethodManager)_activity.GetSystemService(Context.InputMethodService);
+
                 _textViewMessage = _view.FindViewById<TextView>(Resource.Id.textViewMessage);
                 _textViewMessageDetail = _view.FindViewById<TextView>(Resource.Id.textViewMessageDetail);
+
                 _editTextText = _view.FindViewById<EditText>(Resource.Id.editTextText);
+                _editTextText.EditorAction += TextEditorAction;
+            }
+        }
+
+        private void HideKeyboard()
+        {
+            _imm?.HideSoftInputFromWindow(_view.WindowToken, HideSoftInputFlags.None);
+        }
+
+        private void TextEditorAction(object sender, TextView.EditorActionEventArgs e)
+        {
+            switch (e.ActionId)
+            {
+                case ImeAction.Go:
+                case ImeAction.Send:
+                case ImeAction.Next:
+                case ImeAction.Done:
+                case ImeAction.Previous:
+                    HideKeyboard();
+                    break;
             }
         }
 
