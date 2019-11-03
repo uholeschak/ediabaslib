@@ -393,7 +393,7 @@ namespace EdiabasLibConfigTool
                                         if (answer.Contains("DEEPOBD"))
                                         {
                                             sr.Append("\r\n");
-                                            sr.Append(Resources.Strings.ElmAdapterConnected);
+                                            sr.Append(Resources.Strings.FlashReplacementFirmware);
                                             _form.UpdateStatusText(sr.ToString());
                                             return false;
                                         }
