@@ -273,4 +273,7 @@ mit EdiabasLib unterstützt.</value>
   <data name="ElmAdapterConnected" xml:space="preserve">
     <value>Der Adapter verwendet die ELM327 Firmware, es wird nur die Ersatzfirmware unterstützt.</value>
   </data>
+  <data name="FlashReplacementFirmware" xml:space="preserve">
+    <value>Der Adapter verwendet die ELM327 Firmware, bitte flashen Sie zuerst die Ersatzfirmware mit der App.</value>
+  </data>
 </root>
