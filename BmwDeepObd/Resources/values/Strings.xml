@@ -102,6 +102,9 @@
   <string name="select_ecu_zip">Select ECU Zip</string>
   <string name="downloading_file">Downloading files</string>
   <string name="download_failed">Download files failed.\nPlease check your network connection.</string>
+  <string name="obb_offline_extract">Do you want to extract the ECU files offline?</string>
+  <string name="obb_offline_extract_title">Offline extract</string>
+  <string name="obb_offline_extract_message">Enter the offline key.\nTo get the key, send an e-mail with the ID: {0}\nto: {1}</string>
   <string name="extract_cleanup">Removing old files</string>
   <string name="decrypt_file">Preparing archive</string>
   <string name="extract_file">Extracting files</string>

@@ -127,6 +127,9 @@
   <string name="select_ecu_zip">ECU Zip auswählen</string>
   <string name="downloading_file">Dateien herunterladen</string>
   <string name="download_failed">Herunterladen der Dateien fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.</string>
+  <string name="obb_offline_extract">Wollen Sie die ECU Dateien offline extrahieren?</string>
+  <string name="obb_offline_extract_title">Offline extrahieren</string>
+  <string name="obb_offline_extract_message">Geben Sie den Offline-Key ein.\nUm den Key zu erhalten, senden Sie eine E-Mail mit der ID: {0}\nan: {1}</string>
   <string name="extract_cleanup">Alte Dateien löschen</string>
   <string name="decrypt_file">Archiv vorbereiten</string>
   <string name="extract_file">Dateien entpacken</string>
