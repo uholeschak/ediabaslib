@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Xml.Linq;
@@ -3587,7 +3588,11 @@ namespace BmwDeepObd
             textInputDialog.MessageDetail = messageDetail;
             textInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
             {
-                string offlineKey = textInputDialog.Text;
+                string obbKey = DecryptObbOfflineKey(textInputDialog.Text);
+                if (string.IsNullOrEmpty(obbKey))
+                {
+                    _activityCommon.ShowAlert(GetString(Resource.String.obb_offline_key_invalid), Resource.String.alert_title_error);
+                }
             });
             textInputDialog.SetNeutralButton(Resource.String.button_copy, (s, arg) =>
             {
@@ -3597,6 +3602,43 @@ namespace BmwDeepObd
             {
             });
             textInputDialog.Show();
+        }
+
+        private string DecryptObbOfflineKey(string offlineKey)
+        {
+            try
+            {
+                using (AesCryptoServiceProvider crypto = new AesCryptoServiceProvider())
+                {
+                    crypto.Mode = CipherMode.CBC;
+                    crypto.Padding = PaddingMode.PKCS7;
+                    crypto.KeySize = 256;
+
+                    using (SHA256Managed sha256 = new SHA256Managed())
+                    {
+                        crypto.Key = sha256.ComputeHash(Encoding.ASCII.GetBytes(ActivityCommon.AppId));
+                    }
+                    using (MD5 md5 = MD5.Create())
+                    {
+                        crypto.IV = md5.ComputeHash(Encoding.ASCII.GetBytes(ActivityCommon.AppId));
+                    }
+
+                    using (MemoryStream msEncrypt = new MemoryStream(Encoding.ASCII.GetBytes(offlineKey ?? string.Empty)))
+                    {
+                        using (CryptoStream csDecrypt = new CryptoStream(msEncrypt, crypto.CreateDecryptor(), CryptoStreamMode.Read))
+                        {
+                            using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                            {
+                                return srDecrypt.ReadToEnd();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private string GetObbKey(string xmlResult, out string errorMessage)
