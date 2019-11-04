@@ -3387,10 +3387,10 @@ namespace BmwDeepObd
 
             Thread downloadThread = new Thread(() =>
             {
+                DownloadInfo downloadInfo = null;
                 try
                 {
                     string fileName = Path.GetFileName(url) ?? string.Empty;
-                    DownloadInfo downloadInfo = null;
                     if (!string.IsNullOrEmpty(unzipTargetDir))
                     {
                         XElement xmlInfo = new XElement("Info");
@@ -3475,7 +3475,7 @@ namespace BmwDeepObd
                         bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
                         if (!cancelled)
                         {
-                            ObbDownloadError();
+                            ObbDownloadError(downloadInfo);
                         }
                     });
                 }
@@ -3509,8 +3509,7 @@ namespace BmwDeepObd
                                     .SetPositiveButton(Resource.String.button_yes, (s, a) =>
                                     {
                                         yesSelected = true;
-                                        ExtractZipFile(_obbFileName, downloadInfo.TargetDir, downloadInfo.InfoXml, key, false,
-                                            new List<string> { Path.Combine(_instanceData.AppDataPath, "EcuVag") });
+                                        ExtractObbFile(downloadInfo, key);
                                     })
                                     .SetNegativeButton(Resource.String.button_no, (s, a) =>
                                     {
@@ -3534,8 +3533,7 @@ namespace BmwDeepObd
                                     }
                                 };
 #else
-                                ExtractZipFile(_obbFileName, downloadInfo.TargetDir, downloadInfo.InfoXml, key, false,
-                                    new List<string> { Path.Combine(_instanceData.AppDataPath, "EcuVag") });
+                                ExtractObbFile(downloadInfo, key);
 #endif
                                 return;
                             }
@@ -3551,15 +3549,21 @@ namespace BmwDeepObd
 
                     if (!success || error)
                     {
-                        ObbDownloadError(errorMessage);
+                        ObbDownloadError(downloadInfo, errorMessage);
                     }
                 }
             });
         }
 
-        private void ObbDownloadError(string errorMessage = null)
+        private void ObbDownloadError(DownloadInfo downloadInfo, string errorMessage = null)
         {
             string message = GetString(Resource.String.download_failed);
+            if (downloadInfo == null)
+            {
+                _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                return;
+            }
+
             if (!string.IsNullOrEmpty(errorMessage))
             {
                 message = errorMessage;
@@ -3569,7 +3573,7 @@ namespace BmwDeepObd
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (s, a) =>
                 {
-                    ObbExractOffline();
+                    ObbExractOffline(downloadInfo);
                 })
                 .SetNegativeButton(Resource.String.button_no, (s, a) =>
                 {
@@ -3580,16 +3584,25 @@ namespace BmwDeepObd
                 .Show();
         }
 
-        private void ObbExractOffline()
+        private void ObbExractOffline(DownloadInfo downloadInfo)
         {
+            if (downloadInfo == null)
+            {
+                return;
+            }
+
             string messageDetail = string.Format(GetString(Resource.String.obb_offline_extract_message), ActivityCommon.AppId, ActivityCommon.ContactMail);
             TextInputDialog textInputDialog = new TextInputDialog(this);
             textInputDialog.Message = GetString(Resource.String.obb_offline_extract_title);
             textInputDialog.MessageDetail = messageDetail;
             textInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
             {
-                string obbKey = DecryptObbOfflineKey(textInputDialog.Text);
-                if (string.IsNullOrEmpty(obbKey))
+                string key = DecryptObbOfflineKey(textInputDialog.Text);
+                if (!string.IsNullOrEmpty(key))
+                {
+                    ExtractObbFile(downloadInfo, key);
+                }
+                else
                 {
                     _activityCommon.ShowAlert(GetString(Resource.String.obb_offline_key_invalid), Resource.String.alert_title_error);
                 }
@@ -3699,6 +3712,12 @@ namespace BmwDeepObd
             {
                 return null;
             }
+        }
+
+        private void ExtractObbFile(DownloadInfo downloadInfo, string key)
+        {
+            ExtractZipFile(_obbFileName, downloadInfo.TargetDir, downloadInfo.InfoXml, key, false,
+                new List<string> { Path.Combine(_instanceData.AppDataPath, "EcuVag") });
         }
 
         private void ExtractZipFile(string fileName, string targetDirectory, XElement infoXml, string key, bool removeFile = false, List<string> removeDirs = null)
