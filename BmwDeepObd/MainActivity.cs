@@ -3474,7 +3474,7 @@ namespace BmwDeepObd
                         bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
                         if (!cancelled)
                         {
-                            _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
+                            ObbDownloadError();
                         }
                     });
                 }
@@ -3542,24 +3542,56 @@ namespace BmwDeepObd
                             error = true;
                         }
                     }
+
                     _downloadProgress.Dismiss();
                     _downloadProgress.Dispose();
                     _downloadProgress = null;
                     UpdateLockState();
+
                     if (!success || error)
                     {
-                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                        if (!string.IsNullOrEmpty(errorMessage))
-                        {
-                            _activityCommon.ShowAlert(errorMessage, Resource.String.alert_title_error);
-                        }
-                        else
-                        {
-                            _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
-                        }
+                        ObbDownloadError(errorMessage);
                     }
                 }
             });
+        }
+
+        private void ObbDownloadError(string errorMessage = null)
+        {
+            string message = GetString(Resource.String.download_failed);
+            if (!string.IsNullOrEmpty(errorMessage))
+            {
+                message = errorMessage;
+            }
+            message += "\n" + GetString(Resource.String.obb_offline_extract);
+
+            new AlertDialog.Builder(this)
+                .SetPositiveButton(Resource.String.button_yes, (s, a) =>
+                {
+                    ObbExractOffline();
+                })
+                .SetNegativeButton(Resource.String.button_no, (s, a) =>
+                {
+                })
+                .SetCancelable(true)
+                .SetMessage(message)
+                .SetTitle(Resource.String.alert_title_error)
+                .Show();
+        }
+
+        private void ObbExractOffline()
+        {
+            TextInputDialog textInputDialog = new TextInputDialog(this);
+            textInputDialog.Message = GetString(Resource.String.obb_offline_extract_title);
+            textInputDialog.MessageDetail = string.Format(GetString(Resource.String.obb_offline_extract_message), ActivityCommon.AppId, ActivityCommon.ContactMail);
+            textInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
+            {
+                string offlineKey = textInputDialog.Text;
+            });
+            textInputDialog.SetNegativeButton(Resource.String.button_abort, (s, arg) =>
+            {
+            });
+            textInputDialog.Show();
         }
 
         private string GetObbKey(string xmlResult, out string errorMessage)
