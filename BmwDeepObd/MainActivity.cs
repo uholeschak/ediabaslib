@@ -3581,12 +3581,17 @@ namespace BmwDeepObd
 
         private void ObbExractOffline()
         {
+            string messageDetail = string.Format(GetString(Resource.String.obb_offline_extract_message), ActivityCommon.AppId, ActivityCommon.ContactMail);
             TextInputDialog textInputDialog = new TextInputDialog(this);
             textInputDialog.Message = GetString(Resource.String.obb_offline_extract_title);
-            textInputDialog.MessageDetail = string.Format(GetString(Resource.String.obb_offline_extract_message), ActivityCommon.AppId, ActivityCommon.ContactMail);
+            textInputDialog.MessageDetail = messageDetail;
             textInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
             {
                 string offlineKey = textInputDialog.Text;
+            });
+            textInputDialog.SetNeutralButton(Resource.String.button_copy, (s, arg) =>
+            {
+                _activityCommon.SetClipboardText(messageDetail);
             });
             textInputDialog.SetNegativeButton(Resource.String.button_abort, (s, arg) =>
             {
