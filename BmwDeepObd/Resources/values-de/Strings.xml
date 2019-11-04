@@ -130,6 +130,7 @@
   <string name="obb_offline_extract">Wollen Sie die ECU Dateien offline extrahieren?</string>
   <string name="obb_offline_extract_title">Offline extrahieren</string>
   <string name="obb_offline_extract_message">Geben Sie den Offline-Key ein.\nUm den Key zu erhalten, senden Sie eine E-Mail mit der ID: {0}\nan: {1}</string>
+  <string name="obb_offline_key_invalid">Der Offline-Key ist ungültig.</string>
   <string name="extract_cleanup">Alte Dateien löschen</string>
   <string name="decrypt_file">Archiv vorbereiten</string>
   <string name="extract_file">Dateien entpacken</string>
