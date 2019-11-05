@@ -3621,6 +3621,11 @@ namespace BmwDeepObd
         {
             try
             {
+                if (string.IsNullOrEmpty(offlineKey))
+                {
+                    return null;
+                }
+
                 using (AesCryptoServiceProvider crypto = new AesCryptoServiceProvider())
                 {
                     crypto.Mode = CipherMode.CBC;
@@ -3636,7 +3641,7 @@ namespace BmwDeepObd
                         crypto.IV = md5.ComputeHash(Encoding.ASCII.GetBytes(ActivityCommon.AppId));
                     }
 
-                    using (MemoryStream msEncrypt = new MemoryStream(Encoding.ASCII.GetBytes(offlineKey ?? string.Empty)))
+                    using (MemoryStream msEncrypt = new MemoryStream(Convert.FromBase64String(offlineKey)))
                     {
                         using (CryptoStream csDecrypt = new CryptoStream(msEncrypt, crypto.CreateDecryptor(), CryptoStreamMode.Read))
                         {
