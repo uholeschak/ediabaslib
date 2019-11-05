@@ -82,7 +82,7 @@ namespace OfflineKeyGenerator
                                 swEncrypt.Write(obbKey);
                             }
                             byte[] dataEncrypt = msEncrypt.ToArray();
-                            return BitConverter.ToString(dataEncrypt).Replace("-", "");
+                            return Convert.ToBase64String(dataEncrypt);
                         }
                     }
                 }
