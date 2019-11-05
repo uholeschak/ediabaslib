@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Base62;
 
 namespace OfflineKeyGenerator
 {
@@ -82,7 +83,7 @@ namespace OfflineKeyGenerator
                                 swEncrypt.Write(obbKey);
                             }
                             byte[] dataEncrypt = msEncrypt.ToArray();
-                            return Convert.ToBase64String(dataEncrypt);
+                            return dataEncrypt.ToBase62();
                         }
                     }
                 }

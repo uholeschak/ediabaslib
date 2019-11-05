@@ -26,6 +26,7 @@ using Android.Text.Method;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Base62;
 using BmwDeepObd.FilePicker;
 using EdiabasLib;
 using Java.Interop;
@@ -3641,7 +3642,7 @@ namespace BmwDeepObd
                         crypto.IV = md5.ComputeHash(Encoding.ASCII.GetBytes(ActivityCommon.AppId));
                     }
 
-                    using (MemoryStream msEncrypt = new MemoryStream(Convert.FromBase64String(offlineKey)))
+                    using (MemoryStream msEncrypt = new MemoryStream(offlineKey.FromBase62()))
                     {
                         using (CryptoStream csDecrypt = new CryptoStream(msEncrypt, crypto.CreateDecryptor(), CryptoStreamMode.Read))
                         {
