@@ -3597,7 +3597,7 @@ namespace BmwDeepObd
             textInputDialog.MessageDetail = messageDetail;
             textInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
             {
-                string key = DecryptObbOfflineKey(textInputDialog.Text);
+                string key = DecryptObbOfflineKey(textInputDialog.Text.Trim());
                 if (!string.IsNullOrEmpty(key))
                 {
                     ExtractObbFile(downloadInfo, key);

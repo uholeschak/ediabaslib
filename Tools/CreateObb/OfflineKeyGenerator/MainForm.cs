@@ -46,7 +46,7 @@ namespace OfflineKeyGenerator
 
         private void buttonCalculate_Click(object sender, EventArgs e)
         {
-            textBoxOfflineKey.Text = EncryptObbOfflineKey(textBoxObbKey.Text, textBoxAppId.Text) ?? string.Empty;
+            textBoxOfflineKey.Text = EncryptObbOfflineKey(textBoxObbKey.Text.Trim(), textBoxAppId.Text.Trim()) ?? string.Empty;
         }
 
         private string EncryptObbOfflineKey(string obbKey, string appId)
