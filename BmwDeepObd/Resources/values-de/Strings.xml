@@ -129,7 +129,7 @@
   <string name="download_failed">Herunterladen der Dateien fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.</string>
   <string name="obb_offline_extract">Wollen Sie die ECU Dateien offline extrahieren?</string>
   <string name="obb_offline_extract_title">Offline extrahieren</string>
-  <string name="obb_offline_extract_message">Geben Sie den Offline-Key ein.\nUm den Key zu erhalten, senden Sie eine E-Mail mit der\nApp Version: {0}\nund ID: {1}\nan: {2}.\nSie können den Key durch das Kontextmenü des Eingabefeldes einfügen.</string>
+  <string name="obb_offline_extract_message">Geben Sie den Offline-Key ein.\nUm den Key zu erhalten, senden Sie eine E-Mail mit der\nApp Version: {0}\nund ID: {1}\nan: {2} .\nSie können den Key durch das Kontextmenü des Eingabefeldes einfügen.</string>
   <string name="obb_offline_key_invalid">Der Offline-Key ist ungültig.</string>
   <string name="extract_cleanup">Alte Dateien löschen</string>
   <string name="decrypt_file">Archiv vorbereiten</string>
