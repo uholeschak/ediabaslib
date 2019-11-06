@@ -3558,6 +3558,11 @@ namespace BmwDeepObd
 
         private void ObbDownloadError(DownloadInfo downloadInfo, string errorMessage = null)
         {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
             string message = GetString(Resource.String.download_failed);
             if (downloadInfo == null)
             {
@@ -3574,7 +3579,7 @@ namespace BmwDeepObd
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (s, a) =>
                 {
-                    ObbExractOffline(downloadInfo);
+                    ObbExtractOffline(downloadInfo);
                 })
                 .SetNegativeButton(Resource.String.button_no, (s, a) =>
                 {
@@ -3585,19 +3590,30 @@ namespace BmwDeepObd
                 .Show();
         }
 
-        private void ObbExractOffline(DownloadInfo downloadInfo)
+        private void ObbExtractOffline(DownloadInfo downloadInfo)
         {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
             if (downloadInfo == null)
             {
                 return;
             }
 
-            string messageDetail = string.Format(GetString(Resource.String.obb_offline_extract_message), ActivityCommon.AppId, ActivityCommon.ContactMail);
+            string messageDetail = string.Format(GetString(Resource.String.obb_offline_extract_message),
+                _activityCommon.GetPackageInfo()?.VersionName ?? string.Empty, ActivityCommon.AppId, ActivityCommon.ContactMail);
             TextInputDialog textInputDialog = new TextInputDialog(this);
             textInputDialog.Message = GetString(Resource.String.obb_offline_extract_title);
             textInputDialog.MessageDetail = messageDetail;
             textInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 string key = DecryptObbOfflineKey(textInputDialog.Text.Trim());
                 if (!string.IsNullOrEmpty(key))
                 {
@@ -3610,6 +3626,11 @@ namespace BmwDeepObd
             });
             textInputDialog.SetNeutralButton(Resource.String.button_copy, (s, arg) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 _activityCommon.SetClipboardText(messageDetail);
             });
             textInputDialog.SetNegativeButton(Resource.String.button_abort, (s, arg) =>
