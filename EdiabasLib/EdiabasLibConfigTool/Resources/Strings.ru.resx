@@ -269,4 +269,10 @@ Ediabas настройки по умолчанию (ediabas.ini).</value>
   <data name="PatchCopyRuntime" xml:space="preserve">
     <value>Файлы библиотеки VC runtime не найдены и будут скопированы локально.</value>
   </data>
+  <data name="ElmAdapterConnected" xml:space="preserve">
+    <value>Адаптер использует прошивку ELM327, поддерживается только альтернативное программное обеспечение.</value>
+  </data>
+  <data name="FlashReplacementFirmware" xml:space="preserve">
+    <value>Адаптер использует прошивку ELM327, пожалуйста, загрузите сначала при помощи приложения альтернативное программное обеспечение.</value>
+  </data>
 </root>
