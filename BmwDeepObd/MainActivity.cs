@@ -291,7 +291,10 @@ namespace BmwDeepObd
 
             if (_httpClient == null)
             {
-                _httpClient = new HttpClient();
+                _httpClient = new HttpClient(new HttpClientHandler()
+                {
+                    ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
+                });
             }
 
             _stopCommRequest = Intent.GetBooleanExtra(ExtraStopComm, false);

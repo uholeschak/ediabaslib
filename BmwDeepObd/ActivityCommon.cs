@@ -3902,7 +3902,10 @@ namespace BmwDeepObd
 
             if (_sendHttpClient == null)
             {
-                _sendHttpClient = new HttpClient();
+                _sendHttpClient = new HttpClient(new HttpClientHandler()
+                {
+                    ServerCertificateCustomValidationCallback = (msg, certificate2, arg3, arg4) => true
+                });
             }
 
             PackageInfo packageInfo = GetPackageInfo();
@@ -4686,7 +4689,10 @@ namespace BmwDeepObd
 
                 if (_updateHttpClient == null)
                 {
-                    _updateHttpClient = new HttpClient();
+                    _updateHttpClient = new HttpClient(new HttpClientHandler()
+                    {
+                        ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
+                    });
                 }
 
                 PackageInfo packageInfo = GetPackageInfo();
@@ -5916,7 +5922,10 @@ namespace BmwDeepObd
 
             if (_translateHttpClient == null)
             {
-                _translateHttpClient = new HttpClient();
+                _translateHttpClient = new HttpClient(new HttpClientHandler()
+                {
+                    ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
+                });
             }
 
             if (_translateProgress == null)
