@@ -46,7 +46,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Произвольный выбор интернет соединения\n- Поддержка Android Q\n- Возможность редактировать XML файлы\n- Добавлено отображение уведомлений\n- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Распаковка ECU файлов оффлайн\n- Произвольный выбор интернет соединения\n- Поддержка Android Q\n- Возможность редактировать XML файлы\n- Добавлено отображение уведомлений\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -126,11 +126,10 @@
   <string name="select_ecu_zip">Выбрать ECU Zip</string>
   <string name="downloading_file">Скачать файлы</string>
   <string name="download_failed">Не удалось скачать файлы.\nПожалуйста, проверьте подключение к сети.</string>
-  <!--Translate-->
-  <string name="obb_offline_extract">Do you want to extract the ECU files offline?</string>
-  <string name="obb_offline_extract_title">Offline extract</string>
-  <string name="obb_offline_extract_message">Enter the offline key.\nTo get the key, send an e-mail with the\napp version: {0}\nand ID: {1}\nto: {2} .\nYou could paste the key with the context menu of the input field.</string>
-  <string name="obb_offline_key_invalid">The offline key is invalid.</string>
+  <string name="obb_offline_extract">Хотите распаковать ECU файлы оффлайн?</string>
+  <string name="obb_offline_extract_title">Распаковка оффлайн</string>
+  <string name="obb_offline_extract_message">Введите оффлайн-ключ.\nЧтобы получить ключ, нужно отправить электронное письмо с \nверсией приложения: {0}\nи ID: {1}\n на: {2} .\nВы можете вставить ключ через контекстное меню поля ввода.</string>
+  <string name="obb_offline_key_invalid">Оффлайн-ключ недействителен.</string>
   <string name="extract_cleanup">Удалить старые файлы</string>
   <string name="decrypt_file">Подготовка архива</string>
   <string name="extract_file">Разархивировать файлы</string>
