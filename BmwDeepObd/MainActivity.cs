@@ -3343,7 +3343,7 @@ namespace BmwDeepObd
         {
             if (string.IsNullOrEmpty(_obbFileName))
             {
-                _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
+                _activityCommon.ShowAlert(GetString(Resource.String.exp_down_obb_missing), Resource.String.alert_title_error);
                 return;
             }
             try
@@ -3352,7 +3352,7 @@ namespace BmwDeepObd
             }
             catch (Exception)
             {
-                _activityCommon.ShowAlert(GetString(Resource.String.download_failed), Resource.String.alert_title_error);
+                _activityCommon.ShowAlert(GetString(Resource.String.write_files_failed), Resource.String.alert_title_error);
                 return;
             }
 
