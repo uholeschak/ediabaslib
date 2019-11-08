@@ -112,6 +112,7 @@
   <string name="verify_files">Verify files</string>
   <string name="extract_failed">Extracting files failed.\nThe zip file seems to be corrupted.\nIn most cases the reason is a defective storage media.</string>
   <string name="extract_failed_io">Writing extracted files failed.\nIs there no space left on the device?\nIt\'s recommended to uninstall all file protection software (e.g. antivirus).</string>
+  <string name="write_files_failed">Writing files failed.\nIs there no space left on the device?\nIt\'s recommended to uninstall all file protection software (e.g. antivirus).</string>
 
   <!-- Job reader -->
   <string name="job_reader_read_xml_failed">Reading of the configuration file failed.</string>
