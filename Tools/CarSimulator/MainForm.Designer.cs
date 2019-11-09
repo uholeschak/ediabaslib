@@ -56,6 +56,7 @@
             this.buttonDeviceTestBt = new System.Windows.Forms.Button();
             this.textBoxTestResults = new System.Windows.Forms.TextBox();
             this.buttonDeviceTestWifi = new System.Windows.Forms.Button();
+            this.checkBoxBtNameStd = new System.Windows.Forms.CheckBox();
             this.groupBoxConcepts.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -235,7 +236,7 @@
             this.checkBoxIgnitionOk.AutoSize = true;
             this.checkBoxIgnitionOk.Checked = true;
             this.checkBoxIgnitionOk.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxIgnitionOk.Location = new System.Drawing.Point(224, 71);
+            this.checkBoxIgnitionOk.Location = new System.Drawing.Point(224, 48);
             this.checkBoxIgnitionOk.Name = "checkBoxIgnitionOk";
             this.checkBoxIgnitionOk.Size = new System.Drawing.Size(78, 17);
             this.checkBoxIgnitionOk.TabIndex = 4;
@@ -246,7 +247,7 @@
             // checkBoxAdsAdapter
             // 
             this.checkBoxAdsAdapter.AutoSize = true;
-            this.checkBoxAdsAdapter.Location = new System.Drawing.Point(224, 94);
+            this.checkBoxAdsAdapter.Location = new System.Drawing.Point(224, 71);
             this.checkBoxAdsAdapter.Name = "checkBoxAdsAdapter";
             this.checkBoxAdsAdapter.Size = new System.Drawing.Size(87, 17);
             this.checkBoxAdsAdapter.TabIndex = 5;
@@ -258,7 +259,7 @@
             this.checkBoxKLineResponder.AutoSize = true;
             this.checkBoxKLineResponder.Checked = true;
             this.checkBoxKLineResponder.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxKLineResponder.Location = new System.Drawing.Point(336, 94);
+            this.checkBoxKLineResponder.Location = new System.Drawing.Point(224, 94);
             this.checkBoxKLineResponder.Name = "checkBoxKLineResponder";
             this.checkBoxKLineResponder.Size = new System.Drawing.Size(87, 17);
             this.checkBoxKLineResponder.TabIndex = 6;
@@ -328,11 +329,22 @@
             this.buttonDeviceTestWifi.UseVisualStyleBackColor = true;
             this.buttonDeviceTestWifi.Click += new System.EventHandler(this.buttonDeviceTest_Click);
             // 
+            // checkBoxBtNameStd
+            // 
+            this.checkBoxBtNameStd.AutoSize = true;
+            this.checkBoxBtNameStd.Location = new System.Drawing.Point(336, 70);
+            this.checkBoxBtNameStd.Name = "checkBoxBtNameStd";
+            this.checkBoxBtNameStd.Size = new System.Drawing.Size(89, 17);
+            this.checkBoxBtNameStd.TabIndex = 15;
+            this.checkBoxBtNameStd.Text = "Bt Name Std.";
+            this.checkBoxBtNameStd.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(657, 408);
+            this.Controls.Add(this.checkBoxBtNameStd);
             this.Controls.Add(this.buttonDeviceTestWifi);
             this.Controls.Add(this.textBoxTestResults);
             this.Controls.Add(this.buttonDeviceTestBt);
@@ -389,6 +401,7 @@
         private System.Windows.Forms.Button buttonDeviceTestBt;
         private System.Windows.Forms.TextBox textBoxTestResults;
         private System.Windows.Forms.Button buttonDeviceTestWifi;
+        private System.Windows.Forms.CheckBox checkBoxBtNameStd;
     }
 }
 

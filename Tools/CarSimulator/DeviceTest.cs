@@ -24,8 +24,9 @@ namespace CarSimulator
         private NetworkStream _dataStream;
         private bool _disposed;
 
-        private const string DefaultBtName = "Deep OBD";
-        private const string DefaultBtPin = "1234";
+        public const string DefaultBtName = "Deep OBD";
+        public const string DefaultBtNameStd = "OBDII";
+        public const string DefaultBtPin = "1234";
         public const string AdapterSsidElm = @"WiFi_OBDII";
         private const string ElmIp = @"192.168.0.10";
         private const int ElmPort = 35000;
@@ -155,7 +156,7 @@ namespace CarSimulator
             return true;
         }
 
-        private bool ConnectWifiDevice(string comPort, out bool espLink)
+        private bool ConnectWifiDevice(string comPort, string btDeviceName, out bool espLink)
         {
             espLink = false;
             try
@@ -205,7 +206,7 @@ namespace CarSimulator
                                     {
                                         _form.UpdateTestStatusText("Wifi connected");
                                         Thread.Sleep(1000);
-                                        ExecuteTest(true, comPort);
+                                        ExecuteTest(true, comPort, btDeviceName);
                                     }
                                 }));
                             });
@@ -240,7 +241,7 @@ namespace CarSimulator
             }
         }
 
-        public bool ExecuteTest(bool wifi, string comPort)
+        public bool ExecuteTest(bool wifi, string comPort, string btDeviceName)
         {
             if (!comPort.StartsWith("COM"))
             {
@@ -253,7 +254,7 @@ namespace CarSimulator
                 if (wifi)
                 {
                     _form.UpdateTestStatusText("Connecting ...");
-                    if (!ConnectWifiDevice(comPort, out bool espLink))
+                    if (!ConnectWifiDevice(comPort, btDeviceName, out bool espLink))
                     {
                         return false;
                     }
@@ -267,7 +268,7 @@ namespace CarSimulator
                             IPEndPoint ipTcp = new IPEndPoint(IPAddress.Parse(ip), port);
                             tcpClient.Connect(ipTcp);
                             _dataStream = tcpClient.GetStream();
-                            if (!RunTest(comPort))
+                            if (!RunTest(comPort, btDeviceName))
                             {
                                 return false;
                             }
@@ -294,7 +295,7 @@ namespace CarSimulator
                         _form.UpdateTestStatusText("Connection faild");
                         return false;
                     }
-                    if (!RunTest(comPort))
+                    if (!RunTest(comPort, btDeviceName))
                     {
                         return false;
                     }
@@ -307,7 +308,7 @@ namespace CarSimulator
             return true;
         }
 
-        private bool RunTest(string comPort)
+        private bool RunTest(string comPort, string btDeviceName)
         {
             StringBuilder sr = new StringBuilder();
 
@@ -386,12 +387,12 @@ namespace CarSimulator
                 string nameText = Encoding.UTF8.GetString(btName, 0, nameLength);
                 sr.Append(nameText);
                 _form.UpdateTestStatusText(sr.ToString());
-                if (/*adapterType == 5 ||*/ string.Compare(nameText, DefaultBtName, StringComparison.Ordinal) != 0)
+                if (/*adapterType == 5 ||*/ string.Compare(nameText, btDeviceName, StringComparison.Ordinal) != 0)
                 {
                     sr.Append("\r\n");
                     sr.Append("Setting default name!");
                     _form.UpdateTestStatusText(sr.ToString());
-                    byte[] response = AdapterCommandCustom(0x05, Encoding.UTF8.GetBytes(DefaultBtName));
+                    byte[] response = AdapterCommandCustom(0x05, Encoding.UTF8.GetBytes(btDeviceName));
                     if (response == null)
                     {
                         sr.Append("\r\n");

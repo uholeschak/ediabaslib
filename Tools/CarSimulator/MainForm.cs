@@ -597,7 +597,8 @@ namespace CarSimulator
         {
             DeviceTest deviceTest = new DeviceTest(this);
             string selectedPort = listPorts.SelectedItem.ToString();
-            deviceTest.ExecuteTest(sender == buttonDeviceTestWifi, selectedPort);
+            string btDeviceName = checkBoxBtNameStd.Checked ? DeviceTest.DefaultBtNameStd : DeviceTest.DefaultBtName;
+            deviceTest.ExecuteTest(sender == buttonDeviceTestWifi, selectedPort, btDeviceName);
             deviceTest.Dispose();
         }
     }
