@@ -324,7 +324,7 @@
             this.buttonDeviceTestWifi.Location = new System.Drawing.Point(336, 41);
             this.buttonDeviceTestWifi.Name = "buttonDeviceTestWifi";
             this.buttonDeviceTestWifi.Size = new System.Drawing.Size(95, 23);
-            this.buttonDeviceTestWifi.TabIndex = 14;
+            this.buttonDeviceTestWifi.TabIndex = 12;
             this.buttonDeviceTestWifi.Text = "Device Test Wifi";
             this.buttonDeviceTestWifi.UseVisualStyleBackColor = true;
             this.buttonDeviceTestWifi.Click += new System.EventHandler(this.buttonDeviceTest_Click);
@@ -332,10 +332,10 @@
             // checkBoxBtNameStd
             // 
             this.checkBoxBtNameStd.AutoSize = true;
-            this.checkBoxBtNameStd.Location = new System.Drawing.Point(336, 70);
+            this.checkBoxBtNameStd.Location = new System.Drawing.Point(336, 92);
             this.checkBoxBtNameStd.Name = "checkBoxBtNameStd";
             this.checkBoxBtNameStd.Size = new System.Drawing.Size(89, 17);
-            this.checkBoxBtNameStd.TabIndex = 15;
+            this.checkBoxBtNameStd.TabIndex = 13;
             this.checkBoxBtNameStd.Text = "Bt Name Std.";
             this.checkBoxBtNameStd.UseVisualStyleBackColor = true;
             // 
