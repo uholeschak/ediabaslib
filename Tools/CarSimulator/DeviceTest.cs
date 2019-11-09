@@ -390,7 +390,7 @@ namespace CarSimulator
                 if (/*adapterType == 5 ||*/ string.Compare(nameText, btDeviceName, StringComparison.Ordinal) != 0)
                 {
                     sr.Append("\r\n");
-                    sr.Append(string.Format("Setting default name: {0}", btName));
+                    sr.Append(string.Format("Setting default name: {0}", btDeviceName));
                     _form.UpdateTestStatusText(sr.ToString());
                     byte[] response = AdapterCommandCustom(0x05, Encoding.UTF8.GetBytes(btDeviceName));
                     if (response == null)
