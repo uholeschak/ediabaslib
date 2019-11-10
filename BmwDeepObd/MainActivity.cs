@@ -3657,13 +3657,14 @@ namespace BmwDeepObd
                     crypto.Padding = PaddingMode.PKCS7;
                     crypto.KeySize = 256;
 
+                    byte[] appIdBytes = Encoding.ASCII.GetBytes(ActivityCommon.AppId.ToLowerInvariant());
                     using (SHA256Managed sha256 = new SHA256Managed())
                     {
-                        crypto.Key = sha256.ComputeHash(Encoding.ASCII.GetBytes(ActivityCommon.AppId));
+                        crypto.Key = sha256.ComputeHash(appIdBytes);
                     }
                     using (MD5 md5 = MD5.Create())
                     {
-                        crypto.IV = md5.ComputeHash(Encoding.ASCII.GetBytes(ActivityCommon.AppId));
+                        crypto.IV = md5.ComputeHash(appIdBytes);
                     }
 
                     using (MemoryStream msEncrypt = new MemoryStream(offlineKey.FromBase62()))

@@ -54,7 +54,7 @@ namespace OfflineKeyGenerator
         {
             try
             {
-                if (string.IsNullOrEmpty(obbKey) || string.IsNullOrEmpty(appId))
+                if (string.IsNullOrEmpty(obbKey) || string.IsNullOrEmpty(appId) || appId.Length != 36)
                 {
                     return null;
                 }
@@ -65,13 +65,14 @@ namespace OfflineKeyGenerator
                     crypto.Padding = PaddingMode.PKCS7;
                     crypto.KeySize = 256;
 
+                    byte[] appIdBytes = Encoding.ASCII.GetBytes(appId.ToLowerInvariant());
                     using (SHA256Managed sha256 = new SHA256Managed())
                     {
-                        crypto.Key = sha256.ComputeHash(Encoding.ASCII.GetBytes(appId));
+                        crypto.Key = sha256.ComputeHash(appIdBytes);
                     }
                     using (MD5 md5 = MD5.Create())
                     {
-                        crypto.IV = md5.ComputeHash(Encoding.ASCII.GetBytes(appId));
+                        crypto.IV = md5.ComputeHash(appIdBytes);
                     }
 
                     using (MemoryStream msEncrypt = new MemoryStream())
