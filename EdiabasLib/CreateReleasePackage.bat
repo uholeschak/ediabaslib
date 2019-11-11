@@ -52,6 +52,7 @@ copy "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\default\production\*.hex" "!CA
 copy "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\default\production\*.hex" "!CANADAPTERELMPATH!default"
 mkdir "!CANADAPTERELMPATH!bc04"
 copy "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\bc04\production\*.hex" "!CANADAPTERELMPATH!bc04"
+copy "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\bc04\production\*.hex" "!CANADAPTERELMPATH!bc04"
 mkdir "!CANADAPTERELMPATH!hc04"
 copy "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\hc04\production\*.hex" "!CANADAPTERELMPATH!hc04"
 mkdir "!CANADAPTERELMPATH!spp_uart"
