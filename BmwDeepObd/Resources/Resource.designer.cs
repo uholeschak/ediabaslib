@@ -3470,7 +3470,7 @@ namespace BmwDeepObd
 			public const int button_error_reset_all = 2131296331;
 			
 			// aapt resource value: 0x7F09004C
-			public const int button_error_set_all = 2131296332;
+			public const int button_error_select = 2131296332;
 			
 			// aapt resource value: 0x7F09004D
 			public const int button_scan = 2131296333;
@@ -5636,7 +5636,7 @@ namespace BmwDeepObd
 			public const int button_donate = 2131689562;
 			
 			// aapt resource value: 0x7F0F005B
-			public const int button_error_clear_all = 2131689563;
+			public const int button_error_deselect_all = 2131689563;
 			
 			// aapt resource value: 0x7F0F005C
 			public const int button_error_reset = 2131689564;
@@ -5645,7 +5645,7 @@ namespace BmwDeepObd
 			public const int button_error_reset_all = 2131689565;
 			
 			// aapt resource value: 0x7F0F005E
-			public const int button_error_set_all = 2131689566;
+			public const int button_error_select_all = 2131689566;
 			
 			// aapt resource value: 0x7F0F005F
 			public const int button_generate = 2131689567;

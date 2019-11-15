@@ -203,8 +203,8 @@
   <!-- tabs_errors -->
   <string name="button_error_reset">Reset errors</string>
   <string name="button_error_reset_all">Reset all errors</string>
-  <string name="button_error_set_all">Select all</string>
-  <string name="button_error_clear_all">Deselect all</string>
+  <string name="button_error_select_all">Select all</string>
+  <string name="button_error_deselect_all">Deselect all</string>
 
   <!-- Options Menu -->
   <string name="menu_settings">Settings</string>
