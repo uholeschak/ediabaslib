@@ -1147,6 +1147,43 @@ namespace BmwDeepObd
             UpdateDisplay();
         }
 
+        [Export("onErrorSetAllClick")]
+        // ReSharper disable once UnusedMember.Global
+        public void OnErrorSetAllClick(View v)
+        {
+            if (!ActivityCommon.CommActive)
+            {
+                return;
+            }
+
+            View parent = v.Parent as View;
+            parent = parent?.Parent as View;
+            ListView listViewResult = parent?.FindViewById<ListView>(Resource.Id.resultList);
+            ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult?.Adapter;
+            if (resultListAdapter != null)
+            {
+                bool changed = false;
+                foreach (TableResultItem resultItem in resultListAdapter.Items)
+                {
+                    if (resultItem.CheckVisible)
+                    {
+                        if (!resultItem.Selected)
+                        {
+                            resultItem.Selected = true;
+                            changed = true;
+                        }
+                    }
+                }
+
+                if (changed)
+                {
+                    resultListAdapter.NotifyDataSetChanged();
+                }
+            }
+
+            UpdateDisplay();
+        }
+
         [Export("onCopyErrorsClick")]
         // ReSharper disable once UnusedMember.Global
         public void OnCopyErrorsClick(View v)
@@ -2008,11 +2045,13 @@ namespace BmwDeepObd
                 }
                 Button buttonErrorReset = null;
                 Button buttonErrorResetAll = null;
+                Button buttonErrorSetAll = null;
                 Button buttonErrorCopy = null;
                 if (pageInfo.ErrorsInfo != null)
                 {
                     buttonErrorReset = dynamicFragment.View.FindViewById<Button>(Resource.Id.button_error_reset);
                     buttonErrorResetAll = dynamicFragment.View.FindViewById<Button>(Resource.Id.button_error_reset_all);
+                    buttonErrorSetAll = dynamicFragment.View.FindViewById<Button>(Resource.Id.button_error_set_all);
                     buttonErrorCopy = dynamicFragment.View.FindViewById<Button>(Resource.Id.button_copy);
                 }
 
@@ -2451,6 +2490,7 @@ namespace BmwDeepObd
                         }
                         UpdateButtonErrorReset(buttonErrorReset, tempResultList);
                         UpdateButtonErrorResetAll(buttonErrorResetAll, tempResultList, pageInfo);
+                        UpdateButtonErrorSetAll(buttonErrorSetAll, tempResultList);
                         UpdateButtonErrorCopy(buttonErrorCopy, (errorReportList != null) ? tempResultList : null);
 
                         if (stringList.Count > 0)
@@ -2703,6 +2743,7 @@ namespace BmwDeepObd
                     resultGridAdapter?.NotifyDataSetChanged();
                     UpdateButtonErrorReset(buttonErrorReset, null);
                     UpdateButtonErrorResetAll(buttonErrorResetAll, null, pageInfo);
+                    UpdateButtonErrorSetAll(buttonErrorSetAll, null);
                     UpdateButtonErrorCopy(buttonErrorCopy, null);
                 }
 
@@ -2784,6 +2825,27 @@ namespace BmwDeepObd
             }
             buttonErrorResetAll.Visibility = visible ? ViewStates.Visible : ViewStates.Gone;
             buttonErrorResetAll.Enabled = enabled;
+        }
+
+        private void UpdateButtonErrorSetAll(Button buttonErrorSetAll, List<TableResultItem> resultItems)
+        {
+            if (buttonErrorSetAll == null)
+            {
+                return;
+            }
+
+            bool checkVisible = false;
+            if (resultItems != null)
+            {
+                checkVisible = resultItems.Any(resultItem => resultItem.CheckVisible);
+            }
+
+            bool enabled = checkVisible;
+            if (enabled && ActivityCommon.ErrorResetActive)
+            {
+                enabled = false;
+            }
+            buttonErrorSetAll.Enabled = enabled;
         }
 
         private void UpdateButtonErrorCopy(Button buttonErrorCopy, List<TableResultItem> resultItems)

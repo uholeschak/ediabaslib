@@ -36,6 +36,13 @@
             android:onClick="onErrorResetAllClick"
             android:text="@string/button_error_reset_all" />
         <Button
+            android:id="@+id/button_error_set_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onErrorSetAllClick"
+            android:text="@string/button_error_set_all" />
+        <Button
             android:id="@+id/button_copy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
