@@ -1156,6 +1156,9 @@ namespace BmwDeepObd
                 return;
             }
 
+            Button buttonErrorSelect = v.FindViewById<Button>(Resource.Id.button_error_select);
+            bool select = buttonErrorSelect.Tag is Java.Lang.Boolean selectAll && selectAll.BooleanValue();
+
             View parent = v.Parent as View;
             parent = parent?.Parent as View;
             ListView listViewResult = parent?.FindViewById<ListView>(Resource.Id.resultList);
@@ -1167,9 +1170,9 @@ namespace BmwDeepObd
                 {
                     if (resultItem.CheckVisible)
                     {
-                        if (!resultItem.Selected)
+                        if (resultItem.Selected != select)
                         {
-                            resultItem.Selected = true;
+                            resultItem.Selected = select;
                             changed = true;
                         }
                     }
@@ -2835,9 +2838,11 @@ namespace BmwDeepObd
             }
 
             bool checkVisible = false;
+            bool allSelected = false;
             if (resultItems != null)
             {
                 checkVisible = resultItems.Any(resultItem => resultItem.CheckVisible);
+                allSelected = resultItems.All(resultItem => !resultItem.CheckVisible || resultItem.Selected);
             }
 
             bool enabled = checkVisible;
@@ -2846,6 +2851,10 @@ namespace BmwDeepObd
                 enabled = false;
             }
             buttonErrorSelect.Enabled = enabled;
+            int resId = allSelected ? Resource.String.button_error_deselect_all : Resource.String.button_error_select_all;
+            buttonErrorSelect.Text = GetString(resId);
+            Java.Lang.Boolean selectAll = new Java.Lang.Boolean(!allSelected);
+            buttonErrorSelect.Tag = selectAll;
         }
 
         private void UpdateButtonErrorCopy(Button buttonErrorCopy, List<TableResultItem> resultItems)
@@ -3669,6 +3678,7 @@ namespace BmwDeepObd
 
             string messageDetail = string.Format(GetString(Resource.String.obb_offline_extract_message),
                 _activityCommon.GetPackageInfo()?.VersionName ?? string.Empty, ActivityCommon.AppId, ActivityCommon.ContactMail);
+            // ReSharper disable once UseObjectOrCollectionInitializer
             TextInputDialog textInputDialog = new TextInputDialog(this);
             textInputDialog.Message = GetString(Resource.String.obb_offline_extract_title);
             textInputDialog.MessageDetail = messageDetail;
