@@ -2850,11 +2850,12 @@ namespace BmwDeepObd
             {
                 enabled = false;
             }
+
+            bool selectAll = !enabled || !allSelected;
+            int resId = selectAll ? Resource.String.button_error_select_all : Resource.String.button_error_deselect_all;
             buttonErrorSelect.Enabled = enabled;
-            int resId = allSelected ? Resource.String.button_error_deselect_all : Resource.String.button_error_select_all;
             buttonErrorSelect.Text = GetString(resId);
-            Java.Lang.Boolean selectAll = new Java.Lang.Boolean(!allSelected);
-            buttonErrorSelect.Tag = selectAll;
+            buttonErrorSelect.Tag = new Java.Lang.Boolean(selectAll);
         }
 
         private void UpdateButtonErrorCopy(Button buttonErrorCopy, List<TableResultItem> resultItems)
