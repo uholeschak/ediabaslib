@@ -2479,6 +2479,8 @@ namespace BmwDeepObd
                                             return;
                                         }
                                         UpdateButtonErrorReset(buttonErrorReset, resultListAdapter.Items);
+                                        UpdateButtonErrorResetAll(buttonErrorResetAll, resultListAdapter.Items, pageInfo);
+                                        UpdateButtonErrorSelect(buttonErrorSelect, resultListAdapter.Items);
                                     };
                                     newResultItem.CheckEnable = !ActivityCommon.ErrorResetActive;
                                     tempResultList.Add(newResultItem);
