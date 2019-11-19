@@ -4317,7 +4317,16 @@ namespace BmwDeepObd
                                 // ignored
                             }
                         }
-                        handler?.Invoke(this, new EventArgs());
+
+                        _activity?.RunOnUiThread(() =>
+                        {
+                            if (_disposed)
+                            {
+                                return;
+                            }
+
+                            handler?.Invoke(this, new EventArgs());
+                        });
                     }
                     else
                     {
