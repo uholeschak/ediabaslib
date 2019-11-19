@@ -842,7 +842,7 @@ namespace BmwDeepObd
                             _alertInfoDialog = new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
-                                    ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.RawTag, deviceName);
+                                    ReturnDeviceTypeRawWarn(deviceAddress, deviceName);
                                 })
                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                 {
@@ -905,8 +905,7 @@ namespace BmwDeepObd
                                     return;
                                 }
                                 _alertInfoDialog = null;
-                                _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(),
-                                    GetType(), (o, eventArgs) =>
+                                _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), GetType(), (o, eventArgs) =>
                                     {
                                         if (_activityCommon == null)
                                         {
@@ -914,7 +913,7 @@ namespace BmwDeepObd
                                         }
                                         if (yesSelected)
                                         {
-                                            ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.RawTag, deviceName);
+                                            ReturnDeviceTypeRawWarn(deviceAddress, deviceName);
                                         }
                                     });
                             };
@@ -1084,6 +1083,30 @@ namespace BmwDeepObd
                 Priority = System.Threading.ThreadPriority.Highest
             };
             detectThread.Start();
+        }
+
+        private void ReturnDeviceTypeRawWarn(string deviceAddress, string deviceName)
+        {
+            _alertInfoDialog = new AlertDialog.Builder(this)
+                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                {
+                    ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.RawTag, deviceName);
+                })
+                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                {
+                })
+                .SetCancelable(true)
+                .SetMessage(Resource.String.adapter_raw_warn)
+                .SetTitle(Resource.String.alert_title_warning)
+                .Show();
+            _alertInfoDialog.DismissEvent += (sender, args) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+                _alertInfoDialog = null;
+            };
         }
 
         /// <summary>
