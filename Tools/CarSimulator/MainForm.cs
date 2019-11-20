@@ -23,6 +23,7 @@ namespace CarSimulator
         public string responseDir => _responseDir;
         public CommThread commThread => _commThread;
         public CommThread.ConfigData threadConfigData => _configData;
+        public DeviceTest deviceTest => _deviceTest;
 
         public MainForm()
         {
@@ -45,6 +46,7 @@ namespace CarSimulator
             UpdateDirectoryList(_rootFolder);
             UpdateResponseFiles(_responseDir);
             _commThread = new CommThread();
+            _deviceTest = new DeviceTest(this);
             UpdatePorts();
             timerUpdate.Enabled = true;
             UpdateDisplay();
@@ -53,6 +55,8 @@ namespace CarSimulator
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             _commThread.StopThread();
+            _deviceTest.Dispose();
+            _deviceTest = null;
             Properties.Settings.Default.RootFolder = _rootFolder;
             Properties.Settings.Default.Save();
         }
@@ -478,8 +482,8 @@ namespace CarSimulator
         private void UpdateDisplay()
         {
             bool connected = _commThread.ThreadRunning();
-            bool testing = _deviceTest != null;
-            bool testAborted = _deviceTest != null && _deviceTest.AbortTest;
+            bool testing = _deviceTest.TestActive;
+            bool testAborted = _deviceTest.AbortTest;
             buttonConnect.Text = connected ? "Disconnect" : "Connect";
             buttonConnect.Enabled = !testing;
             buttonDeviceTestBt.Enabled = !connected && !testing;
@@ -580,7 +584,7 @@ namespace CarSimulator
             }
         }
 
-        public void UpdateTestStatusText(string text)
+        public void UpdateTestStatusText(string text = null)
         {
             if (InvokeRequired)
             {
@@ -590,10 +594,18 @@ namespace CarSimulator
                 }));
                 return;
             }
-            textBoxTestResults.Text = text;
-            textBoxTestResults.SelectionStart = textBoxTestResults.TextLength;
-            textBoxTestResults.Update();
-            textBoxTestResults.ScrollToCaret();
+
+            if (text == null)
+            {
+                UpdateDisplay();
+            }
+            else
+            {
+                textBoxTestResults.Text = text;
+                textBoxTestResults.SelectionStart = textBoxTestResults.TextLength;
+                textBoxTestResults.Update();
+                textBoxTestResults.ScrollToCaret();
+            }
         }
 
         private void buttonRootFolder_Click(object sender, EventArgs e)
@@ -609,22 +621,16 @@ namespace CarSimulator
 
         private void buttonDeviceTest_Click(object sender, EventArgs e)
         {
-            _deviceTest = new DeviceTest(this);
             string selectedPort = listPorts.SelectedItem.ToString();
             string btDeviceName = checkBoxBtNameStd.Checked ? DeviceTest.DefaultBtNameStd : DeviceTest.DefaultBtName;
             UpdateDisplay();
             _deviceTest.ExecuteTest(sender == buttonDeviceTestWifi, selectedPort, btDeviceName);
-            _deviceTest.Dispose();
-            _deviceTest = null;
         }
 
         private void buttonAbortTest_Click(object sender, EventArgs e)
         {
-            if (_deviceTest != null)
-            {
-                _deviceTest.AbortTest = true;
-                UpdateDisplay();
-            }
+            _deviceTest.AbortTest = true;
+            UpdateDisplay();
         }
     }
 }

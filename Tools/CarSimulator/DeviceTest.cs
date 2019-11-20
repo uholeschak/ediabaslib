@@ -66,6 +66,8 @@ namespace CarSimulator
             _form.UpdateTestStatusText(string.Empty);
         }
 
+        public bool TestActive => _workerThread != null && _workerThread.IsAlive;
+
         public bool AbortTest { get; set; }
 
         public void Dispose()
@@ -251,16 +253,14 @@ namespace CarSimulator
             _workerThread = new Thread(() =>
             {
                 ExecuteTestInner(wifi, comPort, btDeviceName);
+                _form.Invoke((Action) (() =>
+                    {
+                        _workerThread = null;
+                        _form.UpdateTestStatusText();
+                    }));
             });
             _workerThread.Priority = ThreadPriority.Normal;
             _workerThread.Start();
-
-            while (!_workerThread.Join(10))
-            {
-                Application.DoEvents();
-            }
-
-            _workerThread = null;
 
             return true;
         }
