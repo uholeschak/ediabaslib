@@ -377,6 +377,7 @@
             this.MaximizeBox = false;
             this.Name = "MainForm";
             this.Text = "Car Simulator";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.groupBoxConcepts.ResumeLayout(false);
             this.groupBoxConcepts.PerformLayout();

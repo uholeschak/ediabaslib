@@ -632,5 +632,13 @@ namespace CarSimulator
             _deviceTest.AbortTest = true;
             UpdateDisplay();
         }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_deviceTest.TestActive)
+            {
+                e.Cancel = true;
+            }
+        }
     }
 }
