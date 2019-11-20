@@ -22,6 +22,7 @@ namespace CarSimulator
         private readonly MainForm _form;
         private BluetoothClient _btClient;
         private NetworkStream _dataStream;
+        private Thread _workerThread;
         private bool _disposed;
 
         public const string DefaultBtName = "Deep OBD";
@@ -64,6 +65,8 @@ namespace CarSimulator
             _form = form;
             _form.UpdateTestStatusText(string.Empty);
         }
+
+        public bool AbortTest { get; set; }
 
         public void Dispose()
         {
@@ -206,7 +209,7 @@ namespace CarSimulator
                                     {
                                         _form.UpdateTestStatusText("Wifi connected");
                                         Thread.Sleep(1000);
-                                        ExecuteTest(true, comPort, btDeviceName);
+                                        ExecuteTestInner(true, comPort, btDeviceName);
                                     }
                                 }));
                             });
@@ -242,6 +245,27 @@ namespace CarSimulator
         }
 
         public bool ExecuteTest(bool wifi, string comPort, string btDeviceName)
+        {
+            AbortTest = false;
+
+            _workerThread = new Thread(() =>
+            {
+                ExecuteTestInner(wifi, comPort, btDeviceName);
+            });
+            _workerThread.Priority = ThreadPriority.Normal;
+            _workerThread.Start();
+
+            while (!_workerThread.Join(10))
+            {
+                Application.DoEvents();
+            }
+
+            _workerThread = null;
+
+            return true;
+        }
+
+        private bool ExecuteTestInner(bool wifi, string comPort, string btDeviceName)
         {
             if (!comPort.StartsWith("COM"))
             {
@@ -283,21 +307,36 @@ namespace CarSimulator
                 else
                 {
                     _form.UpdateTestStatusText("Discovering devices ...");
-                    BluetoothDeviceInfo device = DiscoverBtDevice();
+                    BluetoothDeviceInfo device = null;
+                    _form.Invoke((Action) (() =>
+                    {
+                        device = DiscoverBtDevice();
+                    }));
+
                     if (device == null)
                     {
                         _form.UpdateTestStatusText("No device selected");
                         return false;
                     }
-                    _form.UpdateTestStatusText("Connecting ...");
-                    if (!ConnectBtDevice(device))
+
+                    for (;;)
                     {
-                        _form.UpdateTestStatusText("Connection faild");
-                        return false;
-                    }
-                    if (!RunTest(comPort, btDeviceName))
-                    {
-                        return false;
+                        _form.UpdateTestStatusText("Connecting ...");
+                        if (!ConnectBtDevice(device))
+                        {
+                            _form.UpdateTestStatusText("Connection faild");
+                            return false;
+                        }
+                        if (!RunTest(comPort, btDeviceName))
+                        {
+                            return false;
+                        }
+                        DisconnectStream();
+
+                        if (AbortTest)
+                        {
+                            break;
+                        }
                     }
                 }
             }

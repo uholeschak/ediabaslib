@@ -18,6 +18,7 @@ namespace CarSimulator
         private readonly CommThread _commThread;
         private int _lastPortCount;
         private readonly CommThread.ConfigData _configData;
+        private DeviceTest _deviceTest;
 
         public string responseDir => _responseDir;
         public CommThread commThread => _commThread;
@@ -477,9 +478,14 @@ namespace CarSimulator
         private void UpdateDisplay()
         {
             bool connected = _commThread.ThreadRunning();
+            bool testing = _deviceTest != null;
+            bool testAborted = _deviceTest != null && _deviceTest.AbortTest;
             buttonConnect.Text = connected ? "Disconnect" : "Connect";
-            buttonDeviceTestBt.Enabled = !connected;
-            buttonDeviceTestWifi.Enabled = !connected;
+            buttonConnect.Enabled = !testing;
+            buttonDeviceTestBt.Enabled = !connected && !testing;
+            buttonDeviceTestWifi.Enabled = !connected && !testing;
+            buttonAbortTest.Enabled = testing && !testAborted;
+            checkBoxBtNameStd.Enabled = !connected && !testing;
             if (connected)
             {
                 _commThread.Moving = checkBoxMoving.Checked;
@@ -576,6 +582,14 @@ namespace CarSimulator
 
         public void UpdateTestStatusText(string text)
         {
+            if (InvokeRequired)
+            {
+                BeginInvoke((Action) (() =>
+                {
+                    UpdateTestStatusText(text);
+                }));
+                return;
+            }
             textBoxTestResults.Text = text;
             textBoxTestResults.SelectionStart = textBoxTestResults.TextLength;
             textBoxTestResults.Update();
@@ -595,11 +609,22 @@ namespace CarSimulator
 
         private void buttonDeviceTest_Click(object sender, EventArgs e)
         {
-            DeviceTest deviceTest = new DeviceTest(this);
+            _deviceTest = new DeviceTest(this);
             string selectedPort = listPorts.SelectedItem.ToString();
             string btDeviceName = checkBoxBtNameStd.Checked ? DeviceTest.DefaultBtNameStd : DeviceTest.DefaultBtName;
-            deviceTest.ExecuteTest(sender == buttonDeviceTestWifi, selectedPort, btDeviceName);
-            deviceTest.Dispose();
+            UpdateDisplay();
+            _deviceTest.ExecuteTest(sender == buttonDeviceTestWifi, selectedPort, btDeviceName);
+            _deviceTest.Dispose();
+            _deviceTest = null;
+        }
+
+        private void buttonAbortTest_Click(object sender, EventArgs e)
+        {
+            if (_deviceTest != null)
+            {
+                _deviceTest.AbortTest = true;
+                UpdateDisplay();
+            }
         }
     }
 }
