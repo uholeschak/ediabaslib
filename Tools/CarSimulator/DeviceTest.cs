@@ -287,14 +287,23 @@ namespace CarSimulator
                         string ip = espLink ? EspLinkIp : ElmIp;
                         int port = espLink ? EspLinkPort : ElmPort;
 
-                        using (TcpClient tcpClient = new TcpClient())
+                        for (;;)
                         {
-                            IPEndPoint ipTcp = new IPEndPoint(IPAddress.Parse(ip), port);
-                            tcpClient.Connect(ipTcp);
-                            _dataStream = tcpClient.GetStream();
-                            if (!RunTest(comPort, btDeviceName))
+                            using (TcpClient tcpClient = new TcpClient())
                             {
-                                return false;
+                                IPEndPoint ipTcp = new IPEndPoint(IPAddress.Parse(ip), port);
+                                tcpClient.Connect(ipTcp);
+                                _dataStream = tcpClient.GetStream();
+                                if (!RunTest(comPort, btDeviceName))
+                                {
+                                    return false;
+                                }
+                            }
+                            DisconnectStream();
+
+                            if (AbortTest)
+                            {
+                                break;
                             }
                         }
                     }
