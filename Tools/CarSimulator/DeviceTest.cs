@@ -292,7 +292,21 @@ namespace CarSimulator
                             using (TcpClient tcpClient = new TcpClient())
                             {
                                 IPEndPoint ipTcp = new IPEndPoint(IPAddress.Parse(ip), port);
-                                tcpClient.Connect(ipTcp);
+                                for (int retry = 0; ; retry++)
+                                {
+                                    try
+                                    {
+                                        tcpClient.Connect(ipTcp);
+                                        break;
+                                    }
+                                    catch (Exception)
+                                    {
+                                        if (retry > 2)
+                                        {
+                                            throw;
+                                        }
+                                    }
+                                }
                                 _dataStream = tcpClient.GetStream();
                                 if (!RunTest(comPort, btDeviceName))
                                 {
