@@ -581,7 +581,7 @@ namespace CarSimulator
                     if (!BmwFastTest())
                     {
                         sr.Append("\r\n");
-                        sr.Append("K-LINE test failed");
+                        sr.Append(string.Format("K-LINE test {0} failed", i + 1));
                         _form.UpdateTestStatusText(sr.ToString());
                         return false;
                     }
@@ -612,7 +612,7 @@ namespace CarSimulator
                     if (!BmwFastTest(true))
                     {
                         sr.Append("\r\n");
-                        sr.Append("L-LINE test failed");
+                        sr.Append(string.Format("L-LINE test {0} failed", i + 1));
                         _form.UpdateTestStatusText(sr.ToString());
                         return false;
                     }
