@@ -637,6 +637,8 @@ namespace CarSimulator
         {
             if (_deviceTest.TestActive)
             {
+                _deviceTest.AbortTest = true;
+                UpdateDisplay();
                 e.Cancel = true;
             }
         }
