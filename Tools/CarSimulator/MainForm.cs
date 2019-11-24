@@ -485,7 +485,7 @@ namespace CarSimulator
             bool connected = _commThread.ThreadRunning();
             bool testing = _deviceTest.TestActive;
             bool testAborted = _deviceTest.AbortTest;
-            buttonConnect.Text = connected ? "Disconnect" : "Connect";
+            buttonConnect.Text = connected && !testing ? "Disconnect" : "Connect";
             buttonConnect.Enabled = !testing;
             buttonDeviceTestBt.Enabled = !connected && !testing;
             buttonDeviceTestWifi.Enabled = !connected && !testing;
