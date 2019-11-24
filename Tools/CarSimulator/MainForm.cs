@@ -19,6 +19,7 @@ namespace CarSimulator
         private int _lastPortCount;
         private readonly CommThread.ConfigData _configData;
         private DeviceTest _deviceTest;
+        private bool _closeRequest;
 
         public string responseDir => _responseDir;
         public CommThread commThread => _commThread;
@@ -550,6 +551,11 @@ namespace CarSimulator
         {
             UpdatePorts();
             UpdateDisplay();
+            if (_closeRequest && !_deviceTest.TestActive)
+            {
+                _closeRequest = false;
+                Close();
+            }
         }
 
         private void checkBoxMoving_CheckedChanged(object sender, EventArgs e)
@@ -637,6 +643,7 @@ namespace CarSimulator
         {
             if (_deviceTest.TestActive)
             {
+                _closeRequest = true;
                 _deviceTest.AbortTest = true;
                 UpdateDisplay();
                 e.Cancel = true;
