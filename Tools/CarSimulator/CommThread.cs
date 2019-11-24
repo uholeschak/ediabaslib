@@ -1147,7 +1147,7 @@ namespace CarSimulator
             return true;
         }
 
-        private bool ReceiveData(byte[] receiveData, int offset, int length)
+        private bool ReceiveData(byte[] receiveData, int offset, int length, bool discard = false)
         {
             if (length < 0)
             {
@@ -1209,6 +1209,10 @@ namespace CarSimulator
                 _receiveStopWatch.Stop();
                 if (recLen < length)
                 {
+                    if (discard && lastBytesToRead > 0)
+                    {
+                        recLen = _serialPort.Read(receiveData, offset + recLen, lastBytesToRead);
+                    }
                     return false;
                 }
             }
@@ -3710,14 +3714,13 @@ namespace CarSimulator
         private bool ReceiveBmwFast(byte[] receiveData)
         {
             // header byte
-            if (!ReceiveData(receiveData, 0, 4))
+            if (!ReceiveData(receiveData, 0, 4, true))
             {
-                _serialPort.DiscardInBuffer();
                 return false;
             }
             if ((receiveData[0] & 0x80) != 0x80)
             {   // 0xC0: Broadcast
-                ReceiveData(receiveData, 0, receiveData.Length);
+                Thread.Sleep(1000);
                 _serialPort.DiscardInBuffer();
                 return false;
             }
@@ -3775,9 +3778,8 @@ namespace CarSimulator
         private bool ReceiveKwp2000S(byte[] receiveData)
         {
             // header byte
-            if (!ReceiveData(receiveData, 0, 4))
+            if (!ReceiveData(receiveData, 0, 4, true))
             {
-                _serialPort.DiscardInBuffer();
                 return false;
             }
             int recLength = receiveData[3] + 4;
@@ -3826,9 +3828,8 @@ namespace CarSimulator
         {
             kwp2000S = false;
             // header byte
-            if (!ReceiveData(receiveData, 0, 4))
+            if (!ReceiveData(receiveData, 0, 4, true))
             {
-                _serialPort.DiscardInBuffer();
                 return false;
             }
             int recLength;
