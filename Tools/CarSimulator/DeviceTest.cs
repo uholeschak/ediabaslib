@@ -601,7 +601,6 @@ namespace CarSimulator
 
                 for (int i = 0; i < 10; i++)
                 {
-                    Thread.Sleep(100);
                     if (!BmwFastTest())
                     {
                         sr.Append("\r\n");
@@ -633,7 +632,6 @@ namespace CarSimulator
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    Thread.Sleep(100);
                     if (!BmwFastTest(true))
                     {
                         sr.Append("\r\n");
