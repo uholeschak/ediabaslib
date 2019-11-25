@@ -23,6 +23,7 @@ namespace CarSimulator
         private BluetoothClient _btClient;
         private NetworkStream _dataStream;
         private Thread _workerThread;
+        private int _testCount;
         private bool _disposed;
 
         public const string DefaultBtName = "Deep OBD";
@@ -287,43 +288,43 @@ namespace CarSimulator
                         string ip = espLink ? EspLinkIp : ElmIp;
                         int port = espLink ? EspLinkPort : ElmPort;
 
-                        for (;;)
+                        using (TcpClient tcpClient = new TcpClient())
                         {
-                            using (TcpClient tcpClient = new TcpClient())
+                            IPEndPoint ipTcp = new IPEndPoint(IPAddress.Parse(ip), port);
+                            for (int retry = 0; ; retry++)
                             {
-                                IPEndPoint ipTcp = new IPEndPoint(IPAddress.Parse(ip), port);
-                                for (int retry = 0; ; retry++)
+                                try
                                 {
-                                    try
+                                    tcpClient.Connect(ipTcp);
+                                    break;
+                                }
+                                catch (Exception)
+                                {
+                                    if (retry > 2)
                                     {
-                                        tcpClient.Connect(ipTcp);
-                                        break;
-                                    }
-                                    catch (Exception)
-                                    {
-                                        if (retry > 2)
-                                        {
-                                            throw;
-                                        }
+                                        throw;
                                     }
                                 }
-                                _dataStream = tcpClient.GetStream();
+                            }
+
+                            _dataStream = tcpClient.GetStream();
+                            _testCount = 0;
+                            for (; ; )
+                            {
                                 if (!RunTest(comPort, btDeviceName))
                                 {
                                     return false;
                                 }
-                            }
-                            DisconnectStream();
-
-                            if (AbortTest)
-                            {
-                                break;
+                                if (AbortTest)
+                                {
+                                    break;
+                                }
                             }
                         }
                     }
                     catch (Exception)
                     {
-                        _form.UpdateTestStatusText("Connection faild");
+                        _form.UpdateTestStatusText("Connection failed");
                         return false;
                     }
                 }
@@ -342,20 +343,20 @@ namespace CarSimulator
                         return false;
                     }
 
+                    _form.UpdateTestStatusText("Connecting ...");
+                    if (!ConnectBtDevice(device))
+                    {
+                        _form.UpdateTestStatusText("Connection failed");
+                        return false;
+                    }
+
+                    _testCount = 0;
                     for (;;)
                     {
-                        _form.UpdateTestStatusText("Connecting ...");
-                        if (!ConnectBtDevice(device))
-                        {
-                            _form.UpdateTestStatusText("Connection faild");
-                            return false;
-                        }
                         if (!RunTest(comPort, btDeviceName))
                         {
                             return false;
                         }
-                        DisconnectStream();
-
                         if (AbortTest)
                         {
                             break;
@@ -376,9 +377,12 @@ namespace CarSimulator
 
             _form.commThread.StopThread();
 
+            _testCount++;
+            sr.Append(string.Format("Test: {0}", _testCount));
             byte[] firmware = AdapterCommandCustom(0xFD, new byte[] { 0xFD });
             if ((firmware == null) || (firmware.Length < 4))
             {
+                sr.Append("\r\n");
                 sr.Append("Read firmware version failed!");
                 _form.UpdateTestStatusText(sr.ToString());
                 return false;
@@ -416,10 +420,13 @@ namespace CarSimulator
                     break;
 
                 default:
+                    sr.Append("\r\n");
                     sr.Append(string.Format("Invalid adapter type: {0}", adapterType));
                     _form.UpdateTestStatusText(sr.ToString());
                     return false;
             }
+
+            sr.Append("\r\n");
             sr.Append("Type: ");
             sr.Append(adapterName);
             sr.Append("\r\n");
