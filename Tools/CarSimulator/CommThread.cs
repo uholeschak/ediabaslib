@@ -1172,6 +1172,11 @@ namespace CarSimulator
                     interByteTimeout = 30;
                 }
 
+                if (_testMode)
+                {
+                    interByteTimeout = 100;
+                }
+
                 int lastBytesToRead = 0;
                 int recLen = 0;
                 _receiveStopWatch.Reset();
