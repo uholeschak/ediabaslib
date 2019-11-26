@@ -487,9 +487,15 @@ namespace CarSimulator
             bool testAborted = _deviceTest.AbortTest;
             buttonConnect.Text = connected && !testing ? "Disconnect" : "Connect";
             buttonConnect.Enabled = !testing;
+            buttonErrorDefault.Enabled = !testing;
             buttonDeviceTestBt.Enabled = !connected && !testing;
             buttonDeviceTestWifi.Enabled = !connected && !testing;
             buttonAbortTest.Enabled = testing && !testAborted;
+            checkBoxMoving.Enabled = !testing;
+            checkBoxVariableValues.Enabled = !testing;
+            checkBoxIgnitionOk.Enabled = !testing;
+            checkBoxAdsAdapter.Enabled = !testing;
+            checkBoxKLineResponder.Enabled = !testing;
             checkBoxBtNameStd.Enabled = !connected && !testing;
             if (connected)
             {
