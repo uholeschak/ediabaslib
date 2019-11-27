@@ -1162,19 +1162,17 @@ namespace CarSimulator
                 switch (_conceptType)
                 {
                     case ConceptType.ConceptBwmFast:
+                        interByteTimeout = 100;     // this is more reliable
+                        break;
+
                     case ConceptType.ConceptKwp2000:
                         interByteTimeout = 30;
                         break;
                 }
 
-                if (_serialPort.BaudRate < 4000)
+                if (_serialPort.BaudRate < 4000 && interByteTimeout < 30)
                 {
                     interByteTimeout = 30;
-                }
-
-                if (_testMode)
-                {
-                    interByteTimeout = 100;
                 }
 
                 int lastBytesToRead = 0;
