@@ -118,10 +118,12 @@ void setSppState(const sppDevState state)
     switch (state)
     {
     case sppDevConnected:
-        ledsPlay(RED_ON);
+        ledsPlay(LED1_ON);
+        ledsPlay(LED2_ON);
         break;
     default:
-		ledsPlay(RED_FLASH);
+		ledsPlay(LED1_FLASH);
+		ledsPlay(LED2_FLASH);
         break;
     }
 }
