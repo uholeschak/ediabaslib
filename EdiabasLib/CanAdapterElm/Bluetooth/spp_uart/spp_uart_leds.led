@@ -3,6 +3,7 @@
 
 pio 1 LED1
 pio 8 LED2
+pio 9 LED3
 
 pattern LED1_ON RPT
 	LED1 ON 0
@@ -21,3 +22,9 @@ pattern LED2_FLASH_FAST RPT
 pattern LED2_FLASH_SLOW RPT
 	LED2 ON 500
 	LED2 OFF 1500
+
+pattern LED3_ON RPT
+	LED3 ON 0
+
+pattern LED3_OFF RPT
+	LED3 OFF 0
