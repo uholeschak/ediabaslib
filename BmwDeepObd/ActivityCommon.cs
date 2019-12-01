@@ -6628,30 +6628,47 @@ namespace BmwDeepObd
                             continue;
                         }
                     }
-                    // Manipulate the output filename here as desired.
-                    String fullZipToPath = Path.Combine(outFolder, entryFileName);
-                    string directoryName = Path.GetDirectoryName(fullZipToPath);
-                    if (!string.IsNullOrEmpty(directoryName))
-                    {
-                        // ReSharper disable once AssignNullToNotNullAttribute
-                        Directory.CreateDirectory(directoryName);
-                    }
 
-                    byte[] buffer = new byte[4096];     // 4K is optimum
-                    using (Stream zipStream = zf.GetInputStream(zipEntry))
+                    for (int retry = 0; ; retry++)
                     {
-                        // Unzip file in buffered chunks. This is just as fast as unpacking to a buffer the full size
-                        // of the file, but does not waste memory.
-                        // The "using" will close the stream even if an exception occurs.
-#if DEBUG
-                        lastFileName = fullZipToPath;
-#endif
-                        using (FileStream streamWriter = File.Create(fullZipToPath))
+                        try
                         {
-                            StreamUtils.Copy(zipStream, streamWriter, buffer);
-                            streamWriter.Flush(true);
+                            // Manipulate the output filename here as desired.
+                            String fullZipToPath = Path.Combine(outFolder, entryFileName);
+                            string directoryName = Path.GetDirectoryName(fullZipToPath);
+                            if (!string.IsNullOrEmpty(directoryName))
+                            {
+                                // ReSharper disable once AssignNullToNotNullAttribute
+                                Directory.CreateDirectory(directoryName);
+                            }
+
+                            byte[] buffer = new byte[4096];     // 4K is optimum
+                            using (Stream zipStream = zf.GetInputStream(zipEntry))
+                            {
+                                // Unzip file in buffered chunks. This is just as fast as unpacking to a buffer the full size
+                                // of the file, but does not waste memory.
+                                // The "using" will close the stream even if an exception occurs.
+#if DEBUG
+                                lastFileName = fullZipToPath;
+#endif
+                                using (FileStream streamWriter = File.Create(fullZipToPath))
+                                {
+                                    StreamUtils.Copy(zipStream, streamWriter, buffer);
+                                }
+                            }
+                            break;
+                        }
+                        catch (Exception)
+                        {
+                            if (retry > 10)
+                            {
+                                throw;
+                            }
+
+                            Thread.Sleep(1000);
                         }
                     }
+
                     index++;
                 }
 #if DEBUG
