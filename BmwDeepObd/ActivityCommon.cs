@@ -6631,7 +6631,7 @@ namespace BmwDeepObd
 
                     for (int retry = 0; ; retry++)
                     {
-                        bool zipStreamOpen = false;
+                        bool noRetry = false;
                         try
                         {
                             // Manipulate the output filename here as desired.
@@ -6644,12 +6644,13 @@ namespace BmwDeepObd
                             }
 
                             byte[] buffer = new byte[4096];     // 4K is optimum
+                            noRetry = true;     // no retry for zip stream exception
                             using (Stream zipStream = zf.GetInputStream(zipEntry))
                             {
                                 // Unzip file in buffered chunks. This is just as fast as unpacking to a buffer the full size
                                 // of the file, but does not waste memory.
                                 // The "using" will close the stream even if an exception occurs.
-                                zipStreamOpen = true;
+                                noRetry = false;
 #if DEBUG
                                 lastFileName = fullZipToPath;
 #endif
@@ -6662,7 +6663,7 @@ namespace BmwDeepObd
                         }
                         catch (Exception)
                         {
-                            if (!zipStreamOpen || retry > 10)
+                            if (!noRetry || retry > 10)
                             {
                                 throw;
                             }
