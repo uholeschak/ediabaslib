@@ -6631,6 +6631,7 @@ namespace BmwDeepObd
 
                     for (int retry = 0; ; retry++)
                     {
+                        bool zipStreamOpen = false;
                         try
                         {
                             // Manipulate the output filename here as desired.
@@ -6648,6 +6649,7 @@ namespace BmwDeepObd
                                 // Unzip file in buffered chunks. This is just as fast as unpacking to a buffer the full size
                                 // of the file, but does not waste memory.
                                 // The "using" will close the stream even if an exception occurs.
+                                zipStreamOpen = true;
 #if DEBUG
                                 lastFileName = fullZipToPath;
 #endif
@@ -6660,7 +6662,7 @@ namespace BmwDeepObd
                         }
                         catch (Exception)
                         {
-                            if (retry > 10)
+                            if (!zipStreamOpen || retry > 10)
                             {
                                 throw;
                             }
