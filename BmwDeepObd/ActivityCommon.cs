@@ -1,3 +1,4 @@
+//#define IO_TEST
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6591,6 +6592,9 @@ namespace BmwDeepObd
                 }
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("ExtractZipFile FileCount: {0}", fileCount));
+#if IO_TEST
+                int testCount = 0;
+#endif
 #endif
                 long index = 0;
                 foreach (ZipEntry zipEntry in zf)
@@ -6653,6 +6657,13 @@ namespace BmwDeepObd
                                 noRetry = false;
 #if DEBUG
                                 lastFileName = fullZipToPath;
+#if IO_TEST
+                                testCount++;
+                                if (testCount % 100 == 0)
+                                {
+                                    throw new IOException("Exception test");
+                                }
+#endif
 #endif
                                 using (FileStream streamWriter = File.Create(fullZipToPath))
                                 {
@@ -6663,7 +6674,7 @@ namespace BmwDeepObd
                         }
                         catch (Exception)
                         {
-                            if (!noRetry || retry > 10)
+                            if (noRetry || retry > 10)
                             {
                                 throw;
                             }
@@ -6688,7 +6699,9 @@ namespace BmwDeepObd
 #endif
             finally
             {
+                // ReSharper disable once ConstantConditionalAccessQualifier
                 zf?.Close(); // Ensure we release resources
+                // ReSharper disable once ConstantConditionalAccessQualifier
                 fs?.Close();
                 if (File.Exists(tempFile))
                 {
