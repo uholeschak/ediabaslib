@@ -86,4 +86,4 @@ Beginning with Android KitKat (4.4) writing to the external SdCard is not possib
 The standard log files are stored in the subdirectory _Log_, whereas the [Ediabas tool](EdiabasTool.md) uses the subdirectory _LogEdiabasTool_ and the [configuration generator](Configuration_Generator.md) the subdirectory _LogConfigTool_.
 
 ## Background image
-It's possible to replace the background image. Simply store a custom _Background.jpg_ file in the subdirectory _Images_ of the current _de.holeschak.bmw_deep_obd_ data directory.
+It's possible to replace the background image. Simply store a custom _Background.jpg_ file in the directory _de.holeschak.bmw_deep_obd\files\Images_ (The _Images_ subdirectory has to be created first).
