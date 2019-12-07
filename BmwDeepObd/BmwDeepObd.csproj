@@ -294,6 +294,7 @@
     <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\bc04\production\ELM327V15.X.production.hex">
       <Link>HexFiles\Type3\ELM327V15.X.production.hex</Link>
     </EmbeddedResource>
+    <None Include=".editorconfig" />
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
