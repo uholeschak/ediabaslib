@@ -39,6 +39,7 @@ using UdsFileReader;
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ConvertToAutoPropertyWhenPossible
 // ReSharper disable InlineOutVariableDeclaration
+// ReSharper disable ConvertToUsingDeclaration
 
 namespace BmwDeepObd
 {
@@ -242,6 +243,8 @@ namespace BmwDeepObd
         public const int UdsDtcStatusOverride = 0x2C;
         public const BuildVersionCodes MinEthernetSettingsVersion = BuildVersionCodes.M;
         public const long UpdateCheckDelayDefault = TimeSpan.TicksPerDay;
+        public const int FileIoRetries = 10;
+        public const int FileIoRetryDelay = 1000;
         public const string MtcBtAppName = @"com.microntek.bluetooth";
         public const string DefaultLang = "en";
         public const string TraceFileName = "ifh.trc.zip";
@@ -6522,30 +6525,53 @@ namespace BmwDeepObd
                             crypto.IV = md5.ComputeHash(Encoding.ASCII.GetBytes(key));
                         }
 
-                        using (FileStream fsRead = File.OpenRead(archiveFilenameIn))
+                        for (int retry = 0;; retry++)
                         {
-                            using (CryptoStream crStream = new CryptoStream(fsRead, crypto.CreateDecryptor(), CryptoStreamMode.Read))
+                            try
                             {
-                                byte[] buffer = new byte[4096];     // 4K is optimum
-                                using (FileStream fsWrite = File.Create(tempFile))
+                                using (FileStream fsRead = File.OpenRead(archiveFilenameIn))
                                 {
-                                    bool aborted = false;
-                                    StreamUtils.Copy(crStream, fsWrite, buffer, (sender, args) =>
+                                    using (CryptoStream crStream = new CryptoStream(fsRead, crypto.CreateDecryptor(), CryptoStreamMode.Read))
                                     {
-                                        if (progressHandler != null)
+                                        byte[] buffer = new byte[4096];     // 4K is optimum
+                                        using (FileStream fsWrite = File.Create(tempFile))
                                         {
-                                            if (progressHandler((int)args.PercentComplete, true))
+                                            bool aborted = false;
+                                            StreamUtils.Copy(crStream, fsWrite, buffer, (sender, args) =>
                                             {
-                                                args.ContinueRunning = false;
-                                                aborted = true;
+                                                if (progressHandler != null)
+                                                {
+                                                    if (progressHandler((int)args.PercentComplete, true))
+                                                    {
+                                                        args.ContinueRunning = false;
+                                                        aborted = true;
+                                                    }
+                                                }
+                                            }, TimeSpan.FromSeconds(1), null, null, fsRead.Length);
+                                            if (aborted)
+                                            {
+                                                return;
                                             }
+#if IO_TEST
+                                            if (retry == 0)
+                                            {
+                                                throw new IOException("Exception test");
+                                            }
+#endif
                                         }
-                                    }, TimeSpan.FromSeconds(1), null, null, fsRead.Length);
-                                    if (aborted)
-                                    {
-                                        return;
                                     }
                                 }
+
+                                break;
+                            }
+                            catch (Exception)
+                            {
+                                if (retry > FileIoRetries)
+                                {
+                                    throw;
+                                }
+
+                                Thread.Sleep(FileIoRetryDelay);
                             }
                         }
                     }
@@ -6674,12 +6700,12 @@ namespace BmwDeepObd
                         }
                         catch (Exception)
                         {
-                            if (noRetry || retry > 10)
+                            if (noRetry || retry > FileIoRetries)
                             {
                                 throw;
                             }
 
-                            Thread.Sleep(1000);
+                            Thread.Sleep(FileIoRetryDelay);
                         }
                     }
 
