@@ -3854,30 +3854,85 @@ namespace BmwDeepObd
             {
                 bool extractFailed = false;
                 bool ioError = false;
+                bool aborted = false;
                 string exceptionText = string.Empty;
                 try
                 {
-                    try
+                    for (int retry = 0;; retry++)
                     {
-                        if (Directory.Exists(targetDirectory))
+                        try
                         {
-                            // delete xml files first to invalidate the ECUs
-                            string[] xmlFiles = Directory.GetFiles(targetDirectory, "*.xml");
-                            foreach (string xmlFile in xmlFiles)
+                            if (Directory.Exists(targetDirectory))
                             {
-                                if (!string.IsNullOrEmpty(xmlFile))
+                                // delete xml files first to invalidate the ECUs
+                                string[] xmlFiles = Directory.GetFiles(targetDirectory, "*.xml");
+                                foreach (string xmlFile in xmlFiles)
                                 {
-                                    File.Delete(xmlFile);
+                                    if (!string.IsNullOrEmpty(xmlFile))
+                                    {
+                                        File.Delete(xmlFile);
+                                    }
                                 }
+
+                                string[] allFiles = Directory.GetFiles(targetDirectory, "*.*", SearchOption.AllDirectories);
+                                int fileIndex = 0;
+                                int lastPercent = -1;
+                                foreach (string file in allFiles)
+                                {
+                                    if (!string.IsNullOrEmpty(file))
+                                    {
+                                        File.Delete(file);
+                                    }
+
+                                    if (_extractZipCanceled)
+                                    {
+                                        aborted = true;
+                                        throw new Exception("Canceled");
+                                    }
+
+                                    int percent = fileIndex * 100 / allFiles.Length;
+                                    if (lastPercent != percent)
+                                    {
+                                        lastPercent = percent;
+                                        RunOnUiThread(() =>
+                                        {
+                                            if (_activityCommon == null)
+                                            {
+                                                return;
+                                            }
+
+                                            if (_downloadProgress != null)
+                                            {
+                                                _downloadProgress.SetMessage(GetString(Resource.String.extract_cleanup));
+                                                _downloadProgress.Progress = percent;
+                                                _downloadProgress.ButtonAbort.Enabled = true;
+                                            }
+                                        });
+                                    }
+
+                                    fileIndex++;
+                                }
+
+                                Directory.Delete(targetDirectory, true);
                             }
-                            Directory.Delete(targetDirectory, true);
+                            Directory.CreateDirectory(targetDirectory);
+                            break;
                         }
-                        Directory.CreateDirectory(targetDirectory);
-                    }
-                    catch (Exception)
-                    {
-                        ioError = true;
-                        throw;
+                        catch (Exception)
+                        {
+                            if (aborted)
+                            {
+                                throw;
+                            }
+
+                            if (retry > ActivityCommon.FileIoRetries)
+                            {
+                                ioError = true;
+                                throw;
+                            }
+
+                            Thread.Sleep(ActivityCommon.FileIoRetryDelay);
+                        }
                     }
 
                     if (removeDirs != null)
@@ -4020,6 +4075,7 @@ namespace BmwDeepObd
                     {
                         return;
                     }
+
                     if (_downloadProgress != null)
                     {
                         _downloadProgress.Dismiss();
@@ -4027,14 +4083,18 @@ namespace BmwDeepObd
                         _downloadProgress = null;
                         UpdateLockState();
                     }
+
                     if (extractFailed)
                     {
-                        string message = GetString(ioError ? Resource.String.extract_failed_io : Resource.String.extract_failed);
-                        if (!string.IsNullOrEmpty(exceptionText))
+                        if (!aborted)
                         {
-                            message += "\r\n" + exceptionText;
+                            string message = GetString(ioError ? Resource.String.extract_failed_io : Resource.String.extract_failed);
+                            if (!string.IsNullOrEmpty(exceptionText))
+                            {
+                                message += "\r\n" + exceptionText;
+                            }
+                            _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
                         }
-                        _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
                     }
                     else
                     {
