@@ -6564,7 +6564,9 @@ namespace BmwDeepObd
 
                                 break;
                             }
+#pragma warning disable 168
                             catch (Exception ex)
+#pragma warning restore 168
                             {
 #if DEBUG
                                 Android.Util.Log.Info(Tag, EdiabasNet.GetExceptionText(ex));
@@ -6701,7 +6703,9 @@ namespace BmwDeepObd
                             }
                             break;
                         }
+#pragma warning disable 168
                         catch (Exception ex)
+#pragma warning restore 168
                         {
 #if DEBUG
                             Android.Util.Log.Info(Tag, EdiabasNet.GetExceptionText(ex));
