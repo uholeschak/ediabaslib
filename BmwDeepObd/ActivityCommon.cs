@@ -6564,8 +6564,11 @@ namespace BmwDeepObd
 
                                 break;
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
+#if DEBUG
+                                Android.Util.Log.Info(Tag, EdiabasNet.GetExceptionText(ex));
+#endif
                                 if (retry > FileIoRetries)
                                 {
                                     throw;
@@ -6698,8 +6701,11 @@ namespace BmwDeepObd
                             }
                             break;
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
+#if DEBUG
+                            Android.Util.Log.Info(Tag, EdiabasNet.GetExceptionText(ex));
+#endif
                             if (noRetry || retry > FileIoRetries)
                             {
                                 throw;
