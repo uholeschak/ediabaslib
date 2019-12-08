@@ -3854,6 +3854,7 @@ namespace BmwDeepObd
             {
                 bool extractFailed = false;
                 bool ioError = false;
+                string exceptionText = string.Empty;
                 try
                 {
                     try
@@ -3993,6 +3994,7 @@ namespace BmwDeepObd
                 catch (Exception ex)
                 {
                     extractFailed = true;
+                    exceptionText = EdiabasNet.GetExceptionText(ex);
                     if (ex is IOException)
                     {
                         ioError = true;
@@ -4027,7 +4029,12 @@ namespace BmwDeepObd
                     }
                     if (extractFailed)
                     {
-                        _activityCommon.ShowAlert(GetString(ioError ? Resource.String.extract_failed_io : Resource.String.extract_failed), Resource.String.alert_title_error);
+                        string message = GetString(ioError ? Resource.String.extract_failed_io : Resource.String.extract_failed);
+                        if (!string.IsNullOrEmpty(exceptionText))
+                        {
+                            message += "\r\n" + exceptionText;
+                        }
+                        _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
                     }
                     else
                     {
