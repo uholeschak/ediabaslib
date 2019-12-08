@@ -525,7 +525,7 @@ namespace BmwDeepObd
             {
                 // ignored
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("UpdateMtcDevices exception: {0}", (ex.Message ?? string.Empty)));
+                Android.Util.Log.Info(Tag, string.Format("UpdateMtcDevices exception: {0}", EdiabasNet.GetExceptionText(ex)));
 #endif
             }
         }
@@ -740,7 +740,7 @@ namespace BmwDeepObd
                             }
                             catch (Exception ex)
                             {
-                                LogString("*** Connect exception: " + (ex.Message ?? string.Empty));
+                                LogString("*** Connect exception: " + EdiabasNet.GetExceptionText(ex));
                                 adapterType = AdapterType.ConnectionFailed;
                             }
                             finally
@@ -779,7 +779,7 @@ namespace BmwDeepObd
                             }
                             catch (Exception ex)
                             {
-                                LogString("*** Connect exception: " + (ex.Message ?? string.Empty));
+                                LogString("*** Connect exception: " + EdiabasNet.GetExceptionText(ex));
                                 adapterType = AdapterType.ConnectionFailed;
                             }
                             finally
@@ -795,7 +795,7 @@ namespace BmwDeepObd
                 }
                 catch (Exception ex)
                 {
-                    LogString("*** General exception: " + (ex.Message ?? string.Empty));
+                    LogString("*** General exception: " + EdiabasNet.GetExceptionText(ex));
                     adapterType = AdapterType.ConnectionFailed;
                 }
 
@@ -1306,7 +1306,7 @@ namespace BmwDeepObd
             }
             catch (Exception ex)
             {
-                LogString("*** Exception: " + (ex.Message ?? string.Empty));
+                LogString("*** Exception: " + EdiabasNet.GetExceptionText(ex));
                 return AdapterType.ConnectionFailed;
             }
             LogString("Adapter type: " + adapterType);

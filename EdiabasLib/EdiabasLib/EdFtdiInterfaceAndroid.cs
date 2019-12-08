@@ -376,7 +376,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", EdiabasNet.GetExceptionText(ex));
                 _reconnectRequired = true;
                 return false;
             }
@@ -447,7 +447,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", EdiabasNet.GetExceptionText(ex));
                 _reconnectRequired = true;
                 return false;
             }
@@ -491,7 +491,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                ediabasLog?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                ediabasLog?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", EdiabasNet.GetExceptionText(ex));
                 _reconnectRequired = true;
                 return false;
             }
@@ -546,7 +546,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", ex.Message);
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", EdiabasNet.GetExceptionText(ex));
                 _reconnectRequired = true;
                 return false;
             }

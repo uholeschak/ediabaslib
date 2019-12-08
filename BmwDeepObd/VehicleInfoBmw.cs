@@ -1212,7 +1212,7 @@ namespace BmwDeepObd
             }
             catch (Exception ex)
             {
-                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Extract type key dict exception: {0}", ex.Message ?? string.Empty);
+                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Extract type key dict exception: {0}", EdiabasNet.GetExceptionText(ex));
                 return null;
             }
         }
@@ -1360,7 +1360,7 @@ namespace BmwDeepObd
             }
             catch (Exception ex)
             {
-                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Type key from VIN exception: {0}", ex.Message ?? string.Empty);
+                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Type key from VIN exception: {0}", EdiabasNet.GetExceptionText(ex));
                 return null;
             }
         }
