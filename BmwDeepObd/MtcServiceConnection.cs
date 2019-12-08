@@ -106,7 +106,7 @@ namespace BmwDeepObd
 #pragma warning restore 168
             {
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("MTC init exception: {0}", ex.Message ?? string.Empty));
+                Android.Util.Log.Info(Tag, string.Format("MTC init exception: {0}", EdiabasLib.EdiabasNet.GetExceptionText(ex)));
 #endif
                 _bound = false;
                 ApiVersion = 0;

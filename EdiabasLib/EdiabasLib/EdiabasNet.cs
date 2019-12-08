@@ -4543,7 +4543,7 @@ namespace EdiabasLib
                 }
                 catch (Exception ex)
                 {
-                    LogString(EdLogLevel.Error, "executeInitJob Exception: " + ex.Message);
+                    LogString(EdLogLevel.Error, "executeInitJob Exception: " + GetExceptionText(ex));
                     CloseSgbdFs();  // close file to force a reload
                     throw;
                 }
@@ -4591,7 +4591,7 @@ namespace EdiabasLib
                 }
                 catch (Exception ex)
                 {
-                    LogString(EdLogLevel.Error, "ExecuteExitJob Exception: " + ex.Message);
+                    LogString(EdLogLevel.Error, "ExecuteExitJob Exception: " + GetExceptionText(ex));
                     throw new Exception("ExecuteExitJob", ex);
                 }
             }
@@ -4619,7 +4619,7 @@ namespace EdiabasLib
                 }
                 catch (Exception ex)
                 {
-                    LogString(EdLogLevel.Error, "executeIdentJob Exception: " + ex.Message);
+                    LogString(EdLogLevel.Error, "executeIdentJob Exception: " + GetExceptionText(ex));
                     throw new Exception("executeIdentJob", ex);
                 }
                 if (_resultSets.Count > 1)

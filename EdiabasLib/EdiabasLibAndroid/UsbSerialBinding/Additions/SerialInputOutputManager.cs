@@ -92,7 +92,7 @@ namespace Hoho.Android.UsbSerial.Util
                 }
                 catch (Exception ex)
                 {
-                    Log.Warn(Tag, "USB task exception: " + ex.Message, ex);
+                    Log.Warn(Tag, "USB task exception: " + (ex.Message ?? string.Empty), ex);
                     EventHandler<UnhandledExceptionEventArgs> handler = Volatile.Read(ref ErrorReceived);
                     handler?.Invoke(this, new UnhandledExceptionEventArgs(ex, false));
                 }

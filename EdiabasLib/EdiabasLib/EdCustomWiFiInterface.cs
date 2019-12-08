@@ -139,7 +139,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Connect failure: {0}", ex.Message);
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Connect failure: {0}", EdiabasNet.GetExceptionText(ex));
                 InterfaceDisconnect(true);
                 return false;
             }
