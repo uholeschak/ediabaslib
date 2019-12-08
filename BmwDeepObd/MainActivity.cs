@@ -3935,6 +3935,19 @@ namespace BmwDeepObd
                         }
                     }
 
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        if (_downloadProgress != null)
+                        {
+                            _downloadProgress.Progress = 0;
+                            _downloadProgress.ButtonAbort.Enabled = false;
+                        }
+                    });
+
                     if (removeDirs != null)
                     {
                         foreach (string removeDir in removeDirs)
@@ -3952,6 +3965,7 @@ namespace BmwDeepObd
                             }
                         }
                     }
+
                     RunOnUiThread(() =>
                     {
                         if (_activityCommon == null)
