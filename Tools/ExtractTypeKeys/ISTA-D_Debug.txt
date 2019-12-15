@@ -48,7 +48,7 @@ EcuFunctionsReadStatus.ConvertResultValue():
  value valid: value = value * (ecuResult.Multiplikator ?? 1m) + (ecuResult.Offset ?? 0m);
  value not valid: FindMatchingValue() or ConvertToString()
 
-Get ECU function info:15:43 15.12.201915:44 15.12.2019
+Get ECU function info (DiagDocDb.sqlite: Open with SQLiteStudio type=System.Data.SQLite)
 EcuFunctionService.RetrieveFunctionDefinition()
  - GetEcuFunctionStructure()
  - SQL XEP_ECUVARFUNCTIONS: GetEcuGroupFunctionsByEcuGroupId()
