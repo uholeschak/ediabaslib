@@ -21,6 +21,12 @@ namespace ExtractEcuFunctions
                 Console.WriteLine("No output directory specified");
                 return 1;
             }
+            if (args.Length < 3)
+            {
+                Console.WriteLine("No ECU name specified");
+                return 1;
+            }
+
             string outDir = args[1];
             if (string.IsNullOrEmpty(outDir))
             {
@@ -28,29 +34,58 @@ namespace ExtractEcuFunctions
                 return 1;
             }
 
+            string ecuName = args[2];
+            if (string.IsNullOrEmpty(ecuName))
+            {
+                Console.WriteLine("ECU name empty");
+                return 1;
+            }
+
             try
             {
-                List<string> zipFiles = new List<string>();
                 string connection = "Data Source=\"" + args[0] + "\";";
                 using (SQLiteConnection mDbConnection = new SQLiteConnection(connection))
                 {
                     mDbConnection.SetPassword("6505EFBDC3E5F324");
                     mDbConnection.Open();
 
-                    string sqlNodeClassReadIdent = string.Format(@"SELECT ID FROM XEP_NODECLASSES WHERE (TRIM(NAME) = '{0}')", "ECUFixedFunctionReadingIdentification");
-                    SQLiteCommand commandSqlnodeClassReadIdent = new SQLiteCommand(sqlNodeClassReadIdent, mDbConnection);
                     string nodeClassReadIdent = null;
-                    using (SQLiteDataReader reader = commandSqlnodeClassReadIdent.ExecuteReader())
                     {
-                        while (reader.Read())
+                        string sql = string.Format(@"SELECT ID FROM XEP_NODECLASSES WHERE (TRIM(NAME) = '{0}')", "ECUFixedFunctionReadingIdentification");
+                        SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
+                        using (SQLiteDataReader reader = command.ExecuteReader())
                         {
-                            nodeClassReadIdent = reader["ID"].ToString();
+                            while (reader.Read())
+                            {
+                                nodeClassReadIdent = reader["ID"].ToString();
+                            }
                         }
                     }
 
                     if (string.IsNullOrEmpty(nodeClassReadIdent))
                     {
                         Console.WriteLine("Node class ECUFixedFunctionReadingIdentification not found");
+                        return 1;
+                    }
+
+                    string ecuVariantId = null;
+                    string ecuVariantGroupId = null;
+                    {
+                        string sql = string.Format(@"SELECT ID, ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuName.ToLowerInvariant());
+                        SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                ecuVariantId = reader["ID"].ToString();
+                                ecuVariantGroupId = reader["ECUGROUPID"].ToString();
+                            }
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(ecuVariantId) || string.IsNullOrEmpty(ecuVariantGroupId))
+                    {
+                        Console.WriteLine("ECU variant not found");
                         return 1;
                     }
 
