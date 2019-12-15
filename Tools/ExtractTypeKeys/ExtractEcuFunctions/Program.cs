@@ -127,6 +127,26 @@ namespace ExtractEcuFunctions
                         return 1;
                     }
 
+                    List<string> ecuRefFuncStructList = new List<string>();
+                    foreach (string ecuVarFunctionId in ecuVarFunctionsList)
+                    {
+                        string sql = string.Format(@"SELECT ECUFUNCSTRUCTID FROM XEP_REFECUFUNCSTRUCTS WHERE ID = {0}", ecuVarFunctionId);
+                        SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                ecuRefFuncStructList.Add(reader["ECUFUNCSTRUCTID"].ToString());
+                            }
+                        }
+                    }
+
+                    if (ecuRefFuncStructList.Count == 0)
+                    {
+                        Console.WriteLine("ECU ref functions not found");
+                        return 1;
+                    }
+
                     mDbConnection.Close();
                 }
             }
