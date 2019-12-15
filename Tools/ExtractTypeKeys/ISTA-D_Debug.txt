@@ -53,3 +53,4 @@ EcuFunctionService.RetrieveFunctionDefinition()
  - GetEcuFunctionStructure()
  - SQL XEP_ECUGROUPFUNCTIONS: GetEcuGroupFunctionsByEcuGroupId(), match ecugroupid
  - SQL XEP_ECUVARFUNCTIONS: GetEcuVariantFunctionByNameAndEcuGroupFunctionId(), match name and ecugroupfunctionid
+ - SQL XEP_ECUFUNCSTRUCTURES: GetEcuFunctionStructureById(), match ecuFuctioonstructureid
