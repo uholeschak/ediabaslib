@@ -47,3 +47,9 @@ EcuFunctionsReadStatus.ProcessJobResults()
 EcuFunctionsReadStatus.ConvertResultValue():
  value valid: value = value * (ecuResult.Multiplikator ?? 1m) + (ecuResult.Offset ?? 0m);
  value not valid: FindMatchingValue() or ConvertToString()
+
+Get ECU function info:15:43 15.12.201915:44 15.12.2019
+EcuFunctionService.RetrieveFunctionDefinition()
+ - GetEcuFunctionStructure()
+ - SQL XEP_ECUVARFUNCTIONS: GetEcuGroupFunctionsByEcuGroupId()
+ - SQL XEP_ECUVARFUNCTIONS: GetEcuVariantFunctionByNameAndEcuGroupFunctionId()
