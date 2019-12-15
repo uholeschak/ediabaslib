@@ -51,6 +51,9 @@ EcuFunctionsReadStatus.ConvertResultValue():
 Get ECU function info (DiagDocDb.sqlite: Open with SQLiteStudio type=System.Data.SQLite)
 EcuFunctionService.RetrieveFunctionDefinition()
  - GetEcuFunctionStructure()
- - SQL XEP_ECUGROUPFUNCTIONS: GetEcuGroupFunctionsByEcuGroupId(), match ecugroupid
- - SQL XEP_ECUVARFUNCTIONS: GetEcuVariantFunctionByNameAndEcuGroupFunctionId(), match name and ecugroupfunctionid
- - SQL XEP_ECUFUNCSTRUCTURES: GetEcuFunctionStructureById(), match ecuFuctioonstructureid
+ - SQL XEP_ECUGROUPS: GetEcuGroupByName(), match name (e.g. "d_ehc" id=1036022155)
+ - SQL XEP_ECUGROUPFUNCTIONS: GetEcuGroupFunctionsByEcuGroupId(), match ecugroupid (e.g. ecugroupid=1036022155 -> id=2000000263355)
+ - SQL XEP_ECUVARFUNCTIONS: GetEcuVariantFunctionByNameAndEcuGroupFunctionId(), match name and ecugroupfunctionid (e.g. name="ehc_e65" id=2000000263355 -> id=2000000264079)
+ - SQL XEP_REFECUFUNCSTRUCTS: match all ids with ecuvariantfunctionid (e.g. id=2000000264079 -> ecufuncstructid=2000001159839, 2000001162603, 2000001179895, 2000001182931 ...)
+ - SQL XEP_ECUFUNCSTRUCTURES: GetEcuFunctionStructureById(), match ecuFuctionstructureid
+ - SQL XEP_ECUFIXEDFUNCTIONS: GetEcuFixedFunctionsByParentId(), match ecuFuctionstructureid
