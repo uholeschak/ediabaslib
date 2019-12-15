@@ -89,6 +89,44 @@ namespace ExtractEcuFunctions
                         return 1;
                     }
 
+                    string ecuGroupFunctionId = null;
+                    {
+                        string sql = string.Format(@"SELECT ID FROM XEP_ECUGROUPFUNCTIONS WHERE ECUGROUPID = {0}", ecuVariantGroupId);
+                        SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                ecuGroupFunctionId = reader["ID"].ToString();
+                            }
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(ecuGroupFunctionId))
+                    {
+                        Console.WriteLine("ECU group function id not found");
+                        return 1;
+                    }
+
+                    List<string> ecuVarFunctionsList = new List<string>();
+                    {
+                        string sql = string.Format(@"SELECT ID, VISIBLE, NAME, OBD_RELEVANZ FROM XEP_ECUVARFUNCTIONS WHERE (lower(NAME) = '{0}') AND ECUGROUPFUNCTIONID = {1}", ecuName.ToLowerInvariant(), ecuGroupFunctionId);
+                        SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                ecuVarFunctionsList.Add(reader["ID"].ToString());
+                            }
+                        }
+                    }
+
+                    if (ecuVarFunctionsList.Count == 0)
+                    {
+                        Console.WriteLine("ECU var functions not found");
+                        return 1;
+                    }
+
                     mDbConnection.Close();
                 }
             }
