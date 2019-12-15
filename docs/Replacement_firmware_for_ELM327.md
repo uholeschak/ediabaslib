@@ -19,6 +19,7 @@ Search for `PIC18F25K80 ELM327` on Aliexpress. It's best to buy it with a Blueto
 For programming the firmware see: [programming](#programming-elm327-adapter-with-deep-obd-firmware)
 
 ## Buy a preprogrammed adapter
+**Because of quality problems no adapters are available at the moment!**  
 You could buy the preprogrammed [Bluetooth or WiFi adapter](https://www.ebay.de/itm/254439538023) also at EBAY.  
 If the link is outdated (what it is most of the time) all adapters are sold, in this case please simply wait for an update of the link.  
 
