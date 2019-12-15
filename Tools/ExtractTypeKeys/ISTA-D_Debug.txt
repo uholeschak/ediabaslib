@@ -43,3 +43,7 @@ EcuFunctionsReadStatus.DoReadStatusSingleShot()
 - ecuReadingTaskData.FixedFunctions: list of functions
 - function.Jobs: list of jobs for function
 - execute job: ECUKom.apiJob()
+EcuFunctionsReadStatus.ProcessJobResults()
+EcuFunctionsReadStatus.ConvertResultValue():
+ value valid: value = value * (ecuResult.Multiplikator ?? 1m) + (ecuResult.Offset ?? 0m);
+ value not valid: FindMatchingValue() or ConvertToString()
