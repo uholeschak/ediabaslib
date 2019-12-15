@@ -59,5 +59,6 @@ EcuFunctionService.RetrieveFunctionDefinition()
  - SQL XEP_ECUVARIANTS: GetEcuVariantByName(), match name (e.g. "ehc_e65" -> id=1036031243, ecugroupid=1036022155)
  - SQL XEP_REFECUVARIANTS: match id from XEP_ECUVARIANTS (e.g. 1036031243 -> id=2000000264079)
  - SQL XEP_ECUFIXEDFUNCTIONS: GetEcuFixedFunctionsByParentId(), match parentid from XEP_REFECUVARIANTS (e.g. 2000001182931 -> 2000001222439, 2000001222443)
- - SQL GetFixedFunctionEcuJobsByNodeClass(), match nodeClass
- - SQL XEP_ECUJOBS or XEP_REFECUJOBS: GetEcuJobsWithParameters(), match ecuFixedFunctionId (e.g. 2000001222439 -> id=2000001356499 name="LESEN_ANALOGWERTE")
+ - SQL XEP_NODECLASSES: name="ECUFixedFunctionReadingIdentification" -> id=7164418
+ - SQL GetFixedFunctionEcuJobsByNodeClass(), match nodeClass (e.g. nodeClass=7164418)
+ - SQL XEP_ECUJOBS or XEP_REFECUJOBS: GetEcuJobsWithParameters(), match nodeClass and ecuFixedFunctionId (e.g. 2000001222439 -> id=2000001356499 name="LESEN_ANALOGWERTE")
