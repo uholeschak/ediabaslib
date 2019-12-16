@@ -147,6 +147,27 @@ namespace ExtractEcuFunctions
                         return 1;
                     }
 
+                    List<string> ecuFuncStructList = new List<string>();
+                    foreach (string ecuFuncStructId in ecuRefFuncStructList)
+                    {
+                        string sql = string.Format(@"SELECT TITLE_ENUS, TITLE_DEDE, TITLE_RU FROM XEP_ECUFUNCSTRUCTURES WHERE ID = {0}", ecuFuncStructId);
+                        SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                string funcStructName = "ENUS='" + reader["TITLE_ENUS"] + "', DE='" + reader["TITLE_DEDE"] + "', RU='" + reader["TITLE_RU"] + "'";
+                                ecuFuncStructList.Add(funcStructName);
+                            }
+                        }
+                    }
+
+                    if (ecuFuncStructList.Count == 0)
+                    {
+                        Console.WriteLine("ECU function structures not found");
+                        return 1;
+                    }
+
                     mDbConnection.Close();
                 }
             }
