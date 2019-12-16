@@ -1,12 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Globalization;
 using System.IO;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 
 namespace ExtractEcuFunctions
 {
+    public class EcuVariant
+    {
+        public EcuVariant(string id, string groupId)
+        {
+            Id = id;
+            GroupId = groupId;
+        }
+
+        public string Id { get; }
+        public string GroupId { get; }
+        public List<string> GroupFunctionIds { get; set; }
+    }
+
     static class Program
     {
         static int Main(string[] args)
@@ -68,8 +82,7 @@ namespace ExtractEcuFunctions
                         return 1;
                     }
 
-                    string ecuVariantId = null;
-                    string ecuVariantGroupId = null;
+                    List<EcuVariant> ecuVarList = new List<EcuVariant>();
                     {
                         string sql = string.Format(@"SELECT ID, ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuName.ToLowerInvariant());
                         SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
@@ -77,46 +90,52 @@ namespace ExtractEcuFunctions
                         {
                             while (reader.Read())
                             {
-                                ecuVariantId = reader["ID"].ToString();
-                                ecuVariantGroupId = reader["ECUGROUPID"].ToString();
+                                ecuVarList.Add(new EcuVariant(reader["ID"].ToString(), reader["ECUGROUPID"].ToString()));
                             }
                         }
                     }
 
-                    if (string.IsNullOrEmpty(ecuVariantId) || string.IsNullOrEmpty(ecuVariantGroupId))
+                    if (ecuVarList.Count == 0)
                     {
                         Console.WriteLine("ECU variant not found");
                         return 1;
                     }
 
-                    string ecuGroupFunctionId = null;
+                    foreach (EcuVariant ecuVariant in ecuVarList)
                     {
-                        string sql = string.Format(@"SELECT ID FROM XEP_ECUGROUPFUNCTIONS WHERE ECUGROUPID = {0}", ecuVariantGroupId);
+                        List<string> ecuGroupFunctionIds = new List<string>();
+                        string sql = string.Format(@"SELECT ID FROM XEP_ECUGROUPFUNCTIONS WHERE ECUGROUPID = {0}", ecuVariant.GroupId);
                         SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
                         using (SQLiteDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                ecuGroupFunctionId = reader["ID"].ToString();
+                                ecuGroupFunctionIds.Add(reader["ID"].ToString());
                             }
                         }
-                    }
 
-                    if (string.IsNullOrEmpty(ecuGroupFunctionId))
-                    {
-                        Console.WriteLine("ECU group function id not found");
-                        return 1;
+                        if (ecuGroupFunctionIds.Count == 0)
+                        {
+                            Console.WriteLine("ECU group function id not found");
+                            return 1;
+                        }
+
+                        ecuVariant.GroupFunctionIds = ecuGroupFunctionIds;
                     }
 
                     List<string> ecuVarFunctionsList = new List<string>();
+                    foreach (EcuVariant ecuVariant in ecuVarList)
                     {
-                        string sql = string.Format(@"SELECT ID, VISIBLE, NAME, OBD_RELEVANZ FROM XEP_ECUVARFUNCTIONS WHERE (lower(NAME) = '{0}') AND ECUGROUPFUNCTIONID = {1}", ecuName.ToLowerInvariant(), ecuGroupFunctionId);
-                        SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
-                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        foreach (string ecuGroupFunctionId in ecuVariant.GroupFunctionIds)
                         {
-                            while (reader.Read())
+                            string sql = string.Format(@"SELECT ID, VISIBLE, NAME, OBD_RELEVANZ FROM XEP_ECUVARFUNCTIONS WHERE (lower(NAME) = '{0}') AND ECUGROUPFUNCTIONID = {1}", ecuName.ToLowerInvariant(), ecuGroupFunctionId);
+                            SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
+                            using (SQLiteDataReader reader = command.ExecuteReader())
                             {
-                                ecuVarFunctionsList.Add(reader["ID"].ToString());
+                                while (reader.Read())
+                                {
+                                    ecuVarFunctionsList.Add(reader["ID"].ToString());
+                                }
                             }
                         }
                     }
