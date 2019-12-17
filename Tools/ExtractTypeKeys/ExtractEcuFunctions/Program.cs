@@ -35,6 +35,18 @@ namespace ExtractEcuFunctions
         public EcuVariant EcuVariant { get; set; }
     }
 
+    public class EcuRefFunc
+    {
+        public EcuRefFunc(string funcStructId, EcuVarFunc ecuVarFunc)
+        {
+            FuncStructId = funcStructId;
+            EcuVarFunc = ecuVarFunc;
+        }
+
+        public string FuncStructId { get; }
+        public EcuVarFunc EcuVarFunc { get; set; }
+    }
+
     static class Program
     {
         static int Main(string[] args)
@@ -160,7 +172,7 @@ namespace ExtractEcuFunctions
                         return 1;
                     }
 
-                    List<string> ecuRefFuncStructList = new List<string>();
+                    List<EcuRefFunc> ecuRefFuncStructList = new List<EcuRefFunc>();
                     foreach (EcuVarFunc ecuVarFunc in ecuVarFunctionsList)
                     {
                         string sql = string.Format(@"SELECT ECUFUNCSTRUCTID FROM XEP_REFECUFUNCSTRUCTS WHERE ID = {0}", ecuVarFunc.Id);
@@ -169,7 +181,7 @@ namespace ExtractEcuFunctions
                         {
                             while (reader.Read())
                             {
-                                ecuRefFuncStructList.Add(reader["ECUFUNCSTRUCTID"].ToString());
+                                ecuRefFuncStructList.Add(new EcuRefFunc(reader["ECUFUNCSTRUCTID"].ToString(), ecuVarFunc));
                             }
                         }
                     }
@@ -181,9 +193,9 @@ namespace ExtractEcuFunctions
                     }
 
                     List<string> ecuFuncStructList = new List<string>();
-                    foreach (string ecuFuncStructId in ecuRefFuncStructList)
+                    foreach (EcuRefFunc ecuRefFunc in ecuRefFuncStructList)
                     {
-                        string sql = string.Format(@"SELECT TITLE_ENUS, TITLE_DEDE, TITLE_RU FROM XEP_ECUFUNCSTRUCTURES WHERE ID = {0}", ecuFuncStructId);
+                        string sql = string.Format(@"SELECT TITLE_ENUS, TITLE_DEDE, TITLE_RU FROM XEP_ECUFUNCSTRUCTURES WHERE ID = {0}", ecuRefFunc.FuncStructId);
                         SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
                         using (SQLiteDataReader reader = command.ExecuteReader())
                         {
