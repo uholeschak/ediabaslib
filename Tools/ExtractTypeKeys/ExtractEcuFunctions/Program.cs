@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Globalization;
 using System.IO;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
@@ -32,7 +31,7 @@ namespace ExtractEcuFunctions
 
         public string Id { get; }
         public string GroupFuncId { get; }
-        public EcuVariant EcuVariant { get; set; }
+        public EcuVariant EcuVariant { get; }
     }
 
     public class EcuRefFunc
@@ -44,7 +43,23 @@ namespace ExtractEcuFunctions
         }
 
         public string FuncStructId { get; }
-        public EcuVarFunc EcuVarFunc { get; set; }
+        public EcuVarFunc EcuVarFunc { get; }
+    }
+
+    public class EcuFuncStruct
+    {
+        public EcuFuncStruct(string titleEn, string titleDe, string titleRu, EcuRefFunc ecuRefFunc)
+        {
+            TitleEn = titleEn;
+            TitleDe = titleDe;
+            TitleRu = titleRu;
+            EcuRefFunc = ecuRefFunc;
+        }
+
+        public string TitleEn { get; }
+        public string TitleDe { get; }
+        public string TitleRu { get; }
+        public EcuRefFunc EcuRefFunc { get; }
     }
 
     static class Program
@@ -192,7 +207,7 @@ namespace ExtractEcuFunctions
                         return 1;
                     }
 
-                    List<string> ecuFuncStructList = new List<string>();
+                    List<EcuFuncStruct> ecuFuncStructList = new List<EcuFuncStruct>();
                     foreach (EcuRefFunc ecuRefFunc in ecuRefFuncStructList)
                     {
                         string sql = string.Format(@"SELECT TITLE_ENUS, TITLE_DEDE, TITLE_RU FROM XEP_ECUFUNCSTRUCTURES WHERE ID = {0}", ecuRefFunc.FuncStructId);
@@ -201,8 +216,9 @@ namespace ExtractEcuFunctions
                         {
                             while (reader.Read())
                             {
-                                string funcStructName = "ENUS='" + reader["TITLE_ENUS"] + "', DE='" + reader["TITLE_DEDE"] + "', RU='" + reader["TITLE_RU"] + "'";
-                                ecuFuncStructList.Add(funcStructName);
+                                ecuFuncStructList.Add(new EcuFuncStruct(
+                                    reader["TITLE_ENUS"].ToString(), reader["TITLE_DEDE"].ToString(),
+                                    reader["TITLE_RU"].ToString(), ecuRefFunc));
                             }
                         }
                     }
