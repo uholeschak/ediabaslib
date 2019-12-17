@@ -21,6 +21,20 @@ namespace ExtractEcuFunctions
         public List<string> GroupFunctionIds { get; set; }
     }
 
+    public class EcuVarFunc
+    {
+        public EcuVarFunc(string id, string groupFuncId, EcuVariant ecuVariant)
+        {
+            Id = id;
+            GroupFuncId = groupFuncId;
+            EcuVariant = ecuVariant;
+        }
+
+        public string Id { get; }
+        public string GroupFuncId { get; }
+        public EcuVariant EcuVariant { get; set; }
+    }
+
     static class Program
     {
         static int Main(string[] args)
@@ -123,7 +137,7 @@ namespace ExtractEcuFunctions
                         ecuVariant.GroupFunctionIds = ecuGroupFunctionIds;
                     }
 
-                    List<string> ecuVarFunctionsList = new List<string>();
+                    List<EcuVarFunc> ecuVarFunctionsList = new List<EcuVarFunc>();
                     foreach (EcuVariant ecuVariant in ecuVarList)
                     {
                         foreach (string ecuGroupFunctionId in ecuVariant.GroupFunctionIds)
@@ -134,7 +148,7 @@ namespace ExtractEcuFunctions
                             {
                                 while (reader.Read())
                                 {
-                                    ecuVarFunctionsList.Add(reader["ID"].ToString());
+                                    ecuVarFunctionsList.Add(new EcuVarFunc(reader["ID"].ToString(), ecuGroupFunctionId, ecuVariant));
                                 }
                             }
                         }
@@ -147,9 +161,9 @@ namespace ExtractEcuFunctions
                     }
 
                     List<string> ecuRefFuncStructList = new List<string>();
-                    foreach (string ecuVarFunctionId in ecuVarFunctionsList)
+                    foreach (EcuVarFunc ecuVarFunc in ecuVarFunctionsList)
                     {
-                        string sql = string.Format(@"SELECT ECUFUNCSTRUCTID FROM XEP_REFECUFUNCSTRUCTS WHERE ID = {0}", ecuVarFunctionId);
+                        string sql = string.Format(@"SELECT ECUFUNCSTRUCTID FROM XEP_REFECUFUNCSTRUCTS WHERE ID = {0}", ecuVarFunc.Id);
                         SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
                         using (SQLiteDataReader reader = command.ExecuteReader())
                         {
