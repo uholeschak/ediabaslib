@@ -48,18 +48,60 @@ namespace ExtractEcuFunctions
 
     public class EcuFuncStruct
     {
-        public EcuFuncStruct(string titleEn, string titleDe, string titleRu, EcuRefFunc ecuRefFunc)
+        public EcuFuncStruct(string id, string titleEn, string titleDe, string titleRu, EcuRefFunc ecuRefFunc)
         {
+            Id = id;
             TitleEn = titleEn;
             TitleDe = titleDe;
             TitleRu = titleRu;
             EcuRefFunc = ecuRefFunc;
         }
 
+        public string Id { get; }
         public string TitleEn { get; }
         public string TitleDe { get; }
         public string TitleRu { get; }
         public EcuRefFunc EcuRefFunc { get; }
+    }
+
+    public class EcuFixedFuncStruct
+    {
+        public EcuFixedFuncStruct(string id, string titleEn, string titleDe, string titleRu,
+            string prepOpEn, string prepOpDe, string prepOpRu,
+            string procOpEn, string procOpDe, string procOpRu,
+            string postOpEn, string postOpDe, string postOpRu,
+            EcuFuncStruct ecuFuncStruct)
+        {
+            Id = id;
+            TitleEn = titleEn;
+            TitleDe = titleDe;
+            TitleRu = titleRu;
+            PrepOpEn = prepOpEn;
+            PrepOpDe = prepOpDe;
+            PrepOpRu = prepOpRu;
+            ProcOpEn = procOpEn;
+            ProcOpDe = procOpDe;
+            ProcOpRu = procOpRu;
+            PostOpEn = postOpEn;
+            PostOpDe = postOpDe;
+            PostOpRu = postOpRu;
+            EcuFuncStruct = ecuFuncStruct;
+        }
+
+        public string Id { get; }
+        public string TitleEn { get; }
+        public string TitleDe { get; }
+        public string TitleRu { get; }
+        public string PrepOpEn { get; }
+        public string PrepOpDe { get; }
+        public string PrepOpRu { get; }
+        public string ProcOpEn { get; }
+        public string ProcOpDe { get; }
+        public string ProcOpRu { get; }
+        public string PostOpEn { get; }
+        public string PostOpDe { get; }
+        public string PostOpRu { get; }
+        public EcuFuncStruct EcuFuncStruct { get; }
     }
 
     static class Program
@@ -216,7 +258,7 @@ namespace ExtractEcuFunctions
                         {
                             while (reader.Read())
                             {
-                                ecuFuncStructList.Add(new EcuFuncStruct(
+                                ecuFuncStructList.Add(new EcuFuncStruct(ecuRefFunc.FuncStructId,
                                     reader["TITLE_ENUS"].ToString(), reader["TITLE_DEDE"].ToString(),
                                     reader["TITLE_RU"].ToString(), ecuRefFunc));
                             }
@@ -226,6 +268,31 @@ namespace ExtractEcuFunctions
                     if (ecuFuncStructList.Count == 0)
                     {
                         Console.WriteLine("ECU function structures not found");
+                        return 1;
+                    }
+
+                    List<EcuFixedFuncStruct> ecuFixedFuncStructList = new List<EcuFixedFuncStruct>();
+                    foreach (EcuFuncStruct ecuFuncStruct in ecuFuncStructList)
+                    {
+                        string sql = string.Format(@"SELECT ID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, " +
+                                                   "PREPARINGOPERATORTEXT_ENUS, PREPARINGOPERATORTEXT_DEDE, PREPARINGOPERATORTEXT_RU, " +
+                                                   "PROCESSINGOPERATORTEXT_ENUS, PROCESSINGOPERATORTEXT_DEDE, PROCESSINGOPERATORTEXT_RU, " +
+                                                   "POSTOPERATORTEXT_ENUS, POSTOPERATORTEXT_DEDE, POSTOPERATORTEXT_RU " +
+                                                   "FROM XEP_ECUFIXEDFUNCTIONS WHERE PARENTID = {0}", ecuFuncStruct.Id);
+                        SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            ecuFixedFuncStructList.Add(new EcuFixedFuncStruct(reader["ID"].ToString(), reader["TITLE_ENUS"].ToString(), reader["TITLE_DEDE"].ToString(), reader["TITLE_RU"].ToString(),
+                                reader["PREPARINGOPERATORTEXT_ENUS"].ToString(), reader["PREPARINGOPERATORTEXT_DEDE"].ToString(), reader["PREPARINGOPERATORTEXT_RU"].ToString(),
+                                reader["PROCESSINGOPERATORTEXT_ENUS"].ToString(), reader["PROCESSINGOPERATORTEXT_DEDE"].ToString(), reader["PROCESSINGOPERATORTEXT_RU"].ToString(),
+                                reader["POSTOPERATORTEXT_ENUS"].ToString(), reader["POSTOPERATORTEXT_DEDE"].ToString(), reader["POSTOPERATORTEXT_RU"].ToString(),
+                                ecuFuncStruct));
+                        }
+                    }
+
+                    if (ecuFixedFuncStructList.Count == 0)
+                    {
+                        Console.WriteLine("ECU fixed function structures not found");
                         return 1;
                     }
 
