@@ -278,15 +278,27 @@ namespace ExtractEcuFunctions
                                                    "PREPARINGOPERATORTEXT_ENUS, PREPARINGOPERATORTEXT_DEDE, PREPARINGOPERATORTEXT_RU, " +
                                                    "PROCESSINGOPERATORTEXT_ENUS, PROCESSINGOPERATORTEXT_DEDE, PROCESSINGOPERATORTEXT_RU, " +
                                                    "POSTOPERATORTEXT_ENUS, POSTOPERATORTEXT_DEDE, POSTOPERATORTEXT_RU " +
-                                                   "FROM XEP_ECUFIXEDFUNCTIONS WHERE PARENTID = {0}", ecuFuncStruct.Id);
+                                                   "FROM XEP_ECUFIXEDFUNCTIONS WHERE (PARENTID = {0})", ecuFuncStruct.Id);
                         SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
                         using (SQLiteDataReader reader = command.ExecuteReader())
                         {
-                            ecuFixedFuncStructList.Add(new EcuFixedFuncStruct(reader["ID"].ToString(), reader["TITLE_ENUS"].ToString(), reader["TITLE_DEDE"].ToString(), reader["TITLE_RU"].ToString(),
-                                reader["PREPARINGOPERATORTEXT_ENUS"].ToString(), reader["PREPARINGOPERATORTEXT_DEDE"].ToString(), reader["PREPARINGOPERATORTEXT_RU"].ToString(),
-                                reader["PROCESSINGOPERATORTEXT_ENUS"].ToString(), reader["PROCESSINGOPERATORTEXT_DEDE"].ToString(), reader["PROCESSINGOPERATORTEXT_RU"].ToString(),
-                                reader["POSTOPERATORTEXT_ENUS"].ToString(), reader["POSTOPERATORTEXT_DEDE"].ToString(), reader["POSTOPERATORTEXT_RU"].ToString(),
-                                ecuFuncStruct));
+                            while (reader.Read())
+                            {
+                                ecuFixedFuncStructList.Add(new EcuFixedFuncStruct(reader["ID"].ToString(),
+                                    reader["TITLE_ENUS"].ToString(),
+                                    reader["TITLE_DEDE"].ToString(),
+                                    reader["TITLE_RU"].ToString(),
+                                    reader["PREPARINGOPERATORTEXT_ENUS"].ToString(),
+                                    reader["PREPARINGOPERATORTEXT_DEDE"].ToString(),
+                                    reader["PREPARINGOPERATORTEXT_RU"].ToString(),
+                                    reader["PROCESSINGOPERATORTEXT_ENUS"].ToString(),
+                                    reader["PROCESSINGOPERATORTEXT_DEDE"].ToString(),
+                                    reader["PROCESSINGOPERATORTEXT_RU"].ToString(),
+                                    reader["POSTOPERATORTEXT_ENUS"].ToString(),
+                                    reader["POSTOPERATORTEXT_DEDE"].ToString(),
+                                    reader["POSTOPERATORTEXT_RU"].ToString(),
+                                    ecuFuncStruct));
+                            }
                         }
                     }
 
