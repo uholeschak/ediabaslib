@@ -211,7 +211,7 @@ namespace ExtractEcuFunctions
                     {
                         foreach (string ecuGroupFunctionId in ecuVariant.GroupFunctionIds)
                         {
-                            string sql = string.Format(@"SELECT ID, VISIBLE, NAME, OBD_RELEVANZ FROM XEP_ECUVARFUNCTIONS WHERE (lower(NAME) = '{0}') AND ECUGROUPFUNCTIONID = {1}", ecuName.ToLowerInvariant(), ecuGroupFunctionId);
+                            string sql = string.Format(@"SELECT ID, VISIBLE, NAME, OBD_RELEVANZ FROM XEP_ECUVARFUNCTIONS WHERE (lower(NAME) = '{0}') AND (ECUGROUPFUNCTIONID = {1})", ecuName.ToLowerInvariant(), ecuGroupFunctionId);
                             SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
                             using (SQLiteDataReader reader = command.ExecuteReader())
                             {
