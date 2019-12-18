@@ -337,7 +337,7 @@ namespace ExtractEcuFunctions
                         {
                             List<EcuJob> ecuJobList = new List<EcuJob>();
                             string sql = string.Format(@"SELECT JOBS.ID JOBID, FUNCTIONNAMEJOB, NAME " +
-                                                       "FROM XEP_ECUJOBS JOBS, XEP_REFECUJOBS REFJOBS WHERE REFJOBS.ECUJOBID AND REFJOBS.ID = {0}", ecuFixedFuncStruct.Id);
+                                                       "FROM XEP_ECUJOBS JOBS, XEP_REFECUJOBS REFJOBS WHERE JOBS.ID = REFJOBS.ECUJOBID AND REFJOBS.ID = {0}", ecuFixedFuncStruct.Id);
                             SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
                             using (SQLiteDataReader reader = command.ExecuteReader())
                             {
