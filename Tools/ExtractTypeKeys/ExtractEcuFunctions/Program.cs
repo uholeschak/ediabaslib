@@ -65,15 +65,32 @@ namespace ExtractEcuFunctions
         public List<EcuFixedFuncStruct> FixedFuncStructList { get; set; }
     }
 
+    public class EcuJob
+    {
+        public EcuJob(string id, string funcNameJob, string name, EcuFixedFuncStruct ecuFixedFuncStruct)
+        {
+            Id = id;
+            FuncNameJob = funcNameJob;
+            Name = name;
+            EcuFixedFuncStruct = ecuFixedFuncStruct;
+        }
+
+        public string Id { get; }
+        public string FuncNameJob { get; }
+        public string Name { get; }
+        public EcuFixedFuncStruct EcuFixedFuncStruct { get; }
+    }
+
     public class EcuFixedFuncStruct
     {
-        public EcuFixedFuncStruct(string id, string titleEn, string titleDe, string titleRu,
+        public EcuFixedFuncStruct(string id, string nodeClass, string titleEn, string titleDe, string titleRu,
             string prepOpEn, string prepOpDe, string prepOpRu,
             string procOpEn, string procOpDe, string procOpRu,
             string postOpEn, string postOpDe, string postOpRu,
             EcuFuncStruct ecuFuncStruct)
         {
             Id = id;
+            NodeClass = nodeClass;
             TitleEn = titleEn;
             TitleDe = titleDe;
             TitleRu = titleRu;
@@ -90,6 +107,7 @@ namespace ExtractEcuFunctions
         }
 
         public string Id { get; }
+        public string NodeClass { get; }
         public string TitleEn { get; }
         public string TitleDe { get; }
         public string TitleRu { get; }
@@ -103,6 +121,7 @@ namespace ExtractEcuFunctions
         public string PostOpDe { get; }
         public string PostOpRu { get; }
         public EcuFuncStruct EcuFuncStruct { get; }
+        public List<EcuJob> EcuJobList { get; set; }
     }
 
     static class Program
@@ -275,7 +294,7 @@ namespace ExtractEcuFunctions
                     foreach (EcuFuncStruct ecuFuncStruct in ecuFuncStructList)
                     {
                         List<EcuFixedFuncStruct> ecuFixedFuncStructList = new List<EcuFixedFuncStruct>();
-                        string sql = string.Format(@"SELECT ID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, " +
+                        string sql = string.Format(@"SELECT ID, NODECLASS, TITLE_ENUS, TITLE_DEDE, TITLE_RU, " +
                                                    "PREPARINGOPERATORTEXT_ENUS, PREPARINGOPERATORTEXT_DEDE, PREPARINGOPERATORTEXT_RU, " +
                                                    "PROCESSINGOPERATORTEXT_ENUS, PROCESSINGOPERATORTEXT_DEDE, PROCESSINGOPERATORTEXT_RU, " +
                                                    "POSTOPERATORTEXT_ENUS, POSTOPERATORTEXT_DEDE, POSTOPERATORTEXT_RU " +
@@ -286,6 +305,7 @@ namespace ExtractEcuFunctions
                             while (reader.Read())
                             {
                                 ecuFixedFuncStructList.Add(new EcuFixedFuncStruct(reader["ID"].ToString(),
+                                    reader["NODECLASS"].ToString(),
                                     reader["TITLE_ENUS"].ToString(),
                                     reader["TITLE_DEDE"].ToString(),
                                     reader["TITLE_RU"].ToString(),
@@ -309,6 +329,35 @@ namespace ExtractEcuFunctions
                         }
 
                         ecuFuncStruct.FixedFuncStructList = ecuFixedFuncStructList;
+                    }
+
+                    foreach (EcuFuncStruct ecuFuncStruct in ecuFuncStructList)
+                    {
+                        foreach (EcuFixedFuncStruct ecuFixedFuncStruct in ecuFuncStruct.FixedFuncStructList)
+                        {
+                            List<EcuJob> ecuJobList = new List<EcuJob>();
+                            string sql = string.Format(@"SELECT JOBS.ID JOBID, FUNCTIONNAMEJOB, NAME " +
+                                                       "FROM XEP_ECUJOBS JOBS, XEP_REFECUJOBS REFJOBS WHERE REFJOBS.ECUJOBID AND REFJOBS.ID = {0}", ecuFixedFuncStruct.Id);
+                            SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
+                            using (SQLiteDataReader reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    ecuJobList.Add(new EcuJob(reader["JOBID"].ToString(),
+                                        reader["FUNCTIONNAMEJOB"].ToString(),
+                                        reader["NAME"].ToString(),
+                                        ecuFixedFuncStruct));
+                                }
+                            }
+
+                            if (ecuJobList.Count == 0)
+                            {
+                                Console.WriteLine("ECU jobs not found");
+                                return 1;
+                            }
+
+                            ecuFixedFuncStruct.EcuJobList = ecuJobList;
+                        }
                     }
 
                     mDbConnection.Close();
