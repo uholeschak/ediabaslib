@@ -62,6 +62,7 @@ namespace ExtractEcuFunctions
         public string TitleDe { get; }
         public string TitleRu { get; }
         public EcuRefFunc EcuRefFunc { get; }
+        public List<EcuFixedFuncStruct> FixedFuncStructList { get; set; }
     }
 
     public class EcuFixedFuncStruct
@@ -271,9 +272,9 @@ namespace ExtractEcuFunctions
                         return 1;
                     }
 
-                    List<EcuFixedFuncStruct> ecuFixedFuncStructList = new List<EcuFixedFuncStruct>();
                     foreach (EcuFuncStruct ecuFuncStruct in ecuFuncStructList)
                     {
+                        List<EcuFixedFuncStruct> ecuFixedFuncStructList = new List<EcuFixedFuncStruct>();
                         string sql = string.Format(@"SELECT ID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, " +
                                                    "PREPARINGOPERATORTEXT_ENUS, PREPARINGOPERATORTEXT_DEDE, PREPARINGOPERATORTEXT_RU, " +
                                                    "PROCESSINGOPERATORTEXT_ENUS, PROCESSINGOPERATORTEXT_DEDE, PROCESSINGOPERATORTEXT_RU, " +
@@ -300,12 +301,14 @@ namespace ExtractEcuFunctions
                                     ecuFuncStruct));
                             }
                         }
-                    }
 
-                    if (ecuFixedFuncStructList.Count == 0)
-                    {
-                        Console.WriteLine("ECU fixed function structures not found");
-                        return 1;
+                        if (ecuFixedFuncStructList.Count == 0)
+                        {
+                            Console.WriteLine("ECU fixed function structures not found");
+                            return 1;
+                        }
+
+                        ecuFuncStruct.FixedFuncStructList = ecuFixedFuncStructList;
                     }
 
                     mDbConnection.Close();
