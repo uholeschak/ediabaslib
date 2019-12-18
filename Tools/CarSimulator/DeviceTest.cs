@@ -343,16 +343,15 @@ namespace CarSimulator
                         return false;
                     }
 
-                    _form.UpdateTestStatusText("Connecting ...");
-                    if (!ConnectBtDevice(device))
-                    {
-                        _form.UpdateTestStatusText("Connection failed");
-                        return false;
-                    }
-
                     _testCount = 0;
                     for (;;)
                     {
+                        _form.UpdateTestStatusText("Connecting ...");
+                        if (!ConnectBtDevice(device))
+                        {
+                            _form.UpdateTestStatusText("Connection failed");
+                            return false;
+                        }
                         if (!RunTest(comPort, btDeviceName))
                         {
                             return false;
@@ -361,6 +360,10 @@ namespace CarSimulator
                         {
                             break;
                         }
+
+                        DisconnectStream();
+                        BluetoothSecurity.RemoveDevice(device.DeviceAddress);
+                        Thread.Sleep(1000);
                     }
                 }
             }
