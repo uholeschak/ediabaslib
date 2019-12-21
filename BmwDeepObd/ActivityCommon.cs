@@ -3275,9 +3275,16 @@ namespace BmwDeepObd
         {
             foreach (Tuple<LockType, PowerManager.WakeLock> tempLock in _lockArray)
             {
-                if (tempLock.Item2.IsHeld)
+                try
                 {
-                    return tempLock.Item1;
+                    if (tempLock.Item2.IsHeld)
+                    {
+                        return tempLock.Item1;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
             }
             return LockType.None;
