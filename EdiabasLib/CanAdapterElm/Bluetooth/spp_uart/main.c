@@ -375,6 +375,14 @@ int main(void)
     DEBUG(("Main Started...\n"));
 
     theSppApp.boot_mode = BootGetMode();
+    if (PsFreeCount(50) < 4)
+    {
+        /* storage memory is low, force a defragment */
+        PsFlood();
+        BootSetMode(theSppApp.boot_mode);
+        return 0;
+    }
+
     if (theSppApp.boot_mode == BOOTMODE_INIT)
     {
         BootSetMode(BOOTMODE_UART);
