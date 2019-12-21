@@ -161,7 +161,7 @@
                 android:id="@+id/editTextDisplayText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:inputType="text"
                 android:maxLines="1" />
             <TextView
                 android:id="@+id/textViewDisplayOrderTitle"
@@ -173,7 +173,7 @@
                 android:id="@+id/editTextDisplayOrder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
+                android:inputType="number"
                 android:maxLines="1" />
             <TextView
                 android:id="@+id/textViewGridType"
