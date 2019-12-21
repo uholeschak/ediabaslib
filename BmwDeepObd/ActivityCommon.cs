@@ -3273,6 +3273,11 @@ namespace BmwDeepObd
 
         public LockType GetLock()
         {
+            if (_disposed)
+            {
+                return LockType.None;
+            }
+
             foreach (Tuple<LockType, PowerManager.WakeLock> tempLock in _lockArray)
             {
                 try
@@ -3292,6 +3297,11 @@ namespace BmwDeepObd
 
         public bool SetLock(LockType lockType)
         {
+            if (_disposed)
+            {
+                return false;
+            }
+
             bool result = true;
             PowerManager.WakeLock wakeLock = null;
             switch (lockType)
