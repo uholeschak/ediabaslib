@@ -115,6 +115,11 @@ namespace BmwDeepObd
         private int _elmVerH = -1;
         private int _elmVerL = -1;
 
+        private enum ActivityRequest
+        {
+            RequestBluetoothSettings,
+        }
+
         protected override void OnCreate (Bundle savedInstanceState)
         {
             SetTheme(ActivityCommon.SelectedThemeId);
@@ -321,6 +326,16 @@ namespace BmwDeepObd
                     return true;
             }
             return base.OnOptionsItemSelected(item);
+        }
+
+        protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
+        {
+            switch ((ActivityRequest)requestCode)
+            {
+                case ActivityRequest.RequestBluetoothSettings:
+                    UpdatePairedDevices();
+                    break;
+            }
         }
 
         private void UpdatePairedDevices()
@@ -634,6 +649,18 @@ namespace BmwDeepObd
 
                 // Turn on area for new devices
                 FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                try
+                {
+                    Intent intent = new Intent(Android.Provider.Settings.ActionBluetoothSettings);
+                    StartActivityForResult(intent, (int)ActivityRequest.RequestBluetoothSettings);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
         }
 
