@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.2.218" package="de.holeschak.bmw_deep_obd" android:installLocation="auto" android:versionCode="259">
-	<uses-sdk android:targetSdkVersion="29" android:minSdkVersion="16" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.2.219" package="de.holeschak.bmw_deep_obd" android:installLocation="auto" android:versionCode="260">
+	<uses-sdk android:targetSdkVersion="29" android:minSdkVersion="18" />
 	<application android:label="Deep OBD for BMW and VAG" android:icon="@mipmap/ic_launcher" android:theme="@style/MyTheme" android:resizeableActivity="true" android:windowSoftInputMode="stateHidden" android:largeHeap="true"></application>
 	<uses-permission android:name="android.permission.BLUETOOTH" />
 	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
