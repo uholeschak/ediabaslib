@@ -33,7 +33,9 @@
    <property key="debug" >1</property>
    <property key="debugtransport" >[SPITRANS=USB SPIPORT=1 SPIMAXCLOCK=100]</property>
    <property key="defines" ></property>
+   <property key="execution_mode" >1</property>
    <property key="firmwareimage" ></property>
+   <property key="flashsize" >2</property>
    <property key="gcc_ver" >1</property>
    <property key="libs" >connection, spp, region, service,bdaddr,sdp_parse</property>
    <property key="output" ></property>
