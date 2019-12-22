@@ -27,6 +27,25 @@
 #define DEBUG(x)
 #endif
 
+#define VOLATILE_PS
+
+#ifdef VOLATILE_PS
+#define PSKEY_USR0 0x028a
+#define	TRUSTED_DEVICE_INDEX 41
+#define	TRUSTED_DEVICE_LIST_BASE 42
+#define	TRUSTED_DEVICE_LIST_LENGTH 8
+#define PS_ARRAY_BASE TRUSTED_DEVICE_INDEX
+#define PS_ARRAY_SIZE (TRUSTED_DEVICE_LIST_LENGTH + 1)
+
+typedef struct
+{
+    uint8               data[32];
+    uint16              length;
+} psData;
+
+static psData psDataArray[PS_ARRAY_SIZE];
+#endif
+
 static sppTaskData theSppApp;
 
 
@@ -374,6 +393,10 @@ int main(void)
 {
     DEBUG(("Main Started...\n"));
 
+#ifdef VOLATILE_PS
+    memset(&psDataArray, 0x00, sizeof(psDataArray));
+#endif
+
     theSppApp.boot_mode = BootGetMode();
     if (PsFreeCount(50) < 4)
     {
@@ -418,3 +441,51 @@ int main(void)
     return 0;
 }
 
+#ifdef VOLATILE_PS
+uint16 PsStore(uint16 key, const void *buff, uint16 words)
+{
+    if (key >= PS_ARRAY_BASE && key < PS_ARRAY_BASE + PS_ARRAY_SIZE)
+    {
+        uint16 index = key - PS_ARRAY_BASE;
+        uint16 length = words;
+        if (sizeof(psDataArray[index].data) < length)
+        {
+            length = sizeof(psDataArray[index].data);
+        }
+
+        if (buff != NULL)
+        {
+            memcpy(&psDataArray[index].data, buff, length);
+            psDataArray[index].length = length;
+        }
+        else
+        {
+            psDataArray[index].length = 0;
+        }
+        return length;
+    }
+
+    return words;
+}
+
+uint16 PsRetrieve(uint16 key, void *buff, uint16 words)
+{
+    if (key >= PS_ARRAY_BASE && key < PS_ARRAY_BASE + PS_ARRAY_SIZE)
+    {
+        uint16 index = key - PS_ARRAY_BASE;
+        uint16 length = words;
+        if (psDataArray[index].length < length)
+        {
+            length = psDataArray[index].length;
+        }
+
+        if (buff != NULL)
+        {
+            memcpy(buff, &psDataArray[index].data, length);
+        }
+        return length;
+    }
+
+    return PsFullRetrieve(key + PSKEY_USR0, buff, words);
+}
+#endif
