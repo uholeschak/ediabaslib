@@ -169,9 +169,18 @@ void handleATSetPin(Task pTask, const struct ATSetPin *pPinReq)
     }
     else
     {
+        bool changed = false;
+        if (memcmp(app->pin, pPinReq->pin.data, pPinReq->pin.length) != 0)
+        {
+            changed = true;
+        }
+        if (app->pin_length != pPinReq->pin.length)
+        {
+            changed = true;
+        }
         memcpy(app->pin, pPinReq->pin.data, pPinReq->pin.length);
         app->pin_length = pPinReq->pin.length;
-        if (!PsStore(PSKEY_USR_PIN, app->pin, app->pin_length))
+        if (changed && !PsStore(PSKEY_USR_PIN, app->pin, app->pin_length))
         {
         	lUsed = addATStr(pSink, pbapATRespId_Fail);    
         }
@@ -214,9 +223,18 @@ void handleATSetName(Task pTask, const struct ATSetName *pNameReq)
     }
     else
     {
+        bool changed = false;
+        if (memcmp(app->name, pNameReq->name.data, pNameReq->name.length) != 0)
+        {
+            changed = true;
+        }
+        if (app->name_length != pNameReq->name.length)
+        {
+            changed = true;
+        }
         memcpy(app->name, pNameReq->name.data, pNameReq->name.length);
         app->name_length = pNameReq->name.length;
-        if (!PsStore(PSKEY_USR_NAME, app->name, app->name_length))
+        if (changed && !PsStore(PSKEY_USR_NAME, app->name, app->name_length))
         {
         	lUsed = addATStr(pSink, pbapATRespId_Fail);    
         }
@@ -296,10 +314,17 @@ void handleATSetUart(Task pTask, const struct ATSetUart *pUartReq)
     }
     else
     {
+        bool changed = false;
+        if ((app->uart_data.baud_rate != baud_code) ||
+            (app->uart_data.stop_bits != pUartReq->stop) ||
+            (app->uart_data.parity != pUartReq->parity))
+        {
+            changed = true;
+        }
         app->uart_data.baud_rate = baud_code;
         app->uart_data.stop_bits = pUartReq->stop;
         app->uart_data.parity = pUartReq->parity;
-        if (!PsStore(PSKEY_USR_UART, &app->uart_data, sizeof(app->uart_data)))
+        if (changed && !PsStore(PSKEY_USR_UART, &app->uart_data, sizeof(app->uart_data)))
         {
         	lUsed = addATStr(pSink, pbapATRespId_Fail);
             valid = false;
