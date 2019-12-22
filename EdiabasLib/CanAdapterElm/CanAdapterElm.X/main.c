@@ -124,6 +124,7 @@
 #define ALLOW_BT_CONFIG
 #define ALLOW_FACTORY_RESET
 //#define REQUIRES_BT_FACTORY
+#define REQUIRES_INIT_BT
 #define REQUIRES_BT_CRLF
 #define REQUIRES_BT_ASSIGN
 //#define REQUIRES_BT_NAME_0
@@ -2059,6 +2060,7 @@ void read_eeprom()
     temp_value1 = eeprom_read(EEP_ADDR_BT_INIT);
     temp_value2 = eeprom_read(EEP_ADDR_BT_INIT + 1);
     init_bt_required = true;
+#if !defined(REQUIRES_INIT_BT)
     if ((~temp_value1 & 0xFF) == temp_value2)
     {
         if (temp_value1 == 0x01)
@@ -2066,6 +2068,7 @@ void read_eeprom()
             init_bt_required = false;
         }
     }
+#endif
 
     memset(pin_buffer, 0x00, sizeof(pin_buffer));
     uint8_t pin_len = 0;
