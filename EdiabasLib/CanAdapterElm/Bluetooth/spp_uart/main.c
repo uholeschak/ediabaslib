@@ -27,8 +27,6 @@
 #define DEBUG(x)
 #endif
 
-#define VOLATILE_PS
-
 #ifdef VOLATILE_PS
 #define PSKEY_USR0 0x028a
 #define	TRUSTED_DEVICE_INDEX 41
