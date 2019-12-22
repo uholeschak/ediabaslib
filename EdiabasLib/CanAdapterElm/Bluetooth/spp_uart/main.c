@@ -393,11 +393,10 @@ int main(void)
 {
     DEBUG(("Main Started...\n"));
 
+    theSppApp.boot_mode = BootGetMode();
 #ifdef VOLATILE_PS
     memset(&psDataArray, 0x00, sizeof(psDataArray));
-#endif
-
-    theSppApp.boot_mode = BootGetMode();
+#else
     if (PsFreeCount(50) < 4)
     {
         /* storage memory is low, force a defragment */
@@ -405,6 +404,7 @@ int main(void)
         BootSetMode(theSppApp.boot_mode);
         return 0;
     }
+#endif
 
     if (theSppApp.boot_mode == BOOTMODE_INIT)
     {
