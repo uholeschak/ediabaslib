@@ -158,7 +158,7 @@ static void app_handler(Task task, MessageId id, Message message)
             ConnectionChangeLocalName(theSppApp.name_length, theSppApp.name);
             ConnectionReadLocalAddr(task);
             /* Configure Mode4 Security Settings */
-            ConnectionSmSecModeConfig(task, cl_sm_wae_acl_owner_none, FALSE, TRUE);
+            ConnectionSmSecModeConfig(task, cl_sm_wae_always, FALSE, TRUE);
             /* Turn off all SDP security */
             ConnectionSmSetSecurityLevel(protocol_l2cap, 1, ssp_secl4_l0, TRUE, FALSE, FALSE);
             /* Connection Library initialisation was a success */
