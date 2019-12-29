@@ -46,8 +46,8 @@ First programming of PIC18F25K80 microcontroller should be done with a PICkit 3 
 
 The source for the firmware could be found in the subdirectory `CanAdapterElm`. The subdirectory names below are the Bluetooth chip types:
 * `default`: For unmodified ELM327L adapter with any Bluetooth chip. Baud rate 38400
-* `bc04`: For adapter with BK3231 Bluetooth chip
-* `hc04`: For adapter with BC417 Bluetooth chip
+* `bc04`: For adapter with BK3231 Bluetooth chip and bc04 firmware
+* `hc04`: For adapter with BC417 Bluetooth chip and hc04 firmware
 * `esp8266`: For adapter with ESP8266 WiFi chip
 * `yc1021`: For adapter with YC1021 Bluetooth chip
 * `spp_uart` and `spp_uart2` (with modified LED configuration): [OpenSource Bluetooth firmware](Custom_Bluetooth_firmware.md) for adapters with BC417 Bluetooth chip (recommended for Android car radios with Rockchip platform)
