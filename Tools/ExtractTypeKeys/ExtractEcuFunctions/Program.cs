@@ -381,21 +381,19 @@ namespace ExtractEcuFunctions
                             {
                                 List<EcuJobParameter> ecuJobParList = new List<EcuJobParameter>();
                                 sql = string.Format(@"SELECT PARAM.ID PARAMID, PARAMVALUE, FUNCTIONNAMEPARAMETER, ADAPTERPATH, NAME, ECUJOBID " +
-                                                    "FROM XEP_ECUPARAMETERS PARAM, XEP_REFECUPARAMETERS REFPARAM WHERE PARAM.ID = REFPARAM.ECUPARAMETERID AND REFPARAM.ID = {0}", ecuFixedFuncStruct.Id);
+                                                    "FROM XEP_ECUPARAMETERS PARAM, XEP_REFECUPARAMETERS REFPARAM WHERE " +
+                                                    "PARAM.ID = REFPARAM.ECUPARAMETERID AND REFPARAM.ID = {0} AND PARAM.ECUJOBID = {1}",
+                                    ecuFixedFuncStruct.Id, ecuJob.Id);
                                 command = new SQLiteCommand(sql, mDbConnection);
                                 using (SQLiteDataReader reader = command.ExecuteReader())
                                 {
                                     while (reader.Read())
                                     {
-                                        string ecuJobId = reader["ECUJOBID"].ToString();
-                                        if (ecuJobId == ecuJob.Id)
-                                        {
-                                            ecuJobParList.Add(new EcuJobParameter(reader["PARAMID"].ToString(),
-                                                reader["PARAMVALUE"].ToString(),
-                                                reader["FUNCTIONNAMEPARAMETER"].ToString(),
-                                                reader["ADAPTERPATH"].ToString(),
-                                                reader["NAME"].ToString(), ecuJob));
-                                        }
+                                        ecuJobParList.Add(new EcuJobParameter(reader["PARAMID"].ToString(),
+                                            reader["PARAMVALUE"].ToString(),
+                                            reader["FUNCTIONNAMEPARAMETER"].ToString(),
+                                            reader["ADAPTERPATH"].ToString(),
+                                            reader["NAME"].ToString(), ecuJob));
                                     }
                                 }
 
