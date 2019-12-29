@@ -79,6 +79,27 @@ namespace ExtractEcuFunctions
         public string FuncNameJob { get; }
         public string Name { get; }
         public EcuFixedFuncStruct EcuFixedFuncStruct { get; }
+        public List<EcuJobParameter> EcuJobParList { get; set; }
+    }
+
+    public class EcuJobParameter
+    {
+        public EcuJobParameter(string id, string value, string funcNamePar, string adapterPath, string name, EcuJob ecuJob)
+        {
+            Id = id;
+            Value = value;
+            FuncNamePar = funcNamePar;
+            AdapterPath = adapterPath;
+            Name = name;
+            EcuJob = ecuJob;
+        }
+
+        public string Id { get; }
+        public string Value { get; }
+        public string FuncNamePar { get; }
+        public string AdapterPath { get; }
+        public string Name { get; }
+        public EcuJob EcuJob { get; }
     }
 
     public class EcuFixedFuncStruct
@@ -354,6 +375,31 @@ namespace ExtractEcuFunctions
                             {
                                 Console.WriteLine("ECU jobs not found");
                                 return 1;
+                            }
+
+                            foreach (EcuJob ecuJob in ecuJobList)
+                            {
+                                List<EcuJobParameter> ecuJobParList = new List<EcuJobParameter>();
+                                sql = string.Format(@"SELECT PARAM.ID PARAMID, PARAMVALUE, FUNCTIONNAMEPARAMETER, ADAPTERPATH, NAME, ECUJOBID " +
+                                                    "FROM XEP_ECUPARAMETERS PARAM, XEP_REFECUPARAMETERS REFPARAM WHERE PARAM.ID = REFPARAM.ECUPARAMETERID AND REFPARAM.ID = {0}", ecuFixedFuncStruct.Id);
+                                command = new SQLiteCommand(sql, mDbConnection);
+                                using (SQLiteDataReader reader = command.ExecuteReader())
+                                {
+                                    while (reader.Read())
+                                    {
+                                        string ecuJobId = reader["ECUJOBID"].ToString();
+                                        if (ecuJobId == ecuJob.Id)
+                                        {
+                                            ecuJobParList.Add(new EcuJobParameter(reader["PARAMID"].ToString(),
+                                                reader["PARAMVALUE"].ToString(),
+                                                reader["FUNCTIONNAMEPARAMETER"].ToString(),
+                                                reader["ADAPTERPATH"].ToString(),
+                                                reader["NAME"].ToString(), ecuJob));
+                                        }
+                                    }
+                                }
+
+                                ecuJob.EcuJobParList = ecuJobParList;
                             }
 
                             ecuFixedFuncStruct.EcuJobList = ecuJobList;
