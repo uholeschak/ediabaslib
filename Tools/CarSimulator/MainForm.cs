@@ -655,5 +655,12 @@ namespace CarSimulator
                 e.Cancel = true;
             }
         }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            checkBoxBtNameStd.Checked = true;
+            checkBoxIgnitionOk.Checked = true;
+            checkBoxKLineResponder.Checked = true;
+        }
     }
 }

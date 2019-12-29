@@ -235,8 +235,6 @@
             // checkBoxIgnitionOk
             // 
             this.checkBoxIgnitionOk.AutoSize = true;
-            this.checkBoxIgnitionOk.Checked = true;
-            this.checkBoxIgnitionOk.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxIgnitionOk.Location = new System.Drawing.Point(224, 53);
             this.checkBoxIgnitionOk.Name = "checkBoxIgnitionOk";
             this.checkBoxIgnitionOk.Size = new System.Drawing.Size(78, 17);
@@ -258,8 +256,6 @@
             // checkBoxKLineResponder
             // 
             this.checkBoxKLineResponder.AutoSize = true;
-            this.checkBoxKLineResponder.Checked = true;
-            this.checkBoxKLineResponder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxKLineResponder.Location = new System.Drawing.Point(225, 99);
             this.checkBoxKLineResponder.Name = "checkBoxKLineResponder";
             this.checkBoxKLineResponder.Size = new System.Drawing.Size(87, 17);
@@ -379,6 +375,7 @@
             this.Text = "Car Simulator";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.groupBoxConcepts.ResumeLayout(false);
             this.groupBoxConcepts.PerformLayout();
             this.ResumeLayout(false);
