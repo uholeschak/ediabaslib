@@ -48,7 +48,7 @@ namespace ExtractEcuFunctions
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(prefix + "REFFUNC:");
-            sb.AppendLine(this.PropertyList(prefix));
+            sb.Append(this.PropertyList(prefix + " "));
             return sb.ToString();
         }
 
@@ -76,12 +76,12 @@ namespace ExtractEcuFunctions
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(prefix + "FUNC:");
-            sb.AppendLine(this.PropertyList(prefix));
+            sb.Append(this.PropertyList(prefix + " "));
             if (FixedFuncStructList != null)
             {
                 foreach (EcuFixedFuncStruct ecuFixedFuncStruct in FixedFuncStructList)
                 {
-                    sb.AppendLine(ecuFixedFuncStruct.ToString(prefix + " "));
+                    sb.Append(ecuFixedFuncStruct.ToString(prefix + " "));
                 }
             }
 
@@ -115,12 +115,12 @@ namespace ExtractEcuFunctions
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(prefix + "JOB:");
-            sb.AppendLine(this.PropertyList(prefix));
+            sb.Append(this.PropertyList(prefix + " "));
             if (EcuJobParList != null)
             {
                 foreach (EcuJobParameter ecuJobParameter in EcuJobParList)
                 {
-                    sb.AppendLine(ecuJobParameter.ToString(prefix + " "));
+                    sb.Append(ecuJobParameter.ToString(prefix + " "));
                 }
             }
 
@@ -128,7 +128,7 @@ namespace ExtractEcuFunctions
             {
                 foreach (EcuJobResult ecuJobResult in EcuJobResultList)
                 {
-                    sb.AppendLine(ecuJobResult.ToString(prefix + " "));
+                    sb.Append(ecuJobResult.ToString(prefix + " "));
                 }
             }
 
@@ -163,7 +163,7 @@ namespace ExtractEcuFunctions
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(prefix + "JOB:");
-            sb.AppendLine(this.PropertyList(prefix));
+            sb.Append(this.PropertyList(prefix + " "));
             return sb.ToString();
         }
 
@@ -203,7 +203,7 @@ namespace ExtractEcuFunctions
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(prefix + "RESULT:");
-            sb.AppendLine(this.PropertyList(prefix));
+            sb.Append(this.PropertyList(prefix + " "));
             return sb.ToString();
         }
 
@@ -256,12 +256,12 @@ namespace ExtractEcuFunctions
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(prefix + "FIXEDFUNC:");
-            sb.AppendLine(this.PropertyList(prefix));
+            sb.Append(this.PropertyList(prefix + " "));
             if (EcuJobList != null)
             {
                 foreach (EcuJob ecuJob in EcuJobList)
                 {
-                    sb.AppendLine(ecuJob.ToString(prefix + " "));
+                    sb.Append(ecuJob.ToString(prefix + " "));
                 }
             }
 
