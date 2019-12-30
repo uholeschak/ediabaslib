@@ -295,6 +295,8 @@ namespace ExtractEcuFunctions
     {
         static int Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.Unicode;
+
             if (args.Length < 1)
             {
                 Console.WriteLine("No Database specified");
