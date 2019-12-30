@@ -17,6 +17,26 @@ namespace ExtractEcuFunctions
             GroupId = groupId;
         }
 
+        public string ToString(string prefix)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(prefix + "VARIANT:");
+            sb.Append(this.PropertyList(prefix + " "));
+            if (GroupFunctionIds != null)
+            {
+                foreach (string GroupFunctionId in GroupFunctionIds)
+                {
+                    sb.Append(prefix + " " + GroupFunctionId);
+                }
+            }
+            return sb.ToString();
+        }
+
+        public override string ToString()
+        {
+            return ToString("");
+        }
+
         public string Id { get; }
         public string GroupId { get; }
         public List<string> GroupFunctionIds { get; set; }
@@ -29,6 +49,19 @@ namespace ExtractEcuFunctions
             Id = id;
             GroupFuncId = groupFuncId;
             EcuVariant = ecuVariant;
+        }
+
+        public string ToString(string prefix)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(prefix + "VARFUNC:");
+            sb.Append(this.PropertyList(prefix + " "));
+            return sb.ToString();
+        }
+
+        public override string ToString()
+        {
+            return ToString("");
         }
 
         public string Id { get; }
