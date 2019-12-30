@@ -69,40 +69,15 @@ namespace ExtractEcuFunctions
         public EcuVariant EcuVariant { get; }
     }
 
-    public class EcuRefFunc
-    {
-        public EcuRefFunc(string funcStructId, EcuVarFunc ecuVarFunc)
-        {
-            FuncStructId = funcStructId;
-            EcuVarFunc = ecuVarFunc;
-        }
-
-        public string ToString(string prefix)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(prefix + "REFFUNC:");
-            sb.Append(this.PropertyList(prefix + " "));
-            return sb.ToString();
-        }
-
-        public override string ToString()
-        {
-            return ToString("");
-        }
-
-        public string FuncStructId { get; }
-        public EcuVarFunc EcuVarFunc { get; }
-    }
-
     public class EcuFuncStruct
     {
-        public EcuFuncStruct(string id, string titleEn, string titleDe, string titleRu, EcuRefFunc ecuRefFunc)
+        public EcuFuncStruct(string id, string titleEn, string titleDe, string titleRu, EcuVarFunc ecuVarFunc)
         {
             Id = id;
             TitleEn = titleEn;
             TitleDe = titleDe;
             TitleRu = titleRu;
-            EcuRefFunc = ecuRefFunc;
+            EcuVarFunc = ecuVarFunc;
         }
 
         public string ToString(string prefix)
@@ -130,7 +105,7 @@ namespace ExtractEcuFunctions
         public string TitleEn { get; }
         public string TitleDe { get; }
         public string TitleRu { get; }
-        public EcuRefFunc EcuRefFunc { get; }
+        public EcuVarFunc EcuVarFunc { get; }
         public List<EcuFixedFuncStruct> FixedFuncStructList { get; set; }
     }
 
@@ -444,43 +419,19 @@ namespace ExtractEcuFunctions
                         Console.WriteLine(ecuVarFunc);
                     }
 
-                    List<EcuRefFunc> ecuRefFuncStructList = new List<EcuRefFunc>();
+                    List<EcuFuncStruct> ecuFuncStructList = new List<EcuFuncStruct>();
                     foreach (EcuVarFunc ecuVarFunc in ecuVarFunctionsList)
                     {
-                        string sql = string.Format(@"SELECT ECUFUNCSTRUCTID FROM XEP_REFECUFUNCSTRUCTS WHERE ID = {0}", ecuVarFunc.Id);
+                        string sql = string.Format(@"SELECT REFFUNCS.ECUFUNCSTRUCTID FUNCSTRUCTID, TITLE_ENUS, TITLE_DEDE, TITLE_RU " +
+                                "FROM XEP_ECUFUNCSTRUCTURES FUNCS, XEP_REFECUFUNCSTRUCTS REFFUNCS WHERE FUNCS.ID = REFFUNCS.ECUFUNCSTRUCTID AND REFFUNCS.ID = {0}", ecuVarFunc.Id);
                         SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
                         using (SQLiteDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                ecuRefFuncStructList.Add(new EcuRefFunc(reader["ECUFUNCSTRUCTID"].ToString(), ecuVarFunc));
-                            }
-                        }
-                    }
-
-                    if (ecuRefFuncStructList.Count == 0)
-                    {
-                        Console.WriteLine("ECU ref functions not found");
-                        return 1;
-                    }
-
-                    foreach (EcuRefFunc ecuRefFunc in ecuRefFuncStructList)
-                    {
-                        Console.WriteLine(ecuRefFunc);
-                    }
-
-                    List<EcuFuncStruct> ecuFuncStructList = new List<EcuFuncStruct>();
-                    foreach (EcuRefFunc ecuRefFunc in ecuRefFuncStructList)
-                    {
-                        string sql = string.Format(@"SELECT TITLE_ENUS, TITLE_DEDE, TITLE_RU FROM XEP_ECUFUNCSTRUCTURES WHERE ID = {0}", ecuRefFunc.FuncStructId);
-                        SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
-                        using (SQLiteDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                ecuFuncStructList.Add(new EcuFuncStruct(ecuRefFunc.FuncStructId,
+                                ecuFuncStructList.Add(new EcuFuncStruct(reader["FUNCSTRUCTID"].ToString(),
                                     reader["TITLE_ENUS"].ToString(), reader["TITLE_DEDE"].ToString(),
-                                    reader["TITLE_RU"].ToString(), ecuRefFunc));
+                                    reader["TITLE_RU"].ToString(), ecuVarFunc));
                             }
                         }
                     }
