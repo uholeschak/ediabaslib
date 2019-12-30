@@ -229,7 +229,7 @@ namespace ExtractEcuFunctions
 
     public class EcuFixedFuncStruct
     {
-        public EcuFixedFuncStruct(string id, string nodeClass, string titleEn, string titleDe, string titleRu,
+        public EcuFixedFuncStruct(string id, string nodeClass, string nodeClassName, string titleEn, string titleDe, string titleRu,
             string prepOpEn, string prepOpDe, string prepOpRu,
             string procOpEn, string procOpDe, string procOpRu,
             string postOpEn, string postOpDe, string postOpRu,
@@ -237,6 +237,7 @@ namespace ExtractEcuFunctions
         {
             Id = id;
             NodeClass = nodeClass;
+            NodeClassName = nodeClassName;
             TitleEn = titleEn;
             TitleDe = titleDe;
             TitleRu = titleRu;
@@ -275,6 +276,7 @@ namespace ExtractEcuFunctions
 
         public string Id { get; }
         public string NodeClass { get; }
+        public string NodeClassName { get; }
         public string TitleEn { get; }
         public string TitleDe { get; }
         public string TitleRu { get; }
@@ -334,25 +336,6 @@ namespace ExtractEcuFunctions
                 {
                     mDbConnection.SetPassword("6505EFBDC3E5F324");
                     mDbConnection.Open();
-
-                    string nodeClassReadIdent = null;
-                    {
-                        string sql = string.Format(@"SELECT ID FROM XEP_NODECLASSES WHERE (TRIM(NAME) = '{0}')", "ECUFixedFunctionReadingIdentification");
-                        SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
-                        using (SQLiteDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                nodeClassReadIdent = reader["ID"].ToString();
-                            }
-                        }
-                    }
-
-                    if (string.IsNullOrEmpty(nodeClassReadIdent))
-                    {
-                        Console.WriteLine("Node class ECUFixedFunctionReadingIdentification not found");
-                        return 1;
-                    }
 
                     List<EcuVariant> ecuVarList = new List<EcuVariant>();
                     {
@@ -475,6 +458,7 @@ namespace ExtractEcuFunctions
                             {
                                 ecuFixedFuncStructList.Add(new EcuFixedFuncStruct(reader["ID"].ToString(),
                                     reader["NODECLASS"].ToString(),
+                                    GetNodeClassName(mDbConnection, reader["NODECLASS"].ToString()),
                                     reader["TITLE_ENUS"].ToString(),
                                     reader["TITLE_DEDE"].ToString(),
                                     reader["TITLE_RU"].ToString(),
@@ -616,6 +600,22 @@ namespace ExtractEcuFunctions
         public static string PropertyList(this object obj)
         {
             return obj.PropertyList("");
+        }
+
+        private static string GetNodeClassName(SQLiteConnection mDbConnection, string nodeClass)
+        {
+            string sql = string.Format(@"SELECT NAME FROM XEP_NODECLASSES WHERE ID = {0}", nodeClass);
+            SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
+            string result = string.Empty;
+            using (SQLiteDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    result = reader["NAME"].ToString();
+                }
+            }
+
+            return result;
         }
 
         private static bool CreateZip(List<string> inputFiles, string archiveFilenameOut)
