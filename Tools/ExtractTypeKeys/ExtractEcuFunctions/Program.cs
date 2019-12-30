@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
+using System.Reflection;
+using System.Text;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 
@@ -42,6 +44,19 @@ namespace ExtractEcuFunctions
             EcuVarFunc = ecuVarFunc;
         }
 
+        public string ToString(string prefix)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(prefix + "REFFUNC:");
+            sb.AppendLine(this.PropertyList(prefix));
+            return sb.ToString();
+        }
+
+        public override string ToString()
+        {
+            return ToString("");
+        }
+
         public string FuncStructId { get; }
         public EcuVarFunc EcuVarFunc { get; }
     }
@@ -55,6 +70,27 @@ namespace ExtractEcuFunctions
             TitleDe = titleDe;
             TitleRu = titleRu;
             EcuRefFunc = ecuRefFunc;
+        }
+
+        public string ToString(string prefix)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(prefix + "FUNC:");
+            sb.AppendLine(this.PropertyList(prefix));
+            if (FixedFuncStructList != null)
+            {
+                foreach (EcuFixedFuncStruct ecuFixedFuncStruct in FixedFuncStructList)
+                {
+                    sb.AppendLine(ecuFixedFuncStruct.ToString(prefix + " "));
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        public override string ToString()
+        {
+            return ToString("");
         }
 
         public string Id { get; }
@@ -75,6 +111,35 @@ namespace ExtractEcuFunctions
             EcuFixedFuncStruct = ecuFixedFuncStruct;
         }
 
+        public string ToString(string prefix)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(prefix + "JOB:");
+            sb.AppendLine(this.PropertyList(prefix));
+            if (EcuJobParList != null)
+            {
+                foreach (EcuJobParameter ecuJobParameter in EcuJobParList)
+                {
+                    sb.AppendLine(ecuJobParameter.ToString(prefix + " "));
+                }
+            }
+
+            if (EcuJobResultList != null)
+            {
+                foreach (EcuJobResult ecuJobResult in EcuJobResultList)
+                {
+                    sb.AppendLine(ecuJobResult.ToString(prefix + " "));
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        public override string ToString()
+        {
+            return ToString("");
+        }
+
         public string Id { get; }
         public string FuncNameJob { get; }
         public string Name { get; }
@@ -92,6 +157,19 @@ namespace ExtractEcuFunctions
             AdapterPath = adapterPath;
             Name = name;
             EcuJob = ecuJob;
+        }
+
+        public string ToString(string prefix)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(prefix + "JOB:");
+            sb.AppendLine(this.PropertyList(prefix));
+            return sb.ToString();
+        }
+
+        public override string ToString()
+        {
+            return ToString("");
         }
 
         public string Id { get; }
@@ -119,6 +197,19 @@ namespace ExtractEcuFunctions
             Offset = offset;
             Round = round;
             EcuJob = ecuJob;
+        }
+
+        public string ToString(string prefix)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(prefix + "RESULT:");
+            sb.AppendLine(this.PropertyList(prefix));
+            return sb.ToString();
+        }
+
+        public override string ToString()
+        {
+            return ToString("");
         }
 
         public string Id { get; }
@@ -159,6 +250,27 @@ namespace ExtractEcuFunctions
             PostOpDe = postOpDe;
             PostOpRu = postOpRu;
             EcuFuncStruct = ecuFuncStruct;
+        }
+
+        public string ToString(string prefix)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(prefix + "FIXEDFUNC:");
+            sb.AppendLine(this.PropertyList(prefix));
+            if (EcuJobList != null)
+            {
+                foreach (EcuJob ecuJob in EcuJobList)
+                {
+                    sb.AppendLine(ecuJob.ToString(prefix + " "));
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        public override string ToString()
+        {
+            return ToString("");
         }
 
         public string Id { get; }
@@ -467,6 +579,11 @@ namespace ExtractEcuFunctions
                     }
 
                     mDbConnection.Close();
+
+                    foreach (EcuFuncStruct ecuFuncStruct in ecuFuncStructList)
+                    {
+                        Console.WriteLine(ecuFuncStruct);
+                    }
                 }
             }
             catch (Exception e)
@@ -474,6 +591,29 @@ namespace ExtractEcuFunctions
                 Console.WriteLine(e);
             }
             return 0;
+        }
+
+        public static string PropertyList(this object obj, string prefix)
+        {
+            StringBuilder sb = new StringBuilder();
+            PropertyInfo[] props = obj.GetType().GetProperties();
+            foreach (PropertyInfo p in props)
+            {
+                if (p.PropertyType == typeof(string))
+                {
+                    string value = p.GetValue(obj, null).ToString();
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        sb.AppendLine(prefix + p.Name + ": " + value);
+                    }
+                }
+            }
+            return sb.ToString();
+        }
+
+        public static string PropertyList(this object obj)
+        {
+            return obj.PropertyList("");
         }
 
         private static bool CreateZip(List<string> inputFiles, string archiveFilenameOut)
