@@ -346,22 +346,7 @@ namespace ExtractEcuFunctions
                     mDbConnection.SetPassword("6505EFBDC3E5F324");
                     mDbConnection.Open();
 
-                    EcuVariant ecuVariant = null;
-                    {
-                        string sql = string.Format(@"SELECT ID, ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuName.ToLowerInvariant());
-                        SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
-                        using (SQLiteDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                string groupId = reader["ECUGROUPID"].ToString();
-                                ecuVariant = new EcuVariant(reader["ID"].ToString(),
-                                    groupId,
-                                    GetEcuGroupFunctionIds(mDbConnection, groupId));
-                            }
-                        }
-                    }
-
+                    EcuVariant ecuVariant = GetEcuVariant(mDbConnection, ecuName);
                     if (ecuVariant == null)
                     {
                         Console.WriteLine("ECU variant not found");
@@ -578,6 +563,25 @@ namespace ExtractEcuFunctions
         public static string PropertyList(this object obj)
         {
             return obj.PropertyList("");
+        }
+
+        private static EcuVariant GetEcuVariant(SQLiteConnection mDbConnection, string ecuName)
+        {
+            EcuVariant ecuVariant = null;
+            string sql = string.Format(@"SELECT ID, ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuName.ToLowerInvariant());
+            SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
+            using (SQLiteDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    string groupId = reader["ECUGROUPID"].ToString();
+                    ecuVariant = new EcuVariant(reader["ID"].ToString(),
+                        groupId,
+                        GetEcuGroupFunctionIds(mDbConnection, groupId));
+                }
+            }
+
+            return ecuVariant;
         }
 
         private static List<string> GetEcuGroupFunctionIds(SQLiteConnection mDbConnection, string groupId)
