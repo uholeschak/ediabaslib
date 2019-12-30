@@ -80,6 +80,7 @@ namespace ExtractEcuFunctions
         public string Name { get; }
         public EcuFixedFuncStruct EcuFixedFuncStruct { get; }
         public List<EcuJobParameter> EcuJobParList { get; set; }
+        public List<EcuJobResult> EcuJobResultList { get; set; }
     }
 
     public class EcuJobParameter
@@ -99,6 +100,41 @@ namespace ExtractEcuFunctions
         public string FuncNamePar { get; }
         public string AdapterPath { get; }
         public string Name { get; }
+        public EcuJob EcuJob { get; }
+    }
+
+    public class EcuJobResult
+    {
+        public EcuJobResult(string id, string titleEn, string titleDe, string titleRu, string adapterPath,
+            string name, string unit, string unitFixed, string format, string mult, string offset, string round, EcuJob ecuJob)
+        {
+            Id = id;
+            TitleEn = titleEn;
+            TitleDe = titleDe;
+            TitleRu = titleRu;
+            AdapterPath = adapterPath;
+            Name = name;
+            Unit = unit;
+            UnitFixed = unitFixed;
+            Format = format;
+            Mult = mult;
+            Offset = offset;
+            Round = round;
+            EcuJob = ecuJob;
+        }
+
+        public string Id { get; }
+        public string TitleEn { get; }
+        public string TitleDe { get; }
+        public string TitleRu { get; }
+        public string AdapterPath { get; }
+        public string Name { get; }
+        public string Unit { get; }
+        public string UnitFixed { get; }
+        public string Format { get; }
+        public string Mult { get; }
+        public string Offset { get; }
+        public string Round { get; }
         public EcuJob EcuJob { get; }
     }
 
@@ -393,11 +429,40 @@ namespace ExtractEcuFunctions
                                             reader["PARAMVALUE"].ToString(),
                                             reader["FUNCTIONNAMEPARAMETER"].ToString(),
                                             reader["ADAPTERPATH"].ToString(),
-                                            reader["NAME"].ToString(), ecuJob));
+                                            reader["NAME"].ToString(),
+                                            ecuJob));
                                     }
                                 }
 
                                 ecuJob.EcuJobParList = ecuJobParList;
+
+                                List<EcuJobResult> ecuJobResultList = new List<EcuJobResult>();
+                                sql = string.Format(@"SELECT RESULTS.ID RESULTID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, ADAPTERPATH, NAME, UNIT, UNITFIXED, FORMAT, MULTIPLIKATOR, OFFSET, RUNDEN, ECUJOBID " +
+                                                    "FROM XEP_ECURESULTS RESULTS, XEP_REFECURESULTS REFRESULTS WHERE " +
+                                                    "ECURESULTID = RESULTS.ID AND REFRESULTS.ID = {0} AND RESULTS.ECUJOBID = {1}",
+                                    ecuFixedFuncStruct.Id, ecuJob.Id);
+                                command = new SQLiteCommand(sql, mDbConnection);
+                                using (SQLiteDataReader reader = command.ExecuteReader())
+                                {
+                                    while (reader.Read())
+                                    {
+                                        ecuJobResultList.Add(new EcuJobResult(reader["RESULTID"].ToString(),
+                                            reader["TITLE_ENUS"].ToString(),
+                                            reader["TITLE_DEDE"].ToString(),
+                                            reader["TITLE_RU"].ToString(),
+                                            reader["ADAPTERPATH"].ToString(),
+                                            reader["NAME"].ToString(),
+                                            reader["UNIT"].ToString(),
+                                            reader["UNITFIXED"].ToString(),
+                                            reader["FORMAT"].ToString(),
+                                            reader["MULTIPLIKATOR"].ToString(),
+                                            reader["OFFSET"].ToString(),
+                                            reader["RUNDEN"].ToString(),
+                                            ecuJob));
+                                    }
+                                }
+
+                                ecuJob.EcuJobResultList = ecuJobResultList;
                             }
 
                             ecuFixedFuncStruct.EcuJobList = ecuJobList;
