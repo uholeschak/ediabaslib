@@ -213,6 +213,14 @@ namespace ExtractEcuFunctions
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(prefix + "RESULT:");
             sb.Append(this.PropertyList(prefix + " "));
+            if (EcuResultStateValueList != null)
+            {
+                foreach (EcuResultStateValue ecuResultStateValue in EcuResultStateValueList)
+                {
+                    sb.Append(ecuResultStateValue.ToString(prefix + " "));
+                }
+            }
+
             return sb.ToString();
         }
 
@@ -234,6 +242,47 @@ namespace ExtractEcuFunctions
         public string Offset { get; }
         public string Round { get; }
         public EcuJob EcuJob { get; }
+        public List<EcuResultStateValue> EcuResultStateValueList { get; set; }
+    }
+
+    public class EcuResultStateValue
+    {
+        public EcuResultStateValue(string id, string titleEn, string titleDe, string titleRu,
+            string stateValue, string validFrom, string validTo, string parentId, EcuJobResult ecuJobResult)
+        {
+            Id = id;
+            TitleEn = titleEn;
+            TitleDe = titleDe;
+            TitleRu = titleRu;
+            StateValue = stateValue;
+            ValidFrom = validFrom;
+            ValidTo = validTo;
+            ParentId = parentId;
+            EcuJobResult = ecuJobResult;
+        }
+
+        public string ToString(string prefix)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(prefix + "STATEVALUE:");
+            sb.Append(this.PropertyList(prefix + " "));
+            return sb.ToString();
+        }
+
+        public override string ToString()
+        {
+            return ToString("");
+        }
+
+        public string Id { get; }
+        public string TitleEn { get; }
+        public string TitleDe { get; }
+        public string TitleRu { get; }
+        public string StateValue { get; }
+        public string ValidFrom { get; }
+        public string ValidTo { get; }
+        public string ParentId { get; }
+        public EcuJobResult EcuJobResult { get; }
     }
 
     public class EcuFixedFuncStruct
@@ -443,6 +492,31 @@ namespace ExtractEcuFunctions
             return result;
         }
 
+        private static List<EcuResultStateValue> GetResultStateValueList(SQLiteConnection mDbConnection, EcuJobResult ecuJobResult)
+        {
+            List<EcuResultStateValue> ecuResultStateValueList = new List<EcuResultStateValue>();
+            string sql = string.Format(@"SELECT ID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, STATEVALUE, VALIDFROM, VALIDTO, PARENTID " +
+                                       "FROM XEP_STATEVALUES WHERE (PARENTID IN (SELECT STATELISTID FROM XEP_REFSTATELISTS WHERE (ID = {0})))", ecuJobResult.Id);
+            SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
+            using (SQLiteDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    ecuResultStateValueList.Add(new EcuResultStateValue(reader["ID"].ToString(),
+                        reader["TITLE_ENUS"].ToString(),
+                        reader["TITLE_DEDE"].ToString(),
+                        reader["TITLE_RU"].ToString(),
+                        reader["STATEVALUE"].ToString(),
+                        reader["VALIDFROM"].ToString(),
+                        reader["VALIDTO"].ToString(),
+                        reader["PARENTID"].ToString(),
+                        ecuJobResult));
+                }
+            }
+
+            return ecuResultStateValueList;
+        }
+
         private static List<EcuFuncStruct> GetEcuFuncStructList(TextWriter outTextWriter, SQLiteConnection mDbConnection, string ecuName)
         {
             EcuVariant ecuVariant = GetEcuVariant(mDbConnection, ecuName);
@@ -620,6 +694,11 @@ namespace ExtractEcuFunctions
                                     reader["RUNDEN"].ToString(),
                                     ecuJob));
                             }
+                        }
+
+                        foreach (EcuJobResult ecuJobResult in ecuJobResultList)
+                        {
+                            ecuJobResult.EcuResultStateValueList = GetResultStateValueList(mDbConnection, ecuJobResult);
                         }
 
                         ecuJob.EcuJobResultList = ecuJobResultList;
