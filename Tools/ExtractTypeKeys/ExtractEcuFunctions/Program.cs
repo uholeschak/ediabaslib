@@ -429,11 +429,6 @@ namespace ExtractEcuFunctions
                 outTextWriter?.WriteLine("No output directory specified");
                 return 1;
             }
-            if (args.Length < 3)
-            {
-                outTextWriter?.WriteLine("No ECU name specified");
-                return 1;
-            }
 
             string outDir = args[1];
             if (string.IsNullOrEmpty(outDir))
@@ -442,11 +437,10 @@ namespace ExtractEcuFunctions
                 return 1;
             }
 
-            string ecuName = args[2];
-            if (string.IsNullOrEmpty(ecuName))
+            string ecuName = null;
+            if (args.Length >= 3)
             {
-                outTextWriter?.WriteLine("ECU name empty");
-                return 1;
+                ecuName = args[2];
             }
 
             try
@@ -457,16 +451,29 @@ namespace ExtractEcuFunctions
                     mDbConnection.SetPassword("6505EFBDC3E5F324");
                     mDbConnection.Open();
 
-                    EcuVariant ecuVariant = GetEcuVariant(outTextWriter, mDbConnection, ecuName);
-
-                    mDbConnection.Close();
-
-                    if (ecuVariant == null)
+                    List<String> ecuNameList;
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                    if (string.IsNullOrEmpty(ecuName))
                     {
-                        return 1;
+                        ecuNameList = GetEcuNameList(mDbConnection);
+                    }
+                    else
+                    {
+                        ecuNameList = new List<string> { ecuName };
                     }
 
-                    outTextWriter?.WriteLine(ecuVariant);
+                    foreach (string name in ecuNameList)
+                    {
+                        outTextWriter?.WriteLine("*** ECU: {0} ***", name);
+                        EcuVariant ecuVariant = GetEcuVariantFunctions(outTextWriter, mDbConnection, name);
+
+                        if (ecuVariant != null)
+                        {
+                            outTextWriter?.WriteLine(ecuVariant);
+                        }
+                    }
+
+                    mDbConnection.Close();
                 }
             }
             catch (Exception e)
@@ -497,6 +504,22 @@ namespace ExtractEcuFunctions
         public static string PropertyList(this object obj)
         {
             return obj.PropertyList("");
+        }
+
+        private static List<string> GetEcuNameList(SQLiteConnection mDbConnection)
+        {
+            List<string> ecuNameList = new List<string>();
+            string sql = @"SELECT NAME FROM XEP_ECUVARIANTS";
+            SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
+            using (SQLiteDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    ecuNameList.Add(reader["NAME"].ToString());
+                }
+            }
+
+            return ecuNameList;
         }
 
         private static EcuVariant GetEcuVariant(SQLiteConnection mDbConnection, string ecuName)
@@ -693,7 +716,7 @@ namespace ExtractEcuFunctions
             return ecuFixedFuncStructList;
         }
 
-        private static EcuVariant GetEcuVariant(TextWriter outTextWriter, SQLiteConnection mDbConnection, string ecuName)
+        private static EcuVariant GetEcuVariantFunctions(TextWriter outTextWriter, SQLiteConnection mDbConnection, string ecuName)
         {
             EcuVariant ecuVariant = GetEcuVariant(mDbConnection, ecuName);
             if (ecuVariant == null)
