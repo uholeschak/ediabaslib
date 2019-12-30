@@ -30,6 +30,23 @@ namespace ExtractEcuFunctions
                     sb.Append(prefix + " " + GroupFunctionId);
                 }
             }
+
+            if (RefEcuVariantList != null)
+            {
+                foreach (RefEcuVariant refEcuVariant in RefEcuVariantList)
+                {
+                    sb.Append(refEcuVariant.ToString(prefix + " "));
+                }
+            }
+
+            if (EcuFuncStructList != null)
+            {
+                foreach (EcuFuncStruct ecuFuncStruct in EcuFuncStructList)
+                {
+                    sb.Append(ecuFuncStruct.ToString(prefix + " "));
+                }
+            }
+
             return sb.ToString();
         }
 
@@ -41,6 +58,8 @@ namespace ExtractEcuFunctions
         public string Id { get; }
         public string GroupId { get; }
         public List<string> GroupFunctionIds { get; }
+        public List<RefEcuVariant> RefEcuVariantList { get; set; }
+        public List<EcuFuncStruct> EcuFuncStructList { get; set; }
     }
 
     public class RefEcuVariant
@@ -432,19 +451,16 @@ namespace ExtractEcuFunctions
                     mDbConnection.SetPassword("6505EFBDC3E5F324");
                     mDbConnection.Open();
 
-                    List<EcuFuncStruct> ecuFuncStructList = GetEcuFuncStructList(outTextWriter, mDbConnection, ecuName);
+                    EcuVariant ecuVariant = GetEcuVariant(outTextWriter, mDbConnection, ecuName);
 
                     mDbConnection.Close();
 
-                    if (ecuFuncStructList == null)
+                    if (ecuVariant == null)
                     {
                         return 1;
                     }
 
-                    foreach (EcuFuncStruct ecuFuncStruct in ecuFuncStructList)
-                    {
-                        outTextWriter?.WriteLine(ecuFuncStruct);
-                    }
+                    outTextWriter?.WriteLine(ecuVariant);
                 }
             }
             catch (Exception e)
@@ -668,7 +684,7 @@ namespace ExtractEcuFunctions
             return ecuFixedFuncStructList;
         }
 
-        private static List<EcuFuncStruct> GetEcuFuncStructList(TextWriter outTextWriter, SQLiteConnection mDbConnection, string ecuName)
+        private static EcuVariant GetEcuVariant(TextWriter outTextWriter, SQLiteConnection mDbConnection, string ecuName)
         {
             EcuVariant ecuVariant = GetEcuVariant(mDbConnection, ecuName);
             if (ecuVariant == null)
@@ -676,8 +692,6 @@ namespace ExtractEcuFunctions
                 outTextWriter?.WriteLine("ECU variant not found");
                 return null;
             }
-
-            outTextWriter?.WriteLine(ecuVariant);
 
             List<RefEcuVariant> refEcuVariantList = new List<RefEcuVariant>();
             {
@@ -700,6 +714,8 @@ namespace ExtractEcuFunctions
                 return null;
             }
 
+            ecuVariant.RefEcuVariantList = refEcuVariantList;
+
             foreach (RefEcuVariant refEcuVariant in refEcuVariantList)
             {
                 List<EcuFixedFuncStruct> ecuFixedFuncStructList = GetEcuFixedFuncStructList(mDbConnection, refEcuVariant.Id);
@@ -710,11 +726,6 @@ namespace ExtractEcuFunctions
                 }
 
                 refEcuVariant.FixedFuncStructList = ecuFixedFuncStructList;
-            }
-
-            foreach (RefEcuVariant refEcuVariant in refEcuVariantList)
-            {
-                outTextWriter?.WriteLine(refEcuVariant);
             }
 
             List<EcuVarFunc> ecuVarFunctionsList = new List<EcuVarFunc>();
@@ -779,7 +790,9 @@ namespace ExtractEcuFunctions
                 ecuFuncStruct.FixedFuncStructList = ecuFixedFuncStructList;
             }
 
-            return ecuFuncStructList;
+            ecuVariant.EcuFuncStructList = ecuFuncStructList;
+
+            return ecuVariant;
         }
 
         // ReSharper disable once UnusedMember.Local
