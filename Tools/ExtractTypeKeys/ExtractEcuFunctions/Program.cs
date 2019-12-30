@@ -85,11 +85,10 @@ namespace ExtractEcuFunctions
 
     public class EcuJobParameter
     {
-        public EcuJobParameter(string id, string value, string funcNamePar, string adapterPath, string name, EcuJob ecuJob)
+        public EcuJobParameter(string id, string value, string adapterPath, string name, EcuJob ecuJob)
         {
             Id = id;
             Value = value;
-            FuncNamePar = funcNamePar;
             AdapterPath = adapterPath;
             Name = name;
             EcuJob = ecuJob;
@@ -97,7 +96,6 @@ namespace ExtractEcuFunctions
 
         public string Id { get; }
         public string Value { get; }
-        public string FuncNamePar { get; }
         public string AdapterPath { get; }
         public string Name { get; }
         public EcuJob EcuJob { get; }
@@ -427,7 +425,6 @@ namespace ExtractEcuFunctions
                                     {
                                         ecuJobParList.Add(new EcuJobParameter(reader["PARAMID"].ToString(),
                                             reader["PARAMVALUE"].ToString(),
-                                            reader["FUNCTIONNAMEPARAMETER"].ToString(),
                                             reader["ADAPTERPATH"].ToString(),
                                             reader["NAME"].ToString(),
                                             ecuJob));
