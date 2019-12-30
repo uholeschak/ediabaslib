@@ -11,10 +11,11 @@ namespace ExtractEcuFunctions
 {
     public class EcuVariant
     {
-        public EcuVariant(string id, string groupId)
+        public EcuVariant(string id, string groupId, List<string> groupFunctionIds)
         {
             Id = id;
             GroupId = groupId;
+            GroupFunctionIds = groupFunctionIds;
         }
 
         public string ToString(string prefix)
@@ -39,7 +40,7 @@ namespace ExtractEcuFunctions
 
         public string Id { get; }
         public string GroupId { get; }
-        public List<string> GroupFunctionIds { get; set; }
+        public List<string> GroupFunctionIds { get; }
     }
 
     public class EcuVarFunc
@@ -345,7 +346,7 @@ namespace ExtractEcuFunctions
                     mDbConnection.SetPassword("6505EFBDC3E5F324");
                     mDbConnection.Open();
 
-                    List<EcuVariant> ecuVarList = new List<EcuVariant>();
+                    EcuVariant ecuVariant = null;
                     {
                         string sql = string.Format(@"SELECT ID, ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuName.ToLowerInvariant());
                         SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
@@ -353,57 +354,32 @@ namespace ExtractEcuFunctions
                         {
                             while (reader.Read())
                             {
-                                ecuVarList.Add(new EcuVariant(reader["ID"].ToString(), reader["ECUGROUPID"].ToString()));
+                                string groupId = reader["ECUGROUPID"].ToString();
+                                ecuVariant = new EcuVariant(reader["ID"].ToString(),
+                                    groupId,
+                                    GetEcuGroupFunctionIds(mDbConnection, groupId));
                             }
                         }
                     }
 
-                    if (ecuVarList.Count == 0)
+                    if (ecuVariant == null)
                     {
                         Console.WriteLine("ECU variant not found");
                         return 1;
                     }
 
-                    foreach (EcuVariant ecuVariant in ecuVarList)
+                    Console.WriteLine(ecuVariant);
+
+                    List<EcuVarFunc> ecuVarFunctionsList = new List<EcuVarFunc>();
+                    foreach (string ecuGroupFunctionId in ecuVariant.GroupFunctionIds)
                     {
-                        List<string> ecuGroupFunctionIds = new List<string>();
-                        string sql = string.Format(@"SELECT ID FROM XEP_ECUGROUPFUNCTIONS WHERE ECUGROUPID = {0}", ecuVariant.GroupId);
+                        string sql = string.Format(@"SELECT ID, VISIBLE, NAME, OBD_RELEVANZ FROM XEP_ECUVARFUNCTIONS WHERE (lower(NAME) = '{0}') AND (ECUGROUPFUNCTIONID = {1})", ecuName.ToLowerInvariant(), ecuGroupFunctionId);
                         SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
                         using (SQLiteDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                ecuGroupFunctionIds.Add(reader["ID"].ToString());
-                            }
-                        }
-
-                        if (ecuGroupFunctionIds.Count == 0)
-                        {
-                            Console.WriteLine("ECU group function id not found");
-                            return 1;
-                        }
-
-                        ecuVariant.GroupFunctionIds = ecuGroupFunctionIds;
-                    }
-
-                    foreach (EcuVariant ecuVariant in ecuVarList)
-                    {
-                        Console.WriteLine(ecuVariant);
-                    }
-
-                    List<EcuVarFunc> ecuVarFunctionsList = new List<EcuVarFunc>();
-                    foreach (EcuVariant ecuVariant in ecuVarList)
-                    {
-                        foreach (string ecuGroupFunctionId in ecuVariant.GroupFunctionIds)
-                        {
-                            string sql = string.Format(@"SELECT ID, VISIBLE, NAME, OBD_RELEVANZ FROM XEP_ECUVARFUNCTIONS WHERE (lower(NAME) = '{0}') AND (ECUGROUPFUNCTIONID = {1})", ecuName.ToLowerInvariant(), ecuGroupFunctionId);
-                            SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
-                            using (SQLiteDataReader reader = command.ExecuteReader())
-                            {
-                                while (reader.Read())
-                                {
-                                    ecuVarFunctionsList.Add(new EcuVarFunc(reader["ID"].ToString(), ecuGroupFunctionId, ecuVariant));
-                                }
+                                ecuVarFunctionsList.Add(new EcuVarFunc(reader["ID"].ToString(), ecuGroupFunctionId, ecuVariant));
                             }
                         }
                     }
@@ -430,8 +406,10 @@ namespace ExtractEcuFunctions
                             while (reader.Read())
                             {
                                 ecuFuncStructList.Add(new EcuFuncStruct(reader["FUNCSTRUCTID"].ToString(),
-                                    reader["TITLE_ENUS"].ToString(), reader["TITLE_DEDE"].ToString(),
-                                    reader["TITLE_RU"].ToString(), ecuVarFunc));
+                                    reader["TITLE_ENUS"].ToString(),
+                                    reader["TITLE_DEDE"].ToString(),
+                                    reader["TITLE_RU"].ToString(),
+                                    ecuVarFunc));
                             }
                         }
                     }
@@ -455,9 +433,10 @@ namespace ExtractEcuFunctions
                         {
                             while (reader.Read())
                             {
+                                string nodeClass = reader["NODECLASS"].ToString();
                                 ecuFixedFuncStructList.Add(new EcuFixedFuncStruct(reader["ID"].ToString(),
-                                    reader["NODECLASS"].ToString(),
-                                    GetNodeClassName(mDbConnection, reader["NODECLASS"].ToString()),
+                                    nodeClass,
+                                    GetNodeClassName(mDbConnection, nodeClass),
                                     reader["TITLE_ENUS"].ToString(),
                                     reader["TITLE_DEDE"].ToString(),
                                     reader["TITLE_RU"].ToString(),
@@ -599,6 +578,22 @@ namespace ExtractEcuFunctions
         public static string PropertyList(this object obj)
         {
             return obj.PropertyList("");
+        }
+
+        private static List<string> GetEcuGroupFunctionIds(SQLiteConnection mDbConnection, string groupId)
+        {
+            List<string> ecuGroupFunctionIds = new List<string>();
+            string sql = string.Format(@"SELECT ID FROM XEP_ECUGROUPFUNCTIONS WHERE ECUGROUPID = {0}", groupId);
+            SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
+            using (SQLiteDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    ecuGroupFunctionIds.Add(reader["ID"].ToString());
+                }
+            }
+
+            return ecuGroupFunctionIds;
         }
 
         private static string GetNodeClassName(SQLiteConnection mDbConnection, string nodeClass)
