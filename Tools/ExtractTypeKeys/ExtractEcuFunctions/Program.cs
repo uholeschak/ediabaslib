@@ -632,6 +632,7 @@ namespace ExtractEcuFunctions
             return ecuFuncStructList;
         }
 
+        // ReSharper disable once UnusedMember.Local
         private static bool CreateZip(List<string> inputFiles, string archiveFilenameOut)
         {
             try
