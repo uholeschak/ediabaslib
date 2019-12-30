@@ -43,6 +43,42 @@ namespace ExtractEcuFunctions
         public List<string> GroupFunctionIds { get; }
     }
 
+    public class RefEcuVariant
+    {
+        public RefEcuVariant(string id, string ecuVariantId, EcuVariant ecuVariant)
+        {
+            Id = id;
+            EcuVariantId = ecuVariantId;
+            EcuVariant = ecuVariant;
+        }
+
+        public string ToString(string prefix)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(prefix + "REFVARIANT:");
+            sb.Append(this.PropertyList(prefix + " "));
+
+            if (FixedFuncStructList != null)
+            {
+                foreach (EcuFixedFuncStruct ecuFixedFuncStruct in FixedFuncStructList)
+                {
+                    sb.Append(ecuFixedFuncStruct.ToString(prefix + " "));
+                }
+            }
+            return sb.ToString();
+        }
+
+        public override string ToString()
+        {
+            return ToString("");
+        }
+
+        public string Id { get; }
+        public string EcuVariantId { get; }
+        public EcuVariant EcuVariant { get; }
+        public List<EcuFixedFuncStruct> FixedFuncStructList { get; set; }
+    }
+
     public class EcuVarFunc
     {
         public EcuVarFunc(string id, string groupFuncId, EcuVariant ecuVariant)
@@ -517,6 +553,42 @@ namespace ExtractEcuFunctions
             return ecuResultStateValueList;
         }
 
+        private static List<EcuFixedFuncStruct> GetEcuFixedFuncStructList(SQLiteConnection mDbConnection, string parentId, EcuFuncStruct ecuFuncStruct = null)
+        {
+            List<EcuFixedFuncStruct> ecuFixedFuncStructList = new List<EcuFixedFuncStruct>();
+            string sql = string.Format(@"SELECT ID, NODECLASS, TITLE_ENUS, TITLE_DEDE, TITLE_RU, " +
+                                       "PREPARINGOPERATORTEXT_ENUS, PREPARINGOPERATORTEXT_DEDE, PREPARINGOPERATORTEXT_RU, " +
+                                       "PROCESSINGOPERATORTEXT_ENUS, PROCESSINGOPERATORTEXT_DEDE, PROCESSINGOPERATORTEXT_RU, " +
+                                       "POSTOPERATORTEXT_ENUS, POSTOPERATORTEXT_DEDE, POSTOPERATORTEXT_RU " +
+                                       "FROM XEP_ECUFIXEDFUNCTIONS WHERE (PARENTID = {0})", parentId);
+            SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
+            using (SQLiteDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    string nodeClass = reader["NODECLASS"].ToString();
+                    ecuFixedFuncStructList.Add(new EcuFixedFuncStruct(reader["ID"].ToString(),
+                        nodeClass,
+                        GetNodeClassName(mDbConnection, nodeClass),
+                        reader["TITLE_ENUS"].ToString(),
+                        reader["TITLE_DEDE"].ToString(),
+                        reader["TITLE_RU"].ToString(),
+                        reader["PREPARINGOPERATORTEXT_ENUS"].ToString(),
+                        reader["PREPARINGOPERATORTEXT_DEDE"].ToString(),
+                        reader["PREPARINGOPERATORTEXT_RU"].ToString(),
+                        reader["PROCESSINGOPERATORTEXT_ENUS"].ToString(),
+                        reader["PROCESSINGOPERATORTEXT_DEDE"].ToString(),
+                        reader["PROCESSINGOPERATORTEXT_RU"].ToString(),
+                        reader["POSTOPERATORTEXT_ENUS"].ToString(),
+                        reader["POSTOPERATORTEXT_DEDE"].ToString(),
+                        reader["POSTOPERATORTEXT_RU"].ToString(),
+                        ecuFuncStruct));
+                }
+            }
+
+            return ecuFixedFuncStructList;
+        }
+
         private static List<EcuFuncStruct> GetEcuFuncStructList(TextWriter outTextWriter, SQLiteConnection mDbConnection, string ecuName)
         {
             EcuVariant ecuVariant = GetEcuVariant(mDbConnection, ecuName);
@@ -527,6 +599,44 @@ namespace ExtractEcuFunctions
             }
 
             outTextWriter?.WriteLine(ecuVariant);
+
+            List<RefEcuVariant> refEcuVariantList = new List<RefEcuVariant>();
+            {
+                string sql = string.Format(@"SELECT ID, ECUVARIANTID FROM XEP_REFECUVARIANTS WHERE ECUVARIANTID = {0}", ecuVariant.Id);
+                SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        refEcuVariantList.Add(new RefEcuVariant(reader["ID"].ToString(),
+                            reader["ECUVARIANTID"].ToString(),
+                            ecuVariant));
+                    }
+                }
+            }
+
+            if (refEcuVariantList.Count == 0)
+            {
+                outTextWriter?.WriteLine("Ref ECU var functions not found");
+                return null;
+            }
+
+            foreach (RefEcuVariant refEcuVariant in refEcuVariantList)
+            {
+                List<EcuFixedFuncStruct> ecuFixedFuncStructList = GetEcuFixedFuncStructList(mDbConnection, refEcuVariant.Id);
+                if (ecuFixedFuncStructList.Count == 0)
+                {
+                    outTextWriter?.WriteLine("ECU fixed function structures not found for ref ECU var");
+                    return null;
+                }
+
+                refEcuVariant.FixedFuncStructList = ecuFixedFuncStructList;
+            }
+
+            foreach (RefEcuVariant refEcuVariant in refEcuVariantList)
+            {
+                outTextWriter?.WriteLine(refEcuVariant);
+            }
 
             List<EcuVarFunc> ecuVarFunctionsList = new List<EcuVarFunc>();
             foreach (string ecuGroupFunctionId in ecuVariant.GroupFunctionIds)
@@ -580,40 +690,10 @@ namespace ExtractEcuFunctions
 
             foreach (EcuFuncStruct ecuFuncStruct in ecuFuncStructList)
             {
-                List<EcuFixedFuncStruct> ecuFixedFuncStructList = new List<EcuFixedFuncStruct>();
-                string sql = string.Format(@"SELECT ID, NODECLASS, TITLE_ENUS, TITLE_DEDE, TITLE_RU, " +
-                                           "PREPARINGOPERATORTEXT_ENUS, PREPARINGOPERATORTEXT_DEDE, PREPARINGOPERATORTEXT_RU, " +
-                                           "PROCESSINGOPERATORTEXT_ENUS, PROCESSINGOPERATORTEXT_DEDE, PROCESSINGOPERATORTEXT_RU, " +
-                                           "POSTOPERATORTEXT_ENUS, POSTOPERATORTEXT_DEDE, POSTOPERATORTEXT_RU " +
-                                           "FROM XEP_ECUFIXEDFUNCTIONS WHERE (PARENTID = {0})", ecuFuncStruct.Id);
-                SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
-                using (SQLiteDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        string nodeClass = reader["NODECLASS"].ToString();
-                        ecuFixedFuncStructList.Add(new EcuFixedFuncStruct(reader["ID"].ToString(),
-                            nodeClass,
-                            GetNodeClassName(mDbConnection, nodeClass),
-                            reader["TITLE_ENUS"].ToString(),
-                            reader["TITLE_DEDE"].ToString(),
-                            reader["TITLE_RU"].ToString(),
-                            reader["PREPARINGOPERATORTEXT_ENUS"].ToString(),
-                            reader["PREPARINGOPERATORTEXT_DEDE"].ToString(),
-                            reader["PREPARINGOPERATORTEXT_RU"].ToString(),
-                            reader["PROCESSINGOPERATORTEXT_ENUS"].ToString(),
-                            reader["PROCESSINGOPERATORTEXT_DEDE"].ToString(),
-                            reader["PROCESSINGOPERATORTEXT_RU"].ToString(),
-                            reader["POSTOPERATORTEXT_ENUS"].ToString(),
-                            reader["POSTOPERATORTEXT_DEDE"].ToString(),
-                            reader["POSTOPERATORTEXT_RU"].ToString(),
-                            ecuFuncStruct));
-                    }
-                }
-
+                List<EcuFixedFuncStruct> ecuFixedFuncStructList = GetEcuFixedFuncStructList(mDbConnection, ecuFuncStruct.Id, ecuFuncStruct);
                 if (ecuFixedFuncStructList.Count == 0)
                 {
-                    outTextWriter?.WriteLine("ECU fixed function structures not found");
+                    outTextWriter?.WriteLine("ECU fixed function structures not found for ECU func struct");
                     return null;
                 }
 
