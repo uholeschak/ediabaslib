@@ -411,6 +411,11 @@ namespace ExtractEcuFunctions
                         ecuVariant.GroupFunctionIds = ecuGroupFunctionIds;
                     }
 
+                    foreach (EcuVariant ecuVariant in ecuVarList)
+                    {
+                        Console.WriteLine(ecuVariant);
+                    }
+
                     List<EcuVarFunc> ecuVarFunctionsList = new List<EcuVarFunc>();
                     foreach (EcuVariant ecuVariant in ecuVarList)
                     {
@@ -434,6 +439,11 @@ namespace ExtractEcuFunctions
                         return 1;
                     }
 
+                    foreach (EcuVarFunc ecuVarFunc in ecuVarFunctionsList)
+                    {
+                        Console.WriteLine(ecuVarFunc);
+                    }
+
                     List<EcuRefFunc> ecuRefFuncStructList = new List<EcuRefFunc>();
                     foreach (EcuVarFunc ecuVarFunc in ecuVarFunctionsList)
                     {
@@ -452,6 +462,11 @@ namespace ExtractEcuFunctions
                     {
                         Console.WriteLine("ECU ref functions not found");
                         return 1;
+                    }
+
+                    foreach (EcuRefFunc ecuRefFunc in ecuRefFuncStructList)
+                    {
+                        Console.WriteLine(ecuRefFunc);
                     }
 
                     List<EcuFuncStruct> ecuFuncStructList = new List<EcuFuncStruct>();
