@@ -528,6 +528,82 @@ namespace ExtractEcuFunctions
             return result;
         }
 
+        private static List<EcuJob> GetFixedFuncStructJobsList(SQLiteConnection mDbConnection, EcuFixedFuncStruct ecuFixedFuncStruct)
+        {
+            List<EcuJob> ecuJobList = new List<EcuJob>();
+            string sql = string.Format(@"SELECT JOBS.ID JOBID, FUNCTIONNAMEJOB, NAME " +
+                                       "FROM XEP_ECUJOBS JOBS, XEP_REFECUJOBS REFJOBS WHERE JOBS.ID = REFJOBS.ECUJOBID AND REFJOBS.ID = {0}", ecuFixedFuncStruct.Id);
+            SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
+            using (SQLiteDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    ecuJobList.Add(new EcuJob(reader["JOBID"].ToString(),
+                        reader["FUNCTIONNAMEJOB"].ToString(),
+                        reader["NAME"].ToString(),
+                        ecuFixedFuncStruct));
+                }
+            }
+
+            foreach (EcuJob ecuJob in ecuJobList)
+            {
+                List<EcuJobParameter> ecuJobParList = new List<EcuJobParameter>();
+                sql = string.Format(
+                    @"SELECT PARAM.ID PARAMID, PARAMVALUE, FUNCTIONNAMEPARAMETER, ADAPTERPATH, NAME, ECUJOBID " +
+                    "FROM XEP_ECUPARAMETERS PARAM, XEP_REFECUPARAMETERS REFPARAM WHERE " +
+                    "PARAM.ID = REFPARAM.ECUPARAMETERID AND REFPARAM.ID = {0} AND PARAM.ECUJOBID = {1}", ecuFixedFuncStruct.Id, ecuJob.Id);
+                command = new SQLiteCommand(sql, mDbConnection);
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        ecuJobParList.Add(new EcuJobParameter(reader["PARAMID"].ToString(),
+                            reader["PARAMVALUE"].ToString(),
+                            reader["ADAPTERPATH"].ToString(),
+                            reader["NAME"].ToString(),
+                            ecuJob));
+                    }
+                }
+
+                ecuJob.EcuJobParList = ecuJobParList;
+
+                List<EcuJobResult> ecuJobResultList = new List<EcuJobResult>();
+                sql = string.Format(
+                    @"SELECT RESULTS.ID RESULTID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, ADAPTERPATH, NAME, UNIT, UNITFIXED, FORMAT, MULTIPLIKATOR, OFFSET, RUNDEN, ECUJOBID " +
+                    "FROM XEP_ECURESULTS RESULTS, XEP_REFECURESULTS REFRESULTS WHERE " +
+                    "ECURESULTID = RESULTS.ID AND REFRESULTS.ID = {0} AND RESULTS.ECUJOBID = {1}", ecuFixedFuncStruct.Id, ecuJob.Id);
+                command = new SQLiteCommand(sql, mDbConnection);
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        ecuJobResultList.Add(new EcuJobResult(reader["RESULTID"].ToString(),
+                            reader["TITLE_ENUS"].ToString(),
+                            reader["TITLE_DEDE"].ToString(),
+                            reader["TITLE_RU"].ToString(),
+                            reader["ADAPTERPATH"].ToString(),
+                            reader["NAME"].ToString(),
+                            reader["UNIT"].ToString(),
+                            reader["UNITFIXED"].ToString(),
+                            reader["FORMAT"].ToString(),
+                            reader["MULTIPLIKATOR"].ToString(),
+                            reader["OFFSET"].ToString(),
+                            reader["RUNDEN"].ToString(),
+                            ecuJob));
+                    }
+                }
+
+                foreach (EcuJobResult ecuJobResult in ecuJobResultList)
+                {
+                    ecuJobResult.EcuResultStateValueList = GetResultStateValueList(mDbConnection, ecuJobResult);
+                }
+
+                ecuJob.EcuJobResultList = ecuJobResultList;
+            }
+
+            return ecuJobList;
+        }
+
         private static List<EcuResultStateValue> GetResultStateValueList(SQLiteConnection mDbConnection, EcuJobResult ecuJobResult)
         {
             List<EcuResultStateValue> ecuResultStateValueList = new List<EcuResultStateValue>();
@@ -567,7 +643,7 @@ namespace ExtractEcuFunctions
                 while (reader.Read())
                 {
                     string nodeClass = reader["NODECLASS"].ToString();
-                    ecuFixedFuncStructList.Add(new EcuFixedFuncStruct(reader["ID"].ToString(),
+                    EcuFixedFuncStruct ecuFixedFuncStruct = new EcuFixedFuncStruct(reader["ID"].ToString(),
                         nodeClass,
                         GetNodeClassName(mDbConnection, nodeClass),
                         reader["TITLE_ENUS"].ToString(),
@@ -582,7 +658,10 @@ namespace ExtractEcuFunctions
                         reader["POSTOPERATORTEXT_ENUS"].ToString(),
                         reader["POSTOPERATORTEXT_DEDE"].ToString(),
                         reader["POSTOPERATORTEXT_RU"].ToString(),
-                        ecuFuncStruct));
+                        ecuFuncStruct);
+
+                    ecuFixedFuncStruct.EcuJobList = GetFixedFuncStructJobsList(mDbConnection, ecuFixedFuncStruct);
+                    ecuFixedFuncStructList.Add(ecuFixedFuncStruct);
                 }
             }
 
@@ -698,94 +777,6 @@ namespace ExtractEcuFunctions
                 }
 
                 ecuFuncStruct.FixedFuncStructList = ecuFixedFuncStructList;
-            }
-
-            foreach (EcuFuncStruct ecuFuncStruct in ecuFuncStructList)
-            {
-                foreach (EcuFixedFuncStruct ecuFixedFuncStruct in ecuFuncStruct.FixedFuncStructList)
-                {
-                    List<EcuJob> ecuJobList = new List<EcuJob>();
-                    string sql = string.Format(@"SELECT JOBS.ID JOBID, FUNCTIONNAMEJOB, NAME " +
-                                               "FROM XEP_ECUJOBS JOBS, XEP_REFECUJOBS REFJOBS WHERE JOBS.ID = REFJOBS.ECUJOBID AND REFJOBS.ID = {0}",
-                        ecuFixedFuncStruct.Id);
-                    SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
-                    using (SQLiteDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            ecuJobList.Add(new EcuJob(reader["JOBID"].ToString(),
-                                reader["FUNCTIONNAMEJOB"].ToString(),
-                                reader["NAME"].ToString(),
-                                ecuFixedFuncStruct));
-                        }
-                    }
-
-                    if (ecuJobList.Count == 0)
-                    {
-                        outTextWriter?.WriteLine("ECU jobs not found");
-                        return null;
-                    }
-
-                    foreach (EcuJob ecuJob in ecuJobList)
-                    {
-                        List<EcuJobParameter> ecuJobParList = new List<EcuJobParameter>();
-                        sql = string.Format(
-                            @"SELECT PARAM.ID PARAMID, PARAMVALUE, FUNCTIONNAMEPARAMETER, ADAPTERPATH, NAME, ECUJOBID " +
-                            "FROM XEP_ECUPARAMETERS PARAM, XEP_REFECUPARAMETERS REFPARAM WHERE " +
-                            "PARAM.ID = REFPARAM.ECUPARAMETERID AND REFPARAM.ID = {0} AND PARAM.ECUJOBID = {1}",
-                            ecuFixedFuncStruct.Id, ecuJob.Id);
-                        command = new SQLiteCommand(sql, mDbConnection);
-                        using (SQLiteDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                ecuJobParList.Add(new EcuJobParameter(reader["PARAMID"].ToString(),
-                                    reader["PARAMVALUE"].ToString(),
-                                    reader["ADAPTERPATH"].ToString(),
-                                    reader["NAME"].ToString(),
-                                    ecuJob));
-                            }
-                        }
-
-                        ecuJob.EcuJobParList = ecuJobParList;
-
-                        List<EcuJobResult> ecuJobResultList = new List<EcuJobResult>();
-                        sql = string.Format(
-                            @"SELECT RESULTS.ID RESULTID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, ADAPTERPATH, NAME, UNIT, UNITFIXED, FORMAT, MULTIPLIKATOR, OFFSET, RUNDEN, ECUJOBID " +
-                            "FROM XEP_ECURESULTS RESULTS, XEP_REFECURESULTS REFRESULTS WHERE " +
-                            "ECURESULTID = RESULTS.ID AND REFRESULTS.ID = {0} AND RESULTS.ECUJOBID = {1}",
-                            ecuFixedFuncStruct.Id, ecuJob.Id);
-                        command = new SQLiteCommand(sql, mDbConnection);
-                        using (SQLiteDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                ecuJobResultList.Add(new EcuJobResult(reader["RESULTID"].ToString(),
-                                    reader["TITLE_ENUS"].ToString(),
-                                    reader["TITLE_DEDE"].ToString(),
-                                    reader["TITLE_RU"].ToString(),
-                                    reader["ADAPTERPATH"].ToString(),
-                                    reader["NAME"].ToString(),
-                                    reader["UNIT"].ToString(),
-                                    reader["UNITFIXED"].ToString(),
-                                    reader["FORMAT"].ToString(),
-                                    reader["MULTIPLIKATOR"].ToString(),
-                                    reader["OFFSET"].ToString(),
-                                    reader["RUNDEN"].ToString(),
-                                    ecuJob));
-                            }
-                        }
-
-                        foreach (EcuJobResult ecuJobResult in ecuJobResultList)
-                        {
-                            ecuJobResult.EcuResultStateValueList = GetResultStateValueList(mDbConnection, ecuJobResult);
-                        }
-
-                        ecuJob.EcuJobResultList = ecuJobResultList;
-                    }
-
-                    ecuFixedFuncStruct.EcuJobList = ecuJobList;
-                }
             }
 
             return ecuFuncStructList;
