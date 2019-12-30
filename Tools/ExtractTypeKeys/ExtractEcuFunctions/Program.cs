@@ -11,9 +11,12 @@ namespace ExtractEcuFunctions
 {
     public class EcuVariant
     {
-        public EcuVariant(string id, string groupId, List<string> groupFunctionIds)
+        public EcuVariant(string id, string titleEn, string titleDe, string titleRu, string groupId, List<string> groupFunctionIds)
         {
             Id = id;
+            TitleEn = titleEn;
+            TitleDe = titleDe;
+            TitleRu = titleRu;
             GroupId = groupId;
             GroupFunctionIds = groupFunctionIds;
         }
@@ -56,6 +59,9 @@ namespace ExtractEcuFunctions
         }
 
         public string Id { get; }
+        public string TitleEn { get; }
+        public string TitleDe { get; }
+        public string TitleRu { get; }
         public string GroupId { get; }
         public List<string> GroupFunctionIds { get; }
         public List<RefEcuVariant> RefEcuVariantList { get; set; }
@@ -496,7 +502,7 @@ namespace ExtractEcuFunctions
         private static EcuVariant GetEcuVariant(SQLiteConnection mDbConnection, string ecuName)
         {
             EcuVariant ecuVariant = null;
-            string sql = string.Format(@"SELECT ID, ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuName.ToLowerInvariant());
+            string sql = string.Format(@"SELECT ID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuName.ToLowerInvariant());
             SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
             using (SQLiteDataReader reader = command.ExecuteReader())
             {
@@ -504,6 +510,9 @@ namespace ExtractEcuFunctions
                 {
                     string groupId = reader["ECUGROUPID"].ToString();
                     ecuVariant = new EcuVariant(reader["ID"].ToString(),
+                        reader["TITLE_ENUS"].ToString(),
+                        reader["TITLE_DEDE"].ToString(),
+                        reader["TITLE_RU"].ToString(),
                         groupId,
                         GetEcuGroupFunctionIds(mDbConnection, groupId));
                 }
