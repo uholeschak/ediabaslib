@@ -572,7 +572,8 @@ namespace ExtractEcuFunctions
         static int Main(string[] args)
         {
             Console.OutputEncoding = Encoding.Unicode;
-            TextWriter outTextWriter = args.Length > 0 ? Console.Out : null;
+            TextWriter outTextWriter = args.Length >= 0 ? Console.Out : null;
+            TextWriter logTextWriter = args.Length >= 3 ? Console.Out : null;
 
             if (args.Length < 1)
             {
@@ -651,7 +652,7 @@ namespace ExtractEcuFunctions
 
                         if (ecuVariant != null)
                         {
-                            outTextWriter?.WriteLine(ecuVariant);
+                            logTextWriter?.WriteLine(ecuVariant);
 
                             string xmlFile = Path.Combine(outDirSub, name.ToLowerInvariant() + ".xml");
                             XmlSerializer serializer = new XmlSerializer(ecuVariant.GetType());
