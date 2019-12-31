@@ -252,7 +252,7 @@ namespace ExtractEcuFunctions
     public class EcuJobResult
     {
         public EcuJobResult(string id, string titleEn, string titleDe, string titleRu, string adapterPath,
-            string name, string unit, string unitFixed, string format, string mult, string offset, string round, EcuJob ecuJob)
+            string name, string location, string unit, string unitFixed, string format, string mult, string offset, string round, string numberFormat, EcuJob ecuJob)
         {
             Id = id;
             TitleEn = titleEn;
@@ -260,12 +260,14 @@ namespace ExtractEcuFunctions
             TitleRu = titleRu;
             AdapterPath = adapterPath;
             Name = name;
+            Location = location;
             Unit = unit;
             UnitFixed = unitFixed;
             Format = format;
             Mult = mult;
             Offset = offset;
             Round = round;
+            NumberFormat = numberFormat;
             EcuJob = ecuJob;
         }
 
@@ -296,12 +298,14 @@ namespace ExtractEcuFunctions
         public string TitleRu { get; }
         public string AdapterPath { get; }
         public string Name { get; }
+        public string Location { get; }
         public string Unit { get; }
         public string UnitFixed { get; }
         public string Format { get; }
         public string Mult { get; }
         public string Offset { get; }
         public string Round { get; }
+        public string NumberFormat { get; }
         public EcuJob EcuJob { get; }
         public List<EcuResultStateValue> EcuResultStateValueList { get; set; }
     }
@@ -617,7 +621,7 @@ namespace ExtractEcuFunctions
 
                 List<EcuJobResult> ecuJobResultList = new List<EcuJobResult>();
                 sql = string.Format(
-                    @"SELECT RESULTS.ID RESULTID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, ADAPTERPATH, NAME, UNIT, UNITFIXED, FORMAT, MULTIPLIKATOR, OFFSET, RUNDEN, ECUJOBID " +
+                    @"SELECT RESULTS.ID RESULTID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, ADAPTERPATH, NAME, LOCATION, UNIT, UNITFIXED, FORMAT, MULTIPLIKATOR, OFFSET, RUNDEN, ZAHLENFORMAT, ECUJOBID " +
                     "FROM XEP_ECURESULTS RESULTS, XEP_REFECURESULTS REFRESULTS WHERE " +
                     "ECURESULTID = RESULTS.ID AND REFRESULTS.ID = {0} AND RESULTS.ECUJOBID = {1}", ecuFixedFuncStruct.Id, ecuJob.Id);
                 command = new SQLiteCommand(sql, mDbConnection);
@@ -631,12 +635,14 @@ namespace ExtractEcuFunctions
                             reader["TITLE_RU"].ToString(),
                             reader["ADAPTERPATH"].ToString(),
                             reader["NAME"].ToString(),
+                            reader["LOCATION"].ToString(),
                             reader["UNIT"].ToString(),
                             reader["UNITFIXED"].ToString(),
                             reader["FORMAT"].ToString(),
                             reader["MULTIPLIKATOR"].ToString(),
                             reader["OFFSET"].ToString(),
                             reader["RUNDEN"].ToString(),
+                            reader["ZAHLENFORMAT"].ToString(),
                             ecuJob));
                     }
                 }
