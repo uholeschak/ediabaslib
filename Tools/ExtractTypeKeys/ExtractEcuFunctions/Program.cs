@@ -70,11 +70,10 @@ namespace ExtractEcuFunctions
 
     public class RefEcuVariant
     {
-        public RefEcuVariant(string id, string ecuVariantId, EcuVariant ecuVariant)
+        public RefEcuVariant(string id, string ecuVariantId)
         {
             Id = id;
             EcuVariantId = ecuVariantId;
-            EcuVariant = ecuVariant;
         }
 
         public string ToString(string prefix)
@@ -100,17 +99,15 @@ namespace ExtractEcuFunctions
 
         public string Id { get; }
         public string EcuVariantId { get; }
-        public EcuVariant EcuVariant { get; }
         public List<EcuFixedFuncStruct> FixedFuncStructList { get; set; }
     }
 
     public class EcuVarFunc
     {
-        public EcuVarFunc(string id, string groupFuncId, EcuVariant ecuVariant)
+        public EcuVarFunc(string id, string groupFuncId)
         {
             Id = id;
             GroupFuncId = groupFuncId;
-            EcuVariant = ecuVariant;
         }
 
         public string ToString(string prefix)
@@ -128,18 +125,16 @@ namespace ExtractEcuFunctions
 
         public string Id { get; }
         public string GroupFuncId { get; }
-        public EcuVariant EcuVariant { get; }
     }
 
     public class EcuFuncStruct
     {
-        public EcuFuncStruct(string id, string titleEn, string titleDe, string titleRu, EcuVarFunc ecuVarFunc)
+        public EcuFuncStruct(string id, string titleEn, string titleDe, string titleRu)
         {
             Id = id;
             TitleEn = titleEn;
             TitleDe = titleDe;
             TitleRu = titleRu;
-            EcuVarFunc = ecuVarFunc;
         }
 
         public string ToString(string prefix)
@@ -167,18 +162,16 @@ namespace ExtractEcuFunctions
         public string TitleEn { get; }
         public string TitleDe { get; }
         public string TitleRu { get; }
-        public EcuVarFunc EcuVarFunc { get; }
         public List<EcuFixedFuncStruct> FixedFuncStructList { get; set; }
     }
 
     public class EcuJob
     {
-        public EcuJob(string id, string funcNameJob, string name, EcuFixedFuncStruct ecuFixedFuncStruct)
+        public EcuJob(string id, string funcNameJob, string name)
         {
             Id = id;
             FuncNameJob = funcNameJob;
             Name = name;
-            EcuFixedFuncStruct = ecuFixedFuncStruct;
         }
 
         public string ToString(string prefix)
@@ -213,20 +206,18 @@ namespace ExtractEcuFunctions
         public string Id { get; }
         public string FuncNameJob { get; }
         public string Name { get; }
-        public EcuFixedFuncStruct EcuFixedFuncStruct { get; }
         public List<EcuJobParameter> EcuJobParList { get; set; }
         public List<EcuJobResult> EcuJobResultList { get; set; }
     }
 
     public class EcuJobParameter
     {
-        public EcuJobParameter(string id, string value, string adapterPath, string name, EcuJob ecuJob)
+        public EcuJobParameter(string id, string value, string adapterPath, string name)
         {
             Id = id;
             Value = value;
             AdapterPath = adapterPath;
             Name = name;
-            EcuJob = ecuJob;
         }
 
         public string ToString(string prefix)
@@ -246,13 +237,12 @@ namespace ExtractEcuFunctions
         public string Value { get; }
         public string AdapterPath { get; }
         public string Name { get; }
-        public EcuJob EcuJob { get; }
     }
 
     public class EcuJobResult
     {
         public EcuJobResult(string id, string titleEn, string titleDe, string titleRu, string adapterPath,
-            string name, string location, string unit, string unitFixed, string format, string mult, string offset, string round, string numberFormat, EcuJob ecuJob)
+            string name, string location, string unit, string unitFixed, string format, string mult, string offset, string round, string numberFormat)
         {
             Id = id;
             TitleEn = titleEn;
@@ -268,7 +258,6 @@ namespace ExtractEcuFunctions
             Offset = offset;
             Round = round;
             NumberFormat = numberFormat;
-            EcuJob = ecuJob;
         }
 
         public string ToString(string prefix)
@@ -306,14 +295,13 @@ namespace ExtractEcuFunctions
         public string Offset { get; }
         public string Round { get; }
         public string NumberFormat { get; }
-        public EcuJob EcuJob { get; }
         public List<EcuResultStateValue> EcuResultStateValueList { get; set; }
     }
 
     public class EcuResultStateValue
     {
         public EcuResultStateValue(string id, string titleEn, string titleDe, string titleRu,
-            string stateValue, string validFrom, string validTo, string parentId, EcuJobResult ecuJobResult)
+            string stateValue, string validFrom, string validTo, string parentId)
         {
             Id = id;
             TitleEn = titleEn;
@@ -323,7 +311,6 @@ namespace ExtractEcuFunctions
             ValidFrom = validFrom;
             ValidTo = validTo;
             ParentId = parentId;
-            EcuJobResult = ecuJobResult;
         }
 
         public string ToString(string prefix)
@@ -347,7 +334,6 @@ namespace ExtractEcuFunctions
         public string ValidFrom { get; }
         public string ValidTo { get; }
         public string ParentId { get; }
-        public EcuJobResult EcuJobResult { get; }
     }
 
     public class EcuFixedFuncStruct
@@ -355,8 +341,7 @@ namespace ExtractEcuFunctions
         public EcuFixedFuncStruct(string id, string nodeClass, string nodeClassName, string titleEn, string titleDe, string titleRu,
             string prepOpEn, string prepOpDe, string prepOpRu,
             string procOpEn, string procOpDe, string procOpRu,
-            string postOpEn, string postOpDe, string postOpRu,
-            EcuFuncStruct ecuFuncStruct)
+            string postOpEn, string postOpDe, string postOpRu)
         {
             Id = id;
             NodeClass = nodeClass;
@@ -373,7 +358,6 @@ namespace ExtractEcuFunctions
             PostOpEn = postOpEn;
             PostOpDe = postOpDe;
             PostOpRu = postOpRu;
-            EcuFuncStruct = ecuFuncStruct;
         }
 
         public string ToString(string prefix)
@@ -412,7 +396,6 @@ namespace ExtractEcuFunctions
         public string PostOpEn { get; }
         public string PostOpDe { get; }
         public string PostOpRu { get; }
-        public EcuFuncStruct EcuFuncStruct { get; }
         public List<EcuJob> EcuJobList { get; set; }
     }
 
@@ -592,8 +575,7 @@ namespace ExtractEcuFunctions
                 {
                     ecuJobList.Add(new EcuJob(reader["JOBID"].ToString(),
                         reader["FUNCTIONNAMEJOB"].ToString(),
-                        reader["NAME"].ToString(),
-                        ecuFixedFuncStruct));
+                        reader["NAME"].ToString()));
                 }
             }
 
@@ -612,8 +594,7 @@ namespace ExtractEcuFunctions
                         ecuJobParList.Add(new EcuJobParameter(reader["PARAMID"].ToString(),
                             reader["PARAMVALUE"].ToString(),
                             reader["ADAPTERPATH"].ToString(),
-                            reader["NAME"].ToString(),
-                            ecuJob));
+                            reader["NAME"].ToString()));
                     }
                 }
 
@@ -642,8 +623,7 @@ namespace ExtractEcuFunctions
                             reader["MULTIPLIKATOR"].ToString(),
                             reader["OFFSET"].ToString(),
                             reader["RUNDEN"].ToString(),
-                            reader["ZAHLENFORMAT"].ToString(),
-                            ecuJob));
+                            reader["ZAHLENFORMAT"].ToString()));
                     }
                 }
 
@@ -675,15 +655,14 @@ namespace ExtractEcuFunctions
                         reader["STATEVALUE"].ToString(),
                         reader["VALIDFROM"].ToString(),
                         reader["VALIDTO"].ToString(),
-                        reader["PARENTID"].ToString(),
-                        ecuJobResult));
+                        reader["PARENTID"].ToString()));
                 }
             }
 
             return ecuResultStateValueList;
         }
 
-        private static List<EcuFixedFuncStruct> GetEcuFixedFuncStructList(SQLiteConnection mDbConnection, string parentId, EcuFuncStruct ecuFuncStruct = null)
+        private static List<EcuFixedFuncStruct> GetEcuFixedFuncStructList(SQLiteConnection mDbConnection, string parentId)
         {
             List<EcuFixedFuncStruct> ecuFixedFuncStructList = new List<EcuFixedFuncStruct>();
             string sql = string.Format(@"SELECT ID, NODECLASS, TITLE_ENUS, TITLE_DEDE, TITLE_RU, " +
@@ -711,8 +690,7 @@ namespace ExtractEcuFunctions
                         reader["PROCESSINGOPERATORTEXT_RU"].ToString(),
                         reader["POSTOPERATORTEXT_ENUS"].ToString(),
                         reader["POSTOPERATORTEXT_DEDE"].ToString(),
-                        reader["POSTOPERATORTEXT_RU"].ToString(),
-                        ecuFuncStruct);
+                        reader["POSTOPERATORTEXT_RU"].ToString());
 
                     ecuFixedFuncStruct.EcuJobList = GetFixedFuncStructJobsList(mDbConnection, ecuFixedFuncStruct);
                     ecuFixedFuncStructList.Add(ecuFixedFuncStruct);
@@ -740,8 +718,7 @@ namespace ExtractEcuFunctions
                     while (reader.Read())
                     {
                         refEcuVariantList.Add(new RefEcuVariant(reader["ID"].ToString(),
-                            reader["ECUVARIANTID"].ToString(),
-                            ecuVariant));
+                            reader["ECUVARIANTID"].ToString()));
                     }
                 }
             }
@@ -775,7 +752,7 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        ecuVarFunctionsList.Add(new EcuVarFunc(reader["ID"].ToString(), ecuGroupFunctionId, ecuVariant));
+                        ecuVarFunctionsList.Add(new EcuVarFunc(reader["ID"].ToString(), ecuGroupFunctionId));
                     }
                 }
             }
@@ -804,8 +781,7 @@ namespace ExtractEcuFunctions
                         ecuFuncStructList.Add(new EcuFuncStruct(reader["FUNCSTRUCTID"].ToString(),
                             reader["TITLE_ENUS"].ToString(),
                             reader["TITLE_DEDE"].ToString(),
-                            reader["TITLE_RU"].ToString(),
-                            ecuVarFunc));
+                            reader["TITLE_RU"].ToString()));
                     }
                 }
             }
@@ -818,7 +794,7 @@ namespace ExtractEcuFunctions
 
             foreach (EcuFuncStruct ecuFuncStruct in ecuFuncStructList)
             {
-                List<EcuFixedFuncStruct> ecuFixedFuncStructList = GetEcuFixedFuncStructList(mDbConnection, ecuFuncStruct.Id, ecuFuncStruct);
+                List<EcuFixedFuncStruct> ecuFixedFuncStructList = GetEcuFixedFuncStructList(mDbConnection, ecuFuncStruct.Id);
                 if (ecuFixedFuncStructList.Count == 0)
                 {
                     outTextWriter?.WriteLine("ECU fixed function structures not found for ECU func struct");
