@@ -10,8 +10,7 @@ using ICSharpCode.SharpZipLib.Zip;
 
 namespace ExtractEcuFunctions
 {
-    [XmlInclude(typeof(RefEcuVariant))]
-    [XmlInclude(typeof(EcuFuncStruct))]
+    [XmlInclude(typeof(RefEcuVariant)), XmlInclude(typeof(EcuFuncStruct))]
     public class EcuVariant
     {
         public EcuVariant()
@@ -66,17 +65,17 @@ namespace ExtractEcuFunctions
         }
 
         [XmlElement]
-        public string Id { get; }
+        public string Id { get; set; }
         [XmlElement]
-        public string TitleEn { get; }
+        public string TitleEn { get; set; }
         [XmlElement]
-        public string TitleDe { get; }
+        public string TitleDe { get; set; }
         [XmlElement]
-        public string TitleRu { get; }
+        public string TitleRu { get; set; }
         [XmlElement]
-        public string GroupId { get; }
+        public string GroupId { get; set; }
         [XmlArray]
-        public List<string> GroupFunctionIds { get; }
+        public List<string> GroupFunctionIds { get; set; }
         [XmlArray]
         public List<RefEcuVariant> RefEcuVariantList { get; set; }
         [XmlArray]
@@ -118,9 +117,9 @@ namespace ExtractEcuFunctions
         }
 
         [XmlElement]
-        public string Id { get; }
+        public string Id { get; set; }
         [XmlElement]
-        public string EcuVariantId { get; }
+        public string EcuVariantId { get; set; }
         [XmlArray]
         public List<EcuFixedFuncStruct> FixedFuncStructList { get; set; }
     }
@@ -151,9 +150,9 @@ namespace ExtractEcuFunctions
         }
 
         [XmlElement]
-        public string Id { get; }
+        public string Id { get; set; }
         [XmlElement]
-        public string GroupFuncId { get; }
+        public string GroupFuncId { get; set; }
     }
 
     [XmlInclude(typeof(EcuFixedFuncStruct))]
@@ -193,19 +192,18 @@ namespace ExtractEcuFunctions
         }
 
         [XmlElement]
-        public string Id { get; }
+        public string Id { get; set; }
         [XmlElement]
-        public string TitleEn { get; }
+        public string TitleEn { get; set; }
         [XmlElement]
-        public string TitleDe { get; }
+        public string TitleDe { get; set; }
         [XmlElement]
-        public string TitleRu { get; }
+        public string TitleRu { get; set; }
         [XmlArray]
         public List<EcuFixedFuncStruct> FixedFuncStructList { get; set; }
     }
 
-    [XmlInclude(typeof(EcuJobParameter))]
-    [XmlInclude(typeof(EcuJobResult))]
+    [XmlInclude(typeof(EcuJobParameter)), XmlInclude(typeof(EcuJobResult))]
     public class EcuJob
     {
         public EcuJob()
@@ -249,11 +247,11 @@ namespace ExtractEcuFunctions
         }
 
         [XmlElement]
-        public string Id { get; }
+        public string Id { get; set; }
         [XmlElement]
-        public string FuncNameJob { get; }
+        public string FuncNameJob { get; set; }
         [XmlElement]
-        public string Name { get; }
+        public string Name { get; set; }
         [XmlArray]
         public List<EcuJobParameter> EcuJobParList { get; set; }
         [XmlArray]
@@ -288,13 +286,13 @@ namespace ExtractEcuFunctions
         }
 
         [XmlElement]
-        public string Id { get; }
+        public string Id { get; set; }
         [XmlElement]
-        public string Value { get; }
+        public string Value { get; set; }
         [XmlElement]
-        public string AdapterPath { get; }
+        public string AdapterPath { get; set; }
         [XmlElement]
-        public string Name { get; }
+        public string Name { get; set; }
     }
 
     [XmlInclude(typeof(EcuResultStateValue))]
@@ -345,33 +343,33 @@ namespace ExtractEcuFunctions
         }
 
         [XmlElement]
-        public string Id { get; }
+        public string Id { get; set; }
         [XmlElement]
-        public string TitleEn { get; }
+        public string TitleEn { get; set; }
         [XmlElement]
-        public string TitleDe { get; }
+        public string TitleDe { get; set; }
         [XmlElement]
-        public string TitleRu { get; }
+        public string TitleRu { get; set; }
         [XmlElement]
-        public string AdapterPath { get; }
+        public string AdapterPath { get; set; }
         [XmlElement]
-        public string Name { get; }
+        public string Name { get; set; }
         [XmlElement]
-        public string Location { get; }
+        public string Location { get; set; }
         [XmlElement]
-        public string Unit { get; }
+        public string Unit { get; set; }
         [XmlElement]
-        public string UnitFixed { get; }
+        public string UnitFixed { get; set; }
         [XmlElement]
-        public string Format { get; }
+        public string Format { get; set; }
         [XmlElement]
-        public string Mult { get; }
+        public string Mult { get; set; }
         [XmlElement]
-        public string Offset { get; }
+        public string Offset { get; set; }
         [XmlElement]
-        public string Round { get; }
+        public string Round { get; set; }
         [XmlElement]
-        public string NumberFormat { get; }
+        public string NumberFormat { get; set; }
         [XmlArray]
         public List<EcuResultStateValue> EcuResultStateValueList { get; set; }
     }
@@ -409,21 +407,21 @@ namespace ExtractEcuFunctions
         }
 
         [XmlElement]
-        public string Id { get; }
+        public string Id { get; set; }
         [XmlElement]
-        public string TitleEn { get; }
+        public string TitleEn { get; set; }
         [XmlElement]
-        public string TitleDe { get; }
+        public string TitleDe { get; set; }
         [XmlElement]
-        public string TitleRu { get; }
+        public string TitleRu { get; set; }
         [XmlElement]
-        public string StateValue { get; }
+        public string StateValue { get; set; }
         [XmlElement]
-        public string ValidFrom { get; }
+        public string ValidFrom { get; set; }
         [XmlElement]
-        public string ValidTo { get; }
+        public string ValidTo { get; set; }
         [XmlElement]
-        public string ParentId { get; }
+        public string ParentId { get; set; }
     }
 
     [XmlInclude(typeof(EcuJob))]
@@ -477,35 +475,35 @@ namespace ExtractEcuFunctions
         }
 
         [XmlElement]
-        public string Id { get; }
+        public string Id { get; set; }
         [XmlElement]
-        public string NodeClass { get; }
+        public string NodeClass { get; set; }
         [XmlElement]
-        public string NodeClassName { get; }
+        public string NodeClassName { get; set; }
         [XmlElement]
-        public string TitleEn { get; }
+        public string TitleEn { get; set; }
         [XmlElement]
-        public string TitleDe { get; }
+        public string TitleDe { get; set; }
         [XmlElement]
-        public string TitleRu { get; }
+        public string TitleRu { get; set; }
         [XmlElement]
-        public string PrepOpEn { get; }
+        public string PrepOpEn { get; set; }
         [XmlElement]
-        public string PrepOpDe { get; }
+        public string PrepOpDe { get; set; }
         [XmlElement]
-        public string PrepOpRu { get; }
+        public string PrepOpRu { get; set; }
         [XmlElement]
-        public string ProcOpEn { get; }
+        public string ProcOpEn { get; set; }
         [XmlElement]
-        public string ProcOpDe { get; }
+        public string ProcOpDe { get; set; }
         [XmlElement]
-        public string ProcOpRu { get; }
+        public string ProcOpRu { get; set; }
         [XmlElement]
-        public string PostOpEn { get; }
+        public string PostOpEn { get; set; }
         [XmlElement]
-        public string PostOpDe { get; }
+        public string PostOpDe { get; set; }
         [XmlElement]
-        public string PostOpRu { get; }
+        public string PostOpRu { get; set; }
         [XmlArray]
         public List<EcuJob> EcuJobList { get; set; }
     }
