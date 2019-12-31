@@ -426,6 +426,7 @@ namespace ExtractEcuFunctions
         public string ParentId { get; }
     }
 
+    [XmlInclude(typeof(EcuJob))]
     public class EcuFixedFuncStruct
     {
         public EcuFixedFuncStruct()
@@ -505,7 +506,7 @@ namespace ExtractEcuFunctions
         public string PostOpDe { get; }
         [XmlElement]
         public string PostOpRu { get; }
-        [XmlElement]
+        [XmlArray]
         public List<EcuJob> EcuJobList { get; set; }
     }
 
