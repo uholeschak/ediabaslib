@@ -4,6 +4,7 @@ using System.Data.SQLite;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Xml.Serialization;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 
@@ -11,6 +12,10 @@ namespace ExtractEcuFunctions
 {
     public class EcuVariant
     {
+        public EcuVariant()
+        {
+        }
+
         public EcuVariant(string id, string titleEn, string titleDe, string titleRu, string groupId, List<string> groupFunctionIds)
         {
             Id = id;
@@ -70,6 +75,10 @@ namespace ExtractEcuFunctions
 
     public class RefEcuVariant
     {
+        public RefEcuVariant()
+        {
+        }
+
         public RefEcuVariant(string id, string ecuVariantId)
         {
             Id = id;
@@ -104,6 +113,10 @@ namespace ExtractEcuFunctions
 
     public class EcuVarFunc
     {
+        public EcuVarFunc()
+        {
+        }
+
         public EcuVarFunc(string id, string groupFuncId)
         {
             Id = id;
@@ -129,6 +142,10 @@ namespace ExtractEcuFunctions
 
     public class EcuFuncStruct
     {
+        public EcuFuncStruct()
+        {
+        }
+
         public EcuFuncStruct(string id, string titleEn, string titleDe, string titleRu)
         {
             Id = id;
@@ -167,6 +184,10 @@ namespace ExtractEcuFunctions
 
     public class EcuJob
     {
+        public EcuJob()
+        {
+        }
+
         public EcuJob(string id, string funcNameJob, string name)
         {
             Id = id;
@@ -212,6 +233,10 @@ namespace ExtractEcuFunctions
 
     public class EcuJobParameter
     {
+        public EcuJobParameter()
+        {
+        }
+
         public EcuJobParameter(string id, string value, string adapterPath, string name)
         {
             Id = id;
@@ -241,6 +266,10 @@ namespace ExtractEcuFunctions
 
     public class EcuJobResult
     {
+        public EcuJobResult()
+        {
+        }
+
         public EcuJobResult(string id, string titleEn, string titleDe, string titleRu, string adapterPath,
             string name, string location, string unit, string unitFixed, string format, string mult, string offset, string round, string numberFormat)
         {
@@ -300,6 +329,10 @@ namespace ExtractEcuFunctions
 
     public class EcuResultStateValue
     {
+        public EcuResultStateValue()
+        {
+        }
+
         public EcuResultStateValue(string id, string titleEn, string titleDe, string titleRu,
             string stateValue, string validFrom, string validTo, string parentId)
         {
@@ -338,6 +371,10 @@ namespace ExtractEcuFunctions
 
     public class EcuFixedFuncStruct
     {
+        public EcuFixedFuncStruct()
+        {
+        }
+
         public EcuFixedFuncStruct(string id, string nodeClass, string nodeClassName, string titleEn, string titleDe, string titleRu,
             string prepOpEn, string prepOpDe, string prepOpRu,
             string procOpEn, string procOpDe, string procOpRu,
@@ -432,6 +469,20 @@ namespace ExtractEcuFunctions
 
             try
             {
+                string outDirSub = Path.Combine(outDir, "EcuFunctions");
+                try
+                {
+                    if (Directory.Exists(outDirSub))
+                    {
+                        Directory.Delete(outDirSub);
+                    }
+                    Directory.CreateDirectory(outDirSub);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
                 string connection = "Data Source=\"" + args[0] + "\";";
                 using (SQLiteConnection mDbConnection = new SQLiteConnection(connection))
                 {
@@ -457,6 +508,14 @@ namespace ExtractEcuFunctions
                         if (ecuVariant != null)
                         {
                             outTextWriter?.WriteLine(ecuVariant);
+
+                            string xmlFile = Path.Combine(outDirSub, name.ToLowerInvariant() + ".xml");
+
+                            XmlSerializer serializer = new XmlSerializer(ecuVariant.GetType());
+                            using (TextWriter writer = new StreamWriter(xmlFile))
+                            {
+                                serializer.Serialize(writer, ecuVariant);
+                            }
                         }
                     }
 
