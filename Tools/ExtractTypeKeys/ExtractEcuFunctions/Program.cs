@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Xml.Serialization;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
@@ -608,6 +609,7 @@ namespace ExtractEcuFunctions
                     if (Directory.Exists(outDirSub))
                     {
                         Directory.Delete(outDirSub, true);
+                        Thread.Sleep(1000);
                     }
                     Directory.CreateDirectory(outDirSub);
                 }
@@ -648,7 +650,7 @@ namespace ExtractEcuFunctions
                     foreach (string name in ecuNameList)
                     {
                         outTextWriter?.WriteLine("*** ECU: {0} ***", name);
-                        EcuVariant ecuVariant = GetEcuVariantFunctions(outTextWriter, mDbConnection, name);
+                        EcuVariant ecuVariant = GetEcuVariantFunctions(outTextWriter, logTextWriter, mDbConnection, name);
 
                         if (ecuVariant != null)
                         {
@@ -909,7 +911,7 @@ namespace ExtractEcuFunctions
             return ecuFixedFuncStructList;
         }
 
-        private static EcuVariant GetEcuVariantFunctions(TextWriter outTextWriter, SQLiteConnection mDbConnection, string ecuName)
+        private static EcuVariant GetEcuVariantFunctions(TextWriter outTextWriter, TextWriter logTextWriter, SQLiteConnection mDbConnection, string ecuName)
         {
             EcuVariant ecuVariant = GetEcuVariant(mDbConnection, ecuName);
             if (ecuVariant == null)
@@ -974,7 +976,7 @@ namespace ExtractEcuFunctions
 
             foreach (EcuVarFunc ecuVarFunc in ecuVarFunctionsList)
             {
-                outTextWriter?.WriteLine(ecuVarFunc);
+                logTextWriter?.WriteLine(ecuVarFunc);
             }
 
             List<EcuFuncStruct> ecuFuncStructList = new List<EcuFuncStruct>();
