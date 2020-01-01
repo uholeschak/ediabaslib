@@ -1,573 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data.SQLite;
 using System.IO;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
+using BmwFileReader;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 
 namespace ExtractEcuFunctions
 {
-    [XmlInclude(typeof(RefEcuVariant)), XmlInclude(typeof(EcuFuncStruct))]
-    public class EcuVariant
-    {
-        public EcuVariant()
-        {
-            Id = string.Empty;
-            TitleEn = string.Empty;
-            TitleDe = string.Empty;
-            TitleRu = string.Empty;
-            GroupId = string.Empty;
-        }
-
-        public EcuVariant(string id, string titleEn, string titleDe, string titleRu, string groupId, List<string> groupFunctionIds)
-        {
-            Id = id;
-            TitleEn = titleEn;
-            TitleDe = titleDe;
-            TitleRu = titleRu;
-            GroupId = groupId;
-            GroupFunctionIds = groupFunctionIds;
-        }
-
-        public string ToString(string prefix)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(prefix + "VARIANT:");
-            sb.Append(this.PropertyList(prefix + " "));
-            if (GroupFunctionIds != null)
-            {
-                foreach (string GroupFunctionId in GroupFunctionIds)
-                {
-                    sb.Append(prefix + " " + GroupFunctionId);
-                }
-            }
-
-            if (RefEcuVariantList != null)
-            {
-                foreach (RefEcuVariant refEcuVariant in RefEcuVariantList)
-                {
-                    sb.Append(refEcuVariant.ToString(prefix + " "));
-                }
-            }
-
-            if (EcuFuncStructList != null)
-            {
-                foreach (EcuFuncStruct ecuFuncStruct in EcuFuncStructList)
-                {
-                    sb.Append(ecuFuncStruct.ToString(prefix + " "));
-                }
-            }
-
-            return sb.ToString();
-        }
-
-        public override string ToString()
-        {
-            return ToString("");
-        }
-
-        [XmlElement, DefaultValue("")]
-        public string Id { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string TitleEn { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string TitleDe { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string TitleRu { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string GroupId { get; set; }
-        [XmlArray]
-        public List<string> GroupFunctionIds { get; set; }
-        [XmlArray]
-        public List<RefEcuVariant> RefEcuVariantList { get; set; }
-        [XmlArray]
-        public List<EcuFuncStruct> EcuFuncStructList { get; set; }
-    }
-
-    [XmlInclude(typeof(EcuFixedFuncStruct))]
-    public class RefEcuVariant
-    {
-        public RefEcuVariant()
-        {
-            Id = string.Empty;
-            EcuVariantId = string.Empty;
-        }
-
-        public RefEcuVariant(string id, string ecuVariantId)
-        {
-            Id = id;
-            EcuVariantId = ecuVariantId;
-        }
-
-        public string ToString(string prefix)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(prefix + "REFVARIANT:");
-            sb.Append(this.PropertyList(prefix + " "));
-
-            if (FixedFuncStructList != null)
-            {
-                foreach (EcuFixedFuncStruct ecuFixedFuncStruct in FixedFuncStructList)
-                {
-                    sb.Append(ecuFixedFuncStruct.ToString(prefix + " "));
-                }
-            }
-            return sb.ToString();
-        }
-
-        public override string ToString()
-        {
-            return ToString("");
-        }
-
-        [XmlElement, DefaultValue("")]
-        public string Id { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string EcuVariantId { get; set; }
-        [XmlArray]
-        public List<EcuFixedFuncStruct> FixedFuncStructList { get; set; }
-    }
-
-    public class EcuVarFunc
-    {
-        public EcuVarFunc()
-        {
-            Id = string.Empty;
-            GroupFuncId = string.Empty;
-        }
-
-        public EcuVarFunc(string id, string groupFuncId)
-        {
-            Id = id;
-            GroupFuncId = groupFuncId;
-        }
-
-        public string ToString(string prefix)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(prefix + "VARFUNC:");
-            sb.Append(this.PropertyList(prefix + " "));
-            return sb.ToString();
-        }
-
-        public override string ToString()
-        {
-            return ToString("");
-        }
-
-        [XmlElement, DefaultValue("")]
-        public string Id { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string GroupFuncId { get; set; }
-    }
-
-    [XmlInclude(typeof(EcuFixedFuncStruct))]
-    public class EcuFuncStruct
-    {
-        public EcuFuncStruct()
-        {
-            Id = string.Empty;
-            TitleEn = string.Empty;
-            TitleDe = string.Empty;
-            TitleRu = string.Empty;
-        }
-
-        public EcuFuncStruct(string id, string titleEn, string titleDe, string titleRu)
-        {
-            Id = id;
-            TitleEn = titleEn;
-            TitleDe = titleDe;
-            TitleRu = titleRu;
-        }
-
-        public string ToString(string prefix)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(prefix + "FUNC:");
-            sb.Append(this.PropertyList(prefix + " "));
-            if (FixedFuncStructList != null)
-            {
-                foreach (EcuFixedFuncStruct ecuFixedFuncStruct in FixedFuncStructList)
-                {
-                    sb.Append(ecuFixedFuncStruct.ToString(prefix + " "));
-                }
-            }
-
-            return sb.ToString();
-        }
-
-        public override string ToString()
-        {
-            return ToString("");
-        }
-
-        [XmlElement, DefaultValue("")]
-        public string Id { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string TitleEn { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string TitleDe { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string TitleRu { get; set; }
-        [XmlArray]
-        public List<EcuFixedFuncStruct> FixedFuncStructList { get; set; }
-    }
-
-    [XmlInclude(typeof(EcuJobParameter)), XmlInclude(typeof(EcuJobResult))]
-    public class EcuJob
-    {
-        public EcuJob()
-        {
-            Id = string.Empty;
-            FuncNameJob = string.Empty;
-            Name = string.Empty;
-        }
-
-        public EcuJob(string id, string funcNameJob, string name)
-        {
-            Id = id;
-            FuncNameJob = funcNameJob;
-            Name = name;
-        }
-
-        public string ToString(string prefix)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(prefix + "JOB:");
-            sb.Append(this.PropertyList(prefix + " "));
-            if (EcuJobParList != null)
-            {
-                foreach (EcuJobParameter ecuJobParameter in EcuJobParList)
-                {
-                    sb.Append(ecuJobParameter.ToString(prefix + " "));
-                }
-            }
-
-            if (EcuJobResultList != null)
-            {
-                foreach (EcuJobResult ecuJobResult in EcuJobResultList)
-                {
-                    sb.Append(ecuJobResult.ToString(prefix + " "));
-                }
-            }
-
-            return sb.ToString();
-        }
-
-        public override string ToString()
-        {
-            return ToString("");
-        }
-
-        [XmlElement, DefaultValue("")]
-        public string Id { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string FuncNameJob { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string Name { get; set; }
-        [XmlArray]
-        public List<EcuJobParameter> EcuJobParList { get; set; }
-        [XmlArray]
-        public List<EcuJobResult> EcuJobResultList { get; set; }
-    }
-
-    public class EcuJobParameter
-    {
-        public EcuJobParameter()
-        {
-            Id = string.Empty;
-            Value = string.Empty;
-            AdapterPath = string.Empty;
-            Name = string.Empty;
-        }
-
-        public EcuJobParameter(string id, string value, string adapterPath, string name)
-        {
-            Id = id;
-            Value = value;
-            AdapterPath = adapterPath;
-            Name = name;
-        }
-
-        public string ToString(string prefix)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(prefix + "JOB:");
-            sb.Append(this.PropertyList(prefix + " "));
-            return sb.ToString();
-        }
-
-        public override string ToString()
-        {
-            return ToString("");
-        }
-
-        [XmlElement, DefaultValue("")]
-        public string Id { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string Value { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string AdapterPath { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string Name { get; set; }
-    }
-
-    [XmlInclude(typeof(EcuResultStateValue))]
-    public class EcuJobResult
-    {
-        public EcuJobResult()
-        {
-            Id = string.Empty;
-            TitleEn = string.Empty;
-            TitleDe = string.Empty;
-            TitleRu = string.Empty;
-            AdapterPath = string.Empty;
-            Name = string.Empty;
-            Location = string.Empty;
-            Unit = string.Empty;
-            UnitFixed = string.Empty;
-            Format = string.Empty;
-            Mult = string.Empty;
-            Offset = string.Empty;
-            Round = string.Empty;
-            NumberFormat = string.Empty;
-        }
-
-        public EcuJobResult(string id, string titleEn, string titleDe, string titleRu, string adapterPath,
-            string name, string location, string unit, string unitFixed, string format, string mult, string offset, string round, string numberFormat)
-        {
-            Id = id;
-            TitleEn = titleEn;
-            TitleDe = titleDe;
-            TitleRu = titleRu;
-            AdapterPath = adapterPath;
-            Name = name;
-            Location = location;
-            Unit = unit;
-            UnitFixed = unitFixed;
-            Format = format;
-            Mult = mult;
-            Offset = offset;
-            Round = round;
-            NumberFormat = numberFormat;
-        }
-
-        public string ToString(string prefix)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(prefix + "RESULT:");
-            sb.Append(this.PropertyList(prefix + " "));
-            if (EcuResultStateValueList != null)
-            {
-                foreach (EcuResultStateValue ecuResultStateValue in EcuResultStateValueList)
-                {
-                    sb.Append(ecuResultStateValue.ToString(prefix + " "));
-                }
-            }
-
-            return sb.ToString();
-        }
-
-        public override string ToString()
-        {
-            return ToString("");
-        }
-
-        [XmlElement, DefaultValue("")]
-        public string Id { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string TitleEn { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string TitleDe { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string TitleRu { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string AdapterPath { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string Name { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string Location { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string Unit { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string UnitFixed { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string Format { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string Mult { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string Offset { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string Round { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string NumberFormat { get; set; }
-        [XmlArray]
-        public List<EcuResultStateValue> EcuResultStateValueList { get; set; }
-    }
-
-    public class EcuResultStateValue
-    {
-        public EcuResultStateValue()
-        {
-            Id = string.Empty;
-            TitleEn = string.Empty;
-            TitleDe = string.Empty;
-            TitleRu = string.Empty;
-            StateValue = string.Empty;
-            ValidFrom = string.Empty;
-            ValidTo = string.Empty;
-            ParentId = string.Empty;
-        }
-
-        public EcuResultStateValue(string id, string titleEn, string titleDe, string titleRu,
-            string stateValue, string validFrom, string validTo, string parentId)
-        {
-            Id = id;
-            TitleEn = titleEn;
-            TitleDe = titleDe;
-            TitleRu = titleRu;
-            StateValue = stateValue;
-            ValidFrom = validFrom;
-            ValidTo = validTo;
-            ParentId = parentId;
-        }
-
-        public string ToString(string prefix)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(prefix + "STATEVALUE:");
-            sb.Append(this.PropertyList(prefix + " "));
-            return sb.ToString();
-        }
-
-        public override string ToString()
-        {
-            return ToString("");
-        }
-
-        [XmlElement, DefaultValue("")]
-        public string Id { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string TitleEn { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string TitleDe { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string TitleRu { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string StateValue { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string ValidFrom { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string ValidTo { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string ParentId { get; set; }
-    }
-
-    [XmlInclude(typeof(EcuJob))]
-    public class EcuFixedFuncStruct
-    {
-        public EcuFixedFuncStruct()
-        {
-            Id = string.Empty;
-            NodeClass = string.Empty;
-            NodeClassName = string.Empty;
-            TitleEn = string.Empty;
-            TitleDe = string.Empty;
-            TitleRu = string.Empty;
-            PrepOpEn = string.Empty;
-            PrepOpDe = string.Empty;
-            PrepOpRu = string.Empty;
-            ProcOpEn = string.Empty;
-            ProcOpDe = string.Empty;
-            ProcOpRu = string.Empty;
-            PostOpEn = string.Empty;
-            PostOpDe = string.Empty;
-            PostOpRu = string.Empty;
-        }
-
-        public EcuFixedFuncStruct(string id, string nodeClass, string nodeClassName, string titleEn, string titleDe, string titleRu,
-            string prepOpEn, string prepOpDe, string prepOpRu,
-            string procOpEn, string procOpDe, string procOpRu,
-            string postOpEn, string postOpDe, string postOpRu)
-        {
-            Id = id;
-            NodeClass = nodeClass;
-            NodeClassName = nodeClassName;
-            TitleEn = titleEn;
-            TitleDe = titleDe;
-            TitleRu = titleRu;
-            PrepOpEn = prepOpEn;
-            PrepOpDe = prepOpDe;
-            PrepOpRu = prepOpRu;
-            ProcOpEn = procOpEn;
-            ProcOpDe = procOpDe;
-            ProcOpRu = procOpRu;
-            PostOpEn = postOpEn;
-            PostOpDe = postOpDe;
-            PostOpRu = postOpRu;
-        }
-
-        public string ToString(string prefix)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(prefix + "FIXEDFUNC:");
-            sb.Append(this.PropertyList(prefix + " "));
-            if (EcuJobList != null)
-            {
-                foreach (EcuJob ecuJob in EcuJobList)
-                {
-                    sb.Append(ecuJob.ToString(prefix + " "));
-                }
-            }
-
-            return sb.ToString();
-        }
-
-        public override string ToString()
-        {
-            return ToString("");
-        }
-
-        [XmlElement, DefaultValue("")]
-        public string Id { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string NodeClass { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string NodeClassName { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string TitleEn { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string TitleDe { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string TitleRu { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string PrepOpEn { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string PrepOpDe { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string PrepOpRu { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string ProcOpEn { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string ProcOpDe { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string ProcOpRu { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string PostOpEn { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string PostOpDe { get; set; }
-        [XmlElement, DefaultValue("")]
-        public string PostOpRu { get; set; }
-        [XmlArray, DefaultValue("")]
-        public List<EcuJob> EcuJobList { get; set; }
-    }
-
     static class Program
     {
         static int Main(string[] args)
@@ -650,7 +94,7 @@ namespace ExtractEcuFunctions
                     foreach (string name in ecuNameList)
                     {
                         outTextWriter?.WriteLine("*** ECU: {0} ***", name);
-                        EcuVariant ecuVariant = GetEcuVariantFunctions(outTextWriter, logTextWriter, mDbConnection, name);
+                        EcuFunctionStructs.EcuVariant ecuVariant = GetEcuVariantFunctions(outTextWriter, logTextWriter, mDbConnection, name);
 
                         if (ecuVariant != null)
                         {
@@ -681,29 +125,6 @@ namespace ExtractEcuFunctions
             return 0;
         }
 
-        public static string PropertyList(this object obj, string prefix)
-        {
-            StringBuilder sb = new StringBuilder();
-            PropertyInfo[] props = obj.GetType().GetProperties();
-            foreach (PropertyInfo p in props)
-            {
-                if (p.PropertyType == typeof(string))
-                {
-                    string value = p.GetValue(obj, null).ToString();
-                    if (!string.IsNullOrEmpty(value))
-                    {
-                        sb.AppendLine(prefix + p.Name + ": " + value);
-                    }
-                }
-            }
-            return sb.ToString();
-        }
-
-        public static string PropertyList(this object obj)
-        {
-            return obj.PropertyList("");
-        }
-
         private static List<string> GetEcuNameList(SQLiteConnection mDbConnection)
         {
             List<string> ecuNameList = new List<string>();
@@ -720,9 +141,9 @@ namespace ExtractEcuFunctions
             return ecuNameList;
         }
 
-        private static EcuVariant GetEcuVariant(SQLiteConnection mDbConnection, string ecuName)
+        private static EcuFunctionStructs.EcuVariant GetEcuVariant(SQLiteConnection mDbConnection, string ecuName)
         {
-            EcuVariant ecuVariant = null;
+            EcuFunctionStructs.EcuVariant ecuVariant = null;
             string sql = string.Format(@"SELECT ID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuName.ToLowerInvariant());
             SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
             using (SQLiteDataReader reader = command.ExecuteReader())
@@ -730,7 +151,7 @@ namespace ExtractEcuFunctions
                 while (reader.Read())
                 {
                     string groupId = reader["ECUGROUPID"].ToString();
-                    ecuVariant = new EcuVariant(reader["ID"].ToString(),
+                    ecuVariant = new EcuFunctionStructs.EcuVariant(reader["ID"].ToString(),
                         reader["TITLE_ENUS"].ToString(),
                         reader["TITLE_DEDE"].ToString(),
                         reader["TITLE_RU"].ToString(),
@@ -774,9 +195,9 @@ namespace ExtractEcuFunctions
             return result;
         }
 
-        private static List<EcuJob> GetFixedFuncStructJobsList(SQLiteConnection mDbConnection, EcuFixedFuncStruct ecuFixedFuncStruct)
+        private static List<EcuFunctionStructs.EcuJob> GetFixedFuncStructJobsList(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct)
         {
-            List<EcuJob> ecuJobList = new List<EcuJob>();
+            List<EcuFunctionStructs.EcuJob> ecuJobList = new List<EcuFunctionStructs.EcuJob>();
             string sql = string.Format(@"SELECT JOBS.ID JOBID, FUNCTIONNAMEJOB, NAME " +
                                        "FROM XEP_ECUJOBS JOBS, XEP_REFECUJOBS REFJOBS WHERE JOBS.ID = REFJOBS.ECUJOBID AND REFJOBS.ID = {0}", ecuFixedFuncStruct.Id);
             SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
@@ -784,15 +205,15 @@ namespace ExtractEcuFunctions
             {
                 while (reader.Read())
                 {
-                    ecuJobList.Add(new EcuJob(reader["JOBID"].ToString(),
+                    ecuJobList.Add(new EcuFunctionStructs.EcuJob(reader["JOBID"].ToString(),
                         reader["FUNCTIONNAMEJOB"].ToString(),
                         reader["NAME"].ToString()));
                 }
             }
 
-            foreach (EcuJob ecuJob in ecuJobList)
+            foreach (EcuFunctionStructs.EcuJob ecuJob in ecuJobList)
             {
-                List<EcuJobParameter> ecuJobParList = new List<EcuJobParameter>();
+                List<EcuFunctionStructs.EcuJobParameter> ecuJobParList = new List<EcuFunctionStructs.EcuJobParameter>();
                 sql = string.Format(
                     @"SELECT PARAM.ID PARAMID, PARAMVALUE, FUNCTIONNAMEPARAMETER, ADAPTERPATH, NAME, ECUJOBID " +
                     "FROM XEP_ECUPARAMETERS PARAM, XEP_REFECUPARAMETERS REFPARAM WHERE " +
@@ -802,7 +223,7 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        ecuJobParList.Add(new EcuJobParameter(reader["PARAMID"].ToString(),
+                        ecuJobParList.Add(new EcuFunctionStructs.EcuJobParameter(reader["PARAMID"].ToString(),
                             reader["PARAMVALUE"].ToString(),
                             reader["ADAPTERPATH"].ToString(),
                             reader["NAME"].ToString()));
@@ -811,7 +232,7 @@ namespace ExtractEcuFunctions
 
                 ecuJob.EcuJobParList = ecuJobParList;
 
-                List<EcuJobResult> ecuJobResultList = new List<EcuJobResult>();
+                List<EcuFunctionStructs.EcuJobResult> ecuJobResultList = new List<EcuFunctionStructs.EcuJobResult>();
                 sql = string.Format(
                     @"SELECT RESULTS.ID RESULTID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, ADAPTERPATH, NAME, LOCATION, UNIT, UNITFIXED, FORMAT, MULTIPLIKATOR, OFFSET, RUNDEN, ZAHLENFORMAT, ECUJOBID " +
                     "FROM XEP_ECURESULTS RESULTS, XEP_REFECURESULTS REFRESULTS WHERE " +
@@ -821,7 +242,7 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        ecuJobResultList.Add(new EcuJobResult(reader["RESULTID"].ToString(),
+                        ecuJobResultList.Add(new EcuFunctionStructs.EcuJobResult(reader["RESULTID"].ToString(),
                             reader["TITLE_ENUS"].ToString(),
                             reader["TITLE_DEDE"].ToString(),
                             reader["TITLE_RU"].ToString(),
@@ -838,7 +259,7 @@ namespace ExtractEcuFunctions
                     }
                 }
 
-                foreach (EcuJobResult ecuJobResult in ecuJobResultList)
+                foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJobResultList)
                 {
                     ecuJobResult.EcuResultStateValueList = GetResultStateValueList(mDbConnection, ecuJobResult);
                 }
@@ -849,9 +270,9 @@ namespace ExtractEcuFunctions
             return ecuJobList;
         }
 
-        private static List<EcuResultStateValue> GetResultStateValueList(SQLiteConnection mDbConnection, EcuJobResult ecuJobResult)
+        private static List<EcuFunctionStructs.EcuResultStateValue> GetResultStateValueList(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuJobResult ecuJobResult)
         {
-            List<EcuResultStateValue> ecuResultStateValueList = new List<EcuResultStateValue>();
+            List<EcuFunctionStructs.EcuResultStateValue> ecuResultStateValueList = new List<EcuFunctionStructs.EcuResultStateValue>();
             string sql = string.Format(@"SELECT ID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, STATEVALUE, VALIDFROM, VALIDTO, PARENTID " +
                                        "FROM XEP_STATEVALUES WHERE (PARENTID IN (SELECT STATELISTID FROM XEP_REFSTATELISTS WHERE (ID = {0})))", ecuJobResult.Id);
             SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
@@ -859,7 +280,7 @@ namespace ExtractEcuFunctions
             {
                 while (reader.Read())
                 {
-                    ecuResultStateValueList.Add(new EcuResultStateValue(reader["ID"].ToString(),
+                    ecuResultStateValueList.Add(new EcuFunctionStructs.EcuResultStateValue(reader["ID"].ToString(),
                         reader["TITLE_ENUS"].ToString(),
                         reader["TITLE_DEDE"].ToString(),
                         reader["TITLE_RU"].ToString(),
@@ -873,9 +294,9 @@ namespace ExtractEcuFunctions
             return ecuResultStateValueList;
         }
 
-        private static List<EcuFixedFuncStruct> GetEcuFixedFuncStructList(SQLiteConnection mDbConnection, string parentId)
+        private static List<EcuFunctionStructs.EcuFixedFuncStruct> GetEcuFixedFuncStructList(SQLiteConnection mDbConnection, string parentId)
         {
-            List<EcuFixedFuncStruct> ecuFixedFuncStructList = new List<EcuFixedFuncStruct>();
+            List<EcuFunctionStructs.EcuFixedFuncStruct> ecuFixedFuncStructList = new List<EcuFunctionStructs.EcuFixedFuncStruct>();
             string sql = string.Format(@"SELECT ID, NODECLASS, TITLE_ENUS, TITLE_DEDE, TITLE_RU, " +
                                        "PREPARINGOPERATORTEXT_ENUS, PREPARINGOPERATORTEXT_DEDE, PREPARINGOPERATORTEXT_RU, " +
                                        "PROCESSINGOPERATORTEXT_ENUS, PROCESSINGOPERATORTEXT_DEDE, PROCESSINGOPERATORTEXT_RU, " +
@@ -887,7 +308,7 @@ namespace ExtractEcuFunctions
                 while (reader.Read())
                 {
                     string nodeClass = reader["NODECLASS"].ToString();
-                    EcuFixedFuncStruct ecuFixedFuncStruct = new EcuFixedFuncStruct(reader["ID"].ToString(),
+                    EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct = new EcuFunctionStructs.EcuFixedFuncStruct(reader["ID"].ToString(),
                         nodeClass,
                         GetNodeClassName(mDbConnection, nodeClass),
                         reader["TITLE_ENUS"].ToString(),
@@ -911,16 +332,16 @@ namespace ExtractEcuFunctions
             return ecuFixedFuncStructList;
         }
 
-        private static EcuVariant GetEcuVariantFunctions(TextWriter outTextWriter, TextWriter logTextWriter, SQLiteConnection mDbConnection, string ecuName)
+        private static EcuFunctionStructs.EcuVariant GetEcuVariantFunctions(TextWriter outTextWriter, TextWriter logTextWriter, SQLiteConnection mDbConnection, string ecuName)
         {
-            EcuVariant ecuVariant = GetEcuVariant(mDbConnection, ecuName);
+            EcuFunctionStructs.EcuVariant ecuVariant = GetEcuVariant(mDbConnection, ecuName);
             if (ecuVariant == null)
             {
                 outTextWriter?.WriteLine("ECU variant not found");
                 return null;
             }
 
-            List<RefEcuVariant> refEcuVariantList = new List<RefEcuVariant>();
+            List<EcuFunctionStructs.RefEcuVariant> refEcuVariantList = new List<EcuFunctionStructs.RefEcuVariant>();
             {
                 string sql = string.Format(@"SELECT ID, ECUVARIANTID FROM XEP_REFECUVARIANTS WHERE ECUVARIANTID = {0}", ecuVariant.Id);
                 SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
@@ -928,7 +349,7 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        refEcuVariantList.Add(new RefEcuVariant(reader["ID"].ToString(),
+                        refEcuVariantList.Add(new EcuFunctionStructs.RefEcuVariant(reader["ID"].ToString(),
                             reader["ECUVARIANTID"].ToString()));
                     }
                 }
@@ -942,9 +363,9 @@ namespace ExtractEcuFunctions
 
             ecuVariant.RefEcuVariantList = refEcuVariantList;
 
-            foreach (RefEcuVariant refEcuVariant in refEcuVariantList)
+            foreach (EcuFunctionStructs.RefEcuVariant refEcuVariant in refEcuVariantList)
             {
-                List<EcuFixedFuncStruct> ecuFixedFuncStructList = GetEcuFixedFuncStructList(mDbConnection, refEcuVariant.Id);
+                List<EcuFunctionStructs.EcuFixedFuncStruct> ecuFixedFuncStructList = GetEcuFixedFuncStructList(mDbConnection, refEcuVariant.Id);
                 if (ecuFixedFuncStructList.Count == 0)
                 {
                     outTextWriter?.WriteLine("ECU fixed function structures not found for ref ECU var");
@@ -954,7 +375,7 @@ namespace ExtractEcuFunctions
                 refEcuVariant.FixedFuncStructList = ecuFixedFuncStructList;
             }
 
-            List<EcuVarFunc> ecuVarFunctionsList = new List<EcuVarFunc>();
+            List<EcuFunctionStructs.EcuVarFunc> ecuVarFunctionsList = new List<EcuFunctionStructs.EcuVarFunc>();
             foreach (string ecuGroupFunctionId in ecuVariant.GroupFunctionIds)
             {
                 string sql = string.Format(@"SELECT ID, VISIBLE, NAME, OBD_RELEVANZ FROM XEP_ECUVARFUNCTIONS WHERE (lower(NAME) = '{0}') AND (ECUGROUPFUNCTIONID = {1})", ecuName.ToLowerInvariant(), ecuGroupFunctionId);
@@ -963,7 +384,7 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        ecuVarFunctionsList.Add(new EcuVarFunc(reader["ID"].ToString(), ecuGroupFunctionId));
+                        ecuVarFunctionsList.Add(new EcuFunctionStructs.EcuVarFunc(reader["ID"].ToString(), ecuGroupFunctionId));
                     }
                 }
             }
@@ -974,13 +395,13 @@ namespace ExtractEcuFunctions
                 return null;
             }
 
-            foreach (EcuVarFunc ecuVarFunc in ecuVarFunctionsList)
+            foreach (EcuFunctionStructs.EcuVarFunc ecuVarFunc in ecuVarFunctionsList)
             {
                 logTextWriter?.WriteLine(ecuVarFunc);
             }
 
-            List<EcuFuncStruct> ecuFuncStructList = new List<EcuFuncStruct>();
-            foreach (EcuVarFunc ecuVarFunc in ecuVarFunctionsList)
+            List<EcuFunctionStructs.EcuFuncStruct> ecuFuncStructList = new List<EcuFunctionStructs.EcuFuncStruct>();
+            foreach (EcuFunctionStructs.EcuVarFunc ecuVarFunc in ecuVarFunctionsList)
             {
                 string sql = string.Format(@"SELECT REFFUNCS.ECUFUNCSTRUCTID FUNCSTRUCTID, TITLE_ENUS, TITLE_DEDE, TITLE_RU " +
                         "FROM XEP_ECUFUNCSTRUCTURES FUNCS, XEP_REFECUFUNCSTRUCTS REFFUNCS WHERE FUNCS.ID = REFFUNCS.ECUFUNCSTRUCTID AND REFFUNCS.ID = {0}", ecuVarFunc.Id);
@@ -989,7 +410,7 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        ecuFuncStructList.Add(new EcuFuncStruct(reader["FUNCSTRUCTID"].ToString(),
+                        ecuFuncStructList.Add(new EcuFunctionStructs.EcuFuncStruct(reader["FUNCSTRUCTID"].ToString(),
                             reader["TITLE_ENUS"].ToString(),
                             reader["TITLE_DEDE"].ToString(),
                             reader["TITLE_RU"].ToString()));
@@ -1003,9 +424,9 @@ namespace ExtractEcuFunctions
                 return null;
             }
 
-            foreach (EcuFuncStruct ecuFuncStruct in ecuFuncStructList)
+            foreach (EcuFunctionStructs.EcuFuncStruct ecuFuncStruct in ecuFuncStructList)
             {
-                List<EcuFixedFuncStruct> ecuFixedFuncStructList = GetEcuFixedFuncStructList(mDbConnection, ecuFuncStruct.Id);
+                List<EcuFunctionStructs.EcuFixedFuncStruct> ecuFixedFuncStructList = GetEcuFixedFuncStructList(mDbConnection, ecuFuncStruct.Id);
                 if (ecuFixedFuncStructList.Count == 0)
                 {
                     outTextWriter?.WriteLine("ECU fixed function structures not found for ECU func struct");

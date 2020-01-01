@@ -207,6 +207,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\EdiabasLib\BmwFileReader\EcuFunctionStructs.cs">
+      <Link>EcuFunctionStructs.cs</Link>
+    </Compile>
     <Compile Include="..\EdiabasLib\BmwFileReader\VehicleInfoBmw.cs">
       <Link>VehicleInfoBmw.cs</Link>
     </Compile>
