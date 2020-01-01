@@ -23,6 +23,11 @@ namespace BmwFileReader
         {
             try
             {
+                if (string.IsNullOrEmpty(ecuName))
+                {
+                    return null;
+                }
+
                 string key = ecuName.ToLowerInvariant();
                 if (_ecuVariantDict.TryGetValue(key, out EcuFunctionStructs.EcuVariant ecuVariant))
                 {
@@ -44,6 +49,11 @@ namespace BmwFileReader
         {
             try
             {
+                if (string.IsNullOrEmpty(ecuName))
+                {
+                    return null;
+                }
+
                 EcuFunctionStructs.EcuVariant ecuVariant = null;
                 ZipFile zf = null;
                 try

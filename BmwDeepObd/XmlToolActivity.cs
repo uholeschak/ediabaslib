@@ -3814,16 +3814,31 @@ namespace BmwDeepObd
                 bool readFailed = false;
                 try
                 {
-                    bool udsEcu = IsUdsEcu(ecuInfo);
-                    if (ActivityCommon.VagUdsActive && udsEcu)
+                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                     {
-                        if (!ReadVagMotInfo(progress))
+                        if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                         {
-                            throw new Exception("Read mot info failed");
+                            string ecuName = ecuInfo.Sgbd ?? string.Empty;
+                            EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuName);
+                            if (ecuVariant == null)
+                            {
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No ECU variant found for: {0}", ecuName);
+                            }
                         }
-                        if (!ReadVagDidInfo(progress))
+                    }
+                    else
+                    {
+                        bool udsEcu = IsUdsEcu(ecuInfo);
+                        if (ActivityCommon.VagUdsActive && udsEcu)
                         {
-                            throw new Exception("Read did info failed");
+                            if (!ReadVagMotInfo(progress))
+                            {
+                                throw new Exception("Read mot info failed");
+                            }
+                            if (!ReadVagDidInfo(progress))
+                            {
+                                throw new Exception("Read did info failed");
+                            }
                         }
                     }
 

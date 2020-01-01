@@ -452,6 +452,7 @@ namespace BmwDeepObd
         private static string _customStorageMedia;
         private static string _appId;
         private static bool _vagUdsActive;
+        private static bool _ecuFunctionActive;
         private static int _btEnableCounter;
         private static Dictionary<string, UdsReader> _udsReaderDict;
         private static EcuFunctionReader _ecuFunctionReader;
@@ -648,6 +649,14 @@ namespace BmwDeepObd
             }
             private set => _vagUdsActive = value;
         }
+
+        public static bool EcuFunctionsActive
+        {
+            get => _ecuFunctionActive;
+            private set => _ecuFunctionActive = value;
+        }
+
+        public static EcuFunctionReader EcuFunctionReader => _ecuFunctionReader;
 
         public static bool ActivityStartedFromMain { get; set; }
 
@@ -7322,12 +7331,14 @@ namespace BmwDeepObd
         public static void ResetEcuFunctionReader()
         {
             _ecuFunctionReader = null;
+            EcuFunctionsActive = false;
         }
 
         public static bool InitEcuFunctionReader(string bmwPath)
         {
             try
             {
+                EcuFunctionsActive = false;
                 if (SelectedManufacturer != ManufacturerType.Bmw)
                 {
                     return true;
@@ -7343,8 +7354,7 @@ namespace BmwDeepObd
                     _ecuFunctionReader = new EcuFunctionReader(bmwPath);
                 }
 
-                //EcuFunctionStructs.EcuVariant ecuVariant = _ecuFunctionReader.GetEcuVariantCached("D60M47A0");
-
+                EcuFunctionsActive = true;
                 return true;
             }
             catch (Exception)
