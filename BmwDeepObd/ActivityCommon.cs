@@ -7343,7 +7343,7 @@ namespace BmwDeepObd
                     _ecuFunctionReader = new EcuFunctionReader(bmwPath);
                 }
 
-                //EcuFunctionStructs.EcuVariant ecuVariant = _ecuFunctionReader.GetEcuVariant("D60M47A0");
+                //EcuFunctionStructs.EcuVariant ecuVariant = _ecuFunctionReader.GetEcuVariantCached("D60M47A0");
 
                 return true;
             }
