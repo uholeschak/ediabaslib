@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using ICSharpCode.SharpZipLib.Zip;
@@ -10,10 +11,33 @@ namespace BmwFileReader
     {
         public const string EcuFuncFileName = "EcuFunctions.zip";
         private readonly string _rootDir;
+        private readonly Dictionary<string, EcuFunctionStructs.EcuVariant> _ecuVariantDict;
 
         public EcuFunctionReader(string rootDir)
         {
             _rootDir = rootDir;
+            _ecuVariantDict = new Dictionary<string, EcuFunctionStructs.EcuVariant>();
+        }
+
+        public EcuFunctionStructs.EcuVariant GetEcuVariantCached(string ecuName)
+        {
+            try
+            {
+                string key = ecuName.ToLowerInvariant();
+                if (_ecuVariantDict.TryGetValue(key, out EcuFunctionStructs.EcuVariant ecuVariant))
+                {
+                    return ecuVariant;
+                }
+
+                ecuVariant = GetEcuVariant(ecuName);
+                _ecuVariantDict[key] = ecuVariant;
+
+                return ecuVariant;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public EcuFunctionStructs.EcuVariant GetEcuVariant(string ecuName)
