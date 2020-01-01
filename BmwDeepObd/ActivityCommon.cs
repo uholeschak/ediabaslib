@@ -33,6 +33,7 @@ using Android.Support.V4.Content;
 using Android.Text.Method;
 using Android.Views;
 using System.Xml.Serialization;
+using BmwFileReader;
 using UdsFileReader;
 // ReSharper disable StringLiteralTypo
 // ReSharper disable IdentifierTypo
@@ -452,7 +453,8 @@ namespace BmwDeepObd
         private static string _appId;
         private static bool _vagUdsActive;
         private static int _btEnableCounter;
-        private static Dictionary<string,UdsReader> _udsReaderDict;
+        private static Dictionary<string, UdsReader> _udsReaderDict;
+        private static EcuFunctionReader _ecuFunctionReader;
         private readonly BluetoothAdapter _btAdapter;
         private readonly Java.Lang.Object _clipboardManager;
         private readonly WifiManager _maWifi;
@@ -2601,6 +2603,7 @@ namespace BmwDeepObd
             builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
             {
                 ResetUdsReader();
+                ResetEcuFunctionReader();
                 switch (listView.CheckedItemPosition)
                 {
                     case 0:
@@ -7314,6 +7317,42 @@ namespace BmwDeepObd
                 // ignored
             }
             return null;
+        }
+
+        public static void ResetEcuFunctionReader()
+        {
+            _ecuFunctionReader = null;
+        }
+
+        public static bool InitEcuFunctionReader(string bmwPath)
+        {
+            try
+            {
+                if (SelectedManufacturer != ManufacturerType.Bmw)
+                {
+                    return true;
+                }
+
+                if (!Directory.Exists(bmwPath))
+                {
+                    return false;
+                }
+
+                if (_ecuFunctionReader == null)
+                {
+                    _ecuFunctionReader = new EcuFunctionReader(bmwPath);
+                }
+
+                //EcuFunctionStructs.EcuVariant ecuVariant = _ecuFunctionReader.GetEcuVariant("D60M47A0");
+
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
         }
 
         private static bool IsEmulator()
