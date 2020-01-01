@@ -2237,12 +2237,33 @@ namespace BmwDeepObd
                                                 dateYear = (Int64)resultData.OpData;
                                             }
                                         }
+
                                         if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && !string.IsNullOrEmpty(ecuSgbd))
                                         {
                                             if (ecuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
                                             {
                                                 // address not existing
-                                                ecuList.Add(new EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup));
+                                                EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup);
+                                                if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                                                {
+                                                    string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
+                                                    EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+                                                    if (ecuVariant == null)
+                                                    {
+                                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No ECU variant found for: {0}", ecuSgbdName);
+                                                    }
+                                                    else
+                                                    {
+                                                        string description = ecuVariant.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                        if (!string.IsNullOrEmpty(description))
+                                                        {
+                                                            ecuInfo.Description = description;
+                                                            ecuInfo.DescriptionTrans = description;
+                                                        }
+                                                    }
+                                                }
+
+                                                ecuList.Add(ecuInfo);
                                             }
                                         }
                                         else
