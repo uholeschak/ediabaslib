@@ -1035,6 +1035,7 @@ namespace BmwDeepObd
 
             if (!ActivityCommon.CommActive)
             {
+                ActivityCommon.InitEcuFunctionReader(_instanceData.BmwPath);
                 if (_activityCommon.InitUdsReaderThread(_instanceData.VagPath, result =>
                 {
                     if (_activityCommon == null)
@@ -3432,6 +3433,7 @@ namespace BmwDeepObd
 
             string certInfo = _activityCommon.GetCertificateInfo();
             ActivityCommon.ResetUdsReader();
+            ActivityCommon.ResetEcuFunctionReader();
 
             if (_downloadProgress == null)
             {
@@ -4722,6 +4724,7 @@ namespace BmwDeepObd
                 return;
             }
 
+            ActivityCommon.InitEcuFunctionReader(_instanceData.BmwPath);
             if (_activityCommon.InitUdsReaderThread(_instanceData.VagPath, result =>
             {
                 if (_activityCommon == null)
