@@ -68,6 +68,26 @@ namespace BmwFileReader
                 return ToString("");
             }
 
+            public string GetTitle(string language)
+            {
+                if (string.IsNullOrEmpty(language))
+                {
+                    return string.Empty;
+                }
+
+                string lang = language.ToLowerInvariant();
+                switch (lang)
+                {
+                    case "de":
+                        return TitleDe;
+
+                    case "ru":
+                        return TitleRu;
+                }
+
+                return TitleEn;
+            }
+
             [XmlElement, DefaultValue("")] public string Id { get; set; }
             [XmlElement, DefaultValue("")] public string TitleEn { get; set; }
             [XmlElement, DefaultValue("")] public string TitleDe { get; set; }
