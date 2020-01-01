@@ -207,6 +207,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\EdiabasLib\BmwFileReader\VehicleInfoBmw.cs">
+      <Link>VehicleInfoBmw.cs</Link>
+    </Compile>
     <Compile Include="..\EdiabasLib\UdsFileReader\DataReader.cs">
       <Link>DataReader.cs</Link>
     </Compile>
@@ -246,7 +249,6 @@
     <Compile Include="TraceInfoInputDialog.cs" />
     <Compile Include="VagAdaptionActivity.cs" />
     <Compile Include="VagCodingActivity.cs" />
-    <Compile Include="VehicleInfoBmw.cs" />
     <Compile Include="XmlToolActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

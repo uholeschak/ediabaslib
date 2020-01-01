@@ -19,6 +19,8 @@ using Android.Widget;
 using BmwDeepObd.FilePicker;
 using EdiabasLib;
 using System.Collections.ObjectModel;
+using BmwFileReader;
+
 // ReSharper disable IdentifierTypo
 // ReSharper disable StringLiteralTypo
 // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
@@ -370,6 +372,7 @@ namespace BmwDeepObd
         private const string DisplayNameEcuPrefix = "!ECU#";
         private const string ManualConfigName = "Manual";
         private const string UnknownVinConfigName = "Unknown";
+        private static readonly string VehicleInfoResourcePath = typeof(XmlToolActivity).Namespace + ".VehicleInfo.";
         private static readonly string[] EcuFileNames =
         {
             "e60", "e65", "e70", "e81", "e87", "e89X", "e90", "m12", "r56", "f01", "f01bn2k", "rr01"
@@ -3132,7 +3135,8 @@ namespace BmwDeepObd
                         vehicleType = VehicleInfoBmw.GetVehicleTypeFromVin(detectedVin, _ediabas, _bmwDir);
                     }
                     detectedVehicleType = vehicleType;
-                    ReadOnlyCollection<VehicleInfoBmw.IEcuLogisticsEntry> ecuLogistics = VehicleInfoBmw.GetEcuLogisticsFromVehicleType(vehicleType, _ediabas);
+                    ReadOnlyCollection<VehicleInfoBmw.IEcuLogisticsEntry> ecuLogistics = VehicleInfoBmw.GetEcuLogisticsFromVehicleType(
+                        VehicleInfoResourcePath, vehicleType, _ediabas);
                     string[] groupArray = groupFiles.Split(',');
                     List<string> groupList;
                     if (ecuLogistics != null)
