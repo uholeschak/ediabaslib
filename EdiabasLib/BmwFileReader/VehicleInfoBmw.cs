@@ -14,7 +14,7 @@ using ICSharpCode.SharpZipLib.Zip;
 // ReSharper disable IdentifierTypo
 // ReSharper disable StringLiteralTypo
 
-namespace BmwDeepObd
+namespace BmwFileReader
 {
     public class VehicleInfoBmw
     {
@@ -1011,7 +1011,7 @@ namespace BmwDeepObd
 
         private static bool EcuLogisticsCreated;
 
-        public static void CreateEcuLogistics()
+        public static void CreateEcuLogistics(string resourcePath)
         {
             if (EcuLogisticsCreated)
             {
@@ -1022,7 +1022,8 @@ namespace BmwDeepObd
             {
                 if (ecuLogisticsData.UsageEntry == null)
                 {
-                    ecuLogisticsData.UsageEntry = ReadEcuLogisticsXml(ecuLogisticsData.XmlName) ?? ecuLogisticsData.StaticEntry;
+                    string resourceName = resourcePath + ecuLogisticsData.XmlName;
+                    ecuLogisticsData.UsageEntry = ReadEcuLogisticsXml(resourceName) ?? ecuLogisticsData.StaticEntry;
                 }
             }
 
@@ -1057,13 +1058,12 @@ namespace BmwDeepObd
 #endif
         }
 
-        public static ReadOnlyCollection<IEcuLogisticsEntry> ReadEcuLogisticsXml(string xmlName)
+        public static ReadOnlyCollection<IEcuLogisticsEntry> ReadEcuLogisticsXml(string resourceName)
         {
             try
             {
                 List<IEcuLogisticsEntry> ecuLogisticsList = new List<IEcuLogisticsEntry>();
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(
-                    typeof(XmlToolActivity).Namespace + ".VehicleInfo." + xmlName))
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
                     if (stream == null)
                     {
@@ -1404,7 +1404,7 @@ namespace BmwDeepObd
             return vehicleType;
         }
 
-        public static ReadOnlyCollection<IEcuLogisticsEntry> GetEcuLogisticsFromVehicleType(string vehicleType, EdiabasNet ediabas)
+        public static ReadOnlyCollection<IEcuLogisticsEntry> GetEcuLogisticsFromVehicleType(string resourcePath, string vehicleType, EdiabasNet ediabas)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECU logistics from vehicle type: {0}", vehicleType ?? "No type");
             if (vehicleType == null)
@@ -1412,7 +1412,7 @@ namespace BmwDeepObd
                 return null;
             }
 
-            CreateEcuLogistics();
+            CreateEcuLogistics(typeof(BmwDeepObd.XmlToolActivity).Namespace + ".VehicleInfo.");
 
             // Mapping could be found in: VehicleLogistics
             // static BaseEcuCharacteristics.GetCharacteristics(Vehicle vecInfo)
