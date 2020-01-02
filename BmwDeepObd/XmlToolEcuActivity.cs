@@ -1793,120 +1793,132 @@ namespace BmwDeepObd
                     bool udsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
                     ActivityCommon.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
 
-                    _ediabas.ArgString = string.Empty;
-                    if (_selectedResult.MwTabEntry != null && _ecuInfo.ReadCommand != null)
+                    if (_selectedJob.EcuFixedFuncStruct?.EcuJobList != null)
                     {
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB file: {0}", _ecuInfo.MwTabFileName ?? "No file");
-                        if (_selectedResult.MwTabEntry.ValueIndex.HasValue)
+                        List<Dictionary<string, EdiabasNet.ResultData>> resultSetsMulti = new List<Dictionary<string, EdiabasNet.ResultData>>();
+                        foreach (EcuFunctionStructs.EcuJob ecuJob in _selectedJob.EcuFixedFuncStruct.EcuJobList)
                         {
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB Block={0} Index={1}", _selectedResult.MwTabEntry.BlockNumber, _selectedResult.MwTabEntry.ValueIndexTrans);
+                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = EdiabasThread.ExecuteEcuJob(_ediabas, ecuJob);
+                            resultSetsMulti.AddRange(resultSets);
                         }
-                        else
-                        {
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB Block={0}", _selectedResult.MwTabEntry.BlockNumber);
-                        }
-                        _ediabas.ArgString = GetJobArgs(_selectedResult.MwTabEntry, _ecuInfo);
                     }
                     else
                     {
-                        _ediabas.ArgString = GetJobArgs(_selectedJob, new List<ResultInfo> {_selectedResult}, _ecuInfo, true);
-                    }
-                    _ediabas.ArgBinaryStd = null;
-                    _ediabas.ResultsRequests = string.Empty;
-                    _ediabas.ExecuteJob(_selectedJob.Name);
-
-                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                    if (resultSets != null && resultSets.Count >= 2)
-                    {
-                        int dictIndex = 0;
-                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                        _ediabas.ArgString = string.Empty;
+                        if (_selectedResult.MwTabEntry != null && _ecuInfo.ReadCommand != null)
                         {
-                            if (dictIndex == 0)
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB file: {0}", _ecuInfo.MwTabFileName ?? "No file");
+                            if (_selectedResult.MwTabEntry.ValueIndex.HasValue)
                             {
-                                dictIndex++;
-                                continue;
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB Block={0} Index={1}", _selectedResult.MwTabEntry.BlockNumber, _selectedResult.MwTabEntry.ValueIndexTrans);
                             }
-                            EdiabasNet.ResultData resultData;
-                            if (_selectedResult.MwTabEntry != null)
+                            else
                             {
-                                if (_selectedResult.MwTabEntry.ValueIndex.HasValue)
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB Block={0}", _selectedResult.MwTabEntry.BlockNumber);
+                            }
+                            _ediabas.ArgString = GetJobArgs(_selectedResult.MwTabEntry, _ecuInfo);
+                        }
+                        else
+                        {
+                            _ediabas.ArgString = GetJobArgs(_selectedJob, new List<ResultInfo> { _selectedResult }, _ecuInfo, true);
+                        }
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob(_selectedJob.Name);
+
+                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            int dictIndex = 0;
+                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                            {
+                                if (dictIndex == 0)
                                 {
-                                    if (_selectedResult.MwTabEntry.ValueIndex.Value == dictIndex)
+                                    dictIndex++;
+                                    continue;
+                                }
+                                EdiabasNet.ResultData resultData;
+                                if (_selectedResult.MwTabEntry != null)
+                                {
+                                    if (_selectedResult.MwTabEntry.ValueIndex.HasValue)
                                     {
-                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB index found: {0}", dictIndex);
-                                        string valueUnit = _selectedResult.MwTabEntry.ValueUnit;
-                                        if (string.IsNullOrEmpty(valueUnit))
+                                        if (_selectedResult.MwTabEntry.ValueIndex.Value == dictIndex)
                                         {
-                                            if (resultDict.TryGetValue("MWEINH_TEXT", out resultData))
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB index found: {0}", dictIndex);
+                                            string valueUnit = _selectedResult.MwTabEntry.ValueUnit;
+                                            if (string.IsNullOrEmpty(valueUnit))
                                             {
-                                                valueUnit = resultData.OpData as string ?? string.Empty;
-                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWEINH_TEXT: {0}", valueUnit);
+                                                if (resultDict.TryGetValue("MWEINH_TEXT", out resultData))
+                                                {
+                                                    valueUnit = resultData.OpData as string ?? string.Empty;
+                                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWEINH_TEXT: {0}", valueUnit);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB unit: {0}", valueUnit);
+                                            }
+                                            if (resultDict.TryGetValue("MW_WERT", out resultData))
+                                            {
+                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Data type: {0}", resultData.ResType.ToString());
+                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Format: {0}", _selectedResult.Format ?? "No format");
+                                                resultText = FormatResult(resultData, _selectedResult.Format);
+                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", resultText);
+                                                if (!string.IsNullOrWhiteSpace(resultText) && !string.IsNullOrWhiteSpace(valueUnit))
+                                                {
+                                                    resultText += " " + valueUnit;
+                                                }
+                                                break;
                                             }
                                         }
-                                        else
+                                    }
+                                    else
+                                    {
+                                        if (resultDict.TryGetValue("ERGEBNIS1WERT", out resultData))
                                         {
-                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "MWTAB unit: {0}", valueUnit);
-                                        }
-                                        if (resultDict.TryGetValue("MW_WERT", out resultData))
-                                        {
-                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Data type: {0}", resultData.ResType.ToString());
-                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Format: {0}", _selectedResult.Format ?? "No format");
-                                            resultText = FormatResult(resultData, _selectedResult.Format);
+                                            resultText = string.Empty;
+                                            if (ActivityCommon.VagUdsActive && udsEcu && resultData.OpData.GetType() == typeof(byte[]))
+                                            {
+                                                UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_ecuInfo.VagUdsFileName);
+                                                UdsFileReader.UdsReader.ParseInfoMwb parseInfoMwb = udsReader?.GetMwbParseInfo(_ecuInfo.VagUdsFileName, _selectedResult.Name);
+                                                if (parseInfoMwb != null)
+                                                {
+                                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UniqueId match: {0}", parseInfoMwb.UniqueIdString);
+                                                    resultText = parseInfoMwb.DataTypeEntry.ToString(CultureInfo.InvariantCulture, (byte[])resultData.OpData, out double? stringDataValue);
+                                                    if (stringDataValue.HasValue && !string.IsNullOrEmpty(_selectedResult.Format))
+                                                    {
+                                                        resultText = EdiabasNet.FormatResult(new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeR, "ERGEBNIS1WERT", stringDataValue.Value), _selectedResult.Format);
+                                                    }
+                                                }
+                                            }
+
+                                            if (string.IsNullOrEmpty(resultText))
+                                            {
+                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Data type: {0}", resultData.ResType.ToString());
+                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Format: {0}", _selectedResult.Format ?? "No format");
+                                                resultText = FormatResult(resultData, _selectedResult.Format);
+                                            }
                                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", resultText);
-                                            if (!string.IsNullOrWhiteSpace(resultText) && !string.IsNullOrWhiteSpace(valueUnit))
-                                            {
-                                                resultText += " " + valueUnit;
-                                            }
                                             break;
                                         }
                                     }
+                                    dictIndex++;
+                                    continue;
                                 }
-                                else
+                                if (resultDict.TryGetValue(_selectedResult.Name.ToUpperInvariant(), out resultData))
                                 {
-                                    if (resultDict.TryGetValue("ERGEBNIS1WERT", out resultData))
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Data type: {0}", resultData.ResType.ToString());
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Format: {0}", _selectedResult.Format ?? "No format");
+                                    string text = FormatResult(resultData, _selectedResult.Format);
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", text);
+                                    if (!string.IsNullOrWhiteSpace(text) && !string.IsNullOrWhiteSpace(resultText))
                                     {
-                                        resultText = string.Empty;
-                                        if (ActivityCommon.VagUdsActive && udsEcu && resultData.OpData.GetType() == typeof(byte[]))
-                                        {
-                                            UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_ecuInfo.VagUdsFileName);
-                                            UdsFileReader.UdsReader.ParseInfoMwb parseInfoMwb = udsReader?.GetMwbParseInfo(_ecuInfo.VagUdsFileName, _selectedResult.Name);
-                                            if (parseInfoMwb != null)
-                                            {
-                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UniqueId match: {0}", parseInfoMwb.UniqueIdString);
-                                                resultText = parseInfoMwb.DataTypeEntry.ToString(CultureInfo.InvariantCulture, (byte[])resultData.OpData, out double? stringDataValue);
-                                                if (stringDataValue.HasValue && !string.IsNullOrEmpty(_selectedResult.Format))
-                                                {
-                                                    resultText = EdiabasNet.FormatResult(new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeR, "ERGEBNIS1WERT", stringDataValue.Value), _selectedResult.Format);
-                                                }
-                                            }
-                                        }
-
-                                        if (string.IsNullOrEmpty(resultText))
-                                        {
-                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Data type: {0}", resultData.ResType.ToString());
-                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Format: {0}", _selectedResult.Format ?? "No format");
-                                            resultText = FormatResult(resultData, _selectedResult.Format);
-                                        }
-                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", resultText);
-                                        break;
+                                        resultText += "; ";
                                     }
+                                    resultText += text;
                                 }
                                 dictIndex++;
-                                continue;
                             }
-                            if (resultDict.TryGetValue(_selectedResult.Name.ToUpperInvariant(), out resultData))
-                            {
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Data type: {0}", resultData.ResType.ToString());
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Format: {0}", _selectedResult.Format ?? "No format");
-                                string text = FormatResult(resultData, _selectedResult.Format);
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", text);
-                                if (!string.IsNullOrWhiteSpace(text) && !string.IsNullOrWhiteSpace(resultText))
-                                {
-                                    resultText += "; ";
-                                }
-                                resultText += text;
-                            }
-                            dictIndex++;
                         }
                     }
                 }
