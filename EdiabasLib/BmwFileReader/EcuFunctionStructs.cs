@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
@@ -101,6 +102,14 @@ namespace BmwFileReader
         [XmlInclude(typeof(EcuJob))]
         public class EcuFixedFuncStruct
         {
+            public enum NodeClassType
+            {
+                Unknown,
+                Identification,
+                ReadState,
+                ControlActuator
+            }
+
             public EcuFixedFuncStruct()
             {
                 Id = string.Empty;
@@ -164,6 +173,106 @@ namespace BmwFileReader
                 return ToString("");
             }
 
+            public string GetTitle(string language)
+            {
+                if (string.IsNullOrEmpty(language))
+                {
+                    return string.Empty;
+                }
+
+                string lang = language.ToLowerInvariant();
+                switch (lang)
+                {
+                    case "de":
+                        return TitleDe;
+
+                    case "ru":
+                        return TitleRu;
+                }
+
+                return TitleEn;
+            }
+
+            public string GetPreOp(string language)
+            {
+                if (string.IsNullOrEmpty(language))
+                {
+                    return string.Empty;
+                }
+
+                string lang = language.ToLowerInvariant();
+                switch (lang)
+                {
+                    case "de":
+                        return PrepOpDe;
+
+                    case "ru":
+                        return PrepOpRu;
+                }
+
+                return PrepOpEn;
+            }
+
+            public string GetProcOp(string language)
+            {
+                if (string.IsNullOrEmpty(language))
+                {
+                    return string.Empty;
+                }
+
+                string lang = language.ToLowerInvariant();
+                switch (lang)
+                {
+                    case "de":
+                        return ProcOpDe;
+
+                    case "ru":
+                        return ProcOpRu;
+                }
+
+                return ProcOpEn;
+            }
+
+            public string GetPostOp(string language)
+            {
+                if (string.IsNullOrEmpty(language))
+                {
+                    return string.Empty;
+                }
+
+                string lang = language.ToLowerInvariant();
+                switch (lang)
+                {
+                    case "de":
+                        return PostOpDe;
+
+                    case "ru":
+                        return PostOpRu;
+                }
+
+                return PostOpEn;
+            }
+
+            public NodeClassType GetNodeClassType()
+            {
+                if (string.Compare(NodeClassName, "ECUFixedFunctionReadingIdentification", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return NodeClassType.Identification;
+                }
+
+                if (string.Compare(NodeClassName, "ECUFixedFunctionReadingState", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return NodeClassType.ReadState;
+                }
+
+                if (string.Compare(NodeClassName, "ECUFixedFunctionControlingActuator", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return NodeClassType.ControlActuator;
+                }
+
+                return NodeClassType.Unknown;
+            }
+
             [XmlElement, DefaultValue("")] public string Id { get; set; }
             [XmlElement, DefaultValue("")] public string NodeClass { get; set; }
             [XmlElement, DefaultValue("")] public string NodeClassName { get; set; }
@@ -179,7 +288,7 @@ namespace BmwFileReader
             [XmlElement, DefaultValue("")] public string PostOpEn { get; set; }
             [XmlElement, DefaultValue("")] public string PostOpDe { get; set; }
             [XmlElement, DefaultValue("")] public string PostOpRu { get; set; }
-            [XmlArray, DefaultValue("")] public List<EcuJob> EcuJobList { get; set; }
+            [XmlArray] public List<EcuJob> EcuJobList { get; set; }
         }
 
         [XmlInclude(typeof(EcuFixedFuncStruct))]
@@ -293,6 +402,26 @@ namespace BmwFileReader
             public override string ToString()
             {
                 return ToString("");
+            }
+
+            public string GetTitle(string language)
+            {
+                if (string.IsNullOrEmpty(language))
+                {
+                    return string.Empty;
+                }
+
+                string lang = language.ToLowerInvariant();
+                switch (lang)
+                {
+                    case "de":
+                        return TitleDe;
+
+                    case "ru":
+                        return TitleRu;
+                }
+
+                return TitleEn;
             }
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
@@ -454,6 +583,26 @@ namespace BmwFileReader
                 return ToString("");
             }
 
+            public string GetTitle(string language)
+            {
+                if (string.IsNullOrEmpty(language))
+                {
+                    return string.Empty;
+                }
+
+                string lang = language.ToLowerInvariant();
+                switch (lang)
+                {
+                    case "de":
+                        return TitleDe;
+
+                    case "ru":
+                        return TitleRu;
+                }
+
+                return TitleEn;
+            }
+
             [XmlElement, DefaultValue("")] public string Id { get; set; }
             [XmlElement, DefaultValue("")] public string TitleEn { get; set; }
             [XmlElement, DefaultValue("")] public string TitleDe { get; set; }
@@ -509,6 +658,26 @@ namespace BmwFileReader
             public override string ToString()
             {
                 return ToString("");
+            }
+
+            public string GetTitle(string language)
+            {
+                if (string.IsNullOrEmpty(language))
+                {
+                    return string.Empty;
+                }
+
+                string lang = language.ToLowerInvariant();
+                switch (lang)
+                {
+                    case "de":
+                        return TitleDe;
+
+                    case "ru":
+                        return TitleRu;
+                }
+
+                return TitleEn;
             }
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }

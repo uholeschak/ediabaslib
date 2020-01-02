@@ -19,6 +19,35 @@ namespace BmwFileReader
             _ecuVariantDict = new Dictionary<string, EcuFunctionStructs.EcuVariant>();
         }
 
+        public List<EcuFunctionStructs.EcuFixedFuncStruct> GetFixedFuncStructList(EcuFunctionStructs.EcuVariant ecuVariant)
+        {
+            List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructList = new List<EcuFunctionStructs.EcuFixedFuncStruct>();
+
+            if (ecuVariant.RefEcuVariantList != null)
+            {
+                foreach (EcuFunctionStructs.RefEcuVariant refEcuVariant in ecuVariant.RefEcuVariantList)
+                {
+                    if (refEcuVariant.FixedFuncStructList != null)
+                    {
+                        fixedFuncStructList.AddRange(refEcuVariant.FixedFuncStructList);
+                    }
+                }
+            }
+
+            if (ecuVariant.EcuFuncStructList != null)
+            {
+                foreach (EcuFunctionStructs.EcuFuncStruct ecuFuncStruct in ecuVariant.EcuFuncStructList)
+                {
+                    if (ecuFuncStruct.FixedFuncStructList != null)
+                    {
+                        fixedFuncStructList.AddRange(ecuFuncStruct.FixedFuncStructList);
+                    }
+                }
+            }
+
+            return fixedFuncStructList;
+        }
+
         public EcuFunctionStructs.EcuVariant GetEcuVariantCached(string ecuName)
         {
             try
