@@ -12,6 +12,7 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
+using BmwFileReader;
 using EdiabasLib;
 
 namespace BmwDeepObd
@@ -33,6 +34,8 @@ namespace BmwDeepObd
                 Args = args;
                 Comments = comments;
                 MwTabEntry = mwTabEntry;
+                EcuJob = null;
+                EcuJobResult = null;
                 Selected = false;
                 Format = string.Empty;
                 GridType = JobReader.DisplayInfo.GridModeType.Text;
@@ -56,6 +59,10 @@ namespace BmwDeepObd
             public List<string> Comments { get; }
 
             public ActivityCommon.MwTabEntry MwTabEntry { get; }
+
+            public EcuFunctionStructs.EcuJob EcuJob { get; set; }
+
+            public EcuFunctionStructs.EcuJobResult EcuJobResult { get; set; }
 
             public List<string> CommentsTrans { get; set; }
 
@@ -85,6 +92,7 @@ namespace BmwDeepObd
                 Results = new List<ResultInfo>();
                 ArgCount = 0;
                 Selected = false;
+                EcuFixedFuncStruct = null;
             }
 
             public string Name { get; }
@@ -98,7 +106,34 @@ namespace BmwDeepObd
             public uint ArgCount { get; set; }
 
             public bool Selected { get; set; }
+
+            public EcuFunctionStructs.EcuFixedFuncStruct EcuFixedFuncStruct { get; set; }
         }
+
+        class JobInfoComparer : IComparer<JobInfo>
+        {
+            public int Compare(JobInfo x, JobInfo y)
+            {
+                if (x == null || y == null)
+                {
+                    return 0;
+                }
+
+                if (x.EcuFixedFuncStruct != null && y.EcuFixedFuncStruct == null)
+                {
+                    return -1;
+                }
+
+                if (x.EcuFixedFuncStruct == null && y.EcuFixedFuncStruct != null)
+                {
+                    return 1;
+                }
+
+                // ReSharper disable once StringCompareToIsCultureSpecific
+                return x.Name.CompareTo(y.Name);
+            }
+        }
+
 
         private enum ActivityRequest
         {
@@ -913,7 +948,9 @@ namespace BmwDeepObd
         {
             int selection = 0;
             _spinnerJobsAdapter.Items.Clear();
-            foreach (JobInfo job in _ecuInfo.JobList.OrderBy(x => x.Name))
+            List<JobInfo> jobListSort = new List<JobInfo>(_ecuInfo.JobList);
+            jobListSort.Sort(new JobInfoComparer());
+            foreach (JobInfo job in jobListSort)
             {
                 if (IsValidJob(job, _ecuInfo))
                 {
