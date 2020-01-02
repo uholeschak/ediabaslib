@@ -60,6 +60,19 @@ namespace BmwDeepObd
             public bool ErrorResetOk { get; }
         }
 
+        public class EcuFunctionResult
+        {
+            public EcuFunctionResult(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData)
+            {
+                EcuJobResult = ecuJobResult;
+                ResultData = resultData;
+            }
+
+            public EcuFunctionStructs.EcuJobResult EcuJobResult { get; }
+
+            public EdiabasNet.ResultData ResultData { get; }
+        }
+
         [DataContract]
         private class BroadcastItem
         {
@@ -1164,7 +1177,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static List<Dictionary<string, EdiabasNet.ResultData>> ExecuteEcuJob(EdiabasNet ediabas, EcuFunctionStructs.EcuJob ecuJob)
+        public static List<EcuFunctionResult> ExecuteEcuJob(EdiabasNet ediabas, EcuFunctionStructs.EcuJob ecuJob)
         {
             StringBuilder sbParameter = new StringBuilder();
             if (ecuJob.EcuJobParList != null)
@@ -1185,8 +1198,51 @@ namespace BmwDeepObd
             ediabas.ExecuteJob(ecuJob.Name);
 
             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(ediabas.ResultSets);
+            List <EcuFunctionResult> ecuFunctionResultList = new List<EcuFunctionResult>();
+            if (ecuJob.EcuJobResultList != null)
+            {
+                foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
+                {
+                    if (resultSets.Count > 1)
+                    {
+                        int dictIndex = 0;
+                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                        {
+                            if (dictIndex == 0)
+                            {
+                                dictIndex++;
+                                continue;
+                            }
 
-            return resultSets;
+                            bool statusOk = false;
+                            if (resultDictLocal.TryGetValue("JOB_STATUS", out EdiabasNet.ResultData resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    // read details
+                                    string jobStatus = (string)resultData.OpData;
+                                    if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        statusOk = true;
+                                    }
+                                }
+                            }
+
+                            if (statusOk)
+                            {
+                                if (resultDictLocal.TryGetValue(ecuJobResult.Name.ToUpperInvariant(), out resultData))
+                                {
+                                    ecuFunctionResultList.Add(new EcuFunctionResult(ecuJobResult, resultData));
+                                }
+                            }
+                            dictIndex++;
+                        }
+
+                    }
+                }
+            }
+
+            return ecuFunctionResultList;
         }
 
         private bool AbortEdiabasJob()
