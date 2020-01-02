@@ -92,8 +92,8 @@ namespace BmwDeepObd
                     return 0;
                 }
 
-                string name1 = x.Name;
-                string name2 = y.Name;
+                string name1 = x.DisplayName;
+                string name2 = y.DisplayName;
                 if (x.EcuJob != null && y.EcuJob != null)
                 {
                     if (x.EcuJob != y.EcuJob)
@@ -1006,14 +1006,20 @@ namespace BmwDeepObd
             _buttonTestFormat.Enabled = (_selectedJob != null) && (_selectedResult != null);
         }
 
-        private bool IsResultBinary(ResultInfo resultInfo)
+        public static bool IsResultBinary(ResultInfo resultInfo)
         {
             return string.Compare(resultInfo.Type, XmlToolActivity.DataTypeBinary, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
-        private bool IsResultString(ResultInfo resultInfo)
+        public static bool IsResultString(ResultInfo resultInfo)
         {
             return string.Compare(resultInfo.Type, XmlToolActivity.DataTypeString, StringComparison.OrdinalIgnoreCase) == 0;
+        }
+
+        public static bool IsResultUseful(string resultName)
+        {
+            return string.Compare(resultName, "JOB_STATUS", StringComparison.OrdinalIgnoreCase) != 0 &&
+                   string.Compare(resultName, "SAETZE", StringComparison.OrdinalIgnoreCase) != 0;
         }
 
         private void UpdateFormatFields(ResultInfo resultInfo, bool userFormat, bool initialCall = false)
@@ -1499,7 +1505,23 @@ namespace BmwDeepObd
                         int index = 0;
                         foreach (ResultInfo result in _spinnerJobResultsAdapter.Items)
                         {
-                            if (result.Name.EndsWith("_WERT", StringComparison.OrdinalIgnoreCase))
+                            bool autoSelect = false;
+                            if (result.EcuJob != null)
+                            {
+                                if (IsResultUseful(result.Name))
+                                {
+                                    autoSelect = true;
+                                }
+                            }
+                            else
+                            {
+                                if (result.Name.EndsWith("_WERT", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    autoSelect = true;
+                                }
+                            }
+
+                            if (autoSelect)
                             {
                                 result.Selected = true;
                                 if (selection < 0)

@@ -3910,25 +3910,6 @@ namespace BmwDeepObd
                                 {
                                     XmlToolEcuActivity.JobInfo jobInfo = new XmlToolEcuActivity.JobInfo(ecuFixedFuncStruct.GetTitle(ActivityCommon.GetCurrentLanguage()));
                                     jobInfo.Comments = new List<string>();
-                                    string preOp = ecuFixedFuncStruct.GetPreOp(language);
-                                    if (!string.IsNullOrEmpty(preOp))
-                                    {
-                                        jobInfo.Comments.Add(preOp);
-                                    }
-
-                                    string procOp = ecuFixedFuncStruct.GetProcOp(language);
-                                    if (!string.IsNullOrEmpty(procOp))
-                                    {
-                                        jobInfo.Comments.Add(procOp);
-                                    }
-
-                                    string postOp = ecuFixedFuncStruct.GetPostOp(language);
-                                    if (!string.IsNullOrEmpty(postOp))
-                                    {
-                                        jobInfo.Comments.Add(postOp);
-                                    }
-
-                                    jobInfo.CommentsTrans = jobInfo.Comments;
                                     jobInfo.EcuFixedFuncStruct = ecuFixedFuncStruct;
 
                                     foreach (EcuFunctionStructs.EcuJob ecuJob in ecuFixedFuncStruct.EcuJobList)
@@ -3938,15 +3919,23 @@ namespace BmwDeepObd
                                             string resultTitle = ecuJobResult.GetTitle(language);
                                             string resultName = ecuJobResult.Name;
                                             string resultType = ecuJobResult.Format;
-                                            List<string> resultCommentList = new List<string> { resultTitle };
-                                            XmlToolEcuActivity.ResultInfo resultInfo = new XmlToolEcuActivity.ResultInfo(resultName, resultTitle, resultType, null, resultCommentList);
+                                            string comment = resultName + " (" + ecuJob.Name + ")";
+                                            List<string> resultCommentList = new List<string> { comment };
+                                            XmlToolEcuActivity.ResultInfo resultInfo =
+                                                new XmlToolEcuActivity.ResultInfo(resultName, resultTitle, resultType, null, resultCommentList);
                                             resultInfo.CommentsTrans = resultInfo.Comments;
                                             resultInfo.EcuJob = ecuJob;
                                             resultInfo.EcuJobResult = ecuJobResult;
                                             jobInfo.Results.Add(resultInfo);
+
+                                            if (XmlToolEcuActivity.IsResultUseful(resultName))
+                                            {
+                                                jobInfo.Comments.Add(resultTitle);
+                                            }
                                         }
                                     }
 
+                                    jobInfo.CommentsTrans = jobInfo.Comments;
                                     jobList.Add(jobInfo);
                                     break;
                                 }
