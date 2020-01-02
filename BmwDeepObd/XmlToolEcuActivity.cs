@@ -1795,11 +1795,11 @@ namespace BmwDeepObd
 
                     if (_selectedJob.EcuFixedFuncStruct?.EcuJobList != null)
                     {
-                        List<Dictionary<string, EdiabasNet.ResultData>> resultSetsMulti = new List<Dictionary<string, EdiabasNet.ResultData>>();
+                        List<EdiabasThread.EcuFunctionResult> ecuFunctionResultListMulti = new List<EdiabasThread.EcuFunctionResult>();
                         foreach (EcuFunctionStructs.EcuJob ecuJob in _selectedJob.EcuFixedFuncStruct.EcuJobList)
                         {
-                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = EdiabasThread.ExecuteEcuJob(_ediabas, ecuJob);
-                            resultSetsMulti.AddRange(resultSets);
+                            List<EdiabasThread.EcuFunctionResult> ecuFunctionResultList = EdiabasThread.ExecuteEcuJob(_ediabas, ecuJob);
+                            ecuFunctionResultListMulti.AddRange(ecuFunctionResultList);
                         }
                     }
                     else
