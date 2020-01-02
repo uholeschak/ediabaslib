@@ -62,15 +62,18 @@ namespace BmwDeepObd
 
         public class EcuFunctionResult
         {
-            public EcuFunctionResult(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData)
+            public EcuFunctionResult(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData, string resultString)
             {
                 EcuJobResult = ecuJobResult;
                 ResultData = resultData;
+                ResultString = resultString;
             }
 
             public EcuFunctionStructs.EcuJobResult EcuJobResult { get; }
 
             public EdiabasNet.ResultData ResultData { get; }
+
+            public string ResultString { get; }
         }
 
         [DataContract]
@@ -1232,7 +1235,21 @@ namespace BmwDeepObd
                             {
                                 if (resultDictLocal.TryGetValue(ecuJobResult.Name.ToUpperInvariant(), out resultData))
                                 {
-                                    ecuFunctionResultList.Add(new EcuFunctionResult(ecuJobResult, resultData));
+                                    string resultString = null;
+                                    if (ecuJobResult.EcuResultStateValueList != null && ecuJobResult.EcuResultStateValueList.Count > 0)
+                                    {
+                                        EcuFunctionStructs.EcuResultStateValue ecuResultStateValue = MatchEcuResultStateValue(ecuJobResult, resultData);
+                                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                                        if (ecuResultStateValue != null)
+                                        {
+                                            resultString = ecuResultStateValue.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                        }
+                                        else
+                                        {
+                                            resultString = EdiabasNet.FormatResult(resultData, "");
+                                        }
+                                    }
+                                    ecuFunctionResultList.Add(new EcuFunctionResult(ecuJobResult, resultData, resultString));
                                 }
                             }
                             dictIndex++;
@@ -1243,6 +1260,45 @@ namespace BmwDeepObd
             }
 
             return ecuFunctionResultList;
+        }
+
+        public static EcuFunctionStructs.EcuResultStateValue MatchEcuResultStateValue(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData)
+        {
+            try
+            {
+                if (ecuJobResult.EcuResultStateValueList == null)
+                {
+                    return null;
+                }
+
+                Predicate<EcuFunctionStructs.EcuResultStateValue> predicateStateValue = null;
+                EcuFunctionStructs.EcuResultStateValue ecuResultStateValue = null;
+                if (resultData.OpData is Int64)
+                {
+                    Int64 value = (Int64)resultData.OpData;
+                    predicateStateValue = stateValue => Convert.ToInt64(stateValue.StateValue, CultureInfo.InvariantCulture) == value;
+                }
+                else if (resultData.OpData is Double)
+                {
+                    Double value = (Double)resultData.OpData;
+                    predicateStateValue = stateValue => Math.Abs(value - Convert.ToDouble(stateValue.StateValue, CultureInfo.InvariantCulture)) < 0.0001;
+                }
+                else if (resultData.OpData is string)
+                {
+                    string value = (string)resultData.OpData;
+                    predicateStateValue = stateValue => stateValue.StateValue.Equals(value, StringComparison.OrdinalIgnoreCase);
+                }
+
+                if (predicateStateValue != null)
+                {
+                    ecuResultStateValue = ecuJobResult.EcuResultStateValueList.FirstOrDefault(stateValue => predicateStateValue(stateValue));
+                }
+                return ecuResultStateValue;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private bool AbortEdiabasJob()
