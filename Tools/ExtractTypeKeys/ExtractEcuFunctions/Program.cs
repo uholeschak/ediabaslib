@@ -234,7 +234,7 @@ namespace ExtractEcuFunctions
 
                 List<EcuFunctionStructs.EcuJobResult> ecuJobResultList = new List<EcuFunctionStructs.EcuJobResult>();
                 sql = string.Format(
-                    @"SELECT RESULTS.ID RESULTID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, ADAPTERPATH, NAME, LOCATION, UNIT, UNITFIXED, FORMAT, MULTIPLIKATOR, OFFSET, RUNDEN, ZAHLENFORMAT, ECUJOBID " +
+                    @"SELECT RESULTS.ID RESULTID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, FUNCTIONNAMERESULT, ADAPTERPATH, NAME, STEUERGERAETEFUNKTIONENRELEVAN, LOCATION, UNIT, UNITFIXED, FORMAT, MULTIPLIKATOR, OFFSET, RUNDEN, ZAHLENFORMAT, ECUJOBID " +
                     "FROM XEP_ECURESULTS RESULTS, XEP_REFECURESULTS REFRESULTS WHERE " +
                     "ECURESULTID = RESULTS.ID AND REFRESULTS.ID = {0} AND RESULTS.ECUJOBID = {1}", ecuFixedFuncStruct.Id, ecuJob.Id);
                 command = new SQLiteCommand(sql, mDbConnection);
@@ -246,8 +246,10 @@ namespace ExtractEcuFunctions
                             reader["TITLE_ENUS"].ToString(),
                             reader["TITLE_DEDE"].ToString(),
                             reader["TITLE_RU"].ToString(),
+                            reader["FUNCTIONNAMERESULT"].ToString(),
                             reader["ADAPTERPATH"].ToString(),
                             reader["NAME"].ToString(),
+                            reader["STEUERGERAETEFUNKTIONENRELEVAN"].ToString(),
                             reader["LOCATION"].ToString(),
                             reader["UNIT"].ToString(),
                             reader["UNITFIXED"].ToString(),
