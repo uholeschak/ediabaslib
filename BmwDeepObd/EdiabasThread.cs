@@ -1235,7 +1235,7 @@ namespace BmwDeepObd
                             {
                                 if (resultDictLocal.TryGetValue(ecuJobResult.Name.ToUpperInvariant(), out resultData))
                                 {
-                                    string resultString = null;
+                                    string resultString;
                                     if (ecuJobResult.EcuResultStateValueList != null && ecuJobResult.EcuResultStateValueList.Count > 0)
                                     {
                                         EcuFunctionStructs.EcuResultStateValue ecuResultStateValue = MatchEcuResultStateValue(ecuJobResult, resultData);
@@ -1249,6 +1249,11 @@ namespace BmwDeepObd
                                             resultString = EdiabasNet.FormatResult(resultData, "");
                                         }
                                     }
+                                    else
+                                    {
+                                        resultString = ConvertEcuResultValue(ecuJobResult, resultData);
+                                    }
+
                                     ecuFunctionResultList.Add(new EcuFunctionResult(ecuJobResult, resultData, resultString));
                                 }
                             }
@@ -1260,6 +1265,157 @@ namespace BmwDeepObd
             }
 
             return ecuFunctionResultList;
+        }
+
+        public static string ConvertEcuResultValue(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData)
+        {
+            try
+            {
+                double? number = null;
+                if (resultData.OpData is Int64)
+                {
+                    Int64 value = (Int64)resultData.OpData;
+                    number = value;
+                }
+                else if (resultData.OpData is Double)
+                {
+                    Double value = (Double)resultData.OpData;
+                    number = value;
+                }
+                else if (resultData.OpData is string)
+                {
+                    string value = (string)resultData.OpData;
+                    try
+                    {
+                        number = Convert.ToDouble(value, CultureInfo.InvariantCulture);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
+                if (number != null)
+                {
+                    double mult = 1;
+                    double offset = 0;
+
+                    try
+                    {
+                        mult = Convert.ToDouble(ecuJobResult.Mult, CultureInfo.InvariantCulture);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                    try
+                    {
+                        offset = Convert.ToDouble(ecuJobResult.Offset, CultureInfo.InvariantCulture);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                    number = number.Value * mult + offset;
+
+                    string result = UseEcuResultNumberFormat(number.Value, ecuJobResult);
+                    if (string.IsNullOrEmpty(result))
+                    {
+                        result = TryEcuResultRounding(number.Value, ecuJobResult);
+                    }
+
+                    if (string.IsNullOrEmpty(result))
+                    {
+                        result = number.ToString();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(ecuJobResult.Unit))
+                    {
+                        result += " " + ecuJobResult.Unit;
+                    }
+
+                    return result;
+                }
+
+                return string.Empty;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
+        public static string UseEcuResultNumberFormat(double value, EcuFunctionStructs.EcuJobResult ecuJobResult)
+        {
+            try
+            {
+                string numberFormat = ecuJobResult.NumberFormat;
+                if (string.IsNullOrWhiteSpace(numberFormat))
+                {
+                    return null;
+                }
+
+                if (numberFormat.Contains(","))
+                {
+                    numberFormat = numberFormat.Replace(",", ".");
+                }
+
+                if (numberFormat.Contains("#"))
+                {
+                    int index = numberFormat.IndexOf(".", StringComparison.Ordinal);
+                    if (-1 < index && index < numberFormat.Length - 1)
+                    {
+                        numberFormat = "{0:0." + numberFormat.Substring(numberFormat.IndexOf('.') + 1) + "}";
+                    }
+                    else
+                    {
+                        numberFormat = "{0:0}";
+                    }
+                }
+                else
+                {
+                    numberFormat = "{0:" + numberFormat + "}";
+                }
+
+                string result = string.Format(CultureInfo.InvariantCulture, numberFormat, value);
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static string TryEcuResultRounding(double value, EcuFunctionStructs.EcuJobResult ecuJobResult)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(ecuJobResult.NumberFormat))
+                {
+                    return null;
+                }
+
+                string result;
+                if (!string.IsNullOrWhiteSpace(ecuJobResult.Round) && ecuJobResult.Round != "0")
+                {
+                    string text = value.ToString(CultureInfo.InvariantCulture);
+                    int num = text.Contains(".") ? text.LastIndexOf(".", StringComparison.Ordinal) : text.LastIndexOf(",", StringComparison.Ordinal);
+                    int length = text.Substring(num + 1, text.Length - num - 1).Length;
+                    double number = Math.Round(value, length - 1, MidpointRounding.ToEven);
+                    result = number.ToString(CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    result = string.Format(CultureInfo.InvariantCulture, "{0:0.00}", value);
+                }
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public static EcuFunctionStructs.EcuResultStateValue MatchEcuResultStateValue(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData)
