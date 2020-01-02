@@ -542,16 +542,18 @@ namespace BmwFileReader
                 NumberFormat = string.Empty;
             }
 
-            public EcuJobResult(string id, string titleEn, string titleDe, string titleRu, string adapterPath,
-                string name, string location, string unit, string unitFixed, string format, string mult, string offset,
+            public EcuJobResult(string id, string titleEn, string titleDe, string titleRu, string funcNameResult, string adapterPath,
+                string name, string ecuFuncRelevant, string location, string unit, string unitFixed, string format, string mult, string offset,
                 string round, string numberFormat)
             {
                 Id = id;
                 TitleEn = titleEn;
                 TitleDe = titleDe;
                 TitleRu = titleRu;
+                FuncNameResult = funcNameResult;
                 AdapterPath = adapterPath;
                 Name = name;
+                EcuFuncRelevant = ecuFuncRelevant;
                 Location = location;
                 Unit = unit;
                 UnitFixed = unitFixed;
@@ -607,8 +609,10 @@ namespace BmwFileReader
             [XmlElement, DefaultValue("")] public string TitleEn { get; set; }
             [XmlElement, DefaultValue("")] public string TitleDe { get; set; }
             [XmlElement, DefaultValue("")] public string TitleRu { get; set; }
+            [XmlElement, DefaultValue("")] public string FuncNameResult { get; set; }
             [XmlElement, DefaultValue("")] public string AdapterPath { get; set; }
             [XmlElement, DefaultValue("")] public string Name { get; set; }
+            [XmlElement, DefaultValue("")] public string EcuFuncRelevant { get; set; }
             [XmlElement, DefaultValue("")] public string Location { get; set; }
             [XmlElement, DefaultValue("")] public string Unit { get; set; }
             [XmlElement, DefaultValue("")] public string UnitFixed { get; set; }
