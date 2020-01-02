@@ -10,6 +10,7 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading;
 using Android.Content;
+using BmwFileReader;
 using EdiabasLib;
 
 // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
@@ -1161,6 +1162,31 @@ namespace BmwDeepObd
                 }
                 resultDict.Add(newKey, mergeDict[key]);
             }
+        }
+
+        public static List<Dictionary<string, EdiabasNet.ResultData>> ExecuteEcuJob(EdiabasNet ediabas, EcuFunctionStructs.EcuJob ecuJob)
+        {
+            StringBuilder sbParameter = new StringBuilder();
+            if (ecuJob.EcuJobParList != null)
+            {
+                foreach (EcuFunctionStructs.EcuJobParameter ecuJobParameter in ecuJob.EcuJobParList.OrderBy(x => x.Name))
+                {
+                    if (sbParameter.Length > 0)
+                    {
+                        sbParameter.Append(";");
+                    }
+                    sbParameter.Append(ecuJobParameter.Value);
+                }
+            }
+
+            ediabas.ArgString = sbParameter.ToString();
+            ediabas.ArgBinaryStd = null;
+            ediabas.ResultsRequests = string.Empty;
+            ediabas.ExecuteJob(ecuJob.Name);
+
+            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(ediabas.ResultSets);
+
+            return resultSets;
         }
 
         private bool AbortEdiabasJob()
