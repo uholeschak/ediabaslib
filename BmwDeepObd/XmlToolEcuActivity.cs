@@ -83,6 +83,31 @@ namespace BmwDeepObd
             public string LogTag { get; set; }
         }
 
+        class ResultInfoComparer : IComparer<ResultInfo>
+        {
+            public int Compare(ResultInfo x, ResultInfo y)
+            {
+                if (x == null || y == null)
+                {
+                    return 0;
+                }
+
+                string name1 = x.Name;
+                string name2 = y.Name;
+                if (x.EcuJob != null && y.EcuJob != null)
+                {
+                    if (x.EcuJob != y.EcuJob)
+                    {
+                        name1 = x.EcuJob.Name;
+                        name2 = y.EcuJob.Name;
+                    }
+                }
+
+                // ReSharper disable once StringCompareToIsCultureSpecific
+                return name1.CompareTo(name2);
+            }
+        }
+
         public class JobInfo
         {
             public JobInfo(string name)
@@ -133,7 +158,6 @@ namespace BmwDeepObd
                 return x.Name.CompareTo(y.Name);
             }
         }
-
 
         private enum ActivityRequest
         {
@@ -1421,7 +1445,7 @@ namespace BmwDeepObd
             {
                 bool udsJob = false;
                 _layoutJobConfig.Visibility = ViewStates.Visible;
-                IEnumerable<ResultInfo> orderedResults;
+                List<ResultInfo> orderedResults;
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if ((ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw) && vagReadJob)
                 {
@@ -1435,12 +1459,14 @@ namespace BmwDeepObd
                     {
                         showResults.AddRange(_selectedJob.Results.Where(result => result.MwTabEntry != null && !result.MwTabEntry.Dummy));
                     }
-                    orderedResults = showResults.OrderBy(x => (x.MwTabEntry?.BlockNumber << 16) + x.MwTabEntry?.ValueIndexTrans);
+                    orderedResults = showResults.OrderBy(x => (x.MwTabEntry?.BlockNumber << 16) + x.MwTabEntry?.ValueIndexTrans).ToList();
                 }
                 else
                 {
-                    orderedResults = _selectedJob.Results.OrderBy(x => x.Name);
+                    orderedResults = new List<ResultInfo>(_selectedJob.Results);
+                    orderedResults.Sort(new ResultInfoComparer());
                 }
+
                 foreach (ResultInfo result in orderedResults)
                 {
                     if (!udsJob && string.Compare(result.Type, XmlToolActivity.DataTypeBinary, StringComparison.OrdinalIgnoreCase) == 0)
