@@ -3858,12 +3858,13 @@ namespace BmwDeepObd
                 bool readFailed = false;
                 try
                 {
+                    EcuFunctionStructs.EcuVariant ecuVariant = null;
                     if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                     {
                         if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                         {
                             string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
-                            EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+                            ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
                             if (ecuVariant == null)
                             {
                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No ECU variant found for: {0}", ecuSgbdName);
@@ -3895,6 +3896,64 @@ namespace BmwDeepObd
                     _ediabas.ExecuteJob("_JOBS");
 
                     List<XmlToolEcuActivity.JobInfo> jobList = new List<XmlToolEcuActivity.JobInfo>();
+
+                    if (ecuVariant != null)
+                    {
+                        string language = ActivityCommon.GetCurrentLanguage();
+                        List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructList = ActivityCommon.EcuFunctionReader.GetFixedFuncStructList(ecuVariant);
+                        foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in fixedFuncStructList)
+                        {
+                            switch (ecuFixedFuncStruct.GetNodeClassType())
+                            {
+                                case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.Identification:
+                                case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ReadState:
+                                {
+                                    XmlToolEcuActivity.JobInfo jobInfo = new XmlToolEcuActivity.JobInfo(ecuFixedFuncStruct.GetTitle(ActivityCommon.GetCurrentLanguage()));
+                                    jobInfo.Comments = new List<string>();
+                                    string preOp = ecuFixedFuncStruct.GetPreOp(language);
+                                    if (!string.IsNullOrEmpty(preOp))
+                                    {
+                                        jobInfo.Comments.Add(preOp);
+                                    }
+
+                                    string procOp = ecuFixedFuncStruct.GetProcOp(language);
+                                    if (!string.IsNullOrEmpty(procOp))
+                                    {
+                                        jobInfo.Comments.Add(procOp);
+                                    }
+
+                                    string postOp = ecuFixedFuncStruct.GetPostOp(language);
+                                    if (!string.IsNullOrEmpty(postOp))
+                                    {
+                                        jobInfo.Comments.Add(postOp);
+                                    }
+
+                                    jobInfo.CommentsTrans = jobInfo.Comments;
+                                    jobInfo.EcuFixedFuncStruct = ecuFixedFuncStruct;
+
+                                    foreach (EcuFunctionStructs.EcuJob ecuJob in ecuFixedFuncStruct.EcuJobList)
+                                    {
+                                        foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
+                                        {
+                                            string resultTitle = ecuJobResult.GetTitle(language);
+                                            string resultName = ecuJobResult.Name;
+                                            string resultType = ecuJobResult.Format;
+                                            List<string> resultCommentList = new List<string> { resultTitle };
+                                            XmlToolEcuActivity.ResultInfo resultInfo = new XmlToolEcuActivity.ResultInfo(resultName, resultTitle, resultType, null, resultCommentList);
+                                            resultInfo.CommentsTrans = resultInfo.Comments;
+                                            resultInfo.EcuJob = ecuJob;
+                                            resultInfo.EcuJobResult = ecuJobResult;
+                                            jobInfo.Results.Add(resultInfo);
+                                        }
+                                    }
+
+                                    jobList.Add(jobInfo);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
                     List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                     if (resultSets != null && resultSets.Count >= 2)
                     {
