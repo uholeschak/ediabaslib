@@ -95,9 +95,9 @@ namespace BmwFileReader
             [XmlElement, DefaultValue("")] public string TitleDe { get; set; }
             [XmlElement, DefaultValue("")] public string TitleRu { get; set; }
             [XmlElement, DefaultValue("")] public string GroupId { get; set; }
-            [XmlArray] public List<string> GroupFunctionIds { get; set; }
-            [XmlArray] public List<RefEcuVariant> RefEcuVariantList { get; set; }
-            [XmlArray] public List<EcuFuncStruct> EcuFuncStructList { get; set; }
+            [XmlArray, DefaultValue(null)] public List<string> GroupFunctionIds { get; set; }
+            [XmlArray, DefaultValue(null)] public List<RefEcuVariant> RefEcuVariantList { get; set; }
+            [XmlArray, DefaultValue(null)] public List<EcuFuncStruct> EcuFuncStructList { get; set; }
         }
 
         [XmlInclude(typeof(EcuJob))]
@@ -289,7 +289,7 @@ namespace BmwFileReader
             [XmlElement, DefaultValue("")] public string PostOpEn { get; set; }
             [XmlElement, DefaultValue("")] public string PostOpDe { get; set; }
             [XmlElement, DefaultValue("")] public string PostOpRu { get; set; }
-            [XmlArray] public List<EcuJob> EcuJobList { get; set; }
+            [XmlArray, DefaultValue(null)] public List<EcuJob> EcuJobList { get; set; }
         }
 
         [XmlInclude(typeof(EcuFixedFuncStruct))]
@@ -331,7 +331,7 @@ namespace BmwFileReader
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
             [XmlElement, DefaultValue("")] public string EcuVariantId { get; set; }
-            [XmlArray] public List<EcuFixedFuncStruct> FixedFuncStructList { get; set; }
+            [XmlArray, DefaultValue(null)] public List<EcuFixedFuncStruct> FixedFuncStructList { get; set; }
         }
 
         public class EcuVarFunc
@@ -429,7 +429,7 @@ namespace BmwFileReader
             [XmlElement, DefaultValue("")] public string TitleEn { get; set; }
             [XmlElement, DefaultValue("")] public string TitleDe { get; set; }
             [XmlElement, DefaultValue("")] public string TitleRu { get; set; }
-            [XmlArray] public List<EcuFixedFuncStruct> FixedFuncStructList { get; set; }
+            [XmlArray, DefaultValue(null)] public List<EcuFixedFuncStruct> FixedFuncStructList { get; set; }
         }
 
         [XmlInclude(typeof(EcuJobParameter)), XmlInclude(typeof(EcuJobResult))]
@@ -481,8 +481,8 @@ namespace BmwFileReader
             [XmlElement, DefaultValue("")] public string Id { get; set; }
             [XmlElement, DefaultValue("")] public string FuncNameJob { get; set; }
             [XmlElement, DefaultValue("")] public string Name { get; set; }
-            [XmlArray] public List<EcuJobParameter> EcuJobParList { get; set; }
-            [XmlArray] public List<EcuJobResult> EcuJobResultList { get; set; }
+            [XmlArray, DefaultValue(null)] public List<EcuJobParameter> EcuJobParList { get; set; }
+            [XmlArray, DefaultValue(null)] public List<EcuJobResult> EcuJobResultList { get; set; }
         }
 
         public class EcuJobParameter
@@ -622,7 +622,7 @@ namespace BmwFileReader
             [XmlElement, DefaultValue("")] public string Offset { get; set; }
             [XmlElement, DefaultValue("")] public string Round { get; set; }
             [XmlElement, DefaultValue("")] public string NumberFormat { get; set; }
-            [XmlArray] public List<EcuResultStateValue> EcuResultStateValueList { get; set; }
+            [XmlArray, DefaultValue(null)] public List<EcuResultStateValue> EcuResultStateValueList { get; set; }
         }
 
         public class EcuResultStateValue
