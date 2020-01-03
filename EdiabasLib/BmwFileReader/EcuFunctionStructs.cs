@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Xml.Serialization;
@@ -715,6 +716,24 @@ namespace BmwFileReader
         public static string PropertyList(this object obj)
         {
             return obj.PropertyList("");
+        }
+
+        public static Int64 ConvertToInt(this object obj)
+        {
+            Int64 result = 0;
+            try
+            {
+                if (obj != null)
+                {
+                    result = Convert.ToInt64(obj, CultureInfo.InvariantCulture);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return result;
         }
     }
 }

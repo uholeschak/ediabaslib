@@ -1398,7 +1398,7 @@ namespace BmwDeepObd
                 }
 
                 string result;
-                if (!string.IsNullOrWhiteSpace(ecuJobResult.Round) && ecuJobResult.Round != "0")
+                if (!string.IsNullOrWhiteSpace(ecuJobResult.Round) && ecuJobResult.Round.ConvertToInt() > 0)
                 {
                     string text = value.ToString(CultureInfo.InvariantCulture);
                     int num = text.Contains(".") ? text.LastIndexOf(".", StringComparison.Ordinal) : text.LastIndexOf(",", StringComparison.Ordinal);
