@@ -11,11 +11,13 @@ namespace BmwDeepObd
     {
         public class DisplayInfo
         {
-            public DisplayInfo(int originalPosition, string name, string result, string format, UInt32 displayOrder, GridModeType gridType, double minValue, double maxValue, string logTag)
+            public DisplayInfo(int originalPosition, string name, string result, string ecuJobId, string ecuJobResultId, string format, UInt32 displayOrder, GridModeType gridType, double minValue, double maxValue, string logTag)
             {
                 OriginalPosition = originalPosition;
                 Name = name;
                 Result = result;
+                EcuJobId = ecuJobId;
+                EcuJobResultId = ecuJobResultId;
                 Format = format;
                 DisplayOrder = displayOrder;
                 GridType = gridType;
@@ -40,6 +42,10 @@ namespace BmwDeepObd
             public string Name { get; }
 
             public string Result { get; }
+
+            public string EcuJobId { get; }
+
+            public string EcuJobResultId { get; }
 
             public string Format { get; }
 
@@ -69,11 +75,12 @@ namespace BmwDeepObd
 
         public class JobInfo
         {
-            public JobInfo(string id, string sgbd, string name, string argsFirst, string args, string results)
+            public JobInfo(string id, string sgbd, string name, string jobFixedFuncStructId, string argsFirst, string args, string results)
             {
                 Id = id;
                 Sgbd = sgbd;
                 Name = name;
+                JobFixedFuncStructId = jobFixedFuncStructId;
                 ArgsFirst = argsFirst;
                 Args = args;
                 Results = results;
@@ -84,6 +91,8 @@ namespace BmwDeepObd
             public string Sgbd { get; }
 
             public string Name { get; }
+
+            public string JobFixedFuncStructId { get; }
 
             public string Args { get; }
 
@@ -573,8 +582,10 @@ namespace BmwDeepObd
                                 {
                                     attrib = xnodePageChild.Attributes["sgbd"];
                                     if (attrib != null) sgbd = attrib.Value;
+
                                     attrib = xnodePageChild.Attributes["vag_data_file"];
                                     if (attrib != null) vagDataFileName = attrib.Value;
+
                                     attrib = xnodePageChild.Attributes["vag_uds_file"];
                                     if (attrib != null) vagUdsFileName = attrib.Value;
                                 }
@@ -585,6 +596,7 @@ namespace BmwDeepObd
                                         string jobId = string.Empty;
                                         string jobSgbd = string.Empty;
                                         string jobName = string.Empty;
+                                        string jobFixedFuncStructId = string.Empty;
                                         string jobArgsFirst = string.Empty;
                                         string jobArgs = string.Empty;
                                         string jobResults = string.Empty;
@@ -592,18 +604,27 @@ namespace BmwDeepObd
                                         {
                                             attrib = xnodeJobsChild.Attributes["id"];
                                             if (attrib != null) jobId = attrib.Value;
+
                                             attrib = xnodeJobsChild.Attributes["sgbd"];
                                             if (attrib != null) jobSgbd = attrib.Value;
+
                                             attrib = xnodeJobsChild.Attributes["name"];
                                             if (attrib != null) jobName = attrib.Value;
+
+                                            attrib = xnodeJobsChild.Attributes["fixed_func_struct_id"];
+                                            if (attrib != null) jobFixedFuncStructId = attrib.Value;
+
                                             attrib = xnodeJobsChild.Attributes["args_first"];
                                             if (attrib != null) jobArgsFirst = attrib.Value;
+
                                             attrib = xnodeJobsChild.Attributes["args"];
                                             if (attrib != null) jobArgs = attrib.Value;
+
                                             attrib = xnodeJobsChild.Attributes["results"];
                                             if (attrib != null) jobResults = attrib.Value;
                                         }
-                                        jobList.Add(new JobInfo(jobId, jobSgbd, jobName, jobArgsFirst, jobArgs, jobResults));
+
+                                        jobList.Add(new JobInfo(jobId, jobSgbd, jobName, jobFixedFuncStructId, jobArgsFirst, jobArgs, jobResults));
                                         foreach (XmlNode xnodeJobChild in xnodeJobsChild.ChildNodes)
                                         {
                                             ReadDisplayNode(xnodeJobChild, displayList, (string.IsNullOrEmpty(jobId) ? jobName : jobId) + "#", ref logEnabled);
@@ -698,6 +719,8 @@ namespace BmwDeepObd
             {
                 string name = string.Empty;
                 string result = string.Empty;
+                string ecuJobId = string.Empty;
+                string ecuJobResultId = string.Empty;
                 string format = null;
                 UInt32 displayOrder = 0;
                 DisplayInfo.GridModeType gridType = DisplayInfo.GridModeType.Hidden;
@@ -708,8 +731,16 @@ namespace BmwDeepObd
                 {
                     XmlAttribute attrib = xmlNode.Attributes["name"];
                     if (attrib != null) name = attrib.Value;
+
                     attrib = xmlNode.Attributes["result"];
                     if (attrib != null) result = attrib.Value;
+
+                    attrib = xmlNode.Attributes["ecu_job_id"];
+                    if (attrib != null) ecuJobId = attrib.Value;
+
+                    attrib = xmlNode.Attributes["ecu_job_result_id"];
+                    if (attrib != null) ecuJobResultId = attrib.Value;
+
                     attrib = xmlNode.Attributes["format"];
                     if (attrib != null) format = attrib.Value;
 
@@ -768,7 +799,7 @@ namespace BmwDeepObd
                     {
                         result = prefix + result;
                     }
-                    displayList.Add(new DisplayInfo(displayList.Count, name, result, format, displayOrder, gridType, minValue, maxValue, logTag));
+                    displayList.Add(new DisplayInfo(displayList.Count, name, result, ecuJobId, ecuJobResultId, format, displayOrder, gridType, minValue, maxValue, logTag));
                 }
 
                 DisplayInfoComparer dic = new DisplayInfoComparer();
