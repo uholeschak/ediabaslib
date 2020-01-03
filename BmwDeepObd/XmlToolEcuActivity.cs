@@ -774,10 +774,27 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (job.EcuFixedFuncStruct?.EcuJobList != null && job.EcuFixedFuncStruct.EcuJobList.Count > 0)
+            if (job.EcuFixedFuncStruct != null)
             {
-                return true;
+                if (job.EcuFixedFuncStruct.EcuJobList == null || job.EcuFixedFuncStruct.EcuJobList.Count == 0)
+                {
+                    return false;
+                }
+
+                foreach (EcuFunctionStructs.EcuJob ecuJob in job.EcuFixedFuncStruct.EcuJobList)
+                {
+                    foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
+                    {
+                        if (ecuJobResult.EcuFuncRelevant.ConvertToInt() != 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
             }
+
             if (string.Compare(job.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return true;
