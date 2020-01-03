@@ -1016,12 +1016,6 @@ namespace BmwDeepObd
             return string.Compare(resultInfo.Type, XmlToolActivity.DataTypeString, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
-        public static bool IsResultUseful(string resultName)
-        {
-            return string.Compare(resultName, "JOB_STATUS", StringComparison.OrdinalIgnoreCase) != 0 &&
-                   string.Compare(resultName, "SAETZE", StringComparison.OrdinalIgnoreCase) != 0;
-        }
-
         private void UpdateFormatFields(ResultInfo resultInfo, bool userFormat, bool initialCall = false)
         {
             string format = resultInfo.Format;
@@ -1508,7 +1502,7 @@ namespace BmwDeepObd
                             bool autoSelect = false;
                             if (result.EcuJob != null)
                             {
-                                if (IsResultUseful(result.Name))
+                                if (result.EcuJobResult.EcuFuncRelevant.ConvertToInt() != 0)
                                 {
                                     autoSelect = true;
                                 }

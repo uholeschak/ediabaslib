@@ -3916,20 +3916,19 @@ namespace BmwDeepObd
                                     {
                                         foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
                                         {
-                                            string resultTitle = ecuJobResult.GetTitle(language);
-                                            string resultName = ecuJobResult.Name;
-                                            string resultType = ecuJobResult.Format;
-                                            string comment = resultName + " (" + ecuJob.Name + ")";
-                                            List<string> resultCommentList = new List<string> { comment };
-                                            XmlToolEcuActivity.ResultInfo resultInfo =
-                                                new XmlToolEcuActivity.ResultInfo(resultName, resultTitle, resultType, null, resultCommentList);
-                                            resultInfo.CommentsTrans = resultInfo.Comments;
-                                            resultInfo.EcuJob = ecuJob;
-                                            resultInfo.EcuJobResult = ecuJobResult;
-                                            jobInfo.Results.Add(resultInfo);
-
-                                            if (XmlToolEcuActivity.IsResultUseful(resultName))
+                                            if (ecuJobResult.EcuFuncRelevant.ConvertToInt() != 0)
                                             {
+                                                string resultTitle = ecuJobResult.GetTitle(language);
+                                                string resultName = ecuJobResult.Name;
+                                                string resultType = ecuJobResult.Format;
+                                                string comment = resultName + " (" + ecuJob.Name + ")";
+                                                List<string> resultCommentList = new List<string> { comment };
+                                                XmlToolEcuActivity.ResultInfo resultInfo =
+                                                    new XmlToolEcuActivity.ResultInfo(resultName, resultTitle, resultType, null, resultCommentList);
+                                                resultInfo.CommentsTrans = resultInfo.Comments;
+                                                resultInfo.EcuJob = ecuJob;
+                                                resultInfo.EcuJobResult = ecuJobResult;
+                                                jobInfo.Results.Add(resultInfo);
                                                 jobInfo.Comments.Add(resultTitle);
                                             }
                                         }
