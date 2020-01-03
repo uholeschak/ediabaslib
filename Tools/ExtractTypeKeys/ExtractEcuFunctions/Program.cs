@@ -389,7 +389,7 @@ namespace ExtractEcuFunctions
             List<EcuFunctionStructs.EcuFuncStruct> ecuFuncStructList = new List<EcuFunctionStructs.EcuFuncStruct>();
             foreach (EcuFunctionStructs.EcuVarFunc ecuVarFunc in ecuVarFunctionsList)
             {
-                string sql = string.Format(@"SELECT REFFUNCS.ECUFUNCSTRUCTID FUNCSTRUCTID, TITLE_ENUS, TITLE_DEDE, TITLE_RU " +
+                string sql = string.Format(@"SELECT REFFUNCS.ECUFUNCSTRUCTID FUNCSTRUCTID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, MULTISELECTION " +
                         "FROM XEP_ECUFUNCSTRUCTURES FUNCS, XEP_REFECUFUNCSTRUCTS REFFUNCS WHERE FUNCS.ID = REFFUNCS.ECUFUNCSTRUCTID AND REFFUNCS.ID = {0}", ecuVarFunc.Id);
                 SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
                 using (SQLiteDataReader reader = command.ExecuteReader())
@@ -399,7 +399,8 @@ namespace ExtractEcuFunctions
                         ecuFuncStructList.Add(new EcuFunctionStructs.EcuFuncStruct(reader["FUNCSTRUCTID"].ToString(),
                             reader["TITLE_ENUS"].ToString(),
                             reader["TITLE_DEDE"].ToString(),
-                            reader["TITLE_RU"].ToString()));
+                            reader["TITLE_RU"].ToString(),
+                            reader["MULTISELECTION"].ToString()));
                     }
                 }
             }

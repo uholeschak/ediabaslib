@@ -785,7 +785,7 @@ namespace BmwDeepObd
                 {
                     foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
                     {
-                        if (ecuJobResult.EcuFuncRelevant.ConvertToInt() != 0)
+                        if (ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
                         {
                             return true;
                         }
@@ -1525,7 +1525,7 @@ namespace BmwDeepObd
                             bool autoSelect = false;
                             if (result.EcuJob != null)
                             {
-                                if (result.EcuJobResult.EcuFuncRelevant.ConvertToInt() != 0)
+                                if (result.EcuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
                                 {
                                     autoSelect = true;
                                 }

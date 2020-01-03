@@ -374,14 +374,16 @@ namespace BmwFileReader
                 TitleEn = string.Empty;
                 TitleDe = string.Empty;
                 TitleRu = string.Empty;
+                MultiSelect = string.Empty;
             }
 
-            public EcuFuncStruct(string id, string titleEn, string titleDe, string titleRu)
+            public EcuFuncStruct(string id, string titleEn, string titleDe, string titleRu, string multiSelect)
             {
                 Id = id;
                 TitleEn = titleEn;
                 TitleDe = titleDe;
                 TitleRu = titleRu;
+                MultiSelect = multiSelect;
             }
 
             public string ToString(string prefix)
@@ -429,6 +431,7 @@ namespace BmwFileReader
             [XmlElement, DefaultValue("")] public string TitleEn { get; set; }
             [XmlElement, DefaultValue("")] public string TitleDe { get; set; }
             [XmlElement, DefaultValue("")] public string TitleRu { get; set; }
+            [XmlElement, DefaultValue("")] public string MultiSelect { get; set; }
             [XmlArray, DefaultValue(null)] public List<EcuFixedFuncStruct> FixedFuncStructList { get; set; }
         }
 
