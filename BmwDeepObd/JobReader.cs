@@ -75,12 +75,12 @@ namespace BmwDeepObd
 
         public class JobInfo
         {
-            public JobInfo(string id, string sgbd, string name, string jobFixedFuncStructId, string argsFirst, string args, string results)
+            public JobInfo(string id, string sgbd, string name, string fixedFuncStructId, string argsFirst, string args, string results)
             {
                 Id = id;
                 Sgbd = sgbd;
                 Name = name;
-                JobFixedFuncStructId = jobFixedFuncStructId;
+                FixedFuncStructId = fixedFuncStructId;
                 ArgsFirst = argsFirst;
                 Args = args;
                 Results = results;
@@ -92,7 +92,7 @@ namespace BmwDeepObd
 
             public string Name { get; }
 
-            public string JobFixedFuncStructId { get; }
+            public string FixedFuncStructId { get; }
 
             public string Args { get; }
 
