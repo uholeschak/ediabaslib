@@ -475,6 +475,8 @@
   <string name="xml_tool_ecu_grid_count_portrait_value">Вертикальный формат</string>
   <string name="xml_tool_ecu_grid_count_landscape_value">Горизонтальный формат</string>
   <string name="xml_tool_ecu_jobs_name">Job список</string>
+  <!--Translate-->
+  <string name="xml_tool_ecu_show_all_jobs">Show all jobs</string>
   <string name="xml_tool_ecu_results">Job результат</string>
   <string name="xml_tool_ecu_show_all_results">Показывать все результаты</string>
   <string name="xml_tool_ecu_display_text">Выведенный текст</string>

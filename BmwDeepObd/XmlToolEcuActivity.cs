@@ -215,6 +215,7 @@ namespace BmwDeepObd
         private EditText _editTextGridCountLandscapeValue;
         private Spinner _spinnerJobs;
         private JobListAdapter _spinnerJobsAdapter;
+        private CheckBox _checkBoxShowAllJobs;
         private TextView _textViewJobCommentsTitle;
         private TextView _textViewJobComments;
         private LinearLayout _layoutJobConfig;
@@ -373,6 +374,38 @@ namespace BmwDeepObd
                 }
             };
 
+            _checkBoxShowAllJobs = FindViewById<CheckBox>(Resource.Id.checkBoxShowAllJobs);
+            bool showAllJobsVisible = false;
+            bool showAllJobsChecked = false;
+            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+            {
+                if (_ecuInfo.JobList.Any(jobInfo => jobInfo.EcuFixedFuncStruct != null))
+                {
+                    showAllJobsVisible = true;
+                }
+
+                if (showAllJobsVisible)
+                {
+                    foreach (JobInfo jobInfo in _ecuInfo.JobList)
+                    {
+                        if (jobInfo.EcuFixedFuncStruct == null && jobInfo.Selected)
+                        {
+                            if (jobInfo.Results.Any(resultInfo => resultInfo.Selected))
+                            {
+                                showAllJobsChecked = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            _checkBoxShowAllJobs.Visibility = showAllJobsVisible ? ViewStates.Visible : ViewStates.Gone;
+            _checkBoxShowAllJobs.Checked = showAllJobsChecked;
+            _checkBoxShowAllJobs.Click += (sender, args) =>
+            {
+                UpdateDisplay();
+            };
+
             _layoutJobConfig = FindViewById<LinearLayout>(Resource.Id.layoutJobConfig);
             _layoutJobConfig.SetOnTouchListener(this);
 
@@ -388,24 +421,28 @@ namespace BmwDeepObd
             };
 
             _checkBoxShowAllResults = FindViewById<CheckBox>(Resource.Id.checkBoxShowAllResults);
-            bool showAll = false;
+            bool showAllResultsChecked = false;
             foreach (JobInfo jobInfo in _ecuInfo.JobList)
             {
                 if (IsVagReadJob(jobInfo, _ecuInfo))
                 {
                     if (jobInfo.Results.All(resultInfo => resultInfo.MwTabEntry != null && resultInfo.MwTabEntry.Dummy))
                     {
-                        showAll = true;
+                        showAllResultsChecked = true;
                         break;
                     }
-                    if (jobInfo.Results.Any(resultInfo => resultInfo.Selected && resultInfo.MwTabEntry != null && resultInfo.MwTabEntry.Dummy))
+
+                    if (jobInfo.Selected)
                     {
-                        showAll = true;
-                        break;
+                        if (jobInfo.Results.Any(resultInfo => resultInfo.Selected && resultInfo.MwTabEntry != null && resultInfo.MwTabEntry.Dummy))
+                        {
+                            showAllResultsChecked = true;
+                            break;
+                        }
                     }
                 }
             }
-            _checkBoxShowAllResults.Checked = showAll;
+            _checkBoxShowAllResults.Checked = showAllResultsChecked;
             _checkBoxShowAllResults.Click += (sender, args) =>
             {
                 JobSelected(_selectedJob);
@@ -1000,12 +1037,27 @@ namespace BmwDeepObd
             {
                 if (IsValidJob(job, _ecuInfo))
                 {
-                    _spinnerJobsAdapter.Items.Add(job);
-                    if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                    bool addJob = true;
+                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                     {
-                        if (IsVagReadJob(job, _ecuInfo))
+                        if (_checkBoxShowAllJobs.Visibility == ViewStates.Visible && !_checkBoxShowAllJobs.Checked)
                         {
-                            selection = _spinnerJobsAdapter.Items.Count - 1;
+                            if (job.EcuFixedFuncStruct == null)
+                            {
+                                addJob = false;
+                            }
+                        }
+                    }
+
+                    if (addJob)
+                    {
+                        _spinnerJobsAdapter.Items.Add(job);
+                        if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                        {
+                            if (IsVagReadJob(job, _ecuInfo))
+                            {
+                                selection = _spinnerJobsAdapter.Items.Count - 1;
+                            }
                         }
                     }
                 }
