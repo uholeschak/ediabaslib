@@ -60,18 +60,16 @@ namespace BmwDeepObd
             public bool ErrorResetOk { get; }
         }
 
-        public class EcuFunctionResult
+        public class EcuFunctionResult : EdiabasNet.ResultData
         {
-            public EcuFunctionResult(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData, string resultString)
+            public EcuFunctionResult(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData, string resultString) :
+                base(resultData.ResType, resultData.Name, resultData.OpData)
             {
                 EcuJobResult = ecuJobResult;
-                ResultData = resultData;
                 ResultString = resultString;
             }
 
             public EcuFunctionStructs.EcuJobResult EcuJobResult { get; }
-
-            public EdiabasNet.ResultData ResultData { get; }
 
             public string ResultString { get; }
         }
@@ -1036,6 +1034,16 @@ namespace BmwDeepObd
                                                 if (string.Compare(ecuJob.Id, displayInfo.EcuJobId, StringComparison.OrdinalIgnoreCase) == 0)
                                                 {
                                                     List<EcuFunctionResult> ecuFunctionResultList = ExecuteEcuJob(Ediabas, ecuJob, ecuFixedFuncStruct);
+                                                    if (ecuFunctionResultList != null)
+                                                    {
+                                                        Dictionary<string, EdiabasNet.ResultData> resultDictLocal = new Dictionary<string, EdiabasNet.ResultData>();
+                                                        foreach (EcuFunctionResult ecuFunctionResult in ecuFunctionResultList)
+                                                        {
+                                                            resultDictLocal.Add(ecuFunctionResult.EcuJobResult.Id, ecuFunctionResult);
+                                                        }
+
+                                                        MergeResultDictionarys(ref resultDict, resultDictLocal, ecuFixedFuncStruct.Id + "#");
+                                                    }
                                                 }
                                             }
                                         }
