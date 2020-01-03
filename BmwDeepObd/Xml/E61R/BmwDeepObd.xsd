@@ -259,14 +259,14 @@
     <xs:attribute name="ecu_job_id" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>
-          ID of the corresponding ECU job.
+          ID of the corresponding ECU job. Only used for BMW configuration generator.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="ecu_job_result_id" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>
-          ID of the corresponding ECU job result.
+          ID of the corresponding ECU job result. Only used for BMW configuration generator.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -402,7 +402,7 @@
     <xs:attribute name="fixed_func_struct_id" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>
-          ID of the corresponding ECU fixed func struct.
+          ID of the corresponding ECU fixed func struct. Only used for BMW configuration generator.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
