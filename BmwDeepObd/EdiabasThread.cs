@@ -1022,38 +1022,61 @@ namespace BmwDeepObd
                                 currentSgbd = sgbd;
                             }
 
-                            if (firstRequestCall && !string.IsNullOrEmpty(jobInfo.ArgsFirst))
+                            EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct = GetEcuFixedFuncStruct(currentSgbd, jobInfo);
+                            if (ecuFixedFuncStruct != null)
                             {
-                                Ediabas.ArgString = jobInfo.ArgsFirst;
+                                if (ecuFixedFuncStruct.EcuJobList != null)
+                                {
+                                    foreach (EcuFunctionStructs.EcuJob ecuJob in ecuFixedFuncStruct.EcuJobList)
+                                    {
+                                        foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
+                                        {
+                                            if (!string.IsNullOrWhiteSpace(displayInfo.EcuJobId))
+                                            {
+                                                if (string.Compare(ecuJob.Id, displayInfo.EcuJobId, StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    List<EcuFunctionResult> ecuFunctionResultList = ExecuteEcuJob(Ediabas, ecuJob, ecuFixedFuncStruct);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                             else
                             {
-                                Ediabas.ArgString = jobInfo.Args;
-                            }
-                            Ediabas.ArgBinaryStd = null;
-                            Ediabas.ResultsRequests = jobInfo.Results;
-                            Ediabas.ExecuteJob(jobInfo.Name);
-
-                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = Ediabas.ResultSets;
-                            if (resultSets != null && resultSets.Count >= 2)
-                            {
-                                int dictIndex = 0;
-                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                                if (firstRequestCall && !string.IsNullOrEmpty(jobInfo.ArgsFirst))
                                 {
-                                    if (dictIndex == 0)
+                                    Ediabas.ArgString = jobInfo.ArgsFirst;
+                                }
+                                else
+                                {
+                                    Ediabas.ArgString = jobInfo.Args;
+                                }
+                                Ediabas.ArgBinaryStd = null;
+                                Ediabas.ResultsRequests = jobInfo.Results;
+                                Ediabas.ExecuteJob(jobInfo.Name);
+
+                                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = Ediabas.ResultSets;
+                                if (resultSets != null && resultSets.Count >= 2)
+                                {
+                                    int dictIndex = 0;
+                                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
                                     {
+                                        if (dictIndex == 0)
+                                        {
+                                            dictIndex++;
+                                            continue;
+                                        }
+                                        if (string.IsNullOrEmpty(jobInfo.Id))
+                                        {
+                                            MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Name + "#");
+                                        }
+                                        else
+                                        {
+                                            MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Id + "#" + dictIndex + "#");
+                                        }
                                         dictIndex++;
-                                        continue;
                                     }
-                                    if (string.IsNullOrEmpty(jobInfo.Id))
-                                    {
-                                        MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Name + "#");
-                                    }
-                                    else
-                                    {
-                                        MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Id + "#" + dictIndex + "#");
-                                    }
-                                    dictIndex++;
                                 }
                             }
                         }
@@ -1178,6 +1201,42 @@ namespace BmwDeepObd
                 }
                 resultDict.Add(newKey, mergeDict[key]);
             }
+        }
+
+        public static EcuFunctionStructs.EcuFixedFuncStruct GetEcuFixedFuncStruct(string sgbd, JobReader.JobInfo jobInfo)
+        {
+            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+            {
+                return null;
+            }
+
+            if (string.IsNullOrWhiteSpace(jobInfo.FixedFuncStructId))
+            {
+                return null;
+            }
+
+            EcuFunctionStructs.EcuVariant ecuVariant = null;
+            if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+            {
+                string ecuSgbdName = sgbd ?? string.Empty;
+                ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+            }
+
+            if (ecuVariant == null)
+            {
+                return null;
+            }
+
+            List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructList = ActivityCommon.EcuFunctionReader.GetFixedFuncStructList(ecuVariant);
+            foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in fixedFuncStructList)
+            {
+                if (string.Compare(ecuFixedFuncStruct.Id, jobInfo.FixedFuncStructId, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return ecuFixedFuncStruct;
+                }
+            }
+
+            return null;
         }
 
         public static List<EcuFunctionResult> ExecuteEcuJob(EdiabasNet ediabas, EcuFunctionStructs.EcuJob ecuJob, EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct)
