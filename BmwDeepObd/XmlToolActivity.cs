@@ -7655,6 +7655,18 @@ namespace BmwDeepObd
 
         private XElement GetJobNode(XmlToolEcuActivity.JobInfo job, XNamespace ns, XElement jobsNode)
         {
+            if (job.EcuFixedFuncStruct != null && !string.IsNullOrWhiteSpace(job.EcuFixedFuncStruct.Id))
+            {
+                return (from node in jobsNode.Elements(ns + "job")
+                    let nameAttrib = node.Attribute("name")
+                    let structIdAttrib = node.Attribute("fixed_func_struct_id")
+                    where nameAttrib != null
+                    where structIdAttrib != null
+                    where string.Compare(nameAttrib.Value, job.Name, StringComparison.OrdinalIgnoreCase) == 0
+                    where string.Compare(structIdAttrib.Value, job.EcuFixedFuncStruct.Id, StringComparison.OrdinalIgnoreCase) == 0
+                    select node).FirstOrDefault();
+            }
+
             return (from node in jobsNode.Elements(ns + "job")
                     let nameAttrib = node.Attribute("name")
                     where nameAttrib != null
@@ -7716,6 +7728,23 @@ namespace BmwDeepObd
                         where string.Compare(resultAttrib.Value, resultName, StringComparison.OrdinalIgnoreCase) == 0
                         select node).FirstOrDefault();
             }
+
+            if (result.EcuJob != null && !string.IsNullOrWhiteSpace(result.EcuJob.Id) &&
+                result.EcuJobResult != null && !string.IsNullOrWhiteSpace(result.EcuJobResult.Id))
+            {
+                return (from node in jobNode.Elements(ns + "display")
+                    let resultAttrib = node.Attribute("result")
+                    let jobIdAttrib = node.Attribute("ecu_job_id")
+                    let jobIdResultAttrib = node.Attribute("ecu_job_result_id")
+                    where resultAttrib != null
+                    where jobIdAttrib != null
+                    where jobIdResultAttrib != null
+                    where string.Compare(resultAttrib.Value, result.Name, StringComparison.OrdinalIgnoreCase) == 0
+                    where string.Compare(jobIdAttrib.Value, result.EcuJob.Id, StringComparison.OrdinalIgnoreCase) == 0
+                    where string.Compare(jobIdResultAttrib.Value, result.EcuJobResult.Id, StringComparison.OrdinalIgnoreCase) == 0
+                    select node).FirstOrDefault();
+            }
+
             return (from node in jobNode.Elements(ns + "display")
                     let resultAttrib = node.Attribute("result")
                     where resultAttrib != null
