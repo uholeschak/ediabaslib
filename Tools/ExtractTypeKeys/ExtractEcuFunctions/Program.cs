@@ -357,23 +357,13 @@ namespace ExtractEcuFunctions
                 }
             }
 
-            if (refEcuVariantList.Count == 0)
-            {
-                outTextWriter?.WriteLine("Ref ECU var functions not found");
-                return null;
-            }
-
+            int fixFuncCount = 0;
             ecuVariant.RefEcuVariantList = refEcuVariantList;
 
             foreach (EcuFunctionStructs.RefEcuVariant refEcuVariant in refEcuVariantList)
             {
                 List<EcuFunctionStructs.EcuFixedFuncStruct> ecuFixedFuncStructList = GetEcuFixedFuncStructList(mDbConnection, refEcuVariant.Id);
-                if (ecuFixedFuncStructList.Count == 0)
-                {
-                    outTextWriter?.WriteLine("ECU fixed function structures not found for ref ECU var");
-                    return null;
-                }
-
+                fixFuncCount += ecuFixedFuncStructList.Count;
                 refEcuVariant.FixedFuncStructList = ecuFixedFuncStructList;
             }
 
@@ -389,12 +379,6 @@ namespace ExtractEcuFunctions
                         ecuVarFunctionsList.Add(new EcuFunctionStructs.EcuVarFunc(reader["ID"].ToString(), ecuGroupFunctionId));
                     }
                 }
-            }
-
-            if (ecuVarFunctionsList.Count == 0)
-            {
-                outTextWriter?.WriteLine("ECU var functions not found");
-                return null;
             }
 
             foreach (EcuFunctionStructs.EcuVarFunc ecuVarFunc in ecuVarFunctionsList)
@@ -420,22 +404,17 @@ namespace ExtractEcuFunctions
                 }
             }
 
-            if (ecuFuncStructList.Count == 0)
-            {
-                outTextWriter?.WriteLine("ECU function structures not found");
-                return null;
-            }
-
             foreach (EcuFunctionStructs.EcuFuncStruct ecuFuncStruct in ecuFuncStructList)
             {
                 List<EcuFunctionStructs.EcuFixedFuncStruct> ecuFixedFuncStructList = GetEcuFixedFuncStructList(mDbConnection, ecuFuncStruct.Id);
-                if (ecuFixedFuncStructList.Count == 0)
-                {
-                    outTextWriter?.WriteLine("ECU fixed function structures not found for ECU func struct");
-                    return null;
-                }
-
+                fixFuncCount += ecuFixedFuncStructList.Count;
                 ecuFuncStruct.FixedFuncStructList = ecuFixedFuncStructList;
+            }
+
+            if (fixFuncCount == 0)
+            {
+                outTextWriter?.WriteLine("No ECU fix functions found");
+                return null;
             }
 
             ecuVariant.EcuFuncStructList = ecuFuncStructList;
