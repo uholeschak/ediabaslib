@@ -1180,8 +1180,9 @@ namespace BmwDeepObd
             }
         }
 
-        public static List<EcuFunctionResult> ExecuteEcuJob(EdiabasNet ediabas, EcuFunctionStructs.EcuJob ecuJob)
+        public static List<EcuFunctionResult> ExecuteEcuJob(EdiabasNet ediabas, EcuFunctionStructs.EcuJob ecuJob, EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct)
         {
+            EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = ecuFixedFuncStruct.GetNodeClassType();
             StringBuilder sbParameter = new StringBuilder();
             if (ecuJob.EcuJobParList != null)
             {
@@ -1251,7 +1252,15 @@ namespace BmwDeepObd
                                     }
                                     else
                                     {
-                                        resultString = ConvertEcuResultValue(ecuJobResult, resultData);
+                                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                                        if (nodeClassType == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.Identification)
+                                        {
+                                            resultString = ConvertEcuResultValueIdent(ecuJobResult, resultData);
+                                        }
+                                        else
+                                        {
+                                            resultString = ConvertEcuResultValue(ecuJobResult, resultData);
+                                        }
                                     }
 
                                     ecuFunctionResultList.Add(new EcuFunctionResult(ecuJobResult, resultData, resultString));
@@ -1265,6 +1274,35 @@ namespace BmwDeepObd
             }
 
             return ecuFunctionResultList;
+        }
+
+        public static string ConvertEcuResultValueIdent(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData)
+        {
+            try
+            {
+                string result = string.Empty;
+                if (resultData.OpData is Int64)
+                {
+                    Int64 value = (Int64)resultData.OpData;
+                    result = value.ToString(CultureInfo.InvariantCulture);
+                }
+                else if (resultData.OpData is Double)
+                {
+                    Double value = (Double)resultData.OpData;
+                    result = value.ToString("0.00", CultureInfo.InvariantCulture);
+                }
+                else if (resultData.OpData is string)
+                {
+                    string value = (string)resultData.OpData;
+                    result = value;
+                }
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
         }
 
         public static string ConvertEcuResultValue(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData)

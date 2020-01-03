@@ -1796,7 +1796,7 @@ namespace BmwDeepObd
                     {
                         foreach (EcuFunctionStructs.EcuJob ecuJob in _selectedJob.EcuFixedFuncStruct.EcuJobList)
                         {
-                            List<EdiabasThread.EcuFunctionResult> ecuFunctionResultList = EdiabasThread.ExecuteEcuJob(_ediabas, ecuJob);
+                            List<EdiabasThread.EcuFunctionResult> ecuFunctionResultList = EdiabasThread.ExecuteEcuJob(_ediabas, ecuJob, _selectedJob.EcuFixedFuncStruct);
                             foreach (EdiabasThread.EcuFunctionResult ecuFunctionResult in ecuFunctionResultList)
                             {
                                 if (string.Compare(ecuFunctionResult.EcuJobResult.Name, _selectedResult.EcuJobResult.Name, StringComparison.OrdinalIgnoreCase) == 0)
