@@ -454,6 +454,7 @@
   <string name="xml_tool_ecu_grid_count_portrait_value">Portrait</string>
   <string name="xml_tool_ecu_grid_count_landscape_value">Landscape</string>
   <string name="xml_tool_ecu_jobs_name">Job list</string>
+  <string name="xml_tool_ecu_show_all_jobs">Show all jobs</string>
   <string name="xml_tool_ecu_results">Job result</string>
   <string name="xml_tool_ecu_show_all_results">Show all results</string>
   <string name="xml_tool_ecu_display_text">Display text</string>

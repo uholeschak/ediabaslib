@@ -113,6 +113,11 @@
             android:id="@+id/spinnerJobs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <CheckBox
+            android:id="@+id/checkBoxShowAllJobs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/xml_tool_ecu_show_all_jobs" />
         <LinearLayout
             android:id="@+id/layoutJobConfig"
             android:orientation="vertical"

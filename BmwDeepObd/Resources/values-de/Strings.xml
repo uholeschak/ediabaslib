@@ -478,6 +478,7 @@
   <string name="xml_tool_ecu_grid_count_portrait_value">Hochformat</string>
   <string name="xml_tool_ecu_grid_count_landscape_value">Querformat</string>
   <string name="xml_tool_ecu_jobs_name">Job Liste</string>
+  <string name="xml_tool_ecu_show_all_jobs">Alle Jobs anzeigen</string>
   <string name="xml_tool_ecu_results">Job Ergebnis</string>
   <string name="xml_tool_ecu_show_all_results">Alle Ergebnisse anzeigen</string>
   <string name="xml_tool_ecu_display_text">Anzeigetext</string>
