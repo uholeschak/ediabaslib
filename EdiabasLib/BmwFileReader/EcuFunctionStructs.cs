@@ -531,8 +531,10 @@ namespace BmwFileReader
                 TitleEn = string.Empty;
                 TitleDe = string.Empty;
                 TitleRu = string.Empty;
+                FuncNameResult = string.Empty;
                 AdapterPath = string.Empty;
                 Name = string.Empty;
+                EcuFuncRelevant = string.Empty;
                 Location = string.Empty;
                 Unit = string.Empty;
                 UnitFixed = string.Empty;
