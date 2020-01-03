@@ -256,6 +256,20 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="ecu_job_id" type="string1-type" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          ID of the corresponding ECU job.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="ecu_job_result_id" type="string1-type" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          ID of the corresponding ECU job result.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute name="result" type="string1-type" use="required">
       <xs:annotation>
         <xs:documentation>
@@ -382,6 +396,13 @@
         <xs:documentation>
           Name of the EDIABAS job to execute.
           If this element is used the function ExecuteJob() will not be called.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="fixed_func_struct_id" type="string1-type" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          ID of the corresponding ECU fixed func struct.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>

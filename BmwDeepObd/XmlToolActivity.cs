@@ -6698,11 +6698,19 @@ namespace BmwDeepObd
                         jobNodeOld = GetJobNode(job, ns, jobsNodeOld);
                         if (jobNodeOld != null)
                         {
-                            jobNodeNew.ReplaceAttributes(from el in jobNodeOld.Attributes() where (el.Name != "name" && el.Name != "args") select new XAttribute(el));
+                            jobNodeNew.ReplaceAttributes(from el in jobNodeOld.Attributes()
+                                where (el.Name != "name" && el.Name != "args" && el.Name != "fixed_func_struct_id")
+                                select new XAttribute(el));
                         }
                     }
 
                     jobNodeNew.Add(new XAttribute("name", job.Name));
+
+                    if (job.EcuFixedFuncStruct != null && !string.IsNullOrWhiteSpace(job.EcuFixedFuncStruct.Id))
+                    {
+                        jobNodeNew.Add(new XAttribute("fixed_func_struct_id", job.EcuFixedFuncStruct.Id));
+                    }
+
                     string jobArgs = XmlToolEcuActivity.GetJobArgs(job, job.Results, ecuInfo);
                     if (!string.IsNullOrEmpty(jobArgs))
                     {
@@ -6755,7 +6763,8 @@ namespace BmwDeepObd
                             if (displayNodeOld != null)
                             {
                                 displayNodeNew.ReplaceAttributes(from el in displayNodeOld.Attributes()
-                                                                 where el.Name != "result" && el.Name != "format" && el.Name != "display-order" &&
+                                                                 where el.Name != "result" && el.Name != "ecu_job_id" && el.Name != "ecu_job_result_id" &&
+                                                                       el.Name != "format" && el.Name != "display-order" &&
                                                                        el.Name != "grid-type" && el.Name != "min-value" && el.Name != "max-value" &&
                                                                        el.Name != "log_tag"
                                                                  select new XAttribute(el));
@@ -6781,6 +6790,12 @@ namespace BmwDeepObd
                             resultName = result.MwTabEntry.ValueIndex.HasValue ? string.Format(Culture, "{0}#MW_Wert", result.MwTabEntry.ValueIndexTrans) : "1#ERGEBNIS1WERT";
                         }
                         displayNodeNew.Add(new XAttribute("result", resultName));
+                        if (result.EcuJob != null && !string.IsNullOrWhiteSpace(result.EcuJob.Id) &&
+                            result.EcuJobResult != null && !string.IsNullOrWhiteSpace(result.EcuJobResult.Id))
+                        {
+                            displayNodeNew.Add(new XAttribute("ecu_job_id", result.EcuJob.Id));
+                            displayNodeNew.Add(new XAttribute("ecu_job_result_id", result.EcuJobResult.Id));
+                        }
                         displayNodeNew.Add(new XAttribute("format", result.Format));
                         if (result.GridType != JobReader.DisplayInfo.GridModeType.Hidden)
                         {
@@ -6801,6 +6816,7 @@ namespace BmwDeepObd
                         displayNodeOld?.Remove();
                         jobNodeNew.Add(displayNodeNew);
                     }
+
                     jobNodeOld?.Remove();
                     jobsNodeNew.Add(jobNodeNew);
                 }
