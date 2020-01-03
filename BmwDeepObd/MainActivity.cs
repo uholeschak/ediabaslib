@@ -2574,10 +2574,14 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                string resultEcuFunc = ActivityCommon.FormatResultEcuFunction(pageInfo, displayInfo, resultDict);
+                                string resultEcuFunc = ActivityCommon.FormatResultEcuFunction(pageInfo, displayInfo, resultDict, out double? dataValueEcuFunc);
                                 if (!string.IsNullOrEmpty(resultEcuFunc))
                                 {
                                     result = resultEcuFunc;
+                                }
+                                if (dataValue == null)
+                                {
+                                    dataValue = dataValueEcuFunc;
                                 }
                             }
 
