@@ -62,13 +62,15 @@ namespace BmwDeepObd
 
         public class EcuFunctionResult : EdiabasNet.ResultData
         {
-            public EcuFunctionResult(string ecuFixedFuncStructId, string ecuJobId, EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData, string resultString) :
+            public EcuFunctionResult(string ecuFixedFuncStructId, string ecuJobId, EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData,
+                string resultString, double? resultValue) :
                 base(resultData.ResType, resultData.Name, resultData.OpData)
             {
                 EcuFixedFuncStructId = ecuFixedFuncStructId;
                 EcuJobId = ecuJobId;
                 EcuJobResult = ecuJobResult;
                 ResultString = resultString;
+                ResultValue = resultValue;
             }
 
             public string EcuFixedFuncStructId { get; }
@@ -78,6 +80,8 @@ namespace BmwDeepObd
             public EcuFunctionStructs.EcuJobResult EcuJobResult { get; }
 
             public string ResultString { get; }
+
+            public double? ResultValue { get; }
         }
 
         [DataContract]
@@ -1311,6 +1315,7 @@ namespace BmwDeepObd
                                 if (resultDictLocal.TryGetValue(ecuJobResult.Name.ToUpperInvariant(), out resultData))
                                 {
                                     string resultString = null;
+                                    double? resultValue = null;
                                     if (ecuJobResult.EcuResultStateValueList != null && ecuJobResult.EcuResultStateValueList.Count > 0)
                                     {
                                         EcuFunctionStructs.EcuResultStateValue ecuResultStateValue = MatchEcuResultStateValue(ecuJobResult, resultData);
@@ -1326,15 +1331,15 @@ namespace BmwDeepObd
                                         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                                         if (nodeClassType == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.Identification)
                                         {
-                                            resultString = ConvertEcuResultValueIdent(ecuJobResult, resultData);
+                                            resultString = ConvertEcuResultValueIdent(ecuJobResult, resultData, out resultValue);
                                         }
                                         else
                                         {
-                                            resultString = ConvertEcuResultValue(ecuJobResult, resultData);
+                                            resultString = ConvertEcuResultValue(ecuJobResult, resultData, out resultValue);
                                         }
                                     }
 
-                                    ecuFunctionResultList.Add(new EcuFunctionResult(ecuFixedFuncStruct.Id, ecuJob.Id, ecuJobResult, resultData, resultString));
+                                    ecuFunctionResultList.Add(new EcuFunctionResult(ecuFixedFuncStruct.Id, ecuJob.Id, ecuJobResult, resultData, resultString, resultValue));
                                 }
                             }
                             dictIndex++;
@@ -1347,8 +1352,9 @@ namespace BmwDeepObd
             return ecuFunctionResultList;
         }
 
-        public static string ConvertEcuResultValueIdent(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData)
+        public static string ConvertEcuResultValueIdent(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData, out double? resultValue)
         {
+            resultValue = null;
             try
             {
                 string result = string.Empty;
@@ -1356,11 +1362,13 @@ namespace BmwDeepObd
                 {
                     Int64 value = (Int64)resultData.OpData;
                     result = value.ToString(CultureInfo.InvariantCulture);
+                    resultValue = value;
                 }
                 else if (resultData.OpData is Double)
                 {
                     Double value = (Double)resultData.OpData;
                     result = value.ToString("0.00", CultureInfo.InvariantCulture);
+                    resultValue = value;
                 }
                 else if (resultData.OpData is string)
                 {
@@ -1386,8 +1394,9 @@ namespace BmwDeepObd
             }
         }
 
-        public static string ConvertEcuResultValue(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData)
+        public static string ConvertEcuResultValue(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData, out double? resultValue)
         {
+            resultValue = null;
             try
             {
                 string result = string.Empty;
@@ -1452,6 +1461,7 @@ namespace BmwDeepObd
                     }
 
                     number = number.Value * mult + offset;
+                    resultValue = number.Value;
 
                     result = UseEcuResultNumberFormat(number.Value, ecuJobResult);
                     if (string.IsNullOrEmpty(result))

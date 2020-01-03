@@ -3669,8 +3669,10 @@ namespace BmwDeepObd
             return sbResult.ToString();
         }
 
-        public static String FormatResultEcuFunction(JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
+        public static String FormatResultEcuFunction(JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict,
+            out double? dataValue)
         {
+            dataValue = null;
             if (string.IsNullOrWhiteSpace(displayInfo.EcuJobId) || string.IsNullOrWhiteSpace(displayInfo.EcuJobResultId))
             {
                 return string.Empty;
@@ -3686,6 +3688,7 @@ namespace BmwDeepObd
                         if (string.Compare(displayInfo.EcuJobId, ecuFunctionResult.EcuJobId, StringComparison.OrdinalIgnoreCase) == 0 &&
                             string.Compare(displayInfo.EcuJobResultId, ecuFunctionResult.EcuJobResult.Id, StringComparison.OrdinalIgnoreCase) == 0)
                         {
+                            dataValue = ecuFunctionResult.ResultValue;
                             return ecuFunctionResult.ResultString;
                         }
                     }
