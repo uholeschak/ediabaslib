@@ -718,14 +718,14 @@ namespace BmwFileReader
             return obj.PropertyList("");
         }
 
-        public static Int64 ConvertToInt(this object obj)
+        public static Int64 ConvertToInt(this string text)
         {
             Int64 result = 0;
             try
             {
-                if (obj != null)
+                if (!string.IsNullOrWhiteSpace(text))
                 {
-                    result = Convert.ToInt64(obj, CultureInfo.InvariantCulture);
+                    result = Convert.ToInt64(text.Trim(), CultureInfo.InvariantCulture);
                 }
             }
             catch (Exception)
