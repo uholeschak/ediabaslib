@@ -3916,7 +3916,7 @@ namespace BmwDeepObd
                                     {
                                         foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
                                         {
-                                            if (ecuJobResult.EcuFuncRelevant.ConvertToInt() != 0)
+                                            if (ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
                                             {
                                                 string resultTitle = ecuJobResult.GetTitle(language);
                                                 string resultName = ecuJobResult.Name;
