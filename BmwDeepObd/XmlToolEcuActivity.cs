@@ -1466,6 +1466,7 @@ namespace BmwDeepObd
             if (jobInfo != null)
             {
                 bool udsJob = false;
+                bool ecuFunction = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && jobInfo.EcuFixedFuncStruct != null;
                 _layoutJobConfig.Visibility = ViewStates.Visible;
                 List<ResultInfo> orderedResults;
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
@@ -1491,7 +1492,7 @@ namespace BmwDeepObd
 
                 foreach (ResultInfo result in orderedResults)
                 {
-                    if (!udsJob && string.Compare(result.Type, XmlToolActivity.DataTypeBinary, StringComparison.OrdinalIgnoreCase) == 0)
+                    if (!udsJob && !ecuFunction && string.Compare(result.Type, XmlToolActivity.DataTypeBinary, StringComparison.OrdinalIgnoreCase) == 0)
                     {   // ignore binary results
                         continue;
                     }
