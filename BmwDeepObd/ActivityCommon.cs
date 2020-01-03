@@ -3669,6 +3669,34 @@ namespace BmwDeepObd
             return sbResult.ToString();
         }
 
+        public static String FormatResultEcuFunction(JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
+        {
+            if (string.IsNullOrWhiteSpace(displayInfo.EcuJobId) || string.IsNullOrWhiteSpace(displayInfo.EcuJobResultId))
+            {
+                return string.Empty;
+            }
+
+            IList<EdiabasNet.ResultData> resultDataList;
+            if (resultDict != null && resultDict.TryGetValue(displayInfo.EcuJobResultId.ToUpperInvariant(), out resultDataList))
+            {
+                foreach (EdiabasNet.ResultData resultData in resultDataList)
+                {
+                    if (resultData is EdiabasThread.EcuFunctionResult ecuFunctionResult)
+                    {
+                        if (string.Compare(displayInfo.EcuJobId, ecuFunctionResult.EcuJobId, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            if (string.Compare(displayInfo.EcuJobResultId, ecuFunctionResult.EcuJobResult.Id, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                return ecuFunctionResult.ResultString;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return string.Empty;
+        }
+
         public static String FormatResultVagUds(string udsFileName, JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict,
             out double? dataValue)
         {

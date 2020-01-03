@@ -62,12 +62,18 @@ namespace BmwDeepObd
 
         public class EcuFunctionResult : EdiabasNet.ResultData
         {
-            public EcuFunctionResult(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData, string resultString) :
+            public EcuFunctionResult(string ecuFixedFuncStructId, string ecuJobId, EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData, string resultString) :
                 base(resultData.ResType, resultData.Name, resultData.OpData)
             {
+                EcuFixedFuncStructId = ecuFixedFuncStructId;
+                EcuJobId = ecuJobId;
                 EcuJobResult = ecuJobResult;
                 ResultString = resultString;
             }
+
+            public string EcuFixedFuncStructId { get; }
+
+            public string EcuJobId { get; }
 
             public EcuFunctionStructs.EcuJobResult EcuJobResult { get; }
 
@@ -1039,10 +1045,10 @@ namespace BmwDeepObd
                                                         Dictionary<string, EdiabasNet.ResultData> resultDictLocal = new Dictionary<string, EdiabasNet.ResultData>();
                                                         foreach (EcuFunctionResult ecuFunctionResult in ecuFunctionResultList)
                                                         {
-                                                            resultDictLocal.Add(ecuFunctionResult.EcuJobResult.Id, ecuFunctionResult);
+                                                            resultDictLocal.Add(ecuFunctionResult.EcuJobResult.Id.ToUpperInvariant(), ecuFunctionResult);
                                                         }
 
-                                                        MergeResultDictionarys(ref resultDict, resultDictLocal, ecuFixedFuncStruct.Id + "#");
+                                                        MergeResultDictionarys(ref resultDict, resultDictLocal /*, ecuFixedFuncStruct.Id + "#"*/);
                                                     }
                                                 }
                                             }
@@ -1327,7 +1333,7 @@ namespace BmwDeepObd
                                         }
                                     }
 
-                                    ecuFunctionResultList.Add(new EcuFunctionResult(ecuJobResult, resultData, resultString));
+                                    ecuFunctionResultList.Add(new EcuFunctionResult(ecuFixedFuncStruct.Id, ecuJob.Id, ecuJobResult, resultData, resultString));
                                 }
                             }
                             dictIndex++;
