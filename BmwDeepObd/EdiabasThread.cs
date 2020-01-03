@@ -1293,6 +1293,16 @@ namespace BmwDeepObd
                     string value = (string)resultData.OpData;
                     result = value;
                 }
+                else if (resultData.OpData.GetType() == typeof(byte[]))
+                {
+                    StringBuilder sb = new StringBuilder();
+                    byte[] data = (byte[])resultData.OpData;
+                    foreach (byte value in data)
+                    {
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:X02} ", value));
+                    }
+                    result = sb.ToString();
+                }
 
                 return result;
             }
@@ -1332,6 +1342,16 @@ namespace BmwDeepObd
                     {
                         // ignored
                     }
+                }
+                else if (resultData.OpData.GetType() == typeof(byte[]))
+                {
+                    StringBuilder sb = new StringBuilder();
+                    byte[] data = (byte[])resultData.OpData;
+                    foreach (byte value in data)
+                    {
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:X02} ", value));
+                    }
+                    result = sb.ToString();
                 }
 
                 if (number != null)
