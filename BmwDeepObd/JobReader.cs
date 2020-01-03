@@ -544,7 +544,7 @@ namespace BmwDeepObd
                         bool codeShowWarnings = false;
                         foreach (XmlNode xnodePageChild in xnodePage.ChildNodes)
                         {
-                            ReadDisplayNode(xnodePageChild, displayList, null, ref logEnabled);
+                            ReadDisplayNode(xnodePageChild, displayList, null, isBmw, ref logEnabled);
                             if (string.Compare(xnodePageChild.Name, "strings", StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 string lang = null;
@@ -611,8 +611,11 @@ namespace BmwDeepObd
                                             attrib = xnodeJobsChild.Attributes["name"];
                                             if (attrib != null) jobName = attrib.Value;
 
-                                            attrib = xnodeJobsChild.Attributes["fixed_func_struct_id"];
-                                            if (attrib != null) jobFixedFuncStructId = attrib.Value;
+                                            if (isBmw)
+                                            {
+                                                attrib = xnodeJobsChild.Attributes["fixed_func_struct_id"];
+                                                if (attrib != null) jobFixedFuncStructId = attrib.Value;
+                                            }
 
                                             attrib = xnodeJobsChild.Attributes["args_first"];
                                             if (attrib != null) jobArgsFirst = attrib.Value;
@@ -632,7 +635,7 @@ namespace BmwDeepObd
                                             {
                                                 nodePrefix = jobFixedFuncStructId;
                                             }
-                                            ReadDisplayNode(xnodeJobChild, displayList, nodePrefix + "#", ref logEnabled);
+                                            ReadDisplayNode(xnodeJobChild, displayList, nodePrefix + "#", isBmw, ref logEnabled);
                                         }
                                     }
                                 }
@@ -718,7 +721,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void ReadDisplayNode(XmlNode xmlNode, List<DisplayInfo> displayList, string prefix, ref bool logEnabled)
+        private void ReadDisplayNode(XmlNode xmlNode, List<DisplayInfo> displayList, string prefix, bool isBmw, ref bool logEnabled)
         {
             if (string.Compare(xmlNode.Name, "display", StringComparison.OrdinalIgnoreCase) == 0)
             {
@@ -740,11 +743,14 @@ namespace BmwDeepObd
                     attrib = xmlNode.Attributes["result"];
                     if (attrib != null) result = attrib.Value;
 
-                    attrib = xmlNode.Attributes["ecu_job_id"];
-                    if (attrib != null) ecuJobId = attrib.Value;
+                    if (isBmw)
+                    {
+                        attrib = xmlNode.Attributes["ecu_job_id"];
+                        if (attrib != null) ecuJobId = attrib.Value;
 
-                    attrib = xmlNode.Attributes["ecu_job_result_id"];
-                    if (attrib != null) ecuJobResultId = attrib.Value;
+                        attrib = xmlNode.Attributes["ecu_job_result_id"];
+                        if (attrib != null) ecuJobResultId = attrib.Value;
+                    }
 
                     attrib = xmlNode.Attributes["format"];
                     if (attrib != null) format = attrib.Value;

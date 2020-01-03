@@ -430,6 +430,14 @@ namespace BmwDeepObd
                     }
                 }
             }
+            else
+            {
+                string resultEcuFunc = ActivityCommon.FormatResultEcuFunction(pageInfo, displayInfo, resultDict, out double? _);
+                if (!string.IsNullOrEmpty(resultEcuFunc))
+                {
+                    result = resultEcuFunc;
+                }
+            }
             return result;
         }
 
