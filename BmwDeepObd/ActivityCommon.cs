@@ -3677,18 +3677,16 @@ namespace BmwDeepObd
             }
 
             IList<EdiabasNet.ResultData> resultDataList;
-            if (resultDict != null && resultDict.TryGetValue(displayInfo.EcuJobResultId.ToUpperInvariant(), out resultDataList))
+            if (resultDict != null && resultDict.TryGetValue(displayInfo.Result.ToUpperInvariant(), out resultDataList))
             {
                 foreach (EdiabasNet.ResultData resultData in resultDataList)
                 {
                     if (resultData is EdiabasThread.EcuFunctionResult ecuFunctionResult)
                     {
-                        if (string.Compare(displayInfo.EcuJobId, ecuFunctionResult.EcuJobId, StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.Compare(displayInfo.EcuJobId, ecuFunctionResult.EcuJobId, StringComparison.OrdinalIgnoreCase) == 0 &&
+                            string.Compare(displayInfo.EcuJobResultId, ecuFunctionResult.EcuJobResult.Id, StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            if (string.Compare(displayInfo.EcuJobResultId, ecuFunctionResult.EcuJobResult.Id, StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                return ecuFunctionResult.ResultString;
-                            }
+                            return ecuFunctionResult.ResultString;
                         }
                     }
                 }

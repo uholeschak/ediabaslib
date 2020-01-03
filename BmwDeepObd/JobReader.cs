@@ -627,7 +627,12 @@ namespace BmwDeepObd
                                         jobList.Add(new JobInfo(jobId, jobSgbd, jobName, jobFixedFuncStructId, jobArgsFirst, jobArgs, jobResults));
                                         foreach (XmlNode xnodeJobChild in xnodeJobsChild.ChildNodes)
                                         {
-                                            ReadDisplayNode(xnodeJobChild, displayList, (string.IsNullOrEmpty(jobId) ? jobName : jobId) + "#", ref logEnabled);
+                                            string nodePrefix = (string.IsNullOrEmpty(jobId) ? jobName : jobId);
+                                            if (!string.IsNullOrWhiteSpace(jobFixedFuncStructId))
+                                            {
+                                                nodePrefix = jobFixedFuncStructId;
+                                            }
+                                            ReadDisplayNode(xnodeJobChild, displayList, nodePrefix + "#", ref logEnabled);
                                         }
                                     }
                                 }
@@ -797,7 +802,14 @@ namespace BmwDeepObd
                     if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(result)) return;
                     if (!string.IsNullOrEmpty(prefix))
                     {
-                        result = prefix + result;
+                        if (!string.IsNullOrWhiteSpace(ecuJobId) && !string.IsNullOrWhiteSpace(ecuJobResultId))
+                        {
+                            result = prefix + ecuJobId + "#" + ecuJobResultId;
+                        }
+                        else
+                        {
+                            result = prefix + result;
+                        }
                     }
                     displayList.Add(new DisplayInfo(displayList.Count, name, result, ecuJobId, ecuJobResultId, format, displayOrder, gridType, minValue, maxValue, logTag));
                 }

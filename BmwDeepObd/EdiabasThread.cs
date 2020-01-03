@@ -1045,10 +1045,11 @@ namespace BmwDeepObd
                                                         Dictionary<string, EdiabasNet.ResultData> resultDictLocal = new Dictionary<string, EdiabasNet.ResultData>();
                                                         foreach (EcuFunctionResult ecuFunctionResult in ecuFunctionResultList)
                                                         {
-                                                            resultDictLocal.Add(ecuFunctionResult.EcuJobResult.Id.ToUpperInvariant(), ecuFunctionResult);
+                                                            string key = (ecuJob.Id + "#" + ecuFunctionResult.EcuJobResult.Id).ToUpperInvariant();
+                                                            resultDictLocal.Add(key, ecuFunctionResult);
                                                         }
 
-                                                        MergeResultDictionarys(ref resultDict, resultDictLocal /*, ecuFixedFuncStruct.Id + "#"*/);
+                                                        MergeResultDictionarys(ref resultDict, resultDictLocal, ecuFixedFuncStruct.Id + "#");
                                                     }
                                                 }
                                             }
