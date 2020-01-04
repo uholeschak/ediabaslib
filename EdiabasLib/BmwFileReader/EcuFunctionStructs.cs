@@ -72,22 +72,7 @@ namespace BmwFileReader
 
             public string GetTitle(string language)
             {
-                if (string.IsNullOrEmpty(language))
-                {
-                    return string.Empty;
-                }
-
-                string lang = language.ToLowerInvariant();
-                switch (lang)
-                {
-                    case "de":
-                        return TitleDe;
-
-                    case "ru":
-                        return TitleRu;
-                }
-
-                return TitleEn;
+                return GetTitleTranslated(this, language);
             }
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
@@ -176,82 +161,22 @@ namespace BmwFileReader
 
             public string GetTitle(string language)
             {
-                if (string.IsNullOrEmpty(language))
-                {
-                    return string.Empty;
-                }
-
-                string lang = language.ToLowerInvariant();
-                switch (lang)
-                {
-                    case "de":
-                        return TitleDe;
-
-                    case "ru":
-                        return TitleRu;
-                }
-
-                return TitleEn;
+                return GetTitleTranslated(this, language);
             }
 
             public string GetPreOp(string language)
             {
-                if (string.IsNullOrEmpty(language))
-                {
-                    return string.Empty;
-                }
-
-                string lang = language.ToLowerInvariant();
-                switch (lang)
-                {
-                    case "de":
-                        return PrepOpDe;
-
-                    case "ru":
-                        return PrepOpRu;
-                }
-
-                return PrepOpEn;
+                return GetTitleTranslated(this, language, "PrepOp");
             }
 
             public string GetProcOp(string language)
             {
-                if (string.IsNullOrEmpty(language))
-                {
-                    return string.Empty;
-                }
-
-                string lang = language.ToLowerInvariant();
-                switch (lang)
-                {
-                    case "de":
-                        return ProcOpDe;
-
-                    case "ru":
-                        return ProcOpRu;
-                }
-
-                return ProcOpEn;
+                return GetTitleTranslated(this, language, "ProcOp");
             }
 
             public string GetPostOp(string language)
             {
-                if (string.IsNullOrEmpty(language))
-                {
-                    return string.Empty;
-                }
-
-                string lang = language.ToLowerInvariant();
-                switch (lang)
-                {
-                    case "de":
-                        return PostOpDe;
-
-                    case "ru":
-                        return PostOpRu;
-                }
-
-                return PostOpEn;
+                return GetTitleTranslated(this, language, "PostOp");
             }
 
             public NodeClassType GetNodeClassType()
@@ -409,22 +334,7 @@ namespace BmwFileReader
 
             public string GetTitle(string language)
             {
-                if (string.IsNullOrEmpty(language))
-                {
-                    return string.Empty;
-                }
-
-                string lang = language.ToLowerInvariant();
-                switch (lang)
-                {
-                    case "de":
-                        return TitleDe;
-
-                    case "ru":
-                        return TitleRu;
-                }
-
-                return TitleEn;
+                return GetTitleTranslated(this, language);
             }
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
@@ -593,22 +503,7 @@ namespace BmwFileReader
 
             public string GetTitle(string language)
             {
-                if (string.IsNullOrEmpty(language))
-                {
-                    return string.Empty;
-                }
-
-                string lang = language.ToLowerInvariant();
-                switch (lang)
-                {
-                    case "de":
-                        return TitleDe;
-
-                    case "ru":
-                        return TitleRu;
-                }
-
-                return TitleEn;
+                return GetTitleTranslated(this, language);
             }
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
@@ -672,22 +567,7 @@ namespace BmwFileReader
 
             public string GetTitle(string language)
             {
-                if (string.IsNullOrEmpty(language))
-                {
-                    return string.Empty;
-                }
-
-                string lang = language.ToLowerInvariant();
-                switch (lang)
-                {
-                    case "de":
-                        return TitleDe;
-
-                    case "ru":
-                        return TitleRu;
-                }
-
-                return TitleEn;
+                return GetTitleTranslated(this, language);
             }
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
@@ -721,6 +601,38 @@ namespace BmwFileReader
         public static string PropertyList(this object obj)
         {
             return obj.PropertyList("");
+        }
+
+        public static string GetTitleTranslated(this object obj, string language, string prefix = "Title")
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(language) || language.Length != 2)
+                {
+                    return string.Empty;
+                }
+
+                string titlePropertyName = prefix + language.ToUpperInvariant()[0] + language.ToLowerInvariant()[1];
+                Type objType = obj.GetType();
+                PropertyInfo propertyTitle = objType.GetProperty(titlePropertyName);
+                if (propertyTitle == null)
+                {
+                    titlePropertyName = prefix + "En";
+                    propertyTitle = objType.GetProperty(titlePropertyName);
+                }
+
+                if (propertyTitle != null)
+                {
+                    string result = propertyTitle.GetValue(obj) as string;
+                    return result ?? string.Empty;
+                }
+                
+                return string.Empty;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
         }
 
         public static Int64 ConvertToInt(this string text)
