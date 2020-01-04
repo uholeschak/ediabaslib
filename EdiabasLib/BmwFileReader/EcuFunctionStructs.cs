@@ -607,7 +607,7 @@ namespace BmwFileReader
         {
             try
             {
-                if (string.IsNullOrEmpty(language) || language.Length != 2)
+                if (string.IsNullOrEmpty(language) || language.Length < 2)
                 {
                     return string.Empty;
                 }
