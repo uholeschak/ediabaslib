@@ -3903,10 +3903,12 @@ namespace BmwDeepObd
                         List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructList = ActivityCommon.EcuFunctionReader.GetFixedFuncStructList(ecuVariant);
                         foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in fixedFuncStructList)
                         {
-                            switch (ecuFixedFuncStruct.GetNodeClassType())
+                            EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = ecuFixedFuncStruct.GetNodeClassType();
+                            switch (nodeClassType)
                             {
                                 case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.Identification:
                                 case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ReadState:
+                                case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator:
                                 {
                                     XmlToolEcuActivity.JobInfo jobInfo = new XmlToolEcuActivity.JobInfo(ecuFixedFuncStruct.Id);
                                     string displayName = ecuFixedFuncStruct.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
@@ -3922,7 +3924,8 @@ namespace BmwDeepObd
                                     {
                                         foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
                                         {
-                                            if (ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
+                                            if (nodeClassType == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator ||
+                                                ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
                                             {
                                                 string resultTitle = ecuJobResult.Title?.GetTitle(language) ?? string.Empty;
                                                 string resultName = ecuJobResult.Name;
