@@ -10,27 +10,23 @@ namespace BmwFileReader
 {
     public static class EcuFunctionStructs
     {
-        [XmlInclude(typeof(RefEcuVariant)), XmlInclude(typeof(EcuFuncStruct))]
+        [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuFuncStruct))]
         public class EcuVariant
         {
             public EcuVariant()
             {
                 Id = string.Empty;
-                TitleEn = string.Empty;
-                TitleDe = string.Empty;
-                TitleRu = string.Empty;
                 GroupId = string.Empty;
+                GroupFunctionIds = null;
+                Title = null;
             }
 
-            public EcuVariant(string id, string titleEn, string titleDe, string titleRu, string groupId,
-                List<string> groupFunctionIds)
+            public EcuVariant(string id, string groupId, EcuTranslation title, List<string> groupFunctionIds)
             {
                 Id = id;
-                TitleEn = titleEn;
-                TitleDe = titleDe;
-                TitleRu = titleRu;
                 GroupId = groupId;
                 GroupFunctionIds = groupFunctionIds;
+                Title = title;
             }
 
             public string ToString(string prefix)
@@ -38,12 +34,18 @@ namespace BmwFileReader
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine(prefix + "VARIANT:");
                 sb.Append(this.PropertyList(prefix + " "));
+
                 if (GroupFunctionIds != null)
                 {
                     foreach (string GroupFunctionId in GroupFunctionIds)
                     {
                         sb.Append(prefix + " " + GroupFunctionId);
                     }
+                }
+
+                if (Title != null)
+                {
+                    sb.Append(prefix + " " + Title);
                 }
 
                 if (RefEcuVariantList != null)
@@ -70,22 +72,15 @@ namespace BmwFileReader
                 return ToString("");
             }
 
-            public string GetTitle(string language)
-            {
-                return GetTitleTranslated(this, language);
-            }
-
             [XmlElement, DefaultValue("")] public string Id { get; set; }
-            [XmlElement, DefaultValue("")] public string TitleEn { get; set; }
-            [XmlElement, DefaultValue("")] public string TitleDe { get; set; }
-            [XmlElement, DefaultValue("")] public string TitleRu { get; set; }
             [XmlElement, DefaultValue("")] public string GroupId { get; set; }
+            [XmlElement, DefaultValue(null)] public EcuTranslation Title { get; set; }
             [XmlArray, DefaultValue(null)] public List<string> GroupFunctionIds { get; set; }
             [XmlArray, DefaultValue(null)] public List<RefEcuVariant> RefEcuVariantList { get; set; }
             [XmlArray, DefaultValue(null)] public List<EcuFuncStruct> EcuFuncStructList { get; set; }
         }
 
-        [XmlInclude(typeof(EcuJob))]
+        [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuJob))]
         public class EcuFixedFuncStruct
         {
             public enum NodeClassType
@@ -101,41 +96,22 @@ namespace BmwFileReader
                 Id = string.Empty;
                 NodeClass = string.Empty;
                 NodeClassName = string.Empty;
-                TitleEn = string.Empty;
-                TitleDe = string.Empty;
-                TitleRu = string.Empty;
-                PrepOpEn = string.Empty;
-                PrepOpDe = string.Empty;
-                PrepOpRu = string.Empty;
-                ProcOpEn = string.Empty;
-                ProcOpDe = string.Empty;
-                ProcOpRu = string.Empty;
-                PostOpEn = string.Empty;
-                PostOpDe = string.Empty;
-                PostOpRu = string.Empty;
+                Title = null;
+                PrepOp = null;
+                ProcOp = null;
+                PostOp = null;
             }
 
-            public EcuFixedFuncStruct(string id, string nodeClass, string nodeClassName, string titleEn, string titleDe,
-                string titleRu,
-                string prepOpEn, string prepOpDe, string prepOpRu,
-                string procOpEn, string procOpDe, string procOpRu,
-                string postOpEn, string postOpDe, string postOpRu)
+            public EcuFixedFuncStruct(string id, string nodeClass, string nodeClassName,
+                EcuTranslation title, EcuTranslation preOp, EcuTranslation procOp, EcuTranslation postOp)
             {
                 Id = id;
                 NodeClass = nodeClass;
                 NodeClassName = nodeClassName;
-                TitleEn = titleEn;
-                TitleDe = titleDe;
-                TitleRu = titleRu;
-                PrepOpEn = prepOpEn;
-                PrepOpDe = prepOpDe;
-                PrepOpRu = prepOpRu;
-                ProcOpEn = procOpEn;
-                ProcOpDe = procOpDe;
-                ProcOpRu = procOpRu;
-                PostOpEn = postOpEn;
-                PostOpDe = postOpDe;
-                PostOpRu = postOpRu;
+                Title = title;
+                PrepOp = preOp;
+                ProcOp = procOp;
+                PostOp = postOp;
             }
 
             public string ToString(string prefix)
@@ -143,6 +119,27 @@ namespace BmwFileReader
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine(prefix + "FIXEDFUNC:");
                 sb.Append(this.PropertyList(prefix + " "));
+
+                if (Title != null)
+                {
+                    sb.Append(prefix + " " + Title);
+                }
+
+                if (PrepOp != null)
+                {
+                    sb.Append(prefix + " PRE-" + PrepOp);
+                }
+
+                if (ProcOp != null)
+                {
+                    sb.Append(prefix + " PROC-" + ProcOp);
+                }
+
+                if (PostOp != null)
+                {
+                    sb.Append(prefix + " POST-" + PostOp);
+                }
+
                 if (EcuJobList != null)
                 {
                     foreach (EcuJob ecuJob in EcuJobList)
@@ -157,26 +154,6 @@ namespace BmwFileReader
             public override string ToString()
             {
                 return ToString("");
-            }
-
-            public string GetTitle(string language)
-            {
-                return GetTitleTranslated(this, language);
-            }
-
-            public string GetPreOp(string language)
-            {
-                return GetTitleTranslated(this, language, "PrepOp");
-            }
-
-            public string GetProcOp(string language)
-            {
-                return GetTitleTranslated(this, language, "ProcOp");
-            }
-
-            public string GetPostOp(string language)
-            {
-                return GetTitleTranslated(this, language, "PostOp");
             }
 
             public NodeClassType GetNodeClassType()
@@ -202,18 +179,10 @@ namespace BmwFileReader
             [XmlElement, DefaultValue("")] public string Id { get; set; }
             [XmlElement, DefaultValue("")] public string NodeClass { get; set; }
             [XmlElement, DefaultValue("")] public string NodeClassName { get; set; }
-            [XmlElement, DefaultValue("")] public string TitleEn { get; set; }
-            [XmlElement, DefaultValue("")] public string TitleDe { get; set; }
-            [XmlElement, DefaultValue("")] public string TitleRu { get; set; }
-            [XmlElement, DefaultValue("")] public string PrepOpEn { get; set; }
-            [XmlElement, DefaultValue("")] public string PrepOpDe { get; set; }
-            [XmlElement, DefaultValue("")] public string PrepOpRu { get; set; }
-            [XmlElement, DefaultValue("")] public string ProcOpEn { get; set; }
-            [XmlElement, DefaultValue("")] public string ProcOpDe { get; set; }
-            [XmlElement, DefaultValue("")] public string ProcOpRu { get; set; }
-            [XmlElement, DefaultValue("")] public string PostOpEn { get; set; }
-            [XmlElement, DefaultValue("")] public string PostOpDe { get; set; }
-            [XmlElement, DefaultValue("")] public string PostOpRu { get; set; }
+            [XmlElement, DefaultValue(null)] public EcuTranslation Title { get; set; }
+            [XmlElement, DefaultValue(null)] public EcuTranslation PrepOp { get; set; }
+            [XmlElement, DefaultValue(null)] public EcuTranslation ProcOp { get; set; }
+            [XmlElement, DefaultValue(null)] public EcuTranslation PostOp { get; set; }
             [XmlArray, DefaultValue(null)] public List<EcuJob> EcuJobList { get; set; }
         }
 
@@ -290,24 +259,20 @@ namespace BmwFileReader
             [XmlElement, DefaultValue("")] public string GroupFuncId { get; set; }
         }
 
-        [XmlInclude(typeof(EcuFixedFuncStruct))]
+        [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuFixedFuncStruct))]
         public class EcuFuncStruct
         {
             public EcuFuncStruct()
             {
                 Id = string.Empty;
-                TitleEn = string.Empty;
-                TitleDe = string.Empty;
-                TitleRu = string.Empty;
+                Title = null;
                 MultiSelect = string.Empty;
             }
 
-            public EcuFuncStruct(string id, string titleEn, string titleDe, string titleRu, string multiSelect)
+            public EcuFuncStruct(string id, EcuTranslation title, string multiSelect)
             {
                 Id = id;
-                TitleEn = titleEn;
-                TitleDe = titleDe;
-                TitleRu = titleRu;
+                Title = title;
                 MultiSelect = multiSelect;
             }
 
@@ -316,6 +281,12 @@ namespace BmwFileReader
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine(prefix + "FUNC:");
                 sb.Append(this.PropertyList(prefix + " "));
+
+                if (Title != null)
+                {
+                    sb.Append(prefix + " " + Title);
+                }
+
                 if (FixedFuncStructList != null)
                 {
                     foreach (EcuFixedFuncStruct ecuFixedFuncStruct in FixedFuncStructList)
@@ -332,15 +303,8 @@ namespace BmwFileReader
                 return ToString("");
             }
 
-            public string GetTitle(string language)
-            {
-                return GetTitleTranslated(this, language);
-            }
-
             [XmlElement, DefaultValue("")] public string Id { get; set; }
-            [XmlElement, DefaultValue("")] public string TitleEn { get; set; }
-            [XmlElement, DefaultValue("")] public string TitleDe { get; set; }
-            [XmlElement, DefaultValue("")] public string TitleRu { get; set; }
+            [XmlElement, DefaultValue(null)] public EcuTranslation Title { get; set; }
             [XmlElement, DefaultValue("")] public string MultiSelect { get; set; }
             [XmlArray, DefaultValue(null)] public List<EcuFixedFuncStruct> FixedFuncStructList { get; set; }
         }
@@ -435,15 +399,13 @@ namespace BmwFileReader
             [XmlElement, DefaultValue("")] public string Name { get; set; }
         }
 
-        [XmlInclude(typeof(EcuResultStateValue))]
+        [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuResultStateValue))]
         public class EcuJobResult
         {
             public EcuJobResult()
             {
                 Id = string.Empty;
-                TitleEn = string.Empty;
-                TitleDe = string.Empty;
-                TitleRu = string.Empty;
+                Title = null;
                 FuncNameResult = string.Empty;
                 AdapterPath = string.Empty;
                 Name = string.Empty;
@@ -458,14 +420,12 @@ namespace BmwFileReader
                 NumberFormat = string.Empty;
             }
 
-            public EcuJobResult(string id, string titleEn, string titleDe, string titleRu, string funcNameResult, string adapterPath,
+            public EcuJobResult(string id, EcuTranslation title, string funcNameResult, string adapterPath,
                 string name, string ecuFuncRelevant, string location, string unit, string unitFixed, string format, string mult, string offset,
                 string round, string numberFormat)
             {
                 Id = id;
-                TitleEn = titleEn;
-                TitleDe = titleDe;
-                TitleRu = titleRu;
+                Title = title;
                 FuncNameResult = funcNameResult;
                 AdapterPath = adapterPath;
                 Name = name;
@@ -485,6 +445,12 @@ namespace BmwFileReader
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine(prefix + "RESULT:");
                 sb.Append(this.PropertyList(prefix + " "));
+
+                if (Title != null)
+                {
+                    sb.Append(prefix + " " + Title);
+                }
+
                 if (EcuResultStateValueList != null)
                 {
                     foreach (EcuResultStateValue ecuResultStateValue in EcuResultStateValueList)
@@ -501,15 +467,8 @@ namespace BmwFileReader
                 return ToString("");
             }
 
-            public string GetTitle(string language)
-            {
-                return GetTitleTranslated(this, language);
-            }
-
             [XmlElement, DefaultValue("")] public string Id { get; set; }
-            [XmlElement, DefaultValue("")] public string TitleEn { get; set; }
-            [XmlElement, DefaultValue("")] public string TitleDe { get; set; }
-            [XmlElement, DefaultValue("")] public string TitleRu { get; set; }
+            [XmlElement, DefaultValue(null)] public EcuTranslation Title { get; set; }
             [XmlElement, DefaultValue("")] public string FuncNameResult { get; set; }
             [XmlElement, DefaultValue("")] public string AdapterPath { get; set; }
             [XmlElement, DefaultValue("")] public string Name { get; set; }
@@ -525,27 +484,24 @@ namespace BmwFileReader
             [XmlArray, DefaultValue(null)] public List<EcuResultStateValue> EcuResultStateValueList { get; set; }
         }
 
+        [XmlInclude(typeof(EcuTranslation))]
         public class EcuResultStateValue
         {
             public EcuResultStateValue()
             {
                 Id = string.Empty;
-                TitleEn = string.Empty;
-                TitleDe = string.Empty;
-                TitleRu = string.Empty;
+                Title = null;
                 StateValue = string.Empty;
                 ValidFrom = string.Empty;
                 ValidTo = string.Empty;
                 ParentId = string.Empty;
             }
 
-            public EcuResultStateValue(string id, string titleEn, string titleDe, string titleRu,
+            public EcuResultStateValue(string id, EcuTranslation title,
                 string stateValue, string validFrom, string validTo, string parentId)
             {
                 Id = id;
-                TitleEn = titleEn;
-                TitleDe = titleDe;
-                TitleRu = titleRu;
+                Title = title;
                 StateValue = stateValue;
                 ValidFrom = validFrom;
                 ValidTo = validTo;
@@ -557,6 +513,49 @@ namespace BmwFileReader
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine(prefix + "STATEVALUE:");
                 sb.Append(this.PropertyList(prefix + " "));
+
+                if (Title != null)
+                {
+                    sb.Append(prefix + " " + Title);
+                }
+                return sb.ToString();
+            }
+
+            public override string ToString()
+            {
+                return ToString("");
+            }
+
+            [XmlElement, DefaultValue("")] public string Id { get; set; }
+            [XmlElement, DefaultValue(null)] public EcuTranslation Title { get; set; }
+            [XmlElement, DefaultValue("")] public string StateValue { get; set; }
+            [XmlElement, DefaultValue("")] public string ValidFrom { get; set; }
+            [XmlElement, DefaultValue("")] public string ValidTo { get; set; }
+            [XmlElement, DefaultValue("")] public string ParentId { get; set; }
+        }
+
+        public class EcuTranslation
+        {
+            public EcuTranslation()
+            {
+                TextEn = string.Empty;
+                TextDe = string.Empty;
+                TextRu = string.Empty;
+            }
+
+            public EcuTranslation(string titleEn, string titleDe, string titleRu)
+            {
+                TextEn = titleEn;
+                TextDe = titleDe;
+                TextRu = titleRu;
+            }
+
+            public string ToString(string prefix)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine(prefix + "TRANS:");
+                sb.Append(this.PropertyList(prefix + " "));
+
                 return sb.ToString();
             }
 
@@ -567,17 +566,12 @@ namespace BmwFileReader
 
             public string GetTitle(string language)
             {
-                return GetTitleTranslated(this, language);
+                return GetTitleTranslated(this, language, "Text");
             }
 
-            [XmlElement, DefaultValue("")] public string Id { get; set; }
-            [XmlElement, DefaultValue("")] public string TitleEn { get; set; }
-            [XmlElement, DefaultValue("")] public string TitleDe { get; set; }
-            [XmlElement, DefaultValue("")] public string TitleRu { get; set; }
-            [XmlElement, DefaultValue("")] public string StateValue { get; set; }
-            [XmlElement, DefaultValue("")] public string ValidFrom { get; set; }
-            [XmlElement, DefaultValue("")] public string ValidTo { get; set; }
-            [XmlElement, DefaultValue("")] public string ParentId { get; set; }
+            [XmlElement, DefaultValue("")] public string TextEn { get; set; }
+            [XmlElement, DefaultValue("")] public string TextDe { get; set; }
+            [XmlElement, DefaultValue("")] public string TextRu { get; set; }
         }
 
         public static string PropertyList(this object obj, string prefix)

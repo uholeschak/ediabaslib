@@ -134,6 +134,7 @@ namespace ExtractEcuFunctions
             return 0;
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private static bool SerializeEcuFunction(TextWriter outTextWriter, TextWriter logTextWriter, string connection, string outDirSub, string ecuName)
         {
             try
@@ -209,6 +210,14 @@ namespace ExtractEcuFunctions
             return ecuNameList;
         }
 
+        private static EcuFunctionStructs.EcuTranslation GetTranslation(SQLiteDataReader reader, string prefix = "TITLE")
+        {
+            return new EcuFunctionStructs.EcuTranslation(
+                reader[prefix + "_ENUS"].ToString(),
+                reader[prefix + "_DEDE"].ToString(),
+                reader[prefix + "_RU"].ToString());
+        }
+
         private static EcuFunctionStructs.EcuVariant GetEcuVariant(SQLiteConnection mDbConnection, string ecuName)
         {
             EcuFunctionStructs.EcuVariant ecuVariant = null;
@@ -220,10 +229,8 @@ namespace ExtractEcuFunctions
                 {
                     string groupId = reader["ECUGROUPID"].ToString();
                     ecuVariant = new EcuFunctionStructs.EcuVariant(reader["ID"].ToString(),
-                        reader["TITLE_ENUS"].ToString(),
-                        reader["TITLE_DEDE"].ToString(),
-                        reader["TITLE_RU"].ToString(),
                         groupId,
+                        GetTranslation(reader),
                         GetEcuGroupFunctionIds(mDbConnection, groupId));
                 }
             }
@@ -311,9 +318,7 @@ namespace ExtractEcuFunctions
                     while (reader.Read())
                     {
                         ecuJobResultList.Add(new EcuFunctionStructs.EcuJobResult(reader["RESULTID"].ToString(),
-                            reader["TITLE_ENUS"].ToString(),
-                            reader["TITLE_DEDE"].ToString(),
-                            reader["TITLE_RU"].ToString(),
+                            GetTranslation(reader),
                             reader["FUNCTIONNAMERESULT"].ToString(),
                             reader["ADAPTERPATH"].ToString(),
                             reader["NAME"].ToString(),
@@ -351,9 +356,7 @@ namespace ExtractEcuFunctions
                 while (reader.Read())
                 {
                     ecuResultStateValueList.Add(new EcuFunctionStructs.EcuResultStateValue(reader["ID"].ToString(),
-                        reader["TITLE_ENUS"].ToString(),
-                        reader["TITLE_DEDE"].ToString(),
-                        reader["TITLE_RU"].ToString(),
+                        GetTranslation(reader),
                         reader["STATEVALUE"].ToString(),
                         reader["VALIDFROM"].ToString(),
                         reader["VALIDTO"].ToString(),
@@ -381,18 +384,10 @@ namespace ExtractEcuFunctions
                     EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct = new EcuFunctionStructs.EcuFixedFuncStruct(reader["ID"].ToString(),
                         nodeClass,
                         GetNodeClassName(mDbConnection, nodeClass),
-                        reader["TITLE_ENUS"].ToString(),
-                        reader["TITLE_DEDE"].ToString(),
-                        reader["TITLE_RU"].ToString(),
-                        reader["PREPARINGOPERATORTEXT_ENUS"].ToString(),
-                        reader["PREPARINGOPERATORTEXT_DEDE"].ToString(),
-                        reader["PREPARINGOPERATORTEXT_RU"].ToString(),
-                        reader["PROCESSINGOPERATORTEXT_ENUS"].ToString(),
-                        reader["PROCESSINGOPERATORTEXT_DEDE"].ToString(),
-                        reader["PROCESSINGOPERATORTEXT_RU"].ToString(),
-                        reader["POSTOPERATORTEXT_ENUS"].ToString(),
-                        reader["POSTOPERATORTEXT_DEDE"].ToString(),
-                        reader["POSTOPERATORTEXT_RU"].ToString());
+                        GetTranslation(reader),
+                        GetTranslation(reader, "PREPARINGOPERATORTEXT"),
+                        GetTranslation(reader, "PROCESSINGOPERATORTEXT"),
+                        GetTranslation(reader, "POSTOPERATORTEXT"));
 
                     ecuFixedFuncStruct.EcuJobList = GetFixedFuncStructJobsList(mDbConnection, ecuFixedFuncStruct);
                     ecuFixedFuncStructList.Add(ecuFixedFuncStruct);
@@ -465,9 +460,7 @@ namespace ExtractEcuFunctions
                     while (reader.Read())
                     {
                         ecuFuncStructList.Add(new EcuFunctionStructs.EcuFuncStruct(reader["FUNCSTRUCTID"].ToString(),
-                            reader["TITLE_ENUS"].ToString(),
-                            reader["TITLE_DEDE"].ToString(),
-                            reader["TITLE_RU"].ToString(),
+                            GetTranslation(reader),
                             reader["MULTISELECTION"].ToString()));
                     }
                 }
