@@ -3908,8 +3908,13 @@ namespace BmwDeepObd
                                 case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.Identification:
                                 case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ReadState:
                                 {
-                                    XmlToolEcuActivity.JobInfo jobInfo = new XmlToolEcuActivity.JobInfo(
-                                        ecuFixedFuncStruct.Title?.GetTitle(ActivityCommon.GetCurrentLanguage()) ?? string.Empty);
+                                    XmlToolEcuActivity.JobInfo jobInfo = new XmlToolEcuActivity.JobInfo(ecuFixedFuncStruct.Id);
+                                    string displayName = ecuFixedFuncStruct.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                    if (!string.IsNullOrWhiteSpace(displayName))
+                                    {
+                                        jobInfo.DisplayName = displayName;
+                                    }
+
                                     jobInfo.Comments = new List<string>();
                                     jobInfo.EcuFixedFuncStruct = ecuFixedFuncStruct;
 
