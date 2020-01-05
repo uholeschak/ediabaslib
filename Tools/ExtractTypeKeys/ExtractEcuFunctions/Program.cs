@@ -273,7 +273,7 @@ namespace ExtractEcuFunctions
         private static List<EcuFunctionStructs.EcuJob> GetFixedFuncStructJobsList(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct)
         {
             List<EcuFunctionStructs.EcuJob> ecuJobList = new List<EcuFunctionStructs.EcuJob>();
-            string sql = string.Format(@"SELECT JOBS.ID JOBID, FUNCTIONNAMEJOB, NAME " +
+            string sql = string.Format(@"SELECT JOBS.ID JOBID, FUNCTIONNAMEJOB, NAME, PHASE, RANK " +
                                        "FROM XEP_ECUJOBS JOBS, XEP_REFECUJOBS REFJOBS WHERE JOBS.ID = REFJOBS.ECUJOBID AND REFJOBS.ID = {0}", ecuFixedFuncStruct.Id);
             SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
             using (SQLiteDataReader reader = command.ExecuteReader())
@@ -282,7 +282,9 @@ namespace ExtractEcuFunctions
                 {
                     ecuJobList.Add(new EcuFunctionStructs.EcuJob(reader["JOBID"].ToString(),
                         reader["FUNCTIONNAMEJOB"].ToString(),
-                        reader["NAME"].ToString()));
+                        reader["NAME"].ToString(),
+                        reader["PHASE"].ToString(),
+                        reader["RANK"].ToString()));
                 }
             }
 
@@ -373,7 +375,8 @@ namespace ExtractEcuFunctions
             string sql = string.Format(@"SELECT ID, NODECLASS, TITLE_ENUS, TITLE_DEDE, TITLE_RU, " +
                                        "PREPARINGOPERATORTEXT_ENUS, PREPARINGOPERATORTEXT_DEDE, PREPARINGOPERATORTEXT_RU, " +
                                        "PROCESSINGOPERATORTEXT_ENUS, PROCESSINGOPERATORTEXT_DEDE, PROCESSINGOPERATORTEXT_RU, " +
-                                       "POSTOPERATORTEXT_ENUS, POSTOPERATORTEXT_DEDE, POSTOPERATORTEXT_RU " +
+                                       "POSTOPERATORTEXT_ENUS, POSTOPERATORTEXT_DEDE, POSTOPERATORTEXT_RU, " +
+                                       "SORT_ORDER, ACTIVATION, ACTIVATION_DURATION_MS " +
                                        "FROM XEP_ECUFIXEDFUNCTIONS WHERE (PARENTID = {0})", parentId);
             SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
             using (SQLiteDataReader reader = command.ExecuteReader())
@@ -387,7 +390,10 @@ namespace ExtractEcuFunctions
                         GetTranslation(reader),
                         GetTranslation(reader, "PREPARINGOPERATORTEXT"),
                         GetTranslation(reader, "PROCESSINGOPERATORTEXT"),
-                        GetTranslation(reader, "POSTOPERATORTEXT"));
+                        GetTranslation(reader, "POSTOPERATORTEXT"),
+                        reader["SORT_ORDER"].ToString(),
+                        reader["ACTIVATION"].ToString(),
+                        reader["ACTIVATION_DURATION_MS"].ToString());
 
                     ecuFixedFuncStruct.EcuJobList = GetFixedFuncStructJobsList(mDbConnection, ecuFixedFuncStruct);
                     ecuFixedFuncStructList.Add(ecuFixedFuncStruct);
