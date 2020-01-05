@@ -1368,7 +1368,8 @@ namespace BmwDeepObd
                             {
                                 if (resultDictLocal.TryGetValue(ecuJobResult.Name.ToUpperInvariant(), out resultData))
                                 {
-                                    if (ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
+                                    if (nodeClassType == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator ||
+                                        ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
                                     {
                                         string resultString = null;
                                         double? resultValue = null;

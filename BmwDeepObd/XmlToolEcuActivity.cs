@@ -821,11 +821,13 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = job.EcuFixedFuncStruct.GetNodeClassType();
                 foreach (EcuFunctionStructs.EcuJob ecuJob in job.EcuFixedFuncStruct.EcuJobList)
                 {
                     foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
                     {
-                        if (ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
+                        if (nodeClassType == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator ||
+                            ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
                         {
                             return true;
                         }
@@ -1864,18 +1866,47 @@ namespace BmwDeepObd
 
                     if (_selectedJob.EcuFixedFuncStruct?.EcuJobList != null)
                     {
-                        List<EdiabasThread.EcuFunctionResult> ecuFunctionResultList = EdiabasThread.ExecuteEcuJobs(_ediabas, _selectedJob.EcuFixedFuncStruct);
-                        foreach (EdiabasThread.EcuFunctionResult ecuFunctionResult in ecuFunctionResultList)
+                        List<EdiabasThread.EcuFunctionResult> ecuFunctionResultList = null;
+                        if (_selectedJob.EcuFixedFuncStruct.GetNodeClassType() == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
                         {
-                            if (string.Compare(ecuFunctionResult.EcuJobResult.Name, _selectedResult.EcuJobResult.Name, StringComparison.OrdinalIgnoreCase) == 0)
+                            ecuFunctionResultList = new List<EdiabasThread.EcuFunctionResult>();
+                            List<EdiabasThread.EcuFunctionResult> resultListPreset = EdiabasThread.ExecuteEcuJobs(_ediabas, _selectedJob.EcuFixedFuncStruct, null, EcuFunctionStructs.EcuJob.PhaseType.Preset);
+                            if (resultListPreset != null && resultListPreset.Count > 0)
                             {
-                                string text = ecuFunctionResult.ResultString;
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", text);
-                                if (!string.IsNullOrWhiteSpace(text) && !string.IsNullOrWhiteSpace(resultText))
+                                ecuFunctionResultList.AddRange(resultListPreset);
+                            }
+
+                            List<EdiabasThread.EcuFunctionResult> resultListMain = EdiabasThread.ExecuteEcuJobs(_ediabas, _selectedJob.EcuFixedFuncStruct, null, EcuFunctionStructs.EcuJob.PhaseType.Main);
+                            if (resultListMain != null && resultListMain.Count > 0)
+                            {
+                                ecuFunctionResultList.AddRange(resultListMain);
+                            }
+
+                            List<EdiabasThread.EcuFunctionResult> resultListReset = EdiabasThread.ExecuteEcuJobs(_ediabas, _selectedJob.EcuFixedFuncStruct, null, EcuFunctionStructs.EcuJob.PhaseType.Reset);
+                            if (resultListReset != null && resultListReset.Count > 0)
+                            {
+                                ecuFunctionResultList.AddRange(resultListReset);
+                            }
+                        }
+                        else
+                        {
+                            ecuFunctionResultList = EdiabasThread.ExecuteEcuJobs(_ediabas, _selectedJob.EcuFixedFuncStruct);
+                        }
+
+                        if (ecuFunctionResultList != null)
+                        {
+                            foreach (EdiabasThread.EcuFunctionResult ecuFunctionResult in ecuFunctionResultList)
+                            {
+                                if (string.Compare(ecuFunctionResult.EcuJobResult.Name, _selectedResult.EcuJobResult.Name, StringComparison.OrdinalIgnoreCase) == 0)
                                 {
-                                    resultText += "; ";
+                                    string text = ecuFunctionResult.ResultString;
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", text);
+                                    if (!string.IsNullOrWhiteSpace(text) && !string.IsNullOrWhiteSpace(resultText))
+                                    {
+                                        resultText += "; ";
+                                    }
+                                    resultText += text;
                                 }
-                                resultText += text;
                             }
                         }
                     }
