@@ -100,10 +100,14 @@ namespace BmwFileReader
                 PrepOp = null;
                 ProcOp = null;
                 PostOp = null;
+                SortOrder = string.Empty;
+                Activation = string.Empty;
+                ActivationDurationMs = string.Empty;
             }
 
             public EcuFixedFuncStruct(string id, string nodeClass, string nodeClassName,
-                EcuTranslation title, EcuTranslation preOp, EcuTranslation procOp, EcuTranslation postOp)
+                EcuTranslation title, EcuTranslation preOp, EcuTranslation procOp, EcuTranslation postOp,
+                string sortOrder, string activation, string activationDuringMs)
             {
                 Id = id;
                 NodeClass = nodeClass;
@@ -112,6 +116,9 @@ namespace BmwFileReader
                 PrepOp = preOp;
                 ProcOp = procOp;
                 PostOp = postOp;
+                SortOrder = sortOrder;
+                Activation = activation;
+                ActivationDurationMs = activationDuringMs;
             }
 
             public string ToString(string prefix)
@@ -183,6 +190,9 @@ namespace BmwFileReader
             [XmlElement, DefaultValue(null)] public EcuTranslation PrepOp { get; set; }
             [XmlElement, DefaultValue(null)] public EcuTranslation ProcOp { get; set; }
             [XmlElement, DefaultValue(null)] public EcuTranslation PostOp { get; set; }
+            [XmlElement, DefaultValue("")] public string SortOrder { get; set; }
+            [XmlElement, DefaultValue("")] public string Activation { get; set; }
+            [XmlElement, DefaultValue("")] public string ActivationDurationMs { get; set; }
             [XmlArray, DefaultValue(null)] public List<EcuJob> EcuJobList { get; set; }
         }
 
@@ -317,13 +327,17 @@ namespace BmwFileReader
                 Id = string.Empty;
                 FuncNameJob = string.Empty;
                 Name = string.Empty;
+                Phase = string.Empty;
+                Rank = string.Empty;
             }
 
-            public EcuJob(string id, string funcNameJob, string name)
+            public EcuJob(string id, string funcNameJob, string name, string phase, string rank)
             {
                 Id = id;
                 FuncNameJob = funcNameJob;
                 Name = name;
+                Phase = phase;
+                Rank = rank;
             }
 
             public string ToString(string prefix)
@@ -358,6 +372,8 @@ namespace BmwFileReader
             [XmlElement, DefaultValue("")] public string Id { get; set; }
             [XmlElement, DefaultValue("")] public string FuncNameJob { get; set; }
             [XmlElement, DefaultValue("")] public string Name { get; set; }
+            [XmlElement, DefaultValue("")] public string Phase { get; set; }
+            [XmlElement, DefaultValue("")] public string Rank { get; set; }
             [XmlArray, DefaultValue(null)] public List<EcuJobParameter> EcuJobParList { get; set; }
             [XmlArray, DefaultValue(null)] public List<EcuJobResult> EcuJobResultList { get; set; }
         }
