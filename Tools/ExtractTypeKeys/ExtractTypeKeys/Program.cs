@@ -42,12 +42,14 @@ namespace ExtractTypeKeys
                     using (StreamWriter swTypeKeys = new StreamWriter(typeKeysFile))
                     {
                         string sql1 = @"SELECT t.NAME AS TYPEKEY, c.NAME AS EREIHE FROM XEP_CHARACTERISTICS t INNER JOIN XEP_VEHICLES v ON (v.TYPEKEYID = t.ID) INNER JOIN XEP_CHARACTERISTICS c ON (v.CHARACTERISTICID = c.ID) INNER JOIN XEP_CHARACTERISTICROOTS r ON (r.ID = c.PARENTID AND r.NODECLASS=40140802) WHERE t.NODECLASS = 40135042 ORDER BY TYPEKEY";
-                        SQLiteCommand command1 = new SQLiteCommand(sql1, mDbConnection);
-                        using (SQLiteDataReader reader = command1.ExecuteReader())
+                        using (SQLiteCommand command = new SQLiteCommand(sql1, mDbConnection))
                         {
-                            while (reader.Read())
+                            using (SQLiteDataReader reader = command.ExecuteReader())
                             {
-                                swTypeKeys.WriteLine(reader["TYPEKEY"] + "," + reader["EREIHE"]);
+                                while (reader.Read())
+                                {
+                                    swTypeKeys.WriteLine(reader["TYPEKEY"] + "," + reader["EREIHE"]);
+                                }
                             }
                         }
                     }
@@ -57,12 +59,14 @@ namespace ExtractTypeKeys
                     using (StreamWriter swVinranges = new StreamWriter(vinRangeFile))
                     {
                         string sql2 = @"SELECT v.VINBANDFROM AS VINBANDFROM, v.VINBANDTO AS VINBANDTO, v.TYPSCHLUESSEL AS TYPEKEY FROM VINRANGES v";
-                        SQLiteCommand command2 = new SQLiteCommand(sql2, mDbConnection);
-                        using (SQLiteDataReader reader = command2.ExecuteReader())
+                        using (SQLiteCommand command = new SQLiteCommand(sql2, mDbConnection))
                         {
-                            while (reader.Read())
+                            using (SQLiteDataReader reader = command.ExecuteReader())
                             {
-                                swVinranges.WriteLine(reader["VINBANDFROM"] + "," + reader["VINBANDTO"] + "," + reader["TYPEKEY"]);
+                                while (reader.Read())
+                                {
+                                    swVinranges.WriteLine(reader["VINBANDFROM"] + "," + reader["VINBANDTO"] + "," + reader["TYPEKEY"]);
+                                }
                             }
                         }
                     }
