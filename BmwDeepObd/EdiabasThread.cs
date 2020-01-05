@@ -62,20 +62,20 @@ namespace BmwDeepObd
 
         public class EcuFunctionResult : EdiabasNet.ResultData
         {
-            public EcuFunctionResult(string ecuFixedFuncStructId, string ecuJobId, EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData,
+            public EcuFunctionResult(EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct, EcuFunctionStructs.EcuJob ecuJob, EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData,
                 string resultString, double? resultValue) :
                 base(resultData.ResType, resultData.Name, resultData.OpData)
             {
-                EcuFixedFuncStructId = ecuFixedFuncStructId;
-                EcuJobId = ecuJobId;
+                EcuFixedFuncStruct = ecuFixedFuncStruct;
+                EcuJob = ecuJob;
                 EcuJobResult = ecuJobResult;
                 ResultString = resultString;
                 ResultValue = resultValue;
             }
 
-            public string EcuFixedFuncStructId { get; }
+            public EcuFunctionStructs.EcuFixedFuncStruct EcuFixedFuncStruct { get; }
 
-            public string EcuJobId { get; }
+            public EcuFunctionStructs.EcuJob EcuJob { get; }
 
             public EcuFunctionStructs.EcuJobResult EcuJobResult { get; }
 
@@ -1043,27 +1043,21 @@ namespace BmwDeepObd
                             {
                                 if (ecuFixedFuncStruct.EcuJobList != null)
                                 {
-                                    foreach (EcuFunctionStructs.EcuJob ecuJob in ecuFixedFuncStruct.EcuJobList)
+                                    foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                                     {
-                                        foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
+                                        if (!string.IsNullOrWhiteSpace(displayInfo.EcuJobId))
                                         {
-                                            if (!string.IsNullOrWhiteSpace(displayInfo.EcuJobId))
+                                            List<EcuFunctionResult> ecuFunctionResultList = ExecuteEcuJobs(Ediabas, ecuFixedFuncStruct, displayInfo.EcuJobId);
+                                            if (ecuFunctionResultList != null)
                                             {
-                                                if (string.Compare(ecuJob.Id, displayInfo.EcuJobId, StringComparison.OrdinalIgnoreCase) == 0)
+                                                Dictionary<string, EdiabasNet.ResultData> resultDictLocal = new Dictionary<string, EdiabasNet.ResultData>();
+                                                foreach (EcuFunctionResult ecuFunctionResult in ecuFunctionResultList)
                                                 {
-                                                    List<EcuFunctionResult> ecuFunctionResultList = ExecuteEcuJob(Ediabas, ecuJob, ecuFixedFuncStruct);
-                                                    if (ecuFunctionResultList != null)
-                                                    {
-                                                        Dictionary<string, EdiabasNet.ResultData> resultDictLocal = new Dictionary<string, EdiabasNet.ResultData>();
-                                                        foreach (EcuFunctionResult ecuFunctionResult in ecuFunctionResultList)
-                                                        {
-                                                            string key = (ecuJob.Id + "#" + ecuFunctionResult.EcuJobResult.Id).ToUpperInvariant();
-                                                            resultDictLocal.Add(key, ecuFunctionResult);
-                                                        }
-
-                                                        MergeResultDictionarys(ref resultDict, resultDictLocal, ecuFixedFuncStruct.Id + "#");
-                                                    }
+                                                    string key = (ecuFunctionResult.EcuJob.Id + "#" + ecuFunctionResult.EcuJobResult.Id).ToUpperInvariant();
+                                                    resultDictLocal.Add(key, ecuFunctionResult);
                                                 }
+
+                                                MergeResultDictionarys(ref resultDict, resultDictLocal, ecuFixedFuncStruct.Id + "#");
                                             }
                                         }
                                     }
@@ -1266,6 +1260,58 @@ namespace BmwDeepObd
             return null;
         }
 
+        public static List<EcuFunctionResult> ExecuteEcuJobs(EdiabasNet ediabas, EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct,
+            string ecuJobId = null, EcuFunctionStructs.EcuJob.PhaseType phaseType = EcuFunctionStructs.EcuJob.PhaseType.Unknown)
+        {
+            List<EcuFunctionResult> ecuFunctionResultList = new List<EcuFunctionResult>();
+            EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = ecuFixedFuncStruct.GetNodeClassType();
+            List<EcuFunctionStructs.EcuJob> ecuJobList = new List<EcuFunctionStructs.EcuJob>();
+            if (ecuFixedFuncStruct.EcuJobList != null)
+            {
+                foreach (EcuFunctionStructs.EcuJob ecuJob in ecuFixedFuncStruct.EcuJobList)
+                {
+                    if (string.IsNullOrEmpty(ecuJobId) ||
+                        string.Compare(ecuJob.Id, ecuJobId, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        bool addJob = false;
+                        if (nodeClassType == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator &&
+                            phaseType != EcuFunctionStructs.EcuJob.PhaseType.Unknown)
+                        {
+                            if (ecuJob.GetPhaseType() == phaseType)
+                            {
+                                addJob = true;
+                            }
+                        }
+                        else
+                        {
+                            addJob = true;
+                        }
+
+                        if (addJob)
+                        {
+                            ecuJobList.Add(ecuJob);
+                        }
+                    }
+                }
+            }
+
+            if (nodeClassType == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
+            {
+                ecuJobList = ecuJobList.OrderBy(ecuJob => ecuJob.Rank.ConvertToInt()).ToList();
+            }
+
+            foreach (EcuFunctionStructs.EcuJob ecuJob in ecuJobList)
+            {
+                List<EcuFunctionResult> resultList = ExecuteEcuJob(ediabas, ecuJob, ecuFixedFuncStruct);
+                if (resultList != null && resultList.Count > 0)
+                {
+                    ecuFunctionResultList.AddRange(resultList);
+                }
+            }
+
+            return ecuFunctionResultList;
+        }
+
         public static List<EcuFunctionResult> ExecuteEcuJob(EdiabasNet ediabas, EcuFunctionStructs.EcuJob ecuJob, EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct)
         {
             EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = ecuFixedFuncStruct.GetNodeClassType();
@@ -1349,7 +1395,7 @@ namespace BmwDeepObd
                                             }
                                         }
 
-                                        ecuFunctionResultList.Add(new EcuFunctionResult(ecuFixedFuncStruct.Id, ecuJob.Id, ecuJobResult, resultData, resultString, resultValue));
+                                        ecuFunctionResultList.Add(new EcuFunctionResult(ecuFixedFuncStruct, ecuJob, ecuJobResult, resultData, resultString, resultValue));
                                     }
                                 }
                             }
