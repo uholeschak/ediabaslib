@@ -322,6 +322,14 @@ namespace BmwFileReader
         [XmlInclude(typeof(EcuJobParameter)), XmlInclude(typeof(EcuJobResult))]
         public class EcuJob
         {
+            public enum PhaseType
+            {
+                Unknown,
+                Preset,
+                Main,
+                Reset
+            }
+
             public EcuJob()
             {
                 Id = string.Empty;
@@ -367,6 +375,26 @@ namespace BmwFileReader
             public override string ToString()
             {
                 return ToString("");
+            }
+
+            public PhaseType GetPhaseType()
+            {
+                if (string.Compare(Phase, "Preset", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return PhaseType.Preset;
+                }
+
+                if (string.Compare(Phase, "Main", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return PhaseType.Main;
+                }
+
+                if (string.Compare(Phase, "Reset", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return PhaseType.Reset;
+                }
+
+                return PhaseType.Unknown;
             }
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
