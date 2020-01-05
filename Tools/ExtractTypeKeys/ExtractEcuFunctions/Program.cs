@@ -136,6 +136,7 @@ namespace ExtractEcuFunctions
                     // limit number of active tasks
                     for (; ; )
                     {
+                        threadList.RemoveAll(thread => !thread.IsAlive);
                         int activeThreads = threadList.Count(thread => thread.IsAlive);
                         if (activeThreads < 16)
                         {
@@ -144,12 +145,12 @@ namespace ExtractEcuFunctions
                         Thread.Sleep(200);
                     }
 
-                    Thread compileThread = new Thread(() =>
+                    Thread serializeThread = new Thread(() =>
                     {
                         SerializeEcuFunction(outTextWriter, logTextWriter, connection, outDirSub, name);
                     });
-                    compileThread.Start();
-                    threadList.Add(compileThread);
+                    serializeThread.Start();
+                    threadList.Add(serializeThread);
                 }
 
                 foreach (Thread compileThread in threadList)
@@ -234,12 +235,14 @@ namespace ExtractEcuFunctions
         {
             List<string> ecuNameList = new List<string>();
             string sql = @"SELECT NAME FROM XEP_ECUVARIANTS";
-            SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
-            using (SQLiteDataReader reader = command.ExecuteReader())
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
-                while (reader.Read())
+                using (SQLiteDataReader reader = command.ExecuteReader())
                 {
-                    ecuNameList.Add(reader["NAME"].ToString());
+                    while (reader.Read())
+                    {
+                        ecuNameList.Add(reader["NAME"].ToString());
+                    }
                 }
             }
 
@@ -274,16 +277,18 @@ namespace ExtractEcuFunctions
         {
             EcuFunctionStructs.EcuVariant ecuVariant = null;
             string sql = string.Format(@"SELECT ID, " + SqlTitleItems + ", ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuName.ToLowerInvariant());
-            SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
-            using (SQLiteDataReader reader = command.ExecuteReader())
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
-                while (reader.Read())
+                using (SQLiteDataReader reader = command.ExecuteReader())
                 {
-                    string groupId = reader["ECUGROUPID"].ToString();
-                    ecuVariant = new EcuFunctionStructs.EcuVariant(reader["ID"].ToString(),
-                        groupId,
-                        GetTranslation(reader),
-                        GetEcuGroupFunctionIds(mDbConnection, groupId));
+                    while (reader.Read())
+                    {
+                        string groupId = reader["ECUGROUPID"].ToString();
+                        ecuVariant = new EcuFunctionStructs.EcuVariant(reader["ID"].ToString(),
+                            groupId,
+                            GetTranslation(reader),
+                            GetEcuGroupFunctionIds(mDbConnection, groupId));
+                    }
                 }
             }
 
@@ -294,12 +299,14 @@ namespace ExtractEcuFunctions
         {
             List<string> ecuGroupFunctionIds = new List<string>();
             string sql = string.Format(@"SELECT ID FROM XEP_ECUGROUPFUNCTIONS WHERE ECUGROUPID = {0}", groupId);
-            SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
-            using (SQLiteDataReader reader = command.ExecuteReader())
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
-                while (reader.Read())
+                using (SQLiteDataReader reader = command.ExecuteReader())
                 {
-                    ecuGroupFunctionIds.Add(reader["ID"].ToString());
+                    while (reader.Read())
+                    {
+                        ecuGroupFunctionIds.Add(reader["ID"].ToString());
+                    }
                 }
             }
 
@@ -308,14 +315,16 @@ namespace ExtractEcuFunctions
 
         private static string GetNodeClassName(SQLiteConnection mDbConnection, string nodeClass)
         {
-            string sql = string.Format(@"SELECT NAME FROM XEP_NODECLASSES WHERE ID = {0}", nodeClass);
-            SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
             string result = string.Empty;
-            using (SQLiteDataReader reader = command.ExecuteReader())
+            string sql = string.Format(@"SELECT NAME FROM XEP_NODECLASSES WHERE ID = {0}", nodeClass);
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
-                while (reader.Read())
+                using (SQLiteDataReader reader = command.ExecuteReader())
                 {
-                    result = reader["NAME"].ToString();
+                    while (reader.Read())
+                    {
+                        result = reader["NAME"].ToString();
+                    }
                 }
             }
 
@@ -327,16 +336,18 @@ namespace ExtractEcuFunctions
             List<EcuFunctionStructs.EcuJob> ecuJobList = new List<EcuFunctionStructs.EcuJob>();
             string sql = string.Format(@"SELECT JOBS.ID JOBID, FUNCTIONNAMEJOB, NAME, PHASE, RANK " +
                                        "FROM XEP_ECUJOBS JOBS, XEP_REFECUJOBS REFJOBS WHERE JOBS.ID = REFJOBS.ECUJOBID AND REFJOBS.ID = {0}", ecuFixedFuncStruct.Id);
-            SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
-            using (SQLiteDataReader reader = command.ExecuteReader())
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
-                while (reader.Read())
+                using (SQLiteDataReader reader = command.ExecuteReader())
                 {
-                    ecuJobList.Add(new EcuFunctionStructs.EcuJob(reader["JOBID"].ToString(),
-                        reader["FUNCTIONNAMEJOB"].ToString(),
-                        reader["NAME"].ToString(),
-                        reader["PHASE"].ToString(),
-                        reader["RANK"].ToString()));
+                    while (reader.Read())
+                    {
+                        ecuJobList.Add(new EcuFunctionStructs.EcuJob(reader["JOBID"].ToString(),
+                            reader["FUNCTIONNAMEJOB"].ToString(),
+                            reader["NAME"].ToString(),
+                            reader["PHASE"].ToString(),
+                            reader["RANK"].ToString()));
+                    }
                 }
             }
 
@@ -347,15 +358,17 @@ namespace ExtractEcuFunctions
                     @"SELECT PARAM.ID PARAMID, PARAMVALUE, FUNCTIONNAMEPARAMETER, ADAPTERPATH, NAME, ECUJOBID " +
                     "FROM XEP_ECUPARAMETERS PARAM, XEP_REFECUPARAMETERS REFPARAM WHERE " +
                     "PARAM.ID = REFPARAM.ECUPARAMETERID AND REFPARAM.ID = {0} AND PARAM.ECUJOBID = {1}", ecuFixedFuncStruct.Id, ecuJob.Id);
-                command = new SQLiteCommand(sql, mDbConnection);
-                using (SQLiteDataReader reader = command.ExecuteReader())
+                using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
                 {
-                    while (reader.Read())
+                    using (SQLiteDataReader reader = command.ExecuteReader())
                     {
-                        ecuJobParList.Add(new EcuFunctionStructs.EcuJobParameter(reader["PARAMID"].ToString(),
-                            reader["PARAMVALUE"].ToString(),
-                            reader["ADAPTERPATH"].ToString(),
-                            reader["NAME"].ToString()));
+                        while (reader.Read())
+                        {
+                            ecuJobParList.Add(new EcuFunctionStructs.EcuJobParameter(reader["PARAMID"].ToString(),
+                                reader["PARAMVALUE"].ToString(),
+                                reader["ADAPTERPATH"].ToString(),
+                                reader["NAME"].ToString()));
+                        }
                     }
                 }
 
@@ -366,25 +379,27 @@ namespace ExtractEcuFunctions
                     @"SELECT RESULTS.ID RESULTID, " + SqlTitleItems + ", FUNCTIONNAMERESULT, ADAPTERPATH, NAME, STEUERGERAETEFUNKTIONENRELEVAN, LOCATION, UNIT, UNITFIXED, FORMAT, MULTIPLIKATOR, OFFSET, RUNDEN, ZAHLENFORMAT, ECUJOBID " +
                     "FROM XEP_ECURESULTS RESULTS, XEP_REFECURESULTS REFRESULTS WHERE " +
                     "ECURESULTID = RESULTS.ID AND REFRESULTS.ID = {0} AND RESULTS.ECUJOBID = {1}", ecuFixedFuncStruct.Id, ecuJob.Id);
-                command = new SQLiteCommand(sql, mDbConnection);
-                using (SQLiteDataReader reader = command.ExecuteReader())
+                using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
                 {
-                    while (reader.Read())
+                    using (SQLiteDataReader reader = command.ExecuteReader())
                     {
-                        ecuJobResultList.Add(new EcuFunctionStructs.EcuJobResult(reader["RESULTID"].ToString(),
-                            GetTranslation(reader),
-                            reader["FUNCTIONNAMERESULT"].ToString(),
-                            reader["ADAPTERPATH"].ToString(),
-                            reader["NAME"].ToString(),
-                            reader["STEUERGERAETEFUNKTIONENRELEVAN"].ToString(),
-                            reader["LOCATION"].ToString(),
-                            reader["UNIT"].ToString(),
-                            reader["UNITFIXED"].ToString(),
-                            reader["FORMAT"].ToString(),
-                            reader["MULTIPLIKATOR"].ToString(),
-                            reader["OFFSET"].ToString(),
-                            reader["RUNDEN"].ToString(),
-                            reader["ZAHLENFORMAT"].ToString()));
+                        while (reader.Read())
+                        {
+                            ecuJobResultList.Add(new EcuFunctionStructs.EcuJobResult(reader["RESULTID"].ToString(),
+                                GetTranslation(reader),
+                                reader["FUNCTIONNAMERESULT"].ToString(),
+                                reader["ADAPTERPATH"].ToString(),
+                                reader["NAME"].ToString(),
+                                reader["STEUERGERAETEFUNKTIONENRELEVAN"].ToString(),
+                                reader["LOCATION"].ToString(),
+                                reader["UNIT"].ToString(),
+                                reader["UNITFIXED"].ToString(),
+                                reader["FORMAT"].ToString(),
+                                reader["MULTIPLIKATOR"].ToString(),
+                                reader["OFFSET"].ToString(),
+                                reader["RUNDEN"].ToString(),
+                                reader["ZAHLENFORMAT"].ToString()));
+                        }
                     }
                 }
 
@@ -404,17 +419,19 @@ namespace ExtractEcuFunctions
             List<EcuFunctionStructs.EcuResultStateValue> ecuResultStateValueList = new List<EcuFunctionStructs.EcuResultStateValue>();
             string sql = string.Format(@"SELECT ID, " + SqlTitleItems + ", STATEVALUE, VALIDFROM, VALIDTO, PARENTID " +
                                        "FROM XEP_STATEVALUES WHERE (PARENTID IN (SELECT STATELISTID FROM XEP_REFSTATELISTS WHERE (ID = {0})))", ecuJobResult.Id);
-            SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
-            using (SQLiteDataReader reader = command.ExecuteReader())
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
-                while (reader.Read())
+                using (SQLiteDataReader reader = command.ExecuteReader())
                 {
-                    ecuResultStateValueList.Add(new EcuFunctionStructs.EcuResultStateValue(reader["ID"].ToString(),
-                        GetTranslation(reader),
-                        reader["STATEVALUE"].ToString(),
-                        reader["VALIDFROM"].ToString(),
-                        reader["VALIDTO"].ToString(),
-                        reader["PARENTID"].ToString()));
+                    while (reader.Read())
+                    {
+                        ecuResultStateValueList.Add(new EcuFunctionStructs.EcuResultStateValue(reader["ID"].ToString(),
+                            GetTranslation(reader),
+                            reader["STATEVALUE"].ToString(),
+                            reader["VALIDFROM"].ToString(),
+                            reader["VALIDTO"].ToString(),
+                            reader["PARENTID"].ToString()));
+                    }
                 }
             }
 
@@ -428,25 +445,27 @@ namespace ExtractEcuFunctions
                                        SqlPreOpItems + ", " + SqlProcItems + ", " + SqlPostOpItems + ", " +
                                        "SORT_ORDER, ACTIVATION, ACTIVATION_DURATION_MS " +
                                        "FROM XEP_ECUFIXEDFUNCTIONS WHERE (PARENTID = {0})", parentId);
-            SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
-            using (SQLiteDataReader reader = command.ExecuteReader())
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
-                while (reader.Read())
+                using (SQLiteDataReader reader = command.ExecuteReader())
                 {
-                    string nodeClass = reader["NODECLASS"].ToString();
-                    EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct = new EcuFunctionStructs.EcuFixedFuncStruct(reader["ID"].ToString(),
-                        nodeClass,
-                        GetNodeClassName(mDbConnection, nodeClass),
-                        GetTranslation(reader),
-                        GetTranslation(reader, "PREPARINGOPERATORTEXT"),
-                        GetTranslation(reader, "PROCESSINGOPERATORTEXT"),
-                        GetTranslation(reader, "POSTOPERATORTEXT"),
-                        reader["SORT_ORDER"].ToString(),
-                        reader["ACTIVATION"].ToString(),
-                        reader["ACTIVATION_DURATION_MS"].ToString());
+                    while (reader.Read())
+                    {
+                        string nodeClass = reader["NODECLASS"].ToString();
+                        EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct = new EcuFunctionStructs.EcuFixedFuncStruct(reader["ID"].ToString(),
+                            nodeClass,
+                            GetNodeClassName(mDbConnection, nodeClass),
+                            GetTranslation(reader),
+                            GetTranslation(reader, "PREPARINGOPERATORTEXT"),
+                            GetTranslation(reader, "PROCESSINGOPERATORTEXT"),
+                            GetTranslation(reader, "POSTOPERATORTEXT"),
+                            reader["SORT_ORDER"].ToString(),
+                            reader["ACTIVATION"].ToString(),
+                            reader["ACTIVATION_DURATION_MS"].ToString());
 
-                    ecuFixedFuncStruct.EcuJobList = GetFixedFuncStructJobsList(mDbConnection, ecuFixedFuncStruct);
-                    ecuFixedFuncStructList.Add(ecuFixedFuncStruct);
+                        ecuFixedFuncStruct.EcuJobList = GetFixedFuncStructJobsList(mDbConnection, ecuFixedFuncStruct);
+                        ecuFixedFuncStructList.Add(ecuFixedFuncStruct);
+                    }
                 }
             }
 
@@ -465,13 +484,15 @@ namespace ExtractEcuFunctions
             List<EcuFunctionStructs.RefEcuVariant> refEcuVariantList = new List<EcuFunctionStructs.RefEcuVariant>();
             {
                 string sql = string.Format(@"SELECT ID, ECUVARIANTID FROM XEP_REFECUVARIANTS WHERE ECUVARIANTID = {0}", ecuVariant.Id);
-                SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
-                using (SQLiteDataReader reader = command.ExecuteReader())
+                using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
                 {
-                    while (reader.Read())
+                    using (SQLiteDataReader reader = command.ExecuteReader())
                     {
-                        refEcuVariantList.Add(new EcuFunctionStructs.RefEcuVariant(reader["ID"].ToString(),
-                            reader["ECUVARIANTID"].ToString()));
+                        while (reader.Read())
+                        {
+                            refEcuVariantList.Add(new EcuFunctionStructs.RefEcuVariant(reader["ID"].ToString(),
+                                reader["ECUVARIANTID"].ToString()));
+                        }
                     }
                 }
             }
@@ -490,12 +511,14 @@ namespace ExtractEcuFunctions
             foreach (string ecuGroupFunctionId in ecuVariant.GroupFunctionIds)
             {
                 string sql = string.Format(@"SELECT ID, VISIBLE, NAME, OBD_RELEVANZ FROM XEP_ECUVARFUNCTIONS WHERE (lower(NAME) = '{0}') AND (ECUGROUPFUNCTIONID = {1})", ecuName.ToLowerInvariant(), ecuGroupFunctionId);
-                SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
-                using (SQLiteDataReader reader = command.ExecuteReader())
+                using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
                 {
-                    while (reader.Read())
+                    using (SQLiteDataReader reader = command.ExecuteReader())
                     {
-                        ecuVarFunctionsList.Add(new EcuFunctionStructs.EcuVarFunc(reader["ID"].ToString(), ecuGroupFunctionId));
+                        while (reader.Read())
+                        {
+                            ecuVarFunctionsList.Add(new EcuFunctionStructs.EcuVarFunc(reader["ID"].ToString(), ecuGroupFunctionId));
+                        }
                     }
                 }
             }
@@ -510,14 +533,16 @@ namespace ExtractEcuFunctions
             {
                 string sql = string.Format(@"SELECT REFFUNCS.ECUFUNCSTRUCTID FUNCSTRUCTID, " + SqlTitleItems + ", MULTISELECTION " +
                         "FROM XEP_ECUFUNCSTRUCTURES FUNCS, XEP_REFECUFUNCSTRUCTS REFFUNCS WHERE FUNCS.ID = REFFUNCS.ECUFUNCSTRUCTID AND REFFUNCS.ID = {0}", ecuVarFunc.Id);
-                SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
-                using (SQLiteDataReader reader = command.ExecuteReader())
+                using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
                 {
-                    while (reader.Read())
+                    using (SQLiteDataReader reader = command.ExecuteReader())
                     {
-                        ecuFuncStructList.Add(new EcuFunctionStructs.EcuFuncStruct(reader["FUNCSTRUCTID"].ToString(),
-                            GetTranslation(reader),
-                            reader["MULTISELECTION"].ToString()));
+                        while (reader.Read())
+                        {
+                            ecuFuncStructList.Add(new EcuFunctionStructs.EcuFuncStruct(reader["FUNCSTRUCTID"].ToString(),
+                                GetTranslation(reader),
+                                reader["MULTISELECTION"].ToString()));
+                        }
                     }
                 }
             }
