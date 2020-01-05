@@ -2254,7 +2254,7 @@ namespace BmwDeepObd
                                                     }
                                                     else
                                                     {
-                                                        string description = ecuVariant.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                        string description = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
                                                         if (!string.IsNullOrEmpty(description))
                                                         {
                                                             ecuInfo.Description = description;
@@ -3149,7 +3149,7 @@ namespace BmwDeepObd
                                         }
                                         else
                                         {
-                                            description = ecuVariant.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                            description = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
                                         }
                                     }
 
@@ -3908,7 +3908,8 @@ namespace BmwDeepObd
                                 case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.Identification:
                                 case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ReadState:
                                 {
-                                    XmlToolEcuActivity.JobInfo jobInfo = new XmlToolEcuActivity.JobInfo(ecuFixedFuncStruct.GetTitle(ActivityCommon.GetCurrentLanguage()));
+                                    XmlToolEcuActivity.JobInfo jobInfo = new XmlToolEcuActivity.JobInfo(
+                                        ecuFixedFuncStruct.Title?.GetTitle(ActivityCommon.GetCurrentLanguage()) ?? string.Empty);
                                     jobInfo.Comments = new List<string>();
                                     jobInfo.EcuFixedFuncStruct = ecuFixedFuncStruct;
 
@@ -3918,7 +3919,7 @@ namespace BmwDeepObd
                                         {
                                             if (ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
                                             {
-                                                string resultTitle = ecuJobResult.GetTitle(language);
+                                                string resultTitle = ecuJobResult.Title?.GetTitle(language) ?? string.Empty;
                                                 string resultName = ecuJobResult.Name;
                                                 string resultType = ecuJobResult.Format;
                                                 string comment = resultName + " (" + ecuJob.Name + ")";
@@ -5956,7 +5957,7 @@ namespace BmwDeepObd
                                 }
                                 else
                                 {
-                                    description = ecuVariant.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                    description = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
                                 }
                             }
 
