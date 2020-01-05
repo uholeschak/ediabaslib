@@ -113,6 +113,7 @@ namespace BmwDeepObd
             public JobInfo(string name)
             {
                 Name = name;
+                DisplayName = name;
                 Comments = new List<string>();
                 Results = new List<ResultInfo>();
                 ArgCount = 0;
@@ -121,6 +122,8 @@ namespace BmwDeepObd
             }
 
             public string Name { get; }
+
+            public string DisplayName { get; set; }
 
             public List<string> Comments { get; set; }
 
@@ -1631,7 +1634,7 @@ namespace BmwDeepObd
                     selection = 0;
                 }
 
-                _textViewJobCommentsTitle.Text = string.Format(GetString(Resource.String.xml_tool_ecu_job_comments), _selectedJob.Name);
+                _textViewJobCommentsTitle.Text = string.Format(GetString(Resource.String.xml_tool_ecu_job_comments), _selectedJob.DisplayName);
 
                 StringBuilder stringBuilderComments = new StringBuilder();
                 List<string> commentList = _selectedJob.CommentsTrans ?? _selectedJob.Comments;
@@ -2101,7 +2104,7 @@ namespace BmwDeepObd
 
                 TextView textJobName = view.FindViewById<TextView>(Resource.Id.textJobName);
                 TextView textJobDesc = view.FindViewById<TextView>(Resource.Id.textJobDesc);
-                textJobName.Text = item.Name;
+                textJobName.Text = item.DisplayName;
 
                 StringBuilder stringBuilderComments = new StringBuilder();
                 List<string> commentList = item.CommentsTrans ?? item.Comments;
