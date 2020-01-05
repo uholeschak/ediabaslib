@@ -1332,7 +1332,7 @@ namespace BmwDeepObd
                                             // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                                             if (ecuResultStateValue != null)
                                             {
-                                                resultString = ecuResultStateValue.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                resultString = ecuResultStateValue.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
                                             }
                                         }
 
