@@ -1864,21 +1864,18 @@ namespace BmwDeepObd
 
                     if (_selectedJob.EcuFixedFuncStruct?.EcuJobList != null)
                     {
-                        foreach (EcuFunctionStructs.EcuJob ecuJob in _selectedJob.EcuFixedFuncStruct.EcuJobList)
+                        List<EdiabasThread.EcuFunctionResult> ecuFunctionResultList = EdiabasThread.ExecuteEcuJobs(_ediabas, _selectedJob.EcuFixedFuncStruct);
+                        foreach (EdiabasThread.EcuFunctionResult ecuFunctionResult in ecuFunctionResultList)
                         {
-                            List<EdiabasThread.EcuFunctionResult> ecuFunctionResultList = EdiabasThread.ExecuteEcuJob(_ediabas, ecuJob, _selectedJob.EcuFixedFuncStruct);
-                            foreach (EdiabasThread.EcuFunctionResult ecuFunctionResult in ecuFunctionResultList)
+                            if (string.Compare(ecuFunctionResult.EcuJobResult.Name, _selectedResult.EcuJobResult.Name, StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                if (string.Compare(ecuFunctionResult.EcuJobResult.Name, _selectedResult.EcuJobResult.Name, StringComparison.OrdinalIgnoreCase) == 0)
+                                string text = ecuFunctionResult.ResultString;
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", text);
+                                if (!string.IsNullOrWhiteSpace(text) && !string.IsNullOrWhiteSpace(resultText))
                                 {
-                                    string text = ecuFunctionResult.ResultString;
-                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Result text: {0}", text);
-                                    if (!string.IsNullOrWhiteSpace(text) && !string.IsNullOrWhiteSpace(resultText))
-                                    {
-                                        resultText += "; ";
-                                    }
-                                    resultText += text;
+                                    resultText += "; ";
                                 }
+                                resultText += text;
                             }
                         }
                     }

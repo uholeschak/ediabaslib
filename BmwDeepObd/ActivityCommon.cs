@@ -3685,7 +3685,7 @@ namespace BmwDeepObd
                 {
                     if (resultData is EdiabasThread.EcuFunctionResult ecuFunctionResult)
                     {
-                        if (string.Compare(displayInfo.EcuJobId, ecuFunctionResult.EcuJobId, StringComparison.OrdinalIgnoreCase) == 0 &&
+                        if (string.Compare(displayInfo.EcuJobId, ecuFunctionResult.EcuJob?.Id ?? string.Empty, StringComparison.OrdinalIgnoreCase) == 0 &&
                             string.Compare(displayInfo.EcuJobResultId, ecuFunctionResult.EcuJobResult.Id, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             dataValue = ecuFunctionResult.ResultValue;
