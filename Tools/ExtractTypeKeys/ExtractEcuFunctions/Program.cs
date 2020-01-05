@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -14,6 +15,8 @@ namespace ExtractEcuFunctions
 {
     static class Program
     {
+        const string DbPassword = "6505EFBDC3E5F324";
+
         static int Main(string[] args)
         {
             Console.OutputEncoding = Encoding.Unicode;
@@ -75,41 +78,47 @@ namespace ExtractEcuFunctions
                 }
 
                 string connection = "Data Source=\"" + args[0] + "\";";
-                using (SQLiteConnection mDbConnection = new SQLiteConnection(connection))
+                List<String> ecuNameList;
+                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                if (string.IsNullOrEmpty(ecuName))
                 {
-                    mDbConnection.SetPassword("6505EFBDC3E5F324");
-                    mDbConnection.Open();
-
-                    List<String> ecuNameList;
-                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                    if (string.IsNullOrEmpty(ecuName))
+                    ecuNameList = GetEcuNameList(connection);
+                    if (ecuNameList == null)
                     {
-                        ecuNameList = GetEcuNameList(mDbConnection);
+                        outTextWriter?.WriteLine("Creating ECU name list failed");
+                        return 1;
                     }
-                    else
-                    {
-                        ecuNameList = new List<string> { ecuName };
-                    }
+                }
+                else
+                {
+                    ecuNameList = new List<string> { ecuName };
+                }
 
-                    foreach (string name in ecuNameList)
+                List<Thread> threadList = new List<Thread>();
+                foreach (string name in ecuNameList)
+                {
+                    // limit number of active tasks
+                    for (; ; )
                     {
-                        outTextWriter?.WriteLine("*** ECU: {0} ***", name);
-                        EcuFunctionStructs.EcuVariant ecuVariant = GetEcuVariantFunctions(outTextWriter, logTextWriter, mDbConnection, name);
-
-                        if (ecuVariant != null)
+                        int activeThreads = threadList.Count(thread => thread.IsAlive);
+                        if (activeThreads < 16)
                         {
-                            logTextWriter?.WriteLine(ecuVariant);
-
-                            string xmlFile = Path.Combine(outDirSub, name.ToLowerInvariant() + ".xml");
-                            XmlSerializer serializer = new XmlSerializer(ecuVariant.GetType());
-                            using (TextWriter writer = new StreamWriter(xmlFile))
-                            {
-                                serializer.Serialize(writer, ecuVariant);
-                            }
+                            break;
                         }
+                        Thread.Sleep(200);
                     }
 
-                    mDbConnection.Close();
+                    Thread compileThread = new Thread(() =>
+                    {
+                        SerializeEcuFunction(outTextWriter, logTextWriter, connection, outDirSub, name);
+                    });
+                    compileThread.Start();
+                    threadList.Add(compileThread);
+                }
+
+                foreach (Thread compileThread in threadList)
+                {
+                    compileThread.Join();
                 }
 
                 if (!CreateZipFile(outDirSub, zipFile))
@@ -123,6 +132,65 @@ namespace ExtractEcuFunctions
                 outTextWriter?.WriteLine(e);
             }
             return 0;
+        }
+
+        private static bool SerializeEcuFunction(TextWriter outTextWriter, TextWriter logTextWriter, string connection, string outDirSub, string ecuName)
+        {
+            try
+            {
+                using (SQLiteConnection mDbConnection = new SQLiteConnection(connection))
+                {
+                    mDbConnection.SetPassword(DbPassword);
+                    mDbConnection.Open();
+
+                    outTextWriter?.WriteLine("*** ECU: {0} ***", ecuName);
+                    EcuFunctionStructs.EcuVariant ecuVariant = GetEcuVariantFunctions(outTextWriter, logTextWriter, mDbConnection, ecuName);
+
+                    if (ecuVariant != null)
+                    {
+                        logTextWriter?.WriteLine(ecuVariant);
+
+                        string xmlFile = Path.Combine(outDirSub, ecuName.ToLowerInvariant() + ".xml");
+                        XmlSerializer serializer = new XmlSerializer(ecuVariant.GetType());
+                        using (TextWriter writer = new StreamWriter(xmlFile))
+                        {
+                            serializer.Serialize(writer, ecuVariant);
+                        }
+                    }
+
+                    mDbConnection.Close();
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                outTextWriter?.WriteLine(e);
+                return false;
+            }
+        }
+
+        private static List<string> GetEcuNameList(string connection)
+        {
+            try
+            {
+                List<string> ecuNameList;
+                using (SQLiteConnection mDbConnection = new SQLiteConnection(connection))
+                {
+                    mDbConnection.SetPassword(DbPassword);
+                    mDbConnection.Open();
+
+                    ecuNameList = GetEcuNameList(mDbConnection);
+
+                    mDbConnection.Close();
+                }
+
+                return ecuNameList;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private static List<string> GetEcuNameList(SQLiteConnection mDbConnection)
