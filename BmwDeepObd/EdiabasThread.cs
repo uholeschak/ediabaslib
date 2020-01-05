@@ -1322,32 +1322,35 @@ namespace BmwDeepObd
                             {
                                 if (resultDictLocal.TryGetValue(ecuJobResult.Name.ToUpperInvariant(), out resultData))
                                 {
-                                    string resultString = null;
-                                    double? resultValue = null;
-                                    if (ecuJobResult.EcuResultStateValueList != null && ecuJobResult.EcuResultStateValueList.Count > 0)
+                                    if (ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
                                     {
-                                        EcuFunctionStructs.EcuResultStateValue ecuResultStateValue = MatchEcuResultStateValue(ecuJobResult, resultData);
-                                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                                        if (ecuResultStateValue != null)
+                                        string resultString = null;
+                                        double? resultValue = null;
+                                        if (ecuJobResult.EcuResultStateValueList != null && ecuJobResult.EcuResultStateValueList.Count > 0)
                                         {
-                                            resultString = ecuResultStateValue.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                            EcuFunctionStructs.EcuResultStateValue ecuResultStateValue = MatchEcuResultStateValue(ecuJobResult, resultData);
+                                            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                                            if (ecuResultStateValue != null)
+                                            {
+                                                resultString = ecuResultStateValue.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                            }
                                         }
-                                    }
 
-                                    if (resultString == null)
-                                    {
-                                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                                        if (nodeClassType == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.Identification)
+                                        if (resultString == null)
                                         {
-                                            resultString = ConvertEcuResultValueIdent(ecuJobResult, resultData, out resultValue);
+                                            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                                            if (nodeClassType == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.Identification)
+                                            {
+                                                resultString = ConvertEcuResultValueIdent(ecuJobResult, resultData, out resultValue);
+                                            }
+                                            else
+                                            {
+                                                resultString = ConvertEcuResultValue(ecuJobResult, resultData, out resultValue);
+                                            }
                                         }
-                                        else
-                                        {
-                                            resultString = ConvertEcuResultValue(ecuJobResult, resultData, out resultValue);
-                                        }
-                                    }
 
-                                    ecuFunctionResultList.Add(new EcuFunctionResult(ecuFixedFuncStruct.Id, ecuJob.Id, ecuJobResult, resultData, resultString, resultValue));
+                                        ecuFunctionResultList.Add(new EcuFunctionResult(ecuFixedFuncStruct.Id, ecuJob.Id, ecuJobResult, resultData, resultString, resultValue));
+                                    }
                                 }
                             }
                             dictIndex++;
