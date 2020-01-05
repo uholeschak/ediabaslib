@@ -554,19 +554,51 @@ namespace BmwFileReader
         {
             public EcuTranslation()
             {
-                TextEn = string.Empty;
                 TextDe = string.Empty;
+                TextEn = string.Empty;
+                TextFr = string.Empty;
+                TextTh = string.Empty;
+                TextSv = string.Empty;
+                TextIt = string.Empty;
+                TextEs = string.Empty;
+                TextId = string.Empty;
+                TextKo = string.Empty;
+                TextEl = string.Empty;
+                TextTr = string.Empty;
+                TextZh = string.Empty;
                 TextRu = string.Empty;
+                TextNl = string.Empty;
+                TextPt = string.Empty;
+                TextJa = string.Empty;
+                TextCs = string.Empty;
+                TextPl = string.Empty;
             }
 
-            public EcuTranslation(string titleEn, string titleDe, string titleRu)
+            public EcuTranslation(string textDe, string textEn, string textFr, string textTh, string textSv, string textIt,
+                string textEs, string textId, string textKo, string textEl, string textTr, string textZh,
+                string textRu, string textNl, string textPt, string textJa, string textCs, string textPl)
             {
-                TextEn = titleEn;
-                TextDe = titleDe;
-                TextRu = titleRu;
+                TextDe = textDe;
+                TextEn = textEn;
+                TextFr = textFr;
+                TextTh = textTh;
+                TextSv = textSv;
+                TextIt = textIt;
+                TextEs = textEs;
+                TextId = textId;
+                TextKo = textKo;
+                TextEl = textEl;
+                TextTr = textTr;
+                TextZh = textZh;
+                TextRu = textRu;
+                TextNl = textNl;
+                TextPt = textPt;
+                TextJa = textJa;
+                TextCs = textCs;
+                TextPl = textPl;
             }
 
-            public string ToString(string prefix)
+        public string ToString(string prefix)
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine(prefix + "TRANS:");
@@ -582,12 +614,27 @@ namespace BmwFileReader
 
             public string GetTitle(string language)
             {
-                return GetTitleTranslated(this, language, "Text");
+                return GetTitleTranslated(this, language);
             }
 
-            [XmlElement, DefaultValue("")] public string TextEn { get; set; }
             [XmlElement, DefaultValue("")] public string TextDe { get; set; }
+            [XmlElement, DefaultValue("")] public string TextEn { get; set; }
+            [XmlElement, DefaultValue("")] public string TextFr { get; set; }
+            [XmlElement, DefaultValue("")] public string TextTh { get; set; }
+            [XmlElement, DefaultValue("")] public string TextSv { get; set; }
+            [XmlElement, DefaultValue("")] public string TextIt { get; set; }
+            [XmlElement, DefaultValue("")] public string TextEs { get; set; }
+            [XmlElement, DefaultValue("")] public string TextId { get; set; }
+            [XmlElement, DefaultValue("")] public string TextKo { get; set; }
+            [XmlElement, DefaultValue("")] public string TextEl { get; set; }
+            [XmlElement, DefaultValue("")] public string TextTr { get; set; }
+            [XmlElement, DefaultValue("")] public string TextZh { get; set; }
             [XmlElement, DefaultValue("")] public string TextRu { get; set; }
+            [XmlElement, DefaultValue("")] public string TextNl { get; set; }
+            [XmlElement, DefaultValue("")] public string TextPt { get; set; }
+            [XmlElement, DefaultValue("")] public string TextJa { get; set; }
+            [XmlElement, DefaultValue("")] public string TextCs { get; set; }
+            [XmlElement, DefaultValue("")] public string TextPl { get; set; }
         }
 
         public static string PropertyList(this object obj, string prefix)
@@ -613,7 +660,7 @@ namespace BmwFileReader
             return obj.PropertyList("");
         }
 
-        public static string GetTitleTranslated(this object obj, string language, string prefix = "Title")
+        public static string GetTitleTranslated(this object obj, string language, string prefix = "Text")
         {
             try
             {

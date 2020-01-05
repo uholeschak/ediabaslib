@@ -17,6 +17,42 @@ namespace ExtractEcuFunctions
     {
         const string DbPassword = "6505EFBDC3E5F324";
 
+        private const string SqlTitleItems =
+            "TITLE_DEDE, TITLE_ENGB, TITLE_ENUS, " +
+            "TITLE_FR, TITLE_TH, TITLE_SV, " +
+            "TITLE_IT, TITLE_ES, TITLE_ID, " +
+            "TITLE_KO, TITLE_EL, TITLE_TR, " +
+            "TITLE_ZHCN, TITLE_RU, TITLE_NL, " +
+            "TITLE_PT, TITLE_ZHTW, TITLE_JA, " +
+            "TITLE_CSCZ, TITLE_PLPL";
+
+        private const string SqlPreOpItems =
+                "PREPARINGOPERATORTEXT_DEDE, PREPARINGOPERATORTEXT_ENGB, PREPARINGOPERATORTEXT_ENUS, " +
+                "PREPARINGOPERATORTEXT_FR, PREPARINGOPERATORTEXT_TH, PREPARINGOPERATORTEXT_SV, " +
+                "PREPARINGOPERATORTEXT_IT, PREPARINGOPERATORTEXT_ES, PREPARINGOPERATORTEXT_ID, " +
+                "PREPARINGOPERATORTEXT_KO, PREPARINGOPERATORTEXT_EL, PREPARINGOPERATORTEXT_TR, " +
+                "PREPARINGOPERATORTEXT_ZHCN, PREPARINGOPERATORTEXT_RU, PREPARINGOPERATORTEXT_NL, " +
+                "PREPARINGOPERATORTEXT_PT, PREPARINGOPERATORTEXT_ZHTW, PREPARINGOPERATORTEXT_JA, " +
+                "PREPARINGOPERATORTEXT_CSCZ, PREPARINGOPERATORTEXT_PLPL";
+
+        private const string SqlProcItems =
+                "PROCESSINGOPERATORTEXT_DEDE, PROCESSINGOPERATORTEXT_ENGB, PROCESSINGOPERATORTEXT_ENUS, " +
+                "PROCESSINGOPERATORTEXT_FR, PROCESSINGOPERATORTEXT_TH, PROCESSINGOPERATORTEXT_SV, " +
+                "PROCESSINGOPERATORTEXT_IT, PROCESSINGOPERATORTEXT_ES, PROCESSINGOPERATORTEXT_ID, " +
+                "PROCESSINGOPERATORTEXT_KO, PROCESSINGOPERATORTEXT_EL, PROCESSINGOPERATORTEXT_TR, " +
+                "PROCESSINGOPERATORTEXT_ZHCN, PROCESSINGOPERATORTEXT_RU, PROCESSINGOPERATORTEXT_NL, " +
+                "PROCESSINGOPERATORTEXT_PT, PROCESSINGOPERATORTEXT_ZHTW, PROCESSINGOPERATORTEXT_JA, " +
+                "PROCESSINGOPERATORTEXT_CSCZ, PROCESSINGOPERATORTEXT_PLPL";
+
+        private const string SqlPostOpItems =
+                "POSTOPERATORTEXT_DEDE, POSTOPERATORTEXT_ENGB, POSTOPERATORTEXT_ENUS, " +
+                "POSTOPERATORTEXT_FR, POSTOPERATORTEXT_TH, POSTOPERATORTEXT_SV, " +
+                "POSTOPERATORTEXT_IT, POSTOPERATORTEXT_ES, POSTOPERATORTEXT_ID, " +
+                "POSTOPERATORTEXT_KO, POSTOPERATORTEXT_EL, POSTOPERATORTEXT_TR, " +
+                "POSTOPERATORTEXT_ZHCN, POSTOPERATORTEXT_RU, POSTOPERATORTEXT_NL, " +
+                "POSTOPERATORTEXT_PT, POSTOPERATORTEXT_ZHTW, POSTOPERATORTEXT_JA, " +
+                "POSTOPERATORTEXT_CSCZ, POSTOPERATORTEXT_PLPL";
+
         static int Main(string[] args)
         {
             Console.OutputEncoding = Encoding.Unicode;
@@ -213,15 +249,31 @@ namespace ExtractEcuFunctions
         private static EcuFunctionStructs.EcuTranslation GetTranslation(SQLiteDataReader reader, string prefix = "TITLE")
         {
             return new EcuFunctionStructs.EcuTranslation(
-                reader[prefix + "_ENUS"].ToString(),
                 reader[prefix + "_DEDE"].ToString(),
-                reader[prefix + "_RU"].ToString());
+                reader[prefix + "_ENUS"].ToString(),
+                reader[prefix + "_FR"].ToString(),
+                reader[prefix + "_TH"].ToString(),
+                reader[prefix + "_SV"].ToString(),
+                reader[prefix + "_IT"].ToString(),
+                reader[prefix + "_ES"].ToString(),
+                reader[prefix + "_ID"].ToString(),
+                reader[prefix + "_KO"].ToString(),
+                reader[prefix + "_EL"].ToString(),
+                reader[prefix + "_TR"].ToString(),
+                reader[prefix + "_ZHCN"].ToString(),
+                reader[prefix + "_RU"].ToString(),
+                reader[prefix + "_NL"].ToString(),
+                reader[prefix + "_PT"].ToString(),
+                reader[prefix + "_JA"].ToString(),
+                reader[prefix + "_CSCZ"].ToString(),
+                reader[prefix + "_PLPL"].ToString()
+                );
         }
 
         private static EcuFunctionStructs.EcuVariant GetEcuVariant(SQLiteConnection mDbConnection, string ecuName)
         {
             EcuFunctionStructs.EcuVariant ecuVariant = null;
-            string sql = string.Format(@"SELECT ID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuName.ToLowerInvariant());
+            string sql = string.Format(@"SELECT ID, " + SqlTitleItems + ", ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuName.ToLowerInvariant());
             SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
             using (SQLiteDataReader reader = command.ExecuteReader())
             {
@@ -311,7 +363,7 @@ namespace ExtractEcuFunctions
 
                 List<EcuFunctionStructs.EcuJobResult> ecuJobResultList = new List<EcuFunctionStructs.EcuJobResult>();
                 sql = string.Format(
-                    @"SELECT RESULTS.ID RESULTID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, FUNCTIONNAMERESULT, ADAPTERPATH, NAME, STEUERGERAETEFUNKTIONENRELEVAN, LOCATION, UNIT, UNITFIXED, FORMAT, MULTIPLIKATOR, OFFSET, RUNDEN, ZAHLENFORMAT, ECUJOBID " +
+                    @"SELECT RESULTS.ID RESULTID, " + SqlTitleItems + ", FUNCTIONNAMERESULT, ADAPTERPATH, NAME, STEUERGERAETEFUNKTIONENRELEVAN, LOCATION, UNIT, UNITFIXED, FORMAT, MULTIPLIKATOR, OFFSET, RUNDEN, ZAHLENFORMAT, ECUJOBID " +
                     "FROM XEP_ECURESULTS RESULTS, XEP_REFECURESULTS REFRESULTS WHERE " +
                     "ECURESULTID = RESULTS.ID AND REFRESULTS.ID = {0} AND RESULTS.ECUJOBID = {1}", ecuFixedFuncStruct.Id, ecuJob.Id);
                 command = new SQLiteCommand(sql, mDbConnection);
@@ -350,7 +402,7 @@ namespace ExtractEcuFunctions
         private static List<EcuFunctionStructs.EcuResultStateValue> GetResultStateValueList(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuJobResult ecuJobResult)
         {
             List<EcuFunctionStructs.EcuResultStateValue> ecuResultStateValueList = new List<EcuFunctionStructs.EcuResultStateValue>();
-            string sql = string.Format(@"SELECT ID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, STATEVALUE, VALIDFROM, VALIDTO, PARENTID " +
+            string sql = string.Format(@"SELECT ID, " + SqlTitleItems + ", STATEVALUE, VALIDFROM, VALIDTO, PARENTID " +
                                        "FROM XEP_STATEVALUES WHERE (PARENTID IN (SELECT STATELISTID FROM XEP_REFSTATELISTS WHERE (ID = {0})))", ecuJobResult.Id);
             SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
             using (SQLiteDataReader reader = command.ExecuteReader())
@@ -372,10 +424,8 @@ namespace ExtractEcuFunctions
         private static List<EcuFunctionStructs.EcuFixedFuncStruct> GetEcuFixedFuncStructList(SQLiteConnection mDbConnection, string parentId)
         {
             List<EcuFunctionStructs.EcuFixedFuncStruct> ecuFixedFuncStructList = new List<EcuFunctionStructs.EcuFixedFuncStruct>();
-            string sql = string.Format(@"SELECT ID, NODECLASS, TITLE_ENUS, TITLE_DEDE, TITLE_RU, " +
-                                       "PREPARINGOPERATORTEXT_ENUS, PREPARINGOPERATORTEXT_DEDE, PREPARINGOPERATORTEXT_RU, " +
-                                       "PROCESSINGOPERATORTEXT_ENUS, PROCESSINGOPERATORTEXT_DEDE, PROCESSINGOPERATORTEXT_RU, " +
-                                       "POSTOPERATORTEXT_ENUS, POSTOPERATORTEXT_DEDE, POSTOPERATORTEXT_RU, " +
+            string sql = string.Format(@"SELECT ID, NODECLASS, " + SqlTitleItems + ", " +
+                                       SqlPreOpItems + ", " + SqlProcItems + ", " + SqlPostOpItems + ", " +
                                        "SORT_ORDER, ACTIVATION, ACTIVATION_DURATION_MS " +
                                        "FROM XEP_ECUFIXEDFUNCTIONS WHERE (PARENTID = {0})", parentId);
             SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
@@ -458,7 +508,7 @@ namespace ExtractEcuFunctions
             List<EcuFunctionStructs.EcuFuncStruct> ecuFuncStructList = new List<EcuFunctionStructs.EcuFuncStruct>();
             foreach (EcuFunctionStructs.EcuVarFunc ecuVarFunc in ecuVarFunctionsList)
             {
-                string sql = string.Format(@"SELECT REFFUNCS.ECUFUNCSTRUCTID FUNCSTRUCTID, TITLE_ENUS, TITLE_DEDE, TITLE_RU, MULTISELECTION " +
+                string sql = string.Format(@"SELECT REFFUNCS.ECUFUNCSTRUCTID FUNCSTRUCTID, " + SqlTitleItems + ", MULTISELECTION " +
                         "FROM XEP_ECUFUNCSTRUCTURES FUNCS, XEP_REFECUFUNCSTRUCTS REFFUNCS WHERE FUNCS.ID = REFFUNCS.ECUFUNCSTRUCTID AND REFFUNCS.ID = {0}", ecuVarFunc.Id);
                 SQLiteCommand command = new SQLiteCommand(sql, mDbConnection);
                 using (SQLiteDataReader reader = command.ExecuteReader())
