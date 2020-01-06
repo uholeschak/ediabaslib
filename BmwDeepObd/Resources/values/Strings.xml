@@ -547,7 +547,8 @@
   <string name="bmw_actuator_comments_title">Hints</string>
   <string name="bmw_actuator_status_title">Status</string>
   <string name="bmw_actuator_operation_title">Operations</string>
-  <string name="bmw_actuator_button_execute">Execute</string>
+  <string name="bmw_actuator_button_execute_single">Execute once</string>
+  <string name="bmw_actuator_button_execute_continuous">Execute continuous</string>
   <string name="bmw_actuator_button_stop">Stop</string>
   <string name="bmw_actuator_operation_failed">The operation failed</string>
 
