@@ -489,9 +489,22 @@ namespace BmwDeepObd
             return null;
         }
 
+        private void AppendSbText(StringBuilder sb, string text)
+        {
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append("\r\n");
+                }
+
+                sb.Append(text);
+            }
+        }
+
         private void UpdateAdaptionInfo()
         {
-            UpdateActuatorStatusText();
+            UpdateActuatorStatus();
 
             string language = ActivityCommon.GetCurrentLanguage();
             StringBuilder stringBuilderComments = new StringBuilder();
@@ -505,11 +518,7 @@ namespace BmwDeepObd
                     int presetCount = ecuJobList.Count(x => x.GetPhaseType() == EcuFunctionStructs.EcuJob.PhaseType.Preset);
                     if (presetCount > 0)
                     {
-                        if (stringBuilderComments.Length > 0)
-                        {
-                            stringBuilderComments.Append("\r\n");
-                        }
-                        stringBuilderComments.Append(preOpText);
+                        AppendSbText(stringBuilderComments, preOpText);
                     }
                     else
                     {
@@ -523,11 +532,7 @@ namespace BmwDeepObd
                     int mainCount = ecuJobList.Count(x => x.GetPhaseType() == EcuFunctionStructs.EcuJob.PhaseType.Main);
                     if (mainCount > 0)
                     {
-                        if (stringBuilderComments.Length > 0)
-                        {
-                            stringBuilderComments.Append("\r\n");
-                        }
-                        stringBuilderComments.Append(procOpText);
+                        AppendSbText(stringBuilderComments, procOpText);
                     }
                     else
                     {
@@ -541,11 +546,7 @@ namespace BmwDeepObd
                     int resetCount = ecuJobList.Count(x => x.GetPhaseType() == EcuFunctionStructs.EcuJob.PhaseType.Reset);
                     if (resetCount > 0)
                     {
-                        if (stringBuilderComments.Length > 0)
-                        {
-                            stringBuilderComments.Append("\r\n");
-                        }
-                        stringBuilderComments.Append(postOpText);
+                        AppendSbText(stringBuilderComments, postOpText);
                     }
                 }
             }
@@ -556,13 +557,16 @@ namespace BmwDeepObd
             _textBmwActuatorComments.Text = actuatorFunctionComment;
         }
 
-        private void UpdateActuatorStatusText()
+        private void UpdateActuatorStatus(bool cyclicUpdate = false)
         {
             bool jobRunning = IsJobRunning();
             bool validFunction = _instanceData.SelectedFunction >= 0;
 
+            if (!cyclicUpdate)
+            {
+                _textBmwActuatorStatus.Text = string.Empty;
+            }
             _spinnerBmwActuatorFunction.Enabled = !jobRunning;
-
             _buttonBmwActuatorExecute.Enabled = !jobRunning && validFunction;
             _buttonBmwActuatorStop.Enabled = jobRunning;
         }
@@ -584,39 +588,64 @@ namespace BmwDeepObd
                 return;
             }
 
+            XmlToolEcuActivity.JobInfo selectedJob = GetSelectedJob();
+            if (selectedJob == null)
+            {
+                return;
+            }
+            string language = ActivityCommon.GetCurrentLanguage();
+
             EdiabasOpen();
 
             _instanceData.StopActuator = false;
             _instanceData.AutoClose = false;
 
+            UpdateActuatorStatus();
+
             bool executeFailed = false;
-            bool finishUpdate = false;
             _jobThread = new Thread(() =>
             {
                 try
                 {
                     ActivityCommon.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
 
-                    int selectedFunction = _instanceData.SelectedFunction;
-
-                    if (!executeFailed)
+                    EcuFunctionStructs.EcuJob.PhaseType phase = EcuFunctionStructs.EcuJob.PhaseType.Preset;
+                    RunOnUiThread(() =>
                     {
-                        for (;;)
+                        if (_activityCommon == null)
                         {
-                            bool stopActuator = _instanceData.StopActuator;
+                            return;
+                        }
 
-                            if (stopActuator)
-                            {
-                                break;
-                            }
+                        string preOpText = selectedJob.EcuFixedFuncStruct.PrepOp?.GetTitle(language);
+                        if (!string.IsNullOrWhiteSpace(preOpText))
+                        {
+                            _textBmwActuatorStatus.Text = preOpText;
+                        }
 
-                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                            if (resultSets != null)
+                        UpdateActuatorStatus(true);
+                    });
+
+                    bool statusUpdated = false;
+                    for (; ; )
+                    {
+                        bool stopActuator = _instanceData.StopActuator;
+
+                        if (stopActuator)
+                        {
+                            break;
+                        }
+
+                        EcuFunctionStructs.EcuJob.PhaseType currentPhase = phase;
+                        StringBuilder sbStatus = new StringBuilder();
+                        bool updateStatus = currentPhase == EcuFunctionStructs.EcuJob.PhaseType.Main;
+
+                        if (updateStatus && !statusUpdated)
+                        {
+                            string procOpText = selectedJob.EcuFixedFuncStruct.ProcOp?.GetTitle(language);
+                            if (!string.IsNullOrWhiteSpace(procOpText))
                             {
-                                if (resultSets.Count >= 2)
-                                {
-                                    Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                                }
+                                AppendSbText(sbStatus, procOpText);
                             }
 
                             RunOnUiThread(() =>
@@ -626,8 +655,67 @@ namespace BmwDeepObd
                                     return;
                                 }
 
-                                UpdateActuatorStatusText();
+                                _textBmwActuatorStatus.Text = sbStatus.ToString();
+                                UpdateActuatorStatus(true);
                             });
+                        }
+
+                        List<EdiabasThread.EcuFunctionResult> resultList = EdiabasThread.ExecuteEcuJobs(_ediabas, selectedJob.EcuFixedFuncStruct, null, currentPhase);
+                        if (resultList == null)
+                        {
+                            executeFailed = true;
+                            break;
+                        }
+
+                        if (phase == EcuFunctionStructs.EcuJob.PhaseType.Preset)
+                        {
+                            phase = EcuFunctionStructs.EcuJob.PhaseType.Main;
+                        }
+
+                        if (updateStatus && !statusUpdated)
+                        {
+                            statusUpdated = true;
+                            foreach (EdiabasThread.EcuFunctionResult ecuFunctionResult in resultList)
+                            {
+                                AppendSbText(sbStatus, ecuFunctionResult.ResultString);
+                            }
+
+                            RunOnUiThread(() =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+
+                                _textBmwActuatorStatus.Text = sbStatus.ToString();
+                                UpdateActuatorStatus(true);
+                            });
+                        }
+                    }
+
+                    if (!executeFailed)
+                    {
+                        EcuFunctionStructs.EcuJob.PhaseType currentPhase = EcuFunctionStructs.EcuJob.PhaseType.Reset;
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            string postOpText = selectedJob.EcuFixedFuncStruct.PostOp?.GetTitle(language);
+                            if (!string.IsNullOrWhiteSpace(postOpText))
+                            {
+                                _textBmwActuatorStatus.Text = postOpText;
+                            }
+
+                            UpdateActuatorStatus(true);
+                        });
+
+                        List<EdiabasThread.EcuFunctionResult> resultList = EdiabasThread.ExecuteEcuJobs(_ediabas, selectedJob.EcuFixedFuncStruct, null, currentPhase);
+                        if (resultList == null)
+                        {
+                            executeFailed = true;
                         }
                     }
                 }
@@ -645,19 +733,10 @@ namespace BmwDeepObd
 
                     if (executeFailed)
                     {
-                        int resId = Resource.String.vag_coding_write_coding_failed;
-                        _activityCommon.ShowAlert(GetString(resId), Resource.String.alert_title_error);
+                        _activityCommon.ShowAlert(GetString(Resource.String.bmw_actuator_operation_failed), Resource.String.alert_title_error);
                     }
                     else
                     {
-                        if (finishUpdate)
-                        {
-                            _ecuInfo.JobList = null;    // force update
-                            SetResult(Android.App.Result.Ok);
-                            Finish();
-                            return;
-                        }
-
                         if (_instanceData.AutoClose)
                         {
                             Finish();
@@ -672,12 +751,12 @@ namespace BmwDeepObd
 
                     _instanceData.StopActuator = false;
 
-                    UpdateActuatorStatusText();
+                    UpdateActuatorStatus(true);
                 });
             });
             _jobThread.Start();
 
-            UpdateActuatorStatusText();
+            UpdateActuatorStatus();
         }
     }
 }

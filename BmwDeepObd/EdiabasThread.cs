@@ -1303,7 +1303,12 @@ namespace BmwDeepObd
             foreach (EcuFunctionStructs.EcuJob ecuJob in ecuJobList)
             {
                 List<EcuFunctionResult> resultList = ExecuteEcuJob(ediabas, ecuJob, ecuFixedFuncStruct);
-                if (resultList != null && resultList.Count > 0)
+                if (resultList == null)
+                {
+                    return null;
+                }
+
+                if (resultList.Count > 0)
                 {
                     ecuFunctionResultList.AddRange(resultList);
                 }
@@ -1333,6 +1338,7 @@ namespace BmwDeepObd
             ediabas.ResultsRequests = string.Empty;
             ediabas.ExecuteJob(ecuJob.Name);
 
+            bool jobOk = true;
             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(ediabas.ResultSets);
             List <EcuFunctionResult> ecuFunctionResultList = new List<EcuFunctionResult>();
             if (ecuJob.EcuJobResultList != null)
@@ -1361,6 +1367,10 @@ namespace BmwDeepObd
                                     {
                                         statusOk = true;
                                     }
+                                    else
+                                    {
+                                        jobOk = false;
+                                    }
                                 }
                             }
 
@@ -1368,8 +1378,7 @@ namespace BmwDeepObd
                             {
                                 if (resultDictLocal.TryGetValue(ecuJobResult.Name.ToUpperInvariant(), out resultData))
                                 {
-                                    if (nodeClassType == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator ||
-                                        ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
+                                    if (ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
                                     {
                                         string resultString = null;
                                         double? resultValue = null;
@@ -1402,9 +1411,13 @@ namespace BmwDeepObd
                             }
                             dictIndex++;
                         }
-
                     }
                 }
+            }
+
+            if (!jobOk)
+            {
+                return null;
             }
 
             return ecuFunctionResultList;
