@@ -494,6 +494,8 @@
   <string name="xml_tool_button_test_format">Считать</string>
   <string name="xml_tool_ecu_add_functions">Дополнительные функции</string>
   <string name="xml_tool_button_ediabas_tool">Ediabas утилита</string>
+  <!--Translate-->
+  <string name="xml_tool_button_bmw_actuator">Actuator functions</string>
   <string name="xml_tool_button_coding">Кодировать</string>
   <string name="xml_tool_button_coding2">Кодировать 2</string>
   <string name="xml_tool_button_adaption">Адаптация</string>
@@ -564,6 +566,7 @@
 
   <!-- BMW Actuator Activity -->
   <!--Translate-->
+  <string name="bmw_actuator_title">Actuator ECU: {0}</string>
   <string name="bmw_actuator_function_title">Function</string>
   <string name="bmw_actuator_comments_title">Примечания</string>
   <string name="bmw_actuator_status_title">Status</string>

@@ -496,6 +496,7 @@
   <string name="xml_tool_button_test_format">Lesen</string>
   <string name="xml_tool_ecu_add_functions">Zusätzliche Funtionen</string>
   <string name="xml_tool_button_ediabas_tool">Ediabas Tool</string>
+  <string name="xml_tool_button_bmw_actuator">Aktuator Funktionen</string>
   <string name="xml_tool_button_coding">Kodieren</string>
   <string name="xml_tool_button_coding2">Kodieren 2</string>
   <string name="xml_tool_button_adaption">Adaption</string>
@@ -565,6 +566,7 @@
   <string name="vag_adaption_ecu_reset">ECU Reset durchführen</string>
 
   <!-- BMW Actuator Activity -->
+  <string name="bmw_actuator_title">Aktuator ECU: {0}</string>
   <string name="bmw_actuator_function_title">Funktion</string>
   <string name="bmw_actuator_comments_title">Hinweise</string>
   <string name="bmw_actuator_status_title">Status</string>

@@ -341,6 +341,12 @@
                     android:layout_gravity="center_vertical"
                     android:text="@string/xml_tool_button_ediabas_tool" />
                 <Button
+                    android:id="@+id/buttonBmwActuator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/xml_tool_button_bmw_actuator" />
+                <Button
                     android:id="@+id/buttonCoding"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -226,6 +226,7 @@
       <Link>VehicleInfoVag.cs</Link>
     </Compile>
     <Compile Include="ActivityCommon.cs" />
+    <Compile Include="BmwActuatorActivity.cs" />
     <Compile Include="CanAdapterActivity.cs" />
     <Compile Include="CustomProgressDialog.cs" />
     <Compile Include="ExpansionAlarmReceiver.cs" />
