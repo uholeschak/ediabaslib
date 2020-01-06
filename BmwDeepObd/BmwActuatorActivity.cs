@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -603,6 +604,9 @@ namespace BmwDeepObd
             object lockObject = new object();
             string language = ActivityCommon.GetCurrentLanguage();
 
+            bool activation = selectedJob.EcuFixedFuncStruct.Activation.ConvertToInt() > 0;
+            Int64 activationDuration = selectedJob.EcuFixedFuncStruct.ActivationDurationMs.ConvertToInt();
+
             EdiabasOpen();
 
             _instanceData.Continuous = continuous;
@@ -637,18 +641,18 @@ namespace BmwDeepObd
 
                     StringBuilder sbStatus = new StringBuilder();
                     bool statusUpdated = false;
+                    long startTime = Stopwatch.GetTimestamp();
                     for (; ; )
                     {
                         bool stopActuator = _instanceData.StopActuator;
 
-                        if (stopActuator)
+                        EcuFunctionStructs.EcuJob.PhaseType currentPhase = phase;
+                        if (stopActuator && currentPhase == EcuFunctionStructs.EcuJob.PhaseType.Main)
                         {
                             break;
                         }
 
-                        EcuFunctionStructs.EcuJob.PhaseType currentPhase = phase;
                         bool updateStatus = currentPhase == EcuFunctionStructs.EcuJob.PhaseType.Main;
-
                         if (updateStatus && !statusUpdated)
                         {
                             lock (lockObject)
@@ -657,7 +661,6 @@ namespace BmwDeepObd
                                 string procOpText = selectedJob.EcuFixedFuncStruct.ProcOp?.GetTitle(language);
                                 if (!string.IsNullOrWhiteSpace(procOpText))
                                 {
-
                                     AppendSbText(sbStatus, procOpText);
                                 }
                             }
@@ -715,9 +718,20 @@ namespace BmwDeepObd
                             });
                         }
 
-                        if (!_instanceData.Continuous && currentPhase == EcuFunctionStructs.EcuJob.PhaseType.Main)
+                        if (currentPhase == EcuFunctionStructs.EcuJob.PhaseType.Main)
                         {
-                            break;
+                            if (!_instanceData.Continuous)
+                            {
+                                if (!activation)
+                                {
+                                    break;
+                                }
+
+                                if (Stopwatch.GetTimestamp() - startTime > activationDuration * ActivityCommon.TickResolMs)
+                                {
+                                    break;
+                                }
+                            }
                         }
                     }
 
