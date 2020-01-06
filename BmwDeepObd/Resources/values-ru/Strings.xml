@@ -509,7 +509,7 @@
   <!-- XML ECU Tool Options Menu -->
   <string name="menu_xml_ecu_tool_search">Поиск</string>
 
-  <!-- Coding Activity -->
+  <!-- VAG Coding Activity -->
   <string name="vag_coding_title_coding">Кодировка ECU: {0}</string>
   <string name="vag_coding_title_login">Авторизация ECU: {0}</string>
   <string name="vag_coding_title_sec_access">Права дооступа ECU: {0}</string>
@@ -539,7 +539,7 @@
   <string name="vag_coding_sec_access_job_failed">Ошибка права доступа</string>
   <string name="vag_coding_sec_access_job_ok">Права доступа получены</string>
 
-  <!-- Adaption Activity -->
+  <!-- VAG Adaption Activity -->
   <string name="vag_adaption_title_adaption">Адаптация ECU: {0}</string>
   <string name="vag_adaption_channel_title">Документированный канал</string>
   <string name="vag_adaption_channel_select">Выбор канала адаптации</string>
@@ -561,6 +561,15 @@
   <string name="vag_adaption_button_store">Сохранить</string>
   <string name="vag_adaption_button_stop">Остановить</string>
   <string name="vag_adaption_ecu_reset">Выполнить ECU сброс</string>
+
+  <!-- BMW Actuator Activity -->
+  <!--Translate-->
+  <string name="bmw_actuator_function_title">Function</string>
+  <string name="bmw_actuator_comments_title">Примечания</string>
+  <string name="bmw_actuator_status_title">Status</string>
+  <string name="bmw_actuator_operation_title">Операции</string>
+  <string name="bmw_actuator_button_execute">Выполнить</string>
+  <string name="bmw_actuator_button_stop">Остановить</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Настройки устройства</string>

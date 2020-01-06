@@ -511,7 +511,7 @@
   <!-- XML ECU Tool Options Menu -->
   <string name="menu_xml_ecu_tool_search">Suchen</string>
 
-  <!-- Coding Activity -->
+  <!-- VAG Coding Activity -->
   <string name="vag_coding_title_coding">ECU Kodieren: {0}</string>
   <string name="vag_coding_title_login">ECU Login: {0}</string>
   <string name="vag_coding_title_sec_access">ECU Zugriffsberechtigung: {0}</string>
@@ -541,7 +541,7 @@
   <string name="vag_coding_sec_access_job_failed">Zugriffsberechtigung fehlgeschlagen</string>
   <string name="vag_coding_sec_access_job_ok">Zugriffsberechtigung erfolgreich</string>
 
-  <!-- Adaption Activity -->
+  <!-- VAG Adaption Activity -->
   <string name="vag_adaption_title_adaption">Adaption ECU: {0}</string>
   <string name="vag_adaption_channel_title">Dokumentierter Kanal</string>
   <string name="vag_adaption_channel_select">Adaptionskanal wählen</string>
@@ -563,6 +563,14 @@
   <string name="vag_adaption_button_store">Speichern</string>
   <string name="vag_adaption_button_stop">Stop</string>
   <string name="vag_adaption_ecu_reset">ECU Reset durchführen</string>
+
+  <!-- BMW Actuator Activity -->
+  <string name="bmw_actuator_function_title">Funktion</string>
+  <string name="bmw_actuator_comments_title">Hinweise</string>
+  <string name="bmw_actuator_status_title">Status</string>
+  <string name="bmw_actuator_operation_title">Vorgänge</string>
+  <string name="bmw_actuator_button_execute">Ausführen</string>
+  <string name="bmw_actuator_button_stop">Stop</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Adapter Konfiguration</string>

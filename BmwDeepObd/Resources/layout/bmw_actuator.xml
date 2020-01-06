@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollViewBmwActuator"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/layoutBmwActuator"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+        <LinearLayout
+            android:id="@+id/layoutBmwActuatorFunction"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/textViewBmwActuatorFunction"
+                android:text="@string/bmw_actuator_function_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextViewInnerCaption" />
+            <android.widget.Spinner
+                android:id="@+id/spinnerBmwActuatorFunction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layoutBmwActuatorInfo"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/layoutBmwActuatorComments"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/textViewBmwActuatorCommentsTitle"
+                    android:text="@string/bmw_actuator_comments_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/TextViewInnerCaption" />
+                <TextView
+                    android:id="@+id/textBmwActuatorComments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars = "vertical"
+                    android:fadeScrollbars="false"
+                    android:minLines="1"
+                    android:maxLines="10" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layoutBmwActuatorStatus"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/textViewBmwActuatorStatusTitle"
+                    android:text="@string/bmw_actuator_status_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/TextViewInnerCaption" />
+                <TextView
+                    android:id="@+id/textBmwActuatorStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars = "vertical"
+                    android:fadeScrollbars="false"
+                    android:minLines="1"
+                    android:maxLines="10" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layoutBmwActuatorOperation"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/textViewBmwActuatorOperationTitle"
+                android:text="@string/bmw_actuator_operation_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextViewInnerCaption" />
+            <org.apmem.tools.layouts.FlowLayout
+                android:id="@+id/layoutBmwActuatorButtons"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left">
+                <Button
+                    android:id="@+id/buttonBmwActuatorExecute"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bmw_actuator_button_execute" />
+                <Button
+                    android:id="@+id/buttonBmwActuatorStop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bmw_actuator_button_stop" />
+            </org.apmem.tools.layouts.FlowLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

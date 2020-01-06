@@ -487,7 +487,7 @@
   <!-- XML ECU Tool Options Menu -->
   <string name="menu_xml_ecu_tool_search">Search</string>
 
-  <!-- Coding Activity -->
+  <!-- VAG Coding Activity -->
   <string name="vag_coding_title_coding">Coding ECU: {0}</string>
   <string name="vag_coding_title_login">Login ECU: {0}</string>
   <string name="vag_coding_title_sec_access">Security access ECU: {0}</string>
@@ -517,7 +517,7 @@
   <string name="vag_coding_sec_access_job_failed">Security access failed.\nIf the code was incorrect, keep the ignition on for 10 minutes before trying it again!</string>
   <string name="vag_coding_sec_access_job_ok">Security access successful</string>
 
-  <!-- Adaption Activity -->
+  <!-- VAG Adaption Activity -->
   <string name="vag_adaption_title_adaption">Adaption ECU: {0}</string>
   <string name="vag_adaption_channel_title">Documented channel</string>
   <string name="vag_adaption_channel_select">Select adaption channel</string>
@@ -539,6 +539,14 @@
   <string name="vag_adaption_button_store">Store</string>
   <string name="vag_adaption_button_stop">Stop</string>
   <string name="vag_adaption_ecu_reset">Perform ECU reset</string>
+
+  <!-- BMW Actuator Activity -->
+  <string name="bmw_actuator_function_title">Function</string>
+  <string name="bmw_actuator_comments_title">Hints</string>
+  <string name="bmw_actuator_status_title">Status</string>
+  <string name="bmw_actuator_operation_title">Operations</string>
+  <string name="bmw_actuator_button_execute">Execute</string>
+  <string name="bmw_actuator_button_stop">Stop</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Adapter configuration</string>
