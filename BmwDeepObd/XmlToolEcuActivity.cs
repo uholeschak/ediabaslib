@@ -850,14 +850,16 @@ namespace BmwDeepObd
                 }
 
                 EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = job.EcuFixedFuncStruct.GetNodeClassType();
-                foreach (EcuFunctionStructs.EcuJob ecuJob in job.EcuFixedFuncStruct.EcuJobList)
+                if (nodeClassType != EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
                 {
-                    foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
+                    foreach (EcuFunctionStructs.EcuJob ecuJob in job.EcuFixedFuncStruct.EcuJobList)
                     {
-                        if (nodeClassType == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator ||
-                            ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
+                        foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
                         {
-                            return true;
+                            if (ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -1894,33 +1896,7 @@ namespace BmwDeepObd
 
                     if (_selectedJob.EcuFixedFuncStruct?.EcuJobList != null)
                     {
-                        List<EdiabasThread.EcuFunctionResult> ecuFunctionResultList = null;
-                        if (_selectedJob.EcuFixedFuncStruct.GetNodeClassType() == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
-                        {
-                            ecuFunctionResultList = new List<EdiabasThread.EcuFunctionResult>();
-                            List<EdiabasThread.EcuFunctionResult> resultListPreset = EdiabasThread.ExecuteEcuJobs(_ediabas, _selectedJob.EcuFixedFuncStruct, null, EcuFunctionStructs.EcuJob.PhaseType.Preset);
-                            if (resultListPreset != null && resultListPreset.Count > 0)
-                            {
-                                ecuFunctionResultList.AddRange(resultListPreset);
-                            }
-
-                            List<EdiabasThread.EcuFunctionResult> resultListMain = EdiabasThread.ExecuteEcuJobs(_ediabas, _selectedJob.EcuFixedFuncStruct, null, EcuFunctionStructs.EcuJob.PhaseType.Main);
-                            if (resultListMain != null && resultListMain.Count > 0)
-                            {
-                                ecuFunctionResultList.AddRange(resultListMain);
-                            }
-
-                            List<EdiabasThread.EcuFunctionResult> resultListReset = EdiabasThread.ExecuteEcuJobs(_ediabas, _selectedJob.EcuFixedFuncStruct, null, EcuFunctionStructs.EcuJob.PhaseType.Reset);
-                            if (resultListReset != null && resultListReset.Count > 0)
-                            {
-                                ecuFunctionResultList.AddRange(resultListReset);
-                            }
-                        }
-                        else
-                        {
-                            ecuFunctionResultList = EdiabasThread.ExecuteEcuJobs(_ediabas, _selectedJob.EcuFixedFuncStruct);
-                        }
-
+                        List<EdiabasThread.EcuFunctionResult> ecuFunctionResultList = EdiabasThread.ExecuteEcuJobs(_ediabas, _selectedJob.EcuFixedFuncStruct);
                         if (ecuFunctionResultList != null)
                         {
                             foreach (EdiabasThread.EcuFunctionResult ecuFunctionResult in ecuFunctionResultList)

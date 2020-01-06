@@ -573,6 +573,7 @@
   <string name="bmw_actuator_operation_title">Операции</string>
   <string name="bmw_actuator_button_execute">Выполнить</string>
   <string name="bmw_actuator_button_stop">Остановить</string>
+  <string name="bmw_actuator_operation_failed">Ошибка выполнения операции</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Настройки устройства</string>
