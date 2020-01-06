@@ -552,6 +552,17 @@ namespace ExtractEcuFunctions
                 List<EcuFunctionStructs.EcuFixedFuncStruct> ecuFixedFuncStructList = GetEcuFixedFuncStructList(mDbConnection, ecuFuncStruct.Id);
                 fixFuncCount += ecuFixedFuncStructList.Count;
                 ecuFuncStruct.FixedFuncStructList = ecuFixedFuncStructList;
+
+                if (ecuFuncStruct.MultiSelect.ConvertToInt() > 0)
+                {
+                    foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in ecuFixedFuncStructList)
+                    {
+                        if (ecuFixedFuncStruct.GetNodeClassType() == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
+                        {
+                            outTextWriter.WriteLine("Actuator multi select!");
+                        }
+                    }
+                }
             }
 
             if (fixFuncCount == 0)
