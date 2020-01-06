@@ -484,7 +484,7 @@ namespace BmwDeepObd
                 }
             }
 
-            UpdateAdaptionInfo();
+            UpdateActuatorInfo();
         }
 
         private XmlToolEcuActivity.JobInfo GetSelectedJob()
@@ -511,7 +511,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void UpdateAdaptionInfo()
+        private void UpdateActuatorInfo()
         {
             UpdateActuatorStatus();
 
@@ -576,6 +576,7 @@ namespace BmwDeepObd
             {
                 _textBmwActuatorStatus.Text = string.Empty;
             }
+
             _spinnerBmwActuatorFunction.Enabled = !jobRunning;
             _buttonBmwActuatorExecuteSingle.Enabled = !jobRunning && validFunction;
             _buttonBmwActuatorExecuteContinuous.Enabled = !jobRunning && validFunction;
@@ -783,7 +784,7 @@ namespace BmwDeepObd
             });
             _jobThread.Start();
 
-            UpdateActuatorStatus();
+            UpdateActuatorStatus(true);
         }
     }
 }
