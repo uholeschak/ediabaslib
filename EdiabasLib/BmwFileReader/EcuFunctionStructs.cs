@@ -439,7 +439,7 @@ namespace BmwFileReader
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
             [XmlElement, DefaultValue("")] public string Value { get; set; }
-            [XmlElement, DefaultValue("")] public string AdapterPath { get; set; }
+            [XmlIgnore, XmlElement, DefaultValue("")] public string AdapterPath { get; set; }
             [XmlElement, DefaultValue("")] public string Name { get; set; }
         }
 
@@ -514,7 +514,7 @@ namespace BmwFileReader
             [XmlElement, DefaultValue("")] public string Id { get; set; }
             [XmlElement, DefaultValue(null)] public EcuTranslation Title { get; set; }
             [XmlElement, DefaultValue("")] public string FuncNameResult { get; set; }
-            [XmlElement, DefaultValue("")] public string AdapterPath { get; set; }
+            [XmlIgnore, XmlElement, DefaultValue("")] public string AdapterPath { get; set; }
             [XmlElement, DefaultValue("")] public string Name { get; set; }
             [XmlElement, DefaultValue("")] public string EcuFuncRelevant { get; set; }
             [XmlElement, DefaultValue("")] public string Location { get; set; }
@@ -573,8 +573,8 @@ namespace BmwFileReader
             [XmlElement, DefaultValue("")] public string Id { get; set; }
             [XmlElement, DefaultValue(null)] public EcuTranslation Title { get; set; }
             [XmlElement, DefaultValue("")] public string StateValue { get; set; }
-            [XmlElement, DefaultValue("")] public string ValidFrom { get; set; }
-            [XmlElement, DefaultValue("")] public string ValidTo { get; set; }
+            [XmlIgnore, XmlElement, DefaultValue("")] public string ValidFrom { get; set; }
+            [XmlIgnore, XmlElement, DefaultValue("")] public string ValidTo { get; set; }
             [XmlElement, DefaultValue("")] public string ParentId { get; set; }
         }
 
