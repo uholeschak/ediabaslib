@@ -164,6 +164,7 @@ namespace BmwDeepObd
 
         private enum ActivityRequest
         {
+            RequestBmwActuator,
             RequestVagCoding,
             RequestVagAdaption,
         }
@@ -250,6 +251,7 @@ namespace BmwDeepObd
         private Button _buttonTestFormat;
         private TextView _textViewTestFormatOutput;
         private Button _buttonEdiabasTool;
+        private Button _buttonBmwActuator;
         private Button _buttonCoding;
         private Button _buttonCoding2;
         private Button _buttonAdaption;
@@ -527,6 +529,31 @@ namespace BmwDeepObd
                 Finish();
             };
 
+            ViewStates bmwButtonsVisibility = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw?
+                ViewStates.Visible : ViewStates.Gone;
+
+            bool bmwActuatorEnabled = false;
+            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+            {
+                foreach (JobInfo jobInfo in _ecuInfo.JobList)
+                {
+                    if (jobInfo.EcuFixedFuncStruct != null &&
+                        jobInfo.EcuFixedFuncStruct.GetNodeClassType() == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
+                    {
+                        bmwActuatorEnabled = true;
+                        break;
+                    }
+                }
+            }
+
+            _buttonBmwActuator = FindViewById<Button>(Resource.Id.buttonBmwActuator);
+            _buttonBmwActuator.Visibility = bmwButtonsVisibility;
+            _buttonBmwActuator.Enabled = bmwActuatorEnabled;
+            _buttonBmwActuator.Click += (sender, args) =>
+            {
+                StartBmwActuator();
+            };
+
             ViewStates vagButtonsVisibility = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && ActivityCommon.VagUdsActive ?
                 ViewStates.Visible : ViewStates.Gone;
             _buttonCoding = FindViewById<Button>(Resource.Id.buttonCoding);
@@ -691,6 +718,7 @@ namespace BmwDeepObd
         {
             switch ((ActivityRequest) requestCode)
             {
+                case ActivityRequest.RequestBmwActuator:
                 case ActivityRequest.RequestVagCoding:
                 case ActivityRequest.RequestVagAdaption:
                     if (resultCode == Android.App.Result.Ok)
@@ -2052,6 +2080,22 @@ namespace BmwDeepObd
                 });
             });
             _jobThread.Start();
+        }
+
+        private void StartBmwActuator()
+        {
+            StoreResults();
+
+            BmwActuatorActivity.IntentEcuInfo = _ecuInfo;
+            Intent serverIntent = new Intent(this, typeof(BmwActuatorActivity));
+            serverIntent.PutExtra(BmwActuatorActivity.ExtraEcuName, _ecuInfo.Name);
+            serverIntent.PutExtra(BmwActuatorActivity.ExtraEcuDir, _ecuDir);
+            serverIntent.PutExtra(BmwActuatorActivity.ExtraTraceDir, _traceDir);
+            serverIntent.PutExtra(BmwActuatorActivity.ExtraTraceAppend, _traceAppend);
+            serverIntent.PutExtra(BmwActuatorActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
+            serverIntent.PutExtra(BmwActuatorActivity.ExtraDeviceAddress, _deviceAddress);
+            serverIntent.PutExtra(BmwActuatorActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestBmwActuator);
         }
 
         private void StartVagCoding(VagCodingActivity.CodingMode codingMode)
