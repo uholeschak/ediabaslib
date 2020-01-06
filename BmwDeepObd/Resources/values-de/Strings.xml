@@ -571,7 +571,8 @@
   <string name="bmw_actuator_comments_title">Hinweise</string>
   <string name="bmw_actuator_status_title">Status</string>
   <string name="bmw_actuator_operation_title">Vorgänge</string>
-  <string name="bmw_actuator_button_execute">Ausführen</string>
+  <string name="bmw_actuator_button_execute_single">Einmalig Ausführen</string>
+  <string name="bmw_actuator_button_execute_continuous">Dauerhaft Ausführen</string>
   <string name="bmw_actuator_button_stop">Stop</string>
   <string name="bmw_actuator_operation_failed">Der Vorgang ist fehlgeschlagen</string>
 

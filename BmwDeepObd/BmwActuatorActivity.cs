@@ -32,6 +32,7 @@ namespace BmwDeepObd
 
             public int SelectedFunction { get; set; }
             public string SelectedFunctionText { get; set; }
+            public bool Continuous { get; set; }
             public bool StopActuator { get; set; }
             public bool AutoClose { get; set; }
         }
@@ -65,7 +66,8 @@ namespace BmwDeepObd
         private TextView _textBmwActuatorStatus;
         private LinearLayout _layoutBmwActuatorOperation;
         private TextView _textViewBmwActuatorOperationTitle;
-        private Button _buttonBmwActuatorExecute;
+        private Button _buttonBmwActuatorExecuteSingle;
+        private Button _buttonBmwActuatorExecuteContinuous;
         private Button _buttonBmwActuatorStop;
         private ActivityCommon _activityCommon;
         private Handler _updateHandler;
@@ -172,11 +174,18 @@ namespace BmwDeepObd
             _textViewBmwActuatorOperationTitle = FindViewById<TextView>(Resource.Id.textViewBmwActuatorOperationTitle);
             _textViewBmwActuatorOperationTitle.SetOnTouchListener(this);
 
-            _buttonBmwActuatorExecute = FindViewById<Button>(Resource.Id.buttonBmwActuatorExecute);
-            _buttonBmwActuatorExecute.SetOnTouchListener(this);
-            _buttonBmwActuatorExecute.Click += (sender, args) =>
+            _buttonBmwActuatorExecuteSingle = FindViewById<Button>(Resource.Id.buttonBmwActuatorExecuteSingle);
+            _buttonBmwActuatorExecuteSingle.SetOnTouchListener(this);
+            _buttonBmwActuatorExecuteSingle.Click += (sender, args) =>
             {
-                ExecuteActuatorFunctionRequest();
+                ExecuteActuatorFunction(false);
+            };
+
+            _buttonBmwActuatorExecuteContinuous = FindViewById<Button>(Resource.Id.buttonBmwActuatorExecuteContinuous);
+            _buttonBmwActuatorExecuteContinuous.SetOnTouchListener(this);
+            _buttonBmwActuatorExecuteContinuous.Click += (sender, args) =>
+            {
+                ExecuteActuatorFunction(true);
             };
 
             _buttonBmwActuatorStop = FindViewById<Button>(Resource.Id.buttonBmwActuatorStop);
@@ -561,14 +570,16 @@ namespace BmwDeepObd
         {
             bool jobRunning = IsJobRunning();
             bool validFunction = _instanceData.SelectedFunction >= 0;
+            bool continuous = _instanceData.Continuous;
 
             if (!cyclicUpdate)
             {
                 _textBmwActuatorStatus.Text = string.Empty;
             }
             _spinnerBmwActuatorFunction.Enabled = !jobRunning;
-            _buttonBmwActuatorExecute.Enabled = !jobRunning && validFunction;
-            _buttonBmwActuatorStop.Enabled = jobRunning;
+            _buttonBmwActuatorExecuteSingle.Enabled = !jobRunning && validFunction;
+            _buttonBmwActuatorExecuteContinuous.Enabled = !jobRunning && validFunction;
+            _buttonBmwActuatorStop.Enabled = jobRunning && continuous;
         }
 
         private void HideKeyboard()
@@ -576,12 +587,7 @@ namespace BmwDeepObd
             _imm?.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
         }
 
-        private void ExecuteActuatorFunctionRequest()
-        {
-            ExecuteAdaption();
-        }
-
-        private void ExecuteAdaption()
+        private void ExecuteActuatorFunction(bool continuous)
         {
             if (IsJobRunning())
             {
@@ -593,10 +599,12 @@ namespace BmwDeepObd
             {
                 return;
             }
+            object lockObject = new object();
             string language = ActivityCommon.GetCurrentLanguage();
 
             EdiabasOpen();
 
+            _instanceData.Continuous = continuous;
             _instanceData.StopActuator = false;
             _instanceData.AutoClose = false;
 
@@ -626,6 +634,7 @@ namespace BmwDeepObd
                         UpdateActuatorStatus(true);
                     });
 
+                    StringBuilder sbStatus = new StringBuilder();
                     bool statusUpdated = false;
                     for (; ; )
                     {
@@ -637,15 +646,19 @@ namespace BmwDeepObd
                         }
 
                         EcuFunctionStructs.EcuJob.PhaseType currentPhase = phase;
-                        StringBuilder sbStatus = new StringBuilder();
                         bool updateStatus = currentPhase == EcuFunctionStructs.EcuJob.PhaseType.Main;
 
                         if (updateStatus && !statusUpdated)
                         {
-                            string procOpText = selectedJob.EcuFixedFuncStruct.ProcOp?.GetTitle(language);
-                            if (!string.IsNullOrWhiteSpace(procOpText))
+                            lock (lockObject)
                             {
-                                AppendSbText(sbStatus, procOpText);
+                                sbStatus.Clear();
+                                string procOpText = selectedJob.EcuFixedFuncStruct.ProcOp?.GetTitle(language);
+                                if (!string.IsNullOrWhiteSpace(procOpText))
+                                {
+
+                                    AppendSbText(sbStatus, procOpText);
+                                }
                             }
 
                             RunOnUiThread(() =>
@@ -655,7 +668,10 @@ namespace BmwDeepObd
                                     return;
                                 }
 
-                                _textBmwActuatorStatus.Text = sbStatus.ToString();
+                                lock (lockObject)
+                                {
+                                    _textBmwActuatorStatus.Text = sbStatus.ToString();
+                                }
                                 UpdateActuatorStatus(true);
                             });
                         }
@@ -675,9 +691,12 @@ namespace BmwDeepObd
                         if (updateStatus && !statusUpdated)
                         {
                             statusUpdated = true;
-                            foreach (EdiabasThread.EcuFunctionResult ecuFunctionResult in resultList)
+                            lock (lockObject)
                             {
-                                AppendSbText(sbStatus, ecuFunctionResult.ResultString);
+                                foreach (EdiabasThread.EcuFunctionResult ecuFunctionResult in resultList)
+                                {
+                                    AppendSbText(sbStatus, ecuFunctionResult.ResultString);
+                                }
                             }
 
                             RunOnUiThread(() =>
@@ -687,9 +706,17 @@ namespace BmwDeepObd
                                     return;
                                 }
 
-                                _textBmwActuatorStatus.Text = sbStatus.ToString();
+                                lock (lockObject)
+                                {
+                                    _textBmwActuatorStatus.Text = sbStatus.ToString();
+                                }
                                 UpdateActuatorStatus(true);
                             });
+                        }
+
+                        if (!_instanceData.Continuous && currentPhase == EcuFunctionStructs.EcuJob.PhaseType.Main)
+                        {
+                            break;
                         }
                     }
 
