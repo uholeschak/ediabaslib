@@ -309,7 +309,14 @@ namespace ExtractEcuFunctions
                             reader["ID"].ToString(),
                             reader["CODE"].ToString());
                         ecuFaultCodeList.Add(ecuFaultCode);
-                        ecuFaultCode.EcuFaultCodeLabelList = GetFaultCodeLabels(mDbConnection, ecuFaultCode);
+                        List<EcuFunctionStructs.EcuFaultCodeLabel> ecuFaultCodeLabelList = GetFaultCodeLabels(mDbConnection, ecuFaultCode);
+                        List<string> ecuFaultLabelIdList = new List<string>();
+                        foreach (EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel in ecuFaultCodeLabelList)
+                        {
+                            ecuFaultLabelIdList.Add(ecuFaultCodeLabel.Id);
+                        }
+                        ecuFaultCode.EcuFaultCodeLabelIdList = ecuFaultLabelIdList;
+                        ecuFaultCode.EcuFaultCodeLabelList = ecuFaultCodeLabelList;
                     }
                 }
             }
@@ -319,7 +326,7 @@ namespace ExtractEcuFunctions
 
         private static List<EcuFunctionStructs.EcuFaultCodeLabel> GetFaultCodeLabels(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuFaultCode ecuFaultCode)
         {
-            List<EcuFunctionStructs.EcuFaultCodeLabel> ecuLabelList = new List<EcuFunctionStructs.EcuFaultCodeLabel>();
+            List<EcuFunctionStructs.EcuFaultCodeLabel> ecuFaultCodeLabelList = new List<EcuFunctionStructs.EcuFaultCodeLabel>();
             string sql = string.Format(@"SELECT LABELS.ID LABELID, CODE, SAECODE, " + SqlTitleItems + ", RELEVANCE, DATATYPE " +
                                        "FROM XEP_FAULTLABELS LABELS, XEP_REFFAULTLABELS REFLABELS WHERE CODE = {0} AND LABELS.ID = REFLABELS.LABELID AND REFLABELS.ID = {1}",
                                         ecuFaultCode.Code, ecuFaultCode.Id);
@@ -329,7 +336,7 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        ecuLabelList.Add(new EcuFunctionStructs.EcuFaultCodeLabel(reader["LABELID"].ToString(),
+                        ecuFaultCodeLabelList.Add(new EcuFunctionStructs.EcuFaultCodeLabel(reader["LABELID"].ToString(),
                             reader["CODE"].ToString(),
                             reader["SAECODE"].ToString(),
                             GetTranslation(reader),
@@ -339,7 +346,7 @@ namespace ExtractEcuFunctions
                 }
             }
 
-            return ecuLabelList;
+            return ecuFaultCodeLabelList;
         }
 
         private static List<string> GetEcuGroupFunctionIds(SQLiteConnection mDbConnection, string groupId)

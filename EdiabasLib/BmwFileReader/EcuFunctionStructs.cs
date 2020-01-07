@@ -37,10 +37,12 @@ namespace BmwFileReader
 
                 if (GroupFunctionIds != null)
                 {
+                    sb.Append(prefix + " GROUPFUNC:");
                     foreach (string GroupFunctionId in GroupFunctionIds)
                     {
-                        sb.Append(prefix + " " + GroupFunctionId);
+                        sb.Append(" " + GroupFunctionId);
                     }
+                    sb.AppendLine();
                 }
 
                 if (Title != null)
@@ -117,6 +119,17 @@ namespace BmwFileReader
                     }
                 }
 
+                if (EcuFaultCodeLabelIdList != null)
+                {
+                    sb.Append(prefix + " LABELID:");
+                    foreach (string ecuFaultCodeLabelId in EcuFaultCodeLabelIdList)
+                    {
+                        sb.Append(" " + ecuFaultCodeLabelId);
+                    }
+
+                    sb.AppendLine();
+                }
+
                 return sb.ToString();
             }
 
@@ -127,7 +140,8 @@ namespace BmwFileReader
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
             [XmlElement, DefaultValue("")] public string Code { get; set; }
-            [XmlArray, DefaultValue(null)] public List<EcuFaultCodeLabel> EcuFaultCodeLabelList { get; set; }
+            [XmlIgnore, XmlArray, DefaultValue(null)] public List<EcuFaultCodeLabel> EcuFaultCodeLabelList { get; set; }
+            [XmlArray, DefaultValue(null)] public List<string> EcuFaultCodeLabelIdList { get; set; }
         }
 
         public class EcuFaultCodeLabel
