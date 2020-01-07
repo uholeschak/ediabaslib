@@ -305,14 +305,40 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        ecuFaultCodeList.Add(new EcuFunctionStructs.EcuFaultCode(
+                        EcuFunctionStructs.EcuFaultCode ecuFaultCode = new EcuFunctionStructs.EcuFaultCode(
                             reader["ID"].ToString(),
-                            reader["CODE"].ToString()));
+                            reader["CODE"].ToString());
+                        ecuFaultCodeList.Add(ecuFaultCode);
+                        ecuFaultCode.EcuFaultCodeLabelList = GetFaultCodeLabels(mDbConnection, ecuFaultCode);
                     }
                 }
             }
 
             return ecuFaultCodeList;
+        }
+
+        private static List<EcuFunctionStructs.EcuFaultCodeLabel> GetFaultCodeLabels(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuFaultCode ecuFaultCode)
+        {
+            List<EcuFunctionStructs.EcuFaultCodeLabel> ecuLabelList = new List<EcuFunctionStructs.EcuFaultCodeLabel>();
+            string sql = string.Format(@"SELECT LABELS.ID LABELID, CODE, SAECODE, " + SqlTitleItems + ", RELEVANCE, DATATYPE " +
+                                       "FROM XEP_FAULTLABELS LABELS, XEP_REFFAULTLABELS REFLABELS WHERE LABELS.ID = REFLABELS.LABELID AND REFLABELS.ID = {0}", ecuFaultCode.Id);
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        ecuLabelList.Add(new EcuFunctionStructs.EcuFaultCodeLabel(reader["LABELID"].ToString(),
+                            reader["CODE"].ToString(),
+                            reader["SAECODE"].ToString(),
+                            GetTranslation(reader),
+                            reader["RELEVANCE"].ToString(),
+                            reader["DATATYPE"].ToString()));
+                    }
+                }
+            }
+
+            return ecuLabelList;
         }
 
         private static List<string> GetEcuGroupFunctionIds(SQLiteConnection mDbConnection, string groupId)
