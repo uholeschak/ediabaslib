@@ -295,6 +295,26 @@ namespace ExtractEcuFunctions
             return ecuVariant;
         }
 
+        private static List<EcuFunctionStructs.EcuFaultCode> GetFaultCodes(SQLiteConnection mDbConnection, string variantId)
+        {
+            List<EcuFunctionStructs.EcuFaultCode> ecuFaultCodeList = new List<EcuFunctionStructs.EcuFaultCode>();
+            string sql = string.Format(@"SELECT ID, CODE FROM XEP_FAULTCODES WHERE ECUVARIANTID = {0}", variantId);
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        ecuFaultCodeList.Add(new EcuFunctionStructs.EcuFaultCode(
+                            reader["ID"].ToString(),
+                            reader["CODE"].ToString()));
+                    }
+                }
+            }
+
+            return ecuFaultCodeList;
+        }
+
         private static List<string> GetEcuGroupFunctionIds(SQLiteConnection mDbConnection, string groupId)
         {
             List<string> ecuGroupFunctionIds = new List<string>();
@@ -480,6 +500,8 @@ namespace ExtractEcuFunctions
                 outTextWriter?.WriteLine("ECU variant not found");
                 return null;
             }
+
+            ecuVariant.EcuFaultCodeList = GetFaultCodes(mDbConnection, ecuVariant.Id);
 
             List<EcuFunctionStructs.RefEcuVariant> refEcuVariantList = new List<EcuFunctionStructs.RefEcuVariant>();
             {

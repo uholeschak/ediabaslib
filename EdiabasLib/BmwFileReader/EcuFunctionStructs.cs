@@ -10,7 +10,7 @@ namespace BmwFileReader
 {
     public static class EcuFunctionStructs
     {
-        [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuFuncStruct))]
+        [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuFuncStruct)), XmlInclude(typeof(EcuFaultCode))]
         public class EcuVariant
         {
             public EcuVariant()
@@ -64,6 +64,14 @@ namespace BmwFileReader
                     }
                 }
 
+                if (EcuFaultCodeList != null)
+                {
+                    foreach (EcuFaultCode ecuFaultCode in EcuFaultCodeList)
+                    {
+                        sb.Append(ecuFaultCode.ToString(prefix + " "));
+                    }
+                }
+
                 return sb.ToString();
             }
 
@@ -78,6 +86,39 @@ namespace BmwFileReader
             [XmlArray, DefaultValue(null)] public List<string> GroupFunctionIds { get; set; }
             [XmlArray, DefaultValue(null)] public List<RefEcuVariant> RefEcuVariantList { get; set; }
             [XmlArray, DefaultValue(null)] public List<EcuFuncStruct> EcuFuncStructList { get; set; }
+            [XmlArray, DefaultValue(null)] public List<EcuFaultCode> EcuFaultCodeList { get; set; }
+        }
+
+        public class EcuFaultCode
+        {
+            public EcuFaultCode()
+            {
+                Id = string.Empty;
+                Code = string.Empty;
+            }
+
+            public EcuFaultCode(string id, string code)
+            {
+                Id = id;
+                Code = code;
+            }
+
+            public string ToString(string prefix)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine(prefix + "FAULTCODE:");
+                sb.Append(this.PropertyList(prefix + " "));
+
+                return sb.ToString();
+            }
+
+            public override string ToString()
+            {
+                return ToString("");
+            }
+
+            [XmlElement, DefaultValue("")] public string Id { get; set; }
+            [XmlElement, DefaultValue("")] public string Code { get; set; }
         }
 
         [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuJob))]
@@ -626,7 +667,7 @@ namespace BmwFileReader
                 TextPl = textPl;
             }
 
-        public string ToString(string prefix)
+            public string ToString(string prefix)
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine(prefix + "TRANS:");
