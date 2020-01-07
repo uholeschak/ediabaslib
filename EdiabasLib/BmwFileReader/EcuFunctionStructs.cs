@@ -45,7 +45,7 @@ namespace BmwFileReader
 
                 if (Title != null)
                 {
-                    sb.Append(prefix + " " + Title);
+                    sb.Append(Title.ToString(prefix + " "));
                 }
 
                 if (RefEcuVariantList != null)
@@ -159,7 +159,7 @@ namespace BmwFileReader
 
                 if (Title != null)
                 {
-                    sb.Append(prefix + " " + Title);
+                    sb.Append(Title.ToString(prefix + " "));
                 }
 
                 return sb.ToString();
@@ -227,22 +227,25 @@ namespace BmwFileReader
 
                 if (Title != null)
                 {
-                    sb.Append(prefix + " " + Title);
+                    sb.Append(Title.ToString(prefix + " "));
                 }
 
                 if (PrepOp != null)
                 {
-                    sb.Append(prefix + " PRE-" + PrepOp);
+                    sb.AppendLine(prefix + " PRE-");
+                    sb.Append(PrepOp.ToString(prefix + " "));
                 }
 
                 if (ProcOp != null)
                 {
-                    sb.Append(prefix + " PROC-" + ProcOp);
+                    sb.AppendLine(prefix + " PROC-");
+                    sb.Append(ProcOp.ToString(prefix + " "));
                 }
 
                 if (PostOp != null)
                 {
-                    sb.Append(prefix + " POST-" + PostOp);
+                    sb.AppendLine(prefix + " POST-");
+                    sb.Append(PostOp.ToString(prefix + " "));
                 }
 
                 if (EcuJobList != null)
@@ -392,7 +395,7 @@ namespace BmwFileReader
 
                 if (Title != null)
                 {
-                    sb.Append(prefix + " " + Title);
+                    sb.Append(Title.ToString(prefix + " "));
                 }
 
                 if (FixedFuncStructList != null)
@@ -590,7 +593,7 @@ namespace BmwFileReader
 
                 if (Title != null)
                 {
-                    sb.Append(prefix + " " + Title);
+                    sb.Append(Title.ToString(prefix + " "));
                 }
 
                 if (EcuResultStateValueList != null)
@@ -658,7 +661,7 @@ namespace BmwFileReader
 
                 if (Title != null)
                 {
-                    sb.Append(prefix + " " + Title);
+                    sb.Append(Title.ToString(prefix + " "));
                 }
                 return sb.ToString();
             }
