@@ -109,6 +109,14 @@ namespace BmwFileReader
                 sb.AppendLine(prefix + "FAULTCODE:");
                 sb.Append(this.PropertyList(prefix + " "));
 
+                if (EcuFaultCodeLabelList != null)
+                {
+                    foreach (EcuFaultCodeLabel ecuFaultCodeLabel in EcuFaultCodeLabelList)
+                    {
+                        sb.Append(ecuFaultCodeLabel.ToString(prefix + " "));
+                    }
+                }
+
                 return sb.ToString();
             }
 
@@ -119,6 +127,55 @@ namespace BmwFileReader
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
             [XmlElement, DefaultValue("")] public string Code { get; set; }
+            [XmlArray, DefaultValue(null)] public List<EcuFaultCodeLabel> EcuFaultCodeLabelList { get; set; }
+        }
+
+        public class EcuFaultCodeLabel
+        {
+            public EcuFaultCodeLabel()
+            {
+                Id = string.Empty;
+                Code = string.Empty;
+                SaeCode = string.Empty;
+                Relevance = string.Empty;
+                DataType = string.Empty;
+            }
+
+            public EcuFaultCodeLabel(string id, string code, string saeCode, EcuTranslation title, string relevance, string dataType)
+            {
+                Id = id;
+                Code = code;
+                SaeCode = saeCode;
+                Title = title;
+                Relevance = relevance;
+                DataType = dataType;
+            }
+
+            public string ToString(string prefix)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine(prefix + "FAULTLABEL:");
+                sb.Append(this.PropertyList(prefix + " "));
+
+                if (Title != null)
+                {
+                    sb.Append(prefix + " " + Title);
+                }
+
+                return sb.ToString();
+            }
+
+            public override string ToString()
+            {
+                return ToString("");
+            }
+
+            [XmlElement, DefaultValue("")] public string Id { get; set; }
+            [XmlElement, DefaultValue("")] public string Code { get; set; }
+            [XmlElement, DefaultValue("")] public string SaeCode { get; set; }
+            [XmlElement, DefaultValue(null)] public EcuTranslation Title { get; set; }
+            [XmlElement, DefaultValue("")] public string Relevance { get; set; }
+            [XmlElement, DefaultValue("")] public string DataType { get; set; }
         }
 
         [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuJob))]
