@@ -130,6 +130,8 @@ namespace ExtractEcuFunctions
                     ecuNameList = new List<string> { ecuName };
                 }
 
+                SerializeEcuFaultData(outTextWriter, logTextWriter, connection, outDirSub);
+
                 List<Thread> threadList = new List<Thread>();
                 foreach (string name in ecuNameList)
                 {
@@ -169,6 +171,41 @@ namespace ExtractEcuFunctions
                 outTextWriter?.WriteLine(e);
             }
             return 0;
+        }
+
+        private static bool SerializeEcuFaultData(TextWriter outTextWriter, TextWriter logTextWriter, string connection, string outDirSub)
+        {
+            try
+            {
+                using (SQLiteConnection mDbConnection = new SQLiteConnection(connection))
+                {
+                    mDbConnection.SetPassword(DbPassword);
+                    mDbConnection.Open();
+
+                    outTextWriter?.WriteLine("*** Fault data ***");
+                    EcuFunctionStructs.EcuFaultData ecuFaultData = new EcuFunctionStructs.EcuFaultData
+                    {
+                        EcuFaultCodeLabelList = GetFaultCodeLabels(mDbConnection)
+                    };
+                    //logTextWriter?.WriteLine(ecuFaultData);
+
+                    string xmlFile = Path.Combine(outDirSub, "faultdata.xml");
+                    XmlSerializer serializer = new XmlSerializer(ecuFaultData.GetType());
+                    using (TextWriter writer = new StreamWriter(xmlFile))
+                    {
+                        serializer.Serialize(writer, ecuFaultData);
+                    }
+
+                    mDbConnection.Close();
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                outTextWriter?.WriteLine(e);
+                return false;
+            }
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
@@ -345,6 +382,11 @@ namespace ExtractEcuFunctions
                             GetTranslation(reader),
                             reader["RELEVANCE"].ToString(),
                             reader["DATATYPE"].ToString()));
+
+                        if (ecuFaultCodeLabelList.Count > 10000)
+                        {
+                            break;
+                        }
                     }
                 }
             }
