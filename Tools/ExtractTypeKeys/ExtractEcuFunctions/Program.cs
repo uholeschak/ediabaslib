@@ -53,6 +53,8 @@ namespace ExtractEcuFunctions
                 "POSTOPERATORTEXT_PT, POSTOPERATORTEXT_ZHTW, POSTOPERATORTEXT_JA, " +
                 "POSTOPERATORTEXT_CSCZ, POSTOPERATORTEXT_PLPL";
 
+        private static HashSet<string> FaultLabelIdHashSet = new HashSet<string>();
+
         static int Main(string[] args)
         {
             Console.OutputEncoding = Encoding.Unicode;
@@ -130,8 +132,6 @@ namespace ExtractEcuFunctions
                     ecuNameList = new List<string> { ecuName };
                 }
 
-                SerializeEcuFaultData(outTextWriter, logTextWriter, connection, outDirSub);
-
                 List<Thread> threadList = new List<Thread>();
                 foreach (string name in ecuNameList)
                 {
@@ -159,6 +159,8 @@ namespace ExtractEcuFunctions
                 {
                     compileThread.Join();
                 }
+
+                SerializeEcuFaultData(outTextWriter, logTextWriter, connection, outDirSub);
 
                 if (!CreateZipFile(outDirSub, zipFile))
                 {
@@ -351,6 +353,10 @@ namespace ExtractEcuFunctions
                         foreach (EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel in ecuFaultCodeLabelList)
                         {
                             ecuFaultLabelIdList.Add(ecuFaultCodeLabel.Id);
+                            lock (ecuFaultCodeLabel)
+                            {
+                                FaultLabelIdHashSet.Add(ecuFaultCodeLabel.Id);
+                            }
                         }
                         ecuFaultCode.EcuFaultCodeLabelIdList = ecuFaultLabelIdList;
                         ecuFaultCode.EcuFaultCodeLabelList = ecuFaultCodeLabelList;
@@ -361,15 +367,51 @@ namespace ExtractEcuFunctions
             return ecuFaultCodeList;
         }
 
-        private static List<EcuFunctionStructs.EcuFaultCodeLabel> GetFaultCodeLabels(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuFaultCode ecuFaultCode = null)
+        private static List<EcuFunctionStructs.EcuFaultCodeLabel> GetFaultCodeLabels(SQLiteConnection mDbConnection)
         {
             List<EcuFunctionStructs.EcuFaultCodeLabel> ecuFaultCodeLabelList = new List<EcuFunctionStructs.EcuFaultCodeLabel>();
-            string sql = @"SELECT LABELS.ID LABELID, CODE, SAECODE, " + SqlTitleItems + ", RELEVANCE, DATATYPE " +
-                         @"FROM XEP_FAULTLABELS LABELS, XEP_REFFAULTLABELS REFLABELS";
-            if (ecuFaultCode != null)
+            string sql = @"SELECT ID LABELID, CODE, SAECODE, " + SqlTitleItems + ", RELEVANCE, DATATYPE " +
+                         @"FROM XEP_FAULTLABELS";
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
-                sql += string.Format(@" WHERE CODE = {0} AND LABELS.ID = REFLABELS.LABELID AND REFLABELS.ID = {1}", ecuFaultCode.Code, ecuFaultCode.Id);
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string labelId = reader["LABELID"].ToString();
+                        bool addItem;
+                        lock (FaultLabelIdHashSet)
+                        {
+                            addItem = FaultLabelIdHashSet.Contains(labelId);
+                        }
+
+                        if (addItem)
+                        {
+                            ecuFaultCodeLabelList.Add(new EcuFunctionStructs.EcuFaultCodeLabel(labelId,
+                                reader["CODE"].ToString(),
+                                reader["SAECODE"].ToString(),
+                                GetTranslation(reader),
+                                reader["RELEVANCE"].ToString(),
+                                reader["DATATYPE"].ToString()));
+                        }
+
+                        if (ecuFaultCodeLabelList.Count > 100000)
+                        {
+                            break;
+                        }
+                    }
+                }
             }
+
+            return ecuFaultCodeLabelList;
+        }
+
+        private static List<EcuFunctionStructs.EcuFaultCodeLabel> GetFaultCodeLabels(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuFaultCode ecuFaultCode)
+        {
+            List<EcuFunctionStructs.EcuFaultCodeLabel> ecuFaultCodeLabelList = new List<EcuFunctionStructs.EcuFaultCodeLabel>();
+            string sql = string.Format(@"SELECT LABELS.ID LABELID, CODE, SAECODE, " + SqlTitleItems + ", RELEVANCE, DATATYPE " +
+                                       @"FROM XEP_FAULTLABELS LABELS, XEP_REFFAULTLABELS REFLABELS" +
+                                       @" WHERE CODE = {0} AND LABELS.ID = REFLABELS.LABELID AND REFLABELS.ID = {1}", ecuFaultCode.Code, ecuFaultCode.Id);
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
                 using (SQLiteDataReader reader = command.ExecuteReader())
