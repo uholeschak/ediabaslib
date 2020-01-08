@@ -324,12 +324,15 @@ namespace ExtractEcuFunctions
             return ecuFaultCodeList;
         }
 
-        private static List<EcuFunctionStructs.EcuFaultCodeLabel> GetFaultCodeLabels(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuFaultCode ecuFaultCode)
+        private static List<EcuFunctionStructs.EcuFaultCodeLabel> GetFaultCodeLabels(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuFaultCode ecuFaultCode = null)
         {
             List<EcuFunctionStructs.EcuFaultCodeLabel> ecuFaultCodeLabelList = new List<EcuFunctionStructs.EcuFaultCodeLabel>();
-            string sql = string.Format(@"SELECT LABELS.ID LABELID, CODE, SAECODE, " + SqlTitleItems + ", RELEVANCE, DATATYPE " +
-                                       "FROM XEP_FAULTLABELS LABELS, XEP_REFFAULTLABELS REFLABELS WHERE CODE = {0} AND LABELS.ID = REFLABELS.LABELID AND REFLABELS.ID = {1}",
-                                        ecuFaultCode.Code, ecuFaultCode.Id);
+            string sql = @"SELECT LABELS.ID LABELID, CODE, SAECODE, " + SqlTitleItems + ", RELEVANCE, DATATYPE " +
+                         @"FROM XEP_FAULTLABELS LABELS, XEP_REFFAULTLABELS REFLABELS";
+            if (ecuFaultCode != null)
+            {
+                sql += string.Format(@" WHERE CODE = {0} AND LABELS.ID = REFLABELS.LABELID AND REFLABELS.ID = {1}", ecuFaultCode.Code, ecuFaultCode.Id);
+            }
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
                 using (SQLiteDataReader reader = command.ExecuteReader())
