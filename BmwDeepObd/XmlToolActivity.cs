@@ -3007,19 +3007,12 @@ namespace BmwDeepObd
                             if (resultSets != null && resultSets.Count >= 2)
                             {
                                 Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                                if (resultDict.TryGetValue("JOB_STATUS", out EdiabasNet.ResultData resultData))
+                                if (EdiabasThread.IsJobStatusOk(resultDict))
                                 {
-                                    if (resultData.OpData is string)
-                                    {
-                                        string status = (string)resultData.OpData;
-                                        if (String.Compare(status, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
-                                        {
-                                            groupFiles = fileName;
-                                            pin78ConnRequire = true;
-                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Motor ECUs detected: {0}", groupFiles);
-                                            break;
-                                        }
-                                    }
+                                    groupFiles = fileName;
+                                    pin78ConnRequire = true;
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Motor ECUs detected: {0}", groupFiles);
+                                    break;
                                 }
                             }
                         }
