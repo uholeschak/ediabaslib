@@ -15,10 +15,7 @@ namespace BmwFileReader
         {
             public EcuFaultData()
             {
-            }
-
-            public EcuFaultData(string id, string code)
-            {
+                EcuFaultCodeLabelList = null;
             }
 
             public string ToString(string prefix)

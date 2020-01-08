@@ -17,6 +17,15 @@ namespace ExtractEcuFunctions
     {
         const string DbPassword = "6505EFBDC3E5F324";
 
+        private static List<string> LangList = new List<string>
+        {
+            "de", "en", "fr", "th",
+            "sv", "it", "es", "id",
+            "ko", "el", "tr", "zh",
+            "ru", "nl", "pt", "ja",
+            "cs", "pl",
+        };
+
         private const string SqlTitleItems =
             "TITLE_DEDE, TITLE_ENGB, TITLE_ENUS, " +
             "TITLE_FR, TITLE_TH, TITLE_SV, " +
@@ -160,7 +169,10 @@ namespace ExtractEcuFunctions
                     compileThread.Join();
                 }
 
-                SerializeEcuFaultData(outTextWriter, logTextWriter, connection, outDirSub);
+                foreach (string language in LangList)
+                {
+                    SerializeEcuFaultData(outTextWriter, logTextWriter, connection, outDirSub, language);
+                }
 
                 if (!CreateZipFile(outDirSub, zipFile))
                 {
@@ -175,7 +187,8 @@ namespace ExtractEcuFunctions
             return 0;
         }
 
-        private static bool SerializeEcuFaultData(TextWriter outTextWriter, TextWriter logTextWriter, string connection, string outDirSub)
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private static bool SerializeEcuFaultData(TextWriter outTextWriter, TextWriter logTextWriter, string connection, string outDirSub, string language)
         {
             try
             {
@@ -184,14 +197,14 @@ namespace ExtractEcuFunctions
                     mDbConnection.SetPassword(DbPassword);
                     mDbConnection.Open();
 
-                    outTextWriter?.WriteLine("*** Fault data ***");
+                    outTextWriter?.WriteLine("*** Fault data {0} ***", language);
                     EcuFunctionStructs.EcuFaultData ecuFaultData = new EcuFunctionStructs.EcuFaultData
                     {
-                        EcuFaultCodeLabelList = GetFaultCodeLabels(mDbConnection)
+                        EcuFaultCodeLabelList = GetFaultCodeLabels(mDbConnection, language)
                     };
                     //logTextWriter?.WriteLine(ecuFaultData);
 
-                    string xmlFile = Path.Combine(outDirSub, "faultdata.xml");
+                    string xmlFile = Path.Combine(outDirSub, "faultdata_" + language + ".xml");
                     XmlSerializer serializer = new XmlSerializer(ecuFaultData.GetType());
                     using (TextWriter writer = new StreamWriter(xmlFile))
                     {
@@ -288,27 +301,27 @@ namespace ExtractEcuFunctions
             return ecuNameList;
         }
 
-        private static EcuFunctionStructs.EcuTranslation GetTranslation(SQLiteDataReader reader, string prefix = "TITLE")
+        private static EcuFunctionStructs.EcuTranslation GetTranslation(SQLiteDataReader reader, string prefix = "TITLE", string language = null)
         {
             return new EcuFunctionStructs.EcuTranslation(
-                reader[prefix + "_DEDE"].ToString(),
-                reader[prefix + "_ENUS"].ToString(),
-                reader[prefix + "_FR"].ToString(),
-                reader[prefix + "_TH"].ToString(),
-                reader[prefix + "_SV"].ToString(),
-                reader[prefix + "_IT"].ToString(),
-                reader[prefix + "_ES"].ToString(),
-                reader[prefix + "_ID"].ToString(),
-                reader[prefix + "_KO"].ToString(),
-                reader[prefix + "_EL"].ToString(),
-                reader[prefix + "_TR"].ToString(),
-                reader[prefix + "_ZHCN"].ToString(),
-                reader[prefix + "_RU"].ToString(),
-                reader[prefix + "_NL"].ToString(),
-                reader[prefix + "_PT"].ToString(),
-                reader[prefix + "_JA"].ToString(),
-                reader[prefix + "_CSCZ"].ToString(),
-                reader[prefix + "_PLPL"].ToString()
+                language == null || language.ToLowerInvariant() == "de" ? reader[prefix + "_DEDE"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "en" ? reader[prefix + "_ENUS"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "fr" ? reader[prefix + "_FR"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "th" ? reader[prefix + "_TH"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "sv" ? reader[prefix + "_SV"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "it" ? reader[prefix + "_IT"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "es" ? reader[prefix + "_ES"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "id" ? reader[prefix + "_ID"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "ko" ? reader[prefix + "_KO"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "el" ? reader[prefix + "_EL"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "tr" ? reader[prefix + "_TR"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "zh" ? reader[prefix + "_ZHCN"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "ru" ? reader[prefix + "_RU"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "nl" ? reader[prefix + "_NL"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "pt" ? reader[prefix + "_PT"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "ja" ? reader[prefix + "_JA"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "cs" ? reader[prefix + "_CSCZ"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "pl" ? reader[prefix + "_PLPL"].ToString() : string.Empty
                 );
         }
 
@@ -367,7 +380,7 @@ namespace ExtractEcuFunctions
             return ecuFaultCodeList;
         }
 
-        private static List<EcuFunctionStructs.EcuFaultCodeLabel> GetFaultCodeLabels(SQLiteConnection mDbConnection)
+        private static List<EcuFunctionStructs.EcuFaultCodeLabel> GetFaultCodeLabels(SQLiteConnection mDbConnection, string language)
         {
             List<EcuFunctionStructs.EcuFaultCodeLabel> ecuFaultCodeLabelList = new List<EcuFunctionStructs.EcuFaultCodeLabel>();
             string sql = @"SELECT ID LABELID, CODE, SAECODE, " + SqlTitleItems + ", RELEVANCE, DATATYPE " +
@@ -390,7 +403,7 @@ namespace ExtractEcuFunctions
                             ecuFaultCodeLabelList.Add(new EcuFunctionStructs.EcuFaultCodeLabel(labelId,
                                 reader["CODE"].ToString(),
                                 reader["SAECODE"].ToString(),
-                                GetTranslation(reader),
+                                GetTranslation(reader, "TITLE", language),
                                 reader["RELEVANCE"].ToString(),
                                 reader["DATATYPE"].ToString()));
                         }
