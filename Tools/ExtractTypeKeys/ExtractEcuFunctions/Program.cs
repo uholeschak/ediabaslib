@@ -439,7 +439,8 @@ namespace ExtractEcuFunctions
                     {
                         while (reader.Read())
                         {
-                            ecuJobResultList.Add(new EcuFunctionStructs.EcuJobResult(reader["RESULTID"].ToString(),
+                            EcuFunctionStructs.EcuJobResult ecuJobResult = new EcuFunctionStructs.EcuJobResult(
+                                reader["RESULTID"].ToString(),
                                 GetTranslation(reader),
                                 reader["FUNCTIONNAMERESULT"].ToString(),
                                 reader["ADAPTERPATH"].ToString(),
@@ -452,7 +453,12 @@ namespace ExtractEcuFunctions
                                 reader["MULTIPLIKATOR"].ToString(),
                                 reader["OFFSET"].ToString(),
                                 reader["RUNDEN"].ToString(),
-                                reader["ZAHLENFORMAT"].ToString()));
+                                reader["ZAHLENFORMAT"].ToString());
+
+                            if (ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
+                            {
+                                ecuJobResultList.Add(ecuJobResult);
+                            }
                         }
                     }
                 }
