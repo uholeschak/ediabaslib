@@ -1338,15 +1338,50 @@ namespace BmwDeepObd
             ediabas.ResultsRequests = string.Empty;
             ediabas.ExecuteJob(ecuJob.Name);
 
-            bool jobOk = true;
+            bool jobOk = false;
             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(ediabas.ResultSets);
-            List <EcuFunctionResult> ecuFunctionResultList = new List<EcuFunctionResult>();
-            if (ecuJob.EcuJobResultList != null)
+            if (resultSets.Count > 1)
             {
-                foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
+                int dictIndex = 0;
+                foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
                 {
-                    if (resultSets.Count > 1)
+                    if (dictIndex == 0)
                     {
+                        dictIndex++;
+                        continue;
+                    }
+
+                    if (resultDictLocal.TryGetValue("JOB_STATUS", out EdiabasNet.ResultData resultData))
+                    {
+                        if (resultData.OpData is string)
+                        {
+                            // read details
+                            string jobStatus = (string)resultData.OpData;
+                            if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                jobOk = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    dictIndex++;
+                }
+            }
+
+            List<EcuFunctionResult> ecuFunctionResultList = null;
+            if (jobOk)
+            {
+                ecuFunctionResultList = new List<EcuFunctionResult>();
+                if (ecuJob.EcuJobResultList != null)
+                {
+                    foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
+                    {
+                        if (ecuJobResult.EcuFuncRelevant.ConvertToInt() <= 0)
+                        {
+                            continue;
+                        }
+
                         int dictIndex = 0;
                         foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
                         {
@@ -1366,10 +1401,6 @@ namespace BmwDeepObd
                                     if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         statusOk = true;
-                                    }
-                                    else
-                                    {
-                                        jobOk = false;
                                     }
                                 }
                             }
@@ -1413,11 +1444,6 @@ namespace BmwDeepObd
                         }
                     }
                 }
-            }
-
-            if (!jobOk)
-            {
-                return null;
             }
 
             return ecuFunctionResultList;
