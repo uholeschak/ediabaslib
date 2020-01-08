@@ -164,14 +164,25 @@ namespace ExtractEcuFunctions
                     threadList.Add(serializeThread);
                 }
 
-                foreach (Thread compileThread in threadList)
+                foreach (Thread processThread in threadList)
                 {
-                    compileThread.Join();
+                    processThread.Join();
                 }
 
+                List<Thread> threadListFaultData = new List<Thread>();
                 foreach (string language in LangList)
                 {
-                    SerializeEcuFaultData(outTextWriter, logTextWriter, connection, outDirSub, language);
+                    Thread serializeThread = new Thread(() =>
+                    {
+                        SerializeEcuFaultData(outTextWriter, logTextWriter, connection, outDirSub, language);
+                    });
+                    serializeThread.Start();
+                    threadListFaultData.Add(serializeThread);
+                }
+
+                foreach (Thread processThread in threadListFaultData)
+                {
+                    processThread.Join();
                 }
 
                 if (!CreateZipFile(outDirSub, zipFile))
@@ -188,6 +199,7 @@ namespace ExtractEcuFunctions
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
+        // ReSharper disable once UnusedParameter.Local
         private static bool SerializeEcuFaultData(TextWriter outTextWriter, TextWriter logTextWriter, string connection, string outDirSub, string language)
         {
             try
