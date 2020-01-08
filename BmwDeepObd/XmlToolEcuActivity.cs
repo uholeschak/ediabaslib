@@ -726,6 +726,7 @@ namespace BmwDeepObd
                         Finish();
                         break;
                     }
+                    EdiabasClose();
                     UpdateDisplay();
                     break;
             }
@@ -2061,6 +2062,7 @@ namespace BmwDeepObd
         private void StartBmwActuator()
         {
             StoreResults();
+            EdiabasClose();
 
             BmwActuatorActivity.IntentEcuInfo = _ecuInfo;
             Intent serverIntent = new Intent(this, typeof(BmwActuatorActivity));
@@ -2077,6 +2079,7 @@ namespace BmwDeepObd
         private void StartVagCoding(VagCodingActivity.CodingMode codingMode)
         {
             StoreResults();
+            EdiabasClose();
 
             VagCodingActivity.IntentEcuInfo = _ecuInfo;
             Intent serverIntent = new Intent(this, typeof(VagCodingActivity));
@@ -2094,6 +2097,7 @@ namespace BmwDeepObd
         private void StartVagAdaption()
         {
             StoreResults();
+            EdiabasClose();
 
             VagAdaptionActivity.IntentEcuInfo = _ecuInfo;
             Intent serverIntent = new Intent(this, typeof(VagAdaptionActivity));
