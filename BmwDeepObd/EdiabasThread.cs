@@ -675,19 +675,13 @@ namespace BmwDeepObd
                                     dictIndex++;
                                     continue;
                                 }
-                                if (resultDictLocal.TryGetValue("JOB_STATUS", out EdiabasNet.ResultData resultData))
+
+                                if (IsJobStatusOk(resultDictLocal))
                                 {
-                                    if (resultData.OpData is string)
-                                    {
-                                        // read details
-                                        string jobStatus = (string)resultData.OpData;
-                                        if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
-                                        {
-                                            resultDictOk = resultDictLocal;
-                                            break;
-                                        }
-                                    }
+                                    resultDictOk = resultDictLocal;
+                                    break;
                                 }
+
                                 dictIndex++;
                             }
 
@@ -857,17 +851,9 @@ namespace BmwDeepObd
                             {
                                 if (resultSets.Count > 1)
                                 {
-                                    if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out EdiabasNet.ResultData resultData))
+                                    if (IsJobStatusOk(resultSets[resultSets.Count - 1]))
                                     {
-                                        if (resultData.OpData is string)
-                                        {
-                                            // read details
-                                            string jobStatus = (string) resultData.OpData;
-                                            if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
-                                            {
-                                                jobOk = true;
-                                            }
-                                        }
+                                        jobOk = true;
                                     }
                                 }
                             }
@@ -1185,6 +1171,24 @@ namespace BmwDeepObd
             return true;
         }
 
+        public static bool IsJobStatusOk(Dictionary<string, EdiabasNet.ResultData> resultDict)
+        {
+            if (resultDict.TryGetValue("JOB_STATUS", out EdiabasNet.ResultData resultData))
+            {
+                if (resultData.OpData is string)
+                {
+                    // read details
+                    string jobStatus = (string)resultData.OpData;
+                    if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public static void MergeResultDictionarys(ref Dictionary<string, EdiabasNet.ResultData> resultDict, Dictionary<string, EdiabasNet.ResultData> mergeDict, string prefix = null)
         {
             if (resultDict == null)
@@ -1351,18 +1355,10 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    if (resultDictLocal.TryGetValue("JOB_STATUS", out EdiabasNet.ResultData resultData))
+                    if (IsJobStatusOk(resultDictLocal))
                     {
-                        if (resultData.OpData is string)
-                        {
-                            // read details
-                            string jobStatus = (string)resultData.OpData;
-                            if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                jobOk = true;
-                                break;
-                            }
-                        }
+                        jobOk = true;
+                        break;
                     }
 
                     dictIndex++;
@@ -1391,23 +1387,10 @@ namespace BmwDeepObd
                                 continue;
                             }
 
-                            bool statusOk = false;
-                            if (resultDictLocal.TryGetValue("JOB_STATUS", out EdiabasNet.ResultData resultData))
-                            {
-                                if (resultData.OpData is string)
-                                {
-                                    // read details
-                                    string jobStatus = (string)resultData.OpData;
-                                    if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
-                                    {
-                                        statusOk = true;
-                                    }
-                                }
-                            }
-
+                            bool statusOk = IsJobStatusOk(resultDictLocal);
                             if (statusOk)
                             {
-                                if (resultDictLocal.TryGetValue(ecuJobResult.Name.ToUpperInvariant(), out resultData))
+                                if (resultDictLocal.TryGetValue(ecuJobResult.Name.ToUpperInvariant(), out EdiabasNet.ResultData resultData))
                                 {
                                     if (ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
                                     {

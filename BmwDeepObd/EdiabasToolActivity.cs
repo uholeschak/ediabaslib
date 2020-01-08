@@ -1723,17 +1723,9 @@ namespace BmwDeepObd
                             bool jobOk = false;
                             if (resultSets != null && resultSets.Count > 1)
                             {
-                                if (resultSets[resultSets.Count - 1].TryGetValue("JOB_STATUS", out EdiabasNet.ResultData resultData))
+                                if (EdiabasThread.IsJobStatusOk(resultSets[resultSets.Count - 1]))
                                 {
-                                    if (resultData.OpData is string)
-                                    {
-                                        // read details
-                                        string jobStatus = (string) resultData.OpData;
-                                        if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
-                                        {
-                                            jobOk = true;
-                                        }
-                                    }
+                                    jobOk = true;
                                 }
                             }
                             // read error details
