@@ -394,11 +394,6 @@ namespace ExtractEcuFunctions
                                 reader["RELEVANCE"].ToString(),
                                 reader["DATATYPE"].ToString()));
                         }
-
-                        if (ecuFaultCodeLabelList.Count > 100000)
-                        {
-                            break;
-                        }
                     }
                 }
             }
