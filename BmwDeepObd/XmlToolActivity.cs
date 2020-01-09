@@ -2247,7 +2247,7 @@ namespace BmwDeepObd
                                                 if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                                                 {
                                                     string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
-                                                    EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+                                                    EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName, ActivityCommon.GetCurrentLanguage());
                                                     if (ecuVariant == null)
                                                     {
                                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No ECU variant found for: {0}", ecuSgbdName);
@@ -3135,7 +3135,7 @@ namespace BmwDeepObd
                                     if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                                     {
                                         string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
-                                        EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+                                        EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName, ActivityCommon.GetCurrentLanguage());
                                         if (ecuVariant == null)
                                         {
                                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No ECU variant found for: {0}", ecuSgbdName);
@@ -3857,7 +3857,7 @@ namespace BmwDeepObd
                         if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                         {
                             string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
-                            ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+                            ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName, ActivityCommon.GetCurrentLanguage());
                             if (ecuVariant == null)
                             {
                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No ECU variant found for: {0}", ecuSgbdName);
@@ -5950,7 +5950,7 @@ namespace BmwDeepObd
                             if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                             {
                                 string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
-                                EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+                                EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName, ActivityCommon.GetCurrentLanguage());
                                 if (ecuVariant == null)
                                 {
                                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No ECU variant found for: {0}", ecuSgbdName);

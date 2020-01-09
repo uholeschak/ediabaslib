@@ -12,6 +12,8 @@ namespace BmwFileReader
         public const string EcuFuncFileName = "EcuFunctions.zip";
         private readonly string _rootDir;
         private readonly Dictionary<string, EcuFunctionStructs.EcuVariant> _ecuVariantDict;
+        public EcuFunctionStructs.EcuFaultData _ecuFaultData;
+        private string _ecuFaultDataLanguage;
 
         public EcuFunctionReader(string rootDir)
         {
@@ -48,10 +50,15 @@ namespace BmwFileReader
             return fixedFuncStructList;
         }
 
-        public EcuFunctionStructs.EcuVariant GetEcuVariantCached(string ecuName)
+        public EcuFunctionStructs.EcuVariant GetEcuVariantCached(string ecuName, string language)
         {
             try
             {
+                if (GetEcuFaultDataCached(language) == null)
+                {
+                    return null;
+                }
+
                 if (string.IsNullOrEmpty(ecuName))
                 {
                     return null;
@@ -74,20 +81,54 @@ namespace BmwFileReader
             }
         }
 
+        public EcuFunctionStructs.EcuFaultData GetEcuFaultDataCached(string language)
+        {
+            if (_ecuFaultData == null || _ecuFaultDataLanguage == null ||
+                string.Compare(_ecuFaultDataLanguage, language, StringComparison.OrdinalIgnoreCase) != 0)
+            {
+                _ecuFaultDataLanguage = null;
+                _ecuFaultData = GetEcuFaultData(language);
+                if (_ecuFaultData != null)
+                {
+                    _ecuFaultDataLanguage = language;
+                }
+            }
+
+            return _ecuFaultData;
+        }
+
         public EcuFunctionStructs.EcuVariant GetEcuVariant(string ecuName)
+        {
+            EcuFunctionStructs.EcuVariant ecuVariant = GetEcuDataObject(ecuName, typeof(EcuFunctionStructs.EcuVariant)) as EcuFunctionStructs.EcuVariant;
+            return ecuVariant;
+        }
+
+        public EcuFunctionStructs.EcuFaultData GetEcuFaultData(string language)
+        {
+            string fileName = "faultdata_" + language.ToLowerInvariant();
+            EcuFunctionStructs.EcuFaultData ecuFaultData = GetEcuDataObject(fileName, typeof(EcuFunctionStructs.EcuFaultData)) as EcuFunctionStructs.EcuFaultData;
+            if (ecuFaultData == null)
+            {
+                fileName = "faultdata_en";
+                ecuFaultData = GetEcuDataObject(fileName, typeof(EcuFunctionStructs.EcuFaultData)) as EcuFunctionStructs.EcuFaultData;
+            }
+            return ecuFaultData;
+        }
+
+        public object GetEcuDataObject(string name, Type type)
         {
             try
             {
-                if (string.IsNullOrEmpty(ecuName))
+                if (string.IsNullOrEmpty(name))
                 {
                     return null;
                 }
 
-                EcuFunctionStructs.EcuVariant ecuVariant = null;
+                object ecuObject = null;
                 ZipFile zf = null;
                 try
                 {
-                    string ecuFileName = ecuName.ToLowerInvariant() + ".xml";
+                    string fileName = name.ToLowerInvariant() + ".xml";
                     using (FileStream fs = File.OpenRead(Path.Combine(_rootDir, EcuFuncFileName)))
                     {
                         zf = new ZipFile(fs);
@@ -97,20 +138,20 @@ namespace BmwFileReader
                             {
                                 continue; // Ignore directories
                             }
-                            if (string.Compare(zipEntry.Name, ecuFileName, StringComparison.OrdinalIgnoreCase) == 0)
+                            if (string.Compare(zipEntry.Name, fileName, StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 Stream zipStream = zf.GetInputStream(zipEntry);
                                 using (TextReader reader = new StreamReader(zipStream))
                                 {
-                                    XmlSerializer serializer = new XmlSerializer(typeof(EcuFunctionStructs.EcuVariant));
-                                    ecuVariant = serializer.Deserialize(reader) as EcuFunctionStructs.EcuVariant;
+                                    XmlSerializer serializer = new XmlSerializer(type);
+                                    ecuObject = serializer.Deserialize(reader);
                                 }
                                 break;
                             }
                         }
                     }
 
-                    return ecuVariant;
+                    return ecuObject;
                 }
                 finally
                 {
@@ -126,5 +167,6 @@ namespace BmwFileReader
                 return null;
             }
         }
+
     }
 }
