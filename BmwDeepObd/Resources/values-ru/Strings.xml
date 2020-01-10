@@ -146,6 +146,10 @@
   <string name="vag_uds_init">Загрузка VAG файлов</string>
   <string name="vag_uds_error">Ошибка при чтении VAG файлов</string>
 
+  <!-- Init BMW ECU functions -->
+  <string name="bmw_ecu_func_init">Загрузка BMW файлов</string>
+  <string name="bmw_ecu_func_error">Ошибка при чтении BMW файлов</string>
+
   <!-- Send trace file -->
   <string name="send_trace_file_request">Ошибка соединения.\nХотите отправить анонимный и сжатый Trace-файл (размер {0:fs0}) для улучшения качества продукта?</string>
   <string name="send_message_request">Ошибка соединения.\nХотите отправить анонимный файл для улучшения качества продукта?</string>

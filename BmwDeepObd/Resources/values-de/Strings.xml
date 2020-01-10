@@ -147,6 +147,10 @@
   <string name="vag_uds_init">VAG Dateien lesen</string>
   <string name="vag_uds_error">VAG Dateien lesen fehlgeschlagen</string>
 
+  <!-- Init BMW ECU functions -->
+  <string name="bmw_ecu_func_init">BMW Dateien lesen</string>
+  <string name="bmw_ecu_func_error">VAG Dateien lesen fehlgeschlagen</string>
+
   <!-- Send trace file -->
   <string name="send_trace_file_request">Es sind Kommunikationsfehler aufgetreten.\nWollen Sie eine komprimierte und anonyme Trace-Datei (Größe {0:fs0}) senden um Produktverbesserungen zu ermöglichen?</string>
   <string name="send_message_request">Es sind Kommunikationsfehler aufgetreten.\nWollen Sie anonyme Daten senden um Produktverbesserungen zu ermöglichen?</string>

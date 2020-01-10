@@ -122,6 +122,10 @@
   <string name="vag_uds_init">Reading VAG files</string>
   <string name="vag_uds_error">Reading VAG files failed</string>
 
+  <!-- Init BMW ECU functions -->
+  <string name="bmw_ecu_func_init">Reading BMW files</string>
+  <string name="bmw_ecu_func_error">Reading BMW files failed</string>
+
   <!-- Send trace file -->
   <string name="send_trace_file_request">Communication errors have occured.\nDo you want to send a compressed and anonymous trace file (size {0:fs0}) to allow improvement of the product?</string>
   <string name="send_message_request">Communication errors have occured.\nDo you want to send anonymous data to allow improvement of the product?</string>
