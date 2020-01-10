@@ -1244,7 +1244,7 @@ namespace BmwDeepObd
             if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
             {
                 string ecuSgbdName = sgbd ?? string.Empty;
-                ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName, ActivityCommon.GetCurrentLanguage());
+                ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
             }
 
             if (ecuVariant == null)
