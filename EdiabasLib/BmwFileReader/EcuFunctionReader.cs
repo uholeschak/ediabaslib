@@ -21,6 +21,22 @@ namespace BmwFileReader
             _ecuVariantDict = new Dictionary<string, EcuFunctionStructs.EcuVariant>();
         }
 
+        public bool Init(string language)
+        {
+            if (GetEcuFaultDataCached(language) == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool IsInitRequired(string language)
+        {
+            return _ecuFaultData == null || _ecuFaultDataLanguage == null ||
+                    string.Compare(_ecuFaultDataLanguage, language, StringComparison.OrdinalIgnoreCase) != 0;
+        }
+
         public List<EcuFunctionStructs.EcuFixedFuncStruct> GetFixedFuncStructList(EcuFunctionStructs.EcuVariant ecuVariant)
         {
             List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructList = new List<EcuFunctionStructs.EcuFixedFuncStruct>();
@@ -50,15 +66,10 @@ namespace BmwFileReader
             return fixedFuncStructList;
         }
 
-        public EcuFunctionStructs.EcuVariant GetEcuVariantCached(string ecuName, string language)
+        public EcuFunctionStructs.EcuVariant GetEcuVariantCached(string ecuName)
         {
             try
             {
-                if (GetEcuFaultDataCached(language) == null)
-                {
-                    return null;
-                }
-
                 if (string.IsNullOrEmpty(ecuName))
                 {
                     return null;
@@ -83,8 +94,7 @@ namespace BmwFileReader
 
         public EcuFunctionStructs.EcuFaultData GetEcuFaultDataCached(string language)
         {
-            if (_ecuFaultData == null || _ecuFaultDataLanguage == null ||
-                string.Compare(_ecuFaultDataLanguage, language, StringComparison.OrdinalIgnoreCase) != 0)
+            if (IsInitRequired(language))
             {
                 _ecuFaultDataLanguage = null;
                 _ecuFaultData = GetEcuFaultData(language);
