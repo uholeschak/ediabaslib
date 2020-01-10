@@ -240,7 +240,7 @@ namespace BmwDeepObd
         public delegate void UpdateCheckDelegate(bool success, bool updateAvailable, int? appVer, string message);
         public delegate void EnetSsidWarnDelegate(bool retry);
         public delegate void WifiConnectedWarnDelegate();
-        public delegate void InitUdsFinishDelegate(bool result);
+        public delegate void InitThreadFinishDelegate(bool result);
         public const int UdsDtcStatusOverride = 0x2C;
         public const BuildVersionCodes MinEthernetSettingsVersion = BuildVersionCodes.M;
         public const long UpdateCheckDelayDefault = TimeSpan.TicksPerDay;
@@ -649,6 +649,8 @@ namespace BmwDeepObd
             }
             private set => _vagUdsActive = value;
         }
+
+        public static bool EcuFunctionsChecked { get; private set; }
 
         public static bool EcuFunctionsActive
         {
@@ -7196,7 +7198,7 @@ namespace BmwDeepObd
             return string.Join(string.Empty, s.ToCharArray().Select(o => invalid.Contains(o) ? replaceChar : o));
         }
 
-        public bool InitUdsReaderThread(string vagPath, InitUdsFinishDelegate handler)
+        public bool InitUdsReaderThread(string vagPath, InitThreadFinishDelegate handler)
         {
             if (OldVagMode || VagUdsChecked || SelectedManufacturer == ManufacturerType.Bmw)
             {
@@ -7357,9 +7359,62 @@ namespace BmwDeepObd
             return null;
         }
 
+        public bool InitEcuFunctionReaderThread(string bmwPath, InitThreadFinishDelegate handler)
+        {
+            if (EcuFunctionsChecked || SelectedManufacturer != ManufacturerType.Bmw)
+            {
+                return false;
+            }
+
+            if (!Directory.Exists(bmwPath))
+            {
+                new AlertDialog.Builder(_context)
+                    .SetMessage(Resource.String.bmw_ecu_func_error)
+                    .SetTitle(Resource.String.alert_title_error)
+                    .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
+                    .Show();
+                handler?.Invoke(false);
+                return true;
+            }
+
+            CustomProgressDialog progress = new CustomProgressDialog(_activity);
+            progress.SetMessage(_activity.GetString(Resource.String.bmw_ecu_func_init));
+            progress.Indeterminate = true;
+            progress.ButtonAbort.Visibility = ViewStates.Gone;
+            progress.Show();
+            SetLock(LockTypeCommunication);
+            Thread initThread = new Thread(() =>
+            {
+                bool result = InitEcuFunctionReader(bmwPath);
+                _activity?.RunOnUiThread(() =>
+                {
+                    if (_disposed)
+                    {
+                        return;
+                    }
+                    progress.Dismiss();
+                    progress.Dispose();
+                    progress = null;
+                    SetLock(LockType.None);
+                    if (!result)
+                    {
+                        new AlertDialog.Builder(_context)
+                            .SetMessage(Resource.String.bmw_ecu_func_error)
+                            .SetTitle(Resource.String.alert_title_error)
+                            .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
+                            .Show();
+                    }
+                    handler?.Invoke(VagUdsActive);
+                });
+            });
+            initThread.Start();
+            return true;
+        }
+
         public static void ResetEcuFunctionReader()
         {
             _ecuFunctionReader = null;
+            EcuFunctionsChecked = false;
             EcuFunctionsActive = false;
         }
 
@@ -7384,6 +7439,7 @@ namespace BmwDeepObd
                 }
 
                 EcuFunctionsActive = true;
+                EcuFunctionsChecked = true;
                 return true;
             }
             catch (Exception)
