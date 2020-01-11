@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 using ICSharpCode.SharpZipLib.Zip;
 // ReSharper disable ConvertToUsingDeclaration
@@ -94,28 +95,18 @@ namespace BmwFileReader
             return ecuFaultCodeLabel;
         }
 
-        public EcuFunctionStructs.EcuFaultModeLabel GetFaultModeLabel(Int64 errorCode, Int64 modeNumber, EcuFunctionStructs.EcuVariant ecuVariant)
-        {
-            List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList = GetFaultModeLabelList(errorCode, ecuVariant);
-            return GetFaultModeLabel(ecuFaultModeLabelList, modeNumber);
-        }
-
-        public EcuFunctionStructs.EcuFaultModeLabel GetFaultModeLabel(List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList, Int64 modeNumber)
+        public List<EcuFunctionStructs.EcuFaultModeLabel> GetFaultModeLabelMatchList(List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList, Int64 modeNumber)
         {
             if (ecuFaultModeLabelList == null)
             {
                 return null;
             }
 
-            foreach (EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel in ecuFaultModeLabelList)
-            {
-                if (ecuFaultModeLabel.Code.ConvertToInt() == modeNumber)
-                {
-                    return ecuFaultModeLabel;
-                }
-            }
+            List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelMatchList =
+                ecuFaultModeLabelList.Where(x => x.Code.ConvertToInt() == modeNumber).
+                    OrderBy(x => x.Id.ConvertToInt()).ToList();
 
-            return null;
+            return ecuFaultModeLabelMatchList;
         }
 
         public List<EcuFunctionStructs.EcuFaultModeLabel> GetFaultModeLabelList(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant)
