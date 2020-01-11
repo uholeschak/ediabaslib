@@ -10,6 +10,7 @@ namespace BmwFileReader
     public class EcuFunctionReader
     {
         public const string EcuFuncFileName = "EcuFunctions.zip";
+        public const string FaultDataBaseName = "faultdata_";
         private readonly string _rootDir;
         private readonly Dictionary<string, EcuFunctionStructs.EcuVariant> _ecuVariantDict;
         private readonly Dictionary<string, EcuFunctionStructs.EcuFaultCodeLabel> _ecuFaultCodeLabelDict;
@@ -73,6 +74,25 @@ namespace BmwFileReader
             }
 
             return fixedFuncStructList;
+        }
+
+        public List<EcuFunctionStructs.EcuFaultCodeLabel> GetFaultCodeLabelList(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant)
+        {
+            if (!ecuVariant.EcuFaultCodeDict.TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
+            {
+                return null;
+            }
+
+            List<EcuFunctionStructs.EcuFaultCodeLabel> ecuFaultCodeLabelList = new List<EcuFunctionStructs.EcuFaultCodeLabel>();
+            foreach (string ecuFaultCodeLabelId in ecuFaultCode.EcuFaultCodeLabelIdList)
+            {
+                if (_ecuFaultCodeLabelDict.TryGetValue(ecuFaultCodeLabelId.ToLowerInvariant(), out EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel))
+                {
+                    ecuFaultCodeLabelList.Add(ecuFaultCodeLabel);
+                }
+            }
+
+            return ecuFaultCodeLabelList;
         }
 
         public EcuFunctionStructs.EcuVariant GetEcuVariantCached(string ecuName)
@@ -146,11 +166,11 @@ namespace BmwFileReader
 
         public EcuFunctionStructs.EcuFaultData GetEcuFaultData(string language)
         {
-            string fileName = "faultdata_" + language.ToLowerInvariant();
+            string fileName = FaultDataBaseName + language.ToLowerInvariant();
             EcuFunctionStructs.EcuFaultData ecuFaultData = GetEcuDataObject(fileName, typeof(EcuFunctionStructs.EcuFaultData)) as EcuFunctionStructs.EcuFaultData;
             if (ecuFaultData == null)
             {
-                fileName = "faultdata_en";
+                fileName = FaultDataBaseName + "en";
                 ecuFaultData = GetEcuDataObject(fileName, typeof(EcuFunctionStructs.EcuFaultData)) as EcuFunctionStructs.EcuFaultData;
             }
             return ecuFaultData;
