@@ -476,7 +476,7 @@ namespace ExtractEcuFunctions
         {
             List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList = new List<EcuFunctionStructs.EcuFaultModeLabel>();
             string sql = @"SELECT ID LABELID, CODE, " + SqlTitleItems + ", RELEVANCE, ERWEITERT " +
-                         @"FROM XEP_FAULTMODELABELS";
+                         @"FROM XEP_FAULTMODELABELS ORDER BY LABELID";
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
                 using (SQLiteDataReader reader = command.ExecuteReader())
@@ -510,7 +510,7 @@ namespace ExtractEcuFunctions
             List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList = new List<EcuFunctionStructs.EcuFaultModeLabel>();
             string sql = string.Format(@"SELECT LABELS.ID LABELID, CODE, " + SqlTitleItems + ", RELEVANCE, ERWEITERT " +
                                        @"FROM XEP_FAULTMODELABELS LABELS, XEP_REFFAULTLABELS REFLABELS" +
-                                       @" WHERE LABELS.ID = REFLABELS.LABELID AND REFLABELS.ID = {0}", ecuFaultCode.Id);
+                                       @" WHERE LABELS.ID = REFLABELS.LABELID AND REFLABELS.ID = {0} ORDER BY LABELID", ecuFaultCode.Id);
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
                 using (SQLiteDataReader reader = command.ExecuteReader())
