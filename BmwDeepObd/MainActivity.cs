@@ -28,6 +28,7 @@ using Android.Views;
 using Android.Widget;
 using Base62;
 using BmwDeepObd.FilePicker;
+using BmwFileReader;
 using EdiabasLib;
 using Java.Interop;
 using Mono.CSharp;
@@ -2413,6 +2414,37 @@ namespace BmwDeepObd
                                         }
 
                                         srMessage.Append("\r\n");
+                                        Int64 errorCode = GetResultInt64(errorReport.ErrorDict, "F_ORT_NR", out bool found);
+                                        if (found)
+                                        {
+                                            EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(errorReport.Sgbd);
+                                            if (ecuVariant != null)
+                                            {
+                                                List<EcuFunctionStructs.EcuFaultCodeLabel> ecuFaultCodeLabelList = ActivityCommon.EcuFunctionReader.GetFaultCodeLabelList(errorCode, ecuVariant);
+                                                if (ecuFaultCodeLabelList != null)
+                                                {
+                                                    StringBuilder sbLabel = new StringBuilder();
+                                                    foreach (EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel in ecuFaultCodeLabelList)
+                                                    {
+                                                        string label = ecuFaultCodeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                        if (!string.IsNullOrEmpty(label))
+                                                        {
+                                                            if (sbLabel.Length > 0)
+                                                            {
+                                                                sbLabel.AppendLine();
+                                                            }
+                                                            sbLabel.Append(label);
+                                                        }
+                                                    }
+
+                                                    if (sbLabel.Length > 0)
+                                                    {
+                                                        text1 = sbLabel.ToString();
+                                                    }
+                                                }
+                                            }
+                                        }
+
                                         string textErrorCode = FormatResultInt64(errorReport.ErrorDict, "F_ORT_NR", "{0:X04}");
                                         if (!string.IsNullOrEmpty(textErrorCode))
                                         {
