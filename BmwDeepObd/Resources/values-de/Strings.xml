@@ -149,7 +149,7 @@
 
   <!-- Init BMW ECU functions -->
   <string name="bmw_ecu_func_init">BMW Dateien lesen</string>
-  <string name="bmw_ecu_func_error">VAG Dateien lesen fehlgeschlagen</string>
+  <string name="bmw_ecu_func_error">BMW Dateien lesen fehlgeschlagen</string>
 
   <!-- Send trace file -->
   <string name="send_trace_file_request">Es sind Kommunikationsfehler aufgetreten.\nWollen Sie eine komprimierte und anonyme Trace-Datei (Größe {0:fs0}) senden um Produktverbesserungen zu ermöglichen?</string>
