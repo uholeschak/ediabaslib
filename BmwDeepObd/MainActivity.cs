@@ -2411,7 +2411,8 @@ namespace BmwDeepObd
                                                     Int64 presentNum = GetResultInt64(errorReport.ErrorDict, "F_VORHANDEN_NR", out found);
                                                     if (found)
                                                     {
-                                                        EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel = ActivityCommon.EcuFunctionReader.GetFaultModeLabel(ecuFaultModeLabelList, presentNum);
+                                                        EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel =
+                                                            ActivityCommon.EcuFunctionReader.GetFaultModeLabelMatchList(ecuFaultModeLabelList, presentNum).LastOrDefault();
                                                         if (ecuFaultModeLabel != null)
                                                         {
                                                             string label = ecuFaultModeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
@@ -2429,7 +2430,8 @@ namespace BmwDeepObd
                                                     Int64 symptomNum = GetResultInt64(errorReport.ErrorDict, "F_SYMPTOM_NR", out found);
                                                     if (found)
                                                     {
-                                                        EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel = ActivityCommon.EcuFunctionReader.GetFaultModeLabel(ecuFaultModeLabelList, symptomNum);
+                                                        EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel =
+                                                            ActivityCommon.EcuFunctionReader.GetFaultModeLabelMatchList(ecuFaultModeLabelList, symptomNum).LastOrDefault();
                                                         if (ecuFaultModeLabel != null)
                                                         {
                                                             string label = ecuFaultModeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
@@ -2447,7 +2449,8 @@ namespace BmwDeepObd
                                                     Int64 errorClassNum = GetResultInt64(errorReport.ErrorDict, "F_FEHLERKLASSE_NR", out found);
                                                     if (found && errorClassNum != 0)
                                                     {
-                                                        EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel = ActivityCommon.EcuFunctionReader.GetFaultModeLabel(ecuFaultModeLabelList, errorClassNum);
+                                                        EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel =
+                                                            ActivityCommon.EcuFunctionReader.GetFaultModeLabelMatchList(ecuFaultModeLabelList, errorClassNum).LastOrDefault();
                                                         if (ecuFaultModeLabel != null)
                                                         {
                                                             string label = ecuFaultModeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
@@ -2465,7 +2468,8 @@ namespace BmwDeepObd
                                                     Int64 warnNum = GetResultInt64(errorReport.ErrorDict, "F_WARNUNG_NR", out found);
                                                     if (found && warnNum != 0)
                                                     {
-                                                        EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel = ActivityCommon.EcuFunctionReader.GetFaultModeLabel(ecuFaultModeLabelList, warnNum);
+                                                        EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel =
+                                                            ActivityCommon.EcuFunctionReader.GetFaultModeLabelMatchList(ecuFaultModeLabelList, warnNum).LastOrDefault();
                                                         if (ecuFaultModeLabel != null)
                                                         {
                                                             string label = ecuFaultModeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
