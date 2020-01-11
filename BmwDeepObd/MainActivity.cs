@@ -2420,26 +2420,13 @@ namespace BmwDeepObd
                                             EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(errorReport.Sgbd);
                                             if (ecuVariant != null)
                                             {
-                                                List<EcuFunctionStructs.EcuFaultCodeLabel> ecuFaultCodeLabelList = ActivityCommon.EcuFunctionReader.GetFaultCodeLabelList(errorCode, ecuVariant);
-                                                if (ecuFaultCodeLabelList != null)
+                                                EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel = ActivityCommon.EcuFunctionReader.GetFaultCodeLabel(errorCode, ecuVariant);
+                                                if (ecuFaultCodeLabel != null)
                                                 {
-                                                    StringBuilder sbLabel = new StringBuilder();
-                                                    foreach (EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel in ecuFaultCodeLabelList)
+                                                    string label = ecuFaultCodeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                    if (!string.IsNullOrEmpty(label))
                                                     {
-                                                        string label = ecuFaultCodeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
-                                                        if (!string.IsNullOrEmpty(label))
-                                                        {
-                                                            if (sbLabel.Length > 0)
-                                                            {
-                                                                sbLabel.AppendLine();
-                                                            }
-                                                            sbLabel.Append(label);
-                                                        }
-                                                    }
-
-                                                    if (sbLabel.Length > 0)
-                                                    {
-                                                        text1 = sbLabel.ToString();
+                                                        text1 = label;
                                                     }
                                                 }
                                             }
