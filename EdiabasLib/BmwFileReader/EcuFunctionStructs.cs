@@ -125,7 +125,7 @@ namespace BmwFileReader
             [XmlIgnore] public Dictionary<Int64, EcuFunctionStructs.EcuFaultCode> EcuFaultCodeDict { get; set; }
         }
 
-        [XmlInclude(typeof(EcuFaultCodeLabel))]
+        [XmlInclude(typeof(EcuFaultCodeLabel)), XmlInclude(typeof(EcuFaultModeLabel))]
         public class EcuFaultCode
         {
             public EcuFaultCode()
@@ -153,6 +153,14 @@ namespace BmwFileReader
                     sb.Append(EcuFaultCodeLabel.ToString(prefix + " "));
                 }
 
+                if (EcuFaultModeLabelList != null)
+                {
+                    foreach (EcuFaultModeLabel ecuFaultModeLabel in EcuFaultModeLabelList)
+                    {
+                        sb.Append(ecuFaultModeLabel.ToString(prefix + " "));
+                    }
+                }
+
                 return sb.ToString();
             }
 
@@ -165,6 +173,8 @@ namespace BmwFileReader
             [XmlElement, DefaultValue("")] public string Code { get; set; }
             [XmlIgnore, XmlElement, DefaultValue(null)] public EcuFaultCodeLabel EcuFaultCodeLabel { get; set; }
             [XmlElement, DefaultValue("")] public string EcuFaultCodeLabelId { get; set; }
+            [XmlIgnore, XmlArray, DefaultValue(null)] public List<EcuFaultModeLabel> EcuFaultModeLabelList { get; set; }
+            [XmlArray, DefaultValue(null)] public List<string> EcuFaultModeLabelIdList { get; set; }
         }
 
         public class EcuFaultCodeLabel
@@ -191,7 +201,7 @@ namespace BmwFileReader
             public string ToString(string prefix)
             {
                 StringBuilder sb = new StringBuilder();
-                sb.AppendLine(prefix + "FAULTLABEL:");
+                sb.AppendLine(prefix + "FAULTCODELABEL:");
                 sb.Append(this.PropertyList(prefix + " "));
 
                 if (Title != null)
@@ -213,6 +223,51 @@ namespace BmwFileReader
             [XmlElement, DefaultValue(null)] public EcuTranslation Title { get; set; }
             [XmlElement, DefaultValue("")] public string Relevance { get; set; }
             [XmlElement, DefaultValue("")] public string DataType { get; set; }
+        }
+
+        public class EcuFaultModeLabel
+        {
+            public EcuFaultModeLabel()
+            {
+                Id = string.Empty;
+                Code = string.Empty;
+                Relevance = string.Empty;
+                Extended = string.Empty;
+            }
+
+            public EcuFaultModeLabel(string id, string code, EcuTranslation title, string relevance, string extended)
+            {
+                Id = id;
+                Code = code;
+                Title = title;
+                Relevance = relevance;
+                Extended = extended;
+            }
+
+            public string ToString(string prefix)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine(prefix + "FAULTMODELABEL:");
+                sb.Append(this.PropertyList(prefix + " "));
+
+                if (Title != null)
+                {
+                    sb.Append(Title.ToString(prefix + " "));
+                }
+
+                return sb.ToString();
+            }
+
+            public override string ToString()
+            {
+                return ToString("");
+            }
+
+            [XmlElement, DefaultValue("")] public string Id { get; set; }
+            [XmlElement, DefaultValue("")] public string Code { get; set; }
+            [XmlElement, DefaultValue(null)] public EcuTranslation Title { get; set; }
+            [XmlElement, DefaultValue("")] public string Relevance { get; set; }
+            [XmlElement, DefaultValue("")] public string Extended { get; set; }
         }
 
         [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuJob))]
