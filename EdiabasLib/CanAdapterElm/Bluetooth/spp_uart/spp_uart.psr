@@ -16,7 +16,7 @@
 // PSKEY_ANA_FTRIM
 &01f6 = 001f
 // PSKEY_ANA_FREQ
-&01fe = 3e80
+&01fe = 6590
 // PSKEY_DEEP_SLEEP_STATE
 &0229 = 0000// deep sleep will not be used
 // PSKEY_UART_BAUDRATE
