@@ -10,7 +10,7 @@ namespace BmwFileReader
 {
     public static class EcuFunctionStructs
     {
-        [XmlInclude(typeof(EcuFaultCodeLabel))]
+        [XmlInclude(typeof(EcuFaultCodeLabel)), XmlInclude(typeof(EcuFaultModeLabel))]
         public class EcuFaultData
         {
             public EcuFaultData()
@@ -32,6 +32,14 @@ namespace BmwFileReader
                     }
                 }
 
+                if (EcuFaultModeLabelList != null)
+                {
+                    foreach (EcuFaultModeLabel ecuFaultModeLabel in EcuFaultModeLabelList)
+                    {
+                        sb.Append(ecuFaultModeLabel.ToString(prefix + " "));
+                    }
+                }
+
                 return sb.ToString();
             }
 
@@ -41,6 +49,7 @@ namespace BmwFileReader
             }
 
             [XmlArray, DefaultValue(null)] public List<EcuFaultCodeLabel> EcuFaultCodeLabelList { get; set; }
+            [XmlArray, DefaultValue(null)] public List<EcuFaultModeLabel> EcuFaultModeLabelList { get; set; }
         }
 
         [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuFuncStruct)), XmlInclude(typeof(EcuFaultCode))]
