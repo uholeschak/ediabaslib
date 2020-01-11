@@ -97,6 +97,16 @@ namespace BmwFileReader
         public EcuFunctionStructs.EcuFaultModeLabel GetFaultModeLabel(Int64 errorCode, Int64 modeNumber, EcuFunctionStructs.EcuVariant ecuVariant)
         {
             List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList = GetFaultModeLabelList(errorCode, ecuVariant);
+            return GetFaultModeLabel(ecuFaultModeLabelList, modeNumber);
+        }
+
+        public EcuFunctionStructs.EcuFaultModeLabel GetFaultModeLabel(List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList, Int64 modeNumber)
+        {
+            if (ecuFaultModeLabelList == null)
+            {
+                return null;
+            }
+
             foreach (EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel in ecuFaultModeLabelList)
             {
                 if (ecuFaultModeLabel.Code.ConvertToInt() == modeNumber)
