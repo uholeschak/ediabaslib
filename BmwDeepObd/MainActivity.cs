@@ -2403,23 +2403,88 @@ namespace BmwDeepObd
                                                     }
                                                 }
 
-                                                Int64 modeCode = GetResultInt64(errorReport.ErrorDict, "F_VORHANDEN_NR", out found);
-                                                if (found)
+                                                List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList =
+                                                    ActivityCommon.EcuFunctionReader.GetFaultModeLabelList(errorCode, ecuVariant);
+                                                if (ecuFaultModeLabelList != null)
                                                 {
-                                                    EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel = ActivityCommon.EcuFunctionReader.GetFaultModeLabel(errorCode, modeCode, ecuVariant);
-                                                    if (ecuFaultModeLabel != null)
+                                                    StringBuilder sbDetail = new StringBuilder();
+                                                    Int64 presentNum = GetResultInt64(errorReport.ErrorDict, "F_VORHANDEN_NR", out found);
+                                                    if (found)
                                                     {
-                                                        string label = ecuFaultModeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
-                                                        if (!string.IsNullOrEmpty(label))
+                                                        EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel = ActivityCommon.EcuFunctionReader.GetFaultModeLabel(ecuFaultModeLabelList, presentNum);
+                                                        if (ecuFaultModeLabel != null)
                                                         {
-                                                            text2 = label;
+                                                            string label = ecuFaultModeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                            if (!string.IsNullOrEmpty(label))
+                                                            {
+                                                                if (sbDetail.Length > 0)
+                                                                {
+                                                                    sbDetail.Append(", ");
+                                                                }
+                                                                sbDetail.Append(label);
+                                                            }
                                                         }
                                                     }
+
+                                                    Int64 symptomNum = GetResultInt64(errorReport.ErrorDict, "F_SYMPTOM_NR", out found);
+                                                    if (found)
+                                                    {
+                                                        EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel = ActivityCommon.EcuFunctionReader.GetFaultModeLabel(ecuFaultModeLabelList, symptomNum);
+                                                        if (ecuFaultModeLabel != null)
+                                                        {
+                                                            string label = ecuFaultModeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                            if (!string.IsNullOrEmpty(label))
+                                                            {
+                                                                if (sbDetail.Length > 0)
+                                                                {
+                                                                    sbDetail.Append(", ");
+                                                                }
+                                                                sbDetail.Append(label);
+                                                            }
+                                                        }
+                                                    }
+
+                                                    Int64 errorClassNum = GetResultInt64(errorReport.ErrorDict, "F_FEHLERKLASSE_NR", out found);
+                                                    if (found && errorClassNum != 0)
+                                                    {
+                                                        EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel = ActivityCommon.EcuFunctionReader.GetFaultModeLabel(ecuFaultModeLabelList, errorClassNum);
+                                                        if (ecuFaultModeLabel != null)
+                                                        {
+                                                            string label = ecuFaultModeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                            if (!string.IsNullOrEmpty(label))
+                                                            {
+                                                                if (sbDetail.Length > 0)
+                                                                {
+                                                                    sbDetail.Append(", ");
+                                                                }
+                                                                sbDetail.Append(label);
+                                                            }
+                                                        }
+                                                    }
+
+                                                    Int64 warnNum = GetResultInt64(errorReport.ErrorDict, "F_WARNUNG_NR", out found);
+                                                    if (found && warnNum != 0)
+                                                    {
+                                                        EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel = ActivityCommon.EcuFunctionReader.GetFaultModeLabel(ecuFaultModeLabelList, warnNum);
+                                                        if (ecuFaultModeLabel != null)
+                                                        {
+                                                            string label = ecuFaultModeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                            if (!string.IsNullOrEmpty(label))
+                                                            {
+                                                                if (sbDetail.Length > 0)
+                                                                {
+                                                                    sbDetail.Append(", ");
+                                                                }
+                                                                sbDetail.Append(label);
+                                                            }
+                                                        }
+                                                    }
+                                                    text2 = sbDetail.ToString();
                                                 }
                                             }
                                         }
 
-                                        if (string.IsNullOrEmpty(text1) || string.IsNullOrEmpty(text2))
+                                        if (string.IsNullOrEmpty(text1))
                                         {
                                             text1 = FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
                                             text2 = FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
@@ -2459,9 +2524,13 @@ namespace BmwDeepObd
                                             srMessage.Append(textErrorCode);
                                             srMessage.Append("\r\n");
                                         }
+
                                         srMessage.Append(text1);
-                                        srMessage.Append(", ");
-                                        srMessage.Append(text2);
+                                        if (!string.IsNullOrEmpty(text2))
+                                        {
+                                            srMessage.Append(", ");
+                                            srMessage.Append(text2);
+                                        }
 
                                         if (errorReport.ErrorDetailSet != null)
                                         {
