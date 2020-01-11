@@ -7198,6 +7198,16 @@ namespace BmwDeepObd
             return string.Join(string.Empty, s.ToCharArray().Select(o => invalid.Contains(o) ? replaceChar : o));
         }
 
+        public bool InitReaderThread(string bmwPath, string vagPath, InitThreadFinishDelegate handler)
+        {
+            if (SelectedManufacturer == ManufacturerType.Bmw)
+            {
+                return InitEcuFunctionReaderThread(bmwPath, handler);
+            }
+
+            return InitUdsReaderThread(vagPath, handler);
+        }
+
         public bool InitUdsReaderThread(string vagPath, InitThreadFinishDelegate handler)
         {
             if (OldVagMode || VagUdsChecked || SelectedManufacturer == ManufacturerType.Bmw)
@@ -7361,7 +7371,20 @@ namespace BmwDeepObd
 
         public bool InitEcuFunctionReaderThread(string bmwPath, InitThreadFinishDelegate handler)
         {
-            if (EcuFunctionsChecked || SelectedManufacturer != ManufacturerType.Bmw)
+            if (SelectedManufacturer != ManufacturerType.Bmw)
+            {
+                return false;
+            }
+
+            if (EcuFunctionsChecked && _ecuFunctionReader != null)
+            {
+                if (_ecuFunctionReader.IsInitRequired(GetCurrentLanguage()))
+                {
+                    EcuFunctionsChecked = false;
+                }
+            }
+
+            if (EcuFunctionsChecked)
             {
                 return false;
             }
@@ -7404,7 +7427,7 @@ namespace BmwDeepObd
                             .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
                             .Show();
                     }
-                    handler?.Invoke(VagUdsActive);
+                    handler?.Invoke(EcuFunctionsActive);
                 });
             });
             initThread.Start();
@@ -7436,6 +7459,11 @@ namespace BmwDeepObd
                 if (_ecuFunctionReader == null)
                 {
                     _ecuFunctionReader = new EcuFunctionReader(bmwPath);
+                }
+
+                if (!_ecuFunctionReader.Init(GetCurrentLanguage()))
+                {
+                    return false;
                 }
 
                 EcuFunctionsActive = true;
