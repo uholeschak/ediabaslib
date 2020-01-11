@@ -76,23 +76,19 @@ namespace BmwFileReader
             return fixedFuncStructList;
         }
 
-        public List<EcuFunctionStructs.EcuFaultCodeLabel> GetFaultCodeLabelList(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant)
+        public EcuFunctionStructs.EcuFaultCodeLabel GetFaultCodeLabel(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant)
         {
             if (!ecuVariant.EcuFaultCodeDict.TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
             {
                 return null;
             }
 
-            List<EcuFunctionStructs.EcuFaultCodeLabel> ecuFaultCodeLabelList = new List<EcuFunctionStructs.EcuFaultCodeLabel>();
-            foreach (string ecuFaultCodeLabelId in ecuFaultCode.EcuFaultCodeLabelIdList)
+            if (!_ecuFaultCodeLabelDict.TryGetValue(ecuFaultCode.EcuFaultCodeLabelId.ToLowerInvariant(), out EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel))
             {
-                if (_ecuFaultCodeLabelDict.TryGetValue(ecuFaultCodeLabelId.ToLowerInvariant(), out EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel))
-                {
-                    ecuFaultCodeLabelList.Add(ecuFaultCodeLabel);
-                }
+                return null;
             }
 
-            return ecuFaultCodeLabelList;
+            return ecuFaultCodeLabel;
         }
 
         public EcuFunctionStructs.EcuVariant GetEcuVariantCached(string ecuName)

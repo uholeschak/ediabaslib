@@ -132,12 +132,14 @@ namespace BmwFileReader
             {
                 Id = string.Empty;
                 Code = string.Empty;
+                EcuFaultCodeLabelId = string.Empty;
             }
 
             public EcuFaultCode(string id, string code)
             {
                 Id = id;
                 Code = code;
+                EcuFaultCodeLabelId = string.Empty;
             }
 
             public string ToString(string prefix)
@@ -146,23 +148,9 @@ namespace BmwFileReader
                 sb.AppendLine(prefix + "FAULTCODE:");
                 sb.Append(this.PropertyList(prefix + " "));
 
-                if (EcuFaultCodeLabelList != null)
+                if (EcuFaultCodeLabel != null)
                 {
-                    foreach (EcuFaultCodeLabel ecuFaultCodeLabel in EcuFaultCodeLabelList)
-                    {
-                        sb.Append(ecuFaultCodeLabel.ToString(prefix + " "));
-                    }
-                }
-
-                if (EcuFaultCodeLabelIdList != null)
-                {
-                    sb.Append(prefix + " LABELID:");
-                    foreach (string ecuFaultCodeLabelId in EcuFaultCodeLabelIdList)
-                    {
-                        sb.Append(" " + ecuFaultCodeLabelId);
-                    }
-
-                    sb.AppendLine();
+                    sb.Append(EcuFaultCodeLabel.ToString(prefix + " "));
                 }
 
                 return sb.ToString();
@@ -175,8 +163,8 @@ namespace BmwFileReader
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
             [XmlElement, DefaultValue("")] public string Code { get; set; }
-            [XmlIgnore, XmlArray, DefaultValue(null)] public List<EcuFaultCodeLabel> EcuFaultCodeLabelList { get; set; }
-            [XmlArray, DefaultValue(null)] public List<string> EcuFaultCodeLabelIdList { get; set; }
+            [XmlIgnore, XmlElement, DefaultValue(null)] public EcuFaultCodeLabel EcuFaultCodeLabel { get; set; }
+            [XmlElement, DefaultValue("")] public string EcuFaultCodeLabelId { get; set; }
         }
 
         public class EcuFaultCodeLabel
