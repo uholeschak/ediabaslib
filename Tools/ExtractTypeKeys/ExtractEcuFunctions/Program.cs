@@ -377,11 +377,13 @@ namespace ExtractEcuFunctions
                         string ecuFaultLabelId = string.Empty;
                         if (ecuFaultCodeLabel != null)
                         {
+                            ecuFaultLabelId = ecuFaultCodeLabel.Id;
                             lock (ecuFaultCodeLabel)
                             {
-                                FaultLabelIdHashSet.Add(ecuFaultCodeLabel.Id);
+                                FaultLabelIdHashSet.Add(ecuFaultLabelId);
                             }
                         }
+
                         ecuFaultCode.EcuFaultCodeLabelId = ecuFaultLabelId;
                         ecuFaultCode.EcuFaultCodeLabel = ecuFaultCodeLabel;
                     }
