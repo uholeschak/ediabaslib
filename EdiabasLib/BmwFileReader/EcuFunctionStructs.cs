@@ -122,6 +122,7 @@ namespace BmwFileReader
             [XmlArray, DefaultValue(null)] public List<RefEcuVariant> RefEcuVariantList { get; set; }
             [XmlArray, DefaultValue(null)] public List<EcuFuncStruct> EcuFuncStructList { get; set; }
             [XmlArray, DefaultValue(null)] public List<EcuFaultCode> EcuFaultCodeList { get; set; }
+            [XmlIgnore] public Dictionary<Int64, EcuFunctionStructs.EcuFaultCode> EcuFaultCodeDict { get; set; }
         }
 
         [XmlInclude(typeof(EcuFaultCodeLabel))]

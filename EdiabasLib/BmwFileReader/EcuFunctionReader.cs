@@ -39,6 +39,13 @@ namespace BmwFileReader
                     string.Compare(_ecuFaultDataLanguage, language, StringComparison.OrdinalIgnoreCase) != 0;
         }
 
+        public void Reset()
+        {
+            _ecuFaultDataLanguage = null;
+            _ecuFaultCodeLabelDict.Clear();
+            _ecuVariantDict.Clear();
+        }
+
         public List<EcuFunctionStructs.EcuFixedFuncStruct> GetFixedFuncStructList(EcuFunctionStructs.EcuVariant ecuVariant)
         {
             List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructList = new List<EcuFunctionStructs.EcuFixedFuncStruct>();
@@ -98,22 +105,17 @@ namespace BmwFileReader
         {
             if (IsInitRequired(language))
             {
-                _ecuFaultDataLanguage = null;
-                _ecuFaultCodeLabelDict.Clear();
+                Reset();
                 _ecuFaultData = GetEcuFaultData(language);
                 if (_ecuFaultData != null)
                 {
                     _ecuFaultDataLanguage = language;
-                    _ecuFaultCodeLabelDict.Clear();
                     if (_ecuFaultData.EcuFaultCodeLabelList != null)
                     {
                         foreach (EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel in _ecuFaultData.EcuFaultCodeLabelList)
                         {
                             string key = ecuFaultCodeLabel.Id.ToLowerInvariant();
-                            if (!_ecuFaultCodeLabelDict.ContainsKey(key))
-                            {
-                                _ecuFaultCodeLabelDict.Add(key, ecuFaultCodeLabel);
-                            }
+                            _ecuFaultCodeLabelDict.TryAdd(key, ecuFaultCodeLabel);
                         }
                     }
                 }
@@ -125,6 +127,20 @@ namespace BmwFileReader
         public EcuFunctionStructs.EcuVariant GetEcuVariant(string ecuName)
         {
             EcuFunctionStructs.EcuVariant ecuVariant = GetEcuDataObject(ecuName, typeof(EcuFunctionStructs.EcuVariant)) as EcuFunctionStructs.EcuVariant;
+            if (ecuVariant?.EcuFaultCodeList != null)
+            {
+                Dictionary<Int64, EcuFunctionStructs.EcuFaultCode> ecuFaultCodeDict = new Dictionary<Int64, EcuFunctionStructs.EcuFaultCode>();
+                foreach (EcuFunctionStructs.EcuFaultCode ecuFaultCode in ecuVariant.EcuFaultCodeList)
+                {
+                    Int64 errorCode = ecuFaultCode.Code.ConvertToInt();
+                    if (errorCode != 0)
+                    {
+                        ecuFaultCodeDict.TryAdd(errorCode, ecuFaultCode);
+                    }
+                }
+
+                ecuVariant.EcuFaultCodeDict = ecuFaultCodeDict;
+            }
             return ecuVariant;
         }
 
