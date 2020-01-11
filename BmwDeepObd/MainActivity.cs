@@ -2385,35 +2385,8 @@ namespace BmwDeepObd
                                     }
                                     else
                                     {
-                                        string text1 = FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
-                                        string text2 = FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
-                                        if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
-                                        {
-                                            int index = stringList.Count;
-                                            stringList.Add(text1);
-                                            stringList.Add(text2);
-                                            if (_translationList != null && _translatedList != null &&
-                                                _translationList.Count == _translatedList.Count)
-                                            {
-                                                if (index < _translatedList.Count)
-                                                {
-                                                    if (string.Compare(text1, _translationList[index], StringComparison.Ordinal) == 0)
-                                                    {
-                                                        text1 = _translatedList[index];
-                                                    }
-                                                }
-                                                index++;
-                                                if (index < _translatedList.Count)
-                                                {
-                                                    if (string.Compare(text2, _translationList[index], StringComparison.Ordinal) == 0)
-                                                    {
-                                                        text2 = _translatedList[index];
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        srMessage.Append("\r\n");
+                                        string text1 = string.Empty;
+                                        string text2 = string.Empty;
                                         Int64 errorCode = GetResultInt64(errorReport.ErrorDict, "F_ORT_NR", out bool found);
                                         if (found)
                                         {
@@ -2429,9 +2402,55 @@ namespace BmwDeepObd
                                                         text1 = label;
                                                     }
                                                 }
+
+                                                Int64 modeCode = GetResultInt64(errorReport.ErrorDict, "F_VORHANDEN_NR", out found);
+                                                if (found)
+                                                {
+                                                    EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel = ActivityCommon.EcuFunctionReader.GetFaultModeLabel(errorCode, modeCode, ecuVariant);
+                                                    if (ecuFaultModeLabel != null)
+                                                    {
+                                                        string label = ecuFaultModeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                        if (!string.IsNullOrEmpty(label))
+                                                        {
+                                                            text2 = label;
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
 
+                                        if (string.IsNullOrEmpty(text1) || string.IsNullOrEmpty(text2))
+                                        {
+                                            text1 = FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
+                                            text2 = FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
+                                            if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
+                                            {
+                                                int index = stringList.Count;
+                                                stringList.Add(text1);
+                                                stringList.Add(text2);
+                                                if (_translationList != null && _translatedList != null &&
+                                                    _translationList.Count == _translatedList.Count)
+                                                {
+                                                    if (index < _translatedList.Count)
+                                                    {
+                                                        if (string.Compare(text1, _translationList[index], StringComparison.Ordinal) == 0)
+                                                        {
+                                                            text1 = _translatedList[index];
+                                                        }
+                                                    }
+                                                    index++;
+                                                    if (index < _translatedList.Count)
+                                                    {
+                                                        if (string.Compare(text2, _translationList[index], StringComparison.Ordinal) == 0)
+                                                        {
+                                                            text2 = _translatedList[index];
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        srMessage.Append("\r\n");
                                         string textErrorCode = FormatResultInt64(errorReport.ErrorDict, "F_ORT_NR", "{0:X04}");
                                         if (!string.IsNullOrEmpty(textErrorCode))
                                         {
