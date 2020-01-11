@@ -62,7 +62,8 @@ namespace ExtractEcuFunctions
                 "POSTOPERATORTEXT_PT, POSTOPERATORTEXT_ZHTW, POSTOPERATORTEXT_JA, " +
                 "POSTOPERATORTEXT_CSCZ, POSTOPERATORTEXT_PLPL";
 
-        private static HashSet<string> FaultLabelIdHashSet = new HashSet<string>();
+        private static readonly HashSet<string> FaultCodeLabelIdHashSet = new HashSet<string>();
+        private static readonly HashSet<string> FaultModeLabelIdHashSet = new HashSet<string>();
 
         static int Main(string[] args)
         {
@@ -374,18 +375,35 @@ namespace ExtractEcuFunctions
                             reader["CODE"].ToString());
                         ecuFaultCodeList.Add(ecuFaultCode);
                         EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel = GetFaultCodeLabel(mDbConnection, ecuFaultCode);
+                        List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList = GetFaultModeLabelList(mDbConnection, ecuFaultCode);
+
                         string ecuFaultLabelId = string.Empty;
                         if (ecuFaultCodeLabel != null)
                         {
                             ecuFaultLabelId = ecuFaultCodeLabel.Id;
-                            lock (ecuFaultCodeLabel)
+                            lock (FaultCodeLabelIdHashSet)
                             {
-                                FaultLabelIdHashSet.Add(ecuFaultLabelId);
+                                FaultCodeLabelIdHashSet.Add(ecuFaultCodeLabel.Id);
+                            }
+                        }
+
+                        List<string> ecuFaultModeLabelIdList = new List<string>();
+                        if (ecuFaultModeLabelList != null)
+                        {
+                            foreach (EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel in ecuFaultModeLabelList)
+                            {
+                                ecuFaultModeLabelIdList.Add(ecuFaultModeLabel.Id);
+                                lock (FaultModeLabelIdHashSet)
+                                {
+                                    FaultModeLabelIdHashSet.Add(ecuFaultModeLabel.Id);
+                                }
                             }
                         }
 
                         ecuFaultCode.EcuFaultCodeLabelId = ecuFaultLabelId;
                         ecuFaultCode.EcuFaultCodeLabel = ecuFaultCodeLabel;
+                        ecuFaultCode.EcuFaultModeLabelList = ecuFaultModeLabelList;
+                        ecuFaultCode.EcuFaultModeLabelIdList = ecuFaultModeLabelIdList;
                     }
                 }
             }
@@ -406,9 +424,9 @@ namespace ExtractEcuFunctions
                     {
                         string labelId = reader["LABELID"].ToString();
                         bool addItem;
-                        lock (FaultLabelIdHashSet)
+                        lock (FaultCodeLabelIdHashSet)
                         {
-                            addItem = FaultLabelIdHashSet.Contains(labelId);
+                            addItem = FaultCodeLabelIdHashSet.Contains(labelId);
                         }
 
                         if (addItem)
@@ -451,6 +469,30 @@ namespace ExtractEcuFunctions
             }
 
             return ecuFaultCodeLabel;
+        }
+
+        private static List<EcuFunctionStructs.EcuFaultModeLabel> GetFaultModeLabelList(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuFaultCode ecuFaultCode)
+        {
+            List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList = new List<EcuFunctionStructs.EcuFaultModeLabel>();
+            string sql = string.Format(@"SELECT LABELS.ID LABELID, CODE, " + SqlTitleItems + ", RELEVANCE, ERWEITERT " +
+                                       @"FROM XEP_FAULTMODELABELS LABELS, XEP_REFFAULTLABELS REFLABELS" +
+                                       @" WHERE LABELS.ID = REFLABELS.LABELID AND REFLABELS.ID = {0}", ecuFaultCode.Id);
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        ecuFaultModeLabelList.Add(new EcuFunctionStructs.EcuFaultModeLabel(reader["LABELID"].ToString(),
+                            reader["CODE"].ToString(),
+                            GetTranslation(reader),
+                            reader["RELEVANCE"].ToString(),
+                            reader["ERWEITERT"].ToString()));
+                    }
+                }
+            }
+
+            return ecuFaultModeLabelList;
         }
 
         private static List<string> GetEcuGroupFunctionIds(SQLiteConnection mDbConnection, string groupId)
