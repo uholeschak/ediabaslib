@@ -12,6 +12,7 @@ namespace BmwFileReader
         public const string EcuFuncFileName = "EcuFunctions.zip";
         private readonly string _rootDir;
         private readonly Dictionary<string, EcuFunctionStructs.EcuVariant> _ecuVariantDict;
+        private readonly Dictionary<string, EcuFunctionStructs.EcuFaultCodeLabel> _ecuFaultCodeLabelDict;
         public EcuFunctionStructs.EcuFaultData _ecuFaultData;
         private string _ecuFaultDataLanguage;
 
@@ -19,6 +20,7 @@ namespace BmwFileReader
         {
             _rootDir = rootDir;
             _ecuVariantDict = new Dictionary<string, EcuFunctionStructs.EcuVariant>();
+            _ecuFaultCodeLabelDict = new Dictionary<string, EcuFunctionStructs.EcuFaultCodeLabel>();
         }
 
         public bool Init(string language)
@@ -97,10 +99,23 @@ namespace BmwFileReader
             if (IsInitRequired(language))
             {
                 _ecuFaultDataLanguage = null;
+                _ecuFaultCodeLabelDict.Clear();
                 _ecuFaultData = GetEcuFaultData(language);
                 if (_ecuFaultData != null)
                 {
                     _ecuFaultDataLanguage = language;
+                    _ecuFaultCodeLabelDict.Clear();
+                    if (_ecuFaultData.EcuFaultCodeLabelList != null)
+                    {
+                        foreach (EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel in _ecuFaultData.EcuFaultCodeLabelList)
+                        {
+                            string key = ecuFaultCodeLabel.Id.ToLowerInvariant();
+                            if (!_ecuFaultCodeLabelDict.ContainsKey(key))
+                            {
+                                _ecuFaultCodeLabelDict.Add(key, ecuFaultCodeLabel);
+                            }
+                        }
+                    }
                 }
             }
 
