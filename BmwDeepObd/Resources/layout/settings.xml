@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -286,6 +286,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_old_vag_mode" />
+        <TextView
+            android:text="@string/settings_caption_bmw_database"
+            android:id="@+id/textViewCaptionBmwDatabase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextViewInnerCaption" />
+        <CheckBox
+            android:id="@+id/checkBoxUseBmwDatabase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_use_bmw_database" />
         <TextView
             android:text="@string/settings_caption_scan_all_ecus"
             android:id="@+id/textViewCaptionScallAllEcus"

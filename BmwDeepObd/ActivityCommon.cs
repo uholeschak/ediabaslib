@@ -661,7 +661,14 @@ namespace BmwDeepObd
 
         public static bool EcuFunctionsActive
         {
-            get => _ecuFunctionActive;
+            get
+            {
+                if (!UseBmwDatabase)
+                {
+                    return false;
+                }
+                return _ecuFunctionActive;
+            }
             private set => _ecuFunctionActive = value;
         }
 
@@ -704,6 +711,8 @@ namespace BmwDeepObd
         public static bool CheckEcuFiles { get; set; }
 
         public static bool OldVagMode { get; set; }
+
+        public static bool UseBmwDatabase { get; set; }
 
         public static bool ScanAllEcus { get; set; }
 
@@ -7378,7 +7387,7 @@ namespace BmwDeepObd
 
         public bool InitEcuFunctionReaderThread(string bmwPath, InitThreadFinishDelegate handler)
         {
-            if (SelectedManufacturer != ManufacturerType.Bmw)
+            if (!UseBmwDatabase || SelectedManufacturer != ManufacturerType.Bmw)
             {
                 return false;
             }
@@ -7450,14 +7459,14 @@ namespace BmwDeepObd
 
         public static bool InitEcuFunctionReader(string bmwPath)
         {
+            if (!UseBmwDatabase)
+            {
+                return true;
+            }
+
             try
             {
                 EcuFunctionsActive = false;
-                if (SelectedManufacturer != ManufacturerType.Bmw)
-                {
-                    return true;
-                }
-
                 if (!Directory.Exists(bmwPath))
                 {
                     return false;

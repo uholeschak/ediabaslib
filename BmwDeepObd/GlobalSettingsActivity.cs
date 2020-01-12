@@ -58,6 +58,7 @@ namespace BmwDeepObd
         private CheckBox _checkBoxCheckEcuFiles;
         private CheckBox _checkBoxShowBatteryVoltageWarning;
         private CheckBox _checkBoxOldVagMode;
+        private CheckBox _checkBoxUseBmwDatabase;
         private CheckBox _checkBoxScanAllEcus;
         private Button _buttonStorageLocation;
         private TextView _textViewCaptionNotifications;
@@ -132,6 +133,7 @@ namespace BmwDeepObd
             _checkBoxCheckEcuFiles = FindViewById<CheckBox>(Resource.Id.checkBoxCheckEcuFiles);
             _checkBoxShowBatteryVoltageWarning = FindViewById<CheckBox>(Resource.Id.checkBoxShowBatteryVoltageWarning);
             _checkBoxOldVagMode = FindViewById<CheckBox>(Resource.Id.checkBoxOldVagMode);
+            _checkBoxUseBmwDatabase = FindViewById<CheckBox>(Resource.Id.checkBoxUseBmwDatabase);
             _checkBoxScanAllEcus = FindViewById<CheckBox>(Resource.Id.checkBoxScanAllEcus);
 
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);
@@ -322,6 +324,7 @@ namespace BmwDeepObd
             _checkBoxCheckEcuFiles.Checked = ActivityCommon.CheckEcuFiles;
             _checkBoxShowBatteryVoltageWarning.Checked = ActivityCommon.ShowBatteryVoltageWarning;
             _checkBoxOldVagMode.Checked = ActivityCommon.OldVagMode;
+            _checkBoxUseBmwDatabase.Checked = ActivityCommon.UseBmwDatabase;
             _checkBoxScanAllEcus.Checked = ActivityCommon.ScanAllEcus;
             _checkBoxCollectDebugInfo.Checked = ActivityCommon.CollectDebugInfo;
             UpdateDisplay();
@@ -456,6 +459,7 @@ namespace BmwDeepObd
             ActivityCommon.CheckEcuFiles = _checkBoxCheckEcuFiles.Checked;
             ActivityCommon.ShowBatteryVoltageWarning = _checkBoxShowBatteryVoltageWarning.Checked;
             ActivityCommon.OldVagMode = _checkBoxOldVagMode.Checked;
+            ActivityCommon.UseBmwDatabase = _checkBoxUseBmwDatabase.Checked;
             ActivityCommon.ScanAllEcus = _checkBoxScanAllEcus.Checked;
             ActivityCommon.CollectDebugInfo = _checkBoxCollectDebugInfo.Checked;
         }
