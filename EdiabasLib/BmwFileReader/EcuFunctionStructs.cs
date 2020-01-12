@@ -129,7 +129,7 @@ namespace BmwFileReader
             [XmlElement, DefaultValue("")] public string Id { get; set; }
             [XmlElement("GId"), DefaultValue("")] public string GroupId { get; set; }
             [XmlElement("Tit"), DefaultValue(null)] public EcuTranslation Title { get; set; }
-            [XmlArray("GFId"), DefaultValue(null)] public List<string> GroupFunctionIds { get; set; }
+            [XmlArray("GFId"), XmlArrayItem("Str"), DefaultValue(null)] public List<string> GroupFunctionIds { get; set; }
             [XmlArray("RVL"), DefaultValue(null)] public List<RefEcuVariant> RefEcuVariantList { get; set; }
             [XmlArray("FSL"), DefaultValue(null)] public List<EcuFuncStruct> EcuFuncStructList { get; set; }
             [XmlArray("FCL"), DefaultValue(null)] public List<EcuFaultCode> EcuFaultCodeList { get; set; }
@@ -186,7 +186,7 @@ namespace BmwFileReader
             [XmlIgnore, XmlElement, DefaultValue(null)] public EcuFaultCodeLabel EcuFaultCodeLabel { get; set; }
             [XmlElement("FCLIdL"), DefaultValue("")] public string EcuFaultCodeLabelId { get; set; }
             [XmlIgnore, XmlArray, DefaultValue(null)] public List<EcuFaultModeLabel> EcuFaultModeLabelList { get; set; }
-            [XmlArray("FMLIdL"), DefaultValue(null)] public List<string> EcuFaultModeLabelIdList { get; set; }
+            [XmlArray("FMLIdL"), XmlArrayItem("Str"), DefaultValue(null)] public List<string> EcuFaultModeLabelIdList { get; set; }
         }
 
         [XmlType("FCLab")]
