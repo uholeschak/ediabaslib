@@ -540,6 +540,34 @@ namespace ExtractEcuFunctions
             return ecuFaultModeLabelList;
         }
 
+        private static List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelList(SQLiteConnection mDbConnection,
+            EcuFunctionStructs.EcuFaultCode ecuFaultCode, EcuFunctionStructs.EcuVariant ecuVariant)
+        {
+            List<EcuFunctionStructs.EcuEnvCondLabel> ecuFaultModeLabelList = new List<EcuFunctionStructs.EcuEnvCondLabel>();
+            string sql = string.Format(@"SELECT ID, NODECLASS, " + SqlTitleItems + ", RELEVANCE, BLOCKANZAHL, UWIDENTTYP, UWIDENT, UNIT " +
+                       @"FROM XEP_ENVCONDSLABELS" +
+                       @" WHERE ID IN (SELECT LABELID FROM XEP_REFFAULTLABELS, XEP_FAULTCODES WHERE CODE = {0} AND ECUVARIANTID = {1} AND XEP_REFFAULTLABELS.ID = XEP_FAULTCODES.ID)",
+                        ecuFaultCode.Id, ecuVariant.Id);
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        ecuFaultModeLabelList.Add(new EcuFunctionStructs.EcuEnvCondLabel(reader["ID"].ToString(),
+                            reader["NODECLASS"].ToString(),
+                            GetTranslation(reader),
+                            reader["RELEVANCE"].ToString(),
+                            reader["BLOCKANZAHL"].ToString(),
+                            reader["UWIDENTTYP"].ToString(),
+                            reader["UNIT"].ToString()));
+                    }
+                }
+            }
+
+            return ecuFaultModeLabelList;
+        }
+
         private static List<string> GetEcuGroupFunctionIds(SQLiteConnection mDbConnection, string groupId)
         {
             List<string> ecuGroupFunctionIds = new List<string>();
