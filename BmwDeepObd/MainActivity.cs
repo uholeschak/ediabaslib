@@ -2408,8 +2408,19 @@ namespace BmwDeepObd
                                                 if (ecuFaultModeLabelList != null)
                                                 {
                                                     List<Tuple<string, bool>> faultModeResultList = ActivityCommon.ErrorFaultModeResultList.ToList();
-                                                    StringBuilder sbDetail = new StringBuilder();
+                                                    Int64 typeCount = GetResultInt64(errorReport.ErrorDict, "F_ART_ANZ", out found);
+                                                    if (!found || typeCount == 0)
+                                                    {
+                                                        typeCount = 1;
+                                                    }
 
+                                                    for (int index = 0; index < typeCount; index++)
+                                                    {
+                                                        string typeName = string.Format(CultureInfo.InvariantCulture, "F_ART{0}_NR", index + 1);
+                                                        faultModeResultList.Add(new Tuple<string, bool>(typeName, false));
+                                                    }
+
+                                                    StringBuilder sbDetail = new StringBuilder();
                                                     foreach (Tuple<string, bool> faultModeResult in faultModeResultList)
                                                     {
                                                         Int64 modeNumber = GetResultInt64(errorReport.ErrorDict, faultModeResult.Item1, out found);
@@ -3548,7 +3559,7 @@ namespace BmwDeepObd
                     if (!string.IsNullOrEmpty(unzipTargetDir))
                     {
                         XElement xmlInfo = new XElement("Info");
-                        xmlInfo.Add(new XAttribute("Url", url));
+                        xmlInfo.Add(new XAttribute("Url", url ?? string.Empty));
                         xmlInfo.Add(new XAttribute("Name", Path.GetFileName(_obbFileName) ?? string.Empty));
                         downloadInfo = new DownloadInfo(downloadDir, unzipTargetDir, xmlInfo);
                     }
