@@ -277,6 +277,13 @@ namespace BmwDeepObd
 #if DEBUG
         private static readonly string Tag = typeof(ActivityCommon).FullName;
 #endif
+        public static readonly Tuple<string, bool>[] ErrorFaultModeResultList =
+        {
+            new Tuple<string, bool>("F_VORHANDEN_NR", false),
+            new Tuple<string, bool>("F_SYMPTOM_NR", false),
+            new Tuple<string, bool>("F_FEHLERKLASSE_NR", true),
+            new Tuple<string, bool>("F_WARNUNG_NR", true),
+        };
 
         private static readonly Dictionary<long, string> VagDtcSaeDict = new Dictionary<long, string>
         {
