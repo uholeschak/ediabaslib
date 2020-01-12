@@ -1572,6 +1572,7 @@ namespace BmwDeepObd
                     ActivityCommon.CheckCpuUsage = prefs.GetBoolean("CheckCpuUsage", true);
                     ActivityCommon.CheckEcuFiles = prefs.GetBoolean("CheckEcuFiles", true);
                     ActivityCommon.OldVagMode = prefs.GetBoolean("OldVagMode", false);
+                    ActivityCommon.UseBmwDatabase = prefs.GetBoolean("UseBmwDatabase", true);
                     ActivityCommon.ScanAllEcus = prefs.GetBoolean("ScanAllEcus", false);
                     ActivityCommon.CollectDebugInfo = prefs.GetBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
                     ActivityCommon.StaticDataInitialized = true;
@@ -1638,6 +1639,7 @@ namespace BmwDeepObd
                 prefsEdit.PutBoolean("CheckCpuUsage", ActivityCommon.CheckCpuUsage);
                 prefsEdit.PutBoolean("CheckEcuFiles", ActivityCommon.CheckEcuFiles);
                 prefsEdit.PutBoolean("OldVagMode", ActivityCommon.OldVagMode);
+                prefsEdit.PutBoolean("UseBmwDatabase", ActivityCommon.UseBmwDatabase);
                 prefsEdit.PutBoolean("ScanAllEcus", ActivityCommon.ScanAllEcus);
                 prefsEdit.PutBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
                 prefsEdit.Commit();
@@ -2387,66 +2389,69 @@ namespace BmwDeepObd
                                     {
                                         string text1 = string.Empty;
                                         string text2 = string.Empty;
-                                        Int64 errorCode = GetResultInt64(errorReport.ErrorDict, "F_ORT_NR", out bool found);
-                                        if (found)
+                                        if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                                         {
-                                            EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(errorReport.Sgbd);
-                                            if (ecuVariant != null)
+                                            Int64 errorCode = GetResultInt64(errorReport.ErrorDict, "F_ORT_NR", out bool found);
+                                            if (found)
                                             {
-                                                EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel = ActivityCommon.EcuFunctionReader.GetFaultCodeLabel(errorCode, ecuVariant);
-                                                if (ecuFaultCodeLabel != null)
+                                                EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(errorReport.Sgbd);
+                                                if (ecuVariant != null)
                                                 {
-                                                    string label = ecuFaultCodeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
-                                                    if (!string.IsNullOrEmpty(label))
+                                                    EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel = ActivityCommon.EcuFunctionReader.GetFaultCodeLabel(errorCode, ecuVariant);
+                                                    if (ecuFaultCodeLabel != null)
                                                     {
-                                                        text1 = label;
-                                                    }
-                                                }
-
-                                                List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList =
-                                                    ActivityCommon.EcuFunctionReader.GetFaultModeLabelList(errorCode, ecuVariant);
-                                                if (ecuFaultModeLabelList != null)
-                                                {
-                                                    List<Tuple<string, bool>> faultModeResultList = ActivityCommon.ErrorFaultModeResultList.ToList();
-                                                    Int64 typeCount = GetResultInt64(errorReport.ErrorDict, "F_ART_ANZ", out found);
-                                                    if (!found || typeCount == 0)
-                                                    {
-                                                        typeCount = 1;
-                                                    }
-
-                                                    for (int index = 0; index < typeCount; index++)
-                                                    {
-                                                        string typeName = string.Format(CultureInfo.InvariantCulture, "F_ART{0}_NR", index + 1);
-                                                        faultModeResultList.Add(new Tuple<string, bool>(typeName, false));
-                                                    }
-
-                                                    StringBuilder sbDetail = new StringBuilder();
-                                                    foreach (Tuple<string, bool> faultModeResult in faultModeResultList)
-                                                    {
-                                                        Int64 modeNumber = GetResultInt64(errorReport.ErrorDict, faultModeResult.Item1, out found);
-                                                        if (found)
+                                                        string label = ecuFaultCodeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                        if (!string.IsNullOrEmpty(label))
                                                         {
-                                                            if (!faultModeResult.Item2 || modeNumber != 0)
+                                                            text1 = label;
+                                                        }
+                                                    }
+
+                                                    List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList =
+                                                        ActivityCommon.EcuFunctionReader.GetFaultModeLabelList(errorCode, ecuVariant);
+                                                    if (ecuFaultModeLabelList != null)
+                                                    {
+                                                        List<Tuple<string, bool>> faultModeResultList = ActivityCommon.ErrorFaultModeResultList.ToList();
+                                                        Int64 typeCount = GetResultInt64(errorReport.ErrorDict, "F_ART_ANZ", out found);
+                                                        if (!found || typeCount == 0)
+                                                        {
+                                                            typeCount = 1;
+                                                        }
+
+                                                        for (int index = 0; index < typeCount; index++)
+                                                        {
+                                                            string typeName = string.Format(CultureInfo.InvariantCulture, "F_ART{0}_NR", index + 1);
+                                                            faultModeResultList.Add(new Tuple<string, bool>(typeName, false));
+                                                        }
+
+                                                        StringBuilder sbDetail = new StringBuilder();
+                                                        foreach (Tuple<string, bool> faultModeResult in faultModeResultList)
+                                                        {
+                                                            Int64 modeNumber = GetResultInt64(errorReport.ErrorDict, faultModeResult.Item1, out found);
+                                                            if (found)
                                                             {
-                                                                EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel =
-                                                                    ActivityCommon.EcuFunctionReader.GetFaultModeLabelMatchList(ecuFaultModeLabelList, modeNumber).LastOrDefault();
-                                                                if (ecuFaultModeLabel != null)
+                                                                if (!faultModeResult.Item2 || modeNumber != 0)
                                                                 {
-                                                                    string label = ecuFaultModeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
-                                                                    if (!string.IsNullOrEmpty(label))
+                                                                    EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel =
+                                                                        ActivityCommon.EcuFunctionReader.GetFaultModeLabelMatchList(ecuFaultModeLabelList, modeNumber).LastOrDefault();
+                                                                    if (ecuFaultModeLabel != null)
                                                                     {
-                                                                        if (sbDetail.Length > 0)
+                                                                        string label = ecuFaultModeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                                        if (!string.IsNullOrEmpty(label))
                                                                         {
-                                                                            sbDetail.Append(", ");
+                                                                            if (sbDetail.Length > 0)
+                                                                            {
+                                                                                sbDetail.Append(", ");
+                                                                            }
+                                                                            sbDetail.Append(label);
                                                                         }
-                                                                        sbDetail.Append(label);
                                                                     }
                                                                 }
                                                             }
                                                         }
-                                                    }
 
-                                                    text2 = sbDetail.ToString();
+                                                        text2 = sbDetail.ToString();
+                                                    }
                                                 }
                                             }
                                         }
