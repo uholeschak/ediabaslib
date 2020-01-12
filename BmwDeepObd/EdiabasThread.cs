@@ -1054,38 +1054,41 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                if (firstRequestCall && !string.IsNullOrEmpty(jobInfo.ArgsFirst))
+                                if (string.IsNullOrWhiteSpace(jobInfo.FixedFuncStructId))
                                 {
-                                    Ediabas.ArgString = jobInfo.ArgsFirst;
-                                }
-                                else
-                                {
-                                    Ediabas.ArgString = jobInfo.Args;
-                                }
-                                Ediabas.ArgBinaryStd = null;
-                                Ediabas.ResultsRequests = jobInfo.Results;
-                                Ediabas.ExecuteJob(jobInfo.Name);
-
-                                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = Ediabas.ResultSets;
-                                if (resultSets != null && resultSets.Count >= 2)
-                                {
-                                    int dictIndex = 0;
-                                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                                    if (firstRequestCall && !string.IsNullOrEmpty(jobInfo.ArgsFirst))
                                     {
-                                        if (dictIndex == 0)
+                                        Ediabas.ArgString = jobInfo.ArgsFirst;
+                                    }
+                                    else
+                                    {
+                                        Ediabas.ArgString = jobInfo.Args;
+                                    }
+                                    Ediabas.ArgBinaryStd = null;
+                                    Ediabas.ResultsRequests = jobInfo.Results;
+                                    Ediabas.ExecuteJob(jobInfo.Name);
+
+                                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = Ediabas.ResultSets;
+                                    if (resultSets != null && resultSets.Count >= 2)
+                                    {
+                                        int dictIndex = 0;
+                                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
                                         {
+                                            if (dictIndex == 0)
+                                            {
+                                                dictIndex++;
+                                                continue;
+                                            }
+                                            if (string.IsNullOrEmpty(jobInfo.Id))
+                                            {
+                                                MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Name + "#");
+                                            }
+                                            else
+                                            {
+                                                MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Id + "#" + dictIndex + "#");
+                                            }
                                             dictIndex++;
-                                            continue;
                                         }
-                                        if (string.IsNullOrEmpty(jobInfo.Id))
-                                        {
-                                            MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Name + "#");
-                                        }
-                                        else
-                                        {
-                                            MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Id + "#" + dictIndex + "#");
-                                        }
-                                        dictIndex++;
                                     }
                                 }
                             }
