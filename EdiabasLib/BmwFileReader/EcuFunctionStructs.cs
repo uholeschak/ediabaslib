@@ -284,6 +284,58 @@ namespace BmwFileReader
             [XmlElement("Ext"), DefaultValue("")] public string Extended { get; set; }
         }
 
+        [XmlType("ECLab")]
+        public class EcuEnvCondLabel
+        {
+            public EcuEnvCondLabel()
+            {
+                Id = string.Empty;
+                NodeClass = string.Empty;
+                Relevance = string.Empty;
+                BlockCount = string.Empty;
+                IdentType = string.Empty;
+                Unit = string.Empty;
+            }
+
+            public EcuEnvCondLabel(string id, string nodeClass, EcuTranslation title, string relevance, string blockCount, string identType, string unit)
+            {
+                Id = id;
+                NodeClass = nodeClass;
+                Title = title;
+                Relevance = relevance;
+                BlockCount = blockCount;
+                IdentType = identType;
+                Unit = unit;
+            }
+
+            public string ToString(string prefix)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine(prefix + "FAULTMODELABEL:");
+                sb.Append(this.PropertyList(prefix + " "));
+
+                if (Title != null)
+                {
+                    sb.Append(Title.ToString(prefix + " "));
+                }
+
+                return sb.ToString();
+            }
+
+            public override string ToString()
+            {
+                return ToString("");
+            }
+
+            [XmlElement, DefaultValue("")] public string Id { get; set; }
+            [XmlElement("NC"), DefaultValue("")] public string NodeClass { get; set; }
+            [XmlElement("Tit"), DefaultValue(null)] public EcuTranslation Title { get; set; }
+            [XmlElement("Rel"), DefaultValue("")] public string Relevance { get; set; }
+            [XmlElement("BCnt"), DefaultValue("")] public string BlockCount { get; set; }
+            [XmlElement("ITyp"), DefaultValue("")] public string IdentType { get; set; }
+            [XmlElement("Uni"), DefaultValue("")] public string Unit { get; set; }
+        }
+
         [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuJob))]
         [XmlType("FFStr")]
         public class EcuFixedFuncStruct
