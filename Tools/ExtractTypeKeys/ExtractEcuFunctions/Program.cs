@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Xml;
 using System.Xml.Serialization;
 using BmwFileReader;
 using ICSharpCode.SharpZipLib.Core;
@@ -220,7 +221,12 @@ namespace ExtractEcuFunctions
 
                     string xmlFile = Path.Combine(outDirSub, "faultdata_" + language + ".xml");
                     XmlSerializer serializer = new XmlSerializer(ecuFaultData.GetType());
-                    using (TextWriter writer = new StreamWriter(xmlFile))
+                    XmlWriterSettings settings = new XmlWriterSettings
+                    {
+                        Indent = true,
+                        IndentChars = "\t"
+                    };
+                    using (XmlWriter writer = XmlWriter.Create(xmlFile, settings))
                     {
                         serializer.Serialize(writer, ecuFaultData);
                     }
@@ -256,7 +262,12 @@ namespace ExtractEcuFunctions
 
                         string xmlFile = Path.Combine(outDirSub, ecuName.ToLowerInvariant() + ".xml");
                         XmlSerializer serializer = new XmlSerializer(ecuVariant.GetType());
-                        using (TextWriter writer = new StreamWriter(xmlFile))
+                        XmlWriterSettings settings = new XmlWriterSettings
+                        {
+                            Indent = true,
+                            IndentChars = "\t"
+                        };
+                        using (XmlWriter writer = XmlWriter.Create(xmlFile, settings))
                         {
                             serializer.Serialize(writer, ecuVariant);
                         }
