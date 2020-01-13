@@ -173,6 +173,14 @@ namespace BmwFileReader
                     }
                 }
 
+                if (EcuEnvCondLabelList != null)
+                {
+                    foreach (EcuEnvCondLabel ecuEnvCondLabel in EcuEnvCondLabelList)
+                    {
+                        sb.Append(ecuEnvCondLabel.ToString(prefix + " "));
+                    }
+                }
+
                 return sb.ToString();
             }
 
@@ -187,6 +195,8 @@ namespace BmwFileReader
             [XmlElement("FCLIdL"), DefaultValue("")] public string EcuFaultCodeLabelId { get; set; }
             [XmlIgnore, XmlArray, DefaultValue(null)] public List<EcuFaultModeLabel> EcuFaultModeLabelList { get; set; }
             [XmlArray("FMLIdL"), XmlArrayItem("Str"), DefaultValue(null)] public List<string> EcuFaultModeLabelIdList { get; set; }
+            [XmlIgnore, XmlArray, DefaultValue(null)] public List<EcuEnvCondLabel> EcuEnvCondLabelList { get; set; }
+            [XmlArray("ECLIdL"), XmlArrayItem("Str"), DefaultValue(null)] public List<string> EcuEnvCondLabelIdList { get; set; }
         }
 
         [XmlType("FCLab")]
