@@ -419,7 +419,7 @@ namespace ExtractEcuFunctions
                         {
                             foreach (EcuFunctionStructs.EcuEnvCondLabel ecuEnvCondLabel in ecuEnvCondLabelList)
                             {
-                                ecuFaultModeLabelIdList.Add(ecuEnvCondLabel.Id);
+                                ecuEnvCondLabelIdList.Add(ecuEnvCondLabel.Id);
                                 lock (EnvCondLabelIdHashSet)
                                 {
                                     EnvCondLabelIdHashSet.Add(ecuEnvCondLabel.Id);
