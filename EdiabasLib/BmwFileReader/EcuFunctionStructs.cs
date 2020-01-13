@@ -10,7 +10,7 @@ namespace BmwFileReader
 {
     public static class EcuFunctionStructs
     {
-        [XmlInclude(typeof(EcuFaultCodeLabel)), XmlInclude(typeof(EcuFaultModeLabel))]
+        [XmlInclude(typeof(EcuFaultCodeLabel)), XmlInclude(typeof(EcuFaultModeLabel)), XmlInclude(typeof(EcuEnvCondLabel))]
         [XmlType("FDat")]
         public class EcuFaultData
         {
@@ -24,7 +24,7 @@ namespace BmwFileReader
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine(prefix + "FAULTDATA:");
                 sb.Append(this.PropertyList(prefix + " "));
-
+#if false
                 if (EcuFaultCodeLabelList != null)
                 {
                     foreach (EcuFaultCodeLabel ecuFaultCodeLabel in EcuFaultCodeLabelList)
@@ -41,6 +41,14 @@ namespace BmwFileReader
                     }
                 }
 
+                if (EcuEnvCondLabelList != null)
+                {
+                    foreach (EcuEnvCondLabel ecuEnvCondLabel in EcuEnvCondLabelList)
+                    {
+                        sb.Append(ecuEnvCondLabel.ToString(prefix + " "));
+                    }
+                }
+#endif
                 return sb.ToString();
             }
 
@@ -51,6 +59,7 @@ namespace BmwFileReader
 
             [XmlArray, DefaultValue(null)] public List<EcuFaultCodeLabel> EcuFaultCodeLabelList { get; set; }
             [XmlArray, DefaultValue(null)] public List<EcuFaultModeLabel> EcuFaultModeLabelList { get; set; }
+            [XmlArray, DefaultValue(null)] public List<EcuEnvCondLabel> EcuEnvCondLabelList { get; set; }
         }
 
         [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuFuncStruct)), XmlInclude(typeof(EcuFaultCode))]
@@ -136,7 +145,7 @@ namespace BmwFileReader
             [XmlIgnore] public Dictionary<Int64, EcuFaultCode> EcuFaultCodeDict { get; set; }
         }
 
-        [XmlInclude(typeof(EcuFaultCodeLabel)), XmlInclude(typeof(EcuFaultModeLabel))]
+        [XmlInclude(typeof(EcuFaultCodeLabel)), XmlInclude(typeof(EcuFaultModeLabel)), XmlInclude(typeof(EcuEnvCondLabel))]
         [XmlType("FCod")]
         public class EcuFaultCode
         {

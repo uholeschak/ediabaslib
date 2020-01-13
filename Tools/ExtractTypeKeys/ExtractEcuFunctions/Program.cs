@@ -216,7 +216,8 @@ namespace ExtractEcuFunctions
                     EcuFunctionStructs.EcuFaultData ecuFaultData = new EcuFunctionStructs.EcuFaultData
                     {
                         EcuFaultCodeLabelList = GetFaultCodeLabels(mDbConnection, language),
-                        EcuFaultModeLabelList = GetFaultModeLabels(mDbConnection, language)
+                        EcuFaultModeLabelList = GetFaultModeLabels(mDbConnection, language),
+                        EcuEnvCondLabelList = GetEnvCondLabels(mDbConnection, language)
                     };
                     //logTextWriter?.WriteLine(ecuFaultData);
 
@@ -557,13 +558,48 @@ namespace ExtractEcuFunctions
             return ecuFaultModeLabelList;
         }
 
+        private static List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabels(SQLiteConnection mDbConnection, string language)
+        {
+            List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList = new List<EcuFunctionStructs.EcuEnvCondLabel>();
+            string sql = @"SELECT ID, NODECLASS, " + SqlTitleItems + ", RELEVANCE, BLOCKANZAHL, UWIDENTTYP, UWIDENT, UNIT " +
+                         @"FROM XEP_ENVCONDSLABELS ORDER BY ID";
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string labelId = reader["ID"].ToString();
+                        bool addItem;
+                        lock (EnvCondLabelIdHashSet)
+                        {
+                            addItem = EnvCondLabelIdHashSet.Contains(labelId);
+                        }
+
+                        if (addItem)
+                        {
+                            ecuEnvCondLabelList.Add(new EcuFunctionStructs.EcuEnvCondLabel(labelId,
+                                reader["NODECLASS"].ToString(),
+                                GetTranslation(reader, "TITLE", language),
+                                reader["RELEVANCE"].ToString(),
+                                reader["BLOCKANZAHL"].ToString(),
+                                reader["UWIDENTTYP"].ToString(),
+                                reader["UNIT"].ToString()));
+                        }
+                    }
+                }
+            }
+
+            return ecuEnvCondLabelList;
+        }
+
         private static List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelList(SQLiteConnection mDbConnection,
             EcuFunctionStructs.EcuFaultCode ecuFaultCode, string variantId)
         {
             List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList = new List<EcuFunctionStructs.EcuEnvCondLabel>();
             string sql = string.Format(@"SELECT ID, NODECLASS, " + SqlTitleItems + ", RELEVANCE, BLOCKANZAHL, UWIDENTTYP, UWIDENT, UNIT " +
                        @"FROM XEP_ENVCONDSLABELS" +
-                       @" WHERE ID IN (SELECT LABELID FROM XEP_REFFAULTLABELS, XEP_FAULTCODES WHERE CODE = {0} AND ECUVARIANTID = {1} AND XEP_REFFAULTLABELS.ID = XEP_FAULTCODES.ID)",
+                       @" WHERE ID IN (SELECT LABELID FROM XEP_REFFAULTLABELS, XEP_FAULTCODES WHERE CODE = {0} AND ECUVARIANTID = {1} AND XEP_REFFAULTLABELS.ID = XEP_FAULTCODES.ID) ORDER BY ID",
                         ecuFaultCode.Code, variantId);
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
