@@ -65,6 +65,7 @@ namespace ExtractEcuFunctions
 
         private static readonly HashSet<string> FaultCodeLabelIdHashSet = new HashSet<string>();
         private static readonly HashSet<string> FaultModeLabelIdHashSet = new HashSet<string>();
+        private static readonly HashSet<string> EnvCondLabelIdHashSet = new HashSet<string>();
 
         static int Main(string[] args)
         {
@@ -388,6 +389,7 @@ namespace ExtractEcuFunctions
                         ecuFaultCodeList.Add(ecuFaultCode);
                         EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel = GetFaultCodeLabel(mDbConnection, ecuFaultCode);
                         List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList = GetFaultModeLabelList(mDbConnection, ecuFaultCode);
+                        List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList = GetEnvCondLabelList(mDbConnection, ecuFaultCode, variantId);
 
                         string ecuFaultLabelId = string.Empty;
                         if (ecuFaultCodeLabel != null)
@@ -412,10 +414,25 @@ namespace ExtractEcuFunctions
                             }
                         }
 
+                        List<string> ecuEnvCondLabelIdList = new List<string>();
+                        if (ecuEnvCondLabelList != null)
+                        {
+                            foreach (EcuFunctionStructs.EcuEnvCondLabel ecuEnvCondLabel in ecuEnvCondLabelList)
+                            {
+                                ecuFaultModeLabelIdList.Add(ecuEnvCondLabel.Id);
+                                lock (EnvCondLabelIdHashSet)
+                                {
+                                    EnvCondLabelIdHashSet.Add(ecuEnvCondLabel.Id);
+                                }
+                            }
+                        }
+
                         ecuFaultCode.EcuFaultCodeLabelId = ecuFaultLabelId;
                         ecuFaultCode.EcuFaultCodeLabel = ecuFaultCodeLabel;
                         ecuFaultCode.EcuFaultModeLabelList = ecuFaultModeLabelList;
                         ecuFaultCode.EcuFaultModeLabelIdList = ecuFaultModeLabelIdList;
+                        ecuFaultCode.EcuEnvCondLabelList = ecuEnvCondLabelList;
+                        ecuFaultCode.EcuEnvCondLabelIdList = ecuEnvCondLabelIdList;
                     }
                 }
             }
@@ -541,20 +558,20 @@ namespace ExtractEcuFunctions
         }
 
         private static List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelList(SQLiteConnection mDbConnection,
-            EcuFunctionStructs.EcuFaultCode ecuFaultCode, EcuFunctionStructs.EcuVariant ecuVariant)
+            EcuFunctionStructs.EcuFaultCode ecuFaultCode, string variantId)
         {
-            List<EcuFunctionStructs.EcuEnvCondLabel> ecuFaultModeLabelList = new List<EcuFunctionStructs.EcuEnvCondLabel>();
+            List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList = new List<EcuFunctionStructs.EcuEnvCondLabel>();
             string sql = string.Format(@"SELECT ID, NODECLASS, " + SqlTitleItems + ", RELEVANCE, BLOCKANZAHL, UWIDENTTYP, UWIDENT, UNIT " +
                        @"FROM XEP_ENVCONDSLABELS" +
                        @" WHERE ID IN (SELECT LABELID FROM XEP_REFFAULTLABELS, XEP_FAULTCODES WHERE CODE = {0} AND ECUVARIANTID = {1} AND XEP_REFFAULTLABELS.ID = XEP_FAULTCODES.ID)",
-                        ecuFaultCode.Id, ecuVariant.Id);
+                        ecuFaultCode.Code, variantId);
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
                 using (SQLiteDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        ecuFaultModeLabelList.Add(new EcuFunctionStructs.EcuEnvCondLabel(reader["ID"].ToString(),
+                        ecuEnvCondLabelList.Add(new EcuFunctionStructs.EcuEnvCondLabel(reader["ID"].ToString(),
                             reader["NODECLASS"].ToString(),
                             GetTranslation(reader),
                             reader["RELEVANCE"].ToString(),
@@ -565,7 +582,7 @@ namespace ExtractEcuFunctions
                 }
             }
 
-            return ecuFaultModeLabelList;
+            return ecuEnvCondLabelList;
         }
 
         private static List<string> GetEcuGroupFunctionIds(SQLiteConnection mDbConnection, string groupId)
