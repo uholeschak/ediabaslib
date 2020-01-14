@@ -101,6 +101,7 @@ namespace BmwFileReader
 
         public List<EcuFunctionStructs.EcuFaultModeLabel> GetFaultModeLabelMatchList(List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList, Int64 modeNumber)
         {
+            // ReSharper disable once UseNullPropagation
             if (ecuFaultModeLabelList == null)
             {
                 return null;
@@ -139,6 +140,7 @@ namespace BmwFileReader
 
         public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelMatchList(List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList, Int64 envNumber)
         {
+            // ReSharper disable once UseNullPropagation
             if (ecuEnvCondLabelList == null)
             {
                 return null;
