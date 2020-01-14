@@ -2389,6 +2389,8 @@ namespace BmwDeepObd
                                     {
                                         string text1 = string.Empty;
                                         string text2 = string.Empty;
+                                        string language = ActivityCommon.GetCurrentLanguage();
+                                        List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList = null;
                                         if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                                         {
                                             Int64 errorCode = GetResultInt64(errorReport.ErrorDict, "F_ORT_NR", out bool found);
@@ -2397,10 +2399,11 @@ namespace BmwDeepObd
                                                 EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(errorReport.Sgbd);
                                                 if (ecuVariant != null)
                                                 {
+                                                    envCondLabelList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelList(errorCode, ecuVariant);
                                                     EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel = ActivityCommon.EcuFunctionReader.GetFaultCodeLabel(errorCode, ecuVariant);
                                                     if (ecuFaultCodeLabel != null)
                                                     {
-                                                        string label = ecuFaultCodeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                        string label = ecuFaultCodeLabel.Title.GetTitle(language);
                                                         if (!string.IsNullOrEmpty(label))
                                                         {
                                                             text1 = label;
@@ -2436,7 +2439,7 @@ namespace BmwDeepObd
                                                                         ActivityCommon.EcuFunctionReader.GetFaultModeLabelMatchList(ecuFaultModeLabelList, modeNumber).LastOrDefault();
                                                                     if (ecuFaultModeLabel != null)
                                                                     {
-                                                                        string label = ecuFaultModeLabel.Title.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                                        string label = ecuFaultModeLabel.Title.GetTitle(language);
                                                                         if (!string.IsNullOrEmpty(label))
                                                                         {
                                                                             if (sbDetail.Length > 0)
@@ -2517,6 +2520,49 @@ namespace BmwDeepObd
                                                         detailText += ", ";
                                                     }
                                                     detailText += kmText + " km";
+                                                }
+
+                                                if (envCondLabelList != null)
+                                                {
+                                                    for (int index = 0; ; index++)
+                                                    {
+                                                        string envNumName = string.Format(CultureInfo.InvariantCulture, "F_UW{0}_NR", index + 1);
+                                                        Int64 envNum = GetResultInt64(errorDetail, envNumName, out bool numFound);
+
+                                                        if (!numFound)
+                                                        {
+                                                            break;
+                                                        }
+
+                                                        string envValName = string.Format(CultureInfo.InvariantCulture, "F_UW{0}_WERT", index + 1);
+                                                        string envVal = string.Empty;
+                                                        bool nameFound = false;
+                                                        if (errorDetail.TryGetValue(envValName.ToUpperInvariant(), out EdiabasNet.ResultData resultDataVal))
+                                                        {
+                                                            nameFound = true;
+                                                            envVal = EdiabasNet.FormatResult(resultDataVal, "") ?? string.Empty;
+                                                        }
+
+                                                        string envUnitName = string.Format(CultureInfo.InvariantCulture, "F_UW{0}_EINH", index + 1);
+                                                        string envUnit = GetResultString(errorDetail, envUnitName, out bool unitFound);
+
+                                                        if (unitFound)
+                                                        {
+                                                            EcuFunctionStructs.EcuEnvCondLabel envCondLabel = ActivityCommon.EcuFunctionReader.GetEnvCondLabelMatchList(envCondLabelList, envNum).LastOrDefault();
+                                                            if (envCondLabel != null)
+                                                            {
+                                                                string envName = envCondLabel.Title.GetTitle(language);
+                                                                if (!string.IsNullOrEmpty(envName))
+                                                                {
+                                                                    if (!string.IsNullOrEmpty(envCondLabel.Unit))
+                                                                    {
+                                                                        envUnit = envCondLabel.Unit;
+                                                                    }
+                                                                    detailText += "\r\n" + envName + " " + envVal + " " + envUnit;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                             if (detailText.Length > 0)
