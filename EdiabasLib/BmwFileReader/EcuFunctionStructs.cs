@@ -313,10 +313,11 @@ namespace BmwFileReader
                 Relevance = string.Empty;
                 BlockCount = string.Empty;
                 IdentType = string.Empty;
+                IdentStr = string.Empty;
                 Unit = string.Empty;
             }
 
-            public EcuEnvCondLabel(string id, string nodeClass, EcuTranslation title, string relevance, string blockCount, string identType, string unit)
+            public EcuEnvCondLabel(string id, string nodeClass, EcuTranslation title, string relevance, string blockCount, string identType, string identStr, string unit)
             {
                 Id = id;
                 NodeClass = nodeClass;
@@ -324,6 +325,7 @@ namespace BmwFileReader
                 Relevance = relevance;
                 BlockCount = blockCount;
                 IdentType = identType;
+                IdentStr = identStr;
                 Unit = unit;
             }
 
@@ -352,6 +354,7 @@ namespace BmwFileReader
             [XmlElement("Rel"), DefaultValue("")] public string Relevance { get; set; }
             [XmlElement("BCnt"), DefaultValue("")] public string BlockCount { get; set; }
             [XmlElement("ITyp"), DefaultValue("")] public string IdentType { get; set; }
+            [XmlElement("IStr"), DefaultValue("")] public string IdentStr { get; set; }
             [XmlElement("Uni"), DefaultValue("")] public string Unit { get; set; }
         }
 

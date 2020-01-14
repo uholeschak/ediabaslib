@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
@@ -134,6 +135,20 @@ namespace BmwFileReader
             }
 
             return ecuFaultModeLabelList;
+        }
+
+        public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelMatchList(List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList, Int64 envNumber)
+        {
+            if (ecuEnvCondLabelList == null)
+            {
+                return null;
+            }
+
+            List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelMatchList =
+                ecuEnvCondLabelList.Where(x => string.Compare(x.IdentStr, envNumber.ToString(CultureInfo.InvariantCulture), StringComparison.OrdinalIgnoreCase) == 0).
+                    OrderBy(x => x.Id.ConvertToInt()).ToList();
+
+            return ecuEnvCondLabelMatchList;
         }
 
         public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelList(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant)
