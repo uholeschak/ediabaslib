@@ -2517,7 +2517,7 @@ namespace BmwDeepObd
                                                 {
                                                     if (detailText.Length > 0)
                                                     {
-                                                        detailText += ", ";
+                                                        detailText += "\r\n";
                                                     }
                                                     detailText += kmText + " km";
                                                 }
