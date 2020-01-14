@@ -584,6 +584,7 @@ namespace ExtractEcuFunctions
                                 reader["RELEVANCE"].ToString(),
                                 reader["BLOCKANZAHL"].ToString(),
                                 reader["UWIDENTTYP"].ToString(),
+                                reader["UWIDENT"].ToString(),
                                 reader["UNIT"].ToString()));
                         }
                     }
@@ -613,6 +614,7 @@ namespace ExtractEcuFunctions
                             reader["RELEVANCE"].ToString(),
                             reader["BLOCKANZAHL"].ToString(),
                             reader["UWIDENTTYP"].ToString(),
+                            reader["UWIDENT"].ToString(),
                             reader["UNIT"].ToString()));
                     }
                 }
