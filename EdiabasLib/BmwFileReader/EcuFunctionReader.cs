@@ -16,6 +16,7 @@ namespace BmwFileReader
         private readonly Dictionary<string, EcuFunctionStructs.EcuVariant> _ecuVariantDict;
         private readonly Dictionary<string, EcuFunctionStructs.EcuFaultCodeLabel> _ecuFaultCodeLabelDict;
         private readonly Dictionary<string, EcuFunctionStructs.EcuFaultModeLabel> _ecuFaultModeLabelDict;
+        private readonly Dictionary<string, EcuFunctionStructs.EcuEnvCondLabel> _ecuEnvCondLabelDict;
         public EcuFunctionStructs.EcuFaultData _ecuFaultData;
         private string _ecuFaultDataLanguage;
 
@@ -25,6 +26,7 @@ namespace BmwFileReader
             _ecuVariantDict = new Dictionary<string, EcuFunctionStructs.EcuVariant>();
             _ecuFaultCodeLabelDict = new Dictionary<string, EcuFunctionStructs.EcuFaultCodeLabel>();
             _ecuFaultModeLabelDict = new Dictionary<string, EcuFunctionStructs.EcuFaultModeLabel>();
+            _ecuEnvCondLabelDict = new Dictionary<string, EcuFunctionStructs.EcuEnvCondLabel>();
         }
 
         public bool Init(string language)
@@ -48,6 +50,7 @@ namespace BmwFileReader
             _ecuFaultDataLanguage = null;
             _ecuFaultCodeLabelDict.Clear();
             _ecuFaultModeLabelDict.Clear();
+            _ecuEnvCondLabelDict.Clear();
             _ecuVariantDict.Clear();
         }
 
@@ -133,6 +136,30 @@ namespace BmwFileReader
             return ecuFaultModeLabelList;
         }
 
+        public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelList(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant)
+        {
+            if (!ecuVariant.EcuFaultCodeDict.TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
+            {
+                return null;
+            }
+
+            if (ecuFaultCode.EcuEnvCondLabelIdList == null)
+            {
+                return null;
+            }
+
+            List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList = new List<EcuFunctionStructs.EcuEnvCondLabel>();
+            foreach (string ecuEnvCondId in ecuFaultCode.EcuEnvCondLabelIdList)
+            {
+                if (_ecuEnvCondLabelDict.TryGetValue(ecuEnvCondId.ToLowerInvariant(), out EcuFunctionStructs.EcuEnvCondLabel ecuEnvCondLabel))
+                {
+                    ecuEnvCondLabelList.Add(ecuEnvCondLabel);
+                }
+            }
+
+            return ecuEnvCondLabelList;
+        }
+
         public EcuFunctionStructs.EcuVariant GetEcuVariantCached(string ecuName)
         {
             try
@@ -183,6 +210,15 @@ namespace BmwFileReader
                         {
                             string key = ecuFaultModeLabel.Id.ToLowerInvariant();
                             _ecuFaultModeLabelDict.TryAdd(key, ecuFaultModeLabel);
+                        }
+                    }
+
+                    if (_ecuFaultData.EcuEnvCondLabelList != null)
+                    {
+                        foreach (EcuFunctionStructs.EcuEnvCondLabel ecuEnvCondLabelLabel in _ecuFaultData.EcuEnvCondLabelList)
+                        {
+                            string key = ecuEnvCondLabelLabel.Id.ToLowerInvariant();
+                            _ecuEnvCondLabelDict.TryAdd(key, ecuEnvCondLabelLabel);
                         }
                     }
                 }
