@@ -66,6 +66,7 @@ namespace ExtractEcuFunctions
         private static readonly HashSet<string> FaultCodeLabelIdHashSet = new HashSet<string>();
         private static readonly HashSet<string> FaultModeLabelIdHashSet = new HashSet<string>();
         private static readonly HashSet<string> EnvCondLabelIdHashSet = new HashSet<string>();
+        private static string EnvDiscreteNodeClassId = string.Empty;
 
         static int Main(string[] args)
         {
@@ -128,6 +129,12 @@ namespace ExtractEcuFunctions
                 }
 
                 string connection = "Data Source=\"" + args[0] + "\";";
+                if (!InitGlobalData(connection))
+                {
+                    outTextWriter?.WriteLine("Init failed");
+                    return 1;
+                }
+
                 List<String> ecuNameList;
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if (string.IsNullOrEmpty(ecuName))
@@ -283,6 +290,33 @@ namespace ExtractEcuFunctions
             catch (Exception e)
             {
                 outTextWriter?.WriteLine(e);
+                return false;
+            }
+        }
+
+        private static bool InitGlobalData(string connection)
+        {
+            try
+            {
+                using (SQLiteConnection mDbConnection = new SQLiteConnection(connection))
+                {
+                    mDbConnection.SetPassword(DbPassword);
+                    mDbConnection.Open();
+
+                    EnvDiscreteNodeClassId = GetNodeClassId(mDbConnection, "EnvironmentalConditionTextDiscrete");
+
+                    mDbConnection.Close();
+
+                    if (string.IsNullOrEmpty(EnvDiscreteNodeClassId))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -652,6 +686,24 @@ namespace ExtractEcuFunctions
                     while (reader.Read())
                     {
                         result = reader["NAME"].ToString();
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private static string GetNodeClassId(SQLiteConnection mDbConnection, string nodeClassName)
+        {
+            string result = string.Empty;
+            string sql = string.Format(@"SELECT ID FROM XEP_NODECLASSES WHERE NAME = '{0}'", nodeClassName);
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        result = reader["ID"].ToString();
                     }
                 }
             }
