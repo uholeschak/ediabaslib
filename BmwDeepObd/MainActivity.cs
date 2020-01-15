@@ -2519,20 +2519,46 @@ namespace BmwDeepObd
                                                     continue;
                                                 }
 
+                                                Int64 envCount = GetResultInt64(errorDetail, "F_UW_ANZ", out bool countFound);
+                                                if (!countFound || envCount < 1)
+                                                {
+                                                    dictIndex++;
+                                                    continue;
+                                                }
+
+                                                StringBuilder sbHead = new StringBuilder();
+                                                sbHead.Append(GetString(Resource.String.error_env_title));
+                                                sbHead.Append(":");
                                                 string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
                                                 if (kmText.Length > 0)
                                                 {
-                                                    if (sbDetail.Length > 0)
+                                                    if (sbHead.Length > 0)
                                                     {
-                                                        sbDetail.Append("\r\n");
+                                                        sbHead.Append("\r\n");
                                                     }
-                                                    sbDetail.Append(kmText);
-                                                    sbDetail.Append(" km");
+                                                    sbHead.Append(kmText);
+                                                    sbHead.Append(" km");
                                                 }
+
+                                                string timeText = FormatResultInt64(errorDetail, "F_UW_ZEIT", "{0}");
+                                                if (timeText.Length > 0)
+                                                {
+                                                    if (kmText.Length > 0)
+                                                    {
+                                                        sbHead.Append(", ");
+                                                    }
+                                                    sbHead.Append(timeText);
+                                                    sbHead.Append(" s");
+                                                }
+
+                                                if (sbDetail.Length > 0)
+                                                {
+                                                    sbDetail.Append("\r\n");
+                                                }
+                                                sbDetail.Append(sbHead.ToString());
 
                                                 if (envCondLabelList != null)
                                                 {
-                                                    Int64 envCount = GetResultInt64(errorDetail, "F_UW_ANZ", out bool countFound);
                                                     if (!countFound)
                                                     {
                                                         envCount = 1;
@@ -2565,7 +2591,16 @@ namespace BmwDeepObd
                                                                     {
                                                                         envUnit = envCondLabel.Unit;
                                                                     }
-                                                                    sbDetail.Append("\r\n" + envName + ": " + envVal + " " + envUnit);
+
+                                                                    sbDetail.Append("\r\n- ");
+                                                                    sbDetail.Append(envName);
+                                                                    sbDetail.Append(": ");
+                                                                    sbDetail.Append(envVal);
+                                                                    if (!string.IsNullOrEmpty(envUnit))
+                                                                    {
+                                                                        sbDetail.Append(" ");
+                                                                        sbDetail.Append(envUnit);
+                                                                    }
                                                                 }
                                                             }
                                                         }
