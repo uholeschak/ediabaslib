@@ -899,7 +899,7 @@ namespace BmwDeepObd
                                             // read details
                                             Ediabas.ArgString = string.Format("0x{0:X02}", (Int64) resultData.OpData);
                                             Ediabas.ArgBinaryStd = null;
-                                            Ediabas.ResultsRequests = ecuInfo.Results;
+                                            Ediabas.ResultsRequests = string.Empty;
 
                                             bool details;
                                             try
@@ -916,7 +916,7 @@ namespace BmwDeepObd
                                             if (details)
                                             {
                                                 List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
-                                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, resultDictLocal, new List<Dictionary<string, EdiabasNet.ResultData>>(resultSetsDetail)));
+                                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, resultDictLocal, resultSetsDetail));
                                             }
                                             else
                                             {
