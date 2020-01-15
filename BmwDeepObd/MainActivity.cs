@@ -2531,29 +2531,34 @@ namespace BmwDeepObd
 
                                                 if (envCondLabelList != null)
                                                 {
-                                                    for (int index = 0; ; index++)
+                                                    Int64 envCount = GetResultInt64(errorDetail, "F_UW_ANZ", out bool countFound);
+                                                    if (!countFound)
+                                                    {
+                                                        envCount = 1;
+                                                    }
+
+                                                    for (int index = 0; index < envCount; index++)
                                                     {
                                                         string envNumName = string.Format(CultureInfo.InvariantCulture, "F_UW{0}_NR", index + 1);
                                                         Int64 envNum = GetResultInt64(errorDetail, envNumName, out bool numFound);
 
-                                                        if (!numFound)
-                                                        {
-                                                            break;
-                                                        }
-
                                                         string envValName = string.Format(CultureInfo.InvariantCulture, "F_UW{0}_WERT", index + 1);
                                                         string envVal = string.Empty;
-                                                        bool nameFound = false;
+                                                        bool valueFound = false;
                                                         if (errorDetail.TryGetValue(envValName.ToUpperInvariant(), out EdiabasNet.ResultData resultDataVal))
                                                         {
-                                                            nameFound = true;
+                                                            valueFound = true;
                                                             envVal = EdiabasNet.FormatResult(resultDataVal, "") ?? string.Empty;
                                                         }
 
                                                         string envUnitName = string.Format(CultureInfo.InvariantCulture, "F_UW{0}_EINH", index + 1);
                                                         string envUnit = GetResultString(errorDetail, envUnitName, out bool unitFound);
+                                                        if (!unitFound)
+                                                        {
+                                                            envUnit = string.Empty;
+                                                        }
 
-                                                        if (unitFound)
+                                                        if (numFound && valueFound)
                                                         {
                                                             EcuFunctionStructs.EcuEnvCondLabel envCondLabel = ActivityCommon.EcuFunctionReader.GetEnvCondLabelMatchList(envCondLabelList, envNum).LastOrDefault();
                                                             if (envCondLabel != null)
