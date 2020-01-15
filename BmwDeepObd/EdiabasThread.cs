@@ -1404,7 +1404,7 @@ namespace BmwDeepObd
                                         double? resultValue = null;
                                         if (ecuJobResult.EcuResultStateValueList != null && ecuJobResult.EcuResultStateValueList.Count > 0)
                                         {
-                                            EcuFunctionStructs.EcuResultStateValue ecuResultStateValue = MatchEcuResultStateValue(ecuJobResult, resultData);
+                                            EcuFunctionStructs.EcuResultStateValue ecuResultStateValue = MatchEcuResultStateValue(ecuJobResult.EcuResultStateValueList, resultData);
                                             // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                                             if (ecuResultStateValue != null)
                                             {
@@ -1478,6 +1478,28 @@ namespace BmwDeepObd
             {
                 return string.Empty;
             }
+        }
+
+        public static string ConvertEcuEnvCondResultValue(EcuFunctionStructs.EcuEnvCondLabel envCondLabel, EdiabasNet.ResultData resultData, out double? resultValue)
+        {
+            resultValue = null;
+            string resultString = null;
+            if (envCondLabel.EcuResultStateValueList != null && envCondLabel.EcuResultStateValueList.Count > 0)
+            {
+                EcuFunctionStructs.EcuResultStateValue ecuResultStateValue = MatchEcuResultStateValue(envCondLabel.EcuResultStateValueList, resultData);
+                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                if (ecuResultStateValue != null)
+                {
+                    resultString = ecuResultStateValue.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                }
+            }
+            
+            if (resultString == null)
+            {
+                resultString = ConvertEcuResultValueDefault(resultData, out resultValue);
+            }
+
+            return resultString;
         }
 
         public static string ConvertEcuResultValueStatus(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData, out double? resultValue)
@@ -1645,11 +1667,11 @@ namespace BmwDeepObd
             }
         }
 
-        public static EcuFunctionStructs.EcuResultStateValue MatchEcuResultStateValue(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData)
+        public static EcuFunctionStructs.EcuResultStateValue MatchEcuResultStateValue(List<EcuFunctionStructs.EcuResultStateValue> ecuResultStateValueList, EdiabasNet.ResultData resultData)
         {
             try
             {
-                if (ecuJobResult.EcuResultStateValueList == null)
+                if (ecuResultStateValueList == null)
                 {
                     return null;
                 }
@@ -1674,7 +1696,7 @@ namespace BmwDeepObd
 
                 if (predicateStateValue != null)
                 {
-                    ecuResultStateValue = ecuJobResult.EcuResultStateValueList.FirstOrDefault(stateValue => predicateStateValue(stateValue));
+                    ecuResultStateValue = ecuResultStateValueList.FirstOrDefault(stateValue => predicateStateValue(stateValue));
                 }
                 return ecuResultStateValue;
             }
