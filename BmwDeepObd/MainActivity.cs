@@ -2509,7 +2509,7 @@ namespace BmwDeepObd
 
                                         if (errorReport.ErrorDetailSet != null)
                                         {
-                                            string detailText = string.Empty;
+                                            StringBuilder sbDetail = new StringBuilder();
                                             int dictIndex = 0;
                                             foreach (Dictionary<string, EdiabasNet.ResultData> errorDetail in errorReport.ErrorDetailSet)
                                             {
@@ -2522,11 +2522,12 @@ namespace BmwDeepObd
                                                 string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
                                                 if (kmText.Length > 0)
                                                 {
-                                                    if (detailText.Length > 0)
+                                                    if (sbDetail.Length > 0)
                                                     {
-                                                        detailText += "\r\n";
+                                                        sbDetail.Append("\r\n");
                                                     }
-                                                    detailText += kmText + " km";
+                                                    sbDetail.Append(kmText);
+                                                    sbDetail.Append(" km");
                                                 }
 
                                                 if (envCondLabelList != null)
@@ -2570,7 +2571,7 @@ namespace BmwDeepObd
                                                                     {
                                                                         envUnit = envCondLabel.Unit;
                                                                     }
-                                                                    detailText += "\r\n" + envName + " " + envVal + " " + envUnit;
+                                                                    sbDetail.Append("\r\n" + envName + " " + envVal + " " + envUnit);
                                                                 }
                                                             }
                                                         }
@@ -2579,10 +2580,10 @@ namespace BmwDeepObd
 
                                                 dictIndex++;
                                             }
-                                            if (detailText.Length > 0)
+                                            if (sbDetail.Length > 0)
                                             {
                                                 srMessage.Append("\r\n");
-                                                srMessage.Append(detailText);
+                                                srMessage.Append(sbDetail.ToString());
                                             }
                                         }
                                     }
