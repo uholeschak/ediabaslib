@@ -654,6 +654,14 @@ namespace ExtractEcuFunctions
                 }
             }
 
+            foreach (EcuFunctionStructs.EcuEnvCondLabel ecuEnvCondLabel in ecuEnvCondLabelList)
+            {
+                if (string.Compare(ecuEnvCondLabel.NodeClass, EnvDiscreteNodeClassId, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    ecuEnvCondLabel.EcuResultStateValueList = GetResultStateValueList(mDbConnection, ecuEnvCondLabel.Id);
+                }
+            }
+
             return ecuEnvCondLabelList;
         }
 
@@ -791,7 +799,7 @@ namespace ExtractEcuFunctions
 
                 foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJobResultList)
                 {
-                    ecuJobResult.EcuResultStateValueList = GetResultStateValueList(mDbConnection, ecuJobResult);
+                    ecuJobResult.EcuResultStateValueList = GetResultStateValueList(mDbConnection, ecuJobResult.Id);
                 }
 
                 ecuJob.EcuJobResultList = ecuJobResultList;
@@ -800,11 +808,11 @@ namespace ExtractEcuFunctions
             return ecuJobList;
         }
 
-        private static List<EcuFunctionStructs.EcuResultStateValue> GetResultStateValueList(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuJobResult ecuJobResult)
+        private static List<EcuFunctionStructs.EcuResultStateValue> GetResultStateValueList(SQLiteConnection mDbConnection, string id)
         {
             List<EcuFunctionStructs.EcuResultStateValue> ecuResultStateValueList = new List<EcuFunctionStructs.EcuResultStateValue>();
             string sql = string.Format(@"SELECT ID, " + SqlTitleItems + ", STATEVALUE, VALIDFROM, VALIDTO, PARENTID " +
-                                       "FROM XEP_STATEVALUES WHERE (PARENTID IN (SELECT STATELISTID FROM XEP_REFSTATELISTS WHERE (ID = {0})))", ecuJobResult.Id);
+                                       "FROM XEP_STATEVALUES WHERE (PARENTID IN (SELECT STATELISTID FROM XEP_REFSTATELISTS WHERE (ID = {0})))", id);
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
                 using (SQLiteDataReader reader = command.ExecuteReader())

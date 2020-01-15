@@ -304,6 +304,7 @@ namespace BmwFileReader
         }
 
         [XmlType("ECLab")]
+        [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuResultStateValue))]
         public class EcuEnvCondLabel
         {
             public EcuEnvCondLabel()
@@ -340,6 +341,14 @@ namespace BmwFileReader
                     sb.Append(Title.ToString(prefix + " "));
                 }
 
+                if (EcuResultStateValueList != null)
+                {
+                    foreach (EcuResultStateValue ecuResultStateValue in EcuResultStateValueList)
+                    {
+                        sb.Append(ecuResultStateValue.ToString(prefix + " "));
+                    }
+                }
+
                 return sb.ToString();
             }
 
@@ -356,6 +365,7 @@ namespace BmwFileReader
             [XmlElement("ITyp"), DefaultValue("")] public string IdentType { get; set; }
             [XmlElement("IStr"), DefaultValue("")] public string IdentStr { get; set; }
             [XmlElement("Uni"), DefaultValue("")] public string Unit { get; set; }
+            [XmlArray("RSVL"), DefaultValue(null)] public List<EcuResultStateValue> EcuResultStateValueList { get; set; }
         }
 
         [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuJob))]
