@@ -2510,8 +2510,15 @@ namespace BmwDeepObd
                                         if (errorReport.ErrorDetailSet != null)
                                         {
                                             string detailText = string.Empty;
+                                            int dictIndex = 0;
                                             foreach (Dictionary<string, EdiabasNet.ResultData> errorDetail in errorReport.ErrorDetailSet)
                                             {
+                                                if (dictIndex == 0)
+                                                {
+                                                    dictIndex++;
+                                                    continue;
+                                                }
+
                                                 string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
                                                 if (kmText.Length > 0)
                                                 {
@@ -2564,6 +2571,8 @@ namespace BmwDeepObd
                                                         }
                                                     }
                                                 }
+
+                                                dictIndex++;
                                             }
                                             if (detailText.Length > 0)
                                             {
