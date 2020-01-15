@@ -1417,11 +1417,11 @@ namespace BmwDeepObd
                                             // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                                             if (nodeClassType == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.Identification)
                                             {
-                                                resultString = ConvertEcuResultValueIdent(ecuJobResult, resultData, out resultValue);
+                                                resultString = ConvertEcuResultValueDefault(resultData, out resultValue);
                                             }
                                             else
                                             {
-                                                resultString = ConvertEcuResultValue(ecuJobResult, resultData, out resultValue);
+                                                resultString = ConvertEcuResultValueStatus(ecuJobResult, resultData, out resultValue);
                                             }
                                         }
 
@@ -1438,7 +1438,7 @@ namespace BmwDeepObd
             return ecuFunctionResultList;
         }
 
-        public static string ConvertEcuResultValueIdent(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData, out double? resultValue)
+        public static string ConvertEcuResultValueDefault(EdiabasNet.ResultData resultData, out double? resultValue)
         {
             resultValue = null;
             try
@@ -1480,7 +1480,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static string ConvertEcuResultValue(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData, out double? resultValue)
+        public static string ConvertEcuResultValueStatus(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData, out double? resultValue)
         {
             resultValue = null;
             try

@@ -2549,7 +2549,7 @@ namespace BmwDeepObd
                                                         if (errorDetail.TryGetValue(envValName.ToUpperInvariant(), out EdiabasNet.ResultData resultDataVal))
                                                         {
                                                             valueFound = true;
-                                                            envVal = EdiabasNet.FormatResult(resultDataVal, "") ?? string.Empty;
+                                                            envVal = EdiabasThread.ConvertEcuResultValueDefault(resultDataVal, out double? _) ?? string.Empty;
                                                         }
 
                                                         string envUnitName = string.Format(CultureInfo.InvariantCulture, "F_UW{0}_EINH", index + 1);
@@ -2571,7 +2571,7 @@ namespace BmwDeepObd
                                                                     {
                                                                         envUnit = envCondLabel.Unit;
                                                                     }
-                                                                    sbDetail.Append("\r\n" + envName + " " + envVal + " " + envUnit);
+                                                                    sbDetail.Append("\r\n" + envName + ": " + envVal + " " + envUnit);
                                                                 }
                                                             }
                                                         }
