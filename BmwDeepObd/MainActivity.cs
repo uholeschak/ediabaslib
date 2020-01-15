@@ -2544,14 +2544,7 @@ namespace BmwDeepObd
                                                         Int64 envNum = GetResultInt64(errorDetail, envNumName, out bool numFound);
 
                                                         string envValName = string.Format(CultureInfo.InvariantCulture, "F_UW{0}_WERT", index + 1);
-                                                        string envVal = string.Empty;
-                                                        bool valueFound = false;
-                                                        if (errorDetail.TryGetValue(envValName.ToUpperInvariant(), out EdiabasNet.ResultData resultDataVal))
-                                                        {
-                                                            valueFound = true;
-                                                            envVal = EdiabasThread.ConvertEcuResultValueDefault(resultDataVal, out double? _) ?? string.Empty;
-                                                        }
-
+                                                        bool valueFound = errorDetail.TryGetValue(envValName.ToUpperInvariant(), out EdiabasNet.ResultData resultDataVal);
                                                         string envUnitName = string.Format(CultureInfo.InvariantCulture, "F_UW{0}_EINH", index + 1);
                                                         string envUnit = GetResultString(errorDetail, envUnitName, out bool unitFound);
                                                         if (!unitFound)
@@ -2567,6 +2560,7 @@ namespace BmwDeepObd
                                                                 string envName = envCondLabel.Title.GetTitle(language);
                                                                 if (!string.IsNullOrEmpty(envName))
                                                                 {
+                                                                    string envVal = EdiabasThread.ConvertEcuEnvCondResultValue(envCondLabel, resultDataVal, out double? _) ?? string.Empty;
                                                                     if (!string.IsNullOrEmpty(envCondLabel.Unit))
                                                                     {
                                                                         envUnit = envCondLabel.Unit;
