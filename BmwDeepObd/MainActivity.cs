@@ -2507,6 +2507,7 @@ namespace BmwDeepObd
                                             srMessage.Append(text2);
                                         }
 
+                                        int envIndex = 0;
                                         if (errorReport.ErrorDetailSet != null)
                                         {
                                             StringBuilder sbDetail = new StringBuilder();
@@ -2527,8 +2528,7 @@ namespace BmwDeepObd
                                                 }
 
                                                 StringBuilder sbHead = new StringBuilder();
-                                                sbHead.Append(GetString(Resource.String.error_env_title));
-                                                sbHead.Append(":");
+                                                sbHead.Append(string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.error_env_title), envIndex + 1));
                                                 string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
                                                 if (kmText.Length > 0)
                                                 {
@@ -2608,6 +2608,7 @@ namespace BmwDeepObd
                                                 }
 
                                                 dictIndex++;
+                                                envIndex++;
                                             }
                                             if (sbDetail.Length > 0)
                                             {

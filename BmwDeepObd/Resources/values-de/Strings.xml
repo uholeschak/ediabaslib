@@ -42,7 +42,7 @@
   <string name="error_reading_errors">Fehlerspeicher lesen: {0}%</string>
   <string name="error_no_response">Keine Antwort</string>
   <string name="error_code">Fehlercode</string>
-  <string name="error_env_title">Umgebungsbedingungen</string>
+  <string name="error_env_title">Umgebungsbedingungen {0}:</string>
   <string formatted="false" name="version_change_info_message">Dieses Open Source Projekt wird gehostet auf:
 \n&lt;a href=\'https://github.com/uholeschak/ediabaslib\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt;
 \nSie können gerne mitwirken oder Probleme melden.
