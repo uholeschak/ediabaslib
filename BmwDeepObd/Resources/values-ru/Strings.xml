@@ -42,7 +42,7 @@
   <string name="error_no_response">Нет подтверждения</string>
   <string name="error_code">Код ошибки</string>
   <!--Translate-->
-  <string name="error_env_title">Environmental conditions</string>
+  <string name="error_env_title">Environmental conditions {0}:</string>
   <string formatted="false" name="version_change_info_message">Этот проект с открытым исходным кодом размещен на:
 \n&lt;a href=\'https://github.com/uholeschak/ediabaslib\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt;
 \nВы можете принять участие в проекте или же сообщить об ошибках.
