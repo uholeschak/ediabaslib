@@ -42,8 +42,8 @@
   <string name="error_no_response">No response</string>
   <string name="error_code">Error code</string>
   <string name="error_env_title">Environmental conditions:</string>
-  <string name="error_env_km">Kilometer</string>
-  <string name="error_env_time">Time</string>
+  <string name="error_env_km">Mileage</string>
+  <string name="error_env_time">Error time</string>
   <string formatted="false" name="version_change_info_message">This open source project is hosted at:
 \n&lt;a href=\'https://github.com/uholeschak/ediabaslib\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt;
 \nFeel free to contribute or to report problems.
