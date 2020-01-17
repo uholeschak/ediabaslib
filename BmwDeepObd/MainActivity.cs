@@ -1,7 +1,9 @@
 //#define APP_USB_FILTER
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -2507,10 +2509,9 @@ namespace BmwDeepObd
                                             srMessage.Append(text2);
                                         }
 
-                                        int envIndex = 0;
                                         if (errorReport.ErrorDetailSet != null)
                                         {
-                                            StringBuilder sbDetail = new StringBuilder();
+                                            OrderedDictionary detailDict = new OrderedDictionary();
                                             int dictIndex = 0;
                                             foreach (Dictionary<string, EdiabasNet.ResultData> errorDetail in errorReport.ErrorDetailSet)
                                             {
@@ -2527,43 +2528,50 @@ namespace BmwDeepObd
                                                     continue;
                                                 }
 
-                                                StringBuilder sbHead = new StringBuilder();
-                                                sbHead.Append(string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.error_env_title), envIndex + 1));
                                                 string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
                                                 if (kmText.Length > 0)
                                                 {
-                                                    if (sbHead.Length > 0)
+                                                    object key = -1;
+                                                    StringBuilder sbKm = detailDict[key] as StringBuilder;
+                                                    if (sbKm == null)
                                                     {
-                                                        sbHead.Append("\r\n");
+                                                        sbKm = new StringBuilder();
+                                                        detailDict.Add(key, sbKm);
+                                                        sbKm.Append(GetString(Resource.String.error_env_time));
+                                                        sbKm.Append(": ");
                                                     }
-                                                    sbHead.Append(kmText);
-                                                    sbHead.Append(" km");
+                                                    else
+                                                    {
+                                                        sbKm.Append("; ");
+                                                    }
+
+                                                    sbKm.Append(kmText);
+                                                    sbKm.Append(" km");
                                                 }
 
                                                 string timeText = FormatResultInt64(errorDetail, "F_UW_ZEIT", "{0}");
                                                 if (timeText.Length > 0)
                                                 {
-                                                    if (kmText.Length > 0)
+                                                    object key = -2;
+                                                    StringBuilder sbTime = detailDict[key] as StringBuilder;
+                                                    if (sbTime == null)
                                                     {
-                                                        sbHead.Append(", ");
+                                                        sbTime = new StringBuilder();
+                                                        detailDict.Add(key, sbTime);
+                                                        sbTime.Append(GetString(Resource.String.error_env_time));
+                                                        sbTime.Append(": ");
                                                     }
-                                                    sbHead.Append(timeText);
-                                                    sbHead.Append(" s");
-                                                }
+                                                    else
+                                                    {
+                                                        sbTime.Append("; ");
+                                                    }
 
-                                                if (sbDetail.Length > 0)
-                                                {
-                                                    sbDetail.Append("\r\n");
+                                                    sbTime.Append(timeText);
+                                                    sbTime.Append(" s");
                                                 }
-                                                sbDetail.Append(sbHead.ToString());
 
                                                 if (envCondLabelList != null)
                                                 {
-                                                    if (!countFound)
-                                                    {
-                                                        envCount = 1;
-                                                    }
-
                                                     for (int index = 0; index < envCount; index++)
                                                     {
                                                         string envNumName = string.Format(CultureInfo.InvariantCulture, "F_UW{0}_NR", index + 1);
@@ -2592,14 +2600,25 @@ namespace BmwDeepObd
                                                                         envUnit = envCondLabel.Unit;
                                                                     }
 
-                                                                    sbDetail.Append("\r\n- ");
-                                                                    sbDetail.Append(envName);
-                                                                    sbDetail.Append(": ");
-                                                                    sbDetail.Append(envVal);
+                                                                    object key = envNum;
+                                                                    StringBuilder sbLine = detailDict[key] as StringBuilder;
+                                                                    if (sbLine == null)
+                                                                    {
+                                                                        sbLine = new StringBuilder();
+                                                                        detailDict.Add(key, sbLine);
+                                                                        sbLine.Append(envName);
+                                                                        sbLine.Append(": ");
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        sbLine.Append("; ");
+                                                                    }
+
+                                                                    sbLine.Append(envVal);
                                                                     if (!string.IsNullOrEmpty(envUnit))
                                                                     {
-                                                                        sbDetail.Append(" ");
-                                                                        sbDetail.Append(envUnit);
+                                                                        sbLine.Append(" ");
+                                                                        sbLine.Append(envUnit);
                                                                     }
                                                                 }
                                                             }
@@ -2608,12 +2627,18 @@ namespace BmwDeepObd
                                                 }
 
                                                 dictIndex++;
-                                                envIndex++;
                                             }
-                                            if (sbDetail.Length > 0)
+
+                                            srMessage.Append("\r\n");
+                                            srMessage.Append(GetString(Resource.String.error_env_title));
+
+                                            foreach (DictionaryEntry detailEntry in detailDict)
                                             {
-                                                srMessage.Append("\r\n");
-                                                srMessage.Append(sbDetail.ToString());
+                                                if (detailEntry.Value is StringBuilder sbDetail && sbDetail.Length > 0)
+                                                {
+                                                    srMessage.Append("\r\n- ");
+                                                    srMessage.Append(sbDetail.ToString());
+                                                }
                                             }
                                         }
                                     }
