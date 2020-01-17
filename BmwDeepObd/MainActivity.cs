@@ -2537,7 +2537,7 @@ namespace BmwDeepObd
                                                     {
                                                         sbKm = new StringBuilder();
                                                         detailDict.Add(key, sbKm);
-                                                        sbKm.Append(GetString(Resource.String.error_env_time));
+                                                        sbKm.Append(GetString(Resource.String.error_env_km));
                                                         sbKm.Append(": ");
                                                     }
                                                     else
