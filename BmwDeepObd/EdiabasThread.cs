@@ -1417,7 +1417,7 @@ namespace BmwDeepObd
                                             // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                                             if (nodeClassType == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.Identification)
                                             {
-                                                resultString = ConvertEcuResultValueDefault(resultData, out resultValue);
+                                                resultString = ConvertEcuResultValueIdent(resultData, out resultValue);
                                             }
                                             else
                                             {
@@ -1438,7 +1438,7 @@ namespace BmwDeepObd
             return ecuFunctionResultList;
         }
 
-        public static string ConvertEcuResultValueDefault(EdiabasNet.ResultData resultData, out double? resultValue)
+        public static string ConvertEcuResultValueIdent(EdiabasNet.ResultData resultData, out double? resultValue)
         {
             resultValue = null;
             try
@@ -1480,6 +1480,38 @@ namespace BmwDeepObd
             }
         }
 
+        public static string ConvertEcuResultValueEnv(EdiabasNet.ResultData resultData, out double? resultValue)
+        {
+            resultValue = null;
+            try
+            {
+                string result = string.Empty;
+                if (resultData.OpData is Int64)
+                {
+                    Int64 value = (Int64)resultData.OpData;
+                    result = value.ToString(CultureInfo.InvariantCulture);
+                    resultValue = value;
+                }
+                else if (resultData.OpData is Double)
+                {
+                    Double value = (Double)resultData.OpData;
+                    result = string.Format(CultureInfo.InvariantCulture, "{0:0.##}", value);
+                    resultValue = value;
+                }
+                else if (resultData.OpData is string)
+                {
+                    string value = (string)resultData.OpData;
+                    result = value;
+                }
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
         public static string ConvertEcuEnvCondResultValue(EcuFunctionStructs.EcuEnvCondLabel envCondLabel, EdiabasNet.ResultData resultData, out double? resultValue)
         {
             resultValue = null;
@@ -1496,7 +1528,7 @@ namespace BmwDeepObd
             
             if (resultString == null)
             {
-                resultString = ConvertEcuResultValueDefault(resultData, out resultValue);
+                resultString = ConvertEcuResultValueEnv(resultData, out resultValue);
             }
 
             return resultString;
