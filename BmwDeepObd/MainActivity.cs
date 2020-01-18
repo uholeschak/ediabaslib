@@ -2531,103 +2531,31 @@ namespace BmwDeepObd
                                                 string frequencyText = FormatResultInt64(errorDetail, "F_HFK", "{0}");
                                                 if (frequencyText.Length > 0)
                                                 {
-                                                    object key = -1;
-                                                    StringBuilder sbFrequency = detailDict[key] as StringBuilder;
-                                                    if (sbFrequency == null)
-                                                    {
-                                                        sbFrequency = new StringBuilder();
-                                                        detailDict.Add(key, sbFrequency);
-                                                        sbFrequency.Append(GetString(Resource.String.error_env_frequency));
-                                                        sbFrequency.Append(": ");
-                                                    }
-                                                    else
-                                                    {
-                                                        sbFrequency.Append("; ");
-                                                    }
-
-                                                    sbFrequency.Append(frequencyText);
+                                                    EdiabasThread.AddEnvCondErrorDetail(detailDict, GetString(Resource.String.error_env_frequency), -1, frequencyText);
                                                 }
 
                                                 string logCountText = FormatResultInt64(errorDetail, "F_LZ", "{0}");
                                                 if (logCountText.Length > 0)
                                                 {
-                                                    object key = -2;
-                                                    StringBuilder sbLogCount = detailDict[key] as StringBuilder;
-                                                    if (sbLogCount == null)
-                                                    {
-                                                        sbLogCount = new StringBuilder();
-                                                        detailDict.Add(key, sbLogCount);
-                                                        sbLogCount.Append(GetString(Resource.String.error_env_log_count));
-                                                        sbLogCount.Append(": ");
-                                                    }
-                                                    else
-                                                    {
-                                                        sbLogCount.Append("; ");
-                                                    }
-
-                                                    sbLogCount.Append(logCountText);
+                                                    EdiabasThread.AddEnvCondErrorDetail(detailDict, GetString(Resource.String.error_env_log_count), -2, logCountText);
                                                 }
 
                                                 string pcodeText = FormatResultString(errorDetail, "F_PCODE_STRING", "{0}");
                                                 if (pcodeText.Length >= 4)
                                                 {
-                                                    object key = -3;
-                                                    StringBuilder sbPcode = detailDict[key] as StringBuilder;
-                                                    if (sbPcode == null)
-                                                    {
-                                                        sbPcode = new StringBuilder();
-                                                        detailDict.Add(key, sbPcode);
-                                                        sbPcode.Append(GetString(Resource.String.error_env_pcode));
-                                                        sbPcode.Append(": ");
-                                                    }
-                                                    else
-                                                    {
-                                                        sbPcode.Append("; ");
-                                                    }
-
-                                                    sbPcode.Append(pcodeText);
+                                                    EdiabasThread.AddEnvCondErrorDetail(detailDict, GetString(Resource.String.error_env_pcode), -3, pcodeText);
                                                 }
 
                                                 string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
                                                 if (kmText.Length > 0)
                                                 {
-                                                    object key = -4;
-                                                    StringBuilder sbKm = detailDict[key] as StringBuilder;
-                                                    if (sbKm == null)
-                                                    {
-                                                        sbKm = new StringBuilder();
-                                                        detailDict.Add(key, sbKm);
-                                                        sbKm.Append(GetString(Resource.String.error_env_km));
-                                                        sbKm.Append(": ");
-                                                    }
-                                                    else
-                                                    {
-                                                        sbKm.Append("; ");
-                                                    }
-
-                                                    sbKm.Append(kmText);
-                                                    sbKm.Append(" km");
+                                                    EdiabasThread.AddEnvCondErrorDetail(detailDict, GetString(Resource.String.error_env_km), -4, kmText + " km");
                                                 }
 
                                                 string timeText = FormatResultInt64(errorDetail, "F_UW_ZEIT", "{0}");
                                                 if (timeText.Length > 0)
                                                 {
-                                                    object key = -5;
-                                                    StringBuilder sbTime = detailDict[key] as StringBuilder;
-                                                    if (sbTime == null)
-                                                    {
-                                                        sbTime = new StringBuilder();
-                                                        detailDict.Add(key, sbTime);
-                                                        sbTime.Append(GetString(Resource.String.error_env_time));
-                                                        sbTime.Append(": ");
-                                                    }
-                                                    else
-                                                    {
-                                                        sbTime.Append("; ");
-                                                    }
-
-                                                    sbTime.Append(timeText);
-                                                    sbTime.Append(" s");
+                                                    EdiabasThread.AddEnvCondErrorDetail(detailDict, GetString(Resource.String.error_env_time), -5, timeText + " s");
                                                 }
 
                                                 if (envCondLabelList != null)
@@ -2660,26 +2588,12 @@ namespace BmwDeepObd
                                                                         envUnit = envCondLabel.Unit;
                                                                     }
 
-                                                                    object key = envNum;
-                                                                    StringBuilder sbLine = detailDict[key] as StringBuilder;
-                                                                    if (sbLine == null)
-                                                                    {
-                                                                        sbLine = new StringBuilder();
-                                                                        detailDict.Add(key, sbLine);
-                                                                        sbLine.Append(envName);
-                                                                        sbLine.Append(": ");
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        sbLine.Append("; ");
-                                                                    }
-
-                                                                    sbLine.Append(envVal);
+                                                                    string valueText = envVal;
                                                                     if (!string.IsNullOrEmpty(envUnit))
                                                                     {
-                                                                        sbLine.Append(" ");
-                                                                        sbLine.Append(envUnit);
+                                                                        valueText += " " + envUnit;
                                                                     }
+                                                                    EdiabasThread.AddEnvCondErrorDetail(detailDict, envName, envNum, valueText);
                                                                 }
                                                             }
                                                         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -1697,6 +1698,29 @@ namespace BmwDeepObd
             {
                 return null;
             }
+        }
+
+        public static void AddEnvCondErrorDetail(OrderedDictionary detailDict, string name, object key, string value)
+        {
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value))
+            {
+                return;
+            }
+
+            StringBuilder sbDetail = detailDict[key] as StringBuilder;
+            if (sbDetail == null)
+            {
+                sbDetail = new StringBuilder();
+                detailDict.Add(key, sbDetail);
+                sbDetail.Append(name);
+                sbDetail.Append(": ");
+            }
+            else
+            {
+                sbDetail.Append("; ");
+            }
+
+            sbDetail.Append(value);
         }
 
         public static EcuFunctionStructs.EcuResultStateValue MatchEcuResultStateValue(List<EcuFunctionStructs.EcuResultStateValue> ecuResultStateValueList, EdiabasNet.ResultData resultData)
