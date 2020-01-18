@@ -2568,10 +2568,30 @@ namespace BmwDeepObd
                                                     sbLogCount.Append(logCountText);
                                                 }
 
+                                                string pcodeText = FormatResultString(errorDetail, "F_PCODE_STRING", "{0}");
+                                                if (pcodeText.Length >= 4)
+                                                {
+                                                    object key = -3;
+                                                    StringBuilder sbPcode = detailDict[key] as StringBuilder;
+                                                    if (sbPcode == null)
+                                                    {
+                                                        sbPcode = new StringBuilder();
+                                                        detailDict.Add(key, sbPcode);
+                                                        sbPcode.Append(GetString(Resource.String.error_env_pcode));
+                                                        sbPcode.Append(": ");
+                                                    }
+                                                    else
+                                                    {
+                                                        sbPcode.Append("; ");
+                                                    }
+
+                                                    sbPcode.Append(pcodeText);
+                                                }
+
                                                 string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
                                                 if (kmText.Length > 0)
                                                 {
-                                                    object key = -3;
+                                                    object key = -4;
                                                     StringBuilder sbKm = detailDict[key] as StringBuilder;
                                                     if (sbKm == null)
                                                     {
@@ -2592,7 +2612,7 @@ namespace BmwDeepObd
                                                 string timeText = FormatResultInt64(errorDetail, "F_UW_ZEIT", "{0}");
                                                 if (timeText.Length > 0)
                                                 {
-                                                    object key = -4;
+                                                    object key = -5;
                                                     StringBuilder sbTime = detailDict[key] as StringBuilder;
                                                     if (sbTime == null)
                                                     {
