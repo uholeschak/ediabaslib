@@ -43,6 +43,8 @@
   <string name="error_no_response">Keine Antwort</string>
   <string name="error_code">Fehlercode</string>
   <string name="error_env_title">Umgebungsbedingungen:</string>
+  <string name="error_env_frequency">Häufigkeit</string>
+  <string name="error_env_log_count">Logistikzähler</string>
   <string name="error_env_km">Kilometerstand</string>
   <string name="error_env_time">Fehlerzeitpunkt</string>
   <string formatted="false" name="version_change_info_message">Dieses Open Source Projekt wird gehostet auf:

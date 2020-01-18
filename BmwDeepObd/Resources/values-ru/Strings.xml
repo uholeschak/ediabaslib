@@ -43,6 +43,8 @@
   <string name="error_code">Код ошибки</string>
   <!--Translate-->
   <string name="error_env_title">Environmental conditions:</string>
+  <string name="error_env_frequency">Frequency</string>
+  <string name="error_env_log_count">Logistics counter</string>
   <string name="error_env_km">Mileage</string>
   <string name="error_env_time">Error time</string>
   <string formatted="false" name="version_change_info_message">Этот проект с открытым исходным кодом размещен на:
