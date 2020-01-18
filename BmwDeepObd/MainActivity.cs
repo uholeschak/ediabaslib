@@ -2528,10 +2528,50 @@ namespace BmwDeepObd
                                                     continue;
                                                 }
 
+                                                string frequencyText = FormatResultInt64(errorDetail, "F_HFK", "{0}");
+                                                if (frequencyText.Length > 0)
+                                                {
+                                                    object key = -1;
+                                                    StringBuilder sbFrequency = detailDict[key] as StringBuilder;
+                                                    if (sbFrequency == null)
+                                                    {
+                                                        sbFrequency = new StringBuilder();
+                                                        detailDict.Add(key, sbFrequency);
+                                                        sbFrequency.Append(GetString(Resource.String.error_env_frequency));
+                                                        sbFrequency.Append(": ");
+                                                    }
+                                                    else
+                                                    {
+                                                        sbFrequency.Append("; ");
+                                                    }
+
+                                                    sbFrequency.Append(frequencyText);
+                                                }
+
+                                                string logCountText = FormatResultInt64(errorDetail, "F_LZ", "{0}");
+                                                if (logCountText.Length > 0)
+                                                {
+                                                    object key = -2;
+                                                    StringBuilder sbLogCount = detailDict[key] as StringBuilder;
+                                                    if (sbLogCount == null)
+                                                    {
+                                                        sbLogCount = new StringBuilder();
+                                                        detailDict.Add(key, sbLogCount);
+                                                        sbLogCount.Append(GetString(Resource.String.error_env_log_count));
+                                                        sbLogCount.Append(": ");
+                                                    }
+                                                    else
+                                                    {
+                                                        sbLogCount.Append("; ");
+                                                    }
+
+                                                    sbLogCount.Append(logCountText);
+                                                }
+
                                                 string kmText = FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
                                                 if (kmText.Length > 0)
                                                 {
-                                                    object key = -1;
+                                                    object key = -3;
                                                     StringBuilder sbKm = detailDict[key] as StringBuilder;
                                                     if (sbKm == null)
                                                     {
@@ -2552,7 +2592,7 @@ namespace BmwDeepObd
                                                 string timeText = FormatResultInt64(errorDetail, "F_UW_ZEIT", "{0}");
                                                 if (timeText.Length > 0)
                                                 {
-                                                    object key = -2;
+                                                    object key = -4;
                                                     StringBuilder sbTime = detailDict[key] as StringBuilder;
                                                     if (sbTime == null)
                                                     {
