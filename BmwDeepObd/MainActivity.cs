@@ -2588,12 +2588,15 @@ namespace BmwDeepObd
                                                                         envUnit = envCondLabel.Unit;
                                                                     }
 
-                                                                    string valueText = envVal;
+                                                                    StringBuilder sbValue = new StringBuilder();
+                                                                    sbValue.Append(envVal);
                                                                     if (!string.IsNullOrEmpty(envUnit))
                                                                     {
-                                                                        valueText += " " + envUnit;
+                                                                        sbValue.Append(" ");
+                                                                        sbValue.Append(envUnit);
                                                                     }
-                                                                    EdiabasThread.AddEnvCondErrorDetail(detailDict, envName, envNum, valueText);
+
+                                                                    EdiabasThread.AddEnvCondErrorDetail(detailDict, envName, envNum, sbValue.ToString());
                                                                 }
                                                             }
                                                         }
