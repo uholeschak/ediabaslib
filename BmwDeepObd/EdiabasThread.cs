@@ -214,8 +214,28 @@ namespace BmwDeepObd
         public static readonly Object DataLock = new Object();
         private const char DataLogSeparator = '\t';
         public const string NotificationBroadcastInfo = ActivityCommon.AppNameSpace + ".Notification.Info";
-        private readonly string _resourceDatalogDate;
+        public static readonly Tuple<string, bool>[] ErrorFaultModeResultList =
+        {
+            new Tuple<string, bool>("F_VORHANDEN_NR", false),
+            new Tuple<string, bool>("F_SYMPTOM_NR", false),
+            new Tuple<string, bool>("F_FEHLERKLASSE_NR", true),
+            new Tuple<string, bool>("F_WARNUNG_NR", true),
+        };
 
+        public static readonly Tuple<string, string, int?>[] ErrorEnvCondResultList =
+        {
+            new Tuple<string, string, int?>("F_HFK", null, null),
+            new Tuple<string, string, int?>("F_PCODE_STRING", null, 4),
+            new Tuple<string, string, int?>("F_HLZ", null, null),
+            new Tuple<string, string, int?>("F_LZ", null, null),
+            new Tuple<string, string, int?>("F_SAE_CODE_STRING", null, 4),
+            new Tuple<string, string, int?>("F_PCODE", null, null),
+            new Tuple<string, string, int?>("F_CODE", null, null),
+            new Tuple<string, string, int?>("F_UW_KM", "km", null),
+            new Tuple<string, string, int?>("F_UW_ZEIT", "s", null),
+        };
+
+        private readonly string _resourceDatalogDate;
         private bool _disposed;
         private Context _context;
         private volatile bool _stopThread;
@@ -1729,7 +1749,7 @@ namespace BmwDeepObd
                 ActivityCommon.EcuFunctionReader.GetFaultModeLabelList(errorCode, ecuVariant);
             if (ecuFaultModeLabelList != null)
             {
-                List<Tuple<string, bool>> faultModeResultList = ActivityCommon.ErrorFaultModeResultList.ToList();
+                List<Tuple<string, bool>> faultModeResultList = ErrorFaultModeResultList.ToList();
                 Int64 typeCount = ActivityMain.GetResultInt64(errorReport.ErrorDict, "F_ART_ANZ", out bool found);
                 if (!found || typeCount == 0)
                 {
@@ -1834,7 +1854,7 @@ namespace BmwDeepObd
                 else
                 {
                     int envCondIndex = 0;
-                    foreach (Tuple<string, string, int?> envCondResult in ActivityCommon.ErrorEnvCondResultList)
+                    foreach (Tuple<string, string, int?> envCondResult in ErrorEnvCondResultList)
                     {
                         string envCondName = envCondResult.Item1;
                         bool valueFound = errorDetail.TryGetValue(envCondName.ToUpperInvariant(), out EdiabasNet.ResultData resultDataVal);
