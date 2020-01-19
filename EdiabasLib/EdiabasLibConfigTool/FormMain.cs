@@ -175,6 +175,15 @@ namespace EdiabasLibConfigTool
                 }
             }
 
+            if (!Patch.IsValid(dirBmw))
+            {
+                string path = LocateFileInPath(Patch.ApiDllName);
+                if (!string.IsNullOrEmpty(path))
+                {
+                    dirBmw = path;
+                }
+            }
+
             if (Patch.IsValid(dirBmw))
             {
                 _ediabasDirBmw = dirBmw;
@@ -229,6 +238,21 @@ namespace EdiabasLibConfigTool
             {
                 // ignored
             }
+        }
+
+        private string LocateFileInPath(string fileName)
+        {
+            string envPath = Environment.GetEnvironmentVariable("PATH");
+            if (string.IsNullOrEmpty(envPath))
+            {
+                return null;
+            }
+
+            string result = envPath
+                .Split(';')
+                .FirstOrDefault(s => File.Exists(Path.Combine(s, fileName)));
+
+            return result;
         }
 
         private bool GetEnableActiveProbing()

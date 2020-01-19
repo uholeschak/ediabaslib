@@ -20,8 +20,8 @@ namespace EdiabasLibConfigTool
         public const string AdapterSsidEspLink = @"DeepOBD";
         public const string AdapterSsidEnetLink = @"ENET-LINK_";
         public const string PassordWifiEnetLink = @"12345678";
-        private const string ApiDirName = @"Api32";
-        private const string ApiDllName = @"api32.dll";
+        public const string ApiDirName = @"Api32";
+        public const string ApiDllName = @"api32.dll";
         private const string ApiDllBackupName = @"api32.backup.dll";
         private const string ConfigFileName = @"EdiabasLib.config";
         private static readonly string[] RuntimeFiles = { "api-ms-win*.dll", "ucrtbase.dll", "msvcp140.dll", "vcruntime140.dll" };
