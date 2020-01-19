@@ -166,10 +166,20 @@ namespace EdiabasLibConfigTool
         private void GetDirectories()
         {
             string dirBmw = Environment.GetEnvironmentVariable("ediabas_config_dir");
+            if (!Patch.IsValid(dirBmw))
+            {
+                string path = Environment.GetEnvironmentVariable("EDIABAS_PATH");
+                if (!string.IsNullOrEmpty(path))
+                {
+                    dirBmw = Path.Combine(path, @"bin");
+                }
+            }
+
             if (Patch.IsValid(dirBmw))
             {
                 _ediabasDirBmw = dirBmw;
             }
+
             try
             {
                 using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Softing\EDIS-VW2"))
