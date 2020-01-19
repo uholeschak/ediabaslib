@@ -2395,7 +2395,7 @@ namespace BmwDeepObd
                                             Int64 errorCode = GetResultInt64(errorReport.ErrorDict, "F_ORT_NR", out bool found);
                                             if (found)
                                             {
-                                                EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(errorReport.Sgbd);
+                                                EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(errorReport.SgbdResolved);
                                                 if (ecuVariant != null)
                                                 {
                                                     envCondLabelList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelList(errorCode, ecuVariant);
