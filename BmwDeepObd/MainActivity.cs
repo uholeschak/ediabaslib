@@ -1950,6 +1950,7 @@ namespace BmwDeepObd
                 return;
             }
             bool dynamicValid = false;
+            string language = ActivityCommon.GetCurrentLanguage();
 
             _connectButtonInfo.Enabled = true;
             if (ActivityCommon.CommActive)
@@ -2161,8 +2162,26 @@ namespace BmwDeepObd
                                 {
                                     _instanceData.CommErrorsOccured = true;
                                 }
+
+                                string ecuTitle = GetPageString(pageInfo, errorReport.EcuName);
+                                EcuFunctionStructs.EcuVariant ecuVariant = null;
+                                if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                                {
+                                    ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(errorReport.SgbdResolved);
+                                    if (ecuVariant != null)
+                                    {
+                                        string title = ecuVariant.GetTitleTranslated(language);
+                                        if (!string.IsNullOrEmpty(title))
+                                        {
+                                            ecuTitle = title;
+                                        }
+                                    }
+                                }
+
                                 StringBuilder srMessage = new StringBuilder();
-                                srMessage.Append(string.Format(Culture, "{0}: ", GetPageString(pageInfo, errorReport.EcuName)));
+                                srMessage.Append(ecuTitle);
+                                srMessage.Append(": ");
+
                                 if (errorReport.ErrorDict == null)
                                 {
                                     srMessage.Append(GetString(Resource.String.error_no_response));
@@ -2390,21 +2409,17 @@ namespace BmwDeepObd
                                         string text1 = string.Empty;
                                         string text2 = string.Empty;
                                         List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList = null;
-                                        if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                                        if (ecuVariant != null)
                                         {
                                             Int64 errorCode = GetResultInt64(errorReport.ErrorDict, "F_ORT_NR", out bool found);
                                             if (found)
                                             {
-                                                EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(errorReport.SgbdResolved);
-                                                if (ecuVariant != null)
+                                                envCondLabelList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelList(errorCode, ecuVariant);
+                                                List<string> faultResultList = EdiabasThread.ConvertFaultCodeError(errorCode, errorReport, ecuVariant);
+                                                if (faultResultList != null && faultResultList.Count == 2)
                                                 {
-                                                    envCondLabelList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelList(errorCode, ecuVariant);
-                                                    List<string> faultResultList = EdiabasThread.ConvertFaultCodeError(errorCode, errorReport, ecuVariant);
-                                                    if (faultResultList != null && faultResultList.Count == 2)
-                                                    {
-                                                        text1 = faultResultList[0];
-                                                        text2 = faultResultList[1];
-                                                    }
+                                                    text1 = faultResultList[0];
+                                                    text2 = faultResultList[1];
                                                 }
                                             }
                                         }
