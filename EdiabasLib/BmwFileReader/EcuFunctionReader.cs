@@ -153,6 +153,21 @@ namespace BmwFileReader
             return ecuEnvCondLabelMatchList;
         }
 
+        public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelMatchList(List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList, string envName)
+        {
+            // ReSharper disable once UseNullPropagation
+            if (ecuEnvCondLabelList == null)
+            {
+                return null;
+            }
+
+            List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelMatchList =
+                ecuEnvCondLabelList.Where(x => string.Compare(x.IdentStr, envName, StringComparison.OrdinalIgnoreCase) == 0).
+                    OrderBy(x => x.Id.ConvertToInt()).ToList();
+
+            return ecuEnvCondLabelMatchList;
+        }
+
         public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelList(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant)
         {
             if (!ecuVariant.EcuFaultCodeDict.TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))

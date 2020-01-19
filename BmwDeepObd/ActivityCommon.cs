@@ -285,6 +285,19 @@ namespace BmwDeepObd
             new Tuple<string, bool>("F_WARNUNG_NR", true),
         };
 
+        public static readonly Tuple<string, string, int?>[] ErrorEnvCondResultList =
+        {
+            new Tuple<string, string, int?>("F_HFK", null, null),
+            new Tuple<string, string, int?>("F_PCODE_STRING", null, 4),
+            new Tuple<string, string, int?>("F_HLZ", null, null),
+            new Tuple<string, string, int?>("F_LZ", null, null),
+            new Tuple<string, string, int?>("F_SAE_CODE_STRING", null, 4),
+            new Tuple<string, string, int?>("F_PCODE", null, null),
+            new Tuple<string, string, int?>("F_CODE", null, null),
+            new Tuple<string, string, int?>("F_UW_KM", "km", null),
+            new Tuple<string, string, int?>("F_UW_ZEIT", "s", null),
+        };
+
         private static readonly Dictionary<long, string> VagDtcSaeDict = new Dictionary<long, string>
         {
             {16394, "P0010"}, {16395, "P0020"}, {16449, "P0065"}, {16450, "P0066"}, {16451, "P0067"},
