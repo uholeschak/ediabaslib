@@ -2472,7 +2472,6 @@ namespace BmwDeepObd
                                     {
                                         object[] args = { pageInfo, errorReport, message };
                                         message = formatErrorResult.Invoke(pageInfo.ClassObject, args) as string;
-                                        //message = pageInfo.ClassObject.FormatErrorResult(pageInfo, errorReport, message);
                                     }
                                     catch (Exception)
                                     {

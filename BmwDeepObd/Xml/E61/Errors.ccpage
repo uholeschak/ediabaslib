@@ -31,6 +31,8 @@
       <string name="SZL">SZL Gearshift unit steering column</string>
       <string name="SZM">SZM Gearshift unit center console</string>
       <string name="TCU">TCU Telematic control unit</string>
+
+      <string name="uw_rpm">RPM</string>
     </strings>
     <strings lang="de">
       <string name="tab_errors">Fehler</string>
@@ -60,6 +62,8 @@
       <string name="SZL">SZL Schaltzentrum Lenksäule</string>
       <string name="SZM">SZM Schaltzentrum Mittelkonsole</string>
       <string name="TCU">TCU Telematic Control Unit</string>
+
+      <string name="uw_rpm">Drehzahl</string>
     </strings>
     <read_errors sgbd_functional="e60.prg" >
       <ecu name="CAS" sgbd="d_cas" />
@@ -106,15 +110,16 @@
                         string rpmText = ActivityMain.FormatResultDouble(errorDetail, "F_UW1_WERT", "{0,6:0.0}");
                         if (rpmText.Length > 0)
                         {
-                            if (detailText.Length == 0)
+                            if (detailText.Length > 0)
                             {
-                                detailText += rpmText + " 1/min";
+                                detailText += "; ";
                             }
+                            detailText += rpmText + " 1/min";
                         }
                     }
                     if (detailText.Length > 0)
                     {
-                        message += "\r\n" + detailText;
+                        message += "\r\n- " + ActivityMain.GetPageString(pageInfo, "uw_rpm") + ": " + detailText;
                     }
                     break;
                 }
