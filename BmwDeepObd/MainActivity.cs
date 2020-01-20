@@ -2170,7 +2170,7 @@ namespace BmwDeepObd
                                     ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(errorReport.SgbdResolved);
                                     if (ecuVariant != null)
                                     {
-                                        string title = ecuVariant.GetTitleTranslated(language);
+                                        string title = ecuVariant.Title?.GetTitle(language);
                                         if (!string.IsNullOrEmpty(title))
                                         {
                                             ecuTitle = title;
