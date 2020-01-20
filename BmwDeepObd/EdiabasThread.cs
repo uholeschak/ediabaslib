@@ -231,6 +231,7 @@ namespace BmwDeepObd
             new Tuple<string, string, int?>("F_SAE_CODE_STRING", null, 4),
             new Tuple<string, string, int?>("F_PCODE", null, null),
             new Tuple<string, string, int?>("F_CODE", null, null),
+            new Tuple<string, string, int?>("F_EREIGNIS_DTC", null, null),
             new Tuple<string, string, int?>("F_UW_KM", "km", null),
             new Tuple<string, string, int?>("F_UW_ZEIT", "s", null),
         };
