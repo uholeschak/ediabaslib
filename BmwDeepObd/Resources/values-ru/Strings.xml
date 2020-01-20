@@ -41,19 +41,18 @@
   <string name="error_reading_errors">Считывание ошибок: {0}%</string>
   <string name="error_no_response">Нет подтверждения</string>
   <string name="error_code">Код ошибки</string>
-  <!--Translate-->
-  <string name="error_env_title">Environmental conditions:</string>
-  <string name="error_env_frequency">Frequency</string>
-  <string name="error_env_log_count">Logistics counter</string>
-  <string name="error_env_pcode">SAE code</string>
-  <string name="error_env_km">Mileage</string>
-  <string name="error_env_time">Error time</string>
+  <string name="error_env_title">Условия окружающей среды:</string>
+  <string name="error_env_frequency">Частота</string>
+  <string name="error_env_log_count">Логистический счётчик</string>
+  <string name="error_env_pcode">SAE Код</string>
+  <string name="error_env_km">Пробег</string>
+  <string name="error_env_time">Время ошибки</string>
   <string formatted="false" name="version_change_info_message">Этот проект с открытым исходным кодом размещен на:
 \n&lt;a href=\'https://github.com/uholeschak/ediabaslib\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt;
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Добавлена база данных BMW\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -372,9 +371,8 @@
   <string name="settings_show_battery_voltage_warning">Показать предупреждение о перенапряжении</string>
   <string name="settings_caption_old_vag_mode">VAG режим</string>
   <string name="settings_old_vag_mode">Использовать старый режим VAG</string>
-  <!--Translate-->
-  <string name="settings_caption_bmw_database">BMW database</string>
-  <string name="settings_use_bmw_database">Use BMW database</string>
+  <string name="settings_caption_bmw_database">База данных BMW</string>
+  <string name="settings_use_bmw_database">Использовать базу данных BMW</string>
   <string name="settings_caption_scan_all_ecus">Распознавание ECU</string>
   <string name="settings_scan_all_ecus">Для автомобилей BMW с протоколом DS2 всегда сканировать все ECU (медленно)</string>
   <string name="settings_check_ecu_files">Проверка ECU файлов при запуске</string>
@@ -489,8 +487,7 @@
   <string name="xml_tool_ecu_grid_count_portrait_value">Вертикальный формат</string>
   <string name="xml_tool_ecu_grid_count_landscape_value">Горизонтальный формат</string>
   <string name="xml_tool_ecu_jobs_name">Job список</string>
-  <!--Translate-->
-  <string name="xml_tool_ecu_show_all_jobs">Show all jobs</string>
+  <string name="xml_tool_ecu_show_all_jobs">Показать все Jobs</string>
   <string name="xml_tool_ecu_results">Job результат</string>
   <string name="xml_tool_ecu_show_all_results">Показывать все результаты</string>
   <string name="xml_tool_ecu_display_text">Выведенный текст</string>
@@ -508,8 +505,7 @@
   <string name="xml_tool_button_test_format">Считать</string>
   <string name="xml_tool_ecu_add_functions">Дополнительные функции</string>
   <string name="xml_tool_button_ediabas_tool">Ediabas утилита</string>
-  <!--Translate-->
-  <string name="xml_tool_button_bmw_actuator">Actuator functions</string>
+  <string name="xml_tool_button_bmw_actuator">Функции актуатора</string>
   <string name="xml_tool_button_coding">Кодировать</string>
   <string name="xml_tool_button_coding2">Кодировать 2</string>
   <string name="xml_tool_button_adaption">Адаптация</string>
@@ -579,14 +575,13 @@
   <string name="vag_adaption_ecu_reset">Выполнить ECU сброс</string>
 
   <!-- BMW Actuator Activity -->
-  <!--Translate-->
-  <string name="bmw_actuator_title">Actuator ECU: {0}</string>
-  <string name="bmw_actuator_function_title">Function</string>
+  <string name="bmw_actuator_title">Актуатор ECU: {0}</string>
+  <string name="bmw_actuator_function_title">Функция</string>
   <string name="bmw_actuator_comments_title">Примечания</string>
-  <string name="bmw_actuator_status_title">Status</string>
+  <string name="bmw_actuator_status_title">Статус</string>
   <string name="bmw_actuator_operation_title">Операции</string>
-  <string name="bmw_actuator_button_execute_single">Execute once</string>
-  <string name="bmw_actuator_button_execute_continuous">Execute continuous</string>
+  <string name="bmw_actuator_button_execute_single">Одноразовое выполнение</string>
+  <string name="bmw_actuator_button_execute_continuous">Постоянное выполнение</string>
   <string name="bmw_actuator_button_stop">Остановить</string>
   <string name="bmw_actuator_operation_failed">Ошибка выполнения операции</string>
 
