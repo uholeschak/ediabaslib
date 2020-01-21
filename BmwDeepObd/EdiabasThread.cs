@@ -1797,157 +1797,37 @@ namespace BmwDeepObd
 
         public static string ConvertEnvCondErrorDetail(Context context, EdiabasErrorReport errorReport, List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList)
         {
+            OrderedDictionary detailDict = new OrderedDictionary();
             if (errorReport.ErrorDetailSet == null)
             {
-                return null;
+                ConvertEnvCondErrorDetailSingle(context, detailDict, errorReport.ErrorDict, envCondLabelList);
+            }
+            else
+            {
+                int dictIndex = 0;
+                foreach (Dictionary<string, EdiabasNet.ResultData> errorDetail in errorReport.ErrorDetailSet)
+                {
+                    if (dictIndex == 0)
+                    {
+                        dictIndex++;
+                        continue;
+                    }
+
+                    Int64 envCount = ActivityMain.GetResultInt64(errorDetail, "F_UW_ANZ", out bool countFound);
+                    if (!countFound || envCount < 1)
+                    {
+                        dictIndex++;
+                        continue;
+                    }
+
+                    ConvertEnvCondErrorDetailSingle(context, detailDict, errorDetail, envCondLabelList);
+                    dictIndex++;
+                }
             }
 
-            string language = ActivityCommon.GetCurrentLanguage();
-            OrderedDictionary detailDict = new OrderedDictionary();
-            int dictIndex = 0;
-            foreach (Dictionary<string, EdiabasNet.ResultData> errorDetail in errorReport.ErrorDetailSet)
+            if (detailDict.Count == 0)
             {
-                if (dictIndex == 0)
-                {
-                    dictIndex++;
-                    continue;
-                }
-
-                Int64 envCount = ActivityMain.GetResultInt64(errorDetail, "F_UW_ANZ", out bool countFound);
-                if (!countFound || envCount < 1)
-                {
-                    dictIndex++;
-                    continue;
-                }
-
-                if (envCondLabelList == null)
-                {
-                    string frequencyText = ActivityMain.FormatResultInt64(errorDetail, "F_HFK", "{0}");
-                    if (frequencyText.Length > 0)
-                    {
-                        AddEnvCondErrorDetail(detailDict, context.GetString(Resource.String.error_env_frequency), -1, frequencyText);
-                    }
-
-                    string logCountText = ActivityMain.FormatResultInt64(errorDetail, "F_LZ", "{0}");
-                    if (logCountText.Length > 0)
-                    {
-                        AddEnvCondErrorDetail(detailDict, context.GetString(Resource.String.error_env_log_count), -2, logCountText);
-                    }
-
-                    string pcodeText = ActivityMain.FormatResultString(errorDetail, "F_PCODE_STRING", "{0}");
-                    if (pcodeText.Length >= 4)
-                    {
-                        AddEnvCondErrorDetail(detailDict, context.GetString(Resource.String.error_env_pcode), -3, pcodeText);
-                    }
-
-                    string kmText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
-                    if (kmText.Length > 0)
-                    {
-                        AddEnvCondErrorDetail(detailDict, context.GetString(Resource.String.error_env_km), -4, kmText + " km");
-                    }
-
-                    string timeText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_ZEIT", "{0}");
-                    if (timeText.Length > 0)
-                    {
-                        AddEnvCondErrorDetail(detailDict, context.GetString(Resource.String.error_env_time), -5, timeText + " s");
-                    }
-                }
-                else
-                {
-                    int envCondIndex = 0;
-                    foreach (Tuple<string, string, int?> envCondResult in ErrorEnvCondResultList)
-                    {
-                        string envCondName = envCondResult.Item1;
-                        bool valueFound = errorDetail.TryGetValue(envCondName.ToUpperInvariant(), out EdiabasNet.ResultData resultDataVal);
-                        if (valueFound)
-                        {
-                            EcuFunctionStructs.EcuEnvCondLabel envCondLabel = ActivityCommon.EcuFunctionReader.GetEnvCondLabelMatchList(envCondLabelList, envCondName).LastOrDefault();
-                            if (envCondLabel != null)
-                            {
-                                string envName = envCondLabel.Title.GetTitle(language);
-                                if (!string.IsNullOrEmpty(envName))
-                                {
-                                    string envVal = ConvertEcuEnvCondResultValue(envCondLabel, resultDataVal, out double? _) ?? string.Empty;
-                                    if (envCondResult.Item3.HasValue)
-                                    {
-                                        if (envVal.Length < envCondResult.Item3.Value)
-                                        {
-                                            envVal = string.Empty;
-                                        }
-                                    }
-
-                                    if (!string.IsNullOrEmpty(envVal))
-                                    {
-                                        string envUnit = envCondResult.Item2;
-                                        if (!string.IsNullOrEmpty(envCondLabel.Unit))
-                                        {
-                                            envUnit = envCondLabel.Unit;
-                                        }
-
-                                        StringBuilder sbValue = new StringBuilder();
-                                        sbValue.Append(envVal);
-                                        if (!string.IsNullOrEmpty(envUnit))
-                                        {
-                                            sbValue.Append(" ");
-                                            sbValue.Append(envUnit);
-                                        }
-
-                                        AddEnvCondErrorDetail(detailDict, envName, -(envCondIndex + 1), sbValue.ToString());
-                                    }
-                                }
-                            }
-                        }
-
-                        envCondIndex++;
-                    }
-
-                    for (int index = 0; index < envCount; index++)
-                    {
-                        string envNumName = string.Format(CultureInfo.InvariantCulture, "F_UW{0}_NR", index + 1);
-                        Int64 envNum = ActivityMain.GetResultInt64(errorDetail, envNumName, out bool numFound);
-
-                        string envValName = string.Format(CultureInfo.InvariantCulture, "F_UW{0}_WERT", index + 1);
-                        bool valueFound = errorDetail.TryGetValue(envValName.ToUpperInvariant(), out EdiabasNet.ResultData resultDataVal);
-                        string envUnitName = string.Format(CultureInfo.InvariantCulture, "F_UW{0}_EINH", index + 1);
-                        string envUnit = ActivityMain.GetResultString(errorDetail, envUnitName, out bool unitFound);
-                        if (!unitFound)
-                        {
-                            envUnit = string.Empty;
-                        }
-
-                        if (numFound && valueFound)
-                        {
-                            EcuFunctionStructs.EcuEnvCondLabel envCondLabel = ActivityCommon.EcuFunctionReader.GetEnvCondLabelMatchList(envCondLabelList, envNum).LastOrDefault();
-                            if (envCondLabel != null)
-                            {
-                                string envName = envCondLabel.Title.GetTitle(language);
-                                if (!string.IsNullOrEmpty(envName))
-                                {
-                                    string envVal = EdiabasThread.ConvertEcuEnvCondResultValue(envCondLabel, resultDataVal, out double? _) ?? string.Empty;
-                                    if (!string.IsNullOrEmpty(envVal))
-                                    {
-                                        if (!string.IsNullOrEmpty(envCondLabel.Unit))
-                                        {
-                                            envUnit = envCondLabel.Unit;
-                                        }
-
-                                        StringBuilder sbValue = new StringBuilder();
-                                        sbValue.Append(envVal);
-                                        if (!string.IsNullOrEmpty(envUnit))
-                                        {
-                                            sbValue.Append(" ");
-                                            sbValue.Append(envUnit);
-                                        }
-
-                                        AddEnvCondErrorDetail(detailDict, envName, envNum, sbValue.ToString());
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                dictIndex++;
+                return null;
             }
 
             StringBuilder sbResult = new StringBuilder();
@@ -1963,6 +1843,150 @@ namespace BmwDeepObd
             }
 
             return sbResult.ToString();
+        }
+
+        public static bool ConvertEnvCondErrorDetailSingle(Context context, OrderedDictionary detailDict, Dictionary<string, EdiabasNet.ResultData> errorDetail, List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList)
+        {
+            if (errorDetail == null)
+            {
+                return false;
+            }
+
+            string language = ActivityCommon.GetCurrentLanguage();
+            Int64 envCount = ActivityMain.GetResultInt64(errorDetail, "F_UW_ANZ", out bool countFound);
+            if (!countFound || envCount < 1)
+            {
+                return false;
+            }
+
+            if (envCondLabelList == null)
+            {
+                string frequencyText = ActivityMain.FormatResultInt64(errorDetail, "F_HFK", "{0}");
+                if (frequencyText.Length > 0)
+                {
+                    AddEnvCondErrorDetail(detailDict, context.GetString(Resource.String.error_env_frequency), -1, frequencyText);
+                }
+
+                string logCountText = ActivityMain.FormatResultInt64(errorDetail, "F_LZ", "{0}");
+                if (logCountText.Length > 0)
+                {
+                    AddEnvCondErrorDetail(detailDict, context.GetString(Resource.String.error_env_log_count), -2, logCountText);
+                }
+
+                string pcodeText = ActivityMain.FormatResultString(errorDetail, "F_PCODE_STRING", "{0}");
+                if (pcodeText.Length >= 4)
+                {
+                    AddEnvCondErrorDetail(detailDict, context.GetString(Resource.String.error_env_pcode), -3, pcodeText);
+                }
+
+                string kmText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
+                if (kmText.Length > 0)
+                {
+                    AddEnvCondErrorDetail(detailDict, context.GetString(Resource.String.error_env_km), -4, kmText + " km");
+                }
+
+                string timeText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_ZEIT", "{0}");
+                if (timeText.Length > 0)
+                {
+                    AddEnvCondErrorDetail(detailDict, context.GetString(Resource.String.error_env_time), -5, timeText + " s");
+                }
+            }
+            else
+            {
+                int envCondIndex = 0;
+                foreach (Tuple<string, string, int?> envCondResult in ErrorEnvCondResultList)
+                {
+                    string envCondName = envCondResult.Item1;
+                    bool valueFound = errorDetail.TryGetValue(envCondName.ToUpperInvariant(), out EdiabasNet.ResultData resultDataVal);
+                    if (valueFound)
+                    {
+                        EcuFunctionStructs.EcuEnvCondLabel envCondLabel = ActivityCommon.EcuFunctionReader.GetEnvCondLabelMatchList(envCondLabelList, envCondName).LastOrDefault();
+                        if (envCondLabel != null)
+                        {
+                            string envName = envCondLabel.Title.GetTitle(language);
+                            if (!string.IsNullOrEmpty(envName))
+                            {
+                                string envVal = ConvertEcuEnvCondResultValue(envCondLabel, resultDataVal, out double? _) ?? string.Empty;
+                                if (envCondResult.Item3.HasValue)
+                                {
+                                    if (envVal.Length < envCondResult.Item3.Value)
+                                    {
+                                        envVal = string.Empty;
+                                    }
+                                }
+
+                                if (!string.IsNullOrEmpty(envVal))
+                                {
+                                    string envUnit = envCondResult.Item2;
+                                    if (!string.IsNullOrEmpty(envCondLabel.Unit))
+                                    {
+                                        envUnit = envCondLabel.Unit;
+                                    }
+
+                                    StringBuilder sbValue = new StringBuilder();
+                                    sbValue.Append(envVal);
+                                    if (!string.IsNullOrEmpty(envUnit))
+                                    {
+                                        sbValue.Append(" ");
+                                        sbValue.Append(envUnit);
+                                    }
+
+                                    AddEnvCondErrorDetail(detailDict, envName, -(envCondIndex + 1), sbValue.ToString());
+                                }
+                            }
+                        }
+                    }
+
+                    envCondIndex++;
+                }
+
+                for (int index = 0; index < envCount; index++)
+                {
+                    string envNumName = string.Format(CultureInfo.InvariantCulture, "F_UW{0}_NR", index + 1);
+                    Int64 envNum = ActivityMain.GetResultInt64(errorDetail, envNumName, out bool numFound);
+
+                    string envValName = string.Format(CultureInfo.InvariantCulture, "F_UW{0}_WERT", index + 1);
+                    bool valueFound = errorDetail.TryGetValue(envValName.ToUpperInvariant(), out EdiabasNet.ResultData resultDataVal);
+                    string envUnitName = string.Format(CultureInfo.InvariantCulture, "F_UW{0}_EINH", index + 1);
+                    string envUnit = ActivityMain.GetResultString(errorDetail, envUnitName, out bool unitFound);
+                    if (!unitFound)
+                    {
+                        envUnit = string.Empty;
+                    }
+
+                    if (numFound && valueFound)
+                    {
+                        EcuFunctionStructs.EcuEnvCondLabel envCondLabel = ActivityCommon.EcuFunctionReader.GetEnvCondLabelMatchList(envCondLabelList, envNum).LastOrDefault();
+                        if (envCondLabel != null)
+                        {
+                            string envName = envCondLabel.Title.GetTitle(language);
+                            if (!string.IsNullOrEmpty(envName))
+                            {
+                                string envVal = EdiabasThread.ConvertEcuEnvCondResultValue(envCondLabel, resultDataVal, out double? _) ?? string.Empty;
+                                if (!string.IsNullOrEmpty(envVal))
+                                {
+                                    if (!string.IsNullOrEmpty(envCondLabel.Unit))
+                                    {
+                                        envUnit = envCondLabel.Unit;
+                                    }
+
+                                    StringBuilder sbValue = new StringBuilder();
+                                    sbValue.Append(envVal);
+                                    if (!string.IsNullOrEmpty(envUnit))
+                                    {
+                                        sbValue.Append(" ");
+                                        sbValue.Append(envUnit);
+                                    }
+
+                                    AddEnvCondErrorDetail(detailDict, envName, envNum, sbValue.ToString());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return true;
         }
 
         public static void AddEnvCondErrorDetail(OrderedDictionary detailDict, string name, object key, string value)
