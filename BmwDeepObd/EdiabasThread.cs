@@ -1493,6 +1493,14 @@ namespace BmwDeepObd
                 {
                     string value = (string)resultData.OpData;
                     result = value;
+                    try
+                    {
+                        resultValue = Convert.ToDouble(value, CultureInfo.InvariantCulture);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }
                 else if (resultData.OpData.GetType() == typeof(byte[]))
                 {
