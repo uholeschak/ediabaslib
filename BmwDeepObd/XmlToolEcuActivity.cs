@@ -1454,7 +1454,7 @@ namespace BmwDeepObd
             }
 
             int resourceId = Resource.String.xml_tool_ecu_msg_no_selection;
-            if (_ecuInfo.DisplayMode == JobReader.PageInfo.DisplayModeType.Grid)
+            if (_checkBoxDisplayTypeGrid.Checked)
             {
                 if (AnyResultsSelected(false))
                 {

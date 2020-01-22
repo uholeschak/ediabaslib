@@ -1903,9 +1903,10 @@ namespace BmwDeepObd
                         EcuFunctionStructs.EcuEnvCondLabel envCondLabel = ActivityCommon.EcuFunctionReader.GetEnvCondLabelMatchList(envCondLabelList, envCondName).LastOrDefault();
                         if (envCondLabel != null)
                         {
-                            string envName = envCondLabel.Title.GetTitle(language);
-                            if (!string.IsNullOrEmpty(envName))
+                            string envName = envCondLabel.Title?.GetTitle(language);
+                            if (!string.IsNullOrWhiteSpace(envName))
                             {
+                                envName = envName.Trim();
                                 string envVal = ConvertEcuEnvCondResultValue(envCondLabel, resultDataVal, out double? _) ?? string.Empty;
                                 if (envCondResult.Item3.HasValue)
                                 {
@@ -1915,20 +1916,21 @@ namespace BmwDeepObd
                                     }
                                 }
 
-                                if (!string.IsNullOrEmpty(envVal))
+                                if (!string.IsNullOrWhiteSpace(envVal))
                                 {
+                                    envVal = envVal.Trim();
                                     string envUnit = envCondResult.Item2;
-                                    if (!string.IsNullOrEmpty(envCondLabel.Unit))
+                                    if (!string.IsNullOrWhiteSpace(envCondLabel.Unit))
                                     {
                                         envUnit = envCondLabel.Unit;
                                     }
 
                                     StringBuilder sbValue = new StringBuilder();
                                     sbValue.Append(envVal);
-                                    if (!string.IsNullOrEmpty(envUnit))
+                                    if (!string.IsNullOrWhiteSpace(envUnit))
                                     {
                                         sbValue.Append(" ");
-                                        sbValue.Append(envUnit);
+                                        sbValue.Append(envUnit.Trim());
                                     }
 
                                     AddEnvCondErrorDetail(detailDict, envName, -(envCondIndex + 1), sbValue.ToString());
@@ -1959,23 +1961,25 @@ namespace BmwDeepObd
                         EcuFunctionStructs.EcuEnvCondLabel envCondLabel = ActivityCommon.EcuFunctionReader.GetEnvCondLabelMatchList(envCondLabelList, envNum).LastOrDefault();
                         if (envCondLabel != null)
                         {
-                            string envName = envCondLabel.Title.GetTitle(language);
-                            if (!string.IsNullOrEmpty(envName))
+                            string envName = envCondLabel.Title?.GetTitle(language);
+                            if (!string.IsNullOrWhiteSpace(envName))
                             {
+                                envName = envName.Trim();
                                 string envVal = EdiabasThread.ConvertEcuEnvCondResultValue(envCondLabel, resultDataVal, out double? _) ?? string.Empty;
-                                if (!string.IsNullOrEmpty(envVal))
+                                if (!string.IsNullOrWhiteSpace(envVal))
                                 {
-                                    if (!string.IsNullOrEmpty(envCondLabel.Unit))
+                                    envVal = envVal.Trim();
+                                    if (!string.IsNullOrWhiteSpace(envCondLabel.Unit))
                                     {
                                         envUnit = envCondLabel.Unit;
                                     }
 
                                     StringBuilder sbValue = new StringBuilder();
                                     sbValue.Append(envVal);
-                                    if (!string.IsNullOrEmpty(envUnit))
+                                    if (!string.IsNullOrWhiteSpace(envUnit))
                                     {
                                         sbValue.Append(" ");
-                                        sbValue.Append(envUnit);
+                                        sbValue.Append(envUnit.Trim());
                                     }
 
                                     AddEnvCondErrorDetail(detailDict, envName, envNum, sbValue.ToString());
