@@ -3921,7 +3921,7 @@ namespace BmwDeepObd
                                             {
                                                 string resultTitle = ecuJobResult.Title?.GetTitle(language) ?? string.Empty;
                                                 string resultName = ecuJobResult.Name;
-                                                string resultType = ecuJobResult.Format;
+                                                string resultType = DataTypeStringReal;
                                                 string comment = resultName + " (" + ecuJob.Name + ")";
                                                 List<string> resultCommentList = new List<string> { comment };
                                                 XmlToolEcuActivity.ResultInfo resultInfo =
