@@ -1405,7 +1405,7 @@ namespace BmwDeepObd
 
         private bool AnyResultsSelected(bool checkGrid)
         {
-            bool gridMode = checkGrid && _ecuInfo.DisplayMode == JobReader.PageInfo.DisplayModeType.Grid;
+            bool gridMode = checkGrid && _checkBoxDisplayTypeGrid.Checked;
             foreach (JobInfo jobInfo in _ecuInfo.JobList)
             {
                 if (jobInfo.Selected)
