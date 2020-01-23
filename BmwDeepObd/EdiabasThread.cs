@@ -2018,7 +2018,7 @@ namespace BmwDeepObd
             }
             else
             {
-                sbDetail.Append("; ");
+                sbDetail.Append(" | ");
             }
 
             sbDetail.Append(value);
