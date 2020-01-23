@@ -112,7 +112,7 @@
                         {
                             if (detailText.Length > 0)
                             {
-                                detailText += "; ";
+                                detailText += " | ";
                             }
                             detailText += rpmText + " 1/min";
                         }
