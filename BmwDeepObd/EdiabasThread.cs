@@ -1867,36 +1867,37 @@ namespace BmwDeepObd
                 return false;
             }
 
+            Dictionary<string, int> envCountDict = new Dictionary<string, int>();
             if (envCondLabelList == null)
             {
                 string frequencyText = ActivityMain.FormatResultInt64(errorDetail, "F_HFK", "{0}");
                 if (frequencyText.Length > 0)
                 {
-                    AddEnvCondErrorDetail(detailDict, context.GetString(Resource.String.error_env_frequency), -1, frequencyText);
+                    AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_frequency), "F_HFK", frequencyText);
                 }
 
                 string logCountText = ActivityMain.FormatResultInt64(errorDetail, "F_LZ", "{0}");
                 if (logCountText.Length > 0)
                 {
-                    AddEnvCondErrorDetail(detailDict, context.GetString(Resource.String.error_env_log_count), -2, logCountText);
+                    AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_log_count), "F_LZ", logCountText);
                 }
 
                 string pcodeText = ActivityMain.FormatResultString(errorDetail, "F_PCODE_STRING", "{0}");
                 if (pcodeText.Length >= 4)
                 {
-                    AddEnvCondErrorDetail(detailDict, context.GetString(Resource.String.error_env_pcode), -3, pcodeText);
+                    AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_pcode), "F_PCODE_STRING", pcodeText);
                 }
 
                 string kmText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
                 if (kmText.Length > 0)
                 {
-                    AddEnvCondErrorDetail(detailDict, context.GetString(Resource.String.error_env_km), -4, kmText + " km");
+                    AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_km), "F_UW_KM", kmText + " km");
                 }
 
                 string timeText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_ZEIT", "{0}");
                 if (timeText.Length > 0)
                 {
-                    AddEnvCondErrorDetail(detailDict, context.GetString(Resource.String.error_env_time), -5, timeText + " s");
+                    AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_time), "F_UW_ZEIT", timeText + " s");
                 }
             }
             else
@@ -1941,7 +1942,7 @@ namespace BmwDeepObd
                                         sbValue.Append(envUnit.Trim());
                                     }
 
-                                    AddEnvCondErrorDetail(detailDict, envName, -(envCondIndex + 1), sbValue.ToString());
+                                    AddEnvCondErrorDetail(detailDict, envCountDict, envName, "#" + (envCondIndex + 1).ToString(CultureInfo.InvariantCulture), sbValue.ToString());
                                 }
                             }
                         }
@@ -1990,7 +1991,7 @@ namespace BmwDeepObd
                                         sbValue.Append(envUnit.Trim());
                                     }
 
-                                    AddEnvCondErrorDetail(detailDict, envName, envNum, sbValue.ToString());
+                                    AddEnvCondErrorDetail(detailDict, envCountDict, envName, "@" + envNum.ToString(CultureInfo.InvariantCulture), sbValue.ToString());
                                 }
                             }
                         }
@@ -2001,18 +2002,30 @@ namespace BmwDeepObd
             return true;
         }
 
-        public static void AddEnvCondErrorDetail(OrderedDictionary detailDict, string name, object key, string value)
+        public static void AddEnvCondErrorDetail(OrderedDictionary detailDict, Dictionary<string, int> envCountDict, string name, string key, string value)
         {
             if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value))
             {
                 return;
             }
 
-            StringBuilder sbDetail = detailDict[key] as StringBuilder;
+            if (envCountDict.TryGetValue(key, out int envIndex))
+            {
+                envIndex++;
+            }
+            else
+            {
+                envIndex = 0;
+            }
+
+            envCountDict[key] = envIndex;
+
+            string detailKey = key + "_" + envIndex.ToString(CultureInfo.InvariantCulture);
+            StringBuilder sbDetail = detailDict[detailKey] as StringBuilder;
             if (sbDetail == null)
             {
                 sbDetail = new StringBuilder();
-                detailDict.Add(key, sbDetail);
+                detailDict.Add(detailKey, sbDetail);
                 sbDetail.Append(name);
                 sbDetail.Append(": ");
             }
