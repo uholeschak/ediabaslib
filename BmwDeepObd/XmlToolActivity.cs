@@ -2254,11 +2254,12 @@ namespace BmwDeepObd
                                                     }
                                                     else
                                                     {
-                                                        string description = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
-                                                        if (!string.IsNullOrEmpty(description))
+                                                        string title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                        if (!string.IsNullOrEmpty(title))
                                                         {
-                                                            ecuInfo.Description = description;
-                                                            ecuInfo.DescriptionTrans = description;
+                                                            ecuInfo.PageName = title;
+                                                            ecuInfo.Description = title;
+                                                            ecuInfo.DescriptionTrans = title;
                                                         }
                                                     }
                                                 }
@@ -3131,7 +3132,7 @@ namespace BmwDeepObd
                                     _ediabas.NoInitForVJobs = true;
                                     _ediabas.ExecuteJob("_VERSIONINFO");
 
-                                    string description = null;
+                                    string title = null;
                                     if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                                     {
                                         string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
@@ -3142,18 +3143,19 @@ namespace BmwDeepObd
                                         }
                                         else
                                         {
-                                            description = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                            title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
                                         }
                                     }
 
-                                    if (string.IsNullOrEmpty(description))
+                                    if (string.IsNullOrEmpty(title))
                                     {
                                         ecuInfo.Description = GetEcuComment(_ediabas.ResultSets);
                                     }
                                     else
                                     {
-                                        ecuInfo.Description = description;
-                                        ecuInfo.DescriptionTrans = description;
+                                        ecuInfo.PageName = title;
+                                        ecuInfo.Description = title;
+                                        ecuInfo.DescriptionTrans = title;
                                     }
                                 }
                                 catch (Exception)
@@ -5946,7 +5948,7 @@ namespace BmwDeepObd
 
                         if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                         {
-                            string description = null;
+                            string title = null;
                             if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                             {
                                 string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
@@ -5957,18 +5959,19 @@ namespace BmwDeepObd
                                 }
                                 else
                                 {
-                                    description = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                    title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
                                 }
                             }
 
-                            if (string.IsNullOrEmpty(description))
+                            if (string.IsNullOrEmpty(title))
                             {
                                 ecuInfo.Description = GetEcuComment(_ediabas.ResultSets);
                             }
                             else
                             {
-                                ecuInfo.Description = description;
-                                ecuInfo.DescriptionTrans = description;
+                                ecuInfo.PageName = title;
+                                ecuInfo.Description = title;
+                                ecuInfo.DescriptionTrans = title;
                             }
                         }
 
