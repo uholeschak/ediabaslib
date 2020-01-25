@@ -3906,7 +3906,7 @@ namespace BmwDeepObd
                                 case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator:
                                 {
                                     XmlToolEcuActivity.JobInfo jobInfo = new XmlToolEcuActivity.JobInfo(ecuFixedFuncStruct.Id);
-                                    string displayName = ecuFixedFuncStruct.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                    string displayName = ecuFixedFuncStruct.Title?.GetTitle(language);
                                     if (!string.IsNullOrWhiteSpace(displayName))
                                     {
                                         jobInfo.DisplayName = displayName;
@@ -4545,7 +4545,10 @@ namespace BmwDeepObd
 
             if (ecuInfo.IgnoreXmlFile)
             {
-                ecuInfo.PageName = ecuInfo.EcuName;
+                if (string.IsNullOrWhiteSpace(ecuInfo.PageName))
+                {
+                    ecuInfo.PageName = ecuInfo.EcuName;
+                }
             }
             else
             {
