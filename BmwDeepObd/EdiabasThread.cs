@@ -121,6 +121,19 @@ namespace BmwDeepObd
             internal List<BroadcastItem> ObdData;
         }
 
+        private class EnvCondDetailInfo
+        {
+            public EnvCondDetailInfo()
+            {
+                SbDetail = new StringBuilder();
+                Index = null;
+            }
+
+            public StringBuilder SbDetail { get; }
+
+            public int? Index { get; set; }
+        }
+
         public delegate void DataUpdatedEventHandler(object sender, EventArgs e);
         public event DataUpdatedEventHandler DataUpdated;
         public delegate void PageChangedEventHandler(object sender, EventArgs e);
@@ -1843,10 +1856,14 @@ namespace BmwDeepObd
 
             foreach (DictionaryEntry detailEntry in detailDict)
             {
-                if (detailEntry.Value is StringBuilder sbDetail && sbDetail.Length > 0)
+                if (detailEntry.Value is EnvCondDetailInfo envCondDetailInfo && envCondDetailInfo.SbDetail.Length > 0)
                 {
                     sbResult.Append("\r\n- ");
-                    sbResult.Append(sbDetail.ToString());
+                    if (envCondDetailInfo.Index.HasValue)
+                    {
+                        sbResult.Append(string.Format(CultureInfo.InvariantCulture, "({0}.) ", envCondDetailInfo.Index + 1));
+                    }
+                    sbResult.Append(envCondDetailInfo.SbDetail.ToString());
                 }
             }
 
@@ -1999,6 +2016,21 @@ namespace BmwDeepObd
                 }
             }
 
+            foreach (KeyValuePair<string, int> envCountPair in envCountDict)
+            {
+                if (envCountPair.Value > 0)
+                {
+                    for (int index = 0; index <= envCountPair.Value; index++)
+                    {
+                        string detailKey = envCountPair.Key + "_" + index.ToString(CultureInfo.InvariantCulture);
+                        if (detailDict[detailKey] is EnvCondDetailInfo envCondDetailInfo)
+                        {
+                            envCondDetailInfo.Index = index;
+                        }
+                    }
+                }
+            }
+
             return true;
         }
 
@@ -2021,20 +2053,20 @@ namespace BmwDeepObd
             envCountDict[key] = envIndex;
 
             string detailKey = key + "_" + envIndex.ToString(CultureInfo.InvariantCulture);
-            StringBuilder sbDetail = detailDict[detailKey] as StringBuilder;
-            if (sbDetail == null)
+            EnvCondDetailInfo envCondDetailInfo = detailDict[detailKey] as EnvCondDetailInfo;
+            if (envCondDetailInfo == null)
             {
-                sbDetail = new StringBuilder();
-                detailDict.Add(detailKey, sbDetail);
-                sbDetail.Append(name);
-                sbDetail.Append(": ");
+                envCondDetailInfo = new EnvCondDetailInfo();
+                detailDict.Add(detailKey, envCondDetailInfo);
+                envCondDetailInfo.SbDetail.Append(name);
+                envCondDetailInfo.SbDetail.Append(": ");
             }
             else
             {
-                sbDetail.Append(" | ");
+                envCondDetailInfo.SbDetail.Append(" | ");
             }
 
-            sbDetail.Append(value);
+            envCondDetailInfo.SbDetail.Append(value);
         }
 
         public static EcuFunctionStructs.EcuResultStateValue MatchEcuResultStateValue(List<EcuFunctionStructs.EcuResultStateValue> ecuResultStateValueList, EdiabasNet.ResultData resultData)
