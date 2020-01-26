@@ -1991,7 +1991,7 @@ namespace BmwDeepObd
                             if (!string.IsNullOrWhiteSpace(envName))
                             {
                                 envName = envName.Trim();
-                                string envVal = EdiabasThread.ConvertEcuEnvCondResultValue(envCondLabel, resultDataVal, out double? _) ?? string.Empty;
+                                string envVal = ConvertEcuEnvCondResultValue(envCondLabel, resultDataVal, out double? _) ?? string.Empty;
                                 if (!string.IsNullOrWhiteSpace(envVal))
                                 {
                                     envVal = envVal.Trim();

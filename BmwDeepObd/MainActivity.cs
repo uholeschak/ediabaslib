@@ -2173,7 +2173,7 @@ namespace BmwDeepObd
                                         string title = ecuVariant.Title?.GetTitle(language);
                                         if (!string.IsNullOrEmpty(title))
                                         {
-                                            ecuTitle = title;
+                                            ecuTitle += " (" + title + ")";
                                         }
                                     }
                                 }
