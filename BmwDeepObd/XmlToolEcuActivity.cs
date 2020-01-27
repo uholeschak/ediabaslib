@@ -147,6 +147,8 @@ namespace BmwDeepObd
                     return 0;
                 }
 
+                string name1 = x.Name;
+                string name2 = y.Name;
                 if (x.EcuFixedFuncStruct != null && y.EcuFixedFuncStruct == null)
                 {
                     return -1;
@@ -157,8 +159,14 @@ namespace BmwDeepObd
                     return 1;
                 }
 
+                if (x.EcuFixedFuncStruct != null && y.EcuFixedFuncStruct != null)
+                {
+                    name1 = x.DisplayName;
+                    name2 = y.DisplayName;
+                }
+
                 // ReSharper disable once StringCompareToIsCultureSpecific
-                return x.Name.CompareTo(y.Name);
+                return name1.CompareTo(name2);
             }
         }
 
