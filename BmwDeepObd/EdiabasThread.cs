@@ -1906,6 +1906,10 @@ namespace BmwDeepObd
                 }
 
                 string kmText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
+                if (string.IsNullOrEmpty(kmText))
+                {
+                    kmText = GetEnvCondKmLast(errorDetail);
+                }
                 if (kmText.Length > 0)
                 {
                     AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_km), "F_UW_KM", kmText + " km");
@@ -1923,8 +1927,18 @@ namespace BmwDeepObd
                 foreach (Tuple<string, string, int?> envCondResult in ErrorEnvCondResultList)
                 {
                     string envCondName = envCondResult.Item1;
+                    string envValText = null;
                     bool valueFound = errorDetail.TryGetValue(envCondName.ToUpperInvariant(), out EdiabasNet.ResultData resultDataVal);
-                    if (valueFound)
+                    if (!valueFound && string.Compare(envCondName, "F_UW_KM", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        string kmText = GetEnvCondKmLast(errorDetail);
+                        if (!string.IsNullOrEmpty(kmText))
+                        {
+                            envValText = kmText;
+                        }
+                    }
+
+                    if (valueFound || !string.IsNullOrEmpty(envValText))
                     {
                         EcuFunctionStructs.EcuEnvCondLabel envCondLabel = ActivityCommon.EcuFunctionReader.GetEnvCondLabelMatchList(envCondLabelList, envCondName).LastOrDefault();
                         if (envCondLabel != null)
@@ -1933,7 +1947,16 @@ namespace BmwDeepObd
                             if (!string.IsNullOrWhiteSpace(envName))
                             {
                                 envName = envName.Trim();
-                                string envVal = ConvertEcuEnvCondResultValue(envCondLabel, resultDataVal, out double? _) ?? string.Empty;
+                                string envVal;
+                                if (!string.IsNullOrEmpty(envValText))
+                                {
+                                    envVal = envValText;
+                                }
+                                else
+                                {
+                                    envVal = ConvertEcuEnvCondResultValue(envCondLabel, resultDataVal, out double? _) ?? string.Empty;
+                                }
+
                                 if (envCondResult.Item3.HasValue)
                                 {
                                     if (envVal.Length < envCondResult.Item3.Value)
@@ -2032,6 +2055,21 @@ namespace BmwDeepObd
             }
 
             return true;
+        }
+
+        public static string GetEnvCondKmLast(Dictionary<string, EdiabasNet.ResultData> errorDetail)
+        {
+            string kmLastText = ActivityMain.FormatResultString(errorDetail, "F_KM_LAST", "{0}");
+            if (!string.IsNullOrEmpty(kmLastText))
+            {
+                string[] kmArrary = kmLastText.Split(' ');
+                if (kmArrary.Length > 0)
+                {
+                    return kmArrary[0];
+                }
+            }
+
+            return string.Empty;
         }
 
         public static void AddEnvCondErrorDetail(OrderedDictionary detailDict, Dictionary<string, int> envCountDict, string name, string key, string value)
