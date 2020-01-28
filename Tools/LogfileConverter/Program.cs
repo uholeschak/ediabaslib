@@ -13,6 +13,7 @@ namespace LogfileConverter
         private static bool _responseFile;
         private static bool _cFormat;
         private static bool _ds2Mode;
+        private static bool _kwp2000sMode;
         private static bool _edicCanMode;
         private static bool _edicCanIsoTpMode;
         private static int _edicCanAddr;
@@ -150,6 +151,7 @@ namespace LogfileConverter
         private static void ConvertPortLogFile(string inputFile, StreamWriter streamWriter)
         {
             _ds2Mode = false;
+            _kwp2000sMode = false;
             _edicCanMode = false;
             _edicCanIsoTpMode = false;
             using (StreamReader streamReader = new StreamReader(inputFile))
@@ -253,6 +255,7 @@ namespace LogfileConverter
         private static void ConvertTraceFile(string inputFile, StreamWriter streamWriter)
         {
             _ds2Mode = false;
+            _kwp2000sMode = false;
             _edicCanMode = false;
             _edicCanIsoTpMode = false;
             using (StreamReader streamReader = new StreamReader(inputFile))
@@ -403,11 +406,10 @@ namespace LogfileConverter
                                     }
                                     else
                                     {
-                                        List<byte> lineConv = ConvertDs2Telegram(lineValues);
+                                        List<byte> lineConv = ConvertBmwTelegram(lineValues);
                                         if (lineConv != null)
                                         {
                                             lineValues = lineConv;
-                                            _ds2Mode = true;
                                         }
                                     }
 
@@ -427,19 +429,17 @@ namespace LogfileConverter
                                             if (writeString.Length > 0 && readString.Length > 0)
                                             {
                                                 List<byte> writeValues = NumberString2List(writeString);
-                                                List<byte> writeConv = ConvertDs2Telegram(writeValues);
+                                                List<byte> writeConv = ConvertBmwTelegram(writeValues);
                                                 if (writeConv != null)
                                                 {
                                                     writeValues = writeConv;
-                                                    _ds2Mode = true;
                                                 }
 
                                                 List<byte> readValues = NumberString2List(readString);
-                                                List<byte> readConv = ConvertDs2Telegram(readValues);
+                                                List<byte> readConv = ConvertBmwTelegram(readValues);
                                                 if (readConv != null)
                                                 {
                                                     readValues = readConv;
-                                                    _ds2Mode = true;
                                                 }
 
                                                 if (ValidResponse(writeValues, readValues))
@@ -543,19 +543,17 @@ namespace LogfileConverter
                     if (writeString.Length > 0 && readString.Length > 0)
                     {
                         List<byte> writeValues = NumberString2List(writeString);
-                        List<byte> writeConv = ConvertDs2Telegram(writeValues);
+                        List<byte> writeConv = ConvertBmwTelegram(writeValues);
                         if (writeConv != null)
                         {
                             writeValues = writeConv;
-                            _ds2Mode = true;
                         }
 
                         List<byte> readValues = NumberString2List(readString);
-                        List<byte> readConv = ConvertDs2Telegram(readValues);
+                        List<byte> readConv = ConvertBmwTelegram(readValues);
                         if (readConv != null)
                         {
                             readValues = readConv;
-                            _ds2Mode = true;
                         }
 
                         if (ValidResponse(writeValues, readValues))
@@ -575,6 +573,7 @@ namespace LogfileConverter
         private static void ConvertIfhlogFile(string inputFile, StreamWriter streamWriter)
         {
             _ds2Mode = false;
+            _kwp2000sMode = false;
             _edicCanMode = false;
             _edicCanIsoTpMode = false;
             using (StreamReader streamReader = new StreamReader(inputFile))
@@ -867,11 +866,10 @@ namespace LogfileConverter
                 if (readString.Length > 0)
                 {
                     List<byte> lineValues = NumberString2List(readString);
-                    List<byte> lineConv = ConvertDs2Telegram(lineValues);
+                    List<byte> lineConv = ConvertBmwTelegram(lineValues);
                     if (lineConv != null)
                     {
                         lineValues = lineConv;
-                        _ds2Mode = true;
                     }
 
                     bool valid = ChecksumValid(lineValues);
@@ -955,6 +953,80 @@ namespace LogfileConverter
                 sum ^= data[i + offset];
             }
             return sum;
+        }
+
+        private static bool IsKwp2000sTelegram(List<byte> telegram)
+        {
+            if (telegram.Count < 5)
+            {
+                return false;
+            }
+
+            if (telegram[0] != 0xB8)
+            {
+                return false;
+            }
+
+            if (telegram[3] + 5 != telegram.Count)
+            {
+                return false;
+            }
+
+            if (CalcChecksumXor(telegram, 0, telegram.Count) != 0x00)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static List<byte> ConvertBmwTelegram(List<byte> telegram)
+        {
+            List<byte> resultDs2 = ConvertDs2Telegram(telegram);
+            if (resultDs2 != null)
+            {
+                _ds2Mode = true;
+                return resultDs2;
+            }
+
+            List<byte> resultKwp2000s = ConvertKwp2000sTelegram(telegram);
+            if (resultKwp2000s != null)
+            {
+                _kwp2000sMode = true;
+                return resultKwp2000s;
+            }
+
+            return null;
+        }
+
+        private static List<byte> ConvertKwp2000sTelegram(List<byte> telegram)
+        {
+            if (!IsKwp2000sTelegram(telegram))
+            {
+                return null;
+            }
+
+            int dataLength = telegram[3];
+            List<byte> result = new List<byte>();
+            if (dataLength > 0x3F)
+            {
+                result.Add(0x80);
+                result.Add(telegram[1]);
+                result.Add(telegram[2]);
+                result.Add((byte)dataLength);
+            }
+            else
+            {
+                result.Add((byte)(dataLength | 0x80));    // header
+                result.Add(telegram[1]);
+                result.Add(telegram[2]);
+            }
+
+            result.AddRange(telegram.GetRange(4, dataLength));
+            byte checkSum = CalcChecksumBmwFast(result, 0, result.Count);
+            result.Add(checkSum);
+
+            return result;
         }
 
         private static bool IsDs2Telegram(List<byte> telegram)
@@ -1200,9 +1272,9 @@ namespace LogfileConverter
 
             List<byte> values = NumberString2List(numberString);
 
-            if (_ds2Mode)
+            if (_ds2Mode || _kwp2000sMode)
             {
-                List<byte> valuesConv = ConvertDs2Telegram(values);
+                List<byte> valuesConv = ConvertBmwTelegram(values);
                 if (valuesConv != null)
                 {
                     values = valuesConv;
