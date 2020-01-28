@@ -121,6 +121,25 @@ namespace BmwDeepObd
             internal List<BroadcastItem> ObdData;
         }
 
+        private class EnvCondResultInfo
+        {
+            public EnvCondResultInfo(string result, string unit = null, int? resourceId = null, int? minLength = null)
+            {
+                Result = result;
+                Unit = unit;
+                ResourceId = resourceId;
+                MinLength = minLength;
+            }
+
+            public string Result { get; }
+
+            public string Unit { get; }
+
+            public int? ResourceId { get; }
+
+            public int? MinLength { get; }
+        }
+
         private class EnvCondDetailInfo
         {
             public EnvCondDetailInfo()
@@ -235,18 +254,18 @@ namespace BmwDeepObd
             new Tuple<string, bool>("F_WARNUNG_NR", true),
         };
 
-        public static readonly Tuple<string, string, int?>[] ErrorEnvCondResultList =
+        private static readonly EnvCondResultInfo[] ErrorEnvCondResultList =
         {
-            new Tuple<string, string, int?>("F_HFK", null, null),
-            new Tuple<string, string, int?>("F_PCODE_STRING", null, 4),
-            new Tuple<string, string, int?>("F_HLZ", null, null),
-            new Tuple<string, string, int?>("F_LZ", null, null),
-            new Tuple<string, string, int?>("F_SAE_CODE_STRING", null, 4),
-            new Tuple<string, string, int?>("F_PCODE", null, null),
-            new Tuple<string, string, int?>("F_CODE", null, null),
-            new Tuple<string, string, int?>("F_EREIGNIS_DTC", null, null),
-            new Tuple<string, string, int?>("F_UW_KM", "km", null),
-            new Tuple<string, string, int?>("F_UW_ZEIT", "s", null),
+            new EnvCondResultInfo("F_HFK", null, Resource.String.error_env_frequency),
+            new EnvCondResultInfo("F_PCODE_STRING", null, null, 4),
+            new EnvCondResultInfo("F_HLZ"),
+            new EnvCondResultInfo("F_LZ", null, Resource.String.error_env_log_count),
+            new EnvCondResultInfo("F_SAE_CODE_STRING", null, null, 4),
+            new EnvCondResultInfo("F_PCODE", null, Resource.String.error_env_pcode),
+            new EnvCondResultInfo("F_CODE"),
+            new EnvCondResultInfo("F_EREIGNIS_DTC"),
+            new EnvCondResultInfo("F_UW_KM", "km", Resource.String.error_env_km),
+            new EnvCondResultInfo("F_UW_ZEIT", "s", Resource.String.error_env_time),
         };
 
         private readonly string _resourceDatalogDate;
@@ -1570,6 +1589,12 @@ namespace BmwDeepObd
         {
             resultValue = null;
             string resultString = null;
+
+            if (envCondLabel == null)
+            {
+                return string.Empty;
+            }
+
             if (envCondLabel.EcuResultStateValueList != null && envCondLabel.EcuResultStateValueList.Count > 0)
             {
                 EcuFunctionStructs.EcuResultStateValue ecuResultStateValue = MatchEcuResultStateValue(envCondLabel.EcuResultStateValueList, resultData);
@@ -1924,9 +1949,9 @@ namespace BmwDeepObd
             else
             {
                 int envCondIndex = 0;
-                foreach (Tuple<string, string, int?> envCondResult in ErrorEnvCondResultList)
+                foreach (EnvCondResultInfo envCondResult in ErrorEnvCondResultList)
                 {
-                    string envCondName = envCondResult.Item1;
+                    string envCondName = envCondResult.Result;
                     string envValText = null;
                     bool valueFound = errorDetail.TryGetValue(envCondName.ToUpperInvariant(), out EdiabasNet.ResultData resultDataVal);
                     if (!valueFound && string.Compare(envCondName, "F_UW_KM", StringComparison.OrdinalIgnoreCase) == 0)
@@ -1940,50 +1965,63 @@ namespace BmwDeepObd
 
                     if (valueFound || !string.IsNullOrEmpty(envValText))
                     {
+                        string envName = null;
                         EcuFunctionStructs.EcuEnvCondLabel envCondLabel = ActivityCommon.EcuFunctionReader.GetEnvCondLabelMatchList(envCondLabelList, envCondName).LastOrDefault();
                         if (envCondLabel != null)
                         {
-                            string envName = envCondLabel.Title?.GetTitle(language);
-                            if (!string.IsNullOrWhiteSpace(envName))
+                            envName = envCondLabel.Title?.GetTitle(language);
+                        }
+
+                        if (string.IsNullOrWhiteSpace(envName))
+                        {
+                            if (envCondResult.ResourceId.HasValue)
                             {
-                                envName = envName.Trim();
-                                string envVal;
-                                if (!string.IsNullOrEmpty(envValText))
-                                {
-                                    envVal = envValText;
-                                }
-                                else
+                                envName = context.GetString(envCondResult.ResourceId.Value);
+                            }
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(envName))
+                        {
+                            envName = envName.Trim();
+                            string envVal = string.Empty;
+                            if (!string.IsNullOrEmpty(envValText))
+                            {
+                                envVal = envValText;
+                            }
+                            else
+                            {
+                                if (envCondLabel != null)
                                 {
                                     envVal = ConvertEcuEnvCondResultValue(envCondLabel, resultDataVal, out double? _) ?? string.Empty;
                                 }
+                            }
 
-                                if (envCondResult.Item3.HasValue)
+                            if (envCondResult.MinLength.HasValue)
+                            {
+                                if (envVal.Length < envCondResult.MinLength.Value)
                                 {
-                                    if (envVal.Length < envCondResult.Item3.Value)
-                                    {
-                                        envVal = string.Empty;
-                                    }
+                                    envVal = string.Empty;
+                                }
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(envVal))
+                            {
+                                envVal = envVal.Trim();
+                                string envUnit = envCondResult.Unit;
+                                if (!string.IsNullOrWhiteSpace(envCondLabel?.Unit))
+                                {
+                                    envUnit = envCondLabel.Unit;
                                 }
 
-                                if (!string.IsNullOrWhiteSpace(envVal))
+                                StringBuilder sbValue = new StringBuilder();
+                                sbValue.Append(envVal);
+                                if (!string.IsNullOrWhiteSpace(envUnit))
                                 {
-                                    envVal = envVal.Trim();
-                                    string envUnit = envCondResult.Item2;
-                                    if (!string.IsNullOrWhiteSpace(envCondLabel.Unit))
-                                    {
-                                        envUnit = envCondLabel.Unit;
-                                    }
-
-                                    StringBuilder sbValue = new StringBuilder();
-                                    sbValue.Append(envVal);
-                                    if (!string.IsNullOrWhiteSpace(envUnit))
-                                    {
-                                        sbValue.Append(" ");
-                                        sbValue.Append(envUnit.Trim());
-                                    }
-
-                                    AddEnvCondErrorDetail(detailDict, envCountDict, envName, "#" + (envCondIndex + 1).ToString(CultureInfo.InvariantCulture), sbValue.ToString());
+                                    sbValue.Append(" ");
+                                    sbValue.Append(envUnit.Trim());
                                 }
+
+                                AddEnvCondErrorDetail(detailDict, envCountDict, envName, "#" + (envCondIndex + 1).ToString(CultureInfo.InvariantCulture), sbValue.ToString());
                             }
                         }
                     }
