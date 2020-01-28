@@ -1884,7 +1884,7 @@ namespace BmwDeepObd
                 if (detailEntry.Value is EnvCondDetailInfo envCondDetailInfo && envCondDetailInfo.SbDetail.Length > 0)
                 {
                     sbResult.Append("\r\n- ");
-                    if (envCondDetailInfo.Index.HasValue)
+                    if (envCondDetailInfo.Index.HasValue && envCondDetailInfo.Index.Value > 0)
                     {
                         sbResult.Append(string.Format(CultureInfo.InvariantCulture, "({0}.) ", envCondDetailInfo.Index + 1));
                     }
