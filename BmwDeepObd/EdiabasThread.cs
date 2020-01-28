@@ -961,21 +961,24 @@ namespace BmwDeepObd
                                     {
                                         if (resultData.OpData is Int64)
                                         {
-                                            // read details
-                                            Ediabas.ArgString = string.Format("0x{0:X02}", (Int64) resultData.OpData);
-                                            Ediabas.ArgBinaryStd = null;
-                                            Ediabas.ResultsRequests = string.Empty;
+                                            bool details = false;
+                                            if (Ediabas.IsJobExisting("FS_LESEN_DETAIL"))
+                                            {
+                                                // read details
+                                                Ediabas.ArgString = string.Format("0x{0:X02}", (Int64)resultData.OpData);
+                                                Ediabas.ArgBinaryStd = null;
+                                                Ediabas.ResultsRequests = string.Empty;
 
-                                            bool details;
-                                            try
-                                            {
-                                                Ediabas.ExecuteJob("FS_LESEN_DETAIL");
-                                                details = true;
-                                            }
-                                            catch (Exception)
-                                            {
-                                                // no details
-                                                details = false;
+                                                try
+                                                {
+                                                    Ediabas.ExecuteJob("FS_LESEN_DETAIL");
+                                                    details = true;
+                                                }
+                                                catch (Exception)
+                                                {
+                                                    // no details
+                                                    details = false;
+                                                }
                                             }
 
                                             if (details)
