@@ -42,6 +42,8 @@ This page allows to change some global app settings.
   * _Show over voltage warning_: Show adapter overvoltage warning for adapter protection.
 * _VAG mode_ options:
   * _Use old VAG mode_: Use the old VAG mode instead of the new implementation. This is only recommended only of you want to use existing configuration files.
+* _BMW database_ options:
+  * _Use BMW database_: Use BMW database for job and fault interpretation and translation. When this option is disabled commication startup is faster.
 * _ECU detection_ options:
   * _For BMW vehicles with DS2 protocol always scan all ECUs (slow)_: If the vehicle has been retrofitted the car database may be incorrect and not all ECUs may be detected.  
   This option allows to ignore the car database and all ECUs are scanned, which is very time consuming.
