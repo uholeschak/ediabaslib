@@ -106,6 +106,7 @@ Within the `jobs` node multiple `job` nodes specify the EDIABAS jobs to execute.
 * `name`: Name of the job to execute
 * `id`: Id for job result identification. If this element is specified the result name will be: `[id]#[data set index]#[result]`, otherwise it's: `[name]#[result]`.
 * `sgbd`: Name of the SGBD file to load. This overrides the SGBD file from the `jobs` node. It's recommended to combine this with the id attribute.
+* `fixed_func_struct_id`: Fixed function structure id from the BMW database. This entry is only used by the configuration generator.
 * `args_first`: Allows to specify semicolon separated job arguments for the first job call.
 * `args`: Allows to specify semicolon separated job arguments. If this is the first call and `args_first` is present `args_first` will be used instead.
 * `result`: Allows to specify the required results. If omitted, all results will be generated, which may require more processing time.
