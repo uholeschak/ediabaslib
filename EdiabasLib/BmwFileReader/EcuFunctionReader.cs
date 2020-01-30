@@ -247,10 +247,10 @@ namespace BmwFileReader
 
                     if (_ecuFaultData.EcuEnvCondLabelList != null)
                     {
-                        foreach (EcuFunctionStructs.EcuEnvCondLabel ecuEnvCondLabelLabel in _ecuFaultData.EcuEnvCondLabelList)
+                        foreach (EcuFunctionStructs.EcuEnvCondLabel ecuEnvCondLabel in _ecuFaultData.EcuEnvCondLabelList)
                         {
-                            string key = ecuEnvCondLabelLabel.Id.ToLowerInvariant();
-                            _ecuEnvCondLabelDict.TryAdd(key, ecuEnvCondLabelLabel);
+                            string key = ecuEnvCondLabel.Id.ToLowerInvariant();
+                            _ecuEnvCondLabelDict.TryAdd(key, ecuEnvCondLabel);
                         }
                     }
                 }
