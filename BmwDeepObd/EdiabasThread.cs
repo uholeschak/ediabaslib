@@ -1874,6 +1874,42 @@ namespace BmwDeepObd
                 }
             }
 
+#if false   // test code for result states
+            if (envCondLabelList != null)
+            {
+                int iTextIndex = 0;
+                Dictionary<string, int> envCountTestDict = new Dictionary<string, int>();
+                foreach (EcuFunctionStructs.EcuEnvCondLabel envCondLabel in envCondLabelList)
+                {
+                    string language = ActivityCommon.GetCurrentLanguage();
+                    if (envCondLabel.EcuResultStateValueList != null && envCondLabel.EcuResultStateValueList.Count > 0)
+                    {
+                        string envName = envCondLabel.Title?.GetTitle(language);
+                        if (!string.IsNullOrWhiteSpace(envName))
+                        {
+                            envName = envName.Trim();
+                            try
+                            {
+                                Int64 testVal = Convert.ToInt64(envCondLabel.EcuResultStateValueList[^1].StateValue, CultureInfo.InvariantCulture);
+                                EdiabasNet.ResultData testDataVal = new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeI, "test", testVal);
+                                string envVal = ConvertEcuEnvCondResultValue(envCondLabel, testDataVal, out double? _) ?? string.Empty;
+                                if (!string.IsNullOrWhiteSpace(envVal))
+                                {
+                                    AddEnvCondErrorDetail(detailDict, envCountTestDict, envName, "@T" + iTextIndex.ToString(CultureInfo.InvariantCulture), envVal);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+                    }
+
+                    iTextIndex++;
+                }
+            }
+#endif
+
             if (detailDict.Count == 0)
             {
                 return null;
