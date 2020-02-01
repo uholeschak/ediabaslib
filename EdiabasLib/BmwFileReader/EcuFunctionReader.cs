@@ -192,6 +192,30 @@ namespace BmwFileReader
             return ecuEnvCondLabelList;
         }
 
+        // for tesing result states only!
+        public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelListWithResultStates(EcuFunctionStructs.EcuVariant ecuVariant)
+        {
+            List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList = new List<EcuFunctionStructs.EcuEnvCondLabel>();
+            foreach (KeyValuePair<Int64, EcuFunctionStructs.EcuFaultCode> ecuFaultCodePair in ecuVariant.EcuFaultCodeDict)
+            {
+                if (ecuFaultCodePair.Value.EcuEnvCondLabelIdList != null)
+                {
+                    foreach (string ecuEnvCondId in ecuFaultCodePair.Value.EcuEnvCondLabelIdList)
+                    {
+                        if (_ecuEnvCondLabelDict.TryGetValue(ecuEnvCondId.ToLowerInvariant(), out EcuFunctionStructs.EcuEnvCondLabel ecuEnvCondLabel))
+                        {
+                            if (ecuEnvCondLabel.EcuResultStateValueList != null && ecuEnvCondLabel.EcuResultStateValueList.Count > 0)
+                            {
+                                ecuEnvCondLabelList.Add(ecuEnvCondLabel);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return ecuEnvCondLabelList;
+        }
+
         public EcuFunctionStructs.EcuVariant GetEcuVariantCached(string ecuName)
         {
             try
