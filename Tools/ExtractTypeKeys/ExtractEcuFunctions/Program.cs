@@ -828,7 +828,7 @@ namespace ExtractEcuFunctions
                     while (reader.Read())
                     {
                         ecuResultStateValueList.Add(new EcuFunctionStructs.EcuResultStateValue(reader["ID"].ToString(),
-                            GetTranslation(reader, language),
+                            GetTranslation(reader, "TITLE", language),
                             reader["STATEVALUE"].ToString(),
                             reader["VALIDFROM"].ToString(),
                             reader["VALIDTO"].ToString(),
