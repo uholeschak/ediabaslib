@@ -625,6 +625,14 @@ namespace ExtractEcuFunctions
                 }
             }
 
+            foreach (EcuFunctionStructs.EcuEnvCondLabel ecuEnvCondLabel in ecuEnvCondLabelList)
+            {
+                if (string.Compare(ecuEnvCondLabel.NodeClass, EnvDiscreteNodeClassId, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    ecuEnvCondLabel.EcuResultStateValueList = GetResultStateValueList(mDbConnection, ecuEnvCondLabel.Id);
+                }
+            }
+
             return ecuEnvCondLabelList;
         }
 
