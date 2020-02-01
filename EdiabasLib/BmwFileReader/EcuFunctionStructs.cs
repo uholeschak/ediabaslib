@@ -57,9 +57,9 @@ namespace BmwFileReader
                 return ToString("");
             }
 
-            [XmlArray, DefaultValue(null)] public List<EcuFaultCodeLabel> EcuFaultCodeLabelList { get; set; }
-            [XmlArray, DefaultValue(null)] public List<EcuFaultModeLabel> EcuFaultModeLabelList { get; set; }
-            [XmlArray, DefaultValue(null)] public List<EcuEnvCondLabel> EcuEnvCondLabelList { get; set; }
+            [XmlArray("EFCLL"), DefaultValue(null)] public List<EcuFaultCodeLabel> EcuFaultCodeLabelList { get; set; }
+            [XmlArray("EFMLL"), DefaultValue(null)] public List<EcuFaultModeLabel> EcuFaultModeLabelList { get; set; }
+            [XmlArray("EECLL"), DefaultValue(null)] public List<EcuEnvCondLabel> EcuEnvCondLabelList { get; set; }
         }
 
         [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuFuncStruct)), XmlInclude(typeof(EcuFaultCode))]

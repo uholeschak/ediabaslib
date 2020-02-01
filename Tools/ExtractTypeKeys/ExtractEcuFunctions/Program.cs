@@ -629,7 +629,7 @@ namespace ExtractEcuFunctions
             {
                 if (string.Compare(ecuEnvCondLabel.NodeClass, EnvDiscreteNodeClassId, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    ecuEnvCondLabel.EcuResultStateValueList = GetResultStateValueList(mDbConnection, ecuEnvCondLabel.Id);
+                    ecuEnvCondLabel.EcuResultStateValueList = GetResultStateValueList(mDbConnection, ecuEnvCondLabel.Id, language);
                 }
             }
 
@@ -816,7 +816,7 @@ namespace ExtractEcuFunctions
             return ecuJobList;
         }
 
-        private static List<EcuFunctionStructs.EcuResultStateValue> GetResultStateValueList(SQLiteConnection mDbConnection, string id)
+        private static List<EcuFunctionStructs.EcuResultStateValue> GetResultStateValueList(SQLiteConnection mDbConnection, string id, string language = null)
         {
             List<EcuFunctionStructs.EcuResultStateValue> ecuResultStateValueList = new List<EcuFunctionStructs.EcuResultStateValue>();
             string sql = string.Format(@"SELECT ID, " + SqlTitleItems + ", STATEVALUE, VALIDFROM, VALIDTO, PARENTID " +
@@ -828,7 +828,7 @@ namespace ExtractEcuFunctions
                     while (reader.Read())
                     {
                         ecuResultStateValueList.Add(new EcuFunctionStructs.EcuResultStateValue(reader["ID"].ToString(),
-                            GetTranslation(reader),
+                            GetTranslation(reader, language),
                             reader["STATEVALUE"].ToString(),
                             reader["VALIDFROM"].ToString(),
                             reader["VALIDTO"].ToString(),
