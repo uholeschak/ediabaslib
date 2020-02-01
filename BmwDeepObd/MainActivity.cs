@@ -2411,6 +2411,18 @@ namespace BmwDeepObd
                                         List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList = null;
                                         if (ecuVariant != null)
                                         {
+#if false   // test code for result states
+                                            List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelResultList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelListWithResultStates(ecuVariant);
+                                            if (envCondLabelResultList != null && envCondLabelResultList.Count > 0)
+                                            {
+                                                string detailTestText = EdiabasThread.ConvertEnvCondErrorDetail(this, errorReport, envCondLabelResultList);
+                                                if (!string.IsNullOrEmpty(detailTestText))
+                                                {
+                                                    srMessage.Append("\r\n");
+                                                    srMessage.Append(detailTestText);
+                                                }
+                                            }
+#endif
                                             Int64 errorCode = GetResultInt64(errorReport.ErrorDict, "F_ORT_NR", out bool found);
                                             if (found)
                                             {
