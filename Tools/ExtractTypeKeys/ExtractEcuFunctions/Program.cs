@@ -876,6 +876,11 @@ namespace ExtractEcuFunctions
             }
 
             ecuVariant.EcuFaultCodeList = GetFaultCodes(mDbConnection, ecuVariant.Id);
+            int faultCodeCount = 0;
+            if (ecuVariant.EcuFaultCodeList != null)
+            {
+                faultCodeCount = ecuVariant.EcuFaultCodeList.Count;
+            }
 
             List<EcuFunctionStructs.RefEcuVariant> refEcuVariantList = new List<EcuFunctionStructs.RefEcuVariant>();
             {
@@ -961,9 +966,9 @@ namespace ExtractEcuFunctions
                 }
             }
 
-            if (fixFuncCount == 0)
+            if (fixFuncCount == 0 && faultCodeCount == 0)
             {
-                outTextWriter?.WriteLine("No ECU fix functions found");
+                outTextWriter?.WriteLine("No ECU fix functions or fault codes found");
                 return null;
             }
 
