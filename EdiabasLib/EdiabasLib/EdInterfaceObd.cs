@@ -418,6 +418,7 @@ namespace EdiabasLib
                     {
                         if (concept == disabledConcept)
                         {
+                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Concept {0:X04} disabled", disabledConcept);
                             EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
                             return;
                         }
