@@ -119,6 +119,7 @@ namespace EdiabasLib
         protected int UdsDtcStatusOverrideProtected = -1;
         protected int UdsEcuCanIdOverrideProtected = -1;
         protected int UdsTesterCanIdOverrideProtected = -1;
+        protected List<int> DisabledConceptsListProtected = null;
         protected double DtrTimeCorrCom = 0.3;
         protected double DtrTimeCorrFtdi = 0.3;
         protected int AddRecTimeout = 20;
@@ -286,6 +287,19 @@ namespace EdiabasLib
                     UdsTesterCanIdOverride = (int)EdiabasNet.StringToValue(prop);
                 }
 
+                prop = EdiabasProtected.GetConfigProperty("ObdDisabledConcepts");
+                if (prop != null)
+                {
+                    string[] disableList = prop.Split(':');
+                    List<int> disabledConceptsList = new List<int>();
+                    foreach (string disableValue in disableList)
+                    {
+                        disabledConceptsList.Add((int)EdiabasNet.StringToValue(disableValue));
+                    }
+
+                    DisabledConceptsList = disabledConceptsList;
+                }
+
                 prop = EdiabasProtected.GetConfigProperty("ObdDtrTimeCorrCom");
                 if (prop != null)
                 {
@@ -397,6 +411,19 @@ namespace EdiabasLib
                 bool stateDtr = false;
                 bool stateRts = false;
                 uint concept = CommParameterProtected[0];
+
+                if (DisabledConceptsList != null)
+                {
+                    foreach (int disabledConcept in DisabledConceptsList)
+                    {
+                        if (concept == disabledConcept)
+                        {
+                            EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
+                            return;
+                        }
+                    }
+                }
+
                 switch (concept)
                 {
                     case 0x0000:    // Raw (EDIC)
@@ -1828,6 +1855,18 @@ namespace EdiabasLib
             set
             {
                 UdsTesterCanIdOverrideProtected = value;
+            }
+        }
+
+        public List<int> DisabledConceptsList
+        {
+            get
+            {
+                return DisabledConceptsListProtected;
+            }
+            set
+            {
+                DisabledConceptsListProtected = value;
             }
         }
 
