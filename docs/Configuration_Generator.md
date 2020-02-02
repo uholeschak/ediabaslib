@@ -33,7 +33,8 @@ The page has the following properties:
 * _ECU name_: With this field the name of ECU on the _Errors_ page could be changed.
 * _Display type_: With his check box a graphical (gauge) display for the results could be enabled. The result will be only displayed if _Graphical design_ is set to value other than hidden.
 * _Font size_: The font size of the displayed data on the main page could be specifed in 3 steps (_Small_, _Medium_ and _Large_).
-* _Job list_: Here all available jobs are listed. Only if the job has a check mark it will be executed later. In the area _Comments for job_ the comments for the selected job will be shown.
+* _Job list_: Here all available jobs are listed. Only if the job has a check mark it will be executed later. In the area _Comments for job_ the comments for the selected job will be shown.  
+ If the BMW database is used, only the known jobs are listed by default. Activating the option _show all jobs_ will display all jobs.
 * _Job result_: Here one ore more job results could be selected (with a check mark) that will be displayed later on the page) For the currently selected result the data type and comment will be shown below.
 * _Display text_: This is the text that will be displayed on the page beside the job result.
 * _Display order_: Here the index of the display order could be specified. The default value is 0. If two values are identical, the original order is retained.
@@ -48,6 +49,14 @@ The page has the following properties:
 * _Output format_: Here the output format of the result data could be modified. The format specification is in the form of [Ediabas result types and formats](EDIABAS_result_types_and_formats.md). Depending on the job data type more or less result types will be listed.
 * _Read_: This button executes the selected job and displays the result in the specified format next to the button.
 * _Search results_: If the result list for a job becomes too large, the results could be filtered with the search widget of the title bar.
+* _Additional functions_: In this area some special functions are display if available.
+  * _Ediabas tool_: This button swithes directly to the [EDIABAS tool](EdiabasTool.md) with the current SGBD loaded.
+  * _Actuator functions_: (BMW only) Known actuator functions from the BMW database could be executed directly.
+  * _Coding_: (VAG only) Execute coding funtions.
+  * _Coding 2_: (VAG only) Execute coding 2 funtions.
+  * _Adaption_: (VAG only) Execute adaption funtions.
+  * _Login_: (VAG only) Execute login funtions.
+  * _Security access_: (VAG only) Execute security access funtions.
 
 With the _Save_ button on the main configuration page the configuration will be stored and used as default on the main page.
 Hint: A long click on the ECU list opens a submenu that allows to change the order of the ECU entries in the list.
