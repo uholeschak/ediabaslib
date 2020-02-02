@@ -3472,6 +3472,7 @@ namespace BmwDeepObd
                 edInterfaceObd.UdsDtcStatusOverride = UdsDtcStatusOverride;
                 edInterfaceObd.UdsEcuCanIdOverride = -1;
                 edInterfaceObd.UdsTesterCanIdOverride = -1;
+                edInterfaceObd.DisabledConceptsList = null;
                 if (SelectedInterface == InterfaceType.Ftdi)
                 {
                     edInterfaceObd.ComPort = "FTDI0";
@@ -3521,6 +3522,8 @@ namespace BmwDeepObd
                     edInterfaceObd.UdsEcuCanIdOverride = -1;
                     edInterfaceObd.UdsTesterCanIdOverride = -1;
                 }
+
+                edInterfaceObd.DisabledConceptsList = new List<int> { 0x0002 }; // for testing: disable ISO 9141 (KWP1281)
                 return true;
             }
 
