@@ -49,7 +49,7 @@ The page has the following properties:
 * _Output format_: Here the output format of the result data could be modified. The format specification is in the form of [Ediabas result types and formats](EDIABAS_result_types_and_formats.md). Depending on the job data type more or less result types will be listed.
 * _Read_: This button executes the selected job and displays the result in the specified format next to the button.
 * _Search results_: If the result list for a job becomes too large, the results could be filtered with the search widget of the title bar.
-* _Additional functions_: In this area some special functions are display if available.
+* _Additional functions_: If available in this area some special functions are displayed.
   * _Ediabas tool_: This button swithes directly to the [EDIABAS tool](EdiabasTool.md) with the current SGBD loaded.
   * _Actuator functions_: (BMW only) Known actuator functions from the BMW database could be executed directly.
   * _Coding_: (VAG only) Execute coding funtions.
