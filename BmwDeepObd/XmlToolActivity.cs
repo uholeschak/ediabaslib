@@ -93,6 +93,7 @@ namespace BmwDeepObd
                 Address = address;
                 Description = description;
                 DescriptionTrans = null;
+                DescriptionTransRequired = true;
                 Sgbd = sgbd;
                 Grp = grp;
                 Selected = false;
@@ -208,6 +209,8 @@ namespace BmwDeepObd
             public string Description { get; set; }
 
             public string DescriptionTrans { get; set; }
+
+            public bool DescriptionTransRequired { get; set; }
 
             public string Sgbd { get; set; }
 
@@ -1402,7 +1405,7 @@ namespace BmwDeepObd
                     List<string> stringList = new List<string>();
                     foreach (EcuInfo ecu in _ecuList)
                     {
-                        if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTrans == null)
+                        if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTransRequired && ecu.DescriptionTrans == null)
                         {
                             stringList.Add(ecu.Description);
                         }
@@ -1411,7 +1414,7 @@ namespace BmwDeepObd
                             // ReSharper disable LoopCanBeConvertedToQuery
                             foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
                             {
-                                if (jobInfo.Comments != null && jobInfo.CommentsTrans == null &&
+                                if (jobInfo.Comments != null && jobInfo.CommentsTransRequired && jobInfo.CommentsTrans == null &&
                                     XmlToolEcuActivity.IsValidJob(jobInfo, ecu))
                                 {
                                     foreach (string comment in jobInfo.Comments)
@@ -1426,7 +1429,7 @@ namespace BmwDeepObd
                                 {
                                     foreach (XmlToolEcuActivity.ResultInfo result in jobInfo.Results)
                                     {
-                                        if (result.Comments != null && result.CommentsTrans == null)
+                                        if (result.Comments != null && result.CommentsTransRequired && result.CommentsTrans == null)
                                         {
                                             foreach (string comment in result.Comments)
                                             {
@@ -1463,7 +1466,7 @@ namespace BmwDeepObd
                                     int transIndex = 0;
                                     foreach (EcuInfo ecu in _ecuList)
                                     {
-                                        if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTrans == null)
+                                        if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTransRequired && ecu.DescriptionTrans == null)
                                         {
                                             if (transIndex < transList.Count)
                                             {
@@ -1474,7 +1477,7 @@ namespace BmwDeepObd
                                         {
                                             foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
                                             {
-                                                if (jobInfo.Comments != null && jobInfo.CommentsTrans == null &&
+                                                if (jobInfo.Comments != null && jobInfo.CommentsTransRequired && jobInfo.CommentsTrans == null &&
                                                     XmlToolEcuActivity.IsValidJob(jobInfo, ecu))
                                                 {
                                                     jobInfo.CommentsTrans = new List<string>();
@@ -1493,7 +1496,7 @@ namespace BmwDeepObd
                                                 {
                                                     foreach (XmlToolEcuActivity.ResultInfo result in jobInfo.Results)
                                                     {
-                                                        if (result.Comments != null && result.CommentsTrans == null)
+                                                        if (result.Comments != null && result.CommentsTransRequired && result.CommentsTrans == null)
                                                         {
                                                             result.CommentsTrans = new List<string>();
                                                             foreach (string comment in result.Comments)
@@ -2259,7 +2262,7 @@ namespace BmwDeepObd
                                                         {
                                                             ecuInfo.PageName = title;
                                                             ecuInfo.Description = title;
-                                                            ecuInfo.DescriptionTrans = title;
+                                                            ecuInfo.DescriptionTransRequired = false;
                                                         }
                                                     }
                                                 }
@@ -3155,7 +3158,7 @@ namespace BmwDeepObd
                                     {
                                         ecuInfo.PageName = title;
                                         ecuInfo.Description = title;
-                                        ecuInfo.DescriptionTrans = title;
+                                        ecuInfo.DescriptionTransRequired = false;
                                     }
                                 }
                                 catch (Exception)
@@ -3928,7 +3931,7 @@ namespace BmwDeepObd
                                                 List<string> resultCommentList = new List<string> { comment };
                                                 XmlToolEcuActivity.ResultInfo resultInfo =
                                                     new XmlToolEcuActivity.ResultInfo(resultName, resultTitle, resultType, null, resultCommentList);
-                                                resultInfo.CommentsTrans = resultInfo.Comments;
+                                                resultInfo.CommentsTransRequired = false;
                                                 resultInfo.EcuJob = ecuJob;
                                                 resultInfo.EcuJobResult = ecuJobResult;
                                                 jobInfo.Results.Add(resultInfo);
@@ -3937,7 +3940,7 @@ namespace BmwDeepObd
                                         }
                                     }
 
-                                    jobInfo.CommentsTrans = jobInfo.Comments;
+                                    jobInfo.CommentsTransRequired = false;
                                     jobList.Add(jobInfo);
                                     break;
                                 }
@@ -5974,7 +5977,7 @@ namespace BmwDeepObd
                             {
                                 ecuInfo.PageName = title;
                                 ecuInfo.Description = title;
-                                ecuInfo.DescriptionTrans = title;
+                                ecuInfo.DescriptionTransRequired = false;
                             }
                         }
 
@@ -7982,7 +7985,7 @@ namespace BmwDeepObd
                 if (!string.IsNullOrEmpty(item.Description))
                 {
                     stringBuilderName.Append(": ");
-                    stringBuilderName.Append(!string.IsNullOrEmpty(item.DescriptionTrans)
+                    stringBuilderName.Append(item.DescriptionTransRequired && !string.IsNullOrEmpty(item.DescriptionTrans)
                         ? item.DescriptionTrans
                         : item.Description);
                 }
