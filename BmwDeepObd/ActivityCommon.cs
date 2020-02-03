@@ -3523,7 +3523,7 @@ namespace BmwDeepObd
                     edInterfaceObd.UdsTesterCanIdOverride = -1;
                 }
 
-                edInterfaceObd.DisabledConceptsList = new List<int> { 0x0002 }; // for testing: disable ISO 9141 (KWP1281)
+                //edInterfaceObd.DisabledConceptsList = new List<int> { 0x0002 }; // for testing: disable ISO 9141 (KWP1281)
                 return true;
             }
 
