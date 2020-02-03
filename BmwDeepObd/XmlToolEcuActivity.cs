@@ -33,6 +33,8 @@ namespace BmwDeepObd
                 Type = type;
                 Args = args;
                 Comments = comments;
+                CommentsTrans = null;
+                CommentsTransRequired = true;
                 MwTabEntry = mwTabEntry;
                 EcuJob = null;
                 EcuJobResult = null;
@@ -65,6 +67,8 @@ namespace BmwDeepObd
             public EcuFunctionStructs.EcuJobResult EcuJobResult { get; set; }
 
             public List<string> CommentsTrans { get; set; }
+
+            public bool CommentsTransRequired { get; set; }
 
             public bool Selected { get; set; }
 
@@ -115,6 +119,8 @@ namespace BmwDeepObd
                 Name = name;
                 DisplayName = name;
                 Comments = new List<string>();
+                CommentsTrans = null;
+                CommentsTransRequired = true;
                 Results = new List<ResultInfo>();
                 ArgCount = 0;
                 Selected = false;
@@ -128,6 +134,8 @@ namespace BmwDeepObd
             public List<string> Comments { get; set; }
 
             public List<string> CommentsTrans { get; set; }
+
+            public bool CommentsTransRequired { get; set; }
 
             public List<ResultInfo> Results { get; }
 
@@ -1678,7 +1686,8 @@ namespace BmwDeepObd
                 _textViewJobCommentsTitle.Text = string.Format(GetString(Resource.String.xml_tool_ecu_job_comments), _selectedJob.DisplayName);
 
                 StringBuilder stringBuilderComments = new StringBuilder();
-                List<string> commentList = _selectedJob.CommentsTrans ?? _selectedJob.Comments;
+                List<string> commentList = _selectedJob.CommentsTransRequired && _selectedJob.CommentsTrans != null ?
+                    _selectedJob.CommentsTrans : _selectedJob.Comments;
                 if (commentList != null)
                 {
                     foreach (string comment in commentList)
@@ -1787,7 +1796,8 @@ namespace BmwDeepObd
                 stringBuilderComments.Append(GetString(Resource.String.xml_tool_ecu_result_type));
                 stringBuilderComments.Append(": ");
                 stringBuilderComments.Append(_selectedResult.Type);
-                List<string> commentList = _selectedResult.CommentsTrans ?? _selectedResult.Comments;
+                List<string> commentList = _selectedResult.CommentsTransRequired && _selectedResult.CommentsTrans != null ?
+                    _selectedResult.CommentsTrans : _selectedResult.Comments;
                 if (commentList != null)
                 {
                     foreach (string comment in commentList)
@@ -2167,7 +2177,8 @@ namespace BmwDeepObd
                 textJobName.Text = item.DisplayName;
 
                 StringBuilder stringBuilderComments = new StringBuilder();
-                List<string> commentList = item.CommentsTrans ?? item.Comments;
+                List<string> commentList = item.CommentsTransRequired && item.CommentsTrans != null ?
+                    item.CommentsTrans : item.Comments;
                 if (commentList != null)
                 {
                     foreach (string comment in commentList)
@@ -2262,7 +2273,8 @@ namespace BmwDeepObd
                 }
 
                 StringBuilder stringBuilderComments = new StringBuilder();
-                List<string> commentList = item.CommentsTrans ?? item.Comments;
+                List<string> commentList = item.CommentsTransRequired && item.CommentsTrans != null ?
+                    item.CommentsTrans : item.Comments;
                 if (commentList != null)
                 {
                     foreach (string comment in commentList)
