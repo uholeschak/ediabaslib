@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.2.228" package="de.holeschak.bmw_deep_obd" android:installLocation="auto" android:versionCode="269">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.2.229" package="de.holeschak.bmw_deep_obd" android:installLocation="auto" android:versionCode="270">
 	<uses-sdk android:targetSdkVersion="29" android:minSdkVersion="19" />
 	<application android:label="Deep OBD for BMW and VAG" android:icon="@mipmap/ic_launcher" android:theme="@style/MyTheme" android:resizeableActivity="true" android:windowSoftInputMode="stateHidden" android:largeHeap="true"></application>
 	<uses-permission android:name="android.permission.BLUETOOTH" />
