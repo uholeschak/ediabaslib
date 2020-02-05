@@ -22,7 +22,7 @@ namespace BmwDeepObd
         ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                                Android.Content.PM.ConfigChanges.Orientation |
                                Android.Content.PM.ConfigChanges.ScreenSize)]
-    public class BmwActuatorActivity : AppCompatActivity, View.IOnTouchListener
+    public class BmwActuatorActivity : BaseActivity, View.IOnTouchListener
     {
         public class InstanceData
         {

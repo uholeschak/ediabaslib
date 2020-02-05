@@ -21,7 +21,7 @@ namespace BmwDeepObd
         ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                                Android.Content.PM.ConfigChanges.Orientation |
                                Android.Content.PM.ConfigChanges.ScreenSize)]
-    public class VagCodingActivity : AppCompatActivity, View.IOnTouchListener
+    public class VagCodingActivity : BaseActivity, View.IOnTouchListener
     {
         public class InstanceData
         {
