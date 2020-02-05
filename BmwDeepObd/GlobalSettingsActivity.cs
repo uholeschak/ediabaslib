@@ -25,6 +25,11 @@ namespace BmwDeepObd
 
         private string _selection;
         private ActivityCommon _activityCommon;
+
+        private RadioButton _radioButtonLocaleDefault;
+        private RadioButton _radioButtonLocaleEn;
+        private RadioButton _radioButtonLocaleDe;
+        private RadioButton _radioButtonLocaleRu;
         private RadioButton _radioButtonThemeDark;
         private RadioButton _radioButtonThemeLight;
         private TextView _textViewCaptionInternet;
@@ -81,6 +86,11 @@ namespace BmwDeepObd
             _selection = Intent.GetStringExtra(ExtraSelection);
 
             _activityCommon = new ActivityCommon(this);
+
+            _radioButtonLocaleDefault = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleDefault);
+            _radioButtonLocaleEn = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleEn);
+            _radioButtonLocaleDe = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleDe);
+            _radioButtonLocaleRu = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleRu);
 
             _radioButtonThemeDark = FindViewById<RadioButton>(Resource.Id.radioButtonThemeDark);
             _radioButtonThemeLight = FindViewById<RadioButton>(Resource.Id.radioButtonThemeLight);
@@ -207,6 +217,26 @@ namespace BmwDeepObd
 
         private void ReadSettings()
         {
+            string locale = ActivityCommon.SelectedLocale ?? string.Empty;
+            switch (locale.ToLowerInvariant())
+            {
+                case "en":
+                    _radioButtonLocaleEn.Checked = true;
+                    break;
+
+                case "de":
+                    _radioButtonLocaleDe.Checked = true;
+                    break;
+
+                case "ru":
+                    _radioButtonLocaleRu.Checked = true;
+                    break;
+
+                default:
+                    _radioButtonLocaleDefault.Checked = true;
+                    break;
+            }
+
             switch (ActivityCommon.SelectedTheme)
             {
                 case ActivityCommon.ThemeType.Light:
@@ -332,6 +362,25 @@ namespace BmwDeepObd
 
         private void StoreSettings()
         {
+            string locale = ActivityCommon.SelectedLocale ?? string.Empty;
+            if (_radioButtonLocaleEn.Checked)
+            {
+                locale = "en";
+            }
+            else if (_radioButtonLocaleDe.Checked)
+            {
+                locale = "de";
+            }
+            else if (_radioButtonLocaleRu.Checked)
+            {
+                locale = "ru";
+            }
+            else if (_radioButtonLocaleDefault.Checked)
+            {
+                locale = string.Empty;
+            }
+            ActivityCommon.SelectedLocale = locale;
+
             ActivityCommon.ThemeType themeType = ActivityCommon.SelectedTheme;
             if (_radioButtonThemeDark.Checked)
             {

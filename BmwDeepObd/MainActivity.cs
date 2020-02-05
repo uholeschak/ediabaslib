@@ -105,6 +105,7 @@ namespace BmwDeepObd
         {
             public InstanceData()
             {
+                LastLocale = string.Empty;
                 LastAppState = LastAppState.Init;
                 AppDataPath = string.Empty;
                 EcuPath = string.Empty;
@@ -117,6 +118,7 @@ namespace BmwDeepObd
                 VerifyEcuFiles = true;
             }
 
+            public string LastLocale { get; set; }
             public ActivityCommon.ThemeType LastThemeType { get; set; }
             public LastAppState LastAppState { get; set; }
             public string AppDataPath { get; set; }
@@ -623,7 +625,8 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestGlobalSettings:
                     _activityCommon.SetPreferredNetworkInterface();
-                    if (_instanceData.LastThemeType != ActivityCommon.SelectedTheme)
+                    if (_instanceData.LastThemeType != ActivityCommon.SelectedTheme ||
+                        string.Compare(_instanceData.LastLocale ?? string.Empty, ActivityCommon.SelectedLocale ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
                     {
                         StoreSettings();
                         Finish();
@@ -1499,7 +1502,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static string GetLocaleSetting()
+        public static string GetLocaleSetting(InstanceData instanceData = null)
         {
             try
             {
@@ -1507,6 +1510,11 @@ namespace BmwDeepObd
                 {
                     ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
                     ActivityCommon.SelectedLocale = prefs.GetString("Locale", string.Empty);
+                }
+
+                if (instanceData != null)
+                {
+                    instanceData.LastLocale = ActivityCommon.SelectedLocale;
                 }
                 return ActivityCommon.SelectedLocale;
             }
@@ -1532,6 +1540,7 @@ namespace BmwDeepObd
 
         private void GetSettings()
         {
+            GetLocaleSetting(_instanceData);
             GetThemeSettings();
 
             try
