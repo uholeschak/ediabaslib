@@ -58,7 +58,7 @@ namespace BmwDeepObd
 
                 Resources resources = context.Resources;
                 Configuration configuration = resources.Configuration;
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.JellyBeanMr1)
                 {
                     configuration.SetLocale(locale);
                 }
