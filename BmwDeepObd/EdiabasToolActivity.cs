@@ -26,7 +26,7 @@ namespace BmwDeepObd
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                         Android.Content.PM.ConfigChanges.Orientation |
                         Android.Content.PM.ConfigChanges.ScreenSize)]
-    public class EdiabasToolActivity : AppCompatActivity, View.IOnTouchListener
+    public class EdiabasToolActivity : BaseActivity, View.IOnTouchListener
     {
         private enum ActivityRequest
         {

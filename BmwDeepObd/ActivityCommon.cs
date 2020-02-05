@@ -6455,33 +6455,6 @@ namespace BmwDeepObd
             }
         }
 
-        public static Context SetLocale(Context context, string language)
-        {
-            Java.Util.Locale locale = new Java.Util.Locale(language);
-            Java.Util.Locale.Default = locale;
-
-            Resources resources = context.Resources;
-            Configuration configuration = resources.Configuration;
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
-            {
-                configuration.SetLocale(locale);
-            }
-            else
-            {
-                configuration.Locale = locale;
-            }
-
-            if (Build.VERSION.SdkInt < BuildVersionCodes.JellyBeanMr1)
-            {
-#pragma warning disable 618
-                resources.UpdateConfiguration(configuration, resources.DisplayMetrics);
-#pragma warning restore 618
-                return context;
-            }
-
-            return context.CreateConfigurationContext(configuration);
-        }
-
         public static Java.Lang.ICharSequence FromHtml(string source)
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.N)

@@ -22,7 +22,7 @@ namespace BmwDeepObd
         ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                     Android.Content.PM.ConfigChanges.Orientation |
                     Android.Content.PM.ConfigChanges.ScreenSize)]
-    public class CanAdapterActivity : AppCompatActivity, View.IOnTouchListener
+    public class CanAdapterActivity : BaseActivity, View.IOnTouchListener
     {
         // Intent extra
         public const string ExtraDeviceAddress = "device_address";

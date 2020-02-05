@@ -8,7 +8,7 @@ namespace BmwDeepObd.FilePicker
             ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                 Android.Content.PM.ConfigChanges.Orientation |
                 Android.Content.PM.ConfigChanges.ScreenSize)]
-    public class FilePickerActivity : AppCompatActivity
+    public class FilePickerActivity : BaseActivity
     {
         // Intent extra
         public const string ExtraTitle = "title";

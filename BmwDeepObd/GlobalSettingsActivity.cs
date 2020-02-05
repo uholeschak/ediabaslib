@@ -12,7 +12,7 @@ namespace BmwDeepObd
         ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                                Android.Content.PM.ConfigChanges.Orientation |
                                Android.Content.PM.ConfigChanges.ScreenSize)]
-    public class GlobalSettingsActivity : AppCompatActivity
+    public class GlobalSettingsActivity : BaseActivity
     {
         // Intent extra
         public const string ExtraSelection = "selection";

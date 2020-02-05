@@ -53,7 +53,7 @@ namespace BmwDeepObd
     [Android.App.IntentFilter(new[] { UsbManager.ActionUsbDeviceAttached })]
     [Android.App.MetaData(UsbManager.ActionUsbDeviceAttached, Resource = "@xml/device_filter")]
 #endif
-    public class ActivityMain : AppCompatActivity, TabLayout.IOnTabSelectedListener
+    public class ActivityMain : BaseActivity, TabLayout.IOnTabSelectedListener
     {
         private enum ActivityRequest
         {
