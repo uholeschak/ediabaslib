@@ -1499,6 +1499,23 @@ namespace BmwDeepObd
             }
         }
 
+        public static string GetLocaleSetting()
+        {
+            try
+            {
+                if (ActivityCommon.SelectedLocale == null)
+                {
+                    ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
+                    ActivityCommon.SelectedLocale = prefs.GetString("Locale", string.Empty);
+                }
+                return ActivityCommon.SelectedLocale;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
         private void GetThemeSettings()
         {
             try
@@ -1622,6 +1639,7 @@ namespace BmwDeepObd
                 prefsEdit.PutString("EmailAddress", ActivityCommon.EmailAddress ?? string.Empty);
                 prefsEdit.PutString("TraceInfo", ActivityCommon.TraceInfo ?? string.Empty);
                 prefsEdit.PutString("AppId", ActivityCommon.AppId);
+                prefsEdit.PutString("Locale", ActivityCommon.SelectedLocale ?? string.Empty);
                 prefsEdit.PutInt("Theme", (int)ActivityCommon.SelectedTheme);
                 prefsEdit.PutInt("InternetConnection", (int)ActivityCommon.SelectedInternetConnection);
                 prefsEdit.PutInt("Manufacturer", (int) ActivityCommon.SelectedManufacturer);
