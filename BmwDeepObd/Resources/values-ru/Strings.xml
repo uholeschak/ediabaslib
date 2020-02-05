@@ -331,6 +331,12 @@
 
   <!--  GlobalSettingsActivity -->
   <string name="settings_title">Глобальные настройки</string>
+  <!--Translate-->
+  <string name="settings_caption_locale">Locale</string>
+  <string name="settings_locale_default">Default</string>
+  <string name="settings_locale_en">English</string>
+  <string name="settings_locale_de">German</string>
+  <string name="settings_locale_ru">Russian</string>
   <string name="settings_caption_theme">Темы</string>
   <string name="settings_theme_dark">Темная</string>
   <string name="settings_theme_light">Светлая</string>

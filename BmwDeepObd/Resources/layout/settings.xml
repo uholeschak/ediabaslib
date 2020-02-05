@@ -11,6 +11,37 @@
         android:focusable="true"
         android:focusableInTouchMode="true">
         <TextView
+          android:text="@string/settings_caption_locale"
+          android:id="@+id/textViewCaptionLocale"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          style="@style/TextViewInnerCaption" />
+        <RadioGroup
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
+          <RadioButton
+            android:id="@+id/radioButtonLocaleDefault"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_locale_default" />
+          <RadioButton
+            android:id="@+id/radioButtonLocaleEn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_locale_en" />
+          <RadioButton
+            android:id="@+id/radioButtonLocaleDe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_locale_de" />
+          <RadioButton
+            android:id="@+id/radioButtonLocaleRu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_locale_ru" />
+        </RadioGroup>
+        <TextView
             android:text="@string/settings_caption_theme"
             android:id="@+id/textViewCaptionTheme"
             android:layout_width="match_parent"

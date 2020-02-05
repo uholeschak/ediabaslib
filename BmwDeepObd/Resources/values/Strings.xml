@@ -310,6 +310,11 @@
 
   <!--  GlobalSettingsActivity -->
   <string name="settings_title">Global Settings</string>
+  <string name="settings_caption_locale">Locale</string>
+  <string name="settings_locale_default">Default</string>
+  <string name="settings_locale_en">English</string>
+  <string name="settings_locale_de">German</string>
+  <string name="settings_locale_ru">Russian</string>
   <string name="settings_caption_theme">Theme</string>
   <string name="settings_theme_dark">Dark</string>
   <string name="settings_theme_light">Light</string>
