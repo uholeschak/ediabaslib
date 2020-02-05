@@ -675,6 +675,8 @@ namespace BmwDeepObd
 
         public static bool BtNoEvents { get; set; }
 
+        public static string SelectedLocale { get; set; }
+
         public static ThemeType SelectedTheme { get; set; }
 
         public static InternetConnectionType SelectedInternetConnection { get; set; }

@@ -9,8 +9,6 @@ namespace BmwDeepObd
 {
     public class BaseActivity : AppCompatActivity
     {
-        private const string TestLanguage = null; // "ru";
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -19,13 +17,13 @@ namespace BmwDeepObd
 
         protected override void AttachBaseContext(Context @base)
         {
-            base.AttachBaseContext(SetLocale(@base, TestLanguage));
+            base.AttachBaseContext(SetLocale(@base, ActivityMain.GetLocaleSetting()));
         }
 
         public override void OnConfigurationChanged(Configuration newConfig)
         {
             base.OnConfigurationChanged(newConfig);
-            SetLocale(this, TestLanguage);
+            SetLocale(this, ActivityMain.GetLocaleSetting());
         }
 
         public void ResetTitle()
