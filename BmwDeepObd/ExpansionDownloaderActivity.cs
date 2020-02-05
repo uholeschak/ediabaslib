@@ -26,7 +26,7 @@ namespace BmwDeepObd
         ConfigurationChanges = ConfigChanges.KeyboardHidden |
                                ConfigChanges.Orientation |
                                ConfigChanges.ScreenSize)]
-    public class ExpansionDownloaderActivity : AppCompatActivity, IDownloaderClient
+    public class ExpansionDownloaderActivity : BaseActivity, IDownloaderClient
     {
 #if DEBUG
         private static readonly string Tag = typeof(ExpansionDownloaderActivity).FullName;
