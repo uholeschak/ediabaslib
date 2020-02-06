@@ -332,7 +332,7 @@
   <!--  GlobalSettingsActivity -->
   <string name="settings_title">Глобальные настройки</string>
   <!--Translate-->
-  <string name="settings_caption_locale">Locale</string>
+  <string name="settings_caption_locale">Language</string>
   <string name="settings_locale_default">Default</string>
   <string name="settings_locale_en">English</string>
   <string name="settings_locale_de">German</string>
