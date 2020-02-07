@@ -46,22 +46,14 @@ namespace BmwDeepObd
         {
             try
             {
-                Resources resources = context.Resources;
-                Configuration configuration = resources.Configuration;
-
                 Java.Util.Locale locale = null;
                 if (string.IsNullOrEmpty(language))
                 {
-                    if (Build.VERSION.SdkInt < BuildVersionCodes.N)
+                    Android.Support.V4.OS.LocaleListCompat localeList =
+                        Android.Support.V4.OS.ConfigurationCompat.GetLocales(Resources.System.Configuration);
+                    if (localeList != null && localeList.Size() > 0)
                     {
-                        locale = Java.Util.Locale.Default;
-                    }
-                    else
-                    {
-                        if (LocaleList.Default != null && LocaleList.Default.Size() > 0)
-                        {
-                            locale = LocaleList.Default.Get(0);
-                        }
+                        locale = localeList.Get(0);
                     }
                 }
 
@@ -72,6 +64,8 @@ namespace BmwDeepObd
 
                 Java.Util.Locale.Default = locale;
 
+                Resources resources = context.Resources;
+                Configuration configuration = resources.Configuration;
                 if (Build.VERSION.SdkInt < BuildVersionCodes.JellyBeanMr1)
                 {
                     configuration.Locale = locale;
