@@ -52,10 +52,16 @@ namespace BmwDeepObd
                 Java.Util.Locale locale = null;
                 if (string.IsNullOrEmpty(language))
                 {
-                    Android.Support.V4.OS.LocaleListCompat localeList = Android.Support.V4.OS.ConfigurationCompat.GetLocales(configuration);
-                    if (localeList != null && localeList.Size() > 0)
+                    if (Build.VERSION.SdkInt < BuildVersionCodes.N)
                     {
-                        locale = localeList.Get(0);
+                        locale = Java.Util.Locale.Default;
+                    }
+                    else
+                    {
+                        if (LocaleList.Default != null && LocaleList.Default.Size() > 0)
+                        {
+                            locale = LocaleList.Default.Get(0);
+                        }
                     }
                 }
 
