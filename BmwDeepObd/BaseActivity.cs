@@ -46,16 +46,26 @@ namespace BmwDeepObd
         {
             try
             {
-                if (string.IsNullOrEmpty(language))
-                {
-                    return context;
-                }
-
-                Java.Util.Locale locale = new Java.Util.Locale(language);
-                Java.Util.Locale.Default = locale;
-
                 Resources resources = context.Resources;
                 Configuration configuration = resources.Configuration;
+
+                Java.Util.Locale locale = null;
+                if (string.IsNullOrEmpty(language))
+                {
+                    Android.Support.V4.OS.LocaleListCompat localeList = Android.Support.V4.OS.ConfigurationCompat.GetLocales(configuration);
+                    if (localeList != null && localeList.Size() > 0)
+                    {
+                        locale = localeList.Get(0);
+                    }
+                }
+
+                if (locale == null)
+                {
+                    locale = new Java.Util.Locale(!string.IsNullOrEmpty(language) ? language : "en");
+                }
+
+                Java.Util.Locale.Default = locale;
+
                 if (Build.VERSION.SdkInt < BuildVersionCodes.JellyBeanMr1)
                 {
                     configuration.Locale = locale;
