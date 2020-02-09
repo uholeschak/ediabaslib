@@ -55,7 +55,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;WINVER=0x0601;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/FU"$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\ApiInternal.netmodule" /FU"$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\EdiabasLib.netmodule" %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -71,7 +71,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CRT_SECURE_NO_WARNINGS;WINVER=0x0601;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/FU"$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\ApiInternal.netmodule" /FU"$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\EdiabasLib.netmodule" %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
