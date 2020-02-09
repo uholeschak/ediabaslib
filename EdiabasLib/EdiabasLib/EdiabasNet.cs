@@ -5315,6 +5315,7 @@ namespace EdiabasLib
             {
                 lock (_logLock)
                 {
+                    bool newFile = false;
                     if (_swLog == null)
                     {
                         string tracePath = GetConfigProperty("TracePath");
@@ -5342,7 +5343,6 @@ namespace EdiabasLib
                             {
                                 buffering = StringToValue(traceBuffering);
                             }
-
 #if COMPRESS_TRACE
                             int compressTrace = 0;
                             string propCompress = GetConfigProperty("CompressTrace");
@@ -5399,6 +5399,8 @@ namespace EdiabasLib
                                         File.Delete(zipFileNameOld);
                                     }
                                 }
+
+                                newFile = true;
                                 _swLog = new StreamWriter(_zipStream, Encoding, 1024, true);
                             }
                             else
@@ -5409,6 +5411,8 @@ namespace EdiabasLib
                                 {
                                     fileMode = FileMode.Create;
                                 }
+
+                                newFile = true;
                                 _swLog = new StreamWriter(
                                     new FileStream(Path.Combine(tracePath, traceFileName), fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding)
                                     {
@@ -5418,8 +5422,14 @@ namespace EdiabasLib
                             _firstLog = false;
                         }
                     }
+
                     if (_swLog != null)
                     {
+                        if (newFile)
+                        {
+                            string currDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                            _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, "Date: {0}", currDateTime));
+                        }
                         _swLog.WriteLine(info);
                     }
                 }
