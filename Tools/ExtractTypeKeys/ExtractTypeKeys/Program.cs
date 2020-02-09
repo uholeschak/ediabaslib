@@ -45,7 +45,7 @@ namespace ExtractTypeKeys
 
                     if (string.IsNullOrEmpty(RootENameClassId) || string.IsNullOrEmpty(TypeKeyClassId))
                     {
-                        Console.WriteLine("Unable to get class IDs");
+                        Console.WriteLine("Unable to get node class IDs");
                         return 1;
                     }
 
