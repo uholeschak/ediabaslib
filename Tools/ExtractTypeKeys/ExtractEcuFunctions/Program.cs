@@ -303,7 +303,7 @@ namespace ExtractEcuFunctions
                     mDbConnection.SetPassword(DbPassword);
                     mDbConnection.Open();
 
-                    EnvDiscreteNodeClassId = GetNodeClassId(mDbConnection, "EnvironmentalConditionTextDiscrete");
+                    EnvDiscreteNodeClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, "EnvironmentalConditionTextDiscrete");
 
                     mDbConnection.Close();
 
@@ -702,24 +702,6 @@ namespace ExtractEcuFunctions
                     while (reader.Read())
                     {
                         result = reader["NAME"].ToString();
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        private static string GetNodeClassId(SQLiteConnection mDbConnection, string nodeClassName)
-        {
-            string result = string.Empty;
-            string sql = string.Format(@"SELECT ID FROM XEP_NODECLASSES WHERE NAME = '{0}'", nodeClassName);
-            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
-            {
-                using (SQLiteDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        result = reader["ID"].ToString();
                     }
                 }
             }

@@ -69,6 +69,9 @@
     <Compile Include="..\..\..\EdiabasLib\BmwFileReader\EcuFunctionStructs.cs">
       <Link>EcuFunctionStructs.cs</Link>
     </Compile>
+    <Compile Include="..\Common\DatabaseFunctions.cs">
+      <Link>DatabaseFunctions.cs</Link>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
