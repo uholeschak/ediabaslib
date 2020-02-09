@@ -9,6 +9,9 @@ namespace ExtractTypeKeys
 {
     static class Program
     {
+        private static string RootENameClassId;
+        private static string TypeKeyClassId;
+
         static int Main(string[] args)
         {
             if (args.Length < 1)
@@ -37,11 +40,20 @@ namespace ExtractTypeKeys
                     mDbConnection.SetPassword("6505EFBDC3E5F324");
                     mDbConnection.Open();
 
+                    RootENameClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootEBezeichnung");
+                    TypeKeyClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"Typschluessel");
+
+                    if (string.IsNullOrEmpty(RootENameClassId) || string.IsNullOrEmpty(TypeKeyClassId))
+                    {
+                        Console.WriteLine("Unable to get class IDs");
+                        return 1;
+                    }
+
                     string typeKeysFile = Path.Combine(outDir, "typekeys.txt");
                     zipFiles.Add(typeKeysFile);
                     using (StreamWriter swTypeKeys = new StreamWriter(typeKeysFile))
                     {
-                        string sql1 = @"SELECT t.NAME AS TYPEKEY, c.NAME AS EREIHE FROM XEP_CHARACTERISTICS t INNER JOIN XEP_VEHICLES v ON (v.TYPEKEYID = t.ID) INNER JOIN XEP_CHARACTERISTICS c ON (v.CHARACTERISTICID = c.ID) INNER JOIN XEP_CHARACTERISTICROOTS r ON (r.ID = c.PARENTID AND r.NODECLASS=40140802) WHERE t.NODECLASS = 40135042 ORDER BY TYPEKEY";
+                        string sql1 = $"SELECT t.NAME AS TYPEKEY, c.NAME AS EREIHE FROM XEP_CHARACTERISTICS t INNER JOIN XEP_VEHICLES v ON (v.TYPEKEYID = t.ID) INNER JOIN XEP_CHARACTERISTICS c ON (v.CHARACTERISTICID = c.ID) INNER JOIN XEP_CHARACTERISTICROOTS r ON (r.ID = c.PARENTID AND r.NODECLASS = {RootENameClassId}) WHERE t.NODECLASS = {TypeKeyClassId} ORDER BY TYPEKEY";
                         using (SQLiteCommand command = new SQLiteCommand(sql1, mDbConnection))
                         {
                             using (SQLiteDataReader reader = command.ExecuteReader())
