@@ -555,6 +555,7 @@ namespace BmwDeepObd
         public const string JobWriteS2EUds = @"GenerischS2E_schreiben";
         public const string JobReadStatMwBlock = @"STATUS_MESSWERTBLOCK_LESEN";
         public const string JobReadStatBlock = @"STATUS_BLOCK_LESEN";
+        public const string JobReadStat = @"STATUS_LESEN";
         public const string JobReadSupportedFunc = @"UnterstFunktionen_abfragen";
         public const string JobReadEcuVersion = @"Steuergeraeteversion_abfragen";
         public const string JobReadEcuVersion2 = @"Steuergeraeteversion_abfragen2";
@@ -4385,7 +4386,8 @@ namespace BmwDeepObd
 
                 bool statMwBlock = string.Compare(job.Name, JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
                 bool statBlock = string.Compare(job.Name, JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0;
-                if (statMwBlock || statBlock)
+                bool statRead = string.Compare(job.Name, JobReadStat, StringComparison.OrdinalIgnoreCase) == 0;
+                if (statMwBlock || statBlock || statRead)
                 {   // use data from table instead of results
                     try
                     {
