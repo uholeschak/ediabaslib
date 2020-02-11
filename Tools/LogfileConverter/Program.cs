@@ -977,6 +977,11 @@ namespace LogfileConverter
                 return false;
             }
 
+            if (IsBmwFastTelegram(telegram))
+            {
+                return false;
+            }
+
             return true;
         }
 
