@@ -4404,6 +4404,9 @@ namespace BmwDeepObd
                             int resultIndex = -1;
                             int unitIndex = -1;
                             int infoIndex = -1;
+                            int serviceIndex = -1;
+                            int argTabIndex = -1;
+                            int resTabIndex = -1;
                             int dictIndex = 0;
                             foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSetsTab)
                             {
@@ -4412,10 +4415,13 @@ namespace BmwDeepObd
                                     dictIndex++;
                                     continue;
                                 }
-                                string args = string.Empty;
+                                string arg = string.Empty;
                                 string result = string.Empty;
                                 string unit = string.Empty;
                                 string info = string.Empty;
+                                string service = string.Empty;
+                                string argTab = string.Empty;
+                                string resTab = string.Empty;
                                 for (int i = 0; ; i++)
                                 {
                                     if (resultDict.TryGetValue("COLUMN" + i.ToString(Culture), out EdiabasNet.ResultData resultData))
@@ -4441,30 +4447,51 @@ namespace BmwDeepObd
                                                 {
                                                     infoIndex = i;
                                                 }
+                                                else if (string.Compare(entry, "SERVICE", StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    serviceIndex = i;
+                                                }
+                                                else if (string.Compare(entry, "ARG_TABELLE", StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    argTabIndex = i;
+                                                }
+                                                else if (string.Compare(entry, "RES_TABELLE", StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    resTabIndex = i;
+                                                }
                                             }
                                             else
                                             {
-                                                if (i == argIndex)
+                                                if (!string.IsNullOrWhiteSpace(entry) && entry != "-")
                                                 {
-                                                    args = entry;
-                                                }
-                                                else if (i == unitIndex)
-                                                {
-                                                    if (entry != "-")
+                                                    if (i == argIndex)
+                                                    {
+                                                        arg = entry;
+                                                    }
+                                                    else if (i == unitIndex)
                                                     {
                                                         unit = entry;
                                                     }
-                                                }
-                                                else if (i == resultIndex)
-                                                {
-                                                    if (entry != "-")
+                                                    else if (i == resultIndex)
                                                     {
                                                         result = entry;
                                                     }
-                                                }
-                                                else if (i == infoIndex)
-                                                {
-                                                    info = entry;
+                                                    else if (i == infoIndex)
+                                                    {
+                                                        info = entry;
+                                                    }
+                                                    else if (i == serviceIndex)
+                                                    {
+                                                        service = entry;
+                                                    }
+                                                    else if (i == argTabIndex)
+                                                    {
+                                                        argTab = entry;
+                                                    }
+                                                    else if (i == resTabIndex)
+                                                    {
+                                                        resTab = entry;
+                                                    }
                                                 }
                                             }
                                         }
@@ -4475,15 +4502,21 @@ namespace BmwDeepObd
                                     }
                                 }
 
-                                if (!string.IsNullOrEmpty(args))
+                                if (statRead)
                                 {
-                                    string name = !string.IsNullOrEmpty(result) ? result : args;
-                                    string comments = info;
-                                    if (!string.IsNullOrEmpty(unit))
+                                    AddReadStatResults(arg, unit, result, info, service, argTab, resTab);
+                                }
+                                else
+                                {
+                                    if (!string.IsNullOrEmpty(arg) && !string.IsNullOrEmpty(result))
                                     {
-                                        comments += " [" + unit + "]";
+                                        string comments = info;
+                                        if (!string.IsNullOrEmpty(unit))
+                                        {
+                                            comments += " [" + unit + "]";
+                                        }
+                                        job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, result, DataTypeReal, arg, new List<string> { comments }));
                                     }
-                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, name, DataTypeReal, args, new List <string> { comments }));
                                 }
                                 dictIndex++;
                             }
@@ -4578,6 +4611,14 @@ namespace BmwDeepObd
                         }
                     }
                 }
+            }
+        }
+
+        private void AddReadStatResults(string arg, string unit, string result, string info, string service, string argTab, string resTab)
+        {
+            if (string.IsNullOrEmpty(arg) || string.IsNullOrEmpty(service) || string.IsNullOrEmpty(resTab))
+            {
+                return;
             }
         }
 
