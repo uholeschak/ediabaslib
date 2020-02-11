@@ -4620,6 +4620,25 @@ namespace BmwDeepObd
             {
                 return;
             }
+
+            bool readService = false;
+            string[] serviceArray = service.Split(";");
+            foreach (string serviceEntry in serviceArray)
+            {
+                if (Int32.TryParse(serviceEntry, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out Int32 value))
+                {
+                    if (value == 0x22)
+                    {
+                        readService = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!readService)
+            {
+                return;
+            }
         }
 
         private void ReadJobThreadDone(EcuInfo ecuInfo, CustomProgressDialog progress, bool readFailed)
