@@ -892,6 +892,10 @@ namespace BmwDeepObd
             {
                 return true;
             }
+            if (string.Compare(job.Name, XmlToolActivity.JobReadStat, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return true;
+            }
             if (string.Compare(job.Name, "FS_LESEN", StringComparison.OrdinalIgnoreCase) == 0 ||
                 string.Compare(job.Name, "IS_LESEN", StringComparison.OrdinalIgnoreCase) == 0 ||
                 string.Compare(job.Name, "AIF_LESEN", StringComparison.OrdinalIgnoreCase) == 0)
@@ -947,6 +951,7 @@ namespace BmwDeepObd
                 }
                 return sb.ToString();
             }
+
             if (string.Compare(job.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 StringBuilder sb = new StringBuilder();
@@ -961,6 +966,22 @@ namespace BmwDeepObd
                 }
                 return sb.ToString();
             }
+
+            if (string.Compare(job.Name, XmlToolActivity.JobReadStat, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("ARG");
+                foreach (ResultInfo resultInfo in resultInfoList)
+                {
+                    if ((selectAll || resultInfo.Selected) && !string.IsNullOrEmpty(resultInfo.Args))
+                    {
+                        sb.Append(";");
+                        sb.Append(resultInfo.Args);
+                    }
+                }
+                return sb.ToString();
+            }
+
             return string.Empty;
         }
 
@@ -1617,7 +1638,8 @@ namespace BmwDeepObd
                     // no selection
                     bool statMbBlock = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
                     bool statBlock = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0;
-                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !statMbBlock && !statBlock)
+                    bool statRead = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStat, StringComparison.OrdinalIgnoreCase) == 0;
+                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !statMbBlock && !statBlock && !statRead)
                     {
                         // auto select all value types
                         int index = 0;
@@ -1869,7 +1891,8 @@ namespace BmwDeepObd
             {
                 bool statMwBlock = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
                 bool statBlock = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0;
-                if ((statMwBlock || statBlock) && isChecked && selectCount > 10)
+                bool statRead = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStat, StringComparison.OrdinalIgnoreCase) == 0;
+                if ((statMwBlock || statBlock || statRead) && isChecked && selectCount > 10)
                 {
                     if (!_instanceData.ResultAmountWarnShown)
                     {
