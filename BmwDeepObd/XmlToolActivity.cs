@@ -4457,7 +4457,10 @@ namespace BmwDeepObd
                                                 }
                                                 else if (i == resultIndex)
                                                 {
-                                                    result = entry;
+                                                    if (entry != "-")
+                                                    {
+                                                        result = entry;
+                                                    }
                                                 }
                                                 else if (i == infoIndex)
                                                 {
@@ -4471,14 +4474,16 @@ namespace BmwDeepObd
                                         break;
                                     }
                                 }
-                                if (!string.IsNullOrEmpty(args) && !string.IsNullOrEmpty(result))
+
+                                if (!string.IsNullOrEmpty(args))
                                 {
+                                    string name = !string.IsNullOrEmpty(result) ? result : args;
                                     string comments = info;
                                     if (!string.IsNullOrEmpty(unit))
                                     {
                                         comments += " [" + unit + "]";
                                     }
-                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, result, DataTypeReal, args, new List <string> { comments }));
+                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(name, name, DataTypeReal, args, new List <string> { comments }));
                                 }
                                 dictIndex++;
                             }
