@@ -1029,6 +1029,31 @@ namespace LogfileConverter
             return result;
         }
 
+        private static bool IsBmwFastTelegram(List<byte> telegram)
+        {
+            if (telegram.Count < 5)
+            {
+                return false;
+            }
+
+            switch (telegram[0] & 0xC0)
+            {
+                case 0x80:
+                case 0xC0:
+                    break;
+
+                default:
+                    return false;
+            }
+
+            if (!ChecksumValid(telegram))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         private static bool IsDs2Telegram(List<byte> telegram)
         {
             if (telegram.Count < 3)
@@ -1042,6 +1067,11 @@ namespace LogfileConverter
             }
 
             if (CalcChecksumXor(telegram, 0, telegram.Count) != 0x00)
+            {
+                return false;
+            }
+
+            if (IsBmwFastTelegram(telegram))
             {
                 return false;
             }
