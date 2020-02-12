@@ -931,12 +931,14 @@ namespace BmwDeepObd
             return string.Format(XmlToolActivity.Culture, "{0};{1}", mwTabEntry.BlockNumber, ecuInfo.ReadCommand);
         }
 
-        public static string GetJobArgs(JobInfo job, List<ResultInfo> resultInfoList, XmlToolActivity.EcuInfo ecuInfo, bool selectAll = false)
+        public static List<string> GetJobArgs(JobInfo job, List<ResultInfo> resultInfoList, XmlToolActivity.EcuInfo ecuInfo, bool selectAll = false)
         {
+            List<string> argList = new List<string>();
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
             {
-                return string.Empty;
+                return argList;
             }
+
             if (string.Compare(job.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 StringBuilder sb = new StringBuilder();
@@ -949,7 +951,9 @@ namespace BmwDeepObd
                         sb.Append(resultInfo.Args);
                     }
                 }
-                return sb.ToString();
+
+                argList.Add(sb.ToString());
+                return argList;
             }
 
             if (string.Compare(job.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0)
@@ -964,27 +968,29 @@ namespace BmwDeepObd
                         sb.Append(resultInfo.Args);
                     }
                 }
-                return sb.ToString();
+
+                argList.Add(sb.ToString());
+                return argList;
             }
 
             if (string.Compare(job.Name, XmlToolActivity.JobReadStat, StringComparison.OrdinalIgnoreCase) == 0)
             {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("ARG");
                 foreach (ResultInfo resultInfo in resultInfoList)
                 {
                     if ((selectAll || resultInfo.Selected) && !string.IsNullOrEmpty(resultInfo.Args))
                     {
-                        sb.Append(";");
-                        sb.Append(resultInfo.Args);
-                        // only one arg for multiple results is allowed
-                        break;
+                        string arg = "ARG;" + resultInfo.Args;
+                        if (!argList.Contains(arg))
+                        {
+                            argList.Add(arg);
+                        }
                     }
                 }
-                return sb.ToString();
+
+                return argList;
             }
 
-            return string.Empty;
+            return argList;
         }
 
         public static string FormatResult(EdiabasNet.ResultData resultData, string format)
@@ -1976,7 +1982,11 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            _ediabas.ArgString = GetJobArgs(_selectedJob, new List<ResultInfo> { _selectedResult }, _ecuInfo, true);
+                            List<string> argList = GetJobArgs(_selectedJob, new List<ResultInfo> { _selectedResult }, _ecuInfo, true);
+                            if (argList.Count > 0)
+                            {
+                                _ediabas.ArgString = argList[0];
+                            }
                         }
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
