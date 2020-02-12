@@ -4616,32 +4616,32 @@ namespace BmwDeepObd
 
         private void AddReadStatResults(XmlToolEcuActivity.JobInfo job, string arg, string infoText, string service, string argTab, string resTab)
         {
-            if (string.IsNullOrEmpty(arg) || string.IsNullOrEmpty(service) || string.IsNullOrEmpty(resTab))
-            {
-                return;
-            }
-
-            bool readService = false;
-            string[] serviceArray = service.Split(";");
-            foreach (string serviceEntry in serviceArray)
-            {
-                if (Int32.TryParse(serviceEntry, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out Int32 value))
-                {
-                    if (value == 0x22)
-                    {
-                        readService = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!readService)
-            {
-                return;
-            }
-
             try
             {
+                if (string.IsNullOrEmpty(arg) || string.IsNullOrEmpty(service) || string.IsNullOrEmpty(resTab))
+                {
+                    return;
+                }
+
+                bool readService = false;
+                string[] serviceArray = service.Split(";");
+                foreach (string serviceEntry in serviceArray)
+                {
+                    if (Int32.TryParse(serviceEntry, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out Int32 value))
+                    {
+                        if (value == 0x22)
+                        {
+                            readService = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!readService)
+                {
+                    return;
+                }
+
                 _ediabas.ArgString = resTab;
                 _ediabas.ArgBinaryStd = null;
                 _ediabas.ResultsRequests = string.Empty;
@@ -4715,12 +4715,24 @@ namespace BmwDeepObd
 
                         if (!string.IsNullOrEmpty(arg) && !string.IsNullOrEmpty(result))
                         {
-                            string comments = !string.IsNullOrWhiteSpace(info) ? info : infoText;
+                            string displayName = arg + "/" + result;
+                            List<string> commentList = new List<string>();
+                            if (!string.IsNullOrEmpty(infoText))
+                            {
+                                commentList.Add(infoText);
+                            }
+
+                            if (!string.IsNullOrEmpty(info))
+                            {
+                                commentList.Add(info);
+                            }
+
                             if (!string.IsNullOrEmpty(unit))
                             {
-                                comments += " [" + unit + "]";
+                                commentList.Add("[" + unit + "]");
                             }
-                            job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, result, DataTypeReal, arg, new List<string> { comments }));
+
+                            job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, displayName, DataTypeReal, arg, commentList));
                         }
                         dictIndex++;
                     }
