@@ -6891,13 +6891,7 @@ namespace BmwDeepObd
                         jobNodeNew.Add(new XAttribute("fixed_func_struct_id", job.EcuFixedFuncStruct.Id));
                     }
 
-                    List<string> argsList = XmlToolEcuActivity.GetJobArgs(job, job.Results, ecuInfo);
-                    string jobArgs = string.Empty;
-                    if (argsList.Count > 0)
-                    {
-                        jobArgs = argsList[0];
-                    }
-
+                    string jobArgs = XmlToolEcuActivity.GetJobArgs(job, job.Results, ecuInfo);
                     if (!string.IsNullOrEmpty(jobArgs))
                     {
                         jobNodeNew.Add(new XAttribute("args", jobArgs));
