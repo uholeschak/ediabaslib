@@ -844,6 +844,45 @@ namespace BmwDeepObd
             return string.Compare(job.Name, XmlToolActivity.JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
+        public static bool IsBmwReadStatusJob(JobInfo job)
+        {
+            if (job == null)
+            {
+                return false;
+            }
+            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+            {
+                return false;
+            }
+            return string.Compare(job.Name, XmlToolActivity.JobReadStat, StringComparison.OrdinalIgnoreCase) == 0;
+        }
+
+        public static bool IsBmwReadStatusBlockJob(JobInfo job)
+        {
+            if (job == null)
+            {
+                return false;
+            }
+            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+            {
+                return false;
+            }
+            return string.Compare(job.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0;
+        }
+
+        public static bool IsBmwReadStatusMwBlockJob(JobInfo job)
+        {
+            if (job == null)
+            {
+                return false;
+            }
+            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+            {
+                return false;
+            }
+            return string.Compare(job.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
+        }
+
         public static bool IsValidJob(JobInfo job, XmlToolActivity.EcuInfo ecuInfo)
         {
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
@@ -884,15 +923,15 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (string.Compare(job.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
+            if (IsBmwReadStatusMwBlockJob(job))
             {
                 return true;
             }
-            if (string.Compare(job.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0)
+            if (IsBmwReadStatusBlockJob(job))
             {
                 return true;
             }
-            if (string.Compare(job.Name, XmlToolActivity.JobReadStat, StringComparison.OrdinalIgnoreCase) == 0)
+            if (IsBmwReadStatusJob(job))
             {
                 return true;
             }
@@ -937,7 +976,8 @@ namespace BmwDeepObd
             {
                 return string.Empty;
             }
-            if (string.Compare(job.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
+
+            if (IsBmwReadStatusMwBlockJob(job))
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append("JA");
@@ -952,7 +992,7 @@ namespace BmwDeepObd
                 return sb.ToString();
             }
 
-            if (string.Compare(job.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0)
+            if (IsBmwReadStatusBlockJob(job))
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append("3;JA;ARG");
@@ -967,7 +1007,7 @@ namespace BmwDeepObd
                 return sb.ToString();
             }
 
-            if (string.Compare(job.Name, XmlToolActivity.JobReadStat, StringComparison.OrdinalIgnoreCase) == 0)
+            if (IsBmwReadStatusJob(job))
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append("ARG");
@@ -1638,9 +1678,9 @@ namespace BmwDeepObd
                 if (_spinnerJobResultsAdapter.Items.Count > 0 && selection < 0 && jobInfo.Selected)
                 {
                     // no selection
-                    bool statMbBlock = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
-                    bool statBlock = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0;
-                    bool statRead = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStat, StringComparison.OrdinalIgnoreCase) == 0;
+                    bool statMbBlock = IsBmwReadStatusMwBlockJob(_selectedJob);
+                    bool statBlock = IsBmwReadStatusBlockJob(_selectedJob);
+                    bool statRead = IsBmwReadStatusJob(_selectedJob);
                     if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !statMbBlock && !statBlock && !statRead)
                     {
                         // auto select all value types
@@ -1891,9 +1931,9 @@ namespace BmwDeepObd
             bool selectJob = selectCount > 0;
             if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
             {
-                bool statMwBlock = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
-                bool statBlock = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0;
-                bool statRead = string.Compare(_selectedJob.Name, XmlToolActivity.JobReadStat, StringComparison.OrdinalIgnoreCase) == 0;
+                bool statMwBlock = IsBmwReadStatusMwBlockJob(_selectedJob);
+                bool statBlock = IsBmwReadStatusBlockJob(_selectedJob);
+                bool statRead = IsBmwReadStatusJob(_selectedJob);
                 if ((statMwBlock || statBlock || statRead) && isChecked && selectCount > 10)
                 {
                     if (!_instanceData.ResultAmountWarnShown)
