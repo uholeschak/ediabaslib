@@ -4384,9 +4384,9 @@ namespace BmwDeepObd
                     continue;
                 }
 
-                bool statMwBlock = string.Compare(job.Name, JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
-                bool statBlock = string.Compare(job.Name, JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0;
-                bool statRead = string.Compare(job.Name, JobReadStat, StringComparison.OrdinalIgnoreCase) == 0;
+                bool statMwBlock = XmlToolEcuActivity.IsBmwReadStatusMwBlockJob(job);
+                bool statBlock = XmlToolEcuActivity.IsBmwReadStatusBlockJob(job);
+                bool statRead = XmlToolEcuActivity.IsBmwReadStatusJob(job);
                 if (statMwBlock || statBlock || statRead)
                 {   // use data from table instead of results
                     try
@@ -6460,13 +6460,25 @@ namespace BmwDeepObd
 
             foreach (XmlToolEcuActivity.JobInfo job in ecuInfo.JobList)
             {
+                bool statRead = XmlToolEcuActivity.IsBmwReadStatusJob(job);
                 XElement jobNode = GetJobNode(job, ns, jobsNode);
                 if (jobNode != null)
                 {
                     job.Selected = true;
                     foreach (XmlToolEcuActivity.ResultInfo result in job.Results)
                     {
-                        if (result.MwTabEntry != null)
+                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+                        {
+                            if (statRead)
+                            {
+                                jobNode = GetJobNode(job, ns, jobsNode, XmlToolEcuActivity.GetJobArgs(job, new List<XmlToolEcuActivity.ResultInfo> {result}, ecuInfo, true));
+                                if (jobNode == null)
+                                {
+                                    continue;
+                                }
+                            }
+                        }
+                        else if (result.MwTabEntry != null)
                         {
                             jobNode = GetJobNode(job, ns, jobsNode, XmlToolEcuActivity.GetJobArgs(result.MwTabEntry, ecuInfo));
                             if (jobNode == null)
@@ -6872,7 +6884,7 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    bool statRead = string.Compare(job.Name, JobReadStat, StringComparison.OrdinalIgnoreCase) == 0;
+                    bool statRead = XmlToolEcuActivity.IsBmwReadStatusJob(job);
                     XElement jobNodeOld = null;
                     XElement jobNodeNew = new XElement(ns + "job");
                     if (jobsNodeOld != null)
@@ -6913,7 +6925,7 @@ namespace BmwDeepObd
                         {
                             if (statRead)
                             {
-                                string args = XmlToolEcuActivity.GetJobArgs(job, new List<XmlToolEcuActivity.ResultInfo> { result }, ecuInfo);
+                                string args = XmlToolEcuActivity.GetJobArgs(job, new List<XmlToolEcuActivity.ResultInfo> { result }, ecuInfo, true);
                                 if (!string.IsNullOrEmpty(args))
                                 {
                                     if (string.Compare(lastArgs, args, StringComparison.Ordinal) != 0)
