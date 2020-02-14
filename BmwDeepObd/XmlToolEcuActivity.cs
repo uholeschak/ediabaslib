@@ -1933,8 +1933,7 @@ namespace BmwDeepObd
             {
                 bool statMwBlock = IsBmwReadStatusMwBlockJob(_selectedJob);
                 bool statBlock = IsBmwReadStatusBlockJob(_selectedJob);
-                bool statRead = IsBmwReadStatusJob(_selectedJob);
-                if ((statMwBlock || statBlock || statRead) && isChecked && selectCount > 10)
+                if ((statMwBlock || statBlock) && isChecked && selectCount > 10)
                 {
                     if (!_instanceData.ResultAmountWarnShown)
                     {
