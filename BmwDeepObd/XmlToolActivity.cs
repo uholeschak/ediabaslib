@@ -6921,10 +6921,12 @@ namespace BmwDeepObd
                             continue;
                         }
 
+                        string resultNamePrefix = string.Empty;
                         if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                         {
                             if (statRead)
                             {
+                                resultNamePrefix = "1#";
                                 string args = XmlToolEcuActivity.GetJobArgs(job, new List<XmlToolEcuActivity.ResultInfo> { result }, ecuInfo, true);
                                 if (!string.IsNullOrEmpty(args))
                                 {
@@ -7015,11 +7017,13 @@ namespace BmwDeepObd
                         {
                             displayNodeNew.Add(new XAttribute("name", displayTag));
                         }
-                        string resultName = result.Name;
+
+                        string resultName = resultNamePrefix + result.Name;
                         if (result.MwTabEntry != null)
                         {
                             resultName = result.MwTabEntry.ValueIndex.HasValue ? string.Format(Culture, "{0}#MW_Wert", result.MwTabEntry.ValueIndexTrans) : "1#ERGEBNIS1WERT";
                         }
+
                         displayNodeNew.Add(new XAttribute("result", resultName));
                         if (result.EcuJob != null && !string.IsNullOrWhiteSpace(result.EcuJob.Id) &&
                             result.EcuJobResult != null && !string.IsNullOrWhiteSpace(result.EcuJobResult.Id))
@@ -7918,6 +7922,7 @@ namespace BmwDeepObd
 
         private XElement GetDisplayNode(XmlToolEcuActivity.ResultInfo result, XmlToolEcuActivity.JobInfo job, XNamespace ns, XElement jobNode)
         {
+            string resultName = result.Name;
             if (result.MwTabEntry != null)
             {
                 bool compareDisplayTag = false;
@@ -7952,7 +7957,7 @@ namespace BmwDeepObd
 
                 }
 
-                string resultName = result.MwTabEntry.ValueIndex.HasValue ? string.Format(Culture, "{0}#MW_Wert", result.MwTabEntry.ValueIndexTrans) : "1#ERGEBNIS1WERT";
+                resultName = result.MwTabEntry.ValueIndex.HasValue ? string.Format(Culture, "{0}#MW_Wert", result.MwTabEntry.ValueIndexTrans) : "1#ERGEBNIS1WERT";
                 return (from node in jobNode.Elements(ns + "display")
                         let resultAttrib = node.Attribute("result")
                         where resultAttrib != null
@@ -7970,16 +7975,21 @@ namespace BmwDeepObd
                     where resultAttrib != null
                     where jobIdAttrib != null
                     where jobIdResultAttrib != null
-                    where string.Compare(resultAttrib.Value, result.Name, StringComparison.OrdinalIgnoreCase) == 0
+                    where string.Compare(resultAttrib.Value, resultName, StringComparison.OrdinalIgnoreCase) == 0
                     where string.Compare(jobIdAttrib.Value, result.EcuJob.Id, StringComparison.OrdinalIgnoreCase) == 0
                     where string.Compare(jobIdResultAttrib.Value, result.EcuJobResult.Id, StringComparison.OrdinalIgnoreCase) == 0
                     select node).FirstOrDefault();
             }
 
+            if (XmlToolEcuActivity.IsBmwReadStatusJob(job))
+            {
+                resultName = "1#" + resultName;
+            }
+
             return (from node in jobNode.Elements(ns + "display")
                     let resultAttrib = node.Attribute("result")
                     where resultAttrib != null
-                    where string.Compare(resultAttrib.Value, result.Name, StringComparison.OrdinalIgnoreCase) == 0
+                    where string.Compare(resultAttrib.Value, resultName, StringComparison.OrdinalIgnoreCase) == 0
                     select node).FirstOrDefault();
         }
 
