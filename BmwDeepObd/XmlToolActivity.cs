@@ -6912,6 +6912,7 @@ namespace BmwDeepObd
                     }
 
                     int jobId = 1;
+                    int jobIdCurrent = jobId;
                     long lastBlockNumber = -1;
                     string lastArgs = string.Empty;
                     foreach (XmlToolEcuActivity.ResultInfo result in job.Results)
@@ -6922,11 +6923,11 @@ namespace BmwDeepObd
                         }
 
                         string resultNamePrefix = string.Empty;
+                        string displayTagPostfix = string.Empty;
                         if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                         {
                             if (statRead)
                             {
-                                resultNamePrefix = "1#";
                                 string args = XmlToolEcuActivity.GetJobArgs(job, new List<XmlToolEcuActivity.ResultInfo> { result }, ecuInfo, true);
                                 if (!string.IsNullOrEmpty(args))
                                 {
@@ -6939,6 +6940,7 @@ namespace BmwDeepObd
                                             jobsNodeNew.Add(jobNodeNew);
                                         }
 
+                                        jobIdCurrent = jobId;
                                         jobNodeOld = null;
                                         jobNodeNew = new XElement(ns + "job");
                                         if (jobsNodeOld != null)
@@ -6956,6 +6958,9 @@ namespace BmwDeepObd
                                         lastArgs = args;
                                     }
                                 }
+
+                                resultNamePrefix = "1#";
+                                displayTagPostfix = "#" + jobIdCurrent.ToString(CultureInfo.InvariantCulture);
                             }
                         }
                         else if (result.MwTabEntry != null)
@@ -6970,6 +6975,7 @@ namespace BmwDeepObd
                                 }
 
                                 string args = XmlToolEcuActivity.GetJobArgs(result.MwTabEntry, ecuInfo);
+                                jobIdCurrent = jobId;
                                 jobNodeOld = null;
                                 jobNodeNew = new XElement(ns + "job");
                                 if (jobsNodeOld != null)
@@ -7012,7 +7018,7 @@ namespace BmwDeepObd
                             }
                         }
 
-                        string displayTag = DisplayNameJobPrefix + job.Name + "#" + result.Name;
+                        string displayTag = DisplayNameJobPrefix + job.Name + "#" + result.Name + displayTagPostfix;
                         if (displayNodeNew.Attribute("name") == null)
                         {
                             displayNodeNew.Add(new XAttribute("name", displayTag));
