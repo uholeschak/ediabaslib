@@ -58,6 +58,14 @@ namespace BmwDeepObd
             public string ExecptionText { get; }
         }
 
+        public class EdiabasErrorShadowReport : EdiabasErrorReport
+        {
+            public EdiabasErrorShadowReport(string ecuName, string sgbd, string sgbdResolved, Dictionary<string, EdiabasNet.ResultData> errorDict) :
+                base(ecuName, sgbd, sgbdResolved, null, null, errorDict, null)
+            {
+            }
+        }
+
         public class EdiabasErrorReportReset : EdiabasErrorReport
         {
             public EdiabasErrorReportReset(string ecuName, string sgbd, string sgbdResolved, string vagDataFileName, string vagUdsFileName, Dictionary<string, EdiabasNet.ResultData> errorDict, bool errorResetOk) :
@@ -998,6 +1006,44 @@ namespace BmwDeepObd
                             else
                             {
                                 errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, null, null));
+                            }
+                        }
+
+                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+                        {
+                            string errorShadowJob = "FS_LESEN_SHADOW";
+                            if (Ediabas.IsJobExisting(errorShadowJob))
+                            {
+                                Ediabas.ArgString = argString;
+                                Ediabas.ArgBinaryStd = null;
+                                Ediabas.ResultsRequests = string.Empty;
+                                Ediabas.ExecuteJob(errorShadowJob);
+
+                                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
+
+                                bool jobOk = false;
+                                if (resultSets.Count > 1)
+                                {
+                                    if (IsJobStatusOk(resultSets[resultSets.Count - 1]))
+                                    {
+                                        jobOk = true;
+                                    }
+                                }
+
+                                if (jobOk)
+                                {
+                                    int dictIndex = 0;
+                                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                                    {
+                                        if (dictIndex == 0)
+                                        {
+                                            dictIndex++;
+                                            continue;
+                                        }
+
+                                        errorReportList.Add(new EdiabasErrorShadowReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, resultDictLocal));
+                                    }
+                                }
                             }
                         }
                     }
