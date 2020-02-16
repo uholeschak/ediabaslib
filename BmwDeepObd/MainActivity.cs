@@ -2190,6 +2190,7 @@ namespace BmwDeepObd
                                     _instanceData.CommErrorsOccured = true;
                                 }
 
+                                bool shadow = errorReport is EdiabasThread.EdiabasErrorShadowReport;
                                 string ecuTitle = GetPageString(pageInfo, errorReport.EcuName);
                                 EcuFunctionStructs.EcuVariant ecuVariant = null;
                                 if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
@@ -2433,6 +2434,7 @@ namespace BmwDeepObd
                                     }
                                     else
                                     {
+                                        // BMW
                                         string text1 = string.Empty;
                                         string text2 = string.Empty;
                                         List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList = null;
@@ -2494,28 +2496,40 @@ namespace BmwDeepObd
                                             }
                                         }
 
-                                        srMessage.Append("\r\n");
                                         string textErrorCode = FormatResultInt64(errorReport.ErrorDict, "F_ORT_NR", "{0:X04}");
-                                        if (!string.IsNullOrEmpty(textErrorCode))
+                                        if (string.IsNullOrEmpty(text1) && string.IsNullOrEmpty(textErrorCode))
                                         {
-                                            srMessage.Append(GetString(Resource.String.error_code));
-                                            srMessage.Append(": ");
-                                            srMessage.Append(textErrorCode);
-                                            srMessage.Append("\r\n");
+                                            srMessage.Clear();
                                         }
-
-                                        srMessage.Append(text1);
-                                        if (!string.IsNullOrEmpty(text2))
-                                        {
-                                            srMessage.Append(", ");
-                                            srMessage.Append(text2);
-                                        }
-
-                                        string detailText = EdiabasThread.ConvertEnvCondErrorDetail(this, errorReport, envCondLabelList);
-                                        if (!string.IsNullOrEmpty(detailText))
+                                        else
                                         {
                                             srMessage.Append("\r\n");
-                                            srMessage.Append(detailText);
+                                            if (!string.IsNullOrEmpty(textErrorCode))
+                                            {
+                                                srMessage.Append(GetString(Resource.String.error_code));
+                                                if (shadow)
+                                                {
+                                                    srMessage.Append(" ");
+                                                    srMessage.Append(GetString(Resource.String.error_shadow));
+                                                }
+                                                srMessage.Append(": ");
+                                                srMessage.Append(textErrorCode);
+                                                srMessage.Append("\r\n");
+                                            }
+
+                                            srMessage.Append(text1);
+                                            if (!string.IsNullOrEmpty(text2))
+                                            {
+                                                srMessage.Append(", ");
+                                                srMessage.Append(text2);
+                                            }
+
+                                            string detailText = EdiabasThread.ConvertEnvCondErrorDetail(this, errorReport, envCondLabelList);
+                                            if (!string.IsNullOrEmpty(detailText))
+                                            {
+                                                srMessage.Append("\r\n");
+                                                srMessage.Append(detailText);
+                                            }
                                         }
                                     }
                                 }
@@ -2552,7 +2566,7 @@ namespace BmwDeepObd
                                         UpdateButtonErrorResetAll(buttonErrorResetAll, resultListAdapter.Items, pageInfo);
                                         UpdateButtonErrorSelect(buttonErrorSelect, resultListAdapter.Items);
                                     };
-                                    newResultItem.CheckEnable = !ActivityCommon.ErrorResetActive;
+                                    newResultItem.CheckEnable = !ActivityCommon.ErrorResetActive && !shadow;
                                     tempResultList.Add(newResultItem);
                                 }
                                 lastEcuName = errorReport.EcuName;

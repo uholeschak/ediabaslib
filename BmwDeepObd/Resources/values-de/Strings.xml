@@ -42,6 +42,7 @@
   <string name="error_reading_errors">Fehlerspeicher lesen: {0}%</string>
   <string name="error_no_response">Keine Antwort</string>
   <string name="error_code">Fehlercode</string>
+  <string name="error_shadow">(Shadow)</string>
   <string name="error_env_title">Umgebungsbedingungen:</string>
   <string name="error_env_frequency">Häufigkeit</string>
   <string name="error_env_log_count">Logistikzähler</string>

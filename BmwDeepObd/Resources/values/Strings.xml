@@ -41,6 +41,7 @@
   <string name="error_reading_errors">Reading error memory: {0}%</string>
   <string name="error_no_response">No response</string>
   <string name="error_code">Error code</string>
+  <string name="error_shadow">(Shadow)</string>
   <string name="error_env_title">Environmental conditions:</string>
   <string name="error_env_frequency">Frequency</string>
   <string name="error_env_log_count">Logistics counter</string>
