@@ -406,10 +406,7 @@ namespace CarSimulator
             0x64, 0x00, 0x58, 0x00, 0x93, 0x43, 0xD0, 0x1F, 0x43, 0x37,
             0x31, 0x51, 0x64, 0x00, 0x57, 0x00, 0x93};
 
-        private readonly byte[] _response12222000 = {
-            0x84, 0xF1, 0x12, 0x62, 0x20, 0x00, 0x00};
-
-        // ReSharper disable once UnusedMember.Local
+            // ReSharper disable once UnusedMember.Local
         private readonly byte[] _response12Nr = {
             0x83, 0xF1, 0x12, 0x7F, 0x1A, 0x78 };
 
@@ -5422,18 +5419,6 @@ namespace CarSimulator
                 intValue = (int)(234567 >> 3);
                 _sendData[25] = (byte)(intValue >> 8);
                 _sendData[26] = (byte)(intValue);
-
-                ObdSend(_sendData);
-            }
-            else if (
-                _receiveData[0] == 0x83 &&
-                _receiveData[1] == 0x12 &&
-                _receiveData[2] == 0xF1 &&
-                _receiveData[3] == 0x22 &&
-                _receiveData[4] == 0x20 &&
-                _receiveData[5] == 0x00)
-            {   // motor info log
-                Array.Copy(_response12222000, _sendData, _response12222000.Length);
 
                 ObdSend(_sendData);
             }
