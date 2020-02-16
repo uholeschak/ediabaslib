@@ -2437,6 +2437,12 @@ namespace BmwDeepObd
                                         // BMW
                                         string text1 = string.Empty;
                                         string text2 = string.Empty;
+                                        Int64 errorCode = GetResultInt64(errorReport.ErrorDict, "F_ORT_NR", out bool errorCodeFound);
+                                        if (!errorCodeFound)
+                                        {
+                                            errorCode = 0x0000;
+                                        }
+
                                         List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList = null;
                                         if (ecuVariant != null)
                                         {
@@ -2452,8 +2458,7 @@ namespace BmwDeepObd
                                                 }
                                             }
 #endif
-                                            Int64 errorCode = GetResultInt64(errorReport.ErrorDict, "F_ORT_NR", out bool found);
-                                            if (found)
+                                            if (errorCode != 0x0000)
                                             {
                                                 envCondLabelList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelList(errorCode, ecuVariant);
                                                 List<string> faultResultList = EdiabasThread.ConvertFaultCodeError(errorCode, errorReport, ecuVariant);
@@ -2497,7 +2502,7 @@ namespace BmwDeepObd
                                         }
 
                                         string textErrorCode = FormatResultInt64(errorReport.ErrorDict, "F_ORT_NR", "{0:X04}");
-                                        if (string.IsNullOrEmpty(text1) && string.IsNullOrEmpty(textErrorCode))
+                                        if (errorCode == 0x0000 || (string.IsNullOrEmpty(text1) && string.IsNullOrEmpty(textErrorCode)))
                                         {
                                             srMessage.Clear();
                                         }
