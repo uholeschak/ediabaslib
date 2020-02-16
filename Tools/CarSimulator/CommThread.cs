@@ -4420,22 +4420,45 @@ namespace CarSimulator
                         found = true;
                     }
 
-                    if (
-                        _receiveData[0] == 0x83 &&
-                        _receiveData[2] == 0xF1 &&
-                        _receiveData[3] == 0x19 &&
-                        _receiveData[4] == 0x02)
+                    if (!found)
                     {
-                        // dummy error response for all devices
-                        _sendData[0] = 0x83;
-                        _sendData[1] = 0xF1;
-                        _sendData[2] = _receiveData[1];
-                        _sendData[3] = 0x59;
-                        _sendData[4] = 0x02;
-                        _sendData[5] = 0xFF;
+                        if (
+                            _receiveData[0] == 0x83 &&
+                            _receiveData[2] == 0xF1 &&
+                            _receiveData[3] == 0x19 &&
+                            _receiveData[4] == 0x02)
+                        {
+                            // dummy error response for all devices
+                            _sendData[0] = 0x83;
+                            _sendData[1] = 0xF1;
+                            _sendData[2] = _receiveData[1];
+                            _sendData[3] = 0x59;
+                            _sendData[4] = 0x02;
+                            _sendData[5] = 0xFF;
 
-                        ObdSend(_sendData);
-                        found = true;
+                            ObdSend(_sendData);
+                            found = true;
+                        }
+                    }
+
+                    if (!found)
+                    {
+                        if (
+                            _receiveData[0] == 0x83 &&
+                            _receiveData[2] == 0xF1 &&
+                            _receiveData[3] == 0x22)
+                        {
+                            // dummy error response for service 22
+                            _sendData[0] = 0x83;
+                            _sendData[1] = 0xF1;
+                            _sendData[2] = _receiveData[1];
+                            _sendData[3] = 0x7F;
+                            _sendData[4] = _receiveData[3];
+                            _sendData[5] = 0x31;
+
+                            ObdSend(_sendData);
+                            found = true;
+                        }
                     }
                 }
 
