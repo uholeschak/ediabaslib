@@ -4614,6 +4614,7 @@ namespace BmwDeepObd
             }
         }
 
+        // ReSharper disable once UnusedParameter.Local
         private void AddReadStatResults(XmlToolEcuActivity.JobInfo job, string arg, string infoText, string service, string argTab, string resTab)
         {
             try
