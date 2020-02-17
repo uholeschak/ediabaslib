@@ -33,7 +33,6 @@ using Android.Support.V4.Content;
 using Android.Text.Method;
 using Android.Views;
 using System.Xml.Serialization;
-using Android.Content.Res;
 using BmwFileReader;
 using UdsFileReader;
 // ReSharper disable StringLiteralTypo
@@ -690,6 +689,8 @@ namespace BmwDeepObd
         public static LockType LockTypeCommunication { get; set; }
 
         public static LockType LockTypeLogging { get; set; }
+
+        public static bool HideActionBar { get; set; }
 
         public static bool StoreDataLogSettings { get; set; }
 

@@ -1407,7 +1407,10 @@ namespace BmwDeepObd
             }
             UpdateLockState();
             UpdateOptionsMenu();
-            SupportActionBar.Hide();
+            if (ActivityCommon.HideActionBar)
+            {
+                SupportActionBar.Hide();
+            }
             return true;
         }
 
@@ -1587,6 +1590,7 @@ namespace BmwDeepObd
                     ActivityCommon.BtDisableHandling = (ActivityCommon.BtDisableType)prefs.GetInt("BtDisable", (int)ActivityCommon.BtDisableType.DisableIfByApp);
                     ActivityCommon.LockTypeCommunication = (ActivityCommon.LockType)prefs.GetInt("LockComm", (int)ActivityCommon.LockType.ScreenDim);
                     ActivityCommon.LockTypeLogging = (ActivityCommon.LockType)prefs.GetInt("LockLog", (int)ActivityCommon.LockType.Cpu);
+                    ActivityCommon.HideActionBar = prefs.GetBoolean("HideActionBar", ActivityCommon.HideActionBar);
                     ActivityCommon.StoreDataLogSettings = prefs.GetBoolean("StoreDataLogSettings", ActivityCommon.StoreDataLogSettings);
                     if (ActivityCommon.StoreDataLogSettings)
                     {
@@ -1658,6 +1662,7 @@ namespace BmwDeepObd
                 prefsEdit.PutInt("BtDisable", (int) ActivityCommon.BtDisableHandling);
                 prefsEdit.PutInt("LockComm", (int)ActivityCommon.LockTypeCommunication);
                 prefsEdit.PutInt("LockLog", (int)ActivityCommon.LockTypeLogging);
+                prefsEdit.PutBoolean("HideActionBar", ActivityCommon.HideActionBar);
                 prefsEdit.PutBoolean("StoreDataLogSettings", ActivityCommon.StoreDataLogSettings);
                 prefsEdit.PutBoolean("DataLogActive", _instanceData.DataLogActive);
                 prefsEdit.PutBoolean("DataLogAppend", _instanceData.DataLogAppend);

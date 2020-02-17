@@ -144,7 +144,10 @@ namespace BmwDeepObd
                                 }
                                 else
                                 {
-                                    _activity.SupportActionBar.Hide();
+                                    if (ActivityCommon.HideActionBar)
+                                    {
+                                        _activity.SupportActionBar.Hide();
+                                    }
                                 }
                             }
                         }
