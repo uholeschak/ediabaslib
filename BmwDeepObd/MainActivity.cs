@@ -1407,6 +1407,7 @@ namespace BmwDeepObd
             }
             UpdateLockState();
             UpdateOptionsMenu();
+            SupportActionBar.Hide();
             return true;
         }
 
@@ -1444,6 +1445,7 @@ namespace BmwDeepObd
             }
             UpdateLockState();
             UpdateOptionsMenu();
+            SupportActionBar.Show();
         }
 
         private void ConnectEdiabasEvents()

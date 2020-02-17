@@ -3,16 +3,29 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Content.Res;
 using Android.OS;
+using Android.Support.V4.View;
 using Android.Support.V7.App;
+using Android.Views;
 
 namespace BmwDeepObd
 {
     public class BaseActivity : AppCompatActivity
     {
+        private GestureDetectorCompat _gestureDetector;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             ResetTitle();
+
+            GestureListener gestureListener = new GestureListener(this);
+            _gestureDetector = new GestureDetectorCompat(this, gestureListener);
+        }
+
+        public override bool DispatchTouchEvent(MotionEvent ev)
+        {
+            _gestureDetector.OnTouchEvent(ev);
+            return base.DispatchTouchEvent(ev);
         }
 
         protected override void AttachBaseContext(Context @base)
@@ -88,6 +101,57 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 return context;
+            }
+        }
+
+        private class GestureListener : GestureDetector.SimpleOnGestureListener
+        {
+            private const int topBorder = 200;
+            private const int flingMinDiff = 100;
+            private const int flingMinVel = 100;
+            private readonly BaseActivity _activity;
+            private readonly View _contentView;
+
+            public GestureListener(BaseActivity activity)
+            {
+                _activity = activity;
+                _contentView = _activity?.FindViewById<View>(Android.Resource.Id.Content);
+            }
+
+            public override bool OnDown(MotionEvent e)
+            {
+                return true;
+            }
+
+            public override bool OnFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
+            {
+                if (_contentView != null && e1 != null && e2 != null)
+                {
+                    int top = _contentView.Top;
+                    float y1 = e1.GetRawY(0) - top;
+                    float y2 = e2.GetRawY(0) - top;
+                    if (y1 < topBorder || y2 < topBorder)
+                    {
+                        float diffX = e2.GetRawX(0) - e1.GetRawX(0);
+                        float diffY = e2.GetRawY(0) - e1.GetRawY(0);
+                        if (Math.Abs(diffX) < Math.Abs(diffY))
+                        {
+                            if (Math.Abs(diffY) > flingMinDiff && Math.Abs(velocityY) > flingMinVel)
+                            {
+                                if (diffY > 0)
+                                {
+                                    _activity.SupportActionBar.Show();
+                                }
+                                else
+                                {
+                                    _activity.SupportActionBar.Hide();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return true;
             }
         }
     }
