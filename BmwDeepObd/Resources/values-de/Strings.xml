@@ -54,7 +54,7 @@
 \nSie können gerne mitwirken oder Probleme melden.
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
 \n\nÄnderungen in dieser Version:\n</string>
-  <string name="version_last_changes">- Unterstützung für STATUS_LESEN\n- Kleinere Probleme behoben</string>
+  <string name="version_last_changes">Die Titelleiste kann ausgeblendet werden\n- Unterstützung für STATUS_LESEN\n- Kleinere Probleme behoben</string>
   <string name="app_info_message">Deep OBD für BMW und VAG\nVersion: {0}\nId: {1}</string>
   <string name="vag_mode_info">Der VAG Modus ist noch experimentell.\nEs wird ein <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD Adapter</a> mit mindestens Firmwareversion 0.11 benötigt.\nIm Moment werden nur die Protokolle KWP2000, KWP1281, TP2.0 und UDS unterstützt.\nFür den neuen VAG Modus müssen die Konfiguration neu generiert werden.\nEs ist möglich den alten VAG Modus wieder in den globalen Einstellungen wählen.</string>
 
@@ -344,7 +344,7 @@
   <string name="settings_theme_dark">Dunkel</string>
   <string name="settings_theme_light">Hell</string>
   <string name="settings_caption_title_bar">Titelzeile</string>
-  <string name="settings_auto_hide_title_bar">Einige Titelzeile automatisch ausblenden (mit Wischgeste anzeigen)</string>
+  <string name="settings_auto_hide_title_bar">Titelzeile auf Hauptseite automatisch ausblenden (mit Wischgeste anzeigen)</string>
   <string name="settings_suppress_title_bar">Nicht verwendete Titelzeilen unterdrücken (mit Wischgeste anzeigen)</string>
   <string name="settings_caption_internet">Für OBD Netzwerkadapter Internetverbindung über</string>
   <string name="settings_internet_cellular">Mobiles Netzwerk</string>
