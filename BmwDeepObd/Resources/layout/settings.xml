@@ -63,6 +63,22 @@
                 android:text="@string/settings_theme_light" />
         </RadioGroup>
         <TextView
+            android:text="@string/settings_caption_title_bar"
+            android:id="@+id/textViewCaptionTitleBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextViewInnerCaption" />
+        <CheckBox
+            android:id="@+id/checkBoxAutoHideTitleBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_auto_hide_title_bar" />
+        <CheckBox
+            android:id="@+id/checkBoxSuppressTitleBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_suppress_title_bar" />
+        <TextView
             android:text="@string/settings_caption_internet"
             android:id="@+id/textViewCaptionInternet"
             android:layout_width="match_parent"
