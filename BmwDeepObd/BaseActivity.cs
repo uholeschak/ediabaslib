@@ -22,6 +22,15 @@ namespace BmwDeepObd
             _gestureDetector = new GestureDetectorCompat(this, gestureListener);
         }
 
+        protected override void OnResume()
+        {
+            base.OnResume();
+            if (!ActivityCommon.AutoHideTitleBar && !ActivityCommon.SuppressTitleBar)
+            {
+                SupportActionBar.Show();
+            }
+        }
+
         public override bool DispatchTouchEvent(MotionEvent ev)
         {
             _gestureDetector.OnTouchEvent(ev);
@@ -125,6 +134,11 @@ namespace BmwDeepObd
 
             public override bool OnFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
             {
+                if (!ActivityCommon.AutoHideTitleBar && !ActivityCommon.SuppressTitleBar)
+                {
+                    return true;
+                }
+
                 if (_contentView != null && e1 != null && e2 != null)
                 {
                     int top = _contentView.Top;
@@ -144,10 +158,7 @@ namespace BmwDeepObd
                                 }
                                 else
                                 {
-                                    if (ActivityCommon.AutoHideTitleBar || ActivityCommon.SuppressTitleBar)
-                                    {
-                                        _activity.SupportActionBar.Hide();
-                                    }
+                                    _activity.SupportActionBar.Hide();
                                 }
                             }
                         }
