@@ -12,6 +12,8 @@ namespace BmwDeepObd
     public class BaseActivity : AppCompatActivity
     {
         private GestureDetectorCompat _gestureDetector;
+        private bool _startCalled;
+        protected bool _allowTitleHiding = true;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -20,6 +22,23 @@ namespace BmwDeepObd
 
             GestureListener gestureListener = new GestureListener(this);
             _gestureDetector = new GestureDetectorCompat(this, gestureListener);
+        }
+
+        protected override void OnStart()
+        {
+            base.OnStart();
+
+            if (!_startCalled)
+            {
+                _startCalled = true;
+                if (ActivityCommon.SuppressTitleBar)
+                {
+                    if (SupportActionBar.CustomView == null && _allowTitleHiding)
+                    {
+                        SupportActionBar.Hide();
+                    }
+                }
+            }
         }
 
         protected override void OnResume()

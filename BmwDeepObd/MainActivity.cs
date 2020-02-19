@@ -244,6 +244,7 @@ namespace BmwDeepObd
             GetThemeSettings();
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
+            _allowTitleHiding = false;
             if (savedInstanceState != null)
             {
                 _activityRecreated = true;
