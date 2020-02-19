@@ -1,7 +1,6 @@
 ﻿using System;
 using Android.Content;
 using Android.OS;
-using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 
@@ -32,6 +31,8 @@ namespace BmwDeepObd
         private RadioButton _radioButtonLocaleRu;
         private RadioButton _radioButtonThemeDark;
         private RadioButton _radioButtonThemeLight;
+        private CheckBox _checkBoxAutoHideTitleBar;
+        private CheckBox _checkBoxSuppressTitleBar;
         private TextView _textViewCaptionInternet;
         private RadioGroup _radioGroupInternet;
         private RadioButton _radioButtonInternetCellular;
@@ -94,6 +95,9 @@ namespace BmwDeepObd
 
             _radioButtonThemeDark = FindViewById<RadioButton>(Resource.Id.radioButtonThemeDark);
             _radioButtonThemeLight = FindViewById<RadioButton>(Resource.Id.radioButtonThemeLight);
+
+            _checkBoxAutoHideTitleBar = FindViewById<CheckBox>(Resource.Id.checkBoxAutoHideTitleBar);
+            _checkBoxSuppressTitleBar = FindViewById<CheckBox>(Resource.Id.checkBoxSuppressTitleBar);
 
             ViewStates viewStateInternet = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ? ViewStates.Visible : ViewStates.Gone;
             _textViewCaptionInternet = FindViewById<TextView>(Resource.Id.textViewCaptionInternet);
@@ -248,6 +252,9 @@ namespace BmwDeepObd
                     break;
             }
 
+            _checkBoxAutoHideTitleBar.Checked = ActivityCommon.AutoHideTitleBar;
+            _checkBoxSuppressTitleBar.Checked = ActivityCommon.SuppressTitleBar;
+
             switch (ActivityCommon.SelectedInternetConnection)
             {
                 case ActivityCommon.InternetConnectionType.Wifi:
@@ -391,6 +398,9 @@ namespace BmwDeepObd
                 themeType = ActivityCommon.ThemeType.Light;
             }
             ActivityCommon.SelectedTheme = themeType;
+
+            ActivityCommon.AutoHideTitleBar = _checkBoxAutoHideTitleBar.Checked;
+            ActivityCommon.SuppressTitleBar = _checkBoxSuppressTitleBar.Checked;
 
             ActivityCommon.InternetConnectionType internetConnectionType = ActivityCommon.SelectedInternetConnection;
             if (_radioGroupInternet.Visibility == ViewStates.Visible)
