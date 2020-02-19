@@ -1407,7 +1407,7 @@ namespace BmwDeepObd
             }
             UpdateLockState();
             UpdateOptionsMenu();
-            if (ActivityCommon.HideActionBar)
+            if (ActivityCommon.AutoHideTitleBar)
             {
                 SupportActionBar.Hide();
             }
@@ -1584,13 +1584,14 @@ namespace BmwDeepObd
                     ActivityCommon.EmailAddress = prefs.GetString("EmailAddress", string.Empty);
                     ActivityCommon.TraceInfo = prefs.GetString("TraceInfo", string.Empty);
                     ActivityCommon.AppId = prefs.GetString("AppId", string.Empty);
+                    ActivityCommon.AutoHideTitleBar = prefs.GetBoolean("AutoHideTitleBar", ActivityCommon.AutoHideTitleBar);
+                    ActivityCommon.SuppressTitleBar = prefs.GetBoolean("SuppressTitleBar", ActivityCommon.SuppressTitleBar);
                     ActivityCommon.SelectedInternetConnection = (ActivityCommon.InternetConnectionType)prefs.GetInt("InternetConnection", (int)ActivityCommon.InternetConnectionType.Cellular);
                     ActivityCommon.SelectedManufacturer = (ActivityCommon.ManufacturerType)prefs.GetInt("Manufacturer", (int)ActivityCommon.ManufacturerType.Bmw);
                     ActivityCommon.BtEnbaleHandling = (ActivityCommon.BtEnableType)prefs.GetInt("BtEnable", (int)ActivityCommon.BtEnableType.Ask);
                     ActivityCommon.BtDisableHandling = (ActivityCommon.BtDisableType)prefs.GetInt("BtDisable", (int)ActivityCommon.BtDisableType.DisableIfByApp);
                     ActivityCommon.LockTypeCommunication = (ActivityCommon.LockType)prefs.GetInt("LockComm", (int)ActivityCommon.LockType.ScreenDim);
                     ActivityCommon.LockTypeLogging = (ActivityCommon.LockType)prefs.GetInt("LockLog", (int)ActivityCommon.LockType.Cpu);
-                    ActivityCommon.HideActionBar = prefs.GetBoolean("HideActionBar", ActivityCommon.HideActionBar);
                     ActivityCommon.StoreDataLogSettings = prefs.GetBoolean("StoreDataLogSettings", ActivityCommon.StoreDataLogSettings);
                     if (ActivityCommon.StoreDataLogSettings)
                     {
@@ -1656,13 +1657,14 @@ namespace BmwDeepObd
                 prefsEdit.PutString("AppId", ActivityCommon.AppId);
                 prefsEdit.PutString("Locale", ActivityCommon.SelectedLocale ?? string.Empty);
                 prefsEdit.PutInt("Theme", (int)ActivityCommon.SelectedTheme);
+                prefsEdit.PutBoolean("AutoHideTitleBar", ActivityCommon.AutoHideTitleBar);
+                prefsEdit.PutBoolean("SuppressTitleBar", ActivityCommon.SuppressTitleBar);
                 prefsEdit.PutInt("InternetConnection", (int)ActivityCommon.SelectedInternetConnection);
                 prefsEdit.PutInt("Manufacturer", (int) ActivityCommon.SelectedManufacturer);
                 prefsEdit.PutInt("BtEnable", (int)ActivityCommon.BtEnbaleHandling);
                 prefsEdit.PutInt("BtDisable", (int) ActivityCommon.BtDisableHandling);
                 prefsEdit.PutInt("LockComm", (int)ActivityCommon.LockTypeCommunication);
                 prefsEdit.PutInt("LockLog", (int)ActivityCommon.LockTypeLogging);
-                prefsEdit.PutBoolean("HideActionBar", ActivityCommon.HideActionBar);
                 prefsEdit.PutBoolean("StoreDataLogSettings", ActivityCommon.StoreDataLogSettings);
                 prefsEdit.PutBoolean("DataLogActive", _instanceData.DataLogActive);
                 prefsEdit.PutBoolean("DataLogAppend", _instanceData.DataLogAppend);

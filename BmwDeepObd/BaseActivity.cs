@@ -144,7 +144,7 @@ namespace BmwDeepObd
                                 }
                                 else
                                 {
-                                    if (ActivityCommon.HideActionBar)
+                                    if (ActivityCommon.AutoHideTitleBar || ActivityCommon.SuppressTitleBar)
                                     {
                                         _activity.SupportActionBar.Hide();
                                     }

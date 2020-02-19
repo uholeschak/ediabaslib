@@ -678,6 +678,10 @@ namespace BmwDeepObd
 
         public static ThemeType SelectedTheme { get; set; }
 
+        public static bool AutoHideTitleBar { get; set; }
+
+        public static bool SuppressTitleBar { get; set; }
+
         public static InternetConnectionType SelectedInternetConnection { get; set; }
 
         public static ManufacturerType SelectedManufacturer { get; set; }
@@ -689,8 +693,6 @@ namespace BmwDeepObd
         public static LockType LockTypeCommunication { get; set; }
 
         public static LockType LockTypeLogging { get; set; }
-
-        public static bool HideActionBar { get; set; }
 
         public static bool StoreDataLogSettings { get; set; }
 
