@@ -341,6 +341,10 @@
   <string name="settings_caption_theme">Темы</string>
   <string name="settings_theme_dark">Темная</string>
   <string name="settings_theme_light">Светлая</string>
+  <!--Translate-->
+  <string name="settings_caption_title_bar">Title bar</string>
+  <string name="settings_auto_hide_title_bar">Auto hide some title bars (show with swipe gesture)</string>
+  <string name="settings_suppress_title_bar">Suppress unused title bars (show with swipe gesture)</string>
   <string name="settings_caption_internet">Подключение сетевого адаптера OBD к интернет соединению через</string>
   <string name="settings_internet_cellular">Мобильную сеть</string>
   <string name="settings_internet_wifi">Wi-Fi</string>
