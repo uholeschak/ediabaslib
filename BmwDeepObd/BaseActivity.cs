@@ -14,31 +14,67 @@ namespace BmwDeepObd
 {
     public class BaseActivity : AppCompatActivity
     {
+        public class InstanceDataBase
+        {
+            public bool ActionBarVisibilitySet { get; set; }
+            public bool ActionBarVisible { get; set; }
+        }
+
+        public const string InstanceDataKeyDefault = "InstanceData";
+        public const string InstanceDataKeyBase = "InstanceDataBase";
+        protected InstanceDataBase _instanceDataBase = new InstanceDataBase();
         private GestureDetectorCompat _gestureDetector;
-        private bool _startCalled;
         protected bool _allowTitleHiding = true;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            if (savedInstanceState != null)
+            {
+                _instanceDataBase = GetInstanceState(savedInstanceState, _instanceDataBase, InstanceDataKeyBase) as InstanceDataBase;
+            }
+
             ResetTitle();
 
             GestureListener gestureListener = new GestureListener(this);
             _gestureDetector = new GestureDetectorCompat(this, gestureListener);
+
+            if (_instanceDataBase != null)
+            {
+                if (_instanceDataBase.ActionBarVisibilitySet)
+                {
+                    if (_instanceDataBase.ActionBarVisible)
+                    {
+                        SupportActionBar.Show();
+                    }
+                    else
+                    {
+                        SupportActionBar.Hide();
+                    }
+                }
+            }
+        }
+
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            StoreInstanceState(outState, _instanceDataBase, InstanceDataKeyBase);
+            base.OnSaveInstanceState(outState);
         }
 
         protected override void OnStart()
         {
             base.OnStart();
 
-            if (!_startCalled)
+            if (!_instanceDataBase.ActionBarVisibilitySet)
             {
-                _startCalled = true;
+                _instanceDataBase.ActionBarVisibilitySet = true;
+                _instanceDataBase.ActionBarVisible = true;
                 if (ActivityCommon.SuppressTitleBar)
                 {
                     if (SupportActionBar.CustomView == null && _allowTitleHiding)
                     {
                         SupportActionBar.Hide();
+                        _instanceDataBase.ActionBarVisible = false;
                     }
                 }
             }
@@ -135,7 +171,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static object GetInstanceState(Bundle savedInstanceState, object lastInstanceData, string key = "InstanceData")
+        public static object GetInstanceState(Bundle savedInstanceState, object lastInstanceData, string key = InstanceDataKeyDefault)
         {
             if (savedInstanceState != null)
             {
@@ -163,7 +199,7 @@ namespace BmwDeepObd
             return lastInstanceData;
         }
 
-        public static bool StoreInstanceState(Bundle outState, object instanceData, string key = "InstanceData")
+        public static bool StoreInstanceState(Bundle outState, object instanceData, string key = InstanceDataKeyDefault)
         {
             try
             {
@@ -228,10 +264,14 @@ namespace BmwDeepObd
                                 if (diffY > 0)
                                 {
                                     _activity.SupportActionBar.Show();
+                                    _activity._instanceDataBase.ActionBarVisibilitySet = true;
+                                    _activity._instanceDataBase.ActionBarVisible = true;
                                 }
                                 else
                                 {
                                     _activity.SupportActionBar.Hide();
+                                    _activity._instanceDataBase.ActionBarVisibilitySet = true;
+                                    _activity._instanceDataBase.ActionBarVisible = false;
                                 }
                             }
                         }
