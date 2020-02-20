@@ -267,12 +267,12 @@ namespace BmwDeepObd
                 if (_contentView != null && e1 != null && e2 != null)
                 {
                     int top = _contentView.Top;
-                    float y1 = e1.GetRawY(0) - top;
-                    float y2 = e2.GetRawY(0) - top;
+                    float y1 = e1.RawY - top;
+                    float y2 = e2.RawY - top;
                     if (y1 < topBorder || y2 < topBorder)
                     {
-                        float diffX = e2.GetRawX(0) - e1.GetRawX(0);
-                        float diffY = e2.GetRawY(0) - e1.GetRawY(0);
+                        float diffX = e2.RawX - e1.RawX;
+                        float diffY = e2.RawY - e1.RawY;
                         if (Math.Abs(diffX) < Math.Abs(diffY))
                         {
                             if (Math.Abs(diffY) > flingMinDiff && Math.Abs(velocityY) > flingMinVel)
