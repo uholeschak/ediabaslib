@@ -157,7 +157,7 @@ namespace BmwDeepObd
             if (savedInstanceState != null)
             {
                 _activityRecreated = true;
-                _instanceData = ActivityCommon.GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
+                _instanceData = GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
             }
 
             SupportActionBar.SetHomeButtonEnabled(true);
@@ -268,7 +268,7 @@ namespace BmwDeepObd
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
-            ActivityCommon.StoreInstanceState(outState, _instanceData);
+            StoreInstanceState(outState, _instanceData);
             base.OnSaveInstanceState(outState);
         }
 
