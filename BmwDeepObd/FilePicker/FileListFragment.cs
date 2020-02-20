@@ -56,7 +56,7 @@ namespace BmwDeepObd.FilePicker
             if (savedInstanceState != null)
             {
                 _activityRecreated = true;
-                _instanceData = ActivityCommon.GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
+                _instanceData = BaseActivity.GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
             }
 
             string initDir = Activity.Intent.GetStringExtra(FilePickerActivity.ExtraInitDir) ?? string.Empty;
@@ -136,7 +136,7 @@ namespace BmwDeepObd.FilePicker
 
         public override void OnSaveInstanceState(Bundle outState)
         {
-            ActivityCommon.StoreInstanceState(outState, _instanceData);
+            BaseActivity.StoreInstanceState(outState, _instanceData);
             base.OnSaveInstanceState(outState);
         }
 
