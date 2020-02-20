@@ -16,8 +16,24 @@ namespace BmwDeepObd
     {
         public class InstanceDataBase
         {
-            public bool ActionBarVisibilitySet { get; set; }
-            public bool ActionBarVisible { get; set; }
+            public bool ActionBarVisibilitySet
+            {
+                get => _actionBarVisibilitySet;
+                set => _actionBarVisibilitySet = value;
+            }
+
+            public bool ActionBarVisible
+            {
+                get => _actionBarVisible;
+                set
+                {
+                    _actionBarVisible = value;
+                    _actionBarVisibilitySet = true;
+                }
+            }
+
+            private bool _actionBarVisibilitySet;
+            private bool _actionBarVisible;
         }
 
         public const string InstanceDataKeyDefault = "InstanceData";
@@ -67,7 +83,6 @@ namespace BmwDeepObd
 
             if (!_instanceDataBase.ActionBarVisibilitySet)
             {
-                _instanceDataBase.ActionBarVisibilitySet = true;
                 _instanceDataBase.ActionBarVisible = true;
                 if (ActivityCommon.SuppressTitleBar)
                 {
@@ -86,6 +101,7 @@ namespace BmwDeepObd
             if (!ActivityCommon.AutoHideTitleBar && !ActivityCommon.SuppressTitleBar)
             {
                 SupportActionBar.Show();
+                _instanceDataBase.ActionBarVisible = true;
             }
         }
 
@@ -264,13 +280,11 @@ namespace BmwDeepObd
                                 if (diffY > 0)
                                 {
                                     _activity.SupportActionBar.Show();
-                                    _activity._instanceDataBase.ActionBarVisibilitySet = true;
                                     _activity._instanceDataBase.ActionBarVisible = true;
                                 }
                                 else
                                 {
                                     _activity.SupportActionBar.Hide();
-                                    _activity._instanceDataBase.ActionBarVisibilitySet = true;
                                     _activity._instanceDataBase.ActionBarVisible = false;
                                 }
                             }
