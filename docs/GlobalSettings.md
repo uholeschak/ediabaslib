@@ -1,8 +1,14 @@
 # Global settings
 This page allows to change some global app settings.  
+* _Language_ options:
+  * _Default_: Use device system language.
+  * _Other_: Use specified language.
 * _Theme_ options:
   * _Dark_: Dark theme is selected.
   * _Light_: Light theme is selected.
+* _Title bar_ options:
+  * _Auto hide title bar on main page_: Auto hide title bar after connecting. You could hide / show the title bar with a swipe gesture at the top edge of the app.
+  * _Suppress unused title bars_: Title bars without special functions are hidden by default. You could hide / show the title bar with a swipe gesture at the top edge of the app.
 * _For OBD network adapter internet connection via_ (Wi-Fi or Ethernet OBD II adapters, only Android 21 or higher) options:
   * _Mobile network_: Internet connection via mobile network is selected.
   * _Wi-Fi_: Internet connection via Wi-Fi is selected.
