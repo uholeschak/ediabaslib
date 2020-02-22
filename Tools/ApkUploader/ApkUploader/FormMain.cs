@@ -1124,7 +1124,7 @@ namespace ApkUploader
                             upload.ChunkSize = ResumableUpload.MinimumChunkSize;
                             upload.ProgressChanged += progress =>
                             {
-                                UpdateStatus(sb.ToString() + $"Apk progress: {100 * progress.BytesSent / fileLength}%");
+                                UpdateStatus(sb + $"Apk progress: {100 * progress.BytesSent / fileLength}%");
                             };
                             upload.ResponseReceived += apk =>
                             {
@@ -1157,7 +1157,7 @@ namespace ApkUploader
                                 upload.ChunkSize = ResumableUpload.MinimumChunkSize;
                                 upload.ProgressChanged += progress =>
                                 {
-                                    UpdateStatus(sb.ToString() + $"Expansion progress: {100 * progress.BytesSent / fileLength}%");
+                                    UpdateStatus(sb + $"Expansion progress: {100 * progress.BytesSent / fileLength}%");
                                 };
                                 IUploadProgress uploadProgress = await upload.UploadAsync(_cts.Token);
                                 sb.AppendLine($"Upload status: {uploadProgress.Status.ToString()}");
