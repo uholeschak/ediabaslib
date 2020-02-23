@@ -32,7 +32,6 @@ using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Android.Text.Method;
 using Android.Views;
-using System.Xml.Serialization;
 using BmwFileReader;
 using UdsFileReader;
 // ReSharper disable StringLiteralTypo
@@ -3533,7 +3532,7 @@ namespace BmwDeepObd
             ediabas.ResolveSgbdFile(sgbdName);
         }
 
-        public static string FormatResult(JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, out Android.Graphics.Color? textColor, out double? dataValue)
+        public static string FormatResult(EdiabasNet ediabas, JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, out Android.Graphics.Color? textColor, out double? dataValue)
         {
             textColor = null;
             dataValue = null;
@@ -3546,6 +3545,7 @@ namespace BmwDeepObd
             MethodInfo formatResultColor = null;
             MethodInfo formatResultMulti = null;
             MethodInfo formatResultValue = null;
+            MethodInfo formatResultOverride = null;
             if (pageInfo.ClassObject != null)
             {
                 Type pageType = pageInfo.ClassObject.GetType();
@@ -3553,7 +3553,9 @@ namespace BmwDeepObd
                 formatResultColor = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() });
                 formatResultMulti = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() });
                 formatResultValue = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType(), typeof(double?).MakeByRefType() });
+                formatResultOverride = pageType.GetMethod("FormatResult", new[] { typeof(EdiabasNet), typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(string), typeof(string).MakeByRefType(), typeof(Android.Graphics.Color?).MakeByRefType(), typeof(double?).MakeByRefType() });
             }
+
             string result = string.Empty;
             if (displayInfo.Format == null)
             {
@@ -3599,6 +3601,26 @@ namespace BmwDeepObd
             else
             {
                 result = FormatResultEdiabas(resultDict, displayInfo.Result, displayInfo.Format);
+            }
+
+            try
+            {
+                if (formatResultOverride != null)
+                {
+                    object[] args = { ediabas, pageInfo, resultDict, displayInfo.Result, result, null, null };
+                    // ReSharper disable once UsePatternMatching
+                    bool? valid = formatResultOverride.Invoke(pageInfo.ClassObject, args) as bool?;
+                    if (valid.HasValue && valid.Value)
+                    {
+                        result = args[4] as string;
+                        textColor = args[5] as Android.Graphics.Color?;
+                        dataValue = args[6] as double?;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
             return result;
         }
