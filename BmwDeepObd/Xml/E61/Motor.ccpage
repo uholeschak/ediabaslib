@@ -69,7 +69,7 @@
       <job name="STATUS_MESSWERTBLOCK_LESEN"
            args_first="JA;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED;ISBLS;IFPWG;IVKMH;IAFZG"
            args="NEIN;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED;ISBLS;IFPWG;IVKMH;IAFZG">
-        <display name="label_motor_bat_voltage" result="STAT_UBATT_WERT" />
+        <display name="label_motor_bat_voltage" result="STAT_UBATT_WERT" format="6.2R" />
         <display name="label_motor_temp" result="STAT_CTSCD_tClntLin_WERT" format="6.2R" />
         <display name="label_motor_air_mass" result="STAT_LUFTMASSE_WERT" format="7.2R" />
         <display name="label_motor_intake_air_temp" result="STAT_LADELUFTTEMPERATUR_WERT" format="6.2R" />
@@ -84,12 +84,12 @@
         <display name="label_motor_fuel_temp" result="STAT_KRAFTSTOFFTEMPERATURK_WERT" format="6.2R" />
         <display name="label_motor_temp_before_filter" result="STAT_ABGASTEMPERATUR_VOR_PARTIKELFILTER_1_WERT" format="6.2R" />
         <display name="label_motor_temp_before_cat" result="STAT_ABGASTEMPERATUR_VOR_KATALYSATOR_WERT" format="6.2R" />
-        <display name="label_motor_part_filt_dist_since_regen" result="STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT" log_tag="part_filt_dist" />
+        <display name="label_motor_part_filt_dist_since_regen" result="STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT" format="6.2R" log_tag="part_filt_dist" />
         <display name="label_motor_exhaust_press" result="STAT_DIFFERENZDRUCK_UEBER_PARTIKELFILTER_WERT" format="6.2R" />
-        <display name="label_motor_oil_press_switch" result="STAT_OELDRUCKSCHALTER_EIN_WERT" />
+        <display name="label_motor_oil_press_switch" result="STAT_OELDRUCKSCHALTER_EIN_WERT" format="6.2R" />
         <display name="label_motor_part_filt_request" result="STAT_REGENERATIONSANFORDERUNG_WERT" log_tag="part_filt_requ" />
-        <display name="label_motor_part_filt_status" result="STAT_EGT_st_WERT" log_tag="part_filt_status" />
-        <display name="label_motor_part_filt_unblocked" result="STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT" log_tag="part_filt_unblocked" />
+        <display name="label_motor_part_filt_status" result="STAT_EGT_st_WERT" format="6.2R" log_tag="part_filt_status" />
+        <display name="label_motor_part_filt_unblocked" result="STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT" format="6.2R" log_tag="part_filt_unblocked" />
         <display name="label_motor_break_light" result="STAT_BREMSLICHTSCHALTER_EIN_WERT" />
         <display name="label_motor_pedal_value" result="STAT_FAHRERWUNSCH_PEDAL_WERT" format="6.2R" />
         <display name="label_motor_speed" result="STAT_GESCHWINDIGKEIT_WERT" format="6.2R" />
