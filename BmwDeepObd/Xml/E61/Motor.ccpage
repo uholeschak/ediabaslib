@@ -121,11 +121,13 @@
             }
         }
 
-        public string FormatResult(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor)
+        public bool FormatResult(EdiabasNet ediabas, JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref string result, ref Android.Graphics.Color? textColor, ref double? dataValue)
         {
-            string result = string.Empty;
+            bool valid = false;
             double value;
             bool found;
+
+            //ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ResultName='{0}', ResultValue='{1}'", resultName, result);
 
             switch (resultName)
             {
@@ -137,11 +139,13 @@
                         textColor = Android.Graphics.Color.Red;
                     }
                     if (!found) result = string.Empty;
+                    valid = true;
                     break;
 
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT":
                     result = string.Format(ActivityMain.Culture, "{0,6:0.0}", ActivityMain.GetResultDouble(resultDict, resultName, 0, out found) / 1000.0);
                     if (!found) result = string.Empty;
+                    valid = true;
                     break;
 
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_OELDRUCKSCHALTER_EIN_WERT":
@@ -151,29 +155,34 @@
                         textColor = Android.Graphics.Color.Red;
                     }
                     if (!found) result = string.Empty;
+                    valid = true;
                     break;
 
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_REGENERATIONSANFORDERUNG_WERT":
                     result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) < 0.5) && found) ? "1" : "0";
                     if (!found) result = string.Empty;
+                    valid = true;
                     break;
 
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_EGT_st_WERT":
                     result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) > 1.5) && found) ? "1" : "0";
                     if (!found) result = string.Empty;
+                    valid = true;
                     break;
 
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT":
                     result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) < 0.5) && found) ? "1" : "0";
                     if (!found) result = string.Empty;
+                    valid = true;
                     break;
 
                 case "STATUS_MESSWERTBLOCK_LESEN#STAT_BREMSLICHTSCHALTER_EIN_WERT":
                     result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) > 0.5) && found) ? "1" : "0";
                     if (!found) result = string.Empty;
+                    valid = true;
                     break;
             }
-            return result;
+            return valid;
         }
     }
       ]]>
