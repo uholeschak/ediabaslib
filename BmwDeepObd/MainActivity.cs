@@ -543,7 +543,7 @@ namespace BmwDeepObd
         {
             base.OnConfigurationChanged(newConfig);
 
-            UpdateDisplay();
+            UpdateDisplay(true);
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
@@ -1861,7 +1861,7 @@ namespace BmwDeepObd
 
         private void DataUpdated(object sender, EventArgs e)
         {
-            RunOnUiThread(UpdateDisplay);
+            RunOnUiThread(() => { UpdateDisplay(); });
         }
 
         private void PageChanged(object sender, EventArgs e)
@@ -1980,7 +1980,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void UpdateDisplay()
+        private void UpdateDisplay(bool forceUpdate = false)
         {
             if (!_activityActive || (_activityCommon == null))
             {   // OnDestroy already executed
@@ -2188,7 +2188,7 @@ namespace BmwDeepObd
                                             }
                                         }
 
-                                        if (changed)
+                                        if (changed || forceUpdate)
                                         {
                                             resultListAdapter.NotifyDataSetChanged();
                                         }
@@ -2634,7 +2634,7 @@ namespace BmwDeepObd
                                             _translateActive = false;
                                             _translatedList = transList;
                                             UpdateOptionsMenu();
-                                            _updateHandler?.Post(UpdateDisplay);
+                                            _updateHandler?.Post(() => { UpdateDisplay(); });
                                         });
                                     }))
                                     {
@@ -2778,7 +2778,7 @@ namespace BmwDeepObd
                                 }
                             }
                         }
-                        if (resultChanged)
+                        if (resultChanged || forceUpdate)
                         {
                             resultGridAdapter.Items.Clear();
                             foreach (GridResultItem resultItem in tempResultGrid)
@@ -2843,7 +2843,7 @@ namespace BmwDeepObd
                                 }
                             }
                         }
-                        if (resultChanged)
+                        if (resultChanged || forceUpdate)
                         {
                             resultListAdapter.Items.Clear();
                             resultListAdapter.Items.AddRange(tempResultList);
