@@ -543,7 +543,7 @@ namespace BmwDeepObd
         {
             base.OnConfigurationChanged(newConfig);
 
-            UpdateDisplay(true);
+            _updateHandler?.Post(() => { UpdateDisplay(true); });
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
