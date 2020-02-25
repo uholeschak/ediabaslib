@@ -248,6 +248,7 @@
     <Compile Include="AndroidUtility.cs" />
     <Compile Include="MtcServiceConnection.cs" />
     <Compile Include="MultiMap.cs" />
+    <Compile Include="MyApplication.cs" />
     <Compile Include="NumberInputDialog.cs" />
     <Compile Include="PicBootloader.cs" />
     <Compile Include="ResultGridAdapter.cs" />

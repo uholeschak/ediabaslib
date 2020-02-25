@@ -22,7 +22,7 @@ namespace BmwDeepObd
     [Android.App.Activity(Label = "@string/app_name",
         MainLauncher = true,
         Icon = "@drawable/icon",
-        LaunchMode = LaunchMode.SingleTask,
+        LaunchMode = LaunchMode.SingleTop,
         ConfigurationChanges = ConfigChanges.KeyboardHidden |
                                ConfigChanges.Orientation |
                                ConfigChanges.ScreenSize)]
