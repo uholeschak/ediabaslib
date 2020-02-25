@@ -43,7 +43,7 @@ using Mono.CSharp;
 namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/app_name", MainLauncher = false,
-            LaunchMode = LaunchMode.SingleTask,
+            LaunchMode = LaunchMode.SingleTop,
             UiOptions=UiOptions.SplitActionBarWhenNarrow,
             ConfigurationChanges = ConfigChanges.KeyboardHidden |
                 ConfigChanges.Orientation |
