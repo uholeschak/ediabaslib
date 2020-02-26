@@ -1813,6 +1813,11 @@ namespace BmwDeepObd
 
         private void BroadcastReceived(Context context, Intent intent)
         {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
             if (intent == null)
             {   // from usb check timer
                 if (_activityActive)
@@ -1821,15 +1826,23 @@ namespace BmwDeepObd
                 }
                 return;
             }
+
             string action = intent.Action;
             switch (action)
             {
                 case ForegroundService.NotificationBroadcastAction:
                 {
                     string request = intent.GetStringExtra(ForegroundService.BroadcastMessageKey);
-                    if (request != null && request.Equals(ForegroundService.BroadcastStopComm))
+                    if (request != null)
                     {
-                        StopEdiabasThread(false);
+                        if (request.Equals(ForegroundService.BroadcastStopComm))
+                        {
+                            StopEdiabasThread(false);
+                        }
+                        else if (request.Equals(ForegroundService.BroadcastShowTitle))
+                        {
+                            SupportActionBar.Show();
+                        }
                     }
                     break;
                 }
