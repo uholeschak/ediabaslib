@@ -313,6 +313,10 @@ namespace BmwDeepObd
             if (ActivityCommon.CommActive)
             {
                 ConnectEdiabasEvents();
+                if (!_activityRecreated && !showTitleRequest && ActivityCommon.AutoHideTitleBar)
+                {
+                    SupportActionBar.Hide();
+                }
             }
             else
             {
