@@ -171,6 +171,7 @@ namespace BmwDeepObd
         };
 
         public const string ExtraStopComm = "stop_communication";
+        public const string ExtraShowTitle = "show_title";
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         public static bool StoreXmlEditor = Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1;
         private InstanceData _instanceData = new InstanceData();
@@ -302,6 +303,12 @@ namespace BmwDeepObd
             }
 
             _stopCommRequest = Intent.GetBooleanExtra(ExtraStopComm, false);
+            bool showTitleRequest = Intent.GetBooleanExtra(ExtraShowTitle, false);
+            if (showTitleRequest)
+            {
+                _instanceDataBase.ActionBarVisible = true;
+            }
+
             _connectTypeRequest = ActivityCommon.AutoConnectHandling;
             if (ActivityCommon.CommActive)
             {
