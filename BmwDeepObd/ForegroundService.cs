@@ -21,7 +21,6 @@ namespace BmwDeepObd
 
         public const string ActionStartService = "ForegroundService.action.START_SERVICE";
         public const string ActionStopService = "ForegroundService.action.STOP_SERVICE";
-        public const string ActionMainActivity = "ForegroundService.action.MAIN_ACTIVITY";
 
         private bool _isStarted;
         private ActivityCommon _activityCommon;
@@ -259,10 +258,11 @@ namespace BmwDeepObd
         private Android.App.PendingIntent BuildIntentToShowMainActivity()
         {
             Intent notificationIntent = new Intent(this, typeof(ActivityMain));
-            notificationIntent.SetAction(ActionMainActivity);
-            //notificationIntent.SetFlags(ActivityFlags.SingleTop /*| ActivityFlags.ClearTask*/);
-            notificationIntent.SetFlags(ActivityFlags.NewTask);
+            notificationIntent.SetAction(Intent.ActionMain);
+            notificationIntent.AddCategory(Intent.CategoryLauncher);
+            notificationIntent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.BroughtToFront);
             notificationIntent.PutExtra(ActivityMain.ExtraStopComm, false);
+            notificationIntent.PutExtra(ActivityMain.ExtraShowTitle, true);
 
             Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetActivity(this, 0, notificationIntent, Android.App.PendingIntentFlags.UpdateCurrent);
             return pendingIntent;
