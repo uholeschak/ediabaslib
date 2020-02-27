@@ -250,6 +250,7 @@ namespace BmwDeepObd
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
             _allowTitleHiding = false;
+            _touchShowTitle = true;
             if (savedInstanceState != null)
             {
                 _activityRecreated = true;

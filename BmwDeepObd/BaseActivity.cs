@@ -41,6 +41,7 @@ namespace BmwDeepObd
         protected InstanceDataBase _instanceDataBase = new InstanceDataBase();
         private GestureDetectorCompat _gestureDetector;
         protected bool _allowTitleHiding = true;
+        protected bool _touchShowTitle = false;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -255,6 +256,22 @@ namespace BmwDeepObd
             public override bool OnDown(MotionEvent e)
             {
                 return true;
+            }
+
+            public override void OnLongPress(MotionEvent e)
+            {
+                base.OnLongPress(e);
+
+                if (!ActivityCommon.AutoHideTitleBar && !ActivityCommon.SuppressTitleBar)
+                {
+                    return;
+                }
+
+                if (_activity._touchShowTitle && !_activity.SupportActionBar.IsShowing)
+                {
+                    _activity.SupportActionBar.Show();
+                    _activity._instanceDataBase.ActionBarVisible = true;
+                }
             }
 
             public override bool OnFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
