@@ -16,11 +16,13 @@ namespace BmwDeepObd
         public const int ServiceRunningNotificationId = 10000;
         public const string BroadcastMessageKey = "broadcast_message";
         public const string BroadcastStopComm = "stop_communication";
+        public const string BroadcastShowTitle = "show_title";
         public const string NotificationBroadcastAction = ActivityCommon.AppNameSpace + ".Notification.Action";
         public const string ActionBroadcastCommand = ActivityCommon.AppNameSpace + ".Action.Command";
 
         public const string ActionStartService = "ForegroundService.action.START_SERVICE";
         public const string ActionStopService = "ForegroundService.action.STOP_SERVICE";
+        public const string ActionShowMainActivity = "ForegroundService.action.SHOW_MAIN_ACTIVITY";
 
         private bool _isStarted;
         private ActivityCommon _activityCommon;
@@ -98,6 +100,16 @@ namespace BmwDeepObd
                             _isStarted = false;
                         }
                     }
+                    break;
+                }
+
+                case ActionShowMainActivity:
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "OnStartCommand: Show main activity");
+#endif
+                    ShowMainActivity();
+                    SendShowTitleBroadcast();
                     break;
                 }
             }
@@ -180,6 +192,31 @@ namespace BmwDeepObd
             LocalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
         }
 
+        private void SendShowTitleBroadcast()
+        {
+            Intent broadcastIntent = new Intent(NotificationBroadcastAction);
+            broadcastIntent.PutExtra(BroadcastMessageKey, BroadcastShowTitle);
+            LocalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
+        }
+
+        private void ShowMainActivity()
+        {
+            try
+            {
+                Intent intent = new Intent(this, typeof(ActivityMain));
+                intent.SetAction(Intent.ActionMain);
+                intent.AddCategory(Intent.CategoryLauncher);
+                intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask);
+                intent.PutExtra(ActivityMain.ExtraStopComm, false);
+                intent.PutExtra(ActivityMain.ExtraShowTitle, true);
+                StartActivity(intent);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
         private void ConnectEdiabasEvents()
         {
             if (ActivityCommon.EdiabasThread != null)
@@ -257,14 +294,9 @@ namespace BmwDeepObd
         /// <returns>The content intent.</returns>
         private Android.App.PendingIntent BuildIntentToShowMainActivity()
         {
-            Intent notificationIntent = new Intent(this, typeof(ActivityMain));
-            notificationIntent.SetAction(Intent.ActionMain);
-            notificationIntent.AddCategory(Intent.CategoryLauncher);
-            notificationIntent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.BroughtToFront);
-            notificationIntent.PutExtra(ActivityMain.ExtraStopComm, false);
-            notificationIntent.PutExtra(ActivityMain.ExtraShowTitle, true);
-
-            Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetActivity(this, 0, notificationIntent, Android.App.PendingIntentFlags.UpdateCurrent);
+            Intent showMainActivityIntent = new Intent(this, GetType());
+            showMainActivityIntent.SetAction(ActionShowMainActivity);
+            Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetService(this, 0, showMainActivityIntent, Android.App.PendingIntentFlags.UpdateCurrent);
             return pendingIntent;
         }
 
@@ -275,9 +307,9 @@ namespace BmwDeepObd
         /// <returns>The stop service action.</returns>
         private NotificationCompat.Action BuildStopServiceAction()
         {
-            var stopServiceIntent = new Intent(this, GetType());
+            Intent stopServiceIntent = new Intent(this, GetType());
             stopServiceIntent.SetAction(ActionStopService);
-            var stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent, 0);
+            Android.App.PendingIntent stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent, 0);
 
             var builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel,
                 GetText(Resource.String.service_stop_comm),
