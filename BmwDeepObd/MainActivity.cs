@@ -164,6 +164,7 @@ namespace BmwDeepObd
         private const string InfoXmlName = "ObbInfo.xml";
         private const string ContentFileName = "Content.xml";
         private const int CpuLoadCritical = 70;
+        private const int AutoHideTimeout = 3000;
         private const int RequestPermissionExternalStorage = 0;
         private readonly string[] _permissionsExternalStorage =
         {
@@ -188,6 +189,9 @@ namespace BmwDeepObd
         private bool _ignoreTabsChange;
         private bool _compileCodePending;
         private ActivityCommon _activityCommon;
+        public bool _autoHideStarted;
+        public long _autoHideStartTime;
+        private Timer _autoHideTimer;
         private Handler _updateHandler;
         private TabLayout _tabLayout;
         private ViewPager _viewPager;
@@ -313,10 +317,6 @@ namespace BmwDeepObd
             if (ActivityCommon.CommActive)
             {
                 ConnectEdiabasEvents();
-                if (!_activityRecreated && !showTitleRequest && ActivityCommon.AutoHideTitleBar)
-                {
-                    SupportActionBar.Hide();
-                }
             }
             else
             {
@@ -463,6 +463,44 @@ namespace BmwDeepObd
             {
                 HandleStartDialogs(firstStart);
             }
+
+            if (ActivityCommon.AutoHideTitleBar)
+            {
+                if (_autoHideTimer == null)
+                {
+                    _autoHideTimer = new Timer(state =>
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            if (_autoHideStarted)
+                            {
+                                if (Stopwatch.GetTimestamp() - _autoHideStartTime >= AutoHideTimeout * ActivityCommon.TickResolMs)
+                                {
+                                    _autoHideStarted = false;
+                                    if (ActivityCommon.CommActive && SupportActionBar.IsShowing)
+                                    {
+                                        SupportActionBar.Hide();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (SupportActionBar.IsShowing && ActivityCommon.CommActive)
+                                {
+                                    _autoHideStartTime = Stopwatch.GetTimestamp();
+                                    _autoHideStarted = true;
+                                }
+                            }
+                        });
+                    }, null, 500, 500);
+                }
+            }
+
             UpdateOptionsMenu();
             UpdateDisplay();
         }
@@ -476,6 +514,12 @@ namespace BmwDeepObd
             if (!UseCommService())
             {
                 StopEdiabasThread(false);
+            }
+
+            if (_autoHideTimer != null)
+            {
+                _autoHideTimer.Dispose();
+                _autoHideTimer = null;
             }
         }
 
@@ -1419,10 +1463,6 @@ namespace BmwDeepObd
             }
             UpdateLockState();
             UpdateOptionsMenu();
-            if (ActivityCommon.AutoHideTitleBar)
-            {
-                SupportActionBar.Hide();
-            }
             return true;
         }
 
@@ -1460,6 +1500,8 @@ namespace BmwDeepObd
             }
             UpdateLockState();
             UpdateOptionsMenu();
+
+            _autoHideStarted = false;
             SupportActionBar.Show();
         }
 
