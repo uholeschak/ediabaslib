@@ -283,9 +283,12 @@ namespace BmwDeepObd
 
                 if (_contentView != null && e1 != null && e2 != null)
                 {
-                    int top = _contentView.Top;
+                    int[] location = new int[2];
+                    _contentView.GetLocationOnScreen(location);
+                    int top = location[1];
                     float y1 = e1.RawY - top;
                     float y2 = e2.RawY - top;
+
                     if (y1 < topBorder || y2 < topBorder)
                     {
                         float diffX = e2.RawX - e1.RawX;
