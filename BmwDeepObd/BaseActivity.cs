@@ -241,16 +241,22 @@ namespace BmwDeepObd
 
         private class GestureListener : GestureDetector.SimpleOnGestureListener
         {
-            private const int topBorder = 200;
             private const int flingMinDiff = 100;
             private const int flingMinVel = 100;
             private readonly BaseActivity _activity;
             private readonly View _contentView;
+            private readonly int _topBorder;
 
             public GestureListener(BaseActivity activity)
             {
                 _activity = activity;
                 _contentView = _activity?.FindViewById<View>(Android.Resource.Id.Content);
+                _topBorder = 200;
+                if (activity != null)
+                {
+                    float yDpi = activity.Resources.DisplayMetrics.Ydpi;
+                    _topBorder = (int)yDpi / 2;
+                }
             }
 
             public override bool OnDown(MotionEvent e)
@@ -289,7 +295,7 @@ namespace BmwDeepObd
                     float y1 = e1.RawY - top;
                     float y2 = e2.RawY - top;
 
-                    if (y1 < topBorder || y2 < topBorder)
+                    if (y1 < _topBorder || y2 < _topBorder)
                     {
                         float diffX = e2.RawX - e1.RawX;
                         float diffY = e2.RawY - e1.RawY;
