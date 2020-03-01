@@ -1011,39 +1011,46 @@ namespace BmwDeepObd
 
                         if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                         {
-                            string errorShadowJob = "FS_LESEN_SHADOW";
-                            if (Ediabas.IsJobExisting(errorShadowJob))
+                            try
                             {
-                                Ediabas.ArgString = argString;
-                                Ediabas.ArgBinaryStd = null;
-                                Ediabas.ResultsRequests = string.Empty;
-                                Ediabas.ExecuteJob(errorShadowJob);
-
-                                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
-
-                                bool jobOk = false;
-                                if (resultSets.Count > 1)
+                                string errorShadowJob = "FS_LESEN_SHADOW";
+                                if (Ediabas.IsJobExisting(errorShadowJob))
                                 {
-                                    if (IsJobStatusOk(resultSets[resultSets.Count - 1]))
-                                    {
-                                        jobOk = true;
-                                    }
-                                }
+                                    Ediabas.ArgString = argString;
+                                    Ediabas.ArgBinaryStd = null;
+                                    Ediabas.ResultsRequests = string.Empty;
+                                    Ediabas.ExecuteJob(errorShadowJob);
 
-                                if (jobOk)
-                                {
-                                    int dictIndex = 0;
-                                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
+
+                                    bool jobOk = false;
+                                    if (resultSets.Count > 1)
                                     {
-                                        if (dictIndex == 0)
+                                        if (IsJobStatusOk(resultSets[resultSets.Count - 1]))
                                         {
-                                            dictIndex++;
-                                            continue;
+                                            jobOk = true;
                                         }
+                                    }
 
-                                        errorReportList.Add(new EdiabasErrorShadowReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, resultDictLocal));
+                                    if (jobOk)
+                                    {
+                                        int dictIndex = 0;
+                                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                                        {
+                                            if (dictIndex == 0)
+                                            {
+                                                dictIndex++;
+                                                continue;
+                                            }
+
+                                            errorReportList.Add(new EdiabasErrorShadowReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, resultDictLocal));
+                                        }
                                     }
                                 }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
                             }
                         }
                     }
