@@ -43,6 +43,8 @@ namespace BmwDeepObd
         protected bool _allowTitleHiding = true;
         protected bool _touchShowTitle = false;
 
+        public bool LongPress { get; set; }
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -109,6 +111,22 @@ namespace BmwDeepObd
         public override bool DispatchTouchEvent(MotionEvent ev)
         {
             _gestureDetector.OnTouchEvent(ev);
+            if (ev.Action == MotionEventActions.Up)
+            {
+                if (LongPress)
+                {
+                    if (ActivityCommon.AutoHideTitleBar || ActivityCommon.SuppressTitleBar)
+                    {
+                        if (_touchShowTitle && !SupportActionBar.IsShowing)
+                        {
+                            SupportActionBar.Show();
+                            _instanceDataBase.ActionBarVisible = true;
+                        }
+                    }
+                }
+
+                LongPress = false;
+            }
             return base.DispatchTouchEvent(ev);
         }
 
@@ -261,23 +279,14 @@ namespace BmwDeepObd
 
             public override bool OnDown(MotionEvent e)
             {
+                _activity.LongPress = false;
                 return true;
             }
 
             public override void OnLongPress(MotionEvent e)
             {
                 base.OnLongPress(e);
-
-                if (!ActivityCommon.AutoHideTitleBar && !ActivityCommon.SuppressTitleBar)
-                {
-                    return;
-                }
-
-                if (_activity._touchShowTitle && !_activity.SupportActionBar.IsShowing)
-                {
-                    _activity.SupportActionBar.Show();
-                    _activity._instanceDataBase.ActionBarVisible = true;
-                }
+                _activity.LongPress = true;
             }
 
             public override bool OnFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
