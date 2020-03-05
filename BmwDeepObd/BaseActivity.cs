@@ -9,6 +9,7 @@ using Android.OS;
 using Android.Support.V4.View;
 using Android.Support.V7.App;
 using Android.Views;
+using Android.Widget;
 
 namespace BmwDeepObd
 {
@@ -42,8 +43,27 @@ namespace BmwDeepObd
         private GestureDetectorCompat _gestureDetector;
         protected bool _allowTitleHiding = true;
         protected bool _touchShowTitle = false;
+        protected bool _longPress;
 
-        public bool LongPress { get; set; }
+        public bool LongPress
+        {
+            get => _longPress;
+            set
+            {
+                if (value && !_longPress)
+                {
+                    if (ActivityCommon.AutoHideTitleBar || ActivityCommon.SuppressTitleBar)
+                    {
+                        if (_touchShowTitle && !SupportActionBar.IsShowing)
+                        {
+                            Toast.MakeText(this, GetString(Resource.String.release_show_title), ToastLength.Short).Show();
+                        }
+                    }
+                }
+
+                _longPress = value;
+            }
+        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
