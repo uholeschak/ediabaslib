@@ -21,6 +21,8 @@
   <string name="back_button_twice_for_exit">Дважды нажмите кнопку, чтобы выйти</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения</string>
+  <!--Translate-->
+  <string name="release_show_title">Release to show title</string>
   <string name="bt_enable">Bluetooth не активирован.\nХотите его активировать?</string>
   <string name="wifi_enable">Wi-Fi не активирован.\nАктивировать или выбрать точку доступа?</string>
   <string name="bt_not_available">Bluetooth недоступен.</string>

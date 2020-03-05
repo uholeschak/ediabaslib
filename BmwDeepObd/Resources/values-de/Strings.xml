@@ -21,6 +21,7 @@
   <string name="back_button_twice_for_exit">Die Schaltfläche zwei mal drücken zum Beenden</string>
   <string name="no_ext_storage">Kein externer Speicher verfügbar</string>
   <string name="access_denied_ext_storage">Zugriff auf den externen Speicher ist notwendig um die App auszuführen</string>
+  <string name="release_show_title">Loslassen um Titel anzuzeigen</string>
   <string name="bt_enable">Bluetooth ist nicht aktiviert.\nWollen Sie es jetzt aktivieren?</string>
   <string name="wifi_enable">Wi-Fi ist nicht aktiviert.\nWollen Sie es jetzt aktivieren oder den Access Point auswählen?</string>
   <string name="bt_not_available">Bluetooth ist nicht verfügbar.</string>
