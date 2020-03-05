@@ -21,8 +21,7 @@
   <string name="back_button_twice_for_exit">Дважды нажмите кнопку, чтобы выйти</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения</string>
-  <!--Translate-->
-  <string name="release_show_title">Release to show title</string>
+  <string name="release_show_title">Отпустить для показа панели заглавия</string>
   <string name="bt_enable">Bluetooth не активирован.\nХотите его активировать?</string>
   <string name="wifi_enable">Wi-Fi не активирован.\nАктивировать или выбрать точку доступа?</string>
   <string name="bt_not_available">Bluetooth недоступен.</string>
@@ -55,7 +54,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Панель заглавия может быть скрыта\n- Чтение Shadow ошибок\n- Поддержка STATUS_LESEN\n- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Улучшено скрытие панели заглавия\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -343,8 +342,7 @@
   <string name="settings_theme_dark">Темная</string>
   <string name="settings_theme_light">Светлая</string>
   <string name="settings_caption_title_bar">Панель заглавия</string>
-  <!--Translate-->
-  <string name="settings_auto_hide_title_bar">Автоматически скрывать панель заглавия на главной странице (show with long click)</string>
+  <string name="settings_auto_hide_title_bar">Автоматически скрывать панель заглавия на главной странице (показать при отпускании после длинного нажатия)</string>
   <string name="settings_suppress_title_bar">Скрывать неиспользуемые панели заглавия  (показывать при помощи жеста смахивания)</string>
   <string name="settings_caption_internet">Подключение сетевого адаптера OBD к интернет соединению через</string>
   <string name="settings_internet_cellular">Мобильную сеть</string>
