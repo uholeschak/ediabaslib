@@ -266,6 +266,7 @@ namespace CarSimulator
             return true;
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private bool ExecuteTestInner(bool wifi, string comPort, string btDeviceName)
         {
             if (!comPort.StartsWith("COM"))
@@ -311,7 +312,7 @@ namespace CarSimulator
                             _testCount = 0;
                             for (; ; )
                             {
-                                if (!RunTest(comPort, btDeviceName))
+                                if (!RunTest(comPort, btDeviceName, out _))
                                 {
                                     return false;
                                 }
@@ -354,9 +355,9 @@ namespace CarSimulator
                             return false;
                         }
                         
-                        if (!RunTest(comPort, btDeviceName))
+                        if (!RunTest(comPort, btDeviceName, out bool commError))
                         {
-                            if (retry > 1)
+                            if (!commError || retry > 1)
                             {
                                 return false;
                             }
@@ -385,8 +386,9 @@ namespace CarSimulator
             return true;
         }
 
-        private bool RunTest(string comPort, string btDeviceName)
+        private bool RunTest(string comPort, string btDeviceName, out bool commError)
         {
+            commError = false;
             StringBuilder sr = new StringBuilder();
 
             _form.commThread.StopThread();
@@ -396,11 +398,17 @@ namespace CarSimulator
             byte[] firmware = AdapterCommandCustom(0xFD, new byte[] { 0xFD });
             if ((firmware == null) || (firmware.Length < 4))
             {
+                if (firmware == null)
+                {
+                    commError = true;
+                }
+
                 sr.Append("\r\n");
                 sr.Append("Read firmware version failed!");
                 _form.UpdateTestStatusText(sr.ToString());
                 return false;
             }
+
             int adapterType = firmware[0] << 8 | firmware[1];
             string adapterName;
             switch (adapterType)
@@ -457,11 +465,13 @@ namespace CarSimulator
             byte[] btName = AdapterCommandCustom(0x85, new byte[] { 0x85 });
             if (btName == null)
             {
+                commError = true;
                 sr.Append("\r\n");
                 sr.Append("Read name failed!");
                 _form.UpdateTestStatusText(sr.ToString());
                 return false;
             }
+
             if (btName.Length > 0)
             {
                 sr.Append("\r\n");
@@ -478,6 +488,7 @@ namespace CarSimulator
                     byte[] response = AdapterCommandCustom(0x05, Encoding.UTF8.GetBytes(btDeviceName));
                     if (response == null)
                     {
+                        commError = true;
                         sr.Append("\r\n");
                         sr.Append("Settings name failed!");
                         _form.UpdateTestStatusText(sr.ToString());
@@ -489,11 +500,13 @@ namespace CarSimulator
             byte[] btPin = AdapterCommandCustom(0x84, new byte[] { 0x85 });
             if (btPin == null)
             {
+                commError = true;
                 sr.Append("\r\n");
                 sr.Append("Read pin failed!");
                 _form.UpdateTestStatusText(sr.ToString());
                 return false;
             }
+
             if (btPin.Length > 0)
             {
                 sr.Append("\r\n");
@@ -521,11 +534,13 @@ namespace CarSimulator
             byte[] serialNumber = AdapterCommandCustom(0xFB, new byte[] { 0xFB });
             if (serialNumber == null)
             {
+                commError = true;
                 sr.Append("\r\n");
                 sr.Append("Read serial number failed!");
                 _form.UpdateTestStatusText(sr.ToString());
                 return false;
             }
+
             sr.Append("\r\n");
             sr.Append("Serial: ");
             sr.Append(BitConverter.ToString(serialNumber).Replace("-", ""));
@@ -534,11 +549,17 @@ namespace CarSimulator
             byte[] voltage = AdapterCommandCustom(0xFC, new byte[] { 0xFC });
             if ((voltage == null) || (voltage.Length != 1))
             {
+                if (voltage == null)
+                {
+                    commError = true;
+                }
+
                 sr.Append("\r\n");
                 sr.Append("Read voltage failed!");
                 _form.UpdateTestStatusText(sr.ToString());
                 return false;
             }
+
             sr.Append("\r\n");
             sr.Append("Voltage: ");
             sr.Append(string.Format("{0,4:0.0}V", (double)voltage[0] / 10));
@@ -574,6 +595,7 @@ namespace CarSimulator
                 // can mode 500
                 if (AdapterCommandCustom(0x02, new byte[] { 0x01 }) == null)
                 {
+                    commError = true;
                     sr.Append("\r\n");
                     sr.Append("Set CAN mode failed!");
                     _form.UpdateTestStatusText(sr.ToString());
@@ -584,12 +606,14 @@ namespace CarSimulator
                 {
                     if (!BmwFastTest())
                     {
+                        commError = true;
                         sr.Append("\r\n");
                         sr.Append("CAN test failed");
                         _form.UpdateTestStatusText(sr.ToString());
                         return false;
                     }
                 }
+
                 sr.Append("\r\n");
                 sr.Append("CAN test OK");
                 _form.UpdateTestStatusText(sr.ToString());
@@ -614,6 +638,7 @@ namespace CarSimulator
                 // can mode off
                 if (AdapterCommandCustom(0x02, new byte[] { 0x00 }) == null)
                 {
+                    commError = true;
                     sr.Append("\r\n");
                     sr.Append("Set CAN mode failed!");
                     _form.UpdateTestStatusText(sr.ToString());
@@ -624,6 +649,7 @@ namespace CarSimulator
                 {
                     if (!BmwFastTest())
                     {
+                        commError = true;
                         sr.Append("\r\n");
                         sr.Append(string.Format("K-LINE test {0} failed", i + 1));
                         _form.UpdateTestStatusText(sr.ToString());
@@ -673,6 +699,7 @@ namespace CarSimulator
             // can mode auto
             if (AdapterCommandCustom(0x02, new byte[] { 0xFF }) == null)
             {
+                commError = true;
                 sr.Append("\r\n");
                 sr.Append("Set CAN mode failed!");
                 _form.UpdateTestStatusText(sr.ToString());
