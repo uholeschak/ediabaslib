@@ -7,7 +7,6 @@ using System.Threading;
 using Android.Content;
 using Android.Hardware.Usb;
 using Android.OS;
-using Android.Support.V7.App;
 using Android.Text.Method;
 using Android.Views;
 using Android.Views.InputMethods;
@@ -639,6 +638,7 @@ namespace BmwDeepObd
                         UpdateActuatorStatus(true);
                     });
 
+                    bool hasResetJobs = selectedJob.EcuFixedFuncStruct.EcuJobList.Any(ecuJob => ecuJob.GetPhaseType() == EcuFunctionStructs.EcuJob.PhaseType.Reset);
                     StringBuilder sbStatus = new StringBuilder();
                     bool statusUpdated = false;
                     long startTime = Stopwatch.GetTimestamp();
@@ -722,6 +722,11 @@ namespace BmwDeepObd
                         {
                             if (!_instanceData.Continuous)
                             {
+                                if (!hasResetJobs)
+                                {
+                                    break;
+                                }
+
                                 if (!activation)
                                 {
                                     break;
