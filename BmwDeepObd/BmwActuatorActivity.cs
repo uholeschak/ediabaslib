@@ -580,7 +580,7 @@ namespace BmwDeepObd
             _spinnerBmwActuatorFunction.Enabled = !jobRunning;
             _buttonBmwActuatorExecuteSingle.Enabled = !jobRunning && validFunction;
             _buttonBmwActuatorExecuteContinuous.Enabled = !jobRunning && validFunction;
-            _buttonBmwActuatorStop.Enabled = jobRunning && continuous;
+            _buttonBmwActuatorStop.Enabled = jobRunning;
         }
 
         private void HideKeyboard()
@@ -727,15 +727,25 @@ namespace BmwDeepObd
                                     break;
                                 }
 
-                                if (!activation)
+                                for (;;)
                                 {
-                                    break;
+                                    if (_instanceData.StopActuator)
+                                    {
+                                        break;
+                                    }
+
+                                    if (activation)
+                                    {
+                                        if (Stopwatch.GetTimestamp() - startTime > activationDuration * ActivityCommon.TickResolMs)
+                                        {
+                                            break;
+                                        }
+
+                                        Thread.Sleep(100);
+                                    }
                                 }
 
-                                if (Stopwatch.GetTimestamp() - startTime > activationDuration * ActivityCommon.TickResolMs)
-                                {
-                                    break;
-                                }
+                                break;
                             }
                         }
                     }
