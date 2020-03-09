@@ -4219,6 +4219,22 @@ namespace CarSimulator
                 standardResponse = true;
             }
             else if (
+                _receiveData[0] == 0x82 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x11)
+            {   // ECU reset
+                int i = 0;
+                _sendData[i++] = 0x82;
+                _sendData[i++] = 0xF1;
+                _sendData[i++] = _receiveData[1];
+                _sendData[i++] = 0x51;
+                _sendData[i++] = _receiveData[4];
+
+                ObdSend(_sendData);
+                Debug.WriteLine("ECU reset");
+                standardResponse = true;
+            }
+            else if (
                 _receiveData[0] == 0x83 &&
                 _receiveData[2] == 0xF1 &&
                 _receiveData[3] == 0x14 &&
