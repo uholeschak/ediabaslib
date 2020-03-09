@@ -740,11 +740,10 @@ namespace BmwDeepObd
                                         {
                                             break;
                                         }
-
-                                        Thread.Sleep(100);
                                     }
-                                }
 
+                                    Thread.Sleep(100);
+                                }
                                 break;
                             }
                         }
