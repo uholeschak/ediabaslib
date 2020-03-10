@@ -570,7 +570,6 @@ namespace BmwDeepObd
         {
             bool jobRunning = IsJobRunning();
             bool validFunction = _instanceData.SelectedFunction >= 0;
-            bool continuous = _instanceData.Continuous;
 
             if (!cyclicUpdate)
             {
