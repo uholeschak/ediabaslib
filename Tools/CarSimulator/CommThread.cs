@@ -4498,6 +4498,27 @@ namespace CarSimulator
 
                 if (!found)
                 {
+                    if (
+                        (_receiveData[0] & 0xC0) == 0x80 &&
+                        (_receiveData[0] & 0x3F) >= 3 &&
+                        _receiveData[2] == 0xF1 &&
+                        _receiveData[3] == 0x31)
+                    {
+                        // dummy ok response for service 31 (self test)
+                        _sendData[0] = 0x83;
+                        _sendData[1] = 0xF1;
+                        _sendData[2] = _receiveData[1];
+                        _sendData[3] = 0x71;
+                        _sendData[4] = _receiveData[4];
+                        _sendData[5] = _receiveData[5];
+
+                        ObdSend(_sendData);
+                        found = true;
+                    }
+                }
+
+                if (!found)
+                {
                     StringBuilder sr = new StringBuilder();
                     sr.Append("Not found: ");
                     for (int i = 0; i < recLength; i++)
