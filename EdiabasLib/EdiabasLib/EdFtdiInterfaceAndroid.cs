@@ -567,6 +567,7 @@ namespace EdiabasLib
                     switch (usbDevice.ProductId)
                     {
                         case 0x6001:
+                        case 0x6015:
                             return true;
 
                         case 0x0000:
