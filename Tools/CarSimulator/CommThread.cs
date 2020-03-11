@@ -4423,6 +4423,7 @@ namespace CarSimulator
                         _receiveData[6] == 0xFF)
                     {
                         // dummy error response for all devices
+                        Debug.WriteLine("Dummy service 18");
                         _sendData[0] = 0x82;
                         _sendData[1] = 0xF1;
                         _sendData[2] = _receiveData[1];
@@ -4443,6 +4444,7 @@ namespace CarSimulator
                         _receiveData[4] == 0x02)
                     {
                         // dummy error response for all devices
+                        Debug.WriteLine("Dummy service 19");
                         _sendData[0] = 0x83;
                         _sendData[1] = 0xF1;
                         _sendData[2] = _receiveData[1];
@@ -4463,6 +4465,7 @@ namespace CarSimulator
                         _receiveData[3] == 0x22)
                     {
                         // dummy error response for service 22
+                        Debug.WriteLine("Dummy service 22: {0:X02}", _receiveData[4]);
                         _sendData[0] = 0x83;
                         _sendData[1] = 0xF1;
                         _sendData[2] = _receiveData[1];
@@ -4484,6 +4487,7 @@ namespace CarSimulator
                         _receiveData[3] == 0x30)
                     {
                         // dummy ok response for service 30 (actuator)
+                        Debug.WriteLine("Dummy service 30: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
                         _sendData[0] = 0x83;
                         _sendData[1] = 0xF1;
                         _sendData[2] = _receiveData[1];
@@ -4505,6 +4509,7 @@ namespace CarSimulator
                         _receiveData[3] == 0x3B)
                     {
                         // dummy ok response for service 3B WriteDataByLocalIdentification
+                        Debug.WriteLine("Dummy service 3B: {0:X02}", _receiveData[4]);
                         _sendData[0] = 0x82;
                         _sendData[1] = 0xF1;
                         _sendData[2] = _receiveData[1];
@@ -4525,6 +4530,7 @@ namespace CarSimulator
                         _receiveData[3] == 0x31)
                     {
                         // dummy ok response for service 31 (self test)
+                        Debug.WriteLine("Dummy service 31: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
                         _sendData[0] = 0x83;
                         _sendData[1] = 0xF1;
                         _sendData[2] = _receiveData[1];
