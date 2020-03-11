@@ -4500,6 +4500,26 @@ namespace CarSimulator
                 {
                     if (
                         (_receiveData[0] & 0xC0) == 0x80 &&
+                        (_receiveData[0] & 0x3F) >= 2 &&
+                        _receiveData[2] == 0xF1 &&
+                        _receiveData[3] == 0x3B)
+                    {
+                        // dummy ok response for service 3B WriteDataByLocalIdentification
+                        _sendData[0] = 0x82;
+                        _sendData[1] = 0xF1;
+                        _sendData[2] = _receiveData[1];
+                        _sendData[3] = 0x7B;
+                        _sendData[4] = _receiveData[4];
+
+                        ObdSend(_sendData);
+                        found = true;
+                    }
+                }
+
+                if (!found)
+                {
+                    if (
+                        (_receiveData[0] & 0xC0) == 0x80 &&
                         (_receiveData[0] & 0x3F) >= 3 &&
                         _receiveData[2] == 0xF1 &&
                         _receiveData[3] == 0x31)
