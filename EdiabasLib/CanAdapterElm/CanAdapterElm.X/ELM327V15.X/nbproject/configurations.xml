@@ -33,11 +33,11 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>MPASMWIN</languageToolchain>
-        <languageToolchainVersion>5.86</languageToolchainVersion>
+        <languageToolchainVersion>5.87</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.2.72"/>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.3.84"/>
       </packs>
       <compileType>
         <linkerTool>
@@ -150,11 +150,11 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>MPASMWIN</languageToolchain>
-        <languageToolchainVersion>5.86</languageToolchainVersion>
+        <languageToolchainVersion>5.87</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.2.72"/>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.3.84"/>
       </packs>
       <compileType>
         <linkerTool>
@@ -267,11 +267,11 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>MPASMWIN</languageToolchain>
-        <languageToolchainVersion>5.86</languageToolchainVersion>
+        <languageToolchainVersion>5.87</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.2.72"/>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.3.84"/>
       </packs>
       <compileType>
         <linkerTool>
@@ -384,11 +384,11 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>MPASMWIN</languageToolchain>
-        <languageToolchainVersion>5.86</languageToolchainVersion>
+        <languageToolchainVersion>5.87</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.2.72"/>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.3.84"/>
       </packs>
       <compileType>
         <linkerTool>
@@ -501,11 +501,11 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>MPASMWIN</languageToolchain>
-        <languageToolchainVersion>5.86</languageToolchainVersion>
+        <languageToolchainVersion>5.87</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.2.72"/>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.3.84"/>
       </packs>
       <compileType>
         <linkerTool>
