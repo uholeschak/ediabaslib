@@ -1,3 +1,5 @@
+Set JAVA_HOME to JDK installation directory first
+
 Build:
 gradlew.bat clean
 gradlew.bat build
