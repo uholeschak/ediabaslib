@@ -18,9 +18,8 @@
 
   <!-- CommonUsbSerialPort -->
   <attr path="/api/package[@name='com.hoho.android.usbserial.driver']/class[@name='CommonUsbSerialPort']" name="visibility">public</attr>
-
-  <attr path="/api/package[@name='com.hoho.android.usbserial.driver']/class[@name='CommonUsbSerialPort']/method[@name='setReadBufferSize' and count(parameter)=1 and parameter[1][@type='int']]" name="final">false</attr>
-  <attr path="/api/package[@name='com.hoho.android.usbserial.driver']/class[@name='CommonUsbSerialPort']/method[@name='setWriteBufferSize' and count(parameter)=1 and parameter[1][@type='int']]" name="final">false</attr>
+  <attr path="/api/package[@name='com.hoho.android.usbserial.driver']/class[@name='CommonUsbSerialPort']/method[@name='closeInt' and count(parameter)=0]" name="visibility">public</attr>
+  <attr path="/api/package[@name='com.hoho.android.usbserial.driver']/class[@name='CommonUsbSerialPort']/method[@name='openInt' and count(parameter)=1 and parameter[1][@type='android.hardware.usb.UsbDeviceConnection']]" name="visibility">public</attr>
 
   <attr path="/api/package[@name='com.hoho.android.usbserial.driver']/class[@name='CommonUsbSerialPort']/method[@name='setParameters' and count(parameter)=4 and parameter[1][@type='int'] and parameter[2][@type='int'] and parameter[3][@type='int'] and parameter[4][@type='int']]/parameter[@name='p0']" name="name">baudRate</attr>
   <attr path="/api/package[@name='com.hoho.android.usbserial.driver']/class[@name='CommonUsbSerialPort']/method[@name='setParameters' and count(parameter)=4 and parameter[1][@type='int'] and parameter[2][@type='int'] and parameter[3][@type='int'] and parameter[4][@type='int']]/parameter[@name='p1']" name="name">dataBits</attr>
