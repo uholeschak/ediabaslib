@@ -3188,6 +3188,8 @@ namespace BmwDeepObd
                             };
                         }
                     }
+#if false
+                    // we use the intent filter now
                     Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_context, 0, new Intent(ActionUsbPermission), 0);
                     try
                     {
@@ -3198,6 +3200,7 @@ namespace BmwDeepObd
                     {
                         // seems to crash on Samsung 5.1.1 with android.permission.sec.MDM_APP_MGMT
                     }
+#endif
                 }
             }
         }
