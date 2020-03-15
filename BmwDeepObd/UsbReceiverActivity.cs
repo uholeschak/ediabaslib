@@ -1,7 +1,8 @@
-﻿using Android.Content;
+﻿using System;
+using Android.Content;
 using Android.Hardware.Usb;
 using Android.OS;
-using System;
+using Android.Support.V7.App;
 
 [assembly: Android.App.UsesFeature("android.hardware.usb.host")]
 
@@ -15,7 +16,7 @@ namespace BmwDeepObd
         NoHistory = true,
         ExcludeFromRecents = true,
         Exported = false)]
-    class UsbReceiverActivity : Android.App.Activity
+    class UsbReceiverActivity : AppCompatActivity
     {
 #if DEBUG
         private static readonly string Tag = typeof(UsbReceiverActivity).FullName;
@@ -42,7 +43,7 @@ namespace BmwDeepObd
 #if DEBUG
                         Android.Util.Log.Info(Tag, "USB device attached");
 #endif
-                        ShowMainActivity();
+                        ShowApplication();
                         break;
                 }
             }
@@ -50,7 +51,7 @@ namespace BmwDeepObd
             Finish();
         }
 
-        private void ShowMainActivity()
+        private void ShowApplication()
         {
             try
             {
