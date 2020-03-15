@@ -733,6 +733,7 @@ namespace ApkUploader
 
                         Track assignTrack = new Track
                         {
+                            TrackValue = toTrack,
                             Releases = new List<TrackRelease>
                             {
                                 new TrackRelease
@@ -752,7 +753,10 @@ namespace ApkUploader
                         sb.AppendLine($"Assigned to track: {toTrack}");
                         UpdateStatus(sb.ToString());
 
-                        Track unassignTrack = new Track();
+                        Track unassignTrack = new Track
+                        {
+                            TrackValue = fromTrack
+                        };
                         await edits.Tracks.Update(unassignTrack, PackageName, appEdit.Id, fromTrack).ExecuteAsync();
                         sb.AppendLine($"Unassigned from track: {fromTrack}");
                         UpdateStatus(sb.ToString());
@@ -842,7 +846,10 @@ namespace ApkUploader
                             sb.AppendLine($"No version for track: {track}");
                         }
 
-                        Track assignTrack = new Track();
+                        Track assignTrack = new Track
+                        {
+                            TrackValue = track
+                        };
                         if (versionAssign.HasValue)
                         {
                             assignTrack.Releases = new List<TrackRelease>
@@ -986,6 +993,7 @@ namespace ApkUploader
                         }
                         Track trackUpdate = new Track
                         {
+                            TrackValue = track,
                             Releases = new List<TrackRelease>
                             {
                                 new TrackRelease
@@ -1204,6 +1212,7 @@ namespace ApkUploader
                         }
                         Track trackUpdate = new Track
                         {
+                            TrackValue = track,
                             Releases = new List<TrackRelease>
                             {
                                 new TrackRelease
