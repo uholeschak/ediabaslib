@@ -755,7 +755,8 @@ namespace ApkUploader
 
                         Track unassignTrack = new Track
                         {
-                            TrackValue = fromTrack
+                            TrackValue = fromTrack,
+                            Releases = new List<TrackRelease>()
                         };
                         await edits.Tracks.Update(unassignTrack, PackageName, appEdit.Id, fromTrack).ExecuteAsync();
                         sb.AppendLine($"Unassigned from track: {fromTrack}");
@@ -869,6 +870,7 @@ namespace ApkUploader
                         }
                         else
                         {
+                            assignTrack.Releases = new List<TrackRelease>();
                             sb.AppendLine("Unassign version");
                         }
                         UpdateStatus(sb.ToString());
