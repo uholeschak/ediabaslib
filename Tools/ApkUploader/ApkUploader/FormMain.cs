@@ -23,6 +23,7 @@ namespace ApkUploader
 {
     public partial class FormMain : Form
     {
+        private const string StatusCompleted = "completed";
         private const string PackageName = @"de.holeschak.bmw_deep_obd";
         private const string ExpansionKeep = @"*";
         private static readonly string[] TracksEdit = { "alpha", "beta", "production", "internal" };
@@ -760,7 +761,7 @@ namespace ApkUploader
                             {
                                 new TrackRelease
                                 {
-                                    Status = "completed"
+                                    Status = StatusCompleted
                                 }
                             }
                         };
@@ -868,7 +869,7 @@ namespace ApkUploader
                                     {
                                         versionAssign
                                     },
-                                    Status = "completed",
+                                    Status = StatusCompleted,
                                     ReleaseNotes = trackReleaseOld?.ReleaseNotes,
                                 }
                             };
@@ -880,7 +881,7 @@ namespace ApkUploader
                             {
                                 new TrackRelease
                                 {
-                                    Status = "completed"
+                                    Status = StatusCompleted
                                 }
                             };
                             sb.AppendLine("Unassign version");
@@ -1236,7 +1237,7 @@ namespace ApkUploader
                                     {
                                         versionCode.Value
                                     },
-                                    Status = "completed",
+                                    Status = StatusCompleted,
                                     ReleaseNotes = releaseNotes,
                                 }
                             }
