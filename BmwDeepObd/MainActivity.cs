@@ -2131,6 +2131,7 @@ namespace BmwDeepObd
 
                 ResultGridAdapter resultGridAdapter = null;
                 GridView gridViewResult = dynamicFragment.View.FindViewById<GridView>(Resource.Id.resultGrid);
+                LinearLayout listLayout = dynamicFragment.View.FindViewById<LinearLayout>(Resource.Id.listLayout);
                 if (gridMode && gridViewResult != null)
                 {
                     if (gridViewResult.Adapter == null)
@@ -2144,9 +2145,25 @@ namespace BmwDeepObd
                 {
                     listViewResult.Visibility = resultGridAdapter != null ? ViewStates.Gone : ViewStates.Visible;
                 }
+
                 if (gridViewResult != null)
                 {
                     gridViewResult.Visibility = resultGridAdapter != null ? ViewStates.Visible : ViewStates.Gone;
+                }
+
+                if (listLayout != null)
+                {
+                    try
+                    {
+                        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams)listLayout.LayoutParameters;
+                        layoutParams.Height = resultGridAdapter != null ? ViewGroup.LayoutParams.WrapContent : ViewGroup.LayoutParams.MatchParent;
+                        layoutParams.Weight = resultGridAdapter != null ? 0 : 1;
+                        listLayout.LayoutParameters = layoutParams;
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }
 
                 ToggleButton buttonActive = null;
