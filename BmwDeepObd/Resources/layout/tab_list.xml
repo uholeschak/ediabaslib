@@ -9,7 +9,8 @@
         android:id="@+id/listLayout"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_weight="1">
         <ListView
             android:id="@+id/resultList"
             android:layout_width="match_parent"
