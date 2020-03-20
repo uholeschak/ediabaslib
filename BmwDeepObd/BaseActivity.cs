@@ -37,6 +37,9 @@ namespace BmwDeepObd
             private bool _actionBarVisible;
         }
 
+        public const ConfigChanges ActivityConfigChanges =
+            ConfigChanges.KeyboardHidden | ConfigChanges.Orientation | ConfigChanges.ScreenLayout |
+            ConfigChanges.ScreenSize | ConfigChanges.SmallestScreenSize;
         public const string InstanceDataKeyDefault = "InstanceData";
         public const string InstanceDataKeyBase = "InstanceDataBase";
         protected InstanceDataBase _instanceDataBase = new InstanceDataBase();

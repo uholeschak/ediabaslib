@@ -42,10 +42,7 @@ namespace BmwDeepObd
     /// Activity in the result Intent.
     /// </summary>
     [Android.App.Activity (Label = "@string/select_device",
-        ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
-                               Android.Content.PM.ConfigChanges.Orientation |
-                               Android.Content.PM.ConfigChanges.ScreenSize |
-                               Android.Content.PM.ConfigChanges.ScreenLayout)]
+        ConfigurationChanges = ActivityConfigChanges)]
     public class DeviceListActivity : BaseActivity, View.IOnClickListener
     {
         enum AdapterType

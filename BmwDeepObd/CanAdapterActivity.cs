@@ -19,10 +19,7 @@ namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/can_adapter_title",
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
-        ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
-                               Android.Content.PM.ConfigChanges.Orientation |
-                               Android.Content.PM.ConfigChanges.ScreenSize |
-                               Android.Content.PM.ConfigChanges.ScreenLayout)]
+        ConfigurationChanges = ActivityConfigChanges)]
     public class CanAdapterActivity : BaseActivity, View.IOnTouchListener
     {
         // Intent extra

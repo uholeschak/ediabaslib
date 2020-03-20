@@ -23,10 +23,7 @@ using EdiabasLib;
 namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/tool_title",
-        ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
-                               Android.Content.PM.ConfigChanges.Orientation |
-                               Android.Content.PM.ConfigChanges.ScreenSize |
-                               Android.Content.PM.ConfigChanges.ScreenLayout)]
+        ConfigurationChanges = ActivityConfigChanges)]
     public class EdiabasToolActivity : BaseActivity, View.IOnTouchListener
     {
         private enum ActivityRequest

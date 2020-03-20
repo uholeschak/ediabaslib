@@ -23,10 +23,7 @@ namespace BmwDeepObd
         MainLauncher = true,
         Icon = "@drawable/icon",
         LaunchMode = LaunchMode.SingleTop,
-        ConfigurationChanges = ConfigChanges.KeyboardHidden |
-                               ConfigChanges.Orientation |
-                               ConfigChanges.ScreenSize |
-                               ConfigChanges.ScreenLayout)]
+        ConfigurationChanges = ActivityConfigChanges)]
     public class ExpansionDownloaderActivity : BaseActivity, IDownloaderClient
     {
 #if DEBUG

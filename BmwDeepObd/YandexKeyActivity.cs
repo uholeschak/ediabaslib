@@ -12,10 +12,7 @@ namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/yandex_api_key_title",
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
-        ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
-                               Android.Content.PM.ConfigChanges.Orientation |
-                               Android.Content.PM.ConfigChanges.ScreenSize |
-                               Android.Content.PM.ConfigChanges.ScreenLayout)]
+        ConfigurationChanges = ActivityConfigChanges)]
     public class YandexKeyActivity : BaseActivity, View.IOnTouchListener
     {
         public class InstanceData
