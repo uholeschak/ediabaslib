@@ -10,7 +10,8 @@ namespace BmwDeepObd
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
                                Android.Content.PM.ConfigChanges.Orientation |
-                               Android.Content.PM.ConfigChanges.ScreenSize)]
+                               Android.Content.PM.ConfigChanges.ScreenSize |
+                               Android.Content.PM.ConfigChanges.ScreenLayout)]
     public class GlobalSettingsActivity : BaseActivity
     {
         // Intent extra

@@ -47,7 +47,8 @@ namespace BmwDeepObd
             UiOptions=UiOptions.SplitActionBarWhenNarrow,
             ConfigurationChanges = ConfigChanges.KeyboardHidden |
                 ConfigChanges.Orientation |
-                ConfigChanges.ScreenSize)]
+                ConfigChanges.ScreenSize |
+                ConfigChanges.ScreenLayout)]
     [Android.App.MetaData("android.support.UI_OPTIONS", Value = "splitActionBarWhenNarrow")]
 #if APP_USB_FILTER
     [Android.App.IntentFilter(new[] { UsbManager.ActionUsbDeviceAttached })]

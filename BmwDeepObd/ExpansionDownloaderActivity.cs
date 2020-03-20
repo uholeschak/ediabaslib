@@ -25,7 +25,8 @@ namespace BmwDeepObd
         LaunchMode = LaunchMode.SingleTop,
         ConfigurationChanges = ConfigChanges.KeyboardHidden |
                                ConfigChanges.Orientation |
-                               ConfigChanges.ScreenSize)]
+                               ConfigChanges.ScreenSize |
+                               ConfigChanges.ScreenLayout)]
     public class ExpansionDownloaderActivity : BaseActivity, IDownloaderClient
     {
 #if DEBUG
