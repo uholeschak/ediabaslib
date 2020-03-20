@@ -2157,7 +2157,6 @@ namespace BmwDeepObd
                     {
                         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams)listLayout.LayoutParameters;
                         layoutParams.Height = resultGridAdapter != null ? ViewGroup.LayoutParams.WrapContent : ViewGroup.LayoutParams.MatchParent;
-                        layoutParams.Weight = resultGridAdapter != null ? 0 : 1;
                         listLayout.LayoutParameters = layoutParams;
                     }
                     catch (Exception)
