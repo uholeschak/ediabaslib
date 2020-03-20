@@ -6,28 +6,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
-        android:id="@+id/listLayout"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
-        <ListView
-            android:id="@+id/resultList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            style="@style/ListViewNoDividerStyle" />
-        <GridView
-            android:id="@+id/resultGrid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnWidth="240dp"
-            android:numColumns="auto_fit"
-            android:verticalSpacing="20dp"
-            android:horizontalSpacing="20dp"
-            android:stretchMode="columnWidth"
-            android:gravity="center"
-            android:layout_weight="1" />
+      android:id="@+id/outerLayout"
+      android:orientation="vertical"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_weight="1">
+      <LinearLayout
+          android:id="@+id/listLayout"
+          android:orientation="vertical"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+          <ListView
+              android:id="@+id/resultList"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              style="@style/ListViewNoDividerStyle" />
+          <GridView
+              android:id="@+id/resultGrid"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:columnWidth="240dp"
+              android:numColumns="auto_fit"
+              android:verticalSpacing="20dp"
+              android:horizontalSpacing="20dp"
+              android:stretchMode="columnWidth"
+              android:gravity="center"
+              android:layout_weight="1" />
+      </LinearLayout>
     </LinearLayout>
     <LinearLayout
         android:orientation="horizontal"
