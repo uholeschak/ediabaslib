@@ -5,9 +5,10 @@ using Android.Views;
 namespace BmwDeepObd.FilePicker
 {
     [Android.App.Activity(Label = "@string/select_file",
-            ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
-                Android.Content.PM.ConfigChanges.Orientation |
-                Android.Content.PM.ConfigChanges.ScreenSize)]
+        ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
+                               Android.Content.PM.ConfigChanges.Orientation |
+                               Android.Content.PM.ConfigChanges.ScreenSize |
+                               Android.Content.PM.ConfigChanges.ScreenLayout)]
     public class FilePickerActivity : BaseActivity
     {
         // Intent extra
