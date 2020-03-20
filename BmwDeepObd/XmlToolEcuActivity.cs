@@ -19,10 +19,7 @@ namespace BmwDeepObd
 {
     [Android.App.Activity(
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
-        ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
-                               Android.Content.PM.ConfigChanges.Orientation |
-                               Android.Content.PM.ConfigChanges.ScreenSize |
-                               Android.Content.PM.ConfigChanges.ScreenLayout)]
+        ConfigurationChanges = ActivityConfigChanges)]
     public class XmlToolEcuActivity : BaseActivity, View.IOnTouchListener
     {
         public class ResultInfo

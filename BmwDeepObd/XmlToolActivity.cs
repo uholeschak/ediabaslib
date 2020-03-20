@@ -28,10 +28,7 @@ using BmwFileReader;
 namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/xml_tool_title",
-        ConfigurationChanges = Android.Content.PM.ConfigChanges.KeyboardHidden |
-                               Android.Content.PM.ConfigChanges.Orientation |
-                               Android.Content.PM.ConfigChanges.ScreenSize |
-                               Android.Content.PM.ConfigChanges.ScreenLayout)]
+        ConfigurationChanges = ActivityConfigChanges)]
     public class XmlToolActivity : BaseActivity
     {
         private enum ActivityRequest
