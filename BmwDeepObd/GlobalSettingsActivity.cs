@@ -185,7 +185,7 @@ namespace BmwDeepObd
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            _activityCommon.Dispose();
+            _activityCommon?.Dispose();
             _activityCommon = null;
         }
 

@@ -132,7 +132,7 @@ namespace BmwDeepObd
             // Remove the notification from the status bar.
             NotificationManagerCompat notificationManager = NotificationManagerCompat.From(this);
             notificationManager.Cancel(ServiceRunningNotificationId);
-            _activityCommon.SetLock(ActivityCommon.LockType.None);
+            _activityCommon?.SetLock(ActivityCommon.LockType.None);
             DisconnectEdiabasEvents();
             lock (ActivityCommon.GlobalLockObject)
             {
@@ -143,7 +143,7 @@ namespace BmwDeepObd
                 }
             }
 
-            _activityCommon.Dispose();
+            _activityCommon?.Dispose();
             _activityCommon = null;
             _isStarted = false;
 
