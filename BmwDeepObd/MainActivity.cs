@@ -2183,13 +2183,23 @@ namespace BmwDeepObd
                 int gaugeSize = 200;
                 if (gridViewResult != null && gridViewResult.Visibility == ViewStates.Visible)
                 {
-                    int gaugeCount = pageInfo.GaugesPortrait;
+                    bool portrait = true;
                     switch (Resources.Configuration.Orientation)
                     {
                         case Android.Content.Res.Orientation.Landscape:
-                            gaugeCount = pageInfo.GaugesLandscape;
+                            portrait = false;
                             break;
                     }
+
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+                    {
+                        if (IsInMultiWindowMode)
+                        {
+                            portrait = !portrait;
+                        }
+                    }
+
+                    int gaugeCount = portrait ? pageInfo.GaugesPortrait : pageInfo.GaugesLandscape;
                     gaugeSize = (gridViewResult.Width / gaugeCount) - gridViewResult.HorizontalSpacing - 1;
                     if (gaugeSize < 10)
                     {
