@@ -152,7 +152,7 @@ namespace BmwDeepObd
         {
             base.OnDestroy();
 
-            _activityCommon.Dispose();
+            _activityCommon?.Dispose();
             _activityCommon = null;
         }
 

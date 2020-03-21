@@ -670,11 +670,14 @@ namespace BmwDeepObd
         {
             base.OnStart();
             _resultFilterText = null;
-            if (_activityCommon.MtcBtService)
+            if (_activityCommon != null)
             {
-                _activityCommon.StartMtcService();
+                if (_activityCommon.MtcBtService)
+                {
+                    _activityCommon.StartMtcService();
+                }
+                _activityCommon?.RequestUsbPermission(null);
             }
-            _activityCommon.RequestUsbPermission(null);
         }
 
         protected override void OnResume()
@@ -692,7 +695,7 @@ namespace BmwDeepObd
         protected override void OnStop()
         {
             base.OnStop();
-            if (_activityCommon.MtcBtService)
+            if (_activityCommon != null && _activityCommon.MtcBtService)
             {
                 _activityCommon.StopMtcService();
             }
@@ -707,7 +710,7 @@ namespace BmwDeepObd
                 _jobThread.Join();
             }
             EdiabasClose();
-            _activityCommon.Dispose();
+            _activityCommon?.Dispose();
             _activityCommon = null;
         }
 
