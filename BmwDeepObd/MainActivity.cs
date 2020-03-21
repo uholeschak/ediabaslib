@@ -1639,6 +1639,7 @@ namespace BmwDeepObd
                     ActivityCommon.AppId = prefs.GetString("AppId", string.Empty);
                     ActivityCommon.AutoHideTitleBar = prefs.GetBoolean("AutoHideTitleBar", ActivityCommon.AutoHideTitleBar);
                     ActivityCommon.SuppressTitleBar = prefs.GetBoolean("SuppressTitleBar", ActivityCommon.SuppressTitleBar);
+                    ActivityCommon.SwapMultiWindowOrientation = prefs.GetBoolean("SwapMultiWindowOrientation", ActivityCommon.SwapMultiWindowOrientation);
                     ActivityCommon.SelectedInternetConnection = (ActivityCommon.InternetConnectionType)prefs.GetInt("InternetConnection", (int)ActivityCommon.InternetConnectionType.Cellular);
                     ActivityCommon.SelectedManufacturer = (ActivityCommon.ManufacturerType)prefs.GetInt("Manufacturer", (int)ActivityCommon.ManufacturerType.Bmw);
                     ActivityCommon.BtEnbaleHandling = (ActivityCommon.BtEnableType)prefs.GetInt("BtEnable", (int)ActivityCommon.BtEnableType.Ask);
@@ -1712,6 +1713,7 @@ namespace BmwDeepObd
                 prefsEdit.PutInt("Theme", (int)ActivityCommon.SelectedTheme);
                 prefsEdit.PutBoolean("AutoHideTitleBar", ActivityCommon.AutoHideTitleBar);
                 prefsEdit.PutBoolean("SuppressTitleBar", ActivityCommon.SuppressTitleBar);
+                prefsEdit.PutBoolean("SwapMultiWindowOrientation", ActivityCommon.SwapMultiWindowOrientation);
                 prefsEdit.PutInt("InternetConnection", (int)ActivityCommon.SelectedInternetConnection);
                 prefsEdit.PutInt("Manufacturer", (int) ActivityCommon.SelectedManufacturer);
                 prefsEdit.PutInt("BtEnable", (int)ActivityCommon.BtEnbaleHandling);
@@ -2193,7 +2195,7 @@ namespace BmwDeepObd
 
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
                     {
-                        if (IsInMultiWindowMode)
+                        if (ActivityCommon.SwapMultiWindowOrientation && IsInMultiWindowMode)
                         {
                             portrait = !portrait;
                         }

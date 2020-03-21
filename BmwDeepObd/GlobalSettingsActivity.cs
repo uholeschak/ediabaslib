@@ -31,6 +31,7 @@ namespace BmwDeepObd
         private RadioButton _radioButtonThemeLight;
         private CheckBox _checkBoxAutoHideTitleBar;
         private CheckBox _checkBoxSuppressTitleBar;
+        private CheckBox _checkBoxSwapMultiWindowOrientation;
         private TextView _textViewCaptionInternet;
         private RadioGroup _radioGroupInternet;
         private RadioButton _radioButtonInternetCellular;
@@ -96,6 +97,8 @@ namespace BmwDeepObd
 
             _checkBoxAutoHideTitleBar = FindViewById<CheckBox>(Resource.Id.checkBoxAutoHideTitleBar);
             _checkBoxSuppressTitleBar = FindViewById<CheckBox>(Resource.Id.checkBoxSuppressTitleBar);
+
+            _checkBoxSwapMultiWindowOrientation = FindViewById<CheckBox>(Resource.Id.checkBoxSwapMultiWindowOrientation);
 
             ViewStates viewStateInternet = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ? ViewStates.Visible : ViewStates.Gone;
             _textViewCaptionInternet = FindViewById<TextView>(Resource.Id.textViewCaptionInternet);
@@ -253,6 +256,8 @@ namespace BmwDeepObd
             _checkBoxAutoHideTitleBar.Checked = ActivityCommon.AutoHideTitleBar;
             _checkBoxSuppressTitleBar.Checked = ActivityCommon.SuppressTitleBar;
 
+            _checkBoxSwapMultiWindowOrientation.Checked = ActivityCommon.SwapMultiWindowOrientation;
+
             switch (ActivityCommon.SelectedInternetConnection)
             {
                 case ActivityCommon.InternetConnectionType.Wifi:
@@ -399,6 +404,8 @@ namespace BmwDeepObd
 
             ActivityCommon.AutoHideTitleBar = _checkBoxAutoHideTitleBar.Checked;
             ActivityCommon.SuppressTitleBar = _checkBoxSuppressTitleBar.Checked;
+
+            ActivityCommon.SwapMultiWindowOrientation = _checkBoxSwapMultiWindowOrientation.Checked;
 
             ActivityCommon.InternetConnectionType internetConnectionType = ActivityCommon.SelectedInternetConnection;
             if (_radioGroupInternet.Visibility == ViewStates.Visible)

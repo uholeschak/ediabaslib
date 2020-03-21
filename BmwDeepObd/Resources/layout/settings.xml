@@ -79,6 +79,17 @@
             android:layout_height="wrap_content"
             android:text="@string/settings_suppress_title_bar" />
         <TextView
+            android:text="@string/settings_caption_multi_window"
+            android:id="@+id/textViewCaptionMultiWindow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextViewInnerCaption" />
+        <CheckBox
+            android:id="@+id/checkBoxSwapMultiWindowOrientation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_swap_multi_window_orientation" />
+        <TextView
             android:text="@string/settings_caption_internet"
             android:id="@+id/textViewCaptionInternet"
             android:layout_width="match_parent"

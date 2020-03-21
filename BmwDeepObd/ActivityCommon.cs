@@ -681,6 +681,8 @@ namespace BmwDeepObd
 
         public static bool SuppressTitleBar { get; set; }
 
+        public static bool SwapMultiWindowOrientation { get; set; }
+
         public static InternetConnectionType SelectedInternetConnection { get; set; }
 
         public static ManufacturerType SelectedManufacturer { get; set; }
