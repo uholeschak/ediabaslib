@@ -344,6 +344,9 @@
   <string name="settings_caption_title_bar">Панель заглавия</string>
   <string name="settings_auto_hide_title_bar">Автоматически скрывать панель заглавия на главной странице (показать при отпускании после длинного нажатия)</string>
   <string name="settings_suppress_title_bar">Скрывать неиспользуемые панели заглавия  (показывать при помощи жеста смахивания)</string>
+  <!--Translate-->
+  <string name="settings_caption_multi_window">Multi window</string>
+  <string name="settings_swap_multi_window_orientation">Graphical display: Swap display orientation in multi window mode</string>
   <string name="settings_caption_internet">Подключение сетевого адаптера OBD к интернет соединению через</string>
   <string name="settings_internet_cellular">Мобильную сеть</string>
   <string name="settings_internet_wifi">Wi-Fi</string>
