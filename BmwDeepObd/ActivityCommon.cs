@@ -503,6 +503,7 @@ namespace BmwDeepObd
         private string _lastEnetSsid = string.Empty;
         private bool? _lastInvertfaceAvailable;
         private bool _usbPermissionRequested;
+        private bool _usbPermissionRequestDisabled;
 
         public bool Emulator { get; }
 
@@ -3166,7 +3167,11 @@ namespace BmwDeepObd
             }
             if (usbDevice != null)
             {
-                if (!_usbManager.HasPermission(usbDevice) && EdFtdiInterface.IsValidUsbDevice(usbDevice, out bool fakeDevice))
+                if (_usbManager.HasPermission(usbDevice))
+                {
+                    _usbPermissionRequestDisabled = true;
+                }
+                else if (EdFtdiInterface.IsValidUsbDevice(usbDevice, out bool fakeDevice))
                 {
                     if (fakeDevice)
                     {
@@ -3190,19 +3195,20 @@ namespace BmwDeepObd
                             };
                         }
                     }
-#if false
-                    // we use the intent filter now
-                    Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_context, 0, new Intent(ActionUsbPermission), 0);
-                    try
+
+                    if (!_usbPermissionRequestDisabled)
                     {
-                        _usbManager.RequestPermission(usbDevice, intent);
-                        _usbPermissionRequested = true;
+                        Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_context, 0, new Intent(ActionUsbPermission), 0);
+                        try
+                        {
+                            _usbManager.RequestPermission(usbDevice, intent);
+                            _usbPermissionRequested = true;
+                        }
+                        catch (Exception)
+                        {
+                            // seems to crash on Samsung 5.1.1 with android.permission.sec.MDM_APP_MGMT
+                        }
                     }
-                    catch (Exception)
-                    {
-                        // seems to crash on Samsung 5.1.1 with android.permission.sec.MDM_APP_MGMT
-                    }
-#endif
                 }
             }
         }
@@ -7909,6 +7915,7 @@ namespace BmwDeepObd
 
                     case ActionUsbPermission:
                         _activityCommon._usbPermissionRequested = false;
+                        _activityCommon._usbPermissionRequestDisabled = true;
                         if (intent.GetBooleanExtra(UsbManager.ExtraPermissionGranted, false))
                         {
                             _activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
