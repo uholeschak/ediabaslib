@@ -13,6 +13,7 @@ namespace BmwDeepObd
 
     [Android.App.Activity(Label = "@string/app_name",
         Theme = "@style/Theme.Transparent",
+        DirectBootAware = true,
         NoHistory = true,
         ExcludeFromRecents = true,
         Exported = false)]
