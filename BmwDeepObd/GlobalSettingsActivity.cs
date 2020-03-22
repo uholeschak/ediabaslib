@@ -31,6 +31,7 @@ namespace BmwDeepObd
         private RadioButton _radioButtonThemeLight;
         private CheckBox _checkBoxAutoHideTitleBar;
         private CheckBox _checkBoxSuppressTitleBar;
+        private TextView _textViewCaptionMultiWindow;
         private CheckBox _checkBoxSwapMultiWindowOrientation;
         private TextView _textViewCaptionInternet;
         private RadioGroup _radioGroupInternet;
@@ -98,7 +99,11 @@ namespace BmwDeepObd
             _checkBoxAutoHideTitleBar = FindViewById<CheckBox>(Resource.Id.checkBoxAutoHideTitleBar);
             _checkBoxSuppressTitleBar = FindViewById<CheckBox>(Resource.Id.checkBoxSuppressTitleBar);
 
+            ViewStates viewStateMultiWindow = Build.VERSION.SdkInt >= BuildVersionCodes.N ? ViewStates.Visible : ViewStates.Gone;
+            _textViewCaptionMultiWindow = FindViewById<TextView>(Resource.Id.textViewCaptionMultiWindow);
             _checkBoxSwapMultiWindowOrientation = FindViewById<CheckBox>(Resource.Id.checkBoxSwapMultiWindowOrientation);
+            _textViewCaptionMultiWindow.Visibility = viewStateMultiWindow;
+            _checkBoxSwapMultiWindowOrientation.Visibility = viewStateMultiWindow;
 
             ViewStates viewStateInternet = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ? ViewStates.Visible : ViewStates.Gone;
             _textViewCaptionInternet = FindViewById<TextView>(Resource.Id.textViewCaptionInternet);
@@ -405,7 +410,15 @@ namespace BmwDeepObd
             ActivityCommon.AutoHideTitleBar = _checkBoxAutoHideTitleBar.Checked;
             ActivityCommon.SuppressTitleBar = _checkBoxSuppressTitleBar.Checked;
 
-            ActivityCommon.SwapMultiWindowOrientation = _checkBoxSwapMultiWindowOrientation.Checked;
+            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+            if (_checkBoxSwapMultiWindowOrientation.Visibility == ViewStates.Visible)
+            {
+                ActivityCommon.SwapMultiWindowOrientation = _checkBoxSwapMultiWindowOrientation.Checked;
+            }
+            else
+            {
+                ActivityCommon.SwapMultiWindowOrientation = false;
+            }
 
             ActivityCommon.InternetConnectionType internetConnectionType = ActivityCommon.SelectedInternetConnection;
             if (_radioGroupInternet.Visibility == ViewStates.Visible)
