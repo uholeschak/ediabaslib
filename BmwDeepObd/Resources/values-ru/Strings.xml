@@ -359,7 +359,7 @@
   <string name="settings_disable_bt_at_exit">Выключать Bluetooth при выходе из приложения</string>
   <string name="settings_caption_lock_communication">Блокировка во время соединения</string>
   <string name="settings_caption_lock_logging">Блокировка во время регистрации данных</string>
-  <string name="settings_lock_none">Устройство переходит в режим энергосбережения</string>
+  <string name="settings_lock_none">Переводить устройство в режим энергосбережения и останавливать передачу данных</string>
   <string name="settings_lock_cpu">Поддерживать активность процессора</string>
   <string name="settings_lock_dim">Уменьшенная яркость экрана</string>
   <string name="settings_lock_bright">Яркий экран</string> 
