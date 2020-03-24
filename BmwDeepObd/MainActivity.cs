@@ -2086,7 +2086,6 @@ namespace BmwDeepObd
                 _connectButtonInfo.Button.Checked = _connectButtonInfo.Checked;
                 _connectButtonInfo.Button.Enabled = _connectButtonInfo.Enabled;
             }
-            _imageBackground.Visibility = dynamicValid ? ViewStates.Invisible : ViewStates.Visible;
 
             Fragment dynamicFragment = null;
             JobReader.PageInfo pageInfo = GetSelectedPage();
@@ -2943,6 +2942,8 @@ namespace BmwDeepObd
                             resultListAdapter.NotifyDataSetChanged();
                         }
                     }
+
+                    _imageBackground.Visibility = ViewStates.Gone;
                 }
                 else
                 {
@@ -2954,6 +2955,8 @@ namespace BmwDeepObd
                     UpdateButtonErrorResetAll(buttonErrorResetAll, null, pageInfo);
                     UpdateButtonErrorSelect(buttonErrorSelect, null);
                     UpdateButtonErrorCopy(buttonErrorCopy, null);
+
+                    _imageBackground.Visibility = ViewStates.Visible;
                 }
 
                 if (pageInfo.ClassObject != null)
