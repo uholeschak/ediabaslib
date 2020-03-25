@@ -54,7 +54,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Улучшено графическое отображение и USB-соединение\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -344,9 +344,8 @@
   <string name="settings_caption_title_bar">Панель заглавия</string>
   <string name="settings_auto_hide_title_bar">Автоматически скрывать панель заглавия на главной странице (показать при отпускании после длинного нажатия)</string>
   <string name="settings_suppress_title_bar">Скрывать неиспользуемые панели заглавия  (показывать при помощи жеста смахивания)</string>
-  <!--Translate-->
-  <string name="settings_caption_multi_window">Multi window</string>
-  <string name="settings_swap_multi_window_orientation">Graphical display: Swap display orientation in multi window mode</string>
+  <string name="settings_caption_multi_window">Многооконный режим</string>
+  <string name="settings_swap_multi_window_orientation">Графическое отображение: поменять ориентацию отображения в многооконным режиме</string>
   <string name="settings_caption_internet">Подключение сетевого адаптера OBD к интернет соединению через</string>
   <string name="settings_internet_cellular">Мобильную сеть</string>
   <string name="settings_internet_wifi">Wi-Fi</string>
