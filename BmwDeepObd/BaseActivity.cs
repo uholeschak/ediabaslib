@@ -44,6 +44,7 @@ namespace BmwDeepObd
         public const string InstanceDataKeyBase = "InstanceDataBase";
         protected InstanceDataBase _instanceDataBase = new InstanceDataBase();
         private GestureDetectorCompat _gestureDetector;
+        protected Configuration _currentConfiguration;
         protected bool _allowTitleHiding = true;
         protected bool _touchShowTitle = false;
         protected bool _longPress;
@@ -80,6 +81,7 @@ namespace BmwDeepObd
 
             GestureListener gestureListener = new GestureListener(this);
             _gestureDetector = new GestureDetectorCompat(this, gestureListener);
+            _currentConfiguration = Resources.Configuration;
 
             if (_instanceDataBase != null)
             {
@@ -161,6 +163,7 @@ namespace BmwDeepObd
         public override void OnConfigurationChanged(Configuration newConfig)
         {
             base.OnConfigurationChanged(newConfig);
+            _currentConfiguration = newConfig;
             SetLocale(this, ActivityMain.GetLocaleSetting());
         }
 

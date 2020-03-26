@@ -2185,7 +2185,7 @@ namespace BmwDeepObd
                 if (gridViewResult != null && gridViewResult.Visibility == ViewStates.Visible)
                 {
                     bool portrait = true;
-                    switch (Resources.Configuration.Orientation)
+                    switch (_currentConfiguration.Orientation)
                     {
                         case Android.Content.Res.Orientation.Landscape:
                             portrait = false;
