@@ -9,6 +9,8 @@ This page allows to change some global app settings.
 * _Title bar_ options:
   * _Auto hide title bar on main page_: Auto hide title bar 3 seconds after connecting. You could hide / show the title bar with a swipe gesture at the top edge of the app or display the bar with a long click and release on the main page.
   * _Suppress unused title bars_: Title bars without special functions are hidden by default. You could hide / show the title bar with a swipe gesture at the top edge of the app.
+* _Multi window_ options:
+  * _Graphical display: Swap display orientation in multi window mode_: In multi window mode some devices change the orientation and some not. With this option you could invert the orientation for graphical display.
 * _For OBD network adapter internet connection via_ (Wi-Fi or Ethernet OBD II adapters, only Android 21 or higher) options:
   * _Mobile network_: Internet connection via mobile network is selected.
   * _Wi-Fi_: Internet connection via Wi-Fi is selected.
