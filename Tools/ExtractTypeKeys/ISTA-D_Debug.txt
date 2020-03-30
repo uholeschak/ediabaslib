@@ -3,6 +3,9 @@ Debugging of ISTA-D:
 
 Decompile ISTA-D:
 =================
+git clone --recursive https://github.com/0xd4d/de4dot.git
+Build de4dot.netframework.sln as Release
+The binary is in the subfolder: Release\net45\de4dot.exe
 Copy files from "TesterGUI\bin\Release" to "TesterGUI\bin\ReleaseMod"
 de4dot -r "TesterGUI\bin\Release" -ru -ro "TesterGUI\bin\ReleaseMod" --dont-rename
 The files in "TesterGUI\bin\Release" are not modified, "TesterGUI\bin\ReleaseMod" now contains the deobfuscated files.
