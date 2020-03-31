@@ -35,9 +35,15 @@ Debugging:
 Disable debugger detection in dnSpy (uncheck System.Diagnostics.Debugger option)!
 After message box has been shown, attach to process IstaOperation.exe
 
-Breakpoints in RheingoldDiagnostics.dll:
+Interesting breakpoints in RheingoldDiagnostics.dll:
 BMW.Rheingold.RheingoldSessionController.Logic.StartVehicleTest() or
 BMW.Rheingold.Diagnostics.VehicleIdent.DoVehicleIdentStep1() and BMW.Rheingold.Diagnostics.VehicleIdent.DoVehicleIdentStep2()
+BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuTest.Perform()
+BMW.Rheingold.Diagnostics.VehicleIdent.doECUReadFS()
+BMW.Rheingold.Diagnostics.VehicleIdent.doECUReadFSDetails()
+BMW.Rheingold.Diagnostics.VehicleIdent.SetDTCDetailValues()
+BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionsReadStatus.DoReadStatus()
+BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionsReadStatus.DoReadStatusSingleShot()
 
 Read status processing:
 =======================
