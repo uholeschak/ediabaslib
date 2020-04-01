@@ -1669,11 +1669,13 @@ namespace BmwDeepObd
             return resultString;
         }
 
+        // from: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionReadStatus.ConvertResultValue
         public static string ConvertEcuResultValueStatus(EcuFunctionStructs.EcuJobResult ecuJobResult, EdiabasNet.ResultData resultData, out double? resultValue)
         {
             resultValue = null;
             try
             {
+                // corresponds to: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionReadStatus.TryConvertToDecimal
                 string result = string.Empty;
                 double? number = null;
                 if (resultData.OpData is Int64)
@@ -1763,6 +1765,7 @@ namespace BmwDeepObd
             }
         }
 
+        // from: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionReadStatus.CheckAndUseNumberFormat
         public static string UseEcuResultNumberFormat(double value, EcuFunctionStructs.EcuJobResult ecuJobResult)
         {
             try
@@ -1804,7 +1807,7 @@ namespace BmwDeepObd
             }
         }
 
-        // from: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.TryRounding
+        // from: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionReadStatus.TryRounding
         public static string TryEcuResultRounding(double value, EcuFunctionStructs.EcuJobResult ecuJobResult)
         {
             try
@@ -1817,7 +1820,7 @@ namespace BmwDeepObd
                 string result;
                 if (!string.IsNullOrWhiteSpace(ecuJobResult.Round) && ecuJobResult.Round.ConvertToInt() > 0)
                 {
-                    // from: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.RoundLastDigit
+                    // from: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionReadStatus.RoundLastDigit
                     string text = value.ToString(CultureInfo.InvariantCulture);
                     int num = text.Contains(".") ? text.LastIndexOf(".", StringComparison.Ordinal) : text.LastIndexOf(",", StringComparison.Ordinal);
                     int length = text.Substring(num + 1, text.Length - num - 1).Length;
@@ -2239,6 +2242,7 @@ namespace BmwDeepObd
             envCondDetailInfo.SbDetail.Append(value);
         }
 
+        // from: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionReadStatus.FindMatchingValue
         public static EcuFunctionStructs.EcuResultStateValue MatchEcuResultStateValue(List<EcuFunctionStructs.EcuResultStateValue> ecuResultStateValueList, EdiabasNet.ResultData resultData)
         {
             try
