@@ -1804,6 +1804,7 @@ namespace BmwDeepObd
             }
         }
 
+        // from: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.TryRounding
         public static string TryEcuResultRounding(double value, EcuFunctionStructs.EcuJobResult ecuJobResult)
         {
             try
@@ -1816,6 +1817,7 @@ namespace BmwDeepObd
                 string result;
                 if (!string.IsNullOrWhiteSpace(ecuJobResult.Round) && ecuJobResult.Round.ConvertToInt() > 0)
                 {
+                    // from: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.RoundLastDigit
                     string text = value.ToString(CultureInfo.InvariantCulture);
                     int num = text.Contains(".") ? text.LastIndexOf(".", StringComparison.Ordinal) : text.LastIndexOf(",", StringComparison.Ordinal);
                     int length = text.Substring(num + 1, text.Length - num - 1).Length;

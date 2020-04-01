@@ -1414,8 +1414,8 @@ namespace BmwFileReader
 
             CreateEcuLogistics(typeof(BmwDeepObd.XmlToolActivity).Namespace + ".VehicleInfo.");
 
-            // Mapping could be found in: VehicleLogistics
-            // static BaseEcuCharacteristics.GetCharacteristics(Vehicle vecInfo)
+            // Mapping could be found in:
+            // RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.VehicleLogistics.GetCharacteristics(Vehicle vecInfo)
             switch (vehicleType.ToUpperInvariant())
             {
                 case "E36":
@@ -1452,7 +1452,7 @@ namespace BmwFileReader
             return null;
         }
 
-        // from RheingoldCoreFramework.dll FA.ExtractEreihe
+        // from: RheingoldCoreFramework.dll BMW.Rheingold.CoreFramework.DatabaseProvider
         public static string GetVehicleTypeFromBrName(string brName, EdiabasNet ediabas)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle type from BR name: {0}", brName ?? "No name");
@@ -1514,8 +1514,8 @@ namespace BmwFileReader
                 vinTypeUpper = vin.Substring(3, 4).ToUpperInvariant();
             }
 
-            // Mapping could be found in: VehicleLogistics
-            // static BaseEcuCharacteristics.GetCharacteristics(Vehicle vecInfo)
+            // Mapping could be found in:
+            // RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.VehicleLogistics.GetCharacteristics(Vehicle vecInfo)
             string typeUpper = vehicleType.ToUpperInvariant();
             switch (typeUpper)
             {
