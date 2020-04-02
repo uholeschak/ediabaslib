@@ -1559,6 +1559,7 @@ namespace BmwDeepObd
             return ecuFunctionResultList;
         }
 
+        // from: RheingoldCoreFramework.dll BMW.Rheingold.CoreFramework.FormatConverter.ConvertECUResultToString
         public static string ConvertEcuResultValueIdent(EdiabasNet.ResultData resultData, out double? resultValue)
         {
             resultValue = null;
