@@ -1675,7 +1675,7 @@ namespace BmwDeepObd
             resultValue = null;
             try
             {
-                // corresponds to: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionReadStatus.TryConvertToDecimal
+                // corresponds to: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionReadStatus.FindMatchingValue
                 string result = string.Empty;
                 double? number = null;
                 if (resultData.OpData is Int64)
@@ -1692,6 +1692,7 @@ namespace BmwDeepObd
                 }
                 else if (resultData.OpData is string)
                 {
+                    // corresponds to: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionReadStatus.TryConvertToDecimal
                     string value = (string)resultData.OpData;
                     result = value;
                     try
