@@ -1906,6 +1906,7 @@ namespace BmwDeepObd
             return resultList;
         }
 
+        // from: RheingoldDiagnostics.dll BMW.Rheingold.Diagnostics.VehicleIdent.SetDTCDetailValues
         public static string ConvertEnvCondErrorDetail(Context context, EdiabasErrorReport errorReport, List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList)
         {
             OrderedDictionary detailDict = new OrderedDictionary();
@@ -1996,6 +1997,7 @@ namespace BmwDeepObd
             return sbResult.ToString();
         }
 
+        // from: RheingoldDiagnostics.dll BMW.Rheingold.Diagnostics.VehicleIdent.doECUReadFS, doECUReadFSDetails
         public static bool ConvertEnvCondErrorDetailSingle(Context context, OrderedDictionary detailDict, Dictionary<string, EdiabasNet.ResultData> errorDetail, List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList)
         {
             if (errorDetail == null)
