@@ -638,6 +638,7 @@ namespace BmwDeepObd
                         UpdateActuatorStatus(true);
                     });
 
+                    // from: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionComponentTrigger.DoTriggerComponent
                     bool hasResetJobs = selectedJob.EcuFixedFuncStruct.EcuJobList.Any(ecuJob => ecuJob.GetPhaseType() == EcuFunctionStructs.EcuJob.PhaseType.Reset);
                     StringBuilder sbStatus = new StringBuilder();
                     bool statusUpdated = false;
