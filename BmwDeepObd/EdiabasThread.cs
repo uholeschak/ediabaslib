@@ -1454,6 +1454,7 @@ namespace BmwDeepObd
             StringBuilder sbParameter = new StringBuilder();
             if (ecuJob.EcuJobParList != null)
             {
+                // from: RheingoldCoreFramework.dll BMW.Rheingold.CoreFramework.DatabaseProvider.XEP_ECUJOBSEX.GetParameterString
                 foreach (EcuFunctionStructs.EcuJobParameter ecuJobParameter in ecuJob.EcuJobParList.OrderBy(x => x.Name))
                 {
                     if (sbParameter.Length > 0)
