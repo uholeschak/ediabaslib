@@ -411,6 +411,7 @@ namespace ExtractEcuFunctions
         private static List<EcuFunctionStructs.EcuFaultCode> GetFaultCodes(SQLiteConnection mDbConnection, string variantId)
         {
             List<EcuFunctionStructs.EcuFaultCode> ecuFaultCodeList = new List<EcuFunctionStructs.EcuFaultCode>();
+            // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetXepFaultCodeByEcuVariantId
             string sql = string.Format(@"SELECT ID, CODE FROM XEP_FAULTCODES WHERE ECUVARIANTID = {0}", variantId);
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
@@ -475,6 +476,7 @@ namespace ExtractEcuFunctions
             return ecuFaultCodeList;
         }
 
+        // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetFaultLabelXepFaultLabel
         private static List<EcuFunctionStructs.EcuFaultCodeLabel> GetFaultCodeLabels(SQLiteConnection mDbConnection, string language)
         {
             List<EcuFunctionStructs.EcuFaultCodeLabel> ecuFaultCodeLabelList = new List<EcuFunctionStructs.EcuFaultCodeLabel>();
@@ -509,6 +511,7 @@ namespace ExtractEcuFunctions
             return ecuFaultCodeLabelList;
         }
 
+        // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetFaultLabelXepFaultLabel
         private static EcuFunctionStructs.EcuFaultCodeLabel GetFaultCodeLabel(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuFaultCode ecuFaultCode)
         {
             EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel = null;
@@ -535,6 +538,7 @@ namespace ExtractEcuFunctions
             return ecuFaultCodeLabel;
         }
 
+        // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetFaultModeLabelById
         private static List<EcuFunctionStructs.EcuFaultModeLabel> GetFaultModeLabels(SQLiteConnection mDbConnection, string language)
         {
             List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList = new List<EcuFunctionStructs.EcuFaultModeLabel>();
@@ -568,6 +572,7 @@ namespace ExtractEcuFunctions
             return ecuFaultModeLabelList;
         }
 
+        // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetFaultModeLabelById
         private static List<EcuFunctionStructs.EcuFaultModeLabel> GetFaultModeLabelList(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuFaultCode ecuFaultCode)
         {
             List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList = new List<EcuFunctionStructs.EcuFaultModeLabel>();
@@ -592,6 +597,7 @@ namespace ExtractEcuFunctions
             return ecuFaultModeLabelList;
         }
 
+        // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetEnvCondLabels
         private static List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabels(SQLiteConnection mDbConnection, string language)
         {
             List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList = new List<EcuFunctionStructs.EcuEnvCondLabel>();
@@ -636,6 +642,7 @@ namespace ExtractEcuFunctions
             return ecuEnvCondLabelList;
         }
 
+        // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetEnvCondLabels
         private static List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelList(SQLiteConnection mDbConnection,
             EcuFunctionStructs.EcuFaultCode ecuFaultCode, string variantId)
         {
@@ -673,6 +680,7 @@ namespace ExtractEcuFunctions
             return ecuEnvCondLabelList;
         }
 
+        // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetEcuGroupFunctionsByEcuGroupId
         private static List<string> GetEcuGroupFunctionIds(SQLiteConnection mDbConnection, string groupId)
         {
             List<string> ecuGroupFunctionIds = new List<string>();
@@ -691,6 +699,7 @@ namespace ExtractEcuFunctions
             return ecuGroupFunctionIds;
         }
 
+        // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetXepNodeClassNameById
         private static string GetNodeClassName(SQLiteConnection mDbConnection, string nodeClass)
         {
             string result = string.Empty;
@@ -712,6 +721,7 @@ namespace ExtractEcuFunctions
         private static List<EcuFunctionStructs.EcuJob> GetFixedFuncStructJobsList(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct)
         {
             List<EcuFunctionStructs.EcuJob> ecuJobList = new List<EcuFunctionStructs.EcuJob>();
+            // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetEcuJobsWithParameters
             string sql = string.Format(@"SELECT JOBS.ID JOBID, FUNCTIONNAMEJOB, NAME, PHASE, RANK " +
                                        "FROM XEP_ECUJOBS JOBS, XEP_REFECUJOBS REFJOBS WHERE JOBS.ID = REFJOBS.ECUJOBID AND REFJOBS.ID = {0}", ecuFixedFuncStruct.Id);
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
@@ -731,6 +741,7 @@ namespace ExtractEcuFunctions
 
             foreach (EcuFunctionStructs.EcuJob ecuJob in ecuJobList)
             {
+                // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetEcuParameters
                 List<EcuFunctionStructs.EcuJobParameter> ecuJobParList = new List<EcuFunctionStructs.EcuJobParameter>();
                 sql = string.Format(
                     @"SELECT PARAM.ID PARAMID, PARAMVALUE, FUNCTIONNAMEPARAMETER, ADAPTERPATH, NAME, ECUJOBID " +
@@ -753,6 +764,7 @@ namespace ExtractEcuFunctions
                 ecuJob.EcuJobParList = ecuJobParList;
 
                 List<EcuFunctionStructs.EcuJobResult> ecuJobResultList = new List<EcuFunctionStructs.EcuJobResult>();
+                // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetEcuResults
                 sql = string.Format(
                     @"SELECT RESULTS.ID RESULTID, " + SqlTitleItems + ", FUNCTIONNAMERESULT, ADAPTERPATH, NAME, STEUERGERAETEFUNKTIONENRELEVAN, LOCATION, UNIT, UNITFIXED, FORMAT, MULTIPLIKATOR, OFFSET, RUNDEN, ZAHLENFORMAT, ECUJOBID " +
                     "FROM XEP_ECURESULTS RESULTS, XEP_REFECURESULTS REFRESULTS WHERE " +
@@ -798,6 +810,7 @@ namespace ExtractEcuFunctions
             return ecuJobList;
         }
 
+        // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetEcuResultStateValues
         private static List<EcuFunctionStructs.EcuResultStateValue> GetResultStateValueList(SQLiteConnection mDbConnection, string id, string language = null)
         {
             List<EcuFunctionStructs.EcuResultStateValue> ecuResultStateValueList = new List<EcuFunctionStructs.EcuResultStateValue>();
