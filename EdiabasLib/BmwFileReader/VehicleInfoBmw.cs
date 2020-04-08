@@ -1524,7 +1524,7 @@ namespace BmwFileReader
             }
 
             // Mapping could be found in:
-            // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.VehicleLogistics.GetCharacteristics(Vehicle vecInfo)
+            // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.VehicleLogistics.getBNType(Vehicle vecInfo)
             string typeUpper = vehicleType.ToUpperInvariant();
             switch (typeUpper)
             {
