@@ -148,6 +148,7 @@ namespace BmwFileReader
         // ReSharper disable RedundantExplicitArrayCreation
         // ReSharper disable CoVariantArrayConversion
 
+        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.E36EcuCharacteristics.E36EcuCharacteristics
         public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE36 =
             new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
             {
@@ -242,6 +243,7 @@ namespace BmwFileReader
         public static EcuLogisticsData EcuLogisticsDataE36 =
             new EcuLogisticsData("E36EcuCharacteristics.xml", EcuLogisticsE36);
 
+        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.E38EcuCharacteristics.E38EcuCharacteristics
         public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE38 =
             new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
             {
@@ -336,6 +338,7 @@ namespace BmwFileReader
         public static EcuLogisticsData EcuLogisticsDataE38 =
             new EcuLogisticsData("E38EcuCharacteristics.xml", EcuLogisticsE38);
 
+        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.E39EcuCharacteristics.E39EcuCharacteristics
         public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE39 =
             new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
             {
@@ -430,6 +433,7 @@ namespace BmwFileReader
         public static EcuLogisticsData EcuLogisticsDataE39 =
             new EcuLogisticsData("E39EcuCharacteristics.xml", EcuLogisticsE39);
 
+        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.E46EcuCharacteristics.E46EcuCharacteristics
         public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE46 =
             new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
             {
@@ -524,6 +528,7 @@ namespace BmwFileReader
         public static EcuLogisticsData EcuLogisticsDataE46 =
             new EcuLogisticsData("E46EcuCharacteristics.xml", EcuLogisticsE46);
 
+        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.E52EcuCharacteristics.E52EcuCharacteristics
         public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE52 =
             new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
             {
@@ -618,6 +623,7 @@ namespace BmwFileReader
         public static EcuLogisticsData EcuLogisticsDataE52 =
             new EcuLogisticsData("E52EcuCharacteristics.xml", EcuLogisticsE52);
 
+        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.E53EcuCharacteristics.E53EcuCharacteristics
         public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE53 =
             new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
             {
@@ -712,6 +718,7 @@ namespace BmwFileReader
         public static EcuLogisticsData EcuLogisticsDataE53 =
             new EcuLogisticsData("E53EcuCharacteristics.xml", EcuLogisticsE53);
 
+        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.E83EcuCharacteristics.E83EcuCharacteristics
         public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE83 =
             new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
             {
@@ -805,6 +812,7 @@ namespace BmwFileReader
         public static EcuLogisticsData EcuLogisticsDataE83 =
             new EcuLogisticsData("E83EcuCharacteristics.xml", EcuLogisticsE83);
 
+        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.E85EcuCharacteristics.E85EcuCharacteristics
         public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE85 =
             new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
             {
@@ -900,6 +908,7 @@ namespace BmwFileReader
         public static EcuLogisticsData EcuLogisticsDataE85 =
             new EcuLogisticsData("E85EcuCharacteristics.xml", EcuLogisticsE85);
 
+        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.R50EcuCharacteristics.R50EcuCharacteristics
         public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsR50 =
             new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
             {
@@ -1415,7 +1424,7 @@ namespace BmwFileReader
             CreateEcuLogistics(typeof(BmwDeepObd.XmlToolActivity).Namespace + ".VehicleInfo.");
 
             // Mapping could be found in:
-            // RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.VehicleLogistics.GetCharacteristics(Vehicle vecInfo)
+            // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.VehicleLogistics.GetCharacteristics(Vehicle vecInfo)
             switch (vehicleType.ToUpperInvariant())
             {
                 case "E36":
@@ -1452,7 +1461,7 @@ namespace BmwFileReader
             return null;
         }
 
-        // from: RheingoldCoreFramework.dll BMW.Rheingold.CoreFramework.DatabaseProvider
+        // from: RheingoldCoreFramework.dll BMW.Rheingold.CoreFramework.DatabaseProvider.FA.ExtractEreihe
         public static string GetVehicleTypeFromBrName(string brName, EdiabasNet ediabas)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle type from BR name: {0}", brName ?? "No name");
@@ -1515,7 +1524,7 @@ namespace BmwFileReader
             }
 
             // Mapping could be found in:
-            // RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.VehicleLogistics.GetCharacteristics(Vehicle vecInfo)
+            // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.VehicleLogistics.GetCharacteristics(Vehicle vecInfo)
             string typeUpper = vehicleType.ToUpperInvariant();
             switch (typeUpper)
             {

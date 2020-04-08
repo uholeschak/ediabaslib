@@ -1611,7 +1611,7 @@ namespace BmwDeepObd
             }
         }
 
-        // from: Rheingold.PresentationFramework.dll BMW.Rheingold.PresentationFramework.FUWFormatConverter.Convert
+        // from: RheingoldPresentationFramework.dll BMW.Rheingold.PresentationFramework.FUWFormatConverter.Convert
         public static string ConvertEcuResultValueEnv(EdiabasNet.ResultData resultData, out double? resultValue)
         {
             resultValue = null;
