@@ -45,6 +45,14 @@ BMW.Rheingold.Diagnostics.VehicleIdent.SetDTCDetailValues()
 BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionsReadStatus.DoReadStatus()
 BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionsReadStatus.DoReadStatusSingleShot()
 
+Checks for ISTA-D Update:
+=========================
+Export the source of the following modules:
+- RheingoldCoreFramework.dll
+- Rheingold.PresentationFramework.dll
+- RheingoldSessionController.dll
+- RheingoldDiagnostics.dll
+
 Read status processing:
 =======================
 EcuFunctionsReadStatus.DoReadStatus()
