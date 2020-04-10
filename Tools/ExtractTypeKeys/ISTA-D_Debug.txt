@@ -54,7 +54,7 @@ Export the source of the following modules:
 - RheingoldDiagnostics.dll
 
 Update XML files in EdiabasLib\BmwDeepObd\VehicleInfo from: RheingoldDiagnostics\Diagnostics\EcuCharacteristics\Xml
-Compare: RheingoldDiagnostics\Diagnostics\VehicleLogistics.cs: GetCharacteristics()
+Compare: RheingoldDiagnostics\Diagnostics\VehicleLogistics.cs: GetCharacteristics(), MRXEcuCharacteristics()
 
 Read status processing:
 =======================

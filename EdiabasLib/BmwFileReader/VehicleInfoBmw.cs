@@ -1537,7 +1537,7 @@ namespace BmwFileReader
                 case "E65":
                 case "E66":
                 case "E67":
-                case "E68":
+                case "E68": // E65EcuCharacteristics
                     return "e65";
 
                 case "E70":
@@ -1547,20 +1547,29 @@ namespace BmwFileReader
 
                 case "M12":
                 case "E89X":
-                case "E81":
-                case "E82":
-                case "E84":
-                case "E87":
+                case "E81": // E89XEcuCharacteristics
+                case "E82": // E89XEcuCharacteristics
+                case "E84": // E89XEcuCharacteristics
+                case "E87": // E89XEcuCharacteristics
                 case "E88":
                 case "E89":
-                case "E90":
-                case "E91":
-                case "E92":
-                case "E93":
+                case "E90": // E89XEcuCharacteristics
+                case "E91": // E89XEcuCharacteristics
+                case "E92": // E89XEcuCharacteristics
+                case "E93": // E89XEcuCharacteristics
+                    // E89XEcuCharacteristics -> E89EcuCharacteristics
                     return "e89x";
 
+                case "E83": // E83EcuCharacteristics
+                    // return "zcs_all";
+                    break;
+
+                case "E85": // E85EcuCharacteristics
+                    // return "zcs_all";
+                    break;
+
                 case "H61": // H61EcuCharacteristics
-                case "H91":
+                case "H91": // H61EcuCharacteristics
                     return "MRKH24";
 
                 case "247":
@@ -1572,7 +1581,7 @@ namespace BmwFileReader
                 case "259R":
                 case "259S":
                 case "A67":
-                case "C01":
+                case "C01": // MRK01XEcuCharacteristics
                 case "E169":
                 case "E189":
                 case "GT1":
@@ -1637,10 +1646,10 @@ namespace BmwFileReader
                 case "K47":
                 case "K48": // MRXEcuCharacteristics
                 case "K49": // MRXEcuCharacteristics
-                case "K50":
-                case "K51":
-                case "K52":
-                case "K53":
+                case "K50": // MRXEcuCharacteristics
+                case "K51": // MRXEcuCharacteristics
+                case "K52": // MRXEcuCharacteristics
+                case "K53": // MRXEcuCharacteristics
                 case "K54":
                 case "K61":
                 case "K67":
