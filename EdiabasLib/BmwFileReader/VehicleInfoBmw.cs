@@ -1564,19 +1564,34 @@ namespace BmwFileReader
                 case "M13": // F56EcuCharacteristics
                     return "f01";
 
+                case "E38": // E38EcuCharacteristics
+                case "E46": // E46EcuCharacteristics
                 case "E83": // E83EcuCharacteristics
+                case "E85": // E85EcuCharacteristics
                     // return "zcs_all";
                     break;
 
-                case "E85": // E85EcuCharacteristics
-                    // return "zcs_all";
+                case "E36": // E36EcuCharacteristics
+                    // return "zcs_e36";
+                    break;
+
+                case "E39": // E39EcuCharacteristics
+                    // return "zcs_e39";
+                    break;
+
+                case "E52": // E52EcuCharacteristics
+                    // return "zcs_e52";
+                    break;
+
+                case "E53": // E53EcuCharacteristics
+                    // return "zcs_e53";
                     break;
 
                 case "H61": // H61EcuCharacteristics
                 case "H91": // H61EcuCharacteristics
                     return "MRKH24";
 
-                case "247":
+                case "247": // MRK01XEcuCharacteristics
                 case "247E": // MRK01XEcuCharacteristics
                 case "248": // MRK01XEcuCharacteristics
                 case "259": // MRK01XEcuCharacteristics
@@ -1606,7 +1621,7 @@ namespace BmwFileReader
                 case "K44": // MREcuCharacteristics
                 case "K569": // MRK01XEcuCharacteristics
                 case "K589": // MRK01XEcuCharacteristics
-                case "K599":
+                case "K599": // MRK01XEcuCharacteristics
                 case "K70": // MREcuCharacteristics
                 case "K71": // MREcuCharacteristics
                 case "K72": // MREcuCharacteristics
@@ -1614,10 +1629,10 @@ namespace BmwFileReader
                 case "K75":
                 case "MRK24": // MREcuCharacteristics
                 case "R13": // MRK01XEcuCharacteristics
-                case "R21":
+                case "R21": // MRK01XEcuCharacteristics
                 case "R22":
                 case "R28":
-                case "V98":
+                case "V98": // MREcuCharacteristics
                     return "MRK24";
 
                 case "K18":
@@ -1677,15 +1692,15 @@ namespace BmwFileReader
                 case "K52": // MRXEcuCharacteristics
                 case "K53": // MRXEcuCharacteristics
                 case "K54": // MRXEcuCharacteristics
-                case "K61":
+                case "K61": // MRXEcuCharacteristics
                 case "K67": // MRXEcuCharacteristics
-                case "K69":
+                case "K69": // MRXEcuCharacteristics
                 case "K80": // MRXEcuCharacteristics
                 case "K81": // MRXEcuCharacteristics
                 case "K82": // MRXEcuCharacteristics
                 case "K83": // MRXEcuCharacteristics
                 case "K84":
-                case "V99":
+                case "V99": // MRXEcuCharacteristics
                 case "X_K001": // MRXEcuCharacteristics
                     return "x_k001";
 
@@ -1697,19 +1712,21 @@ namespace BmwFileReader
                     // special case in MRXEcuCharacteristics
                     return "x_ks01";
 
-                case "RR1":
-                case "RR3":
-                    if (cDate.HasValue && cDate.Value < new DateTime(2012, 06, 01))
+                case "RR1": // RREcuCharacteristics, RR2EcuCharacteristics
+                case "RR3": // RREcuCharacteristics, RR2EcuCharacteristics
+                    if (cDate.HasValue && !(cDate.Value < new DateTime(2012, 06, 01)))
                     {
-                        return "rr1";
+                        // RR2EcuCharacteristics
+                        return "rr1_2020";
                     }
-                    return "rr1_2020";
+                    // RREcuCharacteristics
+                    return "rr1";
 
                 case "R55": // R55EcuCharacteristics
                 case "R56": // R55EcuCharacteristics
                 case "R57":
                 case "R58":
-                case "R59":
+                case "R59": // R55EcuCharacteristics
                 case "R60":
                 case "R61":
                     return "r56";
@@ -1726,12 +1743,13 @@ namespace BmwFileReader
                 case "RR22": // BNT_RR1X_RR3X_RRNM
                 case "RR31": // BNT_RR1X_RR3X_RRNM
                 case "RR5": // RR6EcuCharacteristics
+                case "RR6": // RR6EcuCharacteristics
                     return "f01";
             }
 
             if (typeUpper.StartsWith("F") || typeUpper.StartsWith("G") || typeUpper.StartsWith("I") || typeUpper.StartsWith("J"))
             {
-                // F40, F44
+                // F40
                 // G01, G02, G05, G06, G07, G08, G30
                 // G11, G12, G14, G15, G16
                 // G31, G32, G38
@@ -1740,6 +1758,7 @@ namespace BmwFileReader
                 // F20, F21, F22, F23, F30, F31, F32, F33, F34, F35, F36, F80, F81, F82, F83, F87: F20EcuCharacteristics
                 // F25, F26: F25EcuCharacteristics, F25_1404EcuCharacteristics
                 // F14, F15, F16, F85, F86: F15EcuCharacteristics
+                // F44: BNT_F40_F44
                 // F47, F57: F56EcuCharacteristics
                 // F90: BNT_G11_G12_G3X_SP2015
                 // F91, F92, F93: BNT_G1X_G3X_SP2018, BNT_G1X_G3X_SP2018_MGU, BNT_G1X_G3X_SP2018_noMGU
