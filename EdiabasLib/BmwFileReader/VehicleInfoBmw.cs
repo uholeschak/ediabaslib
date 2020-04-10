@@ -1608,8 +1608,8 @@ namespace BmwFileReader
                 case "K72": // MREcuCharacteristics
                 case "K73":
                 case "K75":
-                case "MRK24":
-                case "R13":
+                case "MRK24": // MREcuCharacteristics
+                case "R13": // MRK01XEcuCharacteristics
                 case "R21":
                 case "R22":
                 case "R28":
@@ -1721,10 +1721,9 @@ namespace BmwFileReader
                 // G11, G12, G14, G15, G16
                 // G31, G32, G38
                 // I12, I15
-                // J29
                 // F01, F02, F03, F04, F06, F07, F10, F11, F12, F13, F18: F01EcuCharacteristics, F01_1307EcuCharacteristics
                 // F39, F60: F56EcuCharacteristics
-                // F34, F35, F36, F80, F81, F82, F83, F87: F20EcuCharacteristics
+                // F30, F31, F32, F33, F34, F35, F36, F80, F81, F82, F83, F87: F20EcuCharacteristics
                 // F14, F15, F16, F85, F86: F15EcuCharacteristics
                 // F90: BNT_G11_G12_G3X_SP2015
                 // F91, F92, F93: BNT_G1X_G3X_SP2018, BNT_G1X_G3X_SP2018_MGU, BNT_G1X_G3X_SP2018_noMGU
@@ -1733,6 +1732,7 @@ namespace BmwFileReader
                 // G20, G21, G22, G23, G28: BNT_G20_G28
                 // G29: BNT_G29
                 // I01: I01EcuCharacteristics
+                // J29: BNT_J29
                 return "f01";
             }
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type unknown");
