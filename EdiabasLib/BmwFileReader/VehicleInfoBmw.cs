@@ -1583,8 +1583,8 @@ namespace BmwFileReader
                 case "259S":
                 case "A67":
                 case "C01": // MRK01XEcuCharacteristics
-                case "E169":
-                case "E189":
+                case "E169": // MRK01XEcuCharacteristics
+                case "E189": // MRK01XEcuCharacteristics
                 case "GT1":
                 case "K14":
                 case "K15":
@@ -1678,7 +1678,7 @@ namespace BmwFileReader
                 case "K83": // MRXEcuCharacteristics
                 case "K84":
                 case "V99":
-                case "X_K001":
+                case "X_K001": // MRXEcuCharacteristics
                     return "x_k001";
 
                 case "K02": // MRXEcuCharacteristics
@@ -1714,14 +1714,22 @@ namespace BmwFileReader
 
             if (typeUpper.StartsWith("F") || typeUpper.StartsWith("G") || typeUpper.StartsWith("I") || typeUpper.StartsWith("J"))
             {
-                // F01, F02, F03, F04, F06, F07, F10, F11, F12, F13, F15, F16, F18,
-                // F25, F40, F44, F90, F91, F92, F93, F95, F96, F97, F98
+                // F01, F02, F03, F04, F06, F07, F10, F11, F12, F13, F15, F16
+                // F25, F40, F44, F98
                 // G01, G02, G05, G06, G07, G08, G30
                 // G11, G12, G14, G15, G16
                 // G20, G21, G22, G23, G28, G29
                 // G31, G32, G38
-                // I01, I12, I15
+                // I12, I15
                 // J29
+                // F18: F01EcuCharacteristics, F01_1307EcuCharacteristics
+                // F80, F81, F82, F83, F87: F20EcuCharacteristics
+                // F86: F15EcuCharacteristics
+                // F90: BNT_G11_G12_G3X_SP2015
+                // F91, F92, F93: BNT_G1X_G3X_SP2018, BNT_G1X_G3X_SP2018_MGU, BNT_G1X_G3X_SP2018_noMGU
+                // F95, F96: BNT_G05_G06_G07
+                // F97: BNT_G01_G02_G08_F97_F98_SP2015
+                // I01: I01EcuCharacteristics
                 return "f01";
             }
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type unknown");
