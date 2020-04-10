@@ -1528,43 +1528,53 @@ namespace BmwFileReader
             string typeUpper = vehicleType.ToUpperInvariant();
             switch (typeUpper)
             {
-                case "E60":
-                case "E61":
+                case "E60": // E60EcuCharacteristics
+                case "E61": // E60EcuCharacteristics
                 case "E62":
-                case "E63":
+                case "E63": // E60EcuCharacteristics
+                case "E64": // E60EcuCharacteristics
                     return "e60";
 
-                case "E65":
-                case "E66":
-                case "E67":
-                case "E68":
+                case "E65": // E65EcuCharacteristics
+                case "E66": // E65EcuCharacteristics
+                case "E67": // E65EcuCharacteristics
+                case "E68": // E65EcuCharacteristics
                     return "e65";
 
-                case "E70":
-                case "E71":
+                case "E70": // E70EcuCharacteristics
+                case "E71": // E70EcuCharacteristics, E70EcuCharacteristicsAMPT, E70EcuCharacteristicsAMPH: MainSeriesSgbd="e70"
                 case "E72": // E72EcuCharacteristics
                     return "e70";
 
                 case "M12":
                 case "E89X":
-                case "E81":
-                case "E82":
-                case "E84":
-                case "E87":
-                case "E88":
-                case "E89":
-                case "E90":
-                case "E91":
-                case "E92":
-                case "E93":
+                case "E81": // E89XEcuCharacteristics
+                case "E82": // E89XEcuCharacteristics
+                case "E84": // E89XEcuCharacteristics
+                case "E87": // E89XEcuCharacteristics
+                case "E88": // E89XEcuCharacteristics
+                case "E89": // E89XEcuCharacteristics
+                case "E90": // E89XEcuCharacteristics
+                case "E91": // E89XEcuCharacteristics
+                case "E92": // E89XEcuCharacteristics
+                case "E93": // E89XEcuCharacteristics
+                    // E89XEcuCharacteristics -> E89EcuCharacteristics
                     return "e89x";
 
+                case "E83": // E83EcuCharacteristics
+                    // return "zcs_all";
+                    break;
+
+                case "E85": // E85EcuCharacteristics
+                    // return "zcs_all";
+                    break;
+
                 case "H61": // H61EcuCharacteristics
-                case "H91":
+                case "H91": // H61EcuCharacteristics
                     return "MRKH24";
 
                 case "247":
-                case "247E":
+                case "247E": // MRK01XEcuCharacteristics
                 case "248":
                 case "259":
                 case "259C":
@@ -1572,28 +1582,28 @@ namespace BmwFileReader
                 case "259R":
                 case "259S":
                 case "A67":
-                case "C01":
+                case "C01": // MRK01XEcuCharacteristics
                 case "E169":
                 case "E189":
                 case "GT1":
                 case "K14":
                 case "K15":
                 case "K16":
-                case "K25":
-                case "K26":
+                case "K25": // MREcuCharacteristics
+                case "K26": // MREcuCharacteristics
                 case "K27": // MREcuCharacteristics
                 case "K28":
                 case "K29":
-                case "K30":
-                case "K40":
-                case "K41":
-                case "K42":
-                case "K43":
+                case "K30": // MRK01XEcuCharacteristics
+                case "K40": // MREcuCharacteristics
+                case "K41": // MRK01XEcuCharacteristics
+                case "K42": // MREcuCharacteristics
+                case "K43": // MREcuCharacteristics
                 case "K44": // MREcuCharacteristics
-                case "K569":
-                case "K589":
+                case "K569": // MRK01XEcuCharacteristics
+                case "K589": // MRK01XEcuCharacteristics
                 case "K599":
-                case "K70":
+                case "K70": // MREcuCharacteristics
                 case "K71": // MREcuCharacteristics
                 case "K72": // MREcuCharacteristics
                 case "K73":
@@ -1622,26 +1632,43 @@ namespace BmwFileReader
                     }
                     return "MRK24";
 
-                case "K21": // VIN "0A06", "0A16" BN2000 else BN2020
+                case "K21": // VIN "0A06", "0A16" BN2000 else BN2020 (getBNType)
                     if (!string.IsNullOrEmpty(vin) &&
                         (vinTypeUpper.Equals("0A06", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0A16", StringComparison.OrdinalIgnoreCase)))
                     {
+                        // BN2000: MREcuCharacteristics
                         return "MRK24";
                     }
+                    // BN2020: MRXEcuCharacteristics
                     return "x_k001";
 
-                case "K22":
-                case "K23":
-                case "K32":
-                case "K33":
+                case "K46":
+                    if (!string.IsNullOrEmpty(vin) && !vinTypeUpper.Equals("XXXX", StringComparison.OrdinalIgnoreCase) &&
+                        (vinTypeUpper.Equals("0D10", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0D21", StringComparison.OrdinalIgnoreCase) ||
+                         vinTypeUpper.Equals("0D30", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0D40", StringComparison.OrdinalIgnoreCase) ||
+                         vinTypeUpper.Equals("0D50", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0D60", StringComparison.OrdinalIgnoreCase) ||
+                         vinTypeUpper.Equals("0D70", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0D80", StringComparison.OrdinalIgnoreCase) ||
+                         vinTypeUpper.Equals("0D90", StringComparison.OrdinalIgnoreCase)
+                         ))
+                    {
+                        // BN2020: MRXEcuCharacteristics
+                        return "x_k001";
+                    }
+                    // BN2000: MREcuCharacteristics
+                    return "MRK24";
+
+                case "K22": // MRXEcuCharacteristics
+                case "K23": // MRXEcuCharacteristics
+                case "K32": // MRXEcuCharacteristics
+                case "K33": // MRXEcuCharacteristics
                 case "K47":
                 case "K48": // MRXEcuCharacteristics
                 case "K49": // MRXEcuCharacteristics
-                case "K50":
-                case "K51":
-                case "K52":
-                case "K53":
-                case "K54":
+                case "K50": // MRXEcuCharacteristics
+                case "K51": // MRXEcuCharacteristics
+                case "K52": // MRXEcuCharacteristics
+                case "K53": // MRXEcuCharacteristics
+                case "K54": // MRXEcuCharacteristics
                 case "K61":
                 case "K67":
                 case "K69":
