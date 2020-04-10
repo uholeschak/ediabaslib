@@ -1530,6 +1530,7 @@ namespace BmwFileReader
             {
                 case "E60": // E60EcuCharacteristics
                 case "E61": // E60EcuCharacteristics
+                case "E62": // BNType: UNKNOWN
                 case "E63": // E60EcuCharacteristics
                 case "E64": // E60EcuCharacteristics
                     return "e60";
