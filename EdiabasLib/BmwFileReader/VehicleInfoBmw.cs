@@ -1542,7 +1542,7 @@ namespace BmwFileReader
 
                 case "E70":
                 case "E71":
-                case "E72": 
+                case "E72": // E72EcuCharacteristics
                     return "e70";
 
                 case "M12":
@@ -1559,7 +1559,7 @@ namespace BmwFileReader
                 case "E93":
                     return "e89x";
 
-                case "H61":
+                case "H61": // H61EcuCharacteristics
                 case "H91":
                     return "MRKH24";
 
@@ -1581,7 +1581,7 @@ namespace BmwFileReader
                 case "K16":
                 case "K25":
                 case "K26":
-                case "K27":
+                case "K27": // MREcuCharacteristics
                 case "K28":
                 case "K29":
                 case "K30":
@@ -1589,13 +1589,13 @@ namespace BmwFileReader
                 case "K41":
                 case "K42":
                 case "K43":
-                case "K44":
+                case "K44": // MREcuCharacteristics
                 case "K569":
                 case "K589":
                 case "K599":
                 case "K70":
-                case "K71":
-                case "K72":
+                case "K71": // MREcuCharacteristics
+                case "K72": // MREcuCharacteristics
                 case "K73":
                 case "K75":
                 case "MRK24":
@@ -1635,8 +1635,8 @@ namespace BmwFileReader
                 case "K32":
                 case "K33":
                 case "K47":
-                case "K48":
-                case "K49":
+                case "K48": // MRXEcuCharacteristics
+                case "K49": // MRXEcuCharacteristics
                 case "K50":
                 case "K51":
                 case "K52":
@@ -1645,20 +1645,21 @@ namespace BmwFileReader
                 case "K61":
                 case "K67":
                 case "K69":
-                case "K80":
-                case "K81":
-                case "K82":
-                case "K83":
+                case "K80": // MRXEcuCharacteristics
+                case "K81": // MRXEcuCharacteristics
+                case "K82": // MRXEcuCharacteristics
+                case "K83": // MRXEcuCharacteristics
                 case "K84":
                 case "V99":
                 case "X_K001":
                     return "x_k001";
 
-                case "K02":
-                case "K03":
-                case "K08":
-                case "K09":
-                case "K60":
+                case "K02": // MRXEcuCharacteristics
+                case "K03": // MRXEcuCharacteristics
+                case "K08": // MRXEcuCharacteristics
+                case "K09": // MRXEcuCharacteristics
+                case "K60": // MRXEcuCharacteristics
+                    // special case in MRXEcuCharacteristics
                     return "x_ks01";
 
                 case "RR1":
