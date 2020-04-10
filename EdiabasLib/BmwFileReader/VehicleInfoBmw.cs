@@ -1530,7 +1530,6 @@ namespace BmwFileReader
             {
                 case "E60": // E60EcuCharacteristics
                 case "E61": // E60EcuCharacteristics
-                case "E62":
                 case "E63": // E60EcuCharacteristics
                 case "E64": // E60EcuCharacteristics
                     return "e60";
@@ -1603,7 +1602,7 @@ namespace BmwFileReader
                 case "C01": // MRK01XEcuCharacteristics
                 case "E169": // MRK01XEcuCharacteristics
                 case "E189": // MRK01XEcuCharacteristics
-                case "GT1":
+                case "GT1": // GibbsEcuCharacteristics, BNType: BN2000_GIBBS
                 case "K14": // MRK01XEcuCharacteristics
                 case "K15": // MRK01XEcuCharacteristics
                 case "K16": // MRK01XEcuCharacteristics
@@ -1625,7 +1624,7 @@ namespace BmwFileReader
                 case "K70": // MREcuCharacteristics
                 case "K71": // MREcuCharacteristics
                 case "K72": // MREcuCharacteristics
-                case "K73":
+                case "K73": // MREcuCharacteristics
                 case "K75": // MREcuCharacteristics
                 case "MRK24": // MREcuCharacteristics
                 case "R13": // MRK01XEcuCharacteristics
@@ -1684,7 +1683,7 @@ namespace BmwFileReader
                 case "K23": // MRXEcuCharacteristics
                 case "K32": // MRXEcuCharacteristics
                 case "K33": // MRXEcuCharacteristics
-                case "K47":
+                case "K47": // MRXEcuCharacteristics
                 case "K48": // MRXEcuCharacteristics
                 case "K49": // MRXEcuCharacteristics
                 case "K50": // MRXEcuCharacteristics
@@ -1751,7 +1750,6 @@ namespace BmwFileReader
 
             if (typeUpper.StartsWith("F") || typeUpper.StartsWith("G") || typeUpper.StartsWith("I") || typeUpper.StartsWith("J"))
             {
-                // G38
                 // F01, F02, F03, F04, F06, F07, F10, F11, F12, F13, F18: F01EcuCharacteristics, F01_1307EcuCharacteristics
                 // F39, F54, F55, F56, F60: F56EcuCharacteristics
                 // F20, F21, F22, F23, F30, F31, F32, F33, F34, F35, F36, F80, F81, F82, F83, F87: F20EcuCharacteristics
