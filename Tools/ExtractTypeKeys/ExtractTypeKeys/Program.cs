@@ -31,6 +31,17 @@ namespace ExtractTypeKeys
                 return 1;
             }
 
+            if (!Directory.Exists(outDir))
+            {
+                Directory.CreateDirectory(outDir);
+            }
+
+            if (!Directory.Exists(outDir))
+            {
+                Console.WriteLine("Output directory not existing");
+                return 1;
+            }
+
             try
             {
                 List<string> zipFiles = new List<string>();
