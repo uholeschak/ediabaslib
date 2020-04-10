@@ -1547,7 +1547,7 @@ namespace BmwFileReader
                     return "e70";
 
                 case "M12":
-                case "E89X":
+                case "E89X": // E89XEcuCharacteristics
                 case "E81": // E89XEcuCharacteristics
                 case "E82": // E89XEcuCharacteristics
                 case "E84": // E89XEcuCharacteristics
@@ -1708,27 +1708,30 @@ namespace BmwFileReader
 
                 case "RR11":
                 case "RR12":
-                case "RR31":
+                case "RR21": // BNT_RR1X_RR3X_RRNM
+                case "RR22": // BNT_RR1X_RR3X_RRNM
+                case "RR31": // BNT_RR1X_RR3X_RRNM
                     return "f01";
             }
 
             if (typeUpper.StartsWith("F") || typeUpper.StartsWith("G") || typeUpper.StartsWith("I") || typeUpper.StartsWith("J"))
             {
-                // F01, F02, F03, F04, F06, F07, F10, F11, F12, F13, F15, F16
-                // F25, F40, F44, F98
+                // F25, F40, F44
                 // G01, G02, G05, G06, G07, G08, G30
                 // G11, G12, G14, G15, G16
-                // G20, G21, G22, G23, G28, G29
                 // G31, G32, G38
                 // I12, I15
                 // J29
-                // F18: F01EcuCharacteristics, F01_1307EcuCharacteristics
-                // F80, F81, F82, F83, F87: F20EcuCharacteristics
-                // F86: F15EcuCharacteristics
+                // F01, F02, F03, F04, F06, F07, F10, F11, F12, F13, F18: F01EcuCharacteristics, F01_1307EcuCharacteristics
+                // F39, F60: F56EcuCharacteristics
+                // F34, F35, F36, F80, F81, F82, F83, F87: F20EcuCharacteristics
+                // F14, F15, F16, F85, F86: F15EcuCharacteristics
                 // F90: BNT_G11_G12_G3X_SP2015
                 // F91, F92, F93: BNT_G1X_G3X_SP2018, BNT_G1X_G3X_SP2018_MGU, BNT_G1X_G3X_SP2018_noMGU
                 // F95, F96: BNT_G05_G06_G07
-                // F97: BNT_G01_G02_G08_F97_F98_SP2015
+                // F97, F98: BNT_G01_G02_G08_F97_F98_SP2015
+                // G20, G21, G22, G23, G28: BNT_G20_G28
+                // G29: BNT_G29
                 // I01: I01EcuCharacteristics
                 return "f01";
             }
