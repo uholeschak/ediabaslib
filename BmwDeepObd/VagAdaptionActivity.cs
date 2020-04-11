@@ -717,7 +717,8 @@ namespace BmwDeepObd
         private void UpdateAdaption()
         {
             bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
-            if (_spinnerVagAdaptionChannel.SelectedItemPosition >= 0)
+            if (_spinnerVagAdaptionChannel.SelectedItemPosition >= 0 &&
+                _spinnerVagAdaptionChannel.SelectedItemPosition < _spinnerVagAdaptionChannelAdapter.Items.Count)
             {
                 StringObjType item = _spinnerVagAdaptionChannelAdapter.Items[_spinnerVagAdaptionChannel.SelectedItemPosition];
                 int channel = (int)item.Data;
