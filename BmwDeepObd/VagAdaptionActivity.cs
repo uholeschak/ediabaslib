@@ -672,10 +672,10 @@ namespace BmwDeepObd
             }
             else
             {
-                bool resetChannelPresent = false;
                 int index = 0;
                 if (_dataInfoAdaptionList != null)
                 {
+                    bool resetChannelPresent = false;
                     _spinnerVagAdaptionChannelAdapter.Items.Add(new StringObjType(GetString(Resource.String.vag_adaption_channel_select), -1));
                     foreach (UdsFileReader.DataReader.DataInfo dataInfo in _dataInfoAdaptionList)
                     {
@@ -699,12 +699,12 @@ namespace BmwDeepObd
                             index++;
                         }
                     }
-                }
 
-                if (!resetChannelPresent)
-                {
-                    string text = string.Format(CultureInfo.InvariantCulture, "{0}: {1}", ResetChannelNumber, GetString(Resource.String.vag_adaption_channel_reset));
-                    _spinnerVagAdaptionChannelAdapter.Items.Insert(1, new StringObjType(text, ResetChannelNumber));
+                    if (!resetChannelPresent)
+                    {
+                        string text = string.Format(CultureInfo.InvariantCulture, "{0}: {1}", ResetChannelNumber, GetString(Resource.String.vag_adaption_channel_reset));
+                        _spinnerVagAdaptionChannelAdapter.Items.Insert(1, new StringObjType(text, ResetChannelNumber));
+                    }
                 }
             }
 
