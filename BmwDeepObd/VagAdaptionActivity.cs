@@ -717,7 +717,8 @@ namespace BmwDeepObd
         private void UpdateAdaption()
         {
             bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
-            if (_spinnerVagAdaptionChannel.SelectedItemPosition >= 0)
+            if (_spinnerVagAdaptionChannel.SelectedItemPosition >= 0 &&
+                _spinnerVagAdaptionChannel.SelectedItemPosition < _spinnerVagAdaptionChannelAdapter.Items.Count)
             {
                 StringObjType item = _spinnerVagAdaptionChannelAdapter.Items[_spinnerVagAdaptionChannel.SelectedItemPosition];
                 int channel = (int)item.Data;
@@ -814,7 +815,8 @@ namespace BmwDeepObd
                             {
                                 try
                                 {
-                                    if (_spinnerVagAdaptionValueNew.SelectedItemPosition >= 0)
+                                    if (_spinnerVagAdaptionValueNew.SelectedItemPosition >= 0 &&
+                                        _spinnerVagAdaptionValueNew.SelectedItemPosition < _spinnerVagAdaptionValueNewAdapter.Items.Count)
                                     {
                                         UInt64 selectedValue = (UInt64)_spinnerVagAdaptionValueNewAdapter.Items[_spinnerVagAdaptionValueNew.SelectedItemPosition].Data;
                                         string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, selectedValue,

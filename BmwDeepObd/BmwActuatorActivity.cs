@@ -474,7 +474,8 @@ namespace BmwDeepObd
 
         private void UpdateActuator()
         {
-            if (_spinnerBmwActuatorFunction.SelectedItemPosition >= 0)
+            if (_spinnerBmwActuatorFunction.SelectedItemPosition >= 0 &&
+                _spinnerBmwActuatorFunction.SelectedItemPosition < _spinnerBmwActuatorFunctionAdapter.Items.Count)
             {
                 StringObjType item = _spinnerBmwActuatorFunctionAdapter.Items[_spinnerBmwActuatorFunction.SelectedItemPosition];
                 int function = (int)item.Data;

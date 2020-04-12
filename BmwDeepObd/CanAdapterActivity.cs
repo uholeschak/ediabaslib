@@ -854,7 +854,8 @@ namespace BmwDeepObd
             if (separationTime < 0) separationTime = 0;
 
             int canMode = 0x01;
-            if (_spinnerCanAdapterMode.SelectedItemPosition >= 0)
+            if (_spinnerCanAdapterMode.SelectedItemPosition >= 0 &&
+                _spinnerCanAdapterMode.SelectedItemPosition < _spinnerCanAdapterModeAdapter.Items.Count)
             {
                 canMode = (int)_spinnerCanAdapterModeAdapter.Items[_spinnerCanAdapterMode.SelectedItemPosition].Data;
             }
