@@ -1384,7 +1384,8 @@ namespace BmwDeepObd
             StringBuilder stringBuilder = new StringBuilder();
 
             FormatType formatType = FormatType.None;
-            if (_spinnerFormatType.SelectedItemPosition >= 0)
+            if (_spinnerFormatType.SelectedItemPosition >= 0 &&
+                _spinnerFormatType.SelectedItemPosition < _spinnerFormatTypeAdapter.Items.Count)
             {
                 formatType = (FormatType)_spinnerFormatTypeAdapter.Items[_spinnerFormatType.SelectedItemPosition].Data;
             }
@@ -1418,7 +1419,8 @@ namespace BmwDeepObd
                 {
                     stringBuilder.Append("-");
                 }
-                if (_spinnerFormatLength1.SelectedItemPosition >= 0)
+                if (_spinnerFormatLength1.SelectedItemPosition >= 0 &&
+                    _spinnerFormatLength1.SelectedItemPosition < _spinnerFormatLength1Adapter.Items.Count)
                 {
                     int value = (int) _spinnerFormatLength1Adapter.Items[_spinnerFormatLength1.SelectedItemPosition].Data;
                     if (value >= 0)
@@ -1426,7 +1428,8 @@ namespace BmwDeepObd
                         stringBuilder.Append(value.ToString());
                     }
                 }
-                if (_spinnerFormatLength2.SelectedItemPosition >= 0)
+                if (_spinnerFormatLength2.SelectedItemPosition >= 0 &&
+                    _spinnerFormatLength2.SelectedItemPosition < _spinnerFormatLength2Adapter.Count)
                 {
                     int value = (int)_spinnerFormatLength2Adapter.Items[_spinnerFormatLength2.SelectedItemPosition].Data;
                     if (value >= 0)
@@ -1450,7 +1453,8 @@ namespace BmwDeepObd
                 {
                     resultInfo.DisplayOrder = displayOrder;
                 }
-                if (_spinnerGridType.SelectedItemPosition >= 0)
+                if (_spinnerGridType.SelectedItemPosition >= 0 &&
+                    _spinnerGridType.SelectedItemPosition < _spinnerGridTypeAdapter.Items.Count)
                 {
                     _selectedResult.GridType = (JobReader.DisplayInfo.GridModeType)_spinnerGridTypeAdapter.Items[_spinnerGridType.SelectedItemPosition].Data;
                 }
@@ -1476,7 +1480,8 @@ namespace BmwDeepObd
             resultInfo.Format = GetFormatString();
 
             FormatType formatType = FormatType.None;
-            if (_spinnerFormatType.SelectedItemPosition >= 0)
+            if (_spinnerFormatType.SelectedItemPosition >= 0 &&
+                _spinnerFormatType.SelectedItemPosition < _spinnerFormatTypeAdapter.Items.Count)
             {
                 formatType = (FormatType)_spinnerFormatTypeAdapter.Items[_spinnerFormatType.SelectedItemPosition].Data;
             }
@@ -1563,7 +1568,8 @@ namespace BmwDeepObd
             _ecuInfo.DisplayMode = _checkBoxDisplayTypeGrid.Checked ? JobReader.PageInfo.DisplayModeType.Grid : JobReader.PageInfo.DisplayModeType.List;
 
             XmlToolActivity.DisplayFontSize fontSize = XmlToolActivity.DisplayFontSize.Small;
-            if (_spinnerFontSize.SelectedItemPosition >= 0)
+            if (_spinnerFontSize.SelectedItemPosition >= 0 &&
+                _spinnerFontSize.SelectedItemPosition < _spinnerFontSizeAdapter.Items.Count)
             {
                 fontSize = (XmlToolActivity.DisplayFontSize)_spinnerFontSizeAdapter.Items[_spinnerFontSize.SelectedItemPosition].Data;
             }

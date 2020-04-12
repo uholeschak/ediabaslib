@@ -1159,7 +1159,8 @@ namespace BmwDeepObd
             if (jobInfo != null)
             {
                 _infoListAdapter.Items.Add(new TableResultItem(GetString(Resource.String.tool_job_result), null));
-                if (_spinnerResults.SelectedItemPosition >= 0)
+                if (_spinnerResults.SelectedItemPosition >= 0 &&
+                    _spinnerResults.SelectedItemPosition < _resultSelectListAdapter.Items.Count)
                 {
                     ExtraInfo info = _resultSelectListAdapter.Items[_spinnerResults.SelectedItemPosition];
                     StringBuilder stringBuilderComments = new StringBuilder();

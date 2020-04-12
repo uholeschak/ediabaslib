@@ -815,7 +815,8 @@ namespace BmwDeepObd
                             {
                                 try
                                 {
-                                    if (_spinnerVagAdaptionValueNew.SelectedItemPosition >= 0)
+                                    if (_spinnerVagAdaptionValueNew.SelectedItemPosition >= 0 &&
+                                        _spinnerVagAdaptionValueNew.SelectedItemPosition < _spinnerVagAdaptionValueNewAdapter.Items.Count)
                                     {
                                         UInt64 selectedValue = (UInt64)_spinnerVagAdaptionValueNewAdapter.Items[_spinnerVagAdaptionValueNew.SelectedItemPosition].Data;
                                         string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, selectedValue,

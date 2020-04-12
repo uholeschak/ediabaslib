@@ -576,7 +576,8 @@ namespace BmwDeepObd
         {
             _instanceData.CurrentCoding = null;
             _instanceData.CurrentDataFileName = null;
-            if (_spinnerVagCodingSubsystem.SelectedItemPosition >= 0)
+            if (_spinnerVagCodingSubsystem.SelectedItemPosition >= 0 &&
+                _spinnerVagCodingSubsystem.SelectedItemPosition < _spinnerVagCodingSubsystemAdapter.Items.Count)
             {
                 int subSystemIndex = (int)_spinnerVagCodingSubsystemAdapter.Items[_spinnerVagCodingSubsystem.SelectedItemPosition].Data;
                 _instanceData.SelectedSubsystem = subSystemIndex;
