@@ -7482,6 +7482,17 @@ namespace CarSimulator
                                     bool nr2123 = responseTel.Length == 7 && responseTel[3] == 0x7F && ((responseTel[5] == 0x21) || (responseTel[5] == 0x23));
                                     if (!nr2123 || (_nr2123SendCount < Kwp2000Nr2123Retries))
                                     {
+#if false
+                                        {
+                                            StringBuilder sr = new StringBuilder();
+                                            sr.Append("Response: ");
+                                            for (int i = 0; i < responseTel.Length; i++)
+                                            {
+                                                sr.Append(string.Format("{0:X02} ", responseTel[i]));
+                                            }
+                                            Debug.WriteLine(sr.ToString());
+                                        }
+#endif
                                         ObdSend(responseTel);
                                         if (nr2123)
                                         {
@@ -7514,7 +7525,6 @@ namespace CarSimulator
                                     Debug.WriteLine(sr.ToString());
                                 }
 #endif
-
                                 ObdSend(responseTel);
                                 _nr2123SendCount = 0;
                             }
