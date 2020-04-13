@@ -7587,13 +7587,14 @@ namespace CarSimulator
                                                 {
                                                     Debug.WriteLine("Found service 22 read entry");
                                                     entryFound = true;
-                                                    byte[] responseTelDyn = responseEntry.ResponseDyn;
-                                                    if (responseTelDyn != null &&
-                                                        responseTelDyn[0] == _receiveData[0] && responseTelDyn[3] == 0x62 &&
-                                                        responseTelDyn[4] == _receiveData[4] && responseTelDyn[5] == _receiveData[5] && recLength == responseTelDyn.Length)
+                                                    foreach (byte[] responseTel in responseEntry.ResponseList)
                                                     {
-                                                        Debug.WriteLine("Updating read entry dyn");
-                                                        Array.Copy(_receiveData, dataOffset + 3, responseTelDyn, dataOffset + 3, dataLength - 3);
+                                                        if (responseTel[0] == _receiveData[0] && responseTel[3] == 0x62 &&
+                                                            responseTel[4] == _receiveData[4] && responseTel[5] == _receiveData[5] && recLength == responseTel.Length)
+                                                        {
+                                                            Debug.WriteLine("Updating read entry dyn");
+                                                            Array.Copy(_receiveData, dataOffset + 3, responseTel, dataOffset + 3, dataLength - 3);
+                                                        }
                                                     }
 
                                                     foreach (byte[] responseTel in responseEntry.ResponseMultiList)
@@ -7733,13 +7734,14 @@ namespace CarSimulator
                                                     responseEntry.Request[3] == 0x1A && responseEntry.Request[4] == 0x9B)
                                                 {
                                                     Debug.WriteLine("Found read coding");
-                                                    byte[] responseTelDyn = responseEntry.ResponseDyn;
-                                                    if (responseTelDyn != null &&
-                                                        responseTelDyn[3] == 0x5A && responseTelDyn[4] == 0x9B && responseTelDyn.Length > 22 + 3)
+                                                    foreach (byte[] responseTel in responseEntry.ResponseList)
                                                     {
-                                                        Debug.WriteLine("Updating coding response dyn");
-                                                        Array.Copy(lastCoding, 0, responseTelDyn, 22, lastCoding.Length);
-                                                        Array.Copy(lastRepairShop, 0, responseTelDyn, 25, lastRepairShop.Length);
+                                                        if (responseTel[3] == 0x5A && responseTel[4] == 0x9B && responseTel.Length > 22 + 3)
+                                                        {
+                                                            Debug.WriteLine("Updating coding response dyn");
+                                                            Array.Copy(lastCoding, 0, responseTel, 22, lastCoding.Length);
+                                                            Array.Copy(lastRepairShop, 0, responseTel, 25, lastRepairShop.Length);
+                                                        }
                                                     }
 
                                                     foreach (byte[] responseTel in responseEntry.ResponseMultiList)
