@@ -7502,18 +7502,19 @@ namespace CarSimulator
                             }
                             else
                             {
+                                byte[] responseTel = responseEntry.ResponseDyn;
 #if false
                                 {
                                     StringBuilder sr = new StringBuilder();
                                     sr.Append("Response: ");
-                                    for (int i = 0; i < responseEntry.ResponseDyn.Length; i++)
+                                    for (int i = 0; i < responseTel.Length; i++)
                                     {
-                                        sr.Append(string.Format("{0:X02} ", responseEntry.ResponseDyn[i]));
+                                        sr.Append(string.Format("{0:X02} ", responseTel[i]));
                                     }
                                     Debug.WriteLine(sr.ToString());
                                 }
 #endif
-                                byte[] responseTel = responseEntry.ResponseDyn;
+
                                 ObdSend(responseTel);
                                 _nr2123SendCount = 0;
                             }
@@ -7769,12 +7770,13 @@ namespace CarSimulator
                                                     responseEntry.Request[3] == 0x1A && responseEntry.Request[4] == 0x9A)
                                                 {
                                                     Debug.WriteLine("Found read long coding");
-                                                    byte[] responseTelDyn = responseEntry.ResponseDyn;
-                                                    if (responseTelDyn != null &&
-                                                        responseTelDyn[3] == 0x5A && responseTelDyn[4] == 0x9A && responseTelDyn.Length == recLength)
+                                                    foreach (byte[] responseTel in responseEntry.ResponseList)
                                                     {
-                                                        Debug.WriteLine("Updating long coding response dyn");
-                                                        Array.Copy(_receiveData, 5, responseTelDyn, 5, recLength - 6);
+                                                        if (responseTel[3] == 0x5A && responseTel[4] == 0x9A && responseTel.Length == recLength)
+                                                        {
+                                                            Debug.WriteLine("Updating long coding response dyn");
+                                                            Array.Copy(_receiveData, 5, responseTel, 5, recLength - 6);
+                                                        }
                                                     }
 
                                                     foreach (byte[] responseTel in responseEntry.ResponseMultiList)
