@@ -1,0 +1,28 @@
+Decompiling of HTC Bluetooth service
+====================================
+
+From the Android device get the files:
+HCTBlueToothXXXX.apk and subdirectory \oat\arm64
+If available also:
+HCTBlueToothManager.apk and subdirectory \oat\arm64
+
+Decompiling:
+============
+
+From: https://github.com/fOmey/vdexExtractor/tree/master/bin or https://github.com/linchanggui/vdexExtractor
+Download bin/vdexExtractor_winx86_64.zip
+Download the statically compiled linux x86-64 binary: 9.0_linux-x86_64_static.zip
+(https://1drv.ms/u/s!ArDC4mvMyPrRhEq96XX-LsCACF2s)
+
+Extract the .vdex file with: vdexExtractor.exe -i xxx.vdex
+If the output file is a .cdex file this has to be converted with compact_dex_converters on a linux system:
+compact_dex_converters -i xxx.cdex
+The output file extension has to be changed to .dex manually afterwards
+
+From: https://github.com/pxb1988/dex2jar download the latest binary package.
+Convert the .dex file to .jar:
+d2j-dex2jar.bat xxx.dex
+
+From: http://java-decompiler.github.io/ download the latest jd-gui
+You could view or extract the source of the .jar file
+The interesting part in the mapping from the the transaction ids to the commands in: BTServiceInf.java onTransact()
