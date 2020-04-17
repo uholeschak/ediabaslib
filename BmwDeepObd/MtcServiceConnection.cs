@@ -162,16 +162,23 @@ namespace BmwDeepObd
 #if DEBUG
                             Android.Util.Log.Info(Tag, string.Format("Hct3ApiVer: package name='{0}', file name='{1}'", appInfo.PackageName, fileName));
 #endif
-                            if (!string.IsNullOrEmpty(fileName) && fileName.Contains("HCT3", StringComparison.OrdinalIgnoreCase))
+                            if (!string.IsNullOrEmpty(fileName))
                             {
-                                if (_hct3ApiVer.Value == 0)
-                                {
-                                    _hct3ApiVer = 3;
-                                }
-
-                                if (fileName.Contains("HCT3C", StringComparison.OrdinalIgnoreCase))
+                                if (fileName.Contains("HCT4", StringComparison.OrdinalIgnoreCase))
                                 {
                                     _hct3ApiVer = 4;
+                                }
+                                else if (fileName.Contains("HCT3", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    if (_hct3ApiVer.Value == 0)
+                                    {
+                                        _hct3ApiVer = 3;
+                                    }
+
+                                    if (fileName.Contains("HCT3C", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        _hct3ApiVer = 4;
+                                    }
                                 }
                             }
                         }
