@@ -26,3 +26,6 @@ d2j-dex2jar.bat xxx.dex
 From: http://java-decompiler.github.io/ download the latest jd-gui
 You could view or extract the source of the .jar file
 The interesting part in the mapping from the the transaction ids to the commands in: BTServiceInf.java onTransact()
+
+For viewing the manifest and .xml files in the .apk file ClassyShark is a useful tool:
+https://github.com/google/android-classyshark
