@@ -34,7 +34,7 @@ namespace BmwDeepObd
         };
 
         public delegate void ServiceConnectedDelegate(bool connected);
-        private static int? _hct3ApiVer;
+        private static int? _hctApiVerDetected;
         // ReSharper disable once NotAccessedField.Local
         private readonly Context _context;
         private readonly ServiceConnectedDelegate _connectedHandler;
@@ -91,10 +91,10 @@ namespace BmwDeepObd
                 else
                 {
                     ApiVersion = 2;
-                    int hct3ApiVer = Hct3ApiVer();
-                    if (hct3ApiVer != 0)
+                    int hctApiVerDetected = HctApiVerDetect();
+                    if (hctApiVerDetected != 0)
                     {
-                        ApiVersion = hct3ApiVer;
+                        ApiVersion = hctApiVerDetected;
                     }
                 }
 
@@ -129,24 +129,24 @@ namespace BmwDeepObd
 #endif
         }
 
-        private int Hct3ApiVer()
+        private int HctApiVerDetect()
         {
-            if (_hct3ApiVer.HasValue)
+            if (_hctApiVerDetected.HasValue)
             {
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("Hct3ApiVer cache: {0}", _hct3ApiVer.Value));
+                Android.Util.Log.Info(Tag, string.Format("HctApiVerDetect cache: {0}", _hctApiVerDetected.Value));
 #endif
-                return _hct3ApiVer.Value;
+                return _hctApiVerDetected.Value;
             }
 
-            _hct3ApiVer = 0;
+            _hctApiVerDetected = 0;
 
             try
             {
                 IList<PackageInfo> installedPackages = _context?.PackageManager.GetInstalledPackages(PackageInfoFlags.MatchSystemOnly);
                 if (installedPackages == null)
                 {
-                    return _hct3ApiVer.Value;
+                    return _hctApiVerDetected.Value;
                 }
 
                 foreach (PackageInfo packageInfo in installedPackages)
@@ -164,21 +164,44 @@ namespace BmwDeepObd
 #endif
                             if (!string.IsNullOrEmpty(fileName))
                             {
-                                if (fileName.Contains("HCT4", StringComparison.OrdinalIgnoreCase))
+                                int? apiVerNew = null;
+
+                                if (fileName.Contains("HCT9", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    _hct3ApiVer = 4;
+                                    apiVerNew = 9;
+                                }
+                                else if (fileName.Contains("HCT8", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    apiVerNew = 8;
+                                }
+                                else if (fileName.Contains("HCT7", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    apiVerNew = 7;
+                                }
+                                else if (fileName.Contains("HCT6", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    apiVerNew = 6;
+                                }
+                                else if (fileName.Contains("HCT5", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    apiVerNew = 5;
+                                }
+                                else if (fileName.Contains("HCT4", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    apiVerNew = 4;
+                                }
+                                else if (fileName.Contains("HCT3C", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    apiVerNew = 4;
                                 }
                                 else if (fileName.Contains("HCT3", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    if (_hct3ApiVer.Value == 0)
-                                    {
-                                        _hct3ApiVer = 3;
-                                    }
+                                    apiVerNew = 3;
+                                }
 
-                                    if (fileName.Contains("HCT3C", StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        _hct3ApiVer = 4;
-                                    }
+                                if (apiVerNew.HasValue && apiVerNew.Value > _hctApiVerDetected.Value)
+                                {
+                                    _hctApiVerDetected = apiVerNew;
                                 }
                             }
                         }
@@ -190,9 +213,9 @@ namespace BmwDeepObd
                 // ignored
             }
 #if DEBUG
-            Android.Util.Log.Info(Tag, string.Format("Hct3ApiVer: {0}", _hct3ApiVer.Value));
+            Android.Util.Log.Info(Tag, string.Format("Hct3ApiVer: {0}", _hctApiVerDetected.Value));
 #endif
-            return _hct3ApiVer.Value;
+            return _hctApiVerDetected.Value;
         }
 
         public string CarManagerGetParameters(string args)
