@@ -643,11 +643,21 @@ namespace EdiabasLib
                             bool validEcho = !testTel.Where((t, i) => responseList[i] != t).Any();
                             if (!validEcho)
                             {
+                                if (Ediabas != null)
+                                {
+                                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UpdateAdapterInfo Type={0}: Echo invalid", telType);
+                                    Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, responseList.ToArray(), 0, responseList.Count, "Resp");
+                                }
                                 return false;
                             }
                             if (CalcChecksumBmwFast(responseList.ToArray(), testTel.Length, respLen - 1) !=
                                 responseList[testTel.Length + respLen - 1])
                             {
+                                if (Ediabas != null)
+                                {
+                                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UpdateAdapterInfo Type={0}: Checksum invalid", telType);
+                                    Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, responseList.ToArray(), 0, responseList.Count, "Resp");
+                                }
                                 return false;
                             }
                             switch (telType)
@@ -676,6 +686,12 @@ namespace EdiabasLib
                                 {
                                     AdapterType = 0;
                                 }
+                            }
+
+                            if (Ediabas != null)
+                            {
+                                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UpdateAdapterInfo Type={0}: Response timeout", telType);
+                                Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, responseList.ToArray(), 0, responseList.Count, "Resp");
                             }
                             return false;
                         }
