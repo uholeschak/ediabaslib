@@ -1197,6 +1197,16 @@ namespace BmwDeepObd
                             bool validEcho = !customData.Where((t, i) => responseList[i] != t).Any();
                             if (validEcho)
                             {
+                                if (responseList.Count > customData.Length)
+                                {
+                                    byte[] addResponse = responseList.GetRange(customData.Length, responseList.Count - customData.Length).ToArray();
+                                    if (EdCustomAdapterCommon.CalcChecksumBmwFast(addResponse, 0, addResponse.Length - 1) != addResponse[addResponse.Length - 1])
+                                    {
+                                        LogString("*** Additional response checksum incorrect");
+                                        break;
+                                    }
+                                }
+
                                 LogString("Valid echo detected");
                                 adapterType = AdapterType.EchoOnly;
                             }
