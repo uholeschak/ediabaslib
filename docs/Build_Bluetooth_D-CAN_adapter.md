@@ -3,7 +3,7 @@
 You could still use the firmware as a replacement for FTDI based adapters (Only [Steps 1](#step1-replace-the-pld) and [Steps 2](#step2-program-the-processor) is required, the [firmware update](#firmware-update) is also possible).
 
 This chapter describes how to build a D-CAN/K-Line adapter with bluetooth support.  
-**This firware is not unsupported any more, use it at your own risk!**
+**This firmware is not unsupported any more, use it at your own risk!**
 
 ![](Build_Bluetooth_D-CAN_adapter_AdapterSmall.png)
 
