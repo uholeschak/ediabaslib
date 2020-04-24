@@ -11,66 +11,66 @@ namespace BmwDeepObd
     public class MtcServiceConnection : Java.Lang.Object, IServiceConnection
     {
         /*
-        Cmd | API4 | API3 | API2
-        init | 1 | 1 | 1
-        getBTState | 2 | 2 | 2
-        getAVState | 3 | 3 | 3
-        getDialOutNum | 4 | 4 | 4
-        getCallInNum | 5 | 5 | 5
-        getPhoneNum | 6 | 6 | 6
-        IsThreeWayCalling | 7 | 7 | -
-        IsConferenceCalling | 8 | 8 | -
-        getThreeWayCallNum | 9 | 9 | -
-        getCallingNumberList | 10 | 10 | -
-        getNowDevAddr | 11 | 11 | 7
-        getNowDevName | 12 | 12 | 8
-        getNowDevUuids | 13 | 13 | 9
-        avPlay | 14 | - | -
-        avPlayPause | 15 | 14 | 9
-        avPlayStop | 16 | 15 | 10
-        avPlayPrev | 17 | 16 | 11
-        avPlayNext | 18 | 17 | 12
-        answerCall | 19 | 18 | 13
-        hangupCall | 20 | 19 | 14
-        rejectCall | 21 | 20 | 15
-        addCall | 22 | 21 | -
-        swichCall | 23 | 22 | -
-        mergeCall | 24 | 23 | -
-        voiceControl | 25 | 24 | -
-        switchVoice | 26 | 25 | 16
-        syncPhonebook | 27 | 26 | 17
-        getModuleName | 28 | 27 | 18
-        getModulePassword | 29 | 28 | 19
-        setModuleName | 30 | 29 | 20
-        setModulePassword | 31 | 30 | 21
-        setAutoConnect | 32 | 31 | 22
-        getAutoConnect | 33 | 32 | 23
-        setAutoAnswer | 34 | 33 | 24
-        getAutoAnswer | 35 | 34 | 25
-        connectBT | 36 | 35 | 26
-        disconnectBT | 37 | 36 | 27
-        connectOBD | 38 | 37 | 28
-        disconnectOBD | 39 | 38 | 29
-        deleteOBD | 40 | 39 | 30
-        deleteBT | 41 | 40 | 30
-        syncMatchList | 42 | 41 | 32
-        getMatchList | 43 | 42 | 33
-        getDeviceList | 44 | 43 | 34
-        getHistoryList | 45 | 44 | 35
-        getPhoneBookList | 46 | 45 | 36
-        setPhoneBookList | 47 | 46 | 37
-        deleteHistory | 48 | 47 | 38
-        deleteHistoryAll | 49 | 48 | 39
-        musicMute | 50 | 49 | 40
-        musicUnmute | 51 | 50 | 41
-        scanStart | 52 | 51 | 42
-        scanStop | 53 | 52 | 43
-        dialOut | 54 | 53 | 44
-        dialOutSub | 55 | 54 | 45
-        reDial | 56 | 55 | 46
-        getMusicInfo | 57 | 56 | 47
-        getOBDstate | 58 | 57 | 48
-        requestBtInfo | 59 | 58 | 49
+        Cmd | API4 | API3 | API2 | API1
+        init | 1 | 1 | 1 | 1
+        getBTState | 2 | 2 | 2 | 2
+        getAVState | 3 | 3 | 3 | 3
+        getDialOutNum | 4 | 4 | 4 | 4
+        getCallInNum | 5 | 5 | 5 | 5
+        getPhoneNum | 6 | 6 | 6 | 6
+        IsThreeWayCalling | 7 | 7 | - | -
+        IsConferenceCalling | 8 | 8 | - | -
+        getThreeWayCallNum | 9 | 9 | - | -
+        getCallingNumberList | 10 | 10 | - | -
+        getNowDevAddr | 11 | 11 | 7 | 7
+        getNowDevName | 12 | 12 | 8 | 8
+        getNowDevUuids | 13 | 13 | 9 | -
+        avPlay | 14 | - | - | -
+        avPlayPause | 15 | 14 | 9 | 9
+        avPlayStop | 16 | 15 | 10 | 10
+        avPlayPrev | 17 | 16 | 11 | 11
+        avPlayNext | 18 | 17 | 12 | 12
+        answerCall | 19 | 18 | 13 | 13
+        hangupCall | 20 | 19 | 14 | 14
+        rejectCall | 21 | 20 | 15 | 15
+        addCall | 22 | 21 | - | -
+        swichCall | 23 | 22 | - | -
+        mergeCall | 24 | 23 | - | -
+        voiceControl | 25 | 24 | - | -
+        switchVoice | 26 | 25 | 16 | 16
+        syncPhonebook | 27 | 26 | 17 | 17
+        getModuleName | 28 | 27 | 18 | 18
+        getModulePassword | 29 | 28 | 19 | 19
+        setModuleName | 30 | 29 | 20 | 20
+        setModulePassword | 31 | 30 | 21 | 21
+        setAutoConnect | 32 | 31 | 22 | 22
+        getAutoConnect | 33 | 32 | 23 | 23
+        setAutoAnswer | 34 | 33 | 24 | 24
+        getAutoAnswer | 35 | 34 | 25 | 25
+        connectBT | 36 | 35 | 26 | 26
+        disconnectBT | 37 | 36 | 27 | 27
+        connectOBD | 38 | 37 | 28 | 28
+        disconnectOBD | 39 | 38 | 29 | 29
+        deleteOBD | 40 | 39 | 30 | 30
+        deleteBT | 41 | 40 | 31 | 31
+        syncMatchList | 42 | 41 | 32 | 32
+        getMatchList | 43 | 42 | 33 | 33
+        getDeviceList | 44 | 43 | 34 | 34
+        getHistoryList | 45 | 44 | 35 | 35
+        getPhoneBookList | 46 | 45 | 36 | -
+        setPhoneBookList | 47 | 46 | 37 | -
+        deleteHistory | 48 | 47 | 38 | 36
+        deleteHistoryAll | 49 | 48 | 39 | 37
+        musicMute | 50 | 49 | 40 | 38
+        musicUnmute | 51 | 50 | 41 | 39
+        scanStart | 52 | 51 | 42 | 40
+        scanStop | 53 | 52 | 43 | 41
+        dialOut | 54 | 53 | 44 | 42
+        dialOutSub | 55 | 54 | 45 | 43
+        reDial | 56 | 55 | 46 | -
+        getMusicInfo | 57 | 56 | 47 | -
+        getOBDstate | 58 | 57 | 48 | -
+        requestBtInfo | 59 | 58 | 49 | -
         */
 #if DEBUG
         private static readonly string Tag = typeof(MtcServiceConnection).FullName;
