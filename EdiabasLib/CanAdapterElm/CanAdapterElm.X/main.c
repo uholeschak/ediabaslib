@@ -89,7 +89,7 @@
 #define DEBUG_PIN           0   // enable debug pin
 #define ID_LOCATION         0x200000    // location of ID memory
 
-#define ADAPTER_VERSION     0x000E
+#define ADAPTER_VERSION     0x000F
 
 #if ADAPTER_TYPE == 0x02
 #define REQUIRES_BT_REC_TIMOUT
@@ -314,11 +314,17 @@ static volatile uint8_t rec_buffer[275];
 
 static uint16_t send_set_idx;
 static uint16_t send_get_idx;
+static uint8_t send_escape;
 static volatile uint16_t send_len;
 static volatile uint8_t send_buffer[TEMP_BUF_SIZE + 10];   // larger send buffer for telegram frames
 
 static op_modes op_mode;        // current operation mode
 static iface_modes iface_mode;  // current interface mode
+
+// escape mode settings
+static uint8_t escape_mode;
+static uint8_t escape_code;
+static uint8_t escape_mask;
 
 // K-LINE data
 static uint32_t kline_baud;         // K-line baud rate, 0=115200 (BMW-FAST))
@@ -2248,6 +2254,30 @@ bool internal_telegram(uint8_t *buffer, uint16_t len)
             uart_send(buffer, len);
             return true;
         }
+        if ((len == 8) && (buffer[3] & 0x7F) == 0x06)
+        {      // escape mode
+            if ((buffer[3] & 0x80) == 0x00)
+            {   // write
+                if ((buffer[5] == 0x00) || (buffer[6] == 0x00))
+                {
+                    escape_mode = 0;
+                    escape_code = 0xFF;
+                    escape_mask = 0x80;
+                }
+                else
+                {
+                    escape_mode = (buffer[4] == 2) ? 1 : 0;
+                    escape_code = buffer[5];
+                    escape_mask = buffer[6];
+                }
+            }
+            buffer[4] = escape_mode ? 2 : 1;
+            buffer[5] = escape_code;
+            buffer[6] = escape_mask;
+            buffer[len - 1] = calc_checkum(buffer, len - 1);
+            uart_send(buffer, len);
+            return true;
+        }
         if ((len == 6) && (buffer[3] == 0xFA) && (buffer[4] == 0xFA))
         {      // read clamp status
             buffer[0] = 0x83;
@@ -3499,12 +3529,18 @@ void main(void)
     rec_bt_mode = false;
     send_set_idx = 0;
     send_get_idx = 0;
+    send_escape = 0;
     send_len = 0;
 
     can_send_active = false;
     can_rec_tel_valid = false;
     op_mode = op_mode_standard;
     iface_mode = iface_mode_auto;
+
+    escape_mode = 0;
+    escape_code = 0xFF;
+    escape_mask = 0x80;
+
     reset_comm_states();
 
     RCONbits.IPEN = 1;      // interrupt priority enable
@@ -4032,11 +4068,37 @@ void interrupt high_priority high_isr (void)
         }
         else
         {
-            TXREG = send_buffer[send_get_idx++];
-            send_len--;
-            if (send_get_idx >= sizeof(send_buffer))
+            uint8_t send_value = send_buffer[send_get_idx];
+            if (escape_mode)
             {
-                send_get_idx = 0;
+                if (!send_escape)
+                {
+                    if ((send_value == 0x00) || (send_value == escape_code))
+                    {
+                        TXREG = escape_code;
+                        send_escape = true;
+                    }
+                }
+                else
+                {
+                    send_value ^= escape_mask;
+                    send_escape = false;
+                }
+            }
+            else
+            {
+                send_escape = false;
+            }
+
+            if (!send_escape)
+            {
+                TXREG = send_value;
+                send_len--;
+                send_get_idx++;
+                if (send_get_idx >= sizeof(send_buffer))
+                {
+                    send_get_idx = 0;
+                }
             }
         }
         return;
