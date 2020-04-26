@@ -118,22 +118,23 @@ namespace FileDecoder
                 return 1;
             }
 
-            string fileSpec = args[0];
-            string dir = Path.GetDirectoryName(fileSpec);
-            string searchPattern = Path.GetFileName(fileSpec);
-            if (dir == null || searchPattern == null)
-            {
-                Console.WriteLine("Invalid file name");
-                return 1;
-            }
-
-            string zipDir = dir;
-            if (args.Length >= 2)
-            {
-                zipDir = args[1];
-            }
             try
             {
+                string fileSpec = args[0];
+                string dir = Path.GetDirectoryName(fileSpec);
+                string searchPattern = Path.GetFileName(fileSpec);
+                if (dir == null)
+                {
+                    Console.WriteLine("Invalid file name");
+                    return 1;
+                }
+
+                string zipDir = dir;
+                if (args.Length >= 2)
+                {
+                    zipDir = args[1];
+                }
+
                 string exePath = Path.Combine(dir, "VCDS.exe");
                 try
                 {
