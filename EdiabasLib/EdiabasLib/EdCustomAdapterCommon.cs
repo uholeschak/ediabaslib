@@ -708,6 +708,7 @@ namespace EdiabasLib
             if (Ediabas != null)
             {
                 Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "AdapterType: {0}", AdapterType);
+                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "AdapterVersion: {0}.{1}", AdapterVersion >> 8, AdapterVersion & 0xFF);
                 if (AdapterSerial != null)
                 {
                     Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "AdapterSerial: {0}", BitConverter.ToString(AdapterSerial).Replace("-", ""));
