@@ -1128,14 +1128,18 @@ namespace BmwDeepObd
                 Stream bluetoothInStream = bluetoothSocket.InputStream;
                 Stream bluetoothOutStream = bluetoothSocket.OutputStream;
 
-                const int versionRespLen = 9;
-                byte[] customData = { 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E };
+                const int minIgnitionRespLen = 6;
+                byte[] customData = { 0x82, 0xF1, 0xF1, 0xFE, 0xFE, 0x00 }; // ignition state
+                customData[^1] = EdCustomAdapterCommon.CalcChecksumBmwFast(customData, 0, customData.Length - 1);
                 // custom adapter
                 bluetoothInStream.Flush();
                 while (bluetoothInStream.IsDataAvailable())
                 {
                     bluetoothInStream.ReadByte();
                 }
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("Send: {0}", BitConverter.ToString(customData).Replace("-", " ")));
+#endif
                 LogData(customData, 0, customData.Length, "Send");
                 bluetoothOutStream.Write(customData, 0, customData.Length);
 
@@ -1149,12 +1153,17 @@ namespace BmwDeepObd
                         int data = bluetoothInStream.ReadByte();
                         if (data >= 0)
                         {
+#if DEBUG
+                            Android.Util.Log.Info(Tag, string.Format("Rec: {0:X02}", data));
+#endif
                             LogByte((byte)data);
                             responseList.Add((byte)data);
                             startTime = Stopwatch.GetTimestamp();
                         }
                     }
-                    if (responseList.Count >= customData.Length + versionRespLen)
+
+                    if (responseList.Count >= customData.Length + minIgnitionRespLen &&
+                        responseList.Count >= customData.Length + (responseList[customData.Length] & 0x3F) + 3)
                     {
                         LogString("Custom adapter length");
                         bool validEcho = !customData.Where((t, i) => responseList[i] != t).Any();
@@ -1163,18 +1172,34 @@ namespace BmwDeepObd
                             LogString("*** Echo incorrect");
                             break;
                         }
-                        byte checkSum = 0x00;
-                        for (int i = 0; i < versionRespLen - 1; i++)
+
+                        if (responseList.Count > customData.Length)
                         {
-                            checkSum += responseList[i + customData.Length];
+                            byte[] addResponse = responseList.GetRange(customData.Length, responseList.Count - customData.Length).ToArray();
+                            if (EdCustomAdapterCommon.CalcChecksumBmwFast(addResponse, 0, addResponse.Length - 1) != addResponse[^1])
+                            {
+                                LogString("*** Checksum incorrect");
+                                break;
+                            }
                         }
-                        if (checkSum != responseList[customData.Length + versionRespLen - 1])
+
+                        LogString("Ignition response ok");
+                        if (!ReadCustomFwVersion(bluetoothInStream, bluetoothOutStream, out int adapterTypeId, out int fwVersion))
                         {
-                            LogString("*** Checksum incorrect");
+                            LogString("*** Read firmware version failed");
                             break;
                         }
-                        int adapterTypeId = responseList[customData.Length + 5] + (responseList[customData.Length + 4] << 8);
-                        int fwVersion = responseList[customData.Length + 7] + (responseList[customData.Length + 6] << 8);
+                        LogString(string.Format("AdapterType: {0}", adapterTypeId));
+                        LogString(string.Format("AdapterVersion: {0}.{1}", fwVersion >> 8, fwVersion & 0xFF));
+
+                        if (adapterTypeId >= 0x0002)
+                        {
+                            if (ReadCustomSerial(bluetoothInStream, bluetoothOutStream, out byte[] adapterSerial))
+                            {
+                                LogString("AdapterSerial: " + BitConverter.ToString(adapterSerial).Replace("-", ""));
+                            }
+                        }
+
                         int fwUpdateVersion = PicBootloader.GetFirmwareVersion((uint)adapterTypeId);
                         if (fwUpdateVersion >= 0 && fwUpdateVersion > fwVersion)
                         {
@@ -1182,11 +1207,6 @@ namespace BmwDeepObd
                             return AdapterType.CustomUpdate;
                         }
                         LogString("Custom adapter detected");
-
-                        if (adapterTypeId >= 0x0002)
-                        {
-                            ReadCustomSerial(bluetoothInStream, bluetoothOutStream);
-                        }
 
                         return AdapterType.Custom;
                     }
@@ -1353,10 +1373,71 @@ namespace BmwDeepObd
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool ReadCustomSerial(Stream bluetoothInStream, Stream bluetoothOutStream)
+        private bool ReadCustomFwVersion(Stream bluetoothInStream, Stream bluetoothOutStream, out int adapterTypeId, out int fwVersion)
         {
+            adapterTypeId = -1;
+            fwVersion = -1;
+            const int fwRespLen = 9;
+            byte[] fwData = { 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x00 };
+            fwData[^1] = EdCustomAdapterCommon.CalcChecksumBmwFast(fwData, 0, fwData.Length - 1);
+
+            LogString("Reading firmware version");
+
+            LogData(fwData, 0, fwData.Length, "Send");
+            bluetoothOutStream.Write(fwData, 0, fwData.Length);
+
+            LogData(null, 0, 0, "Resp");
+            List<byte> responseList = new List<byte>();
+            long startTime = Stopwatch.GetTimestamp();
+            for (; ; )
+            {
+                while (bluetoothInStream.IsDataAvailable())
+                {
+                    int data = bluetoothInStream.ReadByte();
+                    if (data >= 0)
+                    {
+                        LogByte((byte)data);
+                        responseList.Add((byte)data);
+                        startTime = Stopwatch.GetTimestamp();
+                    }
+                }
+
+                if (responseList.Count >= fwData.Length + fwRespLen)
+                {
+                    LogString("FW data length");
+                    bool validEcho = !fwData.Where((t, i) => responseList[i] != t).Any();
+                    if (!validEcho)
+                    {
+                        LogString("*** Echo incorrect");
+                        break;
+                    }
+
+                    byte[] addResponse = responseList.GetRange(fwData.Length, responseList.Count - fwData.Length).ToArray();
+                    if (EdCustomAdapterCommon.CalcChecksumBmwFast(addResponse, 0, addResponse.Length - 1) != addResponse[^1])
+                    {
+                        LogString("*** Checksum incorrect");
+                        return false;
+                    }
+
+                    adapterTypeId = responseList[fwData.Length + 5] + (responseList[fwData.Length + 4] << 8);
+                    fwVersion = responseList[fwData.Length + 7] + (responseList[fwData.Length + 6] << 8);
+                    break;
+                }
+                if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * ActivityCommon.TickResolMs)
+                {
+                    LogString("*** FW data timeout");
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool ReadCustomSerial(Stream bluetoothInStream, Stream bluetoothOutStream, out byte[] adapterSerial)
+        {
+            adapterSerial = null;
             const int idRespLen = 13;
-            byte[] idData = { 0x82, 0xF1, 0xF1, 0xFB, 0xFB, 0x5A };
+            byte[] idData = { 0x82, 0xF1, 0xF1, 0xFB, 0xFB, 0x00 };
+            idData[^1] = EdCustomAdapterCommon.CalcChecksumBmwFast(idData, 0, idData.Length - 1);
 
             LogString("Reading id data");
 
@@ -1389,19 +1470,14 @@ namespace BmwDeepObd
                         break;
                     }
 
-                    byte checkSum = 0x00;
-                    for (int i = 0; i < idRespLen - 1; i++)
-                    {
-                        checkSum += responseList[i + idData.Length];
-                    }
-
-                    if (checkSum != responseList[idData.Length + idRespLen - 1])
+                    byte[] addResponse = responseList.GetRange(idData.Length, responseList.Count - idData.Length).ToArray();
+                    if (EdCustomAdapterCommon.CalcChecksumBmwFast(addResponse, 0, addResponse.Length - 1) != addResponse[^1])
                     {
                         LogString("*** Checksum incorrect");
                         return false;
                     }
-                    byte[] adapterSerial = responseList.GetRange(idData.Length + 4, 8).ToArray();
-                    LogString("AdapterSerial: " + BitConverter.ToString(adapterSerial).Replace("-", ""));
+
+                    adapterSerial = responseList.GetRange(idData.Length + 4, 8).ToArray();
                     break;
                 }
                 if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * ActivityCommon.TickResolMs)
