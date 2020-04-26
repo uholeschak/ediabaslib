@@ -193,11 +193,10 @@ namespace EdiabasLib
                     }
                 }
 
-                _bluetoothInStream = _bluetoothSocket.InputStream;
-                _bluetoothOutStream = _bluetoothSocket.OutputStream;
-
                 if (_elm327Device)
                 {
+                    _bluetoothInStream = _bluetoothSocket.InputStream;
+                    _bluetoothOutStream = _bluetoothSocket.OutputStream;
                     _edElmInterface = new EdElmInterface(CustomAdapter.Ediabas, _bluetoothInStream, _bluetoothOutStream);
                     if (mtcBtService && !usedRfCommSocket)
                     {
@@ -236,17 +235,21 @@ namespace EdiabasLib
                 }
                 else
                 {   // not ELM327
+                    CustomAdapter.EscapeMode = mtcBtService;
+                    _bluetoothInStream = new BtEscapeStreamReader(_bluetoothSocket.InputStream, CustomAdapter.EscapeMode);
+                    _bluetoothOutStream = _bluetoothSocket.OutputStream;
                     if (!CustomAdapter.RawMode && mtcBtService && !usedRfCommSocket)
                     {
                         bool connected = false;
                         for (int retry = 0; retry < 20; retry++)
                         {
                             CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Test connection");
+                            CustomAdapter.EscapeMode = true;
                             if (retry > 0)
                             {
                                 _bluetoothSocket.Close();
                                 _bluetoothSocket.Connect();
-                                _bluetoothInStream = _bluetoothSocket.InputStream;
+                                _bluetoothInStream = new BtEscapeStreamReader(_bluetoothSocket.InputStream, CustomAdapter.EscapeMode);
                                 _bluetoothOutStream = _bluetoothSocket.OutputStream;
                             }
                             if (CustomAdapter.UpdateAdapterInfo(true))
@@ -568,14 +571,29 @@ namespace EdiabasLib
             while (recLen < length)
             {
                 int currTimeout = (recLen == 0) ? timeout : timeoutTelEnd;
-                if (_bluetoothInStream.IsDataAvailable())
+                if (_bluetoothInStream is BtEscapeStreamReader inStream)
                 {
-                    int bytesRead = _bluetoothInStream.Read(buffer, offset + recLen, length - recLen);
-                    if (bytesRead > 0)
+                    if (inStream.IsDataAvailable())
                     {
-                        CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
+                        int bytesRead = inStream.Read(buffer, offset + recLen, length - recLen);
+                        if (bytesRead > 0)
+                        {
+                            CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
+                        }
+                        recLen += bytesRead;
                     }
-                    recLen += bytesRead;
+                }
+                else
+                {
+                    if (_bluetoothInStream.IsDataAvailable())
+                    {
+                        int bytesRead = _bluetoothInStream.Read(buffer, offset + recLen, length - recLen);
+                        if (bytesRead > 0)
+                        {
+                            CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
+                        }
+                        recLen += bytesRead;
+                    }
                 }
                 if (recLen >= length)
                 {
@@ -593,23 +611,40 @@ namespace EdiabasLib
 
         private static void DiscardInBuffer()
         {
-            while (_bluetoothInStream.IsDataAvailable())
+            if (_bluetoothInStream is BtEscapeStreamReader inStream)
             {
-                _bluetoothInStream.ReadByte();
+                while (inStream.IsDataAvailable())
+                {
+                    inStream.ReadByte();
+                }
+            }
+            else
+            {
+                while (_bluetoothInStream.IsDataAvailable())
+                {
+                    _bluetoothInStream.ReadByte();
+                }
             }
         }
 
         private static List<byte> ReadInBuffer()
         {
             List<byte> responseList = new List<byte>();
-            _bluetoothInStream.Flush();
-            while (_bluetoothInStream.IsDataAvailable())
+            if (_bluetoothInStream is BtEscapeStreamReader inStream)
             {
-                int data = _bluetoothInStream.ReadByte();
-                if (data >= 0)
+                if (inStream.EscapeMode != CustomAdapter.EscapeMode)
                 {
-                    CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
-                    responseList.Add((byte)data);
+                    inStream.SetEscapeMode(CustomAdapter.EscapeMode);
+                }
+                inStream.Flush();
+                while (inStream.IsDataAvailable())
+                {
+                    int data = inStream.ReadByte();
+                    if (data >= 0)
+                    {
+                        CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
+                        responseList.Add((byte)data);
+                    }
                 }
             }
             return responseList;

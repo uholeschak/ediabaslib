@@ -7,9 +7,6 @@ namespace EdiabasLib
 {
     public class BtEscapeStreamReader : Stream
     {
-        public const byte EscapeCodeDefault = 0xFF;
-        public const byte EscapeMaskDefault = 0xFF;
-
         private Stream _inStream;
         private bool _escapeMode;
         private byte _escapeCode;
@@ -17,19 +14,22 @@ namespace EdiabasLib
         private bool readEscape;
         private List<byte> _readDataList;
 
-        public BtEscapeStreamReader(Stream inStream, bool escapeMode = false, byte escapeCode = EscapeCodeDefault, byte escapeMask = EscapeMaskDefault)
+        public BtEscapeStreamReader(Stream inStream, bool escapeMode = false, byte escapeCode = EdCustomAdapterCommon.EscapeCodeDefault, byte escapeMask = EdCustomAdapterCommon.EscapeMaskDefault)
         {
             _inStream = inStream;
             SetEscapeMode(escapeMode, escapeCode, escapeMask);
             _readDataList = new List<byte>();
         }
 
-        public void SetEscapeMode(bool escapeMode = false, byte escapeCode = EscapeCodeDefault, byte escapeMask = EscapeMaskDefault)
+        public void SetEscapeMode(bool escapeMode = false, byte escapeCode = EdCustomAdapterCommon.EscapeCodeDefault, byte escapeMask = EdCustomAdapterCommon.EscapeMaskDefault)
         {
+            if (_escapeMode != escapeMode)
+            {
+                readEscape = false;
+            }
             _escapeMode = escapeMode;
             _escapeCode = escapeCode;
             _escapeMask = escapeMask;
-            readEscape = false;
         }
 
         public bool EscapeMode
@@ -110,20 +110,16 @@ namespace EdiabasLib
 
         public override void Flush()
         {
-            _readDataList.Clear();
-            readEscape = false;
-            if (_inStream != null)
-            {
-                while (_inStream.IsDataAvailable())
-                {
-                    _inStream.ReadByte();
-                }
-            }
+            _inStream?.Flush();
         }
 
         public override void Close()
         {
-            _inStream = null;
+            if (_inStream != null)
+            {
+                _inStream.Close();
+                _inStream = null;
+            }
             _readDataList.Clear();
             readEscape = false;
         }
@@ -149,7 +145,20 @@ namespace EdiabasLib
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            throw new NotSupportedException();
+            int length = 0;
+            for (int i = 0; i < count; i++)
+            {
+                int data = ReadByte();
+                if (data < 0)
+                {
+                    break;
+                }
+
+                buffer[length + offset] = (byte) data;
+                length++;
+            }
+
+            return length;
         }
 
         public override long Seek(long offset, SeekOrigin origin)
