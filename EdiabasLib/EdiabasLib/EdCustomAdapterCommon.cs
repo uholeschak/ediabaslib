@@ -41,6 +41,9 @@ namespace EdiabasLib
         public const byte KWP1281_TIMEOUT = 60;
         // ReSharper restore InconsistentNaming
 
+        public const byte EscapeCodeDefault = 0xFF;
+        public const byte EscapeMaskDefault = 0x80;
+
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         public static readonly double AdapterVoltageScale = 0.1;
 
@@ -97,6 +100,10 @@ namespace EdiabasLib
         public bool ConvertBaudResponse { get; set; }
 
         public bool AutoKeyByteResponse { get; set; }
+
+        public int IgnitionStatus { get; set; }
+
+        public bool EscapeMode { get; set; }
 
         public int AdapterType { get; set; }
 
@@ -158,6 +165,8 @@ namespace EdiabasLib
             CanTxId = -1;
             CanRxId = -1;
             CanFlags = EdInterfaceObd.CanFlags.Empty;
+            IgnitionStatus = -1;
+            EscapeMode = false;
             AdapterType = -1;
             AdapterVersion = -1;
             AdapterSerial = null;
@@ -170,6 +179,8 @@ namespace EdiabasLib
             FastInit = false;
             ConvertBaudResponse = false;
             AutoKeyByteResponse = false;
+            IgnitionStatus = -1;
+            EscapeMode = false;
             AdapterType = -1;
             AdapterVersion = -1;
             AdapterSerial = null;
@@ -585,38 +596,53 @@ namespace EdiabasLib
                 // only read once
                 return true;
             }
+
+            IgnitionStatus = -1;
             AdapterType = -1;
             AdapterSerial = null;
             AdapterVoltage = -1;
             try
             {
-                for (int telType = 0; telType < 3; telType++)
+                for (int telType = 0; telType < 5; telType++)
                 {
                     int respLen = 0;
                     byte[] testTel = null;
                     switch (telType)
                     {
                         case 0:
-                            respLen = 9;
-                            testTel = new byte []{ 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E };
+                            // read ignition
+                            respLen = 6;
+                            testTel = new byte[] { 0x82, 0xF1, 0xF1, 0xFE, 0xFE, 0x00 };
                             break;
 
                         case 1:
+                            // escape mode
+                            respLen = 8;
+                            testTel = new byte[] { 0x84, 0xF1, 0xF1, 0x06, (byte)(EscapeMode ? 0x02 : 0x01), EscapeCodeDefault, EscapeMaskDefault, 0x00 };
+                            break;
+
+                        case 2:
+                            // read firmware version
+                            respLen = 9;
+                            testTel = new byte []{ 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x00 };
+                            break;
+
+                        case 3:
                             if (AdapterType < 0x0002)
                             {   // no id support
                                 break;
                             }
                             respLen = 13;
-                            testTel = new byte[] { 0x82, 0xF1, 0xF1, 0xFB, 0xFB, 0x5A };
+                            testTel = new byte[] { 0x82, 0xF1, 0xF1, 0xFB, 0xFB, 0x00 };
                             break;
 
-                        case 2:
+                        case 4:
                             if (AdapterType < 0x0002)
                             {   // no voltage support
                                 break;
                             }
                             respLen = 6;
-                            testTel = new byte[] { 0x82, 0xF1, 0xF1, 0xFC, 0xFC, 0x5C };
+                            testTel = new byte[] { 0x82, 0xF1, 0xF1, 0xFC, 0xFC, 0x00 };
                             break;
                     }
 
@@ -624,6 +650,8 @@ namespace EdiabasLib
                     {
                         break;
                     }
+
+                    testTel[testTel.Length - 1] = CalcChecksumBmwFast(testTel, 0, testTel.Length - 1);
                     _discardInBufferFunc();
                     _sendDataFunc(testTel, testTel.Length);
                     LastCommTick = Stopwatch.GetTimestamp();
@@ -663,15 +691,23 @@ namespace EdiabasLib
                             switch (telType)
                             {
                                 case 0:
+                                    IgnitionStatus = responseList[testTel.Length + 4];
+                                    break;
+
+                                case 1:
+                                    EscapeMode = responseList[testTel.Length + 4] == 0x02;
+                                    break;
+
+                                case 2:
                                     AdapterType = responseList[testTel.Length + 5] + (responseList[testTel.Length + 4] << 8);
                                     AdapterVersion = responseList[testTel.Length + 7] + (responseList[testTel.Length + 6] << 8);
                                     break;
 
-                                case 1:
+                                case 3:
                                     AdapterSerial = responseList.GetRange(testTel.Length + 4, 8).ToArray();
                                     break;
 
-                                case 2:
+                                case 4:
                                     AdapterVoltage = responseList[testTel.Length + 4];
                                     break;
                             }
@@ -679,21 +715,35 @@ namespace EdiabasLib
                         }
                         if (Stopwatch.GetTimestamp() - startTime > _readTimeoutOffsetLong * TickResolMs)
                         {
+                            bool failure = true;
                             if (responseList.Count >= testTel.Length)
                             {
                                 bool validEcho = !testTel.Where((t, i) => responseList[i] != t).Any();
-                                if (telType == 0 && validEcho)
+                                if (validEcho)
                                 {
-                                    AdapterType = 0;
+                                    switch (telType)
+                                    {
+                                        case 0:
+                                            AdapterType = 0;
+                                            break;
+
+                                        case 1:
+                                            EscapeMode = false;
+                                            failure = false;
+                                            break;
+                                    }
                                 }
                             }
 
-                            if (Ediabas != null)
+                            if (failure)
                             {
-                                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UpdateAdapterInfo Type={0}: Response timeout", telType);
-                                Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, responseList.ToArray(), 0, responseList.Count, "Resp");
+                                if (Ediabas != null)
+                                {
+                                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UpdateAdapterInfo Type={0}: Response timeout", telType);
+                                    Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, responseList.ToArray(), 0, responseList.Count, "Resp");
+                                }
+                                return false;
                             }
-                            return false;
                         }
                     }
                 }

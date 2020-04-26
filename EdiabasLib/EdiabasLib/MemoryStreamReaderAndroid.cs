@@ -210,7 +210,7 @@ namespace EdiabasLib
             }
             Marshal.Copy(PosPtr, buffer, offset, useCount);
             _filePos += useCount;
-            return count;
+            return useCount;
         }
 
         public override long Seek(long offset, SeekOrigin origin)

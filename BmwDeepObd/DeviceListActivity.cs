@@ -1385,7 +1385,7 @@ namespace BmwDeepObd
         {
             const int escapeRespLen = 8;
             byte escapeModeValue = (byte) (escapeMode ? 0x02 : 0x01);
-            byte[] escapeData = { 0x84, 0xF1, 0xF1, 0x06, escapeModeValue, BtEscapeStreamReader.EscapeCodeDefault, BtEscapeStreamReader.EscapeMaskDefault, 0x00 };
+            byte[] escapeData = { 0x84, 0xF1, 0xF1, 0x06, escapeModeValue, EdCustomAdapterCommon.EscapeCodeDefault, EdCustomAdapterCommon.EscapeMaskDefault, 0x00 };
             escapeData[^1] = EdCustomAdapterCommon.CalcChecksumBmwFast(escapeData, 0, escapeData.Length - 1);
 
             LogString(string.Format("Set escape mode: {0}", escapeMode));
@@ -1435,13 +1435,13 @@ namespace BmwDeepObd
 
                     if (escapeMode)
                     {
-                        if (responseList[escapeData.Length + 5] != BtEscapeStreamReader.EscapeCodeDefault)
+                        if (responseList[escapeData.Length + 5] != EdCustomAdapterCommon.EscapeCodeDefault)
                         {
                             LogString("*** Escape code incorrect");
                             return false;
                         }
 
-                        if (responseList[escapeData.Length + 6] != BtEscapeStreamReader.EscapeMaskDefault)
+                        if (responseList[escapeData.Length + 6] != EdCustomAdapterCommon.EscapeMaskDefault)
                         {
                             LogString("*** Escape mask incorrect");
                             return false;
