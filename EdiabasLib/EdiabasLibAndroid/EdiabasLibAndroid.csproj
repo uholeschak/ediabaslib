@@ -43,6 +43,9 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\EdiabasLib\BtEscapeStreamReader.cs">
+      <Link>BtEscapeStreamReader.cs</Link>
+    </Compile>
     <Compile Include="..\EdiabasLib\EdBluetoothInterfaceAndroid.cs">
       <Link>EdBluetoothInterfaceAndroid.cs</Link>
     </Compile>

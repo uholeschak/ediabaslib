@@ -1184,7 +1184,16 @@ namespace BmwDeepObd
                         }
 
                         LogString("Ignition response ok");
-                        if (!ReadCustomFwVersion(bluetoothInStream, bluetoothOutStream, out int adapterTypeId, out int fwVersion))
+
+                        bool escapeMode = true;
+                        BtEscapeStreamReader inStream = new BtEscapeStreamReader(bluetoothInStream);
+                        if (!SetCustomEscapeMode(inStream, bluetoothOutStream, escapeMode))
+                        {
+                            LogString("*** Set escape mode failed");
+                            escapeMode = false;
+                        }
+
+                        if (!ReadCustomFwVersion(inStream, bluetoothOutStream, out int adapterTypeId, out int fwVersion))
                         {
                             LogString("*** Read firmware version failed");
                             break;
@@ -1194,7 +1203,7 @@ namespace BmwDeepObd
 
                         if (adapterTypeId >= 0x0002)
                         {
-                            if (ReadCustomSerial(bluetoothInStream, bluetoothOutStream, out byte[] adapterSerial))
+                            if (ReadCustomSerial(inStream, bluetoothOutStream, out byte[] adapterSerial))
                             {
                                 LogString("AdapterSerial: " + BitConverter.ToString(adapterSerial).Replace("-", ""));
                             }
@@ -1372,8 +1381,96 @@ namespace BmwDeepObd
             return adapterType;
         }
 
-        // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool ReadCustomFwVersion(Stream bluetoothInStream, Stream bluetoothOutStream, out int adapterTypeId, out int fwVersion)
+        private bool SetCustomEscapeMode(BtEscapeStreamReader inStream, Stream bluetoothOutStream, bool escapeMode)
+        {
+            const int escapeRespLen = 8;
+            byte escapeModeValue = (byte) (escapeMode ? 0x02 : 0x01);
+            byte[] escapeData = { 0x84, 0xF1, 0xF1, 0x06, escapeModeValue, BtEscapeStreamReader.EscapeCodeDefault, BtEscapeStreamReader.EscapeMaskDefault, 0x00 };
+            escapeData[^1] = EdCustomAdapterCommon.CalcChecksumBmwFast(escapeData, 0, escapeData.Length - 1);
+
+            LogString(string.Format("Set escape mode: {0}", escapeMode));
+
+            inStream.SetEscapeMode(escapeMode);
+            LogData(escapeData, 0, escapeData.Length, "Send");
+            bluetoothOutStream.Write(escapeData, 0, escapeData.Length);
+
+            LogData(null, 0, 0, "Resp");
+            List<byte> responseList = new List<byte>();
+            long startTime = Stopwatch.GetTimestamp();
+            for (; ; )
+            {
+                while (inStream.IsDataAvailable())
+                {
+                    int data = inStream.ReadByte();
+                    if (data >= 0)
+                    {
+                        LogByte((byte)data);
+                        responseList.Add((byte)data);
+                        startTime = Stopwatch.GetTimestamp();
+                    }
+                }
+
+                if (responseList.Count >= escapeData.Length + escapeRespLen)
+                {
+                    LogString("Escape mode length");
+                    bool validEcho = !escapeData.Where((t, i) => responseList[i] != t).Any();
+                    if (!validEcho)
+                    {
+                        LogString("*** Echo incorrect");
+                        break;
+                    }
+
+                    byte[] addResponse = responseList.GetRange(escapeData.Length, responseList.Count - escapeData.Length).ToArray();
+                    if (EdCustomAdapterCommon.CalcChecksumBmwFast(addResponse, 0, addResponse.Length - 1) != addResponse[^1])
+                    {
+                        LogString("*** Checksum incorrect");
+                        return false;
+                    }
+
+                    if (responseList[escapeData.Length + 4] != escapeModeValue)
+                    {
+                        LogString("*** Escape mode incorrect");
+                        return false;
+                    }
+
+                    if (escapeMode)
+                    {
+                        if (responseList[escapeData.Length + 5] != BtEscapeStreamReader.EscapeCodeDefault)
+                        {
+                            LogString("*** Escape code incorrect");
+                            return false;
+                        }
+
+                        if (responseList[escapeData.Length + 6] != BtEscapeStreamReader.EscapeMaskDefault)
+                        {
+                            LogString("*** Escape mask incorrect");
+                            return false;
+                        }
+                    }
+
+                    break;
+                }
+                if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * ActivityCommon.TickResolMs)
+                {
+                    if (responseList.Count == escapeData.Length)
+                    {
+                        bool validEcho = !escapeData.Where((t, i) => responseList[i] != t).Any();
+                        if (validEcho)
+                        {
+                            inStream.SetEscapeMode();
+                            LogString("Escape mode echo correct");
+                            break;
+                        }
+                    }
+
+                    LogString("*** Escape mode timeout");
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool ReadCustomFwVersion(BtEscapeStreamReader inStream, Stream bluetoothOutStream, out int adapterTypeId, out int fwVersion)
         {
             adapterTypeId = -1;
             fwVersion = -1;
@@ -1391,9 +1488,9 @@ namespace BmwDeepObd
             long startTime = Stopwatch.GetTimestamp();
             for (; ; )
             {
-                while (bluetoothInStream.IsDataAvailable())
+                while (inStream.IsDataAvailable())
                 {
-                    int data = bluetoothInStream.ReadByte();
+                    int data = inStream.ReadByte();
                     if (data >= 0)
                     {
                         LogByte((byte)data);
@@ -1432,7 +1529,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool ReadCustomSerial(Stream bluetoothInStream, Stream bluetoothOutStream, out byte[] adapterSerial)
+        private bool ReadCustomSerial(BtEscapeStreamReader inStream, Stream bluetoothOutStream, out byte[] adapterSerial)
         {
             adapterSerial = null;
             const int idRespLen = 13;
@@ -1449,9 +1546,9 @@ namespace BmwDeepObd
             long startTime = Stopwatch.GetTimestamp();
             for (;;)
             {
-                while (bluetoothInStream.IsDataAvailable())
+                while (inStream.IsDataAvailable())
                 {
-                    int data = bluetoothInStream.ReadByte();
+                    int data = inStream.ReadByte();
                     if (data >= 0)
                     {
                         LogByte((byte) data);
