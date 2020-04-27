@@ -236,7 +236,7 @@ namespace EdiabasLib
                 else
                 {   // not ELM327
                     CustomAdapter.EscapeMode = mtcBtService;
-                    _bluetoothInStream = new BtEscapeStreamReader(_bluetoothSocket.InputStream, CustomAdapter.EscapeMode);
+                    _bluetoothInStream = new BtEscapeStreamReader(_bluetoothSocket.InputStream);
                     _bluetoothOutStream = _bluetoothSocket.OutputStream;
                     if (!CustomAdapter.RawMode && mtcBtService && !usedRfCommSocket)
                     {
@@ -249,7 +249,7 @@ namespace EdiabasLib
                             {
                                 _bluetoothSocket.Close();
                                 _bluetoothSocket.Connect();
-                                _bluetoothInStream = new BtEscapeStreamReader(_bluetoothSocket.InputStream, CustomAdapter.EscapeMode);
+                                _bluetoothInStream = new BtEscapeStreamReader(_bluetoothSocket.InputStream);
                                 _bluetoothOutStream = _bluetoothSocket.OutputStream;
                             }
                             if (CustomAdapter.UpdateAdapterInfo(true))
