@@ -1187,11 +1187,11 @@ namespace BmwDeepObd
 
                         bool escapeMode = true;
                         BtEscapeStreamReader inStream = new BtEscapeStreamReader(bluetoothInStream);
-                        if (!SetCustomEscapeMode(inStream, bluetoothOutStream, escapeMode))
+                        if (!SetCustomEscapeMode(inStream, bluetoothOutStream, ref escapeMode))
                         {
                             LogString("*** Set escape mode failed");
-                            escapeMode = false;
                         }
+                        inStream.SetEscapeMode(escapeMode);
 
                         if (!ReadCustomFwVersion(inStream, bluetoothOutStream, out int adapterTypeId, out int fwVersion))
                         {
@@ -1381,16 +1381,16 @@ namespace BmwDeepObd
             return adapterType;
         }
 
-        private bool SetCustomEscapeMode(BtEscapeStreamReader inStream, Stream bluetoothOutStream, bool escapeMode)
+        private bool SetCustomEscapeMode(BtEscapeStreamReader inStream, Stream bluetoothOutStream, ref bool escapeMode)
         {
             const int escapeRespLen = 8;
-            byte escapeModeValue = (byte) (escapeMode ? 0x02 : 0x01);
-            byte[] escapeData = { 0x84, 0xF1, 0xF1, 0x06, escapeModeValue, EdCustomAdapterCommon.EscapeCodeDefault, EdCustomAdapterCommon.EscapeMaskDefault, 0x00 };
+            byte escapeModeValue = (byte) ((escapeMode ? 0x03 : 0x00) ^ EdCustomAdapterCommon.EscapeXor);
+            byte[] escapeData = { 0x84, 0xF1, 0xF1, 0x06, escapeModeValue,
+                EdCustomAdapterCommon.EscapeCodeDefault ^ EdCustomAdapterCommon.EscapeXor, EdCustomAdapterCommon.EscapeMaskDefault ^ EdCustomAdapterCommon.EscapeXor, 0x00 };
             escapeData[^1] = EdCustomAdapterCommon.CalcChecksumBmwFast(escapeData, 0, escapeData.Length - 1);
 
             LogString(string.Format("Set escape mode: {0}", escapeMode));
 
-            inStream.SetEscapeMode(escapeMode);
             LogData(escapeData, 0, escapeData.Length, "Send");
             bluetoothOutStream.Write(escapeData, 0, escapeData.Length);
 
@@ -1424,26 +1424,30 @@ namespace BmwDeepObd
                     if (EdCustomAdapterCommon.CalcChecksumBmwFast(addResponse, 0, addResponse.Length - 1) != addResponse[^1])
                     {
                         LogString("*** Checksum incorrect");
+                        escapeMode = false;
                         return false;
                     }
 
                     if (responseList[escapeData.Length + 4] != escapeModeValue)
                     {
                         LogString("*** Escape mode incorrect");
+                        escapeMode = false;
                         return false;
                     }
 
                     if (escapeMode)
                     {
-                        if (responseList[escapeData.Length + 5] != EdCustomAdapterCommon.EscapeCodeDefault)
+                        if (responseList[escapeData.Length + 5] != (EdCustomAdapterCommon.EscapeCodeDefault ^ EdCustomAdapterCommon.EscapeXor))
                         {
                             LogString("*** Escape code incorrect");
+                            escapeMode = false;
                             return false;
                         }
 
-                        if (responseList[escapeData.Length + 6] != EdCustomAdapterCommon.EscapeMaskDefault)
+                        if (responseList[escapeData.Length + 6] != (EdCustomAdapterCommon.EscapeMaskDefault ^ EdCustomAdapterCommon.EscapeXor))
                         {
                             LogString("*** Escape mask incorrect");
+                            escapeMode = false;
                             return false;
                         }
                     }
@@ -1457,13 +1461,14 @@ namespace BmwDeepObd
                         bool validEcho = !escapeData.Where((t, i) => responseList[i] != t).Any();
                         if (validEcho)
                         {
-                            inStream.SetEscapeMode();
                             LogString("Escape mode echo correct");
+                            escapeMode = false;
                             break;
                         }
                     }
 
                     LogString("*** Escape mode timeout");
+                    escapeMode = false;
                     return false;
                 }
             }

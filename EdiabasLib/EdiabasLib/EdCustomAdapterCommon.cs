@@ -43,6 +43,7 @@ namespace EdiabasLib
 
         public const byte EscapeCodeDefault = 0xFF;
         public const byte EscapeMaskDefault = 0x80;
+        public const byte EscapeXor = 0x55;
 
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         public static readonly double AdapterVoltageScale = 0.1;
@@ -618,7 +619,7 @@ namespace EdiabasLib
                         case 1:
                             // escape mode
                             respLen = 8;
-                            testTel = new byte[] { 0x84, 0xF1, 0xF1, 0x06, (byte)(EscapeMode ? 0x02 : 0x01), EscapeCodeDefault, EscapeMaskDefault, 0x00 };
+                            testTel = new byte[] { 0x84, 0xF1, 0xF1, 0x06, (byte)((EscapeMode ? 0x03 : 0x00) ^ EscapeXor), EscapeCodeDefault ^ EscapeXor, EscapeMaskDefault ^ EscapeXor, 0x00 };
                             break;
 
                         case 2:
@@ -695,7 +696,7 @@ namespace EdiabasLib
                                     break;
 
                                 case 1:
-                                    EscapeMode = responseList[testTel.Length + 4] == 0x02;
+                                    EscapeMode = (responseList[testTel.Length + 4] ^ EscapeXor) == 0x03;
                                     break;
 
                                 case 2:

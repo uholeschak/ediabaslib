@@ -322,7 +322,8 @@ static op_modes op_mode;        // current operation mode
 static iface_modes iface_mode;  // current interface mode
 
 // escape mode settings
-static uint8_t escape_mode;
+static uint8_t escape_mode_send;
+static uint8_t escape_mode_rec;
 static uint8_t escape_code;
 static uint8_t escape_mask;
 
@@ -2258,22 +2259,27 @@ bool internal_telegram(uint8_t *buffer, uint16_t len)
         {      // escape mode
             if ((buffer[3] & 0x80) == 0x00)
             {   // write
-                if ((buffer[5] == 0x00) || (buffer[6] == 0x00))
+                if ((buffer[4] == 0x00) || (buffer[5] == 0x00) || (buffer[6] == 0x00))
                 {
-                    escape_mode = 0;
+                    escape_mode_send = 0;
+                    escape_mode_rec = 0;
                     escape_code = 0xFF;
                     escape_mask = 0x80;
                 }
                 else
                 {
-                    escape_mode = (buffer[4] == 2) ? 1 : 0;
-                    escape_code = buffer[5];
-                    escape_mask = buffer[6];
+                    uint8_t mode_val = buffer[4] ^ 0x55;
+                    escape_mode_send = (mode_val & 0x01) != 0;
+                    escape_mode_rec = (mode_val & 0x02) != 0;
+                    escape_code = buffer[5] ^ 0x55;
+                    escape_mask = buffer[6] ^ 0x55;
                 }
             }
-            buffer[4] = escape_mode ? 2 : 1;
-            buffer[5] = escape_code;
-            buffer[6] = escape_mask;
+            uint8_t mode_val = escape_mode_send ? 0x01 : 0x00;
+            mode_val |= escape_mode_rec ? 0x02 : 0x00;
+            buffer[4] = mode_val ^ 0x55;
+            buffer[5] = escape_code ^ 0x55;
+            buffer[6] = escape_mask ^ 0x55;
             buffer[len - 1] = calc_checkum(buffer, len - 1);
             uart_send(buffer, len);
             return true;
@@ -3537,7 +3543,8 @@ void main(void)
     op_mode = op_mode_standard;
     iface_mode = iface_mode_auto;
 
-    escape_mode = 0;
+    escape_mode_send = 0;
+    escape_mode_rec = 0;
     escape_code = 0xFF;
     escape_mask = 0x80;
 
@@ -4069,7 +4076,7 @@ void interrupt high_priority high_isr (void)
         else
         {
             uint8_t send_value = send_buffer[send_get_idx];
-            if (escape_mode)
+            if (escape_mode_send)
             {
                 if (!send_escape)
                 {
