@@ -1187,13 +1187,15 @@ namespace BmwDeepObd
 
                         bool escapeMode = _activityCommon.MtcBtService;
                         BtEscapeStreamReader inStream = new BtEscapeStreamReader(bluetoothInStream);
-                        if (!SetCustomEscapeMode(inStream, bluetoothOutStream, ref escapeMode))
+                        BtEscapeStreamWriter outStream = new BtEscapeStreamWriter(bluetoothOutStream);
+                        if (!SetCustomEscapeMode(inStream, outStream, ref escapeMode))
                         {
                             LogString("*** Set escape mode failed");
                         }
                         inStream.SetEscapeMode(escapeMode);
+                        outStream.SetEscapeMode(escapeMode);
 
-                        if (!ReadCustomFwVersion(inStream, bluetoothOutStream, out int adapterTypeId, out int fwVersion))
+                        if (!ReadCustomFwVersion(inStream, outStream, out int adapterTypeId, out int fwVersion))
                         {
                             LogString("*** Read firmware version failed");
                             break;
@@ -1203,7 +1205,7 @@ namespace BmwDeepObd
 
                         if (adapterTypeId >= 0x0002)
                         {
-                            if (ReadCustomSerial(inStream, bluetoothOutStream, out byte[] adapterSerial))
+                            if (ReadCustomSerial(inStream, outStream, out byte[] adapterSerial))
                             {
                                 LogString("AdapterSerial: " + BitConverter.ToString(adapterSerial).Replace("-", ""));
                             }
@@ -1381,7 +1383,7 @@ namespace BmwDeepObd
             return adapterType;
         }
 
-        private bool SetCustomEscapeMode(BtEscapeStreamReader inStream, Stream bluetoothOutStream, ref bool escapeMode)
+        private bool SetCustomEscapeMode(BtEscapeStreamReader inStream, BtEscapeStreamWriter outStream, ref bool escapeMode)
         {
             const int escapeRespLen = 8;
             byte escapeModeValue = (byte) ((escapeMode ? 0x03 : 0x00) ^ EdCustomAdapterCommon.EscapeXor);
@@ -1392,7 +1394,7 @@ namespace BmwDeepObd
             LogString(string.Format("Set escape mode: {0}", escapeMode));
 
             LogData(escapeData, 0, escapeData.Length, "Send");
-            bluetoothOutStream.Write(escapeData, 0, escapeData.Length);
+            outStream.Write(escapeData, 0, escapeData.Length);
 
             LogData(null, 0, 0, "Resp");
             List<byte> responseList = new List<byte>();
@@ -1475,7 +1477,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool ReadCustomFwVersion(BtEscapeStreamReader inStream, Stream bluetoothOutStream, out int adapterTypeId, out int fwVersion)
+        private bool ReadCustomFwVersion(BtEscapeStreamReader inStream, BtEscapeStreamWriter outStream, out int adapterTypeId, out int fwVersion)
         {
             adapterTypeId = -1;
             fwVersion = -1;
@@ -1486,7 +1488,7 @@ namespace BmwDeepObd
             LogString("Reading firmware version");
 
             LogData(fwData, 0, fwData.Length, "Send");
-            bluetoothOutStream.Write(fwData, 0, fwData.Length);
+            outStream.Write(fwData, 0, fwData.Length);
 
             LogData(null, 0, 0, "Resp");
             List<byte> responseList = new List<byte>();
@@ -1534,7 +1536,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool ReadCustomSerial(BtEscapeStreamReader inStream, Stream bluetoothOutStream, out byte[] adapterSerial)
+        private bool ReadCustomSerial(BtEscapeStreamReader inStream, BtEscapeStreamWriter outStream, out byte[] adapterSerial)
         {
             adapterSerial = null;
             const int idRespLen = 13;
@@ -1544,7 +1546,7 @@ namespace BmwDeepObd
             LogString("Reading id data");
 
             LogData(idData, 0, idData.Length, "Send");
-            bluetoothOutStream.Write(idData, 0, idData.Length);
+            outStream.Write(idData, 0, idData.Length);
 
             LogData(null, 0, 0, "Resp");
             List<byte> responseList = new List<byte>();
