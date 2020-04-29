@@ -204,10 +204,6 @@ namespace EdiabasLib
                     byte data = _writeDataList[0];
                     if (data == 0 || data == _escapeCode)
                     {
-                        if (_writeDataList.Count < 2)
-                        {
-                            break;
-                        }
                         writeData.Add(_escapeCode);
                         writeData.Add((byte) (data ^ _escapeMask));
                     }
