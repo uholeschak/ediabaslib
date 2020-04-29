@@ -304,6 +304,7 @@ static uint8_t name_buffer[BT_NAME_LENGTH];
 #endif
 
 static volatile rec_states rec_state;
+static uint8_t rec_escape;
 static volatile uint16_t rec_len;
 #if defined(REQUIRES_BT_REC_TIMOUT)
 static volatile uint8_t rec_timeout_count;
@@ -515,6 +516,7 @@ bool kline_baud_detect()
     TMR1H = 0x00;
     TMR1L = 0x00;
     rec_state = rec_state_idle;
+    rec_escape = false;
     idle_counter = 0;
 
     // wait for start bit
@@ -631,6 +633,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
         T1CONbits.TMR1ON = 0;
         PIR1bits.TMR1IF = 0;
         rec_state = rec_state_idle;
+        rec_escape = false;
 
         kline_baud_cfg();
         PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
@@ -683,6 +686,7 @@ void kline_send(uint8_t *buffer, uint16_t count)
     T1CONbits.TMR1ON = 0;
     PIR1bits.TMR1IF = 0;
     rec_state = rec_state_idle;
+    rec_escape = false;
 
     bool use_kline = false;
     bool use_lline = false;
@@ -1354,6 +1358,7 @@ uint16_t uart_receive(uint8_t *buffer)
         {
             memcpy(buffer, rec_buffer, data_len);
             rec_state = rec_state_idle;
+            rec_escape = false;
         }
         return data_len;
     }
@@ -1551,6 +1556,7 @@ uint16_t uart_receive(uint8_t *buffer)
         if (internal_telegram((uint8_t *) rec_buffer, rec_len))
         {
             rec_state = rec_state_idle;
+            rec_escape = false;
             return 0;
         }
 
@@ -1619,6 +1625,7 @@ uint16_t uart_receive(uint8_t *buffer)
     if (buffer != NULL)
     {
         rec_state = rec_state_idle;
+        rec_escape = false;
     }
     return data_len;
 }
@@ -1785,6 +1792,7 @@ bool init_bt()
     di();
     rec_bt_mode = true;
     rec_state = rec_state_idle;
+    rec_escape = false;
     ei();
     // wait for bt chip init
     uint16_t start_tick = get_systick();
@@ -1848,6 +1856,7 @@ bool init_bt()
     di();
     rec_bt_mode = false;
     rec_state = rec_state_idle;
+    rec_escape = false;
     ei();
     return result;
 }
@@ -2274,6 +2283,8 @@ bool internal_telegram(uint8_t *buffer, uint16_t len)
                     escape_code = buffer[5] ^ 0x55;
                     escape_mask = buffer[6] ^ 0x55;
                 }
+                rec_escape = false;
+                send_escape = false;
             }
             uint8_t mode_val = escape_mode_send ? 0x01 : 0x00;
             mode_val |= escape_mode_rec ? 0x02 : 0x00;
@@ -3531,6 +3542,7 @@ void main(void)
     init_failed = false;
     idle_counter = 0;
     rec_state = rec_state_idle;
+    rec_escape = false;
     rec_len = 0;
     rec_bt_mode = false;
     send_set_idx = 0;
@@ -3900,6 +3912,28 @@ void interrupt high_priority high_isr (void)
                 }
                 return;
             }
+
+            if (escape_mode_rec)
+            {
+                if (rec_escape)
+                {
+                    rec_data ^= escape_mask;
+                    rec_escape = false;
+                }
+                else
+                {
+                    if (rec_data == escape_code)
+                    {
+                        rec_escape = true;
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                rec_escape = false;
+            }
+
             switch (rec_state)
             {
                 case rec_state_idle:
@@ -4139,6 +4173,7 @@ void interrupt high_priority high_isr (void)
             case rec_state_error:
                 // receive timeout
                 rec_state = rec_state_idle;
+                rec_escape = false;
                 break;
 
             default:
