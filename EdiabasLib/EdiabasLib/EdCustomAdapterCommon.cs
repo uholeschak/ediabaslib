@@ -745,6 +745,8 @@ namespace EdiabasLib
                                 }
                                 return false;
                             }
+
+                            break;
                         }
                     }
                 }
