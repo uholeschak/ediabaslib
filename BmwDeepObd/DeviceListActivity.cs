@@ -56,6 +56,7 @@ namespace BmwDeepObd
             Elm327FakeOpt,      // ELM327 fake version optional command
             Elm327NoCan,        // ELM327 no CAN support
             Custom,             // custom adapter
+            CustomNoEscape,     // custom adapter with no escape support
             CustomUpdate,       // custom adapter with firmware update
             EchoOnly,           // only echo response
         }
@@ -460,13 +461,14 @@ namespace BmwDeepObd
                     _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_antenna_info), Resource.String.alert_title_info);
                 }
 #endif
+#if false
                 if (!_instanceData.MtcBtModuleErrorShown && !string.IsNullOrEmpty(_instanceData.MtcBtModuleName) &&
                     string.Compare(_instanceData.MtcBtModuleName, "SD-GT936", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     _instanceData.MtcBtModuleErrorShown = true;
                     _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_module_error), Resource.String.alert_title_warning);
                 }
-
+#endif
                 if (oldOffline != _instanceData.MtcOffline)
                 {
                     ShowScanState(false);
@@ -1061,6 +1063,15 @@ namespace BmwDeepObd
                                 .Show();
                             break;
 
+                        case AdapterType.CustomNoEscape:
+                            new AlertDialog.Builder(this)
+                                .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
+                                .SetCancelable(true)
+                                .SetMessage(Resource.String.adapter_no_escape_mode)
+                                .SetTitle(Resource.String.alert_title_error)
+                                .Show();
+                            break;
+
                         case AdapterType.EchoOnly:
                             ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.RawTag, deviceName);
                             break;
@@ -1188,16 +1199,26 @@ namespace BmwDeepObd
                         bool escapeMode = _activityCommon.MtcBtService;
                         BtEscapeStreamReader inStream = new BtEscapeStreamReader(bluetoothInStream);
                         BtEscapeStreamWriter outStream = new BtEscapeStreamWriter(bluetoothOutStream);
-                        if (!SetCustomEscapeMode(inStream, outStream, ref escapeMode))
+                        if (!SetCustomEscapeMode(inStream, outStream, ref escapeMode, out bool noEscapeSupport))
                         {
                             LogString("*** Set escape mode failed");
                         }
+
                         inStream.SetEscapeMode(escapeMode);
                         outStream.SetEscapeMode(escapeMode);
 
                         if (!ReadCustomFwVersion(inStream, outStream, out int adapterTypeId, out int fwVersion))
                         {
                             LogString("*** Read firmware version failed");
+                            if (noEscapeSupport && _activityCommon.MtcBtService)
+                            {
+                                if (!string.IsNullOrEmpty(_instanceData.MtcBtModuleName) &&
+                                    string.Compare(_instanceData.MtcBtModuleName, "SD-GT936", StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    LogString("Custom adapter with no escape mode support");
+                                    return AdapterType.CustomNoEscape;
+                                }
+                            }
                             break;
                         }
                         LogString(string.Format("AdapterType: {0}", adapterTypeId));
@@ -1383,7 +1404,7 @@ namespace BmwDeepObd
             return adapterType;
         }
 
-        private bool SetCustomEscapeMode(BtEscapeStreamReader inStream, BtEscapeStreamWriter outStream, ref bool escapeMode)
+        private bool SetCustomEscapeMode(BtEscapeStreamReader inStream, BtEscapeStreamWriter outStream, ref bool escapeMode, out bool noEscapeSupport)
         {
             const int escapeRespLen = 8;
             byte escapeModeValue = (byte) ((escapeMode ? 0x03 : 0x00) ^ EdCustomAdapterCommon.EscapeXor);
@@ -1392,6 +1413,8 @@ namespace BmwDeepObd
             escapeData[^1] = EdCustomAdapterCommon.CalcChecksumBmwFast(escapeData, 0, escapeData.Length - 1);
 
             LogString(string.Format("Set escape mode: {0}", escapeMode));
+
+            noEscapeSupport = false;
 
             LogData(escapeData, 0, escapeData.Length, "Send");
             outStream.Write(escapeData, 0, escapeData.Length);
@@ -1465,6 +1488,7 @@ namespace BmwDeepObd
                         {
                             LogString("Escape mode echo correct");
                             escapeMode = false;
+                            noEscapeSupport = true;
                             break;
                         }
                     }
