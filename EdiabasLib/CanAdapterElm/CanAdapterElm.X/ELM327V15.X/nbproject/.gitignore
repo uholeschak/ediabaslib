@@ -2,3 +2,4 @@
 /private/
 *.mk
 *.bash
+*.xml~
