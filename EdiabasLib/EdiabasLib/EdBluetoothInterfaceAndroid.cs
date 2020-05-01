@@ -581,6 +581,7 @@ namespace EdiabasLib
             long startTime = Stopwatch.GetTimestamp();
             while (recLen < length)
             {
+                bool dataReceived = false;
                 int currTimeout = (recLen == 0) ? timeout : timeoutTelEnd;
                 if (_bluetoothInStream is BtEscapeStreamReader inStream)
                 {
@@ -589,6 +590,7 @@ namespace EdiabasLib
                         int bytesRead = inStream.Read(buffer, offset + recLen, length - recLen);
                         if (bytesRead > 0)
                         {
+                            dataReceived = true;
                             CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
                             startTime = CustomAdapter.LastCommTick;
                         }
@@ -602,6 +604,7 @@ namespace EdiabasLib
                         int bytesRead = _bluetoothInStream.Read(buffer, offset + recLen, length - recLen);
                         if (bytesRead > 0)
                         {
+                            dataReceived = true;
                             CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
                             startTime = CustomAdapter.LastCommTick;
                         }
@@ -612,7 +615,8 @@ namespace EdiabasLib
                 {
                     break;
                 }
-                if ((Stopwatch.GetTimestamp() - startTime) > currTimeout * EdCustomAdapterCommon.TickResolMs)
+
+                if (!dataReceived && (Stopwatch.GetTimestamp() - startTime) > currTimeout * EdCustomAdapterCommon.TickResolMs)
                 {
                     ediabasLog?.LogData(EdiabasNet.EdLogLevel.Ifh, buffer, offset, recLen, "Rec ");
                     ediabasLog?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** ReceiveData Length={0}, Expected={1}: Timeout", recLen, length);
