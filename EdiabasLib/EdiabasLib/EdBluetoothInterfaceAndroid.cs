@@ -590,6 +590,7 @@ namespace EdiabasLib
                         if (bytesRead > 0)
                         {
                             CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
+                            startTime = CustomAdapter.LastCommTick;
                         }
                         recLen += bytesRead;
                     }
@@ -602,6 +603,7 @@ namespace EdiabasLib
                         if (bytesRead > 0)
                         {
                             CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
+                            startTime = CustomAdapter.LastCommTick;
                         }
                         recLen += bytesRead;
                     }
