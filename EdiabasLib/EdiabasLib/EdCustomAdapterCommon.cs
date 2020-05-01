@@ -660,7 +660,7 @@ namespace EdiabasLib
                     testTel[testTel.Length - 1] = CalcChecksumBmwFast(testTel, 0, testTel.Length - 1);
                     if (Ediabas != null)
                     {
-                        Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, testTel, 0, testTel.Length, "Send");
+                        Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, testTel, 0, testTel.Length, "AdSend");
                     }
 
                     _discardInBufferFunc();
@@ -681,7 +681,7 @@ namespace EdiabasLib
                         {
                             if (Ediabas != null)
                             {
-                                Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, responseList.ToArray(), 0, responseList.Count, "Resp");
+                                Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, responseList.ToArray(), 0, responseList.Count, "AdResp");
                             }
 
                             bool validEcho = !testTel.Where((t, i) => responseList[i] != t).Any();
@@ -731,7 +731,7 @@ namespace EdiabasLib
                         {
                             if (Ediabas != null)
                             {
-                                Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, responseList.ToArray(), 0, responseList.Count, "Resp");
+                                Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, responseList.ToArray(), 0, responseList.Count, "AdResp");
                                 Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UpdateAdapterInfo Type={0}: Response timeout", telType);
                             }
                             bool failure = true;
@@ -777,7 +777,8 @@ namespace EdiabasLib
 
             if (Ediabas != null)
             {
-                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IgnitionStatus: {0}", IgnitionStatus);
+                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IgnitionStatus: {0:X02}", IgnitionStatus);
+                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EscapeMode: {0}", EscapeMode);
                 Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "AdapterType: {0}", AdapterType);
                 Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "AdapterVersion: {0}.{1}", AdapterVersion >> 8, AdapterVersion & 0xFF);
                 if (AdapterSerial != null)
