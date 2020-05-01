@@ -613,6 +613,7 @@ namespace EdiabasLib
                 if ((Stopwatch.GetTimestamp() - startTime) > currTimeout * EdCustomAdapterCommon.TickResolMs)
                 {
                     ediabasLog?.LogData(EdiabasNet.EdLogLevel.Ifh, buffer, offset, recLen, "Rec ");
+                    ediabasLog?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** ReceiveData Length={0}, Expected={1}: Timeout", recLen, length);
                     return false;
                 }
                 Thread.Sleep(10);
