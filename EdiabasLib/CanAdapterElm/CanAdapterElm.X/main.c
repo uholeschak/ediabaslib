@@ -994,6 +994,17 @@ void inline start_kline_rec_timer()
     }
 }
 
+#define INC_WRITE_PTR()                                             \
+{                                                                   \
+    write_ptr++;                                                    \
+    buffer_len++;                                                   \
+    uint8_t diff = *(((uint8_t *) &write_ptr) + 1) - temp_bufferh;  \
+    if (diff == (sizeof(temp_buffer) >> 8))                         \
+    {                                                               \
+        write_ptr = temp_buffer;                                    \
+    }                                                               \
+}
+
 bool kline_receive(bool auto_response)
 {
     uint8_t const temp_bufferh = HIGH_BYTE((uint16_t) temp_buffer);
@@ -1004,6 +1015,11 @@ bool kline_receive(bool auto_response)
 
     if (kline_baud == 0)
     {   // BMW-FAST
+        if (escape_mode_send)
+        {   // not supported for timing reasons
+            return false;
+        }
+
         di();
         kline_baud_cfg();
         PIR1bits.TMR2IF = 0;    // clear timer 2 interrupt flag
@@ -1086,13 +1102,7 @@ bool kline_receive(bool auto_response)
             if (buffer_len < sizeof(temp_buffer))
             {
                 *write_ptr = data;
-                write_ptr++;
-                buffer_len++;
-                uint8_t diff = *(((uint8_t *) &write_ptr) + 1) - temp_bufferh;
-                if (diff == (sizeof(temp_buffer) >> 8))
-                {
-                    write_ptr = temp_buffer;
-                }
+                INC_WRITE_PTR();
             }
             T2CONbits.TMR2ON = 0;
             TMR2 = 0;               // reset timer
@@ -1106,6 +1116,10 @@ bool kline_receive(bool auto_response)
     // dynamic baudrate
     if (!kline_baud_detect())
     {
+        return false;
+    }
+    if (kline_kwp1281_mode && escape_mode_send)
+    {   // not supported for timing reasons
         return false;
     }
     di();
@@ -1295,13 +1309,7 @@ bool kline_receive(bool auto_response)
                 if ((data == 0x00) || (data == escape_code))
                 {
                     *write_ptr = escape_code;
-                    write_ptr++;
-                    buffer_len++;
-                    uint8_t diff = *(((uint8_t *) &write_ptr) + 1) - temp_bufferh;
-                    if (diff == (sizeof(temp_buffer) >> 8))
-                    {
-                        write_ptr = temp_buffer;
-                    }
+                    INC_WRITE_PTR();
 
                     *write_ptr = data ^ escape_mask;
                 }
@@ -1311,13 +1319,7 @@ bool kline_receive(bool auto_response)
                 *write_ptr = data;
             }
 
-            write_ptr++;
-            buffer_len++;
-            uint8_t diff = *(((uint8_t *) &write_ptr) + 1) - temp_bufferh;
-            if (diff == (sizeof(temp_buffer) >> 8))
-            {
-                write_ptr = temp_buffer;
-            }
+            INC_WRITE_PTR();
         }
         // read stop bit
         while (!PIR1bits.TMR2IF) {}
@@ -1331,6 +1333,8 @@ bool kline_receive(bool auto_response)
 #endif
     }
 }
+
+#undef INC_WRITE_PTR
 
 uint8_t calc_checkum(uint8_t *buffer, uint16_t len)
 {
