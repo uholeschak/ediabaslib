@@ -1196,7 +1196,7 @@ namespace BmwDeepObd
 
                         LogString("Ignition response ok");
 
-                        bool escapeMode = _activityCommon.MtcBtService;
+                        bool escapeMode = _activityCommon.MtcBtEscapeMode;
                         BtEscapeStreamReader inStream = new BtEscapeStreamReader(bluetoothInStream);
                         BtEscapeStreamWriter outStream = new BtEscapeStreamWriter(bluetoothOutStream);
                         if (!SetCustomEscapeMode(inStream, outStream, ref escapeMode, out bool noEscapeSupport))

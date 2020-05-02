@@ -599,6 +599,14 @@ namespace BmwDeepObd
             }
         }
 
+        public bool MtcBtEscapeMode
+        {
+            get
+            {
+                return MtcBtService;
+            }
+        }
+
         public MtcServiceConnection MtcServiceConnection => _mtcServiceConnection;
 
         public bool MtcServiceStarted { get; private set; }
@@ -3456,7 +3464,7 @@ namespace BmwDeepObd
                 else
                 {
                     edInterfaceObd.ComPort = "BLUETOOTH:" + btDeviceAddress;
-                    connectParameter = new EdBluetoothInterface.ConnectParameterType(_networkData, MtcBtService, () => _context);
+                    connectParameter = new EdBluetoothInterface.ConnectParameterType(_networkData, MtcBtService, MtcBtEscapeMode, () => _context);
                     ConnectMtcBtDevice(btDeviceAddress);
                 }
             }
