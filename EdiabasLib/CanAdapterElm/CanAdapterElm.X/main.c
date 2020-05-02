@@ -424,6 +424,24 @@ inline uint16_t get_systick()
     return (((uint16_t)high) << 8) | low;
 }
 
+inline void tx_send(uint8_t data)
+{
+    if (escape_mode_send)
+    {
+        if ((data == 0x00) || (data == escape_code))
+        {
+            while (!TXSTAbits.TRMT) { }
+            TXREG = escape_code;
+            while (!TXSTAbits.TRMT) { }
+            TXREG = data ^ escape_mask;
+            return;
+        }
+    }
+
+    while (!TXSTAbits.TRMT) { }
+    TXREG = data;
+}
+
 void do_idle()
 {
     CLRWDT();
@@ -593,10 +611,8 @@ bool kline_baud_detect()
         baud_rate = 0;
     }
     // return baud rate devided by 2
-    while (!TXSTAbits.TRMT);
-    TXREG = baud_rate >> 9;
-    while (!TXSTAbits.TRMT);
-    TXREG = baud_rate >> 1;
+    tx_send(baud_rate >> 9);
+    tx_send(baud_rate >> 1);
     while (!TXSTAbits.TRMT);
 
     if (baud_rate != 0)
@@ -1166,8 +1182,7 @@ bool kline_receive(bool auto_response)
                         if (kline_kwp1281_pos >= kline_kwp1281_len)
                         {   // end of block reached
                             // send status
-                            while (!TXSTAbits.TRMT) { }
-                            TXREG = wait_time;
+                            tx_send(wait_time);
                             ei();
                             return false;
                         }
@@ -1184,8 +1199,7 @@ bool kline_receive(bool auto_response)
                             }
                         }
                         // send status
-                        while (!TXSTAbits.TRMT) { }
-                        TXREG = wait_time;
+                        tx_send(wait_time);
 
                         kline_flags1 = kline_flags1 & (KLINEF1_PARITY_MASK | KLINEF1_NO_ECHO);
                         temp_buffer_short[0] = ~(*read_ptr);
@@ -1274,9 +1288,29 @@ bool kline_receive(bool auto_response)
             while (!PIR1bits.TMR2IF) {}
             PIR1bits.TMR2IF = 0;
         }
-        if (buffer_len < sizeof(temp_buffer))
+        if (buffer_len < sizeof(temp_buffer) - 1)
         {
-            *write_ptr = data;
+            if (escape_mode_send)
+            {
+                if ((data == 0x00) || (data == escape_code))
+                {
+                    *write_ptr = escape_code;
+                    write_ptr++;
+                    buffer_len++;
+                    uint8_t diff = *(((uint8_t *) &write_ptr) + 1) - temp_bufferh;
+                    if (diff == (sizeof(temp_buffer) >> 8))
+                    {
+                        write_ptr = temp_buffer;
+                    }
+
+                    *write_ptr = data ^ escape_mask;
+                }
+            }
+            else
+            {
+                *write_ptr = data;
+            }
+
             write_ptr++;
             buffer_len++;
             uint8_t diff = *(((uint8_t *) &write_ptr) + 1) - temp_bufferh;
