@@ -14,16 +14,19 @@ namespace EdiabasLib
         {
             public delegate Android.Content.Context GetContextDelegate();
 
-            public ConnectParameterType(TcpClientWithTimeout.NetworkData networkData, bool mtcBtService, GetContextDelegate getContextHandler)
+            public ConnectParameterType(TcpClientWithTimeout.NetworkData networkData, bool mtcBtService, bool mtcBtEscapeMode, GetContextDelegate getContextHandler)
             {
                 NetworkData = networkData;
                 MtcBtService = mtcBtService;
+                MtcBtEscapeMode = mtcBtEscapeMode;
                 GetContextHandler = getContextHandler;
             }
 
             public TcpClientWithTimeout.NetworkData NetworkData { get; }
 
             public bool MtcBtService { get; }
+
+            public bool MtcBtEscapeMode { get; }
 
             public GetContextDelegate GetContextHandler { get; }
         }
@@ -84,6 +87,7 @@ namespace EdiabasLib
             _connectPort = port;
             _connectParameter = parameter as ConnectParameterType;
             bool mtcBtService = _connectParameter != null && _connectParameter.MtcBtService;
+            bool mtcBtEscapeMode = _connectParameter != null && _connectParameter.MtcBtEscapeMode;
             try
             {
                 BluetoothDevice device;
@@ -235,7 +239,7 @@ namespace EdiabasLib
                 }
                 else
                 {   // not ELM327
-                    CustomAdapter.EscapeMode = mtcBtService;
+                    CustomAdapter.EscapeMode = mtcBtEscapeMode;
                     _bluetoothInStream = new BtEscapeStreamReader(_bluetoothSocket.InputStream);
                     _bluetoothOutStream = new BtEscapeStreamWriter(_bluetoothSocket.OutputStream);
                     if (!CustomAdapter.RawMode && mtcBtService && !usedRfCommSocket)
