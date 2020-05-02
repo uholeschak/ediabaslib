@@ -443,6 +443,7 @@ namespace BmwDeepObd
         private bool? _usbSupport;
         private bool? _mtcBtService;
         private bool? _mtcBtManager;
+        private static string _mtcBtModuleName;
         private static readonly object LockObject = new object();
         private static int _instanceCount;
         private static string _externalPath;
@@ -599,11 +600,46 @@ namespace BmwDeepObd
             }
         }
 
+        public string MtcBtModuleName
+        {
+            get
+            {
+                if (_mtcBtModuleName != null)
+                {
+                    return _mtcBtModuleName;
+                }
+
+                if (!MtcBtServiceBound)
+                {
+                    return null;
+                }
+
+                if (_mtcBtModuleName == null)
+                {
+                    string moduleName = _mtcServiceConnection.CarManagerGetBtModuleName();
+                    _mtcBtModuleName = moduleName ?? string.Empty;
+                }
+
+                return _mtcBtModuleName;
+            }
+        }
+
         public bool MtcBtEscapeMode
         {
             get
             {
-                return MtcBtService;
+                string moduleName = MtcBtModuleName;
+                if (string.IsNullOrEmpty(moduleName))
+                {
+                    return false;
+                }
+
+                if (string.Compare(moduleName, "SD-GT936", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return true;
+                }
+
+                return false;
             }
         }
 
@@ -907,6 +943,8 @@ namespace BmwDeepObd
                     {
                         if (connected)
                         {
+                            // ReSharper disable once UnusedVariable
+                            string moduleName = MtcBtModuleName;    // cache module name
                             sbyte state = _mtcServiceConnection.GetBtState();
                             MtcBtConnectState = state != 0;
                             if (!_mtcServiceConnection.GetAutoConnect())

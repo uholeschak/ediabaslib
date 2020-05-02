@@ -72,7 +72,6 @@ namespace BmwDeepObd
 
         public class InstanceData
         {
-            public string MtcBtModuleName { get; set; }
             public bool MtcAntennaInfoShown { get; set; }
             public bool MtcBtModuleErrorShown { get; set; }
             public bool MtcErrorShown { get; set; }
@@ -434,18 +433,12 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (_instanceData.MtcBtModuleName == null)
-                {
-                    string btModuleName = mtcServiceConnection.CarManagerGetBtModuleName();
-                    _instanceData.MtcBtModuleName = btModuleName ?? string.Empty;
-                }
-
                 StringBuilder sbTitle = new StringBuilder();
                 sbTitle.Append(GetString(Resource.String.title_paired_devices));
-                if (!string.IsNullOrEmpty(_instanceData.MtcBtModuleName))
+                if (!string.IsNullOrEmpty(_activityCommon.MtcBtModuleName))
                 {
                     sbTitle.Append(" ");
-                    sbTitle.Append(string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bt_module_name), _instanceData.MtcBtModuleName));
+                    sbTitle.Append(string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bt_module_name), _activityCommon.MtcBtModuleName));
                 }
 
                 string titlePairedDevices = sbTitle.ToString();
@@ -454,16 +447,16 @@ namespace BmwDeepObd
                     _textViewTitlePairedDevices.Text = titlePairedDevices;
                 }
 #if false
-                if (!_instanceData.MtcAntennaInfoShown && !string.IsNullOrEmpty(_instanceData.MtcBtModuleName) &&
-                    string.Compare(_instanceData.MtcBtModuleName, "WQ_BC6", StringComparison.OrdinalIgnoreCase) == 0)
+                if (!_instanceData.MtcAntennaInfoShown && !string.IsNullOrEmpty(_activityCommon.MtcBtModuleName) &&
+                    string.Compare(_activityCommon.MtcBtModuleName, "WQ_BC6", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     _instanceData.MtcAntennaInfoShown = true;
                     _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_antenna_info), Resource.String.alert_title_info);
                 }
 #endif
 #if false
-                if (!_instanceData.MtcBtModuleErrorShown && !string.IsNullOrEmpty(_instanceData.MtcBtModuleName) &&
-                    string.Compare(_instanceData.MtcBtModuleName, "SD-GT936", StringComparison.OrdinalIgnoreCase) == 0)
+                if (!_instanceData.MtcBtModuleErrorShown && !string.IsNullOrEmpty(_activityCommon.MtcBtModuleName) &&
+                    string.Compare(_activityCommon.MtcBtModuleName, "SD-GT936", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     _instanceData.MtcBtModuleErrorShown = true;
                     _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_module_error), Resource.String.alert_title_warning);
@@ -1210,14 +1203,10 @@ namespace BmwDeepObd
                         if (!ReadCustomFwVersion(inStream, outStream, out int adapterTypeId, out int fwVersion))
                         {
                             LogString("*** Read firmware version failed");
-                            if (noEscapeSupport && _activityCommon.MtcBtService)
+                            if (noEscapeSupport && _activityCommon.MtcBtEscapeMode)
                             {
-                                if (!string.IsNullOrEmpty(_instanceData.MtcBtModuleName) &&
-                                    string.Compare(_instanceData.MtcBtModuleName, "SD-GT936", StringComparison.OrdinalIgnoreCase) == 0)
-                                {
-                                    LogString("Custom adapter with no escape mode support");
-                                    return AdapterType.CustomNoEscape;
-                                }
+                                LogString("Custom adapter with no escape mode support");
+                                return AdapterType.CustomNoEscape;
                             }
                             break;
                         }
