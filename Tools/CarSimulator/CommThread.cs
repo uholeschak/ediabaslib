@@ -1292,13 +1292,7 @@ namespace CarSimulator
         private bool ObdSend(byte[] sendData)
         {
 #if false
-            StringBuilder sr = new StringBuilder();
-            sr.Append("Response: ");
-            foreach (byte data in sendData)
-            {
-                sr.Append(string.Format("{0:X02} ", data));
-            }
-            Debug.WriteLine(sr.ToString());
+            DebugLogData("Response: ", sendData, sendData.Length);
 #endif
             switch (_responseConcept)
             {
@@ -1526,12 +1520,7 @@ namespace CarSimulator
 #if false
                 if (bytes != null)
                 {
-                    string text = string.Empty;
-                    for (int i = 0; i < bytes.Length; i++)
-                    {
-                        text += string.Format("{0:X02} ", bytes[i]);
-                    }
-                    Debug.WriteLine("Udp: " + text);
+                    DebugLogData("Udp: ", bytes, bytes.Length);
                 }
 #endif
                 if (bytes != null && bytes.Length == 6 && bytes[5] == 0x11)
@@ -1643,12 +1632,7 @@ namespace CarSimulator
 #if false
                 if (recLen > 0)
                 {
-                    string text = string.Empty;
-                    for (int i = 0; i < recLen; i++)
-                    {
-                        text += string.Format("{0:X02} ", _udpBuffer[i]);
-                    }
-                    Debug.WriteLine("Udp: " + text);
+                    DebugLogData("Udp: ", _udpBuffer, recLen);
                 }
 #endif
                 if (recLen == 6 && _udpBuffer[5] == 0x11)
@@ -1813,12 +1797,7 @@ namespace CarSimulator
                     byte[] dataBuffer = new byte[0x200];
                     int recLen = _tcpClientControlStream.Read(dataBuffer, 0, dataBuffer.Length);
 #if false
-                    string text = string.Empty;
-                    for (int i = 0; i < recLen; i++)
-                    {
-                        text += string.Format("{0:X02} ", dataBuffer[i]);
-                    }
-                    Debug.WriteLine("Ctrl Rec: " + text);
+                    DebugLogData("Ctrl Rec: ", dataBuffer, recLen);
 #endif
                     if (recLen >= 6 && dataBuffer[5] == 0x10)
                     {   // ignition state
@@ -1950,12 +1929,7 @@ namespace CarSimulator
                         return false;
                     }
 #if false
-                    string text = string.Empty;
-                    for (int i = 0; i < recLen; i++)
-                    {
-                        text += string.Format("{0:X02} ", dataBuffer[i]);
-                    }
-                    Debug.WriteLine("Rec: " + text);
+                    DebugLogData("Rec: ", dataBuffer, recLen);
 #endif
                     int dataLen = payloadLength - 2;
                     if ((dataLen < 1) || ((dataLen + 8) > recLen))
@@ -2085,12 +2059,7 @@ namespace CarSimulator
                 dataBuffer[7] = targetAddr;
                 Array.Copy(sendData, dataOffset, dataBuffer, 8, dataLength);
 #if false
-                string text = string.Empty;
-                for (int i = 0; i < dataBuffer.Length; i++)
-                {
-                    text += string.Format("{0:X02} ", dataBuffer[i]);
-                }
-                Debug.WriteLine("Send: " + text);
+                DebugLogData("Send: ", dataBuffer, dataBuffer.Length);
 #endif
                 _tcpClientDiagStream.Write(dataBuffer, 0, dataBuffer.Length);
                 _tcpLastResponse = dataBuffer;
@@ -3666,12 +3635,7 @@ namespace CarSimulator
                 dataOffset = 4;
             }
 #if false
-            string dataString = string.Empty;
-            for (int i = 0; i < sendData.Length; i++)
-            {
-                dataString += string.Format("{0:X02} ", sendData[i]);
-            }
-            Debug.WriteLine(string.Format("Add send: {0}", dataString));
+            DebugLogData("Add send: ", sendData, sendData.Length);
 #endif
             if (currChannel.SendData.Count == 0)
             {
@@ -3768,6 +3732,9 @@ namespace CarSimulator
             int sendLength = sendData[3] + 4;
             sendData[sendLength] = CalcChecksumXor(sendData, sendLength);
             sendLength++;
+#if false
+            DebugLogData("Send KWP2000*: ", sendData, sendLength);
+#endif
             if (!SendData(sendData, sendLength))
             {
                 return false;
@@ -3787,12 +3754,7 @@ namespace CarSimulator
             {
                 _serialPort.DiscardInBuffer();
 #if false
-                string text = string.Empty;
-                for (int i = 0; i < 4; i++)
-                {
-                    text += string.Format("{0:X02} ", _receiveData[i]);
-                }
-                Debug.WriteLine("No data: " + text);
+                DebugLogData("No data: ", _receiveData, 4);
 #endif
                 return false;
             }
@@ -3800,12 +3762,7 @@ namespace CarSimulator
             {
                 _serialPort.DiscardInBuffer();
 #if false
-                string text = string.Empty;
-                for (int i = 0; i < recLength + 1; i++)
-                {
-                    text += string.Format("{0:X02} ", _receiveData[i]);
-                }
-                Debug.WriteLine("Checksum: " + text);
+                DebugLogData("Checksum: ", _receiveData, recLength + 1);
 #endif
                 return false;
             }
@@ -3817,6 +3774,9 @@ namespace CarSimulator
             int sendLength = sendData[1] - 1;
             sendData[sendLength] = CalcChecksumXor(sendData, sendLength);
             sendLength++;
+#if false
+            DebugLogData("Send DS2: ", sendData, sendLength);
+#endif
             if (!SendData(sendData, sendLength))
             {
                 return false;
@@ -4150,14 +4110,7 @@ namespace CarSimulator
             }
             recLength += 1; // checksum
 #if false
-            {
-                string text = string.Empty;
-                for (int i = 0; i < recLength; i++)
-                {
-                    text += string.Format("{0:X02} ", _receiveData[i]);
-                }
-                Debug.WriteLine("Request: " + text);
-            }
+            DebugLogData("Request: ", _receiveData, recLength);
 #endif
             if (!_adsAdapter && !_klineResponder && (_tcpServerDiag == null) && (_pcanHandle == PCANBasic.PCAN_NONEBUS))
             {
@@ -4283,12 +4236,9 @@ namespace CarSimulator
                     }
                 }
 
-                StringBuilder sb = new StringBuilder();
-                sb.Append("Reset addr: ");
+                DebugLogData("Reset addr: ", addrHash.ToArray(), addrHash.Count);
                 foreach (byte addr in addrHash)
                 {
-                    sb.Append(string.Format("{0:X02} ", addr));
-
                     _sendData[0] = 0x83;
                     _sendData[1] = 0xF1;
                     _sendData[2] = addr;
@@ -4303,7 +4253,6 @@ namespace CarSimulator
                     ObdSend(_sendData);
                 }
 
-                Debug.WriteLine(sb.ToString());
                 standardResponse = true;
             }
             else if (
@@ -4545,13 +4494,7 @@ namespace CarSimulator
 
                 if (!found)
                 {
-                    StringBuilder sr = new StringBuilder();
-                    sr.Append("Not found: ");
-                    for (int i = 0; i < recLength; i++)
-                    {
-                        sr.Append(string.Format("{0:X02} ", _receiveData[i]));
-                    }
-                    Debug.WriteLine(sr.ToString());
+                    DebugLogData("Not found: ", _receiveData, recLength);
                 }
             }
         }
@@ -6858,13 +6801,7 @@ namespace CarSimulator
             }
             if (!found)
             {
-                StringBuilder sr = new StringBuilder();
-                sr.Append("Not found: ");
-                for (int i = 0; i < recLength; i++)
-                {
-                    sr.Append(string.Format("{0:X02} ", _receiveData[i]));
-                }
-                Debug.WriteLine(sr.ToString());
+                DebugLogData("Not found: ", _receiveData, recLength);
             }
         }
 
@@ -7028,12 +6965,7 @@ namespace CarSimulator
                 }
                 if (command != 0x09)
                 {   // no ack
-                    string text = string.Empty;
-                    for (int i = 0; i < recLength; i++)
-                    {
-                        text += string.Format("{0:X02} ", _receiveData[i]);
-                    }
-                    Debug.WriteLine("Request: " + text);
+                    DebugLogData("Request: ", _receiveData, recLength);
 
                     bool found = false;
                     foreach (ResponseEntry responseEntry in _configData.ResponseList)
@@ -7146,7 +7078,7 @@ namespace CarSimulator
                     }
                     if (!found)
                     {
-                        Debug.WriteLine("Not found: " + text);
+                        DebugLogData("Not found: ", _receiveData, recLength);
                         requestInvalid = true;
                     }
                 }
@@ -7353,15 +7285,7 @@ namespace CarSimulator
                 }
                 recLength += 1; // checksum
 #if true
-                {
-                    StringBuilder sr = new StringBuilder();
-                    sr.Append("Request: ");
-                    for (int i = 0; i < recLength; i++)
-                    {
-                        sr.Append(string.Format("{0:X02} ", _receiveData[i]));
-                    }
-                    Debug.WriteLine(sr.ToString());
-                }
+                DebugLogData("Request: ", _receiveData, recLength);
 #endif
                 if (!_adsAdapter && !_klineResponder)
                 {
@@ -7483,15 +7407,7 @@ namespace CarSimulator
                                     if (!nr2123 || (_nr2123SendCount < Kwp2000Nr2123Retries))
                                     {
 #if false
-                                        {
-                                            StringBuilder sr = new StringBuilder();
-                                            sr.Append("Response: ");
-                                            for (int i = 0; i < responseTel.Length; i++)
-                                            {
-                                                sr.Append(string.Format("{0:X02} ", responseTel[i]));
-                                            }
-                                            Debug.WriteLine(sr.ToString());
-                                        }
+                                        DebugLogData("Response: ", responseTel, responseTel.Length);
 #endif
                                         ObdSend(responseTel);
                                         if (nr2123)
@@ -7515,15 +7431,7 @@ namespace CarSimulator
                             {
                                 byte[] responseTel = responseEntry.ResponseDyn;
 #if false
-                                {
-                                    StringBuilder sr = new StringBuilder();
-                                    sr.Append("Response: ");
-                                    for (int i = 0; i < responseTel.Length; i++)
-                                    {
-                                        sr.Append(string.Format("{0:X02} ", responseTel[i]));
-                                    }
-                                    Debug.WriteLine(sr.ToString());
-                                }
+                                DebugLogData("Response: ", responseTel, responseTel.Length);
 #endif
                                 ObdSend(responseTel);
                                 _nr2123SendCount = 0;
@@ -8006,15 +7914,23 @@ namespace CarSimulator
                     }
                     if (!found)
                     {
-                        StringBuilder sr = new StringBuilder();
-                        sr.Append("Not found: ");
-                        for (int i = 0; i < recLength; i++)
-                        {
-                            sr.Append(string.Format("{0:X02} ", _receiveData[i]));
-                        }
-                        Debug.WriteLine(sr.ToString());
+                        DebugLogData("Not found: ", _receiveData, recLength);
                     }
                 }
+            }
+        }
+
+        private void DebugLogData(string message, byte[] data, int length)
+        {
+            StringBuilder sr = new StringBuilder();
+            sr.Append(message);
+            if (data != null)
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    sr.Append(string.Format("{0:X02} ", data[i]));
+                }
+                Debug.WriteLine(sr.ToString());
             }
         }
     }
