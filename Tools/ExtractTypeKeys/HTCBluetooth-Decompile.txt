@@ -1,11 +1,11 @@
 Decompiling of HTC Bluetooth service
 ====================================
 
-From the Android device get the files in: \system\app
-HCTBlueToothXXXX.apk and subdirectory \oat\arm64
-HCTFactorySettingsXXXX.apk and subdirectory \oat\arm64
+From the Android device get the subdirectories in: \system\app
+HCTXXXBlueToothXXXX
+HCTXXXFactorySettingsXXXX
 If available also:
-HCTBlueToothManager.apk and subdirectory \oat\arm64
+HCTXXXBlueToothManagerXXX
 
 Decompiling:
 ============
