@@ -708,6 +708,10 @@ namespace BmwDeepObd
 
             LogString("Device address: " + deviceAddress);
             LogString("Device name: " + deviceName);
+            if (!string.IsNullOrEmpty(_activityCommon.MtcBtModuleName))
+            {
+                LogString("Bt module: " + _activityCommon.MtcBtModuleName);
+            }
 
             _activityCommon.ConnectMtcBtDevice(deviceAddress);
 
