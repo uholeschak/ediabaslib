@@ -4265,7 +4265,7 @@ namespace EdiabasLib
             }
             if (headerLen == 0)
             {
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Header lenght zero");
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Header length zero");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0041;
             }
             if (!ReceiveData(receiveData, 0, headerLen, ParTimeoutStd, ParTimeoutTelEnd))
