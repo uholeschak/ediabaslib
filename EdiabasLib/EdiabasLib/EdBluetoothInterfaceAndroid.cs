@@ -239,6 +239,7 @@ namespace EdiabasLib
                 }
                 else
                 {   // not ELM327
+                    CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Escape mode: {0}", mtcBtEscapeMode);
                     CustomAdapter.EscapeMode = mtcBtEscapeMode;
                     _bluetoothInStream = new BtEscapeStreamReader(_bluetoothSocket.InputStream);
                     _bluetoothOutStream = new BtEscapeStreamWriter(_bluetoothSocket.OutputStream);
@@ -248,7 +249,7 @@ namespace EdiabasLib
                         for (int retry = 0; retry < 20; retry++)
                         {
                             CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Test connection");
-                            CustomAdapter.EscapeMode = true;
+                            CustomAdapter.EscapeMode = mtcBtEscapeMode;
                             if (retry > 0)
                             {
                                 _bluetoothSocket.Close();
