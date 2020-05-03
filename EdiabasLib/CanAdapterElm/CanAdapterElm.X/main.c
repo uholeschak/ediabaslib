@@ -1311,14 +1311,11 @@ bool kline_receive(bool auto_response)
                     *write_ptr = escape_code;
                     INC_WRITE_PTR();
 
-                    *write_ptr = data ^ escape_mask;
+                    data ^= escape_mask;
                 }
             }
-            else
-            {
-                *write_ptr = data;
-            }
 
+            *write_ptr = data;
             INC_WRITE_PTR();
         }
         // read stop bit
