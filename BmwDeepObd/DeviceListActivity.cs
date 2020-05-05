@@ -708,6 +708,7 @@ namespace BmwDeepObd
 
             LogString("Device address: " + deviceAddress);
             LogString("Device name: " + deviceName);
+            LogString("Escape mode: " + (_activityCommon.MtcBtEscapeMode ? "1" : "0"));
             if (!string.IsNullOrEmpty(_activityCommon.MtcBtModuleName))
             {
                 LogString("Bt module: " + _activityCommon.MtcBtModuleName);
@@ -1192,6 +1193,7 @@ namespace BmwDeepObd
                         }
 
                         LogString("Ignition response ok");
+                        LogString("Escape mode: " + (_activityCommon.MtcBtEscapeMode ? "1" : "0"));
 
                         bool escapeMode = _activityCommon.MtcBtEscapeMode;
                         BtEscapeStreamReader inStream = new BtEscapeStreamReader(bluetoothInStream);
