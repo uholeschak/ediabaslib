@@ -604,21 +604,17 @@ namespace BmwDeepObd
         {
             get
             {
-                if (_mtcBtModuleName != null)
+                if (!string.IsNullOrEmpty(_mtcBtModuleName))
                 {
                     return _mtcBtModuleName;
                 }
 
-                if (!MtcBtServiceBound)
+                if (_mtcServiceConnection == null)
                 {
                     return null;
                 }
 
-                if (_mtcBtModuleName == null)
-                {
-                    string moduleName = _mtcServiceConnection.CarManagerGetBtModuleName();
-                    _mtcBtModuleName = moduleName ?? string.Empty;
-                }
+                _mtcBtModuleName = _mtcServiceConnection.CarManagerGetBtModuleName();
 
                 return _mtcBtModuleName;
             }
@@ -944,7 +940,6 @@ namespace BmwDeepObd
                         if (connected)
                         {
                             // ReSharper disable once UnusedVariable
-                            string moduleName = MtcBtModuleName;    // cache module name
                             sbyte state = _mtcServiceConnection.GetBtState();
                             MtcBtConnectState = state != 0;
                             if (!_mtcServiceConnection.GetAutoConnect())
