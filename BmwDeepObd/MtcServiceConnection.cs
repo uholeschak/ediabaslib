@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
@@ -97,6 +99,7 @@ namespace BmwDeepObd
         };
 
         public delegate void ServiceConnectedDelegate(bool connected);
+        private static readonly Regex HctVerRegEx = new Regex(@"HCT(\d)+\D", RegexOptions.IgnoreCase);
         private static int? _hctApiVerDetected;
         // ReSharper disable once NotAccessedField.Local
         private readonly Context _context;
@@ -223,43 +226,32 @@ namespace BmwDeepObd
                         {
                             string fileName = System.IO.Path.GetFileName(sourceDir);
 #if DEBUG
-                            Android.Util.Log.Info(Tag, string.Format("Hct3ApiVer: package name='{0}', file name='{1}'", appInfo.PackageName, fileName));
+                            Android.Util.Log.Info(Tag, string.Format("HctApiVerDetect: package name='{0}', file name='{1}'", appInfo.PackageName, fileName));
 #endif
                             if (!string.IsNullOrEmpty(fileName))
                             {
                                 int? apiVerNew = null;
 
-                                if (fileName.Contains("HCT9", StringComparison.OrdinalIgnoreCase))
+                                MatchCollection matchesVer = HctVerRegEx.Matches(fileName);
+                                if ((matchesVer.Count == 1) && (matchesVer[0].Groups.Count == 2))
                                 {
-                                    apiVerNew = 9;
-                                }
-                                else if (fileName.Contains("HCT8", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    apiVerNew = 8;
-                                }
-                                else if (fileName.Contains("HCT7", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    apiVerNew = 7;
-                                }
-                                else if (fileName.Contains("HCT6", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    apiVerNew = 6;
-                                }
-                                else if (fileName.Contains("HCT5", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    apiVerNew = 5;
-                                }
-                                else if (fileName.Contains("HCT4", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    apiVerNew = 4;
-                                }
-                                else if (fileName.Contains("HCT3C", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    apiVerNew = 4;
-                                }
-                                else if (fileName.Contains("HCT3", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    apiVerNew = 3;
+                                    if (!Int32.TryParse(matchesVer[0].Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 hctVer))
+                                    {
+                                        hctVer = -1;
+                                    }
+
+                                    if (hctVer == 3)
+                                    {
+                                        apiVerNew = 3;
+                                        if (fileName.Contains("HCT3C", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            apiVerNew = 4;
+                                        }
+                                    }
+                                    else if (hctVer >= 4)
+                                    {
+                                        apiVerNew = 4;
+                                    }
                                 }
 
                                 if (apiVerNew.HasValue && apiVerNew.Value > _hctApiVerDetected.Value)
