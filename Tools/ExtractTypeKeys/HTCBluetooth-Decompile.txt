@@ -10,12 +10,15 @@ HCTXXXBlueToothManagerXXX
 Decompiling:
 ============
 
-From: https://github.com/fOmey/vdexExtractor/tree/master/bin or https://github.com/linchanggui/vdexExtractor
-Download bin/vdexExtractor_winx86_64.zip
+Checkout https://github.com/anestisb/vdexExtractor
+Convert CRLF to LF for make.sh
+In Cygwin: ./make.sh
+Binary is in bin/vdexExtractor.exe
+
 Download the statically compiled linux x86-64 binary: 9.0_linux-x86_64_static.zip
 (https://1drv.ms/u/s!ArDC4mvMyPrRhEq96XX-LsCACF2s)
 
-Extract the .vdex file with: vdexExtractor.exe -i xxx.vdex
+In Cygwin extract the .vdex file with: vdexExtractor.exe -i xxx.vdex
 If the output file is a .cdex file this has to be converted with compact_dex_converters on a linux system:
 compact_dex_converters xxx.cdex
 The output file extension has to be changed to .dex manually afterwards
