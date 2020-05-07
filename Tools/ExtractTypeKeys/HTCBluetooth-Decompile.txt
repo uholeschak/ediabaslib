@@ -31,7 +31,7 @@ From: http://java-decompiler.github.io/ download the latest jd-gui
 You could view or extract the source of the .jar file
 In HCTBlueTooth the interesting part in the mapping from the the transaction ids to the commands in: BTServiceInf.java onTransact()
 
-In HCTFactorySettings search for:
+In HCTFactorySettings search in Factory_Util.java for:
   public static final String[] tp = new String[] { 
       "NO", "MD725", "WQ_BC5", "WQ_BC6", "WQ_BC8", "Parrot_FC6000T", "SD-968", "SD-BC6", "SD-GT936", "IVT-i145", 
       "SD-8350", "WQ_RF210", "SD-816" };
