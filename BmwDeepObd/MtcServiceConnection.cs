@@ -99,7 +99,7 @@ namespace BmwDeepObd
         };
 
         public delegate void ServiceConnectedDelegate(bool connected);
-        private static readonly Regex HctVerRegEx = new Regex(@"HCT(\d)+\D", RegexOptions.IgnoreCase);
+        private static readonly Regex HctVerRegEx = new Regex(@"HCT(\d)+(\D)", RegexOptions.IgnoreCase);
         private static int? _hctApiVerDetected;
         // ReSharper disable once NotAccessedField.Local
         private readonly Context _context;
@@ -233,17 +233,18 @@ namespace BmwDeepObd
                                 int? apiVerNew = null;
 
                                 MatchCollection matchesVer = HctVerRegEx.Matches(fileName);
-                                if ((matchesVer.Count == 1) && (matchesVer[0].Groups.Count == 2))
+                                if ((matchesVer.Count == 1) && (matchesVer[0].Groups.Count == 3))
                                 {
                                     if (!Int32.TryParse(matchesVer[0].Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 hctVer))
                                     {
                                         hctVer = -1;
                                     }
 
+                                    string hctSuffix = matchesVer[0].Groups[2].Value;
                                     if (hctVer == 3)
                                     {
                                         apiVerNew = 3;
-                                        if (fileName.Contains("HCT3C", StringComparison.OrdinalIgnoreCase))
+                                        if (hctSuffix.StartsWith("C", StringComparison.OrdinalIgnoreCase))
                                         {
                                             apiVerNew = 4;
                                         }
