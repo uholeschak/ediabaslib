@@ -613,6 +613,7 @@ namespace BmwDeepObd
                         _instanceData.DeviceName = data.Extras.GetString(DeviceListActivity.ExtraDeviceName);
                         _instanceData.DeviceAddress = data.Extras.GetString(DeviceListActivity.ExtraDeviceAddress);
                         bool callAdapterConfig = data.Extras.GetBoolean(DeviceListActivity.ExtraCallAdapterConfig, false);
+                        StoreSettings();
                         UpdateOptionsMenu();
                         if (callAdapterConfig)
                         {
@@ -634,6 +635,7 @@ namespace BmwDeepObd
                         {
                             _instanceData.DeviceName = string.Empty;
                             _instanceData.DeviceAddress = string.Empty;
+                            StoreSettings();
                             UpdateOptionsMenu();
                         }
                     }
@@ -644,6 +646,7 @@ namespace BmwDeepObd
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
                         _instanceData.ConfigFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
+                        StoreSettings();
                         ReadConfigFile();
                         UpdateOptionsMenu();
                     }
@@ -663,6 +666,7 @@ namespace BmwDeepObd
                             _activityCommon.SelectedEnetIp = data.Extras.GetString(XmlToolActivity.ExtraEnetIp);
                         }
                         _instanceData.ConfigFileName = data.Extras.GetString(XmlToolActivity.ExtraFileName);
+                        StoreSettings();
                         ReadConfigFile();
                         UpdateOptionsMenu();
                     }
@@ -674,6 +678,7 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestYandexKey:
                     ActivityCommon.EnableTranslation = !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey);
+                    StoreSettings();
                     UpdateOptionsMenu();
                     UpdateDisplay();
                     break;
@@ -688,8 +693,8 @@ namespace BmwDeepObd
                         StartActivity(Intent);
                         break;
                     }
-                    UpdateCheck();
                     StoreSettings();
+                    UpdateCheck();
                     UpdateDirectories();
                     UpdateOptionsMenu();
                     UpdateDisplay();
