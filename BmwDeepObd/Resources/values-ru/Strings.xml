@@ -205,7 +205,7 @@
   <string name="bt_mtc_antenna_info">Для некоторых Android-Радио рекомендуется заменить антенный кабель внутреннего модуля Bluetooth и вывести его из корпуса.\nАнтенный кабель должен иметь длину 15,5 см. Для модулей без кабелей - кажущаяся оптимальная длина составляет 16,0 см.</string>
   <string name="bt_mtc_module_error">Устройства Android с модулем Bluetooth SD-GT936, похоже, имеют проблемы коммуникации с адаптерами OBD.\nСоединение, вероятно, не будет работать правильно.</string>  <string name="bt_module_name">(Модуль Bluetooth: {0})</string>
   <!--Translate-->
-  <string name="bt_mtc_module_escape_mode">The Bluetooth module {0} has a limited communication channel and a special communication mode has to be use.\nFor technical reasons not all OBD protocols are supported in this mode.</string>
+  <string name="bt_mtc_module_escape_mode">The Bluetooth module {0} has a limited communication channel and a special communication mode has to be use.\nFor technical reasons not all OBD protocols are supported in this mode and the latest adapter firmware is required</string>
   <string name="title_paired_devices">Авторизированные устройства</string>
   <string name="title_other_devices">Другие доступные устройства</string>
   <string name="button_scan">Поиск устройств</string>
