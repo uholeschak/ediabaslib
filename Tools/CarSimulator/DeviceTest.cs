@@ -23,6 +23,8 @@ namespace CarSimulator
         private BluetoothClient _btClient;
         private NetworkStream _dataStream;
         private Thread _workerThread;
+        private bool _connectActive;
+        private bool _executeInnerTest;
         private int _testCount;
         private bool _disposed;
 
@@ -200,19 +202,21 @@ namespace CarSimulator
                             (string.Compare(ap.Name, AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0))
                         {
                             AuthRequest authRequest = new AuthRequest(ap);
+                            _connectActive = true;
                             ap.ConnectAsync(authRequest, true, success =>
                             {
+                                _executeInnerTest = success;
+                                _connectActive = false;
                                 _form.BeginInvoke((Action)(() =>
                                 {
+                                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                                     if (!success)
                                     {
-                                        _form.UpdateTestStatusText("Connection faild");
+                                        _form.UpdateTestStatusText("Connection failed");
                                     }
                                     else
                                     {
                                         _form.UpdateTestStatusText("Wifi connected");
-                                        Thread.Sleep(1000);
-                                        ExecuteTestInner(true, comPort, btDeviceName);
                                     }
                                 }));
                             });
@@ -251,14 +255,28 @@ namespace CarSimulator
         {
             AbortTest = false;
 
+            _connectActive = false;
+            _executeInnerTest = false;
             _workerThread = new Thread(() =>
             {
                 ExecuteTestInner(wifi, comPort, btDeviceName);
+                while (_connectActive)
+                {
+                    Thread.Sleep(100);
+                }
+
+                if (_executeInnerTest)
+                {
+                    _executeInnerTest = false;
+                    Thread.Sleep(1000);
+                    ExecuteTestInner(wifi, comPort, btDeviceName);
+                }
+
                 _form.Invoke((Action) (() =>
-                    {
-                        _workerThread = null;
-                        _form.UpdateTestStatusText();
-                    }));
+                {
+                    _workerThread = null;
+                    _form.UpdateTestStatusText();
+                }));
             });
             _workerThread.Priority = ThreadPriority.Normal;
             _workerThread.Start();
