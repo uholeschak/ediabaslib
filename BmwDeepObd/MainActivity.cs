@@ -693,6 +693,7 @@ namespace BmwDeepObd
                         StartActivity(Intent);
                         break;
                     }
+
                     StoreSettings();
                     UpdateCheck();
                     UpdateDirectories();
@@ -937,6 +938,7 @@ namespace BmwDeepObd
                 case Resource.Id.menu_cfg_edit_reset:
                     _instanceData.XmlEditorPackageName = string.Empty;
                     _instanceData.XmlEditorClassName = string.Empty;
+                    StoreSettings();
                     UpdateOptionsMenu();
                     return true;
 
@@ -1925,6 +1927,7 @@ namespace BmwDeepObd
                     {
                         _instanceData.XmlEditorPackageName = packageName;
                         _instanceData.XmlEditorClassName = className;
+                        StoreSettings();
                         UpdateOptionsMenu();
                     }
                     break;
@@ -2116,6 +2119,7 @@ namespace BmwDeepObd
                 if (_activityCommon.ShowBatteryWarning(batteryVoltage, adapterSerial))
                 {
                     _instanceData.BatteryWarningShown = true;
+                    StoreSettings();    // store warning voltage
                 }
             }
 
@@ -3326,6 +3330,8 @@ namespace BmwDeepObd
             {
                 _activityCommon.SelectedInterface = ActivityCommon.InterfaceType.None;
             }
+
+            StoreSettings();
         }
 
         private void CompileCode()
@@ -4637,7 +4643,8 @@ namespace BmwDeepObd
                 {
                     _activityCommon.SelectedInterface = ActivityCommon.InterfaceType.Bluetooth;
                 }
-                ClearConfiguration();
+
+                ClearConfiguration();   // settings are store here
                 if (CheckForEcuFiles())
                 {
                     RequestConfigSelect();
@@ -4655,6 +4662,7 @@ namespace BmwDeepObd
             {
                 _instanceData.LastAppState = LastAppState.Init;
                 _instanceData.ConfigFileName = string.Empty;
+                StoreSettings();
                 _configSelectAlertDialog = new AlertDialog.Builder(this)
                     .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                     .SetCancelable(true)
@@ -4709,6 +4717,7 @@ namespace BmwDeepObd
         {
             ActivityCommon.JobReader.Clear();
             _instanceData.ConfigFileName = string.Empty;
+            StoreSettings();
             CreateActionBarTabs();
             UpdateDirectories();
             UpdateOptionsMenu();
