@@ -74,6 +74,7 @@ namespace BmwDeepObd
         {
             public bool MtcAntennaInfoShown { get; set; }
             public bool MtcBtModuleErrorShown { get; set; }
+            public bool MtcBtEscapeModeShown { get; set; }
             public bool MtcErrorShown { get; set; }
             public bool MtcOffline { get; set; }
         }
@@ -462,6 +463,13 @@ namespace BmwDeepObd
                     _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_module_error), Resource.String.alert_title_warning);
                 }
 #endif
+                if (!_instanceData.MtcBtEscapeModeShown && _activityCommon.MtcBtEscapeMode)
+                {
+                    _instanceData.MtcBtEscapeModeShown = true;
+                    string message = string.Format(GetString(Resource.String.bt_mtc_module_escape_mode), _activityCommon.MtcBtModuleName);
+                    _activityCommon.ShowAlert(message, Resource.String.alert_title_info);
+                }
+
                 if (oldOffline != _instanceData.MtcOffline)
                 {
                     ShowScanState(false);
