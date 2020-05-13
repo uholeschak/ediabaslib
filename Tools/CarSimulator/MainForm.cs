@@ -537,9 +537,13 @@ namespace CarSimulator
                 {
                     responseType = CommThread.ResponseType.E61;
                 }
-                if (string.Compare(responseFile, "e90.txt", StringComparison.OrdinalIgnoreCase) == 0)
+                else if (string.Compare(responseFile, "e90.txt", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     responseType = CommThread.ResponseType.E90;
+                }
+                else if (string.Compare(responseFile, "smg2.txt", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    responseType = CommThread.ResponseType.SMG2;
                 }
 
                 if (!ReadResponseFile(Path.Combine(_responseDir, responseFile), conceptType))

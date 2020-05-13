@@ -214,6 +214,7 @@ namespace CarSimulator
             Standard,
             E61,
             E90,
+            SMG2,
         };
 
         private static readonly long TickResolMs = Stopwatch.Frequency/1000;
@@ -4314,6 +4315,13 @@ namespace CarSimulator
                         }
                         break;
 
+                   case ResponseType.SMG2:
+                       if (!ResponseSmg2())
+                       {
+                           useResponseList = true;
+                       }
+                       break;
+
                     default:
                         if (!HandleDynamicUdsIds())
                         {
@@ -6748,6 +6756,57 @@ namespace CarSimulator
             {   // nothing matched, check response list
                 return false;
             }
+            return true;
+        }
+
+        private bool ResponseSmg2()
+        {
+            if (
+                _receiveData[0] == 0x85 &&
+                _receiveData[1] == 0x32 &&
+                _receiveData[2] == 0xF1)
+            {
+                if (
+                    _receiveData[3] == 0x90 &&
+                    _receiveData[4] == 0x42 &&
+                    _receiveData[5] == 0x4D &&
+                    _receiveData[6] == 0x57)
+                {
+                    // seed_key request
+                    // 85 32 F1 90 42 4D 57 XX CRC : AB 32 F1 A0 37 38 34 33 32 36 30 32 46 30 30 FF FF FF FF 31 35 30 35 30 30 30 30 30 30 30 30 30 30 31 30 30 35 32 35 31 31 35 30 33 31 31 E4
+                    byte[] response =
+                    {
+                        0xAB, 0x32, 0xF1, 0xA0, 0x37, 0x38, 0x34, 0x33,
+                        0x32, 0x36, 0x30, 0x32, 0x46, 0x30, 0x30, 0xFF,
+                        0xFF, 0xFF, 0xFF, 0x31, 0x35, 0x30, 0x35, 0x30,
+                        0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30,
+                        0x30, 0x31, 0x30, 0x30, 0x35, 0x32, 0x35, 0x31,
+                        0x31, 0x35, 0x30, 0x33, 0x31, 0x31, 0xE4
+                    };
+
+                    Debug.WriteLine("Seed Key request");
+                    Array.Copy(response, _sendData, response.Length);
+                    ObdSend(_sendData);
+                }
+                else
+                {
+                    // seed_key response
+                    // 85 32 F1 90 91 98 91 97 89 : 82 32 F1 A0 00 45
+                    byte[] response =
+                    {
+                        0x82, 0x32, 0xF1, 0xA0, 0x00, 0x45
+                    };
+
+                    Debug.WriteLine("Seed Key response");
+                    Array.Copy(response, _sendData, response.Length);
+                    ObdSend(_sendData);
+                }
+            }
+            else
+            {
+                return false;
+            }
+
             return true;
         }
 
