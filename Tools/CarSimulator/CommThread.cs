@@ -4111,6 +4111,7 @@ namespace CarSimulator
             }
             recLength += 1; // checksum
 #if false
+            Debug.WriteLine(string.Format("Time: {0}", DateTime.Now.ToString("hh:mm:ss.fff")));
             DebugLogData("Request: ", _receiveData, recLength);
 #endif
             if (!_adsAdapter && !_klineResponder && (_tcpServerDiag == null) && (_pcanHandle == PCANBasic.PCAN_NONEBUS))
