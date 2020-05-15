@@ -125,6 +125,7 @@ namespace EdiabasLib
         protected int AddRecTimeout = 20;
         protected bool EnableFtdiBitBang;
         protected bool ConnectedProtected;
+        protected const int DefaultStdTimeout = 60000;  // 60 sec.
         protected const int EchoTimeout = 100;
         protected const int Kwp1281ByteTimeout = 55;
         protected const int Kwp1281StatusTimeout = 1000;
@@ -604,6 +605,12 @@ namespace EdiabasLib
                         parity = SerialParity.Even;
                         ParTransmitFunc = TransDs2;
                         ParTimeoutStd = (int)CommParameterProtected[5];
+                        if (ParTimeoutStd <= 0)
+                        {
+                            ParTimeoutStd = DefaultStdTimeout;
+                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No timeout specified, using: {0}", ParTimeoutStd);
+                        }
+
                         ParRegenTime = (int)CommParameterProtected[6];
                         ParTimeoutTelEnd = (int)CommParameterProtected[7];
                         if (CommParameterProtected.Length >= 9)
