@@ -406,6 +406,7 @@ namespace EdiabasLib
                     string.Format(Culture, "{0} CommParameter Port={1}, CorrCom={2}, CorrFtdi={3}, RecTimeout={4}, BitBang={5}",
                             InterfaceName, ComPortProtected, DtrTimeCorrCom, DtrTimeCorrFtdi, AddRecTimeout, EnableFtdiBitBang));
 
+                bool checkStdTimeout = false;
                 int baudRate;
                 int dataBits = 8;
                 SerialParity parity;
@@ -503,6 +504,7 @@ namespace EdiabasLib
                         }
                         CommAnswerLenProtected[0] = -2;
                         CommAnswerLenProtected[1] = 0;
+                        checkStdTimeout = true;
                         baudRate = (int)CommParameterProtected[1];
                         parity = SerialParity.Even;
                         ParTransmitFunc = TransDs2;
@@ -534,6 +536,7 @@ namespace EdiabasLib
                         }
                         CommAnswerLenProtected[0] = 1;
                         CommAnswerLenProtected[1] = 0;
+                        checkStdTimeout = true;
                         baudRate = 9600;
                         parity = SerialParity.None;
                         ParTransmitFunc = TransKwp1281;
@@ -569,6 +572,7 @@ namespace EdiabasLib
                         }
                         CommAnswerLenProtected[0] = 52;
                         CommAnswerLenProtected[1] = 0;
+                        checkStdTimeout = true;
                         baudRate = 9600;
                         parity = SerialParity.None;
                         ParTransmitFunc = TransConcept3;
@@ -601,16 +605,11 @@ namespace EdiabasLib
                         }
                         CommAnswerLenProtected[0] = -1;
                         CommAnswerLenProtected[1] = 0;
+                        checkStdTimeout = true;
                         baudRate = (int)CommParameterProtected[1];
                         parity = SerialParity.Even;
                         ParTransmitFunc = TransDs2;
                         ParTimeoutStd = (int)CommParameterProtected[5];
-                        if (ParTimeoutStd <= 0)
-                        {
-                            ParTimeoutStd = DefaultStdTimeout;
-                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No timeout specified, using: {0}", ParTimeoutStd);
-                        }
-
                         ParRegenTime = (int)CommParameterProtected[6];
                         ParTimeoutTelEnd = (int)CommParameterProtected[7];
                         if (CommParameterProtected.Length >= 9)
@@ -756,6 +755,15 @@ namespace EdiabasLib
                     default:
                         EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
                         return;
+                }
+
+                if (checkStdTimeout)
+                {
+                    if (ParTimeoutStd <= 0)
+                    {
+                        ParTimeoutStd = DefaultStdTimeout;
+                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No timeout specified, using: {0}", ParTimeoutStd);
+                    }
                 }
 
                 StartCommThread();
