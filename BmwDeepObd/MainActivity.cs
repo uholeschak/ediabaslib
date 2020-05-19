@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -301,6 +302,7 @@ namespace BmwDeepObd
             {
                 _httpClient = new HttpClient(new HttpClientHandler()
                 {
+                    SslProtocols = ActivityCommon.DefaultSslProtocols,
                     ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
                 });
             }
