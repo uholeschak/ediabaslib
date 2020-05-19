@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Mail;
 using System.Reflection;
+using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -245,6 +246,7 @@ namespace BmwDeepObd
         public const long UpdateCheckDelayDefault = TimeSpan.TicksPerDay;
         public const int FileIoRetries = 10;
         public const int FileIoRetryDelay = 1000;
+        public const SslProtocols DefaultSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13;
         public const string MtcBtAppName = @"com.microntek.bluetooth";
         public const string DefaultLang = "en";
         public const string TraceFileName = "ifh.trc.zip";
@@ -4007,6 +4009,7 @@ namespace BmwDeepObd
             {
                 _sendHttpClient = new HttpClient(new HttpClientHandler()
                 {
+                    SslProtocols = DefaultSslProtocols,
                     ServerCertificateCustomValidationCallback = (msg, certificate2, arg3, arg4) => true
                 });
             }
@@ -4803,6 +4806,7 @@ namespace BmwDeepObd
                 {
                     _updateHttpClient = new HttpClient(new HttpClientHandler()
                     {
+                        SslProtocols = DefaultSslProtocols,
                         ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
                     });
                 }
@@ -6036,6 +6040,7 @@ namespace BmwDeepObd
             {
                 _translateHttpClient = new HttpClient(new HttpClientHandler()
                 {
+                    SslProtocols = DefaultSslProtocols,
                     ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
                 });
             }
