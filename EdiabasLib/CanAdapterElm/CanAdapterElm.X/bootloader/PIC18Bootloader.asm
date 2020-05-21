@@ -241,11 +241,11 @@ BootloaderBreakCheck:
 CheckApplication:
     ; check for adapter type
     movlw   low(END_FLASH - 4)
-    movwf   TBLPTRL
+    movwf   TBLPTRL, ACCESS
     movlw   high(END_FLASH - 4)
-    movwf   TBLPTRH
+    movwf   TBLPTRH, ACCESS
     movlw   upper(END_FLASH - 4)
-    movwf   TBLPTRU
+    movwf   TBLPTRU, ACCESS
     tblrd   *+
     movlw   low(ADAPTER_TYPE)
     xorwf   TABLAT, w
@@ -284,50 +284,50 @@ StableWait:
 #endif
     ; [UH] test if checkum is correct
     movlw   low(AppVector)
-    movwf   TBLPTRL
+    movwf   TBLPTRL, ACCESS
     movlw   high(AppVector)
-    movwf   TBLPTRH
+    movwf   TBLPTRH, ACCESS
     movlw   upper(AppVector)
-    movwf   TBLPTRU
+    movwf   TBLPTRU, ACCESS
 
     movlw   low(END_FLASH - AppVector - 2)
-    movwf   DATA_COUNTL
+    movwf   DATA_COUNTL, ACCESS
     movlw   high(END_FLASH - AppVector - 2)
-    movwf   DATA_COUNTH
+    movwf   DATA_COUNTH, ACCESS
 
-    clrf    CRCL
-    clrf    CRCH
+    clrf    CRCL, ACCESS
+    clrf    CRCH, ACCESS
 CalcCheckum:
     clrwdt
     tblrd   *+                  ; read from FLASH memory into TABLAT
-    movf    TABLAT, w
-    addwf   CRCL, f
+    movf    TABLAT, w, ACCESS
+    addwf   CRCL, f, ACCESS
     movlw   0
-    addwfc  CRCH, f
+    addwfc  CRCH, f, ACCESS
 
-    decf    DATA_COUNTL, f      ; decrement counter
+    decf    DATA_COUNTL, f, ACCESS      ; decrement counter
     movlw   0
-    subwfb  DATA_COUNTH, f
+    subwfb  DATA_COUNTH, f, ACCESS
 
-    movf    DATA_COUNTL, w      ; DATA_COUNTH:DATA_COUNTH == 0?
-    iorwf   DATA_COUNTH, w
+    movf    DATA_COUNTL, w, ACCESS      ; DATA_COUNTH:DATA_COUNTH == 0?
+    iorwf   DATA_COUNTH, w, ACCESS
     bnz     CalcCheckum         ; no, loop
     ; compare checksum
     tblrd   *+
-    movf    TABLAT, w
-    xorwf   CRCL, w
+    movf    TABLAT, w, ACCESS
+    xorwf   CRCL, w, ACCESS
     bnz     BootloadMode
     tblrd   *+
-    movf    TABLAT, w
-    xorwf   CRCH, w
+    movf    TABLAT, w, ACCESS
+    xorwf   CRCH, w, ACCESS
     bnz     BootloadMode
 
 #if (ADAPTER_TYPE == 0x06) || (ADAPTER_TYPE == 0x07)
     ; test if PB5 is low
-    btfss   PORTB, 5
+    btfss   PORTB, 5, ACCESS
 #else
     ; test if PB4 is low
-    btfss   PORTB, 4
+    btfss   PORTB, 4, ACCESS
 #endif
     bra     BootloadMode
 
@@ -336,21 +336,21 @@ CheckAppVector:
     ; If we read 0xFFFF, assume that the application firmware has
     ; not been programmed yet, so don't try going into application mode.
     movlw   low(AppVector)
-    movwf   TBLPTRL
+    movwf   TBLPTRL, ACCESS
     movlw   high(AppVector)
-    movwf   TBLPTRH
+    movwf   TBLPTRH, ACCESS
     ;bra     CheckAppVector2
 
 ;CheckAppVector2:
     movlw   upper(AppVector)
-    movwf   TBLPTRU     
+    movwf   TBLPTRU, ACCESS
     tblrd   *+                  ; read instruction from program memory
-    incfsz  TABLAT, W           ; if the lower byte != 0xFF, 
+    incfsz  TABLAT, W, ACCESS   ; if the lower byte != 0xFF, 
 GotoAppVector:
     goto    AppVector           ; run application.
 
     tblrd   *+                  ; read instruction from program memory
-    incfsz  TABLAT, W           ; if the lower byte == 0xFF but upper byte != 0xFF,
+    incfsz  TABLAT, W, ACCESS   ; if the lower byte == 0xFF but upper byte != 0xFF,
     bra     GotoAppVector       ; run application.
     ; otherwise, assume application firmware is not present because we read a NOP (0xFFFF).
     ; fall through to bootloader mode...
@@ -358,7 +358,7 @@ BootloadMode:
 	; end BOOTLOADER_ADDRESS == 0 ******************************************
 #endif
     lfsr    _FSR2_, 0           ; for compatibility with Extended Instructions mode.
-    bcf     _RI_		; [UH] clear hardware reset bit
+    bcf     _RI_, ACCESS	; [UH] clear hardware reset bit
 
 #ifdef USE_MAX_INTOSC
     movlw   0x70 ;b'01110000'         ; set INTOSC to maximum speed (usually 8MHz)
@@ -382,10 +382,10 @@ BootloadMode:
 #endif
 
 #ifdef INVERT_UART
-    btfsc   RXPORT, RXPIN       ; wait for RX pin to go IDLE
+    btfsc   RXPORT, RXPIN, ACCESS       ; wait for RX pin to go IDLE
     bra     $-2
 #else
-    btfss   RXPORT, RXPIN       ; wait for RX pin to go IDLE
+    btfss   RXPORT, RXPIN, ACCESS       ; wait for RX pin to go IDLE
     bra     $-2
 #endif
 
@@ -415,9 +415,9 @@ BootloadMode:
 #endif
 
     movlw   0x90 ;b'10010000'         ; Setup UART
-    movwf   UxRCSTA
+    movwf   UxRCSTA, ACCESS
     movlw   0x26 ;b'00100110'         ; BRGH = 1, TXEN = 1
-    movwf   UxTXSTA
+    movwf   UxTXSTA, ACCESS
 
 #ifdef INVERT_UART
     bsf     UxBAUDCON, RXDTP
@@ -430,7 +430,7 @@ BootloadMode:
 #else
     movlw   0x03 ;b'00000011'         ; 1:16 prescaler - thus we only have to divide by 2 later on.
 #endif
-    movwf   T0CON
+    movwf   T0CON, ACCESS
 
 #ifdef PICDEM_LCD2
     bsf     LATB, LATB0         ; PICDEM LCD 2 demoboard requires RB0 high to enable MAX3221 TX output to PC.
@@ -438,15 +438,15 @@ BootloadMode:
 #endif
     ; [UH] switch on both LED
 #if (ADAPTER_TYPE == 0x06) || (ADAPTER_TYPE == 0x07)
-    bcf     _LATB4_
-    bcf     _LATB6_
-    bcf     _TRISB4_
-    bcf     _TRISB6_
+    bcf     _LATB4_, ACCESS
+    bcf     _LATB6_, ACCESS
+    bcf     _TRISB4_, ACCESS
+    bcf     _TRISB6_, ACCESS
 #else
-    bcf     _LATB6_
-    bcf     _LATB7_
-    bcf     _TRISB6_
-    bcf     _TRISB7_
+    bcf     _LATB6_, ACCESS
+    bcf     _LATB7_, ACCESS
+    bcf     _TRISB6_, ACCESS
+    bcf     _TRISB7_, ACCESS
 #endif
 
 ; *****************************************************************************
@@ -468,20 +468,20 @@ DoAutoBaud:
 ;   SPBRG = (p / 32) - 1    BRGH = 1, BRG16 = 0
 ;   SPBRG = (p / 8) - 1     BRGH = 1, BRG16 = 1
 
-    bcf     UxRCSTA, CREN       ; Stop receiving
-    movf    UxRCREG, W          ; Empty the buffer
-    movf    UxRCREG, W
+    bcf     UxRCSTA, CREN, ACCESS       ; Stop receiving
+    movf    UxRCREG, W, ACCESS          ; Empty the buffer
+    movf    UxRCREG, W, ACCESS
 
 RetryAutoBaud:
-    clrf    TMR0H               ; reset timer count value
-    clrf    TMR0L
-    bcf     _TMR0IF_
+    clrf    TMR0H, ACCESS               ; reset timer count value
+    clrf    TMR0L, ACCESS
+    bcf     _TMR0IF_, ACCESS
     rcall   WaitForRise         ; wait for a start bit to pass by
-    bsf     _TMR0ON_		; start timer counting for entire D7..D0 data bit period.
+    bsf     _TMR0ON_, ACCESS	; start timer counting for entire D7..D0 data bit period.
     rcall   WaitForRise         ; wait for stop bit
-    bcf     _TMR0ON_		; stop the timer from counting further. 
+    bcf     _TMR0ON_, ACCESS	; stop the timer from counting further. 
 
-    btfsc   _TMR0IF_	        ; if TMR0 overflowed, we did not get a good baud capture
+    btfsc   _TMR0IF_, ACCESS    ; if TMR0 overflowed, we did not get a good baud capture
     bra     RetryAutoBaud       ; try again
 
     #ifdef BRG16
@@ -491,13 +491,13 @@ RetryAutoBaud:
     #else 
     movff   TMR0L, UxSPBRG      ; warning: must read TMR0L before TMR0H holds real data
     ; TMR0H:TMR0L holds (p / 16).
-    rrcf    TMR0H, w            ; divide by 2
-    rrcf    UxSPBRG, F            
-    btfss   _CARRY_		; rounding
-    decf    UxSPBRG, F    
+    rrcf    TMR0H, w, ACCESS    ; divide by 2
+    rrcf    UxSPBRG, F, ACCESS
+    btfss   _CARRY_, ACCESS	; rounding
+    decf    UxSPBRG, F, ACCESS
     #endif
 
-    bsf     UxRCSTA, CREN       ; start receiving
+    bsf     UxRCSTA, CREN, ACCESS       ; start receiving
 
 WaitForHostCommand:
     rcall   ReadHostByte        ; get start of transmission <STX>
@@ -538,12 +538,12 @@ ReceiveDataLoop:
     bz      StartOfLine             ; unexpected STX: abort packet and start over.
 
 NoSTX:
-    movf    RXDATA, W
+    movf    RXDATA, W, ACCESS
     xorlw   ETX                     ; Check for a ETX
     bz      VerifyPacketCRC         ; Yes, verify CRC
 
 NoETX:
-    movf    RXDATA, W
+    movf    RXDATA, W, ACCESS
     xorlw   DLE                     ; Check for a DLE
     bnz     AppendDataBuffer
 
@@ -555,42 +555,42 @@ AppendDataBuffer:
 
 VerifyPacketCRC:
     lfsr    _FSR1_, COMMAND
-    clrf    CRCL
-    clrf    CRCH
+    clrf    CRCL, ACCESS
+    clrf    CRCH, ACCESS
     movff   POSTDEC0, PRODH         ; Save host packet's CRCH to PRODH for later comparison
                                     ; CRCL is now available as INDF0
 VerifyPacketCrcLoop:
-    movf    POSTINC1, w
+    movf    POSTINC1, w, ACCESS
     rcall   AddCrc                  ; add new data to the CRC
 
-    movf    FSR1H, w
-    cpfseq  FSR0H
+    movf    FSR1H, w, ACCESS
+    cpfseq  FSR0H, ACCESS
     bra     VerifyPacketCrcLoop     ; we aren't at the end of the received data yet, loop
-    movf    FSR1L, w
-    cpfseq  FSR0L
+    movf    FSR1L, w, ACCESS
+    cpfseq  FSR0L, ACCESS
     bra     VerifyPacketCrcLoop     ; we aren't at the end of the received data yet, loop
 
-    movf    CRCH, w
-    cpfseq  PRODH
+    movf    CRCH, w, ACCESS
+    cpfseq  PRODH, ACCESS
     bra     DoAutoBaud              ; invalid CRC, reset baud rate generator to re-sync with host
-    movf    CRCL, w
-    cpfseq  INDF0
+    movf    CRCL, w, ACCESS
+    cpfseq  INDF0, ACCESS
     bra     DoAutoBaud              ; invalid CRC, reset baud rate generator to re-sync with host
 
 ; ***********************************************
 ; Pre-setup, common to all commands.
-    clrf    CRCL
-    clrf    CRCH
+    clrf    CRCL, ACCESS
+    clrf    CRCH, ACCESS
 
-    movf    ADDRESS_L, W            ; Set all possible pointers
-    movwf   TBLPTRL
+    movf    ADDRESS_L, W, ACCESS            ; Set all possible pointers
+    movwf   TBLPTRL, ACCESS
 #ifdef EEADR
-    movwf   EEADR
+    movwf   EEADR, ACCESS
 #endif
-    movf    ADDRESS_H, W
-    movwf   TBLPTRH
+    movf    ADDRESS_H, W, ACCESS
+    movwf   TBLPTRH, ACCESS
 #ifdef EEADRH
-    movwf   EEADRH
+    movwf   EEADRH, ACCESS
 #endif
     movff   ADDRESS_U, TBLPTRU
     lfsr    _FSR0_, PACKET_DATA
@@ -602,7 +602,7 @@ VerifyPacketCrcLoop:
 ; Test the command field and sub-command.
 CheckCommand:
     movlw   0x0A
-    cpfslt  COMMAND
+    cpfslt  COMMAND, ACCESS
     bra     DoAutoBaud          ; invalid command - reset baud generator to re-sync with host
 
     ; This jump table must exist entirely within one 256 byte block of program memory.
@@ -615,9 +615,9 @@ CheckCommand:
 #endif
 #endif
 JUMPTABLE_BEGIN:
-    movf    PCL, w              ; 0 do a read of PCL to set PCLATU:PCLATH to current program counter.
-    rlncf   COMMAND, W          ; 2 multiply COMMAND by 2 (each BRA instruction takes 2 bytes on PIC18)
-    addwf   PCL, F              ; 4 Jump in command jump table based on COMMAND from host
+    movf    PCL, w, ACCESS      ; 0 do a read of PCL to set PCLATU:PCLATH to current program counter.
+    rlncf   COMMAND, W, ACCESS  ; 2 multiply COMMAND by 2 (each BRA instruction takes 2 bytes on PIC18)
+    addwf   PCL, F, ACCESS      ; 4 Jump in command jump table based on COMMAND from host
     bra     BootloaderInfo      ; 6 00h
     bra     ReadFlash           ; 8 01h
     bra     VerifyFlash         ; 10 02h
@@ -657,14 +657,14 @@ WaitForRise:
     clrwdt
 
 WaitForRiseLoop:
-    btfsc   _TMR0IF_	    ; if TMR0 overflowed, we did not get a good baud capture
+    btfsc   _TMR0IF_, ACCESS	    ; if TMR0 overflowed, we did not get a good baud capture
     return                  ; abort
 
-    btfsc   RXPORT, RXPIN   ; Wait for a falling edge
+    btfsc   RXPORT, RXPIN, ACCESS   ; Wait for a falling edge
     bra     WaitForRiseLoop
 
 WtSR:
-    btfss   RXPORT, RXPIN   ; Wait for rising edge
+    btfss   RXPORT, RXPIN, ACCESS   ; Wait for rising edge
     bra     WtSR
     return
 	; end #ifdef INVERT_UART
@@ -674,21 +674,21 @@ WtSR:
 ; 16-bit CCITT CRC
 ; Adds WREG byte to the CRC checksum CRCH:CRCL. WREG destroyed on return.
 AddCrc:                           ; Init: CRCH = HHHH hhhh, CRCL = LLLL llll
-    xorwf   CRCH, w               ; Pre:  HHHH hhhh     WREG =      IIII iiii
+    xorwf   CRCH, w, ACCESS       ; Pre:  HHHH hhhh     WREG =      IIII iiii
     movff   CRCL, CRCH            ; Pre:  LLLL llll     CRCH =      LLLL llll
-    movwf   CRCL                  ; Pre:  IIII iiii     CRCL =      IIII iiii
-    swapf   WREG                  ; Pre:  IIII iiii     WREG =      iiii IIII
+    movwf   CRCL, ACCESS          ; Pre:  IIII iiii     CRCL =      IIII iiii
+    swapf   WREG, ACCESS	  ; Pre:  IIII iiii     WREG =      iiii IIII [UH] changed to ACCESS type
     andlw   0x0F                  ; Pre:  iiii IIII     WREG =      0000 IIII
-    xorwf   CRCL, f               ; Pre:  IIII iiii     CRCL =      IIII jjjj
-    swapf   CRCL, w               ; Pre:  IIII jjjj     WREG =      jjjj IIII
+    xorwf   CRCL, f, ACCESS       ; Pre:  IIII iiii     CRCL =      IIII jjjj
+    swapf   CRCL, w, ACCESS       ; Pre:  IIII jjjj     WREG =      jjjj IIII
     andlw   0xF0                  ; Pre:  jjjj IIII     WREG =      jjjj 0000
-    xorwf   CRCH, f               ; Pre:  LLLL llll     CRCH =      MMMM llll
-    swapf   CRCL, w               ; Pre:  IIII jjjj     WREG =      jjjj IIII
-    rlncf   WREG, w               ; Pre:  jjjj IIII     WREG =      jjjI IIIj
-    xorwf   CRCH, f               ; Pre:  MMMM llll     CRCH =      XXXN mmmm
+    xorwf   CRCH, f, ACCESS       ; Pre:  LLLL llll     CRCH =      MMMM llll
+    swapf   CRCL, w, ACCESS       ; Pre:  IIII jjjj     WREG =      jjjj IIII
+    rlncf   WREG, w, ACCESS       ; Pre:  jjjj IIII     WREG =      jjjI IIIj
+    xorwf   CRCH, f, ACCESS       ; Pre:  MMMM llll     CRCH =      XXXN mmmm
     andlw   0xE0 ;b'11100000'     ; Pre:  jjjI IIIj     WREG =      jjj0 0000
-    xorwf   CRCH, f               ; Pre:  jjj0 0000     CRCH =      MMMN mmmm
-    xorwf   CRCL, f               ; Pre:  MMMN mmmm     CRCL =      JJJI jjjj
+    xorwf   CRCH, f, ACCESS       ; Pre:  jjj0 0000     CRCH =      MMMN mmmm
+    xorwf   CRCL, f, ACCESS       ; Pre:  MMMN mmmm     CRCL =      JJJI jjjj
     return
 
 ; ***********************************************
@@ -710,31 +710,31 @@ BootInfoBlockEnd:
 ; Out:  <STX><BOOTBYTESL><BOOTBYTESH><VERL><VERH><STARTBOOTL><STARTBOOTH><STARTBOOTU><0x00><CRCL><CRCH><ETX>
 BootloaderInfo:
     movlw   low(BootInfoBlock)
-    movwf   TBLPTRL
+    movwf   TBLPTRL, ACCESS
     movlw   high(BootInfoBlock)
-    movwf   TBLPTRH
+    movwf   TBLPTRH, ACCESS
     movlw   upper(BootInfoBlock)
-    movwf   TBLPTRU
+    movwf   TBLPTRU, ACCESS
 
     movlw   (BootInfoBlockEnd - BootInfoBlock)
-    movwf   DATA_COUNTL
-    clrf    DATA_COUNTH
+    movwf   DATA_COUNTL, ACCESS
+    clrf    DATA_COUNTH, ACCESS
     ;; fall through to ReadFlash code -- send Bootloader Information Block from FLASH.
 
 ; In:   <STX>[<0x01><ADDRL><ADDRH><ADDRU><0x00><BYTESL><BYTESH>]<CRCL><CRCH><ETX>
 ; Out:  <STX>[<DATA>...]<CRCL><CRCH><ETX>
 ReadFlash:
     tblrd   *+                  ; read from FLASH memory into TABLAT
-    movf    TABLAT, w
+    movf    TABLAT, w, ACCESS
     rcall   SendEscapeByte
     rcall   AddCrc
 
-    decf    DATA_COUNTL, f      ; decrement counter
+    decf    DATA_COUNTL, f, ACCESS      ; decrement counter
     movlw   0
-    subwfb  DATA_COUNTH, f
+    subwfb  DATA_COUNTH, f, ACCESS
 
-    movf    DATA_COUNTL, w      ; DATA_COUNTH:DATA_COUNTH == 0?
-    iorwf   DATA_COUNTH, w
+    movf    DATA_COUNTL, w, ACCESS      ; DATA_COUNTH:DATA_COUNTH == 0?
+    iorwf   DATA_COUNTH, w, ACCESS
     bnz     ReadFlash           ; no, loop
     bra     SendChecksum        ; yes, send end of packet
 
@@ -742,30 +742,30 @@ ReadFlash:
 ; Out:  <STX>[<CRCL1><CRCH1>...<CRCLn><CRCHn>]<ETX>
 VerifyFlash:
     tblrd   *+
-    movf    TABLAT, w    
+    movf    TABLAT, w, ACCESS
     rcall   AddCrc
 
-    movf    TBLPTRL, w          ; have we crossed into the next block?
+    movf    TBLPTRL, w, ACCESS          ; have we crossed into the next block?
 #if ERASE_FLASH_BLOCKSIZE > 0xFF
     bnz     VerifyFlash
-    movf    TBLPTRH, w
+    movf    TBLPTRH, w, ACCESS
     andlw   high(ERASE_FLASH_BLOCKSIZE-1)
 #else
     andlw   (ERASE_FLASH_BLOCKSIZE-1)    
 #endif
     bnz     VerifyFlash
 
-    movf    CRCL, w
+    movf    CRCL, w, ACCESS
     call    SendEscapeByte
-    movf    CRCH, w
+    movf    CRCH, w, ACCESS
     call    SendEscapeByte
 
-    decf    DATA_COUNTL, f      ; decrement counter
+    decf    DATA_COUNTL, f, ACCESS      ; decrement counter
     movlw   0
-    subwfb  DATA_COUNTH, f
+    subwfb  DATA_COUNTH, f, ACCESS
 
-    movf    DATA_COUNTL, w      ; DATA_COUNTH:DATA_COUNTH == 0?
-    iorwf   DATA_COUNTH, w
+    movf    DATA_COUNTL, w, ACCESS      ; DATA_COUNTH:DATA_COUNTH == 0?
+    iorwf   DATA_COUNTH, w, ACCESS
     bnz     VerifyFlash         ; no, loop
     bra     SendETX             ; yes, send end of packet
 
@@ -860,7 +860,7 @@ EraseAddressOkay:
 #else
     movlw   0x14 ;b'00010100'         ; setup FLASH erase for J device (no EEPROM bit)
 #endif
-    movwf   EECON1
+    movwf   EECON1, ACCESS
 
     rcall   StartWrite          ; erase the page
 
@@ -868,18 +868,18 @@ NextEraseBlock:
     ; Decrement address by erase block size
 #if ERASE_FLASH_BLOCKSIZE >= 0x100
     movlw   high(ERASE_FLASH_BLOCKSIZE)
-    subwf   TBLPTRH, F
-    clrf    WREG
-    subwfb  TBLPTRU, F
+    subwf   TBLPTRH, F, ACCESS
+    clrf    WREG, ACCESS
+    subwfb  TBLPTRU, F, ACCESS
 #else
     movlw   ERASE_FLASH_BLOCKSIZE
-    subwf   TBLPTRL, F
-    clrf    WREG
-    subwfb  TBLPTRH, F
-    subwfb  TBLPTRU, F
+    subwf   TBLPTRL, F, ACCESS
+    clrf    WREG, ACCESS
+    subwfb  TBLPTRH, F, ACCESS
+    subwfb  TBLPTRU, F, ACCESS
 #endif
 
-    decfsz  DATA_COUNTL, F
+    decfsz  DATA_COUNTL, F, ACCESS
     bra     EraseFlash    
     bra     SendAcknowledge     ; All done, send acknowledgement packet
 
@@ -974,13 +974,13 @@ WriteAddressOkay:
 #else
     movlw   0x04 ;b'00000100'         ; Setup FLASH writes for J device (no EEPROM bit)
 #endif
-    movwf   EECON1
+    movwf   EECON1, ACCESS
 
 LoadHoldingRegisters:
     movff   POSTINC0, TABLAT    ; Load the holding registers
     pmwtpi                      ; Same as tblwt *+
 
-    movf    TBLPTRL, w          ; have we crossed into the next write block?
+    movf    TBLPTRL, w, ACCESS  ; have we crossed into the next write block?
     andlw   (WRITE_FLASH_BLOCKSIZE-1)
     bnz     LoadHoldingRegisters; Not finished writing holding registers, repeat
 
@@ -988,7 +988,7 @@ LoadHoldingRegisters:
     rcall   StartWrite          ; initiate a page write
     tblrd   *+                  ; Restore pointer for loading holding registers with next block
 
-    decfsz  DATA_COUNTL, F      
+    decfsz  DATA_COUNTL, F, ACCESS
     bra     WriteFlash          ; Not finished writing all blocks, repeat
     bra     SendAcknowledge     ; all done, send ACK packet
 
@@ -1073,15 +1073,15 @@ WriteEepromLoop:
     #ifndef USE_SOFTCONFIGWP
 WriteConfig:
     movlw   0xC4 ;b'11000100'
-    movwf   EECON1
+    movwf   EECON1, ACCESS
     tblrd   *               ; read existing value from config memory
 
 WriteConfigLoop:
-    movf    POSTINC0, w
-    cpfseq  TABLAT          ; is the proposed value already the same as existing value?
+    movf    POSTINC0, w, ACCESS
+    cpfseq  TABLAT, ACCESS  ; is the proposed value already the same as existing value?
     rcall   TableWriteWREG  ; write config memory only if necessary (save time and endurance)
     tblrd   +*              ; increment table pointer to next address and read existing value
-    decfsz  DATA_COUNTL, F
+    decfsz  DATA_COUNTL, F, ACCESS
     bra     WriteConfigLoop ; If more data available in packet, keep looping
 
     bra     SendAcknowledge ; Send acknowledge
@@ -1115,17 +1115,17 @@ WriteEeprom:
 #endif
 
 SendAcknowledge:
-    clrf    EECON1              ; inhibit write cycles to FLASH memory
+    clrf    EECON1, ACCESS      ; inhibit write cycles to FLASH memory
 
-    movf    COMMAND, w
+    movf    COMMAND, w, ACCESS
     rcall   SendEscapeByte      ; Send only the command byte (acknowledge packet)
     rcall   AddCrc
 
 SendChecksum:
-    movf    CRCL, W
+    movf    CRCL, W, ACCESS
     rcall   SendEscapeByte
 
-    movf    CRCH, W
+    movf    CRCH, W, ACCESS
     rcall   SendEscapeByte
 
 SendETX:
@@ -1142,16 +1142,16 @@ SendETX:
 ; Write a byte to the serial port while escaping control characters with a DLE
 ; first.
 SendEscapeByte:
-    movwf   TXDATA          ; Save the data
+    movwf   TXDATA, ACCESS  ; Save the data
  
     xorlw   STX             ; Check for a STX
     bz      WrDLE           ; No, continue WrNext
 
-    movf    TXDATA, W       
+    movf    TXDATA, W, ACCESS
     xorlw   ETX             ; Check for a ETX
     bz      WrDLE           ; No, continue WrNext
 
-    movf    TXDATA, W       
+    movf    TXDATA, W, ACCESS
     xorlw   DLE             ; Check for a DLE
     bnz     WrNext          ; No, continue WrNext
 
@@ -1160,14 +1160,14 @@ WrDLE:
     rcall   SendHostByte
 
 WrNext:
-    movf    TXDATA, W       ; Then send STX
+    movf    TXDATA, W, ACCESS       ; Then send STX
 
 SendHostByte:
     clrwdt
-    btfss   _UxTXIF_	    ; Write only if TXREG is ready
+    btfss   _UxTXIF_, ACCESS	    ; Write only if TXREG is ready
     bra     $-2
     
-    movwf   UxTXREG           ; Start sending
+    movwf   UxTXREG, ACCESS         ; Start sending
 
     return
 ; *****************************************************************************
@@ -1177,16 +1177,16 @@ SendHostByte:
 
 ; *****************************************************************************
 ReadHostByte:
-    btfsc   UxRCSTA, OERR       ; Reset on overun
+    btfsc   UxRCSTA, OERR, ACCESS       ; Reset on overun
     reset
 
 WaitForHostByte:
     clrwdt
-    btfss   _UxRCIF_		; Wait for data from RS232
+    btfss   _UxRCIF_, ACCESS		; Wait for data from RS232
     bra     WaitForHostByte
 
-    movf    UxRCREG, W          ; Save the data
-    movwf   RXDATA
+    movf    UxRCREG, W, ACCESS          ; Save the data
+    movwf   RXDATA, ACCESS
  
     return
 ; *****************************************************************************
@@ -1194,21 +1194,21 @@ WaitForHostByte:
     reset                       ; this code -should- never be executed, but 
     reset                       ; just in case of errant execution or buggy
     reset                       ; firmware, these instructions may protect
-    clrf    EECON1              ; against accidental erase/write operations.
+    clrf    EECON1, ACCESS      ; against accidental erase/write operations.
 
 ; *****************************************************************************
 ; Unlock and start the write or erase sequence.
 TableWriteWREG:
-    movwf   TABLAT
+    movwf   TABLAT, ACCESS
     tblwt   *
 
 StartWrite:
     clrwdt
 
     movlw   0x55            ; Unlock
-    movwf   EECON2
+    movwf   EECON2, ACCESS
     movlw   0xAA
-    movwf   EECON2
+    movwf   EECON2, ACCESS
     bsf     EECON1, WR      ; Start the write
     nop
 
