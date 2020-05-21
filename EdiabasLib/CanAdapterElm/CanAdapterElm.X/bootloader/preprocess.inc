@@ -45,7 +45,7 @@ DigitalInput macro
         bcf     ANSELC, ANSC7	; Digital input enable on RC7/RX pin for PIC18F46K22 family
     #endif
 #endif
-    endm        
+    endm
 
 pmwtpi macro                        ; tblwt*+ macro for PIC18Fxx20 bug
 #ifdef TBLWT_BUG
@@ -66,29 +66,35 @@ pmwtpi macro                        ; tblwt*+ macro for PIC18Fxx20 bug
     #ifdef PORTC
         #define RXPORT PORTC
     #else
-        #define RXPORT PORTB    ; PIC18F1220, PIC18F1320
+				; PIC18F1220, PIC18F1320
+    #define RXPORT PORTB
     #endif
 #endif
 
 #ifndef RXPIN
     #ifdef PORTC
-        #define RXPIN 7            ; most PIC18's have RX on RC7
+				; most PIC18's have RX on RC7
+    #define RXPIN 0x7
     #else
-        #define RXPIN 4            ; PIC18F1220, PIC18F1320 have RX on RB4
+				; PIC18F1220, PIC18F1320 have RX on RB4
+        #define RXPIN 0x4
     #endif
 #endif
 
 #ifdef BRG16
     #ifndef SPBRGH
-        #define SPBRGH SPBRGH1      ; PIC18F87J10 doesn't define SPBRGH by default.
+				; PIC18F87J10 doesn't define SPBRGH by default.
+    #define SPBRGH SPBRGH1
     #endif
 
     #ifndef BAUDCON
         #ifdef BAUDCON1
-            #define BAUDCON BAUDCON1    ; PIC18F85J90 / PIC18F84J90
+					; PIC18F85J90 / PIC18F84J90
+            #define BAUDCON BAUDCON1
         #else
             #ifdef BAUDCTL
-                #define BAUDCON BAUDCTL ; PIC18F1220, PIC18F1320
+					; PIC18F1220, PIC18F1320
+                #define BAUDCON BAUDCTL
             #endif
         #endif
     #endif
@@ -96,31 +102,36 @@ pmwtpi macro                        ; tblwt*+ macro for PIC18Fxx20 bug
 
 #ifndef RCREG
     #ifdef RCREG1
-        #define RCREG RCREG1        ; PIC18F85J90/PIC18F84J90
+					; PIC18F85J90/PIC18F84J90
+        #define RCREG RCREG1
     #endif
 #endif
 
 #ifndef TXIF
     #ifdef TX1IF
-        #define TXIF TX1IF          ; PIC18F97J60 doesn't define TXIF by default
+					; PIC18F97J60 doesn't define TXIF by default
+        #define TXIF TX1IF
     #endif
 #endif
 
 #ifndef RCIF
     #ifdef RC1IF
-        #define RCIF RC1IF          ; Not a problem on PIC18F97J60, but just in case future parts might need it
+					; Not a problem on PIC18F97J60, but just in case future parts might need it
+        #define RCIF RC1IF
     #endif
 #endif
 
 #ifndef RXDTP
     #ifdef DTRXP
-        #define RXDTP DTRXP         ; PIC18F14K50 doesn't define RXDTP, instead they call it DTRXP
+					; PIC18F14K50 doesn't define RXDTP, instead they call it DTRXP
+        #define RXDTP DTRXP
     #endif
 #endif
 
 #ifndef TXCKP
     #ifdef CKTXP
-        #define TXCKP CKTXP         ; PIC18F14K50
+					; PIC18F14K50
+        #define TXCKP CKTXP
     #endif
 #endif
 
@@ -139,7 +150,7 @@ pmwtpi macro                        ; tblwt*+ macro for PIC18Fxx20 bug
     #endif
 #else
     #if (BOOTLOADERSIZE % ERASE_FLASH_BLOCKSIZE) == 0
-        #define BOOTBLOCKSIZE BOOTLOADERSIZE     
+        #define BOOTBLOCKSIZE BOOTLOADERSIZE
     #else
         #define BOOTBLOCKSIZE (BOOTLOADERSIZE / ERASE_FLASH_BLOCKSIZE + 1) * ERASE_FLASH_BLOCKSIZE
     #endif

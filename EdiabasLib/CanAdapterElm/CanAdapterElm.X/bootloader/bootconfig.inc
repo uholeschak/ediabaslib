@@ -53,18 +53,22 @@
 
 ; Bootloader must start at the beginning of a FLASH Erase Block. If unspecified,
 ; bootloader will automatically be located at the end of program memory address space.
-#define BOOTLOADER_ADDRESS   0  ; bootloader at beginning, application start/ISR vectors require remapping
+				; bootloader at beginning, application start/ISR vectors require remapping
+#define BOOTLOADER_ADDRESS   0x0000
 ;#define BOOTLOADER_ADDRESS   END_FLASH - (ERASE_FLASH_BLOCKSIZE * 20)  ; useful for running under debugger (debug executive wants to reside at the end of memory space too)
 ;#define BOOTLOADER_ADDRESS  (END_FLASH - ERASE_FLASH_BLOCKSIZE) ; use on J parts to locate inside flash config erase block
 
 #ifdef BOOTLOADER_ADDRESS
-  #if BOOTLOADER_ADDRESS == 0
+  #if BOOTLOADER_ADDRESS == 0x0000
     ; For Bootloader located at program memory address 0, the application firmware must 
     ; provide remapped reset and interrupt vectors outside of the Boot Block. The following 
     ; #defines tell the bootloader firmware where application entry points are to be expected:
-    #define AppVector           0x800   ; application start up code should be located here.
-    #define AppHighIntVector    0x808   ; application high priority interrupt should be located here
-    #define AppLowIntVector     0x818   ; application low priority interrupt should be located here
+					; application start up code should be located here.
+    #define AppVector           0x800
+					; application high priority interrupt should be located here
+    #define AppHighIntVector    0x808
+					; application low priority interrupt should be located here
+    #define AppLowIntVector     0x818
   #endif
 #endif
 
@@ -136,7 +140,9 @@
 ; If you see the bootloader is reserving more FLASH memory than it really needs (you'll
 ; see a bunch of FFFF/NOP instructions at the end of the bootloader memory region),
 ; you can try reducing BOOTLOADERSIZE.
-#define BOOTLOADERSIZE  .708
+					; 708
+#define BOOTLOADERSIZE  0x2C4
 
-#define MAJOR_VERSION   .1              ; Bootloader Firmware Version
-#define MINOR_VERSION   .5
+					; Bootloader Firmware Version
+#define MAJOR_VERSION   0x1
+#define MINOR_VERSION   0x5

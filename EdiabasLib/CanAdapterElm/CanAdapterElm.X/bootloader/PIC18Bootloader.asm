@@ -105,7 +105,11 @@
 ;       issues. There is a very minute probability that errent code execution
 ;       could jump into the boot area and cause artificial boot entry.
 ; *****************************************************************************
+#ifdef __XC
+#include <pic18.inc>
+#else
 #include <p18cxxx.inc>
+#endif
 #include "devices.inc"
 #include "bootconfig.inc"
 #include "preprocess.inc"
@@ -194,7 +198,8 @@ GotoAppVector:
 
 BootloadMode:
     DigitalInput                ; set RX pin as digital input on certain parts
-#else ; BOOTLOADER_ADDRESS == 0 ****************************************************************
+	; BOOTLOADER_ADDRESS == 0 ****************************************************************
+#else
     ORG     0
 BootloaderStart:
     DigitalInput                ; set RX pin as digital input on certain parts
@@ -348,7 +353,8 @@ GotoAppVector:
     ; otherwise, assume application firmware is not present because we read a NOP (0xFFFF).
     ; fall through to bootloader mode...
 BootloadMode:
-#endif ; end BOOTLOADER_ADDRESS == 0 ******************************************
+	; end BOOTLOADER_ADDRESS == 0 ******************************************
+#endif
     lfsr    FSR2, 0             ; for compatibility with Extended Instructions mode.
     bcf     RCON, RI            ; [UH] clear hardware reset bit
 
@@ -495,7 +501,8 @@ WaitForHostCommand:
     rcall   ReadHostByte        ; get start of transmission <STX>
     xorlw   STX
     bnz     DoAutoBaud          ; got something unexpected, perform autobaud
-#else ; not using autobaud
+	; not using autobaud
+#else
     movlw   low(BAUDRG)         ; set fixed baud rate generator value
     movwf   UxSPBRG
     #ifdef UxSPBRGH
@@ -510,8 +517,9 @@ WaitForHostCommand:
     rcall   ReadHostByte        ; get start of transmission <STX>
     xorlw   STX
     bnz     WaitForHostCommand  ; got something unexpected, keep waiting for <STX>
-#endif ; end #ifdef USE_AUTOBAUD
-        
+	; end #ifdef USE_AUTOBAUD
+#endif
+
 ; *****************************************************************************
 
 ; *****************************************************************************
@@ -591,12 +599,12 @@ VerifyPacketCrcLoop:
 ; ***********************************************
 ; Test the command field and sub-command.
 CheckCommand:
-    movlw   .10
+    movlw   0x0A
     cpfslt  COMMAND
     bra     DoAutoBaud          ; invalid command - reset baud generator to re-sync with host
 
     ; This jump table must exist entirely within one 256 byte block of program memory.
-#if ($ & 0xFF) > (0xFF - .24)
+#if ($ & 0xFF) > (0xFF - 24)
     ; Too close to the end of a 256 byte boundary, push address forward to get code
     ; into the next 256 byte block.
     messg   "Wasting some code space to ensure jump table is aligned."
@@ -637,7 +645,8 @@ WtSR:
     btfsc   RXPORT, RXPIN   ; Wait for starting edge
     bra     WtSR
     return
-#else ; not inverted UART pins
+	; not inverted UART pins
+#else
 WaitForRise:
     clrwdt
 
@@ -652,7 +661,8 @@ WtSR:
     btfss   RXPORT, RXPIN   ; Wait for rising edge
     bra     WtSR
     return
-#endif ; end #ifdef INVERT_UART
+	; end #ifdef INVERT_UART
+#endif
 ; *****************************************************************************
 
 ; 16-bit CCITT CRC
@@ -730,7 +740,7 @@ VerifyFlash:
     rcall   AddCrc
 
     movf    TBLPTRL, w          ; have we crossed into the next block?
-#if ERASE_FLASH_BLOCKSIZE > .255
+#if ERASE_FLASH_BLOCKSIZE > 0xFF
     bnz     VerifyFlash
     movf    TBLPTRH, w
     andlw   high(ERASE_FLASH_BLOCKSIZE-1)
@@ -789,7 +799,8 @@ EraseFlash:
 
     clrf    EECON1              ; inhibit writes for this block
     bra     NextEraseBlock      ; move on to next erase block
-#endif ; end #ifdef USE_SOFTBOOTWP
+	; end #ifdef USE_SOFTBOOTWP
+#endif
 
 EraseEndFlashAddressOkay:
 #ifdef USE_SOFTCONFIGWP
@@ -806,8 +817,10 @@ EraseEndFlashAddressOkay:
     bra     NextEraseBlock      ; move on to next erase block
 
 EraseConfigAddressOkay:
-    #endif ; end CONFIG_AS_FLASH
-#endif ; end USE_SOFTCONFIGWP
+	    ; end CONFIG_AS_FLASH
+    #endif
+	; end USE_SOFTCONFIGWP
+#endif
 
 #ifdef USE_SOFTBOOTWP
     movlw   low(BOOTLOADER_ADDRESS)
@@ -847,7 +860,7 @@ EraseAddressOkay:
 
 NextEraseBlock:
     ; Decrement address by erase block size
-#if ERASE_FLASH_BLOCKSIZE >= .256
+#if ERASE_FLASH_BLOCKSIZE >= 0x100
     movlw   high(ERASE_FLASH_BLOCKSIZE)
     subwf   TBLPTRH, F
     clrf    WREG
@@ -900,7 +913,8 @@ WriteFlash:
 
     clrf    EECON1              ; inhibit writes for this block
     bra     LoadHoldingRegisters; fake the write so we can move on to real writes
-#endif ; end #ifdef SOFTWP
+	; end #ifdef SOFTWP
+#endif
 
 WriteEndFlashAddressOkay:
 #ifdef USE_SOFTCONFIGWP
@@ -917,8 +931,10 @@ WriteEndFlashAddressOkay:
     bra     LoadHoldingRegisters; fake the write so we can move on to real writes
 
 WriteConfigAddressOkay:
-    #endif ; end CONFIG_AS_FLASH
-#endif ; end USE_SOFTCONFIGWP
+	    ; end CONFIG_AS_FLASH
+    #endif
+	; end USE_SOFTCONFIGWP
+#endif
 
 #ifdef USE_SOFTBOOTWP
     movlw   low(BOOTLOADER_ADDRESS)
@@ -972,7 +988,8 @@ LoadHoldingRegisters:
 
 ; In:   <STX>[<0x05><ADDRL><ADDRH><0x00><0x00><BYTESL><BYTESH>]<CRCL><CRCH><ETX>
 ; Out:  <STX>[<DATA>...]<CRCL><CRCH><ETX>
-#ifdef EEADR                ; some devices do not have EEPROM, so no need for this code
+			    ; some devices do not have EEPROM, so no need for this code
+#ifdef EEADR
 ReadEeprom:
     clrf    EECON1 
 ReadEepromLoop:
@@ -1001,11 +1018,13 @@ ReadEepromLoop:
     bra     ReadEepromLoop      ; Not finished then repeat
     bra     SendChecksum
     #endif
-#endif ; end #ifdef EEADR
+	; end #ifdef EEADR
+#endif
 
 ; In:   <STX>[<0x06><ADDRL><ADDRH><0x00><0x00><BYTESL><BYTESH><DATA>...]<CRCL><CRCH><ETX>
 ; Out:  <STX>[<0x06>]<CRCL><CRCH><ETX>
-#ifdef EEADR                ; some devices do not have EEPROM, so no need for this code
+			    ; some devices do not have EEPROM, so no need for this code
+#ifdef EEADR
 WriteEeprom:
     movlw   b'00000100'     ; Setup for EEPROM data writes
     movwf   EECON1
@@ -1038,11 +1057,13 @@ WriteEepromLoop:
     bra     WriteEepromLoop
     bra     SendAcknowledge
     #endif
-#endif ; end #ifdef EEADR
- 
+	; end #ifdef EEADR
+#endif
+
 ; In:   <STX>[<0x07><ADDRL><ADDRH><ADDRU><0x00><BYTES><DATA>...]<CRCL><CRCH><ETX>
 ; Out:  <STX>[<0x07>]<CRCL><CRCH><ETX>
-#ifndef CONFIG_AS_FLASH     ; J flash devices store config words in FLASH, so no need for this code
+			    ; J flash devices store config words in FLASH, so no need for this code
+#ifndef CONFIG_AS_FLASH
     #ifndef USE_SOFTCONFIGWP
 WriteConfig:
     movlw   b'11000100'
@@ -1058,9 +1079,11 @@ WriteConfigLoop:
     bra     WriteConfigLoop ; If more data available in packet, keep looping
 
     bra     SendAcknowledge ; Send acknowledge
-    #endif ; end #ifndef USE_SOFTCONFIGWP
-#endif ; end #ifndef CONFIG_AS_FLASH
-    
+	    ; end #ifndef USE_SOFTCONFIGWP
+    #endif
+	    ; end #ifndef CONFIG_AS_FLASH
+#endif
+
 ;************************************************
 
 ; ***********************************************
@@ -1077,7 +1100,8 @@ WriteConfig:
   #ifdef USE_SOFTCONFIGWP
 WriteConfig:
   #endif
-#endif ; end #ifdef CONFIG_AS_FLASH
+	; end #ifdef CONFIG_AS_FLASH
+#endif
 
 #ifndef EEADR
 ReadEeprom:
