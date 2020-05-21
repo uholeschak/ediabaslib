@@ -106,7 +106,7 @@
 ;       could jump into the boot area and cause artificial boot entry.
 ; *****************************************************************************
 #ifdef __XC
-#include <pic18.inc>
+#include <xc.inc>
 #else
 #include <p18cxxx.inc>
 #endif
@@ -142,7 +142,9 @@ DATA_COUNTH         equ 0x0B        ; only for certain commands
 ; *****************************************************************************
 
 ; *****************************************************************************
+#ifndef __XC
     errorlevel -311                 ; don't warn on HIGH() operator values >16-bits
+#endif
 
 #ifdef USE_SOFTBOOTWP
   #ifndef SOFTWP
@@ -217,7 +219,7 @@ LowPriorityInterruptVector:
 BootloaderBreakCheck:
     ; [UH] set digital ports
     banksel ANCON0
-    movlw   b'00000001'
+    movlw   0x01 ;b'00000001'
     movwf   ANCON0, BANKED
     banksel ANCON1
     clrf    ANCON1, BANKED
@@ -225,10 +227,10 @@ BootloaderBreakCheck:
     banksel WPUB
 #if (ADAPTER_TYPE == 0x06) || (ADAPTER_TYPE == 0x07)
     ; use PB5 for bootloader detection
-    movlw   b'00100000'
+    movlw   0x20 ;b'00100000'
 #else
     ; use PB4 for bootloader detection
-    movlw   b'00010000'
+    movlw   0x10 ;b'00010000'
 #endif
     movwf   WPUB, BANKED
     movlb   0x0F
@@ -255,7 +257,7 @@ CheckApplication:
 
 #if 0
     ; wait for stable input signal
-    movlw   b'00000100'         ; 1:16 prescaler (0.52s)
+    movlw   0x04 ;b'00000100'         ; 1:16 prescaler (0.52s)
     movwf   T0CON
     clrf    TMR0H               ; reset timer count value
     clrf    TMR0L
@@ -266,9 +268,9 @@ StableWait:
     btfss   INTCON, TMR0IF      ; wait for TMR0 overflow
     bra     StableWait
 #ifdef BRG16
-    movlw   b'00000010'         ; 1:8 prescaler - no division required later (but no rounding possible)
+    movlw   0x02 ;b'00000010'         ; 1:8 prescaler - no division required later (but no rounding possible)
 #else
-    movlw   b'00000011'         ; 1:16 prescaler - thus we only have to divide by 2 later on.
+    movlw   0x03 ;b'00000011'         ; 1:16 prescaler - thus we only have to divide by 2 later on.
 #endif
     movwf   T0CON
 
@@ -359,7 +361,7 @@ BootloadMode:
     bcf     RCON, RI            ; [UH] clear hardware reset bit
 
 #ifdef USE_MAX_INTOSC
-    movlw   b'01110000'         ; set INTOSC to maximum speed (usually 8MHz)
+    movlw   0x70 ;b'01110000'         ; set INTOSC to maximum speed (usually 8MHz)
     iorwf   OSCCON, f
 #endif
 
@@ -412,9 +414,9 @@ BootloadMode:
     movlb   0x0F
 #endif
 
-    movlw   b'10010000'         ; Setup UART
+    movlw   0x90 ;b'10010000'         ; Setup UART
     movwf   UxRCSTA
-    movlw   b'00100110'         ; BRGH = 1, TXEN = 1
+    movlw   0x26 ;b'00100110'         ; BRGH = 1, TXEN = 1
     movwf   UxTXSTA
 
 #ifdef INVERT_UART
@@ -424,9 +426,9 @@ BootloadMode:
 
 #ifdef BRG16
     bsf     UxBAUDCON, BRG16
-    movlw   b'00000010'         ; 1:8 prescaler - no division required later (but no rounding possible)
+    movlw   0x02 ;b'00000010'         ; 1:8 prescaler - no division required later (but no rounding possible)
 #else
-    movlw   b'00000011'         ; 1:16 prescaler - thus we only have to divide by 2 later on.
+    movlw   0x03 ;b'00000011'         ; 1:16 prescaler - thus we only have to divide by 2 later on.
 #endif
     movwf   T0CON
 
@@ -604,11 +606,13 @@ CheckCommand:
     bra     DoAutoBaud          ; invalid command - reset baud generator to re-sync with host
 
     ; This jump table must exist entirely within one 256 byte block of program memory.
+#ifndef __XC
 #if ($ & 0xFF) > (0xFF - 24)
     ; Too close to the end of a 256 byte boundary, push address forward to get code
     ; into the next 256 byte block.
     messg   "Wasting some code space to ensure jump table is aligned."
     ORG     $+(0x100 - ($ & 0xFF))
+#endif
 #endif
 JUMPTABLE_BEGIN:
     movf    PCL, w              ; 0 do a read of PCL to set PCLATU:PCLATH to current program counter.
@@ -625,8 +629,10 @@ JUMPTABLE_BEGIN:
     bra     CheckApplication    ; 22 08 [UH] replaced GotoAppVector
     reset                       ; 24 09h
 
+#ifndef __XC
 #if (JUMPTABLE_BEGIN & 0xFF) > ($ & 0xFF)
     error "Jump table is not aligned to fit within a single 256 byte address range."
+#endif
 #endif
 ; *****************************************************************************
 
@@ -680,7 +686,7 @@ AddCrc:                           ; Init: CRCH = HHHH hhhh, CRCL = LLLL llll
     swapf   CRCL, w               ; Pre:  IIII jjjj     WREG =      jjjj IIII
     rlncf   WREG, w               ; Pre:  jjjj IIII     WREG =      jjjI IIIj
     xorwf   CRCH, f               ; Pre:  MMMM llll     CRCH =      XXXN mmmm
-    andlw   b'11100000'           ; Pre:  jjjI IIIj     WREG =      jjj0 0000
+    andlw   0xE0 ;b'11100000'     ; Pre:  jjjI IIIj     WREG =      jjj0 0000
     xorwf   CRCH, f               ; Pre:  jjj0 0000     CRCH =      MMMN mmmm
     xorwf   CRCL, f               ; Pre:  MMMN mmmm     CRCL =      JJJI jjjj
     return
@@ -850,9 +856,9 @@ EraseConfigAddressOkay:
 
 EraseAddressOkay:
 #ifdef EEADR
-    movlw   b'10010100'         ; setup FLASH erase
+    movlw   0x94 ;b'10010100'         ; setup FLASH erase
 #else
-    movlw   b'00010100'         ; setup FLASH erase for J device (no EEPROM bit)
+    movlw   0x14 ;b'00010100'         ; setup FLASH erase for J device (no EEPROM bit)
 #endif
     movwf   EECON1
 
@@ -964,9 +970,9 @@ WriteConfigAddressOkay:
 
 WriteAddressOkay:
 #ifdef EEADR
-    movlw   b'10000100'         ; Setup FLASH writes
+    movlw   0x84 ;b'10000100'         ; Setup FLASH writes
 #else
-    movlw   b'00000100'         ; Setup FLASH writes for J device (no EEPROM bit)
+    movlw   0x04 ;b'00000100'         ; Setup FLASH writes for J device (no EEPROM bit)
 #endif
     movwf   EECON1
 
@@ -1026,7 +1032,7 @@ ReadEepromLoop:
 			    ; some devices do not have EEPROM, so no need for this code
 #ifdef EEADR
 WriteEeprom:
-    movlw   b'00000100'     ; Setup for EEPROM data writes
+    movlw   0x04 ;b'00000100'     ; Setup for EEPROM data writes
     movwf   EECON1
 
 WriteEepromLoop:
@@ -1066,7 +1072,7 @@ WriteEepromLoop:
 #ifndef CONFIG_AS_FLASH
     #ifndef USE_SOFTCONFIGWP
 WriteConfig:
-    movlw   b'11000100'
+    movlw   0xC4 ;b'11000100'
     movwf   EECON1
     tblrd   *               ; read existing value from config memory
 
