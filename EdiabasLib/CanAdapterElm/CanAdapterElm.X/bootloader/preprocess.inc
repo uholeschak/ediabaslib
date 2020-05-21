@@ -23,8 +23,41 @@
 ; OF THESE TERMS.
 
 #ifdef __XC
-#define upper(_x) (low((_x) >> 16))
-#define BANKED b
+    #define upper(_x) (low((_x) >> 16))
+    #define BANKED b
+    #define _FSR0_ 0
+    #define _FSR1_ 1
+    #define _FSR2_ 2
+
+    #define _LATB4_ LATB4
+    #define _LATB6_ LATB6
+    #define _LATB7_ LATB7
+    #define _TRISB4_ TRISB4
+    #define _TRISB6_ TRISB6
+    #define _TRISB7_ TRISB7
+
+    #define _TMR0IF_ TMR0IF
+    #define _TMR0ON_ TMR0ON
+
+    #define _RI_ RI
+    #define _CARRY_ CARRY
+#else
+    #define _FSR0_ FSR0
+    #define _FSR1_ FSR1
+    #define _FSR2_ FSR2
+
+    #define _LATB4_ LATB, LATB4
+    #define _LATB6_ LATB, LATB6
+    #define _LATB7_ LATB, LATB7
+    #define _TRISB4_ TRISB, TRISB4
+    #define _TRISB6_ TRISB, TRISB6
+    #define _TRISB7_ TRISB, TRISB7
+
+    #define _TMR0IF_ INTCON, TMR0IF
+    #define _TMR0ON_ T0CON, TMR0ON
+
+    #define _RI_ RCON, RI
+    #define _CARRY_ STATUS, C
 #endif
 
 DigitalInput macro
