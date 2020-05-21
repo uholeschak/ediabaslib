@@ -40,6 +40,7 @@
     #define _TMR0IF_ TMR0IF
     #define _TMR0ON_ TMR0ON
 
+    #define _RBPU_ RBPU
     #define _RI_ RI
     #define _CARRY_ CARRY
     #define _WR_ WR
@@ -58,6 +59,7 @@
     #define _TMR0IF_ INTCON, TMR0IF
     #define _TMR0ON_ T0CON, TMR0ON
 
+    #define _RBPU_ INTCON2, RBPU
     #define _RI_ RCON, RI
     #define _CARRY_ STATUS, C
     #define _WR_ EECON1, WR
