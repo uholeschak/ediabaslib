@@ -24,6 +24,7 @@
 
 #ifdef __XC
     #define upper(_x) (low((_x) >> 16))
+    #define ACCESS a
     #define BANKED b
     #define _FSR0_ 0
     #define _FSR1_ 1
