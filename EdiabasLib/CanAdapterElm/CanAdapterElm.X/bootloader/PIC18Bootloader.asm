@@ -189,11 +189,11 @@ BootloaderStart:
 BootloaderBreakCheck:
     DigitalInput                ; set RX pin as digital input on certain parts
 #ifdef INVERT_UART
-    btfss   RXPORT, RXPIN
+    btfss   RXPORT, RXPIN, ACCESS
 GotoAppVector:
     goto    AppVector           ; no BREAK state, attempt to start application
 #else
-    btfsc   RXPORT, RXPIN
+    btfsc   RXPORT, RXPIN, ACCESS
 GotoAppVector:
     goto    AppVector           ; no BREAK state, attempt to start application
 #endif
@@ -275,10 +275,10 @@ StableWait:
     movwf   T0CON
 
 #ifdef INVERT_UART
-    btfsc   RXPORT, RXPIN
+    btfsc   RXPORT, RXPIN, ACCESS
     bra     BootloadMode
 #else
-    btfss   RXPORT, RXPIN
+    btfss   RXPORT, RXPIN, ACCESS
     bra     BootloadMode
 #endif
 #endif
@@ -420,12 +420,12 @@ BootloadMode:
     movwf   UxTXSTA, ACCESS
 
 #ifdef INVERT_UART
-    bsf     UxBAUDCON, RXDTP
-    bsf     UxBAUDCON, TXCKP
+    bsf     UxBAUDCON, RXDTP, ACCESS
+    bsf     UxBAUDCON, TXCKP, ACCESS
 #endif
 
 #ifdef BRG16
-    bsf     UxBAUDCON, BRG16
+    bsf     UxBAUDCON, BRG16, ACCESS
     movlw   0x02 ;b'00000010'         ; 1:8 prescaler - no division required later (but no rounding possible)
 #else
     movlw   0x03 ;b'00000011'         ; 1:16 prescaler - thus we only have to divide by 2 later on.
@@ -468,7 +468,7 @@ DoAutoBaud:
 ;   SPBRG = (p / 32) - 1    BRGH = 1, BRG16 = 0
 ;   SPBRG = (p / 8) - 1     BRGH = 1, BRG16 = 1
 
-    bcf     UxRCSTA, CREN, ACCESS       ; Stop receiving
+    bcf     _UxCREN_, ACCESS		; Stop receiving
     movf    UxRCREG, W, ACCESS          ; Empty the buffer
     movf    UxRCREG, W, ACCESS
 
@@ -497,7 +497,7 @@ RetryAutoBaud:
     decf    UxSPBRG, F, ACCESS
     #endif
 
-    bsf     UxRCSTA, CREN, ACCESS       ; start receiving
+    bsf     _UxCREN_, ACCESS    ; start receiving
 
 WaitForHostCommand:
     rcall   ReadHostByte        ; get start of transmission <STX>
@@ -513,7 +513,7 @@ WaitForHostCommand:
     movwf   UxSPBRGH
         #endif
     #endif
-    bsf     UxRCSTA, CREN       ; start receiving
+    bsf     _UxCREN_, ACCESS    ; start receiving
 DoAutoBaud:
 WaitForHostCommand:
     rcall   ReadHostByte        ; get start of transmission <STX>
@@ -644,11 +644,11 @@ WaitForRiseLoop:
     btfsc   INTCON, TMR0IF  ; if TMR0 overflowed, we did not get a good baud capture
     return                  ; abort
 
-    btfss   RXPORT, RXPIN   ; Wait for a falling edge
+    btfss   RXPORT, RXPIN, ACCESS   ; Wait for a falling edge
     bra     WaitForRiseLoop
 
 WtSR:
-    btfsc   RXPORT, RXPIN   ; Wait for starting edge
+    btfsc   RXPORT, RXPIN, ACCESS   ; Wait for starting edge
     bra     WtSR
     return
 	; not inverted UART pins
@@ -1039,7 +1039,7 @@ WriteEepromLoop:
     movff   PREINC0, EEDATA
     rcall   StartWrite      
 
-    btfsc   EECON1, WR      ; wait for write to complete before moving to next address
+    btfsc   _WR_, ACCESS    ; wait for write to complete before moving to next address
     bra     $-2
 
     #ifdef EEADRH
@@ -1177,7 +1177,7 @@ SendHostByte:
 
 ; *****************************************************************************
 ReadHostByte:
-    btfsc   UxRCSTA, OERR, ACCESS       ; Reset on overun
+    btfsc   _UxOERR_, ACCESS		; Reset on overun
     reset
 
 WaitForHostByte:
@@ -1209,7 +1209,7 @@ StartWrite:
     movwf   EECON2, ACCESS
     movlw   0xAA
     movwf   EECON2, ACCESS
-    bsf     EECON1, WR      ; Start the write
+    bsf     _WR_, ACCESS    ; Start the write
     nop
 
     return

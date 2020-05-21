@@ -81,20 +81,24 @@
 ;	ADC chapter of your device's datasheet).
 #define UARTNUM 1
 #if UARTNUM == 1
-    #define UxSPBRG         SPBRG
-    #define UxSPBRGH        SPBRGH
-    #define UxRCSTA         RCSTA
-    #define UxTXSTA         TXSTA
-    #define UxRCREG         RCREG
-    #define UxTXREG         TXREG
+    #define UxSPBRG         SPBRG1
+    #define UxSPBRGH        SPBRGH1
+    #define UxRCSTA         RCSTA1
+    #define UxTXSTA         TXSTA1
+    #define UxRCREG         RCREG1
+    #define UxTXREG         TXREG1
     #ifdef __XC
+        #define _UxCREN_        CREN1
+        #define _UxOERR_        OERR1
 	#define _UxRCIF_        RCIF
 	#define _UxTXIF_        TXIF
     #else
+        #define _UxCREN_        UxRCSTA, CREN
+        #define _UxOERR_        UxRCSTA, OERR
 	#define _UxRCIF_        PIR1, RCIF
 	#define _UxTXIF_        PIR1, TXIF
     #endif
-    #define UxBAUDCON       BAUDCON
+    #define UxBAUDCON       BAUDCON1
 
 ;    #define RXPORT         PORTC   ; RX on RC7 is used by default for most PIC18's.
 ;    #define RXPIN          .7
@@ -114,9 +118,13 @@
     #define UxRCREG         RCREG2
     #define UxTXREG         TXREG2
     #ifdef __XC
+        #define _UxCREN_        CREN2
+        #define _UxOERR_        OERR2
 	#define _UxRCIF_        RC2IF
 	#define _UxTXIF_        TX2IF
     #else
+        #define _UxCREN_        UxRCSTA, CREN
+        #define _UxOERR_        UxRCSTA, OERR
 	#define _UxRCIF_        PIR3, RC2IF
 	#define _UxTXIF_        PIR3, TX2IF
     #endif

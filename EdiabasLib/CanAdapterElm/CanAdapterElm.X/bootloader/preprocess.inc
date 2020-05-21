@@ -42,6 +42,7 @@
 
     #define _RI_ RI
     #define _CARRY_ CARRY
+    #define _WR_ WR
 #else
     #define _FSR0_ FSR0
     #define _FSR1_ FSR1
@@ -59,6 +60,7 @@
 
     #define _RI_ RCON, RI
     #define _CARRY_ STATUS, C
+    #define _WR_ EECON1, WR
 #endif
 
 DigitalInput macro
