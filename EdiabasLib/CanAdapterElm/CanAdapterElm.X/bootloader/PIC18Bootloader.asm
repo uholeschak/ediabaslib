@@ -234,9 +234,9 @@ BootloaderBreakCheck:
 #endif
     movwf   WPUB, BANKED
     movlb   0x0F
-    bcf     INTCON2, RBPU
+    bcf     _RBPU_, ACCESS
     ; check for software reset
-    btfss   _RI_
+    btfss   _RI_, ACCESS
     bra     BootloadMode
 CheckApplication:
     ; check for adapter type
@@ -248,11 +248,11 @@ CheckApplication:
     movwf   TBLPTRU, ACCESS
     tblrd   *+
     movlw   low(ADAPTER_TYPE)
-    xorwf   TABLAT, w
+    xorwf   TABLAT, w, ACCESS
     bnz     BootloadMode
     tblrd   *+
     movlw   high(ADAPTER_TYPE)
-    xorwf   TABLAT, w
+    xorwf   TABLAT, w, ACCESS
     bnz     BootloadMode
 
 #if 0
