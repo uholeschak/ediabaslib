@@ -68,22 +68,22 @@ DigitalInput macro
     #if BOOTLOADER_ADDRESS == 0
     nop                         ; start up GOTO instruction errata
     #endif
-    bsf     ADCON1, PCFG6       ; RB4/AN6/RX pin on PIC18F1x20 requires digital mode
+    bsf     ADCON1, PCFG6, ACCESS       ; RB4/AN6/RX pin on PIC18F1x20 requires digital mode
 #endif
 #ifdef __18F1220
     #if BOOTLOADER_ADDRESS == 0
     nop                         ; start up GOTO instruction errata
     #endif
-    bsf     ADCON1, PCFG6       ; RB4/AN6/RX pin on PIC18F1x20 requires digital mode
+    bsf     ADCON1, PCFG6, ACCESS       ; RB4/AN6/RX pin on PIC18F1x20 requires digital mode
 #endif
 
 #ifdef RXANSEL
     banksel RXANSEL
-    bcf     RXANSEL, RXAN
+    bcf     RXANSEL, RXAN, BANKED
 #else
     #ifdef ANSC7
         banksel ANSELC		; ANSELC is in non-access bank 0x0F on PIC18F46K22 family
-        bcf     ANSELC, ANSC7	; Digital input enable on RC7/RX pin for PIC18F46K22 family
+        bcf     ANSELC, ANSC7, BANKED	; Digital input enable on RC7/RX pin for PIC18F46K22 family
     #endif
 #endif
     endm
