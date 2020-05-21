@@ -87,9 +87,13 @@
     #define UxTXSTA         TXSTA
     #define UxRCREG         RCREG
     #define UxTXREG         TXREG
-    #define UxPIR           PIR1
-    #define UxRCIF          RCIF
-    #define UxTXIF          TXIF
+    #ifdef __XC
+	#define _UxRCIF_        RCIF
+	#define _UxTXIF_        TXIF
+    #else
+	#define _UxRCIF_        PIR1, RCIF
+	#define _UxTXIF_        PIR1, TXIF
+    #endif
     #define UxBAUDCON       BAUDCON
 
 ;    #define RXPORT         PORTC   ; RX on RC7 is used by default for most PIC18's.
@@ -109,9 +113,13 @@
     #define UxTXSTA         TXSTA2
     #define UxRCREG         RCREG2
     #define UxTXREG         TXREG2
-    #define UxPIR           PIR3
-    #define UxRCIF          RC2IF
-    #define UxTXIF          TX2IF
+    #ifdef __XC
+	#define _UxRCIF_        RC2IF
+	#define _UxTXIF_        TX2IF
+    #else
+	#define _UxRCIF_        PIR3, RC2IF
+	#define _UxTXIF_        PIR3, TX2IF
+    #endif
     #define UxBAUDCON       BAUDCON2
 
 ;    #define RXPORT          PORTG   ; RG2 is default RX2 pin for some high pin count PIC18's.
