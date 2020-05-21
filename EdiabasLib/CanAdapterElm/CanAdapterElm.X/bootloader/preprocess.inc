@@ -22,6 +22,11 @@
 ; MICROCHIP PROVIDES THIS SOFTWARE CONDITIONALLY UPON YOUR ACCEPTANCE
 ; OF THESE TERMS.
 
+#ifdef __XC
+#define upper(_x) (low((_x) >> 16))
+#define BANKED b
+#endif
+
 DigitalInput macro
 #ifdef __18F1320
     #if BOOTLOADER_ADDRESS == 0
