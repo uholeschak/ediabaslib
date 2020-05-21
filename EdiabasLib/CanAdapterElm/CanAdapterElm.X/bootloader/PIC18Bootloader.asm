@@ -1164,7 +1164,7 @@ WrNext:
 
 SendHostByte:
     clrwdt
-    btfss   UxPIR, UxTXIF      ; Write only if TXREG is ready
+    btfss   _UxTXIF_	    ; Write only if TXREG is ready
     bra     $-2
     
     movwf   UxTXREG           ; Start sending
@@ -1182,7 +1182,7 @@ ReadHostByte:
 
 WaitForHostByte:
     clrwdt
-    btfss   UxPIR, UxRCIF       ; Wait for data from RS232
+    btfss   _UxRCIF_		; Wait for data from RS232
     bra     WaitForHostByte
 
     movf    UxRCREG, W          ; Save the data
