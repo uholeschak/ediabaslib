@@ -709,7 +709,7 @@ AddCrc:                           ; Init: CRCH = HHHH hhhh, CRCL = LLLL llll
     xorwf   CRCH, w, ACCESS       ; Pre:  HHHH hhhh     WREG =      IIII iiii
     movff   CRCL, CRCH            ; Pre:  LLLL llll     CRCH =      LLLL llll
     movwf   CRCL, ACCESS          ; Pre:  IIII iiii     CRCL =      IIII iiii
-    swapf   WREG, w, ACCESS	  ; Pre:  IIII iiii     WREG =      iiii IIII [UH] changed to w, ACCESS type
+    swapf   WREG, f, ACCESS	  ; Pre:  IIII iiii     WREG =      iiii IIII
     andlw   0x0F                  ; Pre:  iiii IIII     WREG =      0000 IIII
     xorwf   CRCL, f, ACCESS       ; Pre:  IIII iiii     CRCL =      IIII jjjj
     swapf   CRCL, w, ACCESS       ; Pre:  IIII jjjj     WREG =      jjjj IIII
