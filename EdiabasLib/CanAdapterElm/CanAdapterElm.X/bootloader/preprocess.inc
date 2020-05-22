@@ -30,6 +30,8 @@
     #define _FSR1_ 1
     #define _FSR2_ 2
 
+    #define _RD_ RD
+
     #define _LATB4_ LATB4
     #define _LATB6_ LATB6
     #define _LATB7_ LATB7
@@ -44,10 +46,14 @@
     #define _RI_ RI
     #define _CARRY_ CARRY
     #define _WR_ WR
+    #define EEADR EEADR
+    #define EEADRH EEADRH
 #else
     #define _FSR0_ FSR0
     #define _FSR1_ FSR1
     #define _FSR2_ FSR2
+
+    #define _RD_ EECON1, RD
 
     #define _LATB4_ LATB, LATB4
     #define _LATB6_ LATB, LATB6

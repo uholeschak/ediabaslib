@@ -163,7 +163,7 @@ DATA_COUNTH         equ 0x0B        ; only for certain commands
 #ifndef AppVector
     ; The application startup GOTO instruction will be written just before the Boot Block,
     ; courtesy of the host PC bootloader application.
-    #define AppVector (BootloaderStart-.4)
+    #define AppVector (BootloaderStart-0x4)
 #endif
 ; *****************************************************************************
 
@@ -709,7 +709,7 @@ AddCrc:                           ; Init: CRCH = HHHH hhhh, CRCL = LLLL llll
     xorwf   CRCH, w, ACCESS       ; Pre:  HHHH hhhh     WREG =      IIII iiii
     movff   CRCL, CRCH            ; Pre:  LLLL llll     CRCH =      LLLL llll
     movwf   CRCL, ACCESS          ; Pre:  IIII iiii     CRCL =      IIII iiii
-    swapf   WREG, ACCESS	  ; Pre:  IIII iiii     WREG =      iiii IIII [UH] changed to ACCESS type
+    swapf   WREG, w, ACCESS	  ; Pre:  IIII iiii     WREG =      iiii IIII [UH] changed to w, ACCESS type
     andlw   0x0F                  ; Pre:  iiii IIII     WREG =      0000 IIII
     xorwf   CRCL, f, ACCESS       ; Pre:  IIII iiii     CRCL =      IIII jjjj
     swapf   CRCL, w, ACCESS       ; Pre:  IIII jjjj     WREG =      jjjj IIII
@@ -729,13 +729,13 @@ AddCrc:                           ; Init: CRCH = HHHH hhhh, CRCL = LLLL llll
 
 ; Provides information about the Bootloader to the host PC software.
 BootInfoBlock:
-    db      low(BOOTBLOCKSIZE), high(BOOTBLOCKSIZE)
-    db      MAJOR_VERSION, MINOR_VERSION
-    db      0xFF, 0x84             ; command mask : family id 
-    db      low(BootloaderStart), high(BootloaderStart)
-    db      upper(BootloaderStart), 0 
-    db      0x00, 0x00             ; device id (reserved)
-    db      low(ADAPTER_TYPE), high(ADAPTER_TYPE)
+    dw      BOOTBLOCKSIZE
+    dw      (MINOR_VERSION << 8) | MAJOR_VERSION
+    dw      0x84FF             ; command mask : family id 
+    dw      BootloaderStart
+    dw      upper(BootloaderStart)
+    dw      0x0000             ; device id (reserved)
+    dw      ADAPTER_TYPE
 BootInfoBlockEnd:
 
 ; In:   <STX>[<0x00>]<CRCL><CRCH><ETX>
@@ -1029,13 +1029,13 @@ LoadHoldingRegisters:
 			    ; some devices do not have EEPROM, so no need for this code
 #ifdef EEADR
 ReadEeprom:
-    clrf    EECON1 
+    clrf    EECON1, ACCESS
 ReadEepromLoop:
-    bsf     EECON1, RD          ; Read the data
-    movf    EEDATA, w
+    bsf     _RD_, ACCESS	; Read the data
+    movf    EEDATA, w, ACCESS
     #ifdef EEADRH
-    infsnz  EEADR, F            ; Adjust EEDATA pointer
-    incf    EEADRH, F
+    infsnz  EEADR, F, ACCESS    ; Adjust EEDATA pointer
+    incf    EEADRH, F, ACCESS
     #else
     incf    EEADR, F            ; Adjust EEDATA pointer
     #endif
@@ -1043,16 +1043,16 @@ ReadEepromLoop:
     rcall   AddCrc
 
     #ifdef EEADRH
-    decf    DATA_COUNTL, f      ; decrement counter
+    decf    DATA_COUNTL, f, ACCESS      ; decrement counter
     movlw   0
-    subwfb  DATA_COUNTH, f
+    subwfb  DATA_COUNTH, f, ACCESS
 
-    movf    DATA_COUNTL, w      ; DATA_COUNTH:DATA_COUNTH == 0?
-    iorwf   DATA_COUNTH, w
+    movf    DATA_COUNTL, w, ACCESS      ; DATA_COUNTH:DATA_COUNTH == 0?
+    iorwf   DATA_COUNTH, w, ACCESS
     bnz     ReadEepromLoop      ; no, loop
     bra     SendChecksum        ; yes, send end of packet
     #else
-    decfsz  DATA_COUNTL, F
+    decfsz  DATA_COUNTL, F, ACCESS
     bra     ReadEepromLoop      ; Not finished then repeat
     bra     SendChecksum
     #endif
@@ -1065,7 +1065,7 @@ ReadEepromLoop:
 #ifdef EEADR
 WriteEeprom:
     movlw   0x04 ;b'00000100'     ; Setup for EEPROM data writes
-    movwf   EECON1
+    movwf   EECON1, ACCESS
 
 WriteEepromLoop:
     movff   PREINC0, EEDATA
@@ -1075,19 +1075,19 @@ WriteEepromLoop:
     bra     $-2
 
     #ifdef EEADRH
-    infsnz  EEADR, F        ; Adjust EEDATA pointer
-    incf    EEADRH, F
+    infsnz  EEADR, F, ACCESS        ; Adjust EEDATA pointer
+    incf    EEADRH, F, ACCESS
     #else
-    incf    EEADR, f        ; Adjust EEDATA pointer
+    incf    EEADR, f, ACCESS        ; Adjust EEDATA pointer
     #endif
 
     #ifdef EEADRH
-    decf    DATA_COUNTL, f      ; decrement counter
+    decf    DATA_COUNTL, f, ACCESS      ; decrement counter
     movlw   0
-    subwfb  DATA_COUNTH, f
+    subwfb  DATA_COUNTH, f, ACCESS
 
-    movf    DATA_COUNTL, w      ; DATA_COUNTH:DATA_COUNTH == 0?
-    iorwf   DATA_COUNTH, w
+    movf    DATA_COUNTL, w, ACCESS      ; DATA_COUNTH:DATA_COUNTH == 0?
+    iorwf   DATA_COUNTH, w, ACCESS
     bnz     WriteEepromLoop     ; no, loop
     bra     SendAcknowledge     ; yes, send end of packet
     #else
