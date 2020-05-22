@@ -48,6 +48,7 @@
     #define _WR_ WR
     #define EEADR EEADR
     #define EEADRH EEADRH
+    #define PORTC PORTC
 #else
     #define _FSR0_ FSR0
     #define _FSR1_ FSR1
