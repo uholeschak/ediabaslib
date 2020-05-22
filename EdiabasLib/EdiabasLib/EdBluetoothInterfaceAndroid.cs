@@ -130,6 +130,7 @@ namespace EdiabasLib
                 bool usedRfCommSocket = false;
                 Receiver receiver = null;
                 Android.Content.Context context = null;
+                int connectTimeout = mtcBtService ? 1000 : 2000;
                 try
                 {
                     if (_connectParameter?.GetContextHandler != null)
@@ -185,7 +186,6 @@ namespace EdiabasLib
                         usedRfCommSocket = true;
                     }
 
-                    int connectTimeout = mtcBtService ? 1000 : 2000;
                     ConnectedEvent.WaitOne(connectTimeout, false);
                     CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
                 }
@@ -217,6 +217,9 @@ namespace EdiabasLib
                             _edElmInterface.Dispose();
                             _bluetoothSocket.Close();
                             _bluetoothSocket.Connect();
+                            ConnectedEvent.WaitOne(connectTimeout, false);
+                            CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
+
                             _bluetoothInStream = _bluetoothSocket.InputStream;
                             _bluetoothOutStream = _bluetoothSocket.OutputStream;
                             _edElmInterface = new EdElmInterface(CustomAdapter.Ediabas, _bluetoothInStream, _bluetoothOutStream);
@@ -254,6 +257,9 @@ namespace EdiabasLib
                             {
                                 _bluetoothSocket.Close();
                                 _bluetoothSocket.Connect();
+                                ConnectedEvent.WaitOne(connectTimeout, false);
+                                CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
+
                                 _bluetoothInStream = new BtEscapeStreamReader(_bluetoothSocket.InputStream);
                                 _bluetoothOutStream = new BtEscapeStreamWriter(_bluetoothSocket.OutputStream);
                             }
