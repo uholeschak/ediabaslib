@@ -457,7 +457,7 @@ BootloadMode:
 #endif
 
 #ifdef BRG16
-    bsf     UxBAUDCON, BRG16, ACCESS
+    bsf     _UxBRG16_, ACCESS
     movlw   0x02 ;b'00000010'         ; 1:8 prescaler - no division required later (but no rounding possible)
 #else
     movlw   0x03 ;b'00000011'         ; 1:16 prescaler - thus we only have to divide by 2 later on.

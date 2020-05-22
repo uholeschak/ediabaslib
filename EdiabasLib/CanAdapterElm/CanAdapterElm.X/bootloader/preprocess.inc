@@ -124,6 +124,12 @@ pmwtpi macro                        ; tblwt*+ macro for PIC18Fxx20 bug
     #endif
 #endif
 
+#ifndef BRG16
+    #ifdef BRG161
+	#define BRG16 BRG161
+    #endif
+#endif
+
 #ifdef BRG16
     #ifndef SPBRGH
 				; PIC18F87J10 doesn't define SPBRGH by default.
