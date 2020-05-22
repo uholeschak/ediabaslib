@@ -46,9 +46,11 @@
     #define _RI_ RI
     #define _CARRY_ CARRY
     #define _WR_ WR
-    #define EEADR EEADR
-    #define EEADRH EEADRH
-    #define PORTC PORTC
+    #ifdef _PIC18
+	#define EEADR EEADR
+	#define EEADRH EEADRH
+	#define PORTC PORTC
+    #endif
 #else
     #define _FSR0_ FSR0
     #define _FSR1_ FSR1
