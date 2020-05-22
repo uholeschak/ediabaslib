@@ -765,6 +765,8 @@ namespace BmwDeepObd
                                             LogString("Retry connect");
                                             bluetoothSocket.Close();
                                             bluetoothSocket.Connect();
+                                            _connectedEvent.WaitOne(connectTimeout, false);
+                                            LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
                                             adapterType = AdapterTypeDetection(bluetoothSocket);
                                             if (adapterType != AdapterType.Unknown &&
                                                 adapterType != AdapterType.ConnectionFailed)
