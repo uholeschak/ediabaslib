@@ -46,10 +46,17 @@
     #define _RI_ RI
     #define _CARRY_ CARRY
     #define _WR_ WR
-    #ifdef _PIC18
-	#define EEADR EEADR
-	#define EEADRH EEADRH
-	#define PORTC PORTC
+    ; the missing defines have been added in package 1.4.87
+    #ifndef PORTC
+	#ifdef RC0
+	    #define PORTC PORTC
+	#endif
+    #endif
+    #ifndef EEADR
+	#ifdef RD
+	    #define EEADR EEADR
+	    #define EEADRH EEADRH
+	#endif
     #endif
 #else
     #define _FSR0_ FSR0
