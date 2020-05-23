@@ -48,15 +48,15 @@
     #define _WR_ WR
     ; the missing defines have been added in package 1.4.87
     #ifndef PORTC
-	#ifdef RC0
-	    #define PORTC PORTC
-	#endif
+    #ifdef RC0
+        #define PORTC PORTC
+    #endif
     #endif
     #ifndef EEADR
-	#ifdef RD
-	    #define EEADR EEADR
-	    #define EEADRH EEADRH
-	#endif
+    #ifdef RD
+        #define EEADR EEADR
+        #define EEADRH EEADRH
+    #endif
     #endif
 #else
     #define _FSR0_ FSR0
@@ -125,40 +125,40 @@ pmwtpi macro                        ; tblwt*+ macro for PIC18Fxx20 bug
     #ifdef PORTC
         #define RXPORT PORTC
     #else
-				; PIC18F1220, PIC18F1320
+                ; PIC18F1220, PIC18F1320
     #define RXPORT PORTB
     #endif
 #endif
 
 #ifndef RXPIN
     #ifdef PORTC
-				; most PIC18's have RX on RC7
+                ; most PIC18's have RX on RC7
     #define RXPIN 0x7
     #else
-				; PIC18F1220, PIC18F1320 have RX on RB4
+                ; PIC18F1220, PIC18F1320 have RX on RB4
         #define RXPIN 0x4
     #endif
 #endif
 
 #ifndef BRG16
     #ifdef BRG161
-	#define BRG16 BRG161
+        #define BRG16 BRG161
     #endif
 #endif
 
 #ifdef BRG16
     #ifndef SPBRGH
-				; PIC18F87J10 doesn't define SPBRGH by default.
+                ; PIC18F87J10 doesn't define SPBRGH by default.
     #define SPBRGH SPBRGH1
     #endif
 
     #ifndef BAUDCON
         #ifdef BAUDCON1
-					; PIC18F85J90 / PIC18F84J90
+                    ; PIC18F85J90 / PIC18F84J90
             #define BAUDCON BAUDCON1
         #else
             #ifdef BAUDCTL
-					; PIC18F1220, PIC18F1320
+                    ; PIC18F1220, PIC18F1320
                 #define BAUDCON BAUDCTL
             #endif
         #endif
@@ -167,35 +167,35 @@ pmwtpi macro                        ; tblwt*+ macro for PIC18Fxx20 bug
 
 #ifndef RCREG
     #ifdef RCREG1
-					; PIC18F85J90/PIC18F84J90
+                    ; PIC18F85J90/PIC18F84J90
         #define RCREG RCREG1
     #endif
 #endif
 
 #ifndef TXIF
     #ifdef TX1IF
-					; PIC18F97J60 doesn't define TXIF by default
+                    ; PIC18F97J60 doesn't define TXIF by default
         #define TXIF TX1IF
     #endif
 #endif
 
 #ifndef RCIF
     #ifdef RC1IF
-					; Not a problem on PIC18F97J60, but just in case future parts might need it
+                    ; Not a problem on PIC18F97J60, but just in case future parts might need it
         #define RCIF RC1IF
     #endif
 #endif
 
 #ifndef RXDTP
     #ifdef DTRXP
-					; PIC18F14K50 doesn't define RXDTP, instead they call it DTRXP
+                    ; PIC18F14K50 doesn't define RXDTP, instead they call it DTRXP
         #define RXDTP DTRXP
     #endif
 #endif
 
 #ifndef TXCKP
     #ifdef CKTXP
-					; PIC18F14K50
+                    ; PIC18F14K50
         #define TXCKP CKTXP
     #endif
 #endif
