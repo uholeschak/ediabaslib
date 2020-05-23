@@ -3,10 +3,14 @@
 		#include "pic18f25k80.inc"
 		#define upper(_x) (low((_x) >> 16))
 		#define MOD mod
+
+		#define _RI_ RI
 #else
 		LIST      P=18F25K80		; modify this
 		#include "p18f25k80.inc"		; and this
 		#define MOD %
+
+		#define _RI_ RCON, RI
 #endif
 
 		#define ORIGINAL    0
@@ -122,7 +126,7 @@ eep_start:	DB 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x06, 0xAE, 0x02, 
 
 #if SW_VERSION != 0
 eep_end:
-eep_copy:	btfss	RCON,RI
+eep_copy:	btfss	_RI_
 		goto	p_reset		; perform wd reset after software reset
 
 		movlw	0x24
@@ -236,7 +240,7 @@ p__100:	addwf	PCL						; entry from: 1AECh
 		goto	p__3B2
 		DB 0x00, 0x00
 		DB "A", "L"
-		bsf		17h,4
+		bsf		0x17,4
 		bra		p__302
 		DB "A", "R"
 		goto	p__CA0
@@ -247,18 +251,18 @@ p__100:	addwf	PCL						; entry from: 1AECh
 		DB "C", "S"
 		goto	p__E60
 		DB "D", "0"
-		bcf		18h,5
+		bcf		0x18,5
 		bra		p__302
 		DB "D", "1"
-		bsf		18h,5
+		bsf		0x18,5
 		bra		p__302
 		DB "D", "P"
 		goto	p__F40
 		DB "E", "0"
-		bcf		17h,2
+		bcf		0x17,2
 		bra		p__302
 		DB "E", "1"
-		bsf		17h,2
+		bsf		0x17,2
 		bra		p__302
 		DB "F", "E"
 		clrf	0xD2,BANKED
@@ -266,66 +270,66 @@ p__100:	addwf	PCL						; entry from: 1AECh
 		DB "F", "I"
 		goto	p_1104
 		DB "H", "0"
-		bcf		17h,1
+		bcf		0x17,1
 		bra		p__302
 		DB "H", "1"
-		bsf		17h,1
+		bsf		0x17,1
 		bra		p__302
 		DB "J", "E"
-		bcf		35h,2
+		bcf		0x35,2
 		bra		p__302
 		DB "J", "S"
-		bsf		35h,2
+		bsf		0x35,2
 		bra		p__302
 		DB "K", "W"
 		goto	p_11BC
 		DB "L", "0"
-		bcf		17h,7
+		bcf		0x17,7
 		bra		p__302
 		DB "L", "1"
-		bsf		17h,7
+		bsf		0x17,7
 		bra		p__302
 		DB "L", "P"
 		goto	p_11F8
 		DB "M", "0"
-		bcf		17h,5
+		bcf		0x17,5
 		bra		p__302
 		DB "M", "1"
-		bsf		17h,5
+		bsf		0x17,5
 		bra		p__302
 		DB "M", "A"
 		goto	p_129A
 		DB "N", "L"
-		bcf		17h,4
+		bcf		0x17,4
 		bra		p__302
 		DB "P", "C"
 		goto	p_12E0
 		DB "R", "0"
-		bcf		17h,3
+		bcf		0x17,3
 		bra		p__302
 		DB "R", "1"
-		bsf		17h,3
+		bsf		0x17,3
 		bra		p__302
 		DB "R", "D"
 		goto	p_146E
 		DB "R", "V"
 		goto	p_148A
 		DB "S", "0"
-		bsf		18h,0
+		bsf		0x18,0
 		bra		p__302
 		DB "S", "1"
-		bcf		18h,0
+		bcf		0x18,0
 		bra		p__302
 		DB "S", "I"
 		goto	p_156E
 		DB "S", "S"
-		bsf		10h,5
+		bsf		0x10,5
 		bra		p__302
 		DB "V", "0"
-		bcf		35h,5
+		bcf		0x35,5
 		bra		p__302
 		DB "V", "1"
-		bsf		35h,5
+		bsf		0x35,5
 		bra		p__302
 		DB "W", "S"
 		goto	p_1650
@@ -452,7 +456,7 @@ text_table2:
 		DATA " (CAN ", 0
 		DATA "ERR71"
 
-p__3B2:	btfss	17h,7					; entry from: 110h
+p__3B2:	btfss	0x17,7					; entry from: 110h
 		bra		p__3BC
 		call	p__A1E
 		bra		p__302
@@ -461,53 +465,53 @@ p__3BC:	call	p__A1E					; entry from: 3B4h
 		bra		p__302
 
 		ORG BASE_ADDR + 0x03C6
-p__3C6:	clrf	2Fh						; entry from: 0FF2h,14EEh
+p__3C6:	clrf	0x2F						; entry from: 0FF2h,14EEh
 		clrf	30h
 		movlw	3
-		movwf	7Ah,BANKED
+		movwf	0x7A,BANKED
 		movlw	0xE8
-		movwf	7Bh,BANKED
+		movwf	0x7B,BANKED
 		call	p__AE2
-		movff	7Dh,44h
+		movff	0x7D,0x44
 		iorlw	0
 		bz		p__3E0
 		retlw	0xFF
-p__3E0:	movwf	7Ah,BANKED				; entry from: 3DCh
-		movlw	64h
-		movwf	7Bh,BANKED
+p__3E0:	movwf	0x7A,BANKED				; entry from: 3DCh
+		movlw	0x64
+		movwf	0x7B,BANKED
 		call	p__AE2
-		movff	7Dh,30h
-		movff	44h,2Fh
-		clrf	7Dh,BANKED
+		movff	0x7D,0x30
+		movff	0x44,0x2F
+		clrf	0x7D,BANKED
 		movlw	0xA
-p__3F6:	incf	7Dh,f,BANKED			; entry from: 3FAh
-		subwf	32h
+p__3F6:	incf	0x7D,f,BANKED			; entry from: 3FAh
+		subwf	0x32
 		bc		p__3F6
-		addwf	32h
-		decf	7Dh,W,BANKED
-		movwf	31h
+		addwf	0x32
+		decf	0x7D,W,BANKED
+		movwf	0x31
 		retlw	0
 
-p__404:	movwf	3Fh						; entry from: 1B42h,1B48h,1B5Eh,1DB2h
-		tstfsz	3Fh
+p__404:	movwf	0x3F						; entry from: 1B42h,1B48h,1B5Eh,1DB2h
+		tstfsz	0x3F
 		bra		p__66A
 		return	
 
-p__40C:	btfss	72h,1,BANKED			; entry from: 18ACh,18E8h,1E4Ch,1E5Ah,1EFAh,1F04h,2DA6h,2DC4h,2DC8h,2F82h,2F98h,2FA0h,2FB0h,2FFEh,3012h,302Ch,3038h,305Eh,3062h
+p__40C:	btfss	0x72,1,BANKED			; entry from: 18ACh,18E8h,1E4Ch,1E5Ah,1EFAh,1F04h,2DA6h,2DC4h,2DC8h,2F82h,2F98h,2FA0h,2FB0h,2FFEh,3012h,302Ch,3038h,305Eh,3062h
 		btfss	PIR1,5
 		bra		p__476
-		btfsc	72h,0,BANKED
+		btfsc	0x72,0,BANKED
 		bra		p__478
-		clrf	20h
+		clrf	0x20
 		bcf		LATB,4
 		movf	RCSTA1,W
 		andlw	6
 		bnz		p__47A
-		movff	FSR0L,41h
-		movff	74h,FSR0L
+		movff	FSR0L,0x41
+		movff	0x74,FSR0L
 		movf	RCREG1,W
 		movwf	INDF0
-		btfss	17h,2
+		btfss	0x17,2
 		bra		p__472
 		movwf	POSTINC1
 		bcf		FSR1H,0
@@ -517,17 +521,17 @@ p__40C:	btfss	72h,1,BANKED			; entry from: 18ACh,18E8h,1E4Ch,1E5Ah,1EFAh,1F04h,2
 p__43A:	movf	8Bh,W,BANKED			; entry from: 474h
 		xorwf	INDF0,W
 		bz		p__484
-		movlw	20h
+		movlw	0x20
 		cpfsgt	INDF0
 		bra		p__48A
-		btfss	72h,7,BANKED
+		btfss	0x72,7,BANKED
 		bra		p__45A
-		movlw	71h
+		movlw	0x71
 		cpfslt	FSR0L
 		bra		p__468
 		incf	FSR0L,W
-		movwf	74h,BANKED
-		movff	41h,FSR0L
+		movwf	0x74,BANKED
+		movff	0x41,FSR0L
 		retlw	0
 p__45A:	movlw	0xB0					; entry from: 448h
 		movwf	72h,BANKED
