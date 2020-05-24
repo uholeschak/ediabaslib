@@ -113,6 +113,7 @@
 		CONFIG EBTRB = OFF      ; Table Read Protect Boot (Disabled)
 
 #ifdef __XC
+#define END_LABEL reset_vector
 PSECT ramtop,class=RAM,delta=1
 PSECT smallconst,class=CONST,delta=1
 PSECT mediumconst,class=CONST,delta=1
@@ -138,6 +139,8 @@ PSECT init,class=CODE,delta=1
 PSECT powerup,class=CODE,delta=1
 PSECT intcodelo,class=CODE,delta=1
 PSECT intcode,class=CODE,delta=1
+#else
+#define END_LABEL
 #endif
 		; EEPROM
 #if SW_VERSION == 0
@@ -238,6 +241,7 @@ PSECT reset_vec,class=CODE,delta=1
 #endif
 
 		ORG CODE_OFFSET + 0
+reset_vector:
 		nop
 		goto	p_1654
 
@@ -7540,4 +7544,4 @@ p_405E:	btfss	PIR1,4					; entry from: 4056h,405Ah,4060h
 		bra		p_405E
 		movwf	TXREG1
 		return	
-	END
+	END END_LABEL
