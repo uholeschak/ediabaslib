@@ -238,7 +238,7 @@ p____E:	movlw	0x70						; entry from: 18h
 		DB 'L', 'V', ' ', 'R', 'E', 'S', 'E', 'T', 0, 0
 
 		ORG TABLE_OFFSET + 0x00F0
-		DATA "0123456789ABCDEF"
+		DB '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
 p__100:	addwf	PCL						; entry from: 1AECh
 		DB "Z", 0x00
 #if WDT_RESET
