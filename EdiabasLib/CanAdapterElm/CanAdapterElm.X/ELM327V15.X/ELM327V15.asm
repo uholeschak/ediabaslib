@@ -1,4 +1,7 @@
 		;Select your processor
+#ifdef __PICAS
+		#define __XC
+#endif
 #ifdef __XC
 		#include <xc.inc>
 		#define upper(_x) (low((_x) >> 16))
