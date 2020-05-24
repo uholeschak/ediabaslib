@@ -68,7 +68,7 @@
 
 		; CONFIG3H
 		CONFIG CANMX = PORTB    ; ECAN Mux bit (ECAN TX and RX pins are located on RB2 and RB3, respectively)
-		CONFIG MSSPMSK = MSK7   ; MSSP address masking (7 Bit address masking mode)
+		;CONFIG MSSPMSK = MSK7   ; MSSP address masking (7 Bit address masking mode)
 		CONFIG MCLRE = ON       ; Master Clear Enable (MCLR Enabled, RE3 Disabled)
 
 		; CONFIG4L
@@ -105,6 +105,33 @@
 		; CONFIG7H
 		CONFIG EBTRB = OFF      ; Table Read Protect Boot (Disabled)
 
+#ifdef __XC
+PSECT ramtop,class=RAM,delta=1
+PSECT smallconst,class=CONST,delta=1
+PSECT mediumconst,class=CONST,delta=1
+PSECT const,class=CONST,delta=1
+PSECT rdata,class=COMRAM,delta=1
+PSECT nvrram,class=COMRAM,delta=1
+PSECT nvbit,class=COMRAM,delta=1
+PSECT rbss,class=COMRAM,delta=1
+PSECT rbit,class=COMRAM,delta=1
+PSECT farbss,class=FARRAM,delta=1
+PSECT fardata,class=FARRAM,delta=1
+PSECT nvFARRAM,class=FARRAM,delta=1
+PSECT intsave_regs,class=BIGRAM,delta=1
+PSECT bigbss,class=BIGRAM,delta=1
+PSECT bigdata,class=BIGRAM,delta=1
+PSECT bss,class=RAM,delta=1
+PSECT idata,class=CODE,delta=1
+PSECT irdata,class=CODE,delta=1
+PSECT ibigdata,class=CODE,delta=1
+PSECT ifardata,class=CODE,delta=1
+PSECT param0,class=BANK0,delta=1
+PSECT init,class=CODE,delta=1
+PSECT powerup,class=CODE,delta=1
+PSECT intcodelo,class=CODE,delta=1
+PSECT intcode,class=CODE,delta=1
+#endif
 		; EEPROM
 #if SW_VERSION == 0
 #ifdef __XC
@@ -113,6 +140,7 @@ PSECT eeprom_data,class=EEDATA,delta=1
 		ORG 0xF00000 + (EEPROM_PAGE * 0x100)
 #else
 #ifdef __XC
+PSECT eeprom_data,class=EEDATA,delta=1
 PSECT reset_vec,class=CODE,delta=1
 #endif
 		ORG CODE_OFFSET + 0x000100
