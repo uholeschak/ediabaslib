@@ -38,9 +38,11 @@
 		    #define WDT_RESET   0x1
 
 		    #if ADAPTER_TYPE == 0x02
-			#define DEFAULT_BAUD 0x68	;38400
+							;38400
+			#define DEFAULT_BAUD 0x68
 		    #else
-			#define DEFAULT_BAUD 0x23	;115200
+							;115200
+			#define DEFAULT_BAUD 0x23
 		    #endif
 		#endif
 
