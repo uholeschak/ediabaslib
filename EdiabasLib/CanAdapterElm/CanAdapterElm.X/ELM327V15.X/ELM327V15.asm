@@ -216,26 +216,26 @@ p____E:	movlw	0x70						; entry from: 18h
 		bra		p____E
 
 		ORG DATA_OFFSET + 0x001A
-		DATA "ACT ALERT"
-		DATA "OBDII to RS232 Interpreter", 0
-		DATA "BUFFER FULL"
-		DATA "BUS BUSY", 0
-		DATA "BUS ERROR"
-		DATA "BUS INIT: ", 0
-		DATA "CAN ERROR"
-		DATA "<DATA ERROR"
-		DATA "ELM327 v1.5"
-		DATA "?"
-		DATA "FB ERROR", 0
-		DATA "UNABLE TO CONNECT"
-		DATA "NO DATA"
-		DATA "OK", 0
-		DATA ">"
-		DATA "SEARCHING...", 0
-		DATA "STOPPED"
-		DATA ">AT MA", 0
-		DATA "<RX ERROR"
-		DATA "LV RESET", 0
+		DB 'A', 'C', 'T', ' ', 'A', 'L', 'E', 'R', 'T', 0
+		DB 'O', 'B', 'D', 'I', 'I', ' ', 't', 'o', ' ', 'R', 'S', '2', '3', '2', ' ', 'I', 'n', 't', 'e', 'r', 'p', 'r', 'e', 't', 'e', 'r', 0, 0
+		DB 'B', 'U', 'F', 'F', 'E', 'R', ' ', 'F', 'U', 'L', 'L', 0
+		DB 'B', 'U', 'S', ' ', 'B', 'U', 'S', 'Y', 0, 0
+		DB 'B', 'U', 'S', ' ', 'E', 'R', 'R', 'O', 'R', 0
+		DB 'B', 'U', 'S', ' ', 'I', 'N', 'I', 'T', ':', ' ', 0, 0
+		DB 'C', 'A', 'N', ' ', 'E', 'R', 'R', 'O', 'R', 0
+		DB '<', 'D', 'A', 'T', 'A', ' ', 'E', 'R', 'R', 'O', 'R', 0
+		DB 'E', 'L', 'M', '3', '2', '7', ' ', 'v', '1', '.', '5', 0
+		DB '?', 0
+		DB 'F', 'B', ' ', 'E', 'R', 'R', 'O', 'R', 0, 0
+		DB 'U', 'N', 'A', 'B', 'L', 'E', ' ', 'T', 'O', ' ', 'C', 'O', 'N', 'N', 'E', 'C', 'T', 0
+		DB 'N', 'O', ' ', 'D', 'A', 'T', 'A', 0
+		DB 'O', 'K', 0, 0
+		DB '>', 0
+		DB 'S', 'E', 'A', 'R', 'C', 'H', 'I', 'N', 'G', '.', '.', '.', 0, 0
+		DB 'S', 'T', 'O', 'P', 'P', 'E', 'D', 0
+		DB '>', 'A', 'T', ' ', 'M', 'A', 0, 0
+		DB '<', 'R', 'X', ' ', 'E', 'R', 'R', 'O', 'R', 0
+		DB 'L', 'V', ' ', 'R', 'E', 'S', 'E', 'T', 0, 0
 
 		ORG TABLE_OFFSET + 0x00F0
 		DATA "0123456789ABCDEF"
