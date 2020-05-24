@@ -64,14 +64,19 @@
 		CONFIG BORV = 0         ; Brown-out Reset Voltage bits (3.0V)
 		CONFIG BORPWR = HIGH    ; BORMV Power level (BORMV set to high power level)
 
+#ifdef __XC
+		CONFIG CONFIG2H = 0x1E
+		CONFIG CONFIG3H = 0x89
+#else
 		; CONFIG2H
 		CONFIG WDTEN = ON       ; Watchdog Timer (WDT controlled by SWDTEN bit setting)
 		CONFIG WDTPS = 128      ; Watchdog Postscaler (1:128)
 
 		; CONFIG3H
 		CONFIG CANMX = PORTB    ; ECAN Mux bit (ECAN TX and RX pins are located on RB2 and RB3, respectively)
-		;CONFIG MSSPMSK = MSK7   ; MSSP address masking (7 Bit address masking mode)
+		CONFIG MSSPMSK = MSK7   ; MSSP address masking (7 Bit address masking mode)
 		CONFIG MCLRE = ON       ; Master Clear Enable (MCLR Enabled, RE3 Disabled)
+#endif
 
 		; CONFIG4L
 		CONFIG STVREN = ON      ; Stack Overflow Reset (Enabled)
