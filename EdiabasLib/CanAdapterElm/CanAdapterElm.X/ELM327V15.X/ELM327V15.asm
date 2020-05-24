@@ -1,15 +1,19 @@
 		;Select your processor
 #ifdef __XC
-		#include "pic18f25k80.inc"
+		#include <xc.inc>
 		#define upper(_x) (low((_x) >> 16))
 		#define MOD mod
+		#define ACCESS a
+		#define BANKED b
 
+		#define _SWDTEN_ SWDTEN
 		#define _RI_ RI
 #else
 		LIST      P=18F25K80		; modify this
 		#include "p18f25k80.inc"		; and this
 		#define MOD %
 
+		#define _SWDTEN_ WDTCON, SWDTEN
 		#define _RI_ RCON, RI
 #endif
 
@@ -103,8 +107,14 @@
 
 		; EEPROM
 #if SW_VERSION == 0
+#ifdef __XC
+PSECT eeprom_data,class=EEDATA,delta=1
+#endif
 		ORG 0xF00000 + (EEPROM_PAGE * 0x100)
 #else
+#ifdef __XC
+PSECT reset_vec,class=CODE,delta=1
+#endif
 		ORG CODE_OFFSET + 0x000100
 #endif
 eep_start:	DB 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x06, 0xAE, 0x02, 0x6A, 0xFF, 0xFF, 0xFF, 0xFF
@@ -126,7 +136,7 @@ eep_start:	DB 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x06, 0xAE, 0x02, 
 
 #if SW_VERSION != 0
 eep_end:
-eep_copy:	btfss	_RI_
+eep_copy:	btfss	_RI_, ACCESS
 		goto	p_reset		; perform wd reset after software reset
 
 		movlw	0x24
@@ -184,6 +194,9 @@ eep_loop:	tblrd   *+
 #endif
 
 #if ORIGINAL == 0
+#ifdef __XC
+PSECT reset_vec,class=CODE,delta=1
+#endif
 		ORG 0x7FFA
 		DATA 0x0015		; adapter version
 		DATA ADAPTER_TYPE	; adapter type
@@ -7441,8 +7454,8 @@ p_3F26:	movff	0x9D,0x96					; entry from: 2260h,3F1Ah,3F20h
 		nop
 
 #if WDT_RESET
-p_reset		bsf     WDTCON, SWDTEN
-reset_loop	bra	reset_loop
+p_reset:	bsf     _SWDTEN_, ACCESS
+reset_loop:	bra	reset_loop
 #endif
 
 		ORG BASE_ADDR + 0x4000
