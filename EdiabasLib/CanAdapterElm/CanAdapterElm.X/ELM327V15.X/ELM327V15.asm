@@ -198,8 +198,8 @@ eep_loop:	tblrd   *+
 PSECT reset_vec,class=CODE,delta=1
 #endif
 		ORG 0x7FFA
-		DATA 0x0015		; adapter version
-		DATA ADAPTER_TYPE	; adapter type
+		DW 0x0015		; adapter version
+		DW ADAPTER_TYPE		; adapter type
 #endif
 
 		ORG CODE_OFFSET + 0
