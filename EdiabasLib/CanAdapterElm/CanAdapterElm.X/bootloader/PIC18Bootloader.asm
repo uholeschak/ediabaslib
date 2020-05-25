@@ -105,6 +105,9 @@
 ;       issues. There is a very minute probability that errent code execution
 ;       could jump into the boot area and cause artificial boot entry.
 ; *****************************************************************************
+#ifdef __PICAS
+    #define __XC
+#endif
 #ifdef __XC
 #include <xc.inc>
 #else
@@ -198,6 +201,7 @@ PSECT powerup,class=CODE,delta=1
 PSECT intcodelo,class=CODE,delta=1
 PSECT intcode,class=CODE,delta=1
 PSECT reset_vec,class=CODE,delta=1
+PSECT code_abs,abs,class=CODE,delta=1
 #else
 #define END_LABEL
 #endif

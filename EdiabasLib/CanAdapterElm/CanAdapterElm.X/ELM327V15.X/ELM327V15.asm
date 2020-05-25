@@ -121,6 +121,7 @@ PSECT ramtop,class=RAM,delta=1
 PSECT smallconst,class=CONST,delta=1
 PSECT mediumconst,class=CONST,delta=1
 PSECT const,class=CONST,delta=1
+PSECT eeprom_data,class=EEDATA,delta=1
 PSECT rdata,class=COMRAM,delta=1
 PSECT nvrram,class=COMRAM,delta=1
 PSECT nvbit,class=COMRAM,delta=1
@@ -142,20 +143,15 @@ PSECT init,class=CODE,delta=1
 PSECT powerup,class=CODE,delta=1
 PSECT intcodelo,class=CODE,delta=1
 PSECT intcode,class=CODE,delta=1
+PSECT reset_vec,class=CODE,delta=1
+PSECT code_abs,abs,class=CODE,delta=1
 #else
 #define END_LABEL
 #endif
 		; EEPROM
 #if SW_VERSION == 0
-#ifdef __XC
-PSECT eeprom_data,class=EEDATA,delta=1
-#endif
 		ORG 0xF00000 + (EEPROM_PAGE * 0x100)
 #else
-#ifdef __XC
-PSECT eeprom_data,class=EEDATA,delta=1
-PSECT reset_vec,class=CODE,delta=1
-#endif
 		ORG CODE_OFFSET + 0x000100
 #endif
 eep_start:	DB 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x06, 0xAE, 0x02, 0x6A, 0xFF, 0xFF, 0xFF, 0xFF
@@ -235,9 +231,6 @@ eep_loop:	tblrd   *+
 #endif
 
 #if ORIGINAL == 0
-#ifdef __XC
-PSECT reset_vec,class=CODE,delta=1
-#endif
 		ORG 0x7FFA
 		DW 0x0015		; adapter version
 		DW ADAPTER_TYPE		; adapter type
