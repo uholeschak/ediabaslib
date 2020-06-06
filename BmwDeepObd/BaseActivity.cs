@@ -209,7 +209,9 @@ namespace BmwDeepObd
                 Configuration configuration = resources.Configuration;
                 if (Build.VERSION.SdkInt < BuildVersionCodes.JellyBeanMr1)
                 {
+#pragma warning disable CS0618 // Typ oder Element ist veraltet
                     configuration.Locale = locale;
+#pragma warning restore CS0618 // Typ oder Element ist veraltet
                 }
                 else
                 {
