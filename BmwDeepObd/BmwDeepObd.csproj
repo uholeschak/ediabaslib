@@ -69,6 +69,7 @@
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
     <AndroidLinkTool>proguard</AndroidLinkTool>
     <AndroidDexTool>dx</AndroidDexTool>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AndroidFlowLayout, Version=1.9.1.0, Culture=neutral, processorArchitecture=MSIL">
