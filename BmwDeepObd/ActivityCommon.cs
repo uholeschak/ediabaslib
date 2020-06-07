@@ -4039,7 +4039,7 @@ namespace BmwDeepObd
                         formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}",
                             packageInfo != null ? Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "appver");
                         formDownload.Add(new StringContent(GetCurrentLanguage()), "lang");
-                        formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)), "android_ver");
+                        formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.SdkInt )), "android_ver");
                         formDownload.Add(new StringContent(Build.Fingerprint), "fingerprint");
 
                         if (!string.IsNullOrEmpty(certInfo))
@@ -4122,7 +4122,7 @@ namespace BmwDeepObd
                     sb.Append("Deep OBD Trace info");
                     sb.Append(string.Format("\nDate: {0:u}", DateTime.Now));
                     sb.Append(string.Format("\nLanguage: {0}", GetCurrentLanguage()));
-                    sb.Append(string.Format("\nAndroid version: {0}", Build.VERSION.Sdk ?? string.Empty));
+                    sb.Append(string.Format("\nAndroid version: {0}", Build.VERSION.SdkInt));
                     sb.Append(string.Format("\nAndroid id: {0}", Build.Id ?? string.Empty));
                     sb.Append(string.Format("\nAndroid display: {0}", Build.Display ?? string.Empty));
                     sb.Append(string.Format("\nAndroid fingerprint: {0}", Build.Fingerprint ?? string.Empty));
@@ -4833,7 +4833,7 @@ namespace BmwDeepObd
                         packageInfo != null ? Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "app_ver" },
                     { new StringContent(AppId), "app_id" },
                     { new StringContent(GetCurrentLanguage()), "lang" },
-                    { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.Sdk)), "android_ver" },
+                    { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.SdkInt)), "android_ver" },
                     { new StringContent(Build.Fingerprint), "fingerprint" },
                     { new StringContent(installer ?? string.Empty), "installer" }
                 };
