@@ -3825,7 +3825,9 @@ namespace BmwDeepObd
                 else
                 {
                     PackageInfo packageInfo = _packageManager?.GetPackageInfo(_context.PackageName, PackageInfoFlags.Signatures);
+#pragma warning disable 618
                     signatures = packageInfo?.Signatures?.ToArray();
+#pragma warning restore 618
                 }
                 if (signatures != null)
                 {
