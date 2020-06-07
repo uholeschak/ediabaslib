@@ -418,10 +418,10 @@ namespace BmwDeepObd
         {
             Regex regex = new Regex(@"^main\.([0-9]+)\." + context.PackageName + @"\.obb$", RegexOptions.IgnoreCase);
             PackageInfo packageInfo = context.PackageManager.GetPackageInfo(context.PackageName, 0);
-            int packageVersion = -1;
+            long packageVersion = -1;
             if (packageInfo != null)
             {
-                packageVersion = packageInfo.VersionCode;
+                packageVersion = Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo);
             }
             string obbFile = null;
             Java.IO.File[] obbDirs;
@@ -447,7 +447,7 @@ namespace BmwDeepObd
                             if ((matchesFile.Count == 1) && (matchesFile[0].Groups.Count == 2))
                             {
                                 string fileVersion = matchesFile[0].Groups[1].Value;
-                                if ((packageVersion < 0) || (Int32.TryParse(fileVersion, out int version) && version <= packageVersion))
+                                if ((packageVersion < 0) || (Int64.TryParse(fileVersion, out long version) && version <= packageVersion))
                                 {
                                     FileInfo fileInfo = new FileInfo(file);
                                     if (fileInfo.Exists && fileInfo.Length == ObbFileSize)
@@ -730,10 +730,10 @@ namespace BmwDeepObd
                 if (!IsFromGooglePlay(this))
                 {
                     PackageInfo packageInfo = PackageManager.GetPackageInfo(PackageName, 0);
-                    int packageVersion = 0;
+                    long packageVersion = 0;
                     if (packageInfo != null)
                     {
-                        packageVersion = packageInfo.VersionCode;
+                        packageVersion = Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo);
                     }
                     string obbFileName = string.Format(CultureInfo.InvariantCulture, "main.{0}.{1}.obb", packageVersion, PackageName);
 
