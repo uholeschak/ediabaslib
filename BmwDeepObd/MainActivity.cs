@@ -131,7 +131,7 @@ namespace BmwDeepObd
             public string DeviceName { get; set; }
             public string DeviceAddress { get; set; }
             public string ConfigFileName { get; set; }
-            public int LastVersionCode { get; set; }
+            public long LastVersionCode { get; set; }
             public bool StorageRequirementsAccepted { get; set; }
             public bool BatteryWarningShown { get; set; }
             public bool ConfigMatchVehicleShown { get; set; }
@@ -180,7 +180,7 @@ namespace BmwDeepObd
         private ActivityCommon.AutoConnectType _connectTypeRequest;
         private bool _backPressed;
         private long _lastBackPressedTime;
-        private int _currentVersionCode;
+        private long _currentVersionCode;
         private bool _activityActive;
         private bool _onResumeExecuted;
         private bool _createTabsPending;
@@ -1611,7 +1611,8 @@ namespace BmwDeepObd
 
             try
             {
-                _currentVersionCode = PackageManager.GetPackageInfo(PackageName, 0).VersionCode;
+                PackageInfo packageInfo = PackageManager.GetPackageInfo(PackageName, 0);
+                _currentVersionCode = packageInfo != null ? Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
                 _obbFileName = ExpansionDownloaderActivity.GetObbFilename(this);
                 ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
 #if false    // simulate settings reset
@@ -1630,7 +1631,7 @@ namespace BmwDeepObd
                     _instanceData.ConfigFileName = prefs.GetString("ConfigFile", string.Empty);
                     _instanceData.UpdateCheckTime = prefs.GetLong("UpdateCheckTime", DateTime.MinValue.Ticks);
                     _instanceData.UpdateSkipVersion = prefs.GetInt("UpdateSkipVersion", -1);
-                    _instanceData.LastVersionCode = prefs.GetInt("VersionCode", -1);
+                    _instanceData.LastVersionCode = prefs.GetLong("VersionCode", -1);
                     _instanceData.StorageRequirementsAccepted = prefs.GetBoolean("StorageAccepted", false);
                     _instanceData.XmlEditorPackageName = prefs.GetString("XmlEditorPackageName", string.Empty);
                     _instanceData.XmlEditorClassName = prefs.GetString("XmlEditorClassName", string.Empty);
@@ -1703,7 +1704,7 @@ namespace BmwDeepObd
                 prefsEdit.PutLong("UpdateCheckTime", _instanceData.UpdateCheckTime);
                 prefsEdit.PutInt("UpdateSkipVersion", _instanceData.UpdateSkipVersion);
                 prefsEdit.PutString("StorageMedia", _activityCommon.CustomStorageMedia ?? string.Empty);
-                prefsEdit.PutInt("VersionCode", _currentVersionCode);
+                prefsEdit.PutLong("VersionCode", _currentVersionCode);
                 prefsEdit.PutBoolean("StorageAccepted", _instanceData.StorageRequirementsAccepted);
                 prefsEdit.PutString("XmlEditorPackageName", _instanceData.XmlEditorPackageName ?? string.Empty);
                 prefsEdit.PutString("XmlEditorClassName", _instanceData.XmlEditorClassName ?? string.Empty);
