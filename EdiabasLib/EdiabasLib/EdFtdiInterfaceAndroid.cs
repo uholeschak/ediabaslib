@@ -475,6 +475,7 @@ namespace EdiabasLib
             try
             {
                 int recLen = 0;
+                // ReSharper disable once UselessBinaryOperation
                 if (!ReadData(receiveData, offset + recLen, 1, timeout))
                 {
                     return false;
