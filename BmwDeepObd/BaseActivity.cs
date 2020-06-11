@@ -53,6 +53,7 @@ namespace BmwDeepObd
         protected bool _touchShowTitle = false;
         protected bool _longPress;
         protected bool _fullScreen;
+        protected bool _hasFocus;
         protected bool _autoFullScreenStarted;
         protected long _autoFullScreenStartTime;
         protected Timer _autoFullScreenTimer;
@@ -158,21 +159,28 @@ namespace BmwDeepObd
                     {
                         RunOnUiThread(() =>
                         {
-                            if (_autoFullScreenStarted)
+                            if (_hasFocus)
                             {
-                                if (Stopwatch.GetTimestamp() - _autoFullScreenStartTime >= AutoFullScreenTimeout * ActivityCommon.TickResolMs)
+                                if (_autoFullScreenStarted)
                                 {
-                                    _autoFullScreenStarted = false;
-                                    EnableFullScreenMode(true);
+                                    if (Stopwatch.GetTimestamp() - _autoFullScreenStartTime >= AutoFullScreenTimeout * ActivityCommon.TickResolMs)
+                                    {
+                                        _autoFullScreenStarted = false;
+                                        EnableFullScreenMode(true);
+                                    }
+                                }
+                                else
+                                {
+                                    if (!_fullScreen)
+                                    {
+                                        _autoFullScreenStartTime = Stopwatch.GetTimestamp();
+                                        _autoFullScreenStarted = true;
+                                    }
                                 }
                             }
                             else
                             {
-                                if (!_fullScreen)
-                                {
-                                    _autoFullScreenStartTime = Stopwatch.GetTimestamp();
-                                    _autoFullScreenStarted = true;
-                                }
+                                _autoFullScreenStarted = false;
                             }
                         });
                     }, null, 500, 500);
@@ -194,6 +202,8 @@ namespace BmwDeepObd
         public override void OnWindowFocusChanged(bool hasFocus)
         {
             base.OnWindowFocusChanged(hasFocus);
+            _hasFocus = hasFocus;
+            _autoFullScreenStarted = false;
             if (hasFocus)
             {
                 EnableFullScreenMode(true);
