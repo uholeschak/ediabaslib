@@ -133,6 +133,15 @@ namespace BmwDeepObd
             }
         }
 
+        public override void OnWindowFocusChanged(bool hasFocus)
+        {
+            base.OnWindowFocusChanged(hasFocus);
+            if (hasFocus)
+            {
+                EnableFullScreenMode(true);
+            }
+        }
+
         public override bool DispatchTouchEvent(MotionEvent ev)
         {
             _gestureDetector.OnTouchEvent(ev);
@@ -180,6 +189,22 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 // ignored
+            }
+        }
+
+        public void EnableFullScreenMode(bool enable)
+        {
+            View decorView = Window.DecorView;
+            if (decorView != null)
+            {
+                if (enable)
+                {
+                    decorView.SystemUiVisibility = (StatusBarVisibility)(SystemUiFlags.Immersive | SystemUiFlags.HideNavigation | SystemUiFlags.Fullscreen);
+                }
+                else
+                {
+                    decorView.SystemUiVisibility = (StatusBarVisibility)(SystemUiFlags.HideNavigation);
+                }
             }
         }
 
@@ -315,6 +340,7 @@ namespace BmwDeepObd
             {
                 base.OnLongPress(e);
                 _activity.LongPress = true;
+                _activity.EnableFullScreenMode(true);
             }
 
             public override bool OnFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
@@ -342,11 +368,13 @@ namespace BmwDeepObd
                             {
                                 if (diffY > 0)
                                 {
+                                    _activity.EnableFullScreenMode(false);
                                     _activity.SupportActionBar.Show();
                                     _activity._instanceDataBase.ActionBarVisible = true;
                                 }
                                 else
                                 {
+                                    _activity.EnableFullScreenMode(true);
                                     _activity.SupportActionBar.Hide();
                                     _activity._instanceDataBase.ActionBarVisible = false;
                                 }
