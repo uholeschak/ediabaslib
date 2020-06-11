@@ -325,6 +325,7 @@
   <string name="settings_caption_title_bar">Title bar</string>
   <string name="settings_auto_hide_title_bar">Auto hide title bar on main page when connected (show with long click and release)</string>
   <string name="settings_suppress_title_bar">Suppress unused title bars (show with swipe gesture)</string>
+  <string name="settings_full_screen_mode">Full screen mode</string>
   <string name="settings_caption_multi_window">Multi window</string>
   <string name="settings_swap_multi_window_orientation">Graphical display: Swap display orientation in multi window mode</string>
   <string name="settings_caption_internet">For OBD network adapter internet connection via</string>

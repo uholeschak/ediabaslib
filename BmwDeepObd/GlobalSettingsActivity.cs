@@ -31,6 +31,7 @@ namespace BmwDeepObd
         private RadioButton _radioButtonThemeLight;
         private CheckBox _checkBoxAutoHideTitleBar;
         private CheckBox _checkBoxSuppressTitleBar;
+        private CheckBox _checkBoxFullScreenMode;
         private TextView _textViewCaptionMultiWindow;
         private CheckBox _checkBoxSwapMultiWindowOrientation;
         private TextView _textViewCaptionInternet;
@@ -98,6 +99,7 @@ namespace BmwDeepObd
 
             _checkBoxAutoHideTitleBar = FindViewById<CheckBox>(Resource.Id.checkBoxAutoHideTitleBar);
             _checkBoxSuppressTitleBar = FindViewById<CheckBox>(Resource.Id.checkBoxSuppressTitleBar);
+            _checkBoxFullScreenMode = FindViewById<CheckBox>(Resource.Id.checkBoxFullScreenMode);
 
             ViewStates viewStateMultiWindow = Build.VERSION.SdkInt >= BuildVersionCodes.N ? ViewStates.Visible : ViewStates.Gone;
             _textViewCaptionMultiWindow = FindViewById<TextView>(Resource.Id.textViewCaptionMultiWindow);
@@ -260,6 +262,7 @@ namespace BmwDeepObd
 
             _checkBoxAutoHideTitleBar.Checked = ActivityCommon.AutoHideTitleBar;
             _checkBoxSuppressTitleBar.Checked = ActivityCommon.SuppressTitleBar;
+            _checkBoxFullScreenMode.Checked = ActivityCommon.FullScreenMode;
 
             _checkBoxSwapMultiWindowOrientation.Checked = ActivityCommon.SwapMultiWindowOrientation;
 
@@ -409,6 +412,7 @@ namespace BmwDeepObd
 
             ActivityCommon.AutoHideTitleBar = _checkBoxAutoHideTitleBar.Checked;
             ActivityCommon.SuppressTitleBar = _checkBoxSuppressTitleBar.Checked;
+            ActivityCommon.FullScreenMode = _checkBoxFullScreenMode.Checked;
 
             // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
             if (_checkBoxSwapMultiWindowOrientation.Visibility == ViewStates.Visible)
