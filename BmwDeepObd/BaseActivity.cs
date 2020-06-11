@@ -42,7 +42,7 @@ namespace BmwDeepObd
         public const ConfigChanges ActivityConfigChanges =
             ConfigChanges.KeyboardHidden | ConfigChanges.Orientation | ConfigChanges.ScreenLayout |
             ConfigChanges.ScreenSize | ConfigChanges.SmallestScreenSize;
-        private const int AutoFullScreenTimeout = 2000;
+        private const int AutoFullScreenTimeout = 3000;
         public const string InstanceDataKeyDefault = "InstanceData";
         public const string InstanceDataKeyBase = "InstanceDataBase";
         protected InstanceDataBase _instanceDataBase = new InstanceDataBase();
@@ -97,7 +97,7 @@ namespace BmwDeepObd
             {
                 _decorView.SystemUiVisibilityChange += (sender, args) =>
                 {
-                    _fullScreen = (args.Visibility & ((StatusBarVisibility)SystemUiFlags.Fullscreen)) != 0;
+                    _fullScreen = ((SystemUiFlags) args.Visibility & SystemUiFlags.Fullscreen) != 0;
                     _autoFullScreenStarted = false;
                 };
             }
@@ -151,7 +151,7 @@ namespace BmwDeepObd
                 _instanceDataBase.ActionBarVisible = true;
             }
 
-            if (ActivityCommon.AutoHideTitleBar)
+            if (ActivityCommon.FullScreenMode)
             {
                 if (_autoFullScreenTimer == null)
                 {
@@ -166,7 +166,10 @@ namespace BmwDeepObd
                                     if (Stopwatch.GetTimestamp() - _autoFullScreenStartTime >= AutoFullScreenTimeout * ActivityCommon.TickResolMs)
                                     {
                                         _autoFullScreenStarted = false;
-                                        EnableFullScreenMode(true);
+                                        if (ActivityCommon.FullScreenMode)
+                                        {
+                                            EnableFullScreenMode(true);
+                                        }
                                     }
                                 }
                                 else
@@ -206,7 +209,10 @@ namespace BmwDeepObd
             _autoFullScreenStarted = false;
             if (hasFocus)
             {
-                EnableFullScreenMode(true);
+                if (ActivityCommon.FullScreenMode)
+                {
+                    EnableFullScreenMode(true);
+                }
             }
         }
 

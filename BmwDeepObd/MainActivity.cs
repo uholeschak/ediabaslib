@@ -1648,6 +1648,7 @@ namespace BmwDeepObd
                     ActivityCommon.AppId = prefs.GetString("AppId", string.Empty);
                     ActivityCommon.AutoHideTitleBar = prefs.GetBoolean("AutoHideTitleBar", ActivityCommon.AutoHideTitleBar);
                     ActivityCommon.SuppressTitleBar = prefs.GetBoolean("SuppressTitleBar", ActivityCommon.SuppressTitleBar);
+                    ActivityCommon.FullScreenMode = prefs.GetBoolean("FullScreenMode", ActivityCommon.FullScreenMode);
                     ActivityCommon.SwapMultiWindowOrientation = prefs.GetBoolean("SwapMultiWindowOrientation", ActivityCommon.SwapMultiWindowOrientation);
                     ActivityCommon.SelectedInternetConnection = (ActivityCommon.InternetConnectionType)prefs.GetInt("InternetConnection", (int)ActivityCommon.InternetConnectionType.Cellular);
                     ActivityCommon.SelectedManufacturer = (ActivityCommon.ManufacturerType)prefs.GetInt("Manufacturer", (int)ActivityCommon.ManufacturerType.Bmw);
@@ -1722,6 +1723,7 @@ namespace BmwDeepObd
                 prefsEdit.PutInt("Theme", (int)ActivityCommon.SelectedTheme);
                 prefsEdit.PutBoolean("AutoHideTitleBar", ActivityCommon.AutoHideTitleBar);
                 prefsEdit.PutBoolean("SuppressTitleBar", ActivityCommon.SuppressTitleBar);
+                prefsEdit.PutBoolean("FullScreenMode", ActivityCommon.FullScreenMode);
                 prefsEdit.PutBoolean("SwapMultiWindowOrientation", ActivityCommon.SwapMultiWindowOrientation);
                 prefsEdit.PutInt("InternetConnection", (int)ActivityCommon.SelectedInternetConnection);
                 prefsEdit.PutInt("Manufacturer", (int) ActivityCommon.SelectedManufacturer);
