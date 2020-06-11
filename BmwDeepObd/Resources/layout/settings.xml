@@ -78,6 +78,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_suppress_title_bar" />
+        <CheckBox
+            android:id="@+id/checkBoxFullScreenMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_full_screen_mode" />
         <TextView
             android:text="@string/settings_caption_multi_window"
             android:id="@+id/textViewCaptionMultiWindow"

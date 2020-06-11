@@ -349,6 +349,7 @@
   <string name="settings_caption_title_bar">Titelzeile</string>
   <string name="settings_auto_hide_title_bar">Titelzeile auf Hauptseite bei Verbindung automatisch ausblenden (mit Lang-Klick und Loslassen anzeigen)</string>
   <string name="settings_suppress_title_bar">Nicht verwendete Titelzeilen unterdrücken (mit Wischgeste anzeigen)</string>
+  <string name="settings_full_screen_mode">Vollbildmodus</string>
   <string name="settings_caption_multi_window">Geteilte Bildschirmansicht</string>
   <string name="settings_swap_multi_window_orientation">Graphische Anzeige: Anzeige-Orientierung in geteilter Ansicht vertauschen</string>
   <string name="settings_caption_internet">Für OBD Netzwerkadapter Internetverbindung über</string>
