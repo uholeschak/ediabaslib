@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 using Android.Content;
@@ -40,14 +42,20 @@ namespace BmwDeepObd
         public const ConfigChanges ActivityConfigChanges =
             ConfigChanges.KeyboardHidden | ConfigChanges.Orientation | ConfigChanges.ScreenLayout |
             ConfigChanges.ScreenSize | ConfigChanges.SmallestScreenSize;
+        private const int AutoFullScreenTimeout = 2000;
         public const string InstanceDataKeyDefault = "InstanceData";
         public const string InstanceDataKeyBase = "InstanceDataBase";
         protected InstanceDataBase _instanceDataBase = new InstanceDataBase();
         private GestureDetectorCompat _gestureDetector;
         protected Configuration _currentConfiguration;
+        protected View _decorView;
         protected bool _allowTitleHiding = true;
         protected bool _touchShowTitle = false;
         protected bool _longPress;
+        protected bool _fullScreen;
+        protected bool _autoFullScreenStarted;
+        protected long _autoFullScreenStartTime;
+        protected Timer _autoFullScreenTimer;
 
         public bool LongPress
         {
@@ -82,6 +90,16 @@ namespace BmwDeepObd
             GestureListener gestureListener = new GestureListener(this);
             _gestureDetector = new GestureDetectorCompat(this, gestureListener);
             _currentConfiguration = Resources.Configuration;
+
+            _decorView = Window.DecorView;
+            if (_decorView != null)
+            {
+                _decorView.SystemUiVisibilityChange += (sender, args) =>
+                {
+                    _fullScreen = (args.Visibility & ((StatusBarVisibility)SystemUiFlags.Fullscreen)) != 0;
+                    _autoFullScreenStarted = false;
+                };
+            }
 
             if (_instanceDataBase != null)
             {
@@ -130,6 +148,46 @@ namespace BmwDeepObd
             {
                 SupportActionBar.Show();
                 _instanceDataBase.ActionBarVisible = true;
+            }
+
+            if (ActivityCommon.AutoHideTitleBar)
+            {
+                if (_autoFullScreenTimer == null)
+                {
+                    _autoFullScreenTimer = new Timer(state =>
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            if (_autoFullScreenStarted)
+                            {
+                                if (Stopwatch.GetTimestamp() - _autoFullScreenStartTime >= AutoFullScreenTimeout * ActivityCommon.TickResolMs)
+                                {
+                                    _autoFullScreenStarted = false;
+                                    EnableFullScreenMode(true);
+                                }
+                            }
+                            else
+                            {
+                                if (!_fullScreen)
+                                {
+                                    _autoFullScreenStartTime = Stopwatch.GetTimestamp();
+                                    _autoFullScreenStarted = true;
+                                }
+                            }
+                        });
+                    }, null, 500, 500);
+                }
+            }
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+
+            if (_autoFullScreenTimer != null)
+            {
+                _autoFullScreenTimer.Dispose();
+                _autoFullScreenTimer = null;
             }
         }
 
@@ -194,16 +252,15 @@ namespace BmwDeepObd
 
         public void EnableFullScreenMode(bool enable)
         {
-            View decorView = Window.DecorView;
-            if (decorView != null)
+            if (_decorView != null)
             {
                 if (enable)
                 {
-                    decorView.SystemUiVisibility = (StatusBarVisibility)(SystemUiFlags.Immersive | SystemUiFlags.HideNavigation | SystemUiFlags.Fullscreen);
+                    _decorView.SystemUiVisibility = (StatusBarVisibility)(SystemUiFlags.Immersive | SystemUiFlags.HideNavigation | SystemUiFlags.Fullscreen);
                 }
                 else
                 {
-                    decorView.SystemUiVisibility = (StatusBarVisibility)(SystemUiFlags.HideNavigation);
+                    _decorView.SystemUiVisibility = (StatusBarVisibility)(SystemUiFlags.HideNavigation);
                 }
             }
         }
@@ -340,7 +397,6 @@ namespace BmwDeepObd
             {
                 base.OnLongPress(e);
                 _activity.LongPress = true;
-                _activity.EnableFullScreenMode(true);
             }
 
             public override bool OnFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
@@ -368,13 +424,11 @@ namespace BmwDeepObd
                             {
                                 if (diffY > 0)
                                 {
-                                    _activity.EnableFullScreenMode(false);
                                     _activity.SupportActionBar.Show();
                                     _activity._instanceDataBase.ActionBarVisible = true;
                                 }
                                 else
                                 {
-                                    _activity.EnableFullScreenMode(true);
                                     _activity.SupportActionBar.Hide();
                                     _activity._instanceDataBase.ActionBarVisible = false;
                                 }
