@@ -714,8 +714,6 @@ namespace BmwDeepObd
 
         public static bool BtInitiallyEnabled { get; set; }
 
-        public static bool BtNoEvents { get; set; }
-
         public static string SelectedLocale { get; set; }
 
         public static ThemeType SelectedTheme { get; set; }
@@ -2836,10 +2834,6 @@ namespace BmwDeepObd
                                     if (_btUpdateHandler == null)
                                     {
                                         return;
-                                    }
-                                    if (_btEnableCounter == 2)
-                                    {   // update event not received
-                                        BtNoEvents = true;
                                     }
                                     _bcReceiverUpdateDisplayHandler?.Invoke();
                                 }, 1000);
@@ -4993,6 +4987,44 @@ namespace BmwDeepObd
             {
                 return false;
             }
+        }
+
+        public static void SetDefaultSettings(bool globalSettings = false)
+        {
+            if (!globalSettings)
+            {
+                EnableTranslation = false;
+                YandexApiKey = string.Empty;
+                BatteryWarnings = 0;
+                BatteryWarningVoltage = 0;
+                LastAdapterSerial = string.Empty;
+                EmailAddress = string.Empty;
+                TraceInfo = string.Empty;
+                AppId = string.Empty;
+            }
+
+            ShowBatteryVoltageWarning = true;
+            AutoHideTitleBar = false;
+            SuppressTitleBar = false;
+            FullScreenMode = false;
+            SwapMultiWindowOrientation = false;
+            SelectedInternetConnection = InternetConnectionType.Cellular;
+            SelectedManufacturer = ManufacturerType.Bmw;
+            BtEnbaleHandling = BtEnableType.Ask;
+            BtDisableHandling = BtDisableType.DisableIfByApp;
+            LockTypeCommunication = LockType.ScreenDim;
+            LockTypeLogging = LockType.Cpu;
+            StoreDataLogSettings = false;
+            AutoConnectHandling = AutoConnectType.Offline;
+            UpdateCheckDelay = UpdateCheckDelayDefault;
+            DoubleClickForAppExit = false;
+            SendDataBroadcast = false;
+            CheckCpuUsage = true;
+            CheckEcuFiles = true;
+            OldVagMode = false;
+            UseBmwDatabase = true;
+            ScanAllEcus = false;
+            CollectDebugInfo = false;
         }
 
         public static string GetCurrentLanguage()
@@ -7937,7 +7969,6 @@ namespace BmwDeepObd
 #pragma warning restore CS0618 // Typ oder Element ist veraltet
                         if (action == BluetoothAdapter.ActionStateChanged)
                         {
-                            BtNoEvents = false;
                             if (_activityCommon._activity is ActivityMain)
                             {
                                 State extraState = (State)intent.GetIntExtra(BluetoothAdapter.ExtraState, (int)State.Disconnected);
