@@ -244,6 +244,7 @@ namespace BmwDeepObd
         public const int UdsDtcStatusOverride = 0x2C;
         public const BuildVersionCodes MinEthernetSettingsVersion = BuildVersionCodes.M;
         public const long UpdateCheckDelayDefault = TimeSpan.TicksPerDay;
+        public const ThemeType ThemeDefault = ThemeType.Dark;
         public const int FileIoRetries = 10;
         public const int FileIoRetryDelay = 1000;
         public const SslProtocols DefaultSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13;
@@ -4989,9 +4990,9 @@ namespace BmwDeepObd
             }
         }
 
-        public static void SetDefaultSettings(bool globalSettings = false)
+        public static void SetDefaultSettings(bool globalOnly = false, bool includeTheme = false)
         {
-            if (!globalSettings)
+            if (!globalOnly)
             {
                 EnableTranslation = false;
                 YandexApiKey = string.Empty;
@@ -5001,6 +5002,11 @@ namespace BmwDeepObd
                 EmailAddress = string.Empty;
                 TraceInfo = string.Empty;
                 AppId = string.Empty;
+            }
+
+            if (includeTheme)
+            {
+                SelectedTheme = ThemeDefault;
             }
 
             ShowBatteryVoltageWarning = true;

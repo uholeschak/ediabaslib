@@ -655,7 +655,7 @@ namespace BmwDeepObd
 
         private void DefaultSettings()
         {
-            ActivityCommon.SetDefaultSettings(true);
+            ActivityCommon.SetDefaultSettings(true, true);
             ReadSettings();
         }
     }
