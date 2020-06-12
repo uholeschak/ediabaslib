@@ -1595,7 +1595,7 @@ namespace BmwDeepObd
             try
             {
                 ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
-                ActivityCommon.SelectedTheme = (ActivityCommon.ThemeType)prefs.GetInt("Theme", (int)ActivityCommon.ThemeType.Dark);
+                ActivityCommon.SelectedTheme = (ActivityCommon.ThemeType)prefs.GetInt("Theme", (int)ActivityCommon.ThemeDefault);
                 _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
             }
             catch (Exception)
