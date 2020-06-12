@@ -400,8 +400,10 @@
   <string name="settings_collect_debug_info">Собрать отладочную информацию для файла трассировки</string>
   <string name="settings_hci_snoop_log">Файл журнала отслеживания Bluetooth HCI:\n{0}</string>
   <string name="settings_hci_snoop_log_config">Настроить журнал отслеживания</string>
+  <!--Translate-->
+  <string name="settings_default_settings">Default settings</string>
 
-  <!--  EdiabasToolActivity -->
+    <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>
   <string name="tool_select_sgbd">Выбрать SGBD</string>
   <string name="tool_read_sgbd">Считать SGBD информацию</string>

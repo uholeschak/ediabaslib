@@ -401,8 +401,9 @@
   <string name="settings_collect_debug_info">Debug-Informationen für Trace-Datei sammeln</string>
   <string name="settings_hci_snoop_log">Bluetooth HCI Snoop Log Datei:\n{0}</string>
   <string name="settings_hci_snoop_log_config">Snoop Log Konfigurieren</string>
+  <string name="settings_default_settings">Standardeinstellungen</string>
 
-  <!--  EdiabasToolActivity -->
+    <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas Tool</string>
   <string name="tool_select_sgbd">SGBD auswählen</string>
   <string name="tool_read_sgbd">SGBD Informationen lesen</string>

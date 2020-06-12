@@ -412,5 +412,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_hci_snoop_log_config" />
+        <Button
+            android:id="@+id/buttonDefaultSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_default_settings" />
     </LinearLayout>
 </ScrollView>

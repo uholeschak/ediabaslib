@@ -73,6 +73,7 @@ namespace BmwDeepObd
         private CheckBox _checkBoxCollectDebugInfo;
         private CheckBox _checkBoxHciSnoopLog;
         private Button _buttonHciSnoopLog;
+        private Button _buttonDefaultSettings;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -186,6 +187,12 @@ namespace BmwDeepObd
             _buttonHciSnoopLog.Click += (sender, args) =>
             {
                 ShowDevelopmentSettings();
+            };
+
+            _buttonDefaultSettings = FindViewById<Button>(Resource.Id.buttonDefaultSettings);
+            _buttonDefaultSettings.Click += (sender, args) =>
+            {
+                DefaultSettings();
             };
 
             ReadSettings();
@@ -644,6 +651,12 @@ namespace BmwDeepObd
             {
                 return false;
             }
+        }
+
+        private void DefaultSettings()
+        {
+            ActivityCommon.SetDefaultSettings(true);
+            ReadSettings();
         }
     }
 }
