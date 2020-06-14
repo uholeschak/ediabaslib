@@ -935,7 +935,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestYandexKey:
-                    ActivityCommon.EnableTranslation = !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey);
+                    ActivityCommon.EnableTranslation = ActivityCommon.IsTranslationAvailable();
                     UpdateOptionsMenu();
                     UpdateDisplay();
                     break;
@@ -1033,7 +1033,7 @@ namespace BmwDeepObd
             IMenuItem translationEnableMenu = menu.FindItem(Resource.Id.menu_translation_enable);
             if (translationEnableMenu != null)
             {
-                translationEnableMenu.SetEnabled(!commActive || !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey));
+                translationEnableMenu.SetEnabled(!commActive || ActivityCommon.IsTranslationAvailable());
                 translationEnableMenu.SetVisible(ActivityCommon.IsTranslationRequired());
                 translationEnableMenu.SetChecked(ActivityCommon.EnableTranslation);
             }
@@ -1165,11 +1165,12 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_translation_enable:
-                    if (!ActivityCommon.EnableTranslation && string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey))
+                    if (!ActivityCommon.EnableTranslation && !ActivityCommon.IsTranslationAvailable())
                     {
                         EditYandexKey();
                         return true;
                     }
+
                     ActivityCommon.EnableTranslation = !ActivityCommon.EnableTranslation;
                     UpdateOptionsMenu();
                     UpdateDisplay();
@@ -1329,11 +1330,12 @@ namespace BmwDeepObd
 
         private void UpdateDisplay()
         {
-            if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation && string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey))
+            if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation && !ActivityCommon.IsTranslationAvailable())
             {
                 EditYandexKey();
                 return;
             }
+
             _ecuListAdapter.Items.Clear();
             if (_ecuList.Count == 0)
             {

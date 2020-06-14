@@ -678,7 +678,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestYandexKey:
-                    ActivityCommon.EnableTranslation = !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey);
+                    ActivityCommon.EnableTranslation = ActivityCommon.IsTranslationAvailable();
                     StoreSettings();
                     UpdateOptionsMenu();
                     UpdateDisplay();
@@ -853,7 +853,7 @@ namespace BmwDeepObd
             IMenuItem translationEnableMenu = menu.FindItem(Resource.Id.menu_translation_enable);
             if (translationEnableMenu != null)
             {
-                translationEnableMenu.SetEnabled(!commActive || !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey));
+                translationEnableMenu.SetEnabled(!commActive || ActivityCommon.IsTranslationAvailable());
                 translationEnableMenu.SetVisible(ActivityCommon.IsTranslationRequired());
                 translationEnableMenu.SetChecked(ActivityCommon.EnableTranslation);
             }
@@ -975,11 +975,12 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_translation_enable:
-                    if (!ActivityCommon.EnableTranslation && string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey))
+                    if (!ActivityCommon.EnableTranslation && !ActivityCommon.IsTranslationAvailable())
                     {
                         EditYandexKey();
                         return true;
                     }
+
                     ActivityCommon.EnableTranslation = !ActivityCommon.EnableTranslation;
                     UpdateOptionsMenu();
                     UpdateDisplay();
@@ -1639,6 +1640,8 @@ namespace BmwDeepObd
                     ActivityCommon.SetDefaultSettings();
                     ActivityCommon.EnableTranslation = prefs.GetBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
                     ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", ActivityCommon.YandexApiKey);
+                    ActivityCommon.IbmTranslatorApiKey = prefs.GetString("IbmTranslatorApiKey", ActivityCommon.IbmTranslatorApiKey);
+                    ActivityCommon.IbmTranslatorUrl = prefs.GetString("IbmTranslatorUrl", ActivityCommon.IbmTranslatorUrl);
                     ActivityCommon.ShowBatteryVoltageWarning = prefs.GetBoolean("ShowBatteryWarning", ActivityCommon.ShowBatteryVoltageWarning);
                     ActivityCommon.BatteryWarnings = prefs.GetLong("BatteryWarnings", ActivityCommon.BatteryWarnings);
                     ActivityCommon.BatteryWarningVoltage = prefs.GetFloat("BatteryWarningVoltage", (float) ActivityCommon.BatteryWarningVoltage);
@@ -1711,6 +1714,8 @@ namespace BmwDeepObd
                 prefsEdit.PutString("XmlEditorClassName", _instanceData.XmlEditorClassName ?? string.Empty);
                 prefsEdit.PutBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
                 prefsEdit.PutString("YandexApiKey", ActivityCommon.YandexApiKey ?? string.Empty);
+                prefsEdit.PutString("IbmTranslatorApiKey", ActivityCommon.IbmTranslatorApiKey ?? string.Empty);
+                prefsEdit.PutString("IbmTranslatorUrl", ActivityCommon.IbmTranslatorUrl ?? string.Empty);
                 prefsEdit.PutBoolean("ShowBatteryWarning", ActivityCommon.ShowBatteryVoltageWarning);
                 prefsEdit.PutLong("BatteryWarnings", ActivityCommon.BatteryWarnings);
                 prefsEdit.PutFloat("BatteryWarningVoltage", (float)ActivityCommon.BatteryWarningVoltage);
