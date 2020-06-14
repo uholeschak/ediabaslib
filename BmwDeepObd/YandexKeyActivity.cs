@@ -17,6 +17,12 @@ namespace BmwDeepObd
     {
         public class InstanceData
         {
+            public InstanceData()
+            {
+                OldApiKey = string.Empty;
+                OldApiUrl = string.Empty;
+            }
+
             public string OldApiKey { get; set; }
             public string OldApiUrl { get; set; }
         }

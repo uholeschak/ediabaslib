@@ -7,7 +7,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:focusable="true"
         android:focusableInTouchMode="true">
         <TextView
@@ -61,6 +61,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/settings_theme_light" />
+        </RadioGroup>
+        <TextView
+            android:text="@string/settings_caption_translator"
+            android:id="@+id/textViewCaptionTranslator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextViewInnerCaption" />
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RadioButton
+                android:id="@+id/radioButtonTranslatorYandex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_translator_yandex" />
+            <RadioButton
+                android:id="@+id/radioButtonTranslatorIbm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_translator_ibm" />
         </RadioGroup>
         <TextView
             android:text="@string/settings_caption_title_bar"
