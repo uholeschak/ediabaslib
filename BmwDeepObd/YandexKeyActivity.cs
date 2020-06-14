@@ -18,6 +18,7 @@ namespace BmwDeepObd
         public class InstanceData
         {
             public string OldApiKey { get; set; }
+            public string OldApiUrl { get; set; }
         }
 
         private InstanceData _instanceData = new InstanceData();
@@ -31,6 +32,9 @@ namespace BmwDeepObd
         private Button _buttonYandexApiKeyGet;
         private Button _buttonYandexApiKeyPaste;
         private EditText _editTextYandexApiKey;
+        private TextView _textViewApiUrlPasteTitle;
+        private Button _buttonApiUrlPaste;
+        private EditText _editTextApiUrl;
         private Button _buttonYandexApiKeyTest;
         private TextView _textViewYandexApiKeyTestResult;
 
@@ -64,6 +68,7 @@ namespace BmwDeepObd
 
                     case ActivityCommon.TranslatorType.IbmWatson:
                         _instanceData.OldApiKey = ActivityCommon.IbmTranslatorApiKey ?? string.Empty;
+                        _instanceData.OldApiUrl = ActivityCommon.IbmTranslatorUrl ?? string.Empty;
                         break;
                 }
             }
@@ -73,8 +78,17 @@ namespace BmwDeepObd
             _layoutYandexKey = FindViewById<LinearLayout>(Resource.Id.layoutYandexKey);
             _layoutYandexKey.SetOnTouchListener(this);
 
+            bool apiUrlVisible = ActivityCommon.Translator == ActivityCommon.TranslatorType.IbmWatson;
+
             _editTextYandexApiKey = FindViewById<EditText>(Resource.Id.editTextYandexApiKey);
             _editTextYandexApiKey.Text = _instanceData.OldApiKey;
+
+            _textViewApiUrlPasteTitle = FindViewById<TextView>(Resource.Id.textViewApiUrlPasteTitle);
+            _textViewApiUrlPasteTitle.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
+
+            _editTextApiUrl = FindViewById<EditText>(Resource.Id.editTextApiUrl);
+            _editTextApiUrl.Text = _instanceData.OldApiUrl;
+            _editTextApiUrl.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
 
             _buttonYandexApiKeyCreate = FindViewById<Button>(Resource.Id.buttonYandexKeyCreate);
             _buttonYandexApiKeyCreate.SetOnTouchListener(this);
@@ -140,6 +154,23 @@ namespace BmwDeepObd
                 UpdateDisplay();
             };
 
+            _buttonApiUrlPaste = FindViewById<Button>(Resource.Id.buttonApiUrlPaste);
+            _buttonApiUrlPaste.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
+            _buttonApiUrlPaste.SetOnTouchListener(this);
+            _buttonApiUrlPaste.Click += (sender, args) =>
+            {
+                string clipText = _activityCommon.GetClipboardText();
+                if (!string.IsNullOrWhiteSpace(clipText))
+                {
+                    _editTextApiUrl.Text = clipText.Trim();
+                    UpdateDisplay();
+                }
+            };
+            _buttonApiUrlPaste.TextChanged += (sender, args) =>
+            {
+                UpdateDisplay();
+            };
+
             _textViewYandexApiKeyTestResult = FindViewById<TextView>(Resource.Id.textViewYandexKeyTestResult);
 
             _buttonYandexApiKeyTest = FindViewById<Button>(Resource.Id.buttonYandexKeyTest);
@@ -155,6 +186,7 @@ namespace BmwDeepObd
 
                     case ActivityCommon.TranslatorType.IbmWatson:
                         ActivityCommon.IbmTranslatorApiKey = _editTextYandexApiKey.Text.Trim();
+                        ActivityCommon.IbmTranslatorUrl = _editTextApiUrl.Text.Trim();
                         break;
                 }
 
@@ -283,16 +315,31 @@ namespace BmwDeepObd
                 pasteEnable = true;
             }
             _buttonYandexApiKeyPaste.Enabled = pasteEnable;
-            _buttonYandexApiKeyTest.Enabled = !string.IsNullOrWhiteSpace(_editTextYandexApiKey.Text);
+
+            bool testEnabled = !string.IsNullOrWhiteSpace(_editTextYandexApiKey.Text);
+            switch (ActivityCommon.Translator)
+            {
+                case ActivityCommon.TranslatorType.IbmWatson:
+                    if (string.IsNullOrWhiteSpace(_editTextApiUrl.Text))
+                    {
+                        testEnabled = false;
+                    }
+                    break;
+            }
+
+            _buttonYandexApiKeyTest.Enabled = testEnabled;
         }
 
         private bool StoreYandexKey(EventHandler handler)
         {
             string newApiKey = _editTextYandexApiKey.Text.Trim();
-            if (string.Compare(_instanceData.OldApiKey, newApiKey, StringComparison.Ordinal) == 0)
+            string newApiUrl = _editTextApiUrl.Text.Trim();
+            if (string.Compare(_instanceData.OldApiKey, newApiKey, StringComparison.Ordinal) == 0 &&
+                string.Compare(_instanceData.OldApiUrl, newApiUrl, StringComparison.Ordinal) == 0)
             {
                 return true;
             }
+
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
@@ -304,6 +351,7 @@ namespace BmwDeepObd
 
                         case ActivityCommon.TranslatorType.IbmWatson:
                             ActivityCommon.IbmTranslatorApiKey = newApiKey;
+                            ActivityCommon.IbmTranslatorUrl = newApiUrl;
                             break;
                     }
 
@@ -320,6 +368,7 @@ namespace BmwDeepObd
 
                         case ActivityCommon.TranslatorType.IbmWatson:
                             ActivityCommon.IbmTranslatorApiKey = _instanceData.OldApiKey;
+                            ActivityCommon.IbmTranslatorUrl = _instanceData.OldApiUrl;
                             break;
                     }
 

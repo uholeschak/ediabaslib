@@ -191,6 +191,9 @@
   <string name="button_yandex_key_get">Показать API ключи</string>
   <string name="yandex_key_paste_title">API ключ</string>
   <string name="button_yandex_key_paste">Вставить API ключи</string>
+  <!--Translate-->
+  <string name="api_url_paste_title">API URL</string>
+  <string name="button_api_url_paste">Paste API URL</string>
   <string name="yandex_key_test_title">Перевести</string>
   <string name="button_yandex_key_test">Проверить перевод</string>
   <string name="button_yandex_key_test_failed">Ошибка при переводе</string>
