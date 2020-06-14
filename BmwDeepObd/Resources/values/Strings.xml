@@ -151,18 +151,18 @@
   <string name="translate_text">Translating text</string>
   <string name="translate_failed">Translation failed.\nPlease check your network connection.\nDo you want to retry the translation?</string>
   <string name="translate_failed_message">Translation failed with error:\n{0}.\nDo you want to retry the translation?</string>
-  <string name="translate_enable_request">Do you want to enable automatic ECU text translation with <a href='http://translate.yandex.com'>Yandex.Translate</a>?\nThis requires a Yandex account and an API Key.\nPowered by Yandex.Translate</string>
+  <string name="translate_enable_request">Do you want to enable automatic ECU text translation with {0}?\nThis requires an account and an API Key.</string>
   <string name="translate_store_key">Do you want to store the API Key?</string>
 
   <!-- Translate Menu -->
   <string name="menu_translation_submenu">Translations</string>
   <string name="menu_translation_enable">Translate ECU text</string>
-  <string name="menu_translation_yandex_key">Yandex API Key</string>
+  <string name="menu_translation_yandex_key">Translation configuration</string>
   <string name="menu_translation_clear_cache">Clear translation cache</string>
 
   <!-- Yandex key -->
-  <string name="yandex_api_key_title">Yandex API Key</string>
-  <string name="yandex_key_desc">For automatic translation with Yantex.Translate a free API Key is required, that allows a limited amount of translations per day.\nTo get this key, a Yandex account is required.\nWith the buttons below log in to your yandex account and create a key or display your existing ones.\nCopy the key from the web browser and paste it in the field below with the paste button.\nTo copy the key press hand hold the first word, extend the selected range and choose copy.</string>
+  <string name="yandex_api_key_title">Translation configuration</string>
+  <string name="yandex_key_desc">For automatic translation with {0} a free API key and account is required, that allows a limited amount of translations per day.\nWith the buttons below log in to your account and create a key or display your existing ones.\nCopy the key from the web browser and paste it in the field below with the paste button.\nTo copy the key press and hold the first word, extend the selected range and choose copy.</string>
   <string name="yandex_key_copy_title">Copy API Key</string>
   <string name="button_yandex_key_create">Create API Key</string>
   <string name="button_yandex_key_get">Display API Keys</string>
@@ -283,6 +283,10 @@
   <string name="select_manufacturer_seat">Seat</string>
   <string name="select_manufacturer_skoda">Skoda</string>
   <string name="select_manufacturer_vw">VW</string>
+
+  <!-- Translator selection -->
+  <string name="select_translator_yantex">Yantex.Translate</string>
+  <string name="select_translator_ibm">IBM Watson</string>
 
   <!-- Bluetooth -->
   <string name="mtc_disconnect_warn">For a stable communication with the adapter it is recommended to pair any additional smartphone with the radio.\nDo you want to continue anyway?</string>

@@ -27,6 +27,7 @@ namespace BmwDeepObd
         private Timer _clipboardCheckTimer;
         private ActivityCommon _activityCommon;
         private View _contentView;
+        private TextView _textViewYandexKeyDesc;
         private LinearLayout _layoutYandexKey;
         private Button _buttonYandexApiKeyCreate;
         private Button _buttonYandexApiKeyGet;
@@ -62,7 +63,7 @@ namespace BmwDeepObd
             {
                 switch (ActivityCommon.Translator)
                 {
-                    case ActivityCommon.TranslatorType.Yandex:
+                    case ActivityCommon.TranslatorType.YandexTranslate:
                         _instanceData.OldApiKey = ActivityCommon.YandexApiKey ?? string.Empty;
                         break;
 
@@ -74,6 +75,9 @@ namespace BmwDeepObd
             }
 
             _activityCommon = new ActivityCommon(this);
+
+            _textViewYandexKeyDesc = FindViewById<TextView>(Resource.Id.textViewYandexKeyDesc);
+            _textViewYandexKeyDesc.Text = string.Format(GetString(Resource.String.yandex_key_desc), _activityCommon.TranslatorName());
 
             _layoutYandexKey = FindViewById<LinearLayout>(Resource.Id.layoutYandexKey);
             _layoutYandexKey.SetOnTouchListener(this);
@@ -103,7 +107,7 @@ namespace BmwDeepObd
 
                     switch (ActivityCommon.Translator)
                     {
-                        case ActivityCommon.TranslatorType.Yandex:
+                        case ActivityCommon.TranslatorType.YandexTranslate:
                             StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/")));
                             break;
 
@@ -127,7 +131,7 @@ namespace BmwDeepObd
 
                     switch (ActivityCommon.Translator)
                     {
-                        case ActivityCommon.TranslatorType.Yandex:
+                        case ActivityCommon.TranslatorType.YandexTranslate:
                             StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/")));
                             break;
 
@@ -180,7 +184,7 @@ namespace BmwDeepObd
                 _textViewYandexApiKeyTestResult.Text = string.Empty;
                 switch (ActivityCommon.Translator)
                 {
-                    case ActivityCommon.TranslatorType.Yandex:
+                    case ActivityCommon.TranslatorType.YandexTranslate:
                         ActivityCommon.YandexApiKey = _editTextYandexApiKey.Text.Trim();
                         break;
 
@@ -345,7 +349,7 @@ namespace BmwDeepObd
                 {
                     switch (ActivityCommon.Translator)
                     {
-                        case ActivityCommon.TranslatorType.Yandex:
+                        case ActivityCommon.TranslatorType.YandexTranslate:
                             ActivityCommon.YandexApiKey = newApiKey;
                             break;
 
@@ -362,7 +366,7 @@ namespace BmwDeepObd
                 {
                     switch (ActivityCommon.Translator)
                     {
-                        case ActivityCommon.TranslatorType.Yandex:
+                        case ActivityCommon.TranslatorType.YandexTranslate:
                             ActivityCommon.YandexApiKey = _instanceData.OldApiKey;
                             break;
 

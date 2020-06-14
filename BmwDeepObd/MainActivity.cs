@@ -1639,6 +1639,7 @@ namespace BmwDeepObd
 
                     ActivityCommon.SetDefaultSettings();
                     ActivityCommon.EnableTranslation = prefs.GetBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
+                    ActivityCommon.Translator = (ActivityCommon.TranslatorType) prefs.GetLong("Translator", (int) ActivityCommon.Translator);
                     ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", ActivityCommon.YandexApiKey);
                     ActivityCommon.IbmTranslatorApiKey = prefs.GetString("IbmTranslatorApiKey", ActivityCommon.IbmTranslatorApiKey);
                     ActivityCommon.IbmTranslatorUrl = prefs.GetString("IbmTranslatorUrl", ActivityCommon.IbmTranslatorUrl);
@@ -1713,6 +1714,7 @@ namespace BmwDeepObd
                 prefsEdit.PutString("XmlEditorPackageName", _instanceData.XmlEditorPackageName ?? string.Empty);
                 prefsEdit.PutString("XmlEditorClassName", _instanceData.XmlEditorClassName ?? string.Empty);
                 prefsEdit.PutBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
+                prefsEdit.PutLong("Translator", (int)ActivityCommon.Translator);
                 prefsEdit.PutString("YandexApiKey", ActivityCommon.YandexApiKey ?? string.Empty);
                 prefsEdit.PutString("IbmTranslatorApiKey", ActivityCommon.IbmTranslatorApiKey ?? string.Empty);
                 prefsEdit.PutString("IbmTranslatorUrl", ActivityCommon.IbmTranslatorUrl ?? string.Empty);
