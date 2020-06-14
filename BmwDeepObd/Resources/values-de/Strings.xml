@@ -192,6 +192,8 @@
   <string name="button_yandex_key_get">API Keys anzeigen</string>
   <string name="yandex_key_paste_title">API Key</string>
   <string name="button_yandex_key_paste">API Key einfügen</string>
+  <string name="api_url_paste_title">API URL</string>
+  <string name="button_api_url_paste">API URL einfügen</string>
   <string name="yandex_key_test_title">Translate</string>
   <string name="button_yandex_key_test">Übersetzung testen</string>
   <string name="button_yandex_key_test_failed">Übersetzung fehlgeschlagen</string>

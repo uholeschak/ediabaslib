@@ -168,6 +168,8 @@
   <string name="button_yandex_key_get">Display API Keys</string>
   <string name="yandex_key_paste_title">API Key</string>
   <string name="button_yandex_key_paste">Paste API Key</string>
+  <string name="api_url_paste_title">API URL</string>
+  <string name="button_api_url_paste">Paste API URL</string>
   <string name="yandex_key_test_title">Translate</string>
   <string name="button_yandex_key_test">Test translation</string>
   <string name="button_yandex_key_test_failed">Translation failed</string>
