@@ -79,17 +79,21 @@ namespace BmwDeepObd
 
         public class IbmTranslateRequest
         {
-            public IbmTranslateRequest(string[] textArray, string modelId)
+            public IbmTranslateRequest(string[] textArray, string source, string target)
             {
                 TextArray = textArray;
-                ModelId = modelId;
+                Source = source;
+                Target = target;
             }
 
             [JsonPropertyName("text")]
             public string[] TextArray { get; }
 
-            [JsonPropertyName("model_id")]
-            public string ModelId { get; }
+            [JsonPropertyName("source")]
+            public string Source { get; }
+
+            [JsonPropertyName("target")]
+            public string Target { get; }
         }
 
         public class VagEcuEntry
@@ -6220,17 +6224,7 @@ namespace BmwDeepObd
                             }
                         }
 
-                        string langPair = "de-en";
-                        switch (_yandexCurrentLang)
-                        {
-                            case "en":
-                            case "fr":
-                            case "it":
-                                langPair = "de-" + _yandexCurrentLang;
-                                break;
-                        }
-
-                        IbmTranslateRequest translateRequest = new IbmTranslateRequest(transList.ToArray(), langPair);
+                        IbmTranslateRequest translateRequest = new IbmTranslateRequest(transList.ToArray(), "de", _yandexCurrentLang);
                         string jsonString = JsonSerializer.Serialize(translateRequest);
                         HttpContent httpContent = new StringContent(jsonString);
                         httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");

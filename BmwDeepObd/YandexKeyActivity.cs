@@ -17,7 +17,7 @@ namespace BmwDeepObd
     {
         public class InstanceData
         {
-            public string OldYandexApiKey { get; set; }
+            public string OldApiKey { get; set; }
         }
 
         private InstanceData _instanceData = new InstanceData();
@@ -56,7 +56,16 @@ namespace BmwDeepObd
 
             if (!_activityRecreated)
             {
-                _instanceData.OldYandexApiKey = ActivityCommon.YandexApiKey ?? string.Empty;
+                switch (ActivityCommon.Translator)
+                {
+                    case ActivityCommon.TranslatorType.Yandex:
+                        _instanceData.OldApiKey = ActivityCommon.YandexApiKey ?? string.Empty;
+                        break;
+
+                    case ActivityCommon.TranslatorType.IbmWatson:
+                        _instanceData.OldApiKey = ActivityCommon.IbmTranslatorApiKey ?? string.Empty;
+                        break;
+                }
             }
 
             _activityCommon = new ActivityCommon(this);
@@ -65,7 +74,7 @@ namespace BmwDeepObd
             _layoutYandexKey.SetOnTouchListener(this);
 
             _editTextYandexApiKey = FindViewById<EditText>(Resource.Id.editTextYandexApiKey);
-            _editTextYandexApiKey.Text = _instanceData.OldYandexApiKey;
+            _editTextYandexApiKey.Text = _instanceData.OldApiKey;
 
             _buttonYandexApiKeyCreate = FindViewById<Button>(Resource.Id.buttonYandexKeyCreate);
             _buttonYandexApiKeyCreate.SetOnTouchListener(this);
@@ -77,7 +86,17 @@ namespace BmwDeepObd
                     {
                         return;
                     }
-                    StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/get/?service=trnsl")));
+
+                    switch (ActivityCommon.Translator)
+                    {
+                        case ActivityCommon.TranslatorType.Yandex:
+                            StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/")));
+                            break;
+
+                        case ActivityCommon.TranslatorType.IbmWatson:
+                            StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://cloud.ibm.com/catalog/services/language-translator")));
+                            break;
+                    }
                 });
             };
 
@@ -91,7 +110,17 @@ namespace BmwDeepObd
                     {
                         return;
                     }
-                    StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/")));
+
+                    switch (ActivityCommon.Translator)
+                    {
+                        case ActivityCommon.TranslatorType.Yandex:
+                            StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/")));
+                            break;
+
+                        case ActivityCommon.TranslatorType.IbmWatson:
+                            StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://cloud.ibm.com/resources")));
+                            break;
+                    }
                 });
             };
 
@@ -118,7 +147,17 @@ namespace BmwDeepObd
             _buttonYandexApiKeyTest.Click += (sender, args) =>
             {
                 _textViewYandexApiKeyTestResult.Text = string.Empty;
-                ActivityCommon.YandexApiKey = _editTextYandexApiKey.Text.Trim();
+                switch (ActivityCommon.Translator)
+                {
+                    case ActivityCommon.TranslatorType.Yandex:
+                        ActivityCommon.YandexApiKey = _editTextYandexApiKey.Text.Trim();
+                        break;
+
+                    case ActivityCommon.TranslatorType.IbmWatson:
+                        ActivityCommon.IbmTranslatorApiKey = _editTextYandexApiKey.Text.Trim();
+                        break;
+                }
+
                 if (!_activityCommon.TranslateStrings(new List<string> {"Dieser Text wurde erfolgreich \x00fcbersetzt"}, list =>
                 {
                     if (_activityCommon == null)
@@ -249,21 +288,41 @@ namespace BmwDeepObd
 
         private bool StoreYandexKey(EventHandler handler)
         {
-            string newYandexApiKey = _editTextYandexApiKey.Text.Trim();
-            if (string.Compare(_instanceData.OldYandexApiKey, newYandexApiKey, StringComparison.Ordinal) == 0)
+            string newApiKey = _editTextYandexApiKey.Text.Trim();
+            if (string.Compare(_instanceData.OldApiKey, newApiKey, StringComparison.Ordinal) == 0)
             {
                 return true;
             }
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
-                    ActivityCommon.YandexApiKey = newYandexApiKey;
+                    switch (ActivityCommon.Translator)
+                    {
+                        case ActivityCommon.TranslatorType.Yandex:
+                            ActivityCommon.YandexApiKey = newApiKey;
+                            break;
+
+                        case ActivityCommon.TranslatorType.IbmWatson:
+                            ActivityCommon.IbmTranslatorApiKey = newApiKey;
+                            break;
+                    }
+
                     SetResult(Android.App.Result.Ok);
                     handler?.Invoke(sender, args);
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                 {
-                    ActivityCommon.YandexApiKey = _instanceData.OldYandexApiKey;
+                    switch (ActivityCommon.Translator)
+                    {
+                        case ActivityCommon.TranslatorType.Yandex:
+                            ActivityCommon.YandexApiKey = _instanceData.OldApiKey;
+                            break;
+
+                        case ActivityCommon.TranslatorType.IbmWatson:
+                            ActivityCommon.IbmTranslatorApiKey = _instanceData.OldApiKey;
+                            break;
+                    }
+
                     handler?.Invoke(sender, args);
                 })
                 .SetCancelable(true)
