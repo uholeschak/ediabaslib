@@ -29,6 +29,9 @@ namespace BmwDeepObd
         private RadioButton _radioButtonLocaleRu;
         private RadioButton _radioButtonThemeDark;
         private RadioButton _radioButtonThemeLight;
+        private TextView _textViewCaptionTranslator;
+        private RadioButton _radioButtonTranslatorYandex;
+        private RadioButton _radioButtonTranslatorIbm;
         private CheckBox _checkBoxAutoHideTitleBar;
         private CheckBox _checkBoxSuppressTitleBar;
         private CheckBox _checkBoxFullScreenMode;
@@ -97,6 +100,14 @@ namespace BmwDeepObd
 
             _radioButtonThemeDark = FindViewById<RadioButton>(Resource.Id.radioButtonThemeDark);
             _radioButtonThemeLight = FindViewById<RadioButton>(Resource.Id.radioButtonThemeLight);
+
+            ViewStates viewStateTranslation = ActivityCommon.IsTranslationRequired() ? ViewStates.Visible : ViewStates.Gone;
+            _textViewCaptionTranslator = FindViewById<TextView>(Resource.Id.textViewCaptionTranslator);
+            _textViewCaptionTranslator.Visibility = viewStateTranslation;
+            _radioButtonTranslatorYandex = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorYandex);
+            _radioButtonTranslatorYandex.Visibility = viewStateTranslation;
+            _radioButtonTranslatorIbm = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorIbm);
+            _radioButtonTranslatorIbm.Visibility = viewStateTranslation;
 
             _checkBoxAutoHideTitleBar = FindViewById<CheckBox>(Resource.Id.checkBoxAutoHideTitleBar);
             _checkBoxSuppressTitleBar = FindViewById<CheckBox>(Resource.Id.checkBoxSuppressTitleBar);
@@ -267,6 +278,17 @@ namespace BmwDeepObd
                     break;
             }
 
+            switch (ActivityCommon.Translator)
+            {
+                case ActivityCommon.TranslatorType.IbmWatson:
+                    _radioButtonTranslatorIbm.Checked = true;
+                    break;
+
+                default:
+                    _radioButtonTranslatorYandex.Checked = true;
+                    break;
+            }
+
             _checkBoxAutoHideTitleBar.Checked = ActivityCommon.AutoHideTitleBar;
             _checkBoxSuppressTitleBar.Checked = ActivityCommon.SuppressTitleBar;
             _checkBoxFullScreenMode.Checked = ActivityCommon.FullScreenMode;
@@ -407,15 +429,26 @@ namespace BmwDeepObd
             ActivityCommon.SelectedLocale = locale;
 
             ActivityCommon.ThemeType themeType = ActivityCommon.SelectedTheme;
-            if (_radioButtonThemeDark.Checked)
-            {
-                themeType = ActivityCommon.ThemeType.Dark;
-            }
-            else if (_radioButtonThemeLight.Checked)
+            if (_radioButtonThemeLight.Checked)
             {
                 themeType = ActivityCommon.ThemeType.Light;
             }
+            else if (_radioButtonThemeDark.Checked)
+            {
+                themeType = ActivityCommon.ThemeType.Dark;
+            }
             ActivityCommon.SelectedTheme = themeType;
+
+            ActivityCommon.TranslatorType translatorType = ActivityCommon.Translator;
+            if (_radioButtonTranslatorYandex.Checked)
+            {
+                translatorType = ActivityCommon.TranslatorType.YandexTranslate;
+            }
+            else if (_radioButtonTranslatorIbm.Checked)
+            {
+                translatorType = ActivityCommon.TranslatorType.IbmWatson;
+            }
+            ActivityCommon.Translator = translatorType;
 
             ActivityCommon.AutoHideTitleBar = _checkBoxAutoHideTitleBar.Checked;
             ActivityCommon.SuppressTitleBar = _checkBoxSuppressTitleBar.Checked;

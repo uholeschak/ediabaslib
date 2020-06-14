@@ -6,7 +6,7 @@
   <LinearLayout
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="wrap_content">
     <TextView
       android:id="@+id/textViewMessage"
       android:textAppearance="@android:style/TextAppearance.DialogWindowTitle"
@@ -21,7 +21,7 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content" />
     <TextView
-      android:id="@+id/textViewMessage"
+      android:id="@+id/textViewEmail"
       android:text="@string/send_trace_email"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
