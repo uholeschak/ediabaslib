@@ -9,7 +9,6 @@
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/textViewYandexKeyDesc"
-            android:text="@string/yandex_key_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView
@@ -64,7 +63,7 @@
             android:id="@+id/editTextApiUrl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text|textNoSuggestions"
+            android:inputType="textUri"
             android:maxLines="1" />
         <TextView
             android:id="@+id/textViewYandexKeyTestTitle"

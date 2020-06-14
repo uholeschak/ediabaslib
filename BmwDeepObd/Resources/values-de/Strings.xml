@@ -175,18 +175,18 @@
   <!-- Translate -->
   <string name="translate_text">Text wird übersetzt</string>
   <string name="translate_failed">Übersetzung fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.\nWollen Sie die Übersetzung wiederholen?</string>
-  <string name="translate_enable_request">Wollen Sie automatisch die ECU Texte mit <a href='http://translate.yandex.com'>Yandex.Translate</a> übersetzen lasen?\nHierfür benötigen Sie einen Yandex Account und einen API Key.\nPowered by Yandex.Translate</string>
+  <string name="translate_enable_request">Wollen Sie automatisch die ECU Texte mit {0} übersetzen lassen?\nHierfür benötigen Sie einen Account und einen API Key.</string>
   <string name="translate_store_key">Wollen Sie den API Key speichern?</string>
 
   <!-- Translate Menu -->
   <string name="menu_translation_submenu">Übersetzungen</string>
   <string name="menu_translation_enable">ECU Texte übersetzen</string>
-  <string name="menu_translation_yandex_key">Yandex API Key</string>
+  <string name="menu_translation_yandex_key">Einstellungen Übersetzung</string>
   <string name="menu_translation_clear_cache">Übersetzungscache löschen</string>
 
   <!-- Yandex key -->
-  <string name="yandex_api_key_title">Yandex API Key</string>
-  <string name="yandex_key_desc">Für eine automatische Übersetzung mit Yantex.Translate wird eine kostenloser API Key benötigt, der eine begrenzte Anzahl an Übersetzungen pro Tag erlaubt.\nUm diesen Key zu erhalten, wird ein Yandex Account benötigt.\nMit den beiden nächsten Schaltflächen loggen Sie sich in Ihren Yandex Account ein um eine Key zu erzeugen oder Ihre bestehenden anzuzeigen.\nKopieren Sie den Key aus dem Browser und fügen Sie Ihn in das untere Feld mit der Einfügen Schaltfläche ein.\nUm den Key zu kopieren drücken und halten Sie das erste Wort, erweitern den Bereich und wählen Sie anschließend kopieren.</string>
+  <string name="yandex_api_key_title">Einstellungen Übersetzung</string>
+  <string name="yandex_key_desc">Für eine automatische Übersetzung mit {0} wird eine kostenloser API Key und Account benötigt, der eine begrenzte Anzahl an Übersetzungen pro Tag erlaubt.\nMit den folgenden Schaltflächen loggen Sie sich in Ihren Account ein um eine Key zu erzeugen oder Ihre bestehenden anzuzeigen.\nKopieren Sie den Key aus dem Browser und fügen Sie Ihn in das untere Feld mit der Einfügen Schaltfläche ein.\nUm den Key zu kopieren drücken und halten Sie das erste Wort, erweitern den Bereich und wählen Sie anschließend kopieren.</string>
   <string name="yandex_key_copy_title">API Key kopieren</string>
   <string name="button_yandex_key_create">API Key erzeugen</string>
   <string name="button_yandex_key_get">API Keys anzeigen</string>
@@ -307,6 +307,10 @@
   <string name="select_manufacturer_seat">Seat</string>
   <string name="select_manufacturer_skoda">Skoda</string>
   <string name="select_manufacturer_vw">VW</string>
+
+  <!-- Translator selection -->
+  <string name="select_translator_yantex">Yantex.Translate</string>
+  <string name="select_translator_ibm">IBM Watson</string>
 
   <!-- Bluetooth -->
   <string name="mtc_disconnect_warn">Für eine stabile Kommunikation mit dem Adapter wird empfohlen, irgendein zuätzliches Smartphone mit dem Radio zu koppeln.\nWollen Sie trotzdem fortfahren?</string>

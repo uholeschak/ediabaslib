@@ -34,7 +34,6 @@ using System.Xml.Linq;
 using Android.Content.PM;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
-using Android.Text.Method;
 using Android.Views;
 using BmwFileReader;
 using UdsFileReader;
@@ -256,7 +255,7 @@ namespace BmwDeepObd
 
         public enum TranslatorType
         {
-            Yandex,                 // Yandex.translate
+            YandexTranslate,        // Yandex.translate
             IbmWatson,              // IBM Watson Translator
         }
 
@@ -1226,6 +1225,19 @@ namespace BmwDeepObd
                 case ManufacturerType.Vw:
                     return _context.GetString(Resource.String.select_manufacturer_vw);
 
+            }
+            return string.Empty;
+        }
+
+        public string TranslatorName()
+        {
+            switch (Translator)
+            {
+                case TranslatorType.YandexTranslate:
+                    return _context.GetString(Resource.String.select_translator_yantex);
+
+                case TranslatorType.IbmWatson:
+                    return _context.GetString(Resource.String.select_translator_ibm);
             }
             return string.Empty;
         }
@@ -5945,7 +5957,7 @@ namespace BmwDeepObd
         {
             switch (Translator)
             {
-                case TranslatorType.Yandex:
+                case TranslatorType.YandexTranslate:
                     return !string.IsNullOrWhiteSpace(YandexApiKey);
 
                 case TranslatorType.IbmWatson:
@@ -6088,6 +6100,7 @@ namespace BmwDeepObd
                     return false;
                 }
                 EnableTranslateRequested = true;
+                string message = string.Format(_context.GetString(Resource.String.translate_enable_request), TranslatorName());
                 AlertDialog alertDialog = new AlertDialog.Builder(_context)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
@@ -6097,7 +6110,7 @@ namespace BmwDeepObd
                     {
                     })
                     .SetCancelable(true)
-                    .SetMessage(Resource.String.translate_enable_request)
+                    .SetMessage(message)
                     .SetTitle(Resource.String.alert_title_question)
                     .Show();
                 alertDialog.DismissEvent += (sender, args) =>
@@ -6108,11 +6121,6 @@ namespace BmwDeepObd
                     }
                     handler?.Invoke(sender, args);
                 };
-                TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
-                if (messageView != null)
-                {
-                    messageView.MovementMethod = new LinkMovementMethod();
-                }
             }
             catch (Exception)
             {
@@ -6306,7 +6314,7 @@ namespace BmwDeepObd
 
                     if (success)
                     {
-                        if (Translator == TranslatorType.Yandex && _yandexLangList == null)
+                        if (Translator == TranslatorType.YandexTranslate && _yandexLangList == null)
                         {
                             _yandexLangList = GetLanguages(responseTranslateResult);
                             if (_yandexLangList != null)
@@ -6327,7 +6335,7 @@ namespace BmwDeepObd
                             List<string> transList = null;
                             switch (Translator)
                             {
-                                case TranslatorType.Yandex:
+                                case TranslatorType.YandexTranslate:
                                     transList = GetYandexTranslations(responseTranslateResult);
                                     break;
 
@@ -6388,14 +6396,14 @@ namespace BmwDeepObd
                                 _translateLockAquired = false;
                             }
                         }
-                        if ((Translator == TranslatorType.Yandex && _yandexLangList == null) || (_yandexTransList == null))
+                        if ((Translator == TranslatorType.YandexTranslate && _yandexLangList == null) || (_yandexTransList == null))
                         {
                             string errorMessage = string.Empty;
                             if (!success)
                             {
                                 switch (Translator)
                                 {
-                                    case TranslatorType.Yandex:
+                                    case TranslatorType.YandexTranslate:
                                         errorMessage = GetYandexTranslationError(responseTranslateResult, out int _);
                                         break;
 

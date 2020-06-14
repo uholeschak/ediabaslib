@@ -174,18 +174,21 @@
   <!-- Translate -->
   <string name="translate_text">Перевод текста</string>
   <string name="translate_failed">Ошибка перевода текста.\nПожалуйста, проверьте подключение к сети.\nХотите повторить перевод?</string>
-  <string name="translate_enable_request">Хотите воспользоваться автоматическим переводчиком <a href='http://translate.yandex.com'>Яндекс</a> для перевода ECU текста?\nДля этого необходим Яндекс аккаунт и API ключ.\nPowered by Yandex.Translate</string>
+  <!--Translate-->
+  <string name="translate_enable_request">Do you want to enable automatic ECU text translation with {0}?\nThis requires an account and an API Key.</string>
   <string name="translate_store_key">Сохранить ключ?</string>
 
   <!-- Translate Menu -->
   <string name="menu_translation_submenu">Переводы</string>
   <string name="menu_translation_enable">Перевести ECU тексты</string>
-  <string name="menu_translation_yandex_key">Яндекс API ключ</string>
+  <!--Translate-->
+  <string name="menu_translation_yandex_key">Translation configuration</string>
   <string name="menu_translation_clear_cache">Удалить кэш перевода</string>
 
   <!-- Yandex key -->
-  <string name="yandex_api_key_title">Яндекс API ключ</string>
-  <string name="yandex_key_desc">Для автоматическохо перевода в Яндексе необходим безплатный API ключ, который разрешает ограниченное количество переводов в день.\nЧтобы получить этот ключ, необходим Яндекс аккаунт.\nЧтобы получить ключ или показать имеющийся, зарегистрируйтесь в Яндексе с помощью двух следующих кнопок.\nСкопируйте клуч из броузера в нижнее окно и вставте его, нажав кнопку Вставить.\nЧтобы скопировать клуч, нажмите и удерживайте первое слово, выделите нужное и нажмите Копировать.</string>
+  <!--Translate-->
+  <string name="yandex_api_key_title">Translation configuration</string>
+  <string name="yandex_key_desc">For automatic translation with {0} a free API key and account is required, that allows a limited amount of translations per day.\nWith the buttons below log in to your account and create a key or display your existing ones.\nCopy the key from the web browser and paste it in the field below with the paste button.\nTo copy the key press and hold the first word, extend the selected range and choose copy.</string>
   <string name="yandex_key_copy_title">копировать API ключ</string>
   <string name="button_yandex_key_create">создать API ключ</string>
   <string name="button_yandex_key_get">Показать API ключи</string>
@@ -306,6 +309,10 @@
   <string name="select_manufacturer_seat">Seat</string>
   <string name="select_manufacturer_skoda">Skoda</string>
   <string name="select_manufacturer_vw">VW</string>
+
+  <!-- Translator selection -->
+  <string name="select_translator_yantex">Yantex.Translate</string>
+  <string name="select_translator_ibm">IBM Watson</string>
 
   <!-- Bluetooth -->
   <string name="mtc_disconnect_warn">Для стабильной связи с адаптером, соедините радио с любым имеющимся смартфоном.\nХотите продолжить без подключения смартфона?</string>
