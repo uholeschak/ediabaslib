@@ -483,6 +483,7 @@ namespace BmwDeepObd
         private static bool _vagUdsActive;
         private static bool _ecuFunctionActive;
         private static int _btEnableCounter;
+        private static TranslatorType _translatorType;
         private static Dictionary<string, UdsReader> _udsReaderDict;
         private static EcuFunctionReader _ecuFunctionReader;
         private readonly BluetoothAdapter _btAdapter;
@@ -788,7 +789,22 @@ namespace BmwDeepObd
 
         public static bool CollectDebugInfo { get; set; }
 
-        public static TranslatorType Translator { get; set; }
+        public static TranslatorType SelectedTranslator => _translatorType;
+
+        public TranslatorType Translator
+        {
+            get => _translatorType;
+
+            set
+            {
+                if (_translatorType != value)
+                {
+                    _yandexLangList = null;
+                }
+
+                _translatorType = value;
+            }
+        }
 
         public static string YandexApiKey { get; set; }
 
@@ -1231,7 +1247,7 @@ namespace BmwDeepObd
 
         public string TranslatorName()
         {
-            switch (Translator)
+            switch (SelectedTranslator)
             {
                 case TranslatorType.YandexTranslate:
                     return _context.GetString(Resource.String.select_translator_yantex);
@@ -5036,7 +5052,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static void SetDefaultSettings(bool globalOnly = false, bool includeTheme = false)
+        public void SetDefaultSettings(bool globalOnly = false, bool includeTheme = false)
         {
             if (!globalOnly)
             {
@@ -5955,7 +5971,7 @@ namespace BmwDeepObd
 
         public static bool IsTranslationAvailable()
         {
-            switch (Translator)
+            switch (SelectedTranslator)
             {
                 case TranslatorType.YandexTranslate:
                     return !string.IsNullOrWhiteSpace(YandexApiKey);
@@ -6214,7 +6230,7 @@ namespace BmwDeepObd
                     int stringCount = 0;
                     HttpContent httpContent = null;
                     StringBuilder sbUrl = new StringBuilder();
-                    if (Translator == TranslatorType.IbmWatson)
+                    if (SelectedTranslator == TranslatorType.IbmWatson)
                     {
                         if (_yandexLangList == null)
                         {
@@ -6342,7 +6358,7 @@ namespace BmwDeepObd
                     {
                         if (_yandexLangList == null)
                         {
-                            switch (Translator)
+                            switch (SelectedTranslator)
                             {
                                 case TranslatorType.YandexTranslate:
                                     _yandexLangList = GetYandexLanguages(responseTranslateResult);
@@ -6369,7 +6385,7 @@ namespace BmwDeepObd
                         else
                         {
                             List<string> transList = null;
-                            switch (Translator)
+                            switch (SelectedTranslator)
                             {
                                 case TranslatorType.YandexTranslate:
                                     transList = GetYandexTranslations(responseTranslateResult);
@@ -6437,7 +6453,7 @@ namespace BmwDeepObd
                             string errorMessage = string.Empty;
                             if (!success)
                             {
-                                switch (Translator)
+                                switch (SelectedTranslator)
                                 {
                                     case TranslatorType.YandexTranslate:
                                         errorMessage = GetYandexTranslationError(responseTranslateResult, out int _);
