@@ -6212,34 +6212,60 @@ namespace BmwDeepObd
                 {
                     System.Threading.Tasks.Task<HttpResponseMessage> taskTranslate;
                     int stringCount = 0;
+                    HttpContent httpContent = null;
                     StringBuilder sbUrl = new StringBuilder();
                     if (Translator == TranslatorType.IbmWatson)
                     {
-                        sbUrl.Append(IbmTranslatorUrl);
-                        sbUrl.Append(@"/v3/translate?version=2018-05-01");
-
-                        List<string> transList = new List<string>();
-                        int offset = _yandexTransList?.Count ?? 0;
-                        int sumLength = 0;
-                        for (int i = offset; i < _yandexReducedStringList.Count; i++)
+                        if (_yandexLangList == null)
                         {
-                            transList.Add(_yandexReducedStringList[i]);
-                            sumLength += _yandexReducedStringList[i].Length;
-                            stringCount++;
-                            if (sumLength > 40000)
-                            {
-                                break;
-                            }
+                            // no language list present, get it first
+                            sbUrl.Append(IbmTranslatorUrl);
+                            sbUrl.Append(@"/v3/identifiable_languages?version=2018-05-01");
                         }
+                        else
+                        {
+                            sbUrl.Append(IbmTranslatorUrl);
+                            sbUrl.Append(@"/v3/translate?version=2018-05-01");
 
-                        IbmTranslateRequest translateRequest = new IbmTranslateRequest(transList.ToArray(), "de", _yandexCurrentLang);
-                        string jsonString = JsonSerializer.Serialize(translateRequest);
-                        HttpContent httpContent = new StringContent(jsonString);
-                        httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                            List<string> transList = new List<string>();
+                            int offset = _yandexTransList?.Count ?? 0;
+                            int sumLength = 0;
+                            for (int i = offset; i < _yandexReducedStringList.Count; i++)
+                            {
+                                transList.Add(_yandexReducedStringList[i]);
+                                sumLength += _yandexReducedStringList[i].Length;
+                                stringCount++;
+                                if (sumLength > 40000)
+                                {
+                                    break;
+                                }
+                            }
+
+                            string targetLang = _yandexCurrentLang;
+                            if (_yandexLangList.All(lang => string.Compare(lang, _yandexCurrentLang, StringComparison.OrdinalIgnoreCase) != 0))
+                            {
+                                // language not found
+                                targetLang = "en";
+                            }
+
+                            IbmTranslateRequest translateRequest = new IbmTranslateRequest(transList.ToArray(), "de", targetLang);
+                            string jsonString = JsonSerializer.Serialize(translateRequest);
+
+                            httpContent = new StringContent(jsonString);
+                            httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                        }
 
                         string authParameter = Convert.ToBase64String(Encoding.ASCII.GetBytes(String.Format("apikey:{0}", IbmTranslatorApiKey)));
                         _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authParameter);
-                        taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);
+                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                        if (httpContent != null)
+                        {
+                            taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);
+                        }
+                        else
+                        {
+                            taskTranslate = _translateHttpClient.GetAsync(sbUrl.ToString());
+                        }
                     }
                     else
                     {
@@ -6314,9 +6340,19 @@ namespace BmwDeepObd
 
                     if (success)
                     {
-                        if (Translator == TranslatorType.YandexTranslate && _yandexLangList == null)
+                        if (_yandexLangList == null)
                         {
-                            _yandexLangList = GetLanguages(responseTranslateResult);
+                            switch (Translator)
+                            {
+                                case TranslatorType.YandexTranslate:
+                                    _yandexLangList = GetYandexLanguages(responseTranslateResult);
+                                    break;
+
+                                case TranslatorType.IbmWatson:
+                                    _yandexLangList = GetIbmLanguages(responseTranslateResult);
+                                    break;
+                            }
+
                             if (_yandexLangList != null)
                             {
                                 _activity?.RunOnUiThread(() =>
@@ -6396,7 +6432,7 @@ namespace BmwDeepObd
                                 _translateLockAquired = false;
                             }
                         }
-                        if ((Translator == TranslatorType.YandexTranslate && _yandexLangList == null) || (_yandexTransList == null))
+                        if ((_yandexLangList == null) || (_yandexTransList == null))
                         {
                             string errorMessage = string.Empty;
                             if (!success)
@@ -6613,7 +6649,7 @@ namespace BmwDeepObd
             }
         }
 
-        private List<string> GetLanguages(string xmlResult)
+        private List<string> GetYandexLanguages(string xmlResult)
         {
             try
             {
@@ -6636,6 +6672,38 @@ namespace BmwDeepObd
                         transList.Add(reader.ReadInnerXml());
                     }
                 }
+                return transList;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private List<string> GetIbmLanguages(string jsonResult)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(jsonResult))
+                {
+                    return null;
+                }
+
+                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
+                List<string> transList = new List<string>();
+                if (!jsonDocument.RootElement.TryGetProperty("languages", out JsonElement languages))
+                {
+                    return null;
+                }
+
+                foreach (JsonElement translation in languages.EnumerateArray())
+                {
+                    if (translation.TryGetProperty("language", out JsonElement transElem))
+                    {
+                        transList.Add(transElem.GetString());
+                    }
+                }
+
                 return transList;
             }
             catch (Exception)
