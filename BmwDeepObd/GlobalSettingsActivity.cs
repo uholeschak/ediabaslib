@@ -278,7 +278,7 @@ namespace BmwDeepObd
                     break;
             }
 
-            switch (ActivityCommon.Translator)
+            switch (ActivityCommon.SelectedTranslator)
             {
                 case ActivityCommon.TranslatorType.IbmWatson:
                     _radioButtonTranslatorIbm.Checked = true;
@@ -439,7 +439,7 @@ namespace BmwDeepObd
             }
             ActivityCommon.SelectedTheme = themeType;
 
-            ActivityCommon.TranslatorType translatorType = ActivityCommon.Translator;
+            ActivityCommon.TranslatorType translatorType = ActivityCommon.SelectedTranslator;
             if (_radioButtonTranslatorYandex.Checked)
             {
                 translatorType = ActivityCommon.TranslatorType.YandexTranslate;
@@ -448,7 +448,7 @@ namespace BmwDeepObd
             {
                 translatorType = ActivityCommon.TranslatorType.IbmWatson;
             }
-            ActivityCommon.Translator = translatorType;
+            _activityCommon.Translator = translatorType;
 
             ActivityCommon.AutoHideTitleBar = _checkBoxAutoHideTitleBar.Checked;
             ActivityCommon.SuppressTitleBar = _checkBoxSuppressTitleBar.Checked;
@@ -688,7 +688,7 @@ namespace BmwDeepObd
 
         private void DefaultSettings()
         {
-            ActivityCommon.SetDefaultSettings(true, true);
+            _activityCommon.SetDefaultSettings(true, true);
             ReadSettings();
         }
     }

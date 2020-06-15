@@ -67,7 +67,7 @@ namespace BmwDeepObd
 
             if (!_activityRecreated)
             {
-                switch (ActivityCommon.Translator)
+                switch (ActivityCommon.SelectedTranslator)
                 {
                     case ActivityCommon.TranslatorType.YandexTranslate:
                         _instanceData.OldApiKey = ActivityCommon.YandexApiKey ?? string.Empty;
@@ -88,7 +88,7 @@ namespace BmwDeepObd
             _layoutYandexKey = FindViewById<LinearLayout>(Resource.Id.layoutYandexKey);
             _layoutYandexKey.SetOnTouchListener(this);
 
-            bool apiUrlVisible = ActivityCommon.Translator == ActivityCommon.TranslatorType.IbmWatson;
+            bool apiUrlVisible = ActivityCommon.SelectedTranslator == ActivityCommon.TranslatorType.IbmWatson;
 
             _editTextYandexApiKey = FindViewById<EditText>(Resource.Id.editTextYandexApiKey);
             _editTextYandexApiKey.Text = _instanceData.OldApiKey;
@@ -111,7 +111,7 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    switch (ActivityCommon.Translator)
+                    switch (ActivityCommon.SelectedTranslator)
                     {
                         case ActivityCommon.TranslatorType.YandexTranslate:
                             StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/")));
@@ -135,7 +135,7 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    switch (ActivityCommon.Translator)
+                    switch (ActivityCommon.SelectedTranslator)
                     {
                         case ActivityCommon.TranslatorType.YandexTranslate:
                             StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/")));
@@ -188,7 +188,7 @@ namespace BmwDeepObd
             _buttonYandexApiKeyTest.Click += (sender, args) =>
             {
                 _textViewYandexApiKeyTestResult.Text = string.Empty;
-                switch (ActivityCommon.Translator)
+                switch (ActivityCommon.SelectedTranslator)
                 {
                     case ActivityCommon.TranslatorType.YandexTranslate:
                         ActivityCommon.YandexApiKey = _editTextYandexApiKey.Text.Trim();
@@ -327,7 +327,7 @@ namespace BmwDeepObd
             _buttonYandexApiKeyPaste.Enabled = pasteEnable;
 
             bool testEnabled = !string.IsNullOrWhiteSpace(_editTextYandexApiKey.Text);
-            switch (ActivityCommon.Translator)
+            switch (ActivityCommon.SelectedTranslator)
             {
                 case ActivityCommon.TranslatorType.IbmWatson:
                     if (string.IsNullOrWhiteSpace(_editTextApiUrl.Text))
@@ -353,7 +353,7 @@ namespace BmwDeepObd
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
-                    switch (ActivityCommon.Translator)
+                    switch (ActivityCommon.SelectedTranslator)
                     {
                         case ActivityCommon.TranslatorType.YandexTranslate:
                             ActivityCommon.YandexApiKey = newApiKey;
@@ -370,7 +370,7 @@ namespace BmwDeepObd
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                 {
-                    switch (ActivityCommon.Translator)
+                    switch (ActivityCommon.SelectedTranslator)
                     {
                         case ActivityCommon.TranslatorType.YandexTranslate:
                             ActivityCommon.YandexApiKey = _instanceData.OldApiKey;

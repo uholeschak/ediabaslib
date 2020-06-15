@@ -1637,14 +1637,14 @@ namespace BmwDeepObd
                     _instanceData.XmlEditorPackageName = prefs.GetString("XmlEditorPackageName", string.Empty);
                     _instanceData.XmlEditorClassName = prefs.GetString("XmlEditorClassName", string.Empty);
 
-                    ActivityCommon.SetDefaultSettings();
+                    _activityCommon.SetDefaultSettings();
                     ActivityCommon.EnableTranslation = prefs.GetBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
                     ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", ActivityCommon.YandexApiKey);
                     ActivityCommon.IbmTranslatorApiKey = prefs.GetString("IbmTranslatorApiKey", ActivityCommon.IbmTranslatorApiKey);
                     ActivityCommon.IbmTranslatorUrl = prefs.GetString("IbmTranslatorUrl", ActivityCommon.IbmTranslatorUrl);
                     ActivityCommon.TranslatorType defaultTranslator =
-                        !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey) ? ActivityCommon.TranslatorType.YandexTranslate : ActivityCommon.Translator;
-                    ActivityCommon.Translator = (ActivityCommon.TranslatorType)prefs.GetLong("Translator", (int)defaultTranslator);
+                        !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey) ? ActivityCommon.TranslatorType.YandexTranslate : ActivityCommon.SelectedTranslator;
+                    _activityCommon.Translator = (ActivityCommon.TranslatorType)prefs.GetLong("Translator", (int)defaultTranslator);
                     ActivityCommon.ShowBatteryVoltageWarning = prefs.GetBoolean("ShowBatteryWarning", ActivityCommon.ShowBatteryVoltageWarning);
                     ActivityCommon.BatteryWarnings = prefs.GetLong("BatteryWarnings", ActivityCommon.BatteryWarnings);
                     ActivityCommon.BatteryWarningVoltage = prefs.GetFloat("BatteryWarningVoltage", (float) ActivityCommon.BatteryWarningVoltage);
@@ -1719,7 +1719,7 @@ namespace BmwDeepObd
                 prefsEdit.PutString("YandexApiKey", ActivityCommon.YandexApiKey ?? string.Empty);
                 prefsEdit.PutString("IbmTranslatorApiKey", ActivityCommon.IbmTranslatorApiKey ?? string.Empty);
                 prefsEdit.PutString("IbmTranslatorUrl", ActivityCommon.IbmTranslatorUrl ?? string.Empty);
-                prefsEdit.PutLong("Translator", (int)ActivityCommon.Translator);
+                prefsEdit.PutLong("Translator", (int)ActivityCommon.SelectedTranslator);
                 prefsEdit.PutBoolean("ShowBatteryWarning", ActivityCommon.ShowBatteryVoltageWarning);
                 prefsEdit.PutLong("BatteryWarnings", ActivityCommon.BatteryWarnings);
                 prefsEdit.PutFloat("BatteryWarningVoltage", (float)ActivityCommon.BatteryWarningVoltage);
