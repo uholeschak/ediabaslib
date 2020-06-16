@@ -264,6 +264,7 @@ namespace BmwDeepObd
         public delegate void BcReceiverUpdateDisplayDelegate();
         public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
         public delegate void TranslateDelegate(List<string> transList);
+        public delegate void TranslateLoginDelegate(bool success);
         public delegate void UpdateCheckDelegate(bool success, bool updateAvailable, int? appVer, string message);
         public delegate void EnetSsidWarnDelegate(bool retry);
         public delegate void WifiConnectedWarnDelegate();
@@ -523,7 +524,9 @@ namespace BmwDeepObd
         private HttpClient _translateHttpClient;
         private HttpClient _sendHttpClient;
         private HttpClient _updateHttpClient;
+        private HttpClient _transLoginHttpClient;
         private bool _updateCheckActive;
+        private bool _transLoginActive;
         private bool _translateLockAquired;
         private List<string> _yandexLangList;
         private List<string> _yandexTransList;
@@ -1097,6 +1100,19 @@ namespace BmwDeepObd
                             // ignored
                         }
                         _updateHttpClient = null;
+                    }
+
+                    if (_transLoginHttpClient != null)
+                    {
+                        try
+                        {
+                            _transLoginHttpClient.Dispose();
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                        _transLoginHttpClient = null;
                     }
 
                     UnRegisterWifiEnetCallback();
@@ -5050,6 +5066,75 @@ namespace BmwDeepObd
             {
                 return false;
             }
+        }
+
+        public bool TranslateLogin(TranslateLoginDelegate handler)
+        {
+            try
+            {
+                if (SelectedTranslator != TranslatorType.IbmWatson)
+                {
+                    return false;
+                }
+
+                if (!IsTranslationAvailable())
+                {
+                    return false;
+                }
+
+                if (_transLoginActive)
+                {
+                    return false;
+                }
+
+                if (handler == null)
+                {
+                    return false;
+                }
+
+                if (_transLoginHttpClient == null)
+                {
+                    _transLoginHttpClient = new HttpClient(new HttpClientHandler()
+                    {
+                        SslProtocols = DefaultSslProtocols,
+                        ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
+                    });
+                }
+
+                StringBuilder sbUrl = new StringBuilder();
+                sbUrl.Append(IbmTranslatorUrl);
+                sbUrl.Append(@"/v3/identifiable_languages?version=2018-05-01");
+
+                string authParameter = Convert.ToBase64String(Encoding.ASCII.GetBytes(String.Format("apikey:{0}", IbmTranslatorApiKey)));
+                _transLoginHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authParameter);
+
+                System.Threading.Tasks.Task<HttpResponseMessage> taskLogin = _transLoginHttpClient.GetAsync(sbUrl.ToString());
+                _transLoginActive = true;
+                taskLogin.ContinueWith((task, o) =>
+                {
+                    TranslateLoginDelegate handlerLocal = o as TranslateLoginDelegate;
+                    _transLoginActive = false;
+                    try
+                    {
+                        HttpResponseMessage responseLogin = task.Result;
+                        bool success = responseLogin.IsSuccessStatusCode;
+                        string responseTranslateResult = responseLogin.Content.ReadAsStringAsync().Result;
+
+                        handlerLocal?.Invoke(success);
+                    }
+                    catch (Exception)
+                    {
+                        handlerLocal?.Invoke(false);
+                    }
+                }, handler, System.Threading.Tasks.TaskContinuationOptions.None);
+            }
+            catch (Exception)
+            {
+                _transLoginActive = false;
+                return false;
+            }
+
+            return true;
         }
 
         public void SetDefaultSettings(bool globalOnly = false, bool includeTheme = false)
