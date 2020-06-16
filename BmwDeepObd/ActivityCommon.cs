@@ -6151,7 +6151,8 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            if (string.IsNullOrWhiteSpace(YandexApiKey))
+
+            if (!IsTranslationAvailable())
             {
                 return false;
             }
