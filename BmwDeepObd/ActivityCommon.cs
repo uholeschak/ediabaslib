@@ -303,6 +303,9 @@ namespace BmwDeepObd
         public const string NotificationChannelIdMax = "NotificationChannelMax";
         private const string MailInfoDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Mail.php";
         private const string UpdateCheckUrl = @"https://www.holeschak.de/BmwDeepObd/Update.php";
+        private const string IbmTransVersion = @"version=2018-05-01";
+        private const string IbmTransIdentLang = @"/v3/identifiable_languages";
+        private const string IbmTransTranslate = @"/v3/translate";
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
 #if DEBUG
         private static readonly string Tag = typeof(ActivityCommon).FullName;
@@ -5103,7 +5106,9 @@ namespace BmwDeepObd
 
                 StringBuilder sbUrl = new StringBuilder();
                 sbUrl.Append(IbmTranslatorUrl);
-                sbUrl.Append(@"/v3/identifiable_languages?version=2018-05-01");
+                sbUrl.Append(IbmTransIdentLang);
+                sbUrl.Append(@"?");
+                sbUrl.Append(IbmTransVersion);
 
                 string authParameter = Convert.ToBase64String(Encoding.ASCII.GetBytes(String.Format("apikey:{0}", IbmTranslatorApiKey)));
                 _transLoginHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authParameter);
@@ -6331,12 +6336,16 @@ namespace BmwDeepObd
                         {
                             // no language list present, get it first
                             sbUrl.Append(IbmTranslatorUrl);
-                            sbUrl.Append(@"/v3/identifiable_languages?version=2018-05-01");
+                            sbUrl.Append(IbmTransIdentLang);
+                            sbUrl.Append(@"?");
+                            sbUrl.Append(IbmTransVersion);
                         }
                         else
                         {
                             sbUrl.Append(IbmTranslatorUrl);
-                            sbUrl.Append(@"/v3/translate?version=2018-05-01");
+                            sbUrl.Append(IbmTransTranslate);
+                            sbUrl.Append(@"?");
+                            sbUrl.Append(IbmTransVersion);
 
                             List<string> transList = new List<string>();
                             int offset = _yandexTransList?.Count ?? 0;
