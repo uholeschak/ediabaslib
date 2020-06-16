@@ -5120,6 +5120,15 @@ namespace BmwDeepObd
                         bool success = responseLogin.IsSuccessStatusCode;
                         string responseTranslateResult = responseLogin.Content.ReadAsStringAsync().Result;
 
+                        if (success)
+                        {
+                            List<string> languages = GetIbmLanguages(responseTranslateResult);
+                            if (languages == null)
+                            {
+                                success = false;
+                            }
+                        }
+
                         handlerLocal?.Invoke(success);
                     }
                     catch (Exception)
