@@ -149,6 +149,7 @@ namespace BmwDeepObd
             public string UpdateMessage { get; set; }
             public long UpdateCheckTime { get; set; }
             public int UpdateSkipVersion { get; set; }
+            public long TransLoginTime { get; set; }
             public string XmlEditorPackageName { get; set; }
             public string XmlEditorClassName { get; set; }
 
@@ -1320,6 +1321,8 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool UpdateCheck()
         {
+            TranslateLogin();
+
             if (ActivityCommon.UpdateCheckDelay < 0)
             {
                 _instanceData.UpdateCheckTime = DateTime.MinValue.Ticks;
@@ -1359,6 +1362,27 @@ namespace BmwDeepObd
                     });
                 }
             }, _instanceData.UpdateSkipVersion);
+
+            return result;
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool TranslateLogin()
+        {
+            TimeSpan timeDiff = new TimeSpan(DateTime.Now.Ticks - _instanceData.TransLoginTime);
+            if (timeDiff.Ticks < ActivityCommon.TransLoginDelay)
+            {
+                return false;
+            }
+
+            bool result = _activityCommon.TranslateLogin(success =>
+            {
+                if (success)
+                {
+                    _instanceData.TransLoginTime = DateTime.Now.Ticks;
+                    StoreSettings();
+                }
+            });
 
             return result;
         }
@@ -1632,6 +1656,7 @@ namespace BmwDeepObd
                     _instanceData.ConfigFileName = prefs.GetString("ConfigFile", string.Empty);
                     _instanceData.UpdateCheckTime = prefs.GetLong("UpdateCheckTime", DateTime.MinValue.Ticks);
                     _instanceData.UpdateSkipVersion = prefs.GetInt("UpdateSkipVersion", -1);
+                    _instanceData.TransLoginTime = prefs.GetLong("TransLoginTime", DateTime.MinValue.Ticks);
                     _instanceData.LastVersionCode = prefs.GetLong("VersionCode", -1);
                     _instanceData.StorageRequirementsAccepted = prefs.GetBoolean("StorageAccepted", false);
                     _instanceData.XmlEditorPackageName = prefs.GetString("XmlEditorPackageName", string.Empty);
@@ -1683,7 +1708,7 @@ namespace BmwDeepObd
                     if (_instanceData.LastVersionCode != _currentVersionCode)
                     {
                         _instanceData.StorageRequirementsAccepted = false;
-                        _instanceData.UpdateCheckTime = 0;
+                        _instanceData.UpdateCheckTime = DateTime.MinValue.Ticks;
                         _instanceData.UpdateSkipVersion = -1;
                         ActivityCommon.BatteryWarnings = 0;
                         ActivityCommon.BatteryWarningVoltage = 0;
@@ -1710,6 +1735,7 @@ namespace BmwDeepObd
                 prefsEdit.PutString("ConfigFile", _instanceData.ConfigFileName);
                 prefsEdit.PutLong("UpdateCheckTime", _instanceData.UpdateCheckTime);
                 prefsEdit.PutInt("UpdateSkipVersion", _instanceData.UpdateSkipVersion);
+                prefsEdit.PutLong("TransLoginTime", _instanceData.TransLoginTime);
                 prefsEdit.PutString("StorageMedia", _activityCommon.CustomStorageMedia ?? string.Empty);
                 prefsEdit.PutLong("VersionCode", _currentVersionCode);
                 prefsEdit.PutBoolean("StorageAccepted", _instanceData.StorageRequirementsAccepted);

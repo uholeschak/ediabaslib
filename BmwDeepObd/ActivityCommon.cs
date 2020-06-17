@@ -272,6 +272,7 @@ namespace BmwDeepObd
         public const int UdsDtcStatusOverride = 0x2C;
         public const BuildVersionCodes MinEthernetSettingsVersion = BuildVersionCodes.M;
         public const long UpdateCheckDelayDefault = TimeSpan.TicksPerDay;
+        public const long TransLoginDelay = TimeSpan.TicksPerDay;
         public const ThemeType ThemeDefault = ThemeType.Dark;
         public const int FileIoRetries = 10;
         public const int FileIoRetryDelay = 1000;
