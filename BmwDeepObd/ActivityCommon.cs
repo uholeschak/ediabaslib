@@ -272,7 +272,6 @@ namespace BmwDeepObd
         public const int UdsDtcStatusOverride = 0x2C;
         public const BuildVersionCodes MinEthernetSettingsVersion = BuildVersionCodes.M;
         public const long UpdateCheckDelayDefault = TimeSpan.TicksPerDay;
-        public const long TransLoginDelay = TimeSpan.TicksPerDay;
         public const ThemeType ThemeDefault = ThemeType.Dark;
         public const int FileIoRetries = 10;
         public const int FileIoRetryDelay = 1000;
@@ -820,6 +819,8 @@ namespace BmwDeepObd
         public static string IbmTranslatorUrl { get; set; }
 
         public static bool EnableTranslation { get; set; }
+
+        public static bool EnableTranslateLogin { get; set; }
 
         public static bool EnableTranslateRequested { get; set; }
 
@@ -5157,7 +5158,6 @@ namespace BmwDeepObd
             if (!globalOnly)
             {
                 EnableTranslation = false;
-                Translator = TranslatorType.IbmWatson;
                 YandexApiKey = string.Empty;
                 IbmTranslatorApiKey = string.Empty;
                 IbmTranslatorUrl = string.Empty;
@@ -5174,6 +5174,7 @@ namespace BmwDeepObd
                 SelectedTheme = ThemeDefault;
             }
 
+            EnableTranslateLogin = true;
             ShowBatteryVoltageWarning = true;
             AutoHideTitleBar = false;
             SuppressTitleBar = false;
@@ -5196,6 +5197,7 @@ namespace BmwDeepObd
             UseBmwDatabase = true;
             ScanAllEcus = false;
             CollectDebugInfo = false;
+            Translator = TranslatorType.IbmWatson;
         }
 
         public static string GetCurrentLanguage()
