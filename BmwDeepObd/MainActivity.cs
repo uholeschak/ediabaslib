@@ -149,7 +149,7 @@ namespace BmwDeepObd
             public string UpdateMessage { get; set; }
             public long UpdateCheckTime { get; set; }
             public int UpdateSkipVersion { get; set; }
-            public long TransLoginTime { get; set; }
+            public long TransLoginTimeNext { get; set; }
             public string XmlEditorPackageName { get; set; }
             public string XmlEditorClassName { get; set; }
 
@@ -1369,19 +1369,21 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool TranslateLogin()
         {
-            TimeSpan timeDiff = new TimeSpan(DateTime.Now.Ticks - _instanceData.TransLoginTime);
-            if (timeDiff.Ticks < ActivityCommon.TransLoginDelay)
+            if (!ActivityCommon.EnableTranslateLogin)
+            {
+                _instanceData.TransLoginTimeNext = DateTime.MinValue.Ticks;
+                return false;
+            }
+
+            if (DateTime.Now.Ticks < _instanceData.TransLoginTimeNext)
             {
                 return false;
             }
 
             bool result = _activityCommon.TranslateLogin(success =>
             {
-                if (success)
-                {
-                    _instanceData.TransLoginTime = DateTime.Now.Ticks;
-                    StoreSettings();
-                }
+                _instanceData.TransLoginTimeNext = DateTime.Now.Ticks + (success ? TimeSpan.TicksPerDay : TimeSpan.TicksPerHour);
+                StoreSettings();
             });
 
             return result;
@@ -1656,7 +1658,7 @@ namespace BmwDeepObd
                     _instanceData.ConfigFileName = prefs.GetString("ConfigFile", string.Empty);
                     _instanceData.UpdateCheckTime = prefs.GetLong("UpdateCheckTime", DateTime.MinValue.Ticks);
                     _instanceData.UpdateSkipVersion = prefs.GetInt("UpdateSkipVersion", -1);
-                    _instanceData.TransLoginTime = prefs.GetLong("TransLoginTime", DateTime.MinValue.Ticks);
+                    _instanceData.TransLoginTimeNext = prefs.GetLong("TransLoginTimeNext", DateTime.MinValue.Ticks);
                     _instanceData.LastVersionCode = prefs.GetLong("VersionCode", -1);
                     _instanceData.StorageRequirementsAccepted = prefs.GetBoolean("StorageAccepted", false);
                     _instanceData.XmlEditorPackageName = prefs.GetString("XmlEditorPackageName", string.Empty);
@@ -1664,6 +1666,7 @@ namespace BmwDeepObd
 
                     _activityCommon.SetDefaultSettings();
                     ActivityCommon.EnableTranslation = prefs.GetBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
+                    ActivityCommon.EnableTranslateLogin = prefs.GetBoolean("EnableTranslateLogin", ActivityCommon.EnableTranslateLogin);
                     ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", ActivityCommon.YandexApiKey);
                     ActivityCommon.IbmTranslatorApiKey = prefs.GetString("IbmTranslatorApiKey", ActivityCommon.IbmTranslatorApiKey);
                     ActivityCommon.IbmTranslatorUrl = prefs.GetString("IbmTranslatorUrl", ActivityCommon.IbmTranslatorUrl);
@@ -1735,13 +1738,14 @@ namespace BmwDeepObd
                 prefsEdit.PutString("ConfigFile", _instanceData.ConfigFileName);
                 prefsEdit.PutLong("UpdateCheckTime", _instanceData.UpdateCheckTime);
                 prefsEdit.PutInt("UpdateSkipVersion", _instanceData.UpdateSkipVersion);
-                prefsEdit.PutLong("TransLoginTime", _instanceData.TransLoginTime);
+                prefsEdit.PutLong("TransLoginTimeNext", _instanceData.TransLoginTimeNext);
                 prefsEdit.PutString("StorageMedia", _activityCommon.CustomStorageMedia ?? string.Empty);
                 prefsEdit.PutLong("VersionCode", _currentVersionCode);
                 prefsEdit.PutBoolean("StorageAccepted", _instanceData.StorageRequirementsAccepted);
                 prefsEdit.PutString("XmlEditorPackageName", _instanceData.XmlEditorPackageName ?? string.Empty);
                 prefsEdit.PutString("XmlEditorClassName", _instanceData.XmlEditorClassName ?? string.Empty);
                 prefsEdit.PutBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
+                prefsEdit.PutBoolean("EnableTranslateLogin", ActivityCommon.EnableTranslateLogin);
                 prefsEdit.PutString("YandexApiKey", ActivityCommon.YandexApiKey ?? string.Empty);
                 prefsEdit.PutString("IbmTranslatorApiKey", ActivityCommon.IbmTranslatorApiKey ?? string.Empty);
                 prefsEdit.PutString("IbmTranslatorUrl", ActivityCommon.IbmTranslatorUrl ?? string.Empty);

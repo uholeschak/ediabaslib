@@ -84,6 +84,17 @@
                 android:text="@string/settings_translator_ibm" />
         </RadioGroup>
         <TextView
+            android:text="@string/settings_caption_translator_login"
+            android:id="@+id/textViewCaptionTranslatorLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextViewInnerCaption" />
+        <CheckBox
+            android:id="@+id/checkBoxTranslatorLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_translator_login" />
+        <TextView
             android:text="@string/settings_caption_title_bar"
             android:id="@+id/textViewCaptionTitleBar"
             android:layout_width="match_parent"

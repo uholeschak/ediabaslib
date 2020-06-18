@@ -358,6 +358,8 @@
   <string name="settings_caption_translator">Translator</string>
   <string name="settings_translator_yandex">Yandex.Translate</string>
   <string name="settings_translator_ibm">IBM Watson</string>
+  <string name="settings_caption_translator_login">Translator keep alive</string>
+  <string name="settings_translator_login">Keep IBM Watson Api Key alive once a day</string>
   <string name="settings_caption_title_bar">Панель заглавия</string>
   <string name="settings_auto_hide_title_bar">Автоматически скрывать панель заглавия на главной странице (показать при отпускании после длинного нажатия)</string>
   <string name="settings_suppress_title_bar">Скрывать неиспользуемые панели заглавия  (показывать при помощи жеста смахивания)</string>
