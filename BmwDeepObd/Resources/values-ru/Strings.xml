@@ -54,7 +54,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Улучшения для Bluetooth\n- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Добавлен переводчик IBM Watson\n- Опция полноэкранного режима\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -174,29 +174,25 @@
   <!-- Translate -->
   <string name="translate_text">Перевод текста</string>
   <string name="translate_failed">Ошибка перевода текста.\nПожалуйста, проверьте подключение к сети.\nХотите повторить перевод?</string>
-  <!--Translate-->
-  <string name="translate_enable_request">Do you want to enable automatic ECU text translation with {0}?\nThis requires an account and an API Key.</string>
+  <string name="translate_enable_request">Хотите автоматически перевести тексты ECU с помощью {0}?\nДля этого вам нужен аккаунт и ключ API.</string>
   <string name="translate_store_key">Сохранить ключ?</string>
 
   <!-- Translate Menu -->
   <string name="menu_translation_submenu">Переводы</string>
   <string name="menu_translation_enable">Перевести ECU тексты</string>
-  <!--Translate-->
-  <string name="menu_translation_yandex_key">Translation configuration</string>
+  <string name="menu_translation_yandex_key">Настройки перевода</string>
   <string name="menu_translation_clear_cache">Удалить кэш перевода</string>
 
   <!-- Yandex key -->
-  <!--Translate-->
-  <string name="yandex_api_key_title">Translation configuration</string>
-  <string name="yandex_key_desc">For automatic translation with {0} a free API key and account is required, that allows a limited amount of translations per day.\nWith the buttons below log in to your account and create a key or display your existing ones.\nCopy the key from the web browser and paste it in the field below with the paste button.\nTo copy the key press and hold the first word, extend the selected range and choose copy.</string>
+  <string name="yandex_api_key_title">Настройки перевода</string>
+  <string name="yandex_key_desc">Для автоматического перевода с {0} требуется бесплатный ключ API и учётная запись, что позволяет делать ограниченное количество переводов в день.\nИспользуйте следующие кнопки для входа в свою учетную запись, чтобы создать ключ или для отображения существующих.\nСкопируйте ключ из браузера и вставьте его в нижнее поле с помощью кнопки Вставить.\nЧтобы скопировать ключ, нажмите и удерживайте первое слово, расширьте диапазон и выберите "Копировать".</string>
   <string name="yandex_key_copy_title">копировать API ключ</string>
   <string name="button_yandex_key_create">создать API ключ</string>
   <string name="button_yandex_key_get">Показать API ключи</string>
   <string name="yandex_key_paste_title">API ключ</string>
   <string name="button_yandex_key_paste">Вставить API ключи</string>
-  <!--Translate-->
   <string name="api_url_paste_title">API URL</string>
-  <string name="button_api_url_paste">Paste API URL</string>
+  <string name="button_api_url_paste">вставить API URL</string>
   <string name="yandex_key_test_title">Перевести</string>
   <string name="button_yandex_key_test">Проверить перевод</string>
   <string name="button_yandex_key_test_failed">Ошибка при переводе</string>
@@ -354,17 +350,15 @@
   <string name="settings_caption_theme">Темы</string>
   <string name="settings_theme_dark">Темная</string>
   <string name="settings_theme_light">Светлая</string>
-  <!--Translate-->
-  <string name="settings_caption_translator">Translator</string>
-  <string name="settings_translator_yandex">Yandex.Translate</string>
+  <string name="settings_caption_translator">Переводчик</string>
+  <string name="settings_translator_yandex">Яндекс.Переводчик</string>
   <string name="settings_translator_ibm">IBM Watson</string>
-  <string name="settings_caption_translator_login">Translator keep alive</string>
-  <string name="settings_translator_login">Keep IBM Watson Api Key alive once a day</string>
+  <string name="settings_caption_translator_login">Держать переводчиков активным</string>
+  <string name="settings_translator_login">Держать ключ IBM Watson Api активным один раз в день.</string>
   <string name="settings_caption_title_bar">Панель заглавия</string>
   <string name="settings_auto_hide_title_bar">Автоматически скрывать панель заглавия на главной странице (показать при отпускании после длинного нажатия)</string>
   <string name="settings_suppress_title_bar">Скрывать неиспользуемые панели заглавия  (показывать при помощи жеста смахивания)</string>
-  <!--Translate-->
-  <string name="settings_full_screen_mode">Full screen mode</string>
+  <string name="settings_full_screen_mode">Полноэкранный режим</string>
   <string name="settings_caption_multi_window">Многооконный режим</string>
   <string name="settings_swap_multi_window_orientation">Графическое отображение: Изменить ориентацию в многооконном режиме</string>
   <string name="settings_caption_internet">Подключение сетевого адаптера OBD к интернет соединению через</string>
@@ -416,8 +410,7 @@
   <string name="settings_collect_debug_info">Собрать отладочную информацию для файла трассировки</string>
   <string name="settings_hci_snoop_log">Файл журнала отслеживания Bluetooth HCI:\n{0}</string>
   <string name="settings_hci_snoop_log_config">Настроить журнал отслеживания</string>
-  <!--Translate-->
-  <string name="settings_default_settings">Default settings</string>
+  <string name="settings_default_settings">Настройки по умолчанию</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>
