@@ -5112,7 +5112,7 @@ namespace BmwDeepObd
                 sbUrl.Append(@"?");
                 sbUrl.Append(IbmTransVersion);
 
-                string authParameter = Convert.ToBase64String(Encoding.ASCII.GetBytes(String.Format("apikey:{0}", IbmTranslatorApiKey)));
+                string authParameter = Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("apikey:{0}", IbmTranslatorApiKey)));
                 _transLoginHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authParameter);
 
                 System.Threading.Tasks.Task<HttpResponseMessage> taskLogin = _transLoginHttpClient.GetAsync(sbUrl.ToString());
@@ -6355,13 +6355,15 @@ namespace BmwDeepObd
                             int sumLength = 0;
                             for (int i = offset; i < _yandexReducedStringList.Count; i++)
                             {
-                                transList.Add(_yandexReducedStringList[i]);
-                                sumLength += _yandexReducedStringList[i].Length;
-                                stringCount++;
+                                string testString = "\"" + JsonEncodedText.Encode(_yandexReducedStringList[i]) + "\",";
+                                sumLength += testString.Length;
                                 if (sumLength > 40000)
                                 {
                                     break;
                                 }
+
+                                transList.Add(_yandexReducedStringList[i]);
+                                stringCount++;
                             }
 
                             string targetLang = _yandexCurrentLang;
@@ -6378,7 +6380,7 @@ namespace BmwDeepObd
                             httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                         }
 
-                        string authParameter = Convert.ToBase64String(Encoding.ASCII.GetBytes(String.Format("apikey:{0}", IbmTranslatorApiKey)));
+                        string authParameter = Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("apikey:{0}", IbmTranslatorApiKey)));
                         _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authParameter);
                         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                         if (httpContent != null)
