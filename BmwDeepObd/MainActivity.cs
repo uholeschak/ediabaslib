@@ -119,6 +119,7 @@ namespace BmwDeepObd
             public string LastLocale { get; set; }
             public ActivityCommon.ThemeType LastThemeType { get; set; }
             public LastAppState LastAppState { get; set; }
+            public bool GetSettingsCalled { get; set; }
             public string AppDataPath { get; set; }
             public string EcuPath { get; set; }
             public string VagPath { get; set; }
@@ -1717,6 +1718,8 @@ namespace BmwDeepObd
                         ActivityCommon.BatteryWarningVoltage = 0;
                     }
                 }
+
+                _instanceData.GetSettingsCalled = true;
             }
             catch (Exception)
             {
@@ -1728,6 +1731,11 @@ namespace BmwDeepObd
         {
             try
             {
+                if (!ActivityCommon.StaticDataInitialized || !_instanceData.GetSettingsCalled)
+                {
+                    return;
+                }
+
                 ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
                 ISharedPreferencesEditor prefsEdit = prefs.Edit();
                 prefsEdit.Clear();
