@@ -157,6 +157,29 @@ namespace BmwDeepObd
             public ActivityCommon.InterfaceType SelectedInterface { get; set; }
         }
 
+        public class StorageData
+        {
+            public StorageData()
+            {
+                LastAppState = LastAppState.Init;
+                DeviceName = string.Empty;
+                DeviceAddress = string.Empty;
+                ConfigFileName = string.Empty;
+            }
+
+            public LastAppState LastAppState { get; set; }
+            public string DeviceName { get; set; }
+            public string DeviceAddress { get; set; }
+            public string ConfigFileName { get; set; }
+            public long UpdateCheckTime { get; set; }
+            public int UpdateSkipVersion { get; set; }
+            public long TransLoginTimeNext { get; set; }
+            public long LastVersionCode { get; set; }
+            public bool StorageRequirementsAccepted { get; set; }
+            public string XmlEditorPackageName { get; set; }
+            public string XmlEditorClassName { get; set; }
+        }
+
         private const string SharedAppName = ActivityCommon.AppNameSpace;
         private const string AppFolderName = ActivityCommon.AppNameSpace;
         private const string EcuDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Obb.php";
