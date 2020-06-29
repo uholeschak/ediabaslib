@@ -168,6 +168,8 @@ namespace BmwDeepObd
             }
 
             public LastAppState LastAppState { get; set; }
+            public string SelectedLocale { get; set; }
+            public ActivityCommon.ThemeType SelectedTheme { get; set; }
             public string DeviceName { get; set; }
             public string DeviceAddress { get; set; }
             public string ConfigFileName { get; set; }
@@ -178,6 +180,42 @@ namespace BmwDeepObd
             public bool StorageRequirementsAccepted { get; set; }
             public string XmlEditorPackageName { get; set; }
             public string XmlEditorClassName { get; set; }
+            public bool DataLogActive { get; set; }
+            public bool DataLogAppend { get; set; }
+
+            public bool EnableTranslation { get; set; }
+            public bool EnableTranslateLogin { get; set; }
+            public string YandexApiKey { get; set; }
+            public string IbmTranslatorApiKey { get; set; }
+            public string IbmTranslatorUrl { get; set; }
+            public ActivityCommon.TranslatorType Translator { get; set; }
+            public bool ShowBatteryVoltageWarning { get; set; }
+            public long BatteryWarnings { get; set; }
+            public double BatteryWarningVoltage { get; set; }
+            public string LastAdapterSerial { get; set; }
+            public string EmailAddress { get; set; }
+            public string AppId { get; set; }
+            public bool AutoHideTitleBar { get; set; }
+            public bool SuppressTitleBar { get; set; }
+            public bool FullScreenMode { get; set; }
+            public bool SwapMultiWindowOrientation { get; set; }
+            public ActivityCommon.InternetConnectionType SelectedInternetConnection { get; set; }
+            public ActivityCommon.ManufacturerType SelectedManufacturer { get; set; }
+            public ActivityCommon.BtEnableType BtEnbaleHandling { get; set; }
+            public ActivityCommon.BtDisableType BtDisableHandling { get; set; }
+            public ActivityCommon.LockType LockTypeCommunication { get; set; }
+            public ActivityCommon.LockType LockTypeLogging { get; set; }
+            public bool StoreDataLogSettings { get; set; }
+            public ActivityCommon.AutoConnectType AutoConnectHandling { get; set; }
+            public long UpdateCheckDelay { get; set; }
+            public bool DoubleClickForAppExit { get; set; }
+            public bool SendDataBroadcast { get; set; }
+            public bool CheckCpuUsage { get; set; }
+            public bool CheckEcuFiles { get; set; }
+            public bool OldVagMode { get; set; }
+            public bool UseBmwDatabase { get; set; }
+            public bool ScanAllEcus { get; set; }
+            public bool CollectDebugInfo { get; set; }
         }
 
         private const string SharedAppName = ActivityCommon.AppNameSpace;
