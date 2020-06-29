@@ -12,6 +12,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using Android.Content;
 using Android.Content.PM;
 using Android.Content.Res;
@@ -183,6 +184,8 @@ namespace BmwDeepObd
             public bool DataLogActive { get; set; }
             public bool DataLogAppend { get; set; }
 
+            public string SelectedEnetIp { get; set; }
+            public string CustomStorageMedia { get; set; }
             public bool EnableTranslation { get; set; }
             public bool EnableTranslateLogin { get; set; }
             public string YandexApiKey { get; set; }
@@ -1863,6 +1866,64 @@ namespace BmwDeepObd
         {
             _instanceData.LastAppState = lastAppState;
             StoreSettings();
+        }
+
+        public bool GetSettings(string fileName)
+        {
+            try
+            {
+                StorageData storageData = null;
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData));
+                using (StreamReader sr = new StreamReader(fileName))
+                {
+                    storageData = xmlSerializer.Deserialize(sr) as StorageData;
+                }
+
+                if (storageData != null)
+                {
+                    _activityCommon.SelectedEnetIp = storageData.SelectedEnetIp;
+                    _activityCommon.CustomStorageMedia = storageData.CustomStorageMedia;
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            finally
+            {
+                _instanceData.GetSettingsCalled = true;
+            }
+            return false;
+        }
+
+        public bool StoreSettings(string fileName)
+        {
+            try
+            {
+                if (!ActivityCommon.StaticDataInitialized || !_instanceData.GetSettingsCalled)
+                {
+                    return false;
+                }
+
+                StorageData storageData = new StorageData();
+                storageData.SelectedEnetIp = _activityCommon.SelectedEnetIp;
+                storageData.CustomStorageMedia = _activityCommon.CustomStorageMedia;
+
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData));
+                using (StreamWriter sw = new StreamWriter(fileName))
+                {
+                    xmlSerializer.Serialize(sw, storageData);
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            return false;
         }
 
         private void RequestStoragePermissions()
