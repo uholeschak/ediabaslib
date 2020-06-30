@@ -172,7 +172,7 @@ namespace BmwDeepObd
                 YandexApiKey = ActivityCommon.YandexApiKey;
                 IbmTranslatorApiKey = ActivityCommon.IbmTranslatorApiKey;
                 IbmTranslatorUrl = ActivityCommon.IbmTranslatorUrl;
-                Translator = ActivityCommon.SelectedTranslator;
+                Translator = !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey) ? ActivityCommon.TranslatorType.YandexTranslate : ActivityCommon.SelectedTranslator;
                 ShowBatteryVoltageWarning = ActivityCommon.ShowBatteryVoltageWarning;
                 BatteryWarnings = ActivityCommon.BatteryWarnings;
                 BatteryWarningVoltage = ActivityCommon.BatteryWarningVoltage;
@@ -231,6 +231,7 @@ namespace BmwDeepObd
             public double BatteryWarningVoltage { get; set; }
             public string LastAdapterSerial { get; set; }
             public string EmailAddress { get; set; }
+            public string TraceInfo { get; set; }
             public string AppId { get; set; }
             public bool AutoHideTitleBar { get; set; }
             public bool SuppressTitleBar { get; set; }
@@ -1906,17 +1907,84 @@ namespace BmwDeepObd
         {
             try
             {
-                StorageData storageData = null;
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData));
-                using (StreamReader sr = new StreamReader(fileName))
+                bool init = false;
+                if (!ActivityCommon.StaticDataInitialized || !_activityRecreated)
                 {
-                    storageData = xmlSerializer.Deserialize(sr) as StorageData;
+                    init = true;
+                    _activityCommon.SetDefaultSettings();
                 }
 
-                if (storageData != null)
+                StorageData storageData ;
+                try
                 {
-                    _activityCommon.SelectedEnetIp = storageData.SelectedEnetIp;
-                    _activityCommon.CustomStorageMedia = storageData.CustomStorageMedia;
+                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData));
+                    using (StreamReader sr = new StreamReader(fileName))
+                    {
+                        storageData = xmlSerializer.Deserialize(sr) as StorageData;
+                    }
+                }
+                catch (Exception)
+                {
+                    storageData = null;
+                }
+
+                storageData ??= new StorageData();
+
+                _activityCommon.SelectedEnetIp = storageData.SelectedEnetIp;
+                _activityCommon.CustomStorageMedia = storageData.CustomStorageMedia;
+
+                if (init)
+                {
+                    ActivityCommon.EnableTranslation = storageData.EnableTranslation;
+                    ActivityCommon.EnableTranslateLogin = storageData.EnableTranslateLogin;
+                    ActivityCommon.YandexApiKey = storageData.YandexApiKey;
+                    ActivityCommon.IbmTranslatorApiKey = storageData.IbmTranslatorApiKey;
+                    ActivityCommon.IbmTranslatorUrl = storageData.IbmTranslatorUrl;
+                    _activityCommon.Translator = storageData.Translator;
+                    ActivityCommon.ShowBatteryVoltageWarning = storageData.ShowBatteryVoltageWarning;
+                    ActivityCommon.BatteryWarnings = storageData.BatteryWarnings;
+                    ActivityCommon.BatteryWarningVoltage = storageData.BatteryWarningVoltage;
+                    ActivityCommon.LastAdapterSerial = storageData.LastAdapterSerial;
+                    ActivityCommon.EmailAddress = storageData.EmailAddress;
+                    ActivityCommon.TraceInfo = storageData.TraceInfo;
+                    ActivityCommon.AppId = storageData.AppId;
+                    ActivityCommon.AutoHideTitleBar = storageData.AutoHideTitleBar;
+                    ActivityCommon.SuppressTitleBar = storageData.SuppressTitleBar;
+                    ActivityCommon.FullScreenMode = storageData.FullScreenMode;
+                    ActivityCommon.SwapMultiWindowOrientation = storageData.SwapMultiWindowOrientation;
+                    ActivityCommon.SelectedInternetConnection = storageData.SelectedInternetConnection;
+                    ActivityCommon.SelectedManufacturer = storageData.SelectedManufacturer;
+                    ActivityCommon.BtEnbaleHandling = storageData.BtEnbaleHandling;
+                    ActivityCommon.BtDisableHandling = storageData.BtDisableHandling;
+                    ActivityCommon.LockTypeCommunication = storageData.LockTypeCommunication;
+                    ActivityCommon.LockTypeLogging = storageData.LockTypeLogging;
+                    ActivityCommon.StoreDataLogSettings = storageData.StoreDataLogSettings;
+                    if (ActivityCommon.StoreDataLogSettings)
+                    {
+                        _instanceData.DataLogActive = storageData.DataLogActive;
+                        _instanceData.DataLogAppend = storageData.DataLogAppend;
+                    }
+                    ActivityCommon.AutoConnectHandling = storageData.AutoConnectHandling;
+                    ActivityCommon.UpdateCheckDelay = storageData.UpdateCheckDelay;
+                    ActivityCommon.DoubleClickForAppExit = storageData.DoubleClickForAppExit;
+                    ActivityCommon.SendDataBroadcast = storageData.SendDataBroadcast;
+                    ActivityCommon.CheckCpuUsage = storageData.CheckCpuUsage;
+                    ActivityCommon.CheckEcuFiles = storageData.CheckEcuFiles;
+                    ActivityCommon.OldVagMode = storageData.OldVagMode;
+                    ActivityCommon.UseBmwDatabase = storageData.UseBmwDatabase;
+                    ActivityCommon.ScanAllEcus = storageData.ScanAllEcus;
+                    ActivityCommon.CollectDebugInfo = storageData.CollectDebugInfo;
+
+                    if (_instanceData.LastVersionCode != _currentVersionCode)
+                    {
+                        _instanceData.StorageRequirementsAccepted = false;
+                        _instanceData.UpdateCheckTime = DateTime.MinValue.Ticks;
+                        _instanceData.UpdateSkipVersion = -1;
+                        ActivityCommon.BatteryWarnings = 0;
+                        ActivityCommon.BatteryWarningVoltage = 0;
+                    }
+
+                    ActivityCommon.StaticDataInitialized = true;
                 }
 
                 return true;
