@@ -166,6 +166,13 @@ namespace BmwDeepObd
                 DeviceName = string.Empty;
                 DeviceAddress = string.Empty;
                 ConfigFileName = string.Empty;
+                UpdateCheckTime = DateTime.MinValue.Ticks;
+                UpdateSkipVersion = -1;
+                TransLoginTimeNext = DateTime.MinValue.Ticks;
+                LastVersionCode = -1;
+                StorageRequirementsAccepted = false;
+                XmlEditorPackageName = string.Empty;
+                XmlEditorClassName = string.Empty;
 
                 EnableTranslation = ActivityCommon.EnableTranslation;
                 EnableTranslateLogin = ActivityCommon.EnableTranslateLogin;
@@ -1935,6 +1942,18 @@ namespace BmwDeepObd
 
                 if (init)
                 {
+                    _instanceData.LastAppState = storageData.LastAppState;
+                    _instanceData.DeviceName = storageData.DeviceName;
+                    _instanceData.DeviceAddress = storageData.DeviceAddress;
+                    _instanceData.ConfigFileName = storageData.ConfigFileName;
+                    _instanceData.UpdateCheckTime = storageData.UpdateCheckTime;
+                    _instanceData.UpdateSkipVersion = storageData.UpdateSkipVersion;
+                    _instanceData.TransLoginTimeNext = storageData.TransLoginTimeNext;
+                    _instanceData.LastVersionCode = storageData.LastVersionCode;
+                    _instanceData.StorageRequirementsAccepted = storageData.StorageRequirementsAccepted;
+                    _instanceData.XmlEditorPackageName = storageData.XmlEditorPackageName;
+                    _instanceData.XmlEditorClassName = storageData.XmlEditorClassName;
+
                     ActivityCommon.EnableTranslation = storageData.EnableTranslation;
                     ActivityCommon.EnableTranslateLogin = storageData.EnableTranslateLogin;
                     ActivityCommon.YandexApiKey = storageData.YandexApiKey;
