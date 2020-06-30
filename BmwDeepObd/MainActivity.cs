@@ -163,6 +163,8 @@ namespace BmwDeepObd
             public StorageData()
             {
                 LastAppState = LastAppState.Init;
+                SelectedLocale = string.Empty;
+                SelectedTheme = ActivityCommon.ThemeDefault;
                 DeviceName = string.Empty;
                 DeviceAddress = string.Empty;
                 ConfigFileName = string.Empty;
@@ -1936,6 +1938,10 @@ namespace BmwDeepObd
                 }
 
                 storageData ??= new StorageData();
+
+                ActivityCommon.SelectedLocale = storageData.SelectedLocale;
+                ActivityCommon.SelectedTheme = storageData.SelectedTheme;
+                _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
 
                 _activityCommon.SelectedEnetIp = storageData.SelectedEnetIp;
                 _activityCommon.CustomStorageMedia = storageData.CustomStorageMedia;
