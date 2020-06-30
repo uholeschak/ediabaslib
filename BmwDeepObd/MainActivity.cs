@@ -166,6 +166,40 @@ namespace BmwDeepObd
                 DeviceName = string.Empty;
                 DeviceAddress = string.Empty;
                 ConfigFileName = string.Empty;
+
+                EnableTranslation = ActivityCommon.EnableTranslation;
+                EnableTranslateLogin = ActivityCommon.EnableTranslateLogin;
+                YandexApiKey = ActivityCommon.YandexApiKey;
+                IbmTranslatorApiKey = ActivityCommon.IbmTranslatorApiKey;
+                IbmTranslatorUrl = ActivityCommon.IbmTranslatorUrl;
+                Translator = ActivityCommon.SelectedTranslator;
+                ShowBatteryVoltageWarning = ActivityCommon.ShowBatteryVoltageWarning;
+                BatteryWarnings = ActivityCommon.BatteryWarnings;
+                BatteryWarningVoltage = ActivityCommon.BatteryWarningVoltage;
+                LastAdapterSerial = ActivityCommon.LastAdapterSerial;
+                EmailAddress = ActivityCommon.EmailAddress;
+                AppId = ActivityCommon.AppId;
+                AutoHideTitleBar = ActivityCommon.AutoHideTitleBar;
+                SuppressTitleBar = ActivityCommon.SuppressTitleBar;
+                FullScreenMode = ActivityCommon.FullScreenMode;
+                SwapMultiWindowOrientation = ActivityCommon.SwapMultiWindowOrientation;
+                SelectedInternetConnection = ActivityCommon.SelectedInternetConnection;
+                SelectedManufacturer = ActivityCommon.SelectedManufacturer;
+                BtEnbaleHandling = ActivityCommon.BtEnbaleHandling;
+                BtDisableHandling = ActivityCommon.BtDisableHandling;
+                LockTypeCommunication = ActivityCommon.LockTypeCommunication;
+                LockTypeLogging = ActivityCommon.LockTypeLogging;
+                StoreDataLogSettings = ActivityCommon.StoreDataLogSettings;
+                AutoConnectHandling = ActivityCommon.AutoConnectHandling;
+                UpdateCheckDelay = ActivityCommon.UpdateCheckDelay;
+                DoubleClickForAppExit = ActivityCommon.DoubleClickForAppExit;
+                SendDataBroadcast = ActivityCommon.SendDataBroadcast;
+                CheckCpuUsage = ActivityCommon.CheckCpuUsage;
+                CheckEcuFiles = ActivityCommon.CheckEcuFiles;
+                OldVagMode = ActivityCommon.OldVagMode;
+                UseBmwDatabase = ActivityCommon.UseBmwDatabase;
+                ScanAllEcus = ActivityCommon.ScanAllEcus;
+                CollectDebugInfo = ActivityCommon.CollectDebugInfo;
             }
 
             public LastAppState LastAppState { get; set; }
