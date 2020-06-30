@@ -211,6 +211,25 @@ namespace BmwDeepObd
                 CollectDebugInfo = ActivityCommon.CollectDebugInfo;
             }
 
+            public StorageData(ActivityMain activityMain) : this()
+            {
+                InstanceData instanceData = activityMain._instanceData;
+
+                LastAppState = instanceData.LastAppState;
+                SelectedLocale = ActivityCommon.SelectedLocale ?? string.Empty;
+                SelectedTheme = ActivityCommon.SelectedTheme;
+                DeviceName = instanceData.DeviceName;
+                DeviceAddress = instanceData.DeviceAddress;
+                ConfigFileName = instanceData.ConfigFileName;
+                UpdateCheckTime = instanceData.UpdateCheckTime;
+                UpdateSkipVersion = instanceData.UpdateSkipVersion;
+                TransLoginTimeNext = DateTime.MinValue.Ticks;
+                LastVersionCode = activityMain._currentVersionCode;
+                StorageRequirementsAccepted = instanceData.StorageRequirementsAccepted;
+                XmlEditorPackageName = instanceData.XmlEditorPackageName ?? string.Empty;
+                XmlEditorClassName = instanceData.XmlEditorClassName ?? string.Empty;
+            }
+
             public LastAppState LastAppState { get; set; }
             public string SelectedLocale { get; set; }
             public ActivityCommon.ThemeType SelectedTheme { get; set; }
@@ -2034,7 +2053,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                StorageData storageData = new StorageData();
+                StorageData storageData = new StorageData(this);
                 storageData.SelectedEnetIp = _activityCommon.SelectedEnetIp;
                 storageData.CustomStorageMedia = _activityCommon.CustomStorageMedia;
 
