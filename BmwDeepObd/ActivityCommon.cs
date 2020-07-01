@@ -283,6 +283,7 @@ namespace BmwDeepObd
         public const string EmulatorEnetIp = "192.168.10.244";
         public const string DeepObdAdapterIp = "192.168.100.1";
         public const string EnetLinkAdapterIp = "192.168.16.254";
+        public const string SettingsFile = "Settings.xml";
         public const string DownloadDir = "Download";
         public const string EcuBaseDir = "Ecu";
         public const string VagBaseDir = "Vag";
@@ -7970,6 +7971,17 @@ namespace BmwDeepObd
                 return false;
             }
             return true;
+        }
+
+        public static string GetSettingsFileName(Context context)
+        {
+            Java.IO.File filesDir = context.FilesDir;
+            if (filesDir == null)
+            {
+                return string.Empty;
+            }
+
+            return Path.Combine(filesDir.AbsolutePath, SettingsFile);
         }
 
         public static List<string> GetAllStorageMedia()
