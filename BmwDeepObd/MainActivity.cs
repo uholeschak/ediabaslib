@@ -1735,22 +1735,21 @@ namespace BmwDeepObd
 
         public static string GetLocaleSetting(InstanceData instanceData = null)
         {
-            if (ActivityCommon.SelectedLocale == null)
+            if (instanceData == null)
             {
-                string settingsFile = ActivityCommon.GetSettingsFileName();
-                if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+                if (ActivityCommon.SelectedLocale == null)
                 {
-                    GetLocaleThemeSettings(settingsFile);
+                    string settingsFile = ActivityCommon.GetSettingsFileName();
+                    if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+                    {
+                        GetLocaleThemeSettings(settingsFile, true, false);
+                    }
                 }
-            }
 
-            if (ActivityCommon.SelectedLocale != null)
-            {
-                if (instanceData != null)
+                if (ActivityCommon.SelectedLocale != null)
                 {
-                    instanceData.LastLocale = ActivityCommon.SelectedLocale;
+                    return ActivityCommon.SelectedLocale;
                 }
-                return ActivityCommon.SelectedLocale;
             }
 
             try
@@ -1778,8 +1777,9 @@ namespace BmwDeepObd
             string settingsFile = ActivityCommon.GetSettingsFileName();
             if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
             {
-                if (GetLocaleThemeSettings(settingsFile))
+                if (GetLocaleThemeSettings(settingsFile, false, true))
                 {
+                    _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
                     return;
                 }
             }
@@ -2024,12 +2024,19 @@ namespace BmwDeepObd
             return storageData;
         }
 
-        public static bool GetLocaleThemeSettings(string fileName)
+        public static bool GetLocaleThemeSettings(string fileName, bool updateLocale, bool updateTheme)
         {
             StorageData storageData = GetStorageData(fileName);
 
-            ActivityCommon.SelectedLocale = storageData.SelectedLocale;
-            ActivityCommon.SelectedTheme = storageData.SelectedTheme;
+            if (updateLocale)
+            {
+                ActivityCommon.SelectedLocale = storageData.SelectedLocale;
+            }
+
+            if (updateTheme)
+            {
+                ActivityCommon.SelectedTheme = storageData.SelectedTheme;
+            }
 
             return true;
         }
@@ -2058,6 +2065,7 @@ namespace BmwDeepObd
                 StorageData storageData = GetStorageData(fileName);
 
                 ActivityCommon.SelectedLocale = storageData.SelectedLocale;
+                _instanceData.LastLocale = ActivityCommon.SelectedLocale;
                 ActivityCommon.SelectedTheme = storageData.SelectedTheme;
                 _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
 
