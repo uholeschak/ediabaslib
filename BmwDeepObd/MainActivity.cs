@@ -1771,6 +1771,10 @@ namespace BmwDeepObd
 
         private void GetSettings()
         {
+            PackageInfo packageInfo = PackageManager.GetPackageInfo(PackageName, 0);
+            _currentVersionCode = packageInfo != null ? Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
+            _obbFileName = ExpansionDownloaderActivity.GetObbFilename(this);
+
             string settingsFile = ActivityCommon.GetSettingsFileName(this);
             if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
             {
@@ -1790,9 +1794,6 @@ namespace BmwDeepObd
 
             try
             {
-                PackageInfo packageInfo = PackageManager.GetPackageInfo(PackageName, 0);
-                _currentVersionCode = packageInfo != null ? Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
-                _obbFileName = ExpansionDownloaderActivity.GetObbFilename(this);
                 ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
 #if false    // simulate settings reset
                 ISharedPreferencesEditor prefsEdit = prefs.Edit();
@@ -1963,18 +1964,18 @@ namespace BmwDeepObd
 
         public bool GetSettings(string fileName)
         {
+            if (_instanceData == null || _activityCommon == null)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return false;
+            }
+
             try
             {
-                if (string.IsNullOrEmpty(fileName))
-                {
-                    return false;
-                }
-
-                if (_instanceData == null || _activityCommon == null)
-                {
-                    return false;
-                }
-
                 bool init = false;
                 if (!ActivityCommon.StaticDataInitialized || !_activityRecreated)
                 {
@@ -2006,7 +2007,7 @@ namespace BmwDeepObd
                 _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
 
                 _activityCommon.SelectedEnetIp = storageData.SelectedEnetIp;
-                _activityCommon.CustomStorageMedia = storageData.CustomStorageMedia;
+                _activityCommon.CustomStorageMedia = storageData.CustomStorageMedia ?? string.Empty;
 
                 if (init)
                 {
@@ -2089,13 +2090,18 @@ namespace BmwDeepObd
 
         public bool StoreSettings(string fileName)
         {
+            if (_instanceData == null || _activityCommon == null)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return false;
+            }
+
             try
             {
-                if (string.IsNullOrEmpty(fileName))
-                {
-                    return false;
-                }
-
                 if (!ActivityCommon.StaticDataInitialized || !_instanceData.GetSettingsCalled)
                 {
                     return false;
