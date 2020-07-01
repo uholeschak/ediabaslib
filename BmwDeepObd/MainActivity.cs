@@ -1735,6 +1735,24 @@ namespace BmwDeepObd
 
         public static string GetLocaleSetting(InstanceData instanceData = null)
         {
+            if (ActivityCommon.SelectedLocale == null)
+            {
+                string settingsFile = ActivityCommon.GetSettingsFileName();
+                if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+                {
+                    GetLocaleThemeSettings(settingsFile);
+                }
+            }
+
+            if (ActivityCommon.SelectedLocale != null)
+            {
+                if (instanceData != null)
+                {
+                    instanceData.LastLocale = ActivityCommon.SelectedLocale;
+                }
+                return ActivityCommon.SelectedLocale;
+            }
+
             try
             {
                 if (ActivityCommon.SelectedLocale == null)
@@ -1757,6 +1775,15 @@ namespace BmwDeepObd
 
         private void GetThemeSettings()
         {
+            string settingsFile = ActivityCommon.GetSettingsFileName();
+            if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+            {
+                if (GetLocaleThemeSettings(settingsFile))
+                {
+                    return;
+                }
+            }
+
             try
             {
                 ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
@@ -1887,7 +1914,6 @@ namespace BmwDeepObd
         private void StoreSettings()
         {
             StoreSettings(ActivityCommon.GetSettingsFileName());
-            StorePrefsSettings();
         }
 
         private void StorePrefsSettings()
@@ -1967,6 +1993,47 @@ namespace BmwDeepObd
             StoreSettings();
         }
 
+        public static StorageData GetStorageData(string fileName)
+        {
+            StorageData storageData = null;
+            try
+            {
+                if (File.Exists(fileName))
+                {
+                    try
+                    {
+                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData));
+                        using (StreamReader sr = new StreamReader(fileName))
+                        {
+                            storageData = xmlSerializer.Deserialize(sr) as StorageData;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        storageData = null;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            storageData ??= new StorageData();
+
+            return storageData;
+        }
+
+        public static bool GetLocaleThemeSettings(string fileName)
+        {
+            StorageData storageData = GetStorageData(fileName);
+
+            ActivityCommon.SelectedLocale = storageData.SelectedLocale;
+            ActivityCommon.SelectedTheme = storageData.SelectedTheme;
+
+            return true;
+        }
+
         public bool GetSettings(string fileName)
         {
             if (_instanceData == null || _activityCommon == null)
@@ -1988,24 +2055,7 @@ namespace BmwDeepObd
                     _activityCommon.SetDefaultSettings();
                 }
 
-                StorageData storageData = null;
-                if (File.Exists(fileName))
-                {
-                    try
-                    {
-                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData));
-                        using (StreamReader sr = new StreamReader(fileName))
-                        {
-                            storageData = xmlSerializer.Deserialize(sr) as StorageData;
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        storageData = null;
-                    }
-                }
-
-                storageData ??= new StorageData();
+                StorageData storageData = GetStorageData(fileName);
 
                 ActivityCommon.SelectedLocale = storageData.SelectedLocale;
                 ActivityCommon.SelectedTheme = storageData.SelectedTheme;
