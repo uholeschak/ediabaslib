@@ -158,6 +158,7 @@ namespace BmwDeepObd
             public ActivityCommon.InterfaceType SelectedInterface { get; set; }
         }
 
+        [XmlType("Settings")]
         public class StorageData
         {
             public StorageData()
@@ -214,6 +215,12 @@ namespace BmwDeepObd
             public StorageData(ActivityMain activityMain) : this()
             {
                 InstanceData instanceData = activityMain._instanceData;
+                ActivityCommon activityCommon = activityMain.ActivityCommon;
+
+                if (instanceData == null || activityCommon == null)
+                {
+                    return;
+                }
 
                 LastAppState = instanceData.LastAppState;
                 SelectedLocale = ActivityCommon.SelectedLocale ?? string.Empty;
@@ -228,26 +235,29 @@ namespace BmwDeepObd
                 StorageRequirementsAccepted = instanceData.StorageRequirementsAccepted;
                 XmlEditorPackageName = instanceData.XmlEditorPackageName ?? string.Empty;
                 XmlEditorClassName = instanceData.XmlEditorClassName ?? string.Empty;
+
+                SelectedEnetIp = activityCommon.SelectedEnetIp;
+                CustomStorageMedia = activityCommon.CustomStorageMedia;
             }
 
-            public LastAppState LastAppState { get; set; }
-            public string SelectedLocale { get; set; }
-            public ActivityCommon.ThemeType SelectedTheme { get; set; }
-            public string DeviceName { get; set; }
-            public string DeviceAddress { get; set; }
-            public string ConfigFileName { get; set; }
-            public long UpdateCheckTime { get; set; }
-            public int UpdateSkipVersion { get; set; }
-            public long TransLoginTimeNext { get; set; }
-            public long LastVersionCode { get; set; }
-            public bool StorageRequirementsAccepted { get; set; }
-            public string XmlEditorPackageName { get; set; }
-            public string XmlEditorClassName { get; set; }
-            public bool DataLogActive { get; set; }
-            public bool DataLogAppend { get; set; }
+            [XmlElement("LastAppState")] public LastAppState LastAppState { get; set; }
+            [XmlElement("Locale")] public string SelectedLocale { get; set; }
+            [XmlElement("Theme")] public ActivityCommon.ThemeType SelectedTheme { get; set; }
+            [XmlElement("DeviceName")] public string DeviceName { get; set; }
+            [XmlElement("DeviceAddress")] public string DeviceAddress { get; set; }
+            [XmlElement("ConfigFileName")] public string ConfigFileName { get; set; }
+            [XmlElement("UpdateCheckTime")] public long UpdateCheckTime { get; set; }
+            [XmlElement("UpdateSkipVersion")] public int UpdateSkipVersion { get; set; }
+            [XmlElement("TransLoginTimeNext")] public long TransLoginTimeNext { get; set; }
+            [XmlElement("LastVersionCode")] public long LastVersionCode { get; set; }
+            [XmlElement("StorageRequirementsAccepted")] public bool StorageRequirementsAccepted { get; set; }
+            [XmlElement("XmlEditorPackageName")] public string XmlEditorPackageName { get; set; }
+            [XmlElement("XmlEditorClassName")] public string XmlEditorClassName { get; set; }
+            [XmlElement("DataLogActive")] public bool DataLogActive { get; set; }
+            [XmlElement("DataLogAppend")] public bool DataLogAppend { get; set; }
 
-            public string SelectedEnetIp { get; set; }
-            public string CustomStorageMedia { get; set; }
+            [XmlElement("EnetIp")] public string SelectedEnetIp { get; set; }
+            [XmlElement("CustomStorageMedia")] public string CustomStorageMedia { get; set; }
             public bool EnableTranslation { get; set; }
             public bool EnableTranslateLogin { get; set; }
             public string YandexApiKey { get; set; }
@@ -265,8 +275,8 @@ namespace BmwDeepObd
             public bool SuppressTitleBar { get; set; }
             public bool FullScreenMode { get; set; }
             public bool SwapMultiWindowOrientation { get; set; }
-            public ActivityCommon.InternetConnectionType SelectedInternetConnection { get; set; }
-            public ActivityCommon.ManufacturerType SelectedManufacturer { get; set; }
+            [XmlElement("InternetConnection")] public ActivityCommon.InternetConnectionType SelectedInternetConnection { get; set; }
+            [XmlElement("Manufacturer")] public ActivityCommon.ManufacturerType SelectedManufacturer { get; set; }
             public ActivityCommon.BtEnableType BtEnbaleHandling { get; set; }
             public ActivityCommon.BtDisableType BtDisableHandling { get; set; }
             public ActivityCommon.LockType LockTypeCommunication { get; set; }
@@ -1761,6 +1771,20 @@ namespace BmwDeepObd
 
         private void GetSettings()
         {
+            string settingsFile = ActivityCommon.GetSettingsFileName(this);
+            if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+            {
+                if (GetSettings(ActivityCommon.GetSettingsFileName(this)))
+                {
+                    return;
+                }
+            }
+
+            GetPrefSettings();
+        }
+
+        private void GetPrefSettings()
+        {
             GetLocaleSetting(_instanceData);
             GetThemeSettings();
 
@@ -1856,6 +1880,12 @@ namespace BmwDeepObd
 
         private void StoreSettings()
         {
+            StoreSettings(ActivityCommon.GetSettingsFileName(this));
+            StorePrefsSettings();
+        }
+
+        private void StorePrefsSettings()
+        {
             try
             {
                 if (!ActivityCommon.StaticDataInitialized || !_instanceData.GetSettingsCalled)
@@ -1935,6 +1965,16 @@ namespace BmwDeepObd
         {
             try
             {
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    return false;
+                }
+
+                if (_instanceData == null || _activityCommon == null)
+                {
+                    return false;
+                }
+
                 bool init = false;
                 if (!ActivityCommon.StaticDataInitialized || !_activityRecreated)
                 {
@@ -1942,18 +1982,21 @@ namespace BmwDeepObd
                     _activityCommon.SetDefaultSettings();
                 }
 
-                StorageData storageData ;
-                try
+                StorageData storageData = null;
+                if (File.Exists(fileName))
                 {
-                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData));
-                    using (StreamReader sr = new StreamReader(fileName))
+                    try
                     {
-                        storageData = xmlSerializer.Deserialize(sr) as StorageData;
+                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData));
+                        using (StreamReader sr = new StreamReader(fileName))
+                        {
+                            storageData = xmlSerializer.Deserialize(sr) as StorageData;
+                        }
                     }
-                }
-                catch (Exception)
-                {
-                    storageData = null;
+                    catch (Exception)
+                    {
+                        storageData = null;
+                    }
                 }
 
                 storageData ??= new StorageData();
@@ -2048,14 +2091,17 @@ namespace BmwDeepObd
         {
             try
             {
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    return false;
+                }
+
                 if (!ActivityCommon.StaticDataInitialized || !_instanceData.GetSettingsCalled)
                 {
                     return false;
                 }
 
                 StorageData storageData = new StorageData(this);
-                storageData.SelectedEnetIp = _activityCommon.SelectedEnetIp;
-                storageData.CustomStorageMedia = _activityCommon.CustomStorageMedia;
 
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData));
                 using (StreamWriter sw = new StreamWriter(fileName))
