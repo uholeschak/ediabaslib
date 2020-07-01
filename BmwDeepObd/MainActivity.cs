@@ -1771,10 +1771,14 @@ namespace BmwDeepObd
 
         private void GetSettings()
         {
-            string settingsFile = ActivityCommon.GetSettingsFileName(this);
+            PackageInfo packageInfo = PackageManager.GetPackageInfo(PackageName, 0);
+            _currentVersionCode = packageInfo != null ? Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
+            _obbFileName = ExpansionDownloaderActivity.GetObbFilename(this);
+
+            string settingsFile = ActivityCommon.GetSettingsFileName();
             if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
             {
-                if (GetSettings(ActivityCommon.GetSettingsFileName(this)))
+                if (GetSettings(settingsFile))
                 {
                     return;
                 }
@@ -1790,9 +1794,6 @@ namespace BmwDeepObd
 
             try
             {
-                PackageInfo packageInfo = PackageManager.GetPackageInfo(PackageName, 0);
-                _currentVersionCode = packageInfo != null ? Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
-                _obbFileName = ExpansionDownloaderActivity.GetObbFilename(this);
                 ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
 #if false    // simulate settings reset
                 ISharedPreferencesEditor prefsEdit = prefs.Edit();
@@ -1860,14 +1861,7 @@ namespace BmwDeepObd
                     ActivityCommon.CollectDebugInfo = prefs.GetBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
                     ActivityCommon.StaticDataInitialized = true;
 
-                    if (_instanceData.LastVersionCode != _currentVersionCode)
-                    {
-                        _instanceData.StorageRequirementsAccepted = false;
-                        _instanceData.UpdateCheckTime = DateTime.MinValue.Ticks;
-                        _instanceData.UpdateSkipVersion = -1;
-                        ActivityCommon.BatteryWarnings = 0;
-                        ActivityCommon.BatteryWarningVoltage = 0;
-                    }
+                    CheckSettingsVersionChange();
                 }
 
                 _instanceData.GetSettingsCalled = true;
@@ -1878,9 +1872,21 @@ namespace BmwDeepObd
             }
         }
 
+        private void CheckSettingsVersionChange()
+        {
+            if (_instanceData.LastVersionCode != _currentVersionCode)
+            {
+                _instanceData.StorageRequirementsAccepted = false;
+                _instanceData.UpdateCheckTime = DateTime.MinValue.Ticks;
+                _instanceData.UpdateSkipVersion = -1;
+                ActivityCommon.BatteryWarnings = 0;
+                ActivityCommon.BatteryWarningVoltage = 0;
+            }
+        }
+
         private void StoreSettings()
         {
-            StoreSettings(ActivityCommon.GetSettingsFileName(this));
+            StoreSettings(ActivityCommon.GetSettingsFileName());
             StorePrefsSettings();
         }
 
@@ -1963,18 +1969,18 @@ namespace BmwDeepObd
 
         public bool GetSettings(string fileName)
         {
+            if (_instanceData == null || _activityCommon == null)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return false;
+            }
+
             try
             {
-                if (string.IsNullOrEmpty(fileName))
-                {
-                    return false;
-                }
-
-                if (_instanceData == null || _activityCommon == null)
-                {
-                    return false;
-                }
-
                 bool init = false;
                 if (!ActivityCommon.StaticDataInitialized || !_activityRecreated)
                 {
@@ -2006,7 +2012,7 @@ namespace BmwDeepObd
                 _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
 
                 _activityCommon.SelectedEnetIp = storageData.SelectedEnetIp;
-                _activityCommon.CustomStorageMedia = storageData.CustomStorageMedia;
+                _activityCommon.CustomStorageMedia = storageData.CustomStorageMedia ?? string.Empty;
 
                 if (init)
                 {
@@ -2062,14 +2068,7 @@ namespace BmwDeepObd
                     ActivityCommon.ScanAllEcus = storageData.ScanAllEcus;
                     ActivityCommon.CollectDebugInfo = storageData.CollectDebugInfo;
 
-                    if (_instanceData.LastVersionCode != _currentVersionCode)
-                    {
-                        _instanceData.StorageRequirementsAccepted = false;
-                        _instanceData.UpdateCheckTime = DateTime.MinValue.Ticks;
-                        _instanceData.UpdateSkipVersion = -1;
-                        ActivityCommon.BatteryWarnings = 0;
-                        ActivityCommon.BatteryWarningVoltage = 0;
-                    }
+                    CheckSettingsVersionChange();
 
                     ActivityCommon.StaticDataInitialized = true;
                 }
@@ -2089,13 +2088,18 @@ namespace BmwDeepObd
 
         public bool StoreSettings(string fileName)
         {
+            if (_instanceData == null || _activityCommon == null)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return false;
+            }
+
             try
             {
-                if (string.IsNullOrEmpty(fileName))
-                {
-                    return false;
-                }
-
                 if (!ActivityCommon.StaticDataInitialized || !_instanceData.GetSettingsCalled)
                 {
                     return false;
