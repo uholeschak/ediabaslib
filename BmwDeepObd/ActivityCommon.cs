@@ -7973,9 +7973,9 @@ namespace BmwDeepObd
             return true;
         }
 
-        public static string GetSettingsFileName(Context context)
+        public static string GetSettingsFileName()
         {
-            Java.IO.File filesDir = context.FilesDir;
+            Java.IO.File filesDir = Android.App.Application.Context.FilesDir;
             if (filesDir == null)
             {
                 return string.Empty;

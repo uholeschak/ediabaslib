@@ -1775,10 +1775,10 @@ namespace BmwDeepObd
             _currentVersionCode = packageInfo != null ? Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
             _obbFileName = ExpansionDownloaderActivity.GetObbFilename(this);
 
-            string settingsFile = ActivityCommon.GetSettingsFileName(this);
+            string settingsFile = ActivityCommon.GetSettingsFileName();
             if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
             {
-                if (GetSettings(ActivityCommon.GetSettingsFileName(this)))
+                if (GetSettings(settingsFile))
                 {
                     return;
                 }
@@ -1861,14 +1861,7 @@ namespace BmwDeepObd
                     ActivityCommon.CollectDebugInfo = prefs.GetBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
                     ActivityCommon.StaticDataInitialized = true;
 
-                    if (_instanceData.LastVersionCode != _currentVersionCode)
-                    {
-                        _instanceData.StorageRequirementsAccepted = false;
-                        _instanceData.UpdateCheckTime = DateTime.MinValue.Ticks;
-                        _instanceData.UpdateSkipVersion = -1;
-                        ActivityCommon.BatteryWarnings = 0;
-                        ActivityCommon.BatteryWarningVoltage = 0;
-                    }
+                    CheckSettingsVersionChange();
                 }
 
                 _instanceData.GetSettingsCalled = true;
@@ -1879,9 +1872,21 @@ namespace BmwDeepObd
             }
         }
 
+        private void CheckSettingsVersionChange()
+        {
+            if (_instanceData.LastVersionCode != _currentVersionCode)
+            {
+                _instanceData.StorageRequirementsAccepted = false;
+                _instanceData.UpdateCheckTime = DateTime.MinValue.Ticks;
+                _instanceData.UpdateSkipVersion = -1;
+                ActivityCommon.BatteryWarnings = 0;
+                ActivityCommon.BatteryWarningVoltage = 0;
+            }
+        }
+
         private void StoreSettings()
         {
-            StoreSettings(ActivityCommon.GetSettingsFileName(this));
+            StoreSettings(ActivityCommon.GetSettingsFileName());
             StorePrefsSettings();
         }
 
@@ -2063,14 +2068,7 @@ namespace BmwDeepObd
                     ActivityCommon.ScanAllEcus = storageData.ScanAllEcus;
                     ActivityCommon.CollectDebugInfo = storageData.CollectDebugInfo;
 
-                    if (_instanceData.LastVersionCode != _currentVersionCode)
-                    {
-                        _instanceData.StorageRequirementsAccepted = false;
-                        _instanceData.UpdateCheckTime = DateTime.MinValue.Ticks;
-                        _instanceData.UpdateSkipVersion = -1;
-                        ActivityCommon.BatteryWarnings = 0;
-                        ActivityCommon.BatteryWarningVoltage = 0;
-                    }
+                    CheckSettingsVersionChange();
 
                     ActivityCommon.StaticDataInitialized = true;
                 }
