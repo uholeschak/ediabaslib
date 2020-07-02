@@ -829,8 +829,7 @@ namespace BmwDeepObd
                         string.Compare(_instanceData.LastLocale ?? string.Empty, ActivityCommon.SelectedLocale ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
                     {
                         StoreSettings();
-                        Finish();
-                        StartActivity(Intent);
+                        Recreate();
                         break;
                     }
 
@@ -1916,6 +1915,7 @@ namespace BmwDeepObd
             StoreSettings(ActivityCommon.GetSettingsFileName());
         }
 
+#if false
         private void StorePrefsSettings()
         {
             try
@@ -1986,6 +1986,7 @@ namespace BmwDeepObd
                 // ignored
             }
         }
+#endif
 
         private void StoreLastAppState(LastAppState lastAppState)
         {
@@ -2002,10 +2003,13 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData));
-                        using (StreamReader sr = new StreamReader(fileName))
+                        lock (ActivityCommon.GlobalSettingLockObject)
                         {
-                            storageData = xmlSerializer.Deserialize(sr) as StorageData;
+                            XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData));
+                            using (StreamReader sr = new StreamReader(fileName))
+                            {
+                                storageData = xmlSerializer.Deserialize(sr) as StorageData;
+                            }
                         }
                     }
                     catch (Exception)
@@ -2166,9 +2170,12 @@ namespace BmwDeepObd
                 StorageData storageData = new StorageData(this);
 
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData));
-                using (StreamWriter sw = new StreamWriter(fileName))
+                lock (ActivityCommon.GlobalSettingLockObject)
                 {
-                    xmlSerializer.Serialize(sw, storageData);
+                    using (StreamWriter sw = new StreamWriter(fileName))
+                    {
+                        xmlSerializer.Serialize(sw, storageData);
+                    }
                 }
 
                 return true;
