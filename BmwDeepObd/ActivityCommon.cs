@@ -31,6 +31,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using Android.Content.PM;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
@@ -195,68 +196,68 @@ namespace BmwDeepObd
 
         public enum ThemeType
         {
-            Dark,
-            Light,
+            [XmlEnum(Name = "Dark")] Dark,
+            [XmlEnum(Name = "Light")] Light,
         }
 
         public enum InterfaceType
         {
-            None,
-            Bluetooth,
-            Enet,
-            ElmWifi,
-            DeepObdWifi,
-            Ftdi,
+            [XmlEnum(Name = "None")] None,
+            [XmlEnum(Name = "Bluetooth")] Bluetooth,
+            [XmlEnum(Name = "Enet")] Enet,
+            [XmlEnum(Name = "ElmWifi")] ElmWifi,
+            [XmlEnum(Name = "DeepObdWifi")] DeepObdWifi,
+            [XmlEnum(Name = "Ftdi")] Ftdi,
         }
 
         public enum InternetConnectionType
         {
-            Cellular,
-            Wifi,
-            Ethernet,
+            [XmlEnum(Name = "Cellular")] Cellular,
+            [XmlEnum(Name = "Wifi")] Wifi,
+            [XmlEnum(Name = "Ethernet")] Ethernet,
         }
 
         public enum ManufacturerType
         {
-            Bmw,
-            Audi,
-            Seat,
-            Skoda,
-            Vw,
+            [XmlEnum(Name = "Bmw")] Bmw,
+            [XmlEnum(Name = "Audi")] Audi,
+            [XmlEnum(Name = "Seat")] Seat,
+            [XmlEnum(Name = "Skoda")] Skoda,
+            [XmlEnum(Name = "Vw")] Vw,
         }
 
         public enum LockType
         {
-            None,                   // no lock
-            Cpu,                    // CPU lock
-            ScreenDim,              // screen dim lock
-            ScreenBright,           // screen bright lock
+            [XmlEnum(Name = "None")] None,                  // no lock
+            [XmlEnum(Name = "Cpu")] Cpu,                    // CPU lock
+            [XmlEnum(Name = "ScreenDim")] ScreenDim,        // screen dim lock
+            [XmlEnum(Name = "ScreenBright")] ScreenBright,  // screen bright lock
         }
 
         public enum BtEnableType
         {
-            Ask,                    // ask for enbale
-            Always,                 // always enable
-            Nothing                 // no handling
+            [XmlEnum(Name = "Ask")] Ask,                    // ask for enbale
+            [XmlEnum(Name = "Always")] Always,              // always enable
+            [XmlEnum(Name = "Nothing")] Nothing             // no handling
         }
 
         public enum BtDisableType
         {
-            DisableIfByApp,         // disable if enabled by app
-            Nothing                 // no handling
+            [XmlEnum(Name = "DisableIfByApp")] DisableIfByApp,  // disable if enabled by app
+            [XmlEnum(Name = "Nothing")] Nothing                 // no handling
         }
 
         public enum AutoConnectType
         {
-            Offline,                // no auto connect
-            Connect,                // auto connect
-            ConnectClose,           // auto connect and close app
+            [XmlEnum(Name = "Offline")] Offline,                // no auto connect
+            [XmlEnum(Name = "Connect")] Connect,                // auto connect
+            [XmlEnum(Name = "ConnectClose")] ConnectClose,      // auto connect and close app
         }
 
         public enum TranslatorType
         {
-            YandexTranslate,        // Yandex.translate
-            IbmWatson,              // IBM Watson Translator
+            [XmlEnum(Name = "YandexTranslate")] YandexTranslate,    // Yandex.translate
+            [XmlEnum(Name = "IbmWatson")] IbmWatson,                // IBM Watson Translator
         }
 
         public delegate bool ProgressZipDelegate(int percent, bool decrypt = false);

@@ -69,10 +69,10 @@ namespace BmwDeepObd
 
         public enum LastAppState
         {
-            Init,
-            Compile,
-            TabsCreated,
-            Stopped,
+            [XmlEnum(Name = "Init")] Init,
+            [XmlEnum(Name = "Compile")] Compile,
+            [XmlEnum(Name = "TabsCreated")] TabsCreated,
+            [XmlEnum(Name = "Stopped")] Stopped,
         }
 
         private class DownloadInfo
