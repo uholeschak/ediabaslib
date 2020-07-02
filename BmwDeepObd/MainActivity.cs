@@ -245,53 +245,53 @@ namespace BmwDeepObd
             [XmlElement("Theme")] public ActivityCommon.ThemeType SelectedTheme { get; set; }
             [XmlElement("DeviceName")] public string DeviceName { get; set; }
             [XmlElement("DeviceAddress")] public string DeviceAddress { get; set; }
-            [XmlElement("ConfigFileName")] public string ConfigFileName { get; set; }
+            [XmlElement("ConfigFile")] public string ConfigFileName { get; set; }
             [XmlElement("UpdateCheckTime")] public long UpdateCheckTime { get; set; }
             [XmlElement("UpdateSkipVersion")] public int UpdateSkipVersion { get; set; }
             [XmlElement("TransLoginTimeNext")] public long TransLoginTimeNext { get; set; }
-            [XmlElement("LastVersionCode")] public long LastVersionCode { get; set; }
-            [XmlElement("StorageRequirementsAccepted")] public bool StorageRequirementsAccepted { get; set; }
+            [XmlElement("VersionCode")] public long LastVersionCode { get; set; }
+            [XmlElement("StorageAccepted")] public bool StorageRequirementsAccepted { get; set; }
             [XmlElement("XmlEditorPackageName")] public string XmlEditorPackageName { get; set; }
             [XmlElement("XmlEditorClassName")] public string XmlEditorClassName { get; set; }
             [XmlElement("DataLogActive")] public bool DataLogActive { get; set; }
             [XmlElement("DataLogAppend")] public bool DataLogAppend { get; set; }
 
             [XmlElement("EnetIp")] public string SelectedEnetIp { get; set; }
-            [XmlElement("CustomStorageMedia")] public string CustomStorageMedia { get; set; }
-            public bool EnableTranslation { get; set; }
-            public bool EnableTranslateLogin { get; set; }
-            public string YandexApiKey { get; set; }
-            public string IbmTranslatorApiKey { get; set; }
-            public string IbmTranslatorUrl { get; set; }
-            public ActivityCommon.TranslatorType Translator { get; set; }
-            public bool ShowBatteryVoltageWarning { get; set; }
-            public long BatteryWarnings { get; set; }
-            public double BatteryWarningVoltage { get; set; }
-            public string LastAdapterSerial { get; set; }
-            public string EmailAddress { get; set; }
-            public string TraceInfo { get; set; }
-            public string AppId { get; set; }
-            public bool AutoHideTitleBar { get; set; }
-            public bool SuppressTitleBar { get; set; }
-            public bool FullScreenMode { get; set; }
-            public bool SwapMultiWindowOrientation { get; set; }
+            [XmlElement("StorageMedia")] public string CustomStorageMedia { get; set; }
+            [XmlElement("EnableTranslation")] public bool EnableTranslation { get; set; }
+            [XmlElement("EnableTranslateLogin")] public bool EnableTranslateLogin { get; set; }
+            [XmlElement("YandexApiKey")] public string YandexApiKey { get; set; }
+            [XmlElement("IbmTranslatorApiKey")] public string IbmTranslatorApiKey { get; set; }
+            [XmlElement("IbmTranslatorUrl")] public string IbmTranslatorUrl { get; set; }
+            [XmlElement("Translator")] public ActivityCommon.TranslatorType Translator { get; set; }
+            [XmlElement("ShowBatteryVoltageWarning")] public bool ShowBatteryVoltageWarning { get; set; }
+            [XmlElement("BatteryWarnings")] public long BatteryWarnings { get; set; }
+            [XmlElement("BatteryWarningVoltage")] public double BatteryWarningVoltage { get; set; }
+            [XmlElement("LastAdapterSerial")] public string LastAdapterSerial { get; set; }
+            [XmlElement("EmailAddress")] public string EmailAddress { get; set; }
+            [XmlElement("TraceInfo")] public string TraceInfo { get; set; }
+            [XmlElement("AppId")] public string AppId { get; set; }
+            [XmlElement("AutoHideTitleBar")] public bool AutoHideTitleBar { get; set; }
+            [XmlElement("SuppressTitleBar")] public bool SuppressTitleBar { get; set; }
+            [XmlElement("FullScreenMode")] public bool FullScreenMode { get; set; }
+            [XmlElement("SwapMultiWindowOrientation")] public bool SwapMultiWindowOrientation { get; set; }
             [XmlElement("InternetConnection")] public ActivityCommon.InternetConnectionType SelectedInternetConnection { get; set; }
             [XmlElement("Manufacturer")] public ActivityCommon.ManufacturerType SelectedManufacturer { get; set; }
-            public ActivityCommon.BtEnableType BtEnbaleHandling { get; set; }
-            public ActivityCommon.BtDisableType BtDisableHandling { get; set; }
-            public ActivityCommon.LockType LockTypeCommunication { get; set; }
-            public ActivityCommon.LockType LockTypeLogging { get; set; }
-            public bool StoreDataLogSettings { get; set; }
-            public ActivityCommon.AutoConnectType AutoConnectHandling { get; set; }
-            public long UpdateCheckDelay { get; set; }
-            public bool DoubleClickForAppExit { get; set; }
-            public bool SendDataBroadcast { get; set; }
-            public bool CheckCpuUsage { get; set; }
-            public bool CheckEcuFiles { get; set; }
-            public bool OldVagMode { get; set; }
-            public bool UseBmwDatabase { get; set; }
-            public bool ScanAllEcus { get; set; }
-            public bool CollectDebugInfo { get; set; }
+            [XmlElement("BtEnbale")] public ActivityCommon.BtEnableType BtEnbaleHandling { get; set; }
+            [XmlElement("BtDisable")] public ActivityCommon.BtDisableType BtDisableHandling { get; set; }
+            [XmlElement("LockComm")] public ActivityCommon.LockType LockTypeCommunication { get; set; }
+            [XmlElement("LockLog")] public ActivityCommon.LockType LockTypeLogging { get; set; }
+            [XmlElement("StoreDataLogSettings")] public bool StoreDataLogSettings { get; set; }
+            [XmlElement("AutoConnect")] public ActivityCommon.AutoConnectType AutoConnectHandling { get; set; }
+            [XmlElement("UpdateCheckDelay")] public long UpdateCheckDelay { get; set; }
+            [XmlElement("DoubleClickForAppExit")] public bool DoubleClickForAppExit { get; set; }
+            [XmlElement("SendDataBroadcast")] public bool SendDataBroadcast { get; set; }
+            [XmlElement("CheckCpuUsage")] public bool CheckCpuUsage { get; set; }
+            [XmlElement("CheckEcuFiles")] public bool CheckEcuFiles { get; set; }
+            [XmlElement("OldVagMode")] public bool OldVagMode { get; set; }
+            [XmlElement("UseBmwDatabase")] public bool UseBmwDatabase { get; set; }
+            [XmlElement("ScanAllEcus")] public bool ScanAllEcus { get; set; }
+            [XmlElement("CollectDebugInfo")] public bool CollectDebugInfo { get; set; }
         }
 
         private const string SharedAppName = ActivityCommon.AppNameSpace;
