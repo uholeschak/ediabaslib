@@ -480,6 +480,7 @@ namespace BmwDeepObd
         private bool? _mtcBtManager;
         private static string _mtcBtModuleName;
         private static readonly object LockObject = new object();
+        private static readonly object SettingsLockObject = new object();
         private static int _instanceCount;
         private static string _externalPath;
         private static string _externalWritePath;
@@ -686,6 +687,8 @@ namespace BmwDeepObd
         public bool MtcBtDisconnectWarnShown { get; set; }
 
         public static object GlobalLockObject => LockObject;
+
+        public static object GlobalSettingLockObject => SettingsLockObject;
 
         public static bool StaticDataInitialized { get; set; }
 
