@@ -2172,10 +2172,21 @@ namespace BmwDeepObd
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData));
                 lock (ActivityCommon.GlobalSettingLockObject)
                 {
-                    using (StreamWriter sw = new StreamWriter(fileName))
+                    Java.IO.File tempFile = Java.IO.File.CreateTempFile("Settings", ".xml", Android.App.Application.Context.CacheDir);
+                    if (tempFile == null)
+                    {
+                        return false;
+                    }
+
+                    tempFile.DeleteOnExit();
+                    string tempFileName = tempFile.AbsolutePath;
+                    using (StreamWriter sw = new StreamWriter(tempFileName))
                     {
                         xmlSerializer.Serialize(sw, storageData);
                     }
+
+                    File.Copy(tempFileName, fileName, true);
+                    tempFile.Delete();
                 }
 
                 return true;
