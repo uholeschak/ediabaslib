@@ -106,6 +106,7 @@ namespace BmwDeepObd
             {
                 LastLocale = string.Empty;
                 LastAppState = LastAppState.Init;
+                LastSettingsHash = string.Empty;
                 AppDataPath = string.Empty;
                 EcuPath = string.Empty;
                 VagPath = string.Empty;
@@ -120,6 +121,7 @@ namespace BmwDeepObd
             public string LastLocale { get; set; }
             public ActivityCommon.ThemeType LastThemeType { get; set; }
             public LastAppState LastAppState { get; set; }
+            public string LastSettingsHash { get; set; }
             public bool GetSettingsCalled { get; set; }
             public string AppDataPath { get; set; }
             public string EcuPath { get; set; }
@@ -238,6 +240,25 @@ namespace BmwDeepObd
 
                 SelectedEnetIp = activityCommon.SelectedEnetIp;
                 CustomStorageMedia = activityCommon.CustomStorageMedia;
+            }
+
+            public string CalcualeHash()
+            {
+                StringBuilder sb = new StringBuilder();
+                PropertyInfo[] properties = GetType().GetProperties();
+                foreach (PropertyInfo property in properties)
+                {
+                    object value = property.GetValue(this);
+                    if (value != null)
+                    {
+                        sb.Append(value);
+                    }
+                }
+
+                using (SHA256Managed sha256 = new SHA256Managed())
+                {
+                    return BitConverter.ToString(sha256.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString()))).Replace("-", "");
+                }
             }
 
             [XmlElement("LastAppState")] public LastAppState LastAppState { get; set; }
@@ -1890,6 +1911,7 @@ namespace BmwDeepObd
                     CheckSettingsVersionChange();
                 }
 
+                _instanceData.LastSettingsHash = string.Empty;
                 _instanceData.GetSettingsCalled = true;
             }
             catch (Exception)
@@ -2057,6 +2079,7 @@ namespace BmwDeepObd
                 return false;
             }
 
+            string hash = string.Empty;
             try
             {
                 bool init = false;
@@ -2067,6 +2090,7 @@ namespace BmwDeepObd
                 }
 
                 StorageData storageData = GetStorageData(fileName);
+                hash = storageData.CalcualeHash();
 
                 ActivityCommon.SelectedLocale = storageData.SelectedLocale;
                 _instanceData.LastLocale = ActivityCommon.SelectedLocale;
@@ -2143,6 +2167,7 @@ namespace BmwDeepObd
             }
             finally
             {
+                _instanceData.LastSettingsHash = hash;
                 _instanceData.GetSettingsCalled = true;
             }
             return false;
@@ -2168,6 +2193,12 @@ namespace BmwDeepObd
                 }
 
                 StorageData storageData = new StorageData(this);
+                string hash = storageData.CalcualeHash();
+
+                if (string.Compare(hash, _instanceData.LastSettingsHash, StringComparison.Ordinal) == 0)
+                {
+                    return true;
+                }
 
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData));
                 lock (ActivityCommon.GlobalSettingLockObject)
@@ -2188,6 +2219,8 @@ namespace BmwDeepObd
                     File.Copy(tempFileName, fileName, true);
                     tempFile.Delete();
                 }
+
+                _instanceData.LastSettingsHash = hash;
 
                 return true;
             }
