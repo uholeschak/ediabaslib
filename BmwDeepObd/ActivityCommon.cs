@@ -5183,6 +5183,7 @@ namespace BmwDeepObd
                 SelectedTheme = ThemeDefault;
             }
 
+            CustomStorageMedia = string.Empty;
             EnableTranslateLogin = true;
             ShowBatteryVoltageWarning = true;
             AutoHideTitleBar = false;
