@@ -605,9 +605,9 @@ namespace BmwDeepObd
             }
 
             string displayName = GetString(Resource.String.default_media);
-            if (!string.IsNullOrEmpty(_activityCommon.CustomStorageMedia))
+            if (!string.IsNullOrEmpty(ActivityCommon.CustomStorageMedia))
             {
-                string shortName = ActivityCommon.GetTruncatedPathName(_activityCommon.CustomStorageMedia);
+                string shortName = ActivityCommon.GetTruncatedPathName(ActivityCommon.CustomStorageMedia);
                 if (!string.IsNullOrEmpty(shortName))
                 {
                     displayName = shortName;

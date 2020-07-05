@@ -179,6 +179,7 @@ namespace BmwDeepObd
                 XmlEditorPackageName = string.Empty;
                 XmlEditorClassName = string.Empty;
 
+                CustomStorageMedia = ActivityCommon.CustomStorageMedia;
                 EnableTranslation = ActivityCommon.EnableTranslation;
                 EnableTranslateLogin = ActivityCommon.EnableTranslateLogin;
                 YandexApiKey = ActivityCommon.YandexApiKey;
@@ -239,7 +240,6 @@ namespace BmwDeepObd
                 XmlEditorClassName = instanceData.XmlEditorClassName ?? string.Empty;
 
                 SelectedEnetIp = activityCommon.SelectedEnetIp;
-                CustomStorageMedia = activityCommon.CustomStorageMedia;
             }
 
             public string CalcualeHash()
@@ -1856,7 +1856,6 @@ namespace BmwDeepObd
                 prefsEdit.Commit();
 #endif
                 _activityCommon.SelectedEnetIp = prefs.GetString("EnetIp", string.Empty);
-                _activityCommon.CustomStorageMedia = prefs.GetString("StorageMedia", string.Empty);
                 if (!ActivityCommon.StaticDataInitialized || !_activityRecreated)
                 {
                     string stateString = prefs.GetString("LastAppState", string.Empty);
@@ -1873,6 +1872,7 @@ namespace BmwDeepObd
                     _instanceData.XmlEditorClassName = prefs.GetString("XmlEditorClassName", string.Empty);
 
                     _activityCommon.SetDefaultSettings();
+                    ActivityCommon.CustomStorageMedia = prefs.GetString("StorageMedia", string.Empty);
                     ActivityCommon.EnableTranslation = prefs.GetBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
                     ActivityCommon.EnableTranslateLogin = prefs.GetBoolean("EnableTranslateLogin", ActivityCommon.EnableTranslateLogin);
                     ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", ActivityCommon.YandexApiKey);
@@ -2101,7 +2101,6 @@ namespace BmwDeepObd
                 hash = storageData.CalcualeHash();
 
                 _activityCommon.SelectedEnetIp = storageData.SelectedEnetIp;
-                _activityCommon.CustomStorageMedia = storageData.CustomStorageMedia ?? string.Empty;
 
                 if (init)
                 {
@@ -2122,6 +2121,7 @@ namespace BmwDeepObd
                     ActivityCommon.SelectedTheme = storageData.SelectedTheme;
                     _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
 
+                    ActivityCommon.CustomStorageMedia = storageData.CustomStorageMedia;
                     ActivityCommon.EnableTranslation = storageData.EnableTranslation;
                     ActivityCommon.EnableTranslateLogin = storageData.EnableTranslateLogin;
                     ActivityCommon.YandexApiKey = storageData.YandexApiKey;
@@ -2295,7 +2295,7 @@ namespace BmwDeepObd
             _instanceData.EcuPath = string.Empty;
             _instanceData.VagPath = string.Empty;
             _instanceData.UserEcuFiles = false;
-            if (string.IsNullOrEmpty(_activityCommon.CustomStorageMedia))
+            if (string.IsNullOrEmpty(ActivityCommon.CustomStorageMedia))
             {
                 if (string.IsNullOrEmpty(ActivityCommon.ExternalWritePath))
                 {
@@ -2316,7 +2316,7 @@ namespace BmwDeepObd
             }
             else
             {
-                _instanceData.AppDataPath = Path.Combine(_activityCommon.CustomStorageMedia, AppFolderName);
+                _instanceData.AppDataPath = Path.Combine(ActivityCommon.CustomStorageMedia, AppFolderName);
             }
 
             if (string.IsNullOrEmpty(_instanceData.EcuPath))

@@ -697,7 +697,7 @@ namespace BmwDeepObd
 
         public static string ExternalWritePath => _externalWritePath;
 
-        public string CustomStorageMedia
+        public static string CustomStorageMedia
         {
             get => _customStorageMedia;
             set => _customStorageMedia = IsWritable(value) ? value : null;
