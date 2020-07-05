@@ -756,7 +756,7 @@ namespace BmwDeepObd
 
         public static string SelectedLocale { get; set; }
 
-        public static ThemeType SelectedTheme { get; set; }
+        public static ThemeType? SelectedTheme { get; set; }
 
         public static bool AutoHideTitleBar { get; set; }
 
@@ -851,14 +851,18 @@ namespace BmwDeepObd
         {
             get
             {
-                switch (SelectedTheme)
+                if (SelectedTheme != null)
                 {
-                    case ThemeType.Dark:
-                        return Resource.Style.MyTheme;
+                    switch (SelectedTheme)
+                    {
+                        case ThemeType.Dark:
+                            return Resource.Style.MyTheme;
 
-                    case ThemeType.Light:
-                        return Resource.Style.MyThemeLight;
+                        case ThemeType.Light:
+                            return Resource.Style.MyThemeLight;
+                    }
                 }
+
                 return Resource.Style.MyTheme;
             }
         }
