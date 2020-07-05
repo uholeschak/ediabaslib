@@ -1796,20 +1796,20 @@ namespace BmwDeepObd
             }
         }
 
-        private void GetThemeSettings()
+        private void GetThemeSettings(InstanceData instanceData = null)
         {
-            string settingsFile = ActivityCommon.GetSettingsFileName();
-            if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+            if (instanceData == null)
             {
-                if (ActivityCommon.SelectedTheme == null)
+                string settingsFile = ActivityCommon.GetSettingsFileName();
+                if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
                 {
-                    if (GetLocaleThemeSettings(settingsFile, false, true))
+                    if (ActivityCommon.SelectedTheme == null)
                     {
-                        _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
+                        GetLocaleThemeSettings(settingsFile, false, true);
                     }
-                }
 
-                return;
+                    return;
+                }
             }
 
             try
@@ -1820,7 +1820,10 @@ namespace BmwDeepObd
                     ActivityCommon.SelectedTheme = (ActivityCommon.ThemeType)prefs.GetInt("Theme", (int)ActivityCommon.ThemeDefault);
                 }
 
-                _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
+                if (instanceData != null)
+                {
+                    instanceData.LastThemeType = ActivityCommon.SelectedTheme;
+                }
             }
             catch (Exception)
             {
@@ -1849,7 +1852,7 @@ namespace BmwDeepObd
         private void GetPrefSettings()
         {
             GetLocaleSetting(_instanceData);
-            GetThemeSettings();
+            GetThemeSettings(_instanceData);
 
             try
             {
@@ -2120,9 +2123,7 @@ namespace BmwDeepObd
                     _instanceData.XmlEditorClassName = storageData.XmlEditorClassName;
 
                     ActivityCommon.SelectedLocale = storageData.SelectedLocale;
-                    _instanceData.LastLocale = ActivityCommon.SelectedLocale;
                     ActivityCommon.SelectedTheme = storageData.SelectedTheme;
-                    _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
 
                     ActivityCommon.CustomStorageMedia = storageData.CustomStorageMedia;
                     ActivityCommon.EnableTranslation = storageData.EnableTranslation;
@@ -2169,6 +2170,9 @@ namespace BmwDeepObd
 
                     ActivityCommon.StaticDataInitialized = true;
                 }
+
+                _instanceData.LastLocale = ActivityCommon.SelectedLocale;
+                _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
 
                 return true;
             }
