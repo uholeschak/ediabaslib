@@ -119,7 +119,7 @@ namespace BmwDeepObd
             }
 
             public string LastLocale { get; set; }
-            public ActivityCommon.ThemeType LastThemeType { get; set; }
+            public ActivityCommon.ThemeType? LastThemeType { get; set; }
             public LastAppState LastAppState { get; set; }
             public string LastSettingsHash { get; set; }
             public bool GetSettingsCalled { get; set; }
@@ -226,7 +226,7 @@ namespace BmwDeepObd
 
                 LastAppState = instanceData.LastAppState;
                 SelectedLocale = ActivityCommon.SelectedLocale ?? string.Empty;
-                SelectedTheme = ActivityCommon.SelectedTheme;
+                SelectedTheme = ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault;
                 DeviceName = instanceData.DeviceName;
                 DeviceAddress = instanceData.DeviceAddress;
                 ConfigFileName = instanceData.ConfigFileName;
@@ -846,7 +846,7 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestGlobalSettings:
                     _activityCommon.SetPreferredNetworkInterface();
-                    if (_instanceData.LastThemeType != ActivityCommon.SelectedTheme ||
+                    if ((_instanceData.LastThemeType ?? ActivityCommon.ThemeDefault) != (ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault) ||
                         string.Compare(_instanceData.LastLocale ?? string.Empty, ActivityCommon.SelectedLocale ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
                     {
                         StoreSettings();
@@ -1797,17 +1797,25 @@ namespace BmwDeepObd
             string settingsFile = ActivityCommon.GetSettingsFileName();
             if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
             {
-                if (GetLocaleThemeSettings(settingsFile, false, true))
+                if (ActivityCommon.SelectedTheme == null)
                 {
-                    _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
-                    return;
+                    if (GetLocaleThemeSettings(settingsFile, false, true))
+                    {
+                        _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
+                    }
                 }
+
+                return;
             }
 
             try
             {
-                ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
-                ActivityCommon.SelectedTheme = (ActivityCommon.ThemeType)prefs.GetInt("Theme", (int)ActivityCommon.ThemeDefault);
+                if (ActivityCommon.SelectedTheme == null)
+                {
+                    ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
+                    ActivityCommon.SelectedTheme = (ActivityCommon.ThemeType)prefs.GetInt("Theme", (int)ActivityCommon.ThemeDefault);
+                }
+
                 _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
             }
             catch (Exception)
@@ -2092,11 +2100,6 @@ namespace BmwDeepObd
                 StorageData storageData = GetStorageData(fileName);
                 hash = storageData.CalcualeHash();
 
-                ActivityCommon.SelectedLocale = storageData.SelectedLocale;
-                _instanceData.LastLocale = ActivityCommon.SelectedLocale;
-                ActivityCommon.SelectedTheme = storageData.SelectedTheme;
-                _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
-
                 _activityCommon.SelectedEnetIp = storageData.SelectedEnetIp;
                 _activityCommon.CustomStorageMedia = storageData.CustomStorageMedia ?? string.Empty;
 
@@ -2113,6 +2116,11 @@ namespace BmwDeepObd
                     _instanceData.StorageRequirementsAccepted = storageData.StorageRequirementsAccepted;
                     _instanceData.XmlEditorPackageName = storageData.XmlEditorPackageName;
                     _instanceData.XmlEditorClassName = storageData.XmlEditorClassName;
+
+                    ActivityCommon.SelectedLocale = storageData.SelectedLocale;
+                    _instanceData.LastLocale = ActivityCommon.SelectedLocale;
+                    ActivityCommon.SelectedTheme = storageData.SelectedTheme;
+                    _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
 
                     ActivityCommon.EnableTranslation = storageData.EnableTranslation;
                     ActivityCommon.EnableTranslateLogin = storageData.EnableTranslateLogin;

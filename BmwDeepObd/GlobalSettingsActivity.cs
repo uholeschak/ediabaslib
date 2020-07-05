@@ -275,7 +275,7 @@ namespace BmwDeepObd
                     break;
             }
 
-            switch (ActivityCommon.SelectedTheme)
+            switch (ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault)
             {
                 case ActivityCommon.ThemeType.Light:
                     _radioButtonThemeLight.Checked = true;
@@ -438,7 +438,7 @@ namespace BmwDeepObd
             }
             ActivityCommon.SelectedLocale = locale;
 
-            ActivityCommon.ThemeType themeType = ActivityCommon.SelectedTheme;
+            ActivityCommon.ThemeType themeType = ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault;
             if (_radioButtonThemeLight.Checked)
             {
                 themeType = ActivityCommon.ThemeType.Light;
