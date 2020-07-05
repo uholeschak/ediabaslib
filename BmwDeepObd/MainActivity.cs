@@ -1872,7 +1872,7 @@ namespace BmwDeepObd
                     _instanceData.XmlEditorClassName = prefs.GetString("XmlEditorClassName", string.Empty);
 
                     _activityCommon.SetDefaultSettings();
-                    ActivityCommon.CustomStorageMedia = prefs.GetString("StorageMedia", string.Empty);
+                    ActivityCommon.CustomStorageMedia = prefs.GetString("StorageMedia", ActivityCommon.CustomStorageMedia);
                     ActivityCommon.EnableTranslation = prefs.GetBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
                     ActivityCommon.EnableTranslateLogin = prefs.GetBoolean("EnableTranslateLogin", ActivityCommon.EnableTranslateLogin);
                     ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", ActivityCommon.YandexApiKey);
