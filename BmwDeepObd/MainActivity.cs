@@ -116,6 +116,7 @@ namespace BmwDeepObd
                 ConfigFileName = string.Empty;
                 CheckCpuUsage = true;
                 VerifyEcuFiles = true;
+                SelectedEnetIp = string.Empty;
             }
 
             public string LastLocale { get; set; }
@@ -158,6 +159,7 @@ namespace BmwDeepObd
             public string XmlEditorClassName { get; set; }
 
             public ActivityCommon.InterfaceType SelectedInterface { get; set; }
+            public string SelectedEnetIp { get; set; }
         }
 
         [XmlType("Settings")]
@@ -228,6 +230,7 @@ namespace BmwDeepObd
                 LastAppState = instanceData.LastAppState;
                 SelectedLocale = ActivityCommon.SelectedLocale ?? string.Empty;
                 SelectedTheme = ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault;
+                SelectedEnetIp = activityCommon.SelectedEnetIp;
                 DeviceName = instanceData.DeviceName;
                 DeviceAddress = instanceData.DeviceAddress;
                 ConfigFileName = instanceData.ConfigFileName;
@@ -238,8 +241,6 @@ namespace BmwDeepObd
                 StorageRequirementsAccepted = instanceData.StorageRequirementsAccepted;
                 XmlEditorPackageName = instanceData.XmlEditorPackageName ?? string.Empty;
                 XmlEditorClassName = instanceData.XmlEditorClassName ?? string.Empty;
-
-                SelectedEnetIp = activityCommon.SelectedEnetIp;
             }
 
             public string CalcualeHash()
@@ -264,6 +265,7 @@ namespace BmwDeepObd
             [XmlElement("LastAppState")] public LastAppState LastAppState { get; set; }
             [XmlElement("Locale")] public string SelectedLocale { get; set; }
             [XmlElement("Theme")] public ActivityCommon.ThemeType SelectedTheme { get; set; }
+            [XmlElement("EnetIp")] public string SelectedEnetIp { get; set; }
             [XmlElement("DeviceName")] public string DeviceName { get; set; }
             [XmlElement("DeviceAddress")] public string DeviceAddress { get; set; }
             [XmlElement("ConfigFile")] public string ConfigFileName { get; set; }
@@ -277,7 +279,6 @@ namespace BmwDeepObd
             [XmlElement("DataLogActive")] public bool DataLogActive { get; set; }
             [XmlElement("DataLogAppend")] public bool DataLogAppend { get; set; }
 
-            [XmlElement("EnetIp")] public string SelectedEnetIp { get; set; }
             [XmlElement("StorageMedia")] public string CustomStorageMedia { get; set; }
             [XmlElement("EnableTranslation")] public bool EnableTranslation { get; set; }
             [XmlElement("EnableTranslateLogin")] public bool EnableTranslateLogin { get; set; }
@@ -445,6 +446,7 @@ namespace BmwDeepObd
             if (_activityRecreated && _instanceData != null)
             {
                 _activityCommon.SelectedInterface = _instanceData.SelectedInterface;
+                _activityCommon.SelectedEnetIp = _instanceData.SelectedEnetIp;
             }
 
             GetSettings();
@@ -575,6 +577,7 @@ namespace BmwDeepObd
         protected override void OnSaveInstanceState(Bundle outState)
         {
             _instanceData.SelectedInterface = _activityCommon.SelectedInterface;
+            _instanceData.SelectedEnetIp = _activityCommon.SelectedEnetIp;
             StoreInstanceState(outState, _instanceData);
             base.OnSaveInstanceState(outState);
         }
@@ -826,6 +829,7 @@ namespace BmwDeepObd
                             _instanceData.DeviceAddress = data.Extras.GetString(XmlToolActivity.ExtraDeviceAddress);
                             _activityCommon.SelectedEnetIp = data.Extras.GetString(XmlToolActivity.ExtraEnetIp);
                         }
+
                         _instanceData.ConfigFileName = data.Extras.GetString(XmlToolActivity.ExtraFileName);
                         StoreSettings();
                         ReadConfigFile();
@@ -1855,11 +1859,11 @@ namespace BmwDeepObd
                 prefsEdit.Clear();
                 prefsEdit.Commit();
 #endif
-                _activityCommon.SelectedEnetIp = prefs.GetString("EnetIp", string.Empty);
                 if (!ActivityCommon.StaticDataInitialized || !_activityRecreated)
                 {
                     string stateString = prefs.GetString("LastAppState", string.Empty);
                     _instanceData.LastAppState = System.Enum.TryParse(stateString, true, out LastAppState lastAppState) ? lastAppState : LastAppState.Init;
+                    _activityCommon.SelectedEnetIp = prefs.GetString("EnetIp", string.Empty);
                     _instanceData.DeviceName = prefs.GetString("DeviceName", string.Empty);
                     _instanceData.DeviceAddress = prefs.GetString("DeviceAddress", string.Empty);
                     _instanceData.ConfigFileName = prefs.GetString("ConfigFile", string.Empty);
@@ -2100,11 +2104,10 @@ namespace BmwDeepObd
                 StorageData storageData = GetStorageData(fileName);
                 hash = storageData.CalcualeHash();
 
-                _activityCommon.SelectedEnetIp = storageData.SelectedEnetIp;
-
                 if (init)
                 {
                     _instanceData.LastAppState = storageData.LastAppState;
+                    _activityCommon.SelectedEnetIp = storageData.SelectedEnetIp;
                     _instanceData.DeviceName = storageData.DeviceName;
                     _instanceData.DeviceAddress = storageData.DeviceAddress;
                     _instanceData.ConfigFileName = storageData.ConfigFileName;
