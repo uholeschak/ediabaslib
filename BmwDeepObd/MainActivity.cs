@@ -137,6 +137,7 @@ namespace BmwDeepObd
             public string DeviceAddress { get; set; }
             public string ConfigFileName { get; set; }
             public long LastVersionCode { get; set; }
+            public bool VersionInfoShown { get; set; }
             public bool StorageRequirementsAccepted { get; set; }
             public bool BatteryWarningShown { get; set; }
             public bool ConfigMatchVehicleShown { get; set; }
@@ -2263,8 +2264,9 @@ namespace BmwDeepObd
             UpdateDirectories();
             _activityCommon.RequestUsbPermission(null);
             ReadConfigFile();
-            if (_startAlertDialog == null && _currentVersionCode != _instanceData.LastVersionCode)
+            if (_startAlertDialog == null && !_instanceData.VersionInfoShown && _currentVersionCode != _instanceData.LastVersionCode)
             {
+                _instanceData.VersionInfoShown = true;
                 string message = (GetString(Resource.String.version_change_info_message) +
                                  GetString(Resource.String.version_last_changes)).Replace("\n", "<br>");
                 _startAlertDialog = new AlertDialog.Builder(this)
