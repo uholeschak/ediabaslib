@@ -20,6 +20,7 @@
   <string name="back_button_twice_for_exit">Press button twice in order to exit</string>
   <string name="no_ext_storage">No external storage available</string>
   <string name="access_denied_ext_storage">Access to the external storage is required to execute this app</string>
+  <string name="store_settings_failed">Storing settings failed. Please reinstall the application.</string>
   <string name="release_show_title">Release to show title</string>
   <string name="bt_enable">Bluetooth is not enabled.\nDo you want to enable it now?</string>
   <string name="wifi_enable">Wi-Fi is not enabled.\nDo you want to enable it now or select the access point?</string>
