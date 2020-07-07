@@ -600,6 +600,18 @@ namespace BmwDeepObd
 
             _activityCommon?.StopMtcService();
             StoreLastAppState(LastAppState.Stopped);
+            try
+            {
+                Java.IO.File cacheDir = Android.App.Application.Context.CacheDir;
+                if (cacheDir != null)
+                {
+                    Directory.Delete(cacheDir.AbsolutePath, true);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         protected override void OnResume()
