@@ -1962,7 +1962,16 @@ namespace BmwDeepObd
 
         private void StoreSettings()
         {
-            StoreSettings(ActivityCommon.GetSettingsFileName());
+            if (!StoreSettings(ActivityCommon.GetSettingsFileName(), out string errorMessage))
+            {
+                string message = GetString(Resource.String.store_settings_failed);
+                if (errorMessage != null)
+                {
+                    message += "\r\n" + errorMessage;
+                }
+
+                Toast.MakeText(this, message, ToastLength.Long).Show();
+            }
         }
 
 #if false
@@ -2201,8 +2210,9 @@ namespace BmwDeepObd
             return false;
         }
 
-        public bool StoreSettings(string fileName)
+        public bool StoreSettings(string fileName, out string errorMessage)
         {
+            errorMessage = null;
             if (_instanceData == null || _activityCommon == null)
             {
                 return false;
@@ -2252,9 +2262,9 @@ namespace BmwDeepObd
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // ignored
+                errorMessage = EdiabasNet.GetExceptionText(ex);
             }
             return false;
         }
