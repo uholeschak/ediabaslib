@@ -600,6 +600,7 @@ namespace BmwDeepObd
 
             _activityCommon?.StopMtcService();
             StoreLastAppState(LastAppState.Stopped);
+#if false
             try
             {
                 Java.IO.File cacheDir = Android.App.Application.Context.CacheDir;
@@ -612,6 +613,7 @@ namespace BmwDeepObd
             {
                 // ignored
             }
+#endif
         }
 
         protected override void OnResume()
@@ -1869,8 +1871,9 @@ namespace BmwDeepObd
 
             try
             {
-                ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
-#if false    // simulate settings reset
+                ISharedPreferences prefs =
+                    Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
+#if false // simulate settings reset
                 ISharedPreferencesEditor prefsEdit = prefs.Edit();
                 prefsEdit.Clear();
                 prefsEdit.Commit();
@@ -1878,7 +1881,9 @@ namespace BmwDeepObd
                 if (!ActivityCommon.StaticDataInitialized || !_activityRecreated)
                 {
                     string stateString = prefs.GetString("LastAppState", string.Empty);
-                    _instanceData.LastAppState = System.Enum.TryParse(stateString, true, out LastAppState lastAppState) ? lastAppState : LastAppState.Init;
+                    _instanceData.LastAppState = System.Enum.TryParse(stateString, true, out LastAppState lastAppState)
+                        ? lastAppState
+                        : LastAppState.Init;
                     _activityCommon.SelectedEnetIp = prefs.GetString("EnetIp", string.Empty);
                     _instanceData.DeviceName = prefs.GetString("DeviceName", string.Empty);
                     _instanceData.DeviceAddress = prefs.GetString("DeviceAddress", string.Empty);
@@ -1886,65 +1891,98 @@ namespace BmwDeepObd
                     _instanceData.UpdateCheckTime = prefs.GetLong("UpdateCheckTime", DateTime.MinValue.Ticks);
                     _instanceData.UpdateSkipVersion = prefs.GetInt("UpdateSkipVersion", -1);
                     _instanceData.TransLoginTimeNext = prefs.GetLong("TransLoginTimeNext", DateTime.MinValue.Ticks);
-                    _instanceData.LastVersionCode = prefs.GetLong("VersionCode", -1);
+                    _instanceData.LastVersionCode = prefs.GetLong("VersionCodeLong", -1);
                     _instanceData.StorageRequirementsAccepted = prefs.GetBoolean("StorageAccepted", false);
                     _instanceData.XmlEditorPackageName = prefs.GetString("XmlEditorPackageName", string.Empty);
                     _instanceData.XmlEditorClassName = prefs.GetString("XmlEditorClassName", string.Empty);
 
                     _activityCommon.SetDefaultSettings();
-                    ActivityCommon.CustomStorageMedia = prefs.GetString("StorageMedia", ActivityCommon.CustomStorageMedia);
-                    ActivityCommon.EnableTranslation = prefs.GetBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
-                    ActivityCommon.EnableTranslateLogin = prefs.GetBoolean("EnableTranslateLogin", ActivityCommon.EnableTranslateLogin);
+                    ActivityCommon.CustomStorageMedia =
+                        prefs.GetString("StorageMedia", ActivityCommon.CustomStorageMedia);
+                    ActivityCommon.EnableTranslation =
+                        prefs.GetBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
+                    ActivityCommon.EnableTranslateLogin =
+                        prefs.GetBoolean("EnableTranslateLogin", ActivityCommon.EnableTranslateLogin);
                     ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", ActivityCommon.YandexApiKey);
-                    ActivityCommon.IbmTranslatorApiKey = prefs.GetString("IbmTranslatorApiKey", ActivityCommon.IbmTranslatorApiKey);
-                    ActivityCommon.IbmTranslatorUrl = prefs.GetString("IbmTranslatorUrl", ActivityCommon.IbmTranslatorUrl);
+                    ActivityCommon.IbmTranslatorApiKey =
+                        prefs.GetString("IbmTranslatorApiKey", ActivityCommon.IbmTranslatorApiKey);
+                    ActivityCommon.IbmTranslatorUrl =
+                        prefs.GetString("IbmTranslatorUrl", ActivityCommon.IbmTranslatorUrl);
                     ActivityCommon.TranslatorType defaultTranslator =
-                        !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey) ? ActivityCommon.TranslatorType.YandexTranslate : ActivityCommon.SelectedTranslator;
-                    _activityCommon.Translator = (ActivityCommon.TranslatorType)prefs.GetLong("Translator", (int)defaultTranslator);
-                    ActivityCommon.ShowBatteryVoltageWarning = prefs.GetBoolean("ShowBatteryWarning", ActivityCommon.ShowBatteryVoltageWarning);
+                        !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey)
+                            ? ActivityCommon.TranslatorType.YandexTranslate
+                            : ActivityCommon.SelectedTranslator;
+                    _activityCommon.Translator =
+                        (ActivityCommon.TranslatorType) prefs.GetLong("Translator", (int) defaultTranslator);
+                    ActivityCommon.ShowBatteryVoltageWarning = prefs.GetBoolean("ShowBatteryWarning",
+                        ActivityCommon.ShowBatteryVoltageWarning);
                     ActivityCommon.BatteryWarnings = prefs.GetLong("BatteryWarnings", ActivityCommon.BatteryWarnings);
-                    ActivityCommon.BatteryWarningVoltage = prefs.GetFloat("BatteryWarningVoltage", (float) ActivityCommon.BatteryWarningVoltage);
-                    ActivityCommon.LastAdapterSerial = prefs.GetString("LastAdapterSerial", ActivityCommon.LastAdapterSerial);
+                    ActivityCommon.BatteryWarningVoltage = prefs.GetFloat("BatteryWarningVoltage",
+                        (float) ActivityCommon.BatteryWarningVoltage);
+                    ActivityCommon.LastAdapterSerial =
+                        prefs.GetString("LastAdapterSerial", ActivityCommon.LastAdapterSerial);
                     ActivityCommon.EmailAddress = prefs.GetString("EmailAddress", ActivityCommon.EmailAddress);
                     ActivityCommon.TraceInfo = prefs.GetString("TraceInfo", ActivityCommon.TraceInfo);
                     ActivityCommon.AppId = prefs.GetString("AppId", ActivityCommon.AppId);
-                    ActivityCommon.AutoHideTitleBar = prefs.GetBoolean("AutoHideTitleBar", ActivityCommon.AutoHideTitleBar);
-                    ActivityCommon.SuppressTitleBar = prefs.GetBoolean("SuppressTitleBar", ActivityCommon.SuppressTitleBar);
+                    ActivityCommon.AutoHideTitleBar =
+                        prefs.GetBoolean("AutoHideTitleBar", ActivityCommon.AutoHideTitleBar);
+                    ActivityCommon.SuppressTitleBar =
+                        prefs.GetBoolean("SuppressTitleBar", ActivityCommon.SuppressTitleBar);
                     ActivityCommon.FullScreenMode = prefs.GetBoolean("FullScreenMode", ActivityCommon.FullScreenMode);
-                    ActivityCommon.SwapMultiWindowOrientation = prefs.GetBoolean("SwapMultiWindowOrientation", ActivityCommon.SwapMultiWindowOrientation);
-                    ActivityCommon.SelectedInternetConnection = (ActivityCommon.InternetConnectionType)prefs.GetInt("InternetConnection", (int)ActivityCommon.SelectedInternetConnection);
-                    ActivityCommon.SelectedManufacturer = (ActivityCommon.ManufacturerType)prefs.GetInt("Manufacturer", (int)ActivityCommon.SelectedManufacturer);
-                    ActivityCommon.BtEnbaleHandling = (ActivityCommon.BtEnableType)prefs.GetInt("BtEnable", (int)ActivityCommon.BtEnbaleHandling);
-                    ActivityCommon.BtDisableHandling = (ActivityCommon.BtDisableType)prefs.GetInt("BtDisable", (int)ActivityCommon.BtDisableHandling);
-                    ActivityCommon.LockTypeCommunication = (ActivityCommon.LockType)prefs.GetInt("LockComm", (int)ActivityCommon.LockTypeCommunication);
-                    ActivityCommon.LockTypeLogging = (ActivityCommon.LockType)prefs.GetInt("LockLog", (int)ActivityCommon.LockTypeLogging);
-                    ActivityCommon.StoreDataLogSettings = prefs.GetBoolean("StoreDataLogSettings", ActivityCommon.StoreDataLogSettings);
+                    ActivityCommon.SwapMultiWindowOrientation = prefs.GetBoolean("SwapMultiWindowOrientation",
+                        ActivityCommon.SwapMultiWindowOrientation);
+                    ActivityCommon.SelectedInternetConnection =
+                        (ActivityCommon.InternetConnectionType) prefs.GetInt("InternetConnection",
+                            (int) ActivityCommon.SelectedInternetConnection);
+                    ActivityCommon.SelectedManufacturer =
+                        (ActivityCommon.ManufacturerType) prefs.GetInt("Manufacturer",
+                            (int) ActivityCommon.SelectedManufacturer);
+                    ActivityCommon.BtEnbaleHandling =
+                        (ActivityCommon.BtEnableType) prefs.GetInt("BtEnable", (int) ActivityCommon.BtEnbaleHandling);
+                    ActivityCommon.BtDisableHandling =
+                        (ActivityCommon.BtDisableType) prefs.GetInt("BtDisable",
+                            (int) ActivityCommon.BtDisableHandling);
+                    ActivityCommon.LockTypeCommunication =
+                        (ActivityCommon.LockType) prefs.GetInt("LockComm", (int) ActivityCommon.LockTypeCommunication);
+                    ActivityCommon.LockTypeLogging =
+                        (ActivityCommon.LockType) prefs.GetInt("LockLog", (int) ActivityCommon.LockTypeLogging);
+                    ActivityCommon.StoreDataLogSettings =
+                        prefs.GetBoolean("StoreDataLogSettings", ActivityCommon.StoreDataLogSettings);
                     if (ActivityCommon.StoreDataLogSettings)
                     {
                         _instanceData.DataLogActive = prefs.GetBoolean("DataLogActive", _instanceData.DataLogActive);
                         _instanceData.DataLogAppend = prefs.GetBoolean("DataLogAppend", _instanceData.DataLogAppend);
                     }
-                    ActivityCommon.AutoConnectHandling = (ActivityCommon.AutoConnectType)prefs.GetInt("AutoConnect", (int)ActivityCommon.AutoConnectHandling);
-                    ActivityCommon.UpdateCheckDelay = prefs.GetLong("UpdateCheckDelay", ActivityCommon.UpdateCheckDelay);
-                    ActivityCommon.DoubleClickForAppExit = prefs.GetBoolean("DoubleClickForExit", ActivityCommon.DoubleClickForAppExit);
-                    ActivityCommon.SendDataBroadcast = prefs.GetBoolean("SendDataBroadcast", ActivityCommon.SendDataBroadcast);
+
+                    ActivityCommon.AutoConnectHandling =
+                        (ActivityCommon.AutoConnectType) prefs.GetInt("AutoConnect",
+                            (int) ActivityCommon.AutoConnectHandling);
+                    ActivityCommon.UpdateCheckDelay =
+                        prefs.GetLong("UpdateCheckDelay", ActivityCommon.UpdateCheckDelay);
+                    ActivityCommon.DoubleClickForAppExit =
+                        prefs.GetBoolean("DoubleClickForExit", ActivityCommon.DoubleClickForAppExit);
+                    ActivityCommon.SendDataBroadcast =
+                        prefs.GetBoolean("SendDataBroadcast", ActivityCommon.SendDataBroadcast);
                     ActivityCommon.CheckCpuUsage = prefs.GetBoolean("CheckCpuUsage", ActivityCommon.CheckCpuUsage);
                     ActivityCommon.CheckEcuFiles = prefs.GetBoolean("CheckEcuFiles", ActivityCommon.CheckEcuFiles);
                     ActivityCommon.OldVagMode = prefs.GetBoolean("OldVagMode", ActivityCommon.OldVagMode);
                     ActivityCommon.UseBmwDatabase = prefs.GetBoolean("UseBmwDatabase", ActivityCommon.UseBmwDatabase);
                     ActivityCommon.ScanAllEcus = prefs.GetBoolean("ScanAllEcus", ActivityCommon.ScanAllEcus);
-                    ActivityCommon.CollectDebugInfo = prefs.GetBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
-                    ActivityCommon.StaticDataInitialized = true;
+                    ActivityCommon.CollectDebugInfo =
+                        prefs.GetBoolean("CollectDebugInfo", ActivityCommon.CollectDebugInfo);
 
                     CheckSettingsVersionChange();
                 }
-
-                _instanceData.LastSettingsHash = string.Empty;
-                _instanceData.GetSettingsCalled = true;
             }
             catch (Exception)
             {
                 // ignored
+            }
+            finally
+            {
+                ActivityCommon.StaticDataInitialized = true;
+                _instanceData.LastSettingsHash = string.Empty;
+                _instanceData.GetSettingsCalled = true;
             }
         }
 
@@ -1996,7 +2034,7 @@ namespace BmwDeepObd
                 prefsEdit.PutInt("UpdateSkipVersion", _instanceData.UpdateSkipVersion);
                 prefsEdit.PutLong("TransLoginTimeNext", _instanceData.TransLoginTimeNext);
                 prefsEdit.PutString("StorageMedia", _activityCommon.CustomStorageMedia ?? string.Empty);
-                prefsEdit.PutLong("VersionCode", _currentVersionCode);
+                prefsEdit.PutLong("VersionCodeLong", _currentVersionCode);
                 prefsEdit.PutBoolean("StorageAccepted", _instanceData.StorageRequirementsAccepted);
                 prefsEdit.PutString("XmlEditorPackageName", _instanceData.XmlEditorPackageName ?? string.Empty);
                 prefsEdit.PutString("XmlEditorClassName", _instanceData.XmlEditorClassName ?? string.Empty);
@@ -2189,8 +2227,6 @@ namespace BmwDeepObd
                     ActivityCommon.CollectDebugInfo = storageData.CollectDebugInfo;
 
                     CheckSettingsVersionChange();
-
-                    ActivityCommon.StaticDataInitialized = true;
                 }
 
                 _instanceData.LastLocale = ActivityCommon.SelectedLocale;
@@ -2204,6 +2240,7 @@ namespace BmwDeepObd
             }
             finally
             {
+                ActivityCommon.StaticDataInitialized = true;
                 _instanceData.LastSettingsHash = hash;
                 _instanceData.GetSettingsCalled = true;
             }
