@@ -3,7 +3,7 @@
 <!-- ReSharper disable MarkupTextTypo -->
 <resources>
   <string name="library_name">DeepObd</string>
-  <string name="app_name">Deep OBD для BMW и VAG</string>
+  <string name="app_name">Deep OBD</string>
   <string name="button_connected">Соединено</string>
   <string name="button_disconnected">Разъединено</string>
   <string name="button_yes">Да</string>
