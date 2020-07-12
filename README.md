@@ -30,7 +30,6 @@ A compatible apiNET32.dll is also available, so it should be easy to port existi
 Now there is also a library existing that is working with Mono for Android. For communication either FTDI USB or Bluetooth Serial Port Protocol (SSP) protocol could be used.
 
 ### Deep OBD
-**At the moment the app is not available in the PlayStore please download it from the [latest releases](https://github.com/uholeschak/ediabaslib/releases/latest).**  
 Additionally an Android application _[Deep OBD](docs/Deep_OBD_for_BMW_and_VAG.md)_ is existing, that is configurable via [XML](docs/Page_specification.md). Generation of XML code could be simplified with the integrated configuration generator.  
 Download app from Google Play: [https://play.google.com/store/apps/details?id=de.holeschak.bmw_deep_obd](https://play.google.com/store/apps/details?id=de.holeschak.bmw_deep_obd)  
 _Deep OBD for BMW and VAG_ supports several OBD II adapters:
