@@ -3299,8 +3299,12 @@ namespace BmwDeepObd
                             string ipAddr = numberInputDialog.Number.Trim();
                             if (IPAddress.TryParse(ipAddr, out IPAddress ipAddress))
                             {
-                                _selectedEnetIp = ipAddress.ToString();
-                                handler(sender, args);
+                                byte[] ipBytes = ipAddress.GetAddressBytes();
+                                if (ipBytes.Length == 4 && ipBytes.Any(x => x != 0))
+                                {
+                                    _selectedEnetIp = ipAddress.ToString();
+                                    handler(sender, args);
+                                }
                             }
                         });
                         numberInputDialog.SetNegativeButton(Resource.String.button_abort, (s, arg) =>
