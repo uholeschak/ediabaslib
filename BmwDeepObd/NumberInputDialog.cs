@@ -1,6 +1,7 @@
-﻿using System;
-using Android.Content;
+﻿using Android.Content;
 using Android.Support.V7.App;
+using Android.Text;
+using Android.Text.Method;
 using Android.Views;
 using Android.Widget;
 
@@ -48,6 +49,21 @@ namespace BmwDeepObd
                 if (_editTextNumber != null)
                 {
                     _editTextNumber.Text = value;
+                }
+            }
+        }
+
+        public string Digits
+        {
+            set
+            {
+                if (_editTextNumber != null)
+                {
+                    _editTextNumber.InputType = InputTypes.ClassNumber;
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        _editTextNumber.KeyListener = DigitsKeyListener.GetInstance(value);
+                    }
                 }
             }
         }
