@@ -12,6 +12,7 @@
   <string name="button_abort">Abbrechen</string>
   <string name="button_select">Auswählen</string>
   <string name="button_generate">Generieren</string>
+  <string name="button_manually">Manuell</string>
   <string name="button_copy">Kopieren</string>
   <string name="button_accept">Akzeptieren</string>
   <string name="button_decline">Ablehnen</string>
@@ -327,6 +328,7 @@
   <string name="select_enet_ip_search">Fahrzeuge suchen</string>
   <string name="select_enet_ip">ENET IP-Adresse wählen</string>
   <string name="select_enet_ip_auto">Automatisch</string>
+  <string name="select_enet_ip_enter">IP-Adresse eingeben</string>
 
   <!-- ENET adapter config -->
   <string name="enet_adapter_web_info">Das Default-Password für das Adapter-Webinterface ist root.\nFalls der Adapter nach der Konfiguration nicht mehr erreichbar ist, müssen Sie den Adapter öffnen und die Resetaste drücken, nachdem der Adapter gebootet hat.</string>
