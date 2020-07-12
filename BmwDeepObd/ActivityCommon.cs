@@ -3253,6 +3253,11 @@ namespace BmwDeepObd
                     builder.SetView(listView);
                     builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
                     {
+                        if (_disposed)
+                        {
+                            return;
+                        }
+
                         switch (listView.CheckedItemPosition)
                         {
                             case 0:
@@ -3275,23 +3280,33 @@ namespace BmwDeepObd
                     });
                     builder.SetNeutralButton(Resource.String.button_manually, (sender, args) =>
                     {
-                        TextInputDialog textInputDialog = new TextInputDialog(_activity);
-                        textInputDialog.Message = _activity.GetString(Resource.String.select_enet_ip_enter);
-                        textInputDialog.MessageDetail = string.Empty;
-                        textInputDialog.Text = !string.IsNullOrEmpty(_selectedEnetIp) ? _selectedEnetIp: "0.0.0.0";
-                        textInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
+                        if (_disposed)
                         {
-                            string ipAddr = textInputDialog.Text.Trim();
+                            return;
+                        }
+
+                        NumberInputDialog numberInputDialog = new NumberInputDialog(_activity);
+                        numberInputDialog.Message = _activity.GetString(Resource.String.select_enet_ip_enter);
+                        numberInputDialog.Digits = "0123456789.";
+                        numberInputDialog.Number = !string.IsNullOrEmpty(_selectedEnetIp) ? _selectedEnetIp: "0.0.0.0";
+                        numberInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
+                        {
+                            if (_disposed)
+                            {
+                                return;
+                            }
+
+                            string ipAddr = numberInputDialog.Number.Trim();
                             if (IPAddress.TryParse(ipAddr, out IPAddress ipAddress))
                             {
                                 _selectedEnetIp = ipAddress.ToString();
                                 handler(sender, args);
                             }
                         });
-                        textInputDialog.SetNegativeButton(Resource.String.button_abort, (s, arg) =>
+                        numberInputDialog.SetNegativeButton(Resource.String.button_abort, (s, arg) =>
                         {
                         });
-                        textInputDialog.Show();
+                        numberInputDialog.Show();
                     });
                     builder.Show();
                 });

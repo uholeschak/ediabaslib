@@ -5414,6 +5414,7 @@ namespace BmwDeepObd
                 {
                     return;
                 }
+                StoreSettings();
                 UpdateOptionsMenu();
             });
         }
