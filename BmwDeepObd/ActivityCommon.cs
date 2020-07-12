@@ -3244,6 +3244,7 @@ namespace BmwDeepObd
                             index++;
                         }
                     }
+
                     ArrayAdapter<string> adapter = new ArrayAdapter<string>(_context,
                         Android.Resource.Layout.SimpleListItemSingleChoice, interfaceNames.ToArray());
                     listView.Adapter = adapter;
@@ -3271,6 +3272,26 @@ namespace BmwDeepObd
                     });
                     builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
                     {
+                    });
+                    builder.SetNeutralButton(Resource.String.button_manually, (sender, args) =>
+                    {
+                        TextInputDialog textInputDialog = new TextInputDialog(_activity);
+                        textInputDialog.Message = _activity.GetString(Resource.String.select_enet_ip_enter);
+                        textInputDialog.MessageDetail = string.Empty;
+                        textInputDialog.Text = !string.IsNullOrEmpty(_selectedEnetIp) ? _selectedEnetIp: "0.0.0.0";
+                        textInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
+                        {
+                            string ipAddr = textInputDialog.Text.Trim();
+                            if (IPAddress.TryParse(ipAddr, out IPAddress ipAddress))
+                            {
+                                _selectedEnetIp = ipAddress.ToString();
+                                handler(sender, args);
+                            }
+                        });
+                        textInputDialog.SetNegativeButton(Resource.String.button_abort, (s, arg) =>
+                        {
+                        });
+                        textInputDialog.Show();
                     });
                     builder.Show();
                 });

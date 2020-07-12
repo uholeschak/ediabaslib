@@ -12,6 +12,8 @@
   <string name="button_abort">Отменить</string>
   <string name="button_select">Выбрать</string>
   <string name="button_generate">Генерировать</string>
+  <!--Translate-->
+  <string name="button_manually">вручную</string>
   <string name="button_copy">Копировать</string>
   <string name="button_accept">Принять</string>
   <string name="button_decline">Отклонить</string>
@@ -325,6 +327,8 @@
   <string name="select_enet_ip_search">Поиск автомобиля</string>
   <string name="select_enet_ip">Выберите ENET IP-адрес</string>
   <string name="select_enet_ip_auto">Automatic</string>
+  <!--Translate-->
+  <string name="select_enet_ip_enter">Введите IP-адрес</string>
 
   <!-- ENET adapter config -->
   <string name="enet_adapter_web_info">Пароль для веб интерфейса устойства по умолчанию root.\nЕсли устройство после его конфигурирования больше не реагирует - необходимо открыть устройство, перезагрузить его и нажать кнопку сброса.</string>
