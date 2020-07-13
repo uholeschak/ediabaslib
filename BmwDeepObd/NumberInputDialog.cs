@@ -59,10 +59,14 @@ namespace BmwDeepObd
             {
                 if (_editTextNumber != null)
                 {
-                    _editTextNumber.InputType = InputTypes.ClassNumber;
                     if (!string.IsNullOrEmpty(value))
                     {
+                        _editTextNumber.InputType = InputTypes.ClassNumber | InputTypes.NumberFlagDecimal;
                         _editTextNumber.KeyListener = DigitsKeyListener.GetInstance(value);
+                    }
+                    else
+                    {
+                        _editTextNumber.InputType = InputTypes.ClassNumber;
                     }
                 }
             }
