@@ -308,6 +308,7 @@ namespace BmwDeepObd
         private const string IbmTransVersion = @"version=2018-05-01";
         private const string IbmTransIdentLang = @"/v3/identifiable_languages";
         private const string IbmTransTranslate = @"/v3/translate";
+        public static Regex Ipv4RegEx = new Regex(@"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
 #if DEBUG
         private static readonly string Tag = typeof(ActivityCommon).FullName;
@@ -3297,7 +3298,7 @@ namespace BmwDeepObd
                             }
 
                             string ipAddr = numberInputDialog.Number.Trim();
-                            if (IPAddress.TryParse(ipAddr, out IPAddress ipAddress))
+                            if (Ipv4RegEx.IsMatch(ipAddr) && IPAddress.TryParse(ipAddr, out IPAddress ipAddress))
                             {
                                 byte[] ipBytes = ipAddress.GetAddressBytes();
                                 if (ipBytes.Length == 4 && ipBytes.Any(x => x != 0))
