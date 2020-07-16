@@ -415,7 +415,12 @@
   <string name="settings_collect_debug_info">Собрать отладочную информацию для файла трассировки</string>
   <string name="settings_hci_snoop_log">Файл журнала отслеживания Bluetooth HCI:\n{0}</string>
   <string name="settings_hci_snoop_log_config">Настроить журнал отслеживания</string>
+  <!--Translate-->
+  <string name="settings_options">Настройки</string>
   <string name="settings_default_settings">Настройки по умолчанию</string>
+  <!--Translate-->
+  <string name="settings_export_settings">Настройки экспорта</string>
+  <string name="settings_import_settings">Импорт настроек</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>

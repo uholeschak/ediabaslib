@@ -444,10 +444,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_hci_snoop_log_config" />
+        <TextView
+            android:text="@string/settings_options"
+            android:id="@+id/textViewCaptionSettingsOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextViewInnerCaption" />
         <Button
             android:id="@+id/buttonDefaultSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_default_settings" />
+        <Button
+            android:id="@+id/buttonExportSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_export_settings" />
+        <Button
+            android:id="@+id/buttonImportSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_import_settings" />
     </LinearLayout>
 </ScrollView>

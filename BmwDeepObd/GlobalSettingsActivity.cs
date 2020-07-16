@@ -78,6 +78,8 @@ namespace BmwDeepObd
         private CheckBox _checkBoxHciSnoopLog;
         private Button _buttonHciSnoopLog;
         private Button _buttonDefaultSettings;
+        private Button _buttonExportSettings;
+        private Button _buttonImportSettings;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -212,6 +214,16 @@ namespace BmwDeepObd
             _buttonDefaultSettings.Click += (sender, args) =>
             {
                 DefaultSettings();
+            };
+
+            _buttonExportSettings = FindViewById<Button>(Resource.Id.buttonExportSettings);
+            _buttonExportSettings.Click += (sender, args) =>
+            {
+            };
+
+            _buttonImportSettings = FindViewById<Button>(Resource.Id.buttonImportSettings);
+            _buttonImportSettings.Click += (sender, args) =>
+            {
             };
 
             ReadSettings();
