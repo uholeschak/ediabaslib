@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Android.Content;
 using Android.OS;
 using Android.Views;
@@ -14,6 +15,10 @@ namespace BmwDeepObd
         // Intent extra
         public const string ExtraSelection = "selection";
         public const string SelectionStorageLocation = "storage_location";
+        public const string ExtraExportFile = "export_file";
+        public const string ExtraImportFile = "import_file";
+
+        public const string SettingsFileName = "DeepObdSetting.xml";
 
         private enum ActivityRequest
         {
@@ -22,6 +27,7 @@ namespace BmwDeepObd
 
         private string _selection;
         private ActivityCommon _activityCommon;
+        private string _exportFileName;
 
         private RadioButton _radioButtonLocaleDefault;
         private RadioButton _radioButtonLocaleEn;
@@ -95,6 +101,25 @@ namespace BmwDeepObd
             _selection = Intent.GetStringExtra(ExtraSelection);
 
             _activityCommon = new ActivityCommon(this);
+
+            bool allowExport = false;
+            bool allowImport = false;
+            try
+            {
+                if (!string.IsNullOrEmpty(ActivityCommon.ExternalWritePath) && Directory.Exists(ActivityCommon.ExternalWritePath))
+                {
+                    _exportFileName = Path.Combine(ActivityCommon.ExternalWritePath, SettingsFileName);
+                    allowExport = true;
+                    if (File.Exists(_exportFileName))
+                    {
+                        allowImport = true;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
 
             _radioButtonLocaleDefault = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleDefault);
             _radioButtonLocaleEn = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleEn);
@@ -217,13 +242,17 @@ namespace BmwDeepObd
             };
 
             _buttonExportSettings = FindViewById<Button>(Resource.Id.buttonExportSettings);
+            _buttonExportSettings.Enabled = allowExport;
             _buttonExportSettings.Click += (sender, args) =>
             {
+                ExportSettings();
             };
 
             _buttonImportSettings = FindViewById<Button>(Resource.Id.buttonImportSettings);
+            _buttonImportSettings.Enabled = allowImport;
             _buttonImportSettings.Click += (sender, args) =>
             {
+                ImportSettings();
             };
 
             ReadSettings();
@@ -714,6 +743,22 @@ namespace BmwDeepObd
         {
             _activityCommon.SetDefaultSettings(true, true);
             ReadSettings();
+        }
+
+        private void ExportSettings()
+        {
+            Intent intent = new Intent();
+            intent.PutExtra(ExtraExportFile, _exportFileName);
+            SetResult(Android.App.Result.Ok, intent);
+            Finish();
+        }
+
+        private void ImportSettings()
+        {
+            Intent intent = new Intent();
+            intent.PutExtra(ExtraImportFile, _exportFileName);
+            SetResult(Android.App.Result.Ok, intent);
+            Finish();
         }
     }
 }
