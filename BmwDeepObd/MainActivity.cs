@@ -864,6 +864,20 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestGlobalSettings:
+                    if (data != null && resultCode == Android.App.Result.Ok)
+                    {
+                        string exportFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraExportFile);
+                        string importFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraImportFile);
+                        if (!string.IsNullOrEmpty(exportFileName))
+                        {
+                            StoreSettings(exportFileName, true, out string _);
+                        }
+                        else if (!string.IsNullOrEmpty(importFileName))
+                        {
+                            GetSettings(importFileName, true);
+                        }
+                    }
+
                     _activityCommon.SetPreferredNetworkInterface();
                     if ((_instanceData.LastThemeType ?? ActivityCommon.ThemeDefault) != (ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault) ||
                         string.Compare(_instanceData.LastLocale ?? string.Empty, ActivityCommon.SelectedLocale ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
@@ -1855,7 +1869,7 @@ namespace BmwDeepObd
             string settingsFile = ActivityCommon.GetSettingsFileName();
             if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
             {
-                if (GetSettings(settingsFile))
+                if (GetSettings(settingsFile, false))
                 {
                     return;
                 }
@@ -2000,7 +2014,7 @@ namespace BmwDeepObd
 
         private void StoreSettings()
         {
-            if (!StoreSettings(ActivityCommon.GetSettingsFileName(), out string errorMessage))
+            if (!StoreSettings(ActivityCommon.GetSettingsFileName(), false, out string errorMessage))
             {
                 string message = GetString(Resource.String.store_settings_failed);
                 if (errorMessage != null)
@@ -2142,7 +2156,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool GetSettings(string fileName)
+        public bool GetSettings(string fileName, bool import)
         {
             if (_instanceData == null || _activityCommon == null)
             {
@@ -2158,7 +2172,7 @@ namespace BmwDeepObd
             try
             {
                 bool init = false;
-                if (!ActivityCommon.StaticDataInitialized || !_activityRecreated)
+                if (!ActivityCommon.StaticDataInitialized || !_activityRecreated || import)
                 {
                     init = true;
                     _activityCommon.SetDefaultSettings();
@@ -2241,13 +2255,17 @@ namespace BmwDeepObd
             finally
             {
                 ActivityCommon.StaticDataInitialized = true;
-                _instanceData.LastSettingsHash = hash;
+                if (!import)
+                {
+                    _instanceData.LastSettingsHash = hash;
+                }
+
                 _instanceData.GetSettingsCalled = true;
             }
             return false;
         }
 
-        public bool StoreSettings(string fileName, out string errorMessage)
+        public bool StoreSettings(string fileName, bool export, out string errorMessage)
         {
             errorMessage = null;
             if (_instanceData == null || _activityCommon == null)
@@ -2270,7 +2288,7 @@ namespace BmwDeepObd
                 StorageData storageData = new StorageData(this);
                 string hash = storageData.CalcualeHash();
 
-                if (string.Compare(hash, _instanceData.LastSettingsHash, StringComparison.Ordinal) == 0)
+                if (!export && string.Compare(hash, _instanceData.LastSettingsHash, StringComparison.Ordinal) == 0)
                 {
                     return true;
                 }
@@ -2295,7 +2313,10 @@ namespace BmwDeepObd
                     tempFile.Delete();
                 }
 
-                _instanceData.LastSettingsHash = hash;
+                if (!export)
+                {
+                    _instanceData.LastSettingsHash = hash;
+                }
 
                 return true;
             }
