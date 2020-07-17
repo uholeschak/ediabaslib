@@ -24,6 +24,8 @@
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения</string>
   <string name="store_settings_failed">Не удалось сохранить настройки. Пожалуйста, переустановите приложение.</string>
+  <!--Translate-->
+  <string name="store_settings_filename">Настройки были сохранены в:</string>
   <string name="release_show_title">Отпустить для показа панели заглавия</string>
   <string name="bt_enable">Bluetooth не активирован.\nХотите его активировать?</string>
   <string name="wifi_enable">Wi-Fi не активирован.\nАктивировать или выбрать точку доступа?</string>

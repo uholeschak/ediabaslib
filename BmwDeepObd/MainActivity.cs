@@ -880,6 +880,11 @@ namespace BmwDeepObd
 
                                 ActivityCommon.ShowAlert(message, Resource.String.alert_title_error);
                             }
+                            else
+                            {
+                                string message = GetString(Resource.String.store_settings_filename) + "\r\n" + exportFileName;
+                                ActivityCommon.ShowAlert(message, Resource.String.alert_title_info);
+                            }
                         }
                         else if (!string.IsNullOrEmpty(importFileName))
                         {
