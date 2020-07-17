@@ -2243,8 +2243,11 @@ namespace BmwDeepObd
                     CheckSettingsVersionChange();
                 }
 
-                _instanceData.LastLocale = ActivityCommon.SelectedLocale;
-                _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
+                if (!import)
+                {
+                    _instanceData.LastLocale = ActivityCommon.SelectedLocale;
+                    _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
+                }
 
                 return true;
             }
