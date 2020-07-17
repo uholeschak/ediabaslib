@@ -13,6 +13,7 @@ namespace BmwDeepObd
     public class GlobalSettingsActivity : BaseActivity
     {
         // Intent extra
+        public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraSelection = "selection";
         public const string SelectionStorageLocation = "storage_location";
         public const string ExtraExportFile = "export_file";
@@ -25,6 +26,7 @@ namespace BmwDeepObd
             RequestDevelopmentSettings,
         }
 
+        private string _appDataDir;
         private string _selection;
         private ActivityCommon _activityCommon;
         private string _exportFileName;
@@ -98,6 +100,7 @@ namespace BmwDeepObd
             SetContentView(Resource.Layout.settings);
 
             SetResult(Android.App.Result.Canceled);
+            _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _selection = Intent.GetStringExtra(ExtraSelection);
 
             _activityCommon = new ActivityCommon(this);
@@ -106,9 +109,9 @@ namespace BmwDeepObd
             bool allowImport = false;
             try
             {
-                if (!string.IsNullOrEmpty(ActivityCommon.ExternalWritePath) && Directory.Exists(ActivityCommon.ExternalWritePath))
+                if (!string.IsNullOrEmpty(_appDataDir))
                 {
-                    _exportFileName = Path.Combine(ActivityCommon.ExternalWritePath, SettingsFileName);
+                    _exportFileName = Path.Combine(_appDataDir, SettingsFileName);
                     allowExport = true;
                     if (File.Exists(_exportFileName))
                     {

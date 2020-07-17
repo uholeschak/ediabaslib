@@ -870,7 +870,16 @@ namespace BmwDeepObd
                         string importFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraImportFile);
                         if (!string.IsNullOrEmpty(exportFileName))
                         {
-                            StoreSettings(exportFileName, true, out string _);
+                            if (!StoreSettings(exportFileName, true, out string errorMessage))
+                            {
+                                string message = GetString(Resource.String.store_settings_failed);
+                                if (errorMessage != null)
+                                {
+                                    message += "\r\n" + errorMessage;
+                                }
+
+                                ActivityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                            }
                         }
                         else if (!string.IsNullOrEmpty(importFileName))
                         {
@@ -5383,6 +5392,7 @@ namespace BmwDeepObd
         private void EditGlobalSettings(string selection = null)
         {
             Intent serverIntent = new Intent(this, typeof(GlobalSettingsActivity));
+            serverIntent.PutExtra(GlobalSettingsActivity.ExtraAppDataDir, _instanceData.AppDataPath);
             if (selection != null)
             {
                 serverIntent.PutExtra(GlobalSettingsActivity.ExtraSelection, selection);
