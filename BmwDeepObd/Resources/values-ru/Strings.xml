@@ -423,6 +423,7 @@
   <!--Translate-->
   <string name="settings_export_settings">Настройки экспорта</string>
   <string name="settings_import_settings">Импорт настроек</string>
+  <string name="settings_export_private">Вы также хотите экспортировать личные данные?</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>
