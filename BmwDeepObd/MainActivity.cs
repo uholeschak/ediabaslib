@@ -67,6 +67,13 @@ namespace BmwDeepObd
             RequestEditXml,
         }
 
+        public enum SettingsMode
+        {
+            All,
+            Private,
+            Public,
+        }
+
         public enum LastAppState
         {
             [XmlEnum(Name = "Init")] Init,
@@ -870,7 +877,7 @@ namespace BmwDeepObd
                         string importFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraImportFile);
                         if (!string.IsNullOrEmpty(exportFileName))
                         {
-                            if (!StoreSettings(exportFileName, true, out string errorMessage))
+                            if (!StoreSettings(exportFileName, SettingsMode.Private, out string errorMessage))
                             {
                                 string message = GetString(Resource.String.store_settings_failed);
                                 if (errorMessage != null)
@@ -888,7 +895,7 @@ namespace BmwDeepObd
                         }
                         else if (!string.IsNullOrEmpty(importFileName))
                         {
-                            GetSettings(importFileName, true);
+                            GetSettings(importFileName, SettingsMode.Private);
                         }
                     }
 
@@ -1883,7 +1890,7 @@ namespace BmwDeepObd
             string settingsFile = ActivityCommon.GetSettingsFileName();
             if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
             {
-                if (GetSettings(settingsFile, false))
+                if (GetSettings(settingsFile, SettingsMode.All))
                 {
                     return;
                 }
@@ -2028,7 +2035,7 @@ namespace BmwDeepObd
 
         private void StoreSettings()
         {
-            if (!StoreSettings(ActivityCommon.GetSettingsFileName(), false, out string errorMessage))
+            if (!StoreSettings(ActivityCommon.GetSettingsFileName(), SettingsMode.All, out string errorMessage))
             {
                 string message = GetString(Resource.String.store_settings_failed);
                 if (errorMessage != null)
@@ -2119,9 +2126,9 @@ namespace BmwDeepObd
             StoreSettings();
         }
 
-        public static XmlAttributeOverrides GetStoreXmlAttributeOverrides(bool importExport)
+        public static XmlAttributeOverrides GetStoreXmlAttributeOverrides(SettingsMode settingsMode)
         {
-            if (!importExport)
+            if (settingsMode == SettingsMode.All)
             {
                 return null;
             }
@@ -2140,11 +2147,26 @@ namespace BmwDeepObd
             storageClassAttributes.Add(storageType, "VersionCode", ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, "StorageAccepted", ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, "AppId", ignoreXmlAttributes);
+            if (settingsMode == SettingsMode.Public)
+            {
+                storageClassAttributes.Add(storageType, "EnetIp", ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, "DeviceName", ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, "DeviceAddress", ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, "ConfigFile", ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, "XmlEditorPackageName", ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, "XmlEditorClassName", ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, "StorageMedia", ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, "YandexApiKey", ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, "IbmTranslatorApiKey", ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, "IbmTranslatorUrl", ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, "EmailAddress", ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, "TraceInfo", ignoreXmlAttributes);
+            }
 
             return storageClassAttributes;
         }
 
-        public static StorageData GetStorageData(string fileName, bool import = false)
+        public static StorageData GetStorageData(string fileName, SettingsMode settingsMode = SettingsMode.All)
         {
             StorageData storageData = null;
             try
@@ -2155,7 +2177,7 @@ namespace BmwDeepObd
                     {
                         lock (ActivityCommon.GlobalSettingLockObject)
                         {
-                            XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(import);
+                            XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(settingsMode);
                             XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData), storageClassAttributes);
                             using (StreamReader sr = new StreamReader(fileName))
                             {
@@ -2196,7 +2218,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool GetSettings(string fileName, bool import)
+        public bool GetSettings(string fileName, SettingsMode settingsMode)
         {
             if (_instanceData == null || _activityCommon == null)
             {
@@ -2208,6 +2230,7 @@ namespace BmwDeepObd
                 return false;
             }
 
+            bool import = settingsMode != SettingsMode.All;
             string hash = string.Empty;
             try
             {
@@ -2218,7 +2241,7 @@ namespace BmwDeepObd
                     _activityCommon.SetDefaultSettings();
                 }
 
-                StorageData storageData = GetStorageData(fileName, import);
+                StorageData storageData = GetStorageData(fileName, settingsMode);
                 hash = storageData.CalcualeHash();
 
                 if (init || import)
@@ -2308,7 +2331,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        public bool StoreSettings(string fileName, bool export, out string errorMessage)
+        public bool StoreSettings(string fileName, SettingsMode settingsMode, out string errorMessage)
         {
             errorMessage = null;
             if (_instanceData == null || _activityCommon == null)
@@ -2321,6 +2344,7 @@ namespace BmwDeepObd
                 return false;
             }
 
+            bool export = settingsMode != SettingsMode.All;
             try
             {
                 if (!ActivityCommon.StaticDataInitialized || !_instanceData.GetSettingsCalled)
@@ -2336,7 +2360,7 @@ namespace BmwDeepObd
                     return true;
                 }
 
-                XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(export);
+                XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(settingsMode);
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData), storageClassAttributes);
                 lock (ActivityCommon.GlobalSettingLockObject)
                 {
