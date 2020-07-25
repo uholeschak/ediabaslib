@@ -2119,7 +2119,32 @@ namespace BmwDeepObd
             StoreSettings();
         }
 
-        public static StorageData GetStorageData(string fileName)
+        public static XmlAttributeOverrides GetStoreXmlAttributeOverrides(bool importExport)
+        {
+            if (!importExport)
+            {
+                return null;
+            }
+
+            Type storageType = typeof(StorageData);
+            XmlAttributes ignoreXmlAttributes = new XmlAttributes
+            {
+                XmlIgnore = true
+            };
+
+            XmlAttributeOverrides storageClassAttributes = new XmlAttributeOverrides();
+            storageClassAttributes.Add(storageType, "LastAppState", ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, "UpdateCheckTime", ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, "UpdateSkipVersion", ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, "TransLoginTimeNext", ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, "VersionCode", ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, "StorageAccepted", ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, "AppId", ignoreXmlAttributes);
+
+            return storageClassAttributes;
+        }
+
+        public static StorageData GetStorageData(string fileName, bool import = false)
         {
             StorageData storageData = null;
             try
@@ -2130,7 +2155,8 @@ namespace BmwDeepObd
                     {
                         lock (ActivityCommon.GlobalSettingLockObject)
                         {
-                            XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData));
+                            XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(import);
+                            XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData), storageClassAttributes);
                             using (StreamReader sr = new StreamReader(fileName))
                             {
                                 storageData = xmlSerializer.Deserialize(sr) as StorageData;
@@ -2186,16 +2212,16 @@ namespace BmwDeepObd
             try
             {
                 bool init = false;
-                if (!ActivityCommon.StaticDataInitialized || !_activityRecreated || import)
+                if (!ActivityCommon.StaticDataInitialized || !_activityRecreated)
                 {
                     init = true;
                     _activityCommon.SetDefaultSettings();
                 }
 
-                StorageData storageData = GetStorageData(fileName);
+                StorageData storageData = GetStorageData(fileName, import);
                 hash = storageData.CalcualeHash();
 
-                if (init)
+                if (init || import)
                 {
                     _instanceData.LastAppState = storageData.LastAppState;
                     _activityCommon.SelectedEnetIp = storageData.SelectedEnetIp;
@@ -2310,7 +2336,8 @@ namespace BmwDeepObd
                     return true;
                 }
 
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData));
+                XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(export);
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData), storageClassAttributes);
                 lock (ActivityCommon.GlobalSettingLockObject)
                 {
                     Java.IO.File tempFile = Java.IO.File.CreateTempFile("Settings", ".xml", Android.App.Application.Context.CacheDir);
