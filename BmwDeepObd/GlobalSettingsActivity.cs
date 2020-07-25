@@ -18,6 +18,7 @@ namespace BmwDeepObd
         public const string SelectionStorageLocation = "storage_location";
         public const string ExtraExportFile = "export_file";
         public const string ExtraImportFile = "import_file";
+        public const string ExtraSettingsMode = "settigs_mode";
 
         public const string SettingsFileName = "DeepObdSetting.xml";
 
@@ -752,6 +753,7 @@ namespace BmwDeepObd
         {
             Intent intent = new Intent();
             intent.PutExtra(ExtraExportFile, _exportFileName);
+            intent.PutExtra(ExtraSettingsMode, (int) ActivityMain.SettingsMode.Private);
             SetResult(Android.App.Result.Ok, intent);
             Finish();
         }

@@ -875,9 +875,10 @@ namespace BmwDeepObd
                     {
                         string exportFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraExportFile);
                         string importFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraImportFile);
+                        SettingsMode settingsMode = (SettingsMode) data.Extras.GetInt(GlobalSettingsActivity.ExtraSettingsMode, (int) SettingsMode.Private);
                         if (!string.IsNullOrEmpty(exportFileName))
                         {
-                            if (!StoreSettings(exportFileName, SettingsMode.Private, out string errorMessage))
+                            if (!StoreSettings(exportFileName, settingsMode, out string errorMessage))
                             {
                                 string message = GetString(Resource.String.store_settings_failed);
                                 if (errorMessage != null)
