@@ -2,6 +2,7 @@
 using System.IO;
 using Android.Content;
 using Android.OS;
+using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 
@@ -249,7 +250,20 @@ namespace BmwDeepObd
             _buttonExportSettings.Enabled = allowExport;
             _buttonExportSettings.Click += (sender, args) =>
             {
-                ExportSettings();
+                new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_yes, (o, eventArgs) =>
+                    {
+                        ExportSettings(ActivityMain.SettingsMode.Private);
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (o, eventArgs) =>
+                    {
+                        ExportSettings(ActivityMain.SettingsMode.Public);
+                    })
+                    .SetNeutralButton(Resource.String.button_abort, (o, eventArgs) => { })
+                    .SetCancelable(true)
+                    .SetMessage(Resource.String.settings_export_private)
+                    .SetTitle(Resource.String.alert_title_info)
+                    .Show();
             };
 
             _buttonImportSettings = FindViewById<Button>(Resource.Id.buttonImportSettings);
@@ -749,11 +763,11 @@ namespace BmwDeepObd
             ReadSettings();
         }
 
-        private void ExportSettings()
+        private void ExportSettings(ActivityMain.SettingsMode settingsMode)
         {
             Intent intent = new Intent();
             intent.PutExtra(ExtraExportFile, _exportFileName);
-            intent.PutExtra(ExtraSettingsMode, (int) ActivityMain.SettingsMode.Private);
+            intent.PutExtra(ExtraSettingsMode, (int)settingsMode);
             SetResult(Android.App.Result.Ok, intent);
             Finish();
         }

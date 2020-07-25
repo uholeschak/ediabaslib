@@ -396,8 +396,9 @@
   <string name="settings_default_settings">Default settings</string>
   <string name="settings_export_settings">Export settings</string>
   <string name="settings_import_settings">Import settings</string>
+  <string name="settings_export_private">Do you also want to export private data?</string>
 
-    <!--  EdiabasToolActivity -->
+  <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas tool</string>
   <string name="tool_select_sgbd">Select SGBD</string>
   <string name="tool_read_sgbd">Read SGBD information</string>
