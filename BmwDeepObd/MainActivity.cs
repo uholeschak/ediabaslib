@@ -2134,34 +2134,38 @@ namespace BmwDeepObd
                 return null;
             }
 
-            Type storageType = typeof(StorageData);
+            StorageData storageData = new StorageData();
+            Type storageType = storageData.GetType();
             XmlAttributes ignoreXmlAttributes = new XmlAttributes
             {
                 XmlIgnore = true
             };
 
             XmlAttributeOverrides storageClassAttributes = new XmlAttributeOverrides();
-            storageClassAttributes.Add(storageType, "LastAppState", ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, "UpdateCheckTime", ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, "UpdateSkipVersion", ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, "TransLoginTimeNext", ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, "VersionCode", ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, "StorageAccepted", ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, "AppId", ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, nameof(storageData.LastAppState), ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, nameof(storageData.UpdateCheckTime), ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, nameof(storageData.UpdateSkipVersion), ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, nameof(storageData.TransLoginTimeNext), ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, nameof(storageData.LastVersionCode), ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, nameof(storageData.StorageRequirementsAccepted), ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, nameof(storageData.AppId), ignoreXmlAttributes);
             if (settingsMode == SettingsMode.Public)
             {
-                storageClassAttributes.Add(storageType, "EnetIp", ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, "DeviceName", ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, "DeviceAddress", ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, "ConfigFile", ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, "XmlEditorPackageName", ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, "XmlEditorClassName", ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, "StorageMedia", ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, "YandexApiKey", ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, "IbmTranslatorApiKey", ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, "IbmTranslatorUrl", ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, "EmailAddress", ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, "TraceInfo", ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.SelectedEnetIp), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.DeviceName), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.DeviceAddress), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.ConfigFileName), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.XmlEditorPackageName), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.XmlEditorClassName), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.CustomStorageMedia), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.YandexApiKey), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.IbmTranslatorApiKey), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.IbmTranslatorUrl), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.BatteryWarnings), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.BatteryWarningVoltage), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.LastAdapterSerial), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.EmailAddress), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.TraceInfo), ignoreXmlAttributes);
             }
 
             return storageClassAttributes;
