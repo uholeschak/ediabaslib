@@ -223,10 +223,22 @@ namespace BmwDeepObd
                 UseBmwDatabase = ActivityCommon.UseBmwDatabase;
                 ScanAllEcus = ActivityCommon.ScanAllEcus;
                 CollectDebugInfo = ActivityCommon.CollectDebugInfo;
+
+                InitData(ActivityCommon.ActivityMainSettings);
             }
 
             public StorageData(ActivityMain activityMain) : this()
             {
+                InitData(activityMain);
+            }
+
+            public void InitData(ActivityMain activityMain)
+            {
+                if (activityMain == null)
+                {
+                    return;
+                }
+
                 InstanceData instanceData = activityMain._instanceData;
                 ActivityCommon activityCommon = activityMain.ActivityCommon;
 
@@ -2171,7 +2183,7 @@ namespace BmwDeepObd
             return storageClassAttributes;
         }
 
-        public static StorageData GetStorageData(string fileName, SettingsMode settingsMode = SettingsMode.All)
+        public static StorageData GetStorageData(string fileName, ActivityMain activityMain, SettingsMode settingsMode = SettingsMode.All)
         {
             StorageData storageData = null;
             try
@@ -2182,11 +2194,19 @@ namespace BmwDeepObd
                     {
                         lock (ActivityCommon.GlobalSettingLockObject)
                         {
-                            XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(settingsMode);
-                            XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData), storageClassAttributes);
-                            using (StreamReader sr = new StreamReader(fileName))
+                            ActivityCommon.ActivityMainSettings = activityMain;
+                            try
                             {
-                                storageData = xmlSerializer.Deserialize(sr) as StorageData;
+                                XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(settingsMode);
+                                XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData), storageClassAttributes);
+                                using (StreamReader sr = new StreamReader(fileName))
+                                {
+                                    storageData = xmlSerializer.Deserialize(sr) as StorageData;
+                                }
+                            }
+                            finally
+                            {
+                                ActivityCommon.ActivityMainSettings = null;
                             }
                         }
                     }
@@ -2208,7 +2228,7 @@ namespace BmwDeepObd
 
         public static bool GetLocaleThemeSettings(string fileName, bool updateLocale, bool updateTheme)
         {
-            StorageData storageData = GetStorageData(fileName);
+            StorageData storageData = GetStorageData(fileName, ActivityCommon.ActivityMainCurrent);
 
             if (updateLocale)
             {
@@ -2246,7 +2266,7 @@ namespace BmwDeepObd
                     _activityCommon.SetDefaultSettings();
                 }
 
-                StorageData storageData = GetStorageData(fileName, settingsMode);
+                StorageData storageData = GetStorageData(fileName, this, settingsMode);
                 hash = storageData.CalcualeHash();
 
                 if (init || import)
@@ -2357,18 +2377,18 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                StorageData storageData = new StorageData(this);
-                string hash = storageData.CalcualeHash();
-
-                if (!export && string.Compare(hash, _instanceData.LastSettingsHash, StringComparison.Ordinal) == 0)
-                {
-                    return true;
-                }
-
-                XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(settingsMode);
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData), storageClassAttributes);
                 lock (ActivityCommon.GlobalSettingLockObject)
                 {
+                    StorageData storageData = new StorageData(this);
+                    string hash = storageData.CalcualeHash();
+
+                    if (!export && string.Compare(hash, _instanceData.LastSettingsHash, StringComparison.Ordinal) == 0)
+                    {
+                        return true;
+                    }
+
+                    XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(settingsMode);
+                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData), storageClassAttributes);
                     Java.IO.File tempFile = Java.IO.File.CreateTempFile("Settings", ".xml", Android.App.Application.Context.CacheDir);
                     if (tempFile == null)
                     {
@@ -2384,11 +2404,11 @@ namespace BmwDeepObd
 
                     File.Copy(tempFileName, fileName, true);
                     tempFile.Delete();
-                }
 
-                if (!export)
-                {
-                    _instanceData.LastSettingsHash = hash;
+                    if (!export)
+                    {
+                        _instanceData.LastSettingsHash = hash;
+                    }
                 }
 
                 return true;
