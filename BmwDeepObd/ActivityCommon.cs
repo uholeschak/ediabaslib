@@ -844,6 +844,8 @@ namespace BmwDeepObd
 
         public static ActivityMain ActivityMainCurrent { get; set; }
 
+        public static ActivityMain ActivityMainSettings { get; set; }
+
         public static EdiabasThread EdiabasThread { get; set; }
 
         public static JobReader JobReader { get; }
