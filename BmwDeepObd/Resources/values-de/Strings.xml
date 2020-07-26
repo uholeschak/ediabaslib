@@ -420,6 +420,7 @@
   <string name="settings_default_settings">Standardeinstellungen</string>
   <string name="settings_export_settings">Einstellungen exportieren</string>
   <string name="settings_import_settings">Einstellungen importieren</string>
+  <string name="settings_import_no_file">Die Importdatei wurde nicht gefunden:</string>
   <string name="settings_export_private">Wollen Sie auch private Daten exportieren?</string>
 
   <!--  EdiabasToolActivity -->

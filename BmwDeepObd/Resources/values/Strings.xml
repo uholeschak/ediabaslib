@@ -396,6 +396,7 @@
   <string name="settings_default_settings">Default settings</string>
   <string name="settings_export_settings">Export settings</string>
   <string name="settings_import_settings">Import settings</string>
+  <string name="settings_import_no_file">The import file has been found:</string>
   <string name="settings_export_private">Do you also want to export private data?</string>
 
   <!--  EdiabasToolActivity -->
