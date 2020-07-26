@@ -115,10 +115,7 @@ namespace BmwDeepObd
                 {
                     _exportFileName = Path.Combine(_appDataDir, SettingsFileName);
                     allowExport = true;
-                    if (File.Exists(_exportFileName))
-                    {
-                        allowImport = true;
-                    }
+                    allowImport = true;
                 }
             }
             catch (Exception)
@@ -270,6 +267,18 @@ namespace BmwDeepObd
             _buttonImportSettings.Enabled = allowImport;
             _buttonImportSettings.Click += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                if (!File.Exists(_exportFileName))
+                {
+                    string message = GetString(Resource.String.settings_import_no_file) + "\r\n" + _exportFileName;
+                    _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                    return;
+                }
+
                 ImportSettings();
             };
 
