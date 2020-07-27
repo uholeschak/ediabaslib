@@ -2160,6 +2160,9 @@ namespace BmwDeepObd
             storageClassAttributes.Add(storageType, nameof(storageData.TransLoginTimeNext), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.LastVersionCode), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.StorageRequirementsAccepted), ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, nameof(storageData.BatteryWarnings), ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, nameof(storageData.BatteryWarningVoltage), ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, nameof(storageData.LastAdapterSerial), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.AppId), ignoreXmlAttributes);
             if (settingsMode == SettingsMode.Public)
             {
@@ -2173,9 +2176,6 @@ namespace BmwDeepObd
                 storageClassAttributes.Add(storageType, nameof(storageData.YandexApiKey), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.IbmTranslatorApiKey), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.IbmTranslatorUrl), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.BatteryWarnings), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.BatteryWarningVoltage), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.LastAdapterSerial), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.EmailAddress), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.TraceInfo), ignoreXmlAttributes);
             }
