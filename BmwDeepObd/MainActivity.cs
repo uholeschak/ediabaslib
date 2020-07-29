@@ -201,6 +201,7 @@ namespace BmwDeepObd
                 BatteryWarningVoltage = ActivityCommon.BatteryWarningVoltage;
                 LastAdapterSerial = ActivityCommon.LastAdapterSerial;
                 EmailAddress = ActivityCommon.EmailAddress;
+                TraceInfo = ActivityCommon.TraceInfo;
                 AppId = ActivityCommon.AppId;
                 AutoHideTitleBar = ActivityCommon.AutoHideTitleBar;
                 SuppressTitleBar = ActivityCommon.SuppressTitleBar;
