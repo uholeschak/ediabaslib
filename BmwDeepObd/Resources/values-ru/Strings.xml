@@ -12,8 +12,7 @@
   <string name="button_abort">Отменить</string>
   <string name="button_select">Выбрать</string>
   <string name="button_generate">Генерировать</string>
-  <!--Translate-->
-  <string name="button_manually">вручную</string>
+  <string name="button_manually">Вручную</string>
   <string name="button_copy">Копировать</string>
   <string name="button_accept">Принять</string>
   <string name="button_decline">Отклонить</string>
@@ -24,7 +23,6 @@
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения</string>
   <string name="store_settings_failed">Не удалось сохранить настройки. Пожалуйста, переустановите приложение.</string>
-  <!--Translate-->
   <string name="store_settings_filename">Настройки были сохранены в:</string>
   <string name="release_show_title">Отпустить для показа панели заглавия</string>
   <string name="bt_enable">Bluetooth не активирован.\nХотите его активировать?</string>
@@ -59,7 +57,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Разрешить экспорт и импорт настроек\n- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Возможность экспортировать и импортировать настройки\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -328,8 +326,7 @@
   <!-- ENET ip selection -->
   <string name="select_enet_ip_search">Поиск автомобиля</string>
   <string name="select_enet_ip">Выберите ENET IP-адрес</string>
-  <string name="select_enet_ip_auto">Automatic</string>
-  <!--Translate-->
+  <string name="select_enet_ip_auto">Автоматически</string>
   <string name="select_enet_ip_enter">Введите IP-адрес</string>
 
   <!-- ENET adapter config -->
@@ -417,14 +414,12 @@
   <string name="settings_collect_debug_info">Собрать отладочную информацию для файла трассировки</string>
   <string name="settings_hci_snoop_log">Файл журнала отслеживания Bluetooth HCI:\n{0}</string>
   <string name="settings_hci_snoop_log_config">Настроить журнал отслеживания</string>
-  <!--Translate-->
   <string name="settings_options">Настройки</string>
   <string name="settings_default_settings">Настройки по умолчанию</string>
-  <!--Translate-->
-  <string name="settings_export_settings">Настройки экспорта</string>
+  <string name="settings_export_settings">Экспорт настроек</string>
   <string name="settings_import_settings">Импорт настроек</string>
-  <string name="settings_import_no_file">Файл импорта был найден:</string>
-  <string name="settings_export_private">Вы также хотите экспортировать личные данные?</string>
+  <string name="settings_import_no_file">Файл импорта не найден:</string>
+  <string name="settings_export_private">Хотите также экспортировать личные данные?</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>
