@@ -66,6 +66,10 @@ This page allows to change some global app settings.
 * _Debug_ options:
   * _Collect debug information for trace files_: More data is collected while reading vehicle information to improve trace files.
   * _Bluetooth HCI snoop log file_: Current Bluetooth HCI snoop log file name. You could enable HCI snoop logging with the button _Configure snoop log_.
-* _Default settings_: Restore the default settings for the global settings page.
+* _Settings_ options:
+  * _Default settings_: Restore the default settings for the global settings page.
+  * _Export settings_: Export settings to _DeepObbSettings.xml_ in the selected storage media folder. You could select if you also want to export private data.  
+  You should not pass on private data files to other people.
+  * _Import settings_: Import settings from _DeepObbSettings.xml_ in the selected storage media folder.
 
 ![Global settings](GlobalSettings_AppGlobalSettingsSmall.png)
