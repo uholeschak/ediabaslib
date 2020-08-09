@@ -1685,7 +1685,7 @@ namespace BmwDeepObd
 
                         case ActivityCommon.InterfaceType.Enet:
                             connectParameter = new EdInterfaceEnet.ConnectParameterType(_activityCommon.NetworkData);
-                            if (_activityCommon.Emulator)
+                            if (_activityCommon.Emulator && !string.IsNullOrEmpty(ActivityCommon.EmulatorEnetIp))
                             {
                                 // broadcast is not working with emulator
                                 portName = ActivityCommon.EmulatorEnetIp;

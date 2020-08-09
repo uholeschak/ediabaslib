@@ -281,7 +281,7 @@ namespace BmwDeepObd
         public const string DefaultLang = "en";
         public const string TraceFileName = "ifh.trc.zip";
         public const string AdapterSsidDeepObd = "Deep OBD BMW";
-        public const string EmulatorEnetIp = "169.254.0.1";
+        public const string EmulatorEnetIp = ""; // = "169.254.0.1";
         public const string DeepObdAdapterIp = "192.168.100.1";
         public const string EnetLinkAdapterIp = "192.168.16.254";
         public const string SettingsFile = "Settings.xml";
@@ -3638,7 +3638,7 @@ namespace BmwDeepObd
             else if (ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)
             {
                 string remoteHost = string.IsNullOrEmpty(_selectedEnetIp) ? "auto:all" : _selectedEnetIp;
-                if (Emulator)
+                if (Emulator && !string.IsNullOrEmpty(EmulatorEnetIp))
                 {   // broadcast is not working with emulator
                     remoteHost = EmulatorEnetIp;
                 }
