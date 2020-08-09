@@ -268,15 +268,42 @@ namespace BmwDeepObd
 
         public void EnableFullScreenMode(bool enable)
         {
-            if (_decorView != null)
+            if (Build.VERSION.SdkInt <= BuildVersionCodes.Q)
             {
-                if (enable)
+                if (_decorView != null)
                 {
-                    _decorView.SystemUiVisibility = (StatusBarVisibility)(SystemUiFlags.Immersive | SystemUiFlags.HideNavigation | SystemUiFlags.Fullscreen);
+                    if (enable)
+                    {
+#pragma warning disable 618
+                        _decorView.SystemUiVisibility = (StatusBarVisibility)(SystemUiFlags.Immersive | SystemUiFlags.HideNavigation | SystemUiFlags.Fullscreen);
+#pragma warning restore 618
+                    }
+                    else
+                    {
+#pragma warning disable 618
+                        _decorView.SystemUiVisibility = (StatusBarVisibility)(SystemUiFlags.HideNavigation);
+#pragma warning restore 618
+                    }
                 }
-                else
+            }
+            else
+            {
+                if (Window.InsetsController != null)
                 {
-                    _decorView.SystemUiVisibility = (StatusBarVisibility)(SystemUiFlags.HideNavigation);
+                    if (enable)
+                    {
+                        Window.SetDecorFitsSystemWindows(true);
+                        Window.InsetsController.Show(WindowInsets.Type.StatusBars());
+                        Window.InsetsController.Show(WindowInsets.Type.CaptionBar());
+                        Window.InsetsController.Show(WindowInsets.Type.SystemBars());
+                    }
+                    else
+                    {
+                        Window.SetDecorFitsSystemWindows(false);
+                        Window.InsetsController.Hide(WindowInsets.Type.StatusBars());
+                        Window.InsetsController.Hide(WindowInsets.Type.CaptionBar());
+                        Window.InsetsController.Hide(WindowInsets.Type.SystemBars());
+                    }
                 }
             }
         }
