@@ -292,17 +292,17 @@ namespace BmwDeepObd
                 {
                     if (enable)
                     {
-                        Window.SetDecorFitsSystemWindows(true);
-                        Window.InsetsController.Show(WindowInsets.Type.StatusBars());
-                        Window.InsetsController.Show(WindowInsets.Type.CaptionBar());
-                        Window.InsetsController.Show(WindowInsets.Type.SystemBars());
-                    }
-                    else
-                    {
                         Window.SetDecorFitsSystemWindows(false);
                         Window.InsetsController.Hide(WindowInsets.Type.StatusBars());
                         Window.InsetsController.Hide(WindowInsets.Type.CaptionBar());
                         Window.InsetsController.Hide(WindowInsets.Type.SystemBars());
+                    }
+                    else
+                    {
+                        Window.SetDecorFitsSystemWindows(true);
+                        Window.InsetsController.Show(WindowInsets.Type.StatusBars());
+                        Window.InsetsController.Show(WindowInsets.Type.CaptionBar());
+                        Window.InsetsController.Show(WindowInsets.Type.SystemBars());
                     }
                 }
             }
