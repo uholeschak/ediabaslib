@@ -345,7 +345,9 @@ namespace EdiabasLib
             return CustomAdapter.InterfaceSetConfig(protocol, baudRate, dataBits, parity, allowBitBang);
         }
 
+#pragma warning disable IDE0060 // Nicht verwendete Parameter entfernen
         public static bool InterfaceSetDtr(bool dtr)
+#pragma warning restore IDE0060 // Nicht verwendete Parameter entfernen
         {
             if (_bluetoothSocket == null)
             {
@@ -354,7 +356,9 @@ namespace EdiabasLib
             return true;
         }
 
+#pragma warning disable IDE0060 // Nicht verwendete Parameter entfernen
         public static bool InterfaceSetRts(bool rts)
+#pragma warning restore IDE0060 // Nicht verwendete Parameter entfernen
         {
             if (_bluetoothSocket == null)
             {
@@ -373,7 +377,9 @@ namespace EdiabasLib
             return true;
         }
 
+#pragma warning disable IDE0060 // Nicht verwendete Parameter entfernen
         public static bool InterfaceSetBreak(bool enable)
+#pragma warning restore IDE0060 // Nicht verwendete Parameter entfernen
         {
             return false;
         }

@@ -476,7 +476,7 @@ namespace BmwDeepObd
 
             StoreLastAppState(LastAppState.Init);
 
-            _updateHandler = new Handler();
+            _updateHandler = new Handler(Looper.MainLooper);
 
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
 

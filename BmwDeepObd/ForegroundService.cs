@@ -36,7 +36,7 @@ namespace BmwDeepObd
 #if DEBUG
             Android.Util.Log.Info(Tag, "OnCreate: the service is initializing.");
 #endif
-            _stopHandler = new Handler();
+            _stopHandler = new Handler(Looper.MainLooper);
             _activityCommon = new ActivityCommon(this, null, BroadcastReceived);
             _activityCommon.SetLock(ActivityCommon.LockType.Cpu);
 
