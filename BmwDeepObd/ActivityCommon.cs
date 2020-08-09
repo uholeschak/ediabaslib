@@ -943,7 +943,7 @@ namespace BmwDeepObd
             Emulator = IsEmulator();
             _clipboardManager = context?.GetSystemService(Context.ClipboardService);
             _btAdapter = BluetoothAdapter.DefaultAdapter;
-            _btUpdateHandler = new Handler();
+            _btUpdateHandler = new Handler(Looper.MainLooper);
             _maWifi = (WifiManager)context?.ApplicationContext?.GetSystemService(Context.WifiService);
             _maConnectivity = (ConnectivityManager)context?.ApplicationContext?.GetSystemService(Context.ConnectivityService);
             _networkData = new TcpClientWithTimeout.NetworkData(_maConnectivity);

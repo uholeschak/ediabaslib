@@ -110,7 +110,7 @@ namespace BmwDeepObd
             {
 
             }, BroadcastReceived);
-            _updateHandler = new Handler();
+            _updateHandler = new Handler(Looper.MainLooper);
 
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _traceDir = Intent.GetStringExtra(ExtraTraceDir);

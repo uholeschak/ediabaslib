@@ -145,7 +145,7 @@ namespace BmwDeepObd
             {
 
             }, BroadcastReceived);
-            _updateHandler = new Handler();
+            _updateHandler = new Handler(Looper.MainLooper);
 
             _codingMode = (CodingMode) Intent.GetIntExtra(ExtraCodingMode, (int) CodingMode.Coding);
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
