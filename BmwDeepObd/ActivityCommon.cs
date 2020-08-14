@@ -836,6 +836,8 @@ namespace BmwDeepObd
 
         public static double BatteryWarningVoltage { get; set; }
 
+        public static string AdapterBlacklist { get; set; }
+
         public static string LastAdapterSerial { get; set; }
 
         public static string EmailAddress { get; set; }
@@ -4294,6 +4296,10 @@ namespace BmwDeepObd
                             }
                         }
                     }
+                    if (!string.IsNullOrEmpty(AdapterBlacklist))
+                    {
+                        sb.Append(string.Format("\nAdapter blacklist: {0}", AdapterBlacklist));
+                    }
                     if (!string.IsNullOrEmpty(LastAdapterSerial))
                     {
                         sb.Append(string.Format("\nAdapter serial: {0}", LastAdapterSerial));
@@ -5215,6 +5221,7 @@ namespace BmwDeepObd
                 IbmTranslatorUrl = string.Empty;
                 BatteryWarnings = 0;
                 BatteryWarningVoltage = 0;
+                AdapterBlacklist = string.Empty;
                 LastAdapterSerial = string.Empty;
                 EmailAddress = string.Empty;
                 TraceInfo = string.Empty;
