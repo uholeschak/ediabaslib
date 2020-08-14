@@ -310,6 +310,7 @@ namespace BmwDeepObd
             [XmlElement("ShowBatteryVoltageWarning")] public bool ShowBatteryVoltageWarning { get; set; }
             [XmlElement("BatteryWarnings")] public long BatteryWarnings { get; set; }
             [XmlElement("BatteryWarningVoltage")] public double BatteryWarningVoltage { get; set; }
+            [XmlElement("AdapterBlacklist")] public string AdapterBlacklist { get; set; }
             [XmlElement("LastAdapterSerial")] public string LastAdapterSerial { get; set; }
             [XmlElement("EmailAddress")] public string EmailAddress { get; set; }
             [XmlElement("TraceInfo")] public string TraceInfo { get; set; }
@@ -1968,6 +1969,8 @@ namespace BmwDeepObd
                     ActivityCommon.BatteryWarnings = prefs.GetLong("BatteryWarnings", ActivityCommon.BatteryWarnings);
                     ActivityCommon.BatteryWarningVoltage = prefs.GetFloat("BatteryWarningVoltage",
                         (float) ActivityCommon.BatteryWarningVoltage);
+                    ActivityCommon.AdapterBlacklist =
+                        prefs.GetString("AdapterBlacklist", ActivityCommon.AdapterBlacklist);
                     ActivityCommon.LastAdapterSerial =
                         prefs.GetString("LastAdapterSerial", ActivityCommon.LastAdapterSerial);
                     ActivityCommon.EmailAddress = prefs.GetString("EmailAddress", ActivityCommon.EmailAddress);
@@ -2096,6 +2099,7 @@ namespace BmwDeepObd
                 prefsEdit.PutBoolean("ShowBatteryWarning", ActivityCommon.ShowBatteryVoltageWarning);
                 prefsEdit.PutLong("BatteryWarnings", ActivityCommon.BatteryWarnings);
                 prefsEdit.PutFloat("BatteryWarningVoltage", (float)ActivityCommon.BatteryWarningVoltage);
+                prefsEdit.PutString("AdapterBlacklist", ActivityCommon.AdapterBlacklist ?? string.Empty);
                 prefsEdit.PutString("LastAdapterSerial", ActivityCommon.LastAdapterSerial ?? string.Empty);
                 prefsEdit.PutString("EmailAddress", ActivityCommon.EmailAddress ?? string.Empty);
                 prefsEdit.PutString("TraceInfo", ActivityCommon.TraceInfo ?? string.Empty);
@@ -2163,6 +2167,7 @@ namespace BmwDeepObd
             storageClassAttributes.Add(storageType, nameof(storageData.StorageRequirementsAccepted), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.BatteryWarnings), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.BatteryWarningVoltage), ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, nameof(storageData.AdapterBlacklist), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.LastAdapterSerial), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.AppId), ignoreXmlAttributes);
             if (settingsMode == SettingsMode.Public)
@@ -2298,6 +2303,7 @@ namespace BmwDeepObd
                     ActivityCommon.ShowBatteryVoltageWarning = storageData.ShowBatteryVoltageWarning;
                     ActivityCommon.BatteryWarnings = storageData.BatteryWarnings;
                     ActivityCommon.BatteryWarningVoltage = storageData.BatteryWarningVoltage;
+                    ActivityCommon.AdapterBlacklist = storageData.AdapterBlacklist;
                     ActivityCommon.LastAdapterSerial = storageData.LastAdapterSerial;
                     ActivityCommon.EmailAddress = storageData.EmailAddress;
                     ActivityCommon.TraceInfo = storageData.TraceInfo;
@@ -4465,9 +4471,10 @@ namespace BmwDeepObd
                     {
                         if (success)
                         {
-                            string key = GetObbKey(responseXml, out errorMessage);
+                            string key = GetObbKey(responseXml, out errorMessage, out string adapterBlacklist);
                             if (key != null)
                             {
+                                ActivityCommon.AdapterBlacklist = adapterBlacklist ?? string.Empty;
 #if DEBUG
                                 bool yesSelected = false;
                                 AlertDialog altertDialog = new AlertDialog.Builder(this)
@@ -4647,9 +4654,10 @@ namespace BmwDeepObd
             }
         }
 
-        private string GetObbKey(string xmlResult, out string errorMessage)
+        private string GetObbKey(string xmlResult, out string errorMessage, out string adapterBlacklist)
         {
             errorMessage = null;
+            adapterBlacklist = null;
             try
             {
                 if (string.IsNullOrEmpty(xmlResult))
@@ -4669,6 +4677,15 @@ namespace BmwDeepObd
                 if (xmlDoc.Root == null)
                 {
                     return null;
+                }
+
+                foreach (XElement errorNode in xmlDoc.Root.Elements("blacklists"))
+                {
+                    XAttribute serialsAttr = errorNode.Attribute("adapters");
+                    if (serialsAttr != null && !string.IsNullOrEmpty(serialsAttr.Value))
+                    {
+                        adapterBlacklist = serialsAttr.Value;
+                    }
                 }
 
                 foreach (XElement errorNode in xmlDoc.Root.Elements("error"))
