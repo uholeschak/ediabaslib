@@ -44,7 +44,17 @@ namespace EdiabasLib
             public System.Collections.Generic.List<Android.Net.Network> ActiveEthernetNetworks { get; }
         }
 #endif
-        public TcpClientWithTimeout(IPAddress host, int port, int timeoutMilliseconds, bool? noDelay = null, int ? sendBufferSize = null)
+        public TcpClientWithTimeout(IPAddress host, int port, int timeoutMilliseconds) :
+            this(host, port, timeoutMilliseconds, null, null)
+        {
+        }
+
+        public TcpClientWithTimeout(IPAddress host, int port, int timeoutMilliseconds, bool? noDelay) :
+            this(host, port, timeoutMilliseconds, noDelay, null)
+        {
+        }
+
+        public TcpClientWithTimeout(IPAddress host, int port, int timeoutMilliseconds, bool? noDelay, int? sendBufferSize)
         {
             _host = host;
             _port = port;
