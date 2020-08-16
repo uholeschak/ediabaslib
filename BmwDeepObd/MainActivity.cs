@@ -4679,12 +4679,12 @@ namespace BmwDeepObd
                     return null;
                 }
 
-                foreach (XElement errorNode in xmlDoc.Root.Elements("blacklists"))
+                foreach (XElement blacklistNode in xmlDoc.Root.Elements("blacklists"))
                 {
-                    XAttribute serialsAttr = errorNode.Attribute("adapters");
-                    if (serialsAttr != null && !string.IsNullOrEmpty(serialsAttr.Value))
+                    XAttribute adaptersAttr = blacklistNode.Attribute("adapters");
+                    if (adaptersAttr != null && !string.IsNullOrEmpty(adaptersAttr.Value))
                     {
-                        adapterBlacklist = serialsAttr.Value;
+                        adapterBlacklist = adaptersAttr.Value;
                     }
                 }
 
