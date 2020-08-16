@@ -423,7 +423,7 @@ namespace EdiabasLib
                 }
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    TcpDiagClient = new TcpClientWithTimeout(TcpHostIp, DiagnosticPort, ConnectTimeout,true).Connect();
+                    TcpDiagClient = new TcpClientWithTimeout(TcpHostIp, DiagnosticPort, ConnectTimeout, true).Connect();
                 }, TcpHostIp, NetworkData);
                 TcpDiagStream = TcpDiagClient.GetStream();
                 TcpDiagRecLen = 0;
