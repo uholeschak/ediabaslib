@@ -5019,37 +5019,43 @@ namespace BmwDeepObd
                         HttpResponseMessage responseUpdate = task.Result;
                         responseUpdate.EnsureSuccessStatusCode();
                         string responseUpdateXml = responseUpdate.Content.ReadAsStringAsync().Result;
-                        bool success = GetUpdateInfo(responseUpdateXml, out int? appVer, out string appVerName, out string infoText, out string errorMessage);
+                        bool success = GetUpdateInfo(responseUpdateXml, out int? appVer, out string appVerName, out string infoText, out string errorMessage, out string adapterBlacklist);
                         bool updateAvailable = false;
                         StringBuilder sbMessage = new StringBuilder();
 
-                        if (!string.IsNullOrEmpty(errorMessage))
+                        if (success)
                         {
-                            sbMessage.Append(errorMessage);
-                        }
-                        else
-                        {
-                            if (appVer.HasValue)
+                            AdapterBlacklist = adapterBlacklist ?? string.Empty;
+
+                            if (!string.IsNullOrEmpty(errorMessage))
                             {
-                                updateAvailable = true;
-                                sbMessage.Append(_context.GetString(Resource.String.update_header));
-                                if (!string.IsNullOrEmpty(appVerName))
+                                sbMessage.Append(errorMessage);
+                            }
+                            else
+                            {
+                                if (appVer.HasValue)
                                 {
+                                    updateAvailable = true;
+                                    sbMessage.Append(_context.GetString(Resource.String.update_header));
+                                    if (!string.IsNullOrEmpty(appVerName))
+                                    {
+                                        sbMessage.Append("\r\n");
+                                        sbMessage.Append(string.Format(_context.GetString(Resource.String.update_version), appVerName));
+                                    }
+                                    if (!string.IsNullOrEmpty(infoText))
+                                    {
+                                        sbMessage.Append("\r\n");
+                                        sbMessage.Append(_context.GetString(Resource.String.update_info));
+                                        sbMessage.Append("\r\n");
+                                        sbMessage.Append(infoText);
+                                    }
                                     sbMessage.Append("\r\n");
-                                    sbMessage.Append(string.Format(_context.GetString(Resource.String.update_version), appVerName));
+                                    sbMessage.Append("\r\n");
+                                    sbMessage.Append(_context.GetString(Resource.String.update_show));
                                 }
-                                if (!string.IsNullOrEmpty(infoText))
-                                {
-                                    sbMessage.Append("\r\n");
-                                    sbMessage.Append(_context.GetString(Resource.String.update_info));
-                                    sbMessage.Append("\r\n");
-                                    sbMessage.Append(infoText);
-                                }
-                                sbMessage.Append("\r\n");
-                                sbMessage.Append("\r\n");
-                                sbMessage.Append(_context.GetString(Resource.String.update_show));
                             }
                         }
+
                         handlerLocal?.Invoke(success, updateAvailable, appVer, sbMessage.ToString());
                     }
                     catch (Exception)
@@ -5067,12 +5073,14 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool GetUpdateInfo(string xmlResult, out int? appVer, out string appVerName, out string infoText, out string errorMessage)
+        private bool GetUpdateInfo(string xmlResult, out int? appVer, out string appVerName, out string infoText, out string errorMessage, out string adapterBlacklist)
         {
             appVer = null;
             appVerName = null;
             infoText = null;
             errorMessage = null;
+            adapterBlacklist = null;
+
             try
             {
                 if (string.IsNullOrEmpty(xmlResult))
@@ -5086,7 +5094,16 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                XElement errorNode = xmlDoc.Root?.Element("error");
+                foreach (XElement blacklistNode in xmlDoc.Root.Elements("blacklists"))
+                {
+                    XAttribute adaptersAttr = blacklistNode.Attribute("adapters");
+                    if (adaptersAttr != null && !string.IsNullOrEmpty(adaptersAttr.Value))
+                    {
+                        adapterBlacklist = adaptersAttr.Value;
+                    }
+                }
+
+                XElement errorNode = xmlDoc.Root.Element("error");
                 // ReSharper disable once UseNullPropagation
                 if (errorNode != null)
                 {
@@ -5098,7 +5115,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                XElement updateNode = xmlDoc.Root?.Element("update");
+                XElement updateNode = xmlDoc.Root.Element("update");
                 if (updateNode != null)
                 {
                     XAttribute appVerAttr = updateNode.Attribute("app_ver");
