@@ -24,6 +24,7 @@ namespace BmwDeepObd.FilePicker
         {
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(bundle);
+            _allowTitleHiding = false;
 
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
