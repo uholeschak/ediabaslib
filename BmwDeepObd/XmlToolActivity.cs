@@ -721,6 +721,9 @@ namespace BmwDeepObd
                 _instanceData.ManualConfigIdx = 1;
             }
 
+            _activityCommon.UpdateRegisterInternetCellular();
+            _activityCommon.SetPreferredNetworkInterface();
+
             EdiabasClose(_instanceData.ForceAppend);
             if (!_activityRecreated && _instanceData.ManualConfigIdx > 0)
             {
@@ -795,8 +798,12 @@ namespace BmwDeepObd
                 _jobThread.Join();
             }
             EdiabasClose(true);
-            _activityCommon?.Dispose();
-            _activityCommon = null;
+            if (_activityCommon != null)
+            {
+                _activityCommon.UnRegisterInternetCellular();
+                _activityCommon.Dispose();
+                _activityCommon = null;
+            }
         }
 
         public override void OnBackPressed()
