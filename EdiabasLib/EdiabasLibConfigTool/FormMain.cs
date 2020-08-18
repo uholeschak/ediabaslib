@@ -21,7 +21,7 @@ namespace EdiabasLibConfigTool
     {
         private readonly BluetoothClient _cli;
         private readonly List<BluetoothDeviceInfo> _deviceList;
-        private readonly Wifi _wifi;
+        private readonly WifiMod _wifi;
         private readonly WlanClient _wlanClient;
         private readonly Test _test;
         private bool _lastActiveProbing;
@@ -105,7 +105,7 @@ namespace EdiabasLibConfigTool
                 sr.Append(string.Format(Resources.Strings.BtInitError, ex.Message));
             }
             _deviceList = new List<BluetoothDeviceInfo>();
-            _wifi = new Wifi();
+            _wifi = new WifiMod();
             _wlanClient = new WlanClient();
             _test = new Test(this);
             if (_wifi.NoWifiAvailable || _wlanClient.NoWifiAvailable)

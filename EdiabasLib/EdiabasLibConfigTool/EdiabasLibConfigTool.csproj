@@ -91,6 +91,7 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
     <Compile Include="Test.cs" />
+    <Compile Include="WifiMod.cs" />
     <EmbeddedResource Include="FormMain.de.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
