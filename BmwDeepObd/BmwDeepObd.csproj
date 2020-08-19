@@ -15,7 +15,9 @@
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
     <AssemblyName>BmwDeepObd</AssemblyName>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
-    <TargetFrameworkVersion>v10.0.99</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v11.0</TargetFrameworkVersion>
+    <LangVersion>latest</LangVersion>
+    <AndroidEnableAssemblyCompression>false</AndroidEnableAssemblyCompression>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -44,8 +46,7 @@
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
-    <AndroidDexTool>dx</AndroidDexTool>
-    <AndroidLinkTool>proguard</AndroidLinkTool>
+    <AndroidDexTool>d8</AndroidDexTool>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -69,8 +70,7 @@
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <DefineConstants>Android</DefineConstants>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-    <AndroidLinkTool>proguard</AndroidLinkTool>
-    <AndroidDexTool>dx</AndroidDexTool>
+    <AndroidDexTool>d8</AndroidDexTool>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidHttpClientHandlerType>System.Net.Http.HttpClientHandler</AndroidHttpClientHandlerType>
   </PropertyGroup>

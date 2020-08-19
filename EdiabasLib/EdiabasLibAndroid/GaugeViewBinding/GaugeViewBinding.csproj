@@ -12,8 +12,10 @@
     <RootNamespace>GaugeViewBinding</RootNamespace>
     <AssemblyName>GaugeViewBinding</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkVersion>v10.0.99</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v11.0</TargetFrameworkVersion>
+    <LangVersion>latest</LangVersion>
     <AndroidCodegenTarget>XAJavaInterop1</AndroidCodegenTarget>
+    <AndroidClassParser>class-parse</AndroidClassParser>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
