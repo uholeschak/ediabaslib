@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <page name ="tab_axis">
+    <display name="label_axis_front_left" result="STAT_HOEHENSTAND_VL_WERT" />
+    <display name="label_axis_front_right" result="STAT_HOEHENSTAND_VR_WERT" />
+    <display name="label_axis_rear_left" result="STAT_HOEHENSTAND_HL_WERT" />
+    <display name="label_axis_rear_right" result="STAT_HOEHENSTAND_HR_WERT" />
+    <display name="label_axis_bat_volt" result="STAT_SPANNUNG_KLEMME_30_WERT" />
+    <strings>
+      <string name="tab_axis">Axis</string>
+      <string name="button_axis_normal">Normal</string>
+      <string name="button_axis_low">Low</string>
+      <string name="label_axis_front_left">Axis front left [mm]:</string>
+      <string name="label_axis_front_right">Axis front right [mm]:</string>
+      <string name="label_axis_rear_left">Axis rear left [mm]:</string>
+      <string name="label_axis_rear_right">Axis rear right [mm]:</string>
+      <string name="label_axis_bat_volt">Battery voltage [V]:</string>
+    </strings>
+    <strings lang="de">
+      <string name="tab_axis">Achse</string>
+      <string name="button_axis_normal">Normal</string>
+      <string name="button_axis_low">Tief</string>
+      <string name="label_axis_front_left">Achse vorne links [mm]:</string>
+      <string name="label_axis_front_right">Achse vorne rechts [mm]:</string>
+      <string name="label_axis_rear_left">Achse hinten links [mm]:</string>
+      <string name="label_axis_rear_right">Achse hinten rechts [mm]:</string>
+      <string name="label_axis_bat_volt">Batteriespannung [V]:</string>
+    </strings>
+    <jobs sgbd="vdp_g11" />
+    <code show_warnings="true">
+      <![CDATA[
+    class PageClass
+    {
+        private static int OpModeIdle = 0;
+        private static int OpModeNormal = 1;
+        private static int OpModeLow = 2;
+
+        private ToggleButton buttonLow;
+        private ToggleButton buttonNormal;
+        private int updateStep = 0;
+        private int opMode = OpModeIdle;
+        private MultiMap<string, EdiabasNet.ResultData> tempDict;
+        private MultiMap<string, EdiabasNet.ResultData> dynDict;
+
+        public void CreateLayout(ActivityMain activity, JobReader.PageInfo pageInfo, LinearLayout pageLayout)
+        {
+            LinearLayout buttonLayout = new LinearLayout(activity);
+            buttonLayout.Orientation = Orientation.Horizontal;
+
+            LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MatchParent,
+                ViewGroup.LayoutParams.WrapContent);
+            buttonLayoutParams.Weight = 1;
+
+            buttonLow = new ToggleButton(activity);
+            buttonLow.Text = ActivityMain.GetPageString(pageInfo, "button_axis_low");
+            buttonLow.TextOff = buttonLow.Text;
+            buttonLow.TextOn = buttonLow.Text;
+            buttonLow.Click += delegate
+            {
+                if (buttonLow.Checked)
+                {
+                    buttonNormal.Checked = false;
+                    opMode = OpModeLow;
+                }
+                else
+                {
+                    opMode = OpModeIdle;
+                }
+            };
+            buttonLayout.AddView(buttonLow, buttonLayoutParams);
+
+            buttonNormal = new ToggleButton(activity);
+            buttonNormal.Text = ActivityMain.GetPageString(pageInfo, "button_axis_normal");
+            buttonNormal.TextOff = buttonNormal.Text;
+            buttonNormal.TextOn = buttonNormal.Text;
+            buttonNormal.Click += delegate
+            {
+                if (buttonNormal.Checked)
+                {
+                    buttonLow.Checked = false;
+                    opMode = OpModeNormal;
+                }
+                else
+                {
+                    opMode = OpModeIdle;
+                }
+            };
+            buttonLayout.AddView(buttonNormal, buttonLayoutParams);
+
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MatchParent,
+                ViewGroup.LayoutParams.WrapContent);
+            pageLayout.AddView(buttonLayout, layoutParams);
+        }
+
+        public void DestroyLayout(JobReader.PageInfo pageInfo)
+        {
+            buttonLow = null;
+            buttonNormal = null;
+            //Android.Util.Log.Info("Custom", "Destroyed");
+        }
+
+        public void UpdateLayout(JobReader.PageInfo pageInfo, bool pageValid, bool threadActive)
+        {
+            if ((buttonLow == null) || (buttonNormal == null))
+            {
+                return;
+            }
+
+            if (pageValid)
+            {
+                buttonLow.Enabled = true;
+                buttonNormal.Enabled = true;
+                if (opMode == OpModeLow)
+                {
+                    buttonLow.Checked = true;
+                    buttonNormal.Checked = false;
+                }
+                else if (opMode == OpModeNormal)
+                {
+                    buttonLow.Checked = false;
+                    buttonNormal.Checked = true;
+                }
+                else
+                {
+                    buttonLow.Checked = false;
+                    buttonNormal.Checked = false;
+                }
+            }
+            else
+            {
+                buttonLow.Checked = false;
+                buttonLow.Enabled = false;
+                buttonNormal.Checked = false;
+                buttonNormal.Enabled = false;
+            }
+        }
+
+        public void ExecuteJob(EdiabasNet ediabas, ref MultiMap<string, EdiabasNet.ResultData> resultDict, bool firstCall)
+        {
+            if (firstCall)
+            {
+                updateStep = 0;
+                opMode = OpModeIdle;
+                tempDict = null;
+                dynDict = null;
+            }
+            List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
+
+            switch (updateStep)
+            {
+                case 0:
+                    tempDict = null;
+                    ediabas.ArgString = "ARG;STATUS_HOEHENSTAENDE_LESEN";
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = string.Empty;
+
+                    ediabas.ExecuteJob("STATUS_LESEN");
+
+                    resultSets = ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        EdiabasThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+                    }
+                    updateStep++;
+                    break;
+
+                case 1:
+                    ediabas.ArgString = "ARG;SPANNUNG_KLEMME_30_WERT";
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = string.Empty;
+
+                    ediabas.ExecuteJob("STATUS_LESEN");
+
+                    resultSets = ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        EdiabasThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+                    }
+                    dynDict = tempDict;
+                    updateStep = 0;
+                    break;
+
+                default:
+                    updateStep = 0;
+                    break;
+            }
+
+            resultDict = dynDict;
+
+            ediabas.ArgString = string.Empty;
+            ediabas.ArgBinaryStd = null;
+            ediabas.ResultsRequests = string.Empty;
+
+            if (opMode == OpModeNormal)
+            {   // set normal mode
+                ediabas.ArgString = "ARG;STEUERN_EHC_VEHICLE_HEIGHT;Standardniveau";
+                ediabas.ArgBinaryStd = null;
+
+                ediabas.ExecuteJob("STEUERN");
+
+                opMode = OpModeIdle;
+            }
+
+            if (opMode == OpModeLow)
+            {   // set low mode
+                ediabas.ArgString = "ARG;STEUERN_EHC_VEHICLE_HEIGHT;Tiefniveau";
+                ediabas.ArgBinaryStd = null;
+
+                ediabas.ExecuteJob("STEUERN");
+
+                opMode = OpModeIdle;
+            }
+        }
+
+        public string FormatResult(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor)
+        {
+            string result = string.Empty;
+
+            switch (resultName)
+            {
+                case "STAT_HOEHENSTAND_VL_WERT":
+                case "STAT_HOEHENSTAND_VR_WERT":
+                case "STAT_HOEHENSTAND_HL_WERT":
+                case "STAT_HOEHENSTAND_HR_WERT":
+                    result = ActivityMain.FormatResultDouble(resultDict, resultName, "{0,6:0.0}", 0);
+                    break;
+
+                case "STAT_SPANNUNG_KLEMME_30_WERT":
+                    result = ActivityMain.FormatResultDouble(resultDict, resultName, "{0,6:0.0}", 0);
+                    break;
+            }
+            return result;
+        }
+    }
+      ]]>
+    </code>
+  </page>
+</fragment>
