@@ -202,7 +202,14 @@
 
                 ediabas.ExecuteJob("STEUERN");
 
-                opMode = OpModeIdle;
+                resultSets = ediabas.ResultSets;
+                if (resultSets != null && resultSets.Count >= 2)
+                {
+                    if (EdiabasThread.IsJobStatusOk(resultSets[1]))
+                    {
+                        opMode = OpModeIdle;
+                    }
+                }
             }
 
             if (opMode == OpModeLow)
@@ -212,7 +219,14 @@
 
                 ediabas.ExecuteJob("STEUERN");
 
-                opMode = OpModeIdle;
+                resultSets = ediabas.ResultSets;
+                if (resultSets != null && resultSets.Count >= 2)
+                {
+                    if (EdiabasThread.IsJobStatusOk(resultSets[1]))
+                    {
+                        opMode = OpModeIdle;
+                    }
+                }
             }
         }
 
