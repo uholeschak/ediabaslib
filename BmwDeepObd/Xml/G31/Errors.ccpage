@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <page name="!PAGE_NAME">
+    <strings>
+      <string name="!PAGE_NAME">Fehler</string>
+      <string name="!ECU#DME/DDE">DME/DDE</string>
+      <string name="!ECU#GWS">GWS</string>
+      <string name="!ECU#AIRBAG">AIRBAG</string>
+      <string name="!ECU#CAS">CAS</string>
+      <string name="!ECU#DSC">DSC</string>
+      <string name="!ECU#ECALL">ECALL</string>
+      <string name="!ECU#EGS">EGS</string>
+      <string name="!ECU#EPS">EPS</string>
+      <string name="!ECU#FRR/MRR">FRR/MRR</string>
+      <string name="!ECU#FZD">FZD</string>
+      <string name="!ECU#HC/SRR_HR">HC/SRR_HR</string>
+      <string name="!ECU#HEADUNIT">HEADUNIT</string>
+      <string name="!ECU#HKFM">HKFM</string>
+      <string name="!ECU#IHKA">IHKA</string>
+      <string name="!ECU#KAFAS">KAFAS</string>
+      <string name="!ECU#KOMBI">KOMBI</string>
+      <string name="!ECU#LHM_L">LHM_L</string>
+      <string name="!ECU#LHM_R">LHM_R</string>
+      <string name="!ECU#PMA/USS">PMA/USS</string>
+      <string name="!ECU#SAS/AD_PP">SAS/AD_PP</string>
+      <string name="!ECU#SCR">SCR</string>
+      <string name="!ECU#VDC">VDC</string>
+      <string name="!ECU#ZBE">ZBE</string>
+      <string name="!ECU#ZGW">ZGW</string>
+    </strings>
+    <read_errors sgbd_functional="f01">
+      <ecu name="!ECU#DME/DDE" sgbd="D83BX7C0" />
+      <ecu name="!ECU#GWS" sgbd="GWS_G11B" />
+      <ecu name="!ECU#AIRBAG" sgbd="ACSM5" />
+      <ecu name="!ECU#CAS" sgbd="BDC_G11" />
+      <ecu name="!ECU#DSC" sgbd="DSC_G11" />
+      <ecu name="!ECU#ECALL" sgbd="ATM" />
+      <ecu name="!ECU#EGS" sgbd="GSZFB1" />
+      <ecu name="!ECU#EPS" sgbd="EPS_G11" />
+      <ecu name="!ECU#FRR/MRR" sgbd="FRR_G11" />
+      <ecu name="!ECU#FZD" sgbd="FZD_G11" />
+      <ecu name="!ECU#HC/SRR_HR" sgbd="HC2_G11" />
+      <ecu name="!ECU#HEADUNIT" sgbd="NBTEVO" />
+      <ecu name="!ECU#HKFM" sgbd="HKFM_G11" />
+      <ecu name="!ECU#IHKA" sgbd="IHKA_G11" />
+      <ecu name="!ECU#KAFAS" sgbd="KAFASG11" />
+      <ecu name="!ECU#KOMBI" sgbd="KOMB_G11" />
+      <ecu name="!ECU#LHM_L" sgbd="FLM01_L" />
+      <ecu name="!ECU#LHM_R" sgbd="FLM01_R" />
+      <ecu name="!ECU#PMA/USS" sgbd="USS_G11" />
+      <ecu name="!ECU#SAS/AD_PP" sgbd="SAS_G11" />
+      <ecu name="!ECU#SCR" sgbd="SCR03" />
+      <ecu name="!ECU#VDC" sgbd="VDP_G11" />
+      <ecu name="!ECU#ZBE" sgbd="ZBE6" />
+      <ecu name="!ECU#ZGW" sgbd="ZGW_01" />
+    </read_errors>
+  </page>
+</fragment>
