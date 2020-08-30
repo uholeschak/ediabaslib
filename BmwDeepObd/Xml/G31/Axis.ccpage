@@ -3,6 +3,7 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
   <page name ="tab_axis">
+    <display name="label_niveau" result="STAT_NIVEAU" />
     <display name="label_axis_front_left" result="STAT_HOEHENSTAND_VL_WERT" />
     <display name="label_axis_front_right" result="STAT_HOEHENSTAND_VR_WERT" />
     <display name="label_axis_rear_left" result="STAT_HOEHENSTAND_HL_WERT" />
@@ -12,6 +13,7 @@
       <string name="tab_axis">Axis</string>
       <string name="button_axis_normal">Normal</string>
       <string name="button_axis_low">Low</string>
+      <string name="label_niveau">Niveau:</string>
       <string name="label_axis_front_left">Axis front left [mm]:</string>
       <string name="label_axis_front_right">Axis front right [mm]:</string>
       <string name="label_axis_rear_left">Axis rear left [mm]:</string>
@@ -22,6 +24,7 @@
       <string name="tab_axis">Achse</string>
       <string name="button_axis_normal">Normal</string>
       <string name="button_axis_low">Tief</string>
+      <string name="label_niveau">Niveau:</string>
       <string name="label_axis_front_left">Achse vorne links [mm]:</string>
       <string name="label_axis_front_right">Achse vorne rechts [mm]:</string>
       <string name="label_axis_rear_left">Achse hinten links [mm]:</string>
@@ -154,7 +157,7 @@
             {
                 case 0:
                     tempDict = null;
-                    ediabas.ArgString = "ARG;STATUS_HOEHENSTAENDE_LESEN";
+                    ediabas.ArgString = "ARG;STATUS_EHC_VEHICLE_HEIGHT";
                     ediabas.ArgBinaryStd = null;
                     ediabas.ResultsRequests = string.Empty;
 
@@ -169,6 +172,21 @@
                     break;
 
                 case 1:
+                    ediabas.ArgString = "ARG;STATUS_HOEHENSTAENDE_LESEN";
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = string.Empty;
+
+                    ediabas.ExecuteJob("STATUS_LESEN");
+
+                    resultSets = ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        EdiabasThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+                    }
+                    updateStep++;
+                    break;
+
+                case 2:
                     ediabas.ArgString = "ARG;SPANNUNG_KLEMME_30_WERT";
                     ediabas.ArgBinaryStd = null;
                     ediabas.ResultsRequests = string.Empty;
@@ -236,6 +254,10 @@
 
             switch (resultName)
             {
+                case "STAT_NIVEAU":
+                    result = ActivityMain.FormatResultInt64(resultDict, resultName, "{0,2}", 0);
+                    break;
+
                 case "STAT_HOEHENSTAND_VL_WERT":
                 case "STAT_HOEHENSTAND_VR_WERT":
                 case "STAT_HOEHENSTAND_HL_WERT":
