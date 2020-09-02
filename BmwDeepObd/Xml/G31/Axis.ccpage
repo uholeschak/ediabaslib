@@ -276,12 +276,22 @@
                 if ((opMode == OpModeDown) && (axisMode == AxisModeProduction))
                 {   // manual down
                     // read channel states
-                    for (int channel = 0; channel < 3; channel++)
+                    for (int channel = 0; channel < 7; channel++)
                     {
-                        int id = 0x11 + channel;
-                        if (channel == 2)
+                        int id;
+                        switch (channel)
                         {
-                            id = 0x19;    // Ablassventil
+                            case 5:
+                                id = 0x17;    // Druckspeicherventil
+                                break;
+
+                            case 6:
+                                id = 0x19;    // Ablassventil
+                                break;
+
+                            default:
+                                id = 0x11 + channel;
+                                break;
                         }
 
                         ediabas.ArgString = string.Format("0x{0:X02}", id);
@@ -299,10 +309,16 @@
                     // set channel states
                     for (int channel = 0; channel < 3; channel++)
                     {
-                        int id = 0x11 + channel;
-                        if (channel == 2)
+                        int id;
+                        switch (channel)
                         {
-                            id = 0x19;    // Ablassventil
+                            case 2:
+                                id = 0x19;    // Ablassventil
+                                break;
+
+                            default:
+                                id = 0x11 + channel;
+                                break;
                         }
 
                         ediabas.ArgString = string.Format("0x{0:X02}", id);
