@@ -214,6 +214,7 @@ namespace CarSimulator
             Standard,
             E61,
             E90,
+            G31,
             SMG2,
         };
 
@@ -4316,6 +4317,13 @@ namespace CarSimulator
                         }
                         break;
 
+                   case ResponseType.G31:
+                       if (!ResponseG31())
+                       {
+                           useResponseList = true;
+                       }
+                       break;
+
                    case ResponseType.SMG2:
                        if (!ResponseSmg2())
                        {
@@ -6772,6 +6780,73 @@ namespace CarSimulator
                     if (resultBytes >= 1) _sendData[i++] = (byte)(itemValue);
                 }
                 _sendData[0] = (byte)(0x80 | (i - 3));
+
+                ObdSend(_sendData);
+            }
+            else
+            {   // nothing matched, check response list
+                return false;
+            }
+            return true;
+        }
+
+        private bool ResponseG31()
+        {
+            // Axis
+            if (
+                _receiveData[0] == 0x85 &&
+                _receiveData[1] == 0x76 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x31 &&
+                _receiveData[4] == 0x01 &&
+                _receiveData[5] == 0x0F &&
+                _receiveData[6] == 0x0C)
+            {
+                // set mode
+                int i = 0;
+                _sendData[i++] = 0x84;
+                _sendData[i++] = 0xF1;
+                _sendData[i++] = 0x76;
+                _sendData[i++] = 0x71;
+                _sendData[i++] = 0x01;
+                _sendData[i++] = 0x0F;
+                _sendData[i++] = 0x0C;
+
+                ObdSend(_sendData);
+
+                byte mode = _receiveData[7];
+                switch (mode)
+                {
+                    case 0x00: // normal
+                    case 0x01: // production mode
+                    case 0x02: // transport mode
+                    case 0x03: // flash
+                        if (_mode != mode)
+                        {
+                            _noResponseCount = 1;
+                        }
+
+                        _mode = mode;
+                        break;
+                }
+            }
+            else if (
+                _receiveData[0] == 0x83 &&
+                _receiveData[1] == 0x76 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x22 &&
+                _receiveData[4] == 0x10 &&
+                _receiveData[5] == 0x0A)
+            {
+                // get mode
+                int i = 0;
+                _sendData[i++] = 0x84;
+                _sendData[i++] = 0xF1;
+                _sendData[i++] = 0x76;
+                _sendData[i++] = 0x62;
+                _sendData[i++] = 0x10;
+                _sendData[i++] = 0x0A;
+                _sendData[i++] = _mode;
 
                 ObdSend(_sendData);
             }
