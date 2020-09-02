@@ -4021,7 +4021,7 @@ namespace CarSimulator
                 if (_timeValveWrite[i].IsRunning)
                 {
                     manualMode = true;
-                    if (_timeValveWrite[i].ElapsedMilliseconds > 500)
+                    if (_timeValveWrite[i].ElapsedMilliseconds > 1000)
                     {
                         _outputs &= ~(1 << i);
                         _timeValveWrite[i].Stop();
@@ -4838,15 +4838,18 @@ namespace CarSimulator
 
                 ObdSend(_sendData);
 
-                _timeValveWrite[channel].Reset();
-                _timeValveWrite[channel].Start();
-                if ((_receiveData[7] & 0x01) != 0x00)
+                if (channel < _timeValveWrite.Length)
                 {
-                    _outputs |= 1 << channel;
-                }
-                else
-                {
-                    _outputs &= ~(1 << channel);
+                    _timeValveWrite[channel].Reset();
+                    _timeValveWrite[channel].Start();
+                    if ((_receiveData[7] & 0x01) != 0x00)
+                    {
+                        _outputs |= 1 << channel;
+                    }
+                    else
+                    {
+                        _outputs &= ~(1 << channel);
+                    }
                 }
             }
             else if (
@@ -6894,15 +6897,18 @@ namespace CarSimulator
 
                 ObdSend(_sendData);
 
-                _timeValveWrite[channel].Reset();
-                _timeValveWrite[channel].Start();
-                if ((_receiveData[7] & 0x01) != 0x00)
+                if (channel < _timeValveWrite.Length)
                 {
-                    _outputs |= 1 << channel;
-                }
-                else
-                {
-                    _outputs &= ~(1 << channel);
+                    _timeValveWrite[channel].Reset();
+                    _timeValveWrite[channel].Start();
+                    if ((_receiveData[7] & 0x01) != 0x00)
+                    {
+                        _outputs |= 1 << channel;
+                    }
+                    else
+                    {
+                        _outputs &= ~(1 << channel);
+                    }
                 }
             }
             else
