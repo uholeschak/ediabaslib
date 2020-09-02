@@ -279,7 +279,7 @@ namespace CarSimulator
         private byte _kwp2000AdaptionStatus;
         private int _kwp2000AdaptionChannel;
         private int _kwp2000AdaptionValue;
-        private readonly Stopwatch[] _timeValveWrite = new Stopwatch[4];
+        private readonly Stopwatch[] _timeValveWrite = new Stopwatch[10];
         private byte _mode; // 2: conveyor, 4: transport
         private int _outputs; // 0:left, 1:right, 2:down, 3:comp
         private int _axisPosPrescaler;
@@ -4111,7 +4111,7 @@ namespace CarSimulator
                 recLength += 3;
             }
             recLength += 1; // checksum
-#if false
+#if true
             Debug.WriteLine(string.Format("Time: {0}", DateTime.Now.ToString("hh:mm:ss.fff")));
             DebugLogData("Request: ", _receiveData, recLength);
 #endif
@@ -6849,6 +6849,61 @@ namespace CarSimulator
                 _sendData[i++] = _mode;
 
                 ObdSend(_sendData);
+            }
+            else if (
+                _receiveData[0] >= 0x86 &&
+                _receiveData[1] == 0x76 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x2F &&
+                _receiveData[4] == 0xDB &&
+                _receiveData[5] == 0x67 &&
+                _receiveData[6] == 0x03)
+            {
+                // get valve state
+                int channel = _receiveData[8] - 0x11;
+                int i = 0;
+                _sendData[i++] = 0x86;
+                _sendData[i++] = 0xF1;
+                _sendData[i++] = 0x76;
+                _sendData[i++] = 0x6F;
+                _sendData[i++] = 0xDB;
+                _sendData[i++] = 0x67;
+                _sendData[i++] = 0x03;
+                _sendData[i++] = 0x00;
+                _sendData[i++] = (byte)(((_outputs & (1 << channel)) != 0x00) ? 0x01 : 0x00);
+
+                ObdSend(_sendData);
+            }
+            else if (
+                _receiveData[0] == 0x89 &&
+                _receiveData[1] == 0x76 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x2E &&
+                _receiveData[4] == 0xDB &&
+                _receiveData[5] == 0x77)
+            {
+                // set valve state
+                int channel = _receiveData[11] - 0x11;
+                int i = 0;
+                _sendData[i++] = 0x83;
+                _sendData[i++] = 0xF1;
+                _sendData[i++] = 0x76;
+                _sendData[i++] = 0x6E;
+                _sendData[i++] = 0xDB;
+                _sendData[i++] = 0x77;
+
+                ObdSend(_sendData);
+
+                _timeValveWrite[channel].Reset();
+                _timeValveWrite[channel].Start();
+                if ((_receiveData[7] & 0x01) != 0x00)
+                {
+                    _outputs |= 1 << channel;
+                }
+                else
+                {
+                    _outputs &= ~(1 << channel);
+                }
             }
             else
             {   // nothing matched, check response list
