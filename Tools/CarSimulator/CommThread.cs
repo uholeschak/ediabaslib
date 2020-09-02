@@ -4039,17 +4039,25 @@ namespace CarSimulator
             _axisPosPrescaler++;
             if (_axisPosPrescaler > 5)
             {
+                int outputsDown = 0x07;
+                int outputsUp = 0x0B;
+                if (_responseType == ResponseType.G31)
+                {
+                    outputsDown = 0x103;
+                    outputsUp = 0x43;
+                }
+
                 _axisPosPrescaler = 0;
                 if (!manualMode && _mode == 0x00)
                 {
                     if (_axisPosRaw > 0) _axisPosRaw--;
                     if (_axisPosRaw < 0) _axisPosRaw++;
                 }
-                if (_outputs == 0x07)
+                if (_outputs == outputsDown)
                 {
                     if (_axisPosRaw > -80) _axisPosRaw--;
                 }
-                if (_outputs == 0x0B)
+                if (_outputs == outputsUp)
                 {
                     if (_axisPosRaw < 80) _axisPosRaw++;
                 }
