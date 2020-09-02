@@ -294,11 +294,11 @@
                                 break;
                         }
 
-                        ediabas.ArgString = string.Format("0x{0:X02}", id);
+                        ediabas.ArgString = string.Format("ARG;STATUS_SIGNALE_NUMERISCH;STA;0x{0:X02}", id);
                         ediabas.ArgBinaryStd = null;
                         ediabas.ResultsRequests = string.Empty;
 
-                        ediabas.ExecuteJob("STATUS_SIGNALE_NUMERISCH");
+                        ediabas.ExecuteJob("STEUERN_IO");
                         resultSets = ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
@@ -321,11 +321,11 @@
                                 break;
                         }
 
-                        ediabas.ArgString = string.Format("0x{0:X02}", id);
+                        ediabas.ArgString = string.Format("ARG;STEUERN_DIGITALSIGNALE;0x01;2;0x{0:X02}", id);
                         ediabas.ArgBinaryStd = null;
                         ediabas.ResultsRequests = string.Empty;
 
-                        ediabas.ExecuteJob("STEUERN_DIGITALSIGNALE");
+                        ediabas.ExecuteJob("STEUERN");
                     }
                 }
             }
