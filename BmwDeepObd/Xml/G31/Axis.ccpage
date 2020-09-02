@@ -3,7 +3,7 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
   <page name ="tab_axis">
-    <display name="label_niveau" result="STAT_NIVEAU" />
+    <display name="label_axis_mode" result="STAT_ENERGIESPARMODE_WERT" />
     <display name="label_axis_front_left" result="STAT_HOEHENSTAND_VL_WERT" />
     <display name="label_axis_front_right" result="STAT_HOEHENSTAND_VR_WERT" />
     <display name="label_axis_rear_left" result="STAT_HOEHENSTAND_HL_WERT" />
@@ -11,39 +11,57 @@
     <display name="label_axis_bat_volt" result="STAT_SPANNUNG_KLEMME_30_WERT" />
     <strings>
       <string name="tab_axis">Axis</string>
-      <string name="button_axis_normal">Normal</string>
-      <string name="button_axis_low">Low</string>
-      <string name="label_niveau">Niveau:</string>
+      <string name="button_axis_up">Up</string>
+      <string name="button_axis_down">Down</string>
+      <string name="axis_mode_normal">Normal</string>
+      <string name="axis_mode_production">Production</string>
+      <string name="axis_mode_transport">Transport</string>
+      <string name="axis_mode_flash">Flash</string>
+      <string name="label_axis_mode">Axis mode:</string>
       <string name="label_axis_front_left">Axis front left [mm]:</string>
       <string name="label_axis_front_right">Axis front right [mm]:</string>
       <string name="label_axis_rear_left">Axis rear left [mm]:</string>
       <string name="label_axis_rear_right">Axis rear right [mm]:</string>
       <string name="label_axis_bat_volt">Battery voltage [V]:</string>
+      <string name="label_axis_speed">Speed [km/h]:</string>
+      <string name="label_axis_valve_state">Output states:</string>
     </strings>
     <strings lang="de">
       <string name="tab_axis">Achse</string>
-      <string name="button_axis_normal">Normal</string>
-      <string name="button_axis_low">Tief</string>
-      <string name="label_niveau">Niveau:</string>
+      <string name="button_axis_up">Aufwärts</string>
+      <string name="button_axis_down">Abwärts</string>
+      <string name="axis_mode_normal">Normal</string>
+      <string name="axis_mode_production">Produktion</string>
+      <string name="axis_mode_transport">Transport</string>
+      <string name="axis_mode_flash">Flash</string>
+      <string name="label_axis_mode">Achsenmodus:</string>
       <string name="label_axis_front_left">Achse vorne links [mm]:</string>
       <string name="label_axis_front_right">Achse vorne rechts [mm]:</string>
       <string name="label_axis_rear_left">Achse hinten links [mm]:</string>
       <string name="label_axis_rear_right">Achse hinten rechts [mm]:</string>
       <string name="label_axis_bat_volt">Batteriespannung [V]:</string>
+      <string name="label_axis_speed">Geschwindigkeit [km/h]:</string>
+      <string name="label_axis_valve_state">Zustand Ausgänge:</string>
     </strings>
     <jobs sgbd="vdp_g11" />
     <code show_warnings="true">
       <![CDATA[
     class PageClass
     {
-        private static int OpModeIdle = 0;
-        private static int OpModeNormal = 1;
-        private static int OpModeLow = 2;
+        private const int AxisModeNormal = 0x00;
+        private const int AxisModeProduction = 0x01;
+        private const int AxisModeTransport = 0x02;
+        private const int AxisModeFlash = 0x03;
 
-        private ToggleButton buttonLow;
-        private ToggleButton buttonNormal;
+        private const int OpModeStatus = 0;
+        private const int OpModeUp = 1;
+        private const int OpModeDown = 2;
+
+        private ToggleButton buttonDown;
+        private ToggleButton buttonUp;
         private int updateStep = 0;
-        private int opMode = OpModeIdle;
+        private int opMode = OpModeStatus;
+        private Int64 currentSpeed = 0;
         private MultiMap<string, EdiabasNet.ResultData> tempDict;
         private MultiMap<string, EdiabasNet.ResultData> dynDict;
 
@@ -57,41 +75,41 @@
                 ViewGroup.LayoutParams.WrapContent);
             buttonLayoutParams.Weight = 1;
 
-            buttonLow = new ToggleButton(activity);
-            buttonLow.Text = ActivityMain.GetPageString(pageInfo, "button_axis_low");
-            buttonLow.TextOff = buttonLow.Text;
-            buttonLow.TextOn = buttonLow.Text;
-            buttonLow.Click += delegate
+            buttonDown = new ToggleButton(activity);
+            buttonDown.Text = ActivityMain.GetPageString(pageInfo, "button_axis_down");
+            buttonDown.TextOff = buttonDown.Text;
+            buttonDown.TextOn = buttonDown.Text;
+            buttonDown.Click += delegate
             {
-                if (buttonLow.Checked)
+                if (buttonDown.Checked)
                 {
-                    buttonNormal.Checked = false;
-                    opMode = OpModeLow;
+                    buttonUp.Checked = false;
+                    opMode = OpModeDown;
                 }
                 else
                 {
-                    opMode = OpModeIdle;
+                    opMode = OpModeStatus;
                 }
             };
-            buttonLayout.AddView(buttonLow, buttonLayoutParams);
+            buttonLayout.AddView(buttonDown, buttonLayoutParams);
 
-            buttonNormal = new ToggleButton(activity);
-            buttonNormal.Text = ActivityMain.GetPageString(pageInfo, "button_axis_normal");
-            buttonNormal.TextOff = buttonNormal.Text;
-            buttonNormal.TextOn = buttonNormal.Text;
-            buttonNormal.Click += delegate
+            buttonUp = new ToggleButton(activity);
+            buttonUp.Text = ActivityMain.GetPageString(pageInfo, "button_axis_up");
+            buttonUp.TextOff = buttonUp.Text;
+            buttonUp.TextOn = buttonUp.Text;
+            buttonUp.Click += delegate
             {
-                if (buttonNormal.Checked)
+                if (buttonUp.Checked)
                 {
-                    buttonLow.Checked = false;
-                    opMode = OpModeNormal;
+                    buttonDown.Checked = false;
+                    opMode = OpModeUp;
                 }
                 else
                 {
-                    opMode = OpModeIdle;
+                    opMode = OpModeStatus;
                 }
             };
-            buttonLayout.AddView(buttonNormal, buttonLayoutParams);
+            buttonLayout.AddView(buttonUp, buttonLayoutParams);
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MatchParent,
@@ -101,44 +119,49 @@
 
         public void DestroyLayout(JobReader.PageInfo pageInfo)
         {
-            buttonLow = null;
-            buttonNormal = null;
+            buttonDown = null;
+            buttonUp = null;
             //Android.Util.Log.Info("Custom", "Destroyed");
         }
 
         public void UpdateLayout(JobReader.PageInfo pageInfo, bool pageValid, bool threadActive)
         {
-            if ((buttonLow == null) || (buttonNormal == null))
+            if ((buttonDown == null) || (buttonUp == null))
             {
                 return;
             }
 
             if (pageValid)
             {
-                buttonLow.Enabled = true;
-                buttonNormal.Enabled = true;
-                if (opMode == OpModeLow)
+                bool stopped = currentSpeed < 5;
+                buttonDown.Enabled = stopped;
+                buttonUp.Enabled = true;
+                if (!stopped)
                 {
-                    buttonLow.Checked = true;
-                    buttonNormal.Checked = false;
+                    opMode = OpModeStatus;
                 }
-                else if (opMode == OpModeNormal)
+                if (opMode == OpModeDown)
                 {
-                    buttonLow.Checked = false;
-                    buttonNormal.Checked = true;
+                    buttonDown.Checked = true;
+                    buttonUp.Checked = false;
+                }
+                else if (opMode == OpModeUp)
+                {
+                    buttonDown.Checked = false;
+                    buttonUp.Checked = true;
                 }
                 else
                 {
-                    buttonLow.Checked = false;
-                    buttonNormal.Checked = false;
+                    buttonDown.Checked = false;
+                    buttonUp.Checked = false;
                 }
             }
             else
             {
-                buttonLow.Checked = false;
-                buttonLow.Enabled = false;
-                buttonNormal.Checked = false;
-                buttonNormal.Enabled = false;
+                buttonDown.Checked = false;
+                buttonDown.Enabled = false;
+                buttonUp.Checked = false;
+                buttonUp.Enabled = false;
             }
         }
 
@@ -147,7 +170,7 @@
             if (firstCall)
             {
                 updateStep = 0;
-                opMode = OpModeIdle;
+                opMode = OpModeStatus;
                 tempDict = null;
                 dynDict = null;
             }
@@ -213,36 +236,80 @@
             ediabas.ArgBinaryStd = null;
             ediabas.ResultsRequests = string.Empty;
 
-            if (opMode == OpModeNormal)
-            {   // set normal mode
-                ediabas.ArgString = "ARG;STEUERN_EHC_VEHICLE_HEIGHT;Standardniveau";
-                ediabas.ArgBinaryStd = null;
+            ediabas.ExecuteJob("STATUS_ENERGIESPARMODE");
 
-                ediabas.ExecuteJob("STEUERN");
-
-                resultSets = ediabas.ResultSets;
-                if (resultSets != null && resultSets.Count >= 2)
+            int axisMode = -1;
+            resultSets = ediabas.ResultSets;
+            if (resultSets != null && resultSets.Count >= 2)
+            {
+                EdiabasNet.ResultData resultData;
+                if (resultSets[1].TryGetValue("STAT_ENERGIESPARMODE_WERT", out resultData))
                 {
-                    if (EdiabasThread.IsJobStatusOk(resultSets[1]))
+                    if (resultData.OpData is Int64)
                     {
-                        opMode = OpModeIdle;
+                        axisMode = (int)((Int64)resultData.OpData);
                     }
                 }
+                EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
             }
 
-            if (opMode == OpModeLow)
-            {   // set low mode
-                ediabas.ArgString = "ARG;STEUERN_EHC_VEHICLE_HEIGHT;Tiefniveau";
-                ediabas.ArgBinaryStd = null;
+            if (axisMode >= 0)
+            {
+                if ((opMode == OpModeUp) && (axisMode != AxisModeNormal))
+                {   // set normal mode
+                    ediabas.ArgString = string.Format("{0}", AxisModeNormal);
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = string.Empty;
 
-                ediabas.ExecuteJob("STEUERN");
+                    ediabas.ExecuteJob("ENERGIESPARMODE");
+                }
 
-                resultSets = ediabas.ResultSets;
-                if (resultSets != null && resultSets.Count >= 2)
-                {
-                    if (EdiabasThread.IsJobStatusOk(resultSets[1]))
+                if ((opMode == OpModeDown) && (axisMode != AxisModeProduction))
+                {   // set production mode
+                    ediabas.ArgString = string.Format("{0}", AxisModeProduction);
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = string.Empty;
+
+                    ediabas.ExecuteJob("ENERGIESPARMODE");
+                }
+
+                if ((opMode == OpModeDown) && (axisMode == AxisModeProduction))
+                {   // manual down
+                    // read channel states
+                    for (int channel = 0; channel < 3; channel++)
                     {
-                        opMode = OpModeIdle;
+                        int id = 0x11 + channel;
+                        if (channel == 2)
+                        {
+                            id = 0x19;    // Ablassventil
+                        }
+
+                        ediabas.ArgString = string.Format("0x{0:X02}", id);
+                        ediabas.ArgBinaryStd = null;
+                        ediabas.ResultsRequests = string.Empty;
+
+                        ediabas.ExecuteJob("STATUS_SIGNALE_NUMERISCH");
+                        resultSets = ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1], string.Format("STATUS_SIGNALE_NUMERISCH{0}_", channel));
+                        }
+                    }
+
+                    // set channel states
+                    for (int channel = 0; channel < 3; channel++)
+                    {
+                        int id = 0x11 + channel;
+                        if (channel == 2)
+                        {
+                            id = 0x19;    // Ablassventil
+                        }
+
+                        ediabas.ArgString = string.Format("0x{0:X02}", id);
+                        ediabas.ArgBinaryStd = null;
+                        ediabas.ResultsRequests = string.Empty;
+
+                        ediabas.ExecuteJob("STEUERN_DIGITALSIGNALE");
                     }
                 }
             }
@@ -251,12 +318,40 @@
         public string FormatResult(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref Android.Graphics.Color? textColor)
         {
             string result = string.Empty;
+            bool found;
 
             switch (resultName)
             {
-                case "STAT_NIVEAU":
-                    result = ActivityMain.FormatResultInt64(resultDict, resultName, "{0,2}", 0);
+                case "STAT_ENERGIESPARMODE_WERT":
+                {
+                    Int64 axisMode = ActivityMain.GetResultInt64 (resultDict, resultName, 0, out found);
+                    if (found)
+                    {
+                        switch (axisMode)
+                        {
+                            case AxisModeNormal:
+                                result = ActivityMain.GetPageString(pageInfo, "axis_mode_normal");
+                                break;
+
+                            case AxisModeProduction:
+                                result = ActivityMain.GetPageString(pageInfo, "axis_mode_production");
+                                break;
+
+                            case AxisModeTransport:
+                                result = ActivityMain.GetPageString(pageInfo, "axis_mode_transport");
+                                break;
+
+                            case AxisModeFlash:
+                                result = ActivityMain.GetPageString(pageInfo, "axis_mode_flash");
+                                break;
+
+                            default:
+                                result = ActivityMain.FormatResultInt64(resultDict, resultName, "{0,2}", 0);
+                                break;
+                        }
+                    }
                     break;
+                }
 
                 case "STAT_HOEHENSTAND_VL_WERT":
                 case "STAT_HOEHENSTAND_VR_WERT":
@@ -270,6 +365,30 @@
                     break;
             }
             return result;
+        }
+
+        public void BroadcastReceived(JobReader.PageInfo pageInfo, Android.Content.Context context, Android.Content.Intent intent)
+        {
+            string request = intent.GetStringExtra("custom_action");
+            if (string.IsNullOrEmpty(request))
+            {
+                return;
+            }
+            request = request.ToLowerInvariant();
+            switch (request)
+            {
+                case "mode_status":
+                    opMode = OpModeStatus;
+                    break;
+
+                case "mode_up":
+                    opMode = OpModeUp;
+                    break;
+
+                case "mode_down":
+                    opMode = OpModeDown;
+                    break;
+            }
         }
     }
       ]]>
