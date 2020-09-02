@@ -9,6 +9,7 @@
     <display name="label_axis_rear_left" result="STAT_HOEHENSTAND_HL_WERT" />
     <display name="label_axis_rear_right" result="STAT_HOEHENSTAND_HR_WERT" />
     <display name="label_axis_bat_volt" result="STAT_SPANNUNG_KLEMME_30_WERT" />
+    <display name="label_axis_valve_state" result="STATUS_SIGNALE_NUMERISCH" />
     <strings>
       <string name="tab_axis">Axis</string>
       <string name="button_axis_up">Up</string>
@@ -378,6 +379,13 @@
 
                 case "STAT_SPANNUNG_KLEMME_30_WERT":
                     result = ActivityMain.FormatResultDouble(resultDict, resultName, "{0,6:0.0}", 0);
+                    break;
+
+                case "STATUS_SIGNALE_NUMERISCH":
+                    for (int channel = 0; channel < 7; channel++)
+                    {
+                        result = ActivityMain.FormatResultInt64(resultDict, string.Format(ActivityMain.Culture, "STATUS_SIGNALE_NUMERISCH{0}_STAT_ANSTEUERUNG_AKTIV", channel), "{0}", 0) + result;
+                    }
                     break;
             }
             return result;
