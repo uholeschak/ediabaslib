@@ -6805,6 +6805,50 @@ namespace CarSimulator
         {
             // Axis
             if (
+                _receiveData[0] == 0x83 &&
+                _receiveData[1] == 0x76 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x22 &&
+                _receiveData[4] == 0xDC &&
+                _receiveData[5] == 0x05)
+            {
+                // read position
+                float value1 = 1.0f / 1000;
+                float value2 = -1.0f / 1000;
+                float value3 = (float)((_axisPosFilt + 1) / 1000);
+                float value4 = (float)((_axisPosFilt - 1) / 1000);
+                byte[] dataArray1 = BitConverter.GetBytes(value1);
+                byte[] dataArray2 = BitConverter.GetBytes(value2);
+                byte[] dataArray3 = BitConverter.GetBytes(value3);
+                byte[] dataArray4 = BitConverter.GetBytes(value4);
+
+                int i = 0;
+                _sendData[i++] = 0x93;
+                _sendData[i++] = 0xF1;
+                _sendData[i++] = 0x76;
+                _sendData[i++] = 0x62;
+                _sendData[i++] = 0xDC;
+                _sendData[i++] = 0x05;
+                _sendData[i++] = dataArray1[3];
+                _sendData[i++] = dataArray1[2];
+                _sendData[i++] = dataArray1[1];
+                _sendData[i++] = dataArray1[0];
+                _sendData[i++] = dataArray2[3];
+                _sendData[i++] = dataArray2[2];
+                _sendData[i++] = dataArray2[1];
+                _sendData[i++] = dataArray2[0];
+                _sendData[i++] = dataArray3[3];
+                _sendData[i++] = dataArray3[2];
+                _sendData[i++] = dataArray3[1];
+                _sendData[i++] = dataArray3[0];
+                _sendData[i++] = dataArray4[3];
+                _sendData[i++] = dataArray4[2];
+                _sendData[i++] = dataArray4[1];
+                _sendData[i++] = dataArray4[0];
+
+                ObdSend(_sendData);
+            }
+            else if (
                 _receiveData[0] == 0x85 &&
                 _receiveData[1] == 0x76 &&
                 _receiveData[2] == 0xF1 &&

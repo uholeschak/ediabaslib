@@ -12,7 +12,7 @@ namespace CarSimulator
 {
     public partial class MainForm : Form
     {
-        private const string StdResponseFile = "e61.txt";
+        private const string StdResponseFile = "g31.txt";
         private string _rootFolder;
         private string _responseDir;
         private readonly CommThread _commThread;
@@ -74,6 +74,7 @@ namespace CarSimulator
             listPorts.BeginUpdate();
             listPorts.Items.Clear();
             int index = listPorts.Items.Add("ENET");
+            int indexEnet = index;
             Regex rx = new Regex("(COM[0-9]+).*");
             foreach (string port in ports)
             {
@@ -93,7 +94,7 @@ namespace CarSimulator
             {
                 // ignored
             }
-            listPorts.SelectedIndex = index;
+            listPorts.SelectedIndex = indexEnet;
             listPorts.EndUpdate();
 
             buttonConnect.Enabled = listPorts.SelectedIndex >= 0;
@@ -533,7 +534,7 @@ namespace CarSimulator
                 }
 
                 CommThread.ResponseType responseType = CommThread.ResponseType.Standard;
-                if (string.Compare(responseFile, StdResponseFile, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(responseFile, "e61.txt", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     responseType = CommThread.ResponseType.E61;
                 }
@@ -541,7 +542,7 @@ namespace CarSimulator
                 {
                     responseType = CommThread.ResponseType.E90;
                 }
-                else if (string.Compare(responseFile, "g31.txt", StringComparison.OrdinalIgnoreCase) == 0)
+                else if (string.Compare(responseFile, StdResponseFile, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     responseType = CommThread.ResponseType.G31;
                 }
