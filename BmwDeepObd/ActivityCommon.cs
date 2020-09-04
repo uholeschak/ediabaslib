@@ -491,6 +491,7 @@ namespace BmwDeepObd
         private static bool _vagUdsActive;
         private static bool _ecuFunctionActive;
         private static int _btEnableCounter;
+        private static string _adapterBlackList;
         private static TranslatorType _translatorType;
         private static Dictionary<string, UdsReader> _udsReaderDict;
         private static EcuFunctionReader _ecuFunctionReader;
@@ -836,7 +837,33 @@ namespace BmwDeepObd
 
         public static double BatteryWarningVoltage { get; set; }
 
-        public static string AdapterBlacklist { get; set; }
+        public static string AdapterBlacklist
+        {
+            get
+            {
+                return _adapterBlackList;
+            }
+            set
+            {
+                _adapterBlackList = value;
+
+                List<byte[]> blackList = new List<byte[]>();
+                if (!string.IsNullOrEmpty(_adapterBlackList))
+                {
+                    string[] serialArray = _adapterBlackList.Split(";");
+                    foreach (string serial in serialArray)
+                    {
+                        byte[] data = EdiabasNet.HexToByteArray(serial);
+                        if (data.Length > 0)
+                        {
+                            blackList.Add(data);
+                        }
+                    }
+                }
+
+                EdCustomAdapterCommon.AdapterBlackList = blackList;
+            }
+        }
 
         public static string LastAdapterSerial { get; set; }
 
