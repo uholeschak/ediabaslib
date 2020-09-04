@@ -48,12 +48,6 @@ namespace EdiabasLib
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         public static readonly double AdapterVoltageScale = 0.1;
 
-        public static List<byte[]> AdapterBlackList = new List<byte[]>
-        {
-            new byte[] { 0x9D, 0x34, 0xFE, 0x1A, 0x83, 0x24, 0xE9, 0x72 },
-            //new byte[] { 0x31, 0x01, 0x0E, 0x9C, 0xD5, 0x03, 0x79, 0xF6 },
-        };
-
         public delegate void SendDataDelegate(byte[] buffer, int length);
         public delegate bool ReceiveDataDelegate(byte[] buffer, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog);
         public delegate void DiscardInBufferDelegate();
@@ -139,6 +133,8 @@ namespace EdiabasLib
                 return 980;
             }
         }
+
+        public static List<byte[]> AdapterBlackList { get; set; }
 
         public EdCustomAdapterCommon(SendDataDelegate sendDataFunc, ReceiveDataDelegate receiveDataFunc,
             DiscardInBufferDelegate discardInBufferFunc, ReadInBufferDelegate readInBufferFunc,
@@ -514,7 +510,7 @@ namespace EdiabasLib
 
         public static bool IsAdapterBlacklisted(byte[] adapterSerial)
         {
-            if (adapterSerial == null)
+            if (adapterSerial == null || AdapterBlackList == null)
             {
                 return false;
             }
