@@ -322,7 +322,7 @@
                                 break;
                         }
 
-                        ediabas.ArgString = string.Format("ARG;STEUERN_DIGITALSIGNALE;0x01;2;0x{0:X02}", id);
+                        ediabas.ArgString = string.Format("ARG;STEUERN_DIGITALSIGNALE;0x01;20;0x{0:X02}", id);
                         ediabas.ArgBinaryStd = null;
                         ediabas.ResultsRequests = string.Empty;
 
