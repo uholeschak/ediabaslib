@@ -199,6 +199,7 @@ namespace BmwDeepObd
                 ShowBatteryVoltageWarning = ActivityCommon.ShowBatteryVoltageWarning;
                 BatteryWarnings = ActivityCommon.BatteryWarnings;
                 BatteryWarningVoltage = ActivityCommon.BatteryWarningVoltage;
+                AdapterBlacklist = ActivityCommon.AdapterBlacklist;
                 LastAdapterSerial = ActivityCommon.LastAdapterSerial;
                 EmailAddress = ActivityCommon.EmailAddress;
                 TraceInfo = ActivityCommon.TraceInfo;
