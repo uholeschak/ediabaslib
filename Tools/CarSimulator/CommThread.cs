@@ -6949,17 +6949,30 @@ namespace CarSimulator
 
                 ObdSend(_sendData);
 
-                if (channel < _timeValveWrite.Length)
+                if (channel == 0xB2)
                 {
-                    _timeValveWrite[channel].Reset();
-                    _timeValveWrite[channel].Start();
-                    if ((_receiveData[7] & 0x01) != 0x00)
+                    _timeValveWrite[0].Reset();
+                    _timeValveWrite[0].Start();
+                    _timeValveWrite[1].Reset();
+                    _timeValveWrite[1].Start();
+                    _timeValveWrite[8].Reset();
+                    _timeValveWrite[8].Start();
+                    _outputs = 0x103;
+                }
+                else
+                {
+                    if (channel < _timeValveWrite.Length)
                     {
-                        _outputs |= 1 << channel;
-                    }
-                    else
-                    {
-                        _outputs &= ~(1 << channel);
+                        _timeValveWrite[channel].Reset();
+                        _timeValveWrite[channel].Start();
+                        if ((_receiveData[7] & 0x01) != 0x00)
+                        {
+                            _outputs |= 1 << channel;
+                        }
+                        else
+                        {
+                            _outputs &= ~(1 << channel);
+                        }
                     }
                 }
             }
