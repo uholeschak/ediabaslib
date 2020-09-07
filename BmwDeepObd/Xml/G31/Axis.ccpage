@@ -173,6 +173,8 @@
             {
                 updateStep = 0;
                 opMode = OpModeStatus;
+                currentSpeed = 0;
+                errorReset = false;
                 tempDict = null;
                 dynDict = null;
             }
@@ -321,7 +323,7 @@
                     }
 
                     // set channel state
-                    ediabas.ArgString = "ARG;STEUERN_DIGITALSIGNALE;0x02;2;0xC3";
+                    ediabas.ArgString = "ARG;STEUERN_DIGITALSIGNALE;0x02;3;0xC3";
                     ediabas.ArgBinaryStd = null;
                     ediabas.ResultsRequests = string.Empty;
 
