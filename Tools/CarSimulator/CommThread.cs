@@ -4199,7 +4199,7 @@ namespace CarSimulator
                 standardResponse = true;
             }
             else if (
-                _receiveData[0] == 0x83 &&
+                (_receiveData[0] == 0x83 || _receiveData[0] == 0x84) &&
                 _receiveData[2] == 0xF1 &&
                 _receiveData[3] == 0x14 &&
                 _receiveData[4] == 0xFF &&
