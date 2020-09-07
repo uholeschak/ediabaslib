@@ -63,6 +63,7 @@
         private int updateStep = 0;
         private int opMode = OpModeStatus;
         private Int64 currentSpeed = 0;
+        private bool errorReset = false;
         private MultiMap<string, EdiabasNet.ResultData> tempDict;
         private MultiMap<string, EdiabasNet.ResultData> dynDict;
 
@@ -256,6 +257,16 @@
 
             if (axisMode >= 0)
             {
+                if (errorReset)
+                {
+                    ediabas.ArgString = string.Empty;
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = string.Empty;
+                    ediabas.ExecuteJob("FS_LOESCHEN");
+
+                    errorReset = false;
+                }
+
                 if ((opMode == OpModeUp) && (axisMode != AxisModeNormal))
                 {   // set normal mode
                     ediabas.ArgString = string.Format("{0}", AxisModeNormal);
@@ -263,6 +274,8 @@
                     ediabas.ResultsRequests = string.Empty;
 
                     ediabas.ExecuteJob("ENERGIESPARMODE");
+
+                    errorReset = true;
                 }
 
                 if ((opMode == OpModeDown) && (axisMode != AxisModeProduction))
@@ -308,7 +321,7 @@
                     }
 
                     // set channel state
-                    ediabas.ArgString = "ARG;STEUERN_DIGITALSIGNALE;0x02;1000;0xC3";
+                    ediabas.ArgString = "ARG;STEUERN_DIGITALSIGNALE;0x02;2;0xC3";
                     ediabas.ArgBinaryStd = null;
                     ediabas.ResultsRequests = string.Empty;
 
