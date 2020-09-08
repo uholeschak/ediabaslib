@@ -63,7 +63,7 @@
         private int updateStep = 0;
         private int opMode = OpModeStatus;
         private Int64 currentSpeed = 0;
-        private bool errorReset = false;
+        private int errorResetCount = 0;
         private MultiMap<string, EdiabasNet.ResultData> tempDict;
         private MultiMap<string, EdiabasNet.ResultData> dynDict;
 
@@ -174,7 +174,7 @@
                 updateStep = 0;
                 opMode = OpModeStatus;
                 currentSpeed = 0;
-                errorReset = false;
+                errorResetCount = 0;
                 tempDict = null;
                 dynDict = null;
             }
@@ -259,14 +259,14 @@
 
             if (axisMode >= 0)
             {
-                if (errorReset)
+                if (errorResetCount > 0)
                 {
                     ediabas.ArgString = string.Empty;
                     ediabas.ArgBinaryStd = null;
                     ediabas.ResultsRequests = string.Empty;
                     ediabas.ExecuteJob("FS_LOESCHEN");
 
-                    errorReset = false;
+                    errorResetCount--;
                 }
 
                 if ((opMode == OpModeUp) && (axisMode != AxisModeNormal))
@@ -277,7 +277,7 @@
 
                     ediabas.ExecuteJob("ENERGIESPARMODE");
 
-                    errorReset = true;
+                    errorResetCount = 3;
                 }
 
                 if ((opMode == OpModeDown) && (axisMode != AxisModeProduction))
@@ -328,6 +328,8 @@
                     ediabas.ResultsRequests = string.Empty;
 
                     ediabas.ExecuteJob("STEUERN");
+
+                    errorResetCount = 3;
                 }
             }
         }
