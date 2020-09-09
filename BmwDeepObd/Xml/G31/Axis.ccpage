@@ -90,6 +90,7 @@
                 }
                 else
                 {
+                    errorResetCount = 3;
                     opMode = OpModeStatus;
                 }
             };
@@ -292,16 +293,12 @@
                 if ((opMode == OpModeDown) && (axisMode == AxisModeProduction))
                 {   // manual down
                     // read channel states
-                    for (int channel = 0; channel < 7; channel++)
+                    for (int channel = 0; channel < 3; channel++)
                     {
                         int id;
                         switch (channel)
                         {
-                            case 5:
-                                id = 0x17;    // Druckspeicherventil
-                                break;
-
-                            case 6:
+                            case 2:
                                 id = 0x19;    // Ablassventil
                                 break;
 
@@ -328,8 +325,6 @@
                     ediabas.ResultsRequests = string.Empty;
 
                     ediabas.ExecuteJob("STEUERN");
-
-                    errorResetCount = 3;
                 }
             }
         }
@@ -384,7 +379,7 @@
                     break;
 
                 case "STATUS_SIGNALE_NUMERISCH":
-                    for (int channel = 0; channel < 7; channel++)
+                    for (int channel = 0; channel < 3; channel++)
                     {
                         result = ActivityMain.FormatResultInt64(resultDict, string.Format(ActivityMain.Culture, "STATUS_SIGNALE_NUMERISCH{0}_STAT_ANSTEUERUNG_AKTIV", channel), "{0}", 0) + result;
                     }
