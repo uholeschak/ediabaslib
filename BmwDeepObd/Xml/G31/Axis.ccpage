@@ -14,6 +14,8 @@
       <string name="tab_axis">Axis</string>
       <string name="button_axis_up">Up</string>
       <string name="button_axis_down">Down</string>
+      <string name="button_error_reset">Error Reset</string>
+      <string name="button_ecu_reset">ECU Reset</string>
       <string name="axis_mode_normal">Normal</string>
       <string name="axis_mode_production">Production</string>
       <string name="axis_mode_transport">Transport</string>
@@ -31,6 +33,8 @@
       <string name="tab_axis">Achse</string>
       <string name="button_axis_up">Aufwärts</string>
       <string name="button_axis_down">Abwärts</string>
+      <string name="button_error_reset">Fehler Reset</string>
+      <string name="button_ecu_reset">ECU Reset</string>
       <string name="axis_mode_normal">Normal</string>
       <string name="axis_mode_production">Produktion</string>
       <string name="axis_mode_transport">Transport</string>
@@ -60,17 +64,20 @@
 
         private ToggleButton buttonDown;
         private ToggleButton buttonUp;
+        private Button buttonErrorReset;
+        private Button buttonEcuReset;
         private int updateStep = 0;
         private int opMode = OpModeStatus;
         private Int64 currentSpeed = 0;
-        private int errorResetCount = 0;
+        private bool errorReset = false;
+        private bool ecuReset = false;
         private MultiMap<string, EdiabasNet.ResultData> tempDict;
         private MultiMap<string, EdiabasNet.ResultData> dynDict;
 
         public void CreateLayout(ActivityMain activity, JobReader.PageInfo pageInfo, LinearLayout pageLayout)
         {
-            LinearLayout buttonLayout = new LinearLayout(activity);
-            buttonLayout.Orientation = Orientation.Horizontal;
+            LinearLayout buttonLayout1 = new LinearLayout(activity);
+            buttonLayout1.Orientation = Orientation.Horizontal;
 
             LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MatchParent,
@@ -90,11 +97,10 @@
                 }
                 else
                 {
-                    errorResetCount = 3;
                     opMode = OpModeStatus;
                 }
             };
-            buttonLayout.AddView(buttonDown, buttonLayoutParams);
+            buttonLayout1.AddView(buttonDown, buttonLayoutParams);
 
             buttonUp = new ToggleButton(activity);
             buttonUp.Text = ActivityMain.GetPageString(pageInfo, "button_axis_up");
@@ -112,24 +118,46 @@
                     opMode = OpModeStatus;
                 }
             };
-            buttonLayout.AddView(buttonUp, buttonLayoutParams);
+            buttonLayout1.AddView(buttonUp, buttonLayoutParams);
+
+            LinearLayout buttonLayout2 = new LinearLayout(activity);
+            buttonLayout2.Orientation = Orientation.Horizontal;
+
+            buttonErrorReset = new Button(activity);
+            buttonErrorReset.Text = ActivityMain.GetPageString(pageInfo, "button_error_reset");
+            buttonErrorReset.Click += delegate
+            {
+                errorReset = true;
+            };
+            buttonLayout2.AddView(buttonErrorReset, buttonLayoutParams);
+
+            buttonEcuReset = new Button(activity);
+            buttonEcuReset.Text = ActivityMain.GetPageString(pageInfo, "button_ecu_reset");
+            buttonEcuReset.Click += delegate
+            {
+                ecuReset = true;
+            };
+            buttonLayout2.AddView(buttonEcuReset, buttonLayoutParams);
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MatchParent,
                 ViewGroup.LayoutParams.WrapContent);
-            pageLayout.AddView(buttonLayout, layoutParams);
+            pageLayout.AddView(buttonLayout2, layoutParams);
+            pageLayout.AddView(buttonLayout1, layoutParams);
         }
 
         public void DestroyLayout(JobReader.PageInfo pageInfo)
         {
             buttonDown = null;
             buttonUp = null;
+            buttonErrorReset = null;
+            buttonEcuReset = null;
             //Android.Util.Log.Info("Custom", "Destroyed");
         }
 
         public void UpdateLayout(JobReader.PageInfo pageInfo, bool pageValid, bool threadActive)
         {
-            if ((buttonDown == null) || (buttonUp == null))
+            if ((buttonDown == null) || (buttonUp == null) || (buttonErrorReset == null) || (buttonEcuReset == null))
             {
                 return;
             }
@@ -139,6 +167,8 @@
                 bool stopped = currentSpeed < 5;
                 buttonDown.Enabled = stopped;
                 buttonUp.Enabled = true;
+                buttonErrorReset.Enabled = true;
+                buttonEcuReset.Enabled = true;
                 if (!stopped)
                 {
                     opMode = OpModeStatus;
@@ -165,6 +195,8 @@
                 buttonDown.Enabled = false;
                 buttonUp.Checked = false;
                 buttonUp.Enabled = false;
+                buttonErrorReset.Enabled = false;
+                buttonEcuReset.Enabled = false;
             }
         }
 
@@ -175,7 +207,8 @@
                 updateStep = 0;
                 opMode = OpModeStatus;
                 currentSpeed = 0;
-                errorResetCount = 0;
+                errorReset = false;
+                ecuReset = false;
                 tempDict = null;
                 dynDict = null;
             }
@@ -260,14 +293,23 @@
 
             if (axisMode >= 0)
             {
-                if (errorResetCount > 0)
+                if (errorReset)
                 {
                     ediabas.ArgString = string.Empty;
                     ediabas.ArgBinaryStd = null;
                     ediabas.ResultsRequests = string.Empty;
                     ediabas.ExecuteJob("FS_LOESCHEN");
 
-                    errorResetCount--;
+                    errorReset = false;
+                }
+                else if (ecuReset)
+                {
+                    ediabas.ArgString = string.Empty;
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = string.Empty;
+                    ediabas.ExecuteJob("STEUERGERAETE_RESET");
+
+                    ecuReset = false;
                 }
 
                 if ((opMode == OpModeUp) && (axisMode != AxisModeNormal))
@@ -277,8 +319,6 @@
                     ediabas.ResultsRequests = string.Empty;
 
                     ediabas.ExecuteJob("ENERGIESPARMODE");
-
-                    errorResetCount = 3;
                 }
 
                 if ((opMode == OpModeDown) && (axisMode != AxisModeProduction))
