@@ -295,11 +295,17 @@
             {
                 if (errorReset)
                 {
+#if false
                     ediabas.ArgString = string.Empty;
                     ediabas.ArgBinaryStd = null;
                     ediabas.ResultsRequests = string.Empty;
                     ediabas.ExecuteJob("FS_LOESCHEN");
-
+#else
+                    ediabas.ArgString = "ARG;_VDP_RESET_TASK_ZEITEN;STR;0x00";
+                    ediabas.ArgBinaryStd = null;
+                    ediabas.ResultsRequests = string.Empty;
+                    ediabas.ExecuteJob("STEUERN_ROUTINE");
+#endif
                     errorReset = false;
                 }
                 else if (ecuReset)
