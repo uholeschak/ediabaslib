@@ -210,7 +210,6 @@
                 currentSpeed = 0;
                 errorReset = false;
                 ecuReset = false;
-                ignoreError = false;
                 tempDict = null;
                 dynDict = null;
             }
