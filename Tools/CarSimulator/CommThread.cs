@@ -6878,7 +6878,7 @@ namespace CarSimulator
                     case 0x03: // flash
                         if (_mode != mode)
                         {
-                            _noResponseCount = 1;
+                            _noResponseCount = 4;
                         }
 
                         _mode = mode;
