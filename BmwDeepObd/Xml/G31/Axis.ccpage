@@ -71,6 +71,7 @@
         private Int64 currentSpeed = 0;
         private bool errorReset = false;
         private bool ecuReset = false;
+        private bool ignoreError = false;
         private MultiMap<string, EdiabasNet.ResultData> tempDict;
         private MultiMap<string, EdiabasNet.ResultData> dynDict;
 
@@ -209,162 +210,180 @@
                 currentSpeed = 0;
                 errorReset = false;
                 ecuReset = false;
+                ignoreError = false;
                 tempDict = null;
                 dynDict = null;
             }
             List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
 
-            switch (updateStep)
+            try
             {
-                case 0:
-                    tempDict = null;
-                    ediabas.ArgString = "ARG;STATUS_EHC_VEHICLE_HEIGHT";
-                    ediabas.ArgBinaryStd = null;
-                    ediabas.ResultsRequests = string.Empty;
-
-                    ediabas.ExecuteJob("STATUS_LESEN");
-
-                    resultSets = ediabas.ResultSets;
-                    if (resultSets != null && resultSets.Count >= 2)
-                    {
-                        EdiabasThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
-                    }
-                    updateStep++;
-                    break;
-
-                case 1:
-                    ediabas.ArgString = "ARG;STATUS_HOEHENSTAENDE_LESEN";
-                    ediabas.ArgBinaryStd = null;
-                    ediabas.ResultsRequests = string.Empty;
-
-                    ediabas.ExecuteJob("STATUS_LESEN");
-
-                    resultSets = ediabas.ResultSets;
-                    if (resultSets != null && resultSets.Count >= 2)
-                    {
-                        EdiabasThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
-                    }
-                    updateStep++;
-                    break;
-
-                case 2:
-                    ediabas.ArgString = "ARG;SPANNUNG_KLEMME_30_WERT";
-                    ediabas.ArgBinaryStd = null;
-                    ediabas.ResultsRequests = string.Empty;
-
-                    ediabas.ExecuteJob("STATUS_LESEN");
-
-                    resultSets = ediabas.ResultSets;
-                    if (resultSets != null && resultSets.Count >= 2)
-                    {
-                        EdiabasThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
-                    }
-                    dynDict = tempDict;
-                    updateStep = 0;
-                    break;
-
-                default:
-                    updateStep = 0;
-                    break;
-            }
-
-            resultDict = dynDict;
-
-            ediabas.ArgString = string.Empty;
-            ediabas.ArgBinaryStd = null;
-            ediabas.ResultsRequests = string.Empty;
-
-            ediabas.ExecuteJob("STATUS_ENERGIESPARMODE");
-
-            int axisMode = -1;
-            resultSets = ediabas.ResultSets;
-            if (resultSets != null && resultSets.Count >= 2)
-            {
-                EdiabasNet.ResultData resultData;
-                if (resultSets[1].TryGetValue("STAT_ENERGIESPARMODE_WERT", out resultData))
+                switch (updateStep)
                 {
-                    if (resultData.OpData is Int64)
-                    {
-                        axisMode = (int)((Int64)resultData.OpData);
-                    }
-                }
-                EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
-            }
-
-            if (axisMode >= 0)
-            {
-                if (errorReset)
-                {
-                    ediabas.ArgString = string.Empty;
-                    ediabas.ArgBinaryStd = null;
-                    ediabas.ResultsRequests = string.Empty;
-                    ediabas.ExecuteJob("FS_LOESCHEN");
-
-                    errorReset = false;
-                }
-                else if (ecuReset)
-                {
-                    ediabas.ArgString = string.Empty;
-                    ediabas.ArgBinaryStd = null;
-                    ediabas.ResultsRequests = string.Empty;
-                    ediabas.ExecuteJob("STEUERGERAETE_RESET");
-
-                    ecuReset = false;
-                }
-
-                if ((opMode == OpModeUp) && (axisMode != AxisModeNormal))
-                {   // set normal mode
-                    ediabas.ArgString = string.Format("{0}", AxisModeNormal);
-                    ediabas.ArgBinaryStd = null;
-                    ediabas.ResultsRequests = string.Empty;
-
-                    ediabas.ExecuteJob("ENERGIESPARMODE");
-                }
-
-                if ((opMode == OpModeDown) && (axisMode != AxisModeProduction))
-                {   // set production mode
-                    ediabas.ArgString = string.Format("{0}", AxisModeProduction);
-                    ediabas.ArgBinaryStd = null;
-                    ediabas.ResultsRequests = string.Empty;
-
-                    ediabas.ExecuteJob("ENERGIESPARMODE");
-                }
-
-                if ((opMode == OpModeDown) && (axisMode == AxisModeProduction))
-                {   // manual down
-                    // read channel states
-                    for (int channel = 0; channel < 3; channel++)
-                    {
-                        int id;
-                        switch (channel)
-                        {
-                            case 2:
-                                id = 0x19;    // Ablassventil
-                                break;
-
-                            default:
-                                id = 0x11 + channel;
-                                break;
-                        }
-
-                        ediabas.ArgString = string.Format("ARG;STATUS_SIGNALE_NUMERISCH;STA;0x{0:X02}", id);
+                    case 0:
+                        tempDict = null;
+                        ediabas.ArgString = "ARG;STATUS_EHC_VEHICLE_HEIGHT";
                         ediabas.ArgBinaryStd = null;
                         ediabas.ResultsRequests = string.Empty;
 
-                        ediabas.ExecuteJob("STEUERN_IO");
+                        ediabas.ExecuteJob("STATUS_LESEN");
+
                         resultSets = ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
-                            EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1], string.Format("STATUS_SIGNALE_NUMERISCH{0}_", channel));
+                            EdiabasThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+                        }
+                        updateStep++;
+                        break;
+
+                    case 1:
+                        ediabas.ArgString = "ARG;STATUS_HOEHENSTAENDE_LESEN";
+                        ediabas.ArgBinaryStd = null;
+                        ediabas.ResultsRequests = string.Empty;
+
+                        ediabas.ExecuteJob("STATUS_LESEN");
+
+                        resultSets = ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            EdiabasThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+                        }
+                        updateStep++;
+                        break;
+
+                    case 2:
+                        ediabas.ArgString = "ARG;SPANNUNG_KLEMME_30_WERT";
+                        ediabas.ArgBinaryStd = null;
+                        ediabas.ResultsRequests = string.Empty;
+
+                        ediabas.ExecuteJob("STATUS_LESEN");
+
+                        resultSets = ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            EdiabasThread.MergeResultDictionarys(ref tempDict, resultSets[1]);
+                        }
+                        dynDict = tempDict;
+                        updateStep = 0;
+                        break;
+
+                    default:
+                        updateStep = 0;
+                        break;
+                }
+
+                resultDict = dynDict;
+
+                ediabas.ArgString = string.Empty;
+                ediabas.ArgBinaryStd = null;
+                ediabas.ResultsRequests = string.Empty;
+
+                ediabas.ExecuteJob("STATUS_ENERGIESPARMODE");
+
+                int axisMode = -1;
+                resultSets = ediabas.ResultSets;
+                if (resultSets != null && resultSets.Count >= 2)
+                {
+                    EdiabasNet.ResultData resultData;
+                    if (resultSets[1].TryGetValue("STAT_ENERGIESPARMODE_WERT", out resultData))
+                    {
+                        if (resultData.OpData is Int64)
+                        {
+                            axisMode = (int)((Int64)resultData.OpData);
                         }
                     }
+                    EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1]);
+                }
 
-                    // set channel state
-                    ediabas.ArgString = "ARG;STEUERN_DIGITALSIGNALE;0x02;3;0xC3";
-                    ediabas.ArgBinaryStd = null;
-                    ediabas.ResultsRequests = string.Empty;
+                ignoreError = false;
 
-                    ediabas.ExecuteJob("STEUERN");
+                if (axisMode >= 0)
+                {
+                    if (errorReset)
+                    {
+                        ediabas.ArgString = string.Empty;
+                        ediabas.ArgBinaryStd = null;
+                        ediabas.ResultsRequests = string.Empty;
+                        ediabas.ExecuteJob("FS_LOESCHEN");
+
+                        errorReset = false;
+                    }
+                    else if (ecuReset)
+                    {
+                        ediabas.ArgString = string.Empty;
+                        ediabas.ArgBinaryStd = null;
+                        ediabas.ResultsRequests = string.Empty;
+                        ediabas.ExecuteJob("STEUERGERAETE_RESET");
+
+                        ecuReset = false;
+                        ignoreError = true;
+                    }
+
+                    if ((opMode == OpModeUp) && (axisMode != AxisModeNormal))
+                    {   // set normal mode
+                        ediabas.ArgString = string.Format("{0}", AxisModeNormal);
+                        ediabas.ArgBinaryStd = null;
+                        ediabas.ResultsRequests = string.Empty;
+
+                        ediabas.ExecuteJob("ENERGIESPARMODE");
+
+                        ignoreError = true;
+                    }
+
+                    if ((opMode == OpModeDown) && (axisMode != AxisModeProduction))
+                    {   // set production mode
+                        ediabas.ArgString = string.Format("{0}", AxisModeProduction);
+                        ediabas.ArgBinaryStd = null;
+                        ediabas.ResultsRequests = string.Empty;
+
+                        ediabas.ExecuteJob("ENERGIESPARMODE");
+
+                        ignoreError = true;
+                    }
+
+                    if ((opMode == OpModeDown) && (axisMode == AxisModeProduction))
+                    {   // manual down
+                        // read channel states
+                        for (int channel = 0; channel < 3; channel++)
+                        {
+                            int id;
+                            switch (channel)
+                            {
+                                case 2:
+                                    id = 0x19;    // Ablassventil
+                                    break;
+
+                                default:
+                                    id = 0x11 + channel;
+                                    break;
+                            }
+
+                            ediabas.ArgString = string.Format("ARG;STATUS_SIGNALE_NUMERISCH;STA;0x{0:X02}", id);
+                            ediabas.ArgBinaryStd = null;
+                            ediabas.ResultsRequests = string.Empty;
+
+                            ediabas.ExecuteJob("STEUERN_IO");
+                            resultSets = ediabas.ResultSets;
+                            if (resultSets != null && resultSets.Count >= 2)
+                            {
+                                EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1], string.Format("STATUS_SIGNALE_NUMERISCH{0}_", channel));
+                            }
+                        }
+
+                        // set channel state
+                        ediabas.ArgString = "ARG;STEUERN_DIGITALSIGNALE;0x02;3;0xC3";
+                        ediabas.ArgBinaryStd = null;
+                        ediabas.ResultsRequests = string.Empty;
+
+                        ediabas.ExecuteJob("STEUERN");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                if (!ignoreError)
+                {
+                    throw;
                 }
             }
         }
