@@ -79,6 +79,34 @@ namespace BmwDeepObd
             public List<ExtraInfo> Results { get; }
         }
 
+        private class SgFuncInfo
+        {
+            public SgFuncInfo(string arg, string result, string unit, string info, string service, string argTab, string resTab)
+            {
+                Arg = arg;
+                Result = result;
+                Unit = unit;
+                Info = info;
+                Service = service;
+                ArgTab = argTab;
+                ResTab = resTab;
+            }
+
+            public string Arg { get; }
+
+            public string Result { get; }
+
+            public string Unit { get; }
+
+            public string Info { get; }
+
+            public string Service { get; }
+
+            public string ArgTab { get; }
+
+            public string ResTab { get; }
+        }
+
         public class InstanceData
         {
             public InstanceData()
@@ -156,7 +184,7 @@ namespace BmwDeepObd
         private bool _translateActive;
         private bool _jobListTranslated;
         private readonly List<JobInfo> _jobList = new List<JobInfo>();
-        private bool _sgFuncTable;
+        private readonly List<SgFuncInfo> _sgFuncInfoList = new List<SgFuncInfo>();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -773,7 +801,7 @@ namespace BmwDeepObd
             }
             _instanceData.ForceAppend = forceAppend;
             _jobList.Clear();
-            _sgFuncTable = false;
+            _sgFuncInfoList.Clear();
             CloseDataLog();
             UpdateDisplay();
             UpdateOptionsMenu();
@@ -1102,7 +1130,7 @@ namespace BmwDeepObd
             }
             JobInfo jobInfo = GetSelectedJob();
             _resultSelectListAdapter.Items.Clear();
-            bool argAssist = _sgFuncTable && IsArgAssistJob(jobInfo);
+            bool argAssist = _sgFuncInfoList.Count > 0 && IsArgAssistJob(jobInfo);
             string defaultArgs = string.Empty;
             if (jobInfo != null && !argAssist)
             {
@@ -1464,7 +1492,7 @@ namespace BmwDeepObd
                 _ediabas.SetConfigProperty("EcuPath", Path.GetDirectoryName(_instanceData.SgbdFileName));
             }
             _jobList.Clear();
-            _sgFuncTable = false;
+            _sgFuncInfoList.Clear();
             UpdateDisplay();
 
             _activityCommon.SetEdiabasInterface(_ediabas, _instanceData.DeviceAddress);
@@ -1659,7 +1687,6 @@ namespace BmwDeepObd
                         }
                     }
 
-                    bool sgFuncTable = false;
                     try
                     {
                         _ediabas.ArgString = TableSgFunctions;
@@ -1671,15 +1698,122 @@ namespace BmwDeepObd
                         List<Dictionary<string, EdiabasNet.ResultData>> resultSetsTab = _ediabas.ResultSets;
                         if (resultSetsTab != null && resultSetsTab.Count >= 2)
                         {
-                            sgFuncTable = true;
+                            int argIndex = -1;
+                            int resultIndex = -1;
+                            int unitIndex = -1;
+                            int infoIndex = -1;
+                            int serviceIndex = -1;
+                            int argTabIndex = -1;
+                            int resTabIndex = -1;
+                            int dictIndex = 0;
+                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSetsTab)
+                            {
+                                if (dictIndex == 0)
+                                {
+                                    dictIndex++;
+                                    continue;
+                                }
+
+                                string arg = string.Empty;
+                                string result = string.Empty;
+                                string unit = string.Empty;
+                                string info = string.Empty;
+                                string service = string.Empty;
+                                string argTab = string.Empty;
+                                string resTab = string.Empty;
+                                for (int i = 0; ; i++)
+                                {
+                                    if (resultDict.TryGetValue("COLUMN" + i.ToString(Culture), out EdiabasNet.ResultData resultData))
+                                    {
+                                        if (resultData.OpData is string)
+                                        {
+                                            string entry = (string)resultData.OpData;
+                                            if (dictIndex == 1)
+                                            {   // header
+                                                if (string.Compare(entry, "ARG", StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    argIndex = i;
+                                                }
+                                                else if (string.Compare(entry, "EINHEIT", StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    unitIndex = i;
+                                                }
+                                                else if (string.Compare(entry, "RESULTNAME", StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    resultIndex = i;
+                                                }
+                                                else if (string.Compare(entry, "INFO", StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    infoIndex = i;
+                                                }
+                                                else if (string.Compare(entry, "SERVICE", StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    serviceIndex = i;
+                                                }
+                                                else if (string.Compare(entry, "ARG_TABELLE", StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    argTabIndex = i;
+                                                }
+                                                else if (string.Compare(entry, "RES_TABELLE", StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    resTabIndex = i;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (!string.IsNullOrWhiteSpace(entry) && entry != "-")
+                                                {
+                                                    if (i == argIndex)
+                                                    {
+                                                        arg = entry;
+                                                    }
+                                                    else if (i == unitIndex)
+                                                    {
+                                                        unit = entry;
+                                                    }
+                                                    else if (i == resultIndex)
+                                                    {
+                                                        result = entry;
+                                                    }
+                                                    else if (i == infoIndex)
+                                                    {
+                                                        info = entry;
+                                                    }
+                                                    else if (i == serviceIndex)
+                                                    {
+                                                        service = entry;
+                                                    }
+                                                    else if (i == argTabIndex)
+                                                    {
+                                                        argTab = entry;
+                                                    }
+                                                    else if (i == resTabIndex)
+                                                    {
+                                                        resTab = entry;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                }
+
+                                if (!string.IsNullOrEmpty(arg) && !string.IsNullOrEmpty(service))
+                                {
+                                    _sgFuncInfoList.Add(new SgFuncInfo(arg, result, unit, info, service, argTab, resTab));
+                                }
+
+                                dictIndex++;
+                            }
                         }
                     }
                     catch (Exception)
                     {
                         // ignored
                     }
-
-                    _sgFuncTable = sgFuncTable;
                 }
                 catch (Exception ex)
                 {
