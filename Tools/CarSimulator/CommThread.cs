@@ -4195,7 +4195,9 @@ namespace CarSimulator
                 _sendData[i++] = _receiveData[4];
 
                 ObdSend(_sendData);
+
                 Debug.WriteLine("ECU reset");
+                _noResponseCount = 1;
                 standardResponse = true;
             }
             else if (
@@ -6878,7 +6880,7 @@ namespace CarSimulator
                     case 0x03: // flash
                         if (_mode != mode)
                         {
-                            _noResponseCount = 4;
+                            _noResponseCount = 1;
                         }
 
                         _mode = mode;
