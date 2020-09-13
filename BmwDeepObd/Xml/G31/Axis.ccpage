@@ -384,6 +384,8 @@
                 {
                     throw;
                 }
+
+                ignoreError = false;
             }
         }
 
