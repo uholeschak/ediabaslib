@@ -104,6 +104,13 @@ namespace BmwDeepObd
             public bool CommErrorsOccured { get; set; }
         }
 
+        // jobs
+        public const string JobReadStat = @"STATUS_LESEN";
+        public const string JobReadStatBlock = @"STATUS_BLOCK_LESEN";
+        public const string JobControl = @"STEUERN";
+        public const string JobControlRoutine = @"STEUERN_ROUTINE";
+        public const string JobControlIo = @"STEUERN_IO";
+
         // Intent extra
         public const string ExtraInitDir = "init_dir";
         public const string ExtraAppDataDir = "app_data_dir";
@@ -127,6 +134,7 @@ namespace BmwDeepObd
         private Spinner _spinnerJobs;
         private JobListAdapter _jobListAdapter;
         private CheckBox _checkBoxBinArgs;
+        private Button _buttonArgAssist;
         private EditText _editTextArgs;
         private Spinner _spinnerResults;
         private ResultSelectListAdapter _resultSelectListAdapter;
@@ -201,10 +209,10 @@ namespace BmwDeepObd
             _spinnerJobs.Adapter = _jobListAdapter;
             _spinnerJobs.SetOnTouchListener(this);
             _spinnerJobs.ItemSelected += (sender, args) =>
-                {
-                    NewJobSelected();
-                    DisplayJobComments();
-                };
+            {
+                NewJobSelected();
+                DisplayJobComments();
+            };
 
             _editTextArgs = FindViewById<EditText>(Resource.Id.editTextArgs);
             _editTextArgs.SetOnTouchListener(this);
@@ -212,18 +220,27 @@ namespace BmwDeepObd
             _checkBoxBinArgs = FindViewById<CheckBox>(Resource.Id.checkBoxBinArgs);
             _checkBoxBinArgs.SetOnTouchListener(this);
 
+            _buttonArgAssist = FindViewById<Button>(Resource.Id.buttonArgAssist);
+            _buttonArgAssist.SetOnTouchListener(this);
+            _buttonArgAssist.Visibility =
+                ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw ? ViewStates.Visible : ViewStates.Gone;
+            _buttonArgAssist.Click += (sender, args) =>
+            {
+
+            };
+
             _spinnerResults = FindViewById<Spinner>(Resource.Id.spinnerResults);
             _resultSelectListAdapter = new ResultSelectListAdapter(this);
             _spinnerResults.Adapter = _resultSelectListAdapter;
             _spinnerResults.SetOnTouchListener(this);
             _spinnerResults.ItemSelected += (sender, args) =>
+            {
+                if (_resultSelectLastItem != _spinnerResults.SelectedItemPosition)
                 {
-                    if (_resultSelectLastItem != _spinnerResults.SelectedItemPosition)
-                    {
-                        DisplayJobResult();
-                    }
-                    _resultSelectLastItem = -1;
-                };
+                    DisplayJobResult();
+                }
+                _resultSelectLastItem = -1;
+            };
             _resultSelectLastItem = -1;
 
             _listViewInfo = FindViewById<ListView>(Resource.Id.infoList);
@@ -890,6 +907,7 @@ namespace BmwDeepObd
             _spinnerJobs.Enabled = inputsEnabled;
             _editTextArgs.Enabled = inputsEnabled;
             _checkBoxBinArgs.Enabled = inputsEnabled;
+            _buttonArgAssist.Enabled = inputsEnabled;
             _spinnerResults.Enabled = inputsEnabled;
 
             HideKeyboard();
@@ -1081,8 +1099,9 @@ namespace BmwDeepObd
             }
             JobInfo jobInfo = GetSelectedJob();
             _resultSelectListAdapter.Items.Clear();
+            bool argAssist = IsArgAssistJob(jobInfo);
             string defaultArgs = string.Empty;
-            if (jobInfo != null)
+            if (jobInfo != null && !argAssist)
             {
                 foreach (ExtraInfo result in jobInfo.Results.OrderBy(x => x.Name))
                 {
@@ -1096,10 +1115,31 @@ namespace BmwDeepObd
                     }
                 }
             }
+
             _resultSelectListAdapter.NotifyDataSetChanged();
             _resultSelectLastItem = 0;
             _editTextArgs.Text = defaultArgs;
             _checkBoxBinArgs.Checked = false;
+            _buttonArgAssist.Enabled = argAssist;
+        }
+
+        private bool IsArgAssistJob(JobInfo jobInfo)
+        {
+            if (jobInfo == null)
+            {
+                return false;
+            }
+            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+            {
+                return false;
+            }
+
+            return
+                string.Compare(jobInfo.Name, JobReadStat, StringComparison.OrdinalIgnoreCase) == 0 ||
+                string.Compare(jobInfo.Name, JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0 ||
+                string.Compare(jobInfo.Name, JobControl, StringComparison.OrdinalIgnoreCase) == 0 ||
+                string.Compare(jobInfo.Name, JobControlRoutine, StringComparison.OrdinalIgnoreCase) == 0 ||
+                string.Compare(jobInfo.Name, JobControlIo, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
         private void DisplayJobComments()
