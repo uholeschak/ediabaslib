@@ -81,7 +81,7 @@ namespace BmwDeepObd
 
         private class SgFuncInfo
         {
-            public SgFuncInfo(string arg, string id, string result, string info, string unit, string name, string service, string argTab, string resTab)
+            public SgFuncInfo(string arg, string id, string result, string info, string unit, string name, List<int> serviceList, string argTab, string resTab)
             {
                 Arg = arg;
                 Id = id;
@@ -89,7 +89,7 @@ namespace BmwDeepObd
                 Info = info;
                 Unit = unit;
                 Name = name;
-                Service = service;
+                ServiceList = serviceList;
                 ArgTab = argTab;
                 ResTab = resTab;
             }
@@ -106,7 +106,7 @@ namespace BmwDeepObd
 
             public string Name { get; }
 
-            public string Service { get; }
+            public List<int> ServiceList { get; }
 
             public string ArgTab { get; }
 
@@ -138,12 +138,15 @@ namespace BmwDeepObd
             public bool CommErrorsOccured { get; set; }
         }
 
-        // jobs
-        public const string JobReadStat = @"STATUS_LESEN";
-        public const string JobReadStatBlock = @"STATUS_BLOCK_LESEN";
-        public const string JobControl = @"STEUERN";
-        public const string JobControlRoutine = @"STEUERN_ROUTINE";
-        public const string JobControlIo = @"STEUERN_IO";
+        public static readonly Tuple<string, int>[] SgFuncJobListList =
+        {
+            new Tuple<string, int>("STATUS_LESEN", 0x22),
+            new Tuple<string, int>("STATUS_BLOCK_LESEN", 0x2C),
+            new Tuple<string, int>("STEUERN", 0x2E),
+            new Tuple<string, int>("STEUERN_IO", 0x2F),
+            new Tuple<string, int>("STEUERN_ROUTINE", 0x31),
+        };
+
         public const string TableSgFunctions = @"SG_FUNKTIONEN";
 
         // Intent extra
@@ -1135,8 +1138,21 @@ namespace BmwDeepObd
                 return;
             }
             JobInfo jobInfo = GetSelectedJob();
+            int serviceId = GetArgAssistJobService(jobInfo);
+            int funcCount = 0;
+            if (serviceId >= 0)
+            {
+                foreach (SgFuncInfo funcInfo in _sgFuncInfoList)
+                {
+                    if (funcInfo.ServiceList.Contains(serviceId))
+                    {
+                        funcCount++;
+                    }
+                }
+            }
+
             _resultSelectListAdapter.Items.Clear();
-            bool argAssist = _sgFuncInfoList.Count > 0 && IsArgAssistJob(jobInfo);
+            bool argAssist = funcCount > 0;
             string defaultArgs = string.Empty;
             if (jobInfo != null && !argAssist)
             {
@@ -1160,23 +1176,26 @@ namespace BmwDeepObd
             _buttonArgAssist.Enabled = argAssist;
         }
 
-        private bool IsArgAssistJob(JobInfo jobInfo)
+        private int GetArgAssistJobService(JobInfo jobInfo)
         {
             if (jobInfo == null)
             {
-                return false;
+                return -1;
             }
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
             {
-                return false;
+                return -1;
             }
 
-            return
-                string.Compare(jobInfo.Name, JobReadStat, StringComparison.OrdinalIgnoreCase) == 0 ||
-                string.Compare(jobInfo.Name, JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0 ||
-                string.Compare(jobInfo.Name, JobControl, StringComparison.OrdinalIgnoreCase) == 0 ||
-                string.Compare(jobInfo.Name, JobControlRoutine, StringComparison.OrdinalIgnoreCase) == 0 ||
-                string.Compare(jobInfo.Name, JobControlIo, StringComparison.OrdinalIgnoreCase) == 0;
+            foreach (Tuple<string, int> sgFuncJob in SgFuncJobListList)
+            {
+                if (string.Compare(jobInfo.Name, sgFuncJob.Item1, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return sgFuncJob.Item2;
+                }
+            }
+
+            return -1;
         }
 
         private void DisplayJobComments()
@@ -1829,7 +1848,16 @@ namespace BmwDeepObd
 
                                 if (!string.IsNullOrEmpty(arg) && !string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(service))
                                 {
-                                    _sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, unit, name, service, argTab, resTab));
+                                    List<int> serviceList = new List<int>();
+                                    string[] serviceArray = service.Split(";");
+                                    foreach (string serviceEntry in serviceArray)
+                                    {
+                                        if (Int32.TryParse(serviceEntry, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out Int32 value))
+                                        {
+                                            serviceList.Add(value);
+                                        }
+                                    }
+                                    _sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, unit, name, serviceList, argTab, resTab));
                                 }
 
                                 dictIndex++;
