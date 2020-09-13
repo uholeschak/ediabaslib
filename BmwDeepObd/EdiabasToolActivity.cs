@@ -81,12 +81,14 @@ namespace BmwDeepObd
 
         private class SgFuncInfo
         {
-            public SgFuncInfo(string arg, string result, string unit, string info, string service, string argTab, string resTab)
+            public SgFuncInfo(string arg, string id, string result, string info, string unit, string name, string service, string argTab, string resTab)
             {
                 Arg = arg;
+                Id = id;
                 Result = result;
-                Unit = unit;
                 Info = info;
+                Unit = unit;
+                Name = name;
                 Service = service;
                 ArgTab = argTab;
                 ResTab = resTab;
@@ -94,11 +96,15 @@ namespace BmwDeepObd
 
             public string Arg { get; }
 
+            public string Id { get; }
+
             public string Result { get; }
+
+            public string Info { get; }
 
             public string Unit { get; }
 
-            public string Info { get; }
+            public string Name { get; }
 
             public string Service { get; }
 
@@ -1699,9 +1705,11 @@ namespace BmwDeepObd
                         if (resultSetsTab != null && resultSetsTab.Count >= 2)
                         {
                             int argIndex = -1;
+                            int idIndex = -1;
                             int resultIndex = -1;
-                            int unitIndex = -1;
                             int infoIndex = -1;
+                            int unitIndex = -1;
+                            int nameIndex = -1;
                             int serviceIndex = -1;
                             int argTabIndex = -1;
                             int resTabIndex = -1;
@@ -1715,9 +1723,11 @@ namespace BmwDeepObd
                                 }
 
                                 string arg = string.Empty;
+                                string id = string.Empty;
                                 string result = string.Empty;
-                                string unit = string.Empty;
                                 string info = string.Empty;
+                                string unit = string.Empty;
+                                string name = string.Empty;
                                 string service = string.Empty;
                                 string argTab = string.Empty;
                                 string resTab = string.Empty;
@@ -1734,9 +1744,9 @@ namespace BmwDeepObd
                                                 {
                                                     argIndex = i;
                                                 }
-                                                else if (string.Compare(entry, "EINHEIT", StringComparison.OrdinalIgnoreCase) == 0)
+                                                if (string.Compare(entry, "ID", StringComparison.OrdinalIgnoreCase) == 0)
                                                 {
-                                                    unitIndex = i;
+                                                    idIndex = i;
                                                 }
                                                 else if (string.Compare(entry, "RESULTNAME", StringComparison.OrdinalIgnoreCase) == 0)
                                                 {
@@ -1745,6 +1755,14 @@ namespace BmwDeepObd
                                                 else if (string.Compare(entry, "INFO", StringComparison.OrdinalIgnoreCase) == 0)
                                                 {
                                                     infoIndex = i;
+                                                }
+                                                else if (string.Compare(entry, "EINHEIT", StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    unitIndex = i;
+                                                }
+                                                else if (string.Compare(entry, "NAME", StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    nameIndex = i;
                                                 }
                                                 else if (string.Compare(entry, "SERVICE", StringComparison.OrdinalIgnoreCase) == 0)
                                                 {
@@ -1767,9 +1785,9 @@ namespace BmwDeepObd
                                                     {
                                                         arg = entry;
                                                     }
-                                                    else if (i == unitIndex)
+                                                    else if (i == idIndex)
                                                     {
-                                                        unit = entry;
+                                                        id = entry;
                                                     }
                                                     else if (i == resultIndex)
                                                     {
@@ -1778,6 +1796,14 @@ namespace BmwDeepObd
                                                     else if (i == infoIndex)
                                                     {
                                                         info = entry;
+                                                    }
+                                                    else if (i == unitIndex)
+                                                    {
+                                                        unit = entry;
+                                                    }
+                                                    else if (i == nameIndex)
+                                                    {
+                                                        name = entry;
                                                     }
                                                     else if (i == serviceIndex)
                                                     {
@@ -1801,9 +1827,9 @@ namespace BmwDeepObd
                                     }
                                 }
 
-                                if (!string.IsNullOrEmpty(arg) && !string.IsNullOrEmpty(service))
+                                if (!string.IsNullOrEmpty(arg) && !string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(service))
                                 {
-                                    _sgFuncInfoList.Add(new SgFuncInfo(arg, result, unit, info, service, argTab, resTab));
+                                    _sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, unit, name, service, argTab, resTab));
                                 }
 
                                 dictIndex++;
