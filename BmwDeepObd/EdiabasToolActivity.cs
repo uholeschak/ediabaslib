@@ -110,6 +110,7 @@ namespace BmwDeepObd
         public const string JobControl = @"STEUERN";
         public const string JobControlRoutine = @"STEUERN_ROUTINE";
         public const string JobControlIo = @"STEUERN_IO";
+        public const string TableSgFunctions = @"SG_FUNKTIONEN";
 
         // Intent extra
         public const string ExtraInitDir = "init_dir";
@@ -155,6 +156,7 @@ namespace BmwDeepObd
         private bool _translateActive;
         private bool _jobListTranslated;
         private readonly List<JobInfo> _jobList = new List<JobInfo>();
+        private bool _sgFuncTable;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -771,6 +773,7 @@ namespace BmwDeepObd
             }
             _instanceData.ForceAppend = forceAppend;
             _jobList.Clear();
+            _sgFuncTable = false;
             CloseDataLog();
             UpdateDisplay();
             UpdateOptionsMenu();
@@ -1099,7 +1102,7 @@ namespace BmwDeepObd
             }
             JobInfo jobInfo = GetSelectedJob();
             _resultSelectListAdapter.Items.Clear();
-            bool argAssist = IsArgAssistJob(jobInfo);
+            bool argAssist = _sgFuncTable && IsArgAssistJob(jobInfo);
             string defaultArgs = string.Empty;
             if (jobInfo != null && !argAssist)
             {
@@ -1461,6 +1464,7 @@ namespace BmwDeepObd
                 _ediabas.SetConfigProperty("EcuPath", Path.GetDirectoryName(_instanceData.SgbdFileName));
             }
             _jobList.Clear();
+            _sgFuncTable = false;
             UpdateDisplay();
 
             _activityCommon.SetEdiabasInterface(_ediabas, _instanceData.DeviceAddress);
@@ -1654,6 +1658,28 @@ namespace BmwDeepObd
                             }
                         }
                     }
+
+                    bool sgFuncTable = false;
+                    try
+                    {
+                        _ediabas.ArgString = TableSgFunctions;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.NoInitForVJobs = true;
+                        _ediabas.ExecuteJob("_TABLE");
+
+                        List<Dictionary<string, EdiabasNet.ResultData>> resultSetsTab = _ediabas.ResultSets;
+                        if (resultSetsTab != null && resultSetsTab.Count >= 2)
+                        {
+                            sgFuncTable = true;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                    _sgFuncTable = sgFuncTable;
                 }
                 catch (Exception ex)
                 {
