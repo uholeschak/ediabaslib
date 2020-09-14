@@ -81,14 +81,14 @@ namespace BmwDeepObd
 
         private class SgFuncInfo
         {
-            public SgFuncInfo(string arg, string id, string result, string info, string unit, string name, List<int> serviceList, string argTab, string resTab)
+            public SgFuncInfo(string arg, string id, string result, string info, string unit, List<SgFuncValNameInfo> valNameInfoList, List<int> serviceList, string argTab, string resTab)
             {
                 Arg = arg;
                 Id = id;
                 Result = result;
                 Info = info;
                 Unit = unit;
-                Name = name;
+                ValNameInfoList = valNameInfoList;
                 ServiceList = serviceList;
                 ArgTab = argTab;
                 ResTab = resTab;
@@ -104,13 +104,26 @@ namespace BmwDeepObd
 
             public string Unit { get; }
 
-            public string Name { get; }
+            public List<SgFuncValNameInfo> ValNameInfoList { get; }
 
             public List<int> ServiceList { get; }
 
             public string ArgTab { get; }
 
             public string ResTab { get; }
+        }
+
+        private class SgFuncValNameInfo
+        {
+            public SgFuncValNameInfo(string wert, string text)
+            {
+                Wert = wert;
+                Text = text;
+            }
+
+            public string Wert { get; }
+
+            public string Text { get; }
         }
 
         public class InstanceData
@@ -148,6 +161,7 @@ namespace BmwDeepObd
         };
 
         public const string TableSgFunctions = @"SG_FUNKTIONEN";
+        public const string SgFuncUnitValName = @"0-n";
 
         // Intent extra
         public const string ExtraInitDir = "init_dir";
@@ -1916,7 +1930,17 @@ namespace BmwDeepObd
                                     serviceList.Add(value);
                                 }
                             }
-                            sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, unit, name, serviceList, argTab, resTab));
+
+                            List<SgFuncValNameInfo> valNameInfoList = null;
+                            if (!string.IsNullOrEmpty(name))
+                            {
+                                if (string.Compare(unit, SgFuncUnitValName, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    valNameInfoList = ReadSgFuncValNameTable(name);
+                                }
+                            }
+
+                            sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, unit, valNameInfoList, serviceList, argTab, resTab));
                         }
 
                         dictIndex++;
@@ -1929,6 +1953,97 @@ namespace BmwDeepObd
             }
 
             return sgFuncInfoList;
+        }
+
+        private List<SgFuncValNameInfo> ReadSgFuncValNameTable(string tableName)
+        {
+            List<SgFuncValNameInfo> valNameInfoList = new List<SgFuncValNameInfo>();
+            try
+            {
+                _ediabas.ArgString = tableName;
+                _ediabas.ArgBinaryStd = null;
+                _ediabas.ResultsRequests = string.Empty;
+                _ediabas.NoInitForVJobs = true;
+                _ediabas.ExecuteJob("_TABLE");
+
+                List<Dictionary<string, EdiabasNet.ResultData>> resultSetsTab = _ediabas.ResultSets;
+                if (resultSetsTab != null && resultSetsTab.Count >= 2)
+                {
+                    int wertIndex = -1;
+                    int textIndex = -1;
+                    int dictIndex = 0;
+                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSetsTab)
+                    {
+                        if (dictIndex == 0)
+                        {
+                            dictIndex++;
+                            continue;
+                        }
+
+                        string wert = string.Empty;
+                        string text = string.Empty;
+                        string result = string.Empty;
+                        string info = string.Empty;
+                        string unit = string.Empty;
+                        string name = string.Empty;
+                        string service = string.Empty;
+                        string argTab = string.Empty;
+                        string resTab = string.Empty;
+                        for (int i = 0; ; i++)
+                        {
+                            if (resultDict.TryGetValue("COLUMN" + i.ToString(Culture), out EdiabasNet.ResultData resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    string entry = (string)resultData.OpData;
+                                    if (dictIndex == 1)
+                                    {   // header
+                                        if (string.Compare(entry, "WERT", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            wertIndex = i;
+                                        }
+                                        if (string.Compare(entry, "TEXT", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            textIndex = i;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (!string.IsNullOrWhiteSpace(entry) && entry != "-")
+                                        {
+                                            if (i == wertIndex)
+                                            {
+                                                wert = entry;
+                                            }
+                                            else if (i == textIndex)
+                                            {
+                                                text = entry;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(wert))
+                        {
+                            valNameInfoList.Add(new SgFuncValNameInfo(wert, text));
+                        }
+
+                        dictIndex++;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return valNameInfoList;
         }
 
         private void ExecuteSelectedJob(bool continuous)
