@@ -81,7 +81,9 @@ namespace BmwDeepObd
 
         private class SgFuncInfo
         {
-            public SgFuncInfo(string arg, string id, string result, string info, string unit, List<SgFuncValNameInfo> valNameInfoList, List<int> serviceList, string argTab, string resTab)
+            public SgFuncInfo(string arg, string id, string result, string info, string unit,
+                List<SgFuncValNameInfo> valNameInfoList, List<SgFuncBitFieldInfo> bitFieldInfoList, List<int> serviceList,
+                string argTab, string resTab)
             {
                 Arg = arg;
                 Id = id;
@@ -89,6 +91,7 @@ namespace BmwDeepObd
                 Info = info;
                 Unit = unit;
                 ValNameInfoList = valNameInfoList;
+                BitFieldInfoList = bitFieldInfoList;
                 ServiceList = serviceList;
                 ArgTab = argTab;
                 ResTab = resTab;
@@ -106,6 +109,8 @@ namespace BmwDeepObd
 
             public List<SgFuncValNameInfo> ValNameInfoList { get; }
 
+            public List<SgFuncBitFieldInfo> BitFieldInfoList { get; }
+
             public List<int> ServiceList { get; }
 
             public string ArgTab { get; }
@@ -115,15 +120,37 @@ namespace BmwDeepObd
 
         private class SgFuncValNameInfo
         {
-            public SgFuncValNameInfo(string wert, string text)
+            public SgFuncValNameInfo(string value, string text)
             {
-                Wert = wert;
+                Value = value;
                 Text = text;
             }
 
-            public string Wert { get; }
+            public string Value { get; }
 
             public string Text { get; }
+        }
+
+        private class SgFuncBitFieldInfo
+        {
+            public SgFuncBitFieldInfo(string resultName, string unit, string mask, List<SgFuncValNameInfo> valNameInfoList, string info)
+            {
+                ResultName = resultName;
+                Unit = unit;
+                Mask = mask;
+                ValNameInfoList = valNameInfoList;
+                Info = info;
+            }
+
+            public string ResultName { get; }
+
+            public string Unit { get; }
+
+            public string Mask { get; }
+
+            public List<SgFuncValNameInfo> ValNameInfoList { get; }
+
+            public string Info { get; }
         }
 
         public class InstanceData
@@ -162,6 +189,7 @@ namespace BmwDeepObd
 
         public const string TableSgFunctions = @"SG_FUNKTIONEN";
         public const string SgFuncUnitValName = @"0-n";
+        public const string SgFuncUnitBitField = @"BITFIELD";
 
         // Intent extra
         public const string ExtraInitDir = "init_dir";
@@ -1836,7 +1864,7 @@ namespace BmwDeepObd
                                         {
                                             argIndex = i;
                                         }
-                                        if (string.Compare(entry, "ID", StringComparison.OrdinalIgnoreCase) == 0)
+                                        else if (string.Compare(entry, "ID", StringComparison.OrdinalIgnoreCase) == 0)
                                         {
                                             idIndex = i;
                                         }
@@ -1932,15 +1960,20 @@ namespace BmwDeepObd
                             }
 
                             List<SgFuncValNameInfo> valNameInfoList = null;
+                            List<SgFuncBitFieldInfo> bitFieldInfoList = null;
                             if (!string.IsNullOrEmpty(name))
                             {
                                 if (string.Compare(unit, SgFuncUnitValName, StringComparison.OrdinalIgnoreCase) == 0)
                                 {
                                     valNameInfoList = ReadSgFuncValNameTable(name);
                                 }
+                                else if (string.Compare(unit, SgFuncUnitBitField, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    bitFieldInfoList = ReadSgFuncBitFieldTable(name);
+                                }
                             }
 
-                            sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, unit, valNameInfoList, serviceList, argTab, resTab));
+                            sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, unit, valNameInfoList, bitFieldInfoList, serviceList, argTab, resTab));
                         }
 
                         dictIndex++;
@@ -1969,7 +2002,7 @@ namespace BmwDeepObd
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSetsTab = _ediabas.ResultSets;
                 if (resultSetsTab != null && resultSetsTab.Count >= 2)
                 {
-                    int wertIndex = -1;
+                    int valueIndex = -1;
                     int textIndex = -1;
                     int dictIndex = 0;
                     foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSetsTab)
@@ -1980,15 +2013,8 @@ namespace BmwDeepObd
                             continue;
                         }
 
-                        string wert = string.Empty;
+                        string value = string.Empty;
                         string text = string.Empty;
-                        string result = string.Empty;
-                        string info = string.Empty;
-                        string unit = string.Empty;
-                        string name = string.Empty;
-                        string service = string.Empty;
-                        string argTab = string.Empty;
-                        string resTab = string.Empty;
                         for (int i = 0; ; i++)
                         {
                             if (resultDict.TryGetValue("COLUMN" + i.ToString(Culture), out EdiabasNet.ResultData resultData))
@@ -2000,9 +2026,9 @@ namespace BmwDeepObd
                                     {   // header
                                         if (string.Compare(entry, "WERT", StringComparison.OrdinalIgnoreCase) == 0)
                                         {
-                                            wertIndex = i;
+                                            valueIndex = i;
                                         }
-                                        if (string.Compare(entry, "TEXT", StringComparison.OrdinalIgnoreCase) == 0)
+                                        else if (string.Compare(entry, "TEXT", StringComparison.OrdinalIgnoreCase) == 0)
                                         {
                                             textIndex = i;
                                         }
@@ -2011,9 +2037,9 @@ namespace BmwDeepObd
                                     {
                                         if (!string.IsNullOrWhiteSpace(entry) && entry != "-")
                                         {
-                                            if (i == wertIndex)
+                                            if (i == valueIndex)
                                             {
-                                                wert = entry;
+                                                value = entry;
                                             }
                                             else if (i == textIndex)
                                             {
@@ -2029,9 +2055,9 @@ namespace BmwDeepObd
                             }
                         }
 
-                        if (!string.IsNullOrEmpty(wert))
+                        if (!string.IsNullOrEmpty(value))
                         {
-                            valNameInfoList.Add(new SgFuncValNameInfo(wert, text));
+                            valNameInfoList.Add(new SgFuncValNameInfo(value, text));
                         }
 
                         dictIndex++;
@@ -2044,6 +2070,129 @@ namespace BmwDeepObd
             }
 
             return valNameInfoList;
+        }
+
+        private List<SgFuncBitFieldInfo> ReadSgFuncBitFieldTable(string tableName)
+        {
+            List<SgFuncBitFieldInfo> bitFieldInfoList = new List<SgFuncBitFieldInfo>();
+            try
+            {
+                _ediabas.ArgString = tableName;
+                _ediabas.ArgBinaryStd = null;
+                _ediabas.ResultsRequests = string.Empty;
+                _ediabas.NoInitForVJobs = true;
+                _ediabas.ExecuteJob("_TABLE");
+
+                List<Dictionary<string, EdiabasNet.ResultData>> resultSetsTab = _ediabas.ResultSets;
+                if (resultSetsTab != null && resultSetsTab.Count >= 2)
+                {
+                    int resultNameIndex = -1;
+                    int unitIndex = -1;
+                    int maskIndex = -1;
+                    int nameIndex = -1;
+                    int infoIndex = -1;
+                    int dictIndex = 0;
+                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSetsTab)
+                    {
+                        if (dictIndex == 0)
+                        {
+                            dictIndex++;
+                            continue;
+                        }
+
+                        string resultName = string.Empty;
+                        string unit = string.Empty;
+                        string mask = string.Empty;
+                        string name = string.Empty;
+                        string info = string.Empty;
+                        for (int i = 0; ; i++)
+                        {
+                            if (resultDict.TryGetValue("COLUMN" + i.ToString(Culture), out EdiabasNet.ResultData resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    string entry = (string)resultData.OpData;
+                                    if (dictIndex == 1)
+                                    {   // header
+                                        if (string.Compare(entry, "RESULTNAME", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            resultNameIndex = i;
+                                        }
+                                        else if (string.Compare(entry, "UNIT", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            unitIndex = i;
+                                        }
+                                        else if (string.Compare(entry, "MASKE", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            maskIndex = i;
+                                        }
+                                        else if (string.Compare(entry, "NAME", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            nameIndex = i;
+                                        }
+                                        else if (string.Compare(entry, "INFO", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            infoIndex = i;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (!string.IsNullOrWhiteSpace(entry) && entry != "-")
+                                        {
+                                            if (i == resultNameIndex)
+                                            {
+                                                resultName = entry;
+                                            }
+                                            else if (i == unitIndex)
+                                            {
+                                                unit = entry;
+                                            }
+                                            else if (i == maskIndex)
+                                            {
+                                                mask = entry;
+                                            }
+                                            else if (i == nameIndex)
+                                            {
+                                                name = entry;
+                                            }
+                                            else if (i == infoIndex)
+                                            {
+                                                info = entry;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(resultName))
+                        {
+                            List<SgFuncValNameInfo> valNameInfoList = null;
+                            if (!string.IsNullOrEmpty(name))
+                            {
+                                if (string.Compare(unit, SgFuncUnitValName, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    valNameInfoList = ReadSgFuncValNameTable(name);
+                                }
+                            }
+
+                            bitFieldInfoList.Add(new SgFuncBitFieldInfo(resultName, unit, mask, valNameInfoList, info));
+                        }
+
+                        dictIndex++;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return bitFieldInfoList;
         }
 
         private void ExecuteSelectedJob(bool continuous)
