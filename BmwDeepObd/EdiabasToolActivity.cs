@@ -259,6 +259,8 @@ namespace BmwDeepObd
         private bool _jobListTranslated;
         private readonly List<JobInfo> _jobList = new List<JobInfo>();
         private readonly List<SgFuncInfo> _sgFuncInfoList = new List<SgFuncInfo>();
+        private readonly Dictionary<string, List<SgFuncArgInfo>> _sgFuncArgInfoDict = new Dictionary<string, List<SgFuncArgInfo>>();
+        private readonly Dictionary<string, List<SgFuncNameInfo>> _sgFuncNameInfoDict = new Dictionary<string, List<SgFuncNameInfo>>();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -874,12 +876,19 @@ namespace BmwDeepObd
                 _ediabas = null;
             }
             _instanceData.ForceAppend = forceAppend;
-            _jobList.Clear();
-            _sgFuncInfoList.Clear();
+            ClearLists();
             CloseDataLog();
             UpdateDisplay();
             UpdateOptionsMenu();
             return true;
+        }
+
+        private void ClearLists()
+        {
+            _jobList.Clear();
+            _sgFuncInfoList.Clear();
+            _sgFuncArgInfoDict.Clear();
+            _sgFuncNameInfoDict.Clear();
         }
 
         private void CloseDataLog()
@@ -1581,8 +1590,8 @@ namespace BmwDeepObd
                 };
                 _ediabas.SetConfigProperty("EcuPath", Path.GetDirectoryName(_instanceData.SgbdFileName));
             }
-            _jobList.Clear();
-            _sgFuncInfoList.Clear();
+
+            ClearLists();
             UpdateDisplay();
 
             _activityCommon.SetEdiabasInterface(_ediabas, _instanceData.DeviceAddress);
@@ -2006,6 +2015,12 @@ namespace BmwDeepObd
 
         private List<SgFuncArgInfo> ReadSgFuncArgTable(string tableName)
         {
+            string key = tableName.ToUpperInvariant();
+            if (_sgFuncArgInfoDict.TryGetValue(key, out List<SgFuncArgInfo> infoList))
+            {
+                return infoList;
+            }
+
             List<SgFuncArgInfo> argInfoList = new List<SgFuncArgInfo>();
             try
             {
@@ -2110,6 +2125,11 @@ namespace BmwDeepObd
                         dictIndex++;
                     }
                 }
+
+                if (argInfoList.Count > 0)
+                {
+                    _sgFuncArgInfoDict.Add(key, argInfoList);
+                }
             }
             catch (Exception)
             {
@@ -2121,9 +2141,20 @@ namespace BmwDeepObd
 
         private List<SgFuncNameInfo> ReadSgFuncNameTable(string tableName, string unit)
         {
-            List<SgFuncNameInfo> nameInfoList = null;
-            if (!string.IsNullOrEmpty(tableName))
+            try
             {
+                if (string.IsNullOrEmpty(tableName))
+                {
+                    return null;
+                }
+
+                string key = (tableName + "_" + unit).ToUpperInvariant();
+                if (_sgFuncNameInfoDict.TryGetValue(key, out List<SgFuncNameInfo> infoList))
+                {
+                    return infoList;
+                }
+
+                List<SgFuncNameInfo> nameInfoList = null;
                 if (string.Compare(unit, SgFuncUnitValName, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     nameInfoList = ReadSgFuncValNameTable(tableName);
@@ -2132,9 +2163,18 @@ namespace BmwDeepObd
                 {
                     nameInfoList = ReadSgFuncBitFieldTable(tableName);
                 }
-            }
 
-            return nameInfoList;
+                if (nameInfoList != null && nameInfoList.Count > 0)
+                {
+                    _sgFuncNameInfoDict.Add(key, nameInfoList);
+                }
+
+                return nameInfoList;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private List<SgFuncNameInfo> ReadSgFuncValNameTable(string tableName)
