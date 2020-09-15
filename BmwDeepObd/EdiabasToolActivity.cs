@@ -82,7 +82,7 @@ namespace BmwDeepObd
         private class SgFuncInfo
         {
             public SgFuncInfo(string arg, string id, string result, string info, string unit,
-                List<SgFuncValNameInfo> valNameInfoList, List<SgFuncBitFieldInfo> bitFieldInfoList, List<int> serviceList,
+                List<SgFuncNameInfo> nameInfoList, List<int> serviceList,
                 List<SgFuncArgInfo> argInfoList, string resTab)
             {
                 Arg = arg;
@@ -90,8 +90,7 @@ namespace BmwDeepObd
                 Result = result;
                 Info = info;
                 Unit = unit;
-                ValNameInfoList = valNameInfoList;
-                BitFieldInfoList = bitFieldInfoList;
+                NameInfoList = nameInfoList;
                 ServiceList = serviceList;
                 ArgInfoList = argInfoList;
                 ResTab = resTab;
@@ -107,9 +106,7 @@ namespace BmwDeepObd
 
             public string Unit { get; }
 
-            public List<SgFuncValNameInfo> ValNameInfoList { get; }
-
-            public List<SgFuncBitFieldInfo> BitFieldInfoList { get; }
+            public List<SgFuncNameInfo> NameInfoList { get; }
 
             public List<int> ServiceList { get; }
 
@@ -120,13 +117,12 @@ namespace BmwDeepObd
 
         private class SgFuncArgInfo
         {
-            public SgFuncArgInfo(string arg, string unit, string mask, List<SgFuncValNameInfo> valNameInfoList, List<SgFuncBitFieldInfo> bitFieldInfoList, string info)
+            public SgFuncArgInfo(string arg, string unit, string mask, List<SgFuncNameInfo> nameInfoList, string info)
             {
                 Arg = arg;
                 Unit = unit;
                 Mask = mask;
-                ValNameInfoList = valNameInfoList;
-                BitFieldInfoList = bitFieldInfoList;
+                NameInfoList = nameInfoList;
                 Info = info;
             }
 
@@ -136,14 +132,16 @@ namespace BmwDeepObd
 
             public string Mask { get; }
 
-            public List<SgFuncValNameInfo> ValNameInfoList { get; }
-
-            public List<SgFuncBitFieldInfo> BitFieldInfoList { get; }
+            public List<SgFuncNameInfo> NameInfoList { get; }
 
             public string Info { get; }
         }
 
-        private class SgFuncValNameInfo
+        private class SgFuncNameInfo
+        {
+        }
+
+        private class SgFuncValNameInfo : SgFuncNameInfo
         {
             public SgFuncValNameInfo(string value, string text)
             {
@@ -156,14 +154,14 @@ namespace BmwDeepObd
             public string Text { get; }
         }
 
-        private class SgFuncBitFieldInfo
+        private class SgFuncBitFieldInfo : SgFuncNameInfo
         {
-            public SgFuncBitFieldInfo(string resultName, string unit, string mask, List<SgFuncValNameInfo> valNameInfoList, string info)
+            public SgFuncBitFieldInfo(string resultName, string unit, string mask, List<SgFuncNameInfo> nameInfoList, string info)
             {
                 ResultName = resultName;
                 Unit = unit;
                 Mask = mask;
-                ValNameInfoList = valNameInfoList;
+                NameInfoList = nameInfoList;
                 Info = info;
             }
 
@@ -173,7 +171,7 @@ namespace BmwDeepObd
 
             public string Mask { get; }
 
-            public List<SgFuncValNameInfo> ValNameInfoList { get; }
+            public List<SgFuncNameInfo> NameInfoList { get; }
 
             public string Info { get; }
         }
@@ -1984,27 +1982,14 @@ namespace BmwDeepObd
                                 }
                             }
 
-                            List<SgFuncValNameInfo> valNameInfoList = null;
-                            List<SgFuncBitFieldInfo> bitFieldInfoList = null;
-                            if (!string.IsNullOrEmpty(name))
-                            {
-                                if (string.Compare(unit, SgFuncUnitValName, StringComparison.OrdinalIgnoreCase) == 0)
-                                {
-                                    valNameInfoList = ReadSgFuncValNameTable(name);
-                                }
-                                else if (string.Compare(unit, SgFuncUnitBitField, StringComparison.OrdinalIgnoreCase) == 0)
-                                {
-                                    bitFieldInfoList = ReadSgFuncBitFieldTable(name);
-                                }
-                            }
-
+                            List<SgFuncNameInfo> nameInfoList = ReadSgFuncNameTable(name, unit);
                             List<SgFuncArgInfo> argInfoList = null;
                             if (!string.IsNullOrEmpty(argTab))
                             {
                                 argInfoList = ReadSgFuncArgTable(argTab);
                             }
 
-                            sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, unit, valNameInfoList, bitFieldInfoList, serviceList, argInfoList, resTab));
+                            sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, unit, nameInfoList, serviceList, argInfoList, resTab));
                         }
 
                         dictIndex++;
@@ -2118,21 +2103,8 @@ namespace BmwDeepObd
 
                         if (!string.IsNullOrEmpty(arg))
                         {
-                            List<SgFuncValNameInfo> valNameInfoList = null;
-                            List<SgFuncBitFieldInfo> bitFieldInfoList = null;
-                            if (!string.IsNullOrEmpty(name))
-                            {
-                                if (string.Compare(unit, SgFuncUnitValName, StringComparison.OrdinalIgnoreCase) == 0)
-                                {
-                                    valNameInfoList = ReadSgFuncValNameTable(name);
-                                }
-                                else if (string.Compare(unit, SgFuncUnitBitField, StringComparison.OrdinalIgnoreCase) == 0)
-                                {
-                                    bitFieldInfoList = ReadSgFuncBitFieldTable(name);
-                                }
-                            }
-
-                            argInfoList.Add(new SgFuncArgInfo(arg, unit, mask, valNameInfoList, bitFieldInfoList, info));
+                            List<SgFuncNameInfo> nameInfoList = ReadSgFuncNameTable(name, unit);
+                            argInfoList.Add(new SgFuncArgInfo(arg, unit, mask, nameInfoList, info));
                         }
 
                         dictIndex++;
@@ -2147,9 +2119,27 @@ namespace BmwDeepObd
             return argInfoList;
         }
 
-        private List<SgFuncValNameInfo> ReadSgFuncValNameTable(string tableName)
+        private List<SgFuncNameInfo> ReadSgFuncNameTable(string tableName, string unit)
         {
-            List<SgFuncValNameInfo> valNameInfoList = new List<SgFuncValNameInfo>();
+            List<SgFuncNameInfo> nameInfoList = null;
+            if (!string.IsNullOrEmpty(tableName))
+            {
+                if (string.Compare(unit, SgFuncUnitValName, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    nameInfoList = ReadSgFuncValNameTable(tableName);
+                }
+                else if (string.Compare(unit, SgFuncUnitBitField, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    nameInfoList = ReadSgFuncBitFieldTable(tableName);
+                }
+            }
+
+            return nameInfoList;
+        }
+
+        private List<SgFuncNameInfo> ReadSgFuncValNameTable(string tableName)
+        {
+            List<SgFuncNameInfo> valNameInfoList = new List<SgFuncNameInfo>();
             try
             {
                 _ediabas.ArgString = tableName;
@@ -2231,9 +2221,9 @@ namespace BmwDeepObd
             return valNameInfoList;
         }
 
-        private List<SgFuncBitFieldInfo> ReadSgFuncBitFieldTable(string tableName)
+        private List<SgFuncNameInfo> ReadSgFuncBitFieldTable(string tableName)
         {
-            List<SgFuncBitFieldInfo> bitFieldInfoList = new List<SgFuncBitFieldInfo>();
+            List<SgFuncNameInfo> bitFieldInfoList = new List<SgFuncNameInfo>();
             try
             {
                 _ediabas.ArgString = tableName;
@@ -2330,16 +2320,8 @@ namespace BmwDeepObd
 
                         if (!string.IsNullOrEmpty(resultName))
                         {
-                            List<SgFuncValNameInfo> valNameInfoList = null;
-                            if (!string.IsNullOrEmpty(name))
-                            {
-                                if (string.Compare(unit, SgFuncUnitValName, StringComparison.OrdinalIgnoreCase) == 0)
-                                {
-                                    valNameInfoList = ReadSgFuncValNameTable(name);
-                                }
-                            }
-
-                            bitFieldInfoList.Add(new SgFuncBitFieldInfo(resultName, unit, mask, valNameInfoList, info));
+                            List<SgFuncNameInfo> nameInfoList = ReadSgFuncNameTable(name, unit);
+                            bitFieldInfoList.Add(new SgFuncBitFieldInfo(resultName, unit, mask, nameInfoList, info));
                         }
 
                         dictIndex++;
