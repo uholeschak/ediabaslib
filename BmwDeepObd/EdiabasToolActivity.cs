@@ -83,7 +83,7 @@ namespace BmwDeepObd
         {
             public SgFuncInfo(string arg, string id, string result, string info, string unit,
                 List<SgFuncNameInfo> nameInfoList, List<int> serviceList,
-                List<SgFuncArgInfo> argInfoList, string resTab)
+                List<SgFuncArgInfo> argInfoList, List<SgFuncNameInfo> resInfoList)
             {
                 Arg = arg;
                 Id = id;
@@ -93,7 +93,7 @@ namespace BmwDeepObd
                 NameInfoList = nameInfoList;
                 ServiceList = serviceList;
                 ArgInfoList = argInfoList;
-                ResTab = resTab;
+                ResInfoList = resInfoList;
             }
 
             public string Arg { get; }
@@ -112,7 +112,7 @@ namespace BmwDeepObd
 
             public List<SgFuncArgInfo> ArgInfoList { get; }
 
-            public string ResTab { get; }
+            public List<SgFuncNameInfo> ResInfoList { get; }
         }
 
         private class SgFuncArgInfo
@@ -1998,7 +1998,13 @@ namespace BmwDeepObd
                                 argInfoList = ReadSgFuncArgTable(argTab);
                             }
 
-                            sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, unit, nameInfoList, serviceList, argInfoList, resTab));
+                            List<SgFuncNameInfo> resInfoList = null;
+                            if (!string.IsNullOrEmpty(resTab))
+                            {
+                                resInfoList = ReadSgFuncNameTable(resTab, SgFuncUnitBitField);
+                            }
+
+                            sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, unit, nameInfoList, serviceList, argInfoList, resInfoList));
                         }
 
                         dictIndex++;
