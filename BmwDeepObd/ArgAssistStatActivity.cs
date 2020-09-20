@@ -1,8 +1,6 @@
 ﻿using System;
-using System.IO;
 using Android.Content;
 using Android.OS;
-using Android.Support.V7.App;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
@@ -15,8 +13,8 @@ namespace BmwDeepObd
     public class ArgAssistStatActivity : BaseActivity, View.IOnTouchListener
     {
         // Intent extra
-        public const string ServiceId = "service_id";
-        public const string Arguments = "arguments";
+        public const string ExtraServiceId = "service_id";
+        public const string ExtraArguments = "arguments";
 
         private InputMethodManager _imm;
         private View _contentView;
@@ -44,8 +42,8 @@ namespace BmwDeepObd
 
             SetResult(Android.App.Result.Canceled);
 
-            _serviceId = Intent.GetIntExtra(ServiceId, 0);
-            _defaultArguments = Intent.GetStringExtra(Arguments);
+            _serviceId = Intent.GetIntExtra(ExtraServiceId, 0);
+            _defaultArguments = Intent.GetStringExtra(ExtraArguments);
 
             _activityCommon = new ActivityCommon(this);
 
@@ -56,6 +54,8 @@ namespace BmwDeepObd
             _argsListAdapter = new ResultListAdapter(this);
             _listViewArgs.Adapter = _argsListAdapter;
             _listViewArgs.SetOnTouchListener(this);
+
+            UpdateDisplay();
         }
 
         protected override void OnDestroy()
@@ -67,6 +67,7 @@ namespace BmwDeepObd
 
         public override void OnBackPressed()
         {
+            UpdateResult();
             base.OnBackPressed();
         }
 
@@ -75,7 +76,10 @@ namespace BmwDeepObd
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
-                    Finish();
+                    if (UpdateResult())
+                    {
+                        Finish();
+                    }
                     return true;
             }
             return base.OnOptionsItemSelected(item);
@@ -102,6 +106,57 @@ namespace BmwDeepObd
             if (_activityCommon == null)
             {
                 return;
+            }
+
+            try
+            {
+                string argType = string.Empty;
+                if (!string.IsNullOrEmpty(_defaultArguments))
+                {
+                    string[] argArray = _defaultArguments.Split(";");
+                    if (argArray.Length > 0)
+                    {
+                        argType = argArray[0].Trim();
+                    }
+                }
+
+                switch (argType.ToUpperInvariant())
+                {
+                    case EdiabasToolActivity.ArgTypeID:
+                        _radioButtonArgTypeId.Checked = true;
+                        break;
+
+                    default:
+                        _radioButtonArgTypeArg.Checked = true;
+                        break;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        private bool UpdateResult()
+        {
+            try
+            {
+                string argType = EdiabasToolActivity.ArgTypeArg;
+                if (_radioButtonArgTypeId.Checked)
+                {
+                    argType = EdiabasToolActivity.ArgTypeID;
+                }
+
+                string arguments = argType;
+                Intent intent = new Intent();
+                intent.PutExtra(ExtraArguments, arguments);
+                SetResult(Android.App.Result.Ok, intent);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
     }

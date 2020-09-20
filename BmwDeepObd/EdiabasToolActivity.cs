@@ -215,6 +215,9 @@ namespace BmwDeepObd
         public const string SgFuncUnitValName = @"0-n";
         public const string SgFuncUnitBitField = @"BITFIELD";
 
+        public const string ArgTypeArg = "ARG";
+        public const string ArgTypeID = "ID";
+
         // Intent extra
         public const string ExtraInitDir = "init_dir";
         public const string ExtraAppDataDir = "app_data_dir";
@@ -530,6 +533,11 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestArgAssisStat:
+                    if (data != null && resultCode == Android.App.Result.Ok)
+                    {
+                        _editTextArgs.Text = data.Extras.GetString(ArgAssistStatActivity.ExtraArguments, "");
+                    }
+
                     UpdateOptionsMenu();
                     UpdateDisplay();
                     break;
@@ -1196,8 +1204,8 @@ namespace BmwDeepObd
                 {
                     string arguments = _editTextArgs.Enabled ? _editTextArgs.Text : string.Empty;
                     Intent serverIntent = new Intent(this, typeof(ArgAssistStatActivity));
-                    serverIntent.PutExtra(ArgAssistStatActivity.ServiceId, serviceId);
-                    serverIntent.PutExtra(ArgAssistStatActivity.Arguments, arguments);
+                    serverIntent.PutExtra(ArgAssistStatActivity.ExtraServiceId, serviceId);
+                    serverIntent.PutExtra(ArgAssistStatActivity.ExtraArguments, arguments);
                     StartActivityForResult(serverIntent, (int)ActivityRequest.RequestArgAssisStat);
                 }
             }
