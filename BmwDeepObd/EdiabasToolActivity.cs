@@ -32,6 +32,7 @@ namespace BmwDeepObd
             RequestSelectDevice,
             RequestAdapterConfig,
             RequestYandexKey,
+            RequestArgAssisStat,
         }
 
         private class ExtraInfo
@@ -332,7 +333,7 @@ namespace BmwDeepObd
                 ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw ? ViewStates.Visible : ViewStates.Gone;
             _buttonArgAssist.Click += (sender, args) =>
             {
-
+                StartArgAssist();
             };
 
             _spinnerResults = FindViewById<Spinner>(Resource.Id.spinnerResults);
@@ -524,6 +525,11 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestYandexKey:
                     ActivityCommon.EnableTranslation = ActivityCommon.IsTranslationAvailable();
+                    UpdateOptionsMenu();
+                    UpdateDisplay();
+                    break;
+
+                case ActivityRequest.RequestArgAssisStat:
                     UpdateOptionsMenu();
                     UpdateDisplay();
                     break;
@@ -1177,6 +1183,24 @@ namespace BmwDeepObd
         {
             Intent serverIntent = new Intent(this, typeof(YandexKeyActivity));
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestYandexKey);
+        }
+
+        private void StartArgAssist()
+        {
+            JobInfo jobInfo = GetSelectedJob();
+            int serviceId = GetArgAssistJobService(jobInfo);
+
+            if (serviceId >= 0)
+            {
+                if (serviceId == 0x22)
+                {
+                    string arguments = _editTextArgs.Enabled ? _editTextArgs.Text : string.Empty;
+                    Intent serverIntent = new Intent(this, typeof(ArgAssistStatActivity));
+                    serverIntent.PutExtra(ArgAssistStatActivity.ServiceId, serviceId);
+                    serverIntent.PutExtra(ArgAssistStatActivity.Arguments, arguments);
+                    StartActivityForResult(serverIntent, (int)ActivityRequest.RequestArgAssisStat);
+                }
+            }
         }
 
         private void EnetIpConfig()
