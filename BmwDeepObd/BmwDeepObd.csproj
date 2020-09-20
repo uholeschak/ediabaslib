@@ -249,6 +249,7 @@
       <Link>VehicleInfoVag.cs</Link>
     </Compile>
     <Compile Include="ActivityCommon.cs" />
+    <Compile Include="ArgAssistStatActivity.cs" />
     <Compile Include="BaseActivity.cs" />
     <Compile Include="BmwActuatorActivity.cs" />
     <Compile Include="CanAdapterActivity.cs" />

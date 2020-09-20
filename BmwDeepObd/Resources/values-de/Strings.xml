@@ -441,6 +441,7 @@
   <string name="tool_no_errors">Keine Fehler</string>
 
   <!--  Argument Assistant Status -->
+  <string name="arg_assist_stat_title">Argument Assistent</string>
   <string name="arg_assist_stat_arg_type">Argumententyp</string>
   <string name="arg_assist_stat_type_arg">Argument Name (ARG)</string>
   <string name="arg_assist_stat_type_id">Argument Id (ID)</string>
