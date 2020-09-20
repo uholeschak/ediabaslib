@@ -439,6 +439,13 @@
   <string name="tool_read_errors_failure">Не удалось считать ошибки</string>
   <string name="tool_no_errors">Ошибок нет</string>
 
+  <!--  Argument Assistant Status -->
+  <!--Translate-->
+  <string name="arg_assist_stat_arg_type">Argument typ</string>
+  <string name="arg_assist_stat_type_arg">Argument name (ARG)</string>
+  <string name="arg_assist_stat_type_id">Argument Id (ID)</string>
+  <string name="arg_assist_stat_args">Arguments</string>
+
   <!-- Ediabas Tool Options Menu -->
   <string name="menu_tool_sel_interface">Интерфейс</string>
   <string name="menu_tool_offline">оффлайн</string>
