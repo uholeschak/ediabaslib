@@ -80,7 +80,7 @@ namespace BmwDeepObd
             public List<ExtraInfo> Results { get; }
         }
 
-        private class SgFuncInfo
+        public class SgFuncInfo
         {
             public SgFuncInfo(string arg, string id, string result, string info, string unit,
                 List<SgFuncNameInfo> nameInfoList, List<int> serviceList,
@@ -116,7 +116,7 @@ namespace BmwDeepObd
             public List<SgFuncNameInfo> ResInfoList { get; }
         }
 
-        private class SgFuncArgInfo
+        public class SgFuncArgInfo
         {
             public SgFuncArgInfo(string arg, string unit, string mask, List<SgFuncNameInfo> nameInfoList, string info)
             {
@@ -138,11 +138,11 @@ namespace BmwDeepObd
             public string Info { get; }
         }
 
-        private class SgFuncNameInfo
+        public class SgFuncNameInfo
         {
         }
 
-        private class SgFuncValNameInfo : SgFuncNameInfo
+        public class SgFuncValNameInfo : SgFuncNameInfo
         {
             public SgFuncValNameInfo(string value, string text)
             {
@@ -155,7 +155,7 @@ namespace BmwDeepObd
             public string Text { get; }
         }
 
-        private class SgFuncBitFieldInfo : SgFuncNameInfo
+        public class SgFuncBitFieldInfo : SgFuncNameInfo
         {
             public SgFuncBitFieldInfo(string resultName, string unit, string mask, List<SgFuncNameInfo> nameInfoList, string info)
             {
@@ -533,6 +533,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestArgAssisStat:
+                    ArgAssistStatActivity.IntentSgFuncInfo = null;
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
                         _editTextArgs.Text = data.Extras.GetString(ArgAssistStatActivity.ExtraArguments, "");
@@ -1202,6 +1203,7 @@ namespace BmwDeepObd
             {
                 if (serviceId == 0x22)
                 {
+                    ArgAssistStatActivity.IntentSgFuncInfo = _sgFuncInfoList;
                     string arguments = _editTextArgs.Enabled ? _editTextArgs.Text : string.Empty;
                     Intent serverIntent = new Intent(this, typeof(ArgAssistStatActivity));
                     serverIntent.PutExtra(ArgAssistStatActivity.ExtraServiceId, serviceId);

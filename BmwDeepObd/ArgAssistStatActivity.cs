@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Android.Content;
 using Android.OS;
 using Android.Views;
@@ -12,10 +13,18 @@ namespace BmwDeepObd
         ConfigurationChanges = ActivityConfigChanges)]
     public class ArgAssistStatActivity : BaseActivity, View.IOnTouchListener
     {
+        public class InstanceData
+        {
+            public bool Dummy { get; set; }
+        }
+
         // Intent extra
         public const string ExtraServiceId = "service_id";
         public const string ExtraArguments = "arguments";
 
+        public static List<EdiabasToolActivity.SgFuncInfo> IntentSgFuncInfo { get; set; }
+
+        private InstanceData _instanceData = new InstanceData();
         private InputMethodManager _imm;
         private View _contentView;
         private ActivityCommon _activityCommon;
@@ -26,11 +35,17 @@ namespace BmwDeepObd
         private RadioButton _radioButtonArgTypeId;
         private ListView _listViewArgs;
         private ResultListAdapter _argsListAdapter;
+        private List<EdiabasToolActivity.SgFuncInfo> _sgFuncInfoList;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
+            _allowTitleHiding = false;
+            if (savedInstanceState != null)
+            {
+                _instanceData = GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
+            }
 
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
@@ -42,10 +57,18 @@ namespace BmwDeepObd
 
             SetResult(Android.App.Result.Canceled);
 
-            _serviceId = Intent.GetIntExtra(ExtraServiceId, 0);
+            if (IntentSgFuncInfo == null)
+            {
+                Finish();
+                return;
+            }
+
+            _serviceId = Intent.GetIntExtra(ExtraServiceId, -1);
             _defaultArguments = Intent.GetStringExtra(ExtraArguments);
 
             _activityCommon = new ActivityCommon(this);
+
+            _sgFuncInfoList = IntentSgFuncInfo;
 
             _radioButtonArgTypeArg = FindViewById<RadioButton>(Resource.Id.radioButtonArgTypeArg);
             _radioButtonArgTypeId = FindViewById<RadioButton>(Resource.Id.radioButtonArgTypeId);
@@ -56,6 +79,12 @@ namespace BmwDeepObd
             _listViewArgs.SetOnTouchListener(this);
 
             UpdateDisplay();
+        }
+
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            StoreInstanceState(outState, _instanceData);
+            base.OnSaveInstanceState(outState);
         }
 
         protected override void OnDestroy()
@@ -130,6 +159,22 @@ namespace BmwDeepObd
                         _radioButtonArgTypeArg.Checked = true;
                         break;
                 }
+
+                _argsListAdapter.Items.Clear();
+                if (_serviceId >= 0)
+                {
+                    foreach (EdiabasToolActivity.SgFuncInfo funcInfo in _sgFuncInfoList)
+                    {
+                        if (funcInfo.ServiceList.Contains(_serviceId))
+                        {
+                            string name = funcInfo.Arg + " (" + funcInfo.Id + ")";
+                            _argsListAdapter.Items.Add(new TableResultItem(name, funcInfo.Info, funcInfo, true, false));
+                        }
+                    }
+                }
+
+                _argsListAdapter.NotifyDataSetChanged();
+
             }
             catch (Exception)
             {
