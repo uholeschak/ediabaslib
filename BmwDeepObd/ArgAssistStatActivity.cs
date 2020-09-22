@@ -194,7 +194,7 @@ namespace BmwDeepObd
                 _argsListAdapter.Items.Clear();
                 if (_serviceId >= 0)
                 {
-                    foreach (EdiabasToolActivity.SgFuncInfo funcInfo in _sgFuncInfoList)
+                    foreach (EdiabasToolActivity.SgFuncInfo funcInfo in _sgFuncInfoList.OrderBy(x => argTypeId ? x.Id : x.Arg))
                     {
                         if (funcInfo.ServiceList.Contains(_serviceId))
                         {
