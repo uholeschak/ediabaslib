@@ -17,7 +17,7 @@ namespace BmwDeepObd
     {
         public class InstanceData
         {
-            public bool Dummy { get; set; }
+            public string Arguments { get; set; }
         }
 
         // Intent extra
@@ -27,12 +27,12 @@ namespace BmwDeepObd
         public static List<EdiabasToolActivity.SgFuncInfo> IntentSgFuncInfo { get; set; }
 
         private InstanceData _instanceData = new InstanceData();
+        private bool _activityRecreated;
         private InputMethodManager _imm;
         private View _contentView;
         private ActivityCommon _activityCommon;
 
         private int _serviceId;
-        private string _defaultArguments;
         private RadioButton _radioButtonArgTypeArg;
         private RadioButton _radioButtonArgTypeId;
         private ListView _listViewArgs;
@@ -44,8 +44,10 @@ namespace BmwDeepObd
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
             _allowTitleHiding = false;
+
             if (savedInstanceState != null)
             {
+                _activityRecreated = true;
                 _instanceData = GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
             }
 
@@ -66,7 +68,10 @@ namespace BmwDeepObd
             }
 
             _serviceId = Intent.GetIntExtra(ExtraServiceId, -1);
-            _defaultArguments = Intent.GetStringExtra(ExtraArguments);
+            if (!_activityRecreated && _instanceData != null)
+            {
+                _instanceData.Arguments = Intent.GetStringExtra(ExtraArguments);
+            }
 
             _activityCommon = new ActivityCommon(this);
 
@@ -94,6 +99,7 @@ namespace BmwDeepObd
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
+            _instanceData.Arguments = GetArgString();
             StoreInstanceState(outState, _instanceData);
             base.OnSaveInstanceState(outState);
         }
@@ -152,9 +158,9 @@ namespace BmwDeepObd
             {
                 List<string> selectList = null;
                 string argType = string.Empty;
-                if (!string.IsNullOrEmpty(_defaultArguments))
+                if (!string.IsNullOrEmpty(_instanceData.Arguments))
                 {
-                    string[] argArray = _defaultArguments.Split(";");
+                    string[] argArray = _instanceData.Arguments.Split(";");
                     if (argArray.Length > 0)
                     {
                         argType = argArray[0].Trim();
@@ -221,7 +227,7 @@ namespace BmwDeepObd
             }
         }
 
-        private bool UpdateResult()
+        private string GetArgString()
         {
             try
             {
@@ -242,8 +248,20 @@ namespace BmwDeepObd
                     }
                 }
 
+                return sb.ToString();
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
+        private bool UpdateResult()
+        {
+            try
+            {
                 Intent intent = new Intent();
-                intent.PutExtra(ExtraArguments, sb.ToString());
+                intent.PutExtra(ExtraArguments, GetArgString());
                 SetResult(Android.App.Result.Ok, intent);
 
                 return true;
