@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Android.Content;
 using Android.OS;
 using Android.Views;
@@ -230,9 +231,19 @@ namespace BmwDeepObd
                     argType = EdiabasToolActivity.ArgTypeID;
                 }
 
-                string arguments = argType;
+                StringBuilder sb = new StringBuilder();
+                sb.Append(argType);
+                foreach (EdiabasToolActivity.ExtraInfo extraInfo in _argsListAdapter.Items)
+                {
+                    if (extraInfo.Selected)
+                    {
+                        sb.Append(";");
+                        sb.Append(extraInfo.Name);
+                    }
+                }
+
                 Intent intent = new Intent();
-                intent.PutExtra(ExtraArguments, arguments);
+                intent.PutExtra(ExtraArguments, sb.ToString());
                 SetResult(Android.App.Result.Ok, intent);
 
                 return true;
