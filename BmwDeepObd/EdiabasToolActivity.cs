@@ -35,7 +35,7 @@ namespace BmwDeepObd
             RequestArgAssisStat,
         }
 
-        private class ExtraInfo
+        public class ExtraInfo
         {
             public ExtraInfo(string name, string type, List<string> commentList)
             {
@@ -2814,7 +2814,7 @@ namespace BmwDeepObd
             }
         }
 
-        private class ResultSelectListAdapter : BaseAdapter<ExtraInfo>
+        public class ResultSelectListAdapter : BaseAdapter<ExtraInfo>
         {
             private readonly List<ExtraInfo> _items;
             public List<ExtraInfo> Items => _items;
