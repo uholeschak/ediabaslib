@@ -34,7 +34,7 @@ namespace BmwDeepObd
         private RadioButton _radioButtonArgTypeArg;
         private RadioButton _radioButtonArgTypeId;
         private ListView _listViewArgs;
-        private ResultListAdapter _argsListAdapter;
+        private EdiabasToolActivity.ResultSelectListAdapter _argsListAdapter;
         private List<EdiabasToolActivity.SgFuncInfo> _sgFuncInfoList;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -74,7 +74,7 @@ namespace BmwDeepObd
             _radioButtonArgTypeId = FindViewById<RadioButton>(Resource.Id.radioButtonArgTypeId);
 
             _listViewArgs = FindViewById<ListView>(Resource.Id.argList);
-            _argsListAdapter = new ResultListAdapter(this);
+            _argsListAdapter = new EdiabasToolActivity.ResultSelectListAdapter(this);
             _listViewArgs.Adapter = _argsListAdapter;
             _listViewArgs.SetOnTouchListener(this);
 
@@ -168,7 +168,9 @@ namespace BmwDeepObd
                         if (funcInfo.ServiceList.Contains(_serviceId))
                         {
                             string name = funcInfo.Arg + " (" + funcInfo.Id + ")";
-                            _argsListAdapter.Items.Add(new TableResultItem(name, funcInfo.Info, funcInfo, true, false));
+                            EdiabasToolActivity.ExtraInfo extraInfo = new EdiabasToolActivity.ExtraInfo(name, string.Empty, new List<string> { funcInfo.Info });
+                            extraInfo.Selected = true;
+                            _argsListAdapter.Items.Add(extraInfo);
                         }
                     }
                 }
