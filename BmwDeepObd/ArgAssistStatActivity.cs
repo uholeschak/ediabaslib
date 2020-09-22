@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Android.Content;
 using Android.OS;
 using Android.Views;
@@ -71,7 +72,16 @@ namespace BmwDeepObd
             _sgFuncInfoList = IntentSgFuncInfo;
 
             _radioButtonArgTypeArg = FindViewById<RadioButton>(Resource.Id.radioButtonArgTypeArg);
+            _radioButtonArgTypeArg.CheckedChange += (sender, args) =>
+            {
+                UpdateArgList();
+            };
+
             _radioButtonArgTypeId = FindViewById<RadioButton>(Resource.Id.radioButtonArgTypeId);
+            _radioButtonArgTypeId.CheckedChange += (sender, args) =>
+            {
+                UpdateArgList();
+            };
 
             _listViewArgs = FindViewById<ListView>(Resource.Id.argList);
             _argsListAdapter = new EdiabasToolActivity.ResultSelectListAdapter(this);
@@ -139,6 +149,7 @@ namespace BmwDeepObd
 
             try
             {
+                List<string> selectList = null;
                 string argType = string.Empty;
                 if (!string.IsNullOrEmpty(_defaultArguments))
                 {
@@ -146,6 +157,12 @@ namespace BmwDeepObd
                     if (argArray.Length > 0)
                     {
                         argType = argArray[0].Trim();
+                    }
+
+                    if (argArray.Length > 0)
+                    {
+                        selectList = argArray.ToList();
+                        selectList.RemoveAt(0);
                     }
                 }
 
@@ -160,6 +177,20 @@ namespace BmwDeepObd
                         break;
                 }
 
+                UpdateArgList(selectList);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        private void UpdateArgList(List<string> selectList = null)
+        {
+            try
+            {
+                bool argTypeId = _radioButtonArgTypeId.Checked;
+
                 _argsListAdapter.Items.Clear();
                 if (_serviceId >= 0)
                 {
@@ -167,16 +198,21 @@ namespace BmwDeepObd
                     {
                         if (funcInfo.ServiceList.Contains(_serviceId))
                         {
-                            string name = funcInfo.Arg + " (" + funcInfo.Id + ")";
+                            string name = argTypeId ? funcInfo.Id : funcInfo.Arg;
                             EdiabasToolActivity.ExtraInfo extraInfo = new EdiabasToolActivity.ExtraInfo(name, string.Empty, new List<string> { funcInfo.Info });
-                            extraInfo.Selected = true;
+                            if (selectList != null)
+                            {
+                                if (selectList.Contains(name))
+                                {
+                                    extraInfo.Selected = true;
+                                }
+                            }
                             _argsListAdapter.Items.Add(extraInfo);
                         }
                     }
                 }
 
                 _argsListAdapter.NotifyDataSetChanged();
-
             }
             catch (Exception)
             {
