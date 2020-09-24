@@ -2823,6 +2823,9 @@ namespace BmwDeepObd
 
         public class ResultSelectListAdapter : BaseAdapter<ExtraInfo>
         {
+            public delegate void CheckChangedEventHandler(ExtraInfo extraInfo);
+            public event CheckChangedEventHandler CheckChanged;
+
             private readonly List<ExtraInfo> _items;
             public List<ExtraInfo> Items => _items;
             private readonly Android.App.Activity _context;
@@ -2892,6 +2895,7 @@ namespace BmwDeepObd
                     if (tagInfo.Info.Selected != args.IsChecked)
                     {
                         tagInfo.Info.Selected = args.IsChecked;
+                        CheckChanged?.Invoke(tagInfo.Info);
                         NotifyDataSetChanged();
                     }
                 }
