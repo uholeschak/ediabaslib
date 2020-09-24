@@ -50,7 +50,6 @@ namespace BmwDeepObd
         {
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
-            _allowTitleHiding = false;
 
             if (savedInstanceState != null)
             {
