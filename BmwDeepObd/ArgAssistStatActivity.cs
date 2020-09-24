@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Android.Content;
 using Android.OS;
+using Android.Support.V7.App;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
@@ -22,7 +23,9 @@ namespace BmwDeepObd
 
         // Intent extra
         public const string ExtraServiceId = "service_id";
+        public const string ExtraOffline = "offline";
         public const string ExtraArguments = "arguments";
+        public const string ExtraExecute = "execute";
 
         public static List<EdiabasToolActivity.SgFuncInfo> IntentSgFuncInfo { get; set; }
 
@@ -30,9 +33,13 @@ namespace BmwDeepObd
         private bool _activityRecreated;
         private InputMethodManager _imm;
         private View _contentView;
+        private View _barView;
         private ActivityCommon _activityCommon;
 
         private int _serviceId;
+        private bool _offline;
+        private Button _buttonApply;
+        private Button _buttonExecute;
         private RadioButton _radioButtonArgTypeArg;
         private RadioButton _radioButtonArgTypeId;
         private ListView _listViewArgs;
@@ -54,10 +61,20 @@ namespace BmwDeepObd
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetDisplayShowCustomEnabled(true);
             SetContentView(Resource.Layout.arg_assist_status);
 
             _imm = (InputMethodManager)GetSystemService(InputMethodService);
             _contentView = FindViewById<View>(Android.Resource.Id.Content);
+
+            _barView = LayoutInflater.Inflate(Resource.Layout.bar_arg_assist, null);
+            ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
+                ViewGroup.LayoutParams.MatchParent,
+                ViewGroup.LayoutParams.WrapContent);
+            barLayoutParams.Gravity = barLayoutParams.Gravity &
+                                      (int)(~(GravityFlags.HorizontalGravityMask | GravityFlags.VerticalGravityMask)) |
+                                      (int)(GravityFlags.Left | GravityFlags.CenterVertical);
+            SupportActionBar.SetCustomView(_barView, barLayoutParams);
 
             SetResult(Android.App.Result.Canceled);
 
@@ -68,6 +85,7 @@ namespace BmwDeepObd
             }
 
             _serviceId = Intent.GetIntExtra(ExtraServiceId, -1);
+            _offline = Intent.GetBooleanExtra(ExtraOffline, false);
             if (!_activityRecreated && _instanceData != null)
             {
                 _instanceData.Arguments = Intent.GetStringExtra(ExtraArguments);
@@ -76,6 +94,27 @@ namespace BmwDeepObd
             _activityCommon = new ActivityCommon(this);
 
             _sgFuncInfoList = IntentSgFuncInfo;
+
+            _buttonApply = _barView.FindViewById<Button>(Resource.Id.buttonApply);
+            _buttonApply.SetOnTouchListener(this);
+            _buttonApply.Click += (sender, args) =>
+            {
+                if (ArgsSelected() && UpdateResult())
+                {
+                    Finish();
+                }
+            };
+
+            _buttonExecute = _barView.FindViewById<Button>(Resource.Id.buttonExecute);
+            _buttonExecute.SetOnTouchListener(this);
+            _buttonExecute.Enabled = !_offline;
+            _buttonExecute.Click += (sender, args) =>
+            {
+                if (ArgsSelected() && UpdateResult(true))
+                {
+                    Finish();
+                }
+            };
 
             _radioButtonArgTypeArg = FindViewById<RadioButton>(Resource.Id.radioButtonArgTypeArg);
             _radioButtonArgTypeArg.CheckedChange += (sender, args) =>
@@ -113,7 +152,10 @@ namespace BmwDeepObd
 
         public override void OnBackPressed()
         {
-            UpdateResult();
+            if (ArgsSelected())
+            {
+                UpdateResult();
+            }
             base.OnBackPressed();
         }
 
@@ -122,7 +164,7 @@ namespace BmwDeepObd
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
-                    if (UpdateResult())
+                    if (ArgsSelected() && UpdateResult())
                     {
                         Finish();
                     }
@@ -227,6 +269,26 @@ namespace BmwDeepObd
             }
         }
 
+        private bool ArgsSelected()
+        {
+            try
+            {
+                foreach (EdiabasToolActivity.ExtraInfo extraInfo in _argsListAdapter.Items)
+                {
+                    if (extraInfo.Selected)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private string GetArgString()
         {
             try
@@ -256,12 +318,13 @@ namespace BmwDeepObd
             }
         }
 
-        private bool UpdateResult()
+        private bool UpdateResult(bool execute = false)
         {
             try
             {
                 Intent intent = new Intent();
                 intent.PutExtra(ExtraArguments, GetArgString());
+                intent.PutExtra(ExtraExecute, execute);
                 SetResult(Android.App.Result.Ok, intent);
 
                 return true;

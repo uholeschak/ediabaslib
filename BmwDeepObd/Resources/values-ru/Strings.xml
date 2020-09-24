@@ -16,6 +16,9 @@
   <string name="button_copy">Копировать</string>
   <string name="button_accept">Принять</string>
   <string name="button_decline">Отклонить</string>
+  <!--Translate-->
+  <string name="button_apply">Перенимать</string>
+  <string name="button_execute">Выполнить</string>
   <string name="button_donate">Пожертвовать</string>
   <string name="button_skip">Пропустить</string>
   <string name="button_hide">Скрыть</string>

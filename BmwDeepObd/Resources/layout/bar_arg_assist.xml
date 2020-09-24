@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <Button
+        android:id="@+id/buttonApply"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/button_apply"
+        android:layout_gravity="center"
+        android:layout_weight="1" />
+    <Button
+        android:id="@+id/buttonExecute"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/button_execute"
+        android:layout_gravity="center"
+        android:layout_weight="1" />
+</LinearLayout>

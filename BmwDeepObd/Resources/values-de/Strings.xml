@@ -16,6 +16,8 @@
   <string name="button_copy">Kopieren</string>
   <string name="button_accept">Akzeptieren</string>
   <string name="button_decline">Ablehnen</string>
+  <string name="button_apply">Übernehmen</string>
+  <string name="button_execute">Ausführen</string>
   <string name="button_donate">Spenden</string>
   <string name="button_skip">Überspringen</string>
   <string name="button_hide">Verbergen</string>

@@ -536,7 +536,13 @@ namespace BmwDeepObd
                     ArgAssistStatActivity.IntentSgFuncInfo = null;
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
+                        _checkBoxBinArgs.Checked = false;
                         _editTextArgs.Text = data.Extras.GetString(ArgAssistStatActivity.ExtraArguments, "");
+                        bool execute = data.Extras.GetBoolean(ArgAssistStatActivity.ExtraExecute, false);
+                        if (!_instanceData.Offline && !string.IsNullOrEmpty(_editTextArgs.Text) && execute)
+                        {
+                            ExecuteSelectedJob(false);
+                        }
                     }
 
                     UpdateOptionsMenu();
@@ -1207,6 +1213,7 @@ namespace BmwDeepObd
                     string arguments = _editTextArgs.Enabled ? _editTextArgs.Text : string.Empty;
                     Intent serverIntent = new Intent(this, typeof(ArgAssistStatActivity));
                     serverIntent.PutExtra(ArgAssistStatActivity.ExtraServiceId, serviceId);
+                    serverIntent.PutExtra(ArgAssistStatActivity.ExtraOffline, _instanceData.Offline);
                     serverIntent.PutExtra(ArgAssistStatActivity.ExtraArguments, arguments);
                     StartActivityForResult(serverIntent, (int)ActivityRequest.RequestArgAssisStat);
                 }
