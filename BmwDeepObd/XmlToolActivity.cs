@@ -662,7 +662,6 @@ namespace BmwDeepObd
             ListView listViewEcu = FindViewById<ListView>(Resource.Id.listEcu);
             _ecuListAdapter = new EcuListAdapter(this);
             _ecuListAdapter.CheckChanged += EcuCheckChanged;
-
             listViewEcu.Adapter = _ecuListAdapter;
             listViewEcu.ItemClick += (sender, args) =>
             {

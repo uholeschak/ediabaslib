@@ -381,6 +381,7 @@ namespace BmwDeepObd
 
             _spinnerJobs = FindViewById<Spinner>(Resource.Id.spinnerJobs);
             _spinnerJobsAdapter = new JobListAdapter(this);
+            _spinnerJobsAdapter.CheckChanged += JobCheckChanged;
             _spinnerJobs.Adapter = _spinnerJobsAdapter;
             _spinnerJobs.SetOnTouchListener(this);
             _spinnerJobs.ItemSelected += (sender, args) =>
@@ -2203,6 +2204,9 @@ namespace BmwDeepObd
 
         private class JobListAdapter : BaseAdapter<JobInfo>
         {
+            public delegate void CheckChangedEventHandler(JobInfo jobInfo);
+            public event CheckChangedEventHandler CheckChanged;
+
             private readonly List<JobInfo> _items;
 
             public List<JobInfo> Items => _items;
@@ -2276,7 +2280,7 @@ namespace BmwDeepObd
                     if (tagInfo.Info.Selected != args.IsChecked)
                     {
                         tagInfo.Info.Selected = args.IsChecked;
-                        _context.JobCheckChanged(tagInfo.Info);
+                        CheckChanged?.Invoke(tagInfo.Info);
                         NotifyDataSetChanged();
                     }
                 }
