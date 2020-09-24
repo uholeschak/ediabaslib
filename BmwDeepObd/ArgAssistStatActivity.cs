@@ -106,7 +106,6 @@ namespace BmwDeepObd
 
             _buttonExecute = _barView.FindViewById<Button>(Resource.Id.buttonExecute);
             _buttonExecute.SetOnTouchListener(this);
-            _buttonExecute.Enabled = !_offline;
             _buttonExecute.Click += (sender, args) =>
             {
                 if (ArgsSelected() && UpdateResult(true))
@@ -129,6 +128,11 @@ namespace BmwDeepObd
 
             _listViewArgs = FindViewById<ListView>(Resource.Id.argList);
             _argsListAdapter = new EdiabasToolActivity.ResultSelectListAdapter(this);
+            _argsListAdapter.CheckChanged += extraInfo =>
+            {
+                UpdateButtonState();
+            };
+
             _listViewArgs.Adapter = _argsListAdapter;
             _listViewArgs.SetOnTouchListener(this);
 
@@ -226,6 +230,7 @@ namespace BmwDeepObd
                 }
 
                 UpdateArgList(selectList);
+                UpdateButtonState();
             }
             catch (Exception)
             {
@@ -266,6 +271,13 @@ namespace BmwDeepObd
             {
                 // ignored
             }
+        }
+
+        private void UpdateButtonState()
+        {
+            bool enable = ArgsSelected();
+            _buttonApply.Enabled = enable;
+            _buttonExecute.Enabled = enable && !_offline;
         }
 
         private bool ArgsSelected()
