@@ -661,6 +661,12 @@ namespace BmwDeepObd
             _textViewCarInfo = FindViewById<TextView>(Resource.Id.textViewCarInfo);
             ListView listViewEcu = FindViewById<ListView>(Resource.Id.listEcu);
             _ecuListAdapter = new EcuListAdapter(this);
+            _ecuListAdapter.CheckChanged += ecuInfo =>
+            {
+                // ReSharper disable once ConvertClosureToMethodGroup
+                EcuCheckChanged(ecuInfo);
+            };
+
             listViewEcu.Adapter = _ecuListAdapter;
             listViewEcu.ItemClick += (sender, args) =>
             {
@@ -8187,6 +8193,9 @@ namespace BmwDeepObd
 
         private class EcuListAdapter : BaseAdapter<EcuInfo>
         {
+            public delegate void CheckChangedEventHandler(EcuInfo ecuInfo);
+            public event CheckChangedEventHandler CheckChanged;
+
             private readonly List<EcuInfo> _items;
             public List<EcuInfo> Items => _items;
             private readonly XmlToolActivity _context;
@@ -8271,7 +8280,7 @@ namespace BmwDeepObd
                     if (tagInfo.Info.Selected != args.IsChecked)
                     {
                         tagInfo.Info.Selected = args.IsChecked;
-                        _context.EcuCheckChanged(tagInfo.Info);
+                        CheckChanged?.Invoke(tagInfo.Info);
                         NotifyDataSetChanged();
                     }
                 }
