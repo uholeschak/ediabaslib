@@ -661,11 +661,7 @@ namespace BmwDeepObd
             _textViewCarInfo = FindViewById<TextView>(Resource.Id.textViewCarInfo);
             ListView listViewEcu = FindViewById<ListView>(Resource.Id.listEcu);
             _ecuListAdapter = new EcuListAdapter(this);
-            _ecuListAdapter.CheckChanged += ecuInfo =>
-            {
-                // ReSharper disable once ConvertClosureToMethodGroup
-                EcuCheckChanged(ecuInfo);
-            };
+            _ecuListAdapter.CheckChanged += EcuCheckChanged;
 
             listViewEcu.Adapter = _ecuListAdapter;
             listViewEcu.ItemClick += (sender, args) =>
