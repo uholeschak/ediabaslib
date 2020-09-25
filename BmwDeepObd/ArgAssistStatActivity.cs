@@ -19,6 +19,7 @@ namespace BmwDeepObd
         public class InstanceData
         {
             public string Arguments { get; set; }
+            public bool ArgsAmountWarnShown { get; set; }
         }
 
         // Intent extra
@@ -98,7 +99,7 @@ namespace BmwDeepObd
             _buttonApply.SetOnTouchListener(this);
             _buttonApply.Click += (sender, args) =>
             {
-                if (ArgsSelected() && UpdateResult())
+                if (ArgsSelectCount() > 0 && UpdateResult())
                 {
                     Finish();
                 }
@@ -108,7 +109,7 @@ namespace BmwDeepObd
             _buttonExecute.SetOnTouchListener(this);
             _buttonExecute.Click += (sender, args) =>
             {
-                if (ArgsSelected() && UpdateResult(true))
+                if (ArgsSelectCount() > 0 && UpdateResult(true))
                 {
                     Finish();
                 }
@@ -131,6 +132,7 @@ namespace BmwDeepObd
             _argsListAdapter.CheckChanged += extraInfo =>
             {
                 UpdateButtonState();
+                CheckArgsAmount();
             };
 
             _listViewArgs.Adapter = _argsListAdapter;
@@ -155,7 +157,7 @@ namespace BmwDeepObd
 
         public override void OnBackPressed()
         {
-            if (ArgsSelected())
+            if (ArgsSelectCount() > 0)
             {
                 UpdateResult();
             }
@@ -167,7 +169,7 @@ namespace BmwDeepObd
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
-                    if (ArgsSelected() && UpdateResult())
+                    if (ArgsSelectCount() > 0 && UpdateResult())
                     {
                         Finish();
                     }
@@ -275,28 +277,41 @@ namespace BmwDeepObd
 
         private void UpdateButtonState()
         {
-            bool enable = ArgsSelected();
+            bool enable = ArgsSelectCount() > 0;
             _buttonApply.Enabled = enable;
             _buttonExecute.Enabled = enable && !_offline;
         }
 
-        private bool ArgsSelected()
+        private void CheckArgsAmount()
+        {
+            if (!_instanceData.ArgsAmountWarnShown)
+            {
+                if (ArgsSelectCount() > 10)
+                {
+                    _instanceData.ArgsAmountWarnShown = true;
+                    _activityCommon.ShowAlert(GetString(Resource.String.arg_assist_amount_limit), Resource.String.alert_title_warning);
+                }
+            }
+        }
+
+        private int ArgsSelectCount()
         {
             try
             {
+                int count = 0;
                 foreach (EdiabasToolActivity.ExtraInfo extraInfo in _argsListAdapter.Items)
                 {
                     if (extraInfo.Selected)
                     {
-                        return true;
+                        count++;
                     }
                 }
 
-                return false;
+                return count;
             }
             catch (Exception)
             {
-                return false;
+                return 0;
             }
         }
 

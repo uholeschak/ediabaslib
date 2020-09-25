@@ -448,6 +448,7 @@
   <string name="arg_assist_stat_type_arg">Argument Name (ARG)</string>
   <string name="arg_assist_stat_type_id">Argument Id (ID)</string>
   <string name="arg_assist_stat_args">Argumente</string>
+  <string name="arg_assist_amount_limit">Abhängig vom ECU-Typ ist die Anzahl der Argumente begrenzt.\nWenn sie zu viele Argumente wählen, werden keine Daten übertragen.</string>
 
   <!-- Ediabas Tool Options Menu -->
   <string name="menu_tool_sel_interface">Schnittstelle</string>
