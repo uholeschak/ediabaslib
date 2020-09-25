@@ -450,6 +450,7 @@
   <string name="arg_assist_stat_type_id">Argument Id (ID)</string>
   <string name="arg_assist_stat_args">Arguments</string>
   <string name="arg_assist_amount_limit">Depending on the ECU type the amount of arguments is limited.\nIf you select too many arguments no data will be transmitted.</string>
+  <string name="arg_assist_apply_args">Do you want to apply the selected arguments?</string>
 
   <!-- Ediabas Tool Options Menu -->
   <string name="menu_tool_sel_interface">Интерфейс</string>

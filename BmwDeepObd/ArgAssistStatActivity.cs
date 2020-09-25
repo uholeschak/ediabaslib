@@ -22,6 +22,8 @@ namespace BmwDeepObd
             public bool ArgsAmountWarnShown { get; set; }
         }
 
+        public delegate void AcceptDelegate(bool accepted);
+
         // Intent extra
         public const string ExtraServiceId = "service_id";
         public const string ExtraOffline = "offline";
@@ -157,19 +159,35 @@ namespace BmwDeepObd
 
         public override void OnBackPressed()
         {
-            if (ArgsSelectCount() > 0)
+            if (!StoreChangesRequest(accepted =>
             {
-                UpdateResult();
+                if (accepted)
+                {
+                    UpdateResult();
+                }
+
+                base.OnBackPressed();
+            }))
+            {
+                base.OnBackPressed();
             }
-            base.OnBackPressed();
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
+            HideKeyboard();
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
-                    if (ArgsSelectCount() > 0 && UpdateResult())
+                    if (!StoreChangesRequest(accepted =>
+                    {
+                        if (accepted)
+                        {
+                            UpdateResult();
+                        }
+
+                        Finish();
+                    }))
                     {
                         Finish();
                     }
@@ -273,6 +291,29 @@ namespace BmwDeepObd
             {
                 // ignored
             }
+        }
+
+        private bool StoreChangesRequest(AcceptDelegate handler)
+        {
+            if (ArgsSelectCount() <= 0)
+            {
+                return false;
+            }
+
+            new AlertDialog.Builder(this)
+                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                {
+                    handler(true);
+                })
+                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                {
+                    handler(false);
+                })
+                .SetMessage(Resource.String.arg_assist_apply_args)
+                .SetTitle(Resource.String.alert_title_question)
+                .Show();
+
+            return true;
         }
 
         private void UpdateButtonState()
