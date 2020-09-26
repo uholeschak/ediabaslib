@@ -272,7 +272,8 @@ namespace BmwDeepObd
                         if (funcInfo.ServiceList.Contains(_serviceId))
                         {
                             string name = argTypeId ? funcInfo.Id : funcInfo.Arg;
-                            EdiabasToolActivity.ExtraInfo extraInfo = new EdiabasToolActivity.ExtraInfo(name, string.Empty, new List<string> { funcInfo.Info });
+                            string info = funcInfo.InfoTrans ?? funcInfo.Info;
+                            EdiabasToolActivity.ExtraInfo extraInfo = new EdiabasToolActivity.ExtraInfo(name, string.Empty, new List<string> { info });
                             if (selectList != null)
                             {
                                 if (selectList.Contains(name))
