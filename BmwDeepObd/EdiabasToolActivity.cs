@@ -90,6 +90,7 @@ namespace BmwDeepObd
                 Id = id;
                 Result = result;
                 Info = info;
+                InfoTrans = null;
                 Unit = unit;
                 NameInfoList = nameInfoList;
                 ServiceList = serviceList;
@@ -104,6 +105,8 @@ namespace BmwDeepObd
             public string Result { get; }
 
             public string Info { get; }
+
+            public string InfoTrans { get; set; }
 
             public string Unit { get; }
 
@@ -1513,6 +1516,7 @@ namespace BmwDeepObd
                                 }
                             }
                         }
+
                         if (jobInfo.Arguments != null)
                         {
                             foreach (ExtraInfo extraInfo in jobInfo.Arguments)
@@ -1529,6 +1533,7 @@ namespace BmwDeepObd
                                 }
                             }
                         }
+
                         if (jobInfo.Results != null)
                         {
                             foreach (ExtraInfo extraInfo in jobInfo.Results)
@@ -1546,10 +1551,23 @@ namespace BmwDeepObd
                             }
                         }
                     }
+
+                    foreach (SgFuncInfo funcInfo in _sgFuncInfoList)
+                    {
+                        if (funcInfo.InfoTrans == null)
+                        {
+                            if (!string.IsNullOrEmpty(funcInfo.Info))
+                            {
+                                stringList.Add(funcInfo.Info);
+                            }
+                        }
+                    }
+
                     if (stringList.Count == 0)
                     {
                         return false;
                     }
+
                     _translateActive = true;
                     if (_activityCommon.TranslateStrings(stringList, transList =>
                     {
@@ -1581,6 +1599,7 @@ namespace BmwDeepObd
                                                 }
                                             }
                                         }
+
                                         if (jobInfo.Arguments != null)
                                         {
                                             foreach (ExtraInfo extraInfo in jobInfo.Arguments)
@@ -1601,6 +1620,7 @@ namespace BmwDeepObd
                                                 }
                                             }
                                         }
+
                                         if (jobInfo.Results != null)
                                         {
                                             foreach (ExtraInfo extraInfo in jobInfo.Results)
@@ -1618,6 +1638,20 @@ namespace BmwDeepObd
                                                             }
                                                         }
                                                     }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    foreach (SgFuncInfo funcInfo in _sgFuncInfoList)
+                                    {
+                                        if (funcInfo.InfoTrans == null)
+                                        {
+                                            if (!string.IsNullOrEmpty(funcInfo.Info))
+                                            {
+                                                if (transIndex < transList.Count)
+                                                {
+                                                    funcInfo.InfoTrans = transList[transIndex++];
                                                 }
                                             }
                                         }
@@ -1658,12 +1692,18 @@ namespace BmwDeepObd
                             extraInfo.CommentListTrans = null;
                         }
                     }
+
                     if (jobInfo.Results != null)
                     {
                         foreach (ExtraInfo extraInfo in jobInfo.Results)
                         {
                             extraInfo.CommentListTrans = null;
                         }
+                    }
+
+                    foreach (SgFuncInfo funcInfo in _sgFuncInfoList)
+                    {
+                        funcInfo.InfoTrans = null;
                     }
                 }
             }
