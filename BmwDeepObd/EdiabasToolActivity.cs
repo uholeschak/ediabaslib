@@ -1045,8 +1045,17 @@ namespace BmwDeepObd
             _spinnerJobs.Enabled = inputsEnabled;
             _editTextArgs.Enabled = inputsEnabled;
             _checkBoxBinArgs.Enabled = inputsEnabled;
-            _buttonArgAssist.Enabled = inputsEnabled;
             _spinnerResults.Enabled = inputsEnabled;
+            if (!inputsEnabled)
+            {
+                _buttonArgAssist.Enabled = false;
+            }
+            else
+            {
+                JobInfo jobInfo = GetSelectedJob();
+                int serviceId = GetArgAssistJobService(jobInfo);
+                _buttonArgAssist.Enabled = GetArgAssistFuncCount(serviceId) > 0;
+            }
 
             HideKeyboard();
         }
@@ -1255,21 +1264,10 @@ namespace BmwDeepObd
             {
                 return;
             }
+
             JobInfo jobInfo = GetSelectedJob();
             int serviceId = GetArgAssistJobService(jobInfo);
-            int funcCount = 0;
-            if (serviceId >= 0)
-            {
-                foreach (SgFuncInfo funcInfo in _sgFuncInfoList)
-                {
-                    if (funcInfo.ServiceList.Contains(serviceId))
-                    {
-                        funcCount++;
-                    }
-                }
-            }
 
-            bool argAssist = funcCount > 0;
             _resultSelectListAdapter.Items.Clear();
             string defaultArgs = string.Empty;
             if (jobInfo != null)
@@ -1296,8 +1294,25 @@ namespace BmwDeepObd
             {
                 _editTextArgs.Text = defaultArgs;
                 _checkBoxBinArgs.Checked = false;
-                _buttonArgAssist.Enabled = argAssist;
+                _buttonArgAssist.Enabled = GetArgAssistFuncCount(serviceId) > 0;
             }
+        }
+
+        private int GetArgAssistFuncCount(int serviceId)
+        {
+            int funcCount = 0;
+            if (serviceId >= 0)
+            {
+                foreach (SgFuncInfo funcInfo in _sgFuncInfoList)
+                {
+                    if (funcInfo.ServiceList.Contains(serviceId))
+                    {
+                        funcCount++;
+                    }
+                }
+            }
+
+            return funcCount;
         }
 
         private void AddArgAssistResults(int serviceId)
