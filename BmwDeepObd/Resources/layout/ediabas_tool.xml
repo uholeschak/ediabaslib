@@ -31,6 +31,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="text|textNoSuggestions"
+        android:imeOptions="actionDone"
         android:maxLines="1" />
     <Button
         android:id="@+id/buttonArgAssist"
