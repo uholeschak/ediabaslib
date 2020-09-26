@@ -204,13 +204,14 @@ namespace BmwDeepObd
 
         public static readonly Tuple<string, int>[] SgFuncJobListList =
         {
-            new Tuple<string, int>("STATUS_LESEN", 0x22),
+            new Tuple<string, int>("STATUS_LESEN", UdsReadDataById),
             new Tuple<string, int>("STATUS_BLOCK_LESEN", 0x2C),
             new Tuple<string, int>("STEUERN", 0x2E),
             new Tuple<string, int>("STEUERN_IO", 0x2F),
             new Tuple<string, int>("STEUERN_ROUTINE", 0x31),
         };
 
+        public const int UdsReadDataById = 0x22;
         public const string TableSgFunctions = @"SG_FUNKTIONEN";
         public const string SgFuncUnitValName = @"0-n";
         public const string SgFuncUnitBitField = @"BITFIELD";
@@ -538,6 +539,8 @@ namespace BmwDeepObd
                     {
                         _checkBoxBinArgs.Checked = false;
                         _editTextArgs.Text = data.Extras.GetString(ArgAssistStatActivity.ExtraArguments, "");
+                        NewJobSelected(true);
+
                         bool execute = data.Extras.GetBoolean(ArgAssistStatActivity.ExtraExecute, false);
                         if (!_instanceData.Offline && !string.IsNullOrEmpty(_editTextArgs.Text) && execute)
                         {
@@ -1207,7 +1210,7 @@ namespace BmwDeepObd
 
             if (serviceId >= 0)
             {
-                if (serviceId == 0x22)
+                if (serviceId == UdsReadDataById)
                 {
                     ArgAssistStatActivity.IntentSgFuncInfo = _sgFuncInfoList;
                     string arguments = _editTextArgs.Enabled ? _editTextArgs.Text : string.Empty;
@@ -1246,7 +1249,7 @@ namespace BmwDeepObd
             return _jobListAdapter.Items[pos];
         }
 
-        private void NewJobSelected()
+        private void NewJobSelected(bool update = false)
         {
             if (_jobList.Count == 0)
             {
@@ -1266,15 +1269,18 @@ namespace BmwDeepObd
                 }
             }
 
-            _resultSelectListAdapter.Items.Clear();
             bool argAssist = funcCount > 0;
+            _resultSelectListAdapter.Items.Clear();
             string defaultArgs = string.Empty;
-            if (jobInfo != null && !argAssist)
+            if (jobInfo != null)
             {
                 foreach (ExtraInfo result in jobInfo.Results.OrderBy(x => x.Name))
                 {
                     _resultSelectListAdapter.Items.Add(result);
                 }
+
+                AddArgAssistResults(serviceId);
+
                 if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                 {
                     if (string.Compare(jobInfo.Name, XmlToolActivity.JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
@@ -1286,9 +1292,62 @@ namespace BmwDeepObd
 
             _resultSelectListAdapter.NotifyDataSetChanged();
             _resultSelectLastItem = 0;
-            _editTextArgs.Text = defaultArgs;
-            _checkBoxBinArgs.Checked = false;
-            _buttonArgAssist.Enabled = argAssist;
+            if (!update)
+            {
+                _editTextArgs.Text = defaultArgs;
+                _checkBoxBinArgs.Checked = false;
+                _buttonArgAssist.Enabled = argAssist;
+            }
+        }
+
+        private void AddArgAssistResults(int serviceId)
+        {
+            if (serviceId >= 0)
+            {
+                string[] argArray = _editTextArgs.Text.Split(";");
+                string argType = string.Empty;
+                List<string> argList = null;
+                switch (serviceId)
+                {
+                    case UdsReadDataById:
+                        if (argArray.Length > 1)
+                        {
+                            argType = argArray[0].Trim();
+                            argList = argArray.ToList();
+                            argList.RemoveAt(0);
+                        }
+                        break;
+                }
+
+                bool argTypeId = argType.ToUpperInvariant() == ArgTypeID;
+                if (argList != null)
+                {
+                    foreach (string arg in argList)
+                    {
+                        SgFuncInfo argFuncInfo = null;
+                        foreach (SgFuncInfo funcInfo in _sgFuncInfoList)
+                        {
+                            if (string.Compare(arg.Trim(), argTypeId ? funcInfo.Id : funcInfo.Arg, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                argFuncInfo = funcInfo;
+                                break;
+                            }
+                        }
+
+                        if (argFuncInfo?.ResInfoList != null)
+                        {
+                            foreach (SgFuncNameInfo funcNameInfo in argFuncInfo.ResInfoList.OrderBy(x => (x as SgFuncBitFieldInfo)?.ResultName ?? string.Empty))
+                            {
+                                if (funcNameInfo is SgFuncBitFieldInfo funcBitFieldInfo)
+                                {
+                                    ExtraInfo extraInfo = new ExtraInfo(funcBitFieldInfo.ResultName, string.Empty, new List<string> { funcBitFieldInfo.Info });
+                                    _resultSelectListAdapter.Items.Add(extraInfo);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private int GetArgAssistJobService(JobInfo jobInfo)
