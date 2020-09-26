@@ -327,6 +327,7 @@ namespace BmwDeepObd
 
             _editTextArgs = FindViewById<EditText>(Resource.Id.editTextArgs);
             _editTextArgs.SetOnTouchListener(this);
+            _editTextArgs.EditorAction += TextEditorAction;
 
             _checkBoxBinArgs = FindViewById<CheckBox>(Resource.Id.checkBoxBinArgs);
             _checkBoxBinArgs.SetOnTouchListener(this);
@@ -937,6 +938,27 @@ namespace BmwDeepObd
             _jobThread = null;
             _runContinuous = false;
             return false;
+        }
+
+        private void TextEditorAction(object sender, TextView.EditorActionEventArgs e)
+        {
+            switch (e.ActionId)
+            {
+                case ImeAction.Go:
+                case ImeAction.Send:
+                case ImeAction.Next:
+                case ImeAction.Done:
+                case ImeAction.Previous:
+                    HideKeyboard();
+                    if (sender == _editTextArgs)
+                    {
+                        if (_buttonArgAssist.Enabled)
+                        {
+                            NewJobSelected(true);
+                        }
+                    }
+                    break;
+            }
         }
 
         private void HideKeyboard()
