@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+    <TextView
+        android:id="@+id/textViewArgTypeTitle"
+        android:text="@string/arg_assist_stat_arg_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/TextViewInnerCaption" />
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RadioButton
+          android:id="@+id/radioButtonArgTypeArg"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/arg_assist_stat_type_arg" />
+        <RadioButton
+          android:id="@+id/radioButtonArgTypeId"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/arg_assist_stat_type_id" />
+    </RadioGroup>
+</LinearLayout>

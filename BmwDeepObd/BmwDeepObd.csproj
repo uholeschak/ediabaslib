@@ -250,6 +250,7 @@
     </Compile>
     <Compile Include="ActivityCommon.cs" />
     <Compile Include="ArgAssistBaseActivity.cs" />
+    <Compile Include="ArgAssistControlActivity.cs" />
     <Compile Include="ArgAssistStatActivity.cs" />
     <Compile Include="BaseActivity.cs" />
     <Compile Include="BmwActuatorActivity.cs" />
@@ -692,6 +693,12 @@
     <AndroidResource Include="Resources\layout\bar_arg_assist.xml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>AndroidResource</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\arg_assist_control.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
