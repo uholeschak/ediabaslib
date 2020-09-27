@@ -1254,33 +1254,32 @@ namespace BmwDeepObd
 
             if (serviceId >= 0)
             {
+                Intent serverIntent;
+                ActivityRequest activityRequest;
                 switch ((UdsServiceId) serviceId)
                 {
                     case UdsServiceId.ReadDataById:
                     case UdsServiceId.DynamicallyDefineId:
                     {
-                        ArgAssistBaseActivity.IntentSgFuncInfo = _sgFuncInfoList;
-                        string arguments = _editTextArgs.Enabled ? _editTextArgs.Text : string.Empty;
-                        Intent serverIntent = new Intent(this, typeof(ArgAssistStatActivity));
-                        serverIntent.PutExtra(ArgAssistBaseActivity.ExtraServiceId, serviceId);
-                        serverIntent.PutExtra(ArgAssistBaseActivity.ExtraOffline, _instanceData.Offline);
-                        serverIntent.PutExtra(ArgAssistBaseActivity.ExtraArguments, arguments);
-                        StartActivityForResult(serverIntent, (int)ActivityRequest.RequestArgAssistStat);
+                        serverIntent = new Intent(this, typeof(ArgAssistStatActivity));
+                        activityRequest = ActivityRequest.RequestArgAssistStat;
                         break;
                     }
 
                     default:
                     {
-                        ArgAssistBaseActivity.IntentSgFuncInfo = _sgFuncInfoList;
-                        string arguments = _editTextArgs.Enabled ? _editTextArgs.Text : string.Empty;
-                        Intent serverIntent = new Intent(this, typeof(ArgAssistControlActivity));
-                        serverIntent.PutExtra(ArgAssistBaseActivity.ExtraServiceId, serviceId);
-                        serverIntent.PutExtra(ArgAssistBaseActivity.ExtraOffline, _instanceData.Offline);
-                        serverIntent.PutExtra(ArgAssistBaseActivity.ExtraArguments, arguments);
-                        StartActivityForResult(serverIntent, (int)ActivityRequest.RequestArgAssistControl);
+                        serverIntent = new Intent(this, typeof(ArgAssistControlActivity));
+                        activityRequest = ActivityRequest.RequestArgAssistControl;
                         break;
                     }
                 }
+
+                ArgAssistBaseActivity.IntentSgFuncInfo = _sgFuncInfoList;
+                string arguments = _editTextArgs.Enabled ? _editTextArgs.Text : string.Empty;
+                serverIntent.PutExtra(ArgAssistBaseActivity.ExtraServiceId, serviceId);
+                serverIntent.PutExtra(ArgAssistBaseActivity.ExtraOffline, _instanceData.Offline);
+                serverIntent.PutExtra(ArgAssistBaseActivity.ExtraArguments, arguments);
+                StartActivityForResult(serverIntent, (int)activityRequest);
             }
         }
 
