@@ -6,8 +6,8 @@
     android:focusable="true"
     android:focusableInTouchMode="true">
     <TextView
+        android:id="@+id/textViewArgTypeTitle"
         android:text="@string/arg_assist_stat_arg_type"
-        android:id="@+id/textViewArgTypeCaption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/TextViewInnerCaption" />
@@ -26,9 +26,30 @@
           android:layout_height="wrap_content"
           android:text="@string/arg_assist_stat_type_id" />
     </RadioGroup>
+    <LinearLayout
+        android:id="@+id/layoutBlockNumber"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/textViewBlockNumberTitle"
+            android:text="@string/arg_assist_stat_block_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextViewInnerCaption" />
+        <android.widget.Spinner
+            android:id="@+id/spinnerBlockNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <CheckBox
+            android:id="@+id/checkBoxDefineBlockNew"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/arg_assist_stat_define_new" />
+    </LinearLayout>
     <TextView
         android:text="@string/arg_assist_stat_args"
-        android:id="@+id/textViewArgListCaption"
+        android:id="@+id/textViewArgListTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/TextViewInnerCaption" />

@@ -449,6 +449,8 @@
   <string name="arg_assist_stat_type_arg">Argument name (ARG)</string>
   <string name="arg_assist_stat_type_id">Argument Id (ID)</string>
   <string name="arg_assist_stat_args">Arguments</string>
+  <string name="arg_assist_stat_block_number">Block number</string>
+  <string name="arg_assist_stat_define_new">Define block new</string>
   <string name="arg_assist_amount_limit">Depending on the ECU type the amount of arguments is limited.\nIf you select too many arguments no data will be transmitted.</string>
   <string name="arg_assist_apply_args">Do you want to apply the selected arguments?</string>
 
