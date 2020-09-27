@@ -450,6 +450,7 @@
   <string name="arg_assist_stat_args">Argumente</string>
   <string name="arg_assist_stat_block_number">Block Nummer</string>
   <string name="arg_assist_stat_define_new">Block neu definieren</string>
+  <string name="arg_assist_control_arg">Argument</string>
   <string name="arg_assist_amount_limit">Abhängig vom ECU-Typ ist die Anzahl der Argumente begrenzt.\nWenn sie zu viele Argumente wählen, werden keine Daten übertragen.</string>
   <string name="arg_assist_apply_args">Wollen Sie die gewählten Argumente übernehmen?</string>
 

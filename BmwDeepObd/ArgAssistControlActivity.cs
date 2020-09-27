@@ -26,6 +26,9 @@ namespace BmwDeepObd
         private InstanceData _instanceData = new InstanceData();
         protected bool _activityRecreated;
 
+        private Spinner _spinnerArgument;
+        private EdiabasToolActivity.ResultSelectListAdapter _spinnerArgumentAdapter;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -43,6 +46,11 @@ namespace BmwDeepObd
             SetContentView(Resource.Layout.arg_assist_control);
 
             InitBaseVariables();
+
+            _spinnerArgument = FindViewById<Spinner>(Resource.Id.spinnerArgument);
+            _spinnerArgumentAdapter = new EdiabasToolActivity.ResultSelectListAdapter(this);
+            _spinnerArgument.Adapter = _spinnerArgumentAdapter;
+            _spinnerArgument.SetOnTouchListener(this);
 
             if (!_activityRecreated && _instanceData != null)
             {
@@ -133,7 +141,7 @@ namespace BmwDeepObd
 
             try
             {
-                List<string> selectList = null;
+                string selectArg = null;
                 string argType = string.Empty;
                 if (!string.IsNullOrEmpty(_instanceData.Arguments))
                 {
@@ -141,8 +149,11 @@ namespace BmwDeepObd
                     if (argArray.Length > 0)
                     {
                         argType = argArray[0].Trim();
-                        selectList = argArray.ToList();
-                        selectList.RemoveAt(0);
+                    }
+
+                    if (argArray.Length > 1)
+                    {
+                        selectArg = argArray[1].Trim();
                     }
                 }
 
@@ -157,7 +168,7 @@ namespace BmwDeepObd
                         break;
                 }
 
-                UpdateArgList(selectList);
+                UpdateArgList(selectArg);
                 UpdateButtonState();
             }
             catch (Exception)
@@ -166,11 +177,39 @@ namespace BmwDeepObd
             }
         }
 
-        private void UpdateArgList(List<string> selectList = null)
+        private void UpdateArgList(string selectArg = null)
         {
             try
             {
                 bool argTypeId = _radioButtonArgTypeId.Checked;
+
+                int selection = 0;
+                int index = 0;
+                _spinnerArgumentAdapter.Items.Clear();
+                if (_serviceId >= 0)
+                {
+                    foreach (EdiabasToolActivity.SgFuncInfo funcInfo in _sgFuncInfoList.OrderBy(x => argTypeId ? x.Id : x.Arg))
+                    {
+                        if (funcInfo.ServiceList.Contains(_serviceId))
+                        {
+                            string name = argTypeId ? funcInfo.Id : funcInfo.Arg;
+                            string info = funcInfo.InfoTrans ?? funcInfo.Info;
+                            EdiabasToolActivity.ExtraInfo extraInfo = new EdiabasToolActivity.ExtraInfo(name, string.Empty, new List<string> { info });
+                            if (selectArg != null)
+                            {
+                                if (string.Compare(name, selectArg, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    selection = index;
+                                }
+                            }
+                            _spinnerArgumentAdapter.Items.Add(extraInfo);
+                            index++;
+                        }
+                    }
+                }
+
+                _spinnerArgumentAdapter.NotifyDataSetChanged();
+                _spinnerArgument.SetSelection(selection);
             }
             catch (Exception)
             {

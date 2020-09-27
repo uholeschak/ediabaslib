@@ -26,4 +26,14 @@
           android:layout_height="wrap_content"
           android:text="@string/arg_assist_stat_type_id" />
     </RadioGroup>
+    <TextView
+        android:text="@string/arg_assist_control_arg"
+        android:id="@+id/textViewArgListTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/TextViewInnerCaption" />
+    <android.widget.Spinner
+        android:id="@+id/spinnerArgument"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>
