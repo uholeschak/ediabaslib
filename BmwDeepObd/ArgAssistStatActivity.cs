@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Android.Content;
@@ -45,6 +46,10 @@ namespace BmwDeepObd
         private Button _buttonExecute;
         private RadioButton _radioButtonArgTypeArg;
         private RadioButton _radioButtonArgTypeId;
+        private LinearLayout _layoutBlockNumber;
+        private Spinner _spinnerBlockNumber;
+        private StringObjAdapter _spinnerBlockNumberAdapter;
+        private CheckBox _checkBoxDefineBlockNew;
         private ListView _listViewArgs;
         private EdiabasToolActivity.ResultSelectListAdapter _argsListAdapter;
         private List<EdiabasToolActivity.SgFuncInfo> _sgFuncInfoList;
@@ -128,6 +133,22 @@ namespace BmwDeepObd
             {
                 UpdateArgList();
             };
+
+            _layoutBlockNumber = FindViewById<LinearLayout>(Resource.Id.layoutBlockNumber);
+            _layoutBlockNumber.SetOnTouchListener(this);
+            _layoutBlockNumber.Visibility = _serviceId == (int) EdiabasToolActivity.UdsServiceId.DynamicallyDefineId ? ViewStates.Visible : ViewStates.Gone;
+
+            _spinnerBlockNumber = FindViewById<Spinner>(Resource.Id.spinnerBlockNumber);
+            _spinnerBlockNumberAdapter = new StringObjAdapter(this);
+            _spinnerBlockNumber.Adapter = _spinnerBlockNumberAdapter;
+            for (int i = 0; i < 10; i++)
+            {
+                _spinnerBlockNumberAdapter.Items.Add(new StringObjType(string.Format(CultureInfo.InvariantCulture, "{0}", i), i));
+            }
+            _spinnerBlockNumberAdapter.NotifyDataSetChanged();
+
+            _checkBoxDefineBlockNew = FindViewById<CheckBox>(Resource.Id.checkBoxDefineBlockNew);
+            _checkBoxDefineBlockNew.SetOnTouchListener(this);
 
             _listViewArgs = FindViewById<ListView>(Resource.Id.argList);
             _argsListAdapter = new EdiabasToolActivity.ResultSelectListAdapter(this);
