@@ -1252,15 +1252,20 @@ namespace BmwDeepObd
 
             if (serviceId >= 0)
             {
-                if (serviceId == (int) UdsServiceId.ReadDataById)
+                switch ((UdsServiceId) serviceId)
                 {
-                    ArgAssistStatActivity.IntentSgFuncInfo = _sgFuncInfoList;
-                    string arguments = _editTextArgs.Enabled ? _editTextArgs.Text : string.Empty;
-                    Intent serverIntent = new Intent(this, typeof(ArgAssistStatActivity));
-                    serverIntent.PutExtra(ArgAssistStatActivity.ExtraServiceId, serviceId);
-                    serverIntent.PutExtra(ArgAssistStatActivity.ExtraOffline, _instanceData.Offline);
-                    serverIntent.PutExtra(ArgAssistStatActivity.ExtraArguments, arguments);
-                    StartActivityForResult(serverIntent, (int)ActivityRequest.RequestArgAssisStat);
+                    case UdsServiceId.ReadDataById:
+                    case UdsServiceId.DynamicallyDefineId:
+                    {
+                        ArgAssistStatActivity.IntentSgFuncInfo = _sgFuncInfoList;
+                        string arguments = _editTextArgs.Enabled ? _editTextArgs.Text : string.Empty;
+                        Intent serverIntent = new Intent(this, typeof(ArgAssistStatActivity));
+                        serverIntent.PutExtra(ArgAssistStatActivity.ExtraServiceId, serviceId);
+                        serverIntent.PutExtra(ArgAssistStatActivity.ExtraOffline, _instanceData.Offline);
+                        serverIntent.PutExtra(ArgAssistStatActivity.ExtraArguments, arguments);
+                        StartActivityForResult(serverIntent, (int)ActivityRequest.RequestArgAssisStat);
+                        break;
+                    }
                 }
             }
         }
@@ -1355,14 +1360,31 @@ namespace BmwDeepObd
                 string[] argArray = _editTextArgs.Text.Split(";");
                 string argType = string.Empty;
                 List<string> argList = null;
-                switch (serviceId)
+                switch ((UdsServiceId) serviceId)
                 {
-                    case (int) UdsServiceId.ReadDataById:
+                    case UdsServiceId.ReadDataById:
                         if (argArray.Length > 1)
                         {
                             argType = argArray[0].Trim();
                             argList = argArray.ToList();
                             argList.RemoveAt(0);
+                        }
+                        break;
+
+                    case UdsServiceId.DynamicallyDefineId:
+                        if (argArray.Length > 3)
+                        {
+                            argType = argArray[2].Trim();
+                            argList = argArray.ToList();
+                            argList.RemoveRange(0, 3);
+                        }
+                        break;
+
+                    default:
+                        if (argArray.Length > 1)
+                        {
+                            argType = argArray[0].Trim();
+                            argList = new List<string> {argArray[1]};
                         }
                         break;
                 }
