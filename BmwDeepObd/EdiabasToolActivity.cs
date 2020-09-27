@@ -205,16 +205,24 @@ namespace BmwDeepObd
             public bool CommErrorsOccured { get; set; }
         }
 
-        public static readonly Tuple<string, int>[] SgFuncJobListList =
+        public enum UdsServiceId
         {
-            new Tuple<string, int>("STATUS_LESEN", UdsReadDataById),
-            new Tuple<string, int>("STATUS_BLOCK_LESEN", 0x2C),
-            new Tuple<string, int>("STEUERN", 0x2E),
-            new Tuple<string, int>("STEUERN_IO", 0x2F),
-            new Tuple<string, int>("STEUERN_ROUTINE", 0x31),
+            ReadDataById = 0x22,
+            DynamicallyDefineId = 0x2C,
+            WriteDataById = 0x2E,
+            IoControlById = 0x2F,
+            RoutineControl = 0x31,
+        }
+
+        public static readonly Tuple<string, UdsServiceId>[] SgFuncJobListList =
+        {
+            new Tuple<string, UdsServiceId>("STATUS_LESEN", UdsServiceId.ReadDataById),
+            new Tuple<string, UdsServiceId>("STATUS_BLOCK_LESEN", UdsServiceId.DynamicallyDefineId),
+            new Tuple<string, UdsServiceId>("STEUERN", UdsServiceId.WriteDataById),
+            new Tuple<string, UdsServiceId>("STEUERN_IO", UdsServiceId.IoControlById),
+            new Tuple<string, UdsServiceId>("STEUERN_ROUTINE", UdsServiceId.RoutineControl),
         };
 
-        public const int UdsReadDataById = 0x22;
         public const string TableSgFunctions = @"SG_FUNKTIONEN";
         public const string SgFuncUnitValName = @"0-n";
         public const string SgFuncUnitBitField = @"BITFIELD";
@@ -1244,7 +1252,7 @@ namespace BmwDeepObd
 
             if (serviceId >= 0)
             {
-                if (serviceId == UdsReadDataById)
+                if (serviceId == (int) UdsServiceId.ReadDataById)
                 {
                     ArgAssistStatActivity.IntentSgFuncInfo = _sgFuncInfoList;
                     string arguments = _editTextArgs.Enabled ? _editTextArgs.Text : string.Empty;
@@ -1349,7 +1357,7 @@ namespace BmwDeepObd
                 List<string> argList = null;
                 switch (serviceId)
                 {
-                    case UdsReadDataById:
+                    case (int) UdsServiceId.ReadDataById:
                         if (argArray.Length > 1)
                         {
                             argType = argArray[0].Trim();
@@ -1401,11 +1409,11 @@ namespace BmwDeepObd
                 return -1;
             }
 
-            foreach (Tuple<string, int> sgFuncJob in SgFuncJobListList)
+            foreach (Tuple<string, UdsServiceId> sgFuncJob in SgFuncJobListList)
             {
                 if (string.Compare(jobInfo.Name, sgFuncJob.Item1, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    return sgFuncJob.Item2;
+                    return (int) sgFuncJob.Item2;
                 }
             }
 
