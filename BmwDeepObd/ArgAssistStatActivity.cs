@@ -16,7 +16,7 @@ namespace BmwDeepObd
     [Android.App.Activity(Label = "@string/arg_assist_stat_title",
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ConfigurationChanges = ActivityConfigChanges)]
-    public class ArgAssistStatActivity : BaseActivity, View.IOnTouchListener
+    public class ArgAssistStatActivity : ArgAssistBaseActivity, View.IOnTouchListener
     {
         public class InstanceData
         {
@@ -24,41 +24,19 @@ namespace BmwDeepObd
             public bool ArgsAmountWarnShown { get; set; }
         }
 
-        public delegate void AcceptDelegate(bool accepted);
-
-        // Intent extra
-        public const string ExtraServiceId = "service_id";
-        public const string ExtraOffline = "offline";
-        public const string ExtraArguments = "arguments";
-        public const string ExtraExecute = "execute";
-
-        public static List<EdiabasToolActivity.SgFuncInfo> IntentSgFuncInfo { get; set; }
-
         private InstanceData _instanceData = new InstanceData();
-        private bool _activityRecreated;
-        private InputMethodManager _imm;
-        private View _contentView;
-        private View _barView;
-        private ActivityCommon _activityCommon;
-
-        private int _serviceId;
-        private bool _offline;
+        protected bool _activityRecreated;
         private bool _dynamicId;
-        private Button _buttonApply;
-        private Button _buttonExecute;
-        private RadioButton _radioButtonArgTypeArg;
-        private RadioButton _radioButtonArgTypeId;
+
         private LinearLayout _layoutBlockNumber;
         private Spinner _spinnerBlockNumber;
         private StringObjAdapter _spinnerBlockNumberAdapter;
         private CheckBox _checkBoxDefineBlockNew;
         private ListView _listViewArgs;
         private EdiabasToolActivity.ResultSelectListAdapter _argsListAdapter;
-        private List<EdiabasToolActivity.SgFuncInfo> _sgFuncInfoList;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
 
             if (savedInstanceState != null)
@@ -73,40 +51,14 @@ namespace BmwDeepObd
             SupportActionBar.SetDisplayShowCustomEnabled(true);
             SetContentView(Resource.Layout.arg_assist_status);
 
-            _imm = (InputMethodManager)GetSystemService(InputMethodService);
-            _contentView = FindViewById<View>(Android.Resource.Id.Content);
+            InitBaseVariables();
 
-            _barView = LayoutInflater.Inflate(Resource.Layout.bar_arg_assist, null);
-            ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
-                ViewGroup.LayoutParams.MatchParent,
-                ViewGroup.LayoutParams.WrapContent);
-            barLayoutParams.Gravity = barLayoutParams.Gravity &
-                                      (int)(~(GravityFlags.HorizontalGravityMask | GravityFlags.VerticalGravityMask)) |
-                                      (int)(GravityFlags.Left | GravityFlags.CenterVertical);
-            SupportActionBar.SetCustomView(_barView, barLayoutParams);
-
-            SetResult(Android.App.Result.Canceled);
-
-            if (IntentSgFuncInfo == null)
-            {
-                Finish();
-                return;
-            }
-
-            _serviceId = Intent.GetIntExtra(ExtraServiceId, -1);
-            _offline = Intent.GetBooleanExtra(ExtraOffline, false);
             _dynamicId = _serviceId == (int) EdiabasToolActivity.UdsServiceId.DynamicallyDefineId;
             if (!_activityRecreated && _instanceData != null)
             {
                 _instanceData.Arguments = Intent.GetStringExtra(ExtraArguments);
             }
 
-            _activityCommon = new ActivityCommon(this);
-
-            _sgFuncInfoList = IntentSgFuncInfo;
-
-            _buttonApply = _barView.FindViewById<Button>(Resource.Id.buttonApply);
-            _buttonApply.SetOnTouchListener(this);
             _buttonApply.Click += (sender, args) =>
             {
                 if (ArgsSelectCount() > 0 && UpdateResult())
@@ -115,8 +67,6 @@ namespace BmwDeepObd
                 }
             };
 
-            _buttonExecute = _barView.FindViewById<Button>(Resource.Id.buttonExecute);
-            _buttonExecute.SetOnTouchListener(this);
             _buttonExecute.Click += (sender, args) =>
             {
                 if (ArgsSelectCount() > 0 && UpdateResult(true))
@@ -125,13 +75,11 @@ namespace BmwDeepObd
                 }
             };
 
-            _radioButtonArgTypeArg = FindViewById<RadioButton>(Resource.Id.radioButtonArgTypeArg);
             _radioButtonArgTypeArg.CheckedChange += (sender, args) =>
             {
                 UpdateArgList();
             };
 
-            _radioButtonArgTypeId = FindViewById<RadioButton>(Resource.Id.radioButtonArgTypeId);
             _radioButtonArgTypeId.CheckedChange += (sender, args) =>
             {
                 UpdateArgList();
@@ -213,22 +161,6 @@ namespace BmwDeepObd
                     return true;
             }
             return base.OnOptionsItemSelected(item);
-        }
-
-        public bool OnTouch(View v, MotionEvent e)
-        {
-            switch (e.Action)
-            {
-                case MotionEventActions.Down:
-                    HideKeyboard();
-                    break;
-            }
-            return false;
-        }
-
-        private void HideKeyboard()
-        {
-            _imm?.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
         }
 
         private void UpdateDisplay()
