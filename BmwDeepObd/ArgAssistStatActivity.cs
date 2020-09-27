@@ -13,10 +13,10 @@ using EdiabasLib;
 
 namespace BmwDeepObd
 {
-    [Android.App.Activity(Label = "@string/arg_assist_stat_title",
+    [Android.App.Activity(Label = "@string/arg_assist_title",
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ConfigurationChanges = ActivityConfigChanges)]
-    public class ArgAssistStatActivity : ArgAssistBaseActivity, View.IOnTouchListener
+    public class ArgAssistStatActivity : ArgAssistBaseActivity
     {
         public class InstanceData
         {
@@ -115,13 +115,6 @@ namespace BmwDeepObd
             _instanceData.Arguments = GetArgString();
             StoreInstanceState(outState, _instanceData);
             base.OnSaveInstanceState(outState);
-        }
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            _activityCommon?.Dispose();
-            _activityCommon = null;
         }
 
         public override void OnBackPressed()

@@ -32,7 +32,8 @@ namespace BmwDeepObd
             RequestSelectDevice,
             RequestAdapterConfig,
             RequestYandexKey,
-            RequestArgAssisStat,
+            RequestArgAssistStat,
+            RequestArgAssistControl,
         }
 
         public class ExtraInfo
@@ -545,15 +546,16 @@ namespace BmwDeepObd
                     UpdateDisplay();
                     break;
 
-                case ActivityRequest.RequestArgAssisStat:
-                    ArgAssistStatActivity.IntentSgFuncInfo = null;
+                case ActivityRequest.RequestArgAssistStat:
+                case ActivityRequest.RequestArgAssistControl:
+                    ArgAssistBaseActivity.IntentSgFuncInfo = null;
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
                         _checkBoxBinArgs.Checked = false;
-                        _editTextArgs.Text = data.Extras.GetString(ArgAssistStatActivity.ExtraArguments, "");
+                        _editTextArgs.Text = data.Extras.GetString(ArgAssistBaseActivity.ExtraArguments, "");
                         NewJobSelected(true);
 
-                        bool execute = data.Extras.GetBoolean(ArgAssistStatActivity.ExtraExecute, false);
+                        bool execute = data.Extras.GetBoolean(ArgAssistBaseActivity.ExtraExecute, false);
                         if (!_instanceData.Offline && !string.IsNullOrEmpty(_editTextArgs.Text) && execute)
                         {
                             ExecuteSelectedJob(false);
@@ -1257,13 +1259,25 @@ namespace BmwDeepObd
                     case UdsServiceId.ReadDataById:
                     case UdsServiceId.DynamicallyDefineId:
                     {
-                        ArgAssistStatActivity.IntentSgFuncInfo = _sgFuncInfoList;
+                        ArgAssistBaseActivity.IntentSgFuncInfo = _sgFuncInfoList;
                         string arguments = _editTextArgs.Enabled ? _editTextArgs.Text : string.Empty;
                         Intent serverIntent = new Intent(this, typeof(ArgAssistStatActivity));
-                        serverIntent.PutExtra(ArgAssistStatActivity.ExtraServiceId, serviceId);
-                        serverIntent.PutExtra(ArgAssistStatActivity.ExtraOffline, _instanceData.Offline);
-                        serverIntent.PutExtra(ArgAssistStatActivity.ExtraArguments, arguments);
-                        StartActivityForResult(serverIntent, (int)ActivityRequest.RequestArgAssisStat);
+                        serverIntent.PutExtra(ArgAssistBaseActivity.ExtraServiceId, serviceId);
+                        serverIntent.PutExtra(ArgAssistBaseActivity.ExtraOffline, _instanceData.Offline);
+                        serverIntent.PutExtra(ArgAssistBaseActivity.ExtraArguments, arguments);
+                        StartActivityForResult(serverIntent, (int)ActivityRequest.RequestArgAssistStat);
+                        break;
+                    }
+
+                    default:
+                    {
+                        ArgAssistBaseActivity.IntentSgFuncInfo = _sgFuncInfoList;
+                        string arguments = _editTextArgs.Enabled ? _editTextArgs.Text : string.Empty;
+                        Intent serverIntent = new Intent(this, typeof(ArgAssistControlActivity));
+                        serverIntent.PutExtra(ArgAssistBaseActivity.ExtraServiceId, serviceId);
+                        serverIntent.PutExtra(ArgAssistBaseActivity.ExtraOffline, _instanceData.Offline);
+                        serverIntent.PutExtra(ArgAssistBaseActivity.ExtraArguments, arguments);
+                        StartActivityForResult(serverIntent, (int)ActivityRequest.RequestArgAssistControl);
                         break;
                     }
                 }
