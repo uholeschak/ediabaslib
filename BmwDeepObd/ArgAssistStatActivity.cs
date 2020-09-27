@@ -297,6 +297,8 @@ namespace BmwDeepObd
                         {
                             selection = index;
                         }
+
+                        index++;
                     }
                     _spinnerBlockNumberAdapter.NotifyDataSetChanged();
                     _spinnerBlockNumber.SetSelection(selection);
