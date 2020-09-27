@@ -9,6 +9,7 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
+using EdiabasLib;
 
 namespace BmwDeepObd
 {
@@ -42,6 +43,7 @@ namespace BmwDeepObd
 
         private int _serviceId;
         private bool _offline;
+        private bool _dynamicId;
         private Button _buttonApply;
         private Button _buttonExecute;
         private RadioButton _radioButtonArgTypeArg;
@@ -93,6 +95,7 @@ namespace BmwDeepObd
 
             _serviceId = Intent.GetIntExtra(ExtraServiceId, -1);
             _offline = Intent.GetBooleanExtra(ExtraOffline, false);
+            _dynamicId = _serviceId == (int) EdiabasToolActivity.UdsServiceId.DynamicallyDefineId;
             if (!_activityRecreated && _instanceData != null)
             {
                 _instanceData.Arguments = Intent.GetStringExtra(ExtraArguments);
@@ -136,16 +139,11 @@ namespace BmwDeepObd
 
             _layoutBlockNumber = FindViewById<LinearLayout>(Resource.Id.layoutBlockNumber);
             _layoutBlockNumber.SetOnTouchListener(this);
-            _layoutBlockNumber.Visibility = _serviceId == (int) EdiabasToolActivity.UdsServiceId.DynamicallyDefineId ? ViewStates.Visible : ViewStates.Gone;
+            _layoutBlockNumber.Visibility = _dynamicId ? ViewStates.Visible : ViewStates.Gone;
 
             _spinnerBlockNumber = FindViewById<Spinner>(Resource.Id.spinnerBlockNumber);
             _spinnerBlockNumberAdapter = new StringObjAdapter(this);
             _spinnerBlockNumber.Adapter = _spinnerBlockNumberAdapter;
-            for (int i = 0; i < 10; i++)
-            {
-                _spinnerBlockNumberAdapter.Items.Add(new StringObjType(string.Format(CultureInfo.InvariantCulture, "{0}", i), i));
-            }
-            _spinnerBlockNumberAdapter.NotifyDataSetChanged();
 
             _checkBoxDefineBlockNew = FindViewById<CheckBox>(Resource.Id.checkBoxDefineBlockNew);
             _checkBoxDefineBlockNew.SetOnTouchListener(this);
@@ -243,19 +241,31 @@ namespace BmwDeepObd
             try
             {
                 List<string> selectList = null;
+                string blockNumber = string.Empty;
+                string defineBlockNew = string.Empty;
                 string argType = string.Empty;
                 if (!string.IsNullOrEmpty(_instanceData.Arguments))
                 {
                     string[] argArray = _instanceData.Arguments.Split(";");
-                    if (argArray.Length > 0)
+                    if (_dynamicId)
                     {
-                        argType = argArray[0].Trim();
+                        if (argArray.Length > 2)
+                        {
+                            blockNumber = argArray[0].Trim();
+                            defineBlockNew = argArray[1].Trim();
+                            argType = argArray[2].Trim();
+                            selectList = argArray.ToList();
+                            selectList.RemoveRange(0, 3);
+                        }
                     }
-
-                    if (argArray.Length > 0)
+                    else
                     {
-                        selectList = argArray.ToList();
-                        selectList.RemoveAt(0);
+                        if (argArray.Length > 0)
+                        {
+                            argType = argArray[0].Trim();
+                            selectList = argArray.ToList();
+                            selectList.RemoveAt(0);
+                        }
                     }
                 }
 
@@ -268,6 +278,33 @@ namespace BmwDeepObd
                     default:
                         _radioButtonArgTypeArg.Checked = true;
                         break;
+                }
+
+                if (_dynamicId)
+                {
+                    Int64 numberValue = EdiabasNet.StringToValue(blockNumber, out bool valid);
+                    if (!valid)
+                    {
+                        numberValue = 0;
+                    }
+
+                    int selection = 0;
+                    int index = 0;
+                    for (int i = 0; i < 10; i++)
+                    {
+                        _spinnerBlockNumberAdapter.Items.Add(new StringObjType(string.Format(CultureInfo.InvariantCulture, "{0}", i), i));
+                        if (i == numberValue)
+                        {
+                            selection = index;
+                        }
+                    }
+                    _spinnerBlockNumberAdapter.NotifyDataSetChanged();
+                    _spinnerBlockNumber.SetSelection(selection);
+
+                    bool newBlock = string.IsNullOrEmpty(defineBlockNew) ||
+                        string.Compare(defineBlockNew, "JA", StringComparison.OrdinalIgnoreCase) == 0 ||
+                        string.Compare(defineBlockNew, "YES", StringComparison.OrdinalIgnoreCase) == 0;
+                    _checkBoxDefineBlockNew.Checked = newBlock;
                 }
 
                 UpdateArgList(selectList);
@@ -389,6 +426,23 @@ namespace BmwDeepObd
                 }
 
                 StringBuilder sb = new StringBuilder();
+                if (_dynamicId)
+                {
+                    int blockNumber = 0;
+                    int position = _spinnerBlockNumber.SelectedItemPosition;
+                    if (position >= 0 && position < _spinnerBlockNumberAdapter.Items.Count)
+                    {
+                        StringObjType item = _spinnerBlockNumberAdapter.Items[position];
+                        blockNumber = (int) item.Data;
+                    }
+
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", blockNumber));
+                    sb.Append(";");
+
+                    sb.Append(_checkBoxDefineBlockNew.Checked ? "YES" : "NO");
+                    sb.Append(";");
+                }
+
                 sb.Append(argType);
                 foreach (EdiabasToolActivity.ExtraInfo extraInfo in _argsListAdapter.Items)
                 {
