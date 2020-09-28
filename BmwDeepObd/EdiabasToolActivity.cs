@@ -44,6 +44,7 @@ namespace BmwDeepObd
                 Type = type;
                 CommentList = commentList;
                 Selected = false;
+                CheckVisible = true;
             }
 
             public string Name { get; }
@@ -55,6 +56,8 @@ namespace BmwDeepObd
             public List<string> CommentListTrans { get; set; }
 
             public bool Selected { get; set; }
+
+            public bool CheckVisible { get; set; }
         }
 
         private class JobInfo
@@ -3038,6 +3041,7 @@ namespace BmwDeepObd
                 CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxResultSelect);
                 _ignoreCheckEvent = true;
                 checkBoxSelect.Checked = item.Selected;
+                checkBoxSelect.Visibility = item.CheckVisible ? ViewStates.Visible : ViewStates.Gone;
                 _ignoreCheckEvent = false;
 
                 checkBoxSelect.Tag = new TagInfo(item);

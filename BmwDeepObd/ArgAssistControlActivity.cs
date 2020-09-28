@@ -59,7 +59,7 @@ namespace BmwDeepObd
 
             _buttonApply.Click += (sender, args) =>
             {
-                if (UpdateResult())
+                if (ArgsValid() && UpdateResult())
                 {
                     Finish();
                 }
@@ -67,7 +67,7 @@ namespace BmwDeepObd
 
             _buttonExecute.Click += (sender, args) =>
             {
-                if (UpdateResult(true))
+                if (ArgsValid() && UpdateResult(true))
                 {
                     Finish();
                 }
@@ -195,6 +195,9 @@ namespace BmwDeepObd
                             string name = argTypeId ? funcInfo.Id : funcInfo.Arg;
                             string info = funcInfo.InfoTrans ?? funcInfo.Info;
                             EdiabasToolActivity.ExtraInfo extraInfo = new EdiabasToolActivity.ExtraInfo(name, string.Empty, new List<string> { info });
+                            extraInfo.CheckVisible = false;
+                            _spinnerArgumentAdapter.Items.Add(extraInfo);
+
                             if (selectArg != null)
                             {
                                 if (string.Compare(name, selectArg, StringComparison.OrdinalIgnoreCase) == 0)
@@ -202,7 +205,7 @@ namespace BmwDeepObd
                                     selection = index;
                                 }
                             }
-                            _spinnerArgumentAdapter.Items.Add(extraInfo);
+
                             index++;
                         }
                     }
@@ -219,6 +222,11 @@ namespace BmwDeepObd
 
         private bool StoreChangesRequest(AcceptDelegate handler)
         {
+            if (!ArgsValid())
+            {
+                return false;
+            }
+
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
@@ -237,9 +245,27 @@ namespace BmwDeepObd
 
         private void UpdateButtonState()
         {
-            bool enable = true;
+            bool enable = ArgsValid();
             _buttonApply.Enabled = enable;
             _buttonExecute.Enabled = enable && !_offline;
+        }
+
+        private bool ArgsValid()
+        {
+            try
+            {
+                int position = _spinnerArgument.SelectedItemPosition;
+                if (position >= 0 && position < _spinnerArgumentAdapter.Items.Count)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         private string GetArgString()
@@ -254,6 +280,17 @@ namespace BmwDeepObd
 
                 StringBuilder sb = new StringBuilder();
                 sb.Append(argType);
+
+                int position = _spinnerArgument.SelectedItemPosition;
+                if (position >= 0 && position < _spinnerArgumentAdapter.Items.Count)
+                {
+                    EdiabasToolActivity.ExtraInfo item = _spinnerArgumentAdapter.Items[position];
+                    if (!string.IsNullOrEmpty(item.Name))
+                    {
+                        sb.Append(";");
+                        sb.Append(item.Name);
+                    }
+                }
 
                 return sb.ToString();
             }
