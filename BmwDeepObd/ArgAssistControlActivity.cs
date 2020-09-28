@@ -194,8 +194,10 @@ namespace BmwDeepObd
                         {
                             string name = argTypeId ? funcInfo.Id : funcInfo.Arg;
                             string info = funcInfo.InfoTrans ?? funcInfo.Info;
-                            EdiabasToolActivity.ExtraInfo extraInfo = new EdiabasToolActivity.ExtraInfo(name, string.Empty, new List<string> { info });
-                            extraInfo.CheckVisible = false;
+                            EdiabasToolActivity.ExtraInfo extraInfo = new EdiabasToolActivity.ExtraInfo(name, string.Empty, new List<string> { info })
+                            {
+                                CheckVisible = false
+                            };
                             _spinnerArgumentAdapter.Items.Add(extraInfo);
 
                             if (selectArg != null)
