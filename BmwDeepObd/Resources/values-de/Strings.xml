@@ -444,12 +444,20 @@
 
   <!--  Argument Assistant Status -->
   <string name="arg_assist_title">Argument Assistent</string>
-  <string name="arg_assist_stat_arg_type">Argumententyp</string>
-  <string name="arg_assist_stat_type_arg">Argument Name (ARG)</string>
-  <string name="arg_assist_stat_type_id">Argument Id (ID)</string>
-  <string name="arg_assist_stat_args">Argumente</string>
-  <string name="arg_assist_stat_block_number">Block Nummer</string>
-  <string name="arg_assist_stat_define_new">Block neu definieren</string>
+  <string name="arg_assist_arg_type">Argumententyp</string>
+  <string name="arg_assist_type_arg">Argument Name (ARG)</string>
+  <string name="arg_assist_type_id">Argument Id (ID)</string>
+  <string name="arg_assist_control_param">Steuerparameter</string>
+  <string name="arg_assist_str">Routine starten (STR)</string>
+  <string name="arg_assist_stpr">Routine stoppen (STPR)</string>
+  <string name="arg_assist_rrr">Routine Ergebnisse abfragen (RRR)</string>
+  <string name="arg_assist_rctecu">Kontrolle an ECU übergeben (RCTECU)</string>
+  <string name="arg_assist_rtd">Auf Default zurücksetzen (RTD)</string>
+  <string name="arg_assist_fcs">Aktuellen Zustand einfrieren (FCS)</string>
+  <string name="arg_assist_sta">Kurzzeitige Änderung (STA)</string>
+  <string name="arg_assist_args">Argumente</string>
+  <string name="arg_assist_block_number">Block Nummer</string>
+  <string name="arg_assist_define_new">Block neu definieren</string>
   <string name="arg_assist_control_arg">Argument</string>
   <string name="arg_assist_amount_limit">Abhängig vom ECU-Typ ist die Anzahl der Argumente begrenzt.\nWenn sie zu viele Argumente wählen, werden keine Daten übertragen.</string>
   <string name="arg_assist_apply_args">Wollen Sie die gewählten Argumente übernehmen?</string>
