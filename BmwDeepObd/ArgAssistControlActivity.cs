@@ -183,6 +183,7 @@ namespace BmwDeepObd
             {
                 string selectArg = null;
                 string argType = string.Empty;
+                string controlParam = string.Empty;
                 if (!string.IsNullOrEmpty(_instanceData.Arguments))
                 {
                     string[] argArray = _instanceData.Arguments.Split(";");
@@ -195,17 +196,65 @@ namespace BmwDeepObd
                     {
                         selectArg = argArray[1].Trim();
                     }
+
+                    if (_controlRoutine || _controlIo)
+                    {
+                        if (argArray.Length > 2)
+                        {
+                            controlParam = argArray[2].Trim();
+                        }
+                    }
                 }
 
                 switch (argType.ToUpperInvariant())
                 {
-                    case EdiabasToolActivity.ArgTypeID:
+                    case ArgTypeID:
                         _radioButtonArgTypeId.Checked = true;
                         break;
 
                     default:
                         _radioButtonArgTypeArg.Checked = true;
                         break;
+                }
+
+                if (_controlRoutine)
+                {
+                    switch (controlParam.ToUpperInvariant())
+                    {
+                        case "STPR":
+                            _radioButtonStpr.Checked = true;
+                            break;
+
+                        case "RRR":
+                            _radioButtonRrr.Checked = true;
+                            break;
+
+                        default:
+                            _radioButtonStr.Checked = true;
+                            break;
+                    }
+                }
+
+                if (_controlIo)
+                {
+                    switch (controlParam.ToUpperInvariant())
+                    {
+                        case "RTD":
+                            _radioButtonRtd.Checked = true;
+                            break;
+
+                        case "FCS":
+                            _radioButtonFcs.Checked = true;
+                            break;
+
+                        case "STA":
+                            _radioButtonSta.Checked = true;
+                            break;
+
+                        default:
+                            _radioButtonRctEcu.Checked = true;
+                            break;
+                    }
                 }
 
                 UpdateArgList(selectArg);
@@ -314,10 +363,10 @@ namespace BmwDeepObd
         {
             try
             {
-                string argType = EdiabasToolActivity.ArgTypeArg;
+                string argType = ArgTypeArg;
                 if (_radioButtonArgTypeId.Checked)
                 {
-                    argType = EdiabasToolActivity.ArgTypeID;
+                    argType = ArgTypeID;
                 }
 
                 StringBuilder sb = new StringBuilder();
@@ -332,6 +381,48 @@ namespace BmwDeepObd
                         sb.Append(";");
                         sb.Append(item.Name);
                     }
+                }
+
+                string controlParameter = string.Empty;
+                if (_controlRoutine)
+                {
+                    if (_radioButtonStpr.Checked)
+                    {
+                        controlParameter = "STPR";
+                    }
+                    else if (_radioButtonRrr.Checked)
+                    {
+                        controlParameter = "RRR";
+                    }
+                    else
+                    {
+                        controlParameter = "STR";
+                    }
+                }
+                else if (_controlIo)
+                {
+                    if (_radioButtonRtd.Checked)
+                    {
+                        controlParameter = "RTD";
+                    }
+                    else if (_radioButtonFcs.Checked)
+                    {
+                        controlParameter = "FCS";
+                    }
+                    else if (_radioButtonSta.Checked)
+                    {
+                        controlParameter = "STA";
+                    }
+                    else
+                    {
+                        controlParameter = "RCTECU";
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(controlParameter))
+                {
+                    sb.Append(";");
+                    sb.Append(controlParameter);
                 }
 
                 return sb.ToString();

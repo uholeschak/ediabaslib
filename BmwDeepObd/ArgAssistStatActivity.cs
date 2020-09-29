@@ -195,7 +195,7 @@ namespace BmwDeepObd
 
                 switch (argType.ToUpperInvariant())
                 {
-                    case EdiabasToolActivity.ArgTypeID:
+                    case ArgTypeID:
                         _radioButtonArgTypeId.Checked = true;
                         break;
 
@@ -345,10 +345,10 @@ namespace BmwDeepObd
         {
             try
             {
-                string argType = EdiabasToolActivity.ArgTypeArg;
+                string argType = ArgTypeArg;
                 if (_radioButtonArgTypeId.Checked)
                 {
-                    argType = EdiabasToolActivity.ArgTypeID;
+                    argType = ArgTypeID;
                 }
 
                 StringBuilder sb = new StringBuilder();

@@ -231,9 +231,6 @@ namespace BmwDeepObd
         public const string SgFuncUnitValName = @"0-n";
         public const string SgFuncUnitBitField = @"BITFIELD";
 
-        public const string ArgTypeArg = "ARG";
-        public const string ArgTypeID = "ID";
-
         // Intent extra
         public const string ExtraInitDir = "init_dir";
         public const string ExtraAppDataDir = "app_data_dir";
@@ -1405,7 +1402,7 @@ namespace BmwDeepObd
                         break;
                 }
 
-                bool argTypeId = argType.ToUpperInvariant() == ArgTypeID;
+                bool argTypeId = argType.ToUpperInvariant() == ArgAssistBaseActivity.ArgTypeID;
                 if (argList != null)
                 {
                     foreach (string arg in argList)
