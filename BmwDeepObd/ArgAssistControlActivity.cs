@@ -24,10 +24,22 @@ namespace BmwDeepObd
         }
 
         private InstanceData _instanceData = new InstanceData();
-        protected bool _activityRecreated;
+        private bool _activityRecreated;
+        private bool _controlRoutine;
+        private bool _controlIo;
 
         private Spinner _spinnerArgument;
         private EdiabasToolActivity.ResultSelectListAdapter _spinnerArgumentAdapter;
+        private TextView _textViewControlParam;
+        private RadioGroup _radioGroupControlRoutine;
+        private RadioButton _radioButtonStr;
+        private RadioButton _radioButtonStpr;
+        private RadioButton _radioButtonRrr;
+        private RadioGroup _radioGroupControlIo;
+        private RadioButton _radioButtonRctEcu;
+        private RadioButton _radioButtonRtd;
+        private RadioButton _radioButtonFcs;
+        private RadioButton _radioButtonSta;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -47,10 +59,38 @@ namespace BmwDeepObd
 
             InitBaseVariables();
 
+            _controlRoutine = _serviceId == (int)EdiabasToolActivity.UdsServiceId.RoutineControl;
+            _controlIo = _serviceId == (int)EdiabasToolActivity.UdsServiceId.IoControlById;
+
             _spinnerArgument = FindViewById<Spinner>(Resource.Id.spinnerArgument);
             _spinnerArgumentAdapter = new EdiabasToolActivity.ResultSelectListAdapter(this);
             _spinnerArgument.Adapter = _spinnerArgumentAdapter;
             _spinnerArgument.SetOnTouchListener(this);
+
+            _textViewControlParam = FindViewById<TextView>(Resource.Id.textViewControlParam);
+            _textViewControlParam.Visibility = _controlRoutine || _controlIo ? ViewStates.Visible : ViewStates.Gone;
+
+            _radioGroupControlRoutine = FindViewById<RadioGroup>(Resource.Id.radioGroupControlRoutine);
+            _radioGroupControlRoutine.Visibility = _controlRoutine ? ViewStates.Visible : ViewStates.Gone;
+            _radioGroupControlRoutine.SetOnTouchListener(this);
+            _radioButtonStr = FindViewById<RadioButton>(Resource.Id.radioButtonStr);
+            _radioButtonStr.SetOnTouchListener(this);
+            _radioButtonStpr = FindViewById<RadioButton>(Resource.Id.radioButtonStpr);
+            _radioButtonStpr.SetOnTouchListener(this);
+            _radioButtonRrr = FindViewById<RadioButton>(Resource.Id.radioButtonRrr);
+            _radioButtonRrr.SetOnTouchListener(this);
+
+            _radioGroupControlIo = FindViewById<RadioGroup>(Resource.Id.radioGroupControlIo);
+            _radioGroupControlIo.Visibility = _controlIo ? ViewStates.Visible : ViewStates.Gone;
+            _radioGroupControlIo.SetOnTouchListener(this);
+            _radioButtonRctEcu = FindViewById<RadioButton>(Resource.Id.radioButtonRctEcu);
+            _radioButtonRctEcu.SetOnTouchListener(this);
+            _radioButtonRtd = FindViewById<RadioButton>(Resource.Id.radioButtonRtd);
+            _radioButtonRtd.SetOnTouchListener(this);
+            _radioButtonFcs = FindViewById<RadioButton>(Resource.Id.radioButtonFcs);
+            _radioButtonFcs.SetOnTouchListener(this);
+            _radioButtonSta = FindViewById<RadioButton>(Resource.Id.radioButtonSta);
+            _radioButtonSta.SetOnTouchListener(this);
 
             if (!_activityRecreated && _instanceData != null)
             {
