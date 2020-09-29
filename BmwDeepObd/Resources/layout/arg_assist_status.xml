@@ -7,7 +7,7 @@
     android:focusableInTouchMode="true">
     <TextView
         android:id="@+id/textViewArgTypeTitle"
-        android:text="@string/arg_assist_stat_arg_type"
+        android:text="@string/arg_assist_arg_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/TextViewInnerCaption" />
@@ -19,12 +19,12 @@
           android:id="@+id/radioButtonArgTypeArg"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:text="@string/arg_assist_stat_type_arg" />
+          android:text="@string/arg_assist_type_arg" />
         <RadioButton
           android:id="@+id/radioButtonArgTypeId"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:text="@string/arg_assist_stat_type_id" />
+          android:text="@string/arg_assist_type_id" />
     </RadioGroup>
     <LinearLayout
         android:id="@+id/layoutBlockNumber"
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/textViewBlockNumberTitle"
-            android:text="@string/arg_assist_stat_block_number"
+            android:text="@string/arg_assist_block_number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
@@ -45,10 +45,10 @@
             android:id="@+id/checkBoxDefineBlockNew"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/arg_assist_stat_define_new" />
+            android:text="@string/arg_assist_define_new" />
     </LinearLayout>
     <TextView
-        android:text="@string/arg_assist_stat_args"
+        android:text="@string/arg_assist_args"
         android:id="@+id/textViewArgListTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

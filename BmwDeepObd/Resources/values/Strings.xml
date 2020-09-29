@@ -420,12 +420,20 @@
 
   <!--  Argument Assistant -->
   <string name="arg_assist_title">Argument Assistant</string>
-  <string name="arg_assist_stat_arg_type">Argument typ</string>
-  <string name="arg_assist_stat_type_arg">Argument name (ARG)</string>
-  <string name="arg_assist_stat_type_id">Argument Id (ID)</string>
-  <string name="arg_assist_stat_args">Arguments</string>
-  <string name="arg_assist_stat_block_number">Block number</string>
-  <string name="arg_assist_stat_define_new">Define block new</string>
+  <string name="arg_assist_arg_type">Argument typ</string>
+  <string name="arg_assist_type_arg">Argument name (ARG)</string>
+  <string name="arg_assist_type_id">Argument Id (ID)</string>
+  <string name="arg_assist_control_param">Control parameter</string>
+  <string name="arg_assist_str">Start routine (STR)</string>
+  <string name="arg_assist_stpr">Stop routine (STPR)</string>
+  <string name="arg_assist_rrr">Request routine results (RRR)</string>
+  <string name="arg_assist_rctecu">Return control to ECU (RCTECU)</string>
+  <string name="arg_assist_rtd">Reset to default (RTD)</string>
+  <string name="arg_assist_fcs">Freeze current state (FCS)</string>
+  <string name="arg_assist_sta">Short term adjustment (STA)</string>
+  <string name="arg_assist_args">Arguments</string>
+  <string name="arg_assist_block_number">Block number</string>
+  <string name="arg_assist_define_new">Define block new</string>
   <string name="arg_assist_control_arg">Argument</string>
   <string name="arg_assist_amount_limit">Depending on the ECU type the amount of arguments is limited.\nIf you select too many arguments no data will be transmitted.</string>
   <string name="arg_assist_apply_args">Do you want to apply the selected arguments?</string>
