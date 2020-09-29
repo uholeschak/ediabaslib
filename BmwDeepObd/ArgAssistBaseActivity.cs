@@ -80,7 +80,10 @@ namespace BmwDeepObd
             _buttonExecute.SetOnTouchListener(this);
 
             _radioButtonArgTypeArg = FindViewById<RadioButton>(Resource.Id.radioButtonArgTypeArg);
+            _radioButtonArgTypeArg.SetOnTouchListener(this);
+
             _radioButtonArgTypeId = FindViewById<RadioButton>(Resource.Id.radioButtonArgTypeId);
+            _radioButtonArgTypeId.SetOnTouchListener(this);
         }
 
         protected override void OnDestroy()

@@ -24,7 +24,7 @@ namespace BmwDeepObd
         }
 
         private InstanceData _instanceData = new InstanceData();
-        protected bool _activityRecreated;
+        private bool _activityRecreated;
         private bool _dynamicId;
 
         private LinearLayout _layoutBlockNumber;

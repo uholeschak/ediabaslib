@@ -27,6 +27,16 @@
           android:text="@string/arg_assist_type_id" />
     </RadioGroup>
     <TextView
+        android:text="@string/arg_assist_control_arg"
+        android:id="@+id/textViewArgListTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/TextViewInnerCaption" />
+    <android.widget.Spinner
+        android:id="@+id/spinnerArgument"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
         android:id="@+id/textViewControlParam"
         android:text="@string/arg_assist_control_param"
         android:layout_width="match_parent"
@@ -79,14 +89,4 @@
             android:layout_height="wrap_content"
             android:text="@string/arg_assist_sta" />
     </RadioGroup>
-    <TextView
-        android:text="@string/arg_assist_control_arg"
-        android:id="@+id/textViewArgListTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/TextViewInnerCaption" />
-    <android.widget.Spinner
-        android:id="@+id/spinnerArgument"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 </LinearLayout>
