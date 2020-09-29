@@ -17,6 +17,9 @@ namespace BmwDeepObd
     {
         public delegate void AcceptDelegate(bool accepted);
 
+        public const string ArgTypeArg = "ARG";
+        public const string ArgTypeID = "ID";
+
         // Intent extra
         public const string ExtraServiceId = "service_id";
         public const string ExtraOffline = "offline";
