@@ -2693,8 +2693,12 @@ namespace BmwDeepObd
                             double? mulValue = ConvertFloatValue(mul);
                             double? divValue = ConvertFloatValue(div);
                             double? addValue = ConvertFloatValue(add);
+
                             double? minValue = ConvertFloatValue(min);
+                            minValue ??= ScaleValue(dataMinValue, mulValue, divValue, addValue);
+
                             double? maxValue = ConvertFloatValue(max);
+                            maxValue ??= ScaleValue(dataMaxValue, mulValue, divValue, addValue);
 
                             bitFieldInfoList.Add(new SgFuncBitFieldInfo(resultName, unit, dataType, tableDataType, mask, mulValue, divValue, addValue, minValue, maxValue, nameInfoList, info));
                         }
@@ -2723,6 +2727,39 @@ namespace BmwDeepObd
             }
 
             return null;
+        }
+
+        private double? ScaleValue(double? rawValue, double? mul, double? div, double? add)
+        {
+            try
+            {
+                if (!rawValue.HasValue)
+                {
+                    return null;
+                }
+
+                double resultValue = rawValue.Value;
+                if (mul.HasValue)
+                {
+                    resultValue *= mul.Value;
+                }
+
+                if (div.HasValue && div != 0)
+                {
+                    resultValue /= div.Value;
+                }
+
+                if (add.HasValue)
+                {
+                    resultValue += add.Value;
+                }
+
+                return resultValue;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private TableDataType ConvertDataType(string text, out double? minValue, out double? maxValue)
