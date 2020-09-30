@@ -2332,23 +2332,23 @@ namespace BmwDeepObd
                                         {
                                             if (i == argIndex)
                                             {
-                                                arg = entry;
+                                                arg = entry.Trim();
                                             }
                                             else if (i == unitIndex)
                                             {
-                                                unit = entry;
+                                                unit = entry.Trim();
                                             }
                                             else if (i == maskIndex)
                                             {
-                                                mask = entry;
+                                                mask = entry.Trim();
                                             }
                                             else if (i == nameIndex)
                                             {
-                                                name = entry;
+                                                name = entry.Trim();
                                             }
                                             else if (i == infoIndex)
                                             {
-                                                info = entry;
+                                                info = entry.Trim();
                                             }
                                         }
                                     }
@@ -2472,11 +2472,11 @@ namespace BmwDeepObd
                                         {
                                             if (i == valueIndex)
                                             {
-                                                value = entry;
+                                                value = entry.Trim();
                                             }
                                             else if (i == textIndex)
                                             {
-                                                text = entry;
+                                                text = entry.Trim();
                                             }
                                         }
                                     }
