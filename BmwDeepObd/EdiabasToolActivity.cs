@@ -2656,55 +2656,11 @@ namespace BmwDeepObd
                         {
                             List<SgFuncNameInfo> nameInfoList = ReadSgFuncNameTable(name, unit);
 
-                            double? mulValue = null;
-                            if (!string.IsNullOrEmpty(mul))
-                            {
-                                double value = EdiabasNet.StringToFloat(mul, out bool valid);
-                                if (valid)
-                                {
-                                    mulValue = value;
-                                }
-                            }
-
-                            double? divValue = null;
-                            if (!string.IsNullOrEmpty(div))
-                            {
-                                double value = EdiabasNet.StringToFloat(div, out bool valid);
-                                if (valid)
-                                {
-                                    divValue = value;
-                                }
-                            }
-
-                            double? addValue = null;
-                            if (!string.IsNullOrEmpty(add))
-                            {
-                                double value = EdiabasNet.StringToFloat(add, out bool valid);
-                                if (valid)
-                                {
-                                    addValue = value;
-                                }
-                            }
-
-                            double? minValue = null;
-                            if (!string.IsNullOrEmpty(min))
-                            {
-                                double value = EdiabasNet.StringToFloat(min, out bool valid);
-                                if (valid)
-                                {
-                                    minValue = value;
-                                }
-                            }
-
-                            double? maxValue = null;
-                            if (!string.IsNullOrEmpty(max))
-                            {
-                                double value = EdiabasNet.StringToFloat(max, out bool valid);
-                                if (valid)
-                                {
-                                    maxValue = value;
-                                }
-                            }
+                            double? mulValue = ConvertFloatValue(mul);
+                            double? divValue = ConvertFloatValue(div);
+                            double? addValue = ConvertFloatValue(add);
+                            double? minValue = ConvertFloatValue(min);
+                            double? maxValue = ConvertFloatValue(max);
 
                             bitFieldInfoList.Add(new SgFuncBitFieldInfo(resultName, unit, mask, mulValue, divValue, addValue, minValue, maxValue, nameInfoList, info));
                         }
@@ -2719,6 +2675,20 @@ namespace BmwDeepObd
             }
 
             return bitFieldInfoList;
+        }
+
+        private double? ConvertFloatValue(string text)
+        {
+            if (!string.IsNullOrEmpty(text))
+            {
+                double value = EdiabasNet.StringToFloat(text, out bool valid);
+                if (valid)
+                {
+                    return value;
+                }
+            }
+
+            return null;
         }
 
         private void ExecuteSelectedJob(bool continuous)
