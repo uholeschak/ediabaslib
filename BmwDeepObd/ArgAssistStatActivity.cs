@@ -312,7 +312,7 @@ namespace BmwDeepObd
         {
             if (!_instanceData.ArgsAmountWarnShown)
             {
-                if (ArgsSelectCount() > 10)
+                if (ArgsSelectCount() > 5)
                 {
                     _instanceData.ArgsAmountWarnShown = true;
                     _activityCommon.ShowAlert(GetString(Resource.String.arg_assist_amount_limit), Resource.String.alert_title_warning);
