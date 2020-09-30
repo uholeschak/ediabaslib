@@ -2795,8 +2795,8 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        minValue = UInt16.MinValue;
-                        maxValue = UInt16.MaxValue;
+                        minValue = Int16.MinValue;
+                        maxValue = Int16.MaxValue;
                     }
                 }
                 else if (compareText.Contains(DataTypeLong))
