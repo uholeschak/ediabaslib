@@ -36,6 +36,14 @@ namespace BmwDeepObd
             RequestArgAssistControl,
         }
 
+        public enum TableDataType
+        {
+            Undefined,
+            Float,
+            String,
+            Binary
+        }
+
         public class ExtraInfo
         {
             public ExtraInfo(string name, string type, List<string> commentList)
@@ -164,11 +172,13 @@ namespace BmwDeepObd
 
         public class SgFuncBitFieldInfo : SgFuncNameInfo
         {
-            public SgFuncBitFieldInfo(string resultName, string unit, string mask, double? mul, double? div, double? add, double? min, double? max,
+            public SgFuncBitFieldInfo(string resultName, string unit, string dataType, TableDataType tableDataType, string mask, double? mul, double? div, double? add, double? min, double? max,
                 List<SgFuncNameInfo> nameInfoList, string info)
             {
                 ResultName = resultName;
                 Unit = unit;
+                DataType = dataType;
+                TableDataType = tableDataType;
                 Mask = mask;
                 Mul = mul;
                 Div = div;
@@ -184,6 +194,8 @@ namespace BmwDeepObd
             public string Unit { get; }
 
             public string DataType { get; }
+
+            public TableDataType TableDataType { get; }
 
             public string Mask { get; }
 
@@ -248,6 +260,17 @@ namespace BmwDeepObd
         public const string TableSgFunctions = @"SG_FUNKTIONEN";
         public const string SgFuncUnitValName = @"0-n";
         public const string SgFuncUnitBitField = @"BITFIELD";
+
+        // data type strings
+        public const string DataTypeChar = @"char";
+        public const string DataTypeInt = @"int";
+        public const string DataTypeLong = @"long";
+        public const string DataTypeFloat = @"float";
+        public const string DataTypeDouble = @"double";
+        public const string DataTypeString = @"string";
+        public const string DataTypeData = @"data";
+        public const string DataTypeUnsigned = @"unsigned";
+        public const string DataTypeMotorola = @"motorola";
 
         // Intent extra
         public const string ExtraInitDir = "init_dir";
@@ -2521,6 +2544,7 @@ namespace BmwDeepObd
                 {
                     int resultNameIndex = -1;
                     int unitIndex = -1;
+                    int dataTypeIndex = -1;
                     int maskIndex = -1;
                     int mulIndex = -1;
                     int divIndex = -1;
@@ -2540,6 +2564,7 @@ namespace BmwDeepObd
 
                         string resultName = string.Empty;
                         string unit = string.Empty;
+                        string dataType = string.Empty;
                         string mask = string.Empty;
                         string name = string.Empty;
                         string mul = string.Empty;
@@ -2564,6 +2589,10 @@ namespace BmwDeepObd
                                         else if (string.Compare(entry, "EINHEIT", StringComparison.OrdinalIgnoreCase) == 0)
                                         {
                                             unitIndex = i;
+                                        }
+                                        else if (string.Compare(entry, "DATENTYP", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            dataTypeIndex = i;
                                         }
                                         else if (string.Compare(entry, "MASKE", StringComparison.OrdinalIgnoreCase) == 0)
                                         {
@@ -2609,6 +2638,10 @@ namespace BmwDeepObd
                                             else if (i == unitIndex)
                                             {
                                                 unit = entry.Trim();
+                                            }
+                                            else if (i == dataTypeIndex)
+                                            {
+                                                dataType = entry.Trim();
                                             }
                                             else if (i == maskIndex)
                                             {
@@ -2656,13 +2689,14 @@ namespace BmwDeepObd
                         {
                             List<SgFuncNameInfo> nameInfoList = ReadSgFuncNameTable(name, unit);
 
+                            TableDataType tableDataType = ConvertDataType(dataType, out double? dataMinValue, out double? dataMaxValue);
                             double? mulValue = ConvertFloatValue(mul);
                             double? divValue = ConvertFloatValue(div);
                             double? addValue = ConvertFloatValue(add);
                             double? minValue = ConvertFloatValue(min);
                             double? maxValue = ConvertFloatValue(max);
 
-                            bitFieldInfoList.Add(new SgFuncBitFieldInfo(resultName, unit, mask, mulValue, divValue, addValue, minValue, maxValue, nameInfoList, info));
+                            bitFieldInfoList.Add(new SgFuncBitFieldInfo(resultName, unit, dataType, tableDataType, mask, mulValue, divValue, addValue, minValue, maxValue, nameInfoList, info));
                         }
 
                         dictIndex++;
@@ -2689,6 +2723,82 @@ namespace BmwDeepObd
             }
 
             return null;
+        }
+
+        private TableDataType ConvertDataType(string text, out double? minValue, out double? maxValue)
+        {
+            TableDataType dataType = TableDataType.Undefined;
+            minValue = null;
+            maxValue = null;
+
+            if (!string.IsNullOrEmpty(text))
+            {
+                string compareText = text.Trim().ToLowerInvariant();
+                if (compareText.Contains(DataTypeChar))
+                {
+                    dataType = TableDataType.Float;
+                    if (compareText.Contains(DataTypeUnsigned))
+                    {
+                        minValue = byte.MinValue;
+                        maxValue = byte.MaxValue;
+                    }
+                    else
+                    {
+                        minValue = sbyte.MinValue;
+                        maxValue = sbyte.MaxValue;
+                    }
+                }
+                else if (compareText.Contains(DataTypeInt))
+                {
+                    dataType = TableDataType.Float;
+                    if (compareText.Contains(DataTypeUnsigned))
+                    {
+                        minValue = UInt16.MinValue;
+                        maxValue = UInt16.MaxValue;
+                    }
+                    else
+                    {
+                        minValue = UInt16.MinValue;
+                        maxValue = UInt16.MaxValue;
+                    }
+                }
+                else if (compareText.Contains(DataTypeLong))
+                {
+                    dataType = TableDataType.Float;
+                    if (compareText.Contains(DataTypeUnsigned))
+                    {
+                        minValue = UInt32.MinValue;
+                        maxValue = UInt32.MaxValue;
+                    }
+                    else
+                    {
+                        minValue = Int32.MinValue;
+                        maxValue = Int32.MaxValue;
+                    }
+                }
+                else if (compareText.Contains(DataTypeFloat))
+                {
+                    dataType = TableDataType.Float;
+                    minValue = float.MinValue;
+                    maxValue = float.MaxValue;
+                }
+                else if (compareText.Contains(DataTypeDouble))
+                {
+                    dataType = TableDataType.Float;
+                    minValue = double.MinValue;
+                    maxValue = double.MaxValue;
+                }
+                else if (compareText.Contains(DataTypeString))
+                {
+                    dataType = TableDataType.String;
+                }
+                else if (compareText.Contains(DataTypeData))
+                {
+                    dataType = TableDataType.Binary;
+                }
+            }
+
+            return dataType;
         }
 
         private void ExecuteSelectedJob(bool continuous)
