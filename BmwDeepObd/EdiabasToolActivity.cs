@@ -54,6 +54,7 @@ namespace BmwDeepObd
                 CommentList = commentList;
                 Selected = false;
                 CheckVisible = true;
+                Tag = null;
             }
 
             public string Name { get; }
@@ -67,6 +68,8 @@ namespace BmwDeepObd
             public bool Selected { get; set; }
 
             public bool CheckVisible { get; set; }
+
+            public object Tag { get; set; }
         }
 
         private class JobInfo
