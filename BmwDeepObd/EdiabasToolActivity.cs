@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Android.Content;
 using Android.Content.Res;
@@ -172,8 +173,8 @@ namespace BmwDeepObd
 
         public class SgFuncBitFieldInfo : SgFuncNameInfo
         {
-            public SgFuncBitFieldInfo(string resultName, string unit, string dataType, TableDataType tableDataType, string mask, double? mul, double? div, double? add, double? min, double? max,
-                List<SgFuncNameInfo> nameInfoList, string info)
+            public SgFuncBitFieldInfo(string resultName, string unit, string dataType, TableDataType tableDataType, string mask,
+                double? mul, double? div, double? add, double? min, double? max, int? length, List<SgFuncNameInfo> nameInfoList, string info)
             {
                 ResultName = resultName;
                 Unit = unit;
@@ -184,7 +185,8 @@ namespace BmwDeepObd
                 Div = div;
                 Add = add;
                 Min = min;
-                Max = Max;
+                Max = max;
+                Length = length;
                 NameInfoList = nameInfoList;
                 Info = info;
             }
@@ -208,6 +210,8 @@ namespace BmwDeepObd
             public double? Min { get; }
 
             public double? Max { get; }
+
+            public int? Length { get; }
 
             public List<SgFuncNameInfo> NameInfoList { get; }
 
@@ -2689,7 +2693,7 @@ namespace BmwDeepObd
                         {
                             List<SgFuncNameInfo> nameInfoList = ReadSgFuncNameTable(name, unit);
 
-                            TableDataType tableDataType = ConvertDataType(dataType, out double? dataMinValue, out double? dataMaxValue);
+                            TableDataType tableDataType = ConvertDataType(dataType, out double? dataMinValue, out double? dataMaxValue, out int? dataLength);
                             double? mulValue = ConvertFloatValue(mul);
                             double? divValue = ConvertFloatValue(div);
                             double? addValue = ConvertFloatValue(add);
@@ -2700,7 +2704,8 @@ namespace BmwDeepObd
                             double? maxValue = ConvertFloatValue(max);
                             maxValue ??= ScaleValue(dataMaxValue, mulValue, divValue, addValue);
 
-                            bitFieldInfoList.Add(new SgFuncBitFieldInfo(resultName, unit, dataType, tableDataType, mask, mulValue, divValue, addValue, minValue, maxValue, nameInfoList, info));
+                            bitFieldInfoList.Add(new SgFuncBitFieldInfo(resultName, unit, dataType, tableDataType,
+                                mask, mulValue, divValue, addValue, minValue, maxValue, dataLength, nameInfoList, info));
                         }
 
                         dictIndex++;
@@ -2762,14 +2767,16 @@ namespace BmwDeepObd
             }
         }
 
-        private TableDataType ConvertDataType(string text, out double? minValue, out double? maxValue)
+        private TableDataType ConvertDataType(string text, out double? minValue, out double? maxValue, out int? length)
         {
             TableDataType dataType = TableDataType.Undefined;
             minValue = null;
             maxValue = null;
+            length = null;
 
             if (!string.IsNullOrEmpty(text))
             {
+                bool bHasLength = false;
                 string compareText = text.Trim().ToLowerInvariant();
                 if (compareText.Contains(DataTypeChar))
                 {
@@ -2828,10 +2835,24 @@ namespace BmwDeepObd
                 else if (compareText.Contains(DataTypeString))
                 {
                     dataType = TableDataType.String;
+                    bHasLength = true;
                 }
                 else if (compareText.Contains(DataTypeData))
                 {
                     dataType = TableDataType.Binary;
+                    bHasLength = true;
+                }
+
+                if (bHasLength)
+                {
+                    MatchCollection matches = Regex.Matches(compareText, @"\[(\d+)\]", RegexOptions.IgnoreCase);
+                    if ((matches.Count == 1) && (matches[0].Groups.Count == 2))
+                    {
+                        if (Int32.TryParse(matches[0].Groups[1].Value, out int value))
+                        {
+                            length = value;
+                        }
+                    }
                 }
             }
 
