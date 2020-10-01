@@ -1,92 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollViewArgAssist"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:focusable="true"
-    android:focusableInTouchMode="true">
-    <TextView
-        android:id="@+id/textViewArgTypeTitle"
-        android:text="@string/arg_assist_arg_type"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/layoutArgAssist"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/TextViewInnerCaption" />
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <RadioButton
-          android:id="@+id/radioButtonArgTypeArg"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="@string/arg_assist_type_arg" />
-        <RadioButton
-          android:id="@+id/radioButtonArgTypeId"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="@string/arg_assist_type_id" />
-    </RadioGroup>
-    <TextView
-        android:text="@string/arg_assist_control_arg"
-        android:id="@+id/textViewArgListTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/TextViewInnerCaption" />
-    <android.widget.Spinner
-        android:id="@+id/spinnerArgument"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <TextView
-        android:id="@+id/textViewControlParam"
-        android:text="@string/arg_assist_control_param"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/TextViewInnerCaption" />
-    <RadioGroup
-        android:id="@+id/radioGroupControlRoutine"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <RadioButton
-            android:id="@+id/radioButtonStr"
-            android:layout_width="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+        <TextView
+            android:id="@+id/textViewArgTypeTitle"
+            android:text="@string/arg_assist_arg_type"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/arg_assist_str" />
-        <RadioButton
-            android:id="@+id/radioButtonStpr"
-            android:layout_width="wrap_content"
+            style="@style/TextViewInnerCaption" />
+        <RadioGroup
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/arg_assist_stpr" />
-        <RadioButton
-            android:id="@+id/radioButtonRrr"
-            android:layout_width="wrap_content"
+            android:orientation="vertical">
+            <RadioButton
+              android:id="@+id/radioButtonArgTypeArg"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/arg_assist_type_arg" />
+            <RadioButton
+              android:id="@+id/radioButtonArgTypeId"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/arg_assist_type_id" />
+        </RadioGroup>
+        <TextView
+            android:text="@string/arg_assist_control_arg"
+            android:id="@+id/textViewArgTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/arg_assist_rrr" />
-    </RadioGroup>
-    <RadioGroup
-        android:id="@+id/radioGroupControlIo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <RadioButton
-            android:id="@+id/radioButtonRctEcu"
-            android:layout_width="wrap_content"
+            style="@style/TextViewInnerCaption" />
+        <android.widget.Spinner
+            android:id="@+id/spinnerArgument"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/textViewControlParam"
+            android:text="@string/arg_assist_control_param"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/arg_assist_rctecu" />
-        <RadioButton
-            android:id="@+id/radioButtonRtd"
-            android:layout_width="wrap_content"
+            style="@style/TextViewInnerCaption" />
+        <RadioGroup
+            android:id="@+id/radioGroupControlRoutine"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/arg_assist_rtd" />
-        <RadioButton
-            android:id="@+id/radioButtonFcs"
-            android:layout_width="wrap_content"
+            android:orientation="vertical">
+            <RadioButton
+                android:id="@+id/radioButtonStr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/arg_assist_str" />
+            <RadioButton
+                android:id="@+id/radioButtonStpr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/arg_assist_stpr" />
+            <RadioButton
+                android:id="@+id/radioButtonRrr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/arg_assist_rrr" />
+        </RadioGroup>
+        <RadioGroup
+            android:id="@+id/radioGroupControlIo"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/arg_assist_fcs" />
-        <RadioButton
-            android:id="@+id/radioButtonSta"
-            android:layout_width="wrap_content"
+            android:orientation="vertical">
+            <RadioButton
+                android:id="@+id/radioButtonRctEcu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/arg_assist_rctecu" />
+            <RadioButton
+                android:id="@+id/radioButtonRtd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/arg_assist_rtd" />
+            <RadioButton
+                android:id="@+id/radioButtonFcs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/arg_assist_fcs" />
+            <RadioButton
+                android:id="@+id/radioButtonSta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/arg_assist_sta" />
+        </RadioGroup>
+        <TextView
+            android:text="@string/arg_assist_args"
+            android:id="@+id/textViewArgsListTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/arg_assist_sta" />
-    </RadioGroup>
-</LinearLayout>
+            style="@style/TextViewInnerCaption" />
+        <LinearLayout
+            android:id="@+id/layoutArgParams"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

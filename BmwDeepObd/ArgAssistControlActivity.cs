@@ -28,6 +28,8 @@ namespace BmwDeepObd
         private bool _controlRoutine;
         private bool _controlIo;
 
+        private ScrollView _scrollViewArgAssist;
+        private LinearLayout _layoutArgAssist;
         private Spinner _spinnerArgument;
         private EdiabasToolActivity.ResultSelectListAdapter _spinnerArgumentAdapter;
         private TextView _textViewControlParam;
@@ -40,6 +42,7 @@ namespace BmwDeepObd
         private RadioButton _radioButtonRtd;
         private RadioButton _radioButtonFcs;
         private RadioButton _radioButtonSta;
+        private LinearLayout _layoutArgParams;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -62,10 +65,20 @@ namespace BmwDeepObd
             _controlRoutine = _serviceId == (int)EdiabasToolActivity.UdsServiceId.RoutineControl;
             _controlIo = _serviceId == (int)EdiabasToolActivity.UdsServiceId.IoControlById;
 
+            _scrollViewArgAssist = FindViewById<ScrollView>(Resource.Id.scrollViewArgAssist);
+            _scrollViewArgAssist.SetOnTouchListener(this);
+
+            _layoutArgAssist = FindViewById<LinearLayout>(Resource.Id.layoutArgAssist);
+            _layoutArgAssist.SetOnTouchListener(this);
+
             _spinnerArgument = FindViewById<Spinner>(Resource.Id.spinnerArgument);
+            _spinnerArgument.SetOnTouchListener(this);
             _spinnerArgumentAdapter = new EdiabasToolActivity.ResultSelectListAdapter(this);
             _spinnerArgument.Adapter = _spinnerArgumentAdapter;
-            _spinnerArgument.SetOnTouchListener(this);
+            _spinnerArgument.ItemSelected += (sender, args) =>
+            {
+                UpdateArgParams();
+            };
 
             _textViewControlParam = FindViewById<TextView>(Resource.Id.textViewControlParam);
             _textViewControlParam.Visibility = _controlRoutine || _controlIo ? ViewStates.Visible : ViewStates.Gone;
@@ -91,6 +104,9 @@ namespace BmwDeepObd
             _radioButtonFcs.SetOnTouchListener(this);
             _radioButtonSta = FindViewById<RadioButton>(Resource.Id.radioButtonSta);
             _radioButtonSta.SetOnTouchListener(this);
+
+            _layoutArgParams = FindViewById<LinearLayout>(Resource.Id.layoutArgParams);
+            _layoutArgParams.SetOnTouchListener(this);
 
             if (!_activityRecreated && _instanceData != null)
             {
@@ -258,6 +274,7 @@ namespace BmwDeepObd
                 }
 
                 UpdateArgList(selectArg);
+                UpdateArgParams();
                 UpdateButtonState();
             }
             catch (Exception)
@@ -285,7 +302,8 @@ namespace BmwDeepObd
                             string info = funcInfo.InfoTrans ?? funcInfo.Info;
                             EdiabasToolActivity.ExtraInfo extraInfo = new EdiabasToolActivity.ExtraInfo(name, string.Empty, new List<string> { info })
                             {
-                                CheckVisible = false
+                                CheckVisible = false,
+                                Tag = funcInfo
                             };
                             _spinnerArgumentAdapter.Items.Add(extraInfo);
 
@@ -304,6 +322,64 @@ namespace BmwDeepObd
 
                 _spinnerArgumentAdapter.NotifyDataSetChanged();
                 _spinnerArgument.SetSelection(selection);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        private void UpdateArgParams()
+        {
+            try
+            {
+                _layoutArgParams.RemoveAllViews();
+                int position = _spinnerArgument.SelectedItemPosition;
+                if (position >= 0 && position < _spinnerArgumentAdapter.Items.Count)
+                {
+                    EdiabasToolActivity.ExtraInfo item = _spinnerArgumentAdapter.Items[position];
+                    if (item.Tag is EdiabasToolActivity.SgFuncInfo funcInfo)
+                    {
+                        if (funcInfo.ArgInfoList != null)
+                        {
+                            foreach (EdiabasToolActivity.SgFuncArgInfo funcArgInfo in funcInfo.ArgInfoList)
+                            {
+                                LinearLayout argLayout = new LinearLayout(this);
+                                argLayout.Orientation = Orientation.Vertical;
+
+                                TextView textView = new TextView(this);
+                                StringBuilder sb = new StringBuilder();
+                                sb.Append(funcArgInfo.Arg);
+                                if (!string.IsNullOrEmpty(funcArgInfo.Info))
+                                {
+                                    sb.Append("\r\n");
+                                    sb.Append(funcArgInfo.Info);
+                                }
+                                if (!string.IsNullOrEmpty(funcArgInfo.Unit))
+                                {
+                                    sb.Append("\r\n");
+                                    sb.Append(funcArgInfo.Unit);
+                                }
+                                textView.Text = sb.ToString();
+                                LinearLayout.LayoutParams textLayoutParams = new LinearLayout.LayoutParams(
+                                    ViewGroup.LayoutParams.MatchParent,
+                                    ViewGroup.LayoutParams.WrapContent);
+                                argLayout.AddView(textView, textLayoutParams);
+
+                                EditText editText = new EditText(this);
+                                LinearLayout.LayoutParams editLayoutParams = new LinearLayout.LayoutParams(
+                                    ViewGroup.LayoutParams.MatchParent,
+                                    ViewGroup.LayoutParams.WrapContent);
+                                argLayout.AddView(editText, editLayoutParams);
+
+                                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                                    ViewGroup.LayoutParams.MatchParent,
+                                    ViewGroup.LayoutParams.WrapContent);
+                                _layoutArgParams.AddView(argLayout, layoutParams);
+                            }
+                        }
+                    }
+                }
             }
             catch (Exception)
             {
