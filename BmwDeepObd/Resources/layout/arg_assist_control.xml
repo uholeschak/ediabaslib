@@ -94,12 +94,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/arg_assist_sta" />
         </RadioGroup>
-        <TextView
-            android:text="@string/arg_assist_args"
-            android:id="@+id/textViewArgsListTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/TextViewInnerCaption" />
         <LinearLayout
             android:id="@+id/layoutArgParams"
             android:orientation="vertical"
