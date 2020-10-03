@@ -20,12 +20,32 @@ namespace BmwDeepObd
         ConfigurationChanges = ActivityConfigChanges)]
     public class ArgAssistControlActivity : ArgAssistBaseActivity
     {
+        public class ParameterData
+        {
+            public ParameterData(EdiabasToolActivity.SgFuncInfo funcInfo, TextView textViewCaption, TextView textViewDesc, List<object> itemList)
+            {
+                FuncInfo = funcInfo;
+                TextViewCaption = textViewCaption;
+                TextViewDesc = textViewDesc;
+                ItemList = itemList;
+            }
+
+            public EdiabasToolActivity.SgFuncInfo FuncInfo { get; }
+
+            public TextView TextViewCaption { get; }
+
+            public TextView TextViewDesc { get; }
+
+            public List<object> ItemList { get; }
+        }
+
         public class InstanceData
         {
             public string Arguments { get; set; }
         }
 
         private InstanceData _instanceData = new InstanceData();
+        private readonly List<ParameterData> _parameterList = new List<ParameterData>();
         private bool _activityRecreated;
         private bool _controlRoutine;
         private bool _controlIo;
@@ -199,6 +219,7 @@ namespace BmwDeepObd
 
             try
             {
+                List<string> selectList = null;
                 string selectArg = null;
                 string argType = string.Empty;
                 string controlParam = string.Empty;
@@ -220,6 +241,20 @@ namespace BmwDeepObd
                         if (argArray.Length > 2)
                         {
                             controlParam = argArray[2].Trim();
+                        }
+
+                        if (argArray.Length > 3)
+                        {
+                            selectList = argArray.ToList();
+                            selectList.RemoveRange(0, 4);
+                        }
+                    }
+                    else
+                    {
+                        if (argArray.Length > 2)
+                        {
+                            selectList = argArray.ToList();
+                            selectList.RemoveRange(0, 3);
                         }
                     }
                 }
@@ -276,7 +311,7 @@ namespace BmwDeepObd
                 }
 
                 UpdateArgList(selectArg);
-                UpdateArgParams();
+                UpdateArgParams(selectList);
                 UpdateButtonState();
             }
             catch (Exception)
@@ -331,11 +366,12 @@ namespace BmwDeepObd
             }
         }
 
-        private void UpdateArgParams()
+        private void UpdateArgParams(List<string> selectParams = null)
         {
             try
             {
                 _layoutArgParams.RemoveAllViews();
+                _parameterList.Clear();
                 Android.Content.Res.ColorStateList captionTextColors = _textViewArgTypeTitle.TextColors;
                 Drawable captionTextBackground = _textViewArgTypeTitle.Background;
                 int position = _spinnerArgument.SelectedItemPosition;
@@ -348,6 +384,12 @@ namespace BmwDeepObd
                         {
                             foreach (EdiabasToolActivity.SgFuncArgInfo funcArgInfo in funcInfo.ArgInfoList)
                             {
+                                string selectParam = string.Empty;
+                                if (selectParams != null && selectParams.Count > _parameterList.Count)
+                                {
+                                    selectParam = selectParams[_parameterList.Count];
+                                }
+
                                 LinearLayout argLayout = new LinearLayout(this);
                                 argLayout.Orientation = Orientation.Vertical;
 
@@ -366,8 +408,7 @@ namespace BmwDeepObd
                                 textViewCaption.Text = sbCaption.ToString();
                                 argLayout.AddView(textViewCaption, wrapLayoutParams);
 
-                                TextView textViewDesc = new TextView(this);
-
+                                TextView textViewDesc = null;
                                 StringBuilder sbDesc = new StringBuilder();
                                 if (!string.IsNullOrEmpty(funcArgInfo.Info))
                                 {
@@ -386,35 +427,52 @@ namespace BmwDeepObd
 
                                 if (sbDesc.Length > 0)
                                 {
+                                    textViewDesc = new TextView(this);
                                     textViewDesc.Text = sbDesc.ToString();
                                     argLayout.AddView(textViewDesc, wrapLayoutParams);
                                 }
 
+                                List<object> itemList = new List<object>();
                                 if (funcArgInfo.NameInfoList != null && funcArgInfo.NameInfoList.Count > 0)
                                 {
                                     if (funcArgInfo.NameInfoList[0] is EdiabasToolActivity.SgFuncValNameInfo)
                                     {
                                         Spinner spinner = new Spinner(this);
                                         StringObjAdapter spinnerAdapter = new StringObjAdapter(this);
+                                        int selection = 0;
+                                        int index = 0;
                                         foreach (EdiabasToolActivity.SgFuncNameInfo funcNameInfo in funcArgInfo.NameInfoList)
                                         {
                                             if (funcNameInfo is EdiabasToolActivity.SgFuncValNameInfo valNameInfo)
                                             {
                                                 spinner.Adapter = spinnerAdapter;
                                                 spinnerAdapter.Items.Add(new StringObjType(valNameInfo.Text, valNameInfo));
+                                                if (string.Compare(valNameInfo.Text, selectParam, StringComparison.OrdinalIgnoreCase) == 0)
+                                                {
+                                                    selection = index;
+                                                }
                                             }
+
+                                            index++;
                                         }
+
                                         spinnerAdapter.NotifyDataSetChanged();
+                                        spinner.SetSelection(selection);
                                         argLayout.AddView(spinner, wrapLayoutParams);
+                                        itemList.Add(spinner);
                                     }
                                 }
                                 else
                                 {
                                     EditText editText = new EditText(this);
+                                    editText.Text = selectParam;
                                     argLayout.AddView(editText, wrapLayoutParams);
+                                    itemList.Add(editText);
                                 }
 
                                 _layoutArgParams.AddView(argLayout, wrapLayoutParams);
+
+                                _parameterList.Add(new ParameterData(funcInfo, textViewCaption, textViewDesc, itemList));
                             }
                         }
                     }
