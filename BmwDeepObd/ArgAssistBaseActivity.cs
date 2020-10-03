@@ -37,6 +37,7 @@ namespace BmwDeepObd
         protected bool _offline;
         protected Button _buttonApply;
         protected Button _buttonExecute;
+        protected TextView _textViewArgTypeTitle;
         protected RadioButton _radioButtonArgTypeArg;
         protected RadioButton _radioButtonArgTypeId;
         protected List<EdiabasToolActivity.SgFuncInfo> _sgFuncInfoList;
@@ -81,6 +82,9 @@ namespace BmwDeepObd
 
             _buttonExecute = _barView.FindViewById<Button>(Resource.Id.buttonExecute);
             _buttonExecute.SetOnTouchListener(this);
+
+            _textViewArgTypeTitle = FindViewById<TextView>(Resource.Id.textViewArgTypeTitle);
+            _textViewArgTypeTitle.SetOnTouchListener(this);
 
             _radioButtonArgTypeArg = FindViewById<RadioButton>(Resource.Id.radioButtonArgTypeArg);
             _radioButtonArgTypeArg.SetOnTouchListener(this);

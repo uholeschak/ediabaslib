@@ -4,6 +4,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using Android.Content;
+using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
@@ -334,6 +336,8 @@ namespace BmwDeepObd
             try
             {
                 _layoutArgParams.RemoveAllViews();
+                Android.Content.Res.ColorStateList captionTextColors = _textViewArgTypeTitle.TextColors;
+                Drawable captionTextBackground = _textViewArgTypeTitle.Background;
                 int position = _spinnerArgument.SelectedItemPosition;
                 if (position >= 0 && position < _spinnerArgumentAdapter.Items.Count)
                 {
@@ -347,35 +351,49 @@ namespace BmwDeepObd
                                 LinearLayout argLayout = new LinearLayout(this);
                                 argLayout.Orientation = Orientation.Vertical;
 
-                                TextView textView = new TextView(this);
-                                StringBuilder sb = new StringBuilder();
-                                sb.Append(funcArgInfo.Arg);
+                                LinearLayout.LayoutParams wrapLayoutParams = new LinearLayout.LayoutParams(
+                                    ViewGroup.LayoutParams.MatchParent,
+                                    ViewGroup.LayoutParams.WrapContent);
+
+                                TextView textViewCaption = new TextView(this);
+                                textViewCaption.SetTextColor(captionTextColors);
+                                textViewCaption.Background = captionTextBackground;
+
+                                StringBuilder sbCaption = new StringBuilder();
+                                sbCaption.Append(GetString(Resource.String.arg_assist_control_parameter));
+                                sbCaption.Append(": ");
+                                sbCaption.Append(funcArgInfo.Arg);
+                                textViewCaption.Text = sbCaption.ToString();
+                                argLayout.AddView(textViewCaption, wrapLayoutParams);
+
+                                TextView textViewDesc = new TextView(this);
+
+                                StringBuilder sbDesc = new StringBuilder();
                                 if (!string.IsNullOrEmpty(funcArgInfo.Info))
                                 {
-                                    sb.Append("\r\n");
-                                    sb.Append(funcArgInfo.Info);
+                                    sbDesc.Append(funcArgInfo.Info);
                                 }
                                 if (!string.IsNullOrEmpty(funcArgInfo.Unit))
                                 {
-                                    sb.Append("\r\n");
-                                    sb.Append(funcArgInfo.Unit);
+                                    if (sbDesc.Length > 0)
+                                    {
+                                        sbDesc.Append("\r\n");
+                                    }
+                                    sbDesc.Append("[");
+                                    sbDesc.Append(funcArgInfo.Unit);
+                                    sbDesc.Append("]");
                                 }
-                                textView.Text = sb.ToString();
-                                LinearLayout.LayoutParams textLayoutParams = new LinearLayout.LayoutParams(
-                                    ViewGroup.LayoutParams.MatchParent,
-                                    ViewGroup.LayoutParams.WrapContent);
-                                argLayout.AddView(textView, textLayoutParams);
+
+                                if (sbDesc.Length > 0)
+                                {
+                                    textViewDesc.Text = sbDesc.ToString();
+                                    argLayout.AddView(textViewDesc, wrapLayoutParams);
+                                }
 
                                 EditText editText = new EditText(this);
-                                LinearLayout.LayoutParams editLayoutParams = new LinearLayout.LayoutParams(
-                                    ViewGroup.LayoutParams.MatchParent,
-                                    ViewGroup.LayoutParams.WrapContent);
-                                argLayout.AddView(editText, editLayoutParams);
+                                argLayout.AddView(editText, wrapLayoutParams);
 
-                                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                                    ViewGroup.LayoutParams.MatchParent,
-                                    ViewGroup.LayoutParams.WrapContent);
-                                _layoutArgParams.AddView(argLayout, layoutParams);
+                                _layoutArgParams.AddView(argLayout, wrapLayoutParams);
                             }
                         }
                     }
