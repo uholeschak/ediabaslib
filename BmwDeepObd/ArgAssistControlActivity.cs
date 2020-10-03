@@ -390,8 +390,29 @@ namespace BmwDeepObd
                                     argLayout.AddView(textViewDesc, wrapLayoutParams);
                                 }
 
-                                EditText editText = new EditText(this);
-                                argLayout.AddView(editText, wrapLayoutParams);
+                                if (funcArgInfo.NameInfoList != null && funcArgInfo.NameInfoList.Count > 0)
+                                {
+                                    if (funcArgInfo.NameInfoList[0] is EdiabasToolActivity.SgFuncValNameInfo)
+                                    {
+                                        Spinner spinner = new Spinner(this);
+                                        StringObjAdapter spinnerAdapter = new StringObjAdapter(this);
+                                        foreach (EdiabasToolActivity.SgFuncNameInfo funcNameInfo in funcArgInfo.NameInfoList)
+                                        {
+                                            if (funcNameInfo is EdiabasToolActivity.SgFuncValNameInfo valNameInfo)
+                                            {
+                                                spinner.Adapter = spinnerAdapter;
+                                                spinnerAdapter.Items.Add(new StringObjType(valNameInfo.Text, valNameInfo));
+                                            }
+                                        }
+                                        spinnerAdapter.NotifyDataSetChanged();
+                                        argLayout.AddView(spinner, wrapLayoutParams);
+                                    }
+                                }
+                                else
+                                {
+                                    EditText editText = new EditText(this);
+                                    argLayout.AddView(editText, wrapLayoutParams);
+                                }
 
                                 _layoutArgParams.AddView(argLayout, wrapLayoutParams);
                             }
