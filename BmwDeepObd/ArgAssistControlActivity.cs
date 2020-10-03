@@ -7,6 +7,7 @@ using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
+using Android.Views.InputMethods;
 using Android.Widget;
 
 namespace BmwDeepObd
@@ -99,6 +100,7 @@ namespace BmwDeepObd
                 if (_argumentSelectLastItem != _spinnerArgument.SelectedItemPosition)
                 {
                     UpdateArgParams();
+                    UpdateButtonState();
                 }
                 _argumentSelectLastItem = -1;
             };
@@ -469,6 +471,7 @@ namespace BmwDeepObd
                                 {
                                     EditText editText = new EditText(this);
                                     editText.Text = selectParam;
+                                    editText.ImeOptions = ImeAction.Done;
                                     editText.EditorAction += (sender, args) =>
                                     {
                                         UpdateButtonState();
@@ -527,7 +530,7 @@ namespace BmwDeepObd
             try
             {
                 int position = _spinnerArgument.SelectedItemPosition;
-                if (position >= 0 && position < _spinnerArgumentAdapter.Items.Count)
+                if (position < 0 || position >= _spinnerArgumentAdapter.Items.Count)
                 {
                     return true;
                 }
@@ -546,7 +549,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                return false;
+                return true;
             }
             catch (Exception)
             {
