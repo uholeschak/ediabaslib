@@ -466,6 +466,11 @@ namespace BmwDeepObd
                                 {
                                     EditText editText = new EditText(this);
                                     editText.Text = selectParam;
+                                    editText.EditorAction += (sender, args) =>
+                                    {
+                                        UpdateButtonState();
+                                    };
+
                                     argLayout.AddView(editText, wrapLayoutParams);
                                     itemList.Add(editText);
                                 }
@@ -522,6 +527,20 @@ namespace BmwDeepObd
                 if (position >= 0 && position < _spinnerArgumentAdapter.Items.Count)
                 {
                     return true;
+                }
+
+                foreach (ParameterData parameterData in _parameterList)
+                {
+                    foreach (object itemObject in parameterData.ItemList)
+                    {
+                        if (itemObject is EditText editText)
+                        {
+                            if (string.IsNullOrWhiteSpace(editText.Text))
+                            {
+                                return false;
+                            }
+                        }
+                    }
                 }
 
                 return false;
@@ -596,6 +615,44 @@ namespace BmwDeepObd
                 {
                     sb.Append(";");
                     sb.Append(controlParameter);
+                }
+
+                foreach (ParameterData parameterData in _parameterList)
+                {
+                    StringBuilder sbParameter = new StringBuilder();
+                    foreach (object itemObject in parameterData.ItemList)
+                    {
+                        string parameter = string.Empty;
+                        if (itemObject is EditText editText)
+                        {
+                            parameter = editText.Text;
+                        }
+                        else if (itemObject is Spinner spinner)
+                        {
+                            if (spinner.Adapter is StringObjAdapter spinnerAdapter)
+                            {
+                                int spinnerPos = spinner.SelectedItemPosition;
+                                if (spinnerPos >= 0 && spinnerPos < spinnerAdapter.Items.Count)
+                                {
+                                    StringObjType itemSpinner = spinnerAdapter.Items[spinnerPos];
+                                    parameter = itemSpinner.Text;
+                                }
+                            }
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(parameter))
+                        {
+                            if (sbParameter.Length > 0)
+                            {
+                                sb.Append(",");
+                            }
+                            sbParameter.Append(parameter.Trim());
+                            break;
+                        }
+                    }
+
+                    sb.Append(";");
+                    sb.Append(sbParameter.ToString());
                 }
 
                 return sb.ToString();
