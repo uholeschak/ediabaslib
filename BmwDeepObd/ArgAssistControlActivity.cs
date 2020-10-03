@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using Android.Content;
-using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
-using Android.Views.InputMethods;
 using Android.Widget;
-using EdiabasLib;
 
 namespace BmwDeepObd
 {
@@ -49,6 +45,7 @@ namespace BmwDeepObd
         private bool _activityRecreated;
         private bool _controlRoutine;
         private bool _controlIo;
+        private int _argumentSelectLastItem;
 
         private ScrollView _scrollViewArgAssist;
         private LinearLayout _layoutArgAssist;
@@ -99,8 +96,13 @@ namespace BmwDeepObd
             _spinnerArgument.Adapter = _spinnerArgumentAdapter;
             _spinnerArgument.ItemSelected += (sender, args) =>
             {
-                UpdateArgParams();
+                if (_argumentSelectLastItem != _spinnerArgument.SelectedItemPosition)
+                {
+                    UpdateArgParams();
+                }
+                _argumentSelectLastItem = -1;
             };
+            _argumentSelectLastItem = -1;
 
             _textViewControlParam = FindViewById<TextView>(Resource.Id.textViewControlParam);
             _textViewControlParam.Visibility = _controlRoutine || _controlIo ? ViewStates.Visible : ViewStates.Gone;
@@ -246,7 +248,7 @@ namespace BmwDeepObd
                         if (argArray.Length > 3)
                         {
                             selectList = argArray.ToList();
-                            selectList.RemoveRange(0, 4);
+                            selectList.RemoveRange(0, 3);
                         }
                     }
                     else
@@ -254,7 +256,7 @@ namespace BmwDeepObd
                         if (argArray.Length > 2)
                         {
                             selectList = argArray.ToList();
-                            selectList.RemoveRange(0, 3);
+                            selectList.RemoveRange(0, 2);
                         }
                     }
                 }
@@ -358,6 +360,7 @@ namespace BmwDeepObd
                 }
 
                 _spinnerArgumentAdapter.NotifyDataSetChanged();
+                _argumentSelectLastItem = selection;
                 _spinnerArgument.SetSelection(selection);
             }
             catch (Exception)
