@@ -50,6 +50,7 @@ namespace BmwDeepObd
         protected Configuration _currentConfiguration;
         protected View _decorView;
         protected bool _allowTitleHiding = true;
+        protected bool _allowFullScreenMode = true;
         protected bool _touchShowTitle = false;
         protected bool _longPress;
         protected bool _fullScreen;
@@ -151,7 +152,7 @@ namespace BmwDeepObd
                 _instanceDataBase.ActionBarVisible = true;
             }
 
-            if (ActivityCommon.FullScreenMode)
+            if (ActivityCommon.FullScreenMode && _allowFullScreenMode)
             {
                 if (_autoFullScreenTimer == null)
                 {
@@ -166,7 +167,7 @@ namespace BmwDeepObd
                                     if (Stopwatch.GetTimestamp() - _autoFullScreenStartTime >= AutoFullScreenTimeout * ActivityCommon.TickResolMs)
                                     {
                                         _autoFullScreenStarted = false;
-                                        if (ActivityCommon.FullScreenMode)
+                                        if (ActivityCommon.FullScreenMode && _allowFullScreenMode)
                                         {
                                             EnableFullScreenMode(true);
                                         }
@@ -209,7 +210,7 @@ namespace BmwDeepObd
             _autoFullScreenStarted = false;
             if (hasFocus)
             {
-                if (ActivityCommon.FullScreenMode)
+                if (ActivityCommon.FullScreenMode && _allowFullScreenMode)
                 {
                     EnableFullScreenMode(true);
                 }
