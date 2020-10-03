@@ -470,11 +470,22 @@ namespace BmwDeepObd
                                 else
                                 {
                                     EditText editText = new EditText(this);
-                                    editText.Text = selectParam;
+                                    editText.SetSingleLine();
                                     editText.ImeOptions = ImeAction.Done;
+                                    editText.Text = selectParam;
                                     editText.EditorAction += (sender, args) =>
                                     {
-                                        UpdateButtonState();
+                                        switch (args.ActionId)
+                                        {
+                                            case ImeAction.Go:
+                                            case ImeAction.Send:
+                                            case ImeAction.Next:
+                                            case ImeAction.Done:
+                                            case ImeAction.Previous:
+                                                HideKeyboard();
+                                                UpdateButtonState();
+                                                break;
+                                        }
                                     };
 
                                     argLayout.AddView(editText, wrapLayoutParams);
