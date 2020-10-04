@@ -478,9 +478,28 @@ namespace BmwDeepObd
                                     {
                                         sbDesc.Append("\r\n");
                                     }
-                                    sbDesc.Append("[");
+                                    sbDesc.Append("Unit: ");
                                     sbDesc.Append(funcArgInfo.Unit);
-                                    sbDesc.Append("]");
+                                }
+
+                                if (!string.IsNullOrEmpty(funcArgInfo.MinText))
+                                {
+                                    if (sbDesc.Length > 0)
+                                    {
+                                        sbDesc.Append("\r\n");
+                                    }
+                                    sbDesc.Append("Min: ");
+                                    sbDesc.Append(funcArgInfo.MinText);
+                                }
+
+                                if (!string.IsNullOrEmpty(funcArgInfo.MaxText))
+                                {
+                                    if (sbDesc.Length > 0)
+                                    {
+                                        sbDesc.Append("\r\n");
+                                    }
+                                    sbDesc.Append("Max: ");
+                                    sbDesc.Append(funcArgInfo.MaxText);
                                 }
 
                                 if (sbDesc.Length > 0)
