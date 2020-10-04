@@ -2802,32 +2802,34 @@ namespace BmwDeepObd
             return null;
         }
 
-        private double? ScaleValue(double? rawValue, double? mul, double? div, double? add)
+        private double? ScaleValue(double? edValue, double? mul, double? div, double? add)
         {
+            // EBIABAS = (ECU*MUL)/DIV + ADD
+            // ECU = DIV*(EBIABAS-ADD)/MUL
             try
             {
-                if (!rawValue.HasValue)
+                if (!edValue.HasValue)
                 {
                     return null;
                 }
 
-                double resultValue = rawValue.Value;
-                if (mul.HasValue)
-                {
-                    resultValue *= mul.Value;
-                }
-
-                if (div.HasValue && div != 0)
-                {
-                    resultValue /= div.Value;
-                }
-
+                double ecuValue = edValue.Value;
                 if (add.HasValue)
                 {
-                    resultValue += add.Value;
+                    ecuValue -= add.Value;
                 }
 
-                return resultValue;
+                if (div.HasValue)
+                {
+                    ecuValue *= div.Value;
+                }
+
+                if (mul.HasValue && mul.Value != 0)
+                {
+                    ecuValue /= mul.Value;
+                }
+
+                return ecuValue;
             }
             catch (Exception)
             {
