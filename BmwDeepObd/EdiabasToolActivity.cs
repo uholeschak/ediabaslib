@@ -137,7 +137,7 @@ namespace BmwDeepObd
 
         public class SgFuncArgInfo
         {
-            public SgFuncArgInfo(string arg, string unit, string dataType, TableDataType tableDataType, string mask,
+            public SgFuncArgInfo(string arg, string unit, string dataType, TableDataType tableDataType, string mask, string minText, string maxText,
                 double? mul, double? div, double? add, double? min, double? max, int? length, List<SgFuncNameInfo> nameInfoList, string info)
             {
                 Arg = arg;
@@ -145,6 +145,8 @@ namespace BmwDeepObd
                 DataType = dataType;
                 TableDataType = tableDataType;
                 Mask = mask;
+                MinText = minText;
+                MaxText = maxText;
                 Mul = mul;
                 Div = div;
                 Add = add;
@@ -164,6 +166,10 @@ namespace BmwDeepObd
             public TableDataType TableDataType { get; }
 
             public string Mask { get; }
+
+            public string MinText { get; }
+
+            public string MaxText { get; }
 
             public double? Mul { get; }
 
@@ -2483,8 +2489,8 @@ namespace BmwDeepObd
 
                             double? maxValue = ConvertFloatValue(max);
                             maxValue ??= ScaleValue(dataMaxValue, mulValue, divValue, addValue);
-                            argInfoList.Add(new SgFuncArgInfo(arg, unit, dataType, tableDataType,
-                                mask, mulValue, divValue, addValue, minValue, maxValue, dataLength, nameInfoList, info));
+                            argInfoList.Add(new SgFuncArgInfo(arg, unit, dataType, tableDataType, mask, min, max,
+                                mulValue, divValue, addValue, minValue, maxValue, dataLength, nameInfoList, info));
                         }
 
                         dictIndex++;
