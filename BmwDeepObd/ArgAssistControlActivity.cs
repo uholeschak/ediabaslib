@@ -452,7 +452,11 @@ namespace BmwDeepObd
                                             if (funcNameInfo is EdiabasToolActivity.SgFuncValNameInfo valNameInfo)
                                             {
                                                 spinner.Adapter = spinnerAdapter;
-                                                spinnerAdapter.Items.Add(new StringObjType(valNameInfo.Text, valNameInfo));
+                                                StringBuilder sbName = new StringBuilder();
+                                                sbName.Append(valNameInfo.Value);
+                                                sbName.Append(": ");
+                                                sbName.Append(valNameInfo.Text);
+                                                spinnerAdapter.Items.Add(new StringObjType(sbName.ToString(), valNameInfo));
                                                 if (string.Compare(valNameInfo.Text, selectParam, StringComparison.OrdinalIgnoreCase) == 0)
                                                 {
                                                     selection = index;
@@ -637,10 +641,10 @@ namespace BmwDeepObd
 
                 foreach (ParameterData parameterData in _parameterList)
                 {
-                    StringBuilder sbParameter = new StringBuilder();
+                    string parameter = string.Empty;
                     foreach (object itemObject in parameterData.ItemList)
                     {
-                        string parameter = string.Empty;
+                        parameter = string.Empty;
                         if (itemObject is EditText editText)
                         {
                             parameter = editText.Text;
@@ -653,24 +657,22 @@ namespace BmwDeepObd
                                 if (spinnerPos >= 0 && spinnerPos < spinnerAdapter.Items.Count)
                                 {
                                     StringObjType itemSpinner = spinnerAdapter.Items[spinnerPos];
-                                    parameter = itemSpinner.Text;
+                                    if (itemSpinner.Data is EdiabasToolActivity.SgFuncValNameInfo valNameInfo)
+                                    {
+                                        parameter = valNameInfo.Text;
+                                    }
                                 }
                             }
                         }
 
                         if (!string.IsNullOrWhiteSpace(parameter))
                         {
-                            if (sbParameter.Length > 0)
-                            {
-                                sb.Append(",");
-                            }
-                            sbParameter.Append(parameter.Trim());
                             break;
                         }
                     }
 
                     sb.Append(";");
-                    sb.Append(sbParameter.ToString());
+                    sb.Append(parameter);
                 }
 
                 return sb.ToString();
