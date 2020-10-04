@@ -137,11 +137,20 @@ namespace BmwDeepObd
 
         public class SgFuncArgInfo
         {
-            public SgFuncArgInfo(string arg, string unit, string mask, List<SgFuncNameInfo> nameInfoList, string info)
+            public SgFuncArgInfo(string arg, string unit, string dataType, TableDataType tableDataType, string mask,
+                double? mul, double? div, double? add, double? min, double? max, int? length, List<SgFuncNameInfo> nameInfoList, string info)
             {
                 Arg = arg;
                 Unit = unit;
+                DataType = dataType;
+                TableDataType = tableDataType;
                 Mask = mask;
+                Mul = mul;
+                Div = div;
+                Add = add;
+                Min = min;
+                Max = max;
+                Length = length;
                 NameInfoList = nameInfoList;
                 Info = info;
             }
@@ -150,7 +159,23 @@ namespace BmwDeepObd
 
             public string Unit { get; }
 
+            public string DataType { get; }
+
+            public TableDataType TableDataType { get; }
+
             public string Mask { get; }
+
+            public double? Mul { get; }
+
+            public double? Div { get; }
+
+            public double? Add { get; }
+
+            public double? Min { get; }
+
+            public double? Max { get; }
+
+            public int? Length { get; }
 
             public List<SgFuncNameInfo> NameInfoList { get; }
 
@@ -177,7 +202,7 @@ namespace BmwDeepObd
         public class SgFuncBitFieldInfo : SgFuncNameInfo
         {
             public SgFuncBitFieldInfo(string resultName, string unit, string dataType, TableDataType tableDataType, string mask,
-                double? mul, double? div, double? add, double? min, double? max, int? length, List<SgFuncNameInfo> nameInfoList, string info)
+                double? mul, double? div, double? add, int? length, List<SgFuncNameInfo> nameInfoList, string info)
             {
                 ResultName = resultName;
                 Unit = unit;
@@ -187,8 +212,6 @@ namespace BmwDeepObd
                 Mul = mul;
                 Div = div;
                 Add = add;
-                Min = min;
-                Max = max;
                 Length = length;
                 NameInfoList = nameInfoList;
                 Info = info;
@@ -209,10 +232,6 @@ namespace BmwDeepObd
             public double? Div { get; }
 
             public double? Add { get; }
-
-            public double? Min { get; }
-
-            public double? Max { get; }
 
             public int? Length { get; }
 
@@ -2309,7 +2328,13 @@ namespace BmwDeepObd
                 {
                     int argIndex = -1;
                     int unitIndex = -1;
+                    int dataTypeIndex = -1;
                     int maskIndex = -1;
+                    int mulIndex = -1;
+                    int divIndex = -1;
+                    int addIndex = -1;
+                    int minIndex = -1;
+                    int maxIndex = -1;
                     int nameIndex = -1;
                     int infoIndex = -1;
                     int dictIndex = 0;
@@ -2323,8 +2348,14 @@ namespace BmwDeepObd
 
                         string arg = string.Empty;
                         string unit = string.Empty;
+                        string dataType = string.Empty;
                         string mask = string.Empty;
                         string name = string.Empty;
+                        string mul = string.Empty;
+                        string div = string.Empty;
+                        string add = string.Empty;
+                        string min = string.Empty;
+                        string max = string.Empty;
                         string info = string.Empty;
                         for (int i = 0; ; i++)
                         {
@@ -2343,6 +2374,10 @@ namespace BmwDeepObd
                                         {
                                             unitIndex = i;
                                         }
+                                        else if (string.Compare(entry, "DATENTYP", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            dataTypeIndex = i;
+                                        }
                                         else if (string.Compare(entry, "MASKE", StringComparison.OrdinalIgnoreCase) == 0)
                                         {
                                             maskIndex = i;
@@ -2350,6 +2385,26 @@ namespace BmwDeepObd
                                         else if (string.Compare(entry, "NAME", StringComparison.OrdinalIgnoreCase) == 0)
                                         {
                                             nameIndex = i;
+                                        }
+                                        else if (string.Compare(entry, "MUL", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            mulIndex = i;
+                                        }
+                                        else if (string.Compare(entry, "DIV", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            divIndex = i;
+                                        }
+                                        else if (string.Compare(entry, "ADD", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            addIndex = i;
+                                        }
+                                        else if (string.Compare(entry, "MIN", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            minIndex = i;
+                                        }
+                                        else if (string.Compare(entry, "MAX", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            maxIndex = i;
                                         }
                                         else if (string.Compare(entry, "INFO", StringComparison.OrdinalIgnoreCase) == 0)
                                         {
@@ -2368,6 +2423,10 @@ namespace BmwDeepObd
                                             {
                                                 unit = entry.Trim();
                                             }
+                                            else if (i == dataTypeIndex)
+                                            {
+                                                dataType = entry.Trim();
+                                            }
                                             else if (i == maskIndex)
                                             {
                                                 mask = entry.Trim();
@@ -2375,6 +2434,26 @@ namespace BmwDeepObd
                                             else if (i == nameIndex)
                                             {
                                                 name = entry.Trim();
+                                            }
+                                            else if (i == mulIndex)
+                                            {
+                                                mul = entry.Trim();
+                                            }
+                                            else if (i == divIndex)
+                                            {
+                                                div = entry.Trim();
+                                            }
+                                            else if (i == addIndex)
+                                            {
+                                                add = entry.Trim();
+                                            }
+                                            else if (i == minIndex)
+                                            {
+                                                min = entry.Trim();
+                                            }
+                                            else if (i == maxIndex)
+                                            {
+                                                max = entry.Trim();
                                             }
                                             else if (i == infoIndex)
                                             {
@@ -2393,7 +2472,19 @@ namespace BmwDeepObd
                         if (!string.IsNullOrEmpty(arg))
                         {
                             List<SgFuncNameInfo> nameInfoList = ReadSgFuncNameTable(name, unit);
-                            argInfoList.Add(new SgFuncArgInfo(arg, unit, mask, nameInfoList, info));
+
+                            TableDataType tableDataType = ConvertDataType(dataType, out double? dataMinValue, out double? dataMaxValue, out int? dataLength);
+                            double? mulValue = ConvertFloatValue(mul);
+                            double? divValue = ConvertFloatValue(div);
+                            double? addValue = ConvertFloatValue(add);
+
+                            double? minValue = ConvertFloatValue(min);
+                            minValue ??= ScaleValue(dataMinValue, mulValue, divValue, addValue);
+
+                            double? maxValue = ConvertFloatValue(max);
+                            maxValue ??= ScaleValue(dataMaxValue, mulValue, divValue, addValue);
+                            argInfoList.Add(new SgFuncArgInfo(arg, unit, dataType, tableDataType,
+                                mask, mulValue, divValue, addValue, minValue, maxValue, dataLength, nameInfoList, info));
                         }
 
                         dictIndex++;
@@ -2556,8 +2647,6 @@ namespace BmwDeepObd
                     int mulIndex = -1;
                     int divIndex = -1;
                     int addIndex = -1;
-                    int minIndex = -1;
-                    int maxIndex = -1;
                     int nameIndex = -1;
                     int infoIndex = -1;
                     int dictIndex = 0;
@@ -2577,8 +2666,6 @@ namespace BmwDeepObd
                         string mul = string.Empty;
                         string div = string.Empty;
                         string add = string.Empty;
-                        string min = string.Empty;
-                        string max = string.Empty;
                         string info = string.Empty;
                         for (int i = 0; ; i++)
                         {
@@ -2621,14 +2708,6 @@ namespace BmwDeepObd
                                         {
                                             addIndex = i;
                                         }
-                                        else if (string.Compare(entry, "MIN", StringComparison.OrdinalIgnoreCase) == 0)
-                                        {
-                                            minIndex = i;
-                                        }
-                                        else if (string.Compare(entry, "MAX", StringComparison.OrdinalIgnoreCase) == 0)
-                                        {
-                                            maxIndex = i;
-                                        }
                                         else if (string.Compare(entry, "INFO", StringComparison.OrdinalIgnoreCase) == 0)
                                         {
                                             infoIndex = i;
@@ -2670,14 +2749,6 @@ namespace BmwDeepObd
                                             {
                                                 add = entry.Trim();
                                             }
-                                            else if (i == minIndex)
-                                            {
-                                                min = entry.Trim();
-                                            }
-                                            else if (i == maxIndex)
-                                            {
-                                                max = entry.Trim();
-                                            }
                                             else if (i == infoIndex)
                                             {
                                                 info = entry.Trim();
@@ -2696,19 +2767,13 @@ namespace BmwDeepObd
                         {
                             List<SgFuncNameInfo> nameInfoList = ReadSgFuncNameTable(name, unit);
 
-                            TableDataType tableDataType = ConvertDataType(dataType, out double? dataMinValue, out double? dataMaxValue, out int? dataLength);
+                            TableDataType tableDataType = ConvertDataType(dataType, out double? _, out double? _, out int? dataLength);
                             double? mulValue = ConvertFloatValue(mul);
                             double? divValue = ConvertFloatValue(div);
                             double? addValue = ConvertFloatValue(add);
 
-                            double? minValue = ConvertFloatValue(min);
-                            minValue ??= ScaleValue(dataMinValue, mulValue, divValue, addValue);
-
-                            double? maxValue = ConvertFloatValue(max);
-                            maxValue ??= ScaleValue(dataMaxValue, mulValue, divValue, addValue);
-
                             bitFieldInfoList.Add(new SgFuncBitFieldInfo(resultName, unit, dataType, tableDataType,
-                                mask, mulValue, divValue, addValue, minValue, maxValue, dataLength, nameInfoList, info));
+                                mask, mulValue, divValue, addValue, dataLength, nameInfoList, info));
                         }
 
                         dictIndex++;
