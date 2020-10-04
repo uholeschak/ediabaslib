@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Android.Content;
+using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
+using EdiabasLib;
 
 namespace BmwDeepObd
 {
@@ -19,19 +21,22 @@ namespace BmwDeepObd
     {
         public class ParameterData
         {
-            public ParameterData(EdiabasToolActivity.SgFuncInfo funcInfo, TextView textViewCaption, TextView textViewDesc, List<object> itemList)
+            public ParameterData(EdiabasToolActivity.SgFuncArgInfo SgFuncArgInfo, TextView textViewCaption, TextView textViewDesc, Drawable defaultBackground, List<object> itemList)
             {
-                FuncInfo = funcInfo;
+                FuncArgInfo = SgFuncArgInfo;
                 TextViewCaption = textViewCaption;
                 TextViewDesc = textViewDesc;
+                DefaultBackground = defaultBackground;
                 ItemList = itemList;
             }
 
-            public EdiabasToolActivity.SgFuncInfo FuncInfo { get; }
+            public EdiabasToolActivity.SgFuncArgInfo FuncArgInfo { get; }
 
             public TextView TextViewCaption { get; }
 
             public TextView TextViewDesc { get; }
+
+            public Drawable DefaultBackground { get; }
 
             public List<object> ItemList { get; }
         }
@@ -485,12 +490,14 @@ namespace BmwDeepObd
                                     argLayout.AddView(textViewDesc, wrapLayoutParams);
                                 }
 
+                                Drawable defaultBackground = null;
                                 List<object> itemList = new List<object>();
                                 if (funcArgInfo.NameInfoList != null && funcArgInfo.NameInfoList.Count > 0)
                                 {
                                     if (funcArgInfo.NameInfoList[0] is EdiabasToolActivity.SgFuncValNameInfo)
                                     {
                                         Spinner spinner = new Spinner(this);
+                                        defaultBackground = spinner.Background;
                                         StringObjAdapter spinnerAdapter = new StringObjAdapter(this);
                                         int selection = 0;
                                         int index = 0;
@@ -522,6 +529,7 @@ namespace BmwDeepObd
                                 else
                                 {
                                     EditText editText = new EditText(this);
+                                    defaultBackground = editText.Background;
                                     editText.SetSingleLine();
                                     editText.ImeOptions = ImeAction.Done;
                                     editText.Text = selectParam;
@@ -534,6 +542,7 @@ namespace BmwDeepObd
                                             case ImeAction.Next:
                                             case ImeAction.Done:
                                             case ImeAction.Previous:
+                                                ValidateParamText();
                                                 HideKeyboard();
                                                 break;
                                         }
@@ -545,11 +554,13 @@ namespace BmwDeepObd
 
                                 _layoutArgParams.AddView(argLayout, wrapLayoutParams);
 
-                                _parameterList.Add(new ParameterData(funcInfo, textViewCaption, textViewDesc, itemList));
+                                _parameterList.Add(new ParameterData(funcArgInfo, textViewCaption, textViewDesc, defaultBackground, itemList));
                             }
                         }
                     }
                 }
+
+                ValidateParamText();
             }
             catch (Exception)
             {
@@ -585,6 +596,70 @@ namespace BmwDeepObd
             bool enable = ArgsValid();
             _buttonApply.Enabled = enable;
             _buttonExecute.Enabled = enable && !_offline;
+        }
+
+        private void ValidateParamText()
+        {
+            try
+            {
+                if (_layoutArgParams.Visibility == ViewStates.Visible)
+                {
+                    foreach (ParameterData parameterData in _parameterList)
+                    {
+                        foreach (object itemObject in parameterData.ItemList)
+                        {
+                            if (itemObject is EditText editText)
+                            {
+                                EdiabasToolActivity.SgFuncArgInfo funcArgInfo = parameterData.FuncArgInfo;
+                                string paramText = editText.Text;
+                                bool paramValid = true;
+
+                                if (funcArgInfo != null)
+                                {
+                                    switch (funcArgInfo.TableDataType)
+                                    {
+                                        case EdiabasToolActivity.TableDataType.Float:
+                                        {
+                                            double floatValue = EdiabasNet.StringToFloat(paramText, out bool valid);
+                                            if (!valid)
+                                            {
+                                                paramValid = false;
+                                                break;
+                                            }
+
+                                            if (funcArgInfo.Min.HasValue && floatValue < funcArgInfo.Min)
+                                            {
+                                                paramValid = false;
+                                                break;
+                                            }
+
+                                            if (funcArgInfo.Max.HasValue && floatValue > funcArgInfo.Max)
+                                            {
+                                                paramValid = false;
+                                                break;
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if (paramValid)
+                                {
+                                    editText.Background = parameterData.DefaultBackground;
+                                }
+                                else
+                                {
+                                    editText.SetBackgroundColor(Color.Red);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private bool ArgsValid()
