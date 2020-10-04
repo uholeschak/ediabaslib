@@ -630,7 +630,7 @@ namespace BmwDeepObd
                             if (itemObject is EditText editText)
                             {
                                 EdiabasToolActivity.SgFuncArgInfo funcArgInfo = parameterData.FuncArgInfo;
-                                string paramText = editText.Text;
+                                string paramText = editText.Text ?? string.Empty;
                                 bool paramValid = true;
 
                                 if (funcArgInfo != null)
@@ -646,16 +646,52 @@ namespace BmwDeepObd
                                                 break;
                                             }
 
-                                            if (funcArgInfo.Min.HasValue && floatValue < funcArgInfo.Min)
+                                            if (funcArgInfo.Min.HasValue && floatValue < funcArgInfo.Min.Value)
                                             {
                                                 paramValid = false;
                                                 break;
                                             }
 
-                                            if (funcArgInfo.Max.HasValue && floatValue > funcArgInfo.Max)
+                                            if (funcArgInfo.Max.HasValue && floatValue > funcArgInfo.Max.Value)
+                                            {
+                                                paramValid = false;
+                                            }
+                                            break;
+                                        }
+
+                                        case EdiabasToolActivity.TableDataType.String:
+                                        {
+                                            int length = paramText.Length;
+                                            if (length == 0)
                                             {
                                                 paramValid = false;
                                                 break;
+                                            }
+
+                                            int maxLength = 255;
+                                            if (funcArgInfo.Length.HasValue)
+                                            {
+                                                maxLength = funcArgInfo.Length.Value;
+                                            }
+                                            if (length > maxLength)
+                                            {
+                                                paramValid = false;
+                                            }
+                                            break;
+                                        }
+
+                                        case EdiabasToolActivity.TableDataType.Binary:
+                                        {
+                                            byte[] data = EdiabasNet.HexToByteArray(paramText);
+                                            if (data == null || data.Length == 0)
+                                            {
+                                                paramValid = false;
+                                                break;
+                                            }
+
+                                            if (funcArgInfo.Length.HasValue && data.Length > funcArgInfo.Length.Value)
+                                            {
+                                                paramValid = false;
                                             }
                                             break;
                                         }
