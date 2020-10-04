@@ -26,6 +26,7 @@ namespace BmwDeepObd
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
         private bool _dynamicId;
+        private bool _ignoreCheckChange;
 
         private LinearLayout _layoutBlockNumber;
         private Spinner _spinnerBlockNumber;
@@ -76,11 +77,19 @@ namespace BmwDeepObd
 
             _radioButtonArgTypeArg.CheckedChange += (sender, args) =>
             {
+                if (_ignoreCheckChange)
+                {
+                    return;
+                }
                 UpdateArgList();
             };
 
             _radioButtonArgTypeId.CheckedChange += (sender, args) =>
             {
+                if (_ignoreCheckChange)
+                {
+                    return;
+                }
                 UpdateArgList();
             };
 
@@ -164,6 +173,8 @@ namespace BmwDeepObd
 
             try
             {
+                _ignoreCheckChange = true;
+
                 List<string> selectList = null;
                 string blockNumber = string.Empty;
                 string defineBlockNew = string.Empty;
@@ -224,6 +235,7 @@ namespace BmwDeepObd
 
                         index++;
                     }
+
                     _spinnerBlockNumberAdapter.NotifyDataSetChanged();
                     _spinnerBlockNumber.SetSelection(selection);
 
@@ -239,6 +251,10 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 // ignored
+            }
+            finally
+            {
+                _ignoreCheckChange = false;
             }
         }
 
