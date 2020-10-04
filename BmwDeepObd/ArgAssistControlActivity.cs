@@ -46,6 +46,7 @@ namespace BmwDeepObd
         private bool _activityRecreated;
         private bool _controlRoutine;
         private bool _controlIo;
+        private bool _ignoreCheckChange;
         private int _argumentSelectLastItem;
 
         private ScrollView _scrollViewArgAssist;
@@ -115,22 +116,29 @@ namespace BmwDeepObd
             _radioGroupControlRoutine.SetOnTouchListener(this);
             _radioButtonStr = FindViewById<RadioButton>(Resource.Id.radioButtonStr);
             _radioButtonStr.SetOnTouchListener(this);
+            _radioButtonStr.CheckedChange += RadioButtonControlCheckedChange;
             _radioButtonStpr = FindViewById<RadioButton>(Resource.Id.radioButtonStpr);
             _radioButtonStpr.SetOnTouchListener(this);
+            _radioButtonStpr.CheckedChange += RadioButtonControlCheckedChange;
             _radioButtonRrr = FindViewById<RadioButton>(Resource.Id.radioButtonRrr);
             _radioButtonRrr.SetOnTouchListener(this);
+            _radioButtonRrr.CheckedChange += RadioButtonControlCheckedChange;
 
             _radioGroupControlIo = FindViewById<RadioGroup>(Resource.Id.radioGroupControlIo);
             _radioGroupControlIo.Visibility = _controlIo ? ViewStates.Visible : ViewStates.Gone;
             _radioGroupControlIo.SetOnTouchListener(this);
             _radioButtonRctEcu = FindViewById<RadioButton>(Resource.Id.radioButtonRctEcu);
             _radioButtonRctEcu.SetOnTouchListener(this);
+            _radioButtonRctEcu.CheckedChange += RadioButtonControlCheckedChange;
             _radioButtonRtd = FindViewById<RadioButton>(Resource.Id.radioButtonRtd);
             _radioButtonRtd.SetOnTouchListener(this);
+            _radioButtonRtd.CheckedChange += RadioButtonControlCheckedChange;
             _radioButtonFcs = FindViewById<RadioButton>(Resource.Id.radioButtonFcs);
             _radioButtonFcs.SetOnTouchListener(this);
+            _radioButtonFcs.CheckedChange += RadioButtonControlCheckedChange;
             _radioButtonSta = FindViewById<RadioButton>(Resource.Id.radioButtonSta);
             _radioButtonSta.SetOnTouchListener(this);
+            _radioButtonSta.CheckedChange += RadioButtonControlCheckedChange;
 
             _layoutArgParams = FindViewById<LinearLayout>(Resource.Id.layoutArgParams);
             _layoutArgParams.SetOnTouchListener(this);
@@ -158,11 +166,19 @@ namespace BmwDeepObd
 
             _radioButtonArgTypeArg.CheckedChange += (sender, args) =>
             {
+                if (_ignoreCheckChange)
+                {
+                    return;
+                }
                 UpdateArgList();
             };
 
             _radioButtonArgTypeId.CheckedChange += (sender, args) =>
             {
+                if (_ignoreCheckChange)
+                {
+                    return;
+                }
                 UpdateArgList();
             };
 
@@ -224,6 +240,8 @@ namespace BmwDeepObd
 
             try
             {
+                _ignoreCheckChange = true;
+
                 List<string> selectList = null;
                 string selectArg = null;
                 string argType = string.Empty;
@@ -317,12 +335,26 @@ namespace BmwDeepObd
 
                 UpdateArgList(selectArg);
                 UpdateArgParams(selectList);
+                UpdateArgParamsVisible();
                 UpdateButtonState();
             }
             catch (Exception)
             {
                 // ignored
             }
+            finally
+            {
+                _ignoreCheckChange = false;
+            }
+        }
+
+        private void RadioButtonControlCheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            if (_ignoreCheckChange)
+            {
+                return;
+            }
+            UpdateArgParamsVisible();
         }
 
         private void UpdateArgList(string selectArg = null)
@@ -370,6 +402,21 @@ namespace BmwDeepObd
             {
                 // ignored
             }
+        }
+
+        private void UpdateArgParamsVisible()
+        {
+            bool visible = true;
+            if (_controlRoutine)
+            {
+                visible = _radioButtonStr.Checked;
+            }
+            else if (_controlIo)
+            {
+                visible = _radioButtonSta.Checked;
+            }
+
+            _layoutArgParams.Visibility = visible ? ViewStates.Visible : ViewStates.Gone;
         }
 
         private void UpdateArgParams(List<string> selectParams = null)
@@ -639,40 +686,43 @@ namespace BmwDeepObd
                     sb.Append(controlParameter);
                 }
 
-                foreach (ParameterData parameterData in _parameterList)
+                if (_layoutArgParams.Visibility == ViewStates.Visible)
                 {
-                    string parameter = string.Empty;
-                    foreach (object itemObject in parameterData.ItemList)
+                    foreach (ParameterData parameterData in _parameterList)
                     {
-                        parameter = string.Empty;
-                        if (itemObject is EditText editText)
+                        string parameter = string.Empty;
+                        foreach (object itemObject in parameterData.ItemList)
                         {
-                            parameter = editText.Text;
-                        }
-                        else if (itemObject is Spinner spinner)
-                        {
-                            if (spinner.Adapter is StringObjAdapter spinnerAdapter)
+                            parameter = string.Empty;
+                            if (itemObject is EditText editText)
                             {
-                                int spinnerPos = spinner.SelectedItemPosition;
-                                if (spinnerPos >= 0 && spinnerPos < spinnerAdapter.Items.Count)
+                                parameter = editText.Text;
+                            }
+                            else if (itemObject is Spinner spinner)
+                            {
+                                if (spinner.Adapter is StringObjAdapter spinnerAdapter)
                                 {
-                                    StringObjType itemSpinner = spinnerAdapter.Items[spinnerPos];
-                                    if (itemSpinner.Data is EdiabasToolActivity.SgFuncValNameInfo valNameInfo)
+                                    int spinnerPos = spinner.SelectedItemPosition;
+                                    if (spinnerPos >= 0 && spinnerPos < spinnerAdapter.Items.Count)
                                     {
-                                        parameter = valNameInfo.Text;
+                                        StringObjType itemSpinner = spinnerAdapter.Items[spinnerPos];
+                                        if (itemSpinner.Data is EdiabasToolActivity.SgFuncValNameInfo valNameInfo)
+                                        {
+                                            parameter = valNameInfo.Text;
+                                        }
                                     }
                                 }
                             }
+
+                            if (!string.IsNullOrWhiteSpace(parameter))
+                            {
+                                break;
+                            }
                         }
 
-                        if (!string.IsNullOrWhiteSpace(parameter))
-                        {
-                            break;
-                        }
+                        sb.Append(";");
+                        sb.Append(parameter);
                     }
-
-                    sb.Append(";");
-                    sb.Append(parameter);
                 }
 
                 return sb.ToString();
