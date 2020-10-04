@@ -535,7 +535,6 @@ namespace BmwDeepObd
                                             case ImeAction.Done:
                                             case ImeAction.Previous:
                                                 HideKeyboard();
-                                                UpdateButtonState();
                                                 break;
                                         }
                                     };
@@ -596,20 +595,6 @@ namespace BmwDeepObd
                 if (position < 0 || position >= _spinnerArgumentAdapter.Items.Count)
                 {
                     return true;
-                }
-
-                foreach (ParameterData parameterData in _parameterList)
-                {
-                    foreach (object itemObject in parameterData.ItemList)
-                    {
-                        if (itemObject is EditText editText)
-                        {
-                            if (string.IsNullOrWhiteSpace(editText.Text))
-                            {
-                                return false;
-                            }
-                        }
-                    }
                 }
 
                 return true;
