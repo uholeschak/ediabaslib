@@ -546,8 +546,9 @@ namespace BmwDeepObd
                                         Spinner spinner = new Spinner(this);
                                         defaultBackground = spinner.Background;
                                         StringObjAdapter spinnerAdapter = new StringObjAdapter(this);
+                                        spinnerAdapter.Items.Add(new StringObjType("--", null));
                                         int selection = 0;
-                                        int index = 0;
+                                        int index = 1;
                                         foreach (EdiabasToolActivity.SgFuncNameInfo funcNameInfo in funcArgInfo.NameInfoList)
                                         {
                                             if (funcNameInfo is EdiabasToolActivity.SgFuncValNameInfo valNameInfo)
@@ -854,7 +855,7 @@ namespace BmwDeepObd
                                     if (spinnerPos >= 0 && spinnerPos < spinnerAdapter.Items.Count)
                                     {
                                         StringObjType itemSpinner = spinnerAdapter.Items[spinnerPos];
-                                        if (itemSpinner.Data is EdiabasToolActivity.SgFuncValNameInfo valNameInfo)
+                                        if (itemSpinner != null && itemSpinner.Data is EdiabasToolActivity.SgFuncValNameInfo valNameInfo)
                                         {
                                             parameter = valNameInfo.Text;
                                         }
