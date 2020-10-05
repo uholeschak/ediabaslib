@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Android.Content;
@@ -472,6 +473,17 @@ namespace BmwDeepObd
                                 {
                                     sbDesc.Append(funcArgInfo.Info);
                                 }
+
+                                if (!string.IsNullOrEmpty(funcArgInfo.DataType))
+                                {
+                                    if (sbDesc.Length > 0)
+                                    {
+                                        sbDesc.Append("\r\n");
+                                    }
+                                    sbDesc.Append("Data type: ");
+                                    sbDesc.Append(funcArgInfo.DataType);
+                                }
+
                                 if (!string.IsNullOrEmpty(funcArgInfo.Unit))
                                 {
                                     if (sbDesc.Length > 0)
@@ -482,24 +494,40 @@ namespace BmwDeepObd
                                     sbDesc.Append(funcArgInfo.Unit);
                                 }
 
-                                if (!string.IsNullOrEmpty(funcArgInfo.MinText))
+                                string minText = funcArgInfo.MinText;
+                                if (string.IsNullOrEmpty(minText))
+                                {
+                                    if (funcArgInfo.Min.HasValue)
+                                    {
+                                        minText = string.Format(CultureInfo.InvariantCulture, "{0:0.0}", funcArgInfo.Min.Value);
+                                    }
+                                }
+                                if (!string.IsNullOrEmpty(minText))
                                 {
                                     if (sbDesc.Length > 0)
                                     {
                                         sbDesc.Append("\r\n");
                                     }
                                     sbDesc.Append("Min: ");
-                                    sbDesc.Append(funcArgInfo.MinText);
+                                    sbDesc.Append(minText);
                                 }
 
-                                if (!string.IsNullOrEmpty(funcArgInfo.MaxText))
+                                string maxText = funcArgInfo.MaxText;
+                                if (string.IsNullOrEmpty(maxText))
+                                {
+                                    if (funcArgInfo.Max.HasValue)
+                                    {
+                                        maxText = string.Format(CultureInfo.InvariantCulture, "{0:0.0}", funcArgInfo.Max.Value);
+                                    }
+                                }
+                                if (!string.IsNullOrEmpty(maxText))
                                 {
                                     if (sbDesc.Length > 0)
                                     {
                                         sbDesc.Append("\r\n");
                                     }
                                     sbDesc.Append("Max: ");
-                                    sbDesc.Append(funcArgInfo.MaxText);
+                                    sbDesc.Append(maxText);
                                 }
 
                                 if (sbDesc.Length > 0)
