@@ -668,14 +668,19 @@ namespace BmwDeepObd
                                                 break;
                                             }
 
-                                            int maxLength = 255;
                                             if (funcArgInfo.Length.HasValue)
                                             {
-                                                maxLength = funcArgInfo.Length.Value;
+                                                if (length != funcArgInfo.Length.Value)
+                                                {
+                                                    paramValid = false;
+                                                }
                                             }
-                                            if (length > maxLength)
+                                            else
                                             {
-                                                paramValid = false;
+                                                if (length > 255)
+                                                {
+                                                    paramValid = false;
+                                                }
                                             }
                                             break;
                                         }
@@ -689,7 +694,7 @@ namespace BmwDeepObd
                                                 break;
                                             }
 
-                                            if (funcArgInfo.Length.HasValue && data.Length > funcArgInfo.Length.Value)
+                                            if (funcArgInfo.Length.HasValue && data.Length != funcArgInfo.Length.Value)
                                             {
                                                 paramValid = false;
                                             }
