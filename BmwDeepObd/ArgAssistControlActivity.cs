@@ -570,6 +570,10 @@ namespace BmwDeepObd
 
                                         spinnerAdapter.NotifyDataSetChanged();
                                         spinner.SetSelection(selection);
+                                        spinner.ItemSelected += (sender, args) =>
+                                        {
+                                            ValidateParams();
+                                        };
                                         argLayout.AddView(spinner, wrapLayoutParams);
                                         itemList.Add(spinner);
                                     }
@@ -590,7 +594,7 @@ namespace BmwDeepObd
                                             case ImeAction.Next:
                                             case ImeAction.Done:
                                             case ImeAction.Previous:
-                                                ValidateParamText();
+                                                ValidateParams();
                                                 HideKeyboard();
                                                 break;
                                         }
@@ -608,7 +612,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                ValidateParamText();
+                ValidateParams();
             }
             catch (Exception)
             {
@@ -646,7 +650,7 @@ namespace BmwDeepObd
             _buttonExecute.Enabled = enable && !_offline;
         }
 
-        private void ValidateParamText()
+        private void ValidateParams()
         {
             try
             {
@@ -739,6 +743,31 @@ namespace BmwDeepObd
                                 else
                                 {
                                     editText.SetBackgroundColor(Color.Red);
+                                }
+                            }
+                            else if (itemObject is Spinner spinner)
+                            {
+                                bool paramValid = true;
+                                if (spinner.Adapter is StringObjAdapter spinnerAdapter)
+                                {
+                                    int spinnerPos = spinner.SelectedItemPosition;
+                                    if (spinnerPos >= 0 && spinnerPos < spinnerAdapter.Items.Count)
+                                    {
+                                        StringObjType itemSpinner = spinnerAdapter.Items[spinnerPos];
+                                        if (!(itemSpinner.Data is EdiabasToolActivity.SgFuncValNameInfo))
+                                        {
+                                            paramValid = false;
+                                        }
+                                    }
+                                }
+
+                                if (paramValid)
+                                {
+                                    spinner.Background = parameterData.DefaultBackground;
+                                }
+                                else
+                                {
+                                    spinner.SetBackgroundColor(Color.Red);
                                 }
                             }
                         }
@@ -855,7 +884,7 @@ namespace BmwDeepObd
                                     if (spinnerPos >= 0 && spinnerPos < spinnerAdapter.Items.Count)
                                     {
                                         StringObjType itemSpinner = spinnerAdapter.Items[spinnerPos];
-                                        if (itemSpinner != null && itemSpinner.Data is EdiabasToolActivity.SgFuncValNameInfo valNameInfo)
+                                        if (itemSpinner.Data is EdiabasToolActivity.SgFuncValNameInfo valNameInfo)
                                         {
                                             parameter = valNameInfo.Text;
                                         }
