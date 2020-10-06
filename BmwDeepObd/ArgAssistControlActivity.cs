@@ -176,6 +176,7 @@ namespace BmwDeepObd
                     return;
                 }
                 UpdateArgList();
+                UpdateArgParams();
             };
 
             _radioButtonArgTypeId.CheckedChange += (sender, args) =>
@@ -185,6 +186,7 @@ namespace BmwDeepObd
                     return;
                 }
                 UpdateArgList();
+                UpdateArgParams();
             };
 
             UpdateDisplay();
