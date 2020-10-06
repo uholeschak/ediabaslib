@@ -37,7 +37,8 @@ namespace BmwDeepObd
             var item = _items[position];
 
             View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.string_list, null);
-            view.SetBackgroundColor(_backgroundColor);
+            Android.Graphics.Color backgroundColor = item.BackgroundColor.HasValue ? item.BackgroundColor.Value : _backgroundColor;
+            view.SetBackgroundColor(backgroundColor);
 
             TextView textView = view.FindViewById<TextView>(Resource.Id.textStringEntry);
             textView.Text = item.Text;
@@ -48,12 +49,14 @@ namespace BmwDeepObd
 
     public class StringObjType
     {
-        public StringObjType(string text, object data)
+        public StringObjType(string text, object data, Android.Graphics.Color? backgroundColor = null)
         {
             Text = text;
             Data = data;
+            BackgroundColor = backgroundColor;
         }
         public string Text { get; set; }
         public object Data { get; set; }
+        public Android.Graphics.Color? BackgroundColor { get; set; }
     }
 }

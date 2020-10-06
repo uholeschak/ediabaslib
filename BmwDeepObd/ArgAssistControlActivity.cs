@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using Android.Content;
-using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V7.App;
@@ -546,7 +545,7 @@ namespace BmwDeepObd
                                         Spinner spinner = new Spinner(this);
                                         defaultBackground = spinner.Background;
                                         StringObjAdapter spinnerAdapter = new StringObjAdapter(this);
-                                        spinnerAdapter.Items.Add(new StringObjType("--", null));
+                                        spinnerAdapter.Items.Add(new StringObjType("--", null, Android.Graphics.Color.Red));
                                         int selection = 0;
                                         int index = 1;
                                         foreach (EdiabasToolActivity.SgFuncNameInfo funcNameInfo in funcArgInfo.NameInfoList)
@@ -742,32 +741,7 @@ namespace BmwDeepObd
                                 }
                                 else
                                 {
-                                    editText.SetBackgroundColor(Color.Red);
-                                }
-                            }
-                            else if (itemObject is Spinner spinner)
-                            {
-                                bool paramValid = true;
-                                if (spinner.Adapter is StringObjAdapter spinnerAdapter)
-                                {
-                                    int spinnerPos = spinner.SelectedItemPosition;
-                                    if (spinnerPos >= 0 && spinnerPos < spinnerAdapter.Items.Count)
-                                    {
-                                        StringObjType itemSpinner = spinnerAdapter.Items[spinnerPos];
-                                        if (!(itemSpinner.Data is EdiabasToolActivity.SgFuncValNameInfo))
-                                        {
-                                            paramValid = false;
-                                        }
-                                    }
-                                }
-
-                                if (paramValid)
-                                {
-                                    spinner.Background = parameterData.DefaultBackground;
-                                }
-                                else
-                                {
-                                    spinner.SetBackgroundColor(Color.Red);
+                                    editText.SetBackgroundColor(Android.Graphics.Color.Red);
                                 }
                             }
                         }
