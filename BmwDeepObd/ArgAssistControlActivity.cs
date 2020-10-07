@@ -458,6 +458,7 @@ namespace BmwDeepObd
                                     ViewGroup.LayoutParams.WrapContent);
 
                                 TextView textViewCaption = new TextView(this);
+                                textViewCaption.SetOnTouchListener(this);
                                 textViewCaption.SetTextColor(captionTextColors);
                                 textViewCaption.Background = captionTextBackground;
 
@@ -534,6 +535,7 @@ namespace BmwDeepObd
                                 if (sbDesc.Length > 0)
                                 {
                                     textViewDesc = new TextView(this);
+                                    textViewDesc.SetOnTouchListener(this);
                                     textViewDesc.Text = sbDesc.ToString();
                                     argLayout.AddView(textViewDesc, wrapLayoutParams);
                                 }
@@ -545,6 +547,7 @@ namespace BmwDeepObd
                                     if (funcArgInfo.NameInfoList[0] is EdiabasToolActivity.SgFuncValNameInfo)
                                     {
                                         Spinner spinner = new Spinner(this);
+                                        spinner.SetOnTouchListener(this);
                                         defaultBackground = spinner.Background;
                                         StringObjAdapter spinnerAdapter = new StringObjAdapter(this);
                                         spinnerAdapter.Items.Add(new StringObjType("--", null, Android.Graphics.Color.Red));
@@ -586,6 +589,12 @@ namespace BmwDeepObd
                                     editText.SetSingleLine();
                                     editText.ImeOptions = ImeAction.Done;
                                     editText.Text = selectParam;
+
+                                    editText.TextChanged += (sender, args) =>
+                                    {
+                                        ValidateParams();
+                                    };
+
                                     editText.EditorAction += (sender, args) =>
                                     {
                                         switch (args.ActionId)
