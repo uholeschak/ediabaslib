@@ -586,6 +586,12 @@ namespace BmwDeepObd
                                     editText.SetSingleLine();
                                     editText.ImeOptions = ImeAction.Done;
                                     editText.Text = selectParam;
+
+                                    editText.TextChanged += (sender, args) =>
+                                    {
+                                        ValidateParams();
+                                    };
+
                                     editText.EditorAction += (sender, args) =>
                                     {
                                         switch (args.ActionId)
