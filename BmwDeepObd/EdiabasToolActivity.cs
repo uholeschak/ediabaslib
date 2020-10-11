@@ -1685,6 +1685,37 @@ namespace BmwDeepObd
                         }
                     }
 
+                    foreach (KeyValuePair<string, List<SgFuncArgInfo>> argInfoPair in _sgFuncArgInfoDict)
+                    {
+                        foreach (SgFuncArgInfo funcArgInfo in argInfoPair.Value)
+                        {
+                            if (funcArgInfo.InfoTrans == null)
+                            {
+                                if (!string.IsNullOrEmpty(funcArgInfo.Info))
+                                {
+                                    stringList.Add(funcArgInfo.Info);
+                                }
+                            }
+                        }
+                    }
+
+                    foreach (KeyValuePair<string, List<SgFuncNameInfo>> funcNameInfoPair in _sgFuncNameInfoDict)
+                    {
+                        foreach (SgFuncNameInfo funcNameInfo in funcNameInfoPair.Value)
+                        {
+                            if (funcNameInfo is SgFuncBitFieldInfo funcBitFieldInfo)
+                            {
+                                if (funcBitFieldInfo.InfoTrans == null)
+                                {
+                                    if (!string.IsNullOrEmpty(funcBitFieldInfo.Info))
+                                    {
+                                        stringList.Add(funcBitFieldInfo.Info);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     if (stringList.Count == 0)
                     {
                         return false;
@@ -1774,6 +1805,43 @@ namespace BmwDeepObd
                                                 if (transIndex < transList.Count)
                                                 {
                                                     funcInfo.InfoTrans = transList[transIndex++];
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    foreach (KeyValuePair<string, List<SgFuncArgInfo>> argInfoPair in _sgFuncArgInfoDict)
+                                    {
+                                        foreach (SgFuncArgInfo funcArgInfo in argInfoPair.Value)
+                                        {
+                                            if (funcArgInfo.InfoTrans == null)
+                                            {
+                                                if (!string.IsNullOrEmpty(funcArgInfo.Info))
+                                                {
+                                                    if (transIndex < transList.Count)
+                                                    {
+                                                        funcArgInfo.InfoTrans = transList[transIndex++];
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    foreach (KeyValuePair<string, List<SgFuncNameInfo>> funcNameInfoPair in _sgFuncNameInfoDict)
+                                    {
+                                        foreach (SgFuncNameInfo funcNameInfo in funcNameInfoPair.Value)
+                                        {
+                                            if (funcNameInfo is SgFuncBitFieldInfo funcBitFieldInfo)
+                                            {
+                                                if (funcBitFieldInfo.InfoTrans == null)
+                                                {
+                                                    if (!string.IsNullOrEmpty(funcBitFieldInfo.Info))
+                                                    {
+                                                        if (transIndex < transList.Count)
+                                                        {
+                                                            funcBitFieldInfo.InfoTrans = transList[transIndex++];
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
