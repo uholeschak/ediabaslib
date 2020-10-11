@@ -497,40 +497,44 @@ namespace BmwDeepObd
                                     sbDesc.Append(funcArgInfo.Unit);
                                 }
 
-                                string minText = funcArgInfo.MinText;
-                                if (string.IsNullOrEmpty(minText))
-                                {
-                                    if (funcArgInfo.Min.HasValue)
-                                    {
-                                        minText = string.Format(CultureInfo.InvariantCulture, "{0:0.0}", funcArgInfo.Min.Value);
-                                    }
-                                }
-                                if (!string.IsNullOrEmpty(minText))
-                                {
-                                    if (sbDesc.Length > 0)
-                                    {
-                                        sbDesc.Append("\r\n");
-                                    }
-                                    sbDesc.Append("Min: ");
-                                    sbDesc.Append(minText);
-                                }
 
-                                string maxText = funcArgInfo.MaxText;
-                                if (string.IsNullOrEmpty(maxText))
+                                if (funcArgInfo.TableDataType == EdiabasToolActivity.TableDataType.Float)
                                 {
-                                    if (funcArgInfo.Max.HasValue)
+                                    string minText = funcArgInfo.MinText;
+                                    if (string.IsNullOrEmpty(minText))
                                     {
-                                        maxText = string.Format(CultureInfo.InvariantCulture, "{0:0.0}", funcArgInfo.Max.Value);
+                                        if (funcArgInfo.Min.HasValue)
+                                        {
+                                            minText = string.Format(CultureInfo.InvariantCulture, "{0:0.0}", funcArgInfo.Min.Value);
+                                        }
                                     }
-                                }
-                                if (!string.IsNullOrEmpty(maxText))
-                                {
-                                    if (sbDesc.Length > 0)
+                                    if (!string.IsNullOrEmpty(minText))
                                     {
-                                        sbDesc.Append("\r\n");
+                                        if (sbDesc.Length > 0)
+                                        {
+                                            sbDesc.Append("\r\n");
+                                        }
+                                        sbDesc.Append("Min: ");
+                                        sbDesc.Append(minText);
                                     }
-                                    sbDesc.Append("Max: ");
-                                    sbDesc.Append(maxText);
+
+                                    string maxText = funcArgInfo.MaxText;
+                                    if (string.IsNullOrEmpty(maxText))
+                                    {
+                                        if (funcArgInfo.Max.HasValue)
+                                        {
+                                            maxText = string.Format(CultureInfo.InvariantCulture, "{0:0.0}", funcArgInfo.Max.Value);
+                                        }
+                                    }
+                                    if (!string.IsNullOrEmpty(maxText))
+                                    {
+                                        if (sbDesc.Length > 0)
+                                        {
+                                            sbDesc.Append("\r\n");
+                                        }
+                                        sbDesc.Append("Max: ");
+                                        sbDesc.Append(maxText);
+                                    }
                                 }
 
                                 if (sbDesc.Length > 0)
