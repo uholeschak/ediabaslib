@@ -4527,14 +4527,15 @@ namespace CarSimulator
                         _receiveData[2] == 0xF1 &&
                         _receiveData[3] == 0x31)
                     {
-                        // dummy ok response for service 31 (self test)
-                        Debug.WriteLine("Dummy service 31: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
-                        _sendData[0] = 0x83;
+                        // dummy ok response for service 31 (routine control)
+                        Debug.WriteLine("Dummy service 31: {0:X02}: {1:X02}{2:X02}", _receiveData[4], _receiveData[5], _receiveData[6]);
+                        _sendData[0] = 0x84;
                         _sendData[1] = 0xF1;
                         _sendData[2] = _receiveData[1];
                         _sendData[3] = 0x71;
                         _sendData[4] = _receiveData[4];
                         _sendData[5] = _receiveData[5];
+                        _sendData[6] = _receiveData[6];
 
                         ObdSend(_sendData);
                         found = true;
@@ -6977,6 +6978,40 @@ namespace CarSimulator
                         }
                     }
                 }
+            }
+            else if (
+                (_receiveData[0] & 0xC0) == 0x80 &&
+                (_receiveData[0] & 0x3F) >= 3 &&
+                _receiveData[1] == 0x76 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x31)
+            {
+                // dummy ok response for service 31 (routine control)
+                Debug.WriteLine("Dummy service 31: {0:X02}: {1:X02}{2:X02}", _receiveData[4], _receiveData[5], _receiveData[6]);
+                _sendData[0] = 0x84;
+                _sendData[1] = 0xF1;
+                _sendData[2] = _receiveData[1];
+                _sendData[3] = 0x71;
+                _sendData[4] = _receiveData[4];
+                _sendData[5] = _receiveData[5];
+                _sendData[6] = _receiveData[6];
+
+                bool withResponse = false;
+                switch (_receiveData[4])
+                {
+                    case 0x01:
+                    case 0x03:
+                        withResponse = true;
+                        break;
+                }
+
+                if (withResponse)
+                {
+                    _sendData[0]++;
+                    _sendData[7] = 0x01;
+                }
+
+                ObdSend(_sendData);
             }
             else
             {   // nothing matched, check response list
