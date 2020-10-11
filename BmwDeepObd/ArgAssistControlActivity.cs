@@ -471,9 +471,10 @@ namespace BmwDeepObd
 
                                 TextView textViewDesc = null;
                                 StringBuilder sbDesc = new StringBuilder();
-                                if (!string.IsNullOrEmpty(funcArgInfo.Info))
+                                string info = funcArgInfo.InfoTrans ?? funcArgInfo.Info;
+                                if (!string.IsNullOrEmpty(info))
                                 {
-                                    sbDesc.Append(funcArgInfo.Info);
+                                    sbDesc.Append(info);
                                 }
 
                                 if (!string.IsNullOrEmpty(funcArgInfo.DataType))

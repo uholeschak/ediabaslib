@@ -1502,7 +1502,8 @@ namespace BmwDeepObd
                             {
                                 if (funcNameInfo is SgFuncBitFieldInfo funcBitFieldInfo)
                                 {
-                                    ExtraInfo extraInfo = new ExtraInfo(funcBitFieldInfo.ResultName, string.Empty, new List<string> { funcBitFieldInfo.Info });
+                                    string info = funcBitFieldInfo.InfoTrans ?? funcBitFieldInfo.Info;
+                                    ExtraInfo extraInfo = new ExtraInfo(funcBitFieldInfo.ResultName, string.Empty, new List<string> { info });
                                     _resultSelectListAdapter.Items.Add(extraInfo);
                                 }
                             }
