@@ -155,6 +155,7 @@ namespace BmwDeepObd
                 Length = length;
                 NameInfoList = nameInfoList;
                 Info = info;
+                InfoTrans = null;
             }
 
             public string Arg { get; }
@@ -186,6 +187,8 @@ namespace BmwDeepObd
             public List<SgFuncNameInfo> NameInfoList { get; }
 
             public string Info { get; }
+
+            public string InfoTrans { get; set; }
         }
 
         public class SgFuncNameInfo
@@ -221,6 +224,7 @@ namespace BmwDeepObd
                 Length = length;
                 NameInfoList = nameInfoList;
                 Info = info;
+                InfoTrans = null;
             }
 
             public string ResultName { get; }
@@ -244,6 +248,8 @@ namespace BmwDeepObd
             public List<SgFuncNameInfo> NameInfoList { get; }
 
             public string Info { get; }
+
+            public string InfoTrans { get; set; }
         }
 
         public class InstanceData
@@ -1820,6 +1826,25 @@ namespace BmwDeepObd
                     foreach (SgFuncInfo funcInfo in _sgFuncInfoList)
                     {
                         funcInfo.InfoTrans = null;
+                    }
+
+                    foreach (KeyValuePair<string, List<SgFuncArgInfo>> argInfoPair in _sgFuncArgInfoDict)
+                    {
+                        foreach (SgFuncArgInfo funcArgInfo in argInfoPair.Value)
+                        {
+                            funcArgInfo.InfoTrans = null;
+                        }
+                    }
+
+                    foreach (KeyValuePair<string, List<SgFuncNameInfo>> funcNameInfoPair in _sgFuncNameInfoDict)
+                    {
+                        foreach (SgFuncNameInfo funcNameInfo in funcNameInfoPair.Value)
+                        {
+                            if (funcNameInfo is SgFuncBitFieldInfo funcBitFieldInfo)
+                            {
+                                funcBitFieldInfo.InfoTrans = null;
+                            }
+                        }
                     }
                 }
             }
