@@ -7007,8 +7007,29 @@ namespace CarSimulator
 
                 if (withResponse)
                 {
-                    _sendData[0]++;
-                    _sendData[7] = 0x01;
+                    switch (_receiveData[5])
+                    {
+                        case 0xF0:
+                            _sendData[0]++;
+                            _sendData[7] = 0x01;    // active
+                            break;
+
+                        case 0xAB:
+                            _sendData[0] += 8;
+
+                            _sendData[7] = 0x01;
+                            _sendData[8] = 0x02;
+
+                            _sendData[9] = 0x03;
+                            _sendData[10] = 0x04;
+
+                            _sendData[11] = 0x05;
+                            _sendData[12] = 0x06;
+
+                            _sendData[13] = 0x07;
+                            _sendData[14] = 0x08;
+                            break;
+                    }
                 }
 
                 ObdSend(_sendData);
