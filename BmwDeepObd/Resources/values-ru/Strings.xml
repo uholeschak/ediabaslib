@@ -430,7 +430,7 @@
   <string name="tool_read_sgbd">Считать SGBD информацию</string>
   <string name="tool_job_jobs">Jobs:</string>
   <!--Translate-->
-  <string name="tool_job_jobs_prompt">Выбрать job:</string>
+  <string name="tool_job_jobs_prompt">Выбрать job</string>
   <string name="tool_job_job">Job:</string>
   <string name="tool_job_arguments">Аргументы:</string>
   <string name="tool_job_bin_args">Данные (шеснадцатиричные по желаанию с пробелами)</string>
@@ -462,6 +462,7 @@
   <string name="arg_assist_block_number">Block number</string>
   <string name="arg_assist_define_new">Define block new</string>
   <string name="arg_assist_control_arg">Argument</string>
+  <string name="arg_assist_control_arg_prompt">Select argument</string>
   <string name="arg_assist_control_parameter">Parameter</string>
   <string name="arg_assist_amount_limit">Depending on the ECU type the amount of arguments is limited.\nIf you select too many arguments no data will be transmitted.</string>
   <string name="arg_assist_apply_args">Do you want to apply the selected arguments?</string>

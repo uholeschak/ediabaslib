@@ -40,7 +40,9 @@
         <android.widget.Spinner
             android:id="@+id/spinnerArgument"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:spinnerMode="dialog"
+            android:prompt="@string/arg_assist_control_arg_prompt" />
         <TextView
             android:id="@+id/textViewControlParam"
             android:text="@string/arg_assist_control_param"
