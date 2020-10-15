@@ -430,7 +430,7 @@
   <string name="tool_select_sgbd">SGBD auswählen</string>
   <string name="tool_read_sgbd">SGBD Informationen lesen</string>
   <string name="tool_job_jobs">Jobs:</string>
-  <string name="tool_job_jobs_prompt">Job auswählen:</string>
+  <string name="tool_job_jobs_prompt">Job auswählen</string>
   <string name="tool_job_job">Job:</string>
   <string name="tool_job_arguments">Argumente:</string>
   <string name="tool_job_bin_args">Daten (Hex optional mit Leerzeichen)</string>
@@ -460,6 +460,7 @@
   <string name="arg_assist_block_number">Block Nummer</string>
   <string name="arg_assist_define_new">Block neu definieren</string>
   <string name="arg_assist_control_arg">Argument</string>
+  <string name="arg_assist_control_arg_prompt">Argument auswählen</string>
   <string name="arg_assist_control_parameter">Parameter</string>
   <string name="arg_assist_amount_limit">Abhängig vom ECU-Typ ist die Anzahl der Argumente begrenzt.\nWenn sie zu viele Argumente wählen, werden keine Daten übertragen.</string>
   <string name="arg_assist_apply_args">Wollen Sie die gewählten Argumente übernehmen?</string>
