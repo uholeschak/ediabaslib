@@ -429,6 +429,8 @@
   <string name="tool_select_sgbd">Выбрать SGBD</string>
   <string name="tool_read_sgbd">Считать SGBD информацию</string>
   <string name="tool_job_jobs">Jobs:</string>
+  <!--Translate-->
+  <string name="tool_job_jobs_prompt">Выбрать job:</string>
   <string name="tool_job_job">Job:</string>
   <string name="tool_job_arguments">Аргументы:</string>
   <string name="tool_job_bin_args">Данные (шеснадцатиричные по желаанию с пробелами)</string>
