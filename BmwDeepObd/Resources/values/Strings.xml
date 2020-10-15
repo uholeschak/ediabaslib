@@ -406,6 +406,7 @@
   <string name="tool_select_sgbd">Select SGBD</string>
   <string name="tool_read_sgbd">Read SGBD information</string>
   <string name="tool_job_jobs">Jobs:</string>
+  <string name="tool_job_jobs_prompt">Select job:</string>
   <string name="tool_job_job">Job:</string>
   <string name="tool_job_arguments">Arguments:</string>
   <string name="tool_job_bin_args">Data (Hex optionally with space)</string>
