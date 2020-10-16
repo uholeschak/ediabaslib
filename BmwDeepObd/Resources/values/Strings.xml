@@ -618,6 +618,7 @@
   <!-- BMW Actuator Activity -->
   <string name="bmw_actuator_title">Actuator ECU: {0}</string>
   <string name="bmw_actuator_function_title">Function</string>
+  <string name="bmw_actuator_function_prompt">Select function</string>
   <string name="bmw_actuator_comments_title">Hints</string>
   <string name="bmw_actuator_status_title">Status</string>
   <string name="bmw_actuator_operation_title">Operations</string>

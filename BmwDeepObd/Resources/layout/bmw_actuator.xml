@@ -24,7 +24,9 @@
             <android.widget.Spinner
                 android:id="@+id/spinnerBmwActuatorFunction"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:spinnerMode="dialog"
+                android:prompt="@string/bmw_actuator_function_prompt" />
          </LinearLayout>
         <LinearLayout
             android:id="@+id/layoutBmwActuatorInfo"
