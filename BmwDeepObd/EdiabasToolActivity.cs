@@ -3080,7 +3080,7 @@ namespace BmwDeepObd
             StringBuilder stringBuilderResults = new StringBuilder();
             foreach (ExtraInfo info in jobInfo.Results)
             {
-                if (info.Selected)
+                if (!info.GroupVisible && info.Selected)
                 {
                     if (stringBuilderResults.Length > 0)
                     {
@@ -3505,7 +3505,7 @@ namespace BmwDeepObd
                 CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxResultSelect);
                 _ignoreCheckEvent = true;
                 checkBoxSelect.Checked = item.Selected;
-                checkBoxSelect.Enabled = !item.GroupVisible;
+                checkBoxSelect.Enabled = !item.GroupVisible || (item.GroupVisible && item.Selected);
                 checkBoxSelect.Visibility = item.CheckVisible ? ViewStates.Visible : ViewStates.Gone;
                 _ignoreCheckEvent = false;
 
@@ -3544,13 +3544,20 @@ namespace BmwDeepObd
             {
                 if (!_ignoreCheckEvent)
                 {
-                    CheckBox checkBox = (CheckBox)sender;
-                    TagInfo tagInfo = (TagInfo)checkBox.Tag;
-                    if (tagInfo.Info.Selected != args.IsChecked)
+                    CheckBox checkBox = sender as CheckBox;
+                    if (checkBox?.Tag is TagInfo tagInfo)
                     {
-                        tagInfo.Info.Selected = args.IsChecked;
-                        CheckChanged?.Invoke(tagInfo.Info);
-                        NotifyDataSetChanged();
+                        if (tagInfo.Info.Selected != args.IsChecked)
+                        {
+                            if (tagInfo.Info.GroupId.HasValue && tagInfo.Info.GroupVisible && !args.IsChecked)
+                            {
+                                DeselectGroup(tagInfo.Info.GroupId.Value);
+                            }
+
+                            tagInfo.Info.Selected = args.IsChecked;
+                            CheckChanged?.Invoke(tagInfo.Info);
+                            NotifyDataSetChanged();
+                        }
                     }
                 }
             }
@@ -3559,13 +3566,15 @@ namespace BmwDeepObd
             {
                 if (!_ignoreCheckEvent)
                 {
-                    CheckBox checkBox = (CheckBox)sender;
-                    TagInfo tagInfo = (TagInfo)checkBox.Tag;
-                    if (tagInfo.Info.GroupSelected != args.IsChecked)
+                    CheckBox checkBox = sender as CheckBox;
+                    if (checkBox?.Tag is TagInfo tagInfo)
                     {
-                        tagInfo.Info.GroupSelected = args.IsChecked;
-                        GroupChanged?.Invoke(tagInfo.Info);
-                        NotifyDataSetChanged();
+                        if (tagInfo.Info.GroupSelected != args.IsChecked)
+                        {
+                            tagInfo.Info.GroupSelected = args.IsChecked;
+                            GroupChanged?.Invoke(tagInfo.Info);
+                            NotifyDataSetChanged();
+                        }
                     }
                 }
             }
@@ -3607,6 +3616,20 @@ namespace BmwDeepObd
                     if (extraInfo.GroupId.HasValue && extraInfo.GroupVisible)
                     {
                         extraInfo.Selected = checkedGroups.Contains(extraInfo.GroupId.Value);
+                    }
+                }
+            }
+
+            private void DeselectGroup(int groupId)
+            {
+                foreach (ExtraInfo extraInfo in _items)
+                {
+                    if (extraInfo.GroupId.HasValue && !extraInfo.GroupVisible)
+                    {
+                        if (extraInfo.GroupId.Value == groupId)
+                        {
+                            extraInfo.Selected = false;
+                        }
                     }
                 }
             }
