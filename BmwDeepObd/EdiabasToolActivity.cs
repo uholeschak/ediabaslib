@@ -1508,7 +1508,6 @@ namespace BmwDeepObd
 
                         if (argFuncInfo?.ResInfoList != null)
                         {
-                            int itemsStart = _resultSelectListAdapter.Items.Count;
                             int groupSize = 0;
                             foreach (SgFuncNameInfo funcNameInfo in argFuncInfo.ResInfoList.OrderBy(x => (x as SgFuncBitFieldInfo)?.ResultName ?? string.Empty))
                             {
@@ -1519,6 +1518,19 @@ namespace BmwDeepObd
                                     {
                                         GroupId = groupId
                                     };
+
+                                    if (groupSize == 0)
+                                    {
+                                        string infoGroup = argFuncInfo.InfoTrans ?? argFuncInfo.Info;
+                                        ExtraInfo extraInfoGroup = new ExtraInfo(arg, string.Empty, new List<string> { infoGroup })
+                                        {
+                                            GroupVisible = true,
+                                            GroupId = groupId
+                                        };
+
+                                        _resultSelectListAdapter.Items.Add(extraInfoGroup);
+                                    }
+
                                     _resultSelectListAdapter.Items.Add(extraInfo);
                                     groupSize++;
                                 }
@@ -1526,14 +1538,6 @@ namespace BmwDeepObd
 
                             if (groupSize > 0)
                             {
-                                string infoGroup = argFuncInfo.InfoTrans ?? argFuncInfo.Info;
-                                ExtraInfo extraInfoGroup = new ExtraInfo(arg, string.Empty, new List<string> { infoGroup })
-                                {
-                                    GroupVisible = true,
-                                    GroupId = groupId
-                                };
-
-                                _resultSelectListAdapter.Items.Insert(itemsStart, extraInfoGroup);
                                 groupId++;
                             }
                         }
