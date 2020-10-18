@@ -3580,16 +3580,16 @@ namespace BmwDeepObd
 			public const int checkBoxHciSnoopLog = 2131296364;
 			
 			// aapt resource value: 0x7F09006D
-			public const int checkBoxJobSelect = 2131296365;
+			public const int checkBoxOldVagMode = 2131296365;
 			
 			// aapt resource value: 0x7F09006E
-			public const int checkBoxOldVagMode = 2131296366;
+			public const int checkBoxResultSelect = 2131296366;
 			
 			// aapt resource value: 0x7F09006F
-			public const int checkBoxResultSelect = 2131296367;
+			public const int checkBoxScanAllEcus = 2131296367;
 			
 			// aapt resource value: 0x7F090070
-			public const int checkBoxScanAllEcus = 2131296368;
+			public const int checkBoxSelect = 2131296368;
 			
 			// aapt resource value: 0x7F090071
 			public const int checkBoxSendDataBroadcast = 2131296369;
