@@ -37,6 +37,9 @@ namespace BmwDeepObd
                 EcuJob = null;
                 EcuJobResult = null;
                 Selected = false;
+                GroupId = null;
+                GroupSelected = false;
+                GroupVisible = false;
                 Format = string.Empty;
                 GridType = JobReader.DisplayInfo.GridModeType.Text;
                 MinValue = 0;
@@ -69,6 +72,12 @@ namespace BmwDeepObd
             public bool CommentsTransRequired { get; set; }
 
             public bool Selected { get; set; }
+
+            public int? GroupId { get; set; }
+
+            public bool GroupSelected { get; set; }
+
+            public bool GroupVisible { get; set; }
 
             public string Format { get; set; }
 
@@ -1931,7 +1940,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void ResultCheckChanged(bool isChecked)
+        private void ResultCheckChanged(ResultInfo resultInfo)
         {
             if ((_selectedJob == null) || (_selectedResult == null))
             {
@@ -1943,7 +1952,7 @@ namespace BmwDeepObd
             {
                 bool statMwBlock = IsBmwReadStatusMwBlockJob(_selectedJob);
                 bool statBlock = IsBmwReadStatusBlockJob(_selectedJob);
-                if ((statMwBlock || statBlock) && isChecked && selectCount > 10)
+                if ((statMwBlock || statBlock) && resultInfo.Selected && selectCount > 10)
                 {
                     if (!_instanceData.ResultAmountWarnShown)
                     {
@@ -2240,7 +2249,11 @@ namespace BmwDeepObd
 
                 View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.job_select_list, null);
                 view.SetBackgroundColor(_backgroundColor);
-                CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxJobSelect);
+
+                CheckBox checkBoxGroupSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxGroupSelect);
+                checkBoxGroupSelect.Visibility = ViewStates.Gone;
+
+                CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxSelect);
                 _ignoreCheckEvent = true;
                 checkBoxSelect.Checked = item.Selected;
                 _ignoreCheckEvent = false;
@@ -2276,13 +2289,15 @@ namespace BmwDeepObd
             {
                 if (!_ignoreCheckEvent)
                 {
-                    CheckBox checkBox = (CheckBox) sender;
-                    TagInfo tagInfo = (TagInfo) checkBox.Tag;
-                    if (tagInfo.Info.Selected != args.IsChecked)
+                    CheckBox checkBox = sender as CheckBox;
+                    if (checkBox?.Tag is TagInfo tagInfo)
                     {
-                        tagInfo.Info.Selected = args.IsChecked;
-                        CheckChanged?.Invoke(tagInfo.Info);
-                        NotifyDataSetChanged();
+                        if (tagInfo.Info.Selected != args.IsChecked)
+                        {
+                            tagInfo.Info.Selected = args.IsChecked;
+                            CheckChanged?.Invoke(tagInfo.Info);
+                            NotifyDataSetChanged();
+                        }
                     }
                 }
             }
@@ -2300,12 +2315,16 @@ namespace BmwDeepObd
 
         private class ResultListAdapter : BaseAdapter<ResultInfo>
         {
-            public delegate void CheckChangedEventHandler(bool isChecked);
+            public delegate void CheckChangedEventHandler(ResultInfo resultInfo);
             public event CheckChangedEventHandler CheckChanged;
 
-            private readonly List<ResultInfo> _items;
+            public delegate void GroupChangedEventHandler(ResultInfo resultInfo);
+            public event GroupChangedEventHandler GroupChanged;
 
+            private readonly List<ResultInfo> _items;
+            private readonly List<ResultInfo> _itemsVisible;
             public List<ResultInfo> Items => _items;
+            public List<ResultInfo> ItemsVisible => _itemsVisible;
 
             private readonly XmlToolEcuActivity _context;
             private readonly Android.Graphics.Color _backgroundColor;
@@ -2315,6 +2334,7 @@ namespace BmwDeepObd
             {
                 _context = context;
                 _items = new List<ResultInfo>();
+                _itemsVisible = new List<ResultInfo>();
                 TypedArray typedArray = context.Theme.ObtainStyledAttributes(
                     new[] { Android.Resource.Attribute.ColorBackground });
                 _backgroundColor = typedArray.GetColor(0, 0xFFFFFF);
@@ -2325,17 +2345,39 @@ namespace BmwDeepObd
                 return position;
             }
 
-            public override ResultInfo this[int position] => _items[position];
+            public override ResultInfo this[int position] => _itemsVisible[position];
 
-            public override int Count => _items.Count;
+            public override int Count => _itemsVisible.Count;
 
             public override View GetView(int position, View convertView, ViewGroup parent)
             {
-                var item = _items[position];
+                var item = _itemsVisible[position];
 
                 View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.job_select_list, null);
                 view.SetBackgroundColor(_backgroundColor);
-                CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxJobSelect);
+
+                CheckBox checkBoxGroupSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxGroupSelect);
+
+                ViewStates viewStateGroup = ViewStates.Gone;
+                if (item.GroupVisible)
+                {
+                    viewStateGroup = ViewStates.Visible;
+                }
+                else if (item.GroupId.HasValue)
+                {
+                    viewStateGroup = ViewStates.Invisible;
+                }
+
+                _ignoreCheckEvent = true;
+                checkBoxGroupSelect.Visibility = viewStateGroup;
+                checkBoxGroupSelect.Checked = item.GroupSelected;
+                _ignoreCheckEvent = false;
+
+                checkBoxGroupSelect.Tag = new TagInfo(item);
+                checkBoxGroupSelect.CheckedChange -= OnGroupChanged;
+                checkBoxGroupSelect.CheckedChange += OnGroupChanged;
+
+                CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxSelect);
                 _ignoreCheckEvent = true;
                 checkBoxSelect.Checked = item.Selected;
                 _ignoreCheckEvent = false;
@@ -2371,17 +2413,102 @@ namespace BmwDeepObd
                 return view;
             }
 
+            public override void NotifyDataSetChanged()
+            {
+                UpdateGroupList();
+                base.NotifyDataSetChanged();
+            }
+
             private void OnCheckChanged(object sender, CompoundButton.CheckedChangeEventArgs args)
             {
                 if (!_ignoreCheckEvent)
                 {
-                    CheckBox checkBox = (CheckBox)sender;
-                    TagInfo tagInfo = (TagInfo)checkBox.Tag;
-                    if (tagInfo.Info.Selected != args.IsChecked)
+                    CheckBox checkBox = sender as CheckBox;
+                    if (checkBox?.Tag is TagInfo tagInfo)
                     {
-                        tagInfo.Info.Selected = args.IsChecked;
-                        NotifyDataSetChanged();
-                        CheckChanged?.Invoke(args.IsChecked);
+                        if (tagInfo.Info.Selected != args.IsChecked)
+                        {
+                            if (tagInfo.Info.GroupId.HasValue && tagInfo.Info.GroupVisible && !args.IsChecked)
+                            {
+                                DeselectGroup(tagInfo.Info.GroupId.Value);
+                            }
+
+                            tagInfo.Info.Selected = args.IsChecked;
+                            CheckChanged?.Invoke(tagInfo.Info);
+                            NotifyDataSetChanged();
+                        }
+                    }
+                }
+            }
+
+            private void OnGroupChanged(object sender, CompoundButton.CheckedChangeEventArgs args)
+            {
+                if (!_ignoreCheckEvent)
+                {
+                    CheckBox checkBox = sender as CheckBox;
+                    if (checkBox?.Tag is TagInfo tagInfo)
+                    {
+                        if (tagInfo.Info.GroupSelected != args.IsChecked)
+                        {
+                            tagInfo.Info.GroupSelected = args.IsChecked;
+                            GroupChanged?.Invoke(tagInfo.Info);
+                            NotifyDataSetChanged();
+                        }
+                    }
+                }
+            }
+
+            private void UpdateGroupList()
+            {
+                HashSet<int> visibleGroups = new HashSet<int>();
+                HashSet<int> checkedGroups = new HashSet<int>();
+                foreach (ResultInfo resultInfo in _items)
+                {
+                    if (resultInfo.GroupId.HasValue && resultInfo.GroupVisible && resultInfo.GroupSelected)
+                    {
+                        visibleGroups.Add(resultInfo.GroupId.Value);
+                    }
+
+                    if (resultInfo.GroupId.HasValue && !resultInfo.GroupVisible && resultInfo.Selected)
+                    {
+                        checkedGroups.Add(resultInfo.GroupId.Value);
+                    }
+                }
+
+                _itemsVisible.Clear();
+                foreach (ResultInfo resultInfo in _items)
+                {
+                    bool itemVisible = true;
+                    if (resultInfo.GroupId.HasValue && !resultInfo.GroupVisible)
+                    {
+                        if (!visibleGroups.Contains(resultInfo.GroupId.Value))
+                        {
+                            itemVisible = false;
+                        }
+                    }
+
+                    if (itemVisible)
+                    {
+                        _itemsVisible.Add(resultInfo);
+                    }
+
+                    if (resultInfo.GroupId.HasValue && resultInfo.GroupVisible)
+                    {
+                        resultInfo.Selected = checkedGroups.Contains(resultInfo.GroupId.Value);
+                    }
+                }
+            }
+
+            private void DeselectGroup(int groupId)
+            {
+                foreach (ResultInfo resultInfo in _items)
+                {
+                    if (resultInfo.GroupId.HasValue && !resultInfo.GroupVisible)
+                    {
+                        if (resultInfo.GroupId.Value == groupId)
+                        {
+                            resultInfo.Selected = false;
+                        }
                     }
                 }
             }
