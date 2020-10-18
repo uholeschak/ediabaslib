@@ -53,8 +53,9 @@ namespace BmwDeepObd
                 Type = type;
                 CommentList = commentList;
                 Selected = false;
-                GroupSelected = false;
                 CheckVisible = true;
+                GroupId = null;
+                GroupSelected = false;
                 GroupVisible = false;
                 Tag = null;
             }
@@ -69,9 +70,11 @@ namespace BmwDeepObd
 
             public bool Selected { get; set; }
 
-            public bool GroupSelected { get; set; }
-
             public bool CheckVisible { get; set; }
+
+            public int? GroupId { get; set; }
+
+            public bool GroupSelected { get; set; }
 
             public bool GroupVisible { get; set; }
 
@@ -1487,6 +1490,7 @@ namespace BmwDeepObd
                         break;
                 }
 
+                int groupId = 0;
                 bool argTypeId = argType.ToUpperInvariant() == ArgAssistBaseActivity.ArgTypeID;
                 if (argList != null)
                 {
@@ -1508,7 +1512,8 @@ namespace BmwDeepObd
                             ExtraInfo extraInfoGroup = new ExtraInfo(arg, string.Empty, new List<string> { infoGroup })
                             {
                                 CheckVisible = false,
-                                GroupVisible = true
+                                GroupVisible = true,
+                                GroupId = groupId
                             };
                             _resultSelectListAdapter.Items.Add(extraInfoGroup);
 
@@ -1517,10 +1522,15 @@ namespace BmwDeepObd
                                 if (funcNameInfo is SgFuncBitFieldInfo funcBitFieldInfo)
                                 {
                                     string info = funcBitFieldInfo.InfoTrans ?? funcBitFieldInfo.Info;
-                                    ExtraInfo extraInfo = new ExtraInfo(funcBitFieldInfo.ResultName, string.Empty, new List<string> {info});
+                                    ExtraInfo extraInfo = new ExtraInfo(funcBitFieldInfo.ResultName, string.Empty, new List<string> {info})
+                                    {
+                                        GroupId = groupId
+                                    };
                                     _resultSelectListAdapter.Items.Add(extraInfo);
                                 }
                             }
+
+                            groupId++;
                         }
                     }
                 }
@@ -3450,7 +3460,9 @@ namespace BmwDeepObd
             public event GroupChangedEventHandler GroupChanged;
 
             private readonly List<ExtraInfo> _items;
+            private readonly HashSet<int> _visibleGroups;
             public List<ExtraInfo> Items => _items;
+            public HashSet<int> VisibleGroups => _visibleGroups;
             private readonly Android.App.Activity _context;
             private readonly Android.Graphics.Color _backgroundColor;
             private bool _ignoreCheckEvent;
@@ -3459,6 +3471,7 @@ namespace BmwDeepObd
             {
                 _context = context;
                 _items = new List<ExtraInfo>();
+                _visibleGroups = new HashSet<int>();
                 TypedArray typedArray = context.Theme.ObtainStyledAttributes(
                     new[] { Android.Resource.Attribute.ColorBackground });
                 _backgroundColor = typedArray.GetColor(0, 0xFFFFFF);
@@ -3475,10 +3488,20 @@ namespace BmwDeepObd
 
             public override View GetView(int position, View convertView, ViewGroup parent)
             {
-                var item = _items[position];
+                ExtraInfo item = _items[position];
+                bool itemVisible = true;
+                if (item.GroupId.HasValue && !item.GroupVisible)
+                {
+                    if (!_visibleGroups.Contains(item.GroupId.Value))
+                    {
+                        itemVisible = false;
+                    }
+                }
 
                 View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.ediabas_result_list, null);
+                view.Visibility = itemVisible ? ViewStates.Visible : ViewStates.Gone;
                 view.SetBackgroundColor(_backgroundColor);
+
                 CheckBox checkBoxGroupSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxGroupSelect);
                 _ignoreCheckEvent = true;
                 checkBoxGroupSelect.Visibility = item.GroupVisible ? ViewStates.Visible: ViewStates.Gone;
@@ -3520,6 +3543,12 @@ namespace BmwDeepObd
                 return view;
             }
 
+            public override void NotifyDataSetChanged()
+            {
+                UpdateGroupList();
+                base.NotifyDataSetChanged();
+            }
+
             private void OnCheckChanged(object sender, CompoundButton.CheckedChangeEventArgs args)
             {
                 if (!_ignoreCheckEvent)
@@ -3546,6 +3575,18 @@ namespace BmwDeepObd
                         tagInfo.Info.GroupSelected = args.IsChecked;
                         GroupChanged?.Invoke(tagInfo.Info);
                         NotifyDataSetChanged();
+                    }
+                }
+            }
+
+            private void UpdateGroupList()
+            {
+                _visibleGroups.Clear();
+                foreach (ExtraInfo extraInfo in _items)
+                {
+                    if (extraInfo.GroupId.HasValue && extraInfo.GroupVisible && extraInfo.GroupSelected)
+                    {
+                        _visibleGroups.Add(extraInfo.GroupId.Value);
                     }
                 }
             }
