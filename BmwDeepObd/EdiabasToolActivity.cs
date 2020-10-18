@@ -3460,9 +3460,9 @@ namespace BmwDeepObd
             public event GroupChangedEventHandler GroupChanged;
 
             private readonly List<ExtraInfo> _items;
-            private readonly HashSet<int> _visibleGroups;
+            private readonly List<ExtraInfo> _itemsVisible;
             public List<ExtraInfo> Items => _items;
-            public HashSet<int> VisibleGroups => _visibleGroups;
+            public List<ExtraInfo> ItemsVisible => _itemsVisible;
             private readonly Android.App.Activity _context;
             private readonly Android.Graphics.Color _backgroundColor;
             private bool _ignoreCheckEvent;
@@ -3471,7 +3471,7 @@ namespace BmwDeepObd
             {
                 _context = context;
                 _items = new List<ExtraInfo>();
-                _visibleGroups = new HashSet<int>();
+                _itemsVisible = new List<ExtraInfo>();
                 TypedArray typedArray = context.Theme.ObtainStyledAttributes(
                     new[] { Android.Resource.Attribute.ColorBackground });
                 _backgroundColor = typedArray.GetColor(0, 0xFFFFFF);
@@ -3482,24 +3482,15 @@ namespace BmwDeepObd
                 return position;
             }
 
-            public override ExtraInfo this[int position] => _items[position];
+            public override ExtraInfo this[int position] => _itemsVisible[position];
 
-            public override int Count => _items.Count;
+            public override int Count => _itemsVisible.Count;
 
             public override View GetView(int position, View convertView, ViewGroup parent)
             {
-                ExtraInfo item = _items[position];
-                bool itemVisible = true;
-                if (item.GroupId.HasValue && !item.GroupVisible)
-                {
-                    if (!_visibleGroups.Contains(item.GroupId.Value))
-                    {
-                        itemVisible = false;
-                    }
-                }
+                ExtraInfo item = _itemsVisible[position];
 
                 View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.ediabas_result_list, null);
-                view.Visibility = itemVisible ? ViewStates.Visible : ViewStates.Gone;
                 view.SetBackgroundColor(_backgroundColor);
 
                 CheckBox checkBoxGroupSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxGroupSelect);
@@ -3581,12 +3572,30 @@ namespace BmwDeepObd
 
             private void UpdateGroupList()
             {
-                _visibleGroups.Clear();
+                HashSet<int> visibleGroups = new HashSet<int>();
                 foreach (ExtraInfo extraInfo in _items)
                 {
                     if (extraInfo.GroupId.HasValue && extraInfo.GroupVisible && extraInfo.GroupSelected)
                     {
-                        _visibleGroups.Add(extraInfo.GroupId.Value);
+                        visibleGroups.Add(extraInfo.GroupId.Value);
+                    }
+                }
+
+                _itemsVisible.Clear();
+                foreach (ExtraInfo extraInfo in _items)
+                {
+                    bool itemVisible = true;
+                    if (extraInfo.GroupId.HasValue && !extraInfo.GroupVisible)
+                    {
+                        if (!visibleGroups.Contains(extraInfo.GroupId.Value))
+                        {
+                            itemVisible = false;
+                        }
+                    }
+
+                    if (itemVisible)
+                    {
+                        _itemsVisible.Add(extraInfo);
                     }
                 }
             }
