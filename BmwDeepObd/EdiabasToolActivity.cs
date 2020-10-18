@@ -1511,7 +1511,6 @@ namespace BmwDeepObd
                             string infoGroup = argFuncInfo.InfoTrans ?? argFuncInfo.Info;
                             ExtraInfo extraInfoGroup = new ExtraInfo(arg, string.Empty, new List<string> { infoGroup })
                             {
-                                CheckVisible = false,
                                 GroupVisible = true,
                                 GroupId = groupId
                             };
@@ -3506,6 +3505,7 @@ namespace BmwDeepObd
                 CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxResultSelect);
                 _ignoreCheckEvent = true;
                 checkBoxSelect.Checked = item.Selected;
+                checkBoxSelect.Enabled = !item.GroupVisible;
                 checkBoxSelect.Visibility = item.CheckVisible ? ViewStates.Visible : ViewStates.Gone;
                 _ignoreCheckEvent = false;
 
@@ -3573,11 +3573,17 @@ namespace BmwDeepObd
             private void UpdateGroupList()
             {
                 HashSet<int> visibleGroups = new HashSet<int>();
+                HashSet<int> checkedGroups = new HashSet<int>();
                 foreach (ExtraInfo extraInfo in _items)
                 {
                     if (extraInfo.GroupId.HasValue && extraInfo.GroupVisible && extraInfo.GroupSelected)
                     {
                         visibleGroups.Add(extraInfo.GroupId.Value);
+                    }
+
+                    if (extraInfo.GroupId.HasValue && !extraInfo.GroupVisible && extraInfo.Selected)
+                    {
+                        checkedGroups.Add(extraInfo.GroupId.Value);
                     }
                 }
 
@@ -3596,6 +3602,11 @@ namespace BmwDeepObd
                     if (itemVisible)
                     {
                         _itemsVisible.Add(extraInfo);
+                    }
+
+                    if (extraInfo.GroupId.HasValue && extraInfo.GroupVisible)
+                    {
+                        extraInfo.Selected = checkedGroups.Contains(extraInfo.GroupId.Value);
                     }
                 }
             }
