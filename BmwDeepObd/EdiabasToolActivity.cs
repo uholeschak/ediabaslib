@@ -3493,8 +3493,19 @@ namespace BmwDeepObd
                 view.SetBackgroundColor(_backgroundColor);
 
                 CheckBox checkBoxGroupSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxGroupSelect);
+
+                ViewStates viewStateGroup = ViewStates.Gone;
+                if (item.GroupVisible)
+                {
+                    viewStateGroup = ViewStates.Visible;
+                }
+                else if (item.GroupId.HasValue)
+                {
+                    viewStateGroup = ViewStates.Invisible;
+                }
+
                 _ignoreCheckEvent = true;
-                checkBoxGroupSelect.Visibility = item.GroupVisible ? ViewStates.Visible: ViewStates.Gone;
+                checkBoxGroupSelect.Visibility = viewStateGroup;
                 checkBoxGroupSelect.Checked = item.GroupSelected;
                 _ignoreCheckEvent = false;
 
