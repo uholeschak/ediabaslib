@@ -53,7 +53,9 @@ namespace BmwDeepObd
                 Type = type;
                 CommentList = commentList;
                 Selected = false;
+                GroupSelected = false;
                 CheckVisible = true;
+                GroupVisible = false;
                 Tag = null;
             }
 
@@ -67,7 +69,11 @@ namespace BmwDeepObd
 
             public bool Selected { get; set; }
 
+            public bool GroupSelected { get; set; }
+
             public bool CheckVisible { get; set; }
+
+            public bool GroupVisible { get; set; }
 
             public object Tag { get; set; }
         }
@@ -1498,12 +1504,20 @@ namespace BmwDeepObd
 
                         if (argFuncInfo?.ResInfoList != null)
                         {
+                            string infoGroup = argFuncInfo.InfoTrans ?? argFuncInfo.Info;
+                            ExtraInfo extraInfoGroup = new ExtraInfo(arg, string.Empty, new List<string> { infoGroup })
+                            {
+                                CheckVisible = false,
+                                GroupVisible = true
+                            };
+                            _resultSelectListAdapter.Items.Add(extraInfoGroup);
+
                             foreach (SgFuncNameInfo funcNameInfo in argFuncInfo.ResInfoList.OrderBy(x => (x as SgFuncBitFieldInfo)?.ResultName ?? string.Empty))
                             {
                                 if (funcNameInfo is SgFuncBitFieldInfo funcBitFieldInfo)
                                 {
                                     string info = funcBitFieldInfo.InfoTrans ?? funcBitFieldInfo.Info;
-                                    ExtraInfo extraInfo = new ExtraInfo(funcBitFieldInfo.ResultName, string.Empty, new List<string> { info });
+                                    ExtraInfo extraInfo = new ExtraInfo(funcBitFieldInfo.ResultName, string.Empty, new List<string> {info});
                                     _resultSelectListAdapter.Items.Add(extraInfo);
                                 }
                             }
@@ -3432,6 +3446,9 @@ namespace BmwDeepObd
             public delegate void CheckChangedEventHandler(ExtraInfo extraInfo);
             public event CheckChangedEventHandler CheckChanged;
 
+            public delegate void GroupChangedEventHandler(ExtraInfo extraInfo);
+            public event GroupChangedEventHandler GroupChanged;
+
             private readonly List<ExtraInfo> _items;
             public List<ExtraInfo> Items => _items;
             private readonly Android.App.Activity _context;
@@ -3462,6 +3479,16 @@ namespace BmwDeepObd
 
                 View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.ediabas_result_list, null);
                 view.SetBackgroundColor(_backgroundColor);
+                CheckBox checkBoxGroupSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxGroupSelect);
+                _ignoreCheckEvent = true;
+                checkBoxGroupSelect.Visibility = item.GroupVisible ? ViewStates.Visible: ViewStates.Gone;
+                checkBoxGroupSelect.Checked = item.GroupSelected;
+                _ignoreCheckEvent = false;
+
+                checkBoxGroupSelect.Tag = new TagInfo(item);
+                checkBoxGroupSelect.CheckedChange -= OnGroupChanged;
+                checkBoxGroupSelect.CheckedChange += OnGroupChanged;
+
                 CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxResultSelect);
                 _ignoreCheckEvent = true;
                 checkBoxSelect.Checked = item.Selected;
@@ -3503,6 +3530,21 @@ namespace BmwDeepObd
                     {
                         tagInfo.Info.Selected = args.IsChecked;
                         CheckChanged?.Invoke(tagInfo.Info);
+                        NotifyDataSetChanged();
+                    }
+                }
+            }
+
+            private void OnGroupChanged(object sender, CompoundButton.CheckedChangeEventArgs args)
+            {
+                if (!_ignoreCheckEvent)
+                {
+                    CheckBox checkBox = (CheckBox)sender;
+                    TagInfo tagInfo = (TagInfo)checkBox.Tag;
+                    if (tagInfo.Info.GroupSelected != args.IsChecked)
+                    {
+                        tagInfo.Info.GroupSelected = args.IsChecked;
+                        GroupChanged?.Invoke(tagInfo.Info);
                         NotifyDataSetChanged();
                     }
                 }
