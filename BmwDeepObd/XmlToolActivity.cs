@@ -4419,6 +4419,7 @@ namespace BmwDeepObd
                             int argTabIndex = -1;
                             int resTabIndex = -1;
                             int dictIndex = 0;
+                            int groupId = 0;
                             foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSetsTab)
                             {
                                 if (dictIndex == 0)
@@ -4515,7 +4516,7 @@ namespace BmwDeepObd
 
                                 if (statRead)
                                 {
-                                    AddReadStatResults(job, arg, info, service, argTab, resTab);
+                                    AddReadStatResults(job, arg, info, service, argTab, resTab, groupId++);
                                 }
                                 else
                                 {
@@ -4626,7 +4627,7 @@ namespace BmwDeepObd
         }
 
         // ReSharper disable once UnusedParameter.Local
-        private void AddReadStatResults(XmlToolEcuActivity.JobInfo job, string arg, string infoText, string service, string argTab, string resTab)
+        private void AddReadStatResults(XmlToolEcuActivity.JobInfo job, string arg, string infoText, string service, string argTab, string resTab, int groupId)
         {
             try
             {
@@ -4667,6 +4668,7 @@ namespace BmwDeepObd
                     int unitIndex = -1;
                     int infoIndex = -1;
                     int dictIndex = 0;
+                    int resultCount = 0;
                     foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSetsTab)
                     {
                         if (dictIndex == 0)
@@ -4744,7 +4746,29 @@ namespace BmwDeepObd
                                 commentList.Add("[" + unit + "]");
                             }
 
-                            job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, displayName, DataTypeReal, arg, commentList));
+                            if (resultCount == 0)
+                            {
+                                string displayNameGroup = arg;
+                                List<string> commentListGroup = new List<string>();
+                                if (!string.IsNullOrEmpty(infoText))
+                                {
+                                    commentList.Add(infoText);
+                                }
+
+                                XmlToolEcuActivity.ResultInfo resultInfoGroup = new XmlToolEcuActivity.ResultInfo(arg, displayNameGroup, string.Empty, arg, commentListGroup)
+                                {
+                                    GroupId = groupId,
+                                    GroupVisible = true
+                                };
+                                job.Results.Add(resultInfoGroup);
+                            }
+
+                            XmlToolEcuActivity.ResultInfo resultInfo = new XmlToolEcuActivity.ResultInfo(result, displayName, DataTypeReal, arg, commentList)
+                            {
+                                GroupId = groupId
+                            };
+                            job.Results.Add(resultInfo);
+                            resultCount++;
                         }
                         dictIndex++;
                     }
