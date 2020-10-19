@@ -2392,6 +2392,7 @@ namespace BmwDeepObd
                 CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxSelect);
                 _ignoreCheckEvent = true;
                 checkBoxSelect.Checked = item.Selected;
+                checkBoxSelect.Enabled = !item.GroupVisible || (item.GroupVisible && item.Selected);
                 _ignoreCheckEvent = false;
 
                 checkBoxSelect.Tag = new TagInfo(item);
