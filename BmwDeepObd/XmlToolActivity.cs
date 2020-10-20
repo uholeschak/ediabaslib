@@ -6953,7 +6953,7 @@ namespace BmwDeepObd
                     string lastArgs = string.Empty;
                     foreach (XmlToolEcuActivity.ResultInfo result in job.Results)
                     {
-                        if (!result.Selected)
+                        if (!result.ItemSelected)
                         {
                             continue;
                         }

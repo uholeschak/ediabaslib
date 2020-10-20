@@ -73,6 +73,8 @@ namespace BmwDeepObd
 
             public bool Selected { get; set; }
 
+            public bool ItemSelected => Selected && !GroupVisible;
+
             public int? GroupId { get; set; }
 
             public bool GroupSelected { get; set; }
@@ -420,7 +422,7 @@ namespace BmwDeepObd
                     {
                         if (jobInfo.EcuFixedFuncStruct == null && jobInfo.Selected)
                         {
-                            if (jobInfo.Results.Any(resultInfo => resultInfo.Selected))
+                            if (jobInfo.Results.Any(resultInfo => resultInfo.ItemSelected))
                             {
                                 showAllJobsChecked = true;
                                 break;
@@ -465,7 +467,7 @@ namespace BmwDeepObd
 
                     if (jobInfo.Selected)
                     {
-                        if (jobInfo.Results.Any(resultInfo => resultInfo.Selected && resultInfo.MwTabEntry != null && resultInfo.MwTabEntry.Dummy))
+                        if (jobInfo.Results.Any(resultInfo => resultInfo.ItemSelected && resultInfo.MwTabEntry != null && resultInfo.MwTabEntry.Dummy))
                         {
                             showAllResultsChecked = true;
                             break;
@@ -996,7 +998,7 @@ namespace BmwDeepObd
                 sb.Append("JA");
                 foreach (ResultInfo resultInfo in resultInfoList)
                 {
-                    if ((selectAll || resultInfo.Selected) && !string.IsNullOrEmpty(resultInfo.Args))
+                    if ((selectAll || resultInfo.ItemSelected) && !string.IsNullOrEmpty(resultInfo.Args))
                     {
                         sb.Append(";");
                         sb.Append(resultInfo.Args);
@@ -1011,7 +1013,7 @@ namespace BmwDeepObd
                 sb.Append("3;JA;ARG");
                 foreach (ResultInfo resultInfo in resultInfoList)
                 {
-                    if ((selectAll || resultInfo.Selected) && !string.IsNullOrEmpty(resultInfo.Args))
+                    if ((selectAll || resultInfo.ItemSelected) && !string.IsNullOrEmpty(resultInfo.Args))
                     {
                         sb.Append(";");
                         sb.Append(resultInfo.Args);
@@ -1026,7 +1028,7 @@ namespace BmwDeepObd
                 sb.Append("ARG");
                 foreach (ResultInfo resultInfo in resultInfoList)
                 {
-                    if ((selectAll || resultInfo.Selected) && !string.IsNullOrEmpty(resultInfo.Args))
+                    if ((selectAll || resultInfo.ItemSelected) && !string.IsNullOrEmpty(resultInfo.Args))
                     {
                         sb.Append(";");
                         sb.Append(resultInfo.Args);
@@ -1509,7 +1511,7 @@ namespace BmwDeepObd
                 {
                     if (gridMode)
                     {
-                        if (jobInfo.Results.Any(resultInfo => resultInfo.Selected &&
+                        if (jobInfo.Results.Any(resultInfo => resultInfo.ItemSelected &&
                                                               resultInfo.GridType != JobReader.DisplayInfo.GridModeType.Hidden &&
                                                               resultInfo.GridType != JobReader.DisplayInfo.GridModeType.Text))
                         {
@@ -1518,7 +1520,7 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        if (jobInfo.Results.Any(resultInfo => resultInfo.Selected))
+                        if (jobInfo.Results.Any(resultInfo => resultInfo.ItemSelected))
                         {
                             return true;
                         }
@@ -1689,7 +1691,7 @@ namespace BmwDeepObd
                     }
 
                     _spinnerJobResultsAdapter.Items.Add(result);
-                    if (result.Selected && selection < 0)
+                    if (result.ItemSelected && selection < 0)
                     {
                         selection = _spinnerJobResultsAdapter.Items.Count - 1;
                     }
@@ -1946,7 +1948,7 @@ namespace BmwDeepObd
             {
                 return;
             }
-            int selectCount = _selectedJob.Results.Count(resultInfo => resultInfo.Selected);
+            int selectCount = _selectedJob.Results.Count(resultInfo => resultInfo.ItemSelected);
             bool selectJob = selectCount > 0;
             if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
             {
@@ -1964,7 +1966,7 @@ namespace BmwDeepObd
                     limit = 5;
                 }
 
-                if (limit > 0 && resultInfo.Selected && selectCount > limit)
+                if (limit > 0 && resultInfo.ItemSelected && selectCount > limit)
                 {
                     if (!_instanceData.ResultAmountWarnShown)
                     {
