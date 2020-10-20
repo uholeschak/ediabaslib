@@ -70,6 +70,8 @@ namespace BmwDeepObd
 
             public bool Selected { get; set; }
 
+            public bool ItemSelected => Selected && !GroupVisible;
+
             public bool CheckVisible { get; set; }
 
             public int? GroupId { get; set; }
@@ -3090,7 +3092,7 @@ namespace BmwDeepObd
             StringBuilder stringBuilderResults = new StringBuilder();
             foreach (ExtraInfo info in jobInfo.Results)
             {
-                if (!info.GroupVisible && info.Selected)
+                if (!info.ItemSelected)
                 {
                     if (stringBuilderResults.Length > 0)
                     {
@@ -3611,7 +3613,7 @@ namespace BmwDeepObd
                         visibleGroups.Add(extraInfo.GroupId.Value);
                     }
 
-                    if (extraInfo.GroupId.HasValue && !extraInfo.GroupVisible && extraInfo.Selected)
+                    if (extraInfo.GroupId.HasValue && extraInfo.ItemSelected)
                     {
                         checkedGroups.Add(extraInfo.GroupId.Value);
                     }
