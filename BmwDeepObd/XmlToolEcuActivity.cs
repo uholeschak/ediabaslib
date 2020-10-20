@@ -2484,7 +2484,7 @@ namespace BmwDeepObd
                         visibleGroups.Add(resultInfo.GroupId.Value);
                     }
 
-                    if (resultInfo.GroupId.HasValue && !resultInfo.GroupVisible && resultInfo.Selected)
+                    if (resultInfo.GroupId.HasValue && resultInfo.ItemSelected)
                     {
                         checkedGroups.Add(resultInfo.GroupId.Value);
                     }

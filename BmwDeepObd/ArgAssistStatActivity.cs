@@ -343,7 +343,7 @@ namespace BmwDeepObd
                 int count = 0;
                 foreach (EdiabasToolActivity.ExtraInfo extraInfo in _argsListAdapter.Items)
                 {
-                    if (extraInfo.Selected)
+                    if (extraInfo.ItemSelected)
                     {
                         count++;
                     }
@@ -388,7 +388,7 @@ namespace BmwDeepObd
                 sb.Append(argType);
                 foreach (EdiabasToolActivity.ExtraInfo extraInfo in _argsListAdapter.Items)
                 {
-                    if (extraInfo.Selected)
+                    if (extraInfo.ItemSelected)
                     {
                         sb.Append(";");
                         sb.Append(extraInfo.Name);
