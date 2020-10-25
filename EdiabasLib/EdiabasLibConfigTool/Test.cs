@@ -98,6 +98,10 @@ namespace EdiabasLibConfigTool
                     {
                         authRequest.Password = Patch.PassordWifiEnetLink;
                     }
+                    else if (ap.Name.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase))
+                    {
+                        authRequest.Password = Patch.PassordWifiModBmw;
+                    }
                     else
                     {
                         authRequest.Password = _form.WifiPassword;
@@ -130,6 +134,7 @@ namespace EdiabasLibConfigTool
                     string ipAddr = string.Empty;
                     bool isEnet = string.Compare(ssidString, Patch.AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0;
                     bool isEnetLink = ssidString.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase);
+                    bool isModBmw = ssidString.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase);
 
                     IPInterfaceProperties ipProp = wlanIface.NetworkInterface.GetIPProperties();
                     if (ipProp == null)
@@ -144,7 +149,7 @@ namespace EdiabasLibConfigTool
                         return false;
                     }
 
-                    if (isEnet || isEnetLink)
+                    if (isEnet || isEnetLink || isModBmw)
                     {
                         if (configure)
                         {
@@ -161,7 +166,7 @@ namespace EdiabasLibConfigTool
                         {
                             Thread.CurrentThread.CurrentCulture = cultureInfo;
                             Thread.CurrentThread.CurrentUICulture = cultureInfo;
-                            if (isEnet || isEnetLink)
+                            if (isEnet || isEnetLink || isModBmw)
                             {
                                 TestOk = RunWifiTestEnetRetry(ipAddr, out bool configRequired);
                                 if (TestOk && configRequired)
