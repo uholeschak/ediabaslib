@@ -284,6 +284,7 @@ namespace BmwDeepObd
         public const string EmulatorEnetIp = ""; // = "169.254.0.1";
         public const string DeepObdAdapterIp = "192.168.100.1";
         public const string EnetLinkAdapterIp = "192.168.16.254";
+        public const string ModBmwAdapterIp = "169.254.128.7";
         public const string SettingsFile = "Settings.xml";
         public const string DownloadDir = "Download";
         public const string EcuBaseDir = "Ecu";
@@ -2546,6 +2547,7 @@ namespace BmwDeepObd
                 string enetSsid = "NoSsid";
                 bool validDeepObd = false;
                 bool validEnetLink = false;
+                bool validModBmw = false;
                 if ((_maWifi != null) && _maWifi.IsWifiEnabled)
                 {
                     WifiInfo wifiInfo = _maWifi.ConnectionInfo;
@@ -2565,6 +2567,10 @@ namespace BmwDeepObd
                         {
                             validEnetLink = true;
                         }
+                        if (string.Compare(adapterIp, ModBmwAdapterIp, StringComparison.Ordinal) == 0)
+                        {
+                            validModBmw = true;
+                        }
                     }
                 }
                 if (_lastEnetSsid == null)
@@ -2575,7 +2581,8 @@ namespace BmwDeepObd
                 bool validSsid = enetSsid.Contains(AdapterSsidDeepObd);
                 bool validEthernet = IsValidEthernetConnection();
 
-                if (!validEthernet && !validDeepObd && !validEnetLink && string.Compare(_lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
+                if (!validEthernet && !validDeepObd && !validEnetLink && !validModBmw &&
+                    string.Compare(_lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
                 {
                     _lastEnetSsid = enetSsid;
                     if (!validSsid)
