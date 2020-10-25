@@ -2248,11 +2248,17 @@ namespace BmwDeepObd
                 }
 
                 case InterfaceType.Enet:
-                    if (string.IsNullOrEmpty(GetEnetAdapterIp(out string _)))
+                {
+                    if (string.IsNullOrEmpty(GetEnetAdapterIp(out string defaultPassword)))
+                    {
+                        return false;
+                    }
+                    if (string.IsNullOrEmpty(defaultPassword))
                     {
                         return false;
                     }
                     return true;
+                }
 
                 case InterfaceType.ElmWifi:
                     return false;
@@ -2268,7 +2274,7 @@ namespace BmwDeepObd
 
         public string GetEnetAdapterIp(out string defaultPassword)
         {
-            defaultPassword = DefaultPwdDeepObd;
+            defaultPassword = string.Empty;
             if ((_maWifi == null) || !_maWifi.IsWifiEnabled)
             {
                 return null;
@@ -2281,6 +2287,7 @@ namespace BmwDeepObd
                 {
                     if (wifiInfo.SSID.Contains(AdapterSsidDeepObd))
                     {
+                        defaultPassword = DefaultPwdDeepObd;
                         return adapterIp;
                     }
                     if (wifiInfo.SSID.Contains(AdapterSsidModBmw))
@@ -2291,6 +2298,11 @@ namespace BmwDeepObd
                 }
 
                 if (string.Compare(adapterIp, DeepObdAdapterIp, StringComparison.Ordinal) == 0)
+                {
+                    defaultPassword = DefaultPwdDeepObd;
+                    return adapterIp;
+                }
+                if (string.Compare(adapterIp, EnetLinkAdapterIp, StringComparison.Ordinal) == 0)
                 {
                     return adapterIp;
                 }
@@ -2342,7 +2354,7 @@ namespace BmwDeepObd
             if (SelectedInterface == InterfaceType.Enet)
             {
                 string adapterIp = GetEnetAdapterIp(out string defaultPassword);
-                if (!string.IsNullOrEmpty(adapterIp))
+                if (!string.IsNullOrEmpty(adapterIp) && !string.IsNullOrEmpty(defaultPassword))
                 {
                     string message = string.Format(_context.GetString(Resource.String.enet_adapter_web_info), defaultPassword);
                     new AlertDialog.Builder(_context)
