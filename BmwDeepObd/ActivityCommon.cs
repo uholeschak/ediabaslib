@@ -281,6 +281,7 @@ namespace BmwDeepObd
         public const string DefaultLang = "en";
         public const string TraceFileName = "ifh.trc.zip";
         public const string AdapterSsidDeepObd = "Deep OBD BMW";
+        public const string AdapterSsidEnetLink = "ENET-LINK_";
         public const string AdapterSsidModBmw = "modBMW ENET";
         public const string EmulatorEnetIp = ""; // = "169.254.0.1";
         public const string DeepObdAdapterIp = "192.168.100.1";
@@ -2253,7 +2254,7 @@ namespace BmwDeepObd
                     {
                         return false;
                     }
-                    if (string.IsNullOrEmpty(defaultPassword))
+                    if (defaultPassword == null)
                     {
                         return false;
                     }
@@ -2274,7 +2275,7 @@ namespace BmwDeepObd
 
         public string GetEnetAdapterIp(out string defaultPassword)
         {
-            defaultPassword = string.Empty;
+            defaultPassword = null;
             if ((_maWifi == null) || !_maWifi.IsWifiEnabled)
             {
                 return null;
@@ -2288,6 +2289,11 @@ namespace BmwDeepObd
                     if (wifiInfo.SSID.Contains(AdapterSsidDeepObd))
                     {
                         defaultPassword = DefaultPwdDeepObd;
+                        return adapterIp;
+                    }
+                    if (wifiInfo.SSID.Contains(AdapterSsidEnetLink))
+                    {
+                        defaultPassword = string.Empty;
                         return adapterIp;
                     }
                     if (wifiInfo.SSID.Contains(AdapterSsidModBmw))
@@ -2304,6 +2310,7 @@ namespace BmwDeepObd
                 }
                 if (string.Compare(adapterIp, EnetLinkAdapterIp, StringComparison.Ordinal) == 0)
                 {
+                    defaultPassword = string.Empty;
                     return adapterIp;
                 }
                 if (string.Compare(adapterIp, ModBmwAdapterIp, StringComparison.Ordinal) == 0)
@@ -2354,28 +2361,41 @@ namespace BmwDeepObd
             if (SelectedInterface == InterfaceType.Enet)
             {
                 string adapterIp = GetEnetAdapterIp(out string defaultPassword);
-                if (!string.IsNullOrEmpty(adapterIp) && !string.IsNullOrEmpty(defaultPassword))
+                if (!string.IsNullOrEmpty(adapterIp))
                 {
-                    string message = string.Format(_context.GetString(Resource.String.enet_adapter_web_info), defaultPassword);
-                    new AlertDialog.Builder(_context)
-                    .SetMessage(message)
-                    .SetTitle(Resource.String.alert_title_info)
-                    .SetNeutralButton(Resource.String.button_ok, (s, e) =>
+                    if (!string.IsNullOrEmpty(defaultPassword))
                     {
-                        try
-                        {
-                            _context.StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"http://" + adapterIp)));
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                    })
-                    .Show();
+                        string message = string.Format(_context.GetString(Resource.String.enet_adapter_web_info), defaultPassword);
+                        new AlertDialog.Builder(_context)
+                            .SetMessage(message)
+                            .SetTitle(Resource.String.alert_title_info)
+                            .SetNeutralButton(Resource.String.button_ok, (s, e) =>
+                            {
+                                StartEnetAdapterConfig(adapterIp);
+                            })
+                            .Show();
+                        return true;
+                    }
+
+                    StartEnetAdapterConfig(adapterIp);
                     return true;
                 }
             }
             return false;
+        }
+
+        public bool StartEnetAdapterConfig(string adapterIp)
+        {
+            try
+            {
+                _context.StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"http://" + adapterIp)));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public bool IsConnectedToWifiAdapter()
@@ -2608,7 +2628,7 @@ namespace BmwDeepObd
                     _lastEnetSsid = enetSsid;
                 }
 
-                bool validSsid = enetSsid.Contains(AdapterSsidDeepObd) || enetSsid.Contains(AdapterSsidModBmw);
+                bool validSsid = enetSsid.Contains(AdapterSsidDeepObd) || enetSsid.Contains(AdapterSsidEnetLink) || enetSsid.Contains(AdapterSsidModBmw);
                 bool validEthernet = IsValidEthernetConnection();
 
                 if (!validEthernet && !validDeepObd && !validEnetLink && !validModBmw &&
