@@ -248,7 +248,7 @@
   </data>
   <data name="WifiUrlOk" xml:space="preserve">
     <value>Страница конфигурации адаптера открывается в браузере.
-Пароль по умолчанию - root.</value>
+Пароль по умолчанию - {0}.</value>
   </data>
   <data name="PatchApiVersion" xml:space="preserve">
     <value>API версия: {0}</value>

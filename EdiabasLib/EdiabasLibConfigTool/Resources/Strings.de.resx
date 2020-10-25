@@ -248,7 +248,7 @@
   </data>
   <data name="WifiUrlOk" xml:space="preserve">
     <value>Die Adapter-Konfigurationsseite wird im Browser geöffnet.
-Das Standard root Password ist root.</value>
+Das Standard root Password ist {0}.</value>
   </data>
   <data name="PatchApiVersion" xml:space="preserve">
     <value>API version: {0}</value>

@@ -550,7 +550,7 @@ namespace EdiabasLibConfigTool.Resources {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die The adapter configuration page will be opened in the web browser.
-        ///The default root password is root. ähnelt.
+        ///The default root password is {0}. ähnelt.
         /// </summary>
         internal static string WifiUrlOk {
             get {
