@@ -286,6 +286,8 @@ namespace BmwDeepObd
         public const string DeepObdAdapterIp = "192.168.100.1";
         public const string EnetLinkAdapterIp = "192.168.16.254";
         public const string ModBmwAdapterIp = "169.254.128.7";
+        public const string DefaultPwdDeepObd = "root";
+        public const string DefaultPwdModBmw = "admin";
         public const string SettingsFile = "Settings.xml";
         public const string DownloadDir = "Download";
         public const string EcuBaseDir = "Ecu";
@@ -2246,7 +2248,7 @@ namespace BmwDeepObd
                 }
 
                 case InterfaceType.Enet:
-                    if (string.IsNullOrEmpty(GetEnetAdapterIp()))
+                    if (string.IsNullOrEmpty(GetEnetAdapterIp(out string _)))
                     {
                         return false;
                     }
@@ -2264,8 +2266,9 @@ namespace BmwDeepObd
             return false;
         }
 
-        public string GetEnetAdapterIp()
+        public string GetEnetAdapterIp(out string defaultPassword)
         {
+            defaultPassword = DefaultPwdDeepObd;
             if ((_maWifi == null) || !_maWifi.IsWifiEnabled)
             {
                 return null;
@@ -2276,15 +2279,24 @@ namespace BmwDeepObd
                 string adapterIp = TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
                 if (!string.IsNullOrEmpty(wifiInfo.SSID))
                 {
-                    if (wifiInfo.SSID.Contains(AdapterSsidDeepObd) || wifiInfo.SSID.Contains(AdapterSsidModBmw))
+                    if (wifiInfo.SSID.Contains(AdapterSsidDeepObd))
                     {
+                        return adapterIp;
+                    }
+                    if (wifiInfo.SSID.Contains(AdapterSsidModBmw))
+                    {
+                        defaultPassword = DefaultPwdModBmw;
                         return adapterIp;
                     }
                 }
 
-                if (string.Compare(adapterIp, DeepObdAdapterIp, StringComparison.Ordinal) == 0 ||
-                    string.Compare(adapterIp, ModBmwAdapterIp, StringComparison.Ordinal) == 0)
+                if (string.Compare(adapterIp, DeepObdAdapterIp, StringComparison.Ordinal) == 0)
                 {
+                    return adapterIp;
+                }
+                if (string.Compare(adapterIp, ModBmwAdapterIp, StringComparison.Ordinal) == 0)
+                {
+                    defaultPassword = DefaultPwdModBmw;
                     return adapterIp;
                 }
             }
@@ -2329,11 +2341,12 @@ namespace BmwDeepObd
         {
             if (SelectedInterface == InterfaceType.Enet)
             {
-                string adapterIp = GetEnetAdapterIp();
+                string adapterIp = GetEnetAdapterIp(out string defaultPassword);
                 if (!string.IsNullOrEmpty(adapterIp))
                 {
+                    string message = string.Format(_context.GetString(Resource.String.enet_adapter_web_info), defaultPassword);
                     new AlertDialog.Builder(_context)
-                    .SetMessage(Resource.String.enet_adapter_web_info)
+                    .SetMessage(message)
                     .SetTitle(Resource.String.alert_title_info)
                     .SetNeutralButton(Resource.String.button_ok, (s, e) =>
                     {
@@ -2355,7 +2368,7 @@ namespace BmwDeepObd
 
         public bool IsConnectedToWifiAdapter()
         {
-            if (!string.IsNullOrEmpty(GetEnetAdapterIp()))
+            if (!string.IsNullOrEmpty(GetEnetAdapterIp(out string _)))
             {
                 return true;
             }
