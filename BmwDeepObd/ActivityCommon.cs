@@ -281,6 +281,7 @@ namespace BmwDeepObd
         public const string DefaultLang = "en";
         public const string TraceFileName = "ifh.trc.zip";
         public const string AdapterSsidDeepObd = "Deep OBD BMW";
+        public const string AdapterSsidModBmw = "modBMW ENET";
         public const string EmulatorEnetIp = ""; // = "169.254.0.1";
         public const string DeepObdAdapterIp = "192.168.100.1";
         public const string EnetLinkAdapterIp = "192.168.16.254";
@@ -2273,12 +2274,16 @@ namespace BmwDeepObd
             if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
             {
                 string adapterIp = TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
-                if (!string.IsNullOrEmpty(wifiInfo.SSID) && wifiInfo.SSID.Contains(AdapterSsidDeepObd))
+                if (!string.IsNullOrEmpty(wifiInfo.SSID))
                 {
-                    return adapterIp;
+                    if (wifiInfo.SSID.Contains(AdapterSsidDeepObd) || wifiInfo.SSID.Contains(AdapterSsidModBmw))
+                    {
+                        return adapterIp;
+                    }
                 }
 
-                if (string.Compare(adapterIp, DeepObdAdapterIp, StringComparison.Ordinal) == 0)
+                if (string.Compare(adapterIp, DeepObdAdapterIp, StringComparison.Ordinal) == 0 ||
+                    string.Compare(adapterIp, ModBmwAdapterIp, StringComparison.Ordinal) == 0)
                 {
                     return adapterIp;
                 }
@@ -2578,7 +2583,7 @@ namespace BmwDeepObd
                     _lastEnetSsid = enetSsid;
                 }
 
-                bool validSsid = enetSsid.Contains(AdapterSsidDeepObd);
+                bool validSsid = enetSsid.Contains(AdapterSsidDeepObd) || enetSsid.Contains(AdapterSsidModBmw);
                 bool validEthernet = IsValidEthernetConnection();
 
                 if (!validEthernet && !validDeepObd && !validEnetLink && !validModBmw &&
