@@ -16,8 +16,7 @@
   <string name="button_copy">Копировать</string>
   <string name="button_accept">Принять</string>
   <string name="button_decline">Отклонить</string>
-  <!--Translate-->
-  <string name="button_apply">Перенимать</string>
+  <string name="button_apply">Применить</string>
   <string name="button_execute">Выполнить</string>
   <string name="button_donate">Пожертвовать</string>
   <string name="button_skip">Пропустить</string>
@@ -428,13 +427,11 @@
   <string name="tool_title">Ediabas утилита</string>
   <string name="tool_select_sgbd">Выбрать SGBD</string>
   <string name="tool_read_sgbd">Считать SGBD информацию</string>
-  <string name="tool_job_jobs">Jobs:</string>
-  <!--Translate-->
-  <string name="tool_job_jobs_prompt">Выбрать job</string>
-  <string name="tool_job_job">Job:</string>
+  <string name="tool_job_jobs">Задания:</string>
+  <string name="tool_job_jobs_prompt">Выбор задания</string>
+  <string name="tool_job_job">Задание:</string>
   <string name="tool_job_arguments">Аргументы:</string>
   <string name="tool_job_bin_args">Данные (шеснадцатиричные по желаанию с пробелами)</string>
-  <!--Translate-->
   <string name="tool_job_arg_assist">Помощник по аргументам</string>
   <string name="tool_job_arguments_error_detail">Без аргументов будут считаны все ошибки</string>
   <string name="tool_job_results">Результаты:</string>
@@ -442,30 +439,29 @@
   <string name="tool_job_infos">Информация:</string>
   <string name="tool_check_continuous">Непрерывно</string>
   <string name="tool_read_errors_failure">Не удалось считать ошибки</string>
-  <string name="tool_no_errors">Ошибок нет</string>
+  <string name="tool_no_errors">Ошибки отсутствуют</string>
 
   <!--  Argument Assistant Status -->
-  <!--Translate-->
-  <string name="arg_assist_title">Argument Assistant</string>
-  <string name="arg_assist_arg_type">Argument typ</string>
-  <string name="arg_assist_type_arg">Argument name (ARG)</string>
-  <string name="arg_assist_type_id">Argument Id (ID)</string>
-  <string name="arg_assist_control_param">Control parameter</string>
-  <string name="arg_assist_str">Start routine (STR)</string>
-  <string name="arg_assist_stpr">Stop routine (STPR)</string>
-  <string name="arg_assist_rrr">Request routine results (RRR)</string>
-  <string name="arg_assist_rctecu">Return control to ECU (RCTECU)</string>
-  <string name="arg_assist_rtd">Reset to default (RTD)</string>
-  <string name="arg_assist_fcs">Freeze current state (FCS)</string>
-  <string name="arg_assist_sta">Short term adjustment (STA)</string>
-  <string name="arg_assist_args">Arguments</string>
-  <string name="arg_assist_block_number">Block number</string>
-  <string name="arg_assist_define_new">Define block new</string>
-  <string name="arg_assist_control_arg">Argument</string>
-  <string name="arg_assist_control_arg_prompt">Select argument</string>
-  <string name="arg_assist_control_parameter">Parameter</string>
-  <string name="arg_assist_amount_limit">Depending on the ECU type the amount of arguments is limited.\nIf you select too many arguments no data will be transmitted.</string>
-  <string name="arg_assist_apply_args">Do you want to apply the selected arguments?</string>
+  <string name="arg_assist_title">Помощник по аргументам</string>
+  <string name="arg_assist_arg_type">Тип аргумента</string>
+  <string name="arg_assist_type_arg">Имя аргумента(ARG)</string>
+  <string name="arg_assist_type_id">Идентификатор аргумента (ID)</string>
+  <string name="arg_assist_control_param">Управляющие параметры</string>
+  <string name="arg_assist_str">Выполнить действия (STR)</string>
+  <string name="arg_assist_stpr">Остановить действия (STPR)</string>
+  <string name="arg_assist_rrr">Считать результаты действия (RRR)</string>
+  <string name="arg_assist_rctecu">Передать управление ECU (RCTECU)</string>
+  <string name="arg_assist_rtd">Восстановить значения по умолчанию (RTD)</string>
+  <string name="arg_assist_fcs">Заморозить текущее состояние (FCS)</string>
+  <string name="arg_assist_sta">Кратковременное изменение (STA)</string>
+  <string name="arg_assist_args">Аргументы</string>
+  <string name="arg_assist_block_number">Номер блока</string>
+  <string name="arg_assist_define_new">Переопределение блока</string>
+  <string name="arg_assist_control_arg">Аргумент</string>
+  <string name="arg_assist_control_arg_prompt">Выбор аргумента</string>
+  <string name="arg_assist_control_parameter">Параметр</string>
+  <string name="arg_assist_amount_limit">Количество аргументов ограничено в зависимости от типа ECU.\nЕсли вы выберете слишком много аргументов, то данные передаваться не будут.</string>
+  <string name="arg_assist_apply_args">Хотите применить выбранные аргументы?</string>
 
   <!-- Ediabas Tool Options Menu -->
   <string name="menu_tool_sel_interface">Интерфейс</string>
@@ -491,13 +487,13 @@
   <string name="xml_tool_no_response">Автомобиль не отвечает</string>
   <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nЕсли у вашего автомобиля используется К-LINE коммуникация, то необходимо использовать USB или Deep ОDB адаптер.\nЗдесь приведён список <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>поддерживаемых адаптеров</a>.\nПерейти к <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>ручной настройке</a>?</string>
   <string name="xml_tool_no_response_adapter">Автомобиль не отвечает.\nХотите проверить соединение адаптера?</string>
-  <string name="xml_tool_read_jobs_failed">Не удалось считать Jobs</string>
+  <string name="xml_tool_read_jobs_failed">Не удалось считать задания</string>
   <string name="xml_tool_aborting">Отмена операции</string>
   <string name="xml_tool_read_ecu_info_failed">Не удалось считать ECU информацию</string>
   <string name="xml_tool_save_xml_failed">Не удалось сохранить конфигурацию</string>
   <string name="xml_tool_msg_save_config">Сохранить конфигурацию?</string>
   <string name="xml_tool_msg_save_config_select">Хотите сохранить конфигурацию и использовать её как активную?</string>
-  <string name="xml_tool_msg_save_config_empty">Вы не выбрали информации для отображения.\nКликайте по ECU и выбирайте необходимые задания (job) и результаты.\nСохранить конфигурацию в текущем виде?</string>
+  <string name="xml_tool_msg_save_config_empty">Вы не выбрали информации для отображения.\nКликайте по ECU и выбирайте необходимые задания и результаты.\nСохранить конфигурацию в текущем виде?</string>
   <string name="xml_tool_msg_ecu_error">Для некоторых ECU информация не может быть найдена.</string>
   <string name="xml_tool_msg_pin78">Необходимо соединить контакты 7 и 8 в OBD разъеме адаптера, чтобы определилось больше блоков управления.\nВ автомобилях с OBD I разъёмом в моторном отсеке, контакт 8 должен быть дополнительно подключён к OBD II гнезду в салоне.</string>
   <string name="xml_tool_select_ecu_type">Выбрать ECU-тип</string>
@@ -531,8 +527,8 @@
   <string name="menu_xml_tool_ediabas_tool">Ediabas утилита</string>
 
   <!-- XML Tool Ecu Activity -->
-  <string name="xml_tool_ecu_title">Jobs для ECU: {0}</string>
-  <string name="xml_tool_ecu_job_comments">Комментарии для Job: {0}</string>
+  <string name="xml_tool_ecu_title">Задания для ECU: {0}</string>
+  <string name="xml_tool_ecu_job_comments">Комментарии для задания: {0}</string>
   <string name="xml_tool_ecu_job_comments_ecu_info">ECU информация:</string>
   <string name="xml_tool_ecu_job_comments_ecu_info_addr">Aдрес {0:X02}:</string>
   <string name="xml_tool_ecu_job_comments_ecu_info_subsys">Подсистема {0}:</string>
@@ -553,9 +549,9 @@
   <string name="xml_tool_ecu_grid_count">Графические элементы на строку</string>
   <string name="xml_tool_ecu_grid_count_portrait_value">Вертикальный формат</string>
   <string name="xml_tool_ecu_grid_count_landscape_value">Горизонтальный формат</string>
-  <string name="xml_tool_ecu_jobs_name">Job список</string>
-  <string name="xml_tool_ecu_show_all_jobs">Показать все Jobs</string>
-  <string name="xml_tool_ecu_results">Job результат</string>
+  <string name="xml_tool_ecu_jobs_name">Список заданий</string>
+  <string name="xml_tool_ecu_show_all_jobs">Показать все задания</string>
+  <string name="xml_tool_ecu_results">Результат задания</string>
   <string name="xml_tool_ecu_show_all_results">Показывать все результаты</string>
   <string name="xml_tool_ecu_display_text">Выведенный текст</string>
   <string name="xml_tool_ecu_display_order">Порядок отображения</string>
@@ -578,8 +574,8 @@
   <string name="xml_tool_button_adaption">Адаптация</string>
   <string name="xml_tool_button_login">Авторизация</string>
   <string name="xml_tool_button_sec_access">Права доступа</string>
-  <string name="xml_tool_execute_test_job">Выполнение Job</string>
-  <string name="xml_tool_read_test_job_failed">Не удалось выполнить Job</string>
+  <string name="xml_tool_execute_test_job">Выполнение задания</string>
+  <string name="xml_tool_read_test_job_failed">Не удалось выполнить задание</string>
   <string name="xml_tool_ecu_msg_save_lock">Запись конфигурации была заблокирована в файле конфигурации.\nИзменения не могут быть сохранены.</string>
   <string name="xml_tool_ecu_msg_no_selection">Вы не выбрали данные для отображения.\nВыберите сначала нужные задания и результаты из списка.\nВы все равно хотите отменить?</string>
   <string name="xml_tool_ecu_msg_no_grid_selection">Вы активировали графический дисплей, но не выбрали графическое представление.\nГрафическое представление будет недоступно.\nПродолжить?</string>
@@ -644,8 +640,7 @@
   <!-- BMW Actuator Activity -->
   <string name="bmw_actuator_title">Актуатор ECU: {0}</string>
   <string name="bmw_actuator_function_title">Функция</string>
-  <!--Translate-->
-  <string name="bmw_actuator_function_prompt">Select function</string>
+  <string name="bmw_actuator_function_prompt">Выбор функции</string>
   <string name="bmw_actuator_comments_title">Примечания</string>
   <string name="bmw_actuator_status_title">Статус</string>
   <string name="bmw_actuator_operation_title">Операции</string>
