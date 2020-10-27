@@ -1688,7 +1688,7 @@ namespace BmwDeepObd
 
                     if (!string.IsNullOrEmpty(_resultFilterText))
                     {
-                        if (result.DisplayName.IndexOf(_resultFilterText, StringComparison.OrdinalIgnoreCase) < 0)
+                        if (!result.GroupVisible && result.DisplayName.IndexOf(_resultFilterText, StringComparison.OrdinalIgnoreCase) < 0)
                         {
                             continue;   // filter is not matching
                         }
