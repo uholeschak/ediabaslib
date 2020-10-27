@@ -1181,6 +1181,10 @@ namespace BmwDeepObd
 
                     if (addJob)
                     {
+                        foreach (ResultInfo resultInfo in job.Results)
+                        {
+                            resultInfo.GroupSelected = false;
+                        }
                         _spinnerJobsAdapter.Items.Add(job);
                         if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                         {
@@ -1690,7 +1694,6 @@ namespace BmwDeepObd
                         }
                     }
 
-                    result.GroupSelected = false;
                     _spinnerJobResultsAdapter.Items.Add(result);
                     if (result.ItemSelected && selection < 0)
                     {
