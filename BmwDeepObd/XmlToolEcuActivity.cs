@@ -1690,6 +1690,7 @@ namespace BmwDeepObd
                         }
                     }
 
+                    result.GroupSelected = false;
                     _spinnerJobResultsAdapter.Items.Add(result);
                     if (result.ItemSelected && selection < 0)
                     {
