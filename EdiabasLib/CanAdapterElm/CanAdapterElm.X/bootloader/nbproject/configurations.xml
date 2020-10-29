@@ -61,6 +61,7 @@
       </compileType>
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
+        <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
         <makeCustomizationPostStep></makeCustomizationPostStep>
@@ -144,10 +145,8 @@
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
         <property key="linker-maxi-chip" value="false"/>
-        <property key="linker-produce-elf-dwarf-output" value="true"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
-        <property key="linker-produce-intel-hex-output" value="false"/>
         <property key="linker-ram" value=""/>
         <property key="linker-reserve" value=""/>
         <property key="linker-rom" value=""/>
@@ -187,6 +186,7 @@
       </compileType>
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
+        <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
         <makeCustomizationPostStep></makeCustomizationPostStep>
@@ -270,10 +270,8 @@
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
         <property key="linker-maxi-chip" value="false"/>
-        <property key="linker-produce-elf-dwarf-output" value="true"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
-        <property key="linker-produce-intel-hex-output" value="false"/>
         <property key="linker-ram" value=""/>
         <property key="linker-reserve" value=""/>
         <property key="linker-rom" value=""/>
@@ -313,6 +311,7 @@
       </compileType>
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
+        <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
         <makeCustomizationPostStep></makeCustomizationPostStep>
@@ -396,10 +395,8 @@
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
         <property key="linker-maxi-chip" value="false"/>
-        <property key="linker-produce-elf-dwarf-output" value="true"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
-        <property key="linker-produce-intel-hex-output" value="false"/>
         <property key="linker-ram" value=""/>
         <property key="linker-reserve" value=""/>
         <property key="linker-rom" value=""/>
@@ -439,6 +436,7 @@
       </compileType>
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
+        <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
         <makeCustomizationPostStep></makeCustomizationPostStep>
@@ -522,10 +520,8 @@
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
         <property key="linker-maxi-chip" value="false"/>
-        <property key="linker-produce-elf-dwarf-output" value="true"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
-        <property key="linker-produce-intel-hex-output" value="false"/>
         <property key="linker-ram" value=""/>
         <property key="linker-reserve" value=""/>
         <property key="linker-rom" value=""/>
@@ -565,6 +561,7 @@
       </compileType>
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
+        <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
         <makeCustomizationPostStep></makeCustomizationPostStep>
@@ -648,10 +645,8 @@
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
         <property key="linker-maxi-chip" value="false"/>
-        <property key="linker-produce-elf-dwarf-output" value="true"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
-        <property key="linker-produce-intel-hex-output" value="false"/>
         <property key="linker-ram" value=""/>
         <property key="linker-reserve" value=""/>
         <property key="linker-rom" value=""/>
@@ -691,6 +686,7 @@
       </compileType>
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
+        <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
         <makeCustomizationPostStep></makeCustomizationPostStep>
@@ -774,10 +770,8 @@
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
         <property key="linker-maxi-chip" value="false"/>
-        <property key="linker-produce-elf-dwarf-output" value="true"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
-        <property key="linker-produce-intel-hex-output" value="false"/>
         <property key="linker-ram" value=""/>
         <property key="linker-reserve" value=""/>
         <property key="linker-rom" value=""/>
@@ -790,7 +784,7 @@
         <targetDevice>PIC18F25K80</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool></platformTool>
+        <platformTool>noID</platformTool>
         <languageToolchain>pic-as</languageToolchain>
         <languageToolchainVersion>2.20</languageToolchainVersion>
         <platform>3</platform>
@@ -817,6 +811,7 @@
       </compileType>
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
+        <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
         <makeCustomizationPostStep></makeCustomizationPostStep>
@@ -900,10 +895,8 @@
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
         <property key="linker-maxi-chip" value="false"/>
-        <property key="linker-produce-elf-dwarf-output" value="true"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
-        <property key="linker-produce-intel-hex-output" value="false"/>
         <property key="linker-ram" value=""/>
         <property key="linker-reserve" value=""/>
         <property key="linker-rom" value=""/>
