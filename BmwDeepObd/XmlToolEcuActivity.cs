@@ -1679,6 +1679,7 @@ namespace BmwDeepObd
                     orderedResults.Sort(new ResultInfoComparer());
                 }
 
+                ResultInfo resultGroupHeader = null;
                 foreach (ResultInfo result in orderedResults)
                 {
                     if (!udsJob && !ecuFunction && string.Compare(result.Type, XmlToolActivity.DataTypeBinary, StringComparison.OrdinalIgnoreCase) == 0)
@@ -1686,12 +1687,29 @@ namespace BmwDeepObd
                         continue;
                     }
 
+                    if (result.GroupVisible)
+                    {
+                        resultGroupHeader = result;
+                        continue;
+                    }
+
                     if (!string.IsNullOrEmpty(_resultFilterText))
                     {
-                        if (!result.GroupVisible && result.DisplayName.IndexOf(_resultFilterText, StringComparison.OrdinalIgnoreCase) < 0)
+                        if (result.DisplayName.IndexOf(_resultFilterText, StringComparison.OrdinalIgnoreCase) < 0)
                         {
                             continue;   // filter is not matching
                         }
+                    }
+
+                    if (resultGroupHeader != null && resultGroupHeader.GroupId != result.GroupId)
+                    {
+                        resultGroupHeader = null;
+                    }
+
+                    if (resultGroupHeader != null)
+                    {
+                        _spinnerJobResultsAdapter.Items.Add(resultGroupHeader);
+                        resultGroupHeader = null;
                     }
 
                     _spinnerJobResultsAdapter.Items.Add(result);
