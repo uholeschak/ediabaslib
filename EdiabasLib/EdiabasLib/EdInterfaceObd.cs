@@ -204,6 +204,7 @@ namespace EdiabasLib
         protected SerialParity CurrentParity;
         protected int CurrentDataBits;
         protected CanStatus CurrentCanStatus;
+        protected bool KlineDetected;
         protected byte BlockCounter;
         protected byte LastKwp1281Cmd;
 
@@ -3158,9 +3159,17 @@ namespace EdiabasLib
             {
                 if (CurrentCanStatus == CanStatus.CanOk)
                 {
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** KWP2000 aborted because of CAN support");
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    if (KlineDetected)
+                    {
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "CAN and K-LINE support simultaneous");
+                    }
+                    else
+                    {
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** KWP2000 aborted because of CAN support");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    }
                 }
+
                 KwpMode = KwpModes.Undefined;
                 Kwp1281SendNack = false;
                 KeyBytesProtected = ByteArray0;
@@ -3373,6 +3382,9 @@ namespace EdiabasLib
                 {
                     return errorCode;
                 }
+
+                KlineDetected = true;
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "K-LINE has been detected");
 
                 if (protocolMismatch)
                 {
