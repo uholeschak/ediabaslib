@@ -349,16 +349,17 @@ namespace BmwDeepObd
             try
             {
                 _stopThread = false;
-                if (Ediabas.EdInterfaceClass is EdInterfaceObd)
+                if (Ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
                 {
-                    ((EdInterfaceObd)Ediabas.EdInterfaceClass).UdsDtcStatusOverride = ActivityCommon.UdsDtcStatusOverride;
-                    ((EdInterfaceObd)Ediabas.EdInterfaceClass).ComPort = comPort;
+                    edInterfaceObd.UdsDtcStatusOverride = ActivityCommon.UdsDtcStatusOverride;
+                    edInterfaceObd.ComPort = comPort;
+                    edInterfaceObd.KlineDetected = false;
                 }
-                else if (Ediabas.EdInterfaceClass is EdInterfaceEnet)
+                else if (Ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)
                 {
                     if (!string.IsNullOrEmpty(comPort))
                     {
-                        ((EdInterfaceEnet)Ediabas.EdInterfaceClass).RemoteHost = comPort;
+                        edInterfaceEnet.RemoteHost = comPort;
                     }
                 }
                 Ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
