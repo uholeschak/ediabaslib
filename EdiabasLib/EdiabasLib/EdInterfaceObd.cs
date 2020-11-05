@@ -204,7 +204,7 @@ namespace EdiabasLib
         protected SerialParity CurrentParity;
         protected int CurrentDataBits;
         protected CanStatus CurrentCanStatus;
-        protected bool KlineDetectedProtected;
+        protected bool KlineDetected;
         protected byte BlockCounter;
         protected byte LastKwp1281Cmd;
 
@@ -264,6 +264,7 @@ namespace EdiabasLib
             set
             {
                 base.Ediabas = value;
+                KlineDetected = false;
 
                 string prop = EdiabasProtected.GetConfigProperty("ObdComPort");
                 if (prop != null)
@@ -1887,18 +1888,6 @@ namespace EdiabasLib
             }
         }
 
-        public bool KlineDetected
-        {
-            get
-            {
-                return KlineDetectedProtected;
-            }
-            set
-            {
-                KlineDetectedProtected = value;
-            }
-        }
-
         public InterfaceConnectDelegate InterfaceConnectFunc
         {
             get
@@ -3171,7 +3160,7 @@ namespace EdiabasLib
             {
                 if (CurrentCanStatus == CanStatus.CanOk)
                 {
-                    if (KlineDetectedProtected)
+                    if (KlineDetected)
                     {
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "CAN and K-LINE support simultaneous");
                     }
@@ -3395,7 +3384,7 @@ namespace EdiabasLib
                     return errorCode;
                 }
 
-                KlineDetectedProtected = true;
+                KlineDetected = true;
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "K-LINE has been detected");
 
                 if (protocolMismatch)

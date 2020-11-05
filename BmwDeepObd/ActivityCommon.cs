@@ -3699,7 +3699,6 @@ namespace BmwDeepObd
                 edInterfaceObd.UdsEcuCanIdOverride = -1;
                 edInterfaceObd.UdsTesterCanIdOverride = -1;
                 edInterfaceObd.DisabledConceptsList = null;
-                edInterfaceObd.KlineDetected = false;
                 if (SelectedInterface == InterfaceType.Ftdi)
                 {
                     edInterfaceObd.ComPort = "FTDI0";

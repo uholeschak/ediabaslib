@@ -353,7 +353,6 @@ namespace BmwDeepObd
                 {
                     edInterfaceObd.UdsDtcStatusOverride = ActivityCommon.UdsDtcStatusOverride;
                     edInterfaceObd.ComPort = comPort;
-                    edInterfaceObd.KlineDetected = false;
                 }
                 else if (Ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)
                 {
