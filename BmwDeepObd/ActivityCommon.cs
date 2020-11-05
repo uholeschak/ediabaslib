@@ -7202,6 +7202,7 @@ namespace BmwDeepObd
                             crypto.IV = md5.ComputeHash(Encoding.ASCII.GetBytes(key));
                         }
 
+                        bool extractAborted = false;
                         for (int retry = 0;; retry++)
                         {
                             try
@@ -7227,6 +7228,7 @@ namespace BmwDeepObd
                                             }, TimeSpan.FromSeconds(1), null, null, fsRead.Length);
                                             if (aborted)
                                             {
+                                                extractAborted = true;
                                                 return;
                                             }
 #if IO_TEST
@@ -7248,7 +7250,7 @@ namespace BmwDeepObd
 #if DEBUG
                                 Android.Util.Log.Info(Tag, EdiabasNet.GetExceptionText(ex));
 #endif
-                                if (retry > FileIoRetries)
+                                if (extractAborted || retry > FileIoRetries)
                                 {
                                     throw;
                                 }
