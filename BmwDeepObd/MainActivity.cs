@@ -5005,7 +5005,7 @@ namespace BmwDeepObd
 
                     if (extractFailed)
                     {
-                        if (!aborted)
+                        if (!aborted && !_extractZipCanceled)
                         {
                             string message = GetString(ioError ? Resource.String.extract_failed_io : Resource.String.extract_failed);
                             if (!string.IsNullOrEmpty(exceptionText))
