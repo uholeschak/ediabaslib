@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+
 // ReSharper disable ConvertPropertyToExpressionBody
 
 namespace EdiabasLib
@@ -205,7 +207,44 @@ namespace EdiabasLib
 
             while (_inStream.IsDataAvailable())
             {
-                int data = _inStream.ReadByte();
+                Semaphore waitSem = new Semaphore(0, 1);
+                int data = -1;
+                byte[] dataBuffer = new byte[1];
+                IAsyncResult asyncResult = _inStream.BeginRead(dataBuffer, 0, dataBuffer.Length, ar =>
+                {
+                    try
+                    {
+                        if (_inStream != null)
+                        {
+                            int bytes = _inStream.EndRead(ar);
+                            if (bytes > 0)
+                            {
+                                data = dataBuffer[0];
+                                //Android.Util.Log.Debug("InStream", "Async Data: {0}", data);
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        //Android.Util.Log.Debug("InStream", "Async Exception");
+                    }
+
+                    waitSem.Release();
+                }, null);
+
+                if (!waitSem.WaitOne(2000))
+                {
+                    //Android.Util.Log.Debug("InStream", "Read timeout");
+                    break;
+                }
+
+                if (!asyncResult.IsCompleted)
+                {
+                    //Android.Util.Log.Debug("InStream", "Not completed");
+                    break;
+                }
+
+                //Android.Util.Log.Debug("InStream", "Main Data: {0}", data);
                 if (data >= 0)
                 {
                     if (_escapeMode)
