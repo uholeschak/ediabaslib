@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+
 // ReSharper disable ConvertPropertyToExpressionBody
 
 namespace EdiabasLib
@@ -8,6 +10,7 @@ namespace EdiabasLib
     public class BtEscapeStreamWriter : Stream
     {
         private Stream _outStream;
+        private Mutex _writeMutex;
         private bool _escapeMode;
         private byte _escapeCode;
         private byte _escapeMask;
@@ -16,6 +19,7 @@ namespace EdiabasLib
         public BtEscapeStreamWriter(Stream outStream, bool escapeMode = false, byte escapeCode = EdCustomAdapterCommon.EscapeCodeDefault, byte escapeMask = EdCustomAdapterCommon.EscapeMaskDefault)
         {
             _outStream = outStream;
+            _writeMutex = new Mutex(false);
             SetEscapeMode(escapeMode, escapeCode, escapeMask);
             _writeDataList = new List<byte>();
         }
@@ -105,17 +109,41 @@ namespace EdiabasLib
 
         public override void Flush()
         {
-            _outStream?.Flush();
+            if (!AcquireWriteMutex())
+            {
+                return;
+            }
+
+            try
+            {
+                _outStream?.Flush();
+            }
+            finally
+            {
+                ReleaseWriteMutex();
+            }
         }
 
         public override void Close()
         {
-            if (_outStream != null)
+            if (!AcquireWriteMutex(-1))
             {
-                _outStream.Close();
-                _outStream = null;
+                return;
             }
-            _writeDataList.Clear();
+
+            try
+            {
+                if (_outStream != null)
+                {
+                    _outStream.Close();
+                    _outStream = null;
+                }
+                _writeDataList.Clear();
+            }
+            finally
+            {
+                ReleaseWriteMutex();
+            }
         }
 
         public override int ReadByte()
@@ -160,28 +188,81 @@ namespace EdiabasLib
 
         public override void WriteByte(byte value)
         {
-            if (_outStream == null)
+            if (!AcquireWriteMutex())
             {
                 return;
             }
 
-            _writeDataList.Add(value);
-            WriteOutStream();
+            try
+            {
+                if (_outStream == null)
+                {
+                    return;
+                }
+
+                _writeDataList.Add(value);
+                WriteOutStream();
+            }
+            finally
+            {
+                ReleaseWriteMutex();
+            }
         }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if (_outStream == null)
+            if (!AcquireWriteMutex())
             {
                 return;
             }
 
-            for (int i = 0; i < count; i++)
+            try
             {
-                _writeDataList.Add(buffer[i + offset]);
-            }
+                if (_outStream == null)
+                {
+                    return;
+                }
 
-            WriteOutStream();
+                for (int i = 0; i < count; i++)
+                {
+                    _writeDataList.Add(buffer[i + offset]);
+                }
+
+                WriteOutStream();
+            }
+            finally
+            {
+                ReleaseWriteMutex();
+            }
+        }
+
+        private bool AcquireWriteMutex(int timeout = 10000)
+        {
+            try
+            {
+                if (!_writeMutex.WaitOne(timeout))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private void ReleaseWriteMutex()
+        {
+            try
+            {
+                _writeMutex.ReleaseMutex();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private void WriteOutStream()
