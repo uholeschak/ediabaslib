@@ -5388,7 +5388,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                // read voltage first, this updated the adapter data
+                // this only reads cached values
                 batteryVoltage = ediabas.EdInterfaceClass.AdapterVoltage;
                 adapterSerial = ediabas.EdInterfaceClass.AdapterSerial;
 
