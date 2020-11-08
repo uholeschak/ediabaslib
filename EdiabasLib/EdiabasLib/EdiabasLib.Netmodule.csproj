@@ -58,6 +58,7 @@
     <Compile Include="Ftd2xx.cs" />
     <Compile Include="MemoryStreamReader.cs" />
     <Compile Include="IniFile.cs" />
+    <Compile Include="StreamExtension.cs" />
     <Compile Include="TcpClientWithTimeout.cs" />
   </ItemGroup>
   <ItemGroup>

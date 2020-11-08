@@ -74,6 +74,9 @@
     <Compile Include="..\EdiabasLib\IniFile.cs">
       <Link>IniFile.cs</Link>
     </Compile>
+    <Compile Include="..\EdiabasLib\StreamExtension.cs">
+      <Link>StreamExtension.cs</Link>
+    </Compile>
     <Compile Include="..\EdiabasLib\TcpClientWithTimeout.cs">
       <Link>TcpClientWithTimeout.cs</Link>
     </Compile>

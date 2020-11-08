@@ -1154,7 +1154,7 @@ namespace BmwDeepObd
                 bluetoothInStream.Flush();
                 while (bluetoothInStream.IsDataAvailable())
                 {
-                    bluetoothInStream.ReadByte();
+                    bluetoothInStream.ReadByteAsync();
                 }
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("Send: {0}", BitConverter.ToString(customData).Replace("-", " ")));
@@ -1169,7 +1169,7 @@ namespace BmwDeepObd
                 {
                     while (bluetoothInStream.IsDataAvailable())
                     {
-                        int data = bluetoothInStream.ReadByte();
+                        int data = bluetoothInStream.ReadByteAsync();
                         if (data >= 0)
                         {
 #if DEBUG
@@ -1285,7 +1285,7 @@ namespace BmwDeepObd
                     bluetoothInStream.Flush();
                     while (bluetoothInStream.IsDataAvailable())
                     {
-                        bluetoothInStream.ReadByte();
+                        bluetoothInStream.ReadByteAsync();
                     }
                     byte[] sendData = Encoding.UTF8.GetBytes("ATI\r");
                     LogData(sendData, 0, sendData.Length, "Send");
@@ -1326,7 +1326,7 @@ namespace BmwDeepObd
                         bluetoothInStream.Flush();
                         while (bluetoothInStream.IsDataAvailable())
                         {
-                            bluetoothInStream.ReadByte();
+                            bluetoothInStream.ReadByteAsync();
                         }
                         if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, elmInitEntry.Command, false))
                         {
@@ -1687,7 +1687,7 @@ namespace BmwDeepObd
             bluetoothInStream.Flush();
             while (bluetoothInStream.IsDataAvailable())
             {
-                bluetoothInStream.ReadByte();
+                bluetoothInStream.ReadByteAsync();
             }
 
             if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"AT@2", false))
@@ -1767,7 +1767,7 @@ namespace BmwDeepObd
             {
                 while (bluetoothInStream.IsDataAvailable())
                 {
-                    int data = bluetoothInStream.ReadByte();
+                    int data = bluetoothInStream.ReadByteAsync();
                     if (data >= 0 && data != 0x00)
                     {
                         // remove 0x00
