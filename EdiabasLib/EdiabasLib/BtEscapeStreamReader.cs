@@ -10,15 +10,17 @@ namespace EdiabasLib
     public class BtEscapeStreamReader : Stream
     {
         private Stream _inStream;
+        private Mutex _readMutex;
         private bool _escapeMode;
         private byte _escapeCode;
         private byte _escapeMask;
-        private bool readEscape;
+        private bool _readEscape;
         private List<byte> _readDataList;
 
         public BtEscapeStreamReader(Stream inStream, bool escapeMode = false, byte escapeCode = EdCustomAdapterCommon.EscapeCodeDefault, byte escapeMask = EdCustomAdapterCommon.EscapeMaskDefault)
         {
             _inStream = inStream;
+            _readMutex = new Mutex(false);
             SetEscapeMode(escapeMode, escapeCode, escapeMask);
             _readDataList = new List<byte>();
         }
@@ -27,7 +29,7 @@ namespace EdiabasLib
         {
             if (_escapeMode != escapeMode)
             {
-                readEscape = false;
+                _readEscape = false;
             }
             _escapeMode = escapeMode;
             _escapeCode = escapeCode;
@@ -112,37 +114,85 @@ namespace EdiabasLib
 
         public override void Flush()
         {
-            _inStream?.Flush();
+            if (!AcquireReadMutex())
+            {
+                return;
+            }
+
+            try
+            {
+                _inStream?.Flush();
+            }
+            finally
+            {
+                ReleaseReadMutex();
+            }
         }
 
         public override void Close()
         {
-            if (_inStream != null)
+            if (!AcquireReadMutex(-1))
             {
-                _inStream.Close();
-                _inStream = null;
+                return;
             }
-            _readDataList.Clear();
-            readEscape = false;
+
+            try
+            {
+                if (_inStream != null)
+                {
+                    _inStream.Close();
+                    _inStream = null;
+                }
+                _readDataList.Clear();
+                _readEscape = false;
+            }
+            finally
+            {
+                ReleaseReadMutex();
+            }
         }
 
         public bool IsDataAvailable()
         {
-            ReadInStream();
-            return _readDataList.Count > 0;
+            if (!AcquireReadMutex())
+            {
+                return false;
+            }
+
+            try
+            {
+                ReadInStream();
+                return _readDataList.Count > 0;
+            }
+            finally
+            {
+                ReleaseReadMutex();
+            }
         }
 
         public override int ReadByte()
         {
-            ReadInStream();
-            if (_readDataList.Count < 1)
+            if (!AcquireReadMutex())
             {
                 return -1;
             }
 
-            int data = _readDataList[0];
-            _readDataList.RemoveAt(0);
-            return data;
+            try
+            {
+                ReadInStream();
+                if (_readDataList.Count < 1)
+                {
+                    return -1;
+                }
+
+                int data = _readDataList[0];
+                _readDataList.RemoveAt(0);
+                return data;
+            }
+            finally
+            {
+                ReleaseReadMutex();
+            }
         }
 
         public override int Read(byte[] buffer, int offset, int count)
@@ -198,6 +248,35 @@ namespace EdiabasLib
             throw new NotSupportedException();
         }
 
+        private bool AcquireReadMutex(int timeout = 10000)
+        {
+            try
+            {
+                if (!_readMutex.WaitOne(timeout))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private void ReleaseReadMutex()
+        {
+            try
+            {
+                _readMutex.ReleaseMutex();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
         private void ReadInStream()
         {
             if (_inStream == null)
@@ -232,7 +311,7 @@ namespace EdiabasLib
                     waitSem.Release();
                 }, null);
 
-                if (!waitSem.WaitOne(1000))
+                if (!waitSem.WaitOne(2000))
                 {
                     //Android.Util.Log.Debug("InStream", "Read timeout");
                     break;
@@ -249,25 +328,25 @@ namespace EdiabasLib
                 {
                     if (_escapeMode)
                     {
-                        if (readEscape)
+                        if (_readEscape)
                         {
                             data ^= _escapeMask;
-                            readEscape = false;
+                            _readEscape = false;
                         }
                         else
                         {
                             if (data == _escapeCode)
                             {
-                                readEscape = true;
+                                _readEscape = true;
                             }
                         }
                     }
                     else
                     {
-                        readEscape = false;
+                        _readEscape = false;
                     }
 
-                    if (!readEscape)
+                    if (!_readEscape)
                     {
                         _readDataList.Add((byte)data);
                     }
