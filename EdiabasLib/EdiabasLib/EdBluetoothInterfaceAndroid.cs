@@ -657,7 +657,7 @@ namespace EdiabasLib
             {
                 while (_bluetoothInStream.IsDataAvailable())
                 {
-                    _bluetoothInStream.ReadByte();
+                    _bluetoothInStream.ReadByteAsync();
                 }
             }
         }

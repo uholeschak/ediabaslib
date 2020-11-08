@@ -284,45 +284,9 @@ namespace EdiabasLib
                 return;
             }
 
-            Semaphore waitSem = new Semaphore(0, 1);
-            byte[] dataBuffer = new byte[1];
             while (_inStream.IsDataAvailable())
             {
-                int data = -1;
-                IAsyncResult asyncResult = _inStream.BeginRead(dataBuffer, 0, dataBuffer.Length, ar =>
-                {
-                    try
-                    {
-                        if (_inStream != null)
-                        {
-                            int bytes = _inStream.EndRead(ar);
-                            if (bytes > 0)
-                            {
-                                data = dataBuffer[0];
-                                //Android.Util.Log.Debug("InStream", "Async Data: {0}", data);
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        //Android.Util.Log.Debug("InStream", "Async Exception");
-                    }
-
-                    waitSem.Release();
-                }, null);
-
-                if (!waitSem.WaitOne(2000))
-                {
-                    //Android.Util.Log.Debug("InStream", "Read timeout");
-                    break;
-                }
-
-                if (!asyncResult.IsCompleted)
-                {
-                    //Android.Util.Log.Debug("InStream", "Not completed");
-                    break;
-                }
-
+                int data = _inStream.ReadByteAsync();
                 //Android.Util.Log.Debug("InStream", "Main Data: {0}", data);
                 if (data >= 0)
                 {

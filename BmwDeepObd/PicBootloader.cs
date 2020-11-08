@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Reflection;
+using EdiabasLib;
 
 // ReSharper disable RedundantCaseLabel
 
@@ -1909,7 +1910,7 @@ namespace BmwDeepObd
 
                     while (_inStream.IsDataAvailable())
                     {
-                        _inStream.ReadByte();
+                        _inStream.ReadByteAsync();
                     }
                     return;
                 }
@@ -1939,7 +1940,7 @@ namespace BmwDeepObd
                             continue;
                         }
 
-                        int value = _inStream.ReadByte();
+                        int value = _inStream.ReadByteAsync();
                         if (value == STX)
                         {
                             break;
@@ -1967,7 +1968,7 @@ namespace BmwDeepObd
                             continue;
                         }
 
-                        int value = _inStream.ReadByte();
+                        int value = _inStream.ReadByteAsync();
                         if (value == DLE)
                         {
                             while (!_inStream.IsDataAvailable())
@@ -1978,7 +1979,7 @@ namespace BmwDeepObd
                                 }
                                 Thread.Sleep(10);
                             }
-                            value = _inStream.ReadByte();
+                            value = _inStream.ReadByteAsync();
                         }
                         else
                         {
@@ -2051,7 +2052,7 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    int value = _inStream.ReadByte();
+                    int value = _inStream.ReadByteAsync();
                     if (value == STX)
                     {
                         break;
@@ -2078,7 +2079,7 @@ namespace BmwDeepObd
                         Thread.Sleep(10);
                         continue;
                     }
-                    int value = _inStream.ReadByte();
+                    int value = _inStream.ReadByteAsync();
                     // we got some data, don't timeout
                     startTime = Stopwatch.GetTimestamp();
 
@@ -2092,7 +2093,7 @@ namespace BmwDeepObd
                             }
                             Thread.Sleep(10);
                         }
-                        value = _inStream.ReadByte();
+                        value = _inStream.ReadByteAsync();
                     }
                     else
                     {
@@ -2203,7 +2204,7 @@ namespace BmwDeepObd
                 {
                     while (_inStream.IsDataAvailable())
                     {
-                        _inStream.ReadByte();
+                        _inStream.ReadByteAsync();
                     }
                     _outStream.WriteByte(STX);
 
@@ -2229,7 +2230,7 @@ namespace BmwDeepObd
                             Thread.Sleep(10);
                         }
 
-                        int value = _inStream.ReadByte();
+                        int value = _inStream.ReadByteAsync();
                         if (value == STX)
                         {
                             SendPacket(sendPacket);
@@ -2291,7 +2292,7 @@ namespace BmwDeepObd
                     {
                         return ErrorCode.NoAcknowledgement;
                     }
-                    int response = _inStream.ReadByte();
+                    int response = _inStream.ReadByteAsync();
                     if (response != STX)
                     {
                         return ErrorCode.NoAcknowledgement;

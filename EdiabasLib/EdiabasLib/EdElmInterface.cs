@@ -869,7 +869,7 @@ namespace EdiabasLib
             StringBuilder stringBuilder = new StringBuilder();
             while (DataAvailable())
             {
-                int data = _inStream.ReadByte();
+                int data = _inStream.ReadByteAsync();
                 if (data >= 0)
                 {
                     stringBuilder.Append(Convert.ToChar(data));
@@ -893,7 +893,7 @@ namespace EdiabasLib
             {
                 while (DataAvailable())
                 {
-                    int data = _inStream.ReadByte();
+                    int data = _inStream.ReadByteAsync();
                     if (data >= 0)
                     {
                         stringBuilder.Append(Convert.ToChar(data));
@@ -945,7 +945,7 @@ namespace EdiabasLib
             {
                 while (DataAvailable())
                 {
-                    int data = _inStream.ReadByte();
+                    int data = _inStream.ReadByteAsync();
                     if (data >= 0 && data != 0x00)
                     {   // remove 0x00
                         if (canData)
@@ -1001,7 +1001,7 @@ namespace EdiabasLib
             _inStream.Flush();
             while (DataAvailable())
             {
-                _inStream.ReadByte();
+                _inStream.ReadByteAsync();
             }
         }
 
