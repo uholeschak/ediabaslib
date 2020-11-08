@@ -205,11 +205,11 @@ namespace EdiabasLib
                 return;
             }
 
+            Semaphore waitSem = new Semaphore(0, 1);
+            byte[] dataBuffer = new byte[1];
             while (_inStream.IsDataAvailable())
             {
-                Semaphore waitSem = new Semaphore(0, 1);
                 int data = -1;
-                byte[] dataBuffer = new byte[1];
                 IAsyncResult asyncResult = _inStream.BeginRead(dataBuffer, 0, dataBuffer.Length, ar =>
                 {
                     try
@@ -232,7 +232,7 @@ namespace EdiabasLib
                     waitSem.Release();
                 }, null);
 
-                if (!waitSem.WaitOne(2000))
+                if (!waitSem.WaitOne(1000))
                 {
                     //Android.Util.Log.Debug("InStream", "Read timeout");
                     break;
