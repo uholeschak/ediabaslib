@@ -47,7 +47,7 @@ namespace EdiabasLib
 
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         public static readonly double AdapterVoltageScale = 0.1;
-
+        public static readonly long AdapterVoltageTimeout;
         public delegate void SendDataDelegate(byte[] buffer, int length);
         public delegate bool ReceiveDataDelegate(byte[] buffer, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog);
         public delegate void DiscardInBufferDelegate();
@@ -136,6 +136,15 @@ namespace EdiabasLib
         }
 
         public static List<byte[]> AdapterBlackList { get; set; }
+
+        static EdCustomAdapterCommon()
+        {
+#if Android
+            AdapterVoltageTimeout = 10000;
+#else
+            AdapterVoltageTimeout = 0;
+#endif
+        }
 
         public EdCustomAdapterCommon(SendDataDelegate sendDataFunc, ReceiveDataDelegate receiveDataFunc,
             DiscardInBufferDelegate discardInBufferFunc, ReadInBufferDelegate readInBufferFunc,
@@ -593,7 +602,7 @@ namespace EdiabasLib
             bool voltageUpdate = false;
             if (!forceUpdate && AdapterType >= 0)
             {
-                if (Stopwatch.GetTimestamp() - _lastVoltageUpdateTime > 10000 * TickResolMs)
+                if (AdapterVoltageTimeout > 0 && Stopwatch.GetTimestamp() - _lastVoltageUpdateTime > AdapterVoltageTimeout * TickResolMs)
                 {
                     voltageUpdate = true;
                 }
