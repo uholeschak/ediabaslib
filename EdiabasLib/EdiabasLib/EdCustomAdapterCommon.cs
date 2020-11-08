@@ -61,6 +61,7 @@ namespace EdiabasLib
         private readonly ReceiveDataDelegate _receiveDataFunc;
         private readonly DiscardInBufferDelegate _discardInBufferFunc;
         private readonly ReadInBufferDelegate _readInBufferFunc;
+        private long _lastVoltageUpdateTime;
 
         public EdiabasNet Ediabas { get; set; }
 
@@ -148,6 +149,7 @@ namespace EdiabasLib
             _receiveDataFunc = receiveDataFunc;
             _discardInBufferFunc = discardInBufferFunc;
             _readInBufferFunc = readInBufferFunc;
+            _lastVoltageUpdateTime = Stopwatch.GetTimestamp();
 
             RawMode = false;
             CurrentProtocol = EdInterfaceObd.Protocol.Uart;
@@ -588,25 +590,43 @@ namespace EdiabasLib
 
         public bool UpdateAdapterInfo(bool forceUpdate = false)
         {
+            bool voltageUpdate = false;
             if (!forceUpdate && AdapterType >= 0)
             {
-                // only read once
-                return true;
+                if (Stopwatch.GetTimestamp() - _lastVoltageUpdateTime > 10000 * TickResolMs)
+                {
+                    voltageUpdate = true;
+                }
+
+                if (!voltageUpdate)
+                {
+                    // only read once
+                    return true;
+                }
             }
 
             if (Ediabas != null)
             {
-                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UpdateAdapterInfo: {0}", forceUpdate);
+                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UpdateAdapterInfo: ForceUpdate={0}, VoltageUpdate={1}", forceUpdate, voltageUpdate);
             }
 
-            IgnitionStatus = -1;
-            AdapterType = -1;
-            AdapterSerial = null;
+            if (!voltageUpdate)
+            {
+                IgnitionStatus = -1;
+                AdapterType = -1;
+                AdapterSerial = null;
+            }
             AdapterVoltage = -1;
+
             try
             {
                 for (int telType = 0; telType < 5; telType++)
                 {
+                    if (voltageUpdate && telType != 4)
+                    {
+                        continue;
+                    }
+
                     int respLen = 0;
                     byte[] testTel = null;
                     switch (telType)
@@ -719,6 +739,7 @@ namespace EdiabasLib
 
                                 case 4:
                                     AdapterVoltage = responseList[testTel.Length + 4];
+                                    _lastVoltageUpdateTime = Stopwatch.GetTimestamp();
                                     break;
                             }
                             break;
@@ -854,21 +875,12 @@ namespace EdiabasLib
                 return null;
             }
 
-            if (!UpdateAdapterInfo())
-            {
-                return null;
-            }
             return AdapterSerial;
         }
 
         public double? InterfaceAdapterVoltage()
         {
             if (RawMode)
-            {
-                return null;
-            }
-
-            if (!UpdateAdapterInfo(true))
             {
                 return null;
             }

@@ -286,7 +286,6 @@ namespace BmwDeepObd
         private bool _ediabasJobAbort;
         private JobReader.PageInfo _lastPageInfo;
         private long _lastUpdateTime;
-        private long _lastBatteryUpdateTime;
         private string _vagPath;
         private string _logDir;
         private bool _appendLog;
@@ -378,7 +377,6 @@ namespace BmwDeepObd
                 JobPageInfo = pageInfo;
                 _lastPageInfo = null;
                 _lastUpdateTime = Stopwatch.GetTimestamp();
-                _lastBatteryUpdateTime = Stopwatch.GetTimestamp() - (100000 * ActivityCommon.TickResolMs);
                 _vagPath = vagPath;
                 _logDir = logDir;
                 _appendLog = appendLog;
@@ -672,16 +670,12 @@ namespace BmwDeepObd
 
         private bool CommEdiabas(JobReader.PageInfo pageInfo)
         {
-            if (Stopwatch.GetTimestamp() - _lastBatteryUpdateTime > 10000 * ActivityCommon.TickResolMs)
+            if (ActivityCommon.ReadBatteryVoltage(Ediabas, out double? batteryVoltage, out byte[] adapterSerial))
             {
-                if (ActivityCommon.ReadBatteryVoltage(Ediabas, out double? batteryVoltage, out byte[] adapterSerial))
+                lock (DataLock)
                 {
-                    _lastBatteryUpdateTime = Stopwatch.GetTimestamp();
-                    lock (DataLock)
-                    {
-                        BatteryVoltage = batteryVoltage;
-                        AdapterSerial = adapterSerial;
-                    }
+                    BatteryVoltage = batteryVoltage;
+                    AdapterSerial = adapterSerial;
                 }
             }
 
