@@ -47,7 +47,7 @@ namespace EdiabasLib
 
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         public static readonly double AdapterVoltageScale = 0.1;
-        public static readonly long AdapterVoltageTimeout;
+        public static readonly long AdapterVoltageTimeout = 10000;
         public delegate void SendDataDelegate(byte[] buffer, int length);
         public delegate bool ReceiveDataDelegate(byte[] buffer, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog);
         public delegate void DiscardInBufferDelegate();
@@ -62,6 +62,7 @@ namespace EdiabasLib
         private readonly DiscardInBufferDelegate _discardInBufferFunc;
         private readonly ReadInBufferDelegate _readInBufferFunc;
         private long _lastVoltageUpdateTime;
+        private int _adapterVoltage;
 
         public EdiabasNet Ediabas { get; set; }
 
@@ -107,7 +108,17 @@ namespace EdiabasLib
 
         public byte[] AdapterSerial { get; set; }
 
-        public int AdapterVoltage { get; set; }
+        public int AdapterVoltage
+        {
+            get
+            {
+                UpdateAdapterVoltage = true;
+                return _adapterVoltage;
+            }
+            set => _adapterVoltage = value;
+        }
+
+        public bool UpdateAdapterVoltage { get; set; }
 
         public long LastCommTick { get; set; }
 
@@ -136,15 +147,6 @@ namespace EdiabasLib
         }
 
         public static List<byte[]> AdapterBlackList { get; set; }
-
-        static EdCustomAdapterCommon()
-        {
-#if Android
-            AdapterVoltageTimeout = 10000;
-#else
-            AdapterVoltageTimeout = 0;
-#endif
-        }
 
         public EdCustomAdapterCommon(SendDataDelegate sendDataFunc, ReceiveDataDelegate receiveDataFunc,
             DiscardInBufferDelegate discardInBufferFunc, ReadInBufferDelegate readInBufferFunc,
@@ -179,6 +181,7 @@ namespace EdiabasLib
             AdapterVersion = -1;
             AdapterSerial = null;
             AdapterVoltage = -1;
+            UpdateAdapterVoltage = false;
         }
 
         public void Init()
@@ -193,6 +196,7 @@ namespace EdiabasLib
             AdapterVersion = -1;
             AdapterSerial = null;
             AdapterVoltage = -1;
+            UpdateAdapterVoltage = false;
             ReconnectRequired = false;
             LastCommTick = DateTime.MinValue.Ticks;
         }
@@ -602,7 +606,7 @@ namespace EdiabasLib
             bool voltageUpdate = false;
             if (!forceUpdate && AdapterType >= 0)
             {
-                if (AdapterVoltageTimeout > 0 && Stopwatch.GetTimestamp() - _lastVoltageUpdateTime > AdapterVoltageTimeout * TickResolMs)
+                if (UpdateAdapterVoltage && Stopwatch.GetTimestamp() - _lastVoltageUpdateTime > AdapterVoltageTimeout * TickResolMs)
                 {
                     voltageUpdate = true;
                 }
