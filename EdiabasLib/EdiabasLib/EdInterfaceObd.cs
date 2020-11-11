@@ -3388,7 +3388,7 @@ namespace EdiabasLib
                 }
 
                 ValidKlineResponse = true;
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "K-LINE has been detected");
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Valid K-LINE response has been detected");
 
                 if (protocolMismatch)
                 {
@@ -3867,6 +3867,7 @@ namespace EdiabasLib
                 receiveData[receiveLength - 1] = CalcChecksumBmwFast(receiveData, receiveLength - 1);
 
                 ValidCanResponse = true;
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Valid CAN response has been detected");
             }
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
@@ -4023,6 +4024,7 @@ namespace EdiabasLib
                 receiveLength = dataLength + dataOffset;
 
                 ValidCanResponse = true;
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Valid CAN response has been detected");
                 return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
             }
             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
