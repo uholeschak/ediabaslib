@@ -204,7 +204,8 @@ namespace EdiabasLib
         protected SerialParity CurrentParity;
         protected int CurrentDataBits;
         protected CanStatus CurrentCanStatus;
-        protected bool KlineDetected;
+        protected bool ValidKlineResponse;
+        protected bool ValidCanResponse;
         protected byte BlockCounter;
         protected byte LastKwp1281Cmd;
 
@@ -264,7 +265,8 @@ namespace EdiabasLib
             set
             {
                 base.Ediabas = value;
-                KlineDetected = false;
+                ValidKlineResponse = false;
+                ValidCanResponse = false;
 
                 string prop = EdiabasProtected.GetConfigProperty("ObdComPort");
                 if (prop != null)
@@ -3160,14 +3162,15 @@ namespace EdiabasLib
             {
                 if (CurrentCanStatus == CanStatus.CanOk)
                 {
-                    if (KlineDetected)
+                    if (ValidCanResponse)
                     {
-                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "CAN and K-LINE support simultaneous");
-                    }
-                    else
-                    {
-                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** KWP2000 aborted because of CAN support");
-                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                        if (!ValidKlineResponse)
+                        {
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** KWP2000 aborted because of CAN support");
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                        }
+
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "CAN and K-LINE support simultaneously");
                     }
                 }
 
@@ -3384,7 +3387,7 @@ namespace EdiabasLib
                     return errorCode;
                 }
 
-                KlineDetected = true;
+                ValidKlineResponse = true;
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "K-LINE has been detected");
 
                 if (protocolMismatch)
@@ -3862,6 +3865,8 @@ namespace EdiabasLib
                 receiveData[1] = ParEdicTesterAddress;
                 receiveData[2] = ParEdicEcuAddress;
                 receiveData[receiveLength - 1] = CalcChecksumBmwFast(receiveData, receiveLength - 1);
+
+                ValidCanResponse = true;
             }
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
@@ -4016,6 +4021,8 @@ namespace EdiabasLib
                 receiveData[17] = (byte)(dataLength >> 8);
                 Array.Copy(tempBuffer, 3, receiveData, dataOffset, dataLength);
                 receiveLength = dataLength + dataOffset;
+
+                ValidCanResponse = true;
                 return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
             }
             return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
