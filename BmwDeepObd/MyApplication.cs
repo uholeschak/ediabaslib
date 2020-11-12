@@ -1,4 +1,5 @@
 ﻿using System;
+using Android.Support.V7.App;
 
 namespace BmwDeepObd
 {
@@ -14,6 +15,7 @@ namespace BmwDeepObd
         public override void OnCreate()
         {
             base.OnCreate();
+            AppCompatDelegate.CompatVectorFromResourcesEnabled = true;
         }
     }
 }
