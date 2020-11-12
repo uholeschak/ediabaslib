@@ -249,7 +249,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/vag_adaption_button_stop" />
             </org.apmem.tools.layouts.FlowLayout>
-            <android.support.v7.widget.AppCompatCheckBox
+            <CheckBox
                 android:id="@+id/checkBoxEcuReset"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

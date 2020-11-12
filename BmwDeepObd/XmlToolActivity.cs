@@ -19,7 +19,6 @@ using Android.Widget;
 using BmwDeepObd.FilePicker;
 using EdiabasLib;
 using System.Collections.ObjectModel;
-using Android.Support.V7.Widget;
 using BmwFileReader;
 
 // ReSharper disable IdentifierTypo
@@ -8241,7 +8240,7 @@ namespace BmwDeepObd
                 var item = _items[position];
 
                 View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.ecu_select_list, null);
-                AppCompatCheckBox checkBoxSelect = view.FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxEcuSelect);
+                CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxEcuSelect);
                 _ignoreCheckEvent = true;
                 checkBoxSelect.Checked = item.Selected;
                 _ignoreCheckEvent = false;
@@ -8295,7 +8294,7 @@ namespace BmwDeepObd
             {
                 if (!_ignoreCheckEvent)
                 {
-                    AppCompatCheckBox checkBox = (AppCompatCheckBox)sender;
+                    CheckBox checkBox = (CheckBox)sender;
                     TagInfo tagInfo = (TagInfo)checkBox.Tag;
                     if (tagInfo.Info.Selected != args.IsChecked)
                     {

@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
-        <android.support.v7.widget.AppCompatCheckBox
+        <CheckBox
             android:id="@+id/checkBoxDisplayTypeGrid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -113,7 +113,7 @@
             android:id="@+id/spinnerJobs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-        <android.support.v7.widget.AppCompatCheckBox
+        <CheckBox
             android:id="@+id/checkBoxShowAllJobs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -142,7 +142,7 @@
                 android:id="@+id/spinnerJobResults"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-            <android.support.v7.widget.AppCompatCheckBox
+            <CheckBox
                 android:id="@+id/checkBoxShowAllResults"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

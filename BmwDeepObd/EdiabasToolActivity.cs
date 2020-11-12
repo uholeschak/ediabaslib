@@ -11,7 +11,6 @@ using Android.Content.Res;
 using Android.Hardware.Usb;
 using Android.OS;
 using Android.Support.V7.App;
-using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
@@ -340,11 +339,11 @@ namespace BmwDeepObd
         private InputMethodManager _imm;
         private View _contentView;
         private View _barView;
-        private AppCompatCheckBox _checkBoxContinuous;
+        private CheckBox _checkBoxContinuous;
         private ToggleButton _buttonConnect;
         private Spinner _spinnerJobs;
         private JobListAdapter _jobListAdapter;
-        private AppCompatCheckBox _checkBoxBinArgs;
+        private CheckBox _checkBoxBinArgs;
         private Button _buttonArgAssist;
         private EditText _editTextArgs;
         private Spinner _spinnerResults;
@@ -400,7 +399,7 @@ namespace BmwDeepObd
 
             SetResult(Android.App.Result.Canceled);
 
-            _checkBoxContinuous = _barView.FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxContinuous);
+            _checkBoxContinuous = _barView.FindViewById<CheckBox>(Resource.Id.checkBoxContinuous);
             _checkBoxContinuous.SetOnTouchListener(this);
 
             _buttonConnect = _barView.FindViewById<ToggleButton>(Resource.Id.buttonConnect);
@@ -432,7 +431,7 @@ namespace BmwDeepObd
             _editTextArgs.SetOnTouchListener(this);
             _editTextArgs.EditorAction += TextEditorAction;
 
-            _checkBoxBinArgs = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxBinArgs);
+            _checkBoxBinArgs = FindViewById<CheckBox>(Resource.Id.checkBoxBinArgs);
             _checkBoxBinArgs.SetOnTouchListener(this);
 
             _buttonArgAssist = FindViewById<Button>(Resource.Id.buttonArgAssist);
@@ -3505,7 +3504,7 @@ namespace BmwDeepObd
                 View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.ediabas_result_list, null);
                 view.SetBackgroundColor(_backgroundColor);
 
-                AppCompatCheckBox checkBoxGroupSelect = view.FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxGroupSelect);
+                CheckBox checkBoxGroupSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxGroupSelect);
 
                 ViewStates viewStateGroup = ViewStates.Gone;
                 if (item.GroupVisible)
@@ -3526,7 +3525,7 @@ namespace BmwDeepObd
                 checkBoxGroupSelect.CheckedChange -= OnGroupChanged;
                 checkBoxGroupSelect.CheckedChange += OnGroupChanged;
 
-                AppCompatCheckBox checkBoxSelect = view.FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxResultSelect);
+                CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxResultSelect);
                 _ignoreCheckEvent = true;
                 checkBoxSelect.Checked = item.Selected;
                 checkBoxSelect.Enabled = !item.GroupVisible || (item.GroupVisible && item.Selected);
@@ -3568,7 +3567,7 @@ namespace BmwDeepObd
             {
                 if (!_ignoreCheckEvent)
                 {
-                    AppCompatCheckBox checkBox = sender as AppCompatCheckBox;
+                    CheckBox checkBox = sender as CheckBox;
                     if (checkBox?.Tag is TagInfo tagInfo)
                     {
                         if (tagInfo.Info.Selected != args.IsChecked)
@@ -3590,7 +3589,7 @@ namespace BmwDeepObd
             {
                 if (!_ignoreCheckEvent)
                 {
-                    AppCompatCheckBox checkBox = sender as AppCompatCheckBox;
+                    CheckBox checkBox = sender as CheckBox;
                     if (checkBox?.Tag is TagInfo tagInfo)
                     {
                         if (tagInfo.Info.GroupSelected != args.IsChecked)
