@@ -6,6 +6,7 @@ using System.Text;
 using Android.Content;
 using Android.OS;
 using Android.Support.V7.App;
+using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using EdiabasLib;
@@ -31,7 +32,7 @@ namespace BmwDeepObd
         private LinearLayout _layoutBlockNumber;
         private Spinner _spinnerBlockNumber;
         private StringObjAdapter _spinnerBlockNumberAdapter;
-        private CheckBox _checkBoxDefineBlockNew;
+        private AppCompatCheckBox _checkBoxDefineBlockNew;
         private ListView _listViewArgs;
         private EdiabasToolActivity.ResultSelectListAdapter _argsListAdapter;
 
@@ -101,7 +102,7 @@ namespace BmwDeepObd
             _spinnerBlockNumberAdapter = new StringObjAdapter(this);
             _spinnerBlockNumber.Adapter = _spinnerBlockNumberAdapter;
 
-            _checkBoxDefineBlockNew = FindViewById<CheckBox>(Resource.Id.checkBoxDefineBlockNew);
+            _checkBoxDefineBlockNew = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxDefineBlockNew);
             _checkBoxDefineBlockNew.SetOnTouchListener(this);
 
             _listViewArgs = FindViewById<ListView>(Resource.Id.argList);

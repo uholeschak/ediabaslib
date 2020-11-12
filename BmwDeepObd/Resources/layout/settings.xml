@@ -89,7 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxTranslatorLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -100,17 +100,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxAutoHideTitleBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_auto_hide_title_bar" />
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxSuppressTitleBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_suppress_title_bar" />
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxFullScreenMode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -121,7 +121,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxSwapMultiWindowOrientation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -185,7 +185,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxDisableBtAtExit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -258,7 +258,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxStoreDataLogSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -295,7 +295,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxDoubleClickForAppExit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -332,7 +332,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxSendDataBroadcast"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -343,7 +343,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxCheckCpuUsage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -354,7 +354,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxCheckEcuFiles"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -365,7 +365,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxShowBatteryVoltageWarning"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -376,7 +376,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxOldVagMode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -387,7 +387,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxUseBmwDatabase"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -398,7 +398,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxScanAllEcus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -430,12 +430,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxCollectDebugInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_collect_debug_info" />
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxHciSnoopLog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
