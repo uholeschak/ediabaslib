@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Android.App;
 using Android.OS;
+using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 
@@ -64,7 +65,7 @@ namespace BmwDeepObd
             TableResultItem item = _items[position];
 
             View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.result_list, null);
-            CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxResultSelect);
+            AppCompatCheckBox checkBoxSelect = view.FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxResultSelect);
 
             if (_showCheckBox)
             {
@@ -152,7 +153,7 @@ namespace BmwDeepObd
         {
             if (!_ignoreCheckEvent)
             {
-                CheckBox checkBox = (CheckBox)sender;
+                AppCompatCheckBox checkBox = (AppCompatCheckBox)sender;
                 TagInfo tagInfo = (TagInfo)checkBox.Tag;
                 if (tagInfo.Info.Selected != args.IsChecked)
                 {
