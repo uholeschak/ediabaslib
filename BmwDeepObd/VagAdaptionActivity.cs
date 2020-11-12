@@ -7,6 +7,7 @@ using Android.Content;
 using Android.Hardware.Usb;
 using Android.OS;
 using Android.Support.V7.App;
+using Android.Support.V7.Widget;
 using Android.Text;
 using Android.Text.Method;
 using Android.Views;
@@ -118,7 +119,7 @@ namespace BmwDeepObd
         private Button _buttonAdaptionTest;
         private Button _buttonAdaptionStore;
         private Button _buttonAdaptionStop;
-        private CheckBox _checkBoxEcuReset;
+        private AppCompatCheckBox _checkBoxEcuReset;
         private ActivityCommon _activityCommon;
         private Handler _updateHandler;
         private XmlToolActivity.EcuInfo _ecuInfo;
@@ -344,7 +345,7 @@ namespace BmwDeepObd
                 _instanceData.StopAdaption = true;
             };
 
-            _checkBoxEcuReset = FindViewById<CheckBox>(Resource.Id.checkBoxEcuReset);
+            _checkBoxEcuReset = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxEcuReset);
             _checkBoxEcuReset.SetOnTouchListener(this);
             _checkBoxEcuReset.Click += (sender, args) =>
             {
