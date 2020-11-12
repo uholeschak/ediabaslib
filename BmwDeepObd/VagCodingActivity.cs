@@ -8,6 +8,7 @@ using Android.Content;
 using Android.Hardware.Usb;
 using Android.OS;
 using Android.Support.V7.App;
+using Android.Support.V7.Widget;
 using Android.Text.Method;
 using Android.Views;
 using Android.Views.InputMethods;
@@ -97,7 +98,7 @@ namespace BmwDeepObd
         private LinearLayout _layoutCodingButtons;
         private TextView _textViewVagCodingExecuteTitle;
         private Button _buttonCodingExecute;
-        private CheckBox _checkBoxEcuReset;
+        private AppCompatCheckBox _checkBoxEcuReset;
         private LinearLayout _layoutVagCodingAssitant;
         private ResultListAdapter _layoutVagCodingAssitantAdapter;
         private ListView _listViewVagCodingAssistant;
@@ -264,7 +265,7 @@ namespace BmwDeepObd
                 ExecuteCodingRequest();
             };
 
-            _checkBoxEcuReset = FindViewById<CheckBox>(Resource.Id.checkBoxEcuReset);
+            _checkBoxEcuReset = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxEcuReset);
             _checkBoxEcuReset.SetOnTouchListener(this);
 
             _layoutVagCodingAssitant = FindViewById<LinearLayout>(Resource.Id.layoutVagCodingAssitant);

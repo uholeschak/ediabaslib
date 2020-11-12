@@ -13,6 +13,8 @@ using System.IO;
 using System.Net.Sockets;
 using Android.Content;
 using Android.Hardware.Usb;
+using Android.Support.V7.Widget;
+
 // ReSharper disable IdentifierTypo
 
 namespace BmwDeepObd
@@ -71,7 +73,7 @@ namespace BmwDeepObd
         private TextView _textViewSerNum;
         private Button _buttonFwUpdate;
         private Button _buttonFwUpdateChange;
-        private CheckBox _checkBoxExpert;
+        private AppCompatCheckBox _checkBoxExpert;
         private bool _activityActive;
         private string _deviceAddress = string.Empty;
         private ActivityCommon.InterfaceType _interfaceType;
@@ -249,7 +251,7 @@ namespace BmwDeepObd
                 PerformUpdateMessage(true);
             };
 
-            _checkBoxExpert = FindViewById<CheckBox>(Resource.Id.checkBoxCanAdapterExpert);
+            _checkBoxExpert = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxCanAdapterExpert);
             _checkBoxExpert.Visibility = visibility;
             _checkBoxExpert.Click += (sender, args) =>
             {

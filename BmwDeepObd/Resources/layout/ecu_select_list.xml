@@ -6,7 +6,7 @@
     android:descendantFocusability="blocksDescendants"
     android:minWidth="25px"
     android:minHeight="25px">
-    <CheckBox
+    <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/checkBoxEcuSelect"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

@@ -154,7 +154,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/vag_coding_button_execute" />
-            <CheckBox
+            <android.support.v7.widget.AppCompatCheckBox
                 android:id="@+id/checkBoxEcuReset"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

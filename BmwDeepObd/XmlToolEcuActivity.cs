@@ -9,6 +9,7 @@ using Android.Content.Res;
 using Android.Hardware.Usb;
 using Android.OS;
 using Android.Support.V7.App;
+using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
@@ -233,7 +234,7 @@ namespace BmwDeepObd
         private EditText _editTextPageName;
         private TextView _textViewEcuNameTitle;
         private EditText _editTextEcuName;
-        private CheckBox _checkBoxDisplayTypeGrid;
+        private AppCompatCheckBox _checkBoxDisplayTypeGrid;
         private TextView _textViewFontSizeTitle;
         private Spinner _spinnerFontSize;
         private StringObjAdapter _spinnerFontSizeAdapter;
@@ -244,13 +245,13 @@ namespace BmwDeepObd
         private EditText _editTextGridCountLandscapeValue;
         private Spinner _spinnerJobs;
         private JobListAdapter _spinnerJobsAdapter;
-        private CheckBox _checkBoxShowAllJobs;
+        private AppCompatCheckBox _checkBoxShowAllJobs;
         private TextView _textViewJobCommentsTitle;
         private TextView _textViewJobComments;
         private LinearLayout _layoutJobConfig;
         private Spinner _spinnerJobResults;
         private ResultListAdapter _spinnerJobResultsAdapter;
-        private CheckBox _checkBoxShowAllResults;
+        private AppCompatCheckBox _checkBoxShowAllResults;
         private TextView _textViewResultCommentsTitle;
         private TextView _textViewResultComments;
         private EditText _editTextDisplayText;
@@ -354,7 +355,7 @@ namespace BmwDeepObd
             _editTextEcuName.SetOnTouchListener(this);
             _editTextEcuName.Text = _ecuInfo.EcuName;
 
-            _checkBoxDisplayTypeGrid = FindViewById<CheckBox>(Resource.Id.checkBoxDisplayTypeGrid);
+            _checkBoxDisplayTypeGrid = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxDisplayTypeGrid);
             _checkBoxDisplayTypeGrid.Checked = _ecuInfo.DisplayMode == JobReader.PageInfo.DisplayModeType.Grid;
             _checkBoxDisplayTypeGrid.CheckedChange += (sender, args) =>
             {
@@ -406,7 +407,7 @@ namespace BmwDeepObd
                 }
             };
 
-            _checkBoxShowAllJobs = FindViewById<CheckBox>(Resource.Id.checkBoxShowAllJobs);
+            _checkBoxShowAllJobs = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxShowAllJobs);
             bool showAllJobsVisible = false;
             bool showAllJobsChecked = false;
             if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
@@ -453,7 +454,7 @@ namespace BmwDeepObd
                 ResultSelected(args.Position);
             };
 
-            _checkBoxShowAllResults = FindViewById<CheckBox>(Resource.Id.checkBoxShowAllResults);
+            _checkBoxShowAllResults = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxShowAllResults);
             bool showAllResultsChecked = false;
             foreach (JobInfo jobInfo in _ecuInfo.JobList)
             {
@@ -2286,10 +2287,10 @@ namespace BmwDeepObd
                 View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.job_select_list, null);
                 view.SetBackgroundColor(_backgroundColor);
 
-                CheckBox checkBoxGroupSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxGroupSelect);
+                AppCompatCheckBox checkBoxGroupSelect = view.FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxGroupSelect);
                 checkBoxGroupSelect.Visibility = ViewStates.Gone;
 
-                CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxSelect);
+                AppCompatCheckBox checkBoxSelect = view.FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxSelect);
                 _ignoreCheckEvent = true;
                 checkBoxSelect.Checked = item.Selected;
                 _ignoreCheckEvent = false;
@@ -2325,7 +2326,7 @@ namespace BmwDeepObd
             {
                 if (!_ignoreCheckEvent)
                 {
-                    CheckBox checkBox = sender as CheckBox;
+                    AppCompatCheckBox checkBox = sender as AppCompatCheckBox;
                     if (checkBox?.Tag is TagInfo tagInfo)
                     {
                         if (tagInfo.Info.Selected != args.IsChecked)
@@ -2392,7 +2393,7 @@ namespace BmwDeepObd
                 View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.job_select_list, null);
                 view.SetBackgroundColor(_backgroundColor);
 
-                CheckBox checkBoxGroupSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxGroupSelect);
+                AppCompatCheckBox checkBoxGroupSelect = view.FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxGroupSelect);
 
                 ViewStates viewStateGroup = ViewStates.Gone;
                 if (item.GroupVisible)
@@ -2413,7 +2414,7 @@ namespace BmwDeepObd
                 checkBoxGroupSelect.CheckedChange -= OnGroupChanged;
                 checkBoxGroupSelect.CheckedChange += OnGroupChanged;
 
-                CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxSelect);
+                AppCompatCheckBox checkBoxSelect = view.FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxSelect);
                 _ignoreCheckEvent = true;
                 checkBoxSelect.Checked = item.Selected;
                 checkBoxSelect.Enabled = !item.GroupVisible || (item.GroupVisible && item.Selected);
@@ -2460,7 +2461,7 @@ namespace BmwDeepObd
             {
                 if (!_ignoreCheckEvent)
                 {
-                    CheckBox checkBox = sender as CheckBox;
+                    AppCompatCheckBox checkBox = sender as AppCompatCheckBox;
                     if (checkBox?.Tag is TagInfo tagInfo)
                     {
                         if (tagInfo.Info.Selected != args.IsChecked)
@@ -2482,7 +2483,7 @@ namespace BmwDeepObd
             {
                 if (!_ignoreCheckEvent)
                 {
-                    CheckBox checkBox = sender as CheckBox;
+                    AppCompatCheckBox checkBox = sender as AppCompatCheckBox;
                     if (checkBox?.Tag is TagInfo tagInfo)
                     {
                         if (tagInfo.Info.GroupSelected != args.IsChecked)
