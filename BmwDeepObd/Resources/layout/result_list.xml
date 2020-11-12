@@ -9,7 +9,7 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
-        <android.support.v7.widget.AppCompatCheckBox
+        <CheckBox
             android:id="@+id/checkBoxResultSelect"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

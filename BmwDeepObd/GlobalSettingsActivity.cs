@@ -3,7 +3,6 @@ using System.IO;
 using Android.Content;
 using Android.OS;
 using Android.Support.V7.App;
-using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 
@@ -43,12 +42,12 @@ namespace BmwDeepObd
         private TextView _textViewCaptionTranslator;
         private RadioButton _radioButtonTranslatorYandex;
         private RadioButton _radioButtonTranslatorIbm;
-        private AppCompatCheckBox _checkBoxTranslatorLogin;
-        private AppCompatCheckBox _checkBoxAutoHideTitleBar;
-        private AppCompatCheckBox _checkBoxSuppressTitleBar;
-        private AppCompatCheckBox _checkBoxFullScreenMode;
+        private CheckBox _checkBoxTranslatorLogin;
+        private CheckBox _checkBoxAutoHideTitleBar;
+        private CheckBox _checkBoxSuppressTitleBar;
+        private CheckBox _checkBoxFullScreenMode;
         private TextView _textViewCaptionMultiWindow;
-        private AppCompatCheckBox _checkBoxSwapMultiWindowOrientation;
+        private CheckBox _checkBoxSwapMultiWindowOrientation;
         private TextView _textViewCaptionInternet;
         private RadioGroup _radioGroupInternet;
         private RadioButton _radioButtonInternetCellular;
@@ -57,7 +56,7 @@ namespace BmwDeepObd
         private RadioButton _radioButtonAskForBtEnable;
         private RadioButton _radioButtonAlwaysEnableBt;
         private RadioButton _radioButtonNoBtHandling;
-        private AppCompatCheckBox _checkBoxDisableBtAtExit;
+        private CheckBox _checkBoxDisableBtAtExit;
         private RadioButton _radioButtonCommLockNone;
         private RadioButton _radioButtonCommLockCpu;
         private RadioButton _radioButtonCommLockDim;
@@ -66,27 +65,27 @@ namespace BmwDeepObd
         private RadioButton _radioButtonLogLockCpu;
         private RadioButton _radioButtonLogLockDim;
         private RadioButton _radioButtonLogLockBright;
-        private AppCompatCheckBox _checkBoxStoreDataLogSettings;
+        private CheckBox _checkBoxStoreDataLogSettings;
         private RadioButton _radioButtonStartOffline;
         private RadioButton _radioButtonStartConnect;
         private RadioButton _radioButtonStartConnectClose;
-        private AppCompatCheckBox _checkBoxDoubleClickForAppExit;
-        private AppCompatCheckBox _checkBoxSendDataBroadcast;
+        private CheckBox _checkBoxDoubleClickForAppExit;
+        private CheckBox _checkBoxSendDataBroadcast;
         private RadioButton _radioButtonUpdateOff;
         private RadioButton _radioButtonUpdate1Day;
         private RadioButton _radioButtonUpdate1Week;
         private TextView _textViewCaptionCpuUsage;
-        private AppCompatCheckBox _checkBoxCheckCpuUsage;
-        private AppCompatCheckBox _checkBoxCheckEcuFiles;
-        private AppCompatCheckBox _checkBoxShowBatteryVoltageWarning;
-        private AppCompatCheckBox _checkBoxOldVagMode;
-        private AppCompatCheckBox _checkBoxUseBmwDatabase;
-        private AppCompatCheckBox _checkBoxScanAllEcus;
+        private CheckBox _checkBoxCheckCpuUsage;
+        private CheckBox _checkBoxCheckEcuFiles;
+        private CheckBox _checkBoxShowBatteryVoltageWarning;
+        private CheckBox _checkBoxOldVagMode;
+        private CheckBox _checkBoxUseBmwDatabase;
+        private CheckBox _checkBoxScanAllEcus;
         private Button _buttonStorageLocation;
         private TextView _textViewCaptionNotifications;
         private Button _buttonManageNotifications;
-        private AppCompatCheckBox _checkBoxCollectDebugInfo;
-        private AppCompatCheckBox _checkBoxHciSnoopLog;
+        private CheckBox _checkBoxCollectDebugInfo;
+        private CheckBox _checkBoxHciSnoopLog;
         private Button _buttonHciSnoopLog;
         private Button _buttonDefaultSettings;
         private Button _buttonExportSettings;
@@ -144,16 +143,16 @@ namespace BmwDeepObd
                 ActivityCommon.IsTranslationRequired() ||
                 (ActivityCommon.SelectedTranslator == ActivityCommon.TranslatorType.IbmWatson && ActivityCommon.IsTranslationAvailable()) ?
                 ViewStates.Visible : ViewStates.Gone;
-            _checkBoxTranslatorLogin = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxTranslatorLogin);
+            _checkBoxTranslatorLogin = FindViewById<CheckBox>(Resource.Id.checkBoxTranslatorLogin);
             _checkBoxTranslatorLogin.Visibility = viewStateTransLogin;
 
-            _checkBoxAutoHideTitleBar = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxAutoHideTitleBar);
-            _checkBoxSuppressTitleBar = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxSuppressTitleBar);
-            _checkBoxFullScreenMode = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxFullScreenMode);
+            _checkBoxAutoHideTitleBar = FindViewById<CheckBox>(Resource.Id.checkBoxAutoHideTitleBar);
+            _checkBoxSuppressTitleBar = FindViewById<CheckBox>(Resource.Id.checkBoxSuppressTitleBar);
+            _checkBoxFullScreenMode = FindViewById<CheckBox>(Resource.Id.checkBoxFullScreenMode);
 
             ViewStates viewStateMultiWindow = Build.VERSION.SdkInt >= BuildVersionCodes.N ? ViewStates.Visible : ViewStates.Gone;
             _textViewCaptionMultiWindow = FindViewById<TextView>(Resource.Id.textViewCaptionMultiWindow);
-            _checkBoxSwapMultiWindowOrientation = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxSwapMultiWindowOrientation);
+            _checkBoxSwapMultiWindowOrientation = FindViewById<CheckBox>(Resource.Id.checkBoxSwapMultiWindowOrientation);
             _textViewCaptionMultiWindow.Visibility = viewStateMultiWindow;
             _checkBoxSwapMultiWindowOrientation.Visibility = viewStateMultiWindow;
 
@@ -171,7 +170,7 @@ namespace BmwDeepObd
             _radioButtonAlwaysEnableBt = FindViewById<RadioButton>(Resource.Id.radioButtonAlwaysEnableBt);
             _radioButtonNoBtHandling = FindViewById<RadioButton>(Resource.Id.radioButtonNoBtHandling);
 
-            _checkBoxDisableBtAtExit = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxDisableBtAtExit);
+            _checkBoxDisableBtAtExit = FindViewById<CheckBox>(Resource.Id.checkBoxDisableBtAtExit);
 
             _radioButtonCommLockNone = FindViewById<RadioButton>(Resource.Id.radioButtonCommLockNone);
             _radioButtonCommLockCpu = FindViewById<RadioButton>(Resource.Id.radioButtonCommLockCpu);
@@ -183,30 +182,30 @@ namespace BmwDeepObd
             _radioButtonLogLockDim = FindViewById<RadioButton>(Resource.Id.radioButtonLogLockDim);
             _radioButtonLogLockBright = FindViewById<RadioButton>(Resource.Id.radioButtonLogLockBright);
 
-            _checkBoxStoreDataLogSettings = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxStoreDataLogSettings);
+            _checkBoxStoreDataLogSettings = FindViewById<CheckBox>(Resource.Id.checkBoxStoreDataLogSettings);
 
             _radioButtonStartOffline = FindViewById<RadioButton>(Resource.Id.radioButtonStartOffline);
             _radioButtonStartConnect = FindViewById<RadioButton>(Resource.Id.radioButtonStartConnect);
             _radioButtonStartConnectClose = FindViewById<RadioButton>(Resource.Id.radioButtonStartConnectClose);
 
-            _checkBoxDoubleClickForAppExit = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxDoubleClickForAppExit);
-            _checkBoxSendDataBroadcast = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxSendDataBroadcast);
+            _checkBoxDoubleClickForAppExit = FindViewById<CheckBox>(Resource.Id.checkBoxDoubleClickForAppExit);
+            _checkBoxSendDataBroadcast = FindViewById<CheckBox>(Resource.Id.checkBoxSendDataBroadcast);
 
             _radioButtonUpdateOff = FindViewById<RadioButton>(Resource.Id.radioButtonUpdateOff);
             _radioButtonUpdate1Day = FindViewById<RadioButton>(Resource.Id.radioButtonUpdate1Day);
             _radioButtonUpdate1Week = FindViewById<RadioButton>(Resource.Id.radioButtonUpdate1Week);
 
             _textViewCaptionCpuUsage = FindViewById<TextView>(Resource.Id.textViewCaptionCpuUsage);
-            _checkBoxCheckCpuUsage = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxCheckCpuUsage);
+            _checkBoxCheckCpuUsage = FindViewById<CheckBox>(Resource.Id.checkBoxCheckCpuUsage);
             ViewStates viewStateCpuUsage = ActivityCommon.IsCpuStatisticsSupported() ? ViewStates.Visible : ViewStates.Gone;
             _textViewCaptionCpuUsage.Visibility = viewStateCpuUsage;
             _checkBoxCheckCpuUsage.Visibility = viewStateCpuUsage;
 
-            _checkBoxCheckEcuFiles = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxCheckEcuFiles);
-            _checkBoxShowBatteryVoltageWarning = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxShowBatteryVoltageWarning);
-            _checkBoxOldVagMode = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxOldVagMode);
-            _checkBoxUseBmwDatabase = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxUseBmwDatabase);
-            _checkBoxScanAllEcus = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxScanAllEcus);
+            _checkBoxCheckEcuFiles = FindViewById<CheckBox>(Resource.Id.checkBoxCheckEcuFiles);
+            _checkBoxShowBatteryVoltageWarning = FindViewById<CheckBox>(Resource.Id.checkBoxShowBatteryVoltageWarning);
+            _checkBoxOldVagMode = FindViewById<CheckBox>(Resource.Id.checkBoxOldVagMode);
+            _checkBoxUseBmwDatabase = FindViewById<CheckBox>(Resource.Id.checkBoxUseBmwDatabase);
+            _checkBoxScanAllEcus = FindViewById<CheckBox>(Resource.Id.checkBoxScanAllEcus);
 
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);
             _buttonStorageLocation.Click += (sender, args) =>
@@ -224,10 +223,10 @@ namespace BmwDeepObd
             _textViewCaptionNotifications.Visibility = viewStateNotifications;
             _buttonManageNotifications.Visibility = viewStateNotifications;
 
-            _checkBoxCollectDebugInfo = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxCollectDebugInfo);
+            _checkBoxCollectDebugInfo = FindViewById<CheckBox>(Resource.Id.checkBoxCollectDebugInfo);
 
             ViewStates viewStateSnoopLog = _activityCommon.GetConfigHciSnoopLog(out bool _) ? ViewStates.Visible : ViewStates.Gone;
-            _checkBoxHciSnoopLog = FindViewById<AppCompatCheckBox>(Resource.Id.checkBoxHciSnoopLog);
+            _checkBoxHciSnoopLog = FindViewById<CheckBox>(Resource.Id.checkBoxHciSnoopLog);
             _checkBoxHciSnoopLog.Visibility = viewStateSnoopLog;
             _checkBoxHciSnoopLog.Enabled = false;
 
