@@ -7034,6 +7034,62 @@ namespace CarSimulator
 
                 ObdSend(_sendData);
             }
+            else if (
+                (_receiveData[0] & 0xC0) == 0x80 &&
+                _receiveData[1] == 0x76 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x22)
+            {
+                int length = (_receiveData[0] & 0x3F) - 1;
+
+                int i = 0;
+                _sendData[i++] = 0x80;
+                _sendData[i++] = 0xF1;
+                _sendData[i++] = 0x76;
+                _sendData[i++] = 0x01;  // length
+                _sendData[i++] = 0x62;
+
+                for (int offset = 0; offset < length; offset += 2)
+                {
+                    int serviceId = (_receiveData[4 + offset] << 8) + _receiveData[5 + offset];
+                    int responseLength = 0;
+
+                    switch (serviceId)
+                    {
+                        case 0xDC05:
+                            responseLength = 16;
+                            break;
+
+                        case 0xDC06:
+                        case 0xDC07:
+                        case 0xDC08:
+                            responseLength = 8;
+                            break;
+
+                        case 0xDC0A:
+                            responseLength = 16;
+                            break;
+
+                        case 0xDC0B:
+                            responseLength = 64;
+                            break;
+
+                        default:
+                            Debug.WriteLine("Unknown service ID: {0:X04}", serviceId);
+                            return false;
+                    }
+
+                    _sendData[i++] = (byte) (serviceId >> 8);
+                    _sendData[i++] = (byte) (serviceId & 0xFF);
+                    for (int j = 0; j < responseLength; j++)
+                    {
+                        _sendData[i++] = 0;
+                    }
+                }
+
+                _sendData[3] = (byte)(i - 4);
+                ObdSend(_sendData);
+            }
             else
             {   // nothing matched, check response list
                 return false;
