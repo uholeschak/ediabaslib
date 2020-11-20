@@ -1508,39 +1508,51 @@ namespace BmwDeepObd
                             }
                         }
 
-                        if (argFuncInfo?.ResInfoList != null)
+                        if (argFuncInfo != null)
                         {
-                            int groupSize = 0;
-                            foreach (SgFuncNameInfo funcNameInfo in argFuncInfo.ResInfoList.OrderBy(x => (x as SgFuncBitFieldInfo)?.ResultName ?? string.Empty))
+                            if (argFuncInfo.ResInfoList != null)
                             {
-                                if (funcNameInfo is SgFuncBitFieldInfo funcBitFieldInfo)
+                                int groupSize = 0;
+                                foreach (SgFuncNameInfo funcNameInfo in argFuncInfo.ResInfoList.OrderBy(x => (x as SgFuncBitFieldInfo)?.ResultName ?? string.Empty))
                                 {
-                                    string info = funcBitFieldInfo.InfoTrans ?? funcBitFieldInfo.Info;
-                                    ExtraInfo extraInfo = new ExtraInfo(funcBitFieldInfo.ResultName, string.Empty, new List<string> {info})
+                                    if (funcNameInfo is SgFuncBitFieldInfo funcBitFieldInfo)
                                     {
-                                        GroupId = groupId
-                                    };
-
-                                    if (groupSize == 0)
-                                    {
-                                        string infoGroup = argFuncInfo.InfoTrans ?? argFuncInfo.Info;
-                                        ExtraInfo extraInfoGroup = new ExtraInfo(arg, string.Empty, new List<string> { infoGroup })
+                                        string info = funcBitFieldInfo.InfoTrans ?? funcBitFieldInfo.Info;
+                                        ExtraInfo extraInfo = new ExtraInfo(funcBitFieldInfo.ResultName, string.Empty, new List<string> {info})
                                         {
-                                            GroupVisible = true,
                                             GroupId = groupId
                                         };
 
-                                        _resultSelectListAdapter.Items.Add(extraInfoGroup);
-                                    }
+                                        if (groupSize == 0)
+                                        {
+                                            string infoGroup = argFuncInfo.InfoTrans ?? argFuncInfo.Info;
+                                            ExtraInfo extraInfoGroup = new ExtraInfo(arg, string.Empty, new List<string> { infoGroup })
+                                            {
+                                                GroupVisible = true,
+                                                GroupId = groupId
+                                            };
 
-                                    _resultSelectListAdapter.Items.Add(extraInfo);
-                                    groupSize++;
+                                            _resultSelectListAdapter.Items.Add(extraInfoGroup);
+                                        }
+
+                                        _resultSelectListAdapter.Items.Add(extraInfo);
+                                        groupSize++;
+                                    }
+                                }
+
+                                if (groupSize > 0)
+                                {
+                                    groupId++;
                                 }
                             }
-
-                            if (groupSize > 0)
+                            else
                             {
-                                groupId++;
+                                if (!string.IsNullOrEmpty(argFuncInfo.Result))
+                                {
+                                    string info = argFuncInfo.InfoTrans ?? argFuncInfo.Info;
+                                    ExtraInfo extraInfo = new ExtraInfo(argFuncInfo.Result, string.Empty, new List<string> { info });
+                                    _resultSelectListAdapter.Items.Add(extraInfo);
+                                }
                             }
                         }
                     }

@@ -588,6 +588,10 @@ namespace CarSimulator
 
         private readonly Dictionary<int, int> G31Vcp11Service22Dict = new Dictionary<int, int>()
         {
+            {0xD9DA, 96},
+            {0xDAD3, 2},
+            {0xDAD8, 2},
+            {0xDB71, 16},
             {0xDC05, 16},
             {0xDC06, 8},
             {0xDC07, 8},
