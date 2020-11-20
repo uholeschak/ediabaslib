@@ -586,6 +586,19 @@ namespace CarSimulator
             0x86, 0xF1, 0x78, 0x70, 0x06, 0x01, 0x00, 0x00, 0x00};
         // ReSharper restore InconsistentNaming
 
+        private readonly Dictionary<int, int> G31Vcp11Service22Dict = new Dictionary<int, int>()
+        {
+            {0xDC05, 16},
+            {0xDC06, 8},
+            {0xDC07, 8},
+            {0xDC08, 8},
+            {0xDC0A, 16},
+            {0xDC0B, 64},
+            {0xDC0F, 1},
+            {0xDC31, 4},
+            {0xDC50, 8},
+        };
+
         public bool Moving
         {
             get;
@@ -7052,31 +7065,11 @@ namespace CarSimulator
                 for (int offset = 0; offset < length; offset += 2)
                 {
                     int serviceId = (_receiveData[4 + offset] << 8) + _receiveData[5 + offset];
-                    int responseLength = 0;
 
-                    switch (serviceId)
+                    if (!G31Vcp11Service22Dict.TryGetValue(serviceId, out int responseLength))
                     {
-                        case 0xDC05:
-                            responseLength = 16;
-                            break;
-
-                        case 0xDC06:
-                        case 0xDC07:
-                        case 0xDC08:
-                            responseLength = 8;
-                            break;
-
-                        case 0xDC0A:
-                            responseLength = 16;
-                            break;
-
-                        case 0xDC0B:
-                            responseLength = 64;
-                            break;
-
-                        default:
-                            Debug.WriteLine("Unknown service ID: {0:X04}", serviceId);
-                            return false;
+                        Debug.WriteLine("Unknown service ID: {0:X04}", serviceId);
+                        return false;
                     }
 
                     _sendData[i++] = (byte) (serviceId >> 8);
