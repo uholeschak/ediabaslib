@@ -7081,7 +7081,9 @@ namespace CarSimulator
                 _sendData[i++] = 0x80;
                 _sendData[i++] = 0xF1;
                 _sendData[i++] = 0x76;
-                _sendData[i++] = 0x01;  // length
+                _sendData[i++] = 0x00;  // 16 bit length
+                _sendData[i++] = 0x00;  // length h
+                _sendData[i++] = 0x01;  // length l
                 _sendData[i++] = 0x62;
 
                 for (int offset = 0; offset < length; offset += 2)
@@ -7102,7 +7104,9 @@ namespace CarSimulator
                     }
                 }
 
-                _sendData[3] = (byte)(i - 4);
+                int sendLength = i - 6;
+                _sendData[4] = (byte)(sendLength >> 8);
+                _sendData[5] = (byte)(sendLength & 0xFF);
                 ObdSend(_sendData);
             }
             else
