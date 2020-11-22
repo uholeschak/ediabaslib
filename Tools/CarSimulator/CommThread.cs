@@ -588,6 +588,17 @@ namespace CarSimulator
 
         private readonly Dictionary<int, int> G31Vcp11Service22Dict = new Dictionary<int, int>()
         {
+            {0x1820, 98},
+            {0x2502, 4},
+            {0x2503, 2},
+            {0x2504, 12},
+            {0x2540, 3},
+            {0xD665, 16},
+            {0xD666, 24},
+            {0xD7A3, 16},
+            {0xD7A4, 28},
+            {0xD8EC, 2},
+            {0xD8ED, 255},
             {0xD9DA, 96},
             {0xDAD3, 2},
             {0xDAD8, 2},
@@ -601,6 +612,13 @@ namespace CarSimulator
             {0xDC0F, 1},
             {0xDC31, 4},
             {0xDC50, 8},
+            {0xDC75, 64},
+            {0xDD19, 4},
+            {0xDD35, 28},
+            {0xDD3A, 21},
+            {0xDD3B, 112},
+            {0xDD3C, 62},
+            {0xDD3D, 190},
         };
 
         public bool Moving
