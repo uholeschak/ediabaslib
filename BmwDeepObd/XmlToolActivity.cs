@@ -4516,7 +4516,7 @@ namespace BmwDeepObd
 
                                 if (statRead)
                                 {
-                                    AddReadStatResults(job, arg, info, service, argTab, resTab, groupId++);
+                                    AddReadStatResults(job, arg, unit, result, info, service, argTab, resTab, groupId++);
                                 }
                                 else
                                 {
@@ -4627,11 +4627,11 @@ namespace BmwDeepObd
         }
 
         // ReSharper disable once UnusedParameter.Local
-        private void AddReadStatResults(XmlToolEcuActivity.JobInfo job, string arg, string infoText, string service, string argTab, string resTab, int groupId)
+        private void AddReadStatResults(XmlToolEcuActivity.JobInfo job, string arg, string unitText, string resultText, string infoText, string service, string argTab, string resTab, int groupId)
         {
             try
             {
-                if (string.IsNullOrEmpty(arg) || string.IsNullOrEmpty(service) || string.IsNullOrEmpty(resTab))
+                if (string.IsNullOrEmpty(arg) || string.IsNullOrEmpty(service))
                 {
                     return;
                 }
@@ -4652,6 +4652,30 @@ namespace BmwDeepObd
 
                 if (!readService)
                 {
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(resTab))
+                {
+                    if (string.IsNullOrEmpty(resultText))
+                    {
+                        return;
+                    }
+
+                    string displayName = arg + "/" + resultText;
+                    List<string> commentList = new List<string>();
+                    if (!string.IsNullOrEmpty(infoText))
+                    {
+                        commentList.Add(infoText);
+                    }
+
+                    if (!string.IsNullOrEmpty(unitText))
+                    {
+                        commentList.Add("[" + unitText + "]");
+                    }
+
+                    XmlToolEcuActivity.ResultInfo resultInfo = new XmlToolEcuActivity.ResultInfo(resultText, displayName, DataTypeReal, arg, commentList);
+                    job.Results.Add(resultInfo);
                     return;
                 }
 
