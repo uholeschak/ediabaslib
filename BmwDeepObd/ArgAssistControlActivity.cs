@@ -435,9 +435,9 @@ namespace BmwDeepObd
                 Android.Content.Res.ColorStateList captionTextColors = _textViewArgTypeTitle.TextColors;
                 Drawable captionTextBackground = _textViewArgTypeTitle.Background;
                 int position = _spinnerArgument.SelectedItemPosition;
-                if (position >= 0 && position < _spinnerArgumentAdapter.Items.Count)
+                if (position >= 0 && position < _spinnerArgumentAdapter.ItemsVisible.Count)
                 {
-                    EdiabasToolActivity.ExtraInfo item = _spinnerArgumentAdapter.Items[position];
+                    EdiabasToolActivity.ExtraInfo item = _spinnerArgumentAdapter.ItemsVisible[position];
                     if (item.Tag is EdiabasToolActivity.SgFuncInfo funcInfo)
                     {
                         if (funcInfo.ArgInfoList != null)
@@ -775,7 +775,7 @@ namespace BmwDeepObd
             try
             {
                 int position = _spinnerArgument.SelectedItemPosition;
-                if (position < 0 || position >= _spinnerArgumentAdapter.Items.Count)
+                if (position < 0 || position >= _spinnerArgumentAdapter.ItemsVisible.Count)
                 {
                     return true;
                 }
@@ -802,9 +802,9 @@ namespace BmwDeepObd
                 sb.Append(argType);
 
                 int position = _spinnerArgument.SelectedItemPosition;
-                if (position >= 0 && position < _spinnerArgumentAdapter.Items.Count)
+                if (position >= 0 && position < _spinnerArgumentAdapter.ItemsVisible.Count)
                 {
-                    EdiabasToolActivity.ExtraInfo item = _spinnerArgumentAdapter.Items[position];
+                    EdiabasToolActivity.ExtraInfo item = _spinnerArgumentAdapter.ItemsVisible[position];
                     if (!string.IsNullOrEmpty(item.Name))
                     {
                         sb.Append(";");

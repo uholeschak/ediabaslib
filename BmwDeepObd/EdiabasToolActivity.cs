@@ -1649,9 +1649,9 @@ namespace BmwDeepObd
             {
                 _infoListAdapter.Items.Add(new TableResultItem(GetString(Resource.String.tool_job_result), null));
                 if (_spinnerResults.SelectedItemPosition >= 0 &&
-                    _spinnerResults.SelectedItemPosition < _resultSelectListAdapter.Items.Count)
+                    _spinnerResults.SelectedItemPosition < _resultSelectListAdapter.ItemsVisible.Count)
                 {
-                    ExtraInfo info = _resultSelectListAdapter.Items[_spinnerResults.SelectedItemPosition];
+                    ExtraInfo info = _resultSelectListAdapter.ItemsVisible[_spinnerResults.SelectedItemPosition];
                     StringBuilder stringBuilderComments = new StringBuilder();
                     stringBuilderComments.Append(info.Name + " (" + info.Type + "):");
                     foreach (string comment in info.CommentList)
