@@ -1259,10 +1259,12 @@ namespace BmwDeepObd
                         {
                             OpenDonateLink();
                         })
-                        .SetNegativeButton(Resource.String.button_ok, (sender, args) => { })
-                        .SetPositiveButton(Resource.String.button_copy, (sender, args) =>
+                        .SetNegativeButton(Resource.String.button_copy, (sender, args) =>
                         {
                             _activityCommon.SetClipboardText(message);
+                        })
+                        .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                        {
                         })
                         .SetCancelable(true)
                         .SetMessage(message)
