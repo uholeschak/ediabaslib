@@ -1894,9 +1894,9 @@ namespace BmwDeepObd
         private void ResultSelected(int pos)
         {
             UpdateResultSettings(_selectedResult);  // store old settings
-            if (pos >= 0 && pos < _spinnerJobResultsAdapter.Items.Count)
+            if (pos >= 0 && pos < _spinnerJobResultsAdapter.ItemsVisible.Count)
             {
-                _selectedResult = _spinnerJobResultsAdapter.Items[pos];
+                _selectedResult = _spinnerJobResultsAdapter.ItemsVisible[pos];
                 _textViewResultCommentsTitle.Text = string.Format(GetString(Resource.String.xml_tool_ecu_result_comments), _selectedResult.Name);
 
                 StringBuilder stringBuilderComments = new StringBuilder();
