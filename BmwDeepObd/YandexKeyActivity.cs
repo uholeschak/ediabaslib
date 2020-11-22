@@ -114,11 +114,26 @@ namespace BmwDeepObd
                     switch (ActivityCommon.SelectedTranslator)
                     {
                         case ActivityCommon.TranslatorType.YandexTranslate:
-                            StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/")));
+                            try
+                            {
+                                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/")));
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                             break;
 
                         case ActivityCommon.TranslatorType.IbmWatson:
-                            StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://cloud.ibm.com/catalog/services/language-translator")));
+                            try
+                            {
+                                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://cloud.ibm.com/catalog/services/language-translator")));
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+
                             break;
                     }
                 });
@@ -138,11 +153,25 @@ namespace BmwDeepObd
                     switch (ActivityCommon.SelectedTranslator)
                     {
                         case ActivityCommon.TranslatorType.YandexTranslate:
-                            StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/")));
+                            try
+                            {
+                                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/")));
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                             break;
 
                         case ActivityCommon.TranslatorType.IbmWatson:
-                            StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://cloud.ibm.com/resources")));
+                            try
+                            {
+                                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://cloud.ibm.com/resources")));
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                             break;
                     }
                 });
