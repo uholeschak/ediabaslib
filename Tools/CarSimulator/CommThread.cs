@@ -612,7 +612,7 @@ namespace CarSimulator
             {0xDC0F, 1},
             {0xDC31, 4},
             {0xDC50, 8},
-            {0xDC75, 64},
+            {0xDC75, 56},
             {0xDD19, 2},
             {0xDD35, 28},
             {0xDD3A, 21},
