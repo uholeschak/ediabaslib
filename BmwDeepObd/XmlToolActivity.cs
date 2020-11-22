@@ -1203,7 +1203,15 @@ namespace BmwDeepObd
                         {
                             return;
                         }
-                        StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md")));
+
+                        try
+                        {
+                            StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md")));
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                     });
                     return true;
             }

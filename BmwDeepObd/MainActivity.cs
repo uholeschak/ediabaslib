@@ -1238,7 +1238,15 @@ namespace BmwDeepObd
                         {
                             return;
                         }
-                        StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://github.com/uholeschak/ediabaslib/blob/master/docs/Deep_OBD_for_BMW_and_VAG.md")));
+
+                        try
+                        {
+                            StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://github.com/uholeschak/ediabaslib/blob/master/docs/Deep_OBD_for_BMW_and_VAG.md")));
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                     });
                     return true;
 
@@ -1247,7 +1255,11 @@ namespace BmwDeepObd
                     string message = string.Format(GetString(Resource.String.app_info_message),
                         _activityCommon.GetPackageInfo()?.VersionName ?? string.Empty , ActivityCommon.AppId);
                     new AlertDialog.Builder(this)
-                        .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
+                        .SetNeutralButton(Resource.String.button_donate, (sender, args) =>
+                        {
+                            OpenDonateLink();
+                        })
+                        .SetNegativeButton(Resource.String.button_ok, (sender, args) => { })
                         .SetPositiveButton(Resource.String.button_copy, (sender, args) =>
                         {
                             _activityCommon.SetClipboardText(message);
@@ -2453,7 +2465,7 @@ namespace BmwDeepObd
                 _startAlertDialog = new AlertDialog.Builder(this)
                     .SetNeutralButton(Resource.String.button_donate, (sender, args) =>
                     {
-                        StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ")));
+                        OpenDonateLink();
                     })
                     .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
                     {
@@ -5480,6 +5492,18 @@ namespace BmwDeepObd
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
             builder.Show();
+        }
+
+        private void OpenDonateLink()
+        {
+            try
+            {
+                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ")));
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private void EditYandexKey()

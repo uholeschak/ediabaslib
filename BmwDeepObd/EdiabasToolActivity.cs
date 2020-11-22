@@ -944,7 +944,15 @@ namespace BmwDeepObd
                         {
                             return;
                         }
-                        StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://github.com/uholeschak/ediabaslib/blob/master/docs/EdiabasTool.md")));
+
+                        try
+                        {
+                            StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://github.com/uholeschak/ediabaslib/blob/master/docs/EdiabasTool.md")));
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                     });
                     return true;
             }

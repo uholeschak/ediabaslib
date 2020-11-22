@@ -516,7 +516,14 @@ namespace BmwDeepObd
                     Finish();
                     if (result)
                     {
-                        StartActivity(typeof(ActivityMain));
+                        try
+                        {
+                            StartActivity(typeof(ActivityMain));
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                     }
                 };
 
@@ -663,7 +670,14 @@ namespace BmwDeepObd
         /// </param>
         private void OnOpenWiFiSettingsButtonOnClick(object sender, EventArgs e)
         {
-            StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
+            try
+            {
+                StartActivity(new Intent(Android.Provider.Settings.ActionWifiSettings));
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         /// <summary>
@@ -722,14 +736,21 @@ namespace BmwDeepObd
 
                 if (delivered)
                 {
-                    StartActivity(typeof(ActivityMain));
-                    Finish();
+                    try
+                    {
+                        StartActivity(typeof(ActivityMain));
+                        Finish();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                     return;
                 }
 
                 if (!IsFromGooglePlay(this))
                 {
-                    PackageInfo packageInfo = PackageManager.GetPackageInfo(PackageName, 0);
+                    PackageInfo packageInfo = PackageManager?.GetPackageInfo(PackageName ?? string.Empty, 0);
                     long packageVersion = 0;
                     if (packageInfo != null)
                     {
@@ -749,17 +770,20 @@ namespace BmwDeepObd
                     }
 
                     System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                    foreach (Java.IO.File dir in obbDirs)
+                    if (obbDirs != null)
                     {
-                        if (dir != null && !string.IsNullOrEmpty(dir.AbsolutePath))
+                        foreach (Java.IO.File dir in obbDirs)
                         {
-                            if (sb.Length > 0)
+                            if (dir != null && !string.IsNullOrEmpty(dir.AbsolutePath))
                             {
-                                sb.AppendLine();
+                                if (sb.Length > 0)
+                                {
+                                    sb.AppendLine();
+                                }
+                                sb.Append(@"'");
+                                sb.Append(dir.AbsolutePath);
+                                sb.Append(@"'");
                             }
-                            sb.Append(@"'");
-                            sb.Append(dir.AbsolutePath);
-                            sb.Append(@"'");
                         }
                     }
 
