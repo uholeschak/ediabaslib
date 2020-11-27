@@ -1181,21 +1181,19 @@ namespace BmwDeepObd
                                         argString = jobInfo.Args;
                                     }
 
-                                    bool statRead = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStat, StringComparison.OrdinalIgnoreCase) == 0;
-                                    if (statRead)
+                                    bool statMbBlock = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
+                                    if (statMbBlock)
                                     {
                                         List<string> argList = argString.Split(";").ToList();
-                                        if (argList.Count > 0)
+                                        if (argList.Count >= 1)
                                         {
-                                            string argType = argList[0];
-                                            argList.RemoveAt(0);
-
                                             StringBuilder sbArg = new StringBuilder();
-                                            sbArg.Append(argType);
+                                            sbArg.Append(argList[0]);
+                                            argList.RemoveAt(0);
                                             int argCount = 0;
                                             while (argList.Count > 0)
                                             {
-                                                if (argCount > 5)
+                                                if (argCount > 10)
                                                 {
                                                     break;
                                                 }
