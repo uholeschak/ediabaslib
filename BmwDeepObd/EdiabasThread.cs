@@ -1171,14 +1171,46 @@ namespace BmwDeepObd
                             {
                                 if (string.IsNullOrWhiteSpace(jobInfo.FixedFuncStructId))
                                 {
+                                    string argString;
                                     if (firstRequestCall && !string.IsNullOrEmpty(jobInfo.ArgsFirst))
                                     {
-                                        Ediabas.ArgString = jobInfo.ArgsFirst;
+                                        argString = jobInfo.ArgsFirst;
                                     }
                                     else
                                     {
-                                        Ediabas.ArgString = jobInfo.Args;
+                                        argString = jobInfo.Args;
                                     }
+
+                                    bool statRead = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStat, StringComparison.OrdinalIgnoreCase) == 0;
+                                    if (statRead)
+                                    {
+                                        List<string> argList = argString.Split(";").ToList();
+                                        if (argList.Count > 0)
+                                        {
+                                            string argType = argList[0];
+                                            argList.RemoveAt(0);
+
+                                            StringBuilder sbArg = new StringBuilder();
+                                            sbArg.Append(argType);
+                                            int argCount = 0;
+                                            while (argList.Count > 0)
+                                            {
+                                                if (argCount > 5)
+                                                {
+                                                    break;
+                                                }
+
+                                                sbArg.Append(";");
+                                                sbArg.Append(argList[0]);
+                                                argList.RemoveAt(0);
+                                                argCount++;
+                                            }
+
+                                            argString = sbArg.ToString();
+                                        }
+                                    }
+
+                                    Ediabas.ArgString = argString;
                                     Ediabas.ArgBinaryStd = null;
                                     Ediabas.ResultsRequests = jobInfo.Results;
                                     Ediabas.ExecuteJob(jobInfo.Name);
