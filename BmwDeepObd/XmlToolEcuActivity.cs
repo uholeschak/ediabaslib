@@ -1976,16 +1976,11 @@ namespace BmwDeepObd
             {
                 bool statMwBlock = IsBmwReadStatusMwBlockJob(_selectedJob);
                 bool statBlock = IsBmwReadStatusBlockJob(_selectedJob);
-                bool statRead = IsBmwReadStatusJob(_selectedJob);
 
                 int limit = 0;
                 if (statMwBlock || statBlock)
                 {
                     limit = 10;
-                }
-                else if (statRead)
-                {
-                    limit = 5;
                 }
 
                 if (limit > 0 && resultInfo.ItemSelected && selectCount > limit)
