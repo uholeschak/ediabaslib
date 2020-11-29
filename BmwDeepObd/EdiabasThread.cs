@@ -1181,58 +1181,78 @@ namespace BmwDeepObd
                                         argString = jobInfo.Args;
                                     }
 
+                                    List<string> edArgList = new List<string>();
                                     bool statMbBlock = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
                                     if (statMbBlock)
                                     {
                                         List<string> argList = argString.Split(";").ToList();
                                         if (argList.Count >= 1)
                                         {
-                                            StringBuilder sbArg = new StringBuilder();
-                                            sbArg.Append(argList[0]);
+                                            StringBuilder sbArgStart = new StringBuilder();
+                                            sbArgStart.Append(argList[0]);
                                             argList.RemoveAt(0);
-                                            int argCount = 0;
-                                            while (argList.Count > 0)
+
+                                            for (;;)
                                             {
-                                                if (argCount > 10)
+                                                StringBuilder sbArg = new StringBuilder();
+                                                sbArg.Append(sbArgStart);
+                                                int argCount = 0;
+                                                while (argList.Count > 0)
+                                                {
+                                                    if (argCount > 10)
+                                                    {
+                                                        break;
+                                                    }
+
+                                                    sbArg.Append(";");
+                                                    sbArg.Append(argList[0]);
+                                                    argList.RemoveAt(0);
+                                                    argCount++;
+                                                }
+
+                                                if (argCount == 0)
                                                 {
                                                     break;
                                                 }
 
-                                                sbArg.Append(";");
-                                                sbArg.Append(argList[0]);
-                                                argList.RemoveAt(0);
-                                                argCount++;
+                                                edArgList.Add(sbArg.ToString());
                                             }
-
-                                            argString = sbArg.ToString();
                                         }
                                     }
 
-                                    Ediabas.ArgString = argString;
-                                    Ediabas.ArgBinaryStd = null;
-                                    Ediabas.ResultsRequests = jobInfo.Results;
-                                    Ediabas.ExecuteJob(jobInfo.Name);
-
-                                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = Ediabas.ResultSets;
-                                    if (resultSets != null && resultSets.Count >= 2)
+                                    if (edArgList.Count == 0)
                                     {
-                                        int dictIndex = 0;
-                                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                                        edArgList.Add(argString);
+                                    }
+
+                                    foreach (string edArg in edArgList)
+                                    {
+                                        Ediabas.ArgString = edArg;
+                                        Ediabas.ArgBinaryStd = null;
+                                        Ediabas.ResultsRequests = jobInfo.Results;
+                                        Ediabas.ExecuteJob(jobInfo.Name);
+
+                                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = Ediabas.ResultSets;
+                                        if (resultSets != null && resultSets.Count >= 2)
                                         {
-                                            if (dictIndex == 0)
+                                            int dictIndex = 0;
+                                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
                                             {
+                                                if (dictIndex == 0)
+                                                {
+                                                    dictIndex++;
+                                                    continue;
+                                                }
+                                                if (string.IsNullOrEmpty(jobInfo.Id))
+                                                {
+                                                    MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Name + "#");
+                                                }
+                                                else
+                                                {
+                                                    MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Id + "#" + dictIndex + "#");
+                                                }
                                                 dictIndex++;
-                                                continue;
                                             }
-                                            if (string.IsNullOrEmpty(jobInfo.Id))
-                                            {
-                                                MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Name + "#");
-                                            }
-                                            else
-                                            {
-                                                MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Id + "#" + dictIndex + "#");
-                                            }
-                                            dictIndex++;
                                         }
                                     }
                                 }
