@@ -1183,15 +1183,37 @@ namespace BmwDeepObd
 
                                     List<string> edArgList = new List<string>();
                                     bool statMbBlock = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
-                                    if (statMbBlock)
+                                    bool statBlock = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0;
+                                    if (statMbBlock || statBlock)
                                     {
                                         List<string> argList = argString.Split(";").ToList();
-                                        if (argList.Count >= 1)
+                                        StringBuilder sbArgStart = new StringBuilder();
+                                        bool validArg = false;
+                                        if (statMbBlock)
                                         {
-                                            StringBuilder sbArgStart = new StringBuilder();
-                                            sbArgStart.Append(argList[0]);
-                                            argList.RemoveAt(0);
+                                            if (argList.Count >= 1)
+                                            {
+                                                validArg = string.Compare(argList[0].Trim(), "JA", StringComparison.OrdinalIgnoreCase) == 0;
+                                                sbArgStart.Append(argList[0]);
+                                                argList.RemoveAt(0);
+                                            }
+                                        }
+                                        else if (statBlock)
+                                        {
+                                            if (argList.Count >= 3)
+                                            {
+                                                sbArgStart.Append(argList[0]);
+                                                argList.RemoveAt(0);
+                                                validArg = string.Compare(argList[0].Trim(), "JA", StringComparison.OrdinalIgnoreCase) == 0;
+                                                sbArgStart.Append(argList[0]);
+                                                argList.RemoveAt(0);
+                                                sbArgStart.Append(argList[0]);
+                                                argList.RemoveAt(0);
+                                            }
+                                        }
 
+                                        if (validArg && argList.Count >= 1)
+                                        {
                                             for (;;)
                                             {
                                                 StringBuilder sbArg = new StringBuilder();
