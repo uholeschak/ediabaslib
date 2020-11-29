@@ -75,7 +75,7 @@ namespace BmwDeepObd
 
         public class JobInfo
         {
-            public JobInfo(string id, string sgbd, string name, string fixedFuncStructId, string argsFirst, string args, string results)
+            public JobInfo(string id, string sgbd, string name, string fixedFuncStructId, string argsFirst, string args, string results, int argLimit)
             {
                 Id = id;
                 Sgbd = sgbd;
@@ -84,6 +84,7 @@ namespace BmwDeepObd
                 ArgsFirst = argsFirst;
                 Args = args;
                 Results = results;
+                ArgLimit = argLimit;
             }
 
             public string Id { get; }
@@ -99,6 +100,8 @@ namespace BmwDeepObd
             public string ArgsFirst { get; }
 
             public string Results { get; }
+
+            public int ArgLimit { get; }
         }
 
         public class JobsInfo
@@ -600,6 +603,7 @@ namespace BmwDeepObd
                                         string jobArgsFirst = string.Empty;
                                         string jobArgs = string.Empty;
                                         string jobResults = string.Empty;
+                                        int argLimit = 10;
                                         if (xnodeJobsChild.Attributes != null)
                                         {
                                             attrib = xnodeJobsChild.Attributes["id"];
@@ -625,9 +629,22 @@ namespace BmwDeepObd
 
                                             attrib = xnodeJobsChild.Attributes["results"];
                                             if (attrib != null) jobResults = attrib.Value;
+
+                                            attrib = xnodeJobsChild.Attributes["arg_limit"];
+                                            if (attrib != null)
+                                            {
+                                                try
+                                                {
+                                                    argLimit = XmlConvert.ToInt32(attrib.Value);
+                                                }
+                                                catch
+                                                {
+                                                    // ignored
+                                                }
+                                            }
                                         }
 
-                                        jobList.Add(new JobInfo(jobId, jobSgbd, jobName, jobFixedFuncStructId, jobArgsFirst, jobArgs, jobResults));
+                                        jobList.Add(new JobInfo(jobId, jobSgbd, jobName, jobFixedFuncStructId, jobArgsFirst, jobArgs, jobResults, argLimit));
                                         foreach (XmlNode xnodeJobChild in xnodeJobsChild.ChildNodes)
                                         {
                                             string nodePrefix = (string.IsNullOrEmpty(jobId) ? jobName : jobId);
