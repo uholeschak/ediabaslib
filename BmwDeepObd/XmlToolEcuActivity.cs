@@ -207,7 +207,6 @@ namespace BmwDeepObd
         public class InstanceData
         {
             public bool IgnoreFormatSelection { get; set; }
-            public bool ResultAmountWarnShown { get; set; }
         }
 
         public delegate void AcceptDelegate(bool accepted);
@@ -1972,26 +1971,6 @@ namespace BmwDeepObd
             }
             int selectCount = _selectedJob.Results.Count(resultInfo => resultInfo.ItemSelected);
             bool selectJob = selectCount > 0;
-            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
-            {
-                bool statMwBlock = IsBmwReadStatusMwBlockJob(_selectedJob);
-                bool statBlock = IsBmwReadStatusBlockJob(_selectedJob);
-
-                int limit = 0;
-                if (statMwBlock || statBlock)
-                {
-                    limit = 10;
-                }
-
-                if (limit > 0 && resultInfo.ItemSelected && selectCount > limit)
-                {
-                    if (!_instanceData.ResultAmountWarnShown)
-                    {
-                        _instanceData.ResultAmountWarnShown = true;
-                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_result_amount_limit), Resource.String.alert_title_warning);
-                    }
-                }
-            }
             if (_selectedJob.Selected != selectJob)
             {
                 _selectedJob.Selected = selectJob;

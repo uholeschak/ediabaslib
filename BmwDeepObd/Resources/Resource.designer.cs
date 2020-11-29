@@ -7480,43 +7480,40 @@ namespace BmwDeepObd
 			public const int xml_tool_reset_ecu_setting = 2131690102;
 			
 			// aapt resource value: 0x7F0F0277
-			public const int xml_tool_result_amount_limit = 2131690103;
+			public const int xml_tool_result_vin = 2131690103;
 			
 			// aapt resource value: 0x7F0F0278
-			public const int xml_tool_result_vin = 2131690104;
+			public const int xml_tool_save_xml_failed = 2131690104;
 			
 			// aapt resource value: 0x7F0F0279
-			public const int xml_tool_save_xml_failed = 2131690105;
-			
-			// aapt resource value: 0x7F0F027A
-			public const int xml_tool_search_ecus = 2131690106;
-			
-			// aapt resource value: 0x7F0F027C
-			public const int xml_tool_select_ecu_type = 2131690108;
-			
-			// aapt resource value: 0x7F0F027D
-			public const int xml_tool_select_sgbd = 2131690109;
+			public const int xml_tool_search_ecus = 2131690105;
 			
 			// aapt resource value: 0x7F0F027B
-			public const int xml_tool_sel_mwtab_info = 2131690107;
+			public const int xml_tool_select_ecu_type = 2131690107;
+			
+			// aapt resource value: 0x7F0F027C
+			public const int xml_tool_select_sgbd = 2131690108;
+			
+			// aapt resource value: 0x7F0F027A
+			public const int xml_tool_sel_mwtab_info = 2131690106;
+			
+			// aapt resource value: 0x7F0F027D
+			public const int xml_tool_title = 2131690109;
 			
 			// aapt resource value: 0x7F0F027E
-			public const int xml_tool_title = 2131690110;
+			public const int yandex_api_key_title = 2131690110;
 			
 			// aapt resource value: 0x7F0F027F
-			public const int yandex_api_key_title = 2131690111;
+			public const int yandex_key_copy_title = 2131690111;
 			
 			// aapt resource value: 0x7F0F0280
-			public const int yandex_key_copy_title = 2131690112;
+			public const int yandex_key_desc = 2131690112;
 			
 			// aapt resource value: 0x7F0F0281
-			public const int yandex_key_desc = 2131690113;
+			public const int yandex_key_paste_title = 2131690113;
 			
 			// aapt resource value: 0x7F0F0282
-			public const int yandex_key_paste_title = 2131690114;
-			
-			// aapt resource value: 0x7F0F0283
-			public const int yandex_key_test_title = 2131690115;
+			public const int yandex_key_test_title = 2131690114;
 			
 			static String()
 			{
