@@ -1184,7 +1184,7 @@ namespace BmwDeepObd
                                     List<string> edArgList = new List<string>();
                                     bool statMbBlock = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
                                     bool statBlock = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0;
-                                    if (statMbBlock || statBlock)
+                                    if ((statMbBlock || statBlock) && string.IsNullOrEmpty(jobInfo.ArgsFirst) && jobInfo.ArgLimit > 0)
                                     {
                                         List<string> argList = argString.Split(";").ToList();
                                         StringBuilder sbArgStart = new StringBuilder();
@@ -1221,7 +1221,7 @@ namespace BmwDeepObd
                                                 int argCount = 0;
                                                 while (argList.Count > 0)
                                                 {
-                                                    if (argCount > 10)
+                                                    if (argCount > jobInfo.ArgLimit)
                                                     {
                                                         break;
                                                     }
