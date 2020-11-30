@@ -553,6 +553,8 @@
   <string name="xml_tool_ecu_show_all_jobs">Показать все задания</string>
   <string name="xml_tool_ecu_results">Результат задания</string>
   <string name="xml_tool_ecu_show_all_results">Показывать все результаты</string>
+  <!--Translate-->
+  <string name="xml_tool_ecu_arg_limit">Максимальное количество аргументов запроса</string>
   <string name="xml_tool_ecu_display_text">Выведенный текст</string>
   <string name="xml_tool_ecu_display_order">Порядок отображения</string>
   <string name="xml_tool_ecu_log_tag">Тег для протоколированных данных</string>
