@@ -148,6 +148,16 @@
                 android:layout_height="wrap_content"
                 android:text="@string/xml_tool_ecu_show_all_results" />
             <TextView
+                android:id="@+id/textViewArgLimitTitle"
+                android:text="@string/xml_tool_ecu_arg_limit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextViewInnerCaption" />
+            <Spinner
+                android:id="@+id/spinnerArgLimit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
                 android:id="@+id/textViewResultCommentsTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
