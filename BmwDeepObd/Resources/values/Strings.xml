@@ -531,8 +531,8 @@
   <string name="xml_tool_ecu_show_all_jobs">Show all jobs</string>
   <string name="xml_tool_ecu_results">Job result</string>
   <string name="xml_tool_ecu_show_all_results">Show all results</string>
-  <string name="xml_tool_ecu_arg_limit">Maximum request arguments</string>
-  <string name="xml_tool_ecu_arg_limit_off">Off</string>
+  <string name="xml_tool_ecu_arg_limit">Maximum arguments per request</string>
+  <string name="xml_tool_ecu_arg_limit_off">Unlimited</string>
   <string name="xml_tool_ecu_display_text">Display text</string>
   <string name="xml_tool_ecu_display_order">Display order</string>
   <string name="xml_tool_ecu_log_tag">Tag for data logging</string>
