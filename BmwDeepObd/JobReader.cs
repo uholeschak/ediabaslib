@@ -603,7 +603,7 @@ namespace BmwDeepObd
                                         string jobArgsFirst = string.Empty;
                                         string jobArgs = string.Empty;
                                         string jobResults = string.Empty;
-                                        int argLimit = 10;
+                                        int argLimit = 0;
                                         if (xnodeJobsChild.Attributes != null)
                                         {
                                             attrib = xnodeJobsChild.Attributes["id"];
