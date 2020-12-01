@@ -132,6 +132,7 @@ namespace BmwDeepObd
                 CommentsTransRequired = true;
                 Results = new List<ResultInfo>();
                 ArgCount = 0;
+                ArgLimit = 10;
                 Selected = false;
                 EcuFixedFuncStruct = null;
             }
@@ -149,6 +150,8 @@ namespace BmwDeepObd
             public List<ResultInfo> Results { get; }
 
             public uint ArgCount { get; set; }
+
+            public uint ArgLimit { get; set; }
 
             public bool Selected { get; set; }
 
@@ -250,6 +253,9 @@ namespace BmwDeepObd
         private Spinner _spinnerJobResults;
         private ResultListAdapter _spinnerJobResultsAdapter;
         private CheckBox _checkBoxShowAllResults;
+        private TextView _textViewArgLimitTitle;
+        private Spinner _spinnerArgLimit;
+        private StringObjAdapter _spinnerArgLimitAdapter;
         private TextView _textViewResultCommentsTitle;
         private TextView _textViewResultComments;
         private EditText _editTextDisplayText;
@@ -479,6 +485,27 @@ namespace BmwDeepObd
             {
                 JobSelected(_selectedJob);
             };
+
+            _textViewArgLimitTitle = FindViewById<TextView>(Resource.Id.textViewArgLimitTitle);
+            _spinnerArgLimit = FindViewById<Spinner>(Resource.Id.spinnerArgLimit);
+            _spinnerArgLimitAdapter = new StringObjAdapter(this);
+            _spinnerArgLimit.Adapter = _spinnerArgLimitAdapter;
+
+            _spinnerArgLimitAdapter.Items.Clear();
+            for (int i = 0; i < 20; i++)
+            {
+                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                if (i == 0)
+                {
+                    _spinnerArgLimitAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_arg_limit_off), i));
+                }
+                else
+                {
+                    _spinnerArgLimitAdapter.Items.Add(new StringObjType(string.Format(XmlToolActivity.Culture, "{0}", i), i));
+                }
+            }
+            _spinnerArgLimitAdapter.NotifyDataSetChanged();
+            _spinnerArgLimit.SetSelection(0);
 
             _textViewResultCommentsTitle = FindViewById<TextView>(Resource.Id.textViewResultCommentsTitle);
             _textViewResultComments = FindViewById<TextView>(Resource.Id.textViewResultComments);
@@ -1656,6 +1683,24 @@ namespace BmwDeepObd
             int selection = -1;
             if (jobInfo != null)
             {
+                bool statMbBlock = IsBmwReadStatusMwBlockJob(_selectedJob);
+                bool statBlock = IsBmwReadStatusBlockJob(_selectedJob);
+                bool statRead = IsBmwReadStatusJob(_selectedJob);
+
+                ViewStates limitVisibility = statMbBlock || statBlock ? ViewStates.Visible : ViewStates.Gone;
+                _textViewArgLimitTitle.Visibility = limitVisibility;
+                _spinnerArgLimit.Visibility = limitVisibility;
+
+                int limitSelection = 0;
+                for (int i = 0; i < _spinnerArgLimitAdapter.Count; i++)
+                {
+                    if ((int)_spinnerArgLimitAdapter.Items[i].Data == _selectedJob.ArgLimit)
+                    {
+                        limitSelection = i;
+                    }
+                }
+                _spinnerArgLimit.SetSelection(limitSelection);
+
                 bool udsJob = false;
                 bool ecuFunction = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && jobInfo.EcuFixedFuncStruct != null;
                 _layoutJobConfig.Visibility = ViewStates.Visible;
@@ -1720,9 +1765,6 @@ namespace BmwDeepObd
                 if (_spinnerJobResultsAdapter.Items.Count > 0 && selection < 0 && jobInfo.Selected)
                 {
                     // no selection
-                    bool statMbBlock = IsBmwReadStatusMwBlockJob(_selectedJob);
-                    bool statBlock = IsBmwReadStatusBlockJob(_selectedJob);
-                    bool statRead = IsBmwReadStatusJob(_selectedJob);
                     if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !statMbBlock && !statBlock && !statRead)
                     {
                         // auto select all value types
