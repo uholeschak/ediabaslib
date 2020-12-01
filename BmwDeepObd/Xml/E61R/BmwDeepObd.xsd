@@ -429,11 +429,11 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="arg_limit" type="xs:integer" default="10" use="optional">
+    <xs:attribute name="arg_limit" type="xs:integer" use="optional">
       <xs:annotation>
         <xs:documentation>
           Limit the number of arguments of STATUS_BLOCK_LESEN and STATUS_MESSWERTBLOCK_LESEN for one request, more arguments are splitted into multiple requests internally.
-          If omitted the default value is 10. A value of 0 disables splitting.
+          If omitted or the value is 0, splitting is disabled.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>

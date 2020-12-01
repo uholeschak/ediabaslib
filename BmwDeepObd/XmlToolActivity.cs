@@ -6961,7 +6961,7 @@ namespace BmwDeepObd
                         if (jobNodeOld != null)
                         {
                             jobNodeNew.ReplaceAttributes(from el in jobNodeOld.Attributes()
-                                where (el.Name != "name" && el.Name != "args" && el.Name != "fixed_func_struct_id")
+                                where (el.Name != "name" && el.Name != "args" && el.Name != "arg_limit" && el.Name != "fixed_func_struct_id")
                                 select new XAttribute(el));
                         }
                     }
@@ -6977,6 +6977,11 @@ namespace BmwDeepObd
                     if (!string.IsNullOrEmpty(jobArgs))
                     {
                         jobNodeNew.Add(new XAttribute("args", jobArgs));
+                    }
+
+                    if (job.ArgLimit > 0)
+                    {
+                        jobNodeNew.Add(new XAttribute("arg_limit", job.ArgLimit));
                     }
 
                     int jobId = 1;
@@ -7016,13 +7021,18 @@ namespace BmwDeepObd
                                             jobNodeOld = GetJobNode(job, ns, jobsNodeOld, args);
                                             if (jobNodeOld != null)
                                             {
-                                                jobNodeNew.ReplaceAttributes(from el in jobNodeOld.Attributes() where (el.Name != "id" && el.Name != "name" && el.Name != "args") select new XAttribute(el));
+                                                jobNodeNew.ReplaceAttributes(from el in jobNodeOld.Attributes()
+                                                    where (el.Name != "id" && el.Name != "name" && el.Name != "args" && el.Name != "arg_limit") select new XAttribute(el));
                                             }
                                         }
 
                                         jobNodeNew.Add(new XAttribute("id", (jobId++).ToString(Culture)));
                                         jobNodeNew.Add(new XAttribute("name", job.Name));
                                         jobNodeNew.Add(new XAttribute("args", args));
+                                        if (job.ArgLimit > 0)
+                                        {
+                                            jobNodeNew.Add(new XAttribute("arg_limit", job.ArgLimit));
+                                        }
                                         lastArgs = args;
                                     }
                                 }
@@ -7051,13 +7061,18 @@ namespace BmwDeepObd
                                     jobNodeOld = GetJobNode(job, ns, jobsNodeOld, args);
                                     if (jobNodeOld != null)
                                     {
-                                        jobNodeNew.ReplaceAttributes(from el in jobNodeOld.Attributes() where (el.Name != "id" && el.Name != "name" && el.Name != "args") select new XAttribute(el));
+                                        jobNodeNew.ReplaceAttributes(from el in jobNodeOld.Attributes()
+                                            where (el.Name != "id" && el.Name != "name" && el.Name != "args" && el.Name != "arg_limit") select new XAttribute(el));
                                     }
                                 }
 
                                 jobNodeNew.Add(new XAttribute("id", (jobId++).ToString(Culture)));
                                 jobNodeNew.Add(new XAttribute("name", job.Name));
                                 jobNodeNew.Add(new XAttribute("args", args));
+                                if (job.ArgLimit > 0)
+                                {
+                                    jobNodeNew.Add(new XAttribute("arg_limit", job.ArgLimit));
+                                }
                                 lastBlockNumber = result.MwTabEntry.BlockNumber;
                             }
                         }
