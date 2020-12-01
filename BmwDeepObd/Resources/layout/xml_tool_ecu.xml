@@ -49,7 +49,7 @@
             style="@style/TextViewInnerCaption" />
         <Spinner
             android:id="@+id/spinnerFontSize"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/textViewGridCount"
@@ -155,7 +155,7 @@
                 style="@style/TextViewInnerCaption" />
             <Spinner
                 android:id="@+id/spinnerArgLimit"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             <TextView
                 android:id="@+id/textViewResultCommentsTitle"
@@ -203,7 +203,7 @@
                 android:layout_height="wrap_content">
                 <Spinner
                     android:id="@+id/spinnerGridType"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <LinearLayout
                     android:id="@+id/layoutMinValue"

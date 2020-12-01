@@ -151,7 +151,7 @@ namespace BmwDeepObd
 
             public uint ArgCount { get; set; }
 
-            public uint ArgLimit { get; set; }
+            public int ArgLimit { get; set; }
 
             public bool Selected { get; set; }
 
@@ -402,8 +402,15 @@ namespace BmwDeepObd
             _spinnerJobs.SetOnTouchListener(this);
             _spinnerJobs.ItemSelected += (sender, args) =>
             {
+                HideKeyboard();
                 int pos = args.Position;
-                JobSelected(pos >= 0 ? _spinnerJobsAdapter.Items[pos] : null);
+                JobInfo jobInfo = null;
+                if (pos >= 0 && pos < _spinnerJobsAdapter.Items.Count)
+                {
+                    jobInfo = _spinnerJobsAdapter.Items[pos];
+                }
+
+                JobSelected(jobInfo);
                 if (_displayEcuInfo)
                 {
                     DisplayEcuInfo();
@@ -455,6 +462,7 @@ namespace BmwDeepObd
             _spinnerJobResults.Adapter = _spinnerJobResultsAdapter;
             _spinnerJobResults.ItemSelected += (sender, args) =>
             {
+                HideKeyboard();
                 ResultSelected(args.Position);
             };
 
@@ -506,6 +514,19 @@ namespace BmwDeepObd
             }
             _spinnerArgLimitAdapter.NotifyDataSetChanged();
             _spinnerArgLimit.SetSelection(0);
+
+            _spinnerArgLimit.ItemSelected += (sender, args) =>
+            {
+                HideKeyboard();
+                if (_selectedJob != null && _spinnerArgLimit.Visibility == ViewStates.Visible)
+                {
+                    int pos = args.Position;
+                    if (pos >= 0 && pos < _spinnerArgLimitAdapter.Items.Count)
+                    {
+                        _selectedJob.ArgLimit = (int)_spinnerArgLimitAdapter.Items[pos].Data;
+                    }
+                }
+            };
 
             _textViewResultCommentsTitle = FindViewById<TextView>(Resource.Id.textViewResultCommentsTitle);
             _textViewResultComments = FindViewById<TextView>(Resource.Id.textViewResultComments);
@@ -1691,15 +1712,18 @@ namespace BmwDeepObd
                 _textViewArgLimitTitle.Visibility = limitVisibility;
                 _spinnerArgLimit.Visibility = limitVisibility;
 
-                int limitSelection = 0;
-                for (int i = 0; i < _spinnerArgLimitAdapter.Count; i++)
+                if (limitVisibility == ViewStates.Visible)
                 {
-                    if ((int)_spinnerArgLimitAdapter.Items[i].Data == _selectedJob.ArgLimit)
+                    int limitSelection = 0;
+                    for (int i = 0; i < _spinnerArgLimitAdapter.Count; i++)
                     {
-                        limitSelection = i;
+                        if ((int)_spinnerArgLimitAdapter.Items[i].Data == _selectedJob.ArgLimit)
+                        {
+                            limitSelection = i;
+                        }
                     }
+                    _spinnerArgLimit.SetSelection(limitSelection);
                 }
-                _spinnerArgLimit.SetSelection(limitSelection);
 
                 bool udsJob = false;
                 bool ecuFunction = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && jobInfo.EcuFixedFuncStruct != null;
