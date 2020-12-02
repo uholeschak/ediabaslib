@@ -132,7 +132,7 @@ namespace BmwDeepObd
                 CommentsTransRequired = true;
                 Results = new List<ResultInfo>();
                 ArgCount = 0;
-                ArgLimit = 10;
+                ArgLimit = -1;
                 Selected = false;
                 EcuFixedFuncStruct = null;
             }
@@ -1714,6 +1714,11 @@ namespace BmwDeepObd
 
                 if (limitVisibility == ViewStates.Visible)
                 {
+                    if (_selectedJob.ArgLimit < 0)
+                    {
+                        _selectedJob.ArgLimit = 10;
+                    }
+
                     int limitSelection = 0;
                     for (int i = 0; i < _spinnerArgLimitAdapter.Count; i++)
                     {
@@ -1722,6 +1727,7 @@ namespace BmwDeepObd
                             limitSelection = i;
                         }
                     }
+
                     _spinnerArgLimit.SetSelection(limitSelection);
                 }
 

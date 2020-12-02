@@ -6979,7 +6979,7 @@ namespace BmwDeepObd
                         jobNodeNew.Add(new XAttribute("args", jobArgs));
                     }
 
-                    if (job.ArgLimit > 0)
+                    if (job.ArgLimit >= 0)
                     {
                         jobNodeNew.Add(new XAttribute("arg_limit", job.ArgLimit));
                     }
@@ -7029,7 +7029,7 @@ namespace BmwDeepObd
                                         jobNodeNew.Add(new XAttribute("id", (jobId++).ToString(Culture)));
                                         jobNodeNew.Add(new XAttribute("name", job.Name));
                                         jobNodeNew.Add(new XAttribute("args", args));
-                                        if (job.ArgLimit > 0)
+                                        if (job.ArgLimit >= 0)
                                         {
                                             jobNodeNew.Add(new XAttribute("arg_limit", job.ArgLimit));
                                         }
@@ -7069,7 +7069,7 @@ namespace BmwDeepObd
                                 jobNodeNew.Add(new XAttribute("id", (jobId++).ToString(Culture)));
                                 jobNodeNew.Add(new XAttribute("name", job.Name));
                                 jobNodeNew.Add(new XAttribute("args", args));
-                                if (job.ArgLimit > 0)
+                                if (job.ArgLimit >= 0)
                                 {
                                     jobNodeNew.Add(new XAttribute("arg_limit", job.ArgLimit));
                                 }
