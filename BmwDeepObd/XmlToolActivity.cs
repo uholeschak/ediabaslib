@@ -6533,6 +6533,21 @@ namespace BmwDeepObd
                 if (jobNode != null)
                 {
                     job.Selected = true;
+                    int argLimit = -1;
+                    XAttribute argLimitAttr = jobNode.Attribute("arg_limit");
+                    if (argLimitAttr != null)
+                    {
+                        try
+                        {
+                            argLimit = XmlConvert.ToInt32(argLimitAttr.Value);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                    job.ArgLimit = argLimit;
+
                     foreach (XmlToolEcuActivity.ResultInfo result in job.Results)
                     {
                         if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
