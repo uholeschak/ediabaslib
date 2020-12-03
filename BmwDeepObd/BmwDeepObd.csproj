@@ -17,7 +17,6 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <TargetFrameworkVersion>v11.0</TargetFrameworkVersion>
     <LangVersion>latest</LangVersion>
-    <AndroidEnableAssemblyCompression>false</AndroidEnableAssemblyCompression>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
