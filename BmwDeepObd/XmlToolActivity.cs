@@ -6528,7 +6528,6 @@ namespace BmwDeepObd
 
             foreach (XmlToolEcuActivity.JobInfo job in ecuInfo.JobList)
             {
-                bool statRead = XmlToolEcuActivity.IsBmwReadStatusJob(job);
                 XElement jobNode = GetJobNode(job, ns, jobsNode);
                 if (jobNode != null)
                 {
@@ -6550,25 +6549,18 @@ namespace BmwDeepObd
 
                     foreach (XmlToolEcuActivity.ResultInfo result in job.Results)
                     {
-                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+                        if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                         {
-                            if (statRead)
+                            if (result.MwTabEntry != null)
                             {
-                                jobNode = GetJobNode(job, ns, jobsNode, XmlToolEcuActivity.GetJobArgs(job, new List<XmlToolEcuActivity.ResultInfo> {result}, ecuInfo, true));
+                                jobNode = GetJobNode(job, ns, jobsNode, XmlToolEcuActivity.GetJobArgs(result.MwTabEntry, ecuInfo));
                                 if (jobNode == null)
                                 {
                                     continue;
                                 }
                             }
                         }
-                        else if (result.MwTabEntry != null)
-                        {
-                            jobNode = GetJobNode(job, ns, jobsNode, XmlToolEcuActivity.GetJobArgs(result.MwTabEntry, ecuInfo));
-                            if (jobNode == null)
-                            {
-                                continue;
-                            }
-                        }
+
                         XElement displayNode = GetDisplayNode(result, job, ns, jobNode);
                         if (displayNode != null)
                         {
@@ -6967,7 +6959,6 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    bool statRead = XmlToolEcuActivity.IsBmwReadStatusJob(job);
                     XElement jobNodeOld = null;
                     XElement jobNodeNew = new XElement(ns + "job");
                     if (jobsNodeOld != null)
@@ -6976,7 +6967,7 @@ namespace BmwDeepObd
                         if (jobNodeOld != null)
                         {
                             jobNodeNew.ReplaceAttributes(from el in jobNodeOld.Attributes()
-                                where (el.Name != "name" && el.Name != "args" && el.Name != "arg_limit" && el.Name != "fixed_func_struct_id")
+                                where (el.Name != "id" && el.Name != "name" && el.Name != "args" && el.Name != "arg_limit" && el.Name != "fixed_func_struct_id")
                                 select new XAttribute(el));
                         }
                     }
@@ -7000,9 +6991,7 @@ namespace BmwDeepObd
                     }
 
                     int jobId = 1;
-                    int jobIdCurrent = jobId;
                     long lastBlockNumber = -1;
-                    string lastArgs = string.Empty;
                     foreach (XmlToolEcuActivity.ResultInfo result in job.Results)
                     {
                         if (!result.ItemSelected)
@@ -7012,83 +7001,42 @@ namespace BmwDeepObd
 
                         string resultNamePrefix = string.Empty;
                         string displayTagPostfix = string.Empty;
-                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+                        if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                         {
-                            if (statRead)
+                            if (result.MwTabEntry != null)
                             {
-                                string args = XmlToolEcuActivity.GetJobArgs(job, new List<XmlToolEcuActivity.ResultInfo> { result }, ecuInfo, true);
-                                if (!string.IsNullOrEmpty(args))
+                                if (lastBlockNumber != result.MwTabEntry.BlockNumber)
                                 {
-                                    if (string.Compare(lastArgs, args, StringComparison.Ordinal) != 0)
+                                    if (lastBlockNumber >= 0)
                                     {
-                                        if (!string.IsNullOrEmpty(lastArgs))
-                                        {
-                                            // store last generated job
-                                            jobNodeOld?.Remove();
-                                            jobsNodeNew.Add(jobNodeNew);
-                                        }
-
-                                        jobIdCurrent = jobId;
-                                        jobNodeOld = null;
-                                        jobNodeNew = new XElement(ns + "job");
-                                        if (jobsNodeOld != null)
-                                        {
-                                            jobNodeOld = GetJobNode(job, ns, jobsNodeOld, args);
-                                            if (jobNodeOld != null)
-                                            {
-                                                jobNodeNew.ReplaceAttributes(from el in jobNodeOld.Attributes()
-                                                    where (el.Name != "id" && el.Name != "name" && el.Name != "args" && el.Name != "arg_limit") select new XAttribute(el));
-                                            }
-                                        }
-
-                                        jobNodeNew.Add(new XAttribute("id", (jobId++).ToString(Culture)));
-                                        jobNodeNew.Add(new XAttribute("name", job.Name));
-                                        jobNodeNew.Add(new XAttribute("args", args));
-                                        if (job.ArgLimit >= 0)
-                                        {
-                                            jobNodeNew.Add(new XAttribute("arg_limit", job.ArgLimit));
-                                        }
-                                        lastArgs = args;
+                                        // store last generated job
+                                        jobNodeOld?.Remove();
+                                        jobsNodeNew.Add(jobNodeNew);
                                     }
-                                }
 
-                                resultNamePrefix = "1#";
-                                displayTagPostfix = "#" + jobIdCurrent.ToString(CultureInfo.InvariantCulture);
-                            }
-                        }
-                        else if (result.MwTabEntry != null)
-                        {
-                            if (lastBlockNumber != result.MwTabEntry.BlockNumber)
-                            {
-                                if (lastBlockNumber >= 0)
-                                {
-                                    // store last generated job
-                                    jobNodeOld?.Remove();
-                                    jobsNodeNew.Add(jobNodeNew);
-                                }
-
-                                string args = XmlToolEcuActivity.GetJobArgs(result.MwTabEntry, ecuInfo);
-                                jobIdCurrent = jobId;
-                                jobNodeOld = null;
-                                jobNodeNew = new XElement(ns + "job");
-                                if (jobsNodeOld != null)
-                                {
-                                    jobNodeOld = GetJobNode(job, ns, jobsNodeOld, args);
-                                    if (jobNodeOld != null)
+                                    string args = XmlToolEcuActivity.GetJobArgs(result.MwTabEntry, ecuInfo);
+                                    jobNodeOld = null;
+                                    jobNodeNew = new XElement(ns + "job");
+                                    if (jobsNodeOld != null)
                                     {
-                                        jobNodeNew.ReplaceAttributes(from el in jobNodeOld.Attributes()
-                                            where (el.Name != "id" && el.Name != "name" && el.Name != "args" && el.Name != "arg_limit") select new XAttribute(el));
+                                        jobNodeOld = GetJobNode(job, ns, jobsNodeOld, args);
+                                        if (jobNodeOld != null)
+                                        {
+                                            jobNodeNew.ReplaceAttributes(from el in jobNodeOld.Attributes()
+                                                                         where (el.Name != "id" && el.Name != "name" && el.Name != "args" && el.Name != "arg_limit")
+                                                                         select new XAttribute(el));
+                                        }
                                     }
-                                }
 
-                                jobNodeNew.Add(new XAttribute("id", (jobId++).ToString(Culture)));
-                                jobNodeNew.Add(new XAttribute("name", job.Name));
-                                jobNodeNew.Add(new XAttribute("args", args));
-                                if (job.ArgLimit >= 0)
-                                {
-                                    jobNodeNew.Add(new XAttribute("arg_limit", job.ArgLimit));
+                                    jobNodeNew.Add(new XAttribute("id", (jobId++).ToString(Culture)));
+                                    jobNodeNew.Add(new XAttribute("name", job.Name));
+                                    jobNodeNew.Add(new XAttribute("args", args));
+                                    if (job.ArgLimit >= 0)
+                                    {
+                                        jobNodeNew.Add(new XAttribute("arg_limit", job.ArgLimit));
+                                    }
+                                    lastBlockNumber = result.MwTabEntry.BlockNumber;
                                 }
-                                lastBlockNumber = result.MwTabEntry.BlockNumber;
                             }
                         }
 
@@ -8083,11 +8031,6 @@ namespace BmwDeepObd
                     where string.Compare(jobIdAttrib.Value, result.EcuJob.Id, StringComparison.OrdinalIgnoreCase) == 0
                     where string.Compare(jobIdResultAttrib.Value, result.EcuJobResult.Id, StringComparison.OrdinalIgnoreCase) == 0
                     select node).FirstOrDefault();
-            }
-
-            if (XmlToolEcuActivity.IsBmwReadStatusJob(job))
-            {
-                resultName = "1#" + resultName;
             }
 
             return (from node in jobNode.Elements(ns + "display")

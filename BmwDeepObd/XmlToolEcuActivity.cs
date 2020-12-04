@@ -1696,7 +1696,7 @@ namespace BmwDeepObd
                 bool statBlock = IsBmwReadStatusBlockJob(_selectedJob);
                 bool statRead = IsBmwReadStatusJob(_selectedJob);
 
-                ViewStates limitVisibility = statMbBlock || statBlock ? ViewStates.Visible : ViewStates.Gone;
+                ViewStates limitVisibility = statMbBlock || statBlock || statRead ? ViewStates.Visible : ViewStates.Gone;
                 _textViewArgLimitTitle.Visibility = limitVisibility;
                 _spinnerArgLimit.Visibility = limitVisibility;
 
@@ -1704,7 +1704,7 @@ namespace BmwDeepObd
                 {
                     if (_selectedJob.ArgLimit < 0)
                     {
-                        _selectedJob.ArgLimit = 10;
+                        _selectedJob.ArgLimit = 5;
                     }
 
                     int limitSelection = 0;
