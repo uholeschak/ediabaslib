@@ -1079,8 +1079,6 @@ namespace BmwDeepObd
                     {
                         sb.Append(";");
                         sb.Append(resultInfo.Args);
-                        // only one arg for multiple results is allowed
-                        break;
                     }
                 }
                 return sb.ToString();
