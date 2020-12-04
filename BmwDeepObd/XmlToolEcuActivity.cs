@@ -1039,46 +1039,36 @@ namespace BmwDeepObd
                 return string.Empty;
             }
 
+            string argHead = string.Empty;
             if (IsBmwReadStatusMwBlockJob(job))
             {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("JA");
-                foreach (ResultInfo resultInfo in resultInfoList)
-                {
-                    if ((selectAll || resultInfo.ItemSelected) && !string.IsNullOrEmpty(resultInfo.Args))
-                    {
-                        sb.Append(";");
-                        sb.Append(resultInfo.Args);
-                    }
-                }
-                return sb.ToString();
+                argHead = "JA";
+            }
+            else if (IsBmwReadStatusBlockJob(job))
+            {
+                argHead = "3;JA;ARG";
+            }
+            else if (IsBmwReadStatusJob(job))
+            {
+                argHead = "ARG";
             }
 
-            if (IsBmwReadStatusBlockJob(job))
+            if (!string.IsNullOrEmpty(argHead))
             {
+                HashSet<string> argHashSet = new HashSet<string>();
                 StringBuilder sb = new StringBuilder();
-                sb.Append("3;JA;ARG");
+                sb.Append(argHead);
                 foreach (ResultInfo resultInfo in resultInfoList)
                 {
-                    if ((selectAll || resultInfo.ItemSelected) && !string.IsNullOrEmpty(resultInfo.Args))
+                    string arg = resultInfo.Args;
+                    if ((selectAll || resultInfo.ItemSelected) && !string.IsNullOrEmpty(arg))
                     {
-                        sb.Append(";");
-                        sb.Append(resultInfo.Args);
-                    }
-                }
-                return sb.ToString();
-            }
-
-            if (IsBmwReadStatusJob(job))
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("ARG");
-                foreach (ResultInfo resultInfo in resultInfoList)
-                {
-                    if ((selectAll || resultInfo.ItemSelected) && !string.IsNullOrEmpty(resultInfo.Args))
-                    {
-                        sb.Append(";");
-                        sb.Append(resultInfo.Args);
+                        if (!argHashSet.Contains(arg))
+                        {
+                            argHashSet.Add(arg);
+                            sb.Append(";");
+                            sb.Append(arg);
+                        }
                     }
                 }
                 return sb.ToString();
