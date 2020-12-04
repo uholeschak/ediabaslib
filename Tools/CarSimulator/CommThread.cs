@@ -630,6 +630,8 @@ namespace CarSimulator
             {0xDD3B, 112},
             {0xDD3C, 62},
             {0xDD3D, 183},
+            {0xF152, 2},
+            {0xF186, 1},
         };
 
         public bool Moving
