@@ -4519,27 +4519,6 @@ namespace CarSimulator
                 {
                     if (
                         (_receiveData[0] & 0xC0) == 0x80 &&
-                        _receiveData[2] == 0xF1 &&
-                        _receiveData[3] == 0x2C)
-                    {
-                        // dummy error response for service 2C
-                        Debug.WriteLine("Dummy service 2C: {0:X02}", _receiveData[4]);
-                        _sendData[0] = 0x83;
-                        _sendData[1] = 0xF1;
-                        _sendData[2] = _receiveData[1];
-                        _sendData[3] = 0x7F;
-                        _sendData[4] = _receiveData[3];
-                        _sendData[5] = 0x31;
-
-                        ObdSend(_sendData);
-                        found = true;
-                    }
-                }
-
-                if (!found)
-                {
-                    if (
-                        (_receiveData[0] & 0xC0) == 0x80 &&
                         (_receiveData[0] & 0x3F) >= 3 &&
                         _receiveData[2] == 0xF1 &&
                         _receiveData[3] == 0x2E)
@@ -7131,7 +7110,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x00;  // 16 bit length
                 _sendData[i++] = 0x00;  // length h
                 _sendData[i++] = 0x01;  // length l
-                _sendData[i++] = 0x62;
+                _sendData[i++] = (byte)(_receiveData[3] | 0x40);
 
                 for (int offset = 0; offset < length; offset += 2)
                 {
@@ -7171,7 +7150,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x00;  // 16 bit length
                 _sendData[i++] = 0x00;  // length h
                 _sendData[i++] = 0x01;  // length l
-                _sendData[i++] = 0x62;
+                _sendData[i++] = (byte)(_receiveData[3] | 0x40);
 
                 for (int offset = 0; offset < length; offset += 2)
                 {
@@ -7196,8 +7175,9 @@ namespace CarSimulator
                 _sendData[5] = (byte)(sendLength & 0xFF);
                 ObdSend(_sendData);
             }
-            else
-            {   // nothing matched, check response list
+            else if (!HandleDynamicUdsIds())
+            {
+                // nothing matched, check response list
                 return false;
             }
             return true;
