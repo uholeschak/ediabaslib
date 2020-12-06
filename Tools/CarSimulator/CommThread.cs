@@ -586,6 +586,15 @@ namespace CarSimulator
             0x86, 0xF1, 0x78, 0x70, 0x06, 0x01, 0x00, 0x00, 0x00};
         // ReSharper restore InconsistentNaming
 
+        private readonly Dictionary<int, int> G31D83BX7C0Service22Dict = new Dictionary<int, int>()
+        {
+            {0x1750, 1},
+            {0x1751, 3},
+            {0x2540, 3},
+            {0x3010, 9},
+            {0x3020, 32},
+        };
+
         private readonly Dictionary<int, int> G31Vcp11Service22Dict = new Dictionary<int, int>()
         {
             {0x1820, 98},
@@ -7093,7 +7102,7 @@ namespace CarSimulator
                 int i = 0;
                 _sendData[i++] = 0x80;
                 _sendData[i++] = 0xF1;
-                _sendData[i++] = 0x76;
+                _sendData[i++] = _receiveData[1];
                 _sendData[i++] = 0x00;  // 16 bit length
                 _sendData[i++] = 0x00;  // length h
                 _sendData[i++] = 0x01;  // length l
@@ -7111,6 +7120,46 @@ namespace CarSimulator
 
                     _sendData[i++] = (byte) (serviceId >> 8);
                     _sendData[i++] = (byte) (serviceId & 0xFF);
+                    for (int j = 0; j < responseLength; j++)
+                    {
+                        _sendData[i++] = 0;
+                    }
+                }
+
+                int sendLength = i - 6;
+                _sendData[4] = (byte)(sendLength >> 8);
+                _sendData[5] = (byte)(sendLength & 0xFF);
+                ObdSend(_sendData);
+            }
+            else if (
+                (_receiveData[0] & 0xC0) == 0x80 &&
+                _receiveData[1] == 0x12 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x22)
+            {
+                int length = (_receiveData[0] & 0x3F) - 1;
+
+                int i = 0;
+                _sendData[i++] = 0x80;
+                _sendData[i++] = 0xF1;
+                _sendData[i++] = _receiveData[1];
+                _sendData[i++] = 0x00;  // 16 bit length
+                _sendData[i++] = 0x00;  // length h
+                _sendData[i++] = 0x01;  // length l
+                _sendData[i++] = 0x62;
+
+                for (int offset = 0; offset < length; offset += 2)
+                {
+                    int serviceId = (_receiveData[4 + offset] << 8) + _receiveData[5 + offset];
+
+                    if (!G31D83BX7C0Service22Dict.TryGetValue(serviceId, out int responseLength))
+                    {
+                        Debug.WriteLine("Unknown service ID: {0:X04}", serviceId);
+                        return false;
+                    }
+
+                    _sendData[i++] = (byte)(serviceId >> 8);
+                    _sendData[i++] = (byte)(serviceId & 0xFF);
                     for (int j = 0; j < responseLength; j++)
                     {
                         _sendData[i++] = 0;
