@@ -220,12 +220,12 @@ namespace BmwDeepObd
                     Int64 numberValue = EdiabasNet.StringToValue(blockNumber, out bool valid);
                     if (!valid)
                     {
-                        numberValue = 3;
+                        numberValue = 0;
                     }
 
                     int selection = 0;
                     int index = 0;
-                    for (int i = 0; i <= 3; i++)
+                    for (int i = 0; i < 10; i++)
                     {
                         _spinnerBlockNumberAdapter.Items.Add(new StringObjType(string.Format(CultureInfo.InvariantCulture, "{0}", i), i));
                         if (i == numberValue)
