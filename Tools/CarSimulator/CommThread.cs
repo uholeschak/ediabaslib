@@ -593,6 +593,10 @@ namespace CarSimulator
             {0x2540, 3},
             {0x3010, 9},
             {0x3020, 32},
+            {0x406A, 2},
+            {0x406B, 2},
+            {0x406C, 2},
+            {0x406D, 2},
         };
 
         private readonly Dictionary<int, int> G31Vcp11Service22Dict = new Dictionary<int, int>()
@@ -4499,6 +4503,27 @@ namespace CarSimulator
                     {
                         // dummy error response for service 22
                         Debug.WriteLine("Dummy service 22: {0:X02}", _receiveData[4]);
+                        _sendData[0] = 0x83;
+                        _sendData[1] = 0xF1;
+                        _sendData[2] = _receiveData[1];
+                        _sendData[3] = 0x7F;
+                        _sendData[4] = _receiveData[3];
+                        _sendData[5] = 0x31;
+
+                        ObdSend(_sendData);
+                        found = true;
+                    }
+                }
+
+                if (!found)
+                {
+                    if (
+                        (_receiveData[0] & 0xC0) == 0x80 &&
+                        _receiveData[2] == 0xF1 &&
+                        _receiveData[3] == 0x2C)
+                    {
+                        // dummy error response for service 2C
+                        Debug.WriteLine("Dummy service 2C: {0:X02}", _receiveData[4]);
                         _sendData[0] = 0x83;
                         _sendData[1] = 0xF1;
                         _sendData[2] = _receiveData[1];
