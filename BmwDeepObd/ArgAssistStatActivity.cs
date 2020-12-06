@@ -220,7 +220,7 @@ namespace BmwDeepObd
                     Int64 numberValue = EdiabasNet.StringToValue(blockNumber, out bool valid);
                     if (!valid)
                     {
-                        numberValue = 0;
+                        numberValue = 3;
                     }
 
                     int selection = 0;
