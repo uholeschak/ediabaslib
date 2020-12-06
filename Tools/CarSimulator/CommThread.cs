@@ -6868,6 +6868,11 @@ namespace CarSimulator
         private bool ResponseG31()
         {
             // Axis
+            if (HandleDynamicUdsIds())
+            {
+                return true;
+            }
+
             if (
                 _receiveData[0] == 0x83 &&
                 _receiveData[1] == 0x76 &&
@@ -7175,7 +7180,7 @@ namespace CarSimulator
                 _sendData[5] = (byte)(sendLength & 0xFF);
                 ObdSend(_sendData);
             }
-            else if (!HandleDynamicUdsIds())
+            else
             {
                 // nothing matched, check response list
                 return false;
