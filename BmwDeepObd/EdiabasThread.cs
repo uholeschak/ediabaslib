@@ -1188,6 +1188,7 @@ namespace BmwDeepObd
                                     if ((statMbBlock || statBlock || statRead) && string.IsNullOrEmpty(jobInfo.ArgsFirst) && jobInfo.ArgLimit > 0)
                                     {
                                         List<string> argList = argString.Split(";").ToList();
+                                        int? argStartBlock = null;
                                         StringBuilder sbArgStart = new StringBuilder();
                                         bool validArg = false;
                                         if (statMbBlock)
@@ -1203,11 +1204,18 @@ namespace BmwDeepObd
                                         {
                                             if (argList.Count >= 3)
                                             {
+                                                Int64 blockNumber = EdiabasNet.StringToValue(argList[0], out bool valid);
+                                                if (valid)
+                                                {
+                                                    argStartBlock = (int) blockNumber;
+                                                }
+                                                argList.RemoveAt(0);
+
+                                                validArg = argStartBlock.HasValue && string.Compare(argList[0].Trim(), "JA", StringComparison.OrdinalIgnoreCase) == 0;
                                                 sbArgStart.Append(argList[0]);
                                                 argList.RemoveAt(0);
-                                                validArg = string.Compare(argList[0].Trim(), "JA", StringComparison.OrdinalIgnoreCase) == 0;
-                                                sbArgStart.Append(argList[0]);
-                                                argList.RemoveAt(0);
+
+                                                sbArgStart.Append(";");
                                                 sbArgStart.Append(argList[0]);
                                                 argList.RemoveAt(0);
                                             }
@@ -1227,11 +1235,18 @@ namespace BmwDeepObd
                                             for (;;)
                                             {
                                                 StringBuilder sbArg = new StringBuilder();
+                                                if (argStartBlock.HasValue)
+                                                {
+                                                    int blockNumber = argStartBlock.Value + edArgList.Count;
+                                                    sbArg.Append(string.Format(CultureInfo.InvariantCulture, "{0}", blockNumber));
+                                                    sbArg.Append(";");
+                                                }
                                                 sbArg.Append(sbArgStart);
+
                                                 int argCount = 0;
                                                 while (argList.Count > 0)
                                                 {
-                                                    if (argCount > jobInfo.ArgLimit)
+                                                    if (argCount >= jobInfo.ArgLimit)
                                                     {
                                                         break;
                                                     }
