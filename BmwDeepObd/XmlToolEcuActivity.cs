@@ -1046,7 +1046,7 @@ namespace BmwDeepObd
             }
             else if (IsBmwReadStatusBlockJob(job))
             {
-                argHead = "3;JA;ARG";
+                argHead = "0;JA;ARG";
             }
             else if (IsBmwReadStatusJob(job))
             {
