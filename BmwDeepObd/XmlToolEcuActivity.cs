@@ -1032,14 +1032,16 @@ namespace BmwDeepObd
             return string.Format(XmlToolActivity.Culture, "{0};{1}", mwTabEntry.BlockNumber, ecuInfo.ReadCommand);
         }
 
-        public static string GetJobArgs(JobInfo job, List<ResultInfo> resultInfoList, XmlToolActivity.EcuInfo ecuInfo, bool selectAll = false)
+        public static string GetJobArgs(JobInfo job, List<ResultInfo> resultInfoList, XmlToolActivity.EcuInfo ecuInfo, out string args2, bool selectAll = false)
         {
+            args2 = string.Empty;
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
             {
                 return string.Empty;
             }
 
             string argHead = string.Empty;
+            string argHead2 = string.Empty;
             if (IsBmwReadStatusMwBlockJob(job))
             {
                 argHead = "JA";
@@ -1047,6 +1049,7 @@ namespace BmwDeepObd
             else if (IsBmwReadStatusBlockJob(job))
             {
                 argHead = "0;JA;ARG";
+                argHead2 = "0;NEIN;ARG";
             }
             else if (IsBmwReadStatusJob(job))
             {
@@ -1057,7 +1060,6 @@ namespace BmwDeepObd
             {
                 HashSet<string> argHashSet = new HashSet<string>();
                 StringBuilder sb = new StringBuilder();
-                sb.Append(argHead);
                 foreach (ResultInfo resultInfo in resultInfoList)
                 {
                     string arg = resultInfo.Args;
@@ -1071,7 +1073,18 @@ namespace BmwDeepObd
                         }
                     }
                 }
-                return sb.ToString();
+
+                if (sb.Length == 0)
+                {
+                    return string.Empty;
+                }
+
+                if (!string.IsNullOrEmpty(argHead2))
+                {
+                    args2 = argHead2 + sb;
+                }
+
+                return argHead + sb;
             }
 
             return string.Empty;
@@ -2104,7 +2117,7 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            _ediabas.ArgString = GetJobArgs(_selectedJob, new List<ResultInfo> { _selectedResult }, _ecuInfo, true);
+                            _ediabas.ArgString = GetJobArgs(_selectedJob, new List<ResultInfo> { _selectedResult }, _ecuInfo, out string _, true);
                         }
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
