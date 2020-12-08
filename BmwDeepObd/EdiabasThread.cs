@@ -1185,7 +1185,7 @@ namespace BmwDeepObd
                                     bool statMbBlock = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
                                     bool statBlock = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0;
                                     bool statRead = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStat, StringComparison.OrdinalIgnoreCase) == 0;
-                                    if ((statMbBlock || statBlock || statRead) && string.IsNullOrEmpty(jobInfo.ArgsFirst) && jobInfo.ArgLimit > 0)
+                                    if ((statMbBlock || statBlock || statRead) && jobInfo.ArgLimit > 0)
                                     {
                                         List<string> argList = argString.Split(";").ToList();
                                         int? argStartBlock = null;
@@ -1195,7 +1195,7 @@ namespace BmwDeepObd
                                         {
                                             if (argList.Count >= 1)
                                             {
-                                                validArg = string.Compare(argList[0].Trim(), "JA", StringComparison.OrdinalIgnoreCase) == 0;
+                                                validArg = string.IsNullOrEmpty(jobInfo.ArgsFirst) && string.Compare(argList[0].Trim(), "JA", StringComparison.OrdinalIgnoreCase) == 0;
                                                 sbArgStart.Append(argList[0]);
                                                 argList.RemoveAt(0);
                                             }
@@ -1211,7 +1211,7 @@ namespace BmwDeepObd
                                                 }
                                                 argList.RemoveAt(0);
 
-                                                validArg = argStartBlock.HasValue && string.Compare(argList[0].Trim(), "JA", StringComparison.OrdinalIgnoreCase) == 0;
+                                                validArg = argStartBlock.HasValue;
                                                 sbArgStart.Append(argList[0]);
                                                 argList.RemoveAt(0);
 
@@ -1224,7 +1224,7 @@ namespace BmwDeepObd
                                         {
                                             if (argList.Count >= 1)
                                             {
-                                                validArg = true;
+                                                validArg = string.IsNullOrEmpty(jobInfo.ArgsFirst);
                                                 sbArgStart.Append(argList[0]);
                                                 argList.RemoveAt(0);
                                             }
