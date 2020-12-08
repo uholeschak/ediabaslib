@@ -6967,7 +6967,7 @@ namespace BmwDeepObd
                         if (jobNodeOld != null)
                         {
                             jobNodeNew.ReplaceAttributes(from el in jobNodeOld.Attributes()
-                                where (el.Name != "id" && el.Name != "name" && el.Name != "args" && el.Name != "arg_limit" && el.Name != "fixed_func_struct_id")
+                                where (el.Name != "id" && el.Name != "name" && el.Name != "args_first" && el.Name != "args" && el.Name != "arg_limit" && el.Name != "fixed_func_struct_id")
                                 select new XAttribute(el));
                         }
                     }
@@ -6979,10 +6979,18 @@ namespace BmwDeepObd
                         jobNodeNew.Add(new XAttribute("fixed_func_struct_id", job.EcuFixedFuncStruct.Id));
                     }
 
-                    string jobArgs = XmlToolEcuActivity.GetJobArgs(job, job.Results, ecuInfo, out string args2);
-                    if (!string.IsNullOrEmpty(jobArgs))
+                    string jobArgs1 = XmlToolEcuActivity.GetJobArgs(job, job.Results, ecuInfo, out string jobArgs2);
+                    if (!string.IsNullOrEmpty(jobArgs1))
                     {
-                        jobNodeNew.Add(new XAttribute("args", jobArgs));
+                        if (!string.IsNullOrEmpty(jobArgs2))
+                        {
+                            jobNodeNew.Add(new XAttribute("args_first", jobArgs1));
+                            jobNodeNew.Add(new XAttribute("args", jobArgs2));
+                        }
+                        else
+                        {
+                            jobNodeNew.Add(new XAttribute("args", jobArgs1));
+                        }
                     }
 
                     if (job.ArgLimit >= 0)

@@ -1032,9 +1032,9 @@ namespace BmwDeepObd
             return string.Format(XmlToolActivity.Culture, "{0};{1}", mwTabEntry.BlockNumber, ecuInfo.ReadCommand);
         }
 
-        public static string GetJobArgs(JobInfo job, List<ResultInfo> resultInfoList, XmlToolActivity.EcuInfo ecuInfo, out string args2, bool selectAll = false)
+        public static string GetJobArgs(JobInfo job, List<ResultInfo> resultInfoList, XmlToolActivity.EcuInfo ecuInfo, out string jobArgs2, bool selectAll = false)
         {
-            args2 = string.Empty;
+            jobArgs2 = string.Empty;
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
             {
                 return string.Empty;
@@ -1081,7 +1081,7 @@ namespace BmwDeepObd
 
                 if (!string.IsNullOrEmpty(argHead2))
                 {
-                    args2 = argHead2 + sb;
+                    jobArgs2 = argHead2 + sb;
                 }
 
                 return argHead + sb;
