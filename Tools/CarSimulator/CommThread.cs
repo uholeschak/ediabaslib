@@ -616,6 +616,11 @@ namespace CarSimulator
             {0x40AD, 26},
             {0x40AE, 18},
             {0x40AF, 10},
+            {0x4284, 2},
+            {0x4267, 2},
+            {0x44A2, 2},
+            {0x5267, 2},
+            {0x5268, 2},
         };
 
         private readonly Dictionary<int, int> G31Vcp11Service22Dict = new Dictionary<int, int>()
