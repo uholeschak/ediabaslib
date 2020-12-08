@@ -4710,6 +4710,7 @@ namespace CarSimulator
 
                         foreach (DynamicUdsValue dynamicUdsValue in dynamicUdsEntry.UdsValueList)
                         {
+                            Debug.WriteLine("UDS Data: ID={0:X04} P={1} L={2}", dynamicUdsValue.DataId, dynamicUdsValue.DataPos, dynamicUdsValue.DataLength);
                             for (int pos = 0; pos < dynamicUdsValue.DataLength; pos++)
                             {
                                 byte value = 0x00;
