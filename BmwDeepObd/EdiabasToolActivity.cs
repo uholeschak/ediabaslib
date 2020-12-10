@@ -42,7 +42,8 @@ namespace BmwDeepObd
             Undefined,
             Float,
             String,
-            Binary
+            Binary,
+            Bit
         }
 
         public class ExtraInfo
@@ -308,7 +309,7 @@ namespace BmwDeepObd
 
         public const string TableSgFunctions = @"SG_FUNKTIONEN";
         public const string SgFuncUnitValName = @"0-n";
-        public const string SgFuncUnitBitField = @"BITFIELD";
+        public const string SgFuncUnitBit = @"Bit";
 
         // data type strings
         public const string DataTypeChar = @"char";
@@ -318,6 +319,7 @@ namespace BmwDeepObd
         public const string DataTypeDouble = @"double";
         public const string DataTypeString = @"string";
         public const string DataTypeData = @"data";
+        public const string DataTypeBitField = @"BITFIELD";
         public const string DataTypeUnsigned = @"unsigned";
         public const string DataTypeMotorola = @"motorola";
 
@@ -2423,6 +2425,13 @@ namespace BmwDeepObd
 
                         if (!string.IsNullOrEmpty(arg) && !string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(service))
                         {
+#if false
+                            bool bitfield = false;
+                            if (id == "0x40C3" || id == "0x40E1" || id == "0x6005" || id == "0xF0EA" || id == "0xF109")
+                            {
+                                bitfield = true;
+                            }
+#endif
                             List<int> serviceList = new List<int>();
                             string[] serviceArray = service.Split(";");
                             foreach (string serviceEntry in serviceArray)
@@ -2443,7 +2452,7 @@ namespace BmwDeepObd
                             List<SgFuncNameInfo> resInfoList = null;
                             if (!string.IsNullOrEmpty(resTab))
                             {
-                                resInfoList = ReadSgFuncNameTable(resTab, SgFuncUnitBitField);
+                                resInfoList = ReadSgFuncNameTable(resTab);
                             }
 
                             sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, unit, nameInfoList, serviceList, argInfoList, resInfoList));
@@ -2659,7 +2668,7 @@ namespace BmwDeepObd
             return argInfoList;
         }
 
-        private List<SgFuncNameInfo> ReadSgFuncNameTable(string tableName, string unit)
+        private List<SgFuncNameInfo> ReadSgFuncNameTable(string tableName, string unit = null)
         {
             try
             {
@@ -2675,11 +2684,15 @@ namespace BmwDeepObd
                 }
 
                 List<SgFuncNameInfo> nameInfoList = null;
-                if (string.Compare(unit, SgFuncUnitValName, StringComparison.OrdinalIgnoreCase) == 0)
+                if (unit == null)
+                {
+                    nameInfoList = ReadSgFuncBitFieldTable(tableName);
+                }
+                else if (string.Compare(unit, SgFuncUnitValName, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     nameInfoList = ReadSgFuncValNameTable(tableName);
                 }
-                else if (string.Compare(unit, SgFuncUnitBitField, StringComparison.OrdinalIgnoreCase) == 0)
+                else if (string.Compare(unit, SgFuncUnitBit, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     nameInfoList = ReadSgFuncBitFieldTable(tableName);
                 }
@@ -2918,18 +2931,28 @@ namespace BmwDeepObd
                             }
                         }
 
-                        if (!string.IsNullOrEmpty(resultName))
+                        List<SgFuncNameInfo> nameInfoList = ReadSgFuncNameTable(name, unit);
+                        TableDataType tableDataType = ConvertDataType(dataType, out double? _, out double? _, out int? dataLength);
+                        if (tableDataType == TableDataType.Bit)
                         {
-                            List<SgFuncNameInfo> nameInfoList = ReadSgFuncNameTable(name, unit);
-
-                            TableDataType tableDataType = ConvertDataType(dataType, out double? _, out double? _, out int? dataLength);
-                            double? mulValue = ConvertFloatValue(mul);
-                            double? divValue = ConvertFloatValue(div);
-                            double? addValue = ConvertFloatValue(add);
-
-                            bitFieldInfoList.Add(new SgFuncBitFieldInfo(resultName, unit, dataType, tableDataType,
-                                mask, mulValue, divValue, addValue, dataLength, nameInfoList, info));
+                            foreach (SgFuncNameInfo sgFuncNameInfo in nameInfoList)
+                            {
+                                if (sgFuncNameInfo is SgFuncBitFieldInfo sgFuncBitField)
+                                {
+                                    if (sgFuncBitField.Length.HasValue)
+                                    {
+                                        dataLength = sgFuncBitField.Length;
+                                        break;
+                                    }
+                                }
+                            }
                         }
+                        double? mulValue = ConvertFloatValue(mul);
+                        double? divValue = ConvertFloatValue(div);
+                        double? addValue = ConvertFloatValue(add);
+
+                        bitFieldInfoList.Add(new SgFuncBitFieldInfo(resultName, unit, dataType, tableDataType,
+                            mask, mulValue, divValue, addValue, dataLength, nameInfoList, info));
 
                         dictIndex++;
                     }
@@ -3066,6 +3089,10 @@ namespace BmwDeepObd
                 {
                     dataType = TableDataType.Binary;
                     bHasLength = true;
+                }
+                else if (compareText.Contains(DataTypeBitField))
+                {
+                    dataType = TableDataType.Bit;
                 }
 
                 if (bHasLength)
