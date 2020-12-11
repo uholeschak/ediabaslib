@@ -3052,6 +3052,7 @@ namespace BmwDeepObd
                 if (compareText.Contains(DataTypeChar))
                 {
                     dataType = TableDataType.Float;
+                    length = 1;
                     if (compareText.Contains(DataTypeUnsigned))
                     {
                         minValue = byte.MinValue;
@@ -3066,6 +3067,7 @@ namespace BmwDeepObd
                 else if (compareText.Contains(DataTypeInt))
                 {
                     dataType = TableDataType.Float;
+                    length = 2;
                     if (compareText.Contains(DataTypeUnsigned))
                     {
                         minValue = UInt16.MinValue;
@@ -3080,6 +3082,7 @@ namespace BmwDeepObd
                 else if (compareText.Contains(DataTypeLong))
                 {
                     dataType = TableDataType.Float;
+                    length = 4;
                     if (compareText.Contains(DataTypeUnsigned))
                     {
                         minValue = UInt32.MinValue;
@@ -3094,12 +3097,14 @@ namespace BmwDeepObd
                 else if (compareText.Contains(DataTypeFloat))
                 {
                     dataType = TableDataType.Float;
+                    length = 4;
                     minValue = float.MinValue;
                     maxValue = float.MaxValue;
                 }
                 else if (compareText.Contains(DataTypeDouble))
                 {
                     dataType = TableDataType.Float;
+                    length = 8;
                     minValue = double.MinValue;
                     maxValue = double.MaxValue;
                 }
