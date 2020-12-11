@@ -2636,8 +2636,7 @@ namespace BmwDeepObd
                         if (!string.IsNullOrEmpty(arg))
                         {
                             List<SgFuncNameInfo> nameInfoList = ReadSgFuncNameTable(name, unit);
-
-                            TableDataType tableDataType = ConvertDataType(dataType, out double? dataMinValue, out double? dataMaxValue, out int? dataLength);
+                            TableDataType tableDataType = ConvertDataType(dataType, nameInfoList, out double ? dataMinValue, out double? dataMaxValue, out int? dataLength);
                             double? mulValue = ConvertFloatValue(mul);
                             double? divValue = ConvertFloatValue(div);
                             double? addValue = ConvertFloatValue(add);
@@ -2677,22 +2676,24 @@ namespace BmwDeepObd
                     return null;
                 }
 
-                string key = (tableName + "_" + unit).ToUpperInvariant();
+                string key = tableName;
+                if (!string.IsNullOrEmpty(unit))
+                {
+                    key += "_" + unit;
+                }
+                key = key.ToUpperInvariant();
+
                 if (_sgFuncNameInfoDict.TryGetValue(key, out List<SgFuncNameInfo> infoList))
                 {
                     return infoList;
                 }
 
-                List<SgFuncNameInfo> nameInfoList = null;
-                if (unit == null)
-                {
-                    nameInfoList = ReadSgFuncBitFieldTable(tableName);
-                }
-                else if (string.Compare(unit, SgFuncUnitValName, StringComparison.OrdinalIgnoreCase) == 0)
+                List<SgFuncNameInfo> nameInfoList;
+                if (!string.IsNullOrEmpty(unit) && string.Compare(unit, SgFuncUnitValName, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     nameInfoList = ReadSgFuncValNameTable(tableName);
                 }
-                else if (string.Compare(unit, SgFuncUnitBit, StringComparison.OrdinalIgnoreCase) == 0)
+                else
                 {
                     nameInfoList = ReadSgFuncBitFieldTable(tableName);
                 }
@@ -2932,21 +2933,7 @@ namespace BmwDeepObd
                         }
 
                         List<SgFuncNameInfo> nameInfoList = ReadSgFuncNameTable(name, unit);
-                        TableDataType tableDataType = ConvertDataType(dataType, out double? _, out double? _, out int? dataLength);
-                        if (tableDataType == TableDataType.Bit)
-                        {
-                            foreach (SgFuncNameInfo sgFuncNameInfo in nameInfoList)
-                            {
-                                if (sgFuncNameInfo is SgFuncBitFieldInfo sgFuncBitField)
-                                {
-                                    if (sgFuncBitField.Length.HasValue)
-                                    {
-                                        dataLength = sgFuncBitField.Length;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
+                        TableDataType tableDataType = ConvertDataType(dataType, nameInfoList, out double ? _, out double? _, out int? dataLength);
                         double? mulValue = ConvertFloatValue(mul);
                         double? divValue = ConvertFloatValue(div);
                         double? addValue = ConvertFloatValue(add);
@@ -3015,7 +3002,7 @@ namespace BmwDeepObd
             }
         }
 
-        private TableDataType ConvertDataType(string text, out double? minValue, out double? maxValue, out int? length)
+        private TableDataType ConvertDataType(string text, List<SgFuncNameInfo> nameInfoList, out double? minValue, out double? maxValue, out int? length)
         {
             TableDataType dataType = TableDataType.Undefined;
             minValue = null;
@@ -3093,6 +3080,20 @@ namespace BmwDeepObd
                 else if (compareText.Contains(DataTypeBitField))
                 {
                     dataType = TableDataType.Bit;
+                    if (nameInfoList != null)
+                    {
+                        foreach (SgFuncNameInfo sgFuncNameInfo in nameInfoList)
+                        {
+                            if (sgFuncNameInfo is SgFuncBitFieldInfo sgFuncBitField)
+                            {
+                                if (sgFuncBitField.Length.HasValue)
+                                {
+                                    length = sgFuncBitField.Length;
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
 
                 if (bHasLength)
