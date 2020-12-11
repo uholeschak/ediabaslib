@@ -1536,8 +1536,36 @@ namespace BmwDeepObd
                         {
                             if (argFuncInfo.ResInfoList != null)
                             {
+                                List<SgFuncNameInfo> resultList = new List<SgFuncNameInfo>();
+                                foreach (SgFuncNameInfo funcNameInfo in argFuncInfo.ResInfoList)
+                                {
+                                    if (funcNameInfo is SgFuncBitFieldInfo funcBitFieldInfo)
+                                    {
+                                        if (funcBitFieldInfo.NameInfoList != null)
+                                        {
+                                            foreach (SgFuncNameInfo nameInfo in funcBitFieldInfo.NameInfoList)
+                                            {
+                                                if (nameInfo is SgFuncBitFieldInfo nameInfoBitField)
+                                                {
+                                                    if (!string.IsNullOrEmpty(nameInfoBitField.ResultName))
+                                                    {
+                                                        resultList.Add(nameInfoBitField);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (!string.IsNullOrEmpty(funcBitFieldInfo.ResultName))
+                                            {
+                                                resultList.Add(funcNameInfo);
+                                            }
+                                        }
+                                    }
+                                }
+
                                 int groupSize = 0;
-                                foreach (SgFuncNameInfo funcNameInfo in argFuncInfo.ResInfoList.OrderBy(x => (x as SgFuncBitFieldInfo)?.ResultName ?? string.Empty))
+                                foreach (SgFuncNameInfo funcNameInfo in resultList.OrderBy(x => (x as SgFuncBitFieldInfo)?.ResultName ?? string.Empty))
                                 {
                                     if (funcNameInfo is SgFuncBitFieldInfo funcBitFieldInfo)
                                     {
