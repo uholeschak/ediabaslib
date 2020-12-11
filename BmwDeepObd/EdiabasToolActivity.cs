@@ -158,7 +158,7 @@ namespace BmwDeepObd
         public class SgFuncArgInfo
         {
             public SgFuncArgInfo(string arg, string unit, string dataType, TableDataType tableDataType, string mask, string minText, string maxText,
-                double? mul, double? div, double? add, double? min, double? max, int? length, List<SgFuncNameInfo> nameInfoList, string info)
+                double? mul, double? div, double? add, double? min, double? max, int? length, string name, string info)
             {
                 Arg = arg;
                 Unit = unit;
@@ -173,7 +173,8 @@ namespace BmwDeepObd
                 Min = min;
                 Max = max;
                 Length = length;
-                NameInfoList = nameInfoList;
+                Name = name;
+                NameInfoList = null;
                 Info = info;
                 InfoTrans = null;
             }
@@ -184,7 +185,7 @@ namespace BmwDeepObd
 
             public string DataType { get; }
 
-            public TableDataType TableDataType { get; }
+            public TableDataType TableDataType { get; set; }
 
             public string Mask { get; }
 
@@ -202,7 +203,9 @@ namespace BmwDeepObd
 
             public double? Max { get; }
 
-            public int? Length { get; }
+            public int? Length { get; set; }
+
+            public string Name { get; }
 
             public List<SgFuncNameInfo> NameInfoList { get; set; }
 
@@ -231,7 +234,7 @@ namespace BmwDeepObd
         public class SgFuncBitFieldInfo : SgFuncNameInfo
         {
             public SgFuncBitFieldInfo(string resultName, string unit, string dataType, TableDataType tableDataType, string mask,
-                double? mul, double? div, double? add, int? length, List<SgFuncNameInfo> nameInfoList, string info)
+                double? mul, double? div, double? add, int? length, string name, string info)
             {
                 ResultName = resultName;
                 Unit = unit;
@@ -242,7 +245,8 @@ namespace BmwDeepObd
                 Div = div;
                 Add = add;
                 Length = length;
-                NameInfoList = nameInfoList;
+                Name = name;
+                NameInfoList = null;
                 Info = info;
                 InfoTrans = null;
             }
@@ -253,7 +257,7 @@ namespace BmwDeepObd
 
             public string DataType { get; }
 
-            public TableDataType TableDataType { get; }
+            public TableDataType TableDataType { get; set; }
 
             public string Mask { get; }
 
@@ -263,7 +267,9 @@ namespace BmwDeepObd
 
             public double? Add { get; }
 
-            public int? Length { get; }
+            public int? Length { get; set; }
+
+            public string Name { get; }
 
             public List<SgFuncNameInfo> NameInfoList { get; set; }
 
@@ -2648,8 +2654,7 @@ namespace BmwDeepObd
 
                         if (!string.IsNullOrEmpty(arg))
                         {
-                            List<SgFuncNameInfo> nameInfoList = ReadSgFuncNameTable(name, unit);
-                            TableDataType tableDataType = ConvertDataType(dataType, nameInfoList, out double ? dataMinValue, out double? dataMaxValue, out int? dataLength);
+                            TableDataType tableDataType = ConvertDataType(dataType, null, out double? dataMinValue, out double? dataMaxValue, out int? dataLength);
                             double? mulValue = ConvertFloatValue(mul);
                             double? divValue = ConvertFloatValue(div);
                             double? addValue = ConvertFloatValue(add);
@@ -2660,11 +2665,19 @@ namespace BmwDeepObd
                             double? maxValue = ConvertFloatValue(max);
                             maxValue ??= ScaleValue(dataMaxValue, mulValue, divValue, addValue);
                             argInfoList.Add(new SgFuncArgInfo(arg, unit, dataType, tableDataType, mask, min, max,
-                                mulValue, divValue, addValue, minValue, maxValue, dataLength, nameInfoList, info));
+                                mulValue, divValue, addValue, minValue, maxValue, dataLength, name, info));
                         }
 
                         dictIndex++;
                     }
+                }
+
+                foreach (SgFuncArgInfo funcArgInfo in argInfoList)
+                {
+                    List<SgFuncNameInfo> nameInfoList = ReadSgFuncNameTable(funcArgInfo.Name, funcArgInfo.Unit);
+                    funcArgInfo.TableDataType = ConvertDataType(funcArgInfo.DataType, nameInfoList, out double? _, out double? _, out int? dataLength);
+                    funcArgInfo.NameInfoList = nameInfoList;
+                    funcArgInfo.Length = dataLength;
                 }
 
                 if (argInfoList.Count > 0)
@@ -2945,16 +2958,26 @@ namespace BmwDeepObd
                             }
                         }
 
-                        List<SgFuncNameInfo> nameInfoList = ReadSgFuncNameTable(name, unit);
-                        TableDataType tableDataType = ConvertDataType(dataType, nameInfoList, out double ? _, out double? _, out int? dataLength);
+                        TableDataType tableDataType = ConvertDataType(dataType, null, out double? _, out double? _, out int? dataLength);
                         double? mulValue = ConvertFloatValue(mul);
                         double? divValue = ConvertFloatValue(div);
                         double? addValue = ConvertFloatValue(add);
 
                         bitFieldInfoList.Add(new SgFuncBitFieldInfo(resultName, unit, dataType, tableDataType,
-                            mask, mulValue, divValue, addValue, dataLength, nameInfoList, info));
+                            mask, mulValue, divValue, addValue, dataLength, name, info));
 
                         dictIndex++;
+                    }
+                }
+
+                foreach (SgFuncNameInfo funcNameInfo in bitFieldInfoList)
+                {
+                    if (funcNameInfo is SgFuncBitFieldInfo funcBitFieldInfo)
+                    {
+                        List<SgFuncNameInfo> nameInfoList = ReadSgFuncNameTable(funcBitFieldInfo.Name, funcBitFieldInfo.Unit);
+                        funcBitFieldInfo.NameInfoList = nameInfoList;
+                        funcBitFieldInfo.TableDataType = ConvertDataType(funcBitFieldInfo.DataType, nameInfoList, out double? _, out double? _, out int? dataLength);
+                        funcBitFieldInfo.Length = dataLength;
                     }
                 }
             }
