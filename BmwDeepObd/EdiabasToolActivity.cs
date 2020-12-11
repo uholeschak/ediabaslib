@@ -111,8 +111,7 @@ namespace BmwDeepObd
         public class SgFuncInfo
         {
             public SgFuncInfo(string arg, string id, string result, string info, string unit,
-                List<SgFuncNameInfo> nameInfoList, List<int> serviceList,
-                List<SgFuncArgInfo> argInfoList, List<SgFuncNameInfo> resInfoList)
+                string name, List<int> serviceList, string argTab, string resTab)
             {
                 Arg = arg;
                 Id = id;
@@ -120,10 +119,13 @@ namespace BmwDeepObd
                 Info = info;
                 InfoTrans = null;
                 Unit = unit;
-                NameInfoList = nameInfoList;
+                Name = name;
+                NameInfoList = null;
                 ServiceList = serviceList;
-                ArgInfoList = argInfoList;
-                ResInfoList = resInfoList;
+                ArgTab = argTab;
+                ArgInfoList = null;
+                ResTab = resTab;
+                ResInfoList = null;
             }
 
             public string Arg { get; }
@@ -138,13 +140,19 @@ namespace BmwDeepObd
 
             public string Unit { get; }
 
-            public List<SgFuncNameInfo> NameInfoList { get; }
+            public string Name { get; }
+
+            public List<SgFuncNameInfo> NameInfoList { get; set; }
 
             public List<int> ServiceList { get; }
 
-            public List<SgFuncArgInfo> ArgInfoList { get; }
+            public string ArgTab { get; }
 
-            public List<SgFuncNameInfo> ResInfoList { get; }
+            public List<SgFuncArgInfo> ArgInfoList { get; set; }
+
+            public string ResTab { get; }
+
+            public List<SgFuncNameInfo> ResInfoList { get; set; }
         }
 
         public class SgFuncArgInfo
@@ -196,7 +204,7 @@ namespace BmwDeepObd
 
             public int? Length { get; }
 
-            public List<SgFuncNameInfo> NameInfoList { get; }
+            public List<SgFuncNameInfo> NameInfoList { get; set; }
 
             public string Info { get; }
 
@@ -257,7 +265,7 @@ namespace BmwDeepObd
 
             public int? Length { get; }
 
-            public List<SgFuncNameInfo> NameInfoList { get; }
+            public List<SgFuncNameInfo> NameInfoList { get; set; }
 
             public string Info { get; }
 
@@ -319,7 +327,7 @@ namespace BmwDeepObd
         public const string DataTypeDouble = @"double";
         public const string DataTypeString = @"string";
         public const string DataTypeData = @"data";
-        public const string DataTypeBitField = @"BITFIELD";
+        public const string DataTypeBitField = @"bitfield";
         public const string DataTypeUnsigned = @"unsigned";
         public const string DataTypeMotorola = @"motorola";
 
@@ -2425,13 +2433,6 @@ namespace BmwDeepObd
 
                         if (!string.IsNullOrEmpty(arg) && !string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(service))
                         {
-#if false
-                            bool bitfield = false;
-                            if (id == "0x40C3" || id == "0x40E1" || id == "0x6005" || id == "0xF0EA" || id == "0xF109")
-                            {
-                                bitfield = true;
-                            }
-#endif
                             List<int> serviceList = new List<int>();
                             string[] serviceArray = service.Split(";");
                             foreach (string serviceEntry in serviceArray)
@@ -2442,23 +2443,35 @@ namespace BmwDeepObd
                                 }
                             }
 
-                            List<SgFuncNameInfo> nameInfoList = ReadSgFuncNameTable(name, unit);
-                            List<SgFuncArgInfo> argInfoList = null;
-                            if (!string.IsNullOrEmpty(argTab))
-                            {
-                                argInfoList = ReadSgFuncArgTable(argTab);
-                            }
-
-                            List<SgFuncNameInfo> resInfoList = null;
-                            if (!string.IsNullOrEmpty(resTab))
-                            {
-                                resInfoList = ReadSgFuncNameTable(resTab);
-                            }
-
-                            sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, unit, nameInfoList, serviceList, argInfoList, resInfoList));
+                            sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, unit, name, serviceList, argTab, resTab));
                         }
 
                         dictIndex++;
+                    }
+                }
+
+                foreach (SgFuncInfo sgFuncInfo in sgFuncInfoList)
+                {
+#if false
+                    bool bitfield = false;
+                    if (sgFuncInfo.Id == "0x40C3" || sgFuncInfo.Id == "0x40E1" || sgFuncInfo.Id == "0x6005" || sgFuncInfo.Id == "0xF0EA" || sgFuncInfo.Id == "0xF109")
+                    {
+                        bitfield = true;
+                    }
+#endif
+                    if (!string.IsNullOrEmpty(sgFuncInfo.Name))
+                    {
+                        sgFuncInfo.NameInfoList = ReadSgFuncNameTable(sgFuncInfo.Name, sgFuncInfo.Unit);
+                    }
+
+                    if (!string.IsNullOrEmpty(sgFuncInfo.ArgTab))
+                    {
+                        sgFuncInfo.ArgInfoList = ReadSgFuncArgTable(sgFuncInfo.ArgTab);
+                    }
+
+                    if (!string.IsNullOrEmpty(sgFuncInfo.ResTab))
+                    {
+                        sgFuncInfo.ResInfoList = ReadSgFuncNameTable(sgFuncInfo.ResTab);
                     }
                 }
             }
