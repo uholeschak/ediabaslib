@@ -1541,7 +1541,8 @@ namespace BmwDeepObd
                                 {
                                     if (funcNameInfo is SgFuncBitFieldInfo funcBitFieldInfo)
                                     {
-                                        if (funcBitFieldInfo.NameInfoList != null)
+                                        if (funcBitFieldInfo.TableDataType == TableDataType.Bit &&
+                                            funcBitFieldInfo.NameInfoList != null)
                                         {
                                             foreach (SgFuncNameInfo nameInfo in funcBitFieldInfo.NameInfoList)
                                             {
