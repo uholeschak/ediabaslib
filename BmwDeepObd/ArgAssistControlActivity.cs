@@ -10,6 +10,7 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
+using BmwFileReader;
 using EdiabasLib;
 
 namespace BmwDeepObd
@@ -21,7 +22,7 @@ namespace BmwDeepObd
     {
         public class ParameterData
         {
-            public ParameterData(EdiabasToolActivity.SgFuncArgInfo SgFuncArgInfo, TextView textViewCaption, TextView textViewDesc, Drawable defaultBackground, List<object> itemList)
+            public ParameterData(SgFunctions.SgFuncArgInfo SgFuncArgInfo, TextView textViewCaption, TextView textViewDesc, Drawable defaultBackground, List<object> itemList)
             {
                 FuncArgInfo = SgFuncArgInfo;
                 TextViewCaption = textViewCaption;
@@ -30,7 +31,7 @@ namespace BmwDeepObd
                 ItemList = itemList;
             }
 
-            public EdiabasToolActivity.SgFuncArgInfo FuncArgInfo { get; }
+            public SgFunctions.SgFuncArgInfo FuncArgInfo { get; }
 
             public TextView TextViewCaption { get; }
 
@@ -89,8 +90,8 @@ namespace BmwDeepObd
 
             InitBaseVariables();
 
-            _controlRoutine = _serviceId == (int)EdiabasToolActivity.UdsServiceId.RoutineControl;
-            _controlIo = _serviceId == (int)EdiabasToolActivity.UdsServiceId.IoControlById;
+            _controlRoutine = _serviceId == (int)SgFunctions.UdsServiceId.RoutineControl;
+            _controlIo = _serviceId == (int)SgFunctions.UdsServiceId.IoControlById;
 
             _scrollViewArgAssist = FindViewById<ScrollView>(Resource.Id.scrollViewArgAssist);
             _scrollViewArgAssist.SetOnTouchListener(this);
@@ -375,7 +376,7 @@ namespace BmwDeepObd
                 _spinnerArgumentAdapter.Items.Clear();
                 if (_serviceId >= 0)
                 {
-                    foreach (EdiabasToolActivity.SgFuncInfo funcInfo in _sgFuncInfoList.OrderBy(x => argTypeId ? x.Id : x.Arg))
+                    foreach (SgFunctions.SgFuncInfo funcInfo in _sgFuncInfoList.OrderBy(x => argTypeId ? x.Id : x.Arg))
                     {
                         if (funcInfo.ServiceList.Contains(_serviceId))
                         {
@@ -438,11 +439,11 @@ namespace BmwDeepObd
                 if (position >= 0 && position < _spinnerArgumentAdapter.ItemsVisible.Count)
                 {
                     EdiabasToolActivity.ExtraInfo item = _spinnerArgumentAdapter.ItemsVisible[position];
-                    if (item.Tag is EdiabasToolActivity.SgFuncInfo funcInfo)
+                    if (item.Tag is SgFunctions.SgFuncInfo funcInfo)
                     {
                         if (funcInfo.ArgInfoList != null)
                         {
-                            foreach (EdiabasToolActivity.SgFuncArgInfo funcArgInfo in funcInfo.ArgInfoList)
+                            foreach (SgFunctions.SgFuncArgInfo funcArgInfo in funcInfo.ArgInfoList)
                             {
                                 string selectParam = string.Empty;
                                 if (selectParams != null && selectParams.Count > _parameterList.Count)
@@ -498,7 +499,7 @@ namespace BmwDeepObd
                                 }
 
 
-                                if (funcArgInfo.TableDataType == EdiabasToolActivity.TableDataType.Float)
+                                if (funcArgInfo.TableDataType == SgFunctions.TableDataType.Float)
                                 {
                                     string minText = funcArgInfo.MinText;
                                     if (string.IsNullOrEmpty(minText))
@@ -549,7 +550,7 @@ namespace BmwDeepObd
                                 List<object> itemList = new List<object>();
                                 if (funcArgInfo.NameInfoList != null && funcArgInfo.NameInfoList.Count > 0)
                                 {
-                                    if (funcArgInfo.NameInfoList[0] is EdiabasToolActivity.SgFuncValNameInfo)
+                                    if (funcArgInfo.NameInfoList[0] is SgFunctions.SgFuncValNameInfo)
                                     {
                                         Spinner spinner = new Spinner(this);
                                         spinner.SetOnTouchListener(this);
@@ -558,9 +559,9 @@ namespace BmwDeepObd
                                         spinnerAdapter.Items.Add(new StringObjType("--", null, Android.Graphics.Color.Red));
                                         int selection = 0;
                                         int index = 1;
-                                        foreach (EdiabasToolActivity.SgFuncNameInfo funcNameInfo in funcArgInfo.NameInfoList)
+                                        foreach (SgFunctions.SgFuncNameInfo funcNameInfo in funcArgInfo.NameInfoList)
                                         {
-                                            if (funcNameInfo is EdiabasToolActivity.SgFuncValNameInfo valNameInfo)
+                                            if (funcNameInfo is SgFunctions.SgFuncValNameInfo valNameInfo)
                                             {
                                                 spinner.Adapter = spinnerAdapter;
                                                 StringBuilder sbName = new StringBuilder();
@@ -677,7 +678,7 @@ namespace BmwDeepObd
                         {
                             if (itemObject is EditText editText)
                             {
-                                EdiabasToolActivity.SgFuncArgInfo funcArgInfo = parameterData.FuncArgInfo;
+                                SgFunctions.SgFuncArgInfo funcArgInfo = parameterData.FuncArgInfo;
                                 string paramText = editText.Text ?? string.Empty;
                                 bool paramValid = true;
 
@@ -685,7 +686,7 @@ namespace BmwDeepObd
                                 {
                                     switch (funcArgInfo.TableDataType)
                                     {
-                                        case EdiabasToolActivity.TableDataType.Float:
+                                        case SgFunctions.TableDataType.Float:
                                         {
                                             double floatValue = EdiabasNet.StringToFloat(paramText, out bool valid);
                                             if (!valid)
@@ -707,7 +708,7 @@ namespace BmwDeepObd
                                             break;
                                         }
 
-                                        case EdiabasToolActivity.TableDataType.String:
+                                        case SgFunctions.TableDataType.String:
                                         {
                                             int length = paramText.Length;
                                             if (length == 0)
@@ -733,7 +734,7 @@ namespace BmwDeepObd
                                             break;
                                         }
 
-                                        case EdiabasToolActivity.TableDataType.Binary:
+                                        case SgFunctions.TableDataType.Binary:
                                         {
                                             byte[] data = EdiabasNet.HexToByteArray(paramText);
                                             if (data == null || data.Length == 0)
@@ -874,7 +875,7 @@ namespace BmwDeepObd
                                     if (spinnerPos >= 0 && spinnerPos < spinnerAdapter.Items.Count)
                                     {
                                         StringObjType itemSpinner = spinnerAdapter.Items[spinnerPos];
-                                        if (itemSpinner.Data is EdiabasToolActivity.SgFuncValNameInfo valNameInfo)
+                                        if (itemSpinner.Data is SgFunctions.SgFuncValNameInfo valNameInfo)
                                         {
                                             parameter = valNameInfo.Text;
                                         }
