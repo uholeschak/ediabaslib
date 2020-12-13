@@ -9,6 +9,7 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
+using BmwFileReader;
 using EdiabasLib;
 
 namespace BmwDeepObd
@@ -26,7 +27,7 @@ namespace BmwDeepObd
         public const string ExtraArguments = "arguments";
         public const string ExtraExecute = "execute";
 
-        public static List<EdiabasToolActivity.SgFuncInfo> IntentSgFuncInfo { get; set; }
+        public static List<SgFunctions.SgFuncInfo> IntentSgFuncInfo { get; set; }
 
         protected InputMethodManager _imm;
         protected View _contentView;
@@ -40,7 +41,7 @@ namespace BmwDeepObd
         protected TextView _textViewArgTypeTitle;
         protected RadioButton _radioButtonArgTypeArg;
         protected RadioButton _radioButtonArgTypeId;
-        protected List<EdiabasToolActivity.SgFuncInfo> _sgFuncInfoList;
+        protected List<SgFunctions.SgFuncInfo> _sgFuncInfoList;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {

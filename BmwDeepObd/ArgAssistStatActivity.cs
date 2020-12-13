@@ -8,6 +8,7 @@ using Android.OS;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using BmwFileReader;
 using EdiabasLib;
 
 namespace BmwDeepObd
@@ -53,7 +54,7 @@ namespace BmwDeepObd
 
             InitBaseVariables();
 
-            _dynamicId = _serviceId == (int) EdiabasToolActivity.UdsServiceId.DynamicallyDefineId;
+            _dynamicId = _serviceId == (int)SgFunctions.UdsServiceId.DynamicallyDefineId;
             if (!_activityRecreated && _instanceData != null)
             {
                 _instanceData.Arguments = Intent.GetStringExtra(ExtraArguments);
@@ -267,7 +268,7 @@ namespace BmwDeepObd
                 _argsListAdapter.Items.Clear();
                 if (_serviceId >= 0)
                 {
-                    foreach (EdiabasToolActivity.SgFuncInfo funcInfo in _sgFuncInfoList.OrderBy(x => argTypeId ? x.Id : x.Arg))
+                    foreach (SgFunctions.SgFuncInfo funcInfo in _sgFuncInfoList.OrderBy(x => argTypeId ? x.Id : x.Arg))
                     {
                         if (funcInfo.ServiceList.Contains(_serviceId))
                         {

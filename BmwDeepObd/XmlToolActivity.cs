@@ -4650,7 +4650,7 @@ namespace BmwDeepObd
                 {
                     if (Int32.TryParse(serviceEntry, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out Int32 value))
                     {
-                        if (value == (int) EdiabasToolActivity.UdsServiceId.ReadDataById)
+                        if (value == (int)SgFunctions.UdsServiceId.ReadDataById)
                         {
                             readService = true;
                             break;
