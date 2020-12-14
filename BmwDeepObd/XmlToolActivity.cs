@@ -4418,111 +4418,15 @@ namespace BmwDeepObd
                 if (statBlock || statRead)
                 {
                     AddSgFunctionResults(job);
-                }
-                else if (statMwBlock)
-                {   // use data from table instead of results
-                    try
-                    {
-                        _ediabas.ArgString = "MESSWERTETAB";
-                        _ediabas.ArgBinaryStd = null;
-                        _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.NoInitForVJobs = true;
-                        _ediabas.ExecuteJob("_TABLE");
-
-                        List<Dictionary<string, EdiabasNet.ResultData>> resultSetsTab = _ediabas.ResultSets;
-                        if (resultSetsTab != null && resultSetsTab.Count >= 2)
-                        {
-                            int argIndex = -1;
-                            int resultIndex = -1;
-                            int unitIndex = -1;
-                            int infoIndex = -1;
-                            int dictIndex = 0;
-                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSetsTab)
-                            {
-                                if (dictIndex == 0)
-                                {
-                                    dictIndex++;
-                                    continue;
-                                }
-                                string arg = string.Empty;
-                                string result = string.Empty;
-                                string unit = string.Empty;
-                                string info = string.Empty;
-                                for (int i = 0; ; i++)
-                                {
-                                    if (resultDict.TryGetValue("COLUMN" + i.ToString(Culture), out EdiabasNet.ResultData resultData))
-                                    {
-                                        if (resultData.OpData is string)
-                                        {
-                                            string entry = (string) resultData.OpData;
-                                            if (dictIndex == 1)
-                                            {   // header
-                                                if (string.Compare(entry, "ARG", StringComparison.OrdinalIgnoreCase) == 0)
-                                                {
-                                                    argIndex = i;
-                                                }
-                                                else if (string.Compare(entry, "EINHEIT", StringComparison.OrdinalIgnoreCase) == 0)
-                                                {
-                                                    unitIndex = i;
-                                                }
-                                                else if (string.Compare(entry, "RESULTNAME", StringComparison.OrdinalIgnoreCase) == 0)
-                                                {
-                                                    resultIndex = i;
-                                                }
-                                                else if (string.Compare(entry, "INFO", StringComparison.OrdinalIgnoreCase) == 0)
-                                                {
-                                                    infoIndex = i;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                if (!string.IsNullOrWhiteSpace(entry) && entry != "-")
-                                                {
-                                                    if (i == argIndex)
-                                                    {
-                                                        arg = entry;
-                                                    }
-                                                    else if (i == unitIndex)
-                                                    {
-                                                        unit = entry;
-                                                    }
-                                                    else if (i == resultIndex)
-                                                    {
-                                                        result = entry;
-                                                    }
-                                                    else if (i == infoIndex)
-                                                    {
-                                                        info = entry;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        break;
-                                    }
-                                }
-
-                                if (!string.IsNullOrEmpty(arg) && !string.IsNullOrEmpty(result))
-                                {
-                                    string comments = info;
-                                    if (!string.IsNullOrEmpty(unit))
-                                    {
-                                        comments += " [" + unit + "]";
-                                    }
-                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, result, DataTypeReal, arg, new List<string> { comments }));
-                                }
-                                dictIndex++;
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
                     continue;
                 }
+
+                if (statMwBlock)
+                {
+                    AddMwTabResults(job);
+                    continue;
+                }
+
                 _ediabas.ArgString = job.Name;
                 _ediabas.ArgBinaryStd = null;
                 _ediabas.ResultsRequests = string.Empty;
@@ -4744,6 +4648,110 @@ namespace BmwDeepObd
                         job.Results.Add(resultInfo);
                     }
                 }
+            }
+        }
+
+        private void AddMwTabResults(XmlToolEcuActivity.JobInfo job)
+        {
+            try
+            {
+                _ediabas.ArgString = "MESSWERTETAB";
+                _ediabas.ArgBinaryStd = null;
+                _ediabas.ResultsRequests = string.Empty;
+                _ediabas.NoInitForVJobs = true;
+                _ediabas.ExecuteJob("_TABLE");
+
+                List<Dictionary<string, EdiabasNet.ResultData>> resultSetsTab = _ediabas.ResultSets;
+                if (resultSetsTab != null && resultSetsTab.Count >= 2)
+                {
+                    int argIndex = -1;
+                    int resultIndex = -1;
+                    int unitIndex = -1;
+                    int infoIndex = -1;
+                    int dictIndex = 0;
+                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSetsTab)
+                    {
+                        if (dictIndex == 0)
+                        {
+                            dictIndex++;
+                            continue;
+                        }
+                        string arg = string.Empty;
+                        string result = string.Empty;
+                        string unit = string.Empty;
+                        string info = string.Empty;
+                        for (int i = 0; ; i++)
+                        {
+                            if (resultDict.TryGetValue("COLUMN" + i.ToString(Culture), out EdiabasNet.ResultData resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    string entry = (string)resultData.OpData;
+                                    if (dictIndex == 1)
+                                    {   // header
+                                        if (string.Compare(entry, "ARG", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            argIndex = i;
+                                        }
+                                        else if (string.Compare(entry, "EINHEIT", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            unitIndex = i;
+                                        }
+                                        else if (string.Compare(entry, "RESULTNAME", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            resultIndex = i;
+                                        }
+                                        else if (string.Compare(entry, "INFO", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            infoIndex = i;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (!string.IsNullOrWhiteSpace(entry) && entry != "-")
+                                        {
+                                            if (i == argIndex)
+                                            {
+                                                arg = entry;
+                                            }
+                                            else if (i == unitIndex)
+                                            {
+                                                unit = entry;
+                                            }
+                                            else if (i == resultIndex)
+                                            {
+                                                result = entry;
+                                            }
+                                            else if (i == infoIndex)
+                                            {
+                                                info = entry;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(arg) && !string.IsNullOrEmpty(result))
+                        {
+                            string comments = info;
+                            if (!string.IsNullOrEmpty(unit))
+                            {
+                                comments += " [" + unit + "]";
+                            }
+                            job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, result, DataTypeReal, arg, new List<string> { comments }));
+                        }
+                        dictIndex++;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
         }
 
