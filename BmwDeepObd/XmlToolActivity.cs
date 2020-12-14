@@ -4415,15 +4415,15 @@ namespace BmwDeepObd
                 bool statMwBlock = XmlToolEcuActivity.IsBmwReadStatusMwBlockJob(job);
                 bool statBlock = XmlToolEcuActivity.IsBmwReadStatusBlockJob(job);
                 bool statRead = XmlToolEcuActivity.IsBmwReadStatusJob(job);
-                if (statBlock || statRead)
-                {
-                    AddSgFunctionResults(job);
-                    continue;
-                }
-
                 if (statMwBlock)
                 {
                     AddMwTabResults(job);
+                    continue;
+                }
+
+                if (statBlock || statRead)
+                {
+                    AddSgFunctionResults(job);
                     continue;
                 }
 
