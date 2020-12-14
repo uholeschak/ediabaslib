@@ -1182,25 +1182,15 @@ namespace BmwDeepObd
                                     }
 
                                     List<string> edArgList = new List<string>();
-                                    bool statMbBlock = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
                                     bool statBlock = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0;
                                     bool statRead = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStat, StringComparison.OrdinalIgnoreCase) == 0;
-                                    if ((statMbBlock || statBlock || statRead) && jobInfo.ArgLimit > 0)
+                                    if ((statBlock || statRead) && jobInfo.ArgLimit > 0)
                                     {
                                         List<string> argList = argString.Split(";").ToList();
                                         int? argStartBlock = null;
                                         StringBuilder sbArgStart = new StringBuilder();
                                         bool validArg = false;
-                                        if (statMbBlock)
-                                        {
-                                            if (argList.Count >= 1)
-                                            {
-                                                validArg = string.IsNullOrEmpty(jobInfo.ArgsFirst) && string.Compare(argList[0].Trim(), "JA", StringComparison.OrdinalIgnoreCase) == 0;
-                                                sbArgStart.Append(argList[0]);
-                                                argList.RemoveAt(0);
-                                            }
-                                        }
-                                        else if (statBlock)
+                                        if (statBlock)
                                         {
                                             if (argList.Count >= 3)
                                             {

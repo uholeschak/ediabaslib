@@ -237,6 +237,11 @@ namespace BmwFileReader
 
         public List<SgFuncInfo> ReadSgFuncTable()
         {
+            if (_ediabas == null)
+            {
+                return null;
+            }
+
             ResetCache();
 
             List<SgFuncInfo> sgFuncInfoList = new List<SgFuncInfo>();
@@ -421,6 +426,11 @@ namespace BmwFileReader
 
         public List<SgFuncArgInfo> ReadSgFuncArgTable(string tableName)
         {
+            if (_ediabas == null)
+            {
+                return null;
+            }
+
             string key = tableName.ToUpperInvariant();
             if (_sgFuncArgInfoDict.TryGetValue(key, out List<SgFuncArgInfo> infoList))
             {
@@ -625,6 +635,11 @@ namespace BmwFileReader
 
         public List<SgFuncNameInfo> ReadSgFuncNameTable(string tableName, string unit = null)
         {
+            if (_ediabas == null)
+            {
+                return null;
+            }
+
             try
             {
                 if (string.IsNullOrEmpty(tableName))
@@ -669,6 +684,11 @@ namespace BmwFileReader
 
         public List<SgFuncNameInfo> ReadSgFuncValNameTable(string tableName)
         {
+            if (_ediabas == null)
+            {
+                return null;
+            }
+
             List<SgFuncNameInfo> valNameInfoList = new List<SgFuncNameInfo>();
             try
             {
@@ -753,6 +773,11 @@ namespace BmwFileReader
 
         public List<SgFuncNameInfo> ReadSgFuncBitFieldTable(string tableName)
         {
+            if (_ediabas == null)
+            {
+                return null;
+            }
+
             List<SgFuncNameInfo> bitFieldInfoList = new List<SgFuncNameInfo>();
             try
             {

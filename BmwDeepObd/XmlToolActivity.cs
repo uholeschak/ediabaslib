@@ -603,6 +603,7 @@ namespace BmwDeepObd
         private volatile bool _ediabasJobAbort;
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
+        private SgFunctions _sgFunctions;
         private Thread _jobThread;
         private static List<EcuInfo> _ecuList = new List<EcuInfo>();
         private EcuInfo _ecuInfoMot;
@@ -1259,6 +1260,7 @@ namespace BmwDeepObd
                     AbortJobFunc = AbortEdiabasJob
                 };
                 _ediabas.SetConfigProperty("EcuPath", _ecuDir);
+                _sgFunctions = new SgFunctions(_ediabas);
                 UpdateLogInfo();
             }
 
@@ -1273,6 +1275,13 @@ namespace BmwDeepObd
             {
                 return false;
             }
+
+            if (_sgFunctions != null)
+            {
+                _sgFunctions.Dispose();
+                _sgFunctions = null;
+            }
+
             if (_ediabas != null)
             {
                 _ediabas.Dispose();
@@ -4406,11 +4415,15 @@ namespace BmwDeepObd
                 bool statMwBlock = XmlToolEcuActivity.IsBmwReadStatusMwBlockJob(job);
                 bool statBlock = XmlToolEcuActivity.IsBmwReadStatusBlockJob(job);
                 bool statRead = XmlToolEcuActivity.IsBmwReadStatusJob(job);
-                if (statMwBlock || statBlock || statRead)
+                if (statBlock || statRead)
+                {
+                    AddSgFunctionResults(job);
+                }
+                else if (statMwBlock)
                 {   // use data from table instead of results
                     try
                     {
-                        _ediabas.ArgString = statMwBlock ? "MESSWERTETAB" : "SG_FUNKTIONEN";
+                        _ediabas.ArgString = "MESSWERTETAB";
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.NoInitForVJobs = true;
@@ -4423,11 +4436,7 @@ namespace BmwDeepObd
                             int resultIndex = -1;
                             int unitIndex = -1;
                             int infoIndex = -1;
-                            int serviceIndex = -1;
-                            int argTabIndex = -1;
-                            int resTabIndex = -1;
                             int dictIndex = 0;
-                            int groupId = 0;
                             foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSetsTab)
                             {
                                 if (dictIndex == 0)
@@ -4439,9 +4448,6 @@ namespace BmwDeepObd
                                 string result = string.Empty;
                                 string unit = string.Empty;
                                 string info = string.Empty;
-                                string service = string.Empty;
-                                string argTab = string.Empty;
-                                string resTab = string.Empty;
                                 for (int i = 0; ; i++)
                                 {
                                     if (resultDict.TryGetValue("COLUMN" + i.ToString(Culture), out EdiabasNet.ResultData resultData))
@@ -4467,18 +4473,6 @@ namespace BmwDeepObd
                                                 {
                                                     infoIndex = i;
                                                 }
-                                                else if (string.Compare(entry, "SERVICE", StringComparison.OrdinalIgnoreCase) == 0)
-                                                {
-                                                    serviceIndex = i;
-                                                }
-                                                else if (string.Compare(entry, "ARG_TABELLE", StringComparison.OrdinalIgnoreCase) == 0)
-                                                {
-                                                    argTabIndex = i;
-                                                }
-                                                else if (string.Compare(entry, "RES_TABELLE", StringComparison.OrdinalIgnoreCase) == 0)
-                                                {
-                                                    resTabIndex = i;
-                                                }
                                             }
                                             else
                                             {
@@ -4500,18 +4494,6 @@ namespace BmwDeepObd
                                                     {
                                                         info = entry;
                                                     }
-                                                    else if (i == serviceIndex)
-                                                    {
-                                                        service = entry;
-                                                    }
-                                                    else if (i == argTabIndex)
-                                                    {
-                                                        argTab = entry;
-                                                    }
-                                                    else if (i == resTabIndex)
-                                                    {
-                                                        resTab = entry;
-                                                    }
                                                 }
                                             }
                                         }
@@ -4522,21 +4504,14 @@ namespace BmwDeepObd
                                     }
                                 }
 
-                                if (statRead)
+                                if (!string.IsNullOrEmpty(arg) && !string.IsNullOrEmpty(result))
                                 {
-                                    AddReadStatResults(job, arg, unit, result, info, service, argTab, resTab, groupId++);
-                                }
-                                else
-                                {
-                                    if (!string.IsNullOrEmpty(arg) && !string.IsNullOrEmpty(result))
+                                    string comments = info;
+                                    if (!string.IsNullOrEmpty(unit))
                                     {
-                                        string comments = info;
-                                        if (!string.IsNullOrEmpty(unit))
-                                        {
-                                            comments += " [" + unit + "]";
-                                        }
-                                        job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, result, DataTypeReal, arg, new List<string> { comments }));
+                                        comments += " [" + unit + "]";
                                     }
+                                    job.Results.Add(new XmlToolEcuActivity.ResultInfo(result, result, DataTypeReal, arg, new List<string> { comments }));
                                 }
                                 dictIndex++;
                             }
@@ -4634,181 +4609,141 @@ namespace BmwDeepObd
             }
         }
 
-        // ReSharper disable once UnusedParameter.Local
-        private void AddReadStatResults(XmlToolEcuActivity.JobInfo job, string arg, string unitText, string resultText, string infoText, string service, string argTab, string resTab, int groupId)
+        private void AddSgFunctionResults(XmlToolEcuActivity.JobInfo job)
         {
-            try
+            List<SgFunctions.SgFuncInfo> sgFuncInfoList = _sgFunctions?.ReadSgFuncTable();
+            if (sgFuncInfoList == null)
             {
-                if (string.IsNullOrEmpty(arg) || string.IsNullOrEmpty(service))
-                {
-                    return;
-                }
+                return;
+            }
 
-                bool readService = false;
-                string[] serviceArray = service.Split(";");
-                foreach (string serviceEntry in serviceArray)
+            int groupId = 0;
+            foreach (SgFunctions.SgFuncInfo funcInfo in sgFuncInfoList)
+            {
+                string arg = funcInfo.Arg;
+                if (funcInfo.ResInfoList != null)
                 {
-                    if (Int32.TryParse(serviceEntry, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out Int32 value))
+                    List<SgFunctions.SgFuncNameInfo> resultList = new List<SgFunctions.SgFuncNameInfo>();
+                    foreach (SgFunctions.SgFuncNameInfo funcNameInfo in funcInfo.ResInfoList)
                     {
-                        if (value == (int)SgFunctions.UdsServiceId.ReadDataById)
+                        if (funcNameInfo is SgFunctions.SgFuncBitFieldInfo funcBitFieldInfo)
                         {
-                            readService = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!readService)
-                {
-                    return;
-                }
-
-                if (string.IsNullOrEmpty(resTab))
-                {
-                    if (string.IsNullOrEmpty(resultText))
-                    {
-                        return;
-                    }
-
-                    string displayName = arg + "/" + resultText;
-                    List<string> commentList = new List<string>();
-                    if (!string.IsNullOrEmpty(infoText))
-                    {
-                        commentList.Add(infoText);
-                    }
-
-                    if (!string.IsNullOrEmpty(unitText))
-                    {
-                        commentList.Add("[" + unitText + "]");
-                    }
-
-                    XmlToolEcuActivity.ResultInfo resultInfo = new XmlToolEcuActivity.ResultInfo(resultText, displayName, DataTypeReal, arg, commentList);
-                    job.Results.Add(resultInfo);
-                    return;
-                }
-
-                _ediabas.ArgString = resTab;
-                _ediabas.ArgBinaryStd = null;
-                _ediabas.ResultsRequests = string.Empty;
-                _ediabas.NoInitForVJobs = true;
-                _ediabas.ExecuteJob("_TABLE");
-
-                List<Dictionary<string, EdiabasNet.ResultData>> resultSetsTab = _ediabas.ResultSets;
-                if (resultSetsTab != null && resultSetsTab.Count >= 2)
-                {
-                    int resultIndex = -1;
-                    int unitIndex = -1;
-                    int infoIndex = -1;
-                    int dictIndex = 0;
-                    int resultCount = 0;
-                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSetsTab)
-                    {
-                        if (dictIndex == 0)
-                        {
-                            dictIndex++;
-                            continue;
-                        }
-                        string result = string.Empty;
-                        string unit = string.Empty;
-                        string info = string.Empty;
-                        for (int i = 0; ; i++)
-                        {
-                            if (resultDict.TryGetValue("COLUMN" + i.ToString(Culture), out EdiabasNet.ResultData resultData))
+                            if (funcBitFieldInfo.TableDataType == SgFunctions.TableDataType.Bit &&
+                                funcBitFieldInfo.NameInfoList != null)
                             {
-                                if (resultData.OpData is string)
+                                foreach (SgFunctions.SgFuncNameInfo nameInfo in funcBitFieldInfo.NameInfoList)
                                 {
-                                    string entry = (string)resultData.OpData;
-                                    if (dictIndex == 1)
-                                    {   // header
-                                        if (string.Compare(entry, "RESULTNAME", StringComparison.OrdinalIgnoreCase) == 0)
-                                        {
-                                            resultIndex = i;
-                                        }
-                                        else if (string.Compare(entry, "EINHEIT", StringComparison.OrdinalIgnoreCase) == 0)
-                                        {
-                                            unitIndex = i;
-                                        }
-                                        else if (string.Compare(entry, "INFO", StringComparison.OrdinalIgnoreCase) == 0)
-                                        {
-                                            infoIndex = i;
-                                        }
-                                    }
-                                    else
+                                    if (nameInfo is SgFunctions.SgFuncBitFieldInfo nameInfoBitField)
                                     {
-                                        if (!string.IsNullOrWhiteSpace(entry) && entry != "-")
+                                        if (!string.IsNullOrEmpty(nameInfoBitField.ResultName))
                                         {
-                                            if (i == unitIndex)
-                                            {
-                                                unit = entry;
-                                            }
-                                            else if (i == resultIndex)
-                                            {
-                                                result = entry;
-                                            }
-                                            else if (i == infoIndex)
-                                            {
-                                                info = entry;
-                                            }
+                                            resultList.Add(nameInfoBitField);
                                         }
                                     }
                                 }
                             }
                             else
                             {
-                                break;
-                            }
-                        }
-
-                        if (!string.IsNullOrEmpty(arg) && !string.IsNullOrEmpty(result))
-                        {
-                            string displayName = arg + "/" + result;
-                            List<string> commentList = new List<string>();
-                            if (!string.IsNullOrEmpty(infoText))
-                            {
-                                commentList.Add(infoText);
-                            }
-
-                            if (!string.IsNullOrEmpty(info))
-                            {
-                                commentList.Add(info);
-                            }
-
-                            if (!string.IsNullOrEmpty(unit))
-                            {
-                                commentList.Add("[" + unit + "]");
-                            }
-
-                            if (resultCount == 0)
-                            {
-                                string displayNameGroup = arg;
-                                List<string> commentListGroup = new List<string>();
-                                if (!string.IsNullOrEmpty(infoText))
+                                if (!string.IsNullOrEmpty(funcBitFieldInfo.ResultName))
                                 {
-                                    commentList.Add(infoText);
+                                    resultList.Add(funcNameInfo);
                                 }
-
-                                XmlToolEcuActivity.ResultInfo resultInfoGroup = new XmlToolEcuActivity.ResultInfo(arg, displayNameGroup, string.Empty, arg, commentListGroup)
-                                {
-                                    GroupId = groupId,
-                                    GroupVisible = true
-                                };
-                                job.Results.Add(resultInfoGroup);
                             }
-
-                            XmlToolEcuActivity.ResultInfo resultInfo = new XmlToolEcuActivity.ResultInfo(result, displayName, DataTypeReal, arg, commentList)
-                            {
-                                GroupId = groupId
-                            };
-                            job.Results.Add(resultInfo);
-                            resultCount++;
                         }
-                        dictIndex++;
+                    }
+
+                    int groupSize = 0;
+                    foreach (SgFunctions.SgFuncNameInfo funcNameInfo in resultList)
+                    {
+                        if (funcNameInfo is SgFunctions.SgFuncBitFieldInfo funcBitFieldInfo)
+                        {
+                            if (funcBitFieldInfo.TableDataType == SgFunctions.TableDataType.Bit &&
+                                funcBitFieldInfo.NameInfoList != null)
+                            {
+                                foreach (SgFunctions.SgFuncNameInfo nameInfo in funcBitFieldInfo.NameInfoList)
+                                {
+                                    if (nameInfo is SgFunctions.SgFuncBitFieldInfo nameInfoBitField)
+                                    {
+                                        if (!string.IsNullOrEmpty(nameInfoBitField.ResultName))
+                                        {
+                                            string displayName = arg + "/" + nameInfoBitField.ResultName;
+                                            List<string> commentList = new List<string>();
+                                            if (!string.IsNullOrEmpty(funcInfo.Info))
+                                            {
+                                                commentList.Add(funcInfo.Info);
+                                            }
+
+                                            if (!string.IsNullOrEmpty(nameInfoBitField.Info))
+                                            {
+                                                commentList.Add(nameInfoBitField.Info);
+                                            }
+
+                                            if (!string.IsNullOrEmpty(nameInfoBitField.Unit))
+                                            {
+                                                commentList.Add("[" + nameInfoBitField.Unit + "]");
+                                            }
+
+                                            XmlToolEcuActivity.ResultInfo resultInfo = new XmlToolEcuActivity.ResultInfo(nameInfoBitField.ResultName, displayName, DataTypeReal, arg, commentList)
+                                            {
+                                                GroupId = groupId
+                                            };
+
+                                            if (groupSize == 0)
+                                            {
+                                                string displayNameGroup = arg;
+                                                List<string> commentListGroup = new List<string>();
+                                                if (!string.IsNullOrEmpty(funcInfo.Info))
+                                                {
+                                                    commentListGroup.Add(funcInfo.Info);
+                                                }
+
+                                                XmlToolEcuActivity.ResultInfo resultInfoGroup = new XmlToolEcuActivity.ResultInfo(arg, displayNameGroup, string.Empty, arg, commentListGroup)
+                                                {
+                                                    GroupId = groupId,
+                                                    GroupVisible = true
+                                                };
+                                                job.Results.Add(resultInfoGroup);
+                                            }
+
+                                            job.Results.Add(resultInfo);
+                                            groupSize++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (groupSize > 0)
+                    {
+                        groupId++;
                     }
                 }
-            }
-            catch (Exception)
-            {
-                // ignored
+                else
+                {
+                    if (!string.IsNullOrEmpty(funcInfo.Result))
+                    {
+                        string displayName = arg + "/" + funcInfo.Result;
+                        List<string> commentList = new List<string>();
+                        if (!string.IsNullOrEmpty(funcInfo.Info))
+                        {
+                            commentList.Add(funcInfo.Info);
+                        }
+
+                        if (!string.IsNullOrEmpty(funcInfo.Info))
+                        {
+                            commentList.Add(funcInfo.Info);
+                        }
+
+                        if (!string.IsNullOrEmpty(funcInfo.Unit))
+                        {
+                            commentList.Add("[" + funcInfo.Unit + "]");
+                        }
+
+                        XmlToolEcuActivity.ResultInfo resultInfo = new XmlToolEcuActivity.ResultInfo(funcInfo.Result, displayName, DataTypeReal, arg, commentList);
+                        job.Results.Add(resultInfo);
+                    }
+                }
             }
         }
 
