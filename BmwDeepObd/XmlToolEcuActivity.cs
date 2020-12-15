@@ -475,7 +475,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                HideKeyboard();
+                //HideKeyboard();
                 ResultSelected(args.Position);
             };
 
@@ -1565,7 +1565,7 @@ namespace BmwDeepObd
 
         private void UpdateFormatString(ResultInfo resultInfo)
         {
-            if ((resultInfo == null) || _instanceData.IgnoreFormatSelection)
+            if (resultInfo == null)
             {
                 return;
             }
