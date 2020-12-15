@@ -4568,59 +4568,49 @@ namespace BmwDeepObd
                     {
                         if (funcNameInfo is SgFunctions.SgFuncBitFieldInfo funcBitFieldInfo)
                         {
-                            if (funcBitFieldInfo.TableDataType == SgFunctions.TableDataType.Bit &&
-                                funcBitFieldInfo.NameInfoList != null)
+                            if (!string.IsNullOrEmpty(funcBitFieldInfo.ResultName))
                             {
-                                foreach (SgFunctions.SgFuncNameInfo nameInfo in funcBitFieldInfo.NameInfoList)
+                                string displayName = displayBaseName + "/" + funcBitFieldInfo.ResultName;
+                                List<string> commentList = new List<string>();
+                                if (!string.IsNullOrEmpty(funcInfo.Info))
                                 {
-                                    if (nameInfo is SgFunctions.SgFuncBitFieldInfo nameInfoBitField)
-                                    {
-                                        if (!string.IsNullOrEmpty(nameInfoBitField.ResultName))
-                                        {
-                                            string displayName = displayBaseName + "/" + nameInfoBitField.ResultName;
-                                            List<string> commentList = new List<string>();
-                                            if (!string.IsNullOrEmpty(funcInfo.Info))
-                                            {
-                                                commentList.Add(funcInfo.Info);
-                                            }
-
-                                            if (!string.IsNullOrEmpty(nameInfoBitField.Info))
-                                            {
-                                                commentList.Add(nameInfoBitField.Info);
-                                            }
-
-                                            if (!string.IsNullOrEmpty(nameInfoBitField.Unit))
-                                            {
-                                                commentList.Add("[" + nameInfoBitField.Unit + "]");
-                                            }
-
-                                            XmlToolEcuActivity.ResultInfo resultInfo = new XmlToolEcuActivity.ResultInfo(nameInfoBitField.ResultName, displayName, DataTypeReal, arg, commentList)
-                                            {
-                                                GroupId = groupId
-                                            };
-
-                                            if (groupSize == 0)
-                                            {
-                                                string displayNameGroup = displayBaseName;
-                                                List<string> commentListGroup = new List<string>();
-                                                if (!string.IsNullOrEmpty(funcInfo.Info))
-                                                {
-                                                    commentListGroup.Add(funcInfo.Info);
-                                                }
-
-                                                XmlToolEcuActivity.ResultInfo resultInfoGroup = new XmlToolEcuActivity.ResultInfo(arg, displayNameGroup, string.Empty, arg, commentListGroup)
-                                                {
-                                                    GroupId = groupId,
-                                                    GroupVisible = true
-                                                };
-                                                job.Results.Add(resultInfoGroup);
-                                            }
-
-                                            job.Results.Add(resultInfo);
-                                            groupSize++;
-                                        }
-                                    }
+                                    commentList.Add(funcInfo.Info);
                                 }
+
+                                if (!string.IsNullOrEmpty(funcBitFieldInfo.Info))
+                                {
+                                    commentList.Add(funcBitFieldInfo.Info);
+                                }
+
+                                if (!string.IsNullOrEmpty(funcBitFieldInfo.Unit))
+                                {
+                                    commentList.Add("[" + funcBitFieldInfo.Unit + "]");
+                                }
+
+                                XmlToolEcuActivity.ResultInfo resultInfo = new XmlToolEcuActivity.ResultInfo(funcBitFieldInfo.ResultName, displayName, DataTypeReal, arg, commentList)
+                                {
+                                    GroupId = groupId
+                                };
+
+                                if (groupSize == 0)
+                                {
+                                    string displayNameGroup = displayBaseName;
+                                    List<string> commentListGroup = new List<string>();
+                                    if (!string.IsNullOrEmpty(funcInfo.Info))
+                                    {
+                                        commentListGroup.Add(funcInfo.Info);
+                                    }
+
+                                    XmlToolEcuActivity.ResultInfo resultInfoGroup = new XmlToolEcuActivity.ResultInfo(arg, displayNameGroup, string.Empty, arg, commentListGroup)
+                                    {
+                                        GroupId = groupId,
+                                        GroupVisible = true
+                                    };
+                                    job.Results.Add(resultInfoGroup);
+                                }
+
+                                job.Results.Add(resultInfo);
+                                groupSize++;
                             }
                         }
                     }
