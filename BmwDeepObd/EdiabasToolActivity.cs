@@ -1319,7 +1319,8 @@ namespace BmwDeepObd
                         SgFunctions.SgFuncInfo argFuncInfo = null;
                         foreach (SgFunctions.SgFuncInfo funcInfo in _sgFuncInfoList)
                         {
-                            if (string.Compare(arg.Trim(), argTypeId ? funcInfo.Id : funcInfo.Arg, StringComparison.OrdinalIgnoreCase) == 0)
+                            if (string.Compare(arg.Trim(), argTypeId ? funcInfo.Id : funcInfo.Arg, StringComparison.OrdinalIgnoreCase) == 0 &&
+                                funcInfo.ServiceList.Contains(serviceId))
                             {
                                 argFuncInfo = funcInfo;
                                 break;
@@ -1418,15 +1419,7 @@ namespace BmwDeepObd
                 return -1;
             }
 
-            foreach (Tuple<string, SgFunctions.UdsServiceId> sgFuncJob in SgFunctions.SgFuncJobListList)
-            {
-                if (string.Compare(jobInfo.Name, sgFuncJob.Item1, StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    return (int) sgFuncJob.Item2;
-                }
-            }
-
-            return -1;
+            return SgFunctions.GetJobService(jobInfo.Name);
         }
 
         private void DisplayJobComments()
