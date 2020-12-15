@@ -272,12 +272,14 @@ namespace BmwDeepObd
                     {
                         if (funcInfo.ServiceList.Contains(_serviceId))
                         {
-                            string name = argTypeId ? funcInfo.Id : funcInfo.Arg;
+                            string argType = argTypeId ? funcInfo.Id : funcInfo.Arg;
+                            string argName = argTypeId ? funcInfo.Arg : funcInfo.Id;
+                            string name = argType + " (" + argName + ")";
                             string info = funcInfo.InfoTrans ?? funcInfo.Info;
-                            EdiabasToolActivity.ExtraInfo extraInfo = new EdiabasToolActivity.ExtraInfo(name, string.Empty, new List<string> { info });
+                            EdiabasToolActivity.ExtraInfo extraInfo = new EdiabasToolActivity.ExtraInfo(name, argType, new List<string> {info});
                             if (selectList != null)
                             {
-                                if (selectList.Contains(name))
+                                if (selectList.Contains(argType))
                                 {
                                     extraInfo.Selected = true;
                                 }
@@ -392,7 +394,7 @@ namespace BmwDeepObd
                     if (extraInfo.ItemSelected)
                     {
                         sb.Append(";");
-                        sb.Append(extraInfo.Name);
+                        sb.Append(extraInfo.Type);
                     }
                 }
 
