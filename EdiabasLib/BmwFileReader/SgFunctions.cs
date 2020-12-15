@@ -950,6 +950,24 @@ namespace BmwFileReader
             _sgFuncNameInfoDict.Clear();
         }
 
+        public static int GetJobService(string jobName)
+        {
+            if (string.IsNullOrEmpty(jobName))
+            {
+                return -1;
+            }
+
+            foreach (Tuple<string, UdsServiceId> sgFuncJob in SgFuncJobListList)
+            {
+                if (string.Compare(jobName, sgFuncJob.Item1, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return (int)sgFuncJob.Item2;
+                }
+            }
+
+            return -1;
+        }
+
         public void Dispose()
         {
             Dispose(true);

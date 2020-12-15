@@ -4521,9 +4521,20 @@ namespace BmwDeepObd
                 return;
             }
 
+            int serviceId = SgFunctions.GetJobService(job.Name);
+            if (serviceId < 0)
+            {
+                return;
+            }
+
             int groupId = 0;
             foreach (SgFunctions.SgFuncInfo funcInfo in sgFuncInfoList)
             {
+                if (!funcInfo.ServiceList.Contains(serviceId))
+                {
+                    continue;
+                }
+
                 string arg = funcInfo.Arg;
                 string id = funcInfo.Id;
                 string displayBaseName = arg;
