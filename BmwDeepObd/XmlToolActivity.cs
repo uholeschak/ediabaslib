@@ -4525,6 +4525,13 @@ namespace BmwDeepObd
             foreach (SgFunctions.SgFuncInfo funcInfo in sgFuncInfoList)
             {
                 string arg = funcInfo.Arg;
+                string id = funcInfo.Id;
+                string displayBaseName = arg;
+                if (!string.IsNullOrEmpty(id))
+                {
+                    displayBaseName += " (" + id + ")";
+                }
+
                 if (funcInfo.ResInfoList != null)
                 {
                     List<SgFunctions.SgFuncNameInfo> resultList = new List<SgFunctions.SgFuncNameInfo>();
@@ -4570,7 +4577,7 @@ namespace BmwDeepObd
                                     {
                                         if (!string.IsNullOrEmpty(nameInfoBitField.ResultName))
                                         {
-                                            string displayName = arg + "/" + nameInfoBitField.ResultName;
+                                            string displayName = displayBaseName + "/" + nameInfoBitField.ResultName;
                                             List<string> commentList = new List<string>();
                                             if (!string.IsNullOrEmpty(funcInfo.Info))
                                             {
@@ -4594,7 +4601,7 @@ namespace BmwDeepObd
 
                                             if (groupSize == 0)
                                             {
-                                                string displayNameGroup = arg;
+                                                string displayNameGroup = displayBaseName;
                                                 List<string> commentListGroup = new List<string>();
                                                 if (!string.IsNullOrEmpty(funcInfo.Info))
                                                 {
@@ -4627,7 +4634,7 @@ namespace BmwDeepObd
                 {
                     if (!string.IsNullOrEmpty(funcInfo.Result))
                     {
-                        string displayName = arg + "/" + funcInfo.Result;
+                        string displayName = displayBaseName + "/" + funcInfo.Result;
                         List<string> commentList = new List<string>();
                         if (!string.IsNullOrEmpty(funcInfo.Info))
                         {
