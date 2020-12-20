@@ -28,6 +28,7 @@ namespace BmwDeepObd
         private bool _activityRecreated;
         private bool _dynamicId;
         private bool _ignoreCheckChange;
+        private string _argFilterText;
 
         private LinearLayout _layoutBlockNumber;
         private Spinner _spinnerBlockNumber;
@@ -126,6 +127,12 @@ namespace BmwDeepObd
             base.OnSaveInstanceState(outState);
         }
 
+        protected override void OnStart()
+        {
+            base.OnStart();
+            _argFilterText = null;
+        }
+
         public override void OnBackPressed()
         {
             if (!StoreChangesRequest(accepted =>
@@ -140,6 +147,32 @@ namespace BmwDeepObd
             {
                 base.OnBackPressed();
             }
+        }
+
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            var inflater = MenuInflater;
+            inflater.Inflate(Resource.Menu.arg_assist_stat_menu, menu);
+            IMenuItem menuSearch = menu.FindItem(Resource.Id.action_search);
+            if (menuSearch != null)
+            {
+                menuSearch.SetActionView(new Android.Support.V7.Widget.SearchView(this));
+
+                if (menuSearch.ActionView is Android.Support.V7.Widget.SearchView searchViewV7)
+                {
+                    searchViewV7.QueryTextChange += (sender, e) =>
+                    {
+                        e.Handled = OnQueryTextChange(e.NewText, false);
+                    };
+
+                    searchViewV7.QueryTextSubmit += (sender, e) =>
+                    {
+                        e.Handled = OnQueryTextChange(e.NewText, true);
+                    };
+                }
+            }
+
+            return true;
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
@@ -163,6 +196,17 @@ namespace BmwDeepObd
                     return true;
             }
             return base.OnOptionsItemSelected(item);
+        }
+
+        private bool OnQueryTextChange(string text, bool submit)
+        {
+            _argFilterText = text;
+            UpdateArgFilter();
+            if (submit)
+            {
+                HideKeyboard();
+            }
+            return true;
         }
 
         private void UpdateDisplay()
@@ -276,6 +320,15 @@ namespace BmwDeepObd
                             string argName = argTypeId ? funcInfo.Arg : funcInfo.Id;
                             string name = argType + " (" + argName + ")";
                             string info = funcInfo.InfoTrans ?? funcInfo.Info;
+
+                            if (!string.IsNullOrEmpty(_argFilterText))
+                            {
+                                if (name.IndexOf(_argFilterText, StringComparison.OrdinalIgnoreCase) < 0)
+                                {
+                                    continue;   // filter is not matching
+                                }
+                            }
+
                             EdiabasToolActivity.ExtraInfo extraInfo = new EdiabasToolActivity.ExtraInfo(name, argType, new List<string> {info});
                             if (selectList != null)
                             {
@@ -289,12 +342,31 @@ namespace BmwDeepObd
                     }
                 }
 
-                _argsListAdapter.NotifyDataSetChanged();
+                UpdateArgFilter();
             }
             catch (Exception)
             {
                 // ignored
             }
+        }
+
+        private void UpdateArgFilter()
+        {
+            foreach (EdiabasToolActivity.ExtraInfo extraInfo in _argsListAdapter.Items)
+            {
+                bool itemVisible = true;
+                if (!string.IsNullOrEmpty(_argFilterText))
+                {
+                    if (extraInfo.Name.IndexOf(_argFilterText, StringComparison.OrdinalIgnoreCase) < 0)
+                    {
+                        itemVisible = false;
+                    }
+                }
+
+                extraInfo.ItemVisible = itemVisible;
+            }
+
+            _argsListAdapter.NotifyDataSetChanged();
         }
 
         private bool StoreChangesRequest(AcceptDelegate handler)

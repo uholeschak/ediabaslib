@@ -5543,25 +5543,28 @@ namespace BmwDeepObd
 		{
 			
 			// aapt resource value: 0x7F0D0000
-			public const int ediabas_tool_menu = 2131558400;
+			public const int arg_assist_stat_menu = 2131558400;
 			
 			// aapt resource value: 0x7F0D0001
-			public const int file_picker_menu = 2131558401;
+			public const int ediabas_tool_menu = 2131558401;
 			
 			// aapt resource value: 0x7F0D0002
-			public const int option_menu = 2131558402;
+			public const int file_picker_menu = 2131558402;
 			
 			// aapt resource value: 0x7F0D0003
-			public const int xml_ecu_tool_menu = 2131558403;
+			public const int option_menu = 2131558403;
 			
 			// aapt resource value: 0x7F0D0004
-			public const int xml_tool_context = 2131558404;
+			public const int xml_ecu_tool_menu = 2131558404;
 			
 			// aapt resource value: 0x7F0D0005
-			public const int xml_tool_edit = 2131558405;
+			public const int xml_tool_context = 2131558405;
 			
 			// aapt resource value: 0x7F0D0006
-			public const int xml_tool_menu = 2131558406;
+			public const int xml_tool_edit = 2131558406;
+			
+			// aapt resource value: 0x7F0D0007
+			public const int xml_tool_menu = 2131558407;
 			
 			static Menu()
 			{

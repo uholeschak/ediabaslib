@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Android.Content;
 using Android.Content.Res;
@@ -46,6 +45,7 @@ namespace BmwDeepObd
                 Type = type;
                 CommentList = commentList;
                 Selected = false;
+                ItemVisible = true;
                 CheckVisible = true;
                 GroupId = null;
                 GroupSelected = false;
@@ -64,6 +64,8 @@ namespace BmwDeepObd
             public bool Selected { get; set; }
 
             public bool ItemSelected => Selected && !GroupVisible;
+
+            public bool ItemVisible { get; set; }
 
             public bool CheckVisible { get; set; }
 
@@ -2691,6 +2693,11 @@ namespace BmwDeepObd
                         {
                             itemVisible = false;
                         }
+                    }
+
+                    if (!extraInfo.ItemVisible)
+                    {
+                        itemVisible = false;
                     }
 
                     if (itemVisible)
