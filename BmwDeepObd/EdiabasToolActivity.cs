@@ -2695,7 +2695,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    if (!extraInfo.ItemVisible)
+                    if (!extraInfo.ItemVisible && !extraInfo.GroupVisible)
                     {
                         itemVisible = false;
                     }
