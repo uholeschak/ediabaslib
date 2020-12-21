@@ -972,9 +972,9 @@ namespace ApkUploader
                             throw new Exception("Invalid release count");
                         }
                         TrackRelease trackRelease = trackResponse.Releases[0];
-                        if (trackRelease.VersionCodes.Count != 1 || !trackRelease.VersionCodes[0].HasValue)
+                        if (trackRelease?.VersionCodes?.Count != 1 || !trackRelease.VersionCodes[0].HasValue)
                         {
-                            sb.AppendLine($"Invalid version count: {trackRelease.VersionCodes.Count}");
+                            sb.AppendLine($"Invalid version count: {trackRelease?.VersionCodes?.Count}");
                             UpdateStatus(sb.ToString());
                             throw new Exception("Invalid version count");
                         }
