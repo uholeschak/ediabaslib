@@ -2926,6 +2926,10 @@ namespace BmwDeepObd
             HexImporter hexImporter = new HexImporter();
             foreach (FirmwareInfo firmwareInfo in FirmwareInfos)
             {
+                if (firmwareInfo.ElmFirmware)
+                {   // some adapter have problem with ELM firmware communication, disable until fixed.
+                    continue;
+                }
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(
                     typeof(XmlToolActivity).Namespace + ".HexFiles." + firmwareInfo.FileName))
                 {
