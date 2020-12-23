@@ -11,6 +11,7 @@
 
 		#define _SWDTEN_ SWDTEN
 		#define _RI_ RI
+		#define _POR_ POR
 #else
 		LIST      P=18F25K80		; modify this
 		#include "p18f25k80.inc"		; and this
@@ -18,6 +19,7 @@
 
 		#define _SWDTEN_ WDTCON, SWDTEN
 		#define _RI_ RCON, RI
+		#define _POR_ RCON, POR
 #endif
 
 		#define ORIGINAL    0
@@ -32,7 +34,7 @@
 		    #define WDT_RESET   0x0
 		    #define DEFAULT_BAUD 0x68		;38400
 		#else
-		    #define SW_VERSION 0x01
+		    #define SW_VERSION 0x02
 		    #define CODE_OFFSET 0x0800
 		    #define BASE_ADDR 0x1000
 		    #define DATA_OFFSET BASE_ADDR
@@ -175,7 +177,6 @@ eep_start:	DB 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x06, 0xAE, 0x02, 
 eep_end:
 eep_copy:	btfss	_RI_, ACCESS
 		goto	p_reset		; perform wd reset after software reset
-
 		movlw	0x24
 		movwf	EEADR
 		call	p__838
@@ -2813,13 +2814,23 @@ p_1650:	movlw	0x20						; entry from: 1EAh,1296h
 		bra		p_1666
 p_1654:	clrf	OSCCON					; entry from: 2
 		comf	RCON,W
+#if WDT_RESET
+		movwf	FSR0L
+		movlw   0xED	; keep POR and RI bit
+		iorwf	RCON
+		movf    FSR0L,W
+#else
 		setf	RCON
+#endif
 		clrwdt
 		andlw	0x1B
 		btfsc	STKPTR,7
 		iorlw	0xA0
 		btfsc	STKPTR,6
 		iorlw	0x60
+p_1666:	movlb	0						; entry from: 1652h
+		movwf	0xD0,BANKED
+		clrf	STKPTR
 #if EEPROM_PAGE != 0
 		movlw	EEPROM_PAGE
 		movwf	EEADRH
@@ -2827,9 +2838,6 @@ p_1654:	clrf	OSCCON					; entry from: 2
 #if SW_VERSION != 0
 		call	eep_copy
 #endif
-p_1666:	movlb	0						; entry from: 1652h
-		movwf	0xD0,BANKED
-		clrf	STKPTR
 		btfsc	0xD0,1,BANKED
 		bcf		0xD0,0,BANKED
 		btfss	0xD0,4,BANKED
@@ -3014,7 +3022,7 @@ p_1754:	movwf	SPBRG1					; entry from: 174Eh
 		bra		p_182C
 p_1802:	bcf		0xD2,6,BANKED			; entry from: 17FAh
 		call	p__8C0
-		bnz		p_182A
+		bnz		boot_reason
 		movlw	0x82
 		call	p__730
 		call	p__724
@@ -3025,6 +3033,11 @@ p_1802:	bcf		0xD2,6,BANKED			; entry from: 17FAh
 		call	p__658
 		goto	p_129A
 
+boot_reason:
+#if WDT_RESET
+		btfss   _POR_, ACCESS	; check for power on reset
+		bra     p_185E
+#endif
 p_182A:	movlw	0x82						; entry from: 10Ah,1808h
 
 p_182C:	call	p__730					; entry from: 6C2h,82Ah,0C3Eh,0EA0h,0EAEh,1800h,1840h,1D38h
@@ -7489,7 +7502,8 @@ p_3F26:	movff	0x9D,0x96					; entry from: 2260h,3F1Ah,3F20h
 		nop
 
 #if WDT_RESET
-p_reset:	bsf     _SWDTEN_, ACCESS
+p_reset:	bsf     _POR_, ACCESS
+	    	bsf     _SWDTEN_, ACCESS
 reset_loop:	bra	reset_loop
 #endif
 
