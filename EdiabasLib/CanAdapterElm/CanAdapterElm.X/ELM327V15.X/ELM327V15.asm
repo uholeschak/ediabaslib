@@ -177,6 +177,7 @@ eep_start:	DB 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x06, 0xAE, 0x02, 
 eep_end:
 eep_copy:	btfss	_RI_, ACCESS
 		goto	p_reset		; perform wd reset after software reset
+
 		movlw	0x24
 		movwf	EEADR
 		call	p__838
@@ -2814,14 +2815,7 @@ p_1650:	movlw	0x20						; entry from: 1EAh,1296h
 		bra		p_1666
 p_1654:	clrf	OSCCON					; entry from: 2
 		comf	RCON,W
-#if WDT_RESET
-		movwf	FSR0L
-		movlw   0xED	; keep POR and RI bit
-		iorwf	RCON
-		movf    FSR0L,W
-#else
 		setf	RCON
-#endif
 		clrwdt
 		andlw	0x1B
 		btfsc	STKPTR,7
@@ -3022,7 +3016,7 @@ p_1754:	movwf	SPBRG1					; entry from: 174Eh
 		bra		p_182C
 p_1802:	bcf		0xD2,6,BANKED			; entry from: 17FAh
 		call	p__8C0
-		bnz		boot_reason
+		bnz		p_1830
 		movlw	0x82
 		call	p__730
 		call	p__724
@@ -3033,11 +3027,6 @@ p_1802:	bcf		0xD2,6,BANKED			; entry from: 17FAh
 		call	p__658
 		goto	p_129A
 
-boot_reason:
-#if WDT_RESET
-		btfss   _POR_, ACCESS	; check for power on reset
-		bra     p_185E
-#endif
 p_182A:	movlw	0x82						; entry from: 10Ah,1808h
 
 p_182C:	call	p__730					; entry from: 6C2h,82Ah,0C3Eh,0EA0h,0EAEh,1800h,1840h,1D38h
