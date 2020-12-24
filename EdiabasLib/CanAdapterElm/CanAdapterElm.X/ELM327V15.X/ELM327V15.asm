@@ -3015,7 +3015,11 @@ p_1754:	movwf	SPBRG1					; entry from: 174Eh
 		bra		p_182C
 p_1802:	bcf		0xD2,6,BANKED			; entry from: 17FAh
 		call	p__8C0
+#if SW_VERSION == 0
+		bnz		p_182A
+#else
 		bnz		p_1830
+#endif
 		movlw	0x82
 		call	p__730
 		call	p__724
