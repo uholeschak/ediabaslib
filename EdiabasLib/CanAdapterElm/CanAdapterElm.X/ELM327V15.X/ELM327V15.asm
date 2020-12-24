@@ -6,7 +6,6 @@
 		#include <xc.inc>
 		#define upper(_x) (low((_x) >> 16))
 		#define MOD mod
-		#define ACCESS a
 		#define BANKED b
 
 		#define _SWDTEN_ SWDTEN
@@ -175,7 +174,7 @@ eep_start:	DB 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x06, 0xAE, 0x02, 
 
 #if SW_VERSION != 0
 eep_end:
-eep_copy:	btfss	_RI_, ACCESS
+eep_copy:	btfss	_RI_
 		goto	p_reset		; perform wd reset after software reset
 
 		movlw	0x24
@@ -3016,7 +3015,11 @@ p_1754:	movwf	SPBRG1					; entry from: 174Eh
 		bra		p_182C
 p_1802:	bcf		0xD2,6,BANKED			; entry from: 17FAh
 		call	p__8C0
+#if SW_VERSION == 0
+		bnz		p_182A
+#else
 		bnz		p_1830
+#endif
 		movlw	0x82
 		call	p__730
 		call	p__724
@@ -7491,8 +7494,8 @@ p_3F26:	movff	0x9D,0x96					; entry from: 2260h,3F1Ah,3F20h
 		nop
 
 #if WDT_RESET
-p_reset:	bsf     _POR_, ACCESS
-	    	bsf     _SWDTEN_, ACCESS
+p_reset:	bsf     _POR_
+	    	bsf     _SWDTEN_
 reset_loop:	bra	reset_loop
 #endif
 
