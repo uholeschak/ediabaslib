@@ -174,10 +174,11 @@ eep_start:	DB 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x06, 0xAE, 0x02, 
 
 #if SW_VERSION != 0
 eep_end:
-eep_copy:	btfss	_RI_
+p_restart:	btfss	_RI_
 		goto	p_reset		; perform wd reset after software reset
+		return
 
-		movlw	0x24
+eep_copy:	movlw	0x24
 		movwf	EEADR
 		call	p__838
 		xorlw	DEFAULT_BAUD
@@ -2813,6 +2814,9 @@ p_1644:	addwf	POSTINC0,W				; entry from: 1648h
 p_1650:	movlw	0x20						; entry from: 1EAh,1296h
 		bra		p_1666
 p_1654:	clrf	OSCCON					; entry from: 2
+#if SW_VERSION != 0
+		call	p_restart
+#endif
 		comf	RCON,W
 		setf	RCON
 		clrwdt
@@ -7495,6 +7499,7 @@ p_3F26:	movff	0x9D,0x96					; entry from: 2260h,3F1Ah,3F20h
 
 #if WDT_RESET
 p_reset:	bsf     _POR_
+	    	bsf     _RI_
 	    	bsf     _SWDTEN_
 reset_loop:	bra	reset_loop
 #endif
