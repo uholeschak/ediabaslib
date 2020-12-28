@@ -164,7 +164,7 @@ eep_start:	DB 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x06, 0xAE, 0x02, 
 		DB 0x38, 0xFF, 0x02, 0xFF, 0xE0, 0xFF, 0x04, 0xFF, 0x80, 0xFF, 0x0A, 0xFF
 #if SW_VERSION == 0
 		DB 0x00, 0x00, 0x00, 0x00
-		DB 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+		DB 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
 #else
 		DB 0xFF, 0xFF, 0xFF, 0xFF
 		DB "D", "E", "E", "P", "O", "B", "D", " ", 0x30 + (SW_VERSION / 16), 0x30 + (SW_VERSION MOD 16)
@@ -2818,7 +2818,14 @@ p_1654:	clrf	OSCCON					; entry from: 2
 		call	p_restart
 #endif
 		comf	RCON,W
+#if WDT_RESET
+		movwf	FSR0L
+		movlw   0xFD	; keep POR bit
+		iorwf	RCON
+		movf    FSR0L,W
+#else
 		setf	RCON
+#endif
 		clrwdt
 		andlw	0x1B
 		btfsc	STKPTR,7
@@ -3019,11 +3026,7 @@ p_1754:	movwf	SPBRG1					; entry from: 174Eh
 		bra		p_182C
 p_1802:	bcf		0xD2,6,BANKED			; entry from: 17FAh
 		call	p__8C0
-#if SW_VERSION == 0
-		bnz		p_182A
-#else
-		bnz		p_1830
-#endif
+		bnz		boot_reason
 		movlw	0x82
 		call	p__730
 		call	p__724
@@ -3034,6 +3037,11 @@ p_1802:	bcf		0xD2,6,BANKED			; entry from: 17FAh
 		call	p__658
 		goto	p_129A
 
+boot_reason:
+#if WDT_RESET
+		btfss   _POR_, ACCESS	; check for power on reset
+		bra     p_1830
+#endif
 p_182A:	movlw	0x82						; entry from: 10Ah,1808h
 
 p_182C:	call	p__730					; entry from: 6C2h,82Ah,0C3Eh,0EA0h,0EAEh,1800h,1840h,1D38h
@@ -7082,7 +7090,9 @@ p_3B9E:	rcall	p_3CCE					; entry from: 3B94h
 		goto	p_4000
 		nop
 
+#if SW_VERSION == 0
 		ORG BASE_ADDR + 0x3BC2
+#endif
 p_3BC2:	bsf		0x3E,0					; entry from: 4024h
 		rcall	p_3CBA
 		movlw	0
@@ -7287,7 +7297,7 @@ p_3D4A:	movwf	0x37						; entry from: 3208h,3EBEh,3ED4h,3EEAh,3F00h,3F16h,3F2Ch
 p_3D54:	rlncf	0x97,f,BANKED			; entry from: 3D58h
 		addlw	0xFF
 		bnz		p_3D54
-		return	
+		return
 p_3D5C:	rcall	p_3CCE					; entry from: 3592h
 		btfss	0x34,6
 		btfsc	0x34,5
