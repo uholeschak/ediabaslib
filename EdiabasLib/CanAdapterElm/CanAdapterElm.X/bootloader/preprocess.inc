@@ -30,22 +30,22 @@
     #define _FSR1_ 1
     #define _FSR2_ 2
 
-    #define _RD_ RD
+    #define _RD_ RD ACC
 
-    #define _LATB4_ LATB4
-    #define _LATB6_ LATB6
-    #define _LATB7_ LATB7
-    #define _TRISB4_ TRISB4
-    #define _TRISB6_ TRISB6
-    #define _TRISB7_ TRISB7
+    #define _LATB4_ LATB4 ACC
+    #define _LATB6_ LATB6 ACC
+    #define _LATB7_ LATB7 ACC
+    #define _TRISB4_ TRISB4 ACC
+    #define _TRISB6_ TRISB6 ACC
+    #define _TRISB7_ TRISB7 ACC
 
-    #define _TMR0IF_ TMR0IF
-    #define _TMR0ON_ TMR0ON
+    #define _TMR0IF_ TMR0IF ACC
+    #define _TMR0ON_ TMR0ON ACC
 
-    #define _RBPU_ RBPU
-    #define _RI_ RI
-    #define _CARRY_ CARRY
-    #define _WR_ WR
+    #define _RBPU_ RBPU ACC
+    #define _RI_ RI ACC
+    #define _CARRY_ CARRY ACC
+    #define _WR_ WR ACC
     ; the missing defines have been added in package 1.4.87
     #ifndef PORTC
     #ifdef RC0
@@ -63,22 +63,22 @@
     #define _FSR1_ FSR1
     #define _FSR2_ FSR2
 
-    #define _RD_ EECON1, RD
+    #define _RD_ EECON1, RD, ACCESS
 
-    #define _LATB4_ LATB, LATB4
-    #define _LATB6_ LATB, LATB6
-    #define _LATB7_ LATB, LATB7
-    #define _TRISB4_ TRISB, TRISB4
-    #define _TRISB6_ TRISB, TRISB6
-    #define _TRISB7_ TRISB, TRISB7
+    #define _LATB4_ LATB, LATB4, ACCESS
+    #define _LATB6_ LATB, LATB6, ACCESS
+    #define _LATB7_ LATB, LATB7, ACCESS
+    #define _TRISB4_ TRISB, TRISB4, ACCESS
+    #define _TRISB6_ TRISB, TRISB6, ACCESS
+    #define _TRISB7_ TRISB, TRISB7, ACCESS
 
-    #define _TMR0IF_ INTCON, TMR0IF
-    #define _TMR0ON_ T0CON, TMR0ON
+    #define _TMR0IF_ INTCON, TMR0IF, ACCESS
+    #define _TMR0ON_ T0CON, TMR0ON, ACCESS
 
-    #define _RBPU_ INTCON2, RBPU
-    #define _RI_ RCON, RI
-    #define _CARRY_ STATUS, C
-    #define _WR_ EECON1, WR
+    #define _RBPU_ INTCON2, RBPU, ACCESS
+    #define _RI_ RCON, RI, ACCESS
+    #define _CARRY_ STATUS, C, ACCESS
+    #define _WR_ EECON1, WR, ACCESS
 #endif
 
 DigitalInput macro
