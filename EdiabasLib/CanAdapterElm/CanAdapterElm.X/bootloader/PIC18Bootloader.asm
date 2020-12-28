@@ -1019,7 +1019,7 @@ WriteAddressOkay:
 
 LoadHoldingRegisters:
     movff   POSTINC0, TABLAT    ; Load the holding registers
-     pmwtpi                      ; Same as tblwt *+
+    pmwtpi                      ; Same as tblwt *+
 
     movf    TBLPTRL, w, ACCESS  ; have we crossed into the next write block?
     andlw   (WRITE_FLASH_BLOCKSIZE-1)
