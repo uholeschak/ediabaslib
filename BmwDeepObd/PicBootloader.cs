@@ -2276,7 +2276,7 @@ namespace BmwDeepObd
                 return bootInfo;
             }
 
-            public ErrorCode RunApplication()
+            public ErrorCode RunApplication(bool elmFirmware)
             {
                 try
                 {
@@ -2297,7 +2297,9 @@ namespace BmwDeepObd
                     {
                         return ErrorCode.NoAcknowledgement;
                     }
-                    Thread.Sleep(500);  // wait for app start
+
+                    int waitTime = elmFirmware ? 3000 : 500;    // ELM firmware restarts two times
+                    Thread.Sleep(waitTime);  // wait for app start
                     return ErrorCode.Success;
                 }
                 catch (Exception)
@@ -2990,7 +2992,7 @@ namespace BmwDeepObd
                               typeof (XmlToolActivity).Namespace + ".HexFiles." + firmwareDetail.FirmwareInfo.FileName)).FirstOrDefault();
             if (hexFile == null)
             {
-                comm.RunApplication();
+                comm.RunApplication(elmMode);
                 return false;
             }
             try
@@ -2999,7 +3001,7 @@ namespace BmwDeepObd
                 DeviceData deviceData = new DeviceData(device);
                 if (!hexImporter.ImportHexFile(hexFile, deviceData, device))
                 {
-                    comm.RunApplication();
+                    comm.RunApplication(elmMode);
                     return false;
                 }
                 uint adapterType;
@@ -3013,7 +3015,7 @@ namespace BmwDeepObd
                 }
                 if (adapterType != device.AdapterType)
                 {
-                    comm.RunApplication();
+                    comm.RunApplication(elmMode);
                     return false;
                 }
 #if false
@@ -3034,7 +3036,7 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-                Comm.ErrorCode errorCode = comm.RunApplication();
+                Comm.ErrorCode errorCode = comm.RunApplication(elmFirmware);
                 if (errorCode != Comm.ErrorCode.Success)
                 {
                     return false;
