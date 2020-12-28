@@ -33,7 +33,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>pic-as</languageToolchain>
-        <languageToolchainVersion>2.20</languageToolchainVersion>
+        <languageToolchainVersion>2.31</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -158,10 +158,8 @@
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
         <property key="linker-maxi-chip" value="false"/>
-        <property key="linker-produce-elf-dwarf-output" value="true"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
-        <property key="linker-produce-intel-hex-output" value="false"/>
         <property key="linker-ram" value=""/>
         <property key="linker-reserve" value=""/>
         <property key="linker-rom" value=""/>
@@ -176,7 +174,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>pic-as</languageToolchain>
-        <languageToolchainVersion>2.20</languageToolchainVersion>
+        <languageToolchainVersion>2.31</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -232,6 +230,7 @@
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
@@ -301,10 +300,8 @@
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
         <property key="linker-maxi-chip" value="false"/>
-        <property key="linker-produce-elf-dwarf-output" value="true"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
-        <property key="linker-produce-intel-hex-output" value="false"/>
         <property key="linker-ram" value=""/>
         <property key="linker-reserve" value=""/>
         <property key="linker-rom" value=""/>
@@ -319,7 +316,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>pic-as</languageToolchain>
-        <languageToolchainVersion>2.20</languageToolchainVersion>
+        <languageToolchainVersion>2.31</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -444,10 +441,8 @@
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
         <property key="linker-maxi-chip" value="false"/>
-        <property key="linker-produce-elf-dwarf-output" value="true"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
-        <property key="linker-produce-intel-hex-output" value="false"/>
         <property key="linker-ram" value=""/>
         <property key="linker-reserve" value=""/>
         <property key="linker-rom" value=""/>
@@ -462,7 +457,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>pic-as</languageToolchain>
-        <languageToolchainVersion>2.20</languageToolchainVersion>
+        <languageToolchainVersion>2.31</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -587,10 +582,8 @@
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
         <property key="linker-maxi-chip" value="false"/>
-        <property key="linker-produce-elf-dwarf-output" value="true"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
-        <property key="linker-produce-intel-hex-output" value="false"/>
         <property key="linker-ram" value=""/>
         <property key="linker-reserve" value=""/>
         <property key="linker-rom" value=""/>
@@ -605,7 +598,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>pic-as</languageToolchain>
-        <languageToolchainVersion>2.20</languageToolchainVersion>
+        <languageToolchainVersion>2.31</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -730,10 +723,8 @@
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
         <property key="linker-maxi-chip" value="false"/>
-        <property key="linker-produce-elf-dwarf-output" value="true"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
-        <property key="linker-produce-intel-hex-output" value="false"/>
         <property key="linker-ram" value=""/>
         <property key="linker-reserve" value=""/>
         <property key="linker-rom" value=""/>
