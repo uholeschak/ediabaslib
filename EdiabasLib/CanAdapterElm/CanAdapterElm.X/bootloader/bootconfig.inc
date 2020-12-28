@@ -89,17 +89,17 @@
     #define UxTXREG         TXREG1
     #define UxBAUDCON       BAUDCON1
     #ifdef __XC
-        #define _UxBRG16_	BRG161
-        #define _UxCREN_        CREN1
-        #define _UxOERR_        OERR1
-	#define _UxRCIF_        RCIF
-	#define _UxTXIF_        TXIF
+        #define _UxBRG16_	BRG161 ACC
+        #define _UxCREN_        CREN1 ACC
+        #define _UxOERR_        OERR1 ACC
+	#define _UxRCIF_        RCIF ACC
+	#define _UxTXIF_        TXIF ACC
     #else
-        #define _UxBRG16_	UxBAUDCON, BRG16
-	#define _UxCREN_        UxRCSTA, CREN
-        #define _UxOERR_        UxRCSTA, OERR
-	#define _UxRCIF_        PIR1, RCIF
-	#define _UxTXIF_        PIR1, TXIF
+        #define _UxBRG16_	UxBAUDCON, BRG16, ACCESS
+	#define _UxCREN_        UxRCSTA, CREN, ACCESS
+        #define _UxOERR_        UxRCSTA, OERR, ACCESS
+	#define _UxRCIF_        PIR1, RCIF, ACCESS
+	#define _UxTXIF_        PIR1, TXIF, ACCESS
     #endif
 
 ;    #define RXPORT         PORTC   ; RX on RC7 is used by default for most PIC18's.
@@ -121,17 +121,17 @@
     #define UxTXREG         TXREG2
     #define UxBAUDCON       BAUDCON2
     #ifdef __XC
-        #define _UxBRG16_		BRG162
-        #define _UxCREN_        CREN2
-        #define _UxOERR_        OERR2
-	#define _UxRCIF_        RC2IF
-	#define _UxTXIF_        TX2IF
+        #define _UxBRG16_	BRG162 ACC
+        #define _UxCREN_        CREN2 ACC
+        #define _UxOERR_        OERR2 ACC
+	#define _UxRCIF_        RC2IF ACC
+	#define _UxTXIF_        TX2IF ACC
     #else
-        #define _UxBRG16_	UxBAUDCON, BRG16
-        #define _UxCREN_        UxRCSTA, CREN
-        #define _UxOERR_        UxRCSTA, OERR
-	#define _UxRCIF_        PIR3, RC2IF
-	#define _UxTXIF_        PIR3, TX2IF
+        #define _UxBRG16_	UxBAUDCON, BRG16, ACCESS
+        #define _UxCREN_        UxRCSTA, CREN, ACCESS
+        #define _UxOERR_        UxRCSTA, OERR, ACCESS
+	#define _UxRCIF_        PIR3, RC2IF, ACCESS
+	#define _UxTXIF_        PIR3, TX2IF, ACCESS
     #endif
 
 ;    #define RXPORT          PORTG   ; RG2 is default RX2 pin for some high pin count PIC18's.

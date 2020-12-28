@@ -1,5 +1,10 @@
 		;Select your processor
 #ifdef __PICAS
+		#if __PICAS_VERSION < 2300
+		    #define ACC ,a
+		#else
+		    #define ACC
+		#endif
 		#define __XC
 #endif
 #ifdef __XC
@@ -9,17 +14,17 @@
 		#define ACCESS a
 		#define BANKED b
 
-		#define _SWDTEN_ SWDTEN
-		#define _RI_ RI
-		#define _POR_ POR
+		#define _SWDTEN_ SWDTEN ACC
+		#define _RI_ RI ACC
+		#define _POR_ POR ACC
 #else
 		LIST      P=18F25K80		; modify this
 		#include "p18f25k80.inc"		; and this
 		#define MOD %
 
-		#define _SWDTEN_ WDTCON, SWDTEN
-		#define _RI_ RCON, RI
-		#define _POR_ RCON, POR
+		#define _SWDTEN_ WDTCON, SWDTEN, ACCESS
+		#define _RI_ RCON, RI, ACCESS
+		#define _POR_ RCON, POR, ACCESS
 #endif
 
 		#define ORIGINAL    0
@@ -175,7 +180,7 @@ eep_start:	DB 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x06, 0xAE, 0x02, 
 
 #if SW_VERSION != 0
 eep_end:
-p_restart:	btfss	_RI_, ACCESS
+p_restart:	btfss	_RI_
 		goto	p_reset		; perform wd reset after software reset
 		return
 
@@ -3040,7 +3045,7 @@ p_1802:	bcf		0xD2,6,BANKED			; entry from: 17FAh
 
 boot_reason:
 #if WDT_RESET
-		btfss   _POR_, ACCESS	; check for power on reset
+		btfss   _POR_				; check for power on reset
 		bra     p_1830
 #endif
 p_182A:	movlw	0x82						; entry from: 10Ah,1808h
@@ -7509,9 +7514,9 @@ p_3F26:	movff	0x9D,0x96					; entry from: 2260h,3F1Ah,3F20h
 		nop
 
 #if WDT_RESET
-p_reset:	bsf     _POR_, ACCESS
-	    	bsf     _RI_, ACCESS
-	    	bsf     _SWDTEN_, ACCESS
+p_reset:	bsf     _POR_
+	    	bsf     _RI_
+	    	bsf     _SWDTEN_
 reset_loop:	bra	reset_loop
 #endif
 
