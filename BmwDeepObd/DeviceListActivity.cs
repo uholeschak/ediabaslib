@@ -359,8 +359,7 @@ namespace BmwDeepObd
                     }
                     try
                     {
-                        List<Java.Util.UUID> uuidList = GetDeviceUuidList(device);
-                        if (uuidList.Count == 0 || uuidList.Any(uuid => SppUuid.CompareTo(uuid) == 0))
+                        if (IsBtDeviceValid(device))
                         {
                             _pairedDevicesArrayAdapter.Add(device.Name + "\n" + device.Address);
                         }
@@ -386,7 +385,7 @@ namespace BmwDeepObd
             }
         }
 
-        private static List<Java.Util.UUID> GetDeviceUuidList(BluetoothDevice device)
+        private static bool IsBtDeviceValid(BluetoothDevice device)
         {
             ParcelUuid[] uuids = device?.GetUuids();
             List<Java.Util.UUID> uuidList = new List<Java.Util.UUID>();
@@ -401,7 +400,7 @@ namespace BmwDeepObd
                 }
             }
 
-            return uuidList;
+            return uuidList.Count == 0 || uuidList.Any(uuid => SppUuid.CompareTo(uuid) == 0);
         }
 
         private void UpdateMtcDevices()
@@ -2088,8 +2087,7 @@ namespace BmwDeepObd
                             // If it's already paired, skip it, because it's been listed already
                             if (device != null && device.BondState != Bond.Bonded)
                             {
-                                List<Java.Util.UUID> uuidList = GetDeviceUuidList(device);
-                                if (uuidList.Count == 0 || uuidList.Any(uuid => SppUuid.CompareTo(uuid) == 0))
+                                if (IsBtDeviceValid(device))
                                 {
                                     // check for multiple entries
                                     int index = -1;
