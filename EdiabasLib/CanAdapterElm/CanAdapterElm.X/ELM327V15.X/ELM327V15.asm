@@ -8,6 +8,9 @@
 		#define __XC
 #endif
 #ifdef __XC
+		#ifndef ACC
+		    #define ACC ,a
+		#endif
 		#include <xc.inc>
 		#define upper(_x) (low((_x) >> 16))
 		#define MOD mod

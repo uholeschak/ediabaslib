@@ -114,6 +114,9 @@
     #define __XC
 #endif
 #ifdef __XC
+    #ifndef ACC
+	#define ACC ,a
+    #endif
 #include <xc.inc>
 #else
 #include <p18cxxx.inc>
