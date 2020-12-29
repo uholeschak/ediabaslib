@@ -31,6 +31,9 @@ using Android.Views;
 using Android.Widget;
 using EdiabasLib;
 using Android.Text.Method;
+using Android.Content.PM;
+using Android.Support.V4.App;
+using Android.Support.V4.Content;
 
 namespace BmwDeepObd
 {
@@ -72,6 +75,9 @@ namespace BmwDeepObd
 
         public class InstanceData
         {
+            public bool LocationPermssionRequested { get; set; }
+            public bool LocationPermssionGranted { get; set; }
+            public bool LocationWarningShown { get; set; }
             public bool MtcAntennaInfoShown { get; set; }
             public bool MtcBtModuleErrorShown { get; set; }
             public bool MtcBtEscapeModeShown { get; set; }
@@ -82,6 +88,12 @@ namespace BmwDeepObd
         private static readonly Java.Util.UUID SppUuid = Java.Util.UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly Java.Util.UUID ZeroUuid = Java.Util.UUID.FromString("00000000-0000-0000-0000-000000000000");
         private const int ResponseTimeout = 1000;
+        private const int RequestPermissionLocation = 0;
+        private readonly string[] _permissionsLocation =
+        {
+            Android.Manifest.Permission.AccessCoarseLocation,
+            Android.Manifest.Permission.AccessFineLocation
+        };
 
         // Return Intent extra
 #if DEBUG
@@ -279,6 +291,7 @@ namespace BmwDeepObd
             }
             else
             {
+                RequestLocationPermissions();
                 UpdatePairedDevices();
             }
         }
@@ -340,6 +353,63 @@ namespace BmwDeepObd
                     UpdatePairedDevices();
                     break;
             }
+        }
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
+        {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
+            switch (requestCode)
+            {
+                case RequestPermissionLocation:
+                    if (grantResults.Length > 0 && grantResults.All(permission => permission == Permission.Granted))
+                    {
+                        LocationPermissionGranted();
+                        break;
+                    }
+
+                    if (!_instanceData.LocationWarningShown)
+                    {
+                        _instanceData.LocationWarningShown = true;
+                        _activityCommon.ShowAlert(GetString(Resource.String.location_permission_rejected), Resource.String.alert_title_warning);
+                    }
+                    break;
+            }
+        }
+
+        private void RequestLocationPermissions()
+        {
+            if (_activityCommon.MtcBtService)
+            {
+                return;
+            }
+
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
+            {
+                return;
+            }
+
+            if (_instanceData.LocationPermssionRequested)
+            {
+                return;
+            }
+
+            _instanceData.LocationPermssionRequested = true;
+            if (_permissionsLocation.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
+            {
+                LocationPermissionGranted();
+                return;
+            }
+
+            ActivityCompat.RequestPermissions(this, _permissionsLocation, RequestPermissionLocation);
+        }
+
+        private void LocationPermissionGranted()
+        {
+            _instanceData.LocationPermssionGranted = true;
         }
 
         private void UpdatePairedDevices()

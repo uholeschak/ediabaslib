@@ -1290,9 +1290,9 @@ namespace BmwDeepObd
             switch (requestCode)
             {
                 case RequestPermissionExternalStorage:
-                    if (grantResults.Length > 0 && grantResults[0] == Permission.Granted)
+                    if (grantResults.Length > 0 && grantResults.All(permission => permission == Permission.Granted))
                     {
-                        StoragePermissonGranted();
+                        StoragePermissionGranted();
                         break;
                     }
                     Toast.MakeText(this, GetString(Resource.String.access_denied_ext_storage), ToastLength.Long).Show();
@@ -2444,15 +2444,15 @@ namespace BmwDeepObd
 
         private void RequestStoragePermissions()
         {
-            if (_permissionsExternalStorage.All(permisson => ContextCompat.CheckSelfPermission(this, permisson) == Permission.Granted))
+            if (_permissionsExternalStorage.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
             {
-                StoragePermissonGranted();
+                StoragePermissionGranted();
                 return;
             }
             ActivityCompat.RequestPermissions(this, _permissionsExternalStorage, RequestPermissionExternalStorage);
         }
 
-        private void StoragePermissonGranted()
+        private void StoragePermissionGranted()
         {
             _instanceData.StorageAccessGranted = true;
             ActivityCommon.SetStoragePath();
