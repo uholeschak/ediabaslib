@@ -412,22 +412,25 @@ namespace BmwDeepObd
         private void LocationPermissionGranted()
         {
             _instanceData.LocationPermssionGranted = true;
-            if (_activityCommon.LocationManager != null)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
             {
-                try
+                if (_activityCommon.LocationManager != null)
                 {
-                    if (!_activityCommon.LocationManager.IsLocationEnabled)
+                    try
                     {
-                        if (!_instanceData.LocationProviderShown)
+                        if (!_activityCommon.LocationManager.IsLocationEnabled)
                         {
-                            _instanceData.LocationProviderShown = true;
-                            _activityCommon.ShowAlert(GetString(Resource.String.location_provider_disabled), Resource.String.alert_title_warning);
+                            if (!_instanceData.LocationProviderShown)
+                            {
+                                _instanceData.LocationProviderShown = true;
+                                _activityCommon.ShowAlert(GetString(Resource.String.location_provider_disabled), Resource.String.alert_title_warning);
+                            }
                         }
                     }
-                }
-                catch (Exception)
-                {
-                    // ignored
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }
             }
         }
