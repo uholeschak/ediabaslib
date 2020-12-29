@@ -33,6 +33,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Android.Content.PM;
+using Android.Locations;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Android.Views;
@@ -505,6 +506,7 @@ namespace BmwDeepObd
         private readonly WifiManager _maWifi;
         private readonly ConnectivityManager _maConnectivity;
         private readonly UsbManager _usbManager;
+        private readonly LocationManager _locationManager;
         private readonly Android.App.NotificationManager _notificationManager;
         private readonly PowerManager _powerManager;
         private readonly PackageManager _packageManager;
@@ -942,6 +944,8 @@ namespace BmwDeepObd
 
         public UsbManager UsbManager => _usbManager;
 
+        public LocationManager LocationManager => _locationManager;
+
         // ReSharper disable once ConvertToAutoProperty
         public Android.App.NotificationManager NotificationManager => _notificationManager;
 
@@ -982,6 +986,7 @@ namespace BmwDeepObd
             _maConnectivity = (ConnectivityManager)context?.ApplicationContext?.GetSystemService(Context.ConnectivityService);
             _networkData = new TcpClientWithTimeout.NetworkData(_maConnectivity);
             _usbManager = context?.GetSystemService(Context.UsbService) as UsbManager;
+            _locationManager = context?.GetSystemService(Context.LocationService) as LocationManager;
             _notificationManager = context?.GetSystemService(Context.NotificationService) as Android.App.NotificationManager;
             RegisterNotificationChannels();
             _powerManager = context?.GetSystemService(Context.PowerService) as PowerManager;

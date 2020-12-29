@@ -32,6 +32,7 @@ using Android.Widget;
 using EdiabasLib;
 using Android.Text.Method;
 using Android.Content.PM;
+using Android.Locations;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
 
@@ -78,6 +79,7 @@ namespace BmwDeepObd
             public bool LocationPermssionRequested { get; set; }
             public bool LocationPermssionGranted { get; set; }
             public bool LocationWarningShown { get; set; }
+            public bool LocationProviderShown { get; set; }
             public bool MtcAntennaInfoShown { get; set; }
             public bool MtcBtModuleErrorShown { get; set; }
             public bool MtcBtEscapeModeShown { get; set; }
@@ -410,6 +412,24 @@ namespace BmwDeepObd
         private void LocationPermissionGranted()
         {
             _instanceData.LocationPermssionGranted = true;
+            if (_activityCommon.LocationManager != null)
+            {
+                try
+                {
+                    if (!_activityCommon.LocationManager.IsLocationEnabled)
+                    {
+                        if (!_instanceData.LocationProviderShown)
+                        {
+                            _instanceData.LocationProviderShown = true;
+                            _activityCommon.ShowAlert(GetString(Resource.String.location_provider_disabled), Resource.String.alert_title_warning);
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
         }
 
         private void UpdatePairedDevices()
