@@ -359,20 +359,8 @@ namespace BmwDeepObd
                     }
                     try
                     {
-                        ParcelUuid[] uuids = device.GetUuids();
-                        List<Java.Util.UUID> uuidList = new List<Java.Util.UUID>();
-                        if (uuids != null)
-                        {
-                            foreach (ParcelUuid parcelUuid in uuids)
-                            {
-                                if (parcelUuid.Uuid != null && ZeroUuid.CompareTo(parcelUuid.Uuid) != 0)
-                                {
-                                    uuidList.Add(parcelUuid.Uuid);
-                                }
-                            }
-                        }
-
-                        if (uuidList.Count == 0 || (uuidList.Any(uuid => SppUuid.CompareTo(uuid) == 0)))
+                        List<Java.Util.UUID> uuidList = GetDeviceUuidList(device);
+                        if (uuidList.Count == 0 || uuidList.Any(uuid => SppUuid.CompareTo(uuid) == 0))
                         {
                             _pairedDevicesArrayAdapter.Add(device.Name + "\n" + device.Address);
                         }
@@ -396,6 +384,24 @@ namespace BmwDeepObd
                     _pairedDevicesArrayAdapter.Add(Resources.GetText(Resource.String.bt_not_enabled));
                 }
             }
+        }
+
+        private static List<Java.Util.UUID> GetDeviceUuidList(BluetoothDevice device)
+        {
+            ParcelUuid[] uuids = device?.GetUuids();
+            List<Java.Util.UUID> uuidList = new List<Java.Util.UUID>();
+            if (uuids != null)
+            {
+                foreach (ParcelUuid parcelUuid in uuids)
+                {
+                    if (parcelUuid.Uuid != null && ZeroUuid.CompareTo(parcelUuid.Uuid) != 0)
+                    {
+                        uuidList.Add(parcelUuid.Uuid);
+                    }
+                }
+            }
+
+            return uuidList;
         }
 
         private void UpdateMtcDevices()
@@ -2077,12 +2083,13 @@ namespace BmwDeepObd
                         case BluetoothDevice.ActionNameChanged:
                         {
                             // Get the BluetoothDevice object from the Intent
-                            BluetoothDevice device = (BluetoothDevice) intent.GetParcelableExtra(BluetoothDevice.ExtraDevice);
+                            // ReSharper disable once UsePatternMatching
+                            BluetoothDevice device = intent.GetParcelableExtra(BluetoothDevice.ExtraDevice) as BluetoothDevice;
                             // If it's already paired, skip it, because it's been listed already
-                            if (device.BondState != Bond.Bonded)
+                            if (device != null && device.BondState != Bond.Bonded)
                             {
-                                ParcelUuid[] uuids = device.GetUuids();
-                                if ((uuids == null) || (uuids.Any(uuid => SppUuid.CompareTo(uuid.Uuid) == 0)))
+                                List<Java.Util.UUID> uuidList = GetDeviceUuidList(device);
+                                if (uuidList.Count == 0 || uuidList.Any(uuid => SppUuid.CompareTo(uuid) == 0))
                                 {
                                     // check for multiple entries
                                     int index = -1;
@@ -2126,7 +2133,8 @@ namespace BmwDeepObd
                         case BluetoothDevice.ActionAclConnected:
                         case BluetoothDevice.ActionAclDisconnected:
                         {
-                            BluetoothDevice device = (BluetoothDevice)intent.GetParcelableExtra(BluetoothDevice.ExtraDevice);
+                            // ReSharper disable once UsePatternMatching
+                            BluetoothDevice device = intent.GetParcelableExtra(BluetoothDevice.ExtraDevice) as BluetoothDevice;
                             if (device != null)
                             {
                                 if (!string.IsNullOrEmpty(_chat._connectDeviceAddress) &&
