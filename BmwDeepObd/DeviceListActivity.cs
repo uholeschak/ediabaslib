@@ -132,6 +132,7 @@ namespace BmwDeepObd
         private enum ActivityRequest
         {
             RequestBluetoothSettings,
+            RequestLocationSettings,
         }
 
         protected override void OnCreate (Bundle savedInstanceState)
@@ -354,6 +355,9 @@ namespace BmwDeepObd
                 case ActivityRequest.RequestBluetoothSettings:
                     UpdatePairedDevices();
                     break;
+
+                case ActivityRequest.RequestLocationSettings:
+                    break;
             }
         }
 
@@ -423,7 +427,26 @@ namespace BmwDeepObd
                             if (!_instanceData.LocationProviderShown)
                             {
                                 _instanceData.LocationProviderShown = true;
-                                _activityCommon.ShowAlert(GetString(Resource.String.location_provider_disabled), Resource.String.alert_title_warning);
+                                new AlertDialog.Builder(this)
+                                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                    {
+                                        try
+                                        {
+                                            Intent intent = new Intent(Android.Provider.Settings.ActionLocationSourceSettings);
+                                            StartActivityForResult(intent, (int)ActivityRequest.RequestLocationSettings);
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // ignored
+                                        }
+                                    })
+                                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                    {
+                                    })
+                                    .SetCancelable(true)
+                                    .SetMessage(Resource.String.location_provider_disabled)
+                                    .SetTitle(Resource.String.alert_title_warning)
+                                    .Show();
                             }
                         }
                     }

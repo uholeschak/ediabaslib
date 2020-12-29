@@ -232,7 +232,7 @@
   <string name="adapter_no_escape_mode">Для этого типа Bluetooth-модуля требуется обновление прошивки OBD адаптера.</string>
   <!--Translate-->
   <string name="location_permission_rejected">Без разрешения местоположения поиск устройств Bluetooth невозможен.</string>
-  <string name="location_provider_disabled">Для поиска устройства Bluetooth должны быть включены службы определения местоположения.</string>
+  <string name="location_provider_disabled">Для поиска устройства Bluetooth должны быть включены службы определения местоположения.\nВы хотите включить службу определения местоположения?</string>
   <string name="bt_device_enter_mac">Введите Bluetooth-адрес уже подключённого адаптера OBD в указанном формате</string>
   <string name="bt_device_mac_invalid">Неправильный формат Bluetooth-адреса</string>
   <string name="bt_device_connected">(Подключено)</string>
