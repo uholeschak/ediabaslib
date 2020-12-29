@@ -80,6 +80,7 @@ namespace BmwDeepObd
         }
 
         private static readonly Java.Util.UUID SppUuid = Java.Util.UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
+        private static readonly Java.Util.UUID ZeroUuid = Java.Util.UUID.FromString("00000000-0000-0000-0000-000000000000");
         private const int ResponseTimeout = 1000;
 
         // Return Intent extra
@@ -359,7 +360,19 @@ namespace BmwDeepObd
                     try
                     {
                         ParcelUuid[] uuids = device.GetUuids();
-                        if ((uuids == null) || (uuids.Any(uuid => SppUuid.CompareTo(uuid.Uuid) == 0)))
+                        List<Java.Util.UUID> uuidList = new List<Java.Util.UUID>();
+                        if (uuids != null)
+                        {
+                            foreach (ParcelUuid parcelUuid in uuids)
+                            {
+                                if (parcelUuid.Uuid != null && ZeroUuid.CompareTo(parcelUuid.Uuid) != 0)
+                                {
+                                    uuidList.Add(parcelUuid.Uuid);
+                                }
+                            }
+                        }
+
+                        if (uuidList.Count == 0 || (uuidList.Any(uuid => SppUuid.CompareTo(uuid) == 0)))
                         {
                             _pairedDevicesArrayAdapter.Add(device.Name + "\n" + device.Address);
                         }
