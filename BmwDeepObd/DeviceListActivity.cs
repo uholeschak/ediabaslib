@@ -32,7 +32,6 @@ using Android.Widget;
 using EdiabasLib;
 using Android.Text.Method;
 using Android.Content.PM;
-using Android.Locations;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
 
@@ -93,7 +92,6 @@ namespace BmwDeepObd
         private const int RequestPermissionLocation = 0;
         private readonly string[] _permissionsLocation =
         {
-            Android.Manifest.Permission.AccessCoarseLocation,
             Android.Manifest.Permission.AccessFineLocation
         };
 
@@ -403,13 +401,13 @@ namespace BmwDeepObd
                 return;
             }
 
-            _instanceData.LocationPermssionRequested = true;
             if (_permissionsLocation.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
             {
                 LocationPermissionGranted();
                 return;
             }
 
+            _instanceData.LocationPermssionRequested = true;
             ActivityCompat.RequestPermissions(this, _permissionsLocation, RequestPermissionLocation);
         }
 
