@@ -560,10 +560,24 @@ namespace BmwDeepObd
             }
             _tabLayout.Visibility = (ActivityCommon.JobReader.PageList.Count > 0) ? ViewStates.Visible : ViewStates.Gone;
             _fragmentPagerAdapter.NotifyDataSetChanged();
-            if (_tabLayout.TabCount > pageIndex)
+            if (_tabLayout.TabCount > 0)
             {
-                _tabLayout.GetTabAt(pageIndex).Select();
+                if (pageIndex >= _tabLayout.TabCount)
+                {
+                    pageIndex = 0;
+                }
+
+                _updateHandler.Post(() =>
+                {
+                    if (!_activityActive)
+                    {
+                        return;
+                    }
+
+                    _tabLayout.GetTabAt(pageIndex)?.Select();
+                });
             }
+
             _ignoreTabsChange = false;
             UpdateDisplay();
             StoreLastAppState(LastAppState.TabsCreated);
@@ -1295,7 +1309,7 @@ namespace BmwDeepObd
                         StoragePermissionGranted();
                         break;
                     }
-                    Toast.MakeText(this, GetString(Resource.String.access_denied_ext_storage), ToastLength.Long).Show();
+                    Toast.MakeText(this, GetString(Resource.String.access_denied_ext_storage), ToastLength.Long)?.Show();
                     Finish();
                     break;
             }
