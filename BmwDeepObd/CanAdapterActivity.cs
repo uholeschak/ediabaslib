@@ -349,8 +349,18 @@ namespace BmwDeepObd
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
                         _instanceData.FirmwareFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
-                        byte[] buffer = new byte[0x40000];
-                        AtmelBootloader.LoadProgramFile(_instanceData.FirmwareFileName, buffer, out uint usedBuffer);
+                        new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                            {
+                                PerformUpdate(false);
+                            })
+                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                            {
+                            })
+                            .SetCancelable(true)
+                            .SetMessage(Resource.String.can_adapter_fw_update_info)
+                            .SetTitle(Resource.String.alert_title_warning)
+                            .Show();
                     }
                     break;
             }
@@ -1127,6 +1137,7 @@ namespace BmwDeepObd
             {
                 bool updateOk = false;
                 bool connectOk = false;
+                bool usbMode = false;
                 bool elmMode = IsCustomElmAdapter(_interfaceType, _deviceAddress);
                 bool elmFirmware = false;
                 if (changeFirmware)
@@ -1167,16 +1178,30 @@ namespace BmwDeepObd
                                 outStream = networkStream;
                                 break;
                             }
+
+                            case ActivityCommon.InterfaceType.Ftdi:
+                            {
+                                usbMode = true;
+                                break;
+                            }
                         }
                     }
-                    if (inStream == null || outStream == null)
-                    {
-                        connectOk = false;
-                    }
 
-                    if (connectOk)
+                    if (usbMode)
                     {
-                        updateOk = PicBootloader.FwUpdate(inStream, outStream, elmMode, elmFirmware);
+                        updateOk = AtmelBootloader.FwUpdate(_instanceData.FirmwareFileName);
+                    }
+                    else
+                    {
+                        if (inStream == null || outStream == null)
+                        {
+                            connectOk = false;
+                        }
+
+                        if (connectOk)
+                        {
+                            updateOk = PicBootloader.FwUpdate(inStream, outStream, elmMode, elmFirmware);
+                        }
                     }
                 }
                 catch (Exception)
