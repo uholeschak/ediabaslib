@@ -18,6 +18,7 @@ namespace BmwDeepObd
         private const int ReadTimeout = 250;
         private const int SyncLoopTimeout = 3000;
         private const int SyncDelay = 100;
+        private const int MinimumWriteBuffer = 8;
 
         private const string ValidBootloader = "2.1";
         private const byte IdentifierCommand = 0xA5;
@@ -213,7 +214,7 @@ namespace BmwDeepObd
             try
             {
                 byte[] buffer = new byte[0x40000];
-                if (!LoadProgramFile(fileName, buffer, out uint usedBuffer))
+                if (!LoadProgramFile(fileName, buffer, out uint updateBufferUsed))
                 {
                     return false;
                 }
@@ -247,6 +248,28 @@ namespace BmwDeepObd
 
                 string deviceName = GetDeviceName(deviceSignature);
                 if (string.IsNullOrEmpty(deviceName))
+                {
+                    return false;
+                }
+
+                long deviceFlashSize = ReadFlashSizeInfo();
+                if (deviceFlashSize < 0)
+                {
+                    return false;
+                }
+
+                if (deviceFlashSize > buffer.Length)
+                {
+                    return false;
+                }
+
+                if (deviceFlashSize < updateBufferUsed)
+                {
+                    return false;
+                }
+
+                long deviceWriteBuffer = ReadBufferSizeInfo();
+                if (deviceWriteBuffer < MinimumWriteBuffer)
                 {
                     return false;
                 }
@@ -538,6 +561,30 @@ namespace BmwDeepObd
 
             string signature = BitConverter.ToString(readBytes).Replace("-", "");
             return signature;
+        }
+
+        public static long ReadBufferSizeInfo()
+        {
+            byte[] readBytes = ReadInfo(ReadBufferSize);
+            if (readBytes == null || readBytes.Length != 2)
+            {
+                return -1;
+            }
+
+            long bufferSize = (readBytes[0] << 8) + readBytes[1];
+            return bufferSize;
+        }
+
+        public static long ReadFlashSizeInfo()
+        {
+            byte[] readBytes = ReadInfo(ReadFlashSize);
+            if (readBytes == null || readBytes.Length != 3)
+            {
+                return -1;
+            }
+
+            long flashSize = (readBytes[0] << 16) + (readBytes[1] << 8) + readBytes[2];
+            return flashSize;
         }
 
         public static string GetDeviceName(string deviceSignature)
