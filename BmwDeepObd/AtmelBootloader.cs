@@ -44,6 +44,33 @@ namespace BmwDeepObd
         private const byte DataPasswordTrailer = 0xFF;
         private static byte[] ResetCmd = {0x82, 0xF1, 0xF1, 0xFF, 0xFF, 0x62};
 
+        private static Dictionary<string, string> deviceDict = new Dictionary<string, string>
+        {
+            {"1E9007", "ATtiny13"},
+            {"1E910A", "ATtiny2313"},
+            {"1E9205", "ATmega48"},
+            {"1E9206", "ATtiny45"},
+            {"1E9207", "ATtiny44"},
+            {"1E9208", "ATtiny461"},
+            {"1E9306", "ATmega8515"},
+            {"1E9307", "ATmega8"},
+            {"1E9308", "ATmega8535"},
+            {"1E930A", "ATmega88"},
+            {"1E930B", "ATtiny85"},
+            {"1E930C", "ATtiny84"},
+            {"1E930D", "ATtiny861"},
+            {"1E930F", "ATmega88P"},
+            {"1E9403", "ATmega16"},
+            {"1E9404", "ATmega162"},
+            {"1E9406", "ATmega168"},
+            {"1E940B", "ATmega168P"},
+            {"1E9501", "ATmega323"},
+            {"1E9502", "ATmega32"},
+            {"1E950F", "ATmega328P"},
+            {"1E9609", "ATmega644"},
+            {"1E9802", "ATmega2561"},
+        };
+
         private static bool _oneWire = false;
 
         public static bool LoadProgramFile(string fileName, byte[] buffer, out uint usedBuffer)
@@ -214,6 +241,12 @@ namespace BmwDeepObd
 
                 string deviceSignature = ReadSignatureInfo();
                 if (string.IsNullOrEmpty(deviceSignature))
+                {
+                    return false;
+                }
+
+                string deviceName = GetDeviceName(deviceSignature);
+                if (string.IsNullOrEmpty(deviceName))
                 {
                     return false;
                 }
@@ -505,6 +538,21 @@ namespace BmwDeepObd
 
             string signature = BitConverter.ToString(readBytes).Replace("-", "");
             return signature;
+        }
+
+        public static string GetDeviceName(string deviceSignature)
+        {
+            if (string.IsNullOrEmpty(deviceSignature))
+            {
+                return null;
+            }
+
+            if (!deviceDict.TryGetValue(deviceSignature.ToUpperInvariant(), out string deviceName))
+            {
+                return null;
+            }
+
+            return deviceName;
         }
 
         public static bool StartFirmware()
