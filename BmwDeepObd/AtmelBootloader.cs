@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System;
+using System.Globalization;
 using System.Threading;
 using EdiabasLib;
 
@@ -18,6 +19,7 @@ namespace BmwDeepObd
         private const int SyncLoopTimeout = 3000;
         private const int SyncDelay = 100;
 
+        private const string ValidBootloader = "2.1";
         private const byte IdentifierCommand = 0xA5;
         private const byte IdentifierEscape = 0xA5;
         private const byte IdentifierAnswer = 0xA8;
@@ -196,6 +198,26 @@ namespace BmwDeepObd
 
                 _oneWire = oneWireMode;
 
+                bool supportCrc = DetectSupport(CommandProgramCheckCRC);
+                bool supportVerify = DetectSupport(CommandProgramVerify);
+
+                string deviceRevision = ReadRevisionInfo();
+                if (string.IsNullOrEmpty(deviceRevision))
+                {
+                    return false;
+                }
+
+                if (string.Compare(deviceRevision, ValidBootloader, StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    return false;
+                }
+
+                string deviceSignature = ReadSignatureInfo();
+                if (string.IsNullOrEmpty(deviceSignature))
+                {
+                    return false;
+                }
+
                 if (!StartFirmware())
                 {
                     return false;
@@ -204,27 +226,6 @@ namespace BmwDeepObd
                 return true;
             }
             catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public static bool SkipOneWireBytes(int count)
-        {
-            try
-            {
-                if (_oneWire)
-                {
-                    byte[] buffer = new byte[count];
-                    if (!EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-            catch (Exception )
             {
                 return false;
             }
@@ -242,7 +243,11 @@ namespace BmwDeepObd
 
                 if (sendReset)
                 {
-                    EdFtdiInterface.InterfaceSendData(ResetCmd, ResetCmd.Length, false, 0);
+                    if (!EdFtdiInterface.InterfaceSendData(ResetCmd, ResetCmd.Length, false, 0))
+                    {
+                        return false;
+                    }
+
                     Thread.Sleep(150);
                 }
 
@@ -260,7 +265,10 @@ namespace BmwDeepObd
                     bootData.Add(DataAutobaudLeader);
                     bootData.AddRange(enc.GetBytes(password));
                     bootData.Add(DataPasswordTrailer);
-                    EdFtdiInterface.InterfaceSendData(bootData.ToArray(), bootData.Count, false, 0);
+                    if (!EdFtdiInterface.InterfaceSendData(bootData.ToArray(), bootData.Count, false, 0))
+                    {
+                        return false;
+                    }
 
                     startTime = Stopwatch.GetTimestamp();
                     for (;;)
@@ -299,7 +307,10 @@ namespace BmwDeepObd
                 Thread.Sleep(SyncDelay);
 
                 byte[] command = { IdentifierCommand };
-                EdFtdiInterface.InterfaceSendData(command, command.Length, false, 0);
+                if (!EdFtdiInterface.InterfaceSendData(command, command.Length, false, 0))
+                {
+                    return false;
+                }
 
                 bool loopTimeout = false;
                 startTime = Stopwatch.GetTimestamp();
@@ -334,25 +345,196 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool StartFirmware()
+        public static bool SkipOneWireBytes(int count)
         {
             try
             {
-                byte[] command = {IdentifierCommand, CommandProgramStart};
-                EdFtdiInterface.InterfaceSendData(command, command.Length, false, 0);
-
-                SkipOneWireBytes(2);
-
-                byte[] buffer = new byte[1];
-                if (EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
+                if (_oneWire)
                 {
-                    if (buffer[0] == StatusBadCommand)
+                    byte[] buffer = new byte[count];
+                    if (!EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
                     {
                         return false;
                     }
                 }
 
-                EdFtdiInterface.InterfacePurgeInBuffer();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static bool DetectSupport(byte commandByte)
+        {
+            try
+            {
+                try
+                {
+                    byte[] commandTest = { IdentifierCommand, commandByte };
+                    if (!EdFtdiInterface.InterfaceSendData(commandTest, commandTest.Length, false, 0))
+                    {
+                        return false;
+                    }
+
+                    SkipOneWireBytes(2);
+
+                    byte[] buffer = new byte[1];
+                    if (EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
+                    {
+                        if (buffer[0] == StatusBadCommand)
+                        {
+                            return false;
+                        }
+                    }
+
+                    byte[] commandFinish = { IdentifierCommand, CommandProgramFinish };
+                    if (!EdFtdiInterface.InterfaceSendData(commandFinish, commandFinish.Length, false, 0))
+                    {
+                        return false;
+                    }
+
+                    if (EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
+                    {
+                        if (buffer[0] == StatusSuccess || buffer[0] == StatusFail)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                finally
+                {
+                    EdFtdiInterface.InterfacePurgeInBuffer();
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static byte[] ReadInfo(byte commandByte)
+        {
+            try
+            {
+                byte[] readAnswer = null;
+                try
+                {
+                    byte[] commandTest = { IdentifierCommand, commandByte };
+                    if (!EdFtdiInterface.InterfaceSendData(commandTest, commandTest.Length, false, 0))
+                    {
+                        return null;
+                    }
+
+                    SkipOneWireBytes(2);
+
+                    byte[] buffer = new byte[1];
+                    if (!EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
+                    {
+                        return null;
+                    }
+                    byte readLeader = buffer[0];
+
+                    if (!EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
+                    {
+                        return null;
+                    }
+                    byte answerLength = buffer[0];
+
+                    if (answerLength > 0)
+                    {
+                        answerLength--;
+                        readAnswer = new byte[answerLength];
+                        for (int i = 0; i < answerLength; i++)
+                        {
+                            if (!EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
+                            {
+                                return null;
+                            }
+                            readAnswer[i] = buffer[0];
+                        }
+
+                    }
+
+                    if (!EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
+                    {
+                        return null;
+                    }
+                    byte readTrailer = buffer[0];
+
+                    if (readLeader != IdentifierAnswer || readTrailer != StatusSuccess)
+                    {
+                        return null;
+                    }
+                }
+                finally
+                {
+                    EdFtdiInterface.InterfacePurgeInBuffer();
+                }
+
+                return readAnswer;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static string ReadRevisionInfo()
+        {
+            byte[] readBytes = ReadInfo(ReadRevision);
+            if (readBytes == null || readBytes.Length != 2)
+            {
+                return null;
+            }
+
+            string revision = string.Format(CultureInfo.InvariantCulture, "{0}.{1}", readBytes[0], readBytes[1]);
+            return revision;
+        }
+
+        public static string ReadSignatureInfo()
+        {
+            byte[] readBytes = ReadInfo(ReadSignature);
+            if (readBytes == null)
+            {
+                return null;
+            }
+
+            string signature = BitConverter.ToString(readBytes).Replace("-", "");
+            return signature;
+        }
+
+        public static bool StartFirmware()
+        {
+            try
+            {
+                try
+                {
+                    byte[] command = { IdentifierCommand, CommandProgramStart };
+                    if (!EdFtdiInterface.InterfaceSendData(command, command.Length, false, 0))
+                    {
+                        return false;
+                    }
+
+                    SkipOneWireBytes(2);
+
+                    byte[] buffer = new byte[1];
+                    if (EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
+                    {
+                        if (buffer[0] == StatusBadCommand)
+                        {
+                            return false;
+                        }
+                    }
+                }
+                finally
+                {
+                    EdFtdiInterface.InterfacePurgeInBuffer();
+                }
+
                 return true;
             }
             catch (Exception)
