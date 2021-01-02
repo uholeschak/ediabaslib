@@ -13,6 +13,8 @@ using System.IO;
 using System.Net.Sockets;
 using Android.Content;
 using Android.Hardware.Usb;
+using BmwDeepObd.FilePicker;
+
 // ReSharper disable IdentifierTypo
 
 namespace BmwDeepObd
@@ -23,9 +25,15 @@ namespace BmwDeepObd
     public class CanAdapterActivity : BaseActivity, View.IOnTouchListener
     {
         // Intent extra
+        public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraInterfaceType = "interface_type";
         public const string ExtraInvalidateAdapter = "invalidate_adapter";
+
+        private enum ActivityRequest
+        {
+            RequestSelectFirmware,
+        }
 
         private enum AdapterMode
         {
@@ -39,6 +47,7 @@ namespace BmwDeepObd
         {
             public bool FwUpdateShown { get; set; }
             public bool BatteryWarningShown { get; set; }
+            public string FirmwareFileName { get; set; }
         }
 
         private InstanceData _instanceData = new InstanceData();
@@ -73,6 +82,7 @@ namespace BmwDeepObd
         private Button _buttonFwUpdateChange;
         private CheckBox _checkBoxExpert;
         private bool _activityActive;
+        private string _appDataDir = string.Empty;
         private string _deviceAddress = string.Empty;
         private ActivityCommon.InterfaceType _interfaceType;
         private int _blockSize = -1;
@@ -112,12 +122,14 @@ namespace BmwDeepObd
 
             SetResult(Android.App.Result.Canceled);
 
+            _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
             _interfaceType = (ActivityCommon.InterfaceType) Intent.GetIntExtra(ExtraInterfaceType, (int) ActivityCommon.InterfaceType.Bluetooth);
             ViewStates visibility = IsCustomAdapter(_interfaceType, _deviceAddress) ? ViewStates.Visible : ViewStates.Gone;
             ViewStates visibilityBt = IsCustomBtAdapter(_interfaceType, _deviceAddress) ? ViewStates.Visible : ViewStates.Gone;
             bool customElmAdapter = IsCustomElmAdapter(_interfaceType, _deviceAddress);
             bool rawAdapter = IsRawAdapter(_interfaceType, _deviceAddress);
+            bool usbAdapter = IsUsbAdapter(_interfaceType);
 
             if (!(customElmAdapter || rawAdapter))
             {
@@ -231,7 +243,7 @@ namespace BmwDeepObd
             _textViewSerNumTitle.Visibility = ViewStates.Gone;
             _textViewSerNum.Visibility = ViewStates.Gone;
 #endif
-            ViewStates visibilityFwUpdate = rawAdapter ? ViewStates.Visible : visibility;
+            ViewStates visibilityFwUpdate = rawAdapter || usbAdapter? ViewStates.Visible : visibility;
             _buttonFwUpdate = FindViewById<Button>(Resource.Id.buttonCanAdapterFwUpdate);
             _buttonFwUpdate.Visibility = visibilityFwUpdate;
             _buttonFwUpdate.Click += (sender, args) =>
@@ -325,6 +337,20 @@ namespace BmwDeepObd
             if (!IsJobRunning())
             {
                 base.OnBackPressed();
+            }
+        }
+
+        protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
+        {
+            switch ((ActivityRequest) requestCode)
+            {
+                case ActivityRequest.RequestSelectFirmware:
+                    // When FilePickerActivity returns with a file
+                    if (data != null && resultCode == Android.App.Result.Ok)
+                    {
+                        _instanceData.FirmwareFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
+                    }
+                    break;
             }
         }
 
@@ -1058,14 +1084,21 @@ namespace BmwDeepObd
 
         private void PerformUpdateMessage(bool changeFirmware = false)
         {
-            if (_interfaceType == ActivityCommon.InterfaceType.Bluetooth)
+            switch (_interfaceType)
             {
-                if (!ActivityCommon.IsBtReliable() || _activityCommon.MtcBtService)
-                {
-                    _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_not_reliable), Resource.String.alert_title_error);
+                case ActivityCommon.InterfaceType.Bluetooth:
+                    if (!ActivityCommon.IsBtReliable() || _activityCommon.MtcBtService)
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_not_reliable), Resource.String.alert_title_error);
+                        return;
+                    }
+                    break;
+
+                case ActivityCommon.InterfaceType.Ftdi:
+                    SelectFirmwareFile();
                     return;
-                }
             }
+
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
@@ -1214,6 +1247,29 @@ namespace BmwDeepObd
             UpdateDisplay();
         }
 
+        private void SelectFirmwareFile()
+        {
+            // Launch the FilePickerActivity to select a sgbd file
+            Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
+            string initDir = _appDataDir;
+            try
+            {
+                if (!string.IsNullOrEmpty(_instanceData.FirmwareFileName))
+                {
+                    initDir = Path.GetDirectoryName(_instanceData.FirmwareFileName);
+                }
+            }
+            catch (Exception)
+            {
+                initDir = _appDataDir;
+            }
+
+            serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.can_adapter_select_fw_file));
+            serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
+            serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".hex");
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectFirmware);
+        }
+
         private static bool IsCustomAdapter(ActivityCommon.InterfaceType interfaceType, string deviceAddress)
         {
             switch (interfaceType)
@@ -1287,6 +1343,17 @@ namespace BmwDeepObd
                     }
 
                     return false;
+            }
+
+            return false;
+        }
+
+        private static bool IsUsbAdapter(ActivityCommon.InterfaceType interfaceType)
+        {
+            switch (interfaceType)
+            {
+                case ActivityCommon.InterfaceType.Ftdi:
+                    return true;
             }
 
             return false;
