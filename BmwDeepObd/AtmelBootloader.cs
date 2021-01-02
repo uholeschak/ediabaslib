@@ -16,8 +16,10 @@ namespace BmwDeepObd
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const int ConnectLoopTimeout = 100;
         private const int ReadTimeout = 250;
+        private const int ReadLongTimeout = 750;
         private const int SyncLoopTimeout = 3000;
         private const int SyncDelay = 100;
+        private const int VerifyChunkLength = 512;
         private const int MinimumWriteBuffer = 8;
 
         private const string ValidBootloader = "2.1";
@@ -41,6 +43,8 @@ namespace BmwDeepObd
         private const byte StatusBadCommand = 0xA7;
         private const byte StatusSuccess = 0xAA;
         private const byte StatusFail = 0xAB;
+        private const byte DataIllegalChar = 0x13;
+        private const byte DataIllegalCharShift = 0x80;
         private const byte DataAutobaudLeader = 0x0D;
         private const byte DataPasswordTrailer = 0xFF;
         private static byte[] ResetCmd = {0x82, 0xF1, 0xF1, 0xFF, 0xFF, 0x62};
@@ -73,6 +77,9 @@ namespace BmwDeepObd
         };
 
         private static bool _oneWire = false;
+        private static int _failureAddress = 0;
+
+        static int FailureAddress => _failureAddress;
 
         public static bool LoadProgramFile(string fileName, byte[] buffer, out uint usedBuffer)
         {
@@ -209,7 +216,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool FwUpdate(string fileName, string password = "Peda")
+        public static bool FwUpdate(string fileName, bool programWrite = true, bool programVerify = true, bool programStart = true, string password = "Peda")
         {
             try
             {
@@ -224,10 +231,11 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                _failureAddress = 0;
                 _oneWire = oneWireMode;
 
-                bool supportCrc = DetectSupport(CommandProgramCheckCRC);
-                bool supportVerify = DetectSupport(CommandProgramVerify);
+                bool supportsCrc = DetectSupport(CommandProgramCheckCRC);
+                bool supportsVerify = DetectSupport(CommandProgramVerify);
 
                 string deviceRevision = ReadRevisionInfo();
                 if (string.IsNullOrEmpty(deviceRevision))
@@ -274,10 +282,31 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (!StartFirmware())
+                if (programWrite)
                 {
-                    return false;
+                    if (!WriteFirmware(buffer, (int)updateBufferUsed, (int)deviceWriteBuffer))
+                    {
+                        return false;
+                    }
                 }
+
+                if (programVerify && supportsVerify)
+                {
+                    if (!VerifyFirmware(buffer, (int)updateBufferUsed))
+                    {
+                        return false;
+                    }
+                }
+
+                if (programStart)
+                {
+                    if (!StartFirmware())
+                    {
+                        return false;
+                    }
+                }
+
+                Thread.Sleep(500);
 
                 return true;
             }
@@ -539,6 +568,152 @@ namespace BmwDeepObd
             }
         }
 
+        public static bool UploadData(byte targetCommand, bool waitForContinue, byte[] buffer, int bufferLength, int chunkLength)
+        {
+            try
+            {
+                try
+                {
+                    int chunkPosition = 0;
+                    int currentChunk = 0;
+                    int chunkCount = bufferLength / chunkLength;
+                    int chunkLeftover = bufferLength - chunkCount * chunkLength;
+                    if (chunkLeftover != 0)
+                    {
+                        chunkCount++;
+                    }
+
+                    byte[] commandStart = { IdentifierCommand, targetCommand };
+                    if (!EdFtdiInterface.InterfaceSendData(commandStart, commandStart.Length, false, 0))
+                    {
+                        return false;
+                    }
+
+                    SkipOneWireBytes(2);
+
+                    byte[] recBuffer = new byte[1];
+                    while (currentChunk < chunkCount)
+                    {
+                        List<byte> chunkData = GetBufferChunk(buffer, ref chunkPosition, chunkLength, bufferLength);
+                        if (chunkData == null)
+                        {
+                            return false;
+                        }
+
+                        if (chunkData.Count == 0)
+                        {
+                            break;
+                        }
+
+                        currentChunk++;
+                        _failureAddress = chunkPosition;
+
+                        if (!EdFtdiInterface.InterfaceSendData(chunkData.ToArray(), chunkData.Count, false, 0))
+                        {
+                            return false;
+                        }
+
+                        SkipOneWireBytes(chunkData.Count);
+
+                        if (currentChunk == chunkCount)
+                        {
+                            if (chunkPosition < bufferLength)
+                            {
+                                chunkCount++;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        if (waitForContinue)
+                        {
+                            if (!EdFtdiInterface.InterfaceReceiveData(recBuffer, 0, recBuffer.Length, ReadLongTimeout, ReadLongTimeout, null))
+                            {
+                                return false;
+                            }
+
+                            if (recBuffer[0] != IdentifierContinue)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+                    byte[] commandFinish = { IdentifierCommand, CommandProgramFinish };
+                    if (!EdFtdiInterface.InterfaceSendData(commandFinish, commandFinish.Length, false, 0))
+                    {
+                        return false;
+                    }
+
+                    SkipOneWireBytes(2);
+
+                    if (!EdFtdiInterface.InterfaceReceiveData(recBuffer, 0, recBuffer.Length, ReadLongTimeout, ReadLongTimeout, null))
+                    {
+                        return false;
+                    }
+
+                    if (recBuffer[0] != StatusSuccess)
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }
+                finally
+                {
+                    EdFtdiInterface.InterfacePurgeInBuffer();
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static List<byte> GetBufferChunk(byte[] buffer, ref int startPosition, int chunkLength, int bufferMaxLength)
+        {
+            if (startPosition < 0 || startPosition > buffer.Length)
+            {
+                startPosition = 0;
+            }
+
+            if (startPosition >= bufferMaxLength)
+            {
+                startPosition = bufferMaxLength - 1;
+            }
+
+            if (chunkLength + startPosition > bufferMaxLength)
+            {
+                chunkLength = bufferMaxLength - startPosition;
+            }
+
+            List<byte> convertList = new List<byte>();
+            for (int i = 0; i < chunkLength; i++)
+            {
+                if (startPosition >= bufferMaxLength)
+                {
+                    break;
+                }
+
+                byte data = buffer[startPosition];
+                if (data == DataIllegalChar || data == IdentifierEscape)
+                {
+                    convertList.Add(IdentifierEscape);
+                    convertList.Add((byte) (data + DataIllegalCharShift));
+                }
+                else
+                {
+                    convertList.Add(data);
+                }
+
+                startPosition++;
+            }
+
+            return convertList;
+        }
+
         public static string ReadRevisionInfo()
         {
             byte[] readBytes = ReadInfo(ReadRevision);
@@ -600,6 +775,16 @@ namespace BmwDeepObd
             }
 
             return deviceName;
+        }
+
+        public static bool WriteFirmware(byte[] buffer, int bufferLength, int chunkLength)
+        {
+            return UploadData(CommandProgramWrite, true, buffer, bufferLength, chunkLength);
+        }
+
+        public static bool VerifyFirmware(byte[] buffer, int bufferLength)
+        {
+            return UploadData(CommandProgramVerify, false, buffer, bufferLength, VerifyChunkLength);
         }
 
         public static bool StartFirmware()
