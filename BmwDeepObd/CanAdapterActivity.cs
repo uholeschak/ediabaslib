@@ -349,6 +349,8 @@ namespace BmwDeepObd
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
                         _instanceData.FirmwareFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
+                        byte[] buffer = new byte[0x40000];
+                        AtmelBootloader.LoadProgramFile(_instanceData.FirmwareFileName, buffer, out uint usedBuffer);
                     }
                     break;
             }
