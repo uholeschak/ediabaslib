@@ -629,8 +629,14 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    byte[] command = { IdentifierCommand, CommandProgramCheckCRC, (byte)_connectionCRC, (byte)(_connectionCRC >> 8)};
-                    if (!SendBuffer(command, command.Length))
+                    byte[] commandHead = { IdentifierCommand, CommandProgramCheckCRC};
+                    if (!SendBuffer(commandHead, commandHead.Length))
+                    {
+                        return false;
+                    }
+
+                    byte[] commandCrc = { (byte)_connectionCRC, (byte)(_connectionCRC >> 8) };
+                    if (!SendBuffer(commandCrc, commandCrc.Length))
                     {
                         return false;
                     }
@@ -645,7 +651,7 @@ namespace BmwDeepObd
 
                     if (buffer[0] != StatusSuccess)
                     {
-                        //return false;
+                        return false;
                     }
                 }
                 finally
