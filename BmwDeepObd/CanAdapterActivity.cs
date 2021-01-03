@@ -1189,7 +1189,7 @@ namespace BmwDeepObd
 
                     if (usbMode)
                     {
-                        updateOk = AtmelBootloader.FwUpdate(_instanceData.FirmwareFileName, false);
+                        updateOk = AtmelBootloader.FwUpdate(_instanceData.FirmwareFileName);
                     }
                     else
                     {
