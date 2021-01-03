@@ -1201,7 +1201,8 @@ namespace BmwDeepObd
 
                     if (usbMode)
                     {
-                        updateOk = AtmelBootloader.FwUpdate(_ediabas, state =>
+                        AtmelBootloader atmelBootloader = new AtmelBootloader(_ediabas);
+                        updateOk = atmelBootloader.FwUpdate(state =>
                             {
                                 if (_activityCommon == null)
                                 {
