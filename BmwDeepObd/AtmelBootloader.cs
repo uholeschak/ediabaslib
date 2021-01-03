@@ -88,6 +88,7 @@ namespace BmwDeepObd
             {"1E9802", "ATmega2561"},
         };
 
+        private static EdiabasNet _ediabas = null;
         private static bool _oneWire = false;
         private static int _failureAddress = 0;
         private static UInt16 _connectionCRC = 0x0000;
@@ -234,10 +235,12 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool FwUpdate(UpdateStateDelegate handler, string fileName, bool programWrite = true, bool programVerify = true, bool programStart = true, string password = "Peda")
+        public static bool FwUpdate(EdiabasNet ediabas, UpdateStateDelegate handler,
+            string fileName, bool programWrite = true, bool programVerify = true, bool programStart = true, string password = "Peda")
         {
             try
             {
+                _ediabas = ediabas;
                 handler?.Invoke(UpdateState.ReadHex);
                 byte[] buffer = new byte[MaximumBufferSize];
                 if (!LoadProgramFile(fileName, buffer, out uint updateBufferUsed))
@@ -314,7 +317,7 @@ namespace BmwDeepObd
                 if (programWrite)
                 {
                     handler?.Invoke(UpdateState.Update);
-                    if (!WriteFirmware(buffer, (int)updateBufferUsed, (int)deviceWriteBuffer))
+                    if (!WriteFirmware(buffer, (int) updateBufferUsed, (int) deviceWriteBuffer))
                     {
                         return false;
                     }
@@ -323,7 +326,7 @@ namespace BmwDeepObd
                 if (programVerify && supportsVerify)
                 {
                     handler?.Invoke(UpdateState.Verify);
-                    if (!VerifyFirmware(buffer, (int)updateBufferUsed))
+                    if (!VerifyFirmware(buffer, (int) updateBufferUsed))
                     {
                         return false;
                     }
@@ -354,6 +357,10 @@ namespace BmwDeepObd
             {
                 return false;
             }
+            finally
+            {
+                _ediabas = null;
+            }
         }
 
         public static bool CheckHexFile(string fileName)
@@ -364,40 +371,72 @@ namespace BmwDeepObd
 
         public static bool SendByte(byte data)
         {
-            byte[] command = {data};
-            if (!EdFtdiInterface.InterfaceSendData(command, command.Length, false, 0))
+            if (_ediabas?.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
             {
-                return false;
+                if (edInterfaceObd.InterfaceSendDataFuncUse != null)
+                {
+                    byte[] command = { data };
+                    if (!edInterfaceObd.InterfaceSendDataFuncUse(command, command.Length, false, 0))
+                    {
+                        return false;
+                    }
+
+                    CalculateCrc(data);
+
+                    return true;
+                }
             }
 
-            CalculateCrc(data);
-
-            return true;
+            return false;
         }
 
         public static bool SendBuffer(byte[] buffer, int length)
         {
-            if (!EdFtdiInterface.InterfaceSendData(buffer, length, false, 0))
+            if (_ediabas?.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
             {
-                return false;
+                if (edInterfaceObd.InterfaceSendDataFuncUse != null)
+                {
+                    if (!edInterfaceObd.InterfaceSendDataFuncUse(buffer, length, false, 0))
+                    {
+                        return false;
+                    }
+
+                    for (int i = 0; i < length; i++)
+                    {
+                        CalculateCrc(buffer[i]);
+                    }
+
+                    return true;
+                }
             }
 
-            for (int i = 0; i < length; i++)
-            {
-                CalculateCrc(buffer[i]);
-            }
-
-            return true;
+            return false;
         }
 
         public static bool ReceiveBuffer(byte[] buffer, int length, int timeout)
         {
-            return EdFtdiInterface.InterfaceReceiveData(buffer, 0, length, timeout, timeout, null);
+            if (_ediabas?.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
+            {
+                if (edInterfaceObd.InterfaceReceiveDataFuncUse != null)
+                {
+                    return edInterfaceObd.InterfaceReceiveDataFuncUse(buffer, 0, length, timeout, timeout, null);
+                }
+            }
+
+            return false;
         }
 
         public static bool PurgeInBuffer()
         {
-            return EdFtdiInterface.InterfacePurgeInBuffer();
+            if (_ediabas?.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
+            {
+                if (edInterfaceObd.InterfacePurgeInBufferFuncUse != null)
+                {
+                    return edInterfaceObd.InterfacePurgeInBufferFuncUse();
+                }
+            }
+
+            return false;
         }
 
         public static bool Connect(string password, out bool oneWireMode, int connectRetries = 250, bool sendReset = true, bool detectOneWire = true)

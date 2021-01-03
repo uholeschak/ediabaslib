@@ -2092,7 +2092,7 @@ namespace EdiabasLib
             }
         }
 
-        protected InterfacePurgeInBufferDelegate InterfacePurgeInBufferFuncUse
+        public InterfacePurgeInBufferDelegate InterfacePurgeInBufferFuncUse
         {
             get
             {
@@ -2242,7 +2242,7 @@ namespace EdiabasLib
             }
         }
 
-        protected InterfaceSendDataDelegate InterfaceSendDataFuncUse
+        public InterfaceSendDataDelegate InterfaceSendDataFuncUse
         {
             get
             {
@@ -2263,7 +2263,7 @@ namespace EdiabasLib
             }
         }
 
-        protected InterfaceReceiveDataDelegate InterfaceReceiveDataFuncUse
+        public InterfaceReceiveDataDelegate InterfaceReceiveDataFuncUse
         {
             get
             {
