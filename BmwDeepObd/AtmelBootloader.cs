@@ -78,6 +78,7 @@ namespace BmwDeepObd
 
         private static bool _oneWire = false;
         private static int _failureAddress = 0;
+        private static UInt16 _connectionCRC = 0x0000;
 
         static int FailureAddress => _failureAddress;
 
@@ -235,6 +236,7 @@ namespace BmwDeepObd
                 _oneWire = oneWireMode;
 
                 bool supportsCrc = DetectSupport(CommandProgramCheckCRC);
+                ResetCrc();
                 bool supportsVerify = DetectSupport(CommandProgramVerify);
 
                 string deviceRevision = ReadRevisionInfo();
@@ -282,6 +284,14 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                if (supportsCrc)
+                {
+                    if (!CheckCrc())
+                    {
+                        return false;
+                    }
+                }
+
                 if (programWrite)
                 {
                     if (!WriteFirmware(buffer, (int)updateBufferUsed, (int)deviceWriteBuffer))
@@ -293,6 +303,14 @@ namespace BmwDeepObd
                 if (programVerify && supportsVerify)
                 {
                     if (!VerifyFirmware(buffer, (int)updateBufferUsed))
+                    {
+                        return false;
+                    }
+                }
+
+                if (supportsCrc)
+                {
+                    if (!CheckCrc())
                     {
                         return false;
                     }
@@ -316,6 +334,44 @@ namespace BmwDeepObd
             }
         }
 
+        public static bool SendByte(byte data)
+        {
+            byte[] command = {data};
+            if (!EdFtdiInterface.InterfaceSendData(command, command.Length, false, 0))
+            {
+                return false;
+            }
+
+            CalculateCrc(data);
+
+            return true;
+        }
+
+        public static bool SendBuffer(byte[] buffer, int length)
+        {
+            if (!EdFtdiInterface.InterfaceSendData(buffer, length, false, 0))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < length; i++)
+            {
+                CalculateCrc(buffer[i]);
+            }
+
+            return true;
+        }
+
+        public static bool ReceiveBuffer(byte[] buffer, int length, int timeout)
+        {
+            return EdFtdiInterface.InterfaceReceiveData(buffer, 0, length, timeout, timeout, null);
+        }
+
+        public static bool PurgeInBuffer()
+        {
+            return EdFtdiInterface.InterfacePurgeInBuffer();
+        }
+
         public static bool Connect(string password, out bool oneWireMode, int connectRetries = 50, bool sendReset = true, bool detectOneWire = true)
         {
             oneWireMode = false;
@@ -328,7 +384,7 @@ namespace BmwDeepObd
 
                 if (sendReset)
                 {
-                    if (!EdFtdiInterface.InterfaceSendData(ResetCmd, ResetCmd.Length, false, 0))
+                    if (!SendBuffer(ResetCmd, ResetCmd.Length))
                     {
                         return false;
                     }
@@ -336,7 +392,7 @@ namespace BmwDeepObd
                     Thread.Sleep(150);
                 }
 
-                EdFtdiInterface.InterfacePurgeInBuffer();
+                PurgeInBuffer();
 
                 System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
                 byte wireDetectChar = enc.GetBytes(password)[0];
@@ -350,7 +406,7 @@ namespace BmwDeepObd
                     bootData.Add(DataAutobaudLeader);
                     bootData.AddRange(enc.GetBytes(password));
                     bootData.Add(DataPasswordTrailer);
-                    if (!EdFtdiInterface.InterfaceSendData(bootData.ToArray(), bootData.Count, false, 0))
+                    if (!SendBuffer(bootData.ToArray(), bootData.Count))
                     {
                         return false;
                     }
@@ -358,7 +414,7 @@ namespace BmwDeepObd
                     startTime = Stopwatch.GetTimestamp();
                     for (;;)
                     {
-                        if (EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, 10, 10, null))
+                        if (ReceiveBuffer(buffer, buffer.Length, 10))
                         {
                             if (detectOneWire && buffer[0] == wireDetectChar)
                             {
@@ -388,11 +444,10 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                EdFtdiInterface.InterfacePurgeInBuffer();
+                PurgeInBuffer();
                 Thread.Sleep(SyncDelay);
 
-                byte[] command = { IdentifierCommand };
-                if (!EdFtdiInterface.InterfaceSendData(command, command.Length, false, 0))
+                if (!SendByte(IdentifierCommand))
                 {
                     return false;
                 }
@@ -401,7 +456,7 @@ namespace BmwDeepObd
                 startTime = Stopwatch.GetTimestamp();
                 for (;;)
                 {
-                    if (EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, 10, 10, null))
+                    if (ReceiveBuffer(buffer, buffer.Length, 10))
                     {
                         if (buffer[0] == StatusSuccess)
                         {
@@ -416,7 +471,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                EdFtdiInterface.InterfacePurgeInBuffer();
+                PurgeInBuffer();
                 if (loopTimeout)
                 {
                     return false;
@@ -437,7 +492,7 @@ namespace BmwDeepObd
                 if (_oneWire)
                 {
                     byte[] buffer = new byte[count];
-                    if (!EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
+                    if (!ReceiveBuffer(buffer, buffer.Length, ReadTimeout))
                     {
                         return false;
                     }
@@ -458,7 +513,7 @@ namespace BmwDeepObd
                 try
                 {
                     byte[] commandTest = { IdentifierCommand, commandByte };
-                    if (!EdFtdiInterface.InterfaceSendData(commandTest, commandTest.Length, false, 0))
+                    if (!SendBuffer(commandTest, commandTest.Length))
                     {
                         return false;
                     }
@@ -466,7 +521,7 @@ namespace BmwDeepObd
                     SkipOneWireBytes(2);
 
                     byte[] buffer = new byte[1];
-                    if (EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
+                    if (ReceiveBuffer(buffer, buffer.Length, ReadTimeout))
                     {
                         if (buffer[0] == StatusBadCommand)
                         {
@@ -475,12 +530,12 @@ namespace BmwDeepObd
                     }
 
                     byte[] commandFinish = { IdentifierCommand, CommandProgramFinish };
-                    if (!EdFtdiInterface.InterfaceSendData(commandFinish, commandFinish.Length, false, 0))
+                    if (!SendBuffer(commandFinish, commandFinish.Length))
                     {
                         return false;
                     }
 
-                    if (EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
+                    if (ReceiveBuffer(buffer, buffer.Length, ReadTimeout))
                     {
                         if (buffer[0] == StatusSuccess || buffer[0] == StatusFail)
                         {
@@ -490,7 +545,7 @@ namespace BmwDeepObd
                 }
                 finally
                 {
-                    EdFtdiInterface.InterfacePurgeInBuffer();
+                    PurgeInBuffer();
                 }
 
                 return false;
@@ -509,7 +564,7 @@ namespace BmwDeepObd
                 try
                 {
                     byte[] commandTest = { IdentifierCommand, commandByte };
-                    if (!EdFtdiInterface.InterfaceSendData(commandTest, commandTest.Length, false, 0))
+                    if (!SendBuffer(commandTest, commandTest.Length))
                     {
                         return null;
                     }
@@ -517,13 +572,13 @@ namespace BmwDeepObd
                     SkipOneWireBytes(2);
 
                     byte[] buffer = new byte[1];
-                    if (!EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
+                    if (!ReceiveBuffer(buffer, buffer.Length, ReadTimeout))
                     {
                         return null;
                     }
                     byte readLeader = buffer[0];
 
-                    if (!EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
+                    if (!ReceiveBuffer(buffer, buffer.Length, ReadTimeout))
                     {
                         return null;
                     }
@@ -535,7 +590,7 @@ namespace BmwDeepObd
                         readAnswer = new byte[answerLength];
                         for (int i = 0; i < answerLength; i++)
                         {
-                            if (!EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
+                            if (!ReceiveBuffer(buffer, buffer.Length, ReadTimeout))
                             {
                                 return null;
                             }
@@ -544,7 +599,7 @@ namespace BmwDeepObd
 
                     }
 
-                    if (!EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
+                    if (!ReceiveBuffer(buffer, buffer.Length, ReadTimeout))
                     {
                         return null;
                     }
@@ -557,7 +612,7 @@ namespace BmwDeepObd
                 }
                 finally
                 {
-                    EdFtdiInterface.InterfacePurgeInBuffer();
+                    PurgeInBuffer();
                 }
 
                 return readAnswer;
@@ -565,6 +620,44 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 return null;
+            }
+        }
+
+        public static bool CheckCrc()
+        {
+            try
+            {
+                try
+                {
+                    byte[] command = { IdentifierCommand, CommandProgramCheckCRC, (byte)_connectionCRC, (byte)(_connectionCRC >> 8)};
+                    if (!SendBuffer(command, command.Length))
+                    {
+                        return false;
+                    }
+
+                    SkipOneWireBytes(4);
+
+                    byte[] buffer = new byte[1];
+                    if (!ReceiveBuffer(buffer, buffer.Length, ReadTimeout))
+                    {
+                        return false;
+                    }
+
+                    if (buffer[0] != StatusSuccess)
+                    {
+                        //return false;
+                    }
+                }
+                finally
+                {
+                    PurgeInBuffer();
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
@@ -584,7 +677,7 @@ namespace BmwDeepObd
                     }
 
                     byte[] commandStart = { IdentifierCommand, targetCommand };
-                    if (!EdFtdiInterface.InterfaceSendData(commandStart, commandStart.Length, false, 0))
+                    if (!SendBuffer(commandStart, commandStart.Length))
                     {
                         return false;
                     }
@@ -608,7 +701,7 @@ namespace BmwDeepObd
                         currentChunk++;
                         _failureAddress = chunkPosition;
 
-                        if (!EdFtdiInterface.InterfaceSendData(chunkData.ToArray(), chunkData.Count, false, 0))
+                        if (!SendBuffer(chunkData.ToArray(), chunkData.Count))
                         {
                             return false;
                         }
@@ -629,7 +722,7 @@ namespace BmwDeepObd
 
                         if (waitForContinue)
                         {
-                            if (!EdFtdiInterface.InterfaceReceiveData(recBuffer, 0, recBuffer.Length, ReadLongTimeout, ReadLongTimeout, null))
+                            if (!ReceiveBuffer(recBuffer, recBuffer.Length, ReadLongTimeout))
                             {
                                 return false;
                             }
@@ -642,14 +735,14 @@ namespace BmwDeepObd
                     }
 
                     byte[] commandFinish = { IdentifierCommand, CommandProgramFinish };
-                    if (!EdFtdiInterface.InterfaceSendData(commandFinish, commandFinish.Length, false, 0))
+                    if (!SendBuffer(commandFinish, commandFinish.Length))
                     {
                         return false;
                     }
 
                     SkipOneWireBytes(2);
 
-                    if (!EdFtdiInterface.InterfaceReceiveData(recBuffer, 0, recBuffer.Length, ReadLongTimeout, ReadLongTimeout, null))
+                    if (!ReceiveBuffer(recBuffer, recBuffer.Length, ReadLongTimeout))
                     {
                         return false;
                     }
@@ -663,7 +756,7 @@ namespace BmwDeepObd
                 }
                 finally
                 {
-                    EdFtdiInterface.InterfacePurgeInBuffer();
+                    PurgeInBuffer();
                 }
             }
             catch (Exception)
@@ -777,6 +870,29 @@ namespace BmwDeepObd
             return deviceName;
         }
 
+        public static void ResetCrc()
+        {
+            _connectionCRC = 0x0000;
+        }
+
+        public static void CalculateCrc(byte data)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                if (((data & 0x01) ^ (_connectionCRC & 0x0001)) != 0x0000)
+                {
+                    _connectionCRC >>= 1;
+                    _connectionCRC ^= 0xA001;
+                }
+                else
+                {
+                    _connectionCRC >>= 1;
+                }
+
+                data >>= 1;
+            }
+        }
+
         public static bool WriteFirmware(byte[] buffer, int bufferLength, int chunkLength)
         {
             return UploadData(CommandProgramWrite, true, buffer, bufferLength, chunkLength);
@@ -794,7 +910,7 @@ namespace BmwDeepObd
                 try
                 {
                     byte[] command = { IdentifierCommand, CommandProgramStart };
-                    if (!EdFtdiInterface.InterfaceSendData(command, command.Length, false, 0))
+                    if (!SendBuffer(command, command.Length))
                     {
                         return false;
                     }
@@ -802,7 +918,7 @@ namespace BmwDeepObd
                     SkipOneWireBytes(2);
 
                     byte[] buffer = new byte[1];
-                    if (EdFtdiInterface.InterfaceReceiveData(buffer, 0, buffer.Length, ReadTimeout, ReadTimeout, null))
+                    if (ReceiveBuffer(buffer, buffer.Length, ReadTimeout))
                     {
                         if (buffer[0] == StatusBadCommand)
                         {
@@ -812,7 +928,7 @@ namespace BmwDeepObd
                 }
                 finally
                 {
-                    EdFtdiInterface.InterfacePurgeInBuffer();
+                    PurgeInBuffer();
                 }
 
                 return true;
