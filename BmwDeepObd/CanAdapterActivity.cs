@@ -1139,17 +1139,17 @@ namespace BmwDeepObd
 
         private void PerformUpdate(bool changeFirmware)
         {
+            bool usbAdapter = IsUsbAdapter(_interfaceType);
             EdiabasInit();
             CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.can_adapter_fw_update_active));
-            progress.ButtonAbort.Visibility = ViewStates.Gone;
+            progress.ButtonAbort.Visibility = usbAdapter ? ViewStates.Visible : ViewStates.Gone;
             progress.Show();
 
             _adapterThread = new Thread(() =>
             {
                 bool updateOk = false;
                 bool connectOk = false;
-                bool usbMode = false;
                 bool elmMode = IsCustomElmAdapter(_interfaceType, _deviceAddress);
                 bool elmFirmware = false;
                 if (changeFirmware)
@@ -1190,78 +1190,40 @@ namespace BmwDeepObd
                                 outStream = networkStream;
                                 break;
                             }
-
-                            case ActivityCommon.InterfaceType.Ftdi:
-                            {
-                                usbMode = true;
-                                break;
-                            }
                         }
                     }
 
-                    if (usbMode)
+                    if (usbAdapter)
                     {
-                        bool aborted = false;
-                        RunOnUiThread(() =>
-                        {
-                            if (_activityCommon == null)
+                        AtmelBootloader atmelBootloader = new AtmelBootloader(_ediabas);
+                        updateOk = atmelBootloader.FwUpdate(state =>
                             {
-                                return;
-                            }
-
-                            progress.SetMessage("Demo version please wait ...");
-                            progress.AbortClick = sender =>
-                            {
-                                aborted = true;
-                            };
-                            progress.ButtonAbort.Visibility = ViewStates.Visible;
-                            progress.ButtonAbort.Enabled = true;
-                        });
-
-                        for (int i = 0; i < 60; i++)
-                        {
-                            Thread.Sleep(1000);
-                            if (aborted)
-                            {
-                                break;
-                            }
-                        }
-
-                        RunOnUiThread(() =>
-                        {
-                            if (_activityCommon == null)
-                            {
-                                return;
-                            }
-                            progress.ButtonAbort.Enabled = false;
-                        });
-
-                        if (!aborted)
-                        {
-                            AtmelBootloader atmelBootloader = new AtmelBootloader(_ediabas);
-                            updateOk = atmelBootloader.FwUpdate(state =>
+                                RunOnUiThread(() =>
                                 {
-                                    RunOnUiThread(() =>
+                                    if (_activityCommon == null)
                                     {
-                                        if (_activityCommon == null)
-                                        {
-                                            return;
-                                        }
+                                        return;
+                                    }
 
-                                        switch (state)
-                                        {
-                                            case AtmelBootloader.UpdateState.Connect:
-                                                progress.SetMessage(GetString(Resource.String.can_adapter_fw_update_connect));
-                                                break;
+                                    switch (state)
+                                    {
+                                        case AtmelBootloader.UpdateState.Connect:
+                                            progress.ButtonAbort.Enabled = true;
+                                            progress.AbortClick = sender =>
+                                            {
+                                                atmelBootloader.Abort = true;
+                                            };
+                                            progress.SetMessage(GetString(Resource.String.can_adapter_fw_update_connect));
+                                            break;
 
-                                            default:
-                                                progress.SetMessage(GetString(Resource.String.can_adapter_fw_update_active));
-                                                break;
-                                        }
-                                    });
-                                },
-                                ActivityCommon.UsbFirmwareFileName);
-                        }
+                                        default:
+                                            progress.ButtonAbort.Enabled = false;
+                                            progress.SetMessage(GetString(Resource.String.can_adapter_fw_update_active));
+                                            break;
+                                    }
+                                });
+                            },
+                            ActivityCommon.UsbFirmwareFileName);
                     }
                     else
                     {
