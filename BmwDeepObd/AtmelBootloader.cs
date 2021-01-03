@@ -98,11 +98,14 @@ namespace BmwDeepObd
         public int FailureAddress => _failureAddress;
         public int ConnectionCRC => _connectionCRC;
 
+        public bool Abort { get; set; }
+
         public AtmelBootloader(EdiabasNet ediabas)
         {
             _ediabas = ediabas;
             _oneWire = false;
             _failureAddress = 0;
+            Abort = false;
             ResetCrc();
         }
 
@@ -486,6 +489,11 @@ namespace BmwDeepObd
                     startTime = Stopwatch.GetTimestamp();
                     for (;;)
                     {
+                        if (Abort)
+                        {
+                            return false;
+                        }
+
                         if (ReceiveBuffer(buffer, buffer.Length, 20))
                         {
                             if (detectOneWire && buffer[0] == wireDetectChar)
@@ -528,6 +536,11 @@ namespace BmwDeepObd
                 startTime = Stopwatch.GetTimestamp();
                 for (;;)
                 {
+                    if (Abort)
+                    {
+                        return false;
+                    }
+
                     if (ReceiveBuffer(buffer, buffer.Length, 20))
                     {
                         if (buffer[0] == StatusSuccess)
