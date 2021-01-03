@@ -1201,7 +1201,25 @@ namespace BmwDeepObd
 
                     if (usbMode)
                     {
-                        updateOk = AtmelBootloader.FwUpdate(ActivityCommon.UsbFirmwareFileName);
+                        updateOk = AtmelBootloader.FwUpdate(state =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+
+                                switch (state)
+                                {
+                                    case AtmelBootloader.UpdateState.Connect:
+                                        progress.SetMessage(GetString(Resource.String.can_adapter_fw_update_connect));
+                                        break;
+
+                                    default:
+                                        progress.SetMessage(GetString(Resource.String.can_adapter_fw_update_active));
+                                        break;
+                                }
+                            },
+                            ActivityCommon.UsbFirmwareFileName);
                     }
                     else
                     {

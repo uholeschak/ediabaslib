@@ -12,6 +12,17 @@ namespace BmwDeepObd
 {
     public static class AtmelBootloader
     {
+        public enum UpdateState
+        {
+            ReadHex,
+            Connect,
+            Update,
+            Verify,
+            StartFw
+        }
+
+        public delegate void UpdateStateDelegate(UpdateState updateState);
+
         // ReSharper restore InconsistentNaming
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const int ConnectLoopTimeout = 100;
@@ -223,16 +234,18 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool FwUpdate(string fileName, bool programWrite = true, bool programVerify = true, bool programStart = true, string password = "Peda")
+        public static bool FwUpdate(UpdateStateDelegate handler, string fileName, bool programWrite = true, bool programVerify = true, bool programStart = true, string password = "Peda")
         {
             try
             {
+                handler?.Invoke(UpdateState.ReadHex);
                 byte[] buffer = new byte[MaximumBufferSize];
                 if (!LoadProgramFile(fileName, buffer, out uint updateBufferUsed))
                 {
                     return false;
                 }
 
+                handler?.Invoke(UpdateState.Connect);
                 if (!Connect(password, out bool oneWireMode))
                 {
                     return false;
@@ -300,6 +313,7 @@ namespace BmwDeepObd
 
                 if (programWrite)
                 {
+                    handler?.Invoke(UpdateState.Update);
                     if (!WriteFirmware(buffer, (int)updateBufferUsed, (int)deviceWriteBuffer))
                     {
                         return false;
@@ -308,6 +322,7 @@ namespace BmwDeepObd
 
                 if (programVerify && supportsVerify)
                 {
+                    handler?.Invoke(UpdateState.Verify);
                     if (!VerifyFirmware(buffer, (int)updateBufferUsed))
                     {
                         return false;
@@ -324,6 +339,7 @@ namespace BmwDeepObd
 
                 if (programStart)
                 {
+                    handler?.Invoke(UpdateState.StartFw);
                     if (!StartFirmware())
                     {
                         return false;
