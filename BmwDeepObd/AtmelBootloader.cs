@@ -19,6 +19,7 @@ namespace BmwDeepObd
         private const int ReadLongTimeout = 750;
         private const int SyncLoopTimeout = 3000;
         private const int SyncDelay = 100;
+        private const int MaximumBufferSize = 0x40000;
         private const int VerifyChunkLength = 512;
         private const int MinimumWriteBuffer = 8;
 
@@ -94,6 +95,11 @@ namespace BmwDeepObd
                 bool segmentedAdress = false;
 
                 if (string.IsNullOrEmpty(fileName))
+                {
+                    return false;
+                }
+
+                if (!File.Exists(fileName))
                 {
                     return false;
                 }
@@ -221,7 +227,7 @@ namespace BmwDeepObd
         {
             try
             {
-                byte[] buffer = new byte[0x40000];
+                byte[] buffer = new byte[MaximumBufferSize];
                 if (!LoadProgramFile(fileName, buffer, out uint updateBufferUsed))
                 {
                     return false;
@@ -334,6 +340,12 @@ namespace BmwDeepObd
             }
         }
 
+        public static bool CheckHexFile(string fileName)
+        {
+            byte[] buffer = new byte[MaximumBufferSize];
+            return LoadProgramFile(fileName, buffer, out uint _);
+        }
+
         public static bool SendByte(byte data)
         {
             byte[] command = {data};
@@ -372,7 +384,7 @@ namespace BmwDeepObd
             return EdFtdiInterface.InterfacePurgeInBuffer();
         }
 
-        public static bool Connect(string password, out bool oneWireMode, int connectRetries = 50, bool sendReset = true, bool detectOneWire = true)
+        public static bool Connect(string password, out bool oneWireMode, int connectRetries = 250, bool sendReset = true, bool detectOneWire = true)
         {
             oneWireMode = false;
             try
@@ -414,7 +426,7 @@ namespace BmwDeepObd
                     startTime = Stopwatch.GetTimestamp();
                     for (;;)
                     {
-                        if (ReceiveBuffer(buffer, buffer.Length, 10))
+                        if (ReceiveBuffer(buffer, buffer.Length, 20))
                         {
                             if (detectOneWire && buffer[0] == wireDetectChar)
                             {
@@ -456,7 +468,7 @@ namespace BmwDeepObd
                 startTime = Stopwatch.GetTimestamp();
                 for (;;)
                 {
-                    if (ReceiveBuffer(buffer, buffer.Length, 10))
+                    if (ReceiveBuffer(buffer, buffer.Length, 20))
                     {
                         if (buffer[0] == StatusSuccess)
                         {

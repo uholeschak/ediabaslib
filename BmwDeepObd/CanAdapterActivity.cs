@@ -78,6 +78,8 @@ namespace BmwDeepObd
         private TextView _textViewFwVersion;
         private TextView _textViewSerNumTitle;
         private TextView _textViewSerNum;
+        private Button _buttonSelectFirmware;
+        private TextView _textViewFwFileName;
         private Button _buttonFwUpdate;
         private Button _buttonFwUpdateChange;
         private CheckBox _checkBoxExpert;
@@ -243,6 +245,17 @@ namespace BmwDeepObd
             _textViewSerNumTitle.Visibility = ViewStates.Gone;
             _textViewSerNum.Visibility = ViewStates.Gone;
 #endif
+            ViewStates visibilityFwSel = usbAdapter ? ViewStates.Visible : ViewStates.Gone;
+            _buttonSelectFirmware = FindViewById<Button>(Resource.Id.buttonSelectFirmware);
+            _buttonSelectFirmware.Visibility = visibilityFwSel;
+            _buttonSelectFirmware.Click += (sender, args) =>
+            {
+                SelectFirmwareFile();
+            };
+
+            _textViewFwFileName = FindViewById<TextView>(Resource.Id.textViewFwFileName);
+            _textViewFwFileName.Visibility = visibilityFwSel;
+
             ViewStates visibilityFwUpdate = rawAdapter || usbAdapter? ViewStates.Visible : visibility;
             _buttonFwUpdate = FindViewById<Button>(Resource.Id.buttonCanAdapterFwUpdate);
             _buttonFwUpdate.Visibility = visibilityFwUpdate;
@@ -349,18 +362,7 @@ namespace BmwDeepObd
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
                         _instanceData.FirmwareFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
-                        new AlertDialog.Builder(this)
-                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                            {
-                                PerformUpdate(false);
-                            })
-                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                            {
-                            })
-                            .SetCancelable(true)
-                            .SetMessage(Resource.String.can_adapter_fw_update_info)
-                            .SetTitle(Resource.String.alert_title_warning)
-                            .Show();
+                        UpdateDisplay();
                     }
                     break;
             }
@@ -495,6 +497,7 @@ namespace BmwDeepObd
         private void UpdateDisplay()
         {
             bool elmMode = IsCustomElmAdapter(_interfaceType, _deviceAddress);
+            bool usbAdapter = IsUsbAdapter(_interfaceType);
             bool requestFwUpdate = false;
             bool bEnabled = !IsJobRunning();
             bool fwUpdateEnabled = bEnabled;
@@ -646,7 +649,13 @@ namespace BmwDeepObd
                 _textViewBatteryVoltage.Text = voltageText;
 
                 string versionText = string.Empty;
-                if (_adapterType >= 0 && _fwVersion >= 0)
+                if (usbAdapter)
+                {
+                    fwUpdateEnabled = AtmelBootloader.CheckHexFile(_instanceData.FirmwareFileName);
+                    fwChangeEnabled = false;
+                    _textViewFwFileName.Text = ActivityCommon.GetTruncatedPathName(_instanceData.FirmwareFileName) ?? string.Empty;
+                }
+                else if (_adapterType >= 0 && _fwVersion >= 0)
                 {
                     versionText = string.Format(ActivityMain.Culture, "{0}.{1} / ", (_fwVersion >> 8) & 0xFF, _fwVersion & 0xFF);
                     int fwUpdateVersion = PicBootloader.GetFirmwareVersion((uint)_adapterType);
@@ -673,6 +682,7 @@ namespace BmwDeepObd
                         }
                     }
                 }
+
                 _textViewFwVersion.Text = versionText;
 
                 if (_textViewSerNum.Enabled)
@@ -1105,10 +1115,6 @@ namespace BmwDeepObd
                         return;
                     }
                     break;
-
-                case ActivityCommon.InterfaceType.Ftdi:
-                    SelectFirmwareFile();
-                    return;
             }
 
             new AlertDialog.Builder(this)

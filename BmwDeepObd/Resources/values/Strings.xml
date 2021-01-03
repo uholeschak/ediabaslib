@@ -668,6 +668,7 @@
   <string name="button_can_adapter_can_500">D-CAN (from 3/2007)</string>
   <string name="button_can_adapter_can_100">K-CAN (no standard)</string>
   <string name="button_can_adapter_can_off">K-LINE (before 3/2007)</string>
+  <string name="button_can_adapter_fw_sel">Select firmware</string>
   <string name="button_can_adapter_fw_update">Firmware update</string>
   <string name="button_can_adapter_fw_change_elm">Flash ELM327 firmware</string>
   <string name="button_can_adapter_fw_change_custom">Flash replacement firmware</string>
