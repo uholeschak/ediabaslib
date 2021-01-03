@@ -190,6 +190,7 @@ namespace BmwDeepObd
                 XmlEditorClassName = string.Empty;
 
                 CustomStorageMedia = ActivityCommon.CustomStorageMedia;
+                UsbFirmwareFileName = ActivityCommon.UsbFirmwareFileName;
                 EnableTranslation = ActivityCommon.EnableTranslation;
                 EnableTranslateLogin = ActivityCommon.EnableTranslateLogin;
                 YandexApiKey = ActivityCommon.YandexApiKey;
@@ -302,6 +303,7 @@ namespace BmwDeepObd
             [XmlElement("DataLogAppend")] public bool DataLogAppend { get; set; }
 
             [XmlElement("StorageMedia")] public string CustomStorageMedia { get; set; }
+            [XmlElement("UsbFirmwareFile")] public string UsbFirmwareFileName { get; set; }
             [XmlElement("EnableTranslation")] public bool EnableTranslation { get; set; }
             [XmlElement("EnableTranslateLogin")] public bool EnableTranslateLogin { get; set; }
             [XmlElement("YandexApiKey")] public string YandexApiKey { get; set; }
@@ -2208,6 +2210,7 @@ namespace BmwDeepObd
                 storageClassAttributes.Add(storageType, nameof(storageData.XmlEditorPackageName), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.XmlEditorClassName), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.CustomStorageMedia), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.UsbFirmwareFileName), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.YandexApiKey), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.IbmTranslatorApiKey), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.IbmTranslatorUrl), ignoreXmlAttributes);
@@ -2323,6 +2326,7 @@ namespace BmwDeepObd
                     ActivityCommon.SelectedTheme = storageData.SelectedTheme;
 
                     ActivityCommon.CustomStorageMedia = storageData.CustomStorageMedia;
+                    ActivityCommon.UsbFirmwareFileName = storageData.UsbFirmwareFileName;
                     ActivityCommon.EnableTranslation = storageData.EnableTranslation;
                     ActivityCommon.EnableTranslateLogin = storageData.EnableTranslateLogin;
                     ActivityCommon.YandexApiKey = storageData.YandexApiKey;
