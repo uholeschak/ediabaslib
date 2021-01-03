@@ -47,7 +47,6 @@ namespace BmwDeepObd
         {
             public bool FwUpdateShown { get; set; }
             public bool BatteryWarningShown { get; set; }
-            public string FirmwareFileName { get; set; }
         }
 
         private InstanceData _instanceData = new InstanceData();
@@ -361,8 +360,15 @@ namespace BmwDeepObd
                     // When FilePickerActivity returns with a file
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
-                        _instanceData.FirmwareFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
-                        UpdateDisplay();
+                        string fileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
+                        if (AtmelBootloader.CheckHexFile(fileName))
+                        {
+                            ActivityCommon.UsbFirmwareFileName = fileName;
+                            UpdateDisplay();
+                            break;
+                        }
+
+                        _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_fw_invalid), Resource.String.alert_title_error);
                     }
                     break;
             }
@@ -651,9 +657,9 @@ namespace BmwDeepObd
                 string versionText = string.Empty;
                 if (usbAdapter)
                 {
-                    fwUpdateEnabled = AtmelBootloader.CheckHexFile(_instanceData.FirmwareFileName);
+                    fwUpdateEnabled = AtmelBootloader.CheckHexFile(ActivityCommon.UsbFirmwareFileName);
                     fwChangeEnabled = false;
-                    _textViewFwFileName.Text = ActivityCommon.GetTruncatedPathName(_instanceData.FirmwareFileName) ?? string.Empty;
+                    _textViewFwFileName.Text = ActivityCommon.GetTruncatedPathName(ActivityCommon.UsbFirmwareFileName) ?? string.Empty;
                 }
                 else if (_adapterType >= 0 && _fwVersion >= 0)
                 {
@@ -1195,7 +1201,7 @@ namespace BmwDeepObd
 
                     if (usbMode)
                     {
-                        updateOk = AtmelBootloader.FwUpdate(_instanceData.FirmwareFileName);
+                        updateOk = AtmelBootloader.FwUpdate(ActivityCommon.UsbFirmwareFileName);
                     }
                     else
                     {
@@ -1287,9 +1293,9 @@ namespace BmwDeepObd
             string initDir = _appDataDir;
             try
             {
-                if (!string.IsNullOrEmpty(_instanceData.FirmwareFileName))
+                if (!string.IsNullOrEmpty(ActivityCommon.UsbFirmwareFileName))
                 {
-                    initDir = Path.GetDirectoryName(_instanceData.FirmwareFileName);
+                    initDir = Path.GetDirectoryName(ActivityCommon.UsbFirmwareFileName);
                 }
             }
             catch (Exception)
