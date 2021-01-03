@@ -692,6 +692,8 @@
   <string name="button_can_adapter_can_500">D-CAN (после 3/2007)</string>
   <string name="button_can_adapter_can_100">K-CAN (не стандарт)</string>
   <string name="button_can_adapter_can_off">K-LINE (до 3/2007)</string>
+  <!--Translate-->
+  <string name="button_can_adapter_fw_sel">Выбрать прошивку</string>
   <string name="button_can_adapter_fw_update">Обновление прошивки</string>
   <string name="button_can_adapter_fw_change_elm">Прошить программное обеспечение ELM327</string>
   <string name="button_can_adapter_fw_change_custom">Прошить альтернативное программное обеспечение ELM327</string>
