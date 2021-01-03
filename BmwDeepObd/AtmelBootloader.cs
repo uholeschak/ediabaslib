@@ -10,7 +10,7 @@ using EdiabasLib;
 
 namespace BmwDeepObd
 {
-    public static class AtmelBootloader
+    public class AtmelBootloader
     {
         public enum UpdateState
         {
@@ -88,12 +88,23 @@ namespace BmwDeepObd
             {"1E9802", "ATmega2561"},
         };
 
-        private static EdiabasNet _ediabas = null;
-        private static bool _oneWire = false;
-        private static int _failureAddress = 0;
-        private static UInt16 _connectionCRC = 0x0000;
+        private readonly EdiabasNet _ediabas;
+        private bool _oneWire;
+        private int _failureAddress;
+        private UInt16 _connectionCRC;
 
-        static int FailureAddress => _failureAddress;
+        public EdiabasNet Ediabas => _ediabas;
+        public bool OneWire => _oneWire;
+        public int FailureAddress => _failureAddress;
+        public int ConnectionCRC => _connectionCRC;
+
+        public AtmelBootloader(EdiabasNet ediabas)
+        {
+            _ediabas = ediabas;
+            _oneWire = false;
+            _failureAddress = 0;
+            ResetCrc();
+        }
 
         public static bool LoadProgramFile(string fileName, byte[] buffer, out uint usedBuffer)
         {
@@ -104,7 +115,7 @@ namespace BmwDeepObd
             {
                 uint checksum = 0;
                 uint segmentAddress = 0;
-                bool segmentedAdress = false;
+                bool segmentedAddress = false;
 
                 if (string.IsNullOrEmpty(fileName))
                 {
@@ -140,7 +151,7 @@ namespace BmwDeepObd
                         checksum += (address >> 8) & 0xFF;
 
                         uint memoryAddress = address;
-                        if (segmentedAdress)
+                        if (segmentedAddress)
                         {
                             memoryAddress += segmentAddress;
                         }
@@ -196,7 +207,7 @@ namespace BmwDeepObd
                                     continue;
                                 }
 
-                                segmentedAdress = true;
+                                segmentedAddress = true;
                                 segmentAddress = Convert.ToUInt32(line.Substring(9, 4), 16);
                                 lineChecksum = Convert.ToUInt32(line.Substring(13, 2), 16);
                                 break;
@@ -235,12 +246,10 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool FwUpdate(EdiabasNet ediabas, UpdateStateDelegate handler,
-            string fileName, bool programWrite = true, bool programVerify = true, bool programStart = true, string password = "Peda")
+        public bool FwUpdate(UpdateStateDelegate handler, string fileName, bool programWrite = true, bool programVerify = true, bool programStart = true, string password = "Peda")
         {
             try
             {
-                _ediabas = ediabas;
                 handler?.Invoke(UpdateState.ReadHex);
                 byte[] buffer = new byte[MaximumBufferSize];
                 if (!LoadProgramFile(fileName, buffer, out uint updateBufferUsed))
@@ -357,10 +366,6 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            finally
-            {
-                _ediabas = null;
-            }
         }
 
         public static bool CheckHexFile(string fileName)
@@ -369,7 +374,7 @@ namespace BmwDeepObd
             return LoadProgramFile(fileName, buffer, out uint _);
         }
 
-        public static bool SendByte(byte data)
+        public bool SendByte(byte data)
         {
             if (_ediabas?.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
             {
@@ -390,7 +395,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        public static bool SendBuffer(byte[] buffer, int length)
+        public bool SendBuffer(byte[] buffer, int length)
         {
             if (_ediabas?.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
             {
@@ -413,7 +418,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        public static bool ReceiveBuffer(byte[] buffer, int length, int timeout)
+        public bool ReceiveBuffer(byte[] buffer, int length, int timeout)
         {
             if (_ediabas?.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
             {
@@ -426,7 +431,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        public static bool PurgeInBuffer()
+        public bool PurgeInBuffer()
         {
             if (_ediabas?.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
             {
@@ -439,7 +444,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        public static bool Connect(string password, out bool oneWireMode, int connectRetries = 250, bool sendReset = true, bool detectOneWire = true)
+        public bool Connect(string password, out bool oneWireMode, int connectRetries = 250, bool sendReset = true, bool detectOneWire = true)
         {
             oneWireMode = false;
             try
@@ -552,7 +557,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool SkipOneWireBytes(int count)
+        public bool SkipOneWireBytes(int count)
         {
             try
             {
@@ -573,7 +578,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool DetectSupport(byte commandByte)
+        public bool DetectSupport(byte commandByte)
         {
             try
             {
@@ -623,7 +628,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static byte[] ReadInfo(byte commandByte)
+        public byte[] ReadInfo(byte commandByte)
         {
             try
             {
@@ -690,7 +695,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool CheckCrc()
+        public bool CheckCrc()
         {
             try
             {
@@ -734,7 +739,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool UploadData(byte targetCommand, bool waitForContinue, byte[] buffer, int bufferLength, int chunkLength)
+        public bool UploadData(byte targetCommand, bool waitForContinue, byte[] buffer, int bufferLength, int chunkLength)
         {
             try
             {
@@ -838,7 +843,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static List<byte> GetBufferChunk(byte[] buffer, ref int startPosition, int chunkLength, int bufferMaxLength)
+        private static List<byte> GetBufferChunk(byte[] buffer, ref int startPosition, int chunkLength, int bufferMaxLength)
         {
             if (startPosition < 0 || startPosition > buffer.Length)
             {
@@ -880,7 +885,7 @@ namespace BmwDeepObd
             return convertList;
         }
 
-        public static string ReadRevisionInfo()
+        public string ReadRevisionInfo()
         {
             byte[] readBytes = ReadInfo(ReadRevision);
             if (readBytes == null || readBytes.Length != 2)
@@ -892,7 +897,7 @@ namespace BmwDeepObd
             return revision;
         }
 
-        public static string ReadSignatureInfo()
+        public string ReadSignatureInfo()
         {
             byte[] readBytes = ReadInfo(ReadSignature);
             if (readBytes == null)
@@ -904,7 +909,7 @@ namespace BmwDeepObd
             return signature;
         }
 
-        public static long ReadBufferSizeInfo()
+        public long ReadBufferSizeInfo()
         {
             byte[] readBytes = ReadInfo(ReadBufferSize);
             if (readBytes == null || readBytes.Length != 2)
@@ -916,7 +921,7 @@ namespace BmwDeepObd
             return bufferSize;
         }
 
-        public static long ReadFlashSizeInfo()
+        public long ReadFlashSizeInfo()
         {
             byte[] readBytes = ReadInfo(ReadFlashSize);
             if (readBytes == null || readBytes.Length != 3)
@@ -943,12 +948,12 @@ namespace BmwDeepObd
             return deviceName;
         }
 
-        public static void ResetCrc()
+        public void ResetCrc()
         {
             _connectionCRC = 0x0000;
         }
 
-        public static void CalculateCrc(byte data)
+        public void CalculateCrc(byte data)
         {
             for (int i = 0; i < 8; i++)
             {
@@ -966,17 +971,17 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool WriteFirmware(byte[] buffer, int bufferLength, int chunkLength)
+        public bool WriteFirmware(byte[] buffer, int bufferLength, int chunkLength)
         {
             return UploadData(CommandProgramWrite, true, buffer, bufferLength, chunkLength);
         }
 
-        public static bool VerifyFirmware(byte[] buffer, int bufferLength)
+        public bool VerifyFirmware(byte[] buffer, int bufferLength)
         {
             return UploadData(CommandProgramVerify, false, buffer, bufferLength, VerifyChunkLength);
         }
 
-        public static bool StartFirmware()
+        public bool StartFirmware()
         {
             try
             {
