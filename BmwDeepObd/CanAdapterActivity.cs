@@ -1201,26 +1201,67 @@ namespace BmwDeepObd
 
                     if (usbMode)
                     {
-                        AtmelBootloader atmelBootloader = new AtmelBootloader(_ediabas);
-                        updateOk = atmelBootloader.FwUpdate(state =>
+                        bool aborted = false;
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
                             {
-                                if (_activityCommon == null)
-                                {
-                                    return;
-                                }
+                                return;
+                            }
 
-                                switch (state)
-                                {
-                                    case AtmelBootloader.UpdateState.Connect:
-                                        progress.SetMessage(GetString(Resource.String.can_adapter_fw_update_connect));
-                                        break;
+                            progress.SetMessage("Demo version please wait ...");
+                            progress.AbortClick = sender =>
+                            {
+                                aborted = true;
+                            };
+                            progress.ButtonAbort.Visibility = ViewStates.Visible;
+                            progress.ButtonAbort.Enabled = true;
+                        });
 
-                                    default:
-                                        progress.SetMessage(GetString(Resource.String.can_adapter_fw_update_active));
-                                        break;
-                                }
-                            },
-                            ActivityCommon.UsbFirmwareFileName);
+                        for (int i = 0; i < 60; i++)
+                        {
+                            Thread.Sleep(1000);
+                            if (aborted)
+                            {
+                                break;
+                            }
+                        }
+
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+                            progress.ButtonAbort.Enabled = false;
+                        });
+
+                        if (!aborted)
+                        {
+                            AtmelBootloader atmelBootloader = new AtmelBootloader(_ediabas);
+                            updateOk = atmelBootloader.FwUpdate(state =>
+                                {
+                                    RunOnUiThread(() =>
+                                    {
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
+
+                                        switch (state)
+                                        {
+                                            case AtmelBootloader.UpdateState.Connect:
+                                                progress.SetMessage(GetString(Resource.String.can_adapter_fw_update_connect));
+                                                break;
+
+                                            default:
+                                                progress.SetMessage(GetString(Resource.String.can_adapter_fw_update_active));
+                                                break;
+                                        }
+                                    });
+                                },
+                                ActivityCommon.UsbFirmwareFileName);
+                        }
                     }
                     else
                     {
