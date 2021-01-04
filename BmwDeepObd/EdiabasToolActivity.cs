@@ -1269,7 +1269,10 @@ namespace BmwDeepObd
                 {
                     if (serviceId == (int) SgFunctions.UdsServiceId.MwBlock)
                     {
-                        funcCount++;
+                        if (funcInfo.ServiceList == null)
+                        {
+                            funcCount++;
+                        }
                     }
                     else
                     {

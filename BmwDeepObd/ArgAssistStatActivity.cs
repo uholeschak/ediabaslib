@@ -229,7 +229,16 @@ namespace BmwDeepObd
                 if (!string.IsNullOrEmpty(_instanceData.Arguments))
                 {
                     string[] argArray = _instanceData.Arguments.Split(";");
-                    if (_dynamicId)
+                    if (_mwBlock)
+                    {
+                        if (argArray.Length > 0)
+                        {
+                            defineBlockNew = argArray[0].Trim();
+                            selectList = argArray.ToList();
+                            selectList.RemoveAt(0);
+                        }
+                    }
+                    else if (_dynamicId)
                     {
                         if (argArray.Length > 2)
                         {
@@ -285,10 +294,13 @@ namespace BmwDeepObd
 
                     _spinnerBlockNumberAdapter.NotifyDataSetChanged();
                     _spinnerBlockNumber.SetSelection(selection);
+                }
 
+                if (_mwBlock || _dynamicId)
+                {
                     bool newBlock = string.IsNullOrEmpty(defineBlockNew) ||
-                        string.Compare(defineBlockNew, "JA", StringComparison.OrdinalIgnoreCase) == 0 ||
-                        string.Compare(defineBlockNew, "YES", StringComparison.OrdinalIgnoreCase) == 0;
+                                    string.Compare(defineBlockNew, "JA", StringComparison.OrdinalIgnoreCase) == 0 ||
+                                    string.Compare(defineBlockNew, "YES", StringComparison.OrdinalIgnoreCase) == 0;
                     _checkBoxDefineBlockNew.Checked = newBlock;
                 }
 
@@ -319,7 +331,10 @@ namespace BmwDeepObd
                         bool addArg = false;
                         if (_mwBlock)
                         {
-                            addArg = true;
+                            if (funcInfo.ServiceList == null)
+                            {
+                                addArg = true;
+                            }
                         }
                         else
                         {
@@ -458,7 +473,12 @@ namespace BmwDeepObd
                 }
 
                 StringBuilder sb = new StringBuilder();
-                if (_dynamicId)
+                if (_mwBlock)
+                {
+                    sb.Append(_checkBoxDefineBlockNew.Checked ? "YES" : "NO");
+                    sb.Append(";");
+                }
+                else if (_dynamicId)
                 {
                     int blockNumber = 0;
                     int position = _spinnerBlockNumber.SelectedItemPosition;
