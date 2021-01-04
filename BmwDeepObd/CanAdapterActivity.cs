@@ -1112,6 +1112,7 @@ namespace BmwDeepObd
 
         private void PerformUpdateMessage(bool changeFirmware = false)
         {
+            int messageId = Resource.String.can_adapter_fw_update_info;
             switch (_interfaceType)
             {
                 case ActivityCommon.InterfaceType.Bluetooth:
@@ -1120,6 +1121,10 @@ namespace BmwDeepObd
                         _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_not_reliable), Resource.String.alert_title_error);
                         return;
                     }
+                    break;
+
+                case ActivityCommon.InterfaceType.Ftdi:
+                    messageId = Resource.String.can_adapter_fw_update_info_ftdi;
                     break;
             }
 
@@ -1132,7 +1137,7 @@ namespace BmwDeepObd
                 {
                 })
                 .SetCancelable(true)
-                .SetMessage(Resource.String.can_adapter_fw_update_info)
+                .SetMessage(messageId)
                 .SetTitle(Resource.String.alert_title_warning)
                 .Show();
         }
