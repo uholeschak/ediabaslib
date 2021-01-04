@@ -1170,6 +1170,7 @@ namespace BmwDeepObd
                 {
                     case SgFunctions.UdsServiceId.ReadDataById:
                     case SgFunctions.UdsServiceId.DynamicallyDefineId:
+                    case SgFunctions.UdsServiceId.MwBlock:
                     {
                         serverIntent = new Intent(this, typeof(ArgAssistStatActivity));
                         activityRequest = ActivityRequest.RequestArgAssistStat;
@@ -1266,9 +1267,16 @@ namespace BmwDeepObd
             {
                 foreach (SgFunctions.SgFuncInfo funcInfo in _sgFuncInfoList)
                 {
-                    if (funcInfo.ServiceList != null && funcInfo.ServiceList.Contains(serviceId))
+                    if (serviceId == (int) SgFunctions.UdsServiceId.MwBlock)
                     {
                         funcCount++;
+                    }
+                    else
+                    {
+                        if (funcInfo.ServiceList != null && funcInfo.ServiceList.Contains(serviceId))
+                        {
+                            funcCount++;
+                        }
                     }
                 }
             }

@@ -27,6 +27,7 @@ namespace BmwDeepObd
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
         private bool _dynamicId;
+        private bool _mwBlock;
         private bool _ignoreCheckChange;
         private string _argFilterText;
 
@@ -56,6 +57,7 @@ namespace BmwDeepObd
             InitBaseVariables();
 
             _dynamicId = _serviceId == (int)SgFunctions.UdsServiceId.DynamicallyDefineId;
+            _mwBlock = _serviceId == (int)SgFunctions.UdsServiceId.MwBlock;
             if (!_activityRecreated && _instanceData != null)
             {
                 _instanceData.Arguments = Intent.GetStringExtra(ExtraArguments);
@@ -314,7 +316,20 @@ namespace BmwDeepObd
                 {
                     foreach (SgFunctions.SgFuncInfo funcInfo in _sgFuncInfoList.OrderBy(x => argTypeId ? x.Id : x.Arg))
                     {
-                        if (funcInfo.ServiceList != null && funcInfo.ServiceList.Contains(_serviceId))
+                        bool addArg = false;
+                        if (_mwBlock)
+                        {
+                            addArg = true;
+                        }
+                        else
+                        {
+                            if (funcInfo.ServiceList != null && funcInfo.ServiceList.Contains(_serviceId))
+                            {
+                                addArg = true;
+                            }
+                        }
+
+                        if (addArg)
                         {
                             string argType = argTypeId ? funcInfo.Id : funcInfo.Arg;
                             string argName = argTypeId ? funcInfo.Arg : funcInfo.Id;
