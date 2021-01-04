@@ -314,7 +314,7 @@ namespace BmwDeepObd
                 {
                     foreach (SgFunctions.SgFuncInfo funcInfo in _sgFuncInfoList.OrderBy(x => argTypeId ? x.Id : x.Arg))
                     {
-                        if (funcInfo.ServiceList.Contains(_serviceId))
+                        if (funcInfo.ServiceList != null && funcInfo.ServiceList.Contains(_serviceId))
                         {
                             string argType = argTypeId ? funcInfo.Id : funcInfo.Arg;
                             string argName = argTypeId ? funcInfo.Arg : funcInfo.Id;

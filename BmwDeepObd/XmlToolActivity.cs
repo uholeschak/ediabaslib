@@ -4530,7 +4530,7 @@ namespace BmwDeepObd
             int groupId = 0;
             foreach (SgFunctions.SgFuncInfo funcInfo in sgFuncInfoList)
             {
-                if (!funcInfo.ServiceList.Contains(serviceId))
+                if (funcInfo.ServiceList == null || !funcInfo.ServiceList.Contains(serviceId))
                 {
                     continue;
                 }
