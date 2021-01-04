@@ -1155,6 +1155,7 @@ namespace BmwDeepObd
             {
                 bool updateOk = false;
                 bool connectOk = false;
+                bool aborted = false;
                 bool elmMode = IsCustomElmAdapter(_interfaceType, _deviceAddress);
                 bool elmFirmware = false;
                 if (changeFirmware)
@@ -1217,6 +1218,7 @@ namespace BmwDeepObd
                                             progress.AbortClick = sender =>
                                             {
                                                 atmelBootloader.Abort = true;
+                                                aborted = true;
                                             };
                                             progress.SetMessage(GetString(Resource.String.can_adapter_fw_update_connect));
                                             break;
@@ -1280,33 +1282,36 @@ namespace BmwDeepObd
                         EdiabasClose();
                     }
 
-                    AlertDialog alertDialog = new AlertDialog.Builder(this)
-                        .SetMessage(message)
-                        .SetTitle(updateOk ? Resource.String.alert_title_info : Resource.String.alert_title_error)
-                        .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
-                        .Show();
-                    alertDialog.DismissEvent += (sender, args) =>
+                    if (!aborted)
                     {
-                        if (_activityCommon == null)
+                        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                            .SetMessage(message)
+                            .SetTitle(updateOk ? Resource.String.alert_title_info : Resource.String.alert_title_error)
+                            .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
+                            .Show();
+                        alertDialog.DismissEvent += (sender, args) =>
                         {
-                            return;
-                        }
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
 
-                        if (updateOk)
-                        {
-                            if (changeFirmware)
+                            if (updateOk)
                             {
-                                Intent intent = new Intent();
-                                intent.PutExtra(ExtraInvalidateAdapter, true);
-                                SetResult(Android.App.Result.Ok, intent);
-                                Finish();
+                                if (changeFirmware)
+                                {
+                                    Intent intent = new Intent();
+                                    intent.PutExtra(ExtraInvalidateAdapter, true);
+                                    SetResult(Android.App.Result.Ok, intent);
+                                    Finish();
+                                }
+                                else
+                                {
+                                    PerformRead();
+                                }
                             }
-                            else
-                            {
-                                PerformRead();
-                            }
-                        }
-                    };
+                        };
+                    }
                 });
             });
             _adapterThread.Start();
