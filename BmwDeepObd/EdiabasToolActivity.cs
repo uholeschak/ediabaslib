@@ -1266,7 +1266,7 @@ namespace BmwDeepObd
             {
                 foreach (SgFunctions.SgFuncInfo funcInfo in _sgFuncInfoList)
                 {
-                    if (funcInfo.ServiceList.Contains(serviceId))
+                    if (funcInfo.ServiceList != null && funcInfo.ServiceList.Contains(serviceId))
                     {
                         funcCount++;
                     }
@@ -1322,7 +1322,7 @@ namespace BmwDeepObd
                         foreach (SgFunctions.SgFuncInfo funcInfo in _sgFuncInfoList)
                         {
                             if (string.Compare(arg.Trim(), argTypeId ? funcInfo.Id : funcInfo.Arg, StringComparison.OrdinalIgnoreCase) == 0 &&
-                                funcInfo.ServiceList.Contains(serviceId))
+                                funcInfo.ServiceList != null && funcInfo.ServiceList.Contains(serviceId))
                             {
                                 argFuncInfo = funcInfo;
                                 break;
@@ -2073,6 +2073,12 @@ namespace BmwDeepObd
                     }
 
                     List<SgFunctions.SgFuncInfo> sgFuncInfoList = _sgFunctions.ReadSgFuncTable();
+                    // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
+                    if (sgFuncInfoList == null)
+                    {
+                        sgFuncInfoList = _sgFunctions.ReadMwTabTable();
+                    }
+
                     if (sgFuncInfoList != null)
                     {
                         _sgFuncInfoList.AddRange(sgFuncInfoList);
