@@ -2104,8 +2104,7 @@ namespace BmwDeepObd
                     }
 
                     List<SgFunctions.SgFuncInfo> sgFuncInfoList = _sgFunctions.ReadSgFuncTable();
-                    // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
-                    if (sgFuncInfoList?.Count == 0)
+                    if (sgFuncInfoList == null || sgFuncInfoList.Count == 0)
                     {
                         sgFuncInfoList = _sgFunctions.ReadMwTabTable();
                     }
