@@ -1292,6 +1292,7 @@ namespace BmwDeepObd
             if (serviceId >= 0)
             {
                 string[] argArray = _editTextArgs.Text.Split(";");
+                bool mwBlock = false;
                 string argType = string.Empty;
                 List<string> argList = null;
                 switch ((SgFunctions.UdsServiceId) serviceId)
@@ -1314,6 +1315,15 @@ namespace BmwDeepObd
                         }
                         break;
 
+                    case SgFunctions.UdsServiceId.MwBlock:
+                        mwBlock = true;
+                        if (argArray.Length > 0)
+                        {
+                            argList = argArray.ToList();
+                            argList.RemoveAt(0);
+                        }
+                        break;
+
                     default:
                         if (argArray.Length > 1)
                         {
@@ -1332,11 +1342,21 @@ namespace BmwDeepObd
                         SgFunctions.SgFuncInfo argFuncInfo = null;
                         foreach (SgFunctions.SgFuncInfo funcInfo in _sgFuncInfoList)
                         {
-                            if (string.Compare(arg.Trim(), argTypeId ? funcInfo.Id : funcInfo.Arg, StringComparison.OrdinalIgnoreCase) == 0 &&
-                                funcInfo.ServiceList != null && funcInfo.ServiceList.Contains(serviceId))
+                            if (mwBlock)
                             {
-                                argFuncInfo = funcInfo;
-                                break;
+                                if (string.Compare(arg.Trim(), funcInfo.Arg, StringComparison.OrdinalIgnoreCase) == 0 && funcInfo.ServiceList == null)
+                                {
+                                    argFuncInfo = funcInfo;
+                                }
+                            }
+                            else
+                            {
+                                if (string.Compare(arg.Trim(), argTypeId ? funcInfo.Id : funcInfo.Arg, StringComparison.OrdinalIgnoreCase) == 0 &&
+                                    funcInfo.ServiceList != null && funcInfo.ServiceList.Contains(serviceId))
+                                {
+                                    argFuncInfo = funcInfo;
+                                    break;
+                                }
                             }
                         }
 
