@@ -5,27 +5,33 @@
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true">
-    <TextView
-        android:id="@+id/textViewArgTypeTitle"
-        android:text="@string/arg_assist_arg_type"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/TextViewInnerCaption" />
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <RadioButton
-          android:id="@+id/radioButtonArgTypeArg"
-          android:layout_width="wrap_content"
+    <LinearLayout
+      android:id="@+id/layoutArgType"
+      android:orientation="vertical"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+      <TextView
+          android:id="@+id/textViewArgTypeTitle"
+          android:text="@string/arg_assist_arg_type"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:text="@string/arg_assist_type_arg" />
-        <RadioButton
-          android:id="@+id/radioButtonArgTypeId"
-          android:layout_width="wrap_content"
+          style="@style/TextViewInnerCaption" />
+      <RadioGroup
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:text="@string/arg_assist_type_id" />
-    </RadioGroup>
+          android:orientation="vertical">
+          <RadioButton
+            android:id="@+id/radioButtonArgTypeArg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/arg_assist_type_arg" />
+          <RadioButton
+            android:id="@+id/radioButtonArgTypeId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/arg_assist_type_id" />
+      </RadioGroup>
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/layoutBlockNumber"
         android:orientation="vertical"
@@ -41,12 +47,12 @@
             android:id="@+id/spinnerBlockNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-        <CheckBox
-            android:id="@+id/checkBoxDefineBlockNew"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/arg_assist_define_new" />
     </LinearLayout>
+    <CheckBox
+        android:id="@+id/checkBoxDefineBlockNew"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/arg_assist_define_new" />
     <TextView
         android:text="@string/arg_assist_args"
         android:id="@+id/textViewArgListTitle"

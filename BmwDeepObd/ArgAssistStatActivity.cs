@@ -31,6 +31,7 @@ namespace BmwDeepObd
         private bool _ignoreCheckChange;
         private string _argFilterText;
 
+        private LinearLayout _layoutArgType;
         private LinearLayout _layoutBlockNumber;
         private Spinner _spinnerBlockNumber;
         private StringObjAdapter _spinnerBlockNumberAdapter;
@@ -97,6 +98,10 @@ namespace BmwDeepObd
                 UpdateArgList();
             };
 
+            _layoutArgType = FindViewById<LinearLayout>(Resource.Id.layoutArgType);
+            _layoutArgType.SetOnTouchListener(this);
+            _layoutArgType.Visibility = _mwBlock ? ViewStates.Gone : ViewStates.Visible;
+
             _layoutBlockNumber = FindViewById<LinearLayout>(Resource.Id.layoutBlockNumber);
             _layoutBlockNumber.SetOnTouchListener(this);
             _layoutBlockNumber.Visibility = _dynamicId ? ViewStates.Visible : ViewStates.Gone;
@@ -107,6 +112,7 @@ namespace BmwDeepObd
 
             _checkBoxDefineBlockNew = FindViewById<CheckBox>(Resource.Id.checkBoxDefineBlockNew);
             _checkBoxDefineBlockNew.SetOnTouchListener(this);
+            _checkBoxDefineBlockNew.Visibility = _mwBlock || _dynamicId ? ViewStates.Visible : ViewStates.Gone;
 
             _listViewArgs = FindViewById<ListView>(Resource.Id.argList);
             _argsListAdapter = new EdiabasToolActivity.ResultSelectListAdapter(this);
