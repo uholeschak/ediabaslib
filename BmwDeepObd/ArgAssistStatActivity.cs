@@ -39,6 +39,8 @@ namespace BmwDeepObd
         private ListView _listViewArgs;
         private EdiabasToolActivity.ResultSelectListAdapter _argsListAdapter;
 
+        private int ArgAmountLimit => _mwBlock ? 10 : 5;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -439,7 +441,7 @@ namespace BmwDeepObd
         {
             if (!_instanceData.ArgsAmountWarnShown)
             {
-                if (ArgsSelectCount() > 5)
+                if (ArgsSelectCount() > ArgAmountLimit)
                 {
                     _instanceData.ArgsAmountWarnShown = true;
                     _activityCommon.ShowAlert(GetString(Resource.String.arg_assist_amount_limit), Resource.String.alert_title_warning);
