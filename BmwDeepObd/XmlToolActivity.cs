@@ -4548,10 +4548,14 @@ namespace BmwDeepObd
 
                 string arg = funcInfo.Arg;
                 string id = funcInfo.Id;
-                string displayBaseName = arg;
-                if (!string.IsNullOrEmpty(id))
+                string displayBaseName = string.Empty;
+                if (!statMwBlock)
                 {
-                    displayBaseName += " (" + id + ")";
+                    displayBaseName = arg;
+                    if (!string.IsNullOrEmpty(id))
+                    {
+                        displayBaseName += " (" + id + ")";
+                    }
                 }
 
                 if (funcInfo.ResInfoList != null)
@@ -4592,7 +4596,13 @@ namespace BmwDeepObd
                         {
                             if (!string.IsNullOrEmpty(funcBitFieldInfo.ResultName))
                             {
-                                string displayName = displayBaseName + "/" + funcBitFieldInfo.ResultName;
+                                string displayName = string.Empty;
+                                if (!string.IsNullOrEmpty(displayBaseName))
+                                {
+                                    displayName = displayBaseName + "/";
+                                }
+                                displayName += funcBitFieldInfo.ResultName;
+
                                 List<string> commentList = new List<string>();
                                 if (!string.IsNullOrEmpty(funcInfo.Info))
                                 {
@@ -4646,7 +4656,13 @@ namespace BmwDeepObd
                 {
                     if (!string.IsNullOrEmpty(funcInfo.Result))
                     {
-                        string displayName = displayBaseName + "/" + funcInfo.Result;
+                        string displayName = string.Empty;
+                        if (!string.IsNullOrEmpty(displayBaseName))
+                        {
+                            displayName = displayBaseName + "/";
+                        }
+                        displayName += funcInfo.Result;
+
                         List<string> commentList = new List<string>();
                         if (!string.IsNullOrEmpty(funcInfo.Info))
                         {
