@@ -482,26 +482,29 @@ namespace BmwDeepObd
                 if (_mwBlock)
                 {
                     sb.Append(_checkBoxDefineBlockNew.Checked ? "YES" : "NO");
-                    sb.Append(";");
                 }
-                else if (_dynamicId)
+                else
                 {
-                    int blockNumber = 0;
-                    int position = _spinnerBlockNumber.SelectedItemPosition;
-                    if (position >= 0 && position < _spinnerBlockNumberAdapter.Items.Count)
+                    if (_dynamicId)
                     {
-                        StringObjType item = _spinnerBlockNumberAdapter.Items[position];
-                        blockNumber = (int) item.Data;
+                        int blockNumber = 0;
+                        int position = _spinnerBlockNumber.SelectedItemPosition;
+                        if (position >= 0 && position < _spinnerBlockNumberAdapter.Items.Count)
+                        {
+                            StringObjType item = _spinnerBlockNumberAdapter.Items[position];
+                            blockNumber = (int)item.Data;
+                        }
+
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", blockNumber));
+                        sb.Append(";");
+
+                        sb.Append(_checkBoxDefineBlockNew.Checked ? "YES" : "NO");
+                        sb.Append(";");
                     }
 
-                    sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", blockNumber));
-                    sb.Append(";");
-
-                    sb.Append(_checkBoxDefineBlockNew.Checked ? "YES" : "NO");
-                    sb.Append(";");
+                    sb.Append(argType);
                 }
 
-                sb.Append(argType);
                 foreach (EdiabasToolActivity.ExtraInfo extraInfo in _argsListAdapter.Items)
                 {
                     if (extraInfo.ItemSelected)
