@@ -972,7 +972,8 @@ namespace BmwDeepObd
                 _jobListTranslated = false;
             }
 
-            if (IsJobRunning() || _instanceData.Offline)
+            bool isRunning = IsJobRunning();
+            if (isRunning || _instanceData.Offline)
             {
                 checkContinuousEnable = false;
                 buttonConnectEnable = _runContinuous;
@@ -981,9 +982,10 @@ namespace BmwDeepObd
                     inputsEnabled = false;
                 }
             }
+
             _checkBoxContinuous.Enabled = checkContinuousEnable;
             _buttonConnect.Enabled = buttonConnectEnable;
-            if (!buttonConnectEnable)
+            if (!isRunning)
             {
                 _buttonConnect.Checked = false;
             }
