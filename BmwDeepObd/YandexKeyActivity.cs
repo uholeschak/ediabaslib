@@ -116,7 +116,7 @@ namespace BmwDeepObd
                         case ActivityCommon.TranslatorType.YandexTranslate:
                             try
                             {
-                                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/")));
+                                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://translate.yandex.com/developers/keys")));
                             }
                             catch (Exception)
                             {
@@ -155,7 +155,7 @@ namespace BmwDeepObd
                         case ActivityCommon.TranslatorType.YandexTranslate:
                             try
                             {
-                                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://tech.yandex.com/keys/")));
+                                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://translate.yandex.com/developers/keys")));
                             }
                             catch (Exception)
                             {
