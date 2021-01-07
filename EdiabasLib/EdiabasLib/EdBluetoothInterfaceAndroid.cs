@@ -147,7 +147,15 @@ namespace EdiabasLib
                     }
                     _connectDeviceAddress = device.Address;
 
-                    _bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
+                    if (device.BondState == Bond.Bonded)
+                    {
+                        _bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
+                    }
+                    else
+                    {
+                        _bluetoothSocket = device.CreateInsecureRfcommSocketToServiceRecord(SppUuid);
+                    }
+
                     try
                     {
                         _bluetoothSocket.Connect();
