@@ -5908,10 +5908,10 @@ namespace BmwDeepObd
 			public const int bt_device_not_selected = 2131689572;
 			
 			// aapt resource value: 0x7F0F0065
-			public const int bt_device_pair_select = 2131689573;
+			public const int bt_device_select = 2131689573;
 			
 			// aapt resource value: 0x7F0F0066
-			public const int bt_device_select = 2131689574;
+			public const int bt_device_select_secure = 2131689574;
 			
 			// aapt resource value: 0x7F0F0067
 			public const int bt_enable = 2131689575;
