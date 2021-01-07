@@ -2043,7 +2043,7 @@ namespace BmwDeepObd
             itemList.Add(GetString(Resource.String.bt_device_select));
             operationList.Add(BtOperation.SelectAdapter);
 
-            itemList.Add(GetString(Resource.String.bt_device_pair_select));
+            itemList.Add(GetString(Resource.String.bt_device_select_secure));
             operationList.Add(BtOperation.ConnectSelectAdapter);
 
             Java.Lang.ICharSequence[] items = new Java.Lang.ICharSequence[itemList.Count];
