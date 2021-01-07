@@ -66,11 +66,12 @@ namespace BmwDeepObd
 
         enum BtOperation
         {
-            SelectAdapter,      // select the adapter
-            ConnectObd,         // connect device as OBD
-            ConnectPhone,       // connect device as phone
-            DisconnectPhone,    // dosconnect phone
-            DeleteDevice,       // delete device
+            SelectAdapter,          // select the adapter
+            ConnectSelectAdapter,   // connect and select the adapter
+            ConnectObd,             // connect device as OBD
+            ConnectPhone,           // connect device as phone
+            DisconnectPhone,        // disconnect phone
+            DeleteDevice,           // delete device
         }
 
         public class InstanceData
@@ -239,6 +240,7 @@ namespace BmwDeepObd
             filter = new IntentFilter();
             filter.AddAction(BluetoothDevice.ActionAclConnected);
             filter.AddAction(BluetoothDevice.ActionAclDisconnected);
+            filter.AddAction(BluetoothDevice.ActionBondStateChanged);
             RegisterReceiver(_receiver, filter);
 
             // Get the local Bluetooth adapter
@@ -830,8 +832,9 @@ namespace BmwDeepObd
         /// Start adapter detection
         /// </summary>
         /// <param name="deviceAddress">Device Bluetooth address</param>
-        /// <param name="deviceName">Device Bleutooth name</param>
-        private void DetectAdapter(string deviceAddress, string deviceName)
+        /// <param name="deviceName">Device Bluetooth name</param>
+        /// <param name="forceSecure">Force secure connection</param>
+        private void DetectAdapter(string deviceAddress, string deviceName, bool forceSecure = false)
         {
             if (string.IsNullOrEmpty(deviceAddress) || string.IsNullOrEmpty(deviceName))
             {
@@ -874,7 +877,7 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                if (device.BondState == Bond.Bonded)
+                                if (forceSecure || device.BondState == Bond.Bonded)
                                 {
                                     LogString("Connect with CreateRfcommSocketToServiceRecord");
                                     bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
@@ -1988,13 +1991,13 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    DetectAdapter(address, name);
+                    SelectBtDeviceAction(name, address, paired);
                 }
             }
         }
 
         /// <summary>
-        /// Manual Bluettoth address entry in MTC mode
+        /// Manual Bluetooth address entry in MTC mode
         /// </summary>
         private void MtcManualAddressEntry()
         {
@@ -2022,6 +2025,60 @@ namespace BmwDeepObd
             {
             });
             textInputDialog.Show();
+        }
+
+        /// <summary>
+        /// Select action for Blutooth device in standard mode
+        /// </summary>
+        private void SelectBtDeviceAction(string name, string address, bool paired)
+        {
+            if (paired)
+            {
+                DetectAdapter(address, name);
+                return;
+            }
+
+            List<BtOperation> operationList = new List<BtOperation>();
+            List<string> itemList = new List<string>();
+            itemList.Add(GetString(Resource.String.bt_device_select));
+            operationList.Add(BtOperation.SelectAdapter);
+
+            itemList.Add(GetString(Resource.String.bt_device_pair_select));
+            operationList.Add(BtOperation.ConnectSelectAdapter);
+
+            Java.Lang.ICharSequence[] items = new Java.Lang.ICharSequence[itemList.Count];
+            for (int i = 0; i < itemList.Count; i++)
+            {
+                items[i] = new Java.Lang.String(itemList[i]);
+            }
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.SetTitle(Resource.String.bt_device_menu_tite);
+            builder.SetItems(items, (sender, args) =>
+            {
+                if (args.Which < 0 || args.Which >= operationList.Count)
+                {
+                    return;
+                }
+                try
+                {
+                    switch (operationList[args.Which])
+                    {
+                        case BtOperation.SelectAdapter:
+                            DetectAdapter(address, name);
+                            break;
+
+                        case BtOperation.ConnectSelectAdapter:
+                            DetectAdapter(address, name, true);
+                            break;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            });
+            builder.Show();
         }
 
         /// <summary>
@@ -2267,46 +2324,37 @@ namespace BmwDeepObd
                             }
                             break;
                         }
+
+                        case BluetoothDevice.ActionBondStateChanged:
+                        {
+                            BluetoothDevice device = intent.GetParcelableExtra(BluetoothDevice.ExtraDevice) as BluetoothDevice;
+                            if (device != null)
+                            {
+                                if (device.BondState == Bond.Bonded)
+                                {
+                                    for (int i = 0; i < _chat._newDevicesArrayAdapter.Count; i++)
+                                    {
+                                        string item = _chat._newDevicesArrayAdapter.GetItem(i);
+                                        if (ExtractDeviceInfo(_chat._newDevicesArrayAdapter.GetItem(i), out string _, out string address))
+                                        {
+                                            if (string.Compare(address, device.Address, StringComparison.OrdinalIgnoreCase) == 0)
+                                            {
+                                                _chat._newDevicesArrayAdapter.Remove(item);
+                                            }
+                                        }
+                                    }
+
+                                    _chat.UpdatePairedDevices();
+                                }
+                            }
+                            break;
+                        }
                     }
                 }
                 catch (Exception)
                 {
                     // ignored
                 }
-            }
-        }
-    }
-
-    // ReSharper disable once UnusedMember.Global
-    public class SelectListener : Java.Lang.Object, IDialogInterfaceOnClickListener
-    {
-        private readonly Context _context;
-
-        // ReSharper disable once UnusedMember.Global
-        public SelectListener(Context context)
-        {
-            _context = context;
-        }
-
-        public void OnClick(IDialogInterface dialog, Int32 which)
-        {
-            switch (which)
-            {
-                case 1:
-                    Toast.MakeText(_context, "Button1", ToastLength.Long);
-                    break;
-
-                case 2:
-                    Toast.MakeText(_context, "Button2", ToastLength.Long);
-                    break;
-
-                case 3:
-                    Toast.MakeText(_context, "Button3", ToastLength.Long);
-                    break;
-
-                case 4:
-                    Toast.MakeText(_context, "Button4", ToastLength.Long);
-                    break;
             }
         }
     }
