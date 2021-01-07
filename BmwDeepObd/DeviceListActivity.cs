@@ -874,8 +874,17 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                LogString("Connect with CreateRfcommSocketToServiceRecord");
-                                bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
+                                if (device.BondState == Bond.Bonded)
+                                {
+                                    LogString("Connect with CreateRfcommSocketToServiceRecord");
+                                    bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
+                                }
+                                else
+                                {
+                                    LogString("Connect with CreateInsecureRfcommSocketToServiceRecord");
+                                    bluetoothSocket = device.CreateInsecureRfcommSocketToServiceRecord(SppUuid);
+                                }
+
                                 if (bluetoothSocket != null)
                                 {
                                     try
