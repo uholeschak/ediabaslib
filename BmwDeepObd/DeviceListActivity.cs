@@ -128,6 +128,8 @@ namespace BmwDeepObd
         private readonly AutoResetEvent _connectedEvent = new AutoResetEvent(false);
         private readonly AutoResetEvent _btGattConnectEvent = new AutoResetEvent(false);
         private readonly AutoResetEvent _btGattDiscoveredEvent = new AutoResetEvent(false);
+        private readonly AutoResetEvent _btGattReceivedEvent = new AutoResetEvent(false);
+        private readonly AutoResetEvent _btGattWriteEvent = new AutoResetEvent(false);
         private volatile string _connectDeviceAddress = string.Empty;
         private BluetoothGatt _bluetoothGatt;
         private BluetoothGattCharacteristic _gattCharacteristicSpp;
@@ -1300,36 +1302,38 @@ namespace BmwDeepObd
                     return false;
                 }
 
+#if DEBUG
                 foreach (BluetoothGattService gattService in services)
                 {
                     if (gattService.Uuid == null || gattService.Characteristics == null)
                     {
                         continue;
                     }
-#if DEBUG
+
                     Android.Util.Log.Info(Tag, string.Format("GATT service: {0}", gattService.Uuid));
-#endif
-                    bool sppService = gattService.Uuid.Equals(GattServiceSpp);
                     foreach (BluetoothGattCharacteristic gattCharacteristic in gattService.Characteristics)
                     {
                         if (gattCharacteristic.Uuid == null)
                         {
                             continue;
                         }
-#if DEBUG
+
                         Android.Util.Log.Info(Tag, string.Format("GATT characteristic: {0}", gattCharacteristic.Uuid));
                         Android.Util.Log.Info(Tag, string.Format("GATT properties: {0}", gattCharacteristic.Properties));
+                    }
+                }
 #endif
-                        bool sppCharacteristic = gattCharacteristic.Uuid.Equals(GattCharacteristicSpp);
-                        if (sppService && sppCharacteristic)
-                        {
-                            if ((gattCharacteristic.Properties & (GattProperty.Read | GattProperty.Write | GattProperty.Notify)) ==
-                                (GattProperty.Read | GattProperty.Write | GattProperty.Notify))
-                            {
-                                _gattCharacteristicSpp = gattCharacteristic;
-                                Android.Util.Log.Info(Tag, "SPP characteristic found");
-                            }
-                        }
+
+                _gattCharacteristicSpp = null;
+                BluetoothGattService gattServiceSpp = _bluetoothGatt.GetService(GattServiceSpp);
+                BluetoothGattCharacteristic gattCharacteristicSpp = gattServiceSpp?.GetCharacteristic(GattCharacteristicSpp);
+                if (gattCharacteristicSpp != null)
+                {
+                    if ((gattCharacteristicSpp.Properties & (GattProperty.Read | GattProperty.Write | GattProperty.Notify)) ==
+                        (GattProperty.Read | GattProperty.Write | GattProperty.Notify))
+                    {
+                        _gattCharacteristicSpp = gattCharacteristicSpp;
+                        Android.Util.Log.Info(Tag, "SPP characteristic found");
                     }
                 }
 
@@ -1341,9 +1345,25 @@ namespace BmwDeepObd
 
                 if (!_bluetoothGatt.SetCharacteristicNotification(_gattCharacteristicSpp, true))
                 {
-                    LogString("*** GATT SPP Enable notification failed");
+                    LogString("*** GATT SPP enable notification failed");
                     return false;
                 }
+
+                byte[] sendData = Encoding.UTF8.GetBytes("ATI\r");
+                _gattCharacteristicSpp.SetValue(sendData);
+                if (!_bluetoothGatt.WriteCharacteristic(_gattCharacteristicSpp))
+                {
+                    LogString("*** GATT SPP write failed");
+                    return false;
+                }
+
+                if (!_btGattWriteEvent.WaitOne(2000))
+                {
+                    LogString("*** GATT SPP write failed");
+                    return false;
+                }
+
+                _btGattReceivedEvent.WaitOne(4000, false);
 
                 return true;
             }
@@ -1360,6 +1380,29 @@ namespace BmwDeepObd
                     BtGattDisconnect();
                 }
             }
+        }
+
+        private bool ReadGattSppData(BluetoothGattCharacteristic characteristic)
+        {
+            try
+            {
+                if (characteristic.Uuid != null && characteristic.Uuid.Equals(GattCharacteristicSpp))
+                {
+                    byte[] data = characteristic.GetValue();
+                    if (data != null)
+                    {
+                        LogData(data, 0, data.Length, "Received");
+                        _btGattReceivedEvent.Set();
+                        return true;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return false;
         }
 
         private void BtGattDisconnect()
@@ -2554,11 +2597,24 @@ namespace BmwDeepObd
             {
                 if (status == GattStatus.Success)
                 {
+                    _chat.ReadGattSppData(characteristic);
+                }
+            }
+
+            public override void OnCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, GattStatus status)
+            {
+                if (status == GattStatus.Success)
+                {
+                    if (characteristic.Uuid != null && characteristic.Uuid.Equals(GattCharacteristicSpp))
+                    {
+                        _chat._btGattWriteEvent.Set();
+                    }
                 }
             }
 
             public override void OnCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)
             {
+                _chat.ReadGattSppData(characteristic);
             }
         }
     }
