@@ -1349,7 +1349,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                byte[] sendData = Encoding.UTF8.GetBytes("ATI\r");
+                byte[] sendData = Encoding.UTF8.GetBytes("ATI\r\n");
                 _gattCharacteristicSpp.SetValue(sendData);
                 if (!_bluetoothGatt.WriteCharacteristic(_gattCharacteristicSpp))
                 {
@@ -1360,6 +1360,21 @@ namespace BmwDeepObd
                 if (!_btGattWriteEvent.WaitOne(2000))
                 {
                     LogString("*** GATT SPP write failed");
+                    return false;
+                }
+
+                if (!_bluetoothGatt.ReadCharacteristic(_gattCharacteristicSpp))
+                {
+                    LogString("*** GATT SPP read failed");
+                    return false;
+                }
+
+                _btGattReceivedEvent.WaitOne(4000, false);
+                Thread.Sleep(500);
+
+                if (!_bluetoothGatt.ReadCharacteristic(_gattCharacteristicSpp))
+                {
+                    LogString("*** GATT SPP read failed");
                     return false;
                 }
 
@@ -1391,7 +1406,10 @@ namespace BmwDeepObd
                     byte[] data = characteristic.GetValue();
                     if (data != null)
                     {
-                        LogData(data, 0, data.Length, "Received");
+                        //LogData(data, 0, data.Length, "Received");
+#if DEBUG
+                        Android.Util.Log.Info(Tag, string.Format("GATT SPP data received: {0}", Encoding.UTF8.GetString(data)));
+#endif
                         _btGattReceivedEvent.Set();
                         return true;
                     }
