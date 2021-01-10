@@ -137,8 +137,9 @@ namespace BmwDeepObd
         private volatile bool _deviceConnected;
         private volatile State _gattConnectionState = State.Disconnected;
         private volatile bool _gattServicesDiscovered;
+        private GattStatus _gattWriteStatus = GattStatus.Failure;
         private MemoryQueueBufferStream _btGattSppInStream;
-        private MemoryQueueBufferStream _btGattSppOutStream;
+        private BGattOutputStream _btGattSppOutStream;
         private int _elmVerH = -1;
         private int _elmVerL = -1;
 
@@ -1279,7 +1280,7 @@ namespace BmwDeepObd
                 _gattConnectionState = State.Connecting;
                 _gattServicesDiscovered = false;
                 _btGattSppInStream = new MemoryQueueBufferStream();
-                _btGattSppOutStream = new MemoryQueueBufferStream();
+                _btGattSppOutStream = new BGattOutputStream(this);
                 _bluetoothGatt = device.ConnectGatt(this, false, new BGattCallback(this));
                 if (_bluetoothGatt == null)
                 {
@@ -1370,6 +1371,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                _gattWriteStatus = GattStatus.Failure;
                 descriptor.SetValue(BluetoothGattDescriptor.EnableNotificationValue.ToArray());
                 if (!_bluetoothGatt.WriteDescriptor(descriptor))
                 {
@@ -1383,19 +1385,14 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                byte[] sendData = Encoding.UTF8.GetBytes("ATI\r");
-                _gattCharacteristicSpp.SetValue(sendData);
-                if (!_bluetoothGatt.WriteCharacteristic(_gattCharacteristicSpp))
+                if (_gattWriteStatus != GattStatus.Success)
                 {
-                    LogString("*** GATT SPP write failed");
+                    LogString("*** GATT SPP write config descriptor status failure");
                     return false;
                 }
 
-                if (!_btGattWriteEvent.WaitOne(2000))
-                {
-                    LogString("*** GATT SPP write timeout");
-                    return false;
-                }
+                byte[] sendData = Encoding.UTF8.GetBytes("ATI\r");
+                _btGattSppOutStream.Write(sendData, 0, sendData.Length);
 
                 while (_btGattReceivedEvent.WaitOne(2000, false))
                 {
@@ -2667,26 +2664,71 @@ namespace BmwDeepObd
 
             public override void OnCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, GattStatus status)
             {
+                GattStatus resultStatus = GattStatus.Failure;
                 if (status == GattStatus.Success)
                 {
                     if (characteristic.Uuid != null && characteristic.Uuid.Equals(GattCharacteristicSpp))
                     {
-                        _chat._btGattWriteEvent.Set();
+                        resultStatus = status;
                     }
                 }
+
+                _chat._gattWriteStatus = resultStatus;
+                _chat._btGattWriteEvent.Set();
             }
 
             public override void OnDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, GattStatus status)
             {
-                if (status == GattStatus.Success)
-                {
-                    _chat._btGattWriteEvent.Set();
-                }
+                _chat._gattWriteStatus = status;
+                _chat._btGattWriteEvent.Set();
             }
 
             public override void OnCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)
             {
                 _chat.ReadGattSppData(characteristic);
+            }
+        }
+
+        class BGattOutputStream : MemoryQueueBufferStream
+        {
+            readonly DeviceListActivity _chat;
+
+            public BGattOutputStream(DeviceListActivity chat)
+            {
+                _chat = chat;
+            }
+
+            public override void Write(byte[] buffer, int offset, int count)
+            {
+                base.Write(buffer, offset, count);
+
+                long dataLength = Length;
+                if (dataLength > 0 && _chat._gattCharacteristicSpp != null)
+                {
+                    byte[] sendData = new byte[dataLength];
+                    int length = Read(sendData, 0, (int) dataLength);
+                    if (length != dataLength)
+                    {
+                        throw new IOException("Read failed");
+                    }
+
+                    _chat._gattWriteStatus = GattStatus.Failure;
+                    _chat._gattCharacteristicSpp.SetValue(sendData);
+                    if (!_chat._bluetoothGatt.WriteCharacteristic(_chat._gattCharacteristicSpp))
+                    {
+                        throw new IOException("WriteCharacteristic failed");
+                    }
+
+                    if (!_chat._btGattWriteEvent.WaitOne(2000))
+                    {
+                        throw new IOException("WriteCharacteristic timeout");
+                    }
+
+                    if (_chat._gattWriteStatus != GattStatus.Success)
+                    {
+                        throw new IOException("WriteCharacteristic status failure");
+                    }
+                }
             }
         }
     }
