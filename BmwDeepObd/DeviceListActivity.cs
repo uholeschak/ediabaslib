@@ -51,6 +51,7 @@ namespace BmwDeepObd
         enum AdapterType
         {
             ConnectionFailed,   // connection to adapter failed
+            LeGatt,             // LE gatt device
             Unknown,            // unknown adapter
             Elm327,             // ELM327
             Elm327Custom,       // ELM327 with custom firmware
@@ -123,8 +124,13 @@ namespace BmwDeepObd
         private string _appDataDir;
         private readonly StringBuilder _sbLog = new StringBuilder();
         private readonly AutoResetEvent _connectedEvent = new AutoResetEvent(false);
+        private readonly AutoResetEvent _btGattConnectEvent = new AutoResetEvent(false);
+        private readonly AutoResetEvent _btGattDiscoveredEvent = new AutoResetEvent(false);
         private volatile string _connectDeviceAddress = string.Empty;
+        private BluetoothGatt _bluetoothGatt;
         private volatile bool _deviceConnected;
+        private volatile State _gattConnectionState = State.Disconnected;
+        private volatile bool _gattServicesDiscovered;
         private int _elmVerH = -1;
         private int _elmVerL = -1;
 
@@ -325,9 +331,10 @@ namespace BmwDeepObd
 
             // Make sure we're not doing discovery anymore
             _btAdapter?.CancelDiscovery ();
+            BtGattDisconnect();
 
             // Unregister broadcast listeners
-            UnregisterReceiver (_receiver);
+            UnregisterReceiver(_receiver);
             _activityCommon?.Dispose();
             _activityCommon = null;
         }
@@ -873,6 +880,20 @@ namespace BmwDeepObd
                         LogString("Bond state: " + device.BondState);
 
                         adapterType = AdapterType.ConnectionFailed;
+                        if (device.Type == BluetoothDeviceType.Le)
+                        {
+                            if (!ConnectLeGattDevice(device))
+                            {
+                                LogString("Connect to LE GATT device failed");
+                            }
+                            else
+                            {
+                                LogString("Connect to LE GATT device success");
+                                adapterType = AdapterType.LeGatt;
+                                BtGattDisconnect();
+                            }
+                        }
+
                         if (adapterType == AdapterType.ConnectionFailed)
                         {
                             try
@@ -1238,6 +1259,97 @@ namespace BmwDeepObd
                 Priority = System.Threading.ThreadPriority.Highest
             };
             detectThread.Start();
+        }
+
+        private bool ConnectLeGattDevice(BluetoothDevice device)
+        {
+            try
+            {
+                BtGattDisconnect();
+
+                _gattConnectionState = State.Connecting;
+                _gattServicesDiscovered = false;
+                _bluetoothGatt = device.ConnectGatt(this, false, new BGattCallback(this));
+                if (_bluetoothGatt == null)
+                {
+                    return false;
+                }
+
+                _btGattConnectEvent.WaitOne(2000, false);
+                if (_gattConnectionState != State.Connected)
+                {
+                    return false;
+                }
+
+                _btGattDiscoveredEvent.WaitOne(2000, false);
+                if (!_gattServicesDiscovered)
+                {
+                    return false;
+                }
+
+                IList<BluetoothGattService> services = _bluetoothGatt.Services;
+                if (services == null)
+                {
+                    return false;
+                }
+
+                foreach (BluetoothGattService gattService in services)
+                {
+                    if (gattService.Uuid == null || gattService.Characteristics == null)
+                    {
+                        continue;
+                    }
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("GATT service: {0}", gattService.Uuid));
+#endif
+                    foreach (BluetoothGattCharacteristic gattCharacteristic in gattService.Characteristics)
+                    {
+                        if (gattCharacteristic.Uuid == null)
+                        {
+                            continue;
+                        }
+#if DEBUG
+                        Android.Util.Log.Info(Tag, string.Format("GATT characteristic: {0}", gattCharacteristic.Uuid));
+                        Android.Util.Log.Info(Tag, string.Format("GATT properties: {0}", gattCharacteristic.Properties));
+#endif
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                _gattConnectionState = State.Disconnected;
+                _gattServicesDiscovered = false;
+                return false;
+            }
+            finally
+            {
+                if (!_gattServicesDiscovered)
+                {
+                    BtGattDisconnect();
+                }
+            }
+        }
+
+        private void BtGattDisconnect()
+        {
+            try
+            {
+                if (_bluetoothGatt != null)
+                {
+                    _bluetoothGatt.Disconnect();
+                    _bluetoothGatt.Dispose();
+                    _bluetoothGatt = null;
+                }
+
+                _gattConnectionState = State.Disconnected;
+                _gattServicesDiscovered = false;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private void ReturnDeviceTypeRawWarn(string deviceAddress, string deviceName)
@@ -2355,6 +2467,67 @@ namespace BmwDeepObd
                 {
                     // ignored
                 }
+            }
+        }
+
+        class BGattCallback : BluetoothGattCallback
+        {
+            readonly DeviceListActivity _chat;
+
+            public BGattCallback(DeviceListActivity chat)
+            {
+                _chat = chat;
+            }
+
+            public override void OnConnectionStateChange(BluetoothGatt gatt, GattStatus status, ProfileState newState)
+            {
+                if (newState == ProfileState.Connected)
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "Connected to GATT server.");
+#endif
+                    _chat._gattConnectionState = State.Connected;
+                    _chat._gattServicesDiscovered = false;
+                    _chat._btGattConnectEvent.Set();
+                    gatt.DiscoverServices();
+                }
+                else if (newState == ProfileState.Disconnected)
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "Disconnected from GATT server.");
+#endif
+                    _chat._gattConnectionState = State.Disconnected;
+                    _chat._gattServicesDiscovered = false;
+                }
+            }
+
+            public override void OnServicesDiscovered(BluetoothGatt gatt, GattStatus status)
+            {
+                if (status == GattStatus.Success)
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "GATT services discovered.");
+#endif
+                    _chat._gattServicesDiscovered = true;
+                    _chat._btGattDiscoveredEvent.Set();
+                }
+                else
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("GATT services discovery failed: {0}", status));
+#endif
+                }
+            }
+
+            public override void OnCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, GattStatus status)
+            {
+                if (status == GattStatus.Success)
+                {
+                }
+            }
+
+            public override void OnCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)
+            {
             }
         }
     }
