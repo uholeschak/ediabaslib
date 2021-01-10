@@ -90,6 +90,8 @@ namespace BmwDeepObd
 
         private static readonly Java.Util.UUID SppUuid = Java.Util.UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly Java.Util.UUID ZeroUuid = Java.Util.UUID.FromString("00000000-0000-0000-0000-000000000000");
+        private static readonly Java.Util.UUID GattServiceSpp = Java.Util.UUID.FromString("0000ffe0-0000-1000-8000-00805f9b34fb");
+        private static readonly Java.Util.UUID GattCharacteristicSpp = Java.Util.UUID.FromString("0000ffe1-0000-1000-8000-00805f9b34fb");
         private const int ResponseTimeout = 1000;
         private const int RequestPermissionLocation = 0;
         private readonly string[] _permissionsLocation =
@@ -128,6 +130,7 @@ namespace BmwDeepObd
         private readonly AutoResetEvent _btGattDiscoveredEvent = new AutoResetEvent(false);
         private volatile string _connectDeviceAddress = string.Empty;
         private BluetoothGatt _bluetoothGatt;
+        private BluetoothGattCharacteristic _gattCharacteristicSpp;
         private volatile bool _deviceConnected;
         private volatile State _gattConnectionState = State.Disconnected;
         private volatile bool _gattServicesDiscovered;
@@ -882,6 +885,7 @@ namespace BmwDeepObd
                         adapterType = AdapterType.ConnectionFailed;
                         if (device.Type == BluetoothDeviceType.Le)
                         {
+                            adapterType = AdapterType.LeGatt;
                             if (!ConnectLeGattDevice(device))
                             {
                                 LogString("Connect to LE GATT device failed");
@@ -889,7 +893,6 @@ namespace BmwDeepObd
                             else
                             {
                                 LogString("Connect to LE GATT device success");
-                                adapterType = AdapterType.LeGatt;
                                 BtGattDisconnect();
                             }
                         }
@@ -1272,24 +1275,28 @@ namespace BmwDeepObd
                 _bluetoothGatt = device.ConnectGatt(this, false, new BGattCallback(this));
                 if (_bluetoothGatt == null)
                 {
+                    LogString("*** ConnectGatt failed");
                     return false;
                 }
 
                 _btGattConnectEvent.WaitOne(2000, false);
                 if (_gattConnectionState != State.Connected)
                 {
+                    LogString("*** GATT connection timeout");
                     return false;
                 }
 
                 _btGattDiscoveredEvent.WaitOne(2000, false);
                 if (!_gattServicesDiscovered)
                 {
+                    LogString("*** GATT service discovery timeout");
                     return false;
                 }
 
                 IList<BluetoothGattService> services = _bluetoothGatt.Services;
                 if (services == null)
                 {
+                    LogString("*** No GATT services found");
                     return false;
                 }
 
@@ -1302,6 +1309,7 @@ namespace BmwDeepObd
 #if DEBUG
                     Android.Util.Log.Info(Tag, string.Format("GATT service: {0}", gattService.Uuid));
 #endif
+                    bool sppService = gattService.Uuid.Equals(GattServiceSpp);
                     foreach (BluetoothGattCharacteristic gattCharacteristic in gattService.Characteristics)
                     {
                         if (gattCharacteristic.Uuid == null)
@@ -1312,7 +1320,29 @@ namespace BmwDeepObd
                         Android.Util.Log.Info(Tag, string.Format("GATT characteristic: {0}", gattCharacteristic.Uuid));
                         Android.Util.Log.Info(Tag, string.Format("GATT properties: {0}", gattCharacteristic.Properties));
 #endif
+                        bool sppCharacteristic = gattCharacteristic.Uuid.Equals(GattCharacteristicSpp);
+                        if (sppService && sppCharacteristic)
+                        {
+                            if ((gattCharacteristic.Properties & (GattProperty.Read | GattProperty.Write | GattProperty.Notify)) ==
+                                (GattProperty.Read | GattProperty.Write | GattProperty.Notify))
+                            {
+                                _gattCharacteristicSpp = gattCharacteristic;
+                                Android.Util.Log.Info(Tag, "SPP characteristic found");
+                            }
+                        }
                     }
+                }
+
+                if (_gattCharacteristicSpp == null)
+                {
+                    LogString("*** No GATT SPP characteristic found");
+                    return false;
+                }
+
+                if (!_bluetoothGatt.SetCharacteristicNotification(_gattCharacteristicSpp, true))
+                {
+                    LogString("*** GATT SPP Enable notification failed");
+                    return false;
                 }
 
                 return true;
@@ -1336,15 +1366,16 @@ namespace BmwDeepObd
         {
             try
             {
+                _gattCharacteristicSpp = null;
+                _gattConnectionState = State.Disconnected;
+                _gattServicesDiscovered = false;
+
                 if (_bluetoothGatt != null)
                 {
                     _bluetoothGatt.Disconnect();
                     _bluetoothGatt.Dispose();
                     _bluetoothGatt = null;
                 }
-
-                _gattConnectionState = State.Disconnected;
-                _gattServicesDiscovered = false;
             }
             catch (Exception)
             {
