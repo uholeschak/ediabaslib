@@ -74,6 +74,9 @@
     <Compile Include="..\EdiabasLib\IniFile.cs">
       <Link>IniFile.cs</Link>
     </Compile>
+    <Compile Include="..\EdiabasLib\MemoryQueueBufferStream.cs">
+      <Link>MemoryQueueBufferStream.cs</Link>
+    </Compile>
     <Compile Include="..\EdiabasLib\StreamExtension.cs">
       <Link>StreamExtension.cs</Link>
     </Compile>

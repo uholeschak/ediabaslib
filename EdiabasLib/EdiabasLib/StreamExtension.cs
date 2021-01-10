@@ -6,11 +6,34 @@ namespace EdiabasLib
 {
     public static class StreamExtension
     {
+        public static bool HasData(this Stream inStream)
+        {
+            if (inStream == null)
+            {
+                return false;
+            }
+
+            if (inStream is MemoryQueueBufferStream memoryStream)
+            {
+                return memoryStream.IsDataAvailable();
+            }
+#if Android
+            return inStream.IsDataAvailable();
+#else
+            return inStream.Length > 0;
+#endif
+        }
+
         public static int ReadByteAsync(this Stream inStream, int timeout = 2000)
         {
             if (inStream == null)
             {
                 return -1;
+            }
+
+            if (inStream is MemoryQueueBufferStream memoryStream)
+            {
+                return memoryStream.ReadByte();
             }
 
             Semaphore waitSem = new Semaphore(0, 1);

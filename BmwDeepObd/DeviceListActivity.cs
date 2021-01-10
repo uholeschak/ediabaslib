@@ -137,6 +137,8 @@ namespace BmwDeepObd
         private volatile bool _deviceConnected;
         private volatile State _gattConnectionState = State.Disconnected;
         private volatile bool _gattServicesDiscovered;
+        private MemoryQueueBufferStream _btGattSppInStream;
+        private MemoryQueueBufferStream _btGattSppOutStream;
         private int _elmVerH = -1;
         private int _elmVerL = -1;
 
@@ -896,6 +898,7 @@ namespace BmwDeepObd
                             else
                             {
                                 LogString("Connect to LE GATT device success");
+                                //adapterType = AdapterTypeDetection(_btGattSppInStream, _btGattSppOutStream);
                                 BtGattDisconnect();
                             }
                         }
@@ -928,7 +931,7 @@ namespace BmwDeepObd
                                     }
                                     _connectedEvent.WaitOne(connectTimeout, false);
                                     LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
-                                    adapterType = AdapterTypeDetection(bluetoothSocket);
+                                    adapterType = AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
                                     if (_activityCommon.MtcBtService && adapterType == AdapterType.Unknown)
                                     {
                                         for (int retry = 0; retry < 20; retry++)
@@ -938,7 +941,7 @@ namespace BmwDeepObd
                                             bluetoothSocket.Connect();
                                             _connectedEvent.WaitOne(connectTimeout, false);
                                             LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
-                                            adapterType = AdapterTypeDetection(bluetoothSocket);
+                                            adapterType = AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
                                             if (adapterType != AdapterType.Unknown &&
                                                 adapterType != AdapterType.ConnectionFailed)
                                             {
@@ -984,7 +987,7 @@ namespace BmwDeepObd
                                     bluetoothSocket.Connect();
                                     _connectedEvent.WaitOne(connectTimeout, false);
                                     LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
-                                    adapterType = AdapterTypeDetection(bluetoothSocket);
+                                    adapterType = AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
                                 }
                             }
                             catch (Exception ex)
@@ -1275,6 +1278,8 @@ namespace BmwDeepObd
 
                 _gattConnectionState = State.Connecting;
                 _gattServicesDiscovered = false;
+                _btGattSppInStream = new MemoryQueueBufferStream();
+                _btGattSppOutStream = new MemoryQueueBufferStream();
                 _bluetoothGatt = device.ConnectGatt(this, false, new BGattCallback(this));
                 if (_bluetoothGatt == null)
                 {
@@ -1378,7 +1383,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                byte[] sendData = Encoding.UTF8.GetBytes("ATI\r\n");
+                byte[] sendData = Encoding.UTF8.GetBytes("ATI\r");
                 _gattCharacteristicSpp.SetValue(sendData);
                 if (!_bluetoothGatt.WriteCharacteristic(_gattCharacteristicSpp))
                 {
@@ -1396,6 +1401,18 @@ namespace BmwDeepObd
                 {
 #if DEBUG
                     Android.Util.Log.Info(Tag, "GATT SPP data received");
+#endif
+                }
+
+                while (_btGattSppInStream.HasData())
+                {
+                    int data = _btGattSppInStream.ReadByteAsync();
+                    if (data < 0)
+                    {
+                        break;
+                    }
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("GATT SPP byte: {0:X02}", data));
 #endif
                 }
 
@@ -1425,10 +1442,10 @@ namespace BmwDeepObd
                     byte[] data = characteristic.GetValue();
                     if (data != null)
                     {
-                        //LogData(data, 0, data.Length, "Received");
 #if DEBUG
                         Android.Util.Log.Info(Tag, string.Format("GATT SPP data received: {0}", Encoding.UTF8.GetString(data)));
 #endif
+                        _btGattSppInStream?.Write(data);
                         _btGattReceivedEvent.Set();
                         return true;
                     }
@@ -1455,6 +1472,18 @@ namespace BmwDeepObd
                     _bluetoothGatt.Disconnect();
                     _bluetoothGatt.Dispose();
                     _bluetoothGatt = null;
+                }
+
+                if (_btGattSppInStream != null)
+                {
+                    _btGattSppInStream.Dispose();
+                    _btGattSppInStream = null;
+                }
+
+                if (_btGattSppOutStream != null)
+                {
+                    _btGattSppOutStream.Dispose();
+                    _btGattSppOutStream = null;
                 }
             }
             catch (Exception)
@@ -1501,9 +1530,10 @@ namespace BmwDeepObd
         /// <summary>
         /// Detects the CAN adapter type
         /// </summary>
-        /// <param name="bluetoothSocket">Bluetooth socket for communication</param>
+        /// <param name="bluetoothInStream">Bluetooth input stream</param>
+        /// <param name="bluetoothOutStream">Bluetooth output stream</param>
         /// <returns>Adapter type</returns>
-        private AdapterType AdapterTypeDetection(BluetoothSocket bluetoothSocket)
+        private AdapterType AdapterTypeDetection(Stream bluetoothInStream, Stream bluetoothOutStream)
         {
             AdapterType adapterType = AdapterType.Unknown;
             _elmVerH = -1;
@@ -1511,15 +1541,12 @@ namespace BmwDeepObd
 
             try
             {
-                Stream bluetoothInStream = bluetoothSocket.InputStream;
-                Stream bluetoothOutStream = bluetoothSocket.OutputStream;
-
                 const int minIgnitionRespLen = 6;
                 byte[] customData = { 0x82, 0xF1, 0xF1, 0xFE, 0xFE, 0x00 }; // ignition state
                 customData[^1] = EdCustomAdapterCommon.CalcChecksumBmwFast(customData, 0, customData.Length - 1);
                 // custom adapter
                 bluetoothInStream.Flush();
-                while (bluetoothInStream.IsDataAvailable())
+                while (bluetoothInStream.HasData())
                 {
                     bluetoothInStream.ReadByteAsync();
                 }
@@ -1534,7 +1561,7 @@ namespace BmwDeepObd
                 long startTime = Stopwatch.GetTimestamp();
                 for (; ; )
                 {
-                    while (bluetoothInStream.IsDataAvailable())
+                    while (bluetoothInStream.HasData())
                     {
                         int data = bluetoothInStream.ReadByteAsync();
                         if (data >= 0)
@@ -1650,7 +1677,7 @@ namespace BmwDeepObd
                 for (int retries = 0; retries < 2; retries++)
                 {
                     bluetoothInStream.Flush();
-                    while (bluetoothInStream.IsDataAvailable())
+                    while (bluetoothInStream.HasData())
                     {
                         bluetoothInStream.ReadByteAsync();
                     }
@@ -1691,7 +1718,7 @@ namespace BmwDeepObd
                     foreach (EdElmInterface.ElmInitEntry elmInitEntry in EdBluetoothInterface.Elm327InitCommands)
                     {
                         bluetoothInStream.Flush();
-                        while (bluetoothInStream.IsDataAvailable())
+                        while (bluetoothInStream.HasData())
                         {
                             bluetoothInStream.ReadByteAsync();
                         }
@@ -1800,7 +1827,7 @@ namespace BmwDeepObd
             long startTime = Stopwatch.GetTimestamp();
             for (; ; )
             {
-                while (inStream.IsDataAvailable())
+                while (inStream.HasData())
                 {
                     int data = inStream.ReadByte();
                     if (data >= 0)
@@ -1895,7 +1922,7 @@ namespace BmwDeepObd
             long startTime = Stopwatch.GetTimestamp();
             for (; ; )
             {
-                while (inStream.IsDataAvailable())
+                while (inStream.HasData())
                 {
                     int data = inStream.ReadByte();
                     if (data >= 0)
@@ -1953,7 +1980,7 @@ namespace BmwDeepObd
             long startTime = Stopwatch.GetTimestamp();
             for (;;)
             {
-                while (inStream.IsDataAvailable())
+                while (inStream.HasData())
                 {
                     int data = inStream.ReadByte();
                     if (data >= 0)
@@ -2052,7 +2079,7 @@ namespace BmwDeepObd
         {
             customFirmware = false;
             bluetoothInStream.Flush();
-            while (bluetoothInStream.IsDataAvailable())
+            while (bluetoothInStream.HasData())
             {
                 bluetoothInStream.ReadByteAsync();
             }
@@ -2132,7 +2159,7 @@ namespace BmwDeepObd
             bool lengthMessage = false;
             for (; ; )
             {
-                while (bluetoothInStream.IsDataAvailable())
+                while (bluetoothInStream.HasData())
                 {
                     int data = bluetoothInStream.ReadByteAsync();
                     if (data >= 0 && data != 0x00)

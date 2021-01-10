@@ -56,6 +56,7 @@
     <Compile Include="EdiabasNet.cs" />
     <Compile Include="EdOperations.cs" />
     <Compile Include="Ftd2xx.cs" />
+    <Compile Include="MemoryQueueBufferStream.cs" />
     <Compile Include="MemoryStreamReader.cs" />
     <Compile Include="IniFile.cs" />
     <Compile Include="StreamExtension.cs" />
