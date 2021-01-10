@@ -92,6 +92,7 @@ namespace BmwDeepObd
         private static readonly Java.Util.UUID ZeroUuid = Java.Util.UUID.FromString("00000000-0000-0000-0000-000000000000");
         private static readonly Java.Util.UUID GattServiceSpp = Java.Util.UUID.FromString("0000ffe0-0000-1000-8000-00805f9b34fb");
         private static readonly Java.Util.UUID GattCharacteristicSpp = Java.Util.UUID.FromString("0000ffe1-0000-1000-8000-00805f9b34fb");
+        private static readonly Java.Util.UUID GattCharacteristicConfig = Java.Util.UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
         private const int ResponseTimeout = 1000;
         private const int RequestPermissionLocation = 0;
         private readonly string[] _permissionsLocation =
@@ -1333,7 +1334,9 @@ namespace BmwDeepObd
                         (GattProperty.Read | GattProperty.Write | GattProperty.Notify))
                     {
                         _gattCharacteristicSpp = gattCharacteristicSpp;
+#if DEBUG
                         Android.Util.Log.Info(Tag, "SPP characteristic found");
+#endif
                     }
                 }
 
@@ -1349,6 +1352,32 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                BluetoothGattDescriptor descriptor = _gattCharacteristicSpp.GetDescriptor(GattCharacteristicConfig);
+                if (descriptor == null)
+                {
+                    LogString("*** GATT SPP config descriptor not found");
+                    return false;
+                }
+
+                if (BluetoothGattDescriptor.EnableNotificationValue == null)
+                {
+                    LogString("*** GATT SPP EnableNotificationValue not present");
+                    return false;
+                }
+
+                descriptor.SetValue(BluetoothGattDescriptor.EnableNotificationValue.ToArray());
+                if (!_bluetoothGatt.WriteDescriptor(descriptor))
+                {
+                    LogString("*** GATT SPP write config descriptor failed");
+                    return false;
+                }
+
+                if (!_btGattWriteEvent.WaitOne(2000))
+                {
+                    LogString("*** GATT SPP write config descriptor timeout");
+                    return false;
+                }
+
                 byte[] sendData = Encoding.UTF8.GetBytes("ATI\r\n");
                 _gattCharacteristicSpp.SetValue(sendData);
                 if (!_bluetoothGatt.WriteCharacteristic(_gattCharacteristicSpp))
@@ -1359,26 +1388,16 @@ namespace BmwDeepObd
 
                 if (!_btGattWriteEvent.WaitOne(2000))
                 {
-                    LogString("*** GATT SPP write failed");
+                    LogString("*** GATT SPP write timeout");
                     return false;
                 }
 
-                if (!_bluetoothGatt.ReadCharacteristic(_gattCharacteristicSpp))
+                while (_btGattReceivedEvent.WaitOne(2000, false))
                 {
-                    LogString("*** GATT SPP read failed");
-                    return false;
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "GATT SPP data received");
+#endif
                 }
-
-                _btGattReceivedEvent.WaitOne(4000, false);
-                Thread.Sleep(500);
-
-                if (!_bluetoothGatt.ReadCharacteristic(_gattCharacteristicSpp))
-                {
-                    LogString("*** GATT SPP read failed");
-                    return false;
-                }
-
-                _btGattReceivedEvent.WaitOne(4000, false);
 
                 return true;
             }
@@ -2627,6 +2646,14 @@ namespace BmwDeepObd
                     {
                         _chat._btGattWriteEvent.Set();
                     }
+                }
+            }
+
+            public override void OnDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, GattStatus status)
+            {
+                if (status == GattStatus.Success)
+                {
+                    _chat._btGattWriteEvent.Set();
                 }
             }
 
