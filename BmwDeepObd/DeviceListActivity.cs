@@ -67,7 +67,7 @@ namespace BmwDeepObd
         enum BtOperation
         {
             SelectAdapter,          // select the adapter
-            ConnectSelectAdapter,   // connect and select the adapter
+            SelectAdapterSecure,    // select the adapter secure
             ConnectObd,             // connect device as OBD
             ConnectPhone,           // connect device as phone
             DisconnectPhone,        // disconnect phone
@@ -2281,7 +2281,22 @@ namespace BmwDeepObd
         /// </summary>
         private void SelectBtDeviceAction(string name, string address, bool paired)
         {
-            if (paired)
+            bool showMenu = !paired;
+
+            try
+            {
+                BluetoothDevice device = _btAdapter.GetRemoteDevice(address.ToUpperInvariant());
+                if (device != null && device.Type == BluetoothDeviceType.Le)
+                {
+                    showMenu = false;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            if (!showMenu)
             {
                 DetectAdapter(address, name);
                 return;
@@ -2289,11 +2304,11 @@ namespace BmwDeepObd
 
             List<BtOperation> operationList = new List<BtOperation>();
             List<string> itemList = new List<string>();
+            itemList.Add(GetString(Resource.String.bt_device_select_secure));
+            operationList.Add(BtOperation.SelectAdapterSecure);
+
             itemList.Add(GetString(Resource.String.bt_device_select));
             operationList.Add(BtOperation.SelectAdapter);
-
-            itemList.Add(GetString(Resource.String.bt_device_select_secure));
-            operationList.Add(BtOperation.ConnectSelectAdapter);
 
             Java.Lang.ICharSequence[] items = new Java.Lang.ICharSequence[itemList.Count];
             for (int i = 0; i < itemList.Count; i++)
@@ -2313,12 +2328,12 @@ namespace BmwDeepObd
                 {
                     switch (operationList[args.Which])
                     {
-                        case BtOperation.SelectAdapter:
-                            DetectAdapter(address, name);
+                        case BtOperation.SelectAdapterSecure:
+                            DetectAdapter(address, name, true);
                             break;
 
-                        case BtOperation.ConnectSelectAdapter:
-                            DetectAdapter(address, name, true);
+                        case BtOperation.SelectAdapter:
+                            DetectAdapter(address, name);
                             break;
                     }
                 }
