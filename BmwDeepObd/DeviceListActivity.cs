@@ -51,7 +51,6 @@ namespace BmwDeepObd
         enum AdapterType
         {
             ConnectionFailed,   // connection to adapter failed
-            LeGatt,             // LE gatt device
             Unknown,            // unknown adapter
             Elm327,             // ELM327
             Elm327Custom,       // ELM327 with custom firmware
@@ -891,17 +890,18 @@ namespace BmwDeepObd
                         adapterType = AdapterType.ConnectionFailed;
                         if (device.Type == BluetoothDeviceType.Le)
                         {
-                            adapterType = AdapterType.LeGatt;
                             if (!ConnectLeGattDevice(device))
                             {
                                 LogString("Connect to LE GATT device failed");
+                                adapterType = AdapterType.Unknown;
                             }
                             else
                             {
                                 LogString("Connect to LE GATT device success");
-                                //adapterType = AdapterTypeDetection(_btGattSppInStream, _btGattSppOutStream);
-                                BtGattDisconnect();
+                                adapterType = AdapterTypeDetection(_btGattSppInStream, _btGattSppOutStream);
                             }
+
+                            BtGattDisconnect();
                         }
 
                         if (adapterType == AdapterType.ConnectionFailed)
@@ -1391,6 +1391,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
+#if false
                 byte[] sendData = Encoding.UTF8.GetBytes("ATI\r");
                 _btGattSppOutStream.Write(sendData, 0, sendData.Length);
 
@@ -1412,7 +1413,7 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, string.Format("GATT SPP byte: {0:X02}", data));
 #endif
                 }
-
+#endif
                 return true;
             }
             catch (Exception)
