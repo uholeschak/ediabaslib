@@ -890,18 +890,26 @@ namespace BmwDeepObd
                         adapterType = AdapterType.ConnectionFailed;
                         if (device.Type == BluetoothDeviceType.Le)
                         {
-                            if (!ConnectLeGattDevice(device))
+                            try
                             {
-                                LogString("Connect to LE GATT device failed");
-                                adapterType = AdapterType.Unknown;
+                                if (!ConnectLeGattDevice(device))
+                                {
+                                    LogString("Connect to LE GATT device failed");
+                                    if (_gattServicesDiscovered)
+                                    {
+                                        adapterType = AdapterType.Unknown;
+                                    }
+                                }
+                                else
+                                {
+                                    LogString("Connect to LE GATT device success");
+                                    adapterType = AdapterTypeDetection(_btGattSppInStream, _btGattSppOutStream);
+                                }
                             }
-                            else
+                            finally
                             {
-                                LogString("Connect to LE GATT device success");
-                                adapterType = AdapterTypeDetection(_btGattSppInStream, _btGattSppOutStream);
+                                BtGattDisconnect();
                             }
-
-                            BtGattDisconnect();
                         }
 
                         if (adapterType == AdapterType.ConnectionFailed)
@@ -1421,13 +1429,6 @@ namespace BmwDeepObd
                 _gattConnectionState = State.Disconnected;
                 _gattServicesDiscovered = false;
                 return false;
-            }
-            finally
-            {
-                if (!_gattServicesDiscovered)
-                {
-                    BtGattDisconnect();
-                }
             }
         }
 
