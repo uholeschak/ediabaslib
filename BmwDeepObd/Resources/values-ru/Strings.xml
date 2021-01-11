@@ -239,7 +239,7 @@
   <string name="bt_device_menu_tite">Выберите одну из нижеперечисленных опций для этого устройства</string>
   <string name="bt_device_select">Выбрать OBD адаптер</string>
   <!--Translate-->
-  <string name="bt_device_select_secure">Выбрать OBD адаптер (зашифрованный)</string>
+  <string name="bt_device_select_secure">Выбрать OBD адаптер (безопасное соединение)</string>
   <string name="bt_device_connect_obd">Подключить как OBD адаптер</string>
   <string name="bt_device_connect_phone">Подключить как телефон</string>
   <string name="bt_device_disconnect_phone">Отсоединить телефон</string>
