@@ -13,6 +13,11 @@ namespace EdiabasLib
                 return false;
             }
 
+            if (inStream is BtEscapeStreamReader escapeStream)
+            {
+                return escapeStream.IsDataAvailable();
+            }
+
             if (inStream is MemoryQueueBufferStream memoryStream)
             {
                 return memoryStream.IsDataAvailable();
