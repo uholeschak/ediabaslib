@@ -13,16 +13,16 @@ namespace EdiabasLib
                 return false;
             }
 
-            if (inStream is BtEscapeStreamReader escapeStream)
-            {
-                return escapeStream.IsDataAvailable();
-            }
-
             if (inStream is MemoryQueueBufferStream memoryStream)
             {
                 return memoryStream.IsDataAvailable();
             }
 #if Android
+            if (inStream is BtEscapeStreamReader escapeStream)
+            {
+                return escapeStream.IsDataAvailable();
+            }
+
             return inStream.IsDataAvailable();
 #else
             return inStream.Length > 0;
