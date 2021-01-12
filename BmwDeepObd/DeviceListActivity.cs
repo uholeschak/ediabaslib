@@ -246,7 +246,7 @@ namespace BmwDeepObd
 
             // Get the local Bluetooth adapter
             _btAdapter = BluetoothAdapter.DefaultAdapter;
-            _btLeGattSpp = new BtLeGattSpp(this, LogString);
+            _btLeGattSpp = new BtLeGattSpp(LogString);
 
             // Get a set of currently paired devices
             if (!_activityCommon.MtcBtService)
@@ -884,13 +884,9 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                if (!_btLeGattSpp.ConnectLeGattDevice(device))
+                                if (!_btLeGattSpp.ConnectLeGattDevice(this, device))
                                 {
                                     LogString("Connect to LE GATT device failed");
-                                    if (_btLeGattSpp.GattServicesDiscovered)
-                                    {
-                                        adapterType = AdapterType.Unknown;
-                                    }
                                 }
                                 else
                                 {
