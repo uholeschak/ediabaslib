@@ -12,6 +12,8 @@ namespace EdiabasLib
 {
     public class BtLeGattSpp : IDisposable
     {
+        public delegate void LogStringDelegate(string message);
+
 #if DEBUG
         private static readonly string Tag = typeof(BtLeGattSpp).FullName;
 #endif
@@ -21,6 +23,7 @@ namespace EdiabasLib
 
         private bool _disposed;
         private readonly Context _context;
+        private readonly LogStringDelegate _logStringHandler;
         private readonly AutoResetEvent _btGattConnectEvent = new AutoResetEvent(false);
         private readonly AutoResetEvent _btGattDiscoveredEvent = new AutoResetEvent(false);
         private readonly AutoResetEvent _btGattReceivedEvent = new AutoResetEvent(false);
@@ -34,13 +37,14 @@ namespace EdiabasLib
         private BGattOutputStream _btGattSppOutStream;
 
         public State GattConnectionState => _gattConnectionState;
-        private bool GattServicesDiscovered => _gattServicesDiscovered;
+        public bool GattServicesDiscovered => _gattServicesDiscovered;
         public MemoryQueueBufferStream BtGattSppInStream => _btGattSppInStream;
         public BGattOutputStream BtGattSppOutStream => _btGattSppOutStream;
 
-        public BtLeGattSpp(Context context)
+        public BtLeGattSpp(Context context, LogStringDelegate logStringHandler)
         {
             _context = context;
+            _logStringHandler = logStringHandler;
         }
 
         public void Dispose()
@@ -285,6 +289,7 @@ namespace EdiabasLib
 
         private void LogString(string info)
         {
+            _logStringHandler?.Invoke(info);
         }
 
         private class BGattCallback : BluetoothGattCallback

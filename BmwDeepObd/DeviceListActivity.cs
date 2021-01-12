@@ -89,9 +89,6 @@ namespace BmwDeepObd
 
         private static readonly Java.Util.UUID SppUuid = Java.Util.UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly Java.Util.UUID ZeroUuid = Java.Util.UUID.FromString("00000000-0000-0000-0000-000000000000");
-        private static readonly Java.Util.UUID GattServiceSpp = Java.Util.UUID.FromString("0000ffe0-0000-1000-8000-00805f9b34fb");
-        private static readonly Java.Util.UUID GattCharacteristicSpp = Java.Util.UUID.FromString("0000ffe1-0000-1000-8000-00805f9b34fb");
-        private static readonly Java.Util.UUID GattCharacteristicConfig = Java.Util.UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
         private const int ResponseTimeout = 1000;
         private const int RequestPermissionLocation = 0;
         private readonly string[] _permissionsLocation =
@@ -111,6 +108,7 @@ namespace BmwDeepObd
         // Member fields
         private InstanceData _instanceData = new InstanceData();
         private BluetoothAdapter _btAdapter;
+        private BtLeGattSpp _btLeGattSpp;
         private Timer _deviceUpdateTimer;
         private ListView _pairedListView;
         private ArrayAdapter<string> _pairedDevicesArrayAdapter;
@@ -126,19 +124,8 @@ namespace BmwDeepObd
         private string _appDataDir;
         private readonly StringBuilder _sbLog = new StringBuilder();
         private readonly AutoResetEvent _connectedEvent = new AutoResetEvent(false);
-        private readonly AutoResetEvent _btGattConnectEvent = new AutoResetEvent(false);
-        private readonly AutoResetEvent _btGattDiscoveredEvent = new AutoResetEvent(false);
-        private readonly AutoResetEvent _btGattReceivedEvent = new AutoResetEvent(false);
-        private readonly AutoResetEvent _btGattWriteEvent = new AutoResetEvent(false);
         private volatile string _connectDeviceAddress = string.Empty;
-        private BluetoothGatt _bluetoothGatt;
-        private BluetoothGattCharacteristic _gattCharacteristicSpp;
         private volatile bool _deviceConnected;
-        private volatile State _gattConnectionState = State.Disconnected;
-        private volatile bool _gattServicesDiscovered;
-        private GattStatus _gattWriteStatus = GattStatus.Failure;
-        private MemoryQueueBufferStream _btGattSppInStream;
-        private BGattOutputStream _btGattSppOutStream;
         private int _elmVerH = -1;
         private int _elmVerL = -1;
 
@@ -259,6 +246,7 @@ namespace BmwDeepObd
 
             // Get the local Bluetooth adapter
             _btAdapter = BluetoothAdapter.DefaultAdapter;
+            _btLeGattSpp = new BtLeGattSpp(this, LogString);
 
             // Get a set of currently paired devices
             if (!_activityCommon.MtcBtService)
@@ -339,7 +327,11 @@ namespace BmwDeepObd
 
             // Make sure we're not doing discovery anymore
             _btAdapter?.CancelDiscovery ();
-            BtGattDisconnect();
+            if (_btLeGattSpp != null)
+            {
+                _btLeGattSpp.Dispose();
+                _btLeGattSpp = null;
+            }
 
             // Unregister broadcast listeners
             UnregisterReceiver(_receiver);
@@ -888,14 +880,14 @@ namespace BmwDeepObd
                         LogString("Bond state: " + device.BondState);
 
                         adapterType = AdapterType.ConnectionFailed;
-                        if (device.Type == BluetoothDeviceType.Le)
+                        if (device.Type == BluetoothDeviceType.Le && _btLeGattSpp != null)
                         {
                             try
                             {
-                                if (!ConnectLeGattDevice(device))
+                                if (!_btLeGattSpp.ConnectLeGattDevice(device))
                                 {
                                     LogString("Connect to LE GATT device failed");
-                                    if (_gattServicesDiscovered)
+                                    if (_btLeGattSpp.GattServicesDiscovered)
                                     {
                                         adapterType = AdapterType.Unknown;
                                     }
@@ -903,12 +895,12 @@ namespace BmwDeepObd
                                 else
                                 {
                                     LogString("Connect to LE GATT device success");
-                                    adapterType = AdapterTypeDetection(_btGattSppInStream, _btGattSppOutStream);
+                                    adapterType = AdapterTypeDetection(_btLeGattSpp.BtGattSppInStream, _btLeGattSpp.BtGattSppOutStream);
                                 }
                             }
                             finally
                             {
-                                BtGattDisconnect();
+                                _btLeGattSpp.BtGattDisconnect();
                             }
                         }
 
@@ -1277,218 +1269,6 @@ namespace BmwDeepObd
                 Priority = System.Threading.ThreadPriority.Highest
             };
             detectThread.Start();
-        }
-
-        private bool ConnectLeGattDevice(BluetoothDevice device)
-        {
-            try
-            {
-                BtGattDisconnect();
-
-                _gattConnectionState = State.Connecting;
-                _gattServicesDiscovered = false;
-                _btGattSppInStream = new MemoryQueueBufferStream();
-                _btGattSppOutStream = new BGattOutputStream(this);
-                _bluetoothGatt = device.ConnectGatt(this, false, new BGattCallback(this));
-                if (_bluetoothGatt == null)
-                {
-                    LogString("*** ConnectGatt failed");
-                    return false;
-                }
-
-                _btGattConnectEvent.WaitOne(2000, false);
-                if (_gattConnectionState != State.Connected)
-                {
-                    LogString("*** GATT connection timeout");
-                    return false;
-                }
-
-                _btGattDiscoveredEvent.WaitOne(2000, false);
-                if (!_gattServicesDiscovered)
-                {
-                    LogString("*** GATT service discovery timeout");
-                    return false;
-                }
-
-                IList<BluetoothGattService> services = _bluetoothGatt.Services;
-                if (services == null)
-                {
-                    LogString("*** No GATT services found");
-                    return false;
-                }
-
-#if DEBUG
-                foreach (BluetoothGattService gattService in services)
-                {
-                    if (gattService.Uuid == null || gattService.Characteristics == null)
-                    {
-                        continue;
-                    }
-
-                    Android.Util.Log.Info(Tag, string.Format("GATT service: {0}", gattService.Uuid));
-                    foreach (BluetoothGattCharacteristic gattCharacteristic in gattService.Characteristics)
-                    {
-                        if (gattCharacteristic.Uuid == null)
-                        {
-                            continue;
-                        }
-
-                        Android.Util.Log.Info(Tag, string.Format("GATT characteristic: {0}", gattCharacteristic.Uuid));
-                        Android.Util.Log.Info(Tag, string.Format("GATT properties: {0}", gattCharacteristic.Properties));
-                    }
-                }
-#endif
-
-                _gattCharacteristicSpp = null;
-                BluetoothGattService gattServiceSpp = _bluetoothGatt.GetService(GattServiceSpp);
-                BluetoothGattCharacteristic gattCharacteristicSpp = gattServiceSpp?.GetCharacteristic(GattCharacteristicSpp);
-                if (gattCharacteristicSpp != null)
-                {
-                    if ((gattCharacteristicSpp.Properties & (GattProperty.Read | GattProperty.Write | GattProperty.Notify)) ==
-                        (GattProperty.Read | GattProperty.Write | GattProperty.Notify))
-                    {
-                        _gattCharacteristicSpp = gattCharacteristicSpp;
-#if DEBUG
-                        Android.Util.Log.Info(Tag, "SPP characteristic found");
-#endif
-                    }
-                }
-
-                if (_gattCharacteristicSpp == null)
-                {
-                    LogString("*** No GATT SPP characteristic found");
-                    return false;
-                }
-
-                if (!_bluetoothGatt.SetCharacteristicNotification(_gattCharacteristicSpp, true))
-                {
-                    LogString("*** GATT SPP enable notification failed");
-                    return false;
-                }
-
-                BluetoothGattDescriptor descriptor = _gattCharacteristicSpp.GetDescriptor(GattCharacteristicConfig);
-                if (descriptor == null)
-                {
-                    LogString("*** GATT SPP config descriptor not found");
-                    return false;
-                }
-
-                if (BluetoothGattDescriptor.EnableNotificationValue == null)
-                {
-                    LogString("*** GATT SPP EnableNotificationValue not present");
-                    return false;
-                }
-
-                _gattWriteStatus = GattStatus.Failure;
-                descriptor.SetValue(BluetoothGattDescriptor.EnableNotificationValue.ToArray());
-                if (!_bluetoothGatt.WriteDescriptor(descriptor))
-                {
-                    LogString("*** GATT SPP write config descriptor failed");
-                    return false;
-                }
-
-                if (!_btGattWriteEvent.WaitOne(2000))
-                {
-                    LogString("*** GATT SPP write config descriptor timeout");
-                    return false;
-                }
-
-                if (_gattWriteStatus != GattStatus.Success)
-                {
-                    LogString("*** GATT SPP write config descriptor status failure");
-                    return false;
-                }
-
-#if false
-                byte[] sendData = Encoding.UTF8.GetBytes("ATI\r");
-                _btGattSppOutStream.Write(sendData, 0, sendData.Length);
-
-                while (_btGattReceivedEvent.WaitOne(2000, false))
-                {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "GATT SPP data received");
-#endif
-                }
-
-                while (_btGattSppInStream.HasData())
-                {
-                    int data = _btGattSppInStream.ReadByteAsync();
-                    if (data < 0)
-                    {
-                        break;
-                    }
-#if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("GATT SPP byte: {0:X02}", data));
-#endif
-                }
-#endif
-                return true;
-            }
-            catch (Exception)
-            {
-                _gattConnectionState = State.Disconnected;
-                _gattServicesDiscovered = false;
-                return false;
-            }
-        }
-
-        private bool ReadGattSppData(BluetoothGattCharacteristic characteristic)
-        {
-            try
-            {
-                if (characteristic.Uuid != null && characteristic.Uuid.Equals(GattCharacteristicSpp))
-                {
-                    byte[] data = characteristic.GetValue();
-                    if (data != null)
-                    {
-#if DEBUG
-                        Android.Util.Log.Info(Tag, string.Format("GATT SPP data received: {0}", Encoding.UTF8.GetString(data)));
-#endif
-                        _btGattSppInStream?.Write(data);
-                        _btGattReceivedEvent.Set();
-                        return true;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return false;
-        }
-
-        private void BtGattDisconnect()
-        {
-            try
-            {
-                _gattCharacteristicSpp = null;
-                _gattConnectionState = State.Disconnected;
-                _gattServicesDiscovered = false;
-
-                if (_bluetoothGatt != null)
-                {
-                    _bluetoothGatt.Disconnect();
-                    _bluetoothGatt.Dispose();
-                    _bluetoothGatt = null;
-                }
-
-                if (_btGattSppInStream != null)
-                {
-                    _btGattSppInStream.Dispose();
-                    _btGattSppInStream = null;
-                }
-
-                if (_btGattSppOutStream != null)
-                {
-                    _btGattSppOutStream.Dispose();
-                    _btGattSppOutStream = null;
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
         }
 
         private void ReturnDeviceTypeRawWarn(string deviceAddress, string deviceName)
@@ -2618,133 +2398,6 @@ namespace BmwDeepObd
                 catch (Exception)
                 {
                     // ignored
-                }
-            }
-        }
-
-        class BGattCallback : BluetoothGattCallback
-        {
-            readonly DeviceListActivity _chat;
-
-            public BGattCallback(DeviceListActivity chat)
-            {
-                _chat = chat;
-            }
-
-            public override void OnConnectionStateChange(BluetoothGatt gatt, GattStatus status, ProfileState newState)
-            {
-                if (newState == ProfileState.Connected)
-                {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "Connected to GATT server.");
-#endif
-                    _chat._gattConnectionState = State.Connected;
-                    _chat._gattServicesDiscovered = false;
-                    _chat._btGattConnectEvent.Set();
-                    gatt.DiscoverServices();
-                }
-                else if (newState == ProfileState.Disconnected)
-                {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "Disconnected from GATT server.");
-#endif
-                    _chat._gattConnectionState = State.Disconnected;
-                    _chat._gattServicesDiscovered = false;
-                }
-            }
-
-            public override void OnServicesDiscovered(BluetoothGatt gatt, GattStatus status)
-            {
-                if (status == GattStatus.Success)
-                {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "GATT services discovered.");
-#endif
-                    _chat._gattServicesDiscovered = true;
-                    _chat._btGattDiscoveredEvent.Set();
-                }
-                else
-                {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("GATT services discovery failed: {0}", status));
-#endif
-                }
-            }
-
-            public override void OnCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, GattStatus status)
-            {
-                if (status == GattStatus.Success)
-                {
-                    _chat.ReadGattSppData(characteristic);
-                }
-            }
-
-            public override void OnCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, GattStatus status)
-            {
-                GattStatus resultStatus = GattStatus.Failure;
-                if (status == GattStatus.Success)
-                {
-                    if (characteristic.Uuid != null && characteristic.Uuid.Equals(GattCharacteristicSpp))
-                    {
-                        resultStatus = status;
-                    }
-                }
-
-                _chat._gattWriteStatus = resultStatus;
-                _chat._btGattWriteEvent.Set();
-            }
-
-            public override void OnDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, GattStatus status)
-            {
-                _chat._gattWriteStatus = status;
-                _chat._btGattWriteEvent.Set();
-            }
-
-            public override void OnCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)
-            {
-                _chat.ReadGattSppData(characteristic);
-            }
-        }
-
-        class BGattOutputStream : MemoryQueueBufferStream
-        {
-            readonly DeviceListActivity _chat;
-
-            public BGattOutputStream(DeviceListActivity chat)
-            {
-                _chat = chat;
-            }
-
-            public override void Write(byte[] buffer, int offset, int count)
-            {
-                base.Write(buffer, offset, count);
-
-                long dataLength = Length;
-                if (dataLength > 0 && _chat._gattCharacteristicSpp != null)
-                {
-                    byte[] sendData = new byte[dataLength];
-                    int length = Read(sendData, 0, (int) dataLength);
-                    if (length != dataLength)
-                    {
-                        throw new IOException("Read failed");
-                    }
-
-                    _chat._gattWriteStatus = GattStatus.Failure;
-                    _chat._gattCharacteristicSpp.SetValue(sendData);
-                    if (!_chat._bluetoothGatt.WriteCharacteristic(_chat._gattCharacteristicSpp))
-                    {
-                        throw new IOException("WriteCharacteristic failed");
-                    }
-
-                    if (!_chat._btGattWriteEvent.WaitOne(2000))
-                    {
-                        throw new IOException("WriteCharacteristic timeout");
-                    }
-
-                    if (_chat._gattWriteStatus != GattStatus.Success)
-                    {
-                        throw new IOException("WriteCharacteristic status failure");
-                    }
                 }
             }
         }
