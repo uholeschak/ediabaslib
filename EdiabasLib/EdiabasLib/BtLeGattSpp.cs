@@ -22,7 +22,6 @@ namespace EdiabasLib
         private static readonly Java.Util.UUID GattCharacteristicConfig = Java.Util.UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
 
         private bool _disposed;
-        private readonly Context _context;
         private readonly LogStringDelegate _logStringHandler;
         private readonly AutoResetEvent _btGattConnectEvent = new AutoResetEvent(false);
         private readonly AutoResetEvent _btGattDiscoveredEvent = new AutoResetEvent(false);
@@ -41,9 +40,8 @@ namespace EdiabasLib
         public MemoryQueueBufferStream BtGattSppInStream => _btGattSppInStream;
         public BGattOutputStream BtGattSppOutStream => _btGattSppOutStream;
 
-        public BtLeGattSpp(Context context, LogStringDelegate logStringHandler)
+        public BtLeGattSpp(LogStringDelegate logStringHandler)
         {
-            _context = context;
             _logStringHandler = logStringHandler;
         }
 
@@ -75,7 +73,7 @@ namespace EdiabasLib
             }
         }
 
-        public bool ConnectLeGattDevice(BluetoothDevice device)
+        public bool ConnectLeGattDevice(Context context, BluetoothDevice device)
         {
             try
             {
@@ -85,7 +83,7 @@ namespace EdiabasLib
                 _gattServicesDiscovered = false;
                 _btGattSppInStream = new MemoryQueueBufferStream();
                 _btGattSppOutStream = new BGattOutputStream(this);
-                _bluetoothGatt = device.ConnectGatt(_context, false, new BGattCallback(this));
+                _bluetoothGatt = device.ConnectGatt(context, false, new BGattCallback(this));
                 if (_bluetoothGatt == null)
                 {
                     LogString("*** ConnectGatt failed");
