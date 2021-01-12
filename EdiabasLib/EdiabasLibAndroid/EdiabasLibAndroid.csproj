@@ -50,6 +50,9 @@
     <Compile Include="..\EdiabasLib\BtEscapeStreamWriter.cs">
       <Link>BtEscapeStreamWriter.cs</Link>
     </Compile>
+    <Compile Include="..\EdiabasLib\BtLeGattSpp.cs">
+      <Link>BtLeGattSpp.cs</Link>
+    </Compile>
     <Compile Include="..\EdiabasLib\EdBluetoothInterfaceAndroid.cs">
       <Link>EdBluetoothInterfaceAndroid.cs</Link>
     </Compile>
