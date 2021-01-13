@@ -41,6 +41,12 @@ namespace EdiabasLib
                 return memoryStream.ReadByte();
             }
 
+#if Android
+            if (inStream is BtEscapeStreamReader escapeStream)
+            {
+                return escapeStream.ReadByte();
+            }
+#endif
             Semaphore waitSem = new Semaphore(0, 1);
             byte[] dataBuffer = new byte[1];
             int result = -1;
