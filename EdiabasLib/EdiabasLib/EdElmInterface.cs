@@ -1008,7 +1008,7 @@ namespace EdiabasLib
         private bool DataAvailable()
         {
 #if Android
-            return _inStream.IsDataAvailable();
+            return _inStream.HasData();
 #else
             if (!(_inStream is System.Net.Sockets.NetworkStream networkStream))
             {
