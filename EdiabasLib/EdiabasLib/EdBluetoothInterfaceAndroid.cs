@@ -42,6 +42,7 @@ namespace EdiabasLib
         protected const int EchoTimeout = 500;
         private static readonly EdCustomAdapterCommon CustomAdapter =
             new EdCustomAdapterCommon(SendData, ReceiveData, DiscardInBuffer, ReadInBuffer, ReadTimeoutOffsetLong, ReadTimeoutOffsetShort, EchoTimeout, false);
+        private static BtLeGattSpp _btLeGattSpp;
         private static BluetoothSocket _bluetoothSocket;
         private static Stream _bluetoothInStream;
         private static Stream _bluetoothOutStream;
@@ -67,10 +68,12 @@ namespace EdiabasLib
 
         public static bool InterfaceConnect(string port, object parameter)
         {
-            if (_bluetoothSocket != null)
+            if (_bluetoothInStream != null && _bluetoothOutStream != null)
             {
                 return true;
             }
+
+            InterfaceDisconnect();
             CustomAdapter.Init();
 
             if (!port.StartsWith(PortId, StringComparison.OrdinalIgnoreCase))
@@ -78,6 +81,7 @@ namespace EdiabasLib
                 InterfaceDisconnect();
                 return false;
             }
+
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
             if (bluetoothAdapter == null)
             {
@@ -145,57 +149,79 @@ namespace EdiabasLib
                             context.RegisterReceiver(receiver, filter);
                         }
                     }
+
                     _connectDeviceAddress = device.Address;
 
-                    if (device.BondState == Bond.Bonded)
+                    if (!mtcBtService && device.Type == BluetoothDeviceType.Le && context != null)
                     {
-                        _bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
-                    }
-                    else
-                    {
-                        _bluetoothSocket = device.CreateInsecureRfcommSocketToServiceRecord(SppUuid);
+                        _btLeGattSpp ??= new BtLeGattSpp();
+
+                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                        if (!_btLeGattSpp.ConnectLeGattDevice(context, device))
+                        {
+                            CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Connect to LE GATT device failed");
+                        }
+                        else
+                        {
+                            CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Connect to LE GATT device success");
+                            _bluetoothInStream = _btLeGattSpp.BtGattSppInStream;
+                            _bluetoothOutStream = _btLeGattSpp.BtGattSppOutStream;
+                        }
                     }
 
-                    try
+                    if (_bluetoothInStream == null || _bluetoothOutStream == null)
                     {
-                        _bluetoothSocket.Connect();
-                    }
-                    catch (Exception)
-                    {
+                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                        if (device.BondState == Bond.Bonded)
+                        {
+                            _bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
+                        }
+                        else
+                        {
+                            _bluetoothSocket = device.CreateInsecureRfcommSocketToServiceRecord(SppUuid);
+                        }
+
                         try
                         {
-                            // sometimes the second connect is working
-                            _bluetoothSocket.Connect();
+                            _bluetoothSocket?.Connect();
                         }
                         catch (Exception)
                         {
-                            _bluetoothSocket.Close();
-                            _bluetoothSocket = null;
+                            try
+                            {
+                                // sometimes the second connect is working
+                                _bluetoothSocket.Connect();
+                            }
+                            catch (Exception)
+                            {
+                                _bluetoothSocket.Close();
+                                _bluetoothSocket = null;
+                            }
                         }
-                    }
 
-                    if (_bluetoothSocket == null)
-                    {
-                        // this socket sometimes looses data for long telegrams
-                        IntPtr createRfcommSocket = Android.Runtime.JNIEnv.GetMethodID(device.Class.Handle,
-                            "createRfcommSocket", "(I)Landroid/bluetooth/BluetoothSocket;");
-                        if (createRfcommSocket == IntPtr.Zero)
+                        if (_bluetoothSocket == null)
                         {
-                            throw new Exception("No createRfcommSocket");
+                            // this socket sometimes looses data for long telegrams
+                            IntPtr createRfcommSocket = Android.Runtime.JNIEnv.GetMethodID(device.Class.Handle,
+                                "createRfcommSocket", "(I)Landroid/bluetooth/BluetoothSocket;");
+                            if (createRfcommSocket == IntPtr.Zero)
+                            {
+                                throw new Exception("No createRfcommSocket");
+                            }
+                            IntPtr rfCommSocket = Android.Runtime.JNIEnv.CallObjectMethod(device.Handle,
+                                createRfcommSocket, new Android.Runtime.JValue(1));
+                            if (rfCommSocket == IntPtr.Zero)
+                            {
+                                throw new Exception("No rfCommSocket");
+                            }
+                            _bluetoothSocket = Java.Lang.Object.GetObject<BluetoothSocket>(rfCommSocket, Android.Runtime.JniHandleOwnership.TransferLocalRef);
+                            _bluetoothSocket.Connect();
+                            usedRfCommSocket = true;
                         }
-                        IntPtr rfCommSocket = Android.Runtime.JNIEnv.CallObjectMethod(device.Handle,
-                            createRfcommSocket, new Android.Runtime.JValue(1));
-                        if (rfCommSocket == IntPtr.Zero)
-                        {
-                            throw new Exception("No rfCommSocket");
-                        }
-                        _bluetoothSocket = Java.Lang.Object.GetObject<BluetoothSocket>(rfCommSocket, Android.Runtime.JniHandleOwnership.TransferLocalRef);
-                        _bluetoothSocket.Connect();
-                        usedRfCommSocket = true;
-                    }
 
-                    ConnectedEvent.WaitOne(connectTimeout, false);
-                    CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
+                        ConnectedEvent.WaitOne(connectTimeout, false);
+                        CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
+                    }
                 }
                 finally
                 {
@@ -207,10 +233,14 @@ namespace EdiabasLib
 
                 if (_elm327Device)
                 {
-                    _bluetoothInStream = _bluetoothSocket.InputStream;
-                    _bluetoothOutStream = _bluetoothSocket.OutputStream;
+                    if (_bluetoothSocket != null)
+                    {
+                        _bluetoothInStream = _bluetoothSocket.InputStream;
+                        _bluetoothOutStream = _bluetoothSocket.OutputStream;
+                    }
+
                     _edElmInterface = new EdElmInterface(CustomAdapter.Ediabas, _bluetoothInStream, _bluetoothOutStream);
-                    if (mtcBtService && !usedRfCommSocket)
+                    if (mtcBtService && !usedRfCommSocket && _bluetoothSocket != null)
                     {
                         bool connected = false;
                         for (int retry = 0; retry < 20; retry++)
@@ -252,9 +282,13 @@ namespace EdiabasLib
                 {   // not ELM327
                     CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Escape mode: {0}", mtcBtEscapeMode);
                     CustomAdapter.EscapeMode = mtcBtEscapeMode;
-                    _bluetoothInStream = new BtEscapeStreamReader(_bluetoothSocket.InputStream);
-                    _bluetoothOutStream = new BtEscapeStreamWriter(_bluetoothSocket.OutputStream);
-                    if (!CustomAdapter.RawMode && mtcBtService && !usedRfCommSocket)
+                    if (_bluetoothSocket != null)
+                    {
+                        _bluetoothInStream = new BtEscapeStreamReader(_bluetoothSocket.InputStream);
+                        _bluetoothOutStream = new BtEscapeStreamWriter(_bluetoothSocket.OutputStream);
+                    }
+
+                    if (!CustomAdapter.RawMode && mtcBtService && !usedRfCommSocket && _bluetoothSocket != null)
                     {
                         bool connected = false;
                         for (int retry = 0; retry < 20; retry++)
@@ -340,12 +374,18 @@ namespace EdiabasLib
             {
                 result = false;
             }
+
+            if (_btLeGattSpp != null)
+            {
+                _btLeGattSpp.Dispose();
+                _btLeGattSpp = null;
+            }
             return result;
         }
 
         public static EdInterfaceObd.InterfaceErrorResult InterfaceSetConfig(EdInterfaceObd.Protocol protocol, int baudRate, int dataBits, EdInterfaceObd.SerialParity parity, bool allowBitBang)
         {
-            if (_bluetoothSocket == null)
+            if (_bluetoothInStream == null || _bluetoothOutStream == null)
             {
                 return EdInterfaceObd.InterfaceErrorResult.ConfigError;
             }
@@ -357,7 +397,7 @@ namespace EdiabasLib
         public static bool InterfaceSetDtr(bool dtr)
 #pragma warning restore IDE0060 // Nicht verwendete Parameter entfernen
         {
-            if (_bluetoothSocket == null)
+            if (_bluetoothInStream == null || _bluetoothOutStream == null)
             {
                 return false;
             }
@@ -368,7 +408,7 @@ namespace EdiabasLib
         public static bool InterfaceSetRts(bool rts)
 #pragma warning restore IDE0060 // Nicht verwendete Parameter entfernen
         {
-            if (_bluetoothSocket == null)
+            if (_bluetoothInStream == null || _bluetoothOutStream == null)
             {
                 return false;
             }
@@ -378,7 +418,7 @@ namespace EdiabasLib
         public static bool InterfaceGetDsr(out bool dsr)
         {
             dsr = true;
-            if (_bluetoothSocket == null)
+            if (_bluetoothInStream == null || _bluetoothOutStream == null)
             {
                 return false;
             }
@@ -404,7 +444,7 @@ namespace EdiabasLib
 
         public static bool InterfacePurgeInBuffer()
         {
-            if ((_bluetoothSocket == null) || (_bluetoothInStream == null))
+            if (_bluetoothInStream == null || _bluetoothOutStream == null)
             {
                 return false;
             }
@@ -485,7 +525,7 @@ namespace EdiabasLib
 
         public static bool InterfaceSendData(byte[] sendData, int length, bool setDtr, double dtrTimeCorr)
         {
-            if ((_bluetoothSocket == null) || (_bluetoothOutStream == null))
+            if (_bluetoothInStream == null || _bluetoothOutStream == null)
             {
                 return false;
             }
@@ -544,7 +584,7 @@ namespace EdiabasLib
 
         public static bool InterfaceReceiveData(byte[] receiveData, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog)
         {
-            if ((_bluetoothSocket == null) || (_bluetoothInStream == null))
+            if (_bluetoothInStream == null || _bluetoothOutStream == null)
             {
                 return false;
             }
@@ -562,7 +602,7 @@ namespace EdiabasLib
 
         public static bool InterfaceSendPulse(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines, int autoKeyByteDelay)
         {
-            if ((_bluetoothSocket == null) || (_bluetoothOutStream == null))
+            if (_bluetoothInStream == null || _bluetoothOutStream == null)
             {
                 return false;
             }

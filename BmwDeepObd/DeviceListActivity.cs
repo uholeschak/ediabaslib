@@ -880,7 +880,7 @@ namespace BmwDeepObd
                         LogString("Bond state: " + device.BondState);
 
                         adapterType = AdapterType.ConnectionFailed;
-                        if (device.Type == BluetoothDeviceType.Le && _btLeGattSpp != null)
+                        if (!_activityCommon.MtcBtService && device.Type == BluetoothDeviceType.Le && _btLeGattSpp != null)
                         {
                             try
                             {
