@@ -40,7 +40,7 @@ namespace EdiabasLib
         public MemoryQueueBufferStream BtGattSppInStream => _btGattSppInStream;
         public BGattOutputStream BtGattSppOutStream => _btGattSppOutStream;
 
-        public BtLeGattSpp(LogStringDelegate logStringHandler)
+        public BtLeGattSpp(LogStringDelegate logStringHandler = null)
         {
             _logStringHandler = logStringHandler;
         }
