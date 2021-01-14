@@ -845,6 +845,8 @@ namespace EdiabasLib
                 {
                     return null;
                 }
+                // remove all spaces
+                answer = answer.Replace(" ", string.Empty);
                 if ((answer.Length & 0x01) == 0)
                 {   // must be odd because of can header
                     return null;
