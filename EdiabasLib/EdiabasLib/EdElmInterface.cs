@@ -203,6 +203,10 @@ namespace EdiabasLib
             }
             string elmDevDesc = Elm327ReceiveAnswer(Elm327CommandTimeout);
             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM ID: {0}", elmDevDesc);
+            if (elmDevDesc.ToUpperInvariant().Contains("CARLY-UNIVERSAL"))
+            {
+                _elm327FullTransport = true;
+            }
 
             if (!Elm327SendCommand("AT#1", false))
             {
@@ -212,7 +216,10 @@ namespace EdiabasLib
             string elmManufact = Elm327ReceiveAnswer(Elm327CommandTimeout);
             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM Manufacturer: {0}", elmManufact);
 
-            _elm327FullTransport = elmManufact.ToUpperInvariant().Contains("WGSOFT");
+            if (elmManufact.ToUpperInvariant().Contains("WGSOFT"))
+            {
+                _elm327FullTransport = true;
+            }
             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM full transport: {0}", _elm327FullTransport);
 
             if (_elm327FullTransport)
@@ -294,35 +301,35 @@ namespace EdiabasLib
 
         private void Elm327CanSenderFull()
         {
-            byte[] requBuffer;
+            byte[] reqBuffer;
             lock (_elm327BufferLock)
             {
-                requBuffer = _elm327RequBuffer;
+                reqBuffer = _elm327RequBuffer;
                 _elm327RequBuffer = null;
             }
 
-            if (requBuffer != null && requBuffer.Length >= 4)
+            if (reqBuffer != null && reqBuffer.Length >= 4)
             {
-                byte targetAddr = requBuffer[1];
-                byte sourceAddr = requBuffer[2];
+                byte targetAddr = reqBuffer[1];
+                byte sourceAddr = reqBuffer[2];
                 int dataOffset = 3;
-                int dataLength = requBuffer[0] & 0x3F;
+                int dataLength = reqBuffer[0] & 0x3F;
                 if (dataLength == 0)
                 {
                     // with length byte
-                    if (requBuffer[3] == 0x00)
+                    if (reqBuffer[3] == 0x00)
                     {
-                        dataLength = (requBuffer[4] << 8) + requBuffer[5];
+                        dataLength = (reqBuffer[4] << 8) + reqBuffer[5];
                         dataOffset = 6;
                     }
                     else
                     {
-                        dataLength = requBuffer[3];
+                        dataLength = reqBuffer[3];
                         dataOffset = 4;
                     }
                 }
 
-                if (requBuffer.Length < (dataOffset + dataLength))
+                if (reqBuffer.Length < (dataOffset + dataLength))
                 {
                     return;
                 }
@@ -356,7 +363,7 @@ namespace EdiabasLib
                 }
 
                 byte[] canSendBuffer = new byte[dataLength];
-                Array.Copy(requBuffer, dataOffset, canSendBuffer, 0, dataLength);
+                Array.Copy(reqBuffer, dataOffset, canSendBuffer, 0, dataLength);
                 Elm327SendCanTelegram(canSendBuffer);
             }
         }
