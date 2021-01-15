@@ -236,7 +236,8 @@ namespace EdiabasLib
                     if (data != null)
                     {
 #if DEBUG
-                        Android.Util.Log.Info(Tag, string.Format("GATT SPP data received: {0}", Encoding.UTF8.GetString(data)));
+                        Android.Util.Log.Info(Tag, string.Format("GATT SPP data received: {0} '{1}'",
+                            BitConverter.ToString(data).Replace("-", ""), Encoding.UTF8.GetString(data)));
 #endif
                         _btGattSppInStream?.Write(data);
                         _btGattReceivedEvent.Set();
@@ -397,6 +398,10 @@ namespace EdiabasLib
                         throw new IOException("Read failed");
                     }
 
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("GATT SPP data write: {0} '{1}'",
+                        BitConverter.ToString(sendData).Replace("-", ""), Encoding.UTF8.GetString(sendData)));
+#endif
                     _btLeGattSpp._gattWriteStatus = GattStatus.Failure;
                     _btLeGattSpp._gattCharacteristicSpp.SetValue(sendData);
                     if (!_btLeGattSpp._bluetoothGatt.WriteCharacteristic(_btLeGattSpp._gattCharacteristicSpp))
