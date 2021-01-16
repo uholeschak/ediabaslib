@@ -33,9 +33,12 @@ namespace EdiabasLib
         //Each item in the queue represents each write to the stream.  Every call to write translates to an item in the queue
         private readonly Queue<Chunk> _lstBuffers;
 
-        public MemoryQueueBufferStream()
+        public bool ChunkMode { get; set; }
+
+        public MemoryQueueBufferStream(bool chunkMode = false)
         {
             _lstBuffers = new Queue<Chunk>();
+            ChunkMode = chunkMode;
         }
 
         public bool IsDataAvailable()
@@ -87,6 +90,11 @@ namespace EdiabasLib
                     {
                         //Otherwise just update the chunk read start index, so we know where to start reading on the next call
                         chunk.ChunkReadStartIndex = chunk.ChunkReadStartIndex + iBytesToRead;
+                    }
+
+                    if (ChunkMode)
+                    {
+                        break;
                     }
                 }
                 else
