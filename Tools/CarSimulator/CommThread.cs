@@ -1379,7 +1379,7 @@ namespace CarSimulator
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool ObdSend(byte[] sendData)
         {
-#if false
+#if true
             DebugLogData("Response: ", sendData, sendData.Length);
 #endif
             switch (_responseConcept)
