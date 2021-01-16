@@ -855,7 +855,7 @@ namespace EdiabasLib
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if (_elm327CarlyTransport)
                 {
-                    answer = Elm327DataCarlyAnswer(timeout);
+                    answer = Elm327DataCarlyAnswer(5000);
                 }
                 else
                 {
@@ -906,10 +906,17 @@ namespace EdiabasLib
 
         private bool Elm327LeaveDataMode(int timeout)
         {
+            if (_elm327CarlyTransport)
+            {
+                _elm327DataMode = false;
+                return true;
+            }
+
             if (!_elm327DataMode)
             {
                 return true;
             }
+
             bool elmThread = _elm327Thread != null && Thread.CurrentThread == _elm327Thread;
             StringBuilder stringBuilder = new StringBuilder();
             while (DataAvailable())
@@ -1055,6 +1062,7 @@ namespace EdiabasLib
                     int length = _inStream.Read(buffer, 0, buffer.Length);
                     if (length > 1)
                     {
+                        startTime = Stopwatch.GetTimestamp();
                         bool lastBlock = false;
                         switch (buffer[0])
                         {
@@ -1079,6 +1087,7 @@ namespace EdiabasLib
 
                         if (lastBlock)
                         {
+                            _elm327DataMode = false;
                             string answer = stringBuilder.ToString();
                             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN rec: {0}", answer);
                             return answer;
@@ -1088,6 +1097,7 @@ namespace EdiabasLib
 
                 if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
                 {
+                    _elm327DataMode = false;
                     Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM rec timeout");
                     return string.Empty;
                 }
