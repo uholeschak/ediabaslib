@@ -69,6 +69,7 @@ namespace EdiabasLib
         private const int Elm327ReadTimeoutOffset = 1000;
         private const int Elm327CommandTimeout = 1500;
         private const int Elm327DataTimeout = 2000;
+        private const int Elm327CarlyDataTimeout = 6000;
         private const int Elm327CanBlockSize = 8;
         private const int Elm327CanSepTime = 0;
         private bool _disposed;
@@ -319,6 +320,7 @@ namespace EdiabasLib
                 {
                     Elm327CanSender();
                 }
+
                 Elm327CanReceiver();
                 _elm327RequEvent.WaitOne(10, false);
             }
@@ -326,6 +328,11 @@ namespace EdiabasLib
 
         private void Elm327CanSenderFull()
         {
+            if (_elm327CarlyTransport && _elm327DataMode)
+            {
+                return;
+            }
+
             byte[] reqBuffer;
             lock (_elm327BufferLock)
             {
@@ -855,7 +862,7 @@ namespace EdiabasLib
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if (_elm327CarlyTransport)
                 {
-                    answer = Elm327DataCarlyAnswer(5000);
+                    answer = Elm327DataCarlyAnswer(Elm327CarlyDataTimeout);
                 }
                 else
                 {
