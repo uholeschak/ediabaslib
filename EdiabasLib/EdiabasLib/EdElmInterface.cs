@@ -80,6 +80,7 @@ namespace EdiabasLib
         private bool _elm327DataMode;
         private bool _elm327FullTransport;
         private bool _elm327CarlyTransport;
+        private List<string> _elm327CarlyRespList;
         private int _elm327CanHeader;
         private int _elm327Timeout;
         private Thread _elm327Thread;
@@ -628,7 +629,7 @@ namespace EdiabasLib
                                     }
                                     blockCount = 1;
 
-                                    if (!_elm327FullTransport)
+                                    if (!_elm327FullTransport && !_elm327CarlyTransport)
                                     {
                                         byte[] canSendBuffer = new byte[8];
                                         canSendBuffer[0] = sourceAddr;
@@ -680,7 +681,7 @@ namespace EdiabasLib
                             }
                             recLen += telLen;
                             blockCount++;
-                            if (!_elm327FullTransport && fcCount > 0 && recLen < recDataBuffer.Length)
+                            if (!_elm327FullTransport && !_elm327CarlyTransport && fcCount > 0 && recLen < recDataBuffer.Length)
                             {
                                 fcCount--;
                                 if (fcCount == 0)
@@ -917,6 +918,7 @@ namespace EdiabasLib
             if (_elm327CarlyTransport)
             {
                 _elm327DataMode = false;
+                _elm327CarlyRespList = null;
                 return true;
             }
 
@@ -1059,6 +1061,21 @@ namespace EdiabasLib
 
         private string Elm327DataCarlyAnswer(int timeout)
         {
+            if (_elm327CarlyRespList != null && _elm327CarlyRespList.Count > 0)
+            {
+                string answer = _elm327CarlyRespList[0];
+                _elm327CarlyRespList.RemoveAt(0);
+                if (_elm327CarlyRespList.Count == 0)
+                {
+                    _elm327DataMode = false;
+                    _elm327CarlyRespList = null;
+                }
+
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN rec cached: {0}", answer);
+                return answer;
+            }
+
+            _elm327CarlyRespList = null;
             bool elmThread = _elm327Thread != null && Thread.CurrentThread == _elm327Thread;
             List<byte> recData = new List<byte>();
             byte[] buffer = new byte[100];
@@ -1092,14 +1109,64 @@ namespace EdiabasLib
 
                         if (lastBlock)
                         {
-                            _elm327DataMode = false;
-                            StringBuilder stringBuilder = new StringBuilder();
-                            foreach (byte value in recData)
+                            List<string> recList = new List<string>();
+                            int telLength = 10;
+                            if (recData.Count % telLength != 0)
                             {
-                                stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0:X02}", value));
+                                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN data length invalid: {0}", recData.Count);
+                                return string.Empty;
                             }
 
-                            string answer = stringBuilder.ToString();
+                            int pos = 0;
+                            for (;;)
+                            {
+                                if (pos >= recData.Count)
+                                {
+                                    break;
+                                }
+
+                                if (recData[pos] != 0x06)
+                                {   // invalid CAN high byte
+                                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN data high byte invalid: {0:X02}", recData[pos]);
+                                    return string.Empty;
+                                }
+
+                                if (pos + telLength > recData.Count)
+                                {
+                                    break;
+                                }
+
+                                StringBuilder stringBuilder = new StringBuilder();
+                                int source = (recData[0] << 8) + recData[1];
+                                stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0:X03}", source));
+
+                                for (int i = 2; i < telLength; i++)
+                                {
+                                    stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0:X02}", recData[pos + i]));
+                                }
+
+                                recList.Add(stringBuilder.ToString());
+
+                                pos += telLength;
+                            }
+
+                            if (recList.Count == 0)
+                            {
+                                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM CAN receive list empty");
+                                return string.Empty;
+                            }
+
+                            string answer = recList[0];
+                            recList.RemoveAt(0);
+                            if (recList.Count == 0)
+                            {
+                                _elm327DataMode = false;
+                            }
+                            else
+                            {
+                                _elm327CarlyRespList = recList;
+                            }
+
                             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN rec: {0}", answer);
                             return answer;
                         }
