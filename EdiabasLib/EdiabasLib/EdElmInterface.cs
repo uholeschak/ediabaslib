@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -1059,7 +1060,7 @@ namespace EdiabasLib
         private string Elm327DataCarlyAnswer(int timeout)
         {
             bool elmThread = _elm327Thread != null && Thread.CurrentThread == _elm327Thread;
-            StringBuilder stringBuilder = new StringBuilder();
+            List<byte> recData = new List<byte>();
             byte[] buffer = new byte[100];
             long startTime = Stopwatch.GetTimestamp();
             for (; ; )
@@ -1087,14 +1088,17 @@ namespace EdiabasLib
                                 return string.Empty;
                         }
 
-                        for (int i = 1; i < length; i++)
-                        {
-                            stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0:X02}", buffer[i]));
-                        }
+                        recData.AddRange(buffer.ToList().GetRange(1, length - 1));
 
                         if (lastBlock)
                         {
                             _elm327DataMode = false;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            foreach (byte value in recData)
+                            {
+                                stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0:X02}", value));
+                            }
+
                             string answer = stringBuilder.ToString();
                             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN rec: {0}", answer);
                             return answer;
