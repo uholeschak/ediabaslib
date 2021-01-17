@@ -302,6 +302,11 @@ namespace EdiabasLib
 
             public override void OnConnectionStateChange(BluetoothGatt gatt, GattStatus status, ProfileState newState)
             {
+                if (gatt != _btLeGattSpp._bluetoothGatt)
+                {
+                    return;
+                }
+
                 if (newState == ProfileState.Connected)
                 {
 #if DEBUG
@@ -324,6 +329,11 @@ namespace EdiabasLib
 
             public override void OnServicesDiscovered(BluetoothGatt gatt, GattStatus status)
             {
+                if (gatt != _btLeGattSpp._bluetoothGatt)
+                {
+                    return;
+                }
+
                 if (status == GattStatus.Success)
                 {
 #if DEBUG
@@ -342,6 +352,11 @@ namespace EdiabasLib
 
             public override void OnCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, GattStatus status)
             {
+                if (gatt != _btLeGattSpp._bluetoothGatt)
+                {
+                    return;
+                }
+
                 if (status == GattStatus.Success)
                 {
                     _btLeGattSpp.ReadGattSppData(characteristic);
@@ -350,6 +365,11 @@ namespace EdiabasLib
 
             public override void OnCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, GattStatus status)
             {
+                if (gatt != _btLeGattSpp._bluetoothGatt)
+                {
+                    return;
+                }
+
                 GattStatus resultStatus = GattStatus.Failure;
                 if (status == GattStatus.Success)
                 {
@@ -365,12 +385,22 @@ namespace EdiabasLib
 
             public override void OnDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, GattStatus status)
             {
+                if (gatt != _btLeGattSpp._bluetoothGatt)
+                {
+                    return;
+                }
+
                 _btLeGattSpp._gattWriteStatus = status;
                 _btLeGattSpp._btGattWriteEvent.Set();
             }
 
             public override void OnCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)
             {
+                if (gatt != _btLeGattSpp._bluetoothGatt)
+                {
+                    return;
+                }
+
                 _btLeGattSpp.ReadGattSppData(characteristic);
             }
         }
