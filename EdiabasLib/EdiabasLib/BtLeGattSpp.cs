@@ -257,13 +257,34 @@ namespace EdiabasLib
         {
             try
             {
-                _gattCharacteristicSpp = null;
+                if (_gattCharacteristicSpp != null)
+                {
+                    try
+                    {
+                        _bluetoothGatt?.SetCharacteristicNotification(_gattCharacteristicSpp, false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                    _gattCharacteristicSpp = null;
+                }
+
                 _gattConnectionState = State.Disconnected;
                 _gattServicesDiscovered = false;
 
                 if (_bluetoothGatt != null)
                 {
-                    _bluetoothGatt.Disconnect();
+                    try
+                    {
+                        _bluetoothGatt.Disconnect();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
                     _bluetoothGatt.Dispose();
                     _bluetoothGatt = null;
                 }
