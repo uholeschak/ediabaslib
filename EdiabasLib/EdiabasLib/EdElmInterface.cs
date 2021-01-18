@@ -329,11 +329,6 @@ namespace EdiabasLib
 
         private void Elm327CanSenderFull()
         {
-            if (_elm327CarlyTransport && _elm327DataMode)
-            {
-                return;
-            }
-
             byte[] reqBuffer;
             lock (_elm327BufferLock)
             {
