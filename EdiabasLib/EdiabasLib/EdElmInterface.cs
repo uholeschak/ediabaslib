@@ -581,10 +581,17 @@ namespace EdiabasLib
             byte[] recDataBuffer = null;
             for (;;)
             {
-                if (recLen == 0 && !DataAvailable())
+                bool dataAvailable = DataAvailable();
+                if (_elm327CarlyTransport && _elm327CarlyRespList != null && _elm327CarlyRespList.Count > 0)
+                {
+                    dataAvailable = true;
+                }
+
+                if (recLen == 0 && !dataAvailable)
                 {
                     return;
                 }
+
                 int[] canRecData = Elm327ReceiveCanTelegram(Elm327DataTimeout);
                 if (canRecData != null && canRecData.Length >= (1 + 2))
                 {
