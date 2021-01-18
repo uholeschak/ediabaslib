@@ -1104,6 +1104,7 @@ namespace EdiabasLib
                                 break;
 
                             default:
+                                _elm327DataMode = false;
                                 Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM rec no binary data");
                                 return string.Empty;
                         }
@@ -1116,6 +1117,7 @@ namespace EdiabasLib
                             int telLength = 10;
                             if (recData.Count % telLength != 0)
                             {
+                                _elm327DataMode = false;
                                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN data length invalid: {0}", recData.Count);
                                 return string.Empty;
                             }
@@ -1130,6 +1132,7 @@ namespace EdiabasLib
 
                                 if (recData[pos] != 0x06)
                                 {   // invalid CAN high byte
+                                    _elm327DataMode = false;
                                     Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN data high byte invalid: {0:X02}", recData[pos]);
                                     return string.Empty;
                                 }
@@ -1155,6 +1158,7 @@ namespace EdiabasLib
 
                             if (recList.Count == 0)
                             {
+                                _elm327DataMode = false;
                                 Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM CAN receive list empty");
                                 return string.Empty;
                             }

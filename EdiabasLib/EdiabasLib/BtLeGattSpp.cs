@@ -439,14 +439,20 @@ namespace EdiabasLib
             {
                 base.Write(buffer, offset, count);
 
+                if (_btLeGattSpp._gattConnectionState != State.Connected ||
+                    _btLeGattSpp._gattCharacteristicSpp == null)
+                {
+                    throw new IOException("GATT disconnected");
+                }
+
                 long dataLength = Length;
-                if (dataLength > 0 && _btLeGattSpp._gattCharacteristicSpp != null)
+                if (dataLength > 0)
                 {
                     byte[] sendData = new byte[dataLength];
                     int length = Read(sendData, 0, (int)dataLength);
                     if (length != dataLength)
                     {
-                        throw new IOException("Read failed");
+                        throw new IOException("Stream write: read failed");
                     }
 
 #if DEBUG
