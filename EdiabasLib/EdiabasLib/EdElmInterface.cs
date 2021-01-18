@@ -70,7 +70,6 @@ namespace EdiabasLib
         private const int Elm327ReadTimeoutOffset = 1000;
         private const int Elm327CommandTimeout = 1500;
         private const int Elm327DataTimeout = 2000;
-        private const int Elm327CarlyDataTimeout = 6000;
         private const int Elm327CanBlockSize = 8;
         private const int Elm327CanSepTime = 0;
         private bool _disposed;
@@ -806,7 +805,11 @@ namespace EdiabasLib
         {
             try
             {
-                int timeout = expectResponse ? 0xFF : 0x00;
+                int timeout = expectResponse? 0xFF : 0x00;
+                if (_elm327CarlyTransport)
+                {
+                    timeout = 32;
+                }
                 if ((timeout == 0x00) || (timeout != _elm327Timeout))
                 {
                     if (!Elm327SendCommand(string.Format("ATST{0:X02}", timeout), false))
@@ -867,7 +870,7 @@ namespace EdiabasLib
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if (_elm327CarlyTransport)
                 {
-                    answer = Elm327DataCarlyAnswer(Elm327CarlyDataTimeout);
+                    answer = Elm327DataCarlyAnswer(timeout);
                 }
                 else
                 {
