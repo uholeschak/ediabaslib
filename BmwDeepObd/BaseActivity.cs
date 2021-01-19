@@ -190,6 +190,10 @@ namespace BmwDeepObd
                     }, null, 500, 500);
                 }
             }
+            else
+            {
+                EnableFullScreenMode(false);
+            }
         }
 
         protected override void OnPause()
