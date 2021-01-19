@@ -214,6 +214,10 @@ namespace BmwDeepObd
                 {
                     EnableFullScreenMode(true);
                 }
+                else
+                {
+                    EnableFullScreenMode(false);
+                }
             }
         }
 
@@ -296,6 +300,8 @@ namespace BmwDeepObd
                         if (Build.VERSION.SdkInt > BuildVersionCodes.Q)
                         {
                             Window.InsetsController.SystemBarsBehavior = (int) WindowInsetsControllerBehavior.ShowTransientBarsBySwipe;
+                            Window.InsetsController.SetSystemBarsAppearance((int) (WindowInsetsControllerAppearance.LightNavigationBars | WindowInsetsControllerAppearance.LightStatusBars),
+                                (int)(WindowInsetsControllerAppearance.LightNavigationBars | WindowInsetsControllerAppearance.LightStatusBars));
                         }
 
                         Window.SetDecorFitsSystemWindows(false);
@@ -305,6 +311,13 @@ namespace BmwDeepObd
                     }
                     else
                     {
+                        if (Build.VERSION.SdkInt > BuildVersionCodes.Q)
+                        {
+                            Window.InsetsController.SystemBarsBehavior = (int)WindowInsetsControllerBehavior.ShowBarsByTouch;
+                            Window.InsetsController.SetSystemBarsAppearance(0,
+                                (int)(WindowInsetsControllerAppearance.LightNavigationBars | WindowInsetsControllerAppearance.LightStatusBars));
+                        }
+
                         Window.SetDecorFitsSystemWindows(true);
                         Window.InsetsController.Show(WindowInsets.Type.StatusBars());
                         Window.InsetsController.Show(WindowInsets.Type.CaptionBar());
