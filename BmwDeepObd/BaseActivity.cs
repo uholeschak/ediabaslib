@@ -295,7 +295,7 @@ namespace BmwDeepObd
                     {
                         if (Build.VERSION.SdkInt > BuildVersionCodes.Q)
                         {
-                            Window.InsetsController.SystemBarsBehavior = 1;
+                            Window.InsetsController.SystemBarsBehavior = (int) WindowInsetsControllerBehavior.ShowTransientBarsBySwipe;
                         }
 
                         Window.SetDecorFitsSystemWindows(false);
