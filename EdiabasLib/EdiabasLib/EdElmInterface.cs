@@ -378,7 +378,7 @@ namespace EdiabasLib
                     _elm327CanHeader = canHeader;
                 }
 
-                int blockSize = _elm327CarlyTransport ? 0x0F : 0x00;
+                int blockSize = 0x00;
                 int sepTime = _elm327CarlyTransport ? 0x02 : 0x00;
                 if (!Elm327SendCommand("ATFCSD" + string.Format("{0:X02}30{1:X02}{2:X02}", targetAddr, blockSize, sepTime)))
                 {
