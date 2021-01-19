@@ -91,9 +91,9 @@ namespace BmwDeepObd
 
             GestureListener gestureListener = new GestureListener(this);
             _gestureDetector = new GestureDetectorCompat(this, gestureListener);
-            _currentConfiguration = Resources.Configuration;
+            _currentConfiguration = Resources?.Configuration;
 
-            _decorView = Window.DecorView;
+            _decorView = Window?.DecorView;
             if (_decorView != null)
             {
                 _decorView.SystemUiVisibilityChange += (sender, args) =>
@@ -289,10 +289,15 @@ namespace BmwDeepObd
             }
             else
             {
-                if (Window.InsetsController != null)
+                if (Window != null && Window.InsetsController != null)
                 {
                     if (enable)
                     {
+                        if (Build.VERSION.SdkInt > BuildVersionCodes.Q)
+                        {
+                            Window.InsetsController.SystemBarsBehavior = 1;
+                        }
+
                         Window.SetDecorFitsSystemWindows(false);
                         Window.InsetsController.Hide(WindowInsets.Type.StatusBars());
                         Window.InsetsController.Hide(WindowInsets.Type.CaptionBar());
