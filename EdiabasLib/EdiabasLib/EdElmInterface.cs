@@ -80,6 +80,7 @@ namespace EdiabasLib
         private bool _elm327FullTransport;
         private bool _elm327CarlyTransport;
         private List<string> _elm327CarlyRespList;
+        private int _elm327TimeoutMultiplier = 1;
         private int _elm327CanHeader;
         private int _elm327Timeout;
         private Thread _elm327Thread;
@@ -171,6 +172,7 @@ namespace EdiabasLib
         public bool Elm327Init()
         {
             _elm327DataMode = false;
+            _elm327TimeoutMultiplier = 1;
             lock (_elm327BufferLock)
             {
                 _elm327RequBuffer = null;
@@ -198,6 +200,13 @@ namespace EdiabasLib
                         }
                     }
                 }
+                else
+                {
+                    if (string.Compare(elmInitEntry.Command, "ATCTM5", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        _elm327TimeoutMultiplier = 5;
+                    }
+                }
                 if (!elmInitEntry.OkResponse)
                 {
                     string answer = Elm327ReceiveAnswer(Elm327CommandTimeout);
@@ -208,6 +217,8 @@ namespace EdiabasLib
                 }
                 firstCommand = false;
             }
+
+            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM timeout multiplier: {0}", _elm327TimeoutMultiplier);
 
             if (!Elm327SendCommand("AT@1", false))
             {
