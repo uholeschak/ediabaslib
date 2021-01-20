@@ -428,6 +428,7 @@ namespace EdiabasLib
 
         public class BGattOutputStream : MemoryQueueBufferStream
         {
+            private const int MaxWriteLength = 20;
             readonly BtLeGattSpp _btLeGattSpp;
 
             public BGattOutputStream(BtLeGattSpp btLeGattSpp)
@@ -448,6 +449,11 @@ namespace EdiabasLib
                 long dataLength = Length;
                 if (dataLength > 0)
                 {
+                    if (dataLength > MaxWriteLength)
+                    {
+                        dataLength = MaxWriteLength;
+                    }
+
                     byte[] sendData = new byte[dataLength];
                     int length = Read(sendData, 0, (int)dataLength);
                     if (length != dataLength)
