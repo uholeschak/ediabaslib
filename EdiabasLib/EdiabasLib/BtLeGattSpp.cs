@@ -431,7 +431,7 @@ namespace EdiabasLib
             private const int MaxWriteLength = 20;
             readonly BtLeGattSpp _btLeGattSpp;
 
-            public BGattOutputStream(BtLeGattSpp btLeGattSpp)
+            public BGattOutputStream(BtLeGattSpp btLeGattSpp) : base(true)
             {
                 _btLeGattSpp = btLeGattSpp;
             }
@@ -446,20 +446,17 @@ namespace EdiabasLib
                     throw new IOException("GATT disconnected");
                 }
 
-                long dataLength = Length;
-                if (dataLength > 0)
+                while (Length > 0)
                 {
-                    if (dataLength > MaxWriteLength)
+                    byte[] readBuffer = new byte[MaxWriteLength];
+                    int length = Read(readBuffer, 0, readBuffer.Length);
+                    if (length <= 0)
                     {
-                        dataLength = MaxWriteLength;
+                        throw new IOException("Stream write: read chunk failed");
                     }
 
-                    byte[] sendData = new byte[dataLength];
-                    int length = Read(sendData, 0, (int)dataLength);
-                    if (length != dataLength)
-                    {
-                        throw new IOException("Stream write: read failed");
-                    }
+                    byte[] sendData = new byte[length];
+                    Array.Copy(readBuffer, 0, sendData, 0, length);
 
 #if DEBUG
                     Android.Util.Log.Info(Tag, string.Format("GATT SPP data write: {0} '{1}'",
