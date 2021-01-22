@@ -832,7 +832,7 @@ namespace EdiabasLib
                 int timeout = expectResponse? 0xFF : 0x00;
                 if (_elm327CarlyTransport)
                 {
-                    timeout = 32;
+                    timeout = Elm327DataTimeout / 2 / 4 / _elm327TimeoutMultiplier;
                 }
                 if ((timeout == 0x00) || (timeout != _elm327Timeout))
                 {
