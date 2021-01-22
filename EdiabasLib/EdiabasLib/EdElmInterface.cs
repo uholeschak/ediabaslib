@@ -59,7 +59,7 @@ namespace EdiabasLib
 
         public static ElmInitEntry[] Elm327InitCarlyTransport =
         {
-            new ElmInitEntry("ATGB1"),      // switch to binary mode
+            //new ElmInitEntry("ATGB1"),      // switch to binary mode
             new ElmInitEntry("ATSH6F1"),
             new ElmInitEntry("ATFCSH6F1"),
             new ElmInitEntry("ATPBC101"),   // set Parameter for CAN B Custom Protocol 11/500 with var. DLC
@@ -1116,7 +1116,7 @@ namespace EdiabasLib
                 while (DataAvailable())
                 {
                     int length = _inStream.Read(buffer, 0, buffer.Length);
-                    if (length > 1)
+                    if (length > 0)
                     {
                         startTime = Stopwatch.GetTimestamp();
                         if (!_elm327BinaryData)
@@ -1174,7 +1174,12 @@ namespace EdiabasLib
                                 return answer;
                             }
 
-                            continue;
+                            break;
+                        }
+
+                        if (length < 2)
+                        {
+                            break;
                         }
 
                         bool lastBlock = false;
