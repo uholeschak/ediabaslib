@@ -2092,7 +2092,8 @@ namespace CarSimulator
                         Array.Copy(dataBuffer, 8, receiveData, 3, dataLen);
                         len = dataLen + 3;
                     }
-                    if ((targetAddr == 0xED) || (targetAddr == 0xEF) || (targetAddr == 0xDF))
+
+                    if (IsFunctionalAddress(targetAddr))
                     {   // functional address
                         receiveData[0] |= 0xC0;
                     }
@@ -2498,7 +2499,8 @@ namespace CarSimulator
                 Array.Copy(dataBuffer, 0, receiveData, 3, dataBuffer.Length);
                 len = dataBuffer.Length + 3;
             }
-            if ((targetAddr == 0xED) || (targetAddr == 0xEF) || (targetAddr == 0xDF))
+
+            if (IsFunctionalAddress(targetAddr))
             {   // functional address
                 receiveData[0] |= 0xC0;
             }
@@ -2597,13 +2599,21 @@ namespace CarSimulator
                             stsResult = PCANBasic.Read(_pcanHandle, out canMsg, out TPCANTimestamp _);
                             if (stsResult == TPCANStatus.PCAN_ERROR_OK)
                             {
+                                byte sourceRec = canMsg.DATA[0];
+                                bool sourceValid = IsFunctionalAddress(sourceRec) || (sourceRec == sourceAddr);
                                 if ((canMsg.LEN >= 4) && (canMsg.MSGTYPE == TPCANMessageType.PCAN_MESSAGE_STANDARD) &&
                                     ((canMsg.ID & 0xFF00) == 0x0600) &&
-                                    ((canMsg.ID & 0xFF) == targetAddr) && (canMsg.DATA[0] == sourceAddr) &&
+                                    ((canMsg.ID & 0xFF) == targetAddr) && sourceValid &&
                                     ((canMsg.DATA[1] & 0xF0) == 0x30))
                                 {
                                     break;
                                 }
+#if CAN_DEBUG
+                                if (!sourceValid)
+                                {
+                                    Debug.WriteLine("Source address mismatch: received={0:X02}, expected={1:X02}", sourceRec, sourceAddr);
+                                }
+#endif
                             }
                             if (_receiveStopWatch.ElapsedMilliseconds > 1000)
                             {
@@ -2689,6 +2699,9 @@ namespace CarSimulator
                 {
                     len = 6;
                 }
+#if CAN_DEBUG
+                //Debug.WriteLine("Send CC: Source={0:X02} Target={1:X02} Len={2}", sourceAddr, targetAddr, len);
+#endif
                 sendMsg.ID = (uint)(0x600 + sourceAddr);
 #if CAN_DYN_LEN
                 sendMsg.LEN = (byte)(2 + len);
@@ -3777,6 +3790,19 @@ namespace CarSimulator
                 return false;
             }
             return true;
+        }
+
+        public static bool IsFunctionalAddress(byte address)
+        {
+            switch (address)
+            {
+                case 0xED:
+                case 0xEF:
+                case 0xDF:
+                    return true;
+            }
+
+            return false;
         }
 
         public static int TelLengthBmwFast(byte[] dataBuffer)
