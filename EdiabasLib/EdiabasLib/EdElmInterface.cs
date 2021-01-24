@@ -374,6 +374,7 @@ namespace EdiabasLib
 
             if (reqBuffer != null && reqBuffer.Length >= 4)
             {
+                bool funcAddress = (reqBuffer[0] & 0xC0) == 0xC0;     // functional address
                 byte targetAddr = reqBuffer[1];
                 byte sourceAddr = reqBuffer[2];
                 int dataOffset = 3;
@@ -431,7 +432,7 @@ namespace EdiabasLib
 
                 byte[] canSendBuffer = new byte[dataLength];
                 Array.Copy(reqBuffer, dataOffset, canSendBuffer, 0, dataLength);
-                Elm327SendCanTelegram(canSendBuffer);
+                Elm327SendCanTelegram(canSendBuffer, true, funcAddress);
             }
         }
 
@@ -834,15 +835,15 @@ namespace EdiabasLib
             return true;
         }
 
-        private bool Elm327SendCanTelegram(byte[] canTelegram, bool expectResponse = true)
+        private bool Elm327SendCanTelegram(byte[] canTelegram, bool expectResponse = true, bool funcAddress = false)
         {
             try
             {
                 int timeout = expectResponse? 0xFF : 0x00;
                 if (_elm327CarlyTransport)
                 {
-                    if ((canTelegram[0] & 0xC0) == 0xC0)
-                    {   // broadcast
+                    if (funcAddress)
+                    {
                         timeout = 0xFF;
                     }
                     else
