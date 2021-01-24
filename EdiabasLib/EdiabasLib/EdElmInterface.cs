@@ -59,7 +59,7 @@ namespace EdiabasLib
 
         public static ElmInitEntry[] Elm327InitCarlyTransport =
         {
-            //new ElmInitEntry("ATGB1"),      // switch to binary mode
+            new ElmInitEntry("ATGB1"),      // switch to binary mode
             new ElmInitEntry("ATSH6F1"),
             new ElmInitEntry("ATFCSH6F1"),
             new ElmInitEntry("ATPBC101"),   // set Parameter for CAN B Custom Protocol 11/500 with var. DLC
@@ -70,8 +70,10 @@ namespace EdiabasLib
         private const int Elm327ReadTimeoutOffset = 1000;
         private const int Elm327CommandTimeout = 1500;
         private const int Elm327DataTimeout = 2000;
+        private const int Elm327DataCarlyTimeout = 500;
         private const int Elm327CanBlockSize = 8;
         private const int Elm327CanSepTime = 0;
+        private const int Elm327TimeoutBaseMultiplier = 4;
         private bool _disposed;
         private readonly Stream _inStream;
         private readonly Stream _outStream;
@@ -79,7 +81,8 @@ namespace EdiabasLib
         private bool _elm327DataMode;
         private bool _elm327FullTransport;
         private bool _elm327CarlyTransport;
-        private List<string> _elm327CarlyRespList;
+        private volatile bool _elm327ReceiverBusy;
+        private volatile List<string> _elm327CarlyRespList;
         private int _elm327TimeoutMultiplier = 1;
         private bool _elm327BinaryData;
         private int _elm327CanHeader;
@@ -153,11 +156,20 @@ namespace EdiabasLib
                         break;
                     }
                 }
-                if ((Stopwatch.GetTimestamp() - _elm327ReceiveStartTime) > timeout * TickResolMs)
+
+                if (ReceiverBusy())
                 {
-                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receive timeout");
-                    return false;
+                    _elm327ReceiveStartTime = Stopwatch.GetTimestamp();
                 }
+                else
+                {
+                    if ((Stopwatch.GetTimestamp() - _elm327ReceiveStartTime) > timeout * TickResolMs)
+                    {
+                        Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receive timeout");
+                        return false;
+                    }
+                }
+
                 _elm327RespEvent.WaitOne(timeout, false);
             }
             lock (_elm327BufferLock)
@@ -173,6 +185,8 @@ namespace EdiabasLib
         public bool Elm327Init()
         {
             _elm327DataMode = false;
+            _elm327ReceiverBusy = false;
+            _elm327CarlyRespList = null;
             _elm327TimeoutMultiplier = 1;
             _elm327BinaryData = false;
             lock (_elm327BufferLock)
@@ -832,7 +846,7 @@ namespace EdiabasLib
                 int timeout = expectResponse? 0xFF : 0x00;
                 if (_elm327CarlyTransport)
                 {
-                    timeout = Elm327DataTimeout / 2 / 4 / _elm327TimeoutMultiplier;
+                    timeout = Elm327DataCarlyTimeout / Elm327TimeoutBaseMultiplier / _elm327TimeoutMultiplier;
                 }
                 if ((timeout == 0x00) || (timeout != _elm327Timeout))
                 {
@@ -948,6 +962,7 @@ namespace EdiabasLib
             if (_elm327CarlyTransport)
             {
                 _elm327DataMode = false;
+                _elm327ReceiverBusy = false;
                 _elm327CarlyRespList = null;
                 return true;
             }
@@ -1105,51 +1120,157 @@ namespace EdiabasLib
                 return answer;
             }
 
-            _elm327CarlyRespList = null;
-            bool elmThread = _elm327Thread != null && Thread.CurrentThread == _elm327Thread;
-            List<byte> recData = new List<byte>();
-            StringBuilder recString = new StringBuilder();
-            byte[] buffer = new byte[100];
-            long startTime = Stopwatch.GetTimestamp();
-            for (; ; )
+            try
             {
-                while (DataAvailable())
+                _elm327CarlyRespList = null;
+                bool elmThread = _elm327Thread != null && Thread.CurrentThread == _elm327Thread;
+                int recTimeout = timeout;
+                if (_elm327Timeout > 0)
                 {
-                    int length = _inStream.Read(buffer, 0, buffer.Length);
-                    if (length > 0)
+                    recTimeout = (_elm327Timeout * 4 * _elm327TimeoutMultiplier) + 200;
+                }
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM receive timeout: {0}", recTimeout);
+
+                List<byte> recData = new List<byte>();
+                StringBuilder recString = new StringBuilder();
+                byte[] buffer = new byte[100];
+                long startTime = Stopwatch.GetTimestamp();
+                _elm327ReceiverBusy = true;
+
+                for (; ; )
+                {
+                    while (DataAvailable())
                     {
-                        startTime = Stopwatch.GetTimestamp();
-                        if (!_elm327BinaryData)
+                        int length = _inStream.Read(buffer, 0, buffer.Length);
+                        if (length > 0)
                         {
-                            bool finished = false;
-                            for (int pos = 0; pos < length; pos++)
+                            startTime = Stopwatch.GetTimestamp();
+                            if (!_elm327BinaryData)
                             {
-                                switch (buffer[pos])
+                                bool finished = false;
+                                for (int pos = 0; pos < length; pos++)
                                 {
-                                    case (byte) '\n':
-                                        break;
+                                    switch (buffer[pos])
+                                    {
+                                        case (byte)'\n':
+                                            break;
 
-                                    case 0x3E:
-                                        finished = true;
-                                        break;
+                                        case 0x3E:
+                                            finished = true;
+                                            break;
 
-                                    default:
-                                        recString.Append(Convert.ToChar(buffer[pos]));
-                                        break;
+                                        default:
+                                            recString.Append(Convert.ToChar(buffer[pos]));
+                                            break;
+                                    }
                                 }
+
+                                if (finished)
+                                {
+                                    string[] recArray = recString.ToString().Split('\r');
+                                    List<string> recList = new List<string>();
+                                    foreach (string line in recArray)
+                                    {
+                                        string trimmedLine = line.Trim();
+                                        if (!string.IsNullOrWhiteSpace(trimmedLine))
+                                        {
+                                            recList.Add(trimmedLine);
+                                        }
+                                    }
+
+                                    if (recList.Count == 0)
+                                    {
+                                        _elm327DataMode = false;
+                                        Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM CAN receive list empty");
+                                        return string.Empty;
+                                    }
+
+                                    string answer = recList[0];
+                                    recList.RemoveAt(0);
+                                    if (recList.Count == 0)
+                                    {
+                                        _elm327DataMode = false;
+                                    }
+                                    else
+                                    {
+                                        _elm327CarlyRespList = recList;
+                                    }
+
+                                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN rec: {0}", answer);
+                                    return answer;
+                                }
+
+                                break;
                             }
 
-                            if (finished)
+                            if (length < 2)
                             {
-                                string[] recArray = recString.ToString().Split('\r');
+                                break;
+                            }
+
+                            bool lastBlock = false;
+                            switch (buffer[0])
+                            {
+                                case 0xBB:
+                                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM rec bin length: {0}", length - 1);
+                                    break;
+
+                                case 0xBE:
+                                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM rec bin last length: {0}", length - 1);
+                                    lastBlock = true;
+                                    break;
+
+                                default:
+                                    _elm327DataMode = false;
+                                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM rec no binary data");
+                                    return string.Empty;
+                            }
+
+                            recData.AddRange(buffer.ToList().GetRange(1, length - 1));
+
+                            if (lastBlock)
+                            {
                                 List<string> recList = new List<string>();
-                                foreach (string line in recArray)
+                                int telLength = 10;
+                                if (recData.Count % telLength != 0)
                                 {
-                                    string trimmedLine = line.Trim();
-                                    if (!string.IsNullOrWhiteSpace(trimmedLine))
+                                    _elm327DataMode = false;
+                                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN data length invalid: {0}", recData.Count);
+                                    return string.Empty;
+                                }
+
+                                int pos = 0;
+                                for (; ; )
+                                {
+                                    if (pos >= recData.Count)
                                     {
-                                        recList.Add(trimmedLine);
+                                        break;
                                     }
+
+                                    if (recData[pos] != 0x06)
+                                    {   // invalid CAN high byte
+                                        _elm327DataMode = false;
+                                        Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN data high byte invalid: {0:X02}", recData[pos]);
+                                        return string.Empty;
+                                    }
+
+                                    if (pos + telLength > recData.Count)
+                                    {
+                                        break;
+                                    }
+
+                                    StringBuilder stringBuilder = new StringBuilder();
+                                    int source = (recData[0] << 8) + recData[1];
+                                    stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0:X03}", source));
+
+                                    for (int i = 2; i < telLength; i++)
+                                    {
+                                        stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0:X02}", recData[pos + i]));
+                                    }
+
+                                    recList.Add(stringBuilder.ToString());
+
+                                    pos += telLength;
                                 }
 
                                 if (recList.Count == 0)
@@ -1173,123 +1294,33 @@ namespace EdiabasLib
                                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN rec: {0}", answer);
                                 return answer;
                             }
-
-                            break;
-                        }
-
-                        if (length < 2)
-                        {
-                            break;
-                        }
-
-                        bool lastBlock = false;
-                        switch (buffer[0])
-                        {
-                            case 0xBB:
-                                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM rec bin length: {0}", length - 1);
-                                break;
-
-                            case 0xBE:
-                                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM rec bin last length: {0}", length - 1);
-                                lastBlock = true;
-                                break;
-
-                            default:
-                                _elm327DataMode = false;
-                                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM rec no binary data");
-                                return string.Empty;
-                        }
-
-                        recData.AddRange(buffer.ToList().GetRange(1, length - 1));
-
-                        if (lastBlock)
-                        {
-                            List<string> recList = new List<string>();
-                            int telLength = 10;
-                            if (recData.Count % telLength != 0)
-                            {
-                                _elm327DataMode = false;
-                                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN data length invalid: {0}", recData.Count);
-                                return string.Empty;
-                            }
-
-                            int pos = 0;
-                            for (;;)
-                            {
-                                if (pos >= recData.Count)
-                                {
-                                    break;
-                                }
-
-                                if (recData[pos] != 0x06)
-                                {   // invalid CAN high byte
-                                    _elm327DataMode = false;
-                                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN data high byte invalid: {0:X02}", recData[pos]);
-                                    return string.Empty;
-                                }
-
-                                if (pos + telLength > recData.Count)
-                                {
-                                    break;
-                                }
-
-                                StringBuilder stringBuilder = new StringBuilder();
-                                int source = (recData[0] << 8) + recData[1];
-                                stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0:X03}", source));
-
-                                for (int i = 2; i < telLength; i++)
-                                {
-                                    stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0:X02}", recData[pos + i]));
-                                }
-
-                                recList.Add(stringBuilder.ToString());
-
-                                pos += telLength;
-                            }
-
-                            if (recList.Count == 0)
-                            {
-                                _elm327DataMode = false;
-                                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM CAN receive list empty");
-                                return string.Empty;
-                            }
-
-                            string answer = recList[0];
-                            recList.RemoveAt(0);
-                            if (recList.Count == 0)
-                            {
-                                _elm327DataMode = false;
-                            }
-                            else
-                            {
-                                _elm327CarlyRespList = recList;
-                            }
-
-                            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN rec: {0}", answer);
-                            return answer;
                         }
                     }
-                }
 
-                if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
-                {
-                    _elm327DataMode = false;
-                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM rec timeout");
-                    return string.Empty;
-                }
-
-                if (elmThread)
-                {
-                    if (_elm327TerminateThread)
+                    if ((Stopwatch.GetTimestamp() - startTime) > recTimeout * TickResolMs)
                     {
+                        _elm327DataMode = false;
+                        Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM rec timeout");
                         return string.Empty;
                     }
-                    _elm327RequEvent.WaitOne(10, false);
+
+                    if (elmThread)
+                    {
+                        if (_elm327TerminateThread)
+                        {
+                            return string.Empty;
+                        }
+                        _elm327RequEvent.WaitOne(10, false);
+                    }
+                    else
+                    {
+                        Thread.Sleep(10);
+                    }
                 }
-                else
-                {
-                    Thread.Sleep(10);
-                }
+            }
+            finally
+            {
+                _elm327ReceiverBusy = false;
             }
         }
 
@@ -1313,6 +1344,26 @@ namespace EdiabasLib
             }
             return networkStream.DataAvailable;
 #endif
+        }
+
+        bool ReceiverBusy()
+        {
+            if (_elm327CarlyTransport)
+            {
+                if (_elm327ReceiverBusy)
+                {
+                    return true;
+                }
+
+                if (_elm327CarlyRespList != null && _elm327CarlyRespList.Count > 0)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
         }
 
         public static byte CalcChecksumBmwFast(byte[] data, int offset, int length)
