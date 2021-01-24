@@ -1386,6 +1386,9 @@ namespace CarSimulator
             {
                 case ConceptType.ConceptBwmFast:
                 case ConceptType.ConceptKwp2000Bmw:
+#if true
+                    DebugLogData("Response: ", sendData, TelLengthBmwFast(sendData));
+#endif
                     if (_tcpServerDiag != null)
                     {
                         return SendEnet(sendData);
@@ -3738,22 +3741,7 @@ namespace CarSimulator
 
         private bool SendBmwfast(byte[] sendData)
         {
-            int sendLength = sendData[0] & 0x3F;
-            if (sendLength == 0)
-            {   // with length byte
-                if (sendData[3] == 0)
-                {
-                    sendLength = (sendData[4] << 8) + sendData[5] + 6;
-                }
-                else
-                {
-                    sendLength = sendData[3] + 4;
-                }
-            }
-            else
-            {
-                sendLength += 3;
-            }
+            int sendLength = TelLengthBmwFast(sendData);
             sendData[sendLength] = CalcChecksumBmwFast(sendData, sendLength);
             sendLength++;
             if (!SendData(sendData, sendLength))
@@ -3776,22 +3764,8 @@ namespace CarSimulator
                 _serialPort.DiscardInBuffer();
                 return false;
             }
-            int recLength = receiveData[0] & 0x3F;
-            if (recLength == 0)
-            {   // with length byte
-                if (receiveData[3] == 0)
-                {
-                    recLength = (receiveData[4] << 8) + receiveData[5] + 6;
-                }
-                else
-                {
-                    recLength = receiveData[3] + 4;
-                }
-            }
-            else
-            {
-                recLength += 3;
-            }
+
+            int recLength = TelLengthBmwFast(receiveData);
             if (!ReceiveData(receiveData, 4, recLength - 3))
             {
                 _serialPort.DiscardInBuffer();
@@ -3803,6 +3777,27 @@ namespace CarSimulator
                 return false;
             }
             return true;
+        }
+
+        public static int TelLengthBmwFast(byte[] dataBuffer)
+        {
+            int telLength = dataBuffer[0] & 0x3F;
+            if (telLength == 0)
+            {   // with length byte
+                if (dataBuffer[3] == 0)
+                {
+                    telLength = ((dataBuffer[4] << 8) | dataBuffer[5]) + 6;
+                }
+                else
+                {
+                    telLength = dataBuffer[3] + 4;
+                }
+            }
+            else
+            {
+                telLength += 3;
+            }
+            return telLength;
         }
 
         public static byte CalcChecksumBmwFast(byte[] data, int length)
@@ -4188,22 +4183,8 @@ namespace CarSimulator
             {
                 return;
             }
-            int recLength = _receiveData[0] & 0x3F;
-            if (recLength == 0)
-            {   // with length byte
-                if (_receiveData[3] == 0)
-                {
-                    recLength = (_receiveData[4] << 8) + _receiveData[5] + 6;
-                }
-                else
-                {
-                    recLength = _receiveData[3] + 4;
-                }
-            }
-            else
-            {
-                recLength += 3;
-            }
+
+            int recLength = TelLengthBmwFast(_receiveData);
             recLength += 1; // checksum
 #if true
             Debug.WriteLine(string.Format("Time: {0}", DateTime.Now.ToString("hh:mm:ss.fff")));
@@ -8438,6 +8419,11 @@ namespace CarSimulator
         {
             StringBuilder sr = new StringBuilder();
             sr.Append(message);
+            if (length <= 0)
+            {
+                sr.Append("No data");
+            }
+
             if (data != null)
             {
                 for (int i = 0; i < length; i++)
