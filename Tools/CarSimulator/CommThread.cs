@@ -2555,6 +2555,7 @@ namespace CarSimulator
                 sendMsg.LEN = 8;
 #endif
                 sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+                Array.Clear(sendMsg.DATA, 0, sendMsg.DATA.Length);
                 sendMsg.DATA[0] = targetAddr;
                 sendMsg.DATA[1] = (byte)(0x00 | dataLength);  // SF
                 Array.Copy(sendData, dataOffset, sendMsg.DATA, 2, dataLength);
@@ -2570,6 +2571,7 @@ namespace CarSimulator
             sendMsg.ID = (uint)(0x600 + sourceAddr);
             sendMsg.LEN = 8;
             sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+            Array.Clear(sendMsg.DATA, 0, sendMsg.DATA.Length);
             sendMsg.DATA[0] = targetAddr;
             sendMsg.DATA[1] = (byte)(0x10 | ((dataLength >> 8) & 0xFF));  // FF
             sendMsg.DATA[2] = (byte)dataLength;
@@ -2709,6 +2711,7 @@ namespace CarSimulator
                 sendMsg.LEN = 8;
 #endif
                 sendMsg.MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD;
+                Array.Clear(sendMsg.DATA, 0, sendMsg.DATA.Length);
                 sendMsg.DATA[0] = targetAddr;
                 sendMsg.DATA[1] = (byte)(0x20 | (blockCount & 0x0F));  // CF
                 Array.Copy(sendData, dataOffset, sendMsg.DATA, 2, len);
