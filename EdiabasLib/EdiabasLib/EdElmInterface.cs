@@ -1264,7 +1264,7 @@ namespace EdiabasLib
                                     }
 
                                     StringBuilder stringBuilder = new StringBuilder();
-                                    int source = (recData[0] << 8) + recData[1];
+                                    int source = (recData[pos + 0] << 8) + recData[pos + 1];
                                     stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0:X03}", source));
 
                                     for (int i = 2; i < telLength; i++)
