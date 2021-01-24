@@ -612,12 +612,7 @@ namespace EdiabasLib
             byte[] recDataBuffer = null;
             for (;;)
             {
-                bool dataAvailable = DataAvailable();
-                if (_elm327CarlyTransport && _elm327CarlyRespList != null && _elm327CarlyRespList.Count > 0)
-                {
-                    dataAvailable = true;
-                }
-
+                bool dataAvailable = _elm327CarlyTransport || DataAvailable();
                 if (recLen == 0 && !dataAvailable)
                 {
                     return;
@@ -846,8 +841,16 @@ namespace EdiabasLib
                 int timeout = expectResponse? 0xFF : 0x00;
                 if (_elm327CarlyTransport)
                 {
-                    timeout = Elm327DataCarlyTimeout / Elm327TimeoutBaseMultiplier / _elm327TimeoutMultiplier;
+                    if ((canTelegram[0] & 0xC0) == 0xC0)
+                    {   // broadcast
+                        timeout = 0xFF;
+                    }
+                    else
+                    {
+                        timeout = Elm327DataCarlyTimeout / Elm327TimeoutBaseMultiplier / _elm327TimeoutMultiplier;
+                    }
                 }
+
                 if ((timeout == 0x00) || (timeout != _elm327Timeout))
                 {
                     if (!Elm327SendCommand(string.Format("ATST{0:X02}", timeout), false))
