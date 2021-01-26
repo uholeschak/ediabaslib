@@ -2611,6 +2611,7 @@ namespace CarSimulator
                                     break;
                                 }
 #if CAN_DEBUG
+                                Debug.WriteLine(string.Format("CAN ignored: {0:X03} {1}", canMsg.ID, BitConverter.ToString(canMsg.DATA).Replace("-", " ")));
                                 if (!sourceValid)
                                 {
                                     Debug.WriteLine("Source address mismatch: received={0:X02}, expected={1:X02}", sourceRec, sourceAddr);
