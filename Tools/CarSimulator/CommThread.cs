@@ -2266,6 +2266,7 @@ namespace CarSimulator
                     long receiveTime = Stopwatch.GetTimestamp();
                     long timeDiff = (receiveTime - lastReceiveTime) / TickResolMs;
                     lastReceiveTime = receiveTime;
+                    //Debug.WriteLine(string.Format("CAN rec: {0:X03} {1}", canMsg.ID, BitConverter.ToString(canMsg.DATA).Replace("-", " ")));
                     Debug.WriteLine("Rec({0}): {1}", frameType, timeDiff);
 #endif
                     if (recLen == 0)
@@ -2602,13 +2603,20 @@ namespace CarSimulator
                             if (stsResult == TPCANStatus.PCAN_ERROR_OK)
                             {
                                 byte sourceRec = canMsg.DATA[0];
+                                byte frameType = (byte)((canMsg.DATA[1] >> 4) & 0x0F);
                                 bool sourceValid = IsFunctionalAddress(sourceRec) || (sourceRec == sourceAddr);
                                 if ((canMsg.LEN >= 4) && (canMsg.MSGTYPE == TPCANMessageType.PCAN_MESSAGE_STANDARD) &&
                                     ((canMsg.ID & 0xFF00) == 0x0600) &&
-                                    ((canMsg.ID & 0xFF) == targetAddr) && sourceValid &&
-                                    ((canMsg.DATA[1] & 0xF0) == 0x30))
+                                    ((canMsg.ID & 0xFF) == targetAddr) && sourceValid)
                                 {
-                                    break;
+                                    if (frameType == 0x3)
+                                    {
+                                        break;
+                                    }
+#if CAN_DEBUG
+                                    Debug.WriteLine("Unexpected frame type: {0}, aborting", frameType);
+#endif
+                                    return false;
                                 }
 #if CAN_DEBUG
                                 Debug.WriteLine(string.Format("CAN ignored: {0:X03} {1}", canMsg.ID, BitConverter.ToString(canMsg.DATA).Replace("-", " ")));
