@@ -665,6 +665,16 @@ namespace EdiabasLib
                                     }
                                     blockCount = 1;
 
+                                    if (_elm327CarlyTransport)
+                                    {
+                                        if (_elm327CarlyRespList == null || _elm327CarlyRespList.Count == 0)
+                                        {
+                                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Carly aborted transmission, creating dummy response");
+                                            recLen = recDataBuffer.Length;
+                                            break;
+                                        }
+                                    }
+
                                     if (!_elm327FullTransport && !_elm327CarlyTransport)
                                     {
                                         byte[] canSendBuffer = new byte[8];
