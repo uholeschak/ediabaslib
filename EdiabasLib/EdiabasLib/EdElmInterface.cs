@@ -671,6 +671,13 @@ namespace EdiabasLib
                                         {
                                             Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Carly aborted transmission, creating dummy response");
                                             recLen = recDataBuffer.Length;
+                                            // send dummy byte to abort transmission
+                                            byte[] canSendBuffer = new byte[1];
+                                            canSendBuffer[0] = 0x00;
+                                            if (!Elm327SendCanTelegram(canSendBuffer))
+                                            {
+                                                return;
+                                            }
                                             break;
                                         }
                                     }
