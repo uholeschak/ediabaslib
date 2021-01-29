@@ -2125,6 +2125,7 @@ namespace BmwDeepObd
         private void ExecuteAnalyzeJobBmw()
         {
             _translateEnabled = false;
+            bool elmDevice = _activityCommon.IsElmDevice(_instanceData.DeviceAddress);
             EdiabasOpen();
             ClearEcuList();
             UpdateDisplay();
@@ -2396,96 +2397,99 @@ namespace BmwDeepObd
                     _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
                     _instanceData.SgbdFunctional = ecuFileNameBest;
 
-                    try
+                    if (!elmDevice || string.IsNullOrEmpty(detectedVin))
                     {
-                        ActivityCommon.ResolveSgbdFile(_ediabas, ecuFileNameBest);
-                        _ediabas.ArgString = string.Empty;
-                        _ediabas.ArgBinaryStd = null;
-                        _ediabas.ResultsRequests = string.Empty;
-                        bool readVinOk = false;
-                        foreach (string vinJob in ReadVinJobs)
+                        try
                         {
-                            try
+                            ActivityCommon.ResolveSgbdFile(_ediabas, ecuFileNameBest);
+                            _ediabas.ArgString = string.Empty;
+                            _ediabas.ArgBinaryStd = null;
+                            _ediabas.ResultsRequests = string.Empty;
+                            bool readVinOk = false;
+                            foreach (string vinJob in ReadVinJobs)
                             {
-                                if (_ediabasJobAbort)
+                                try
                                 {
+                                    if (_ediabasJobAbort)
+                                    {
+                                        break;
+                                    }
+                                    _ediabas.ExecuteJob(vinJob);
+                                    readVinOk = true;
                                     break;
                                 }
-                                _ediabas.ExecuteJob(vinJob);
-                                readVinOk = true;
-                                break;
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
                             }
-                            catch (Exception)
+                            if (!readVinOk)
                             {
-                                // ignored
+                                throw new Exception("Read VIN failed");
                             }
-                        }
-                        if (!readVinOk)
-                        {
-                            throw new Exception("Read VIN failed");
-                        }
 
-                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                        if (resultSets != null && resultSets.Count >= 2)
-                        {
-                            int dictIndex = 0;
-                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                            if (resultSets != null && resultSets.Count >= 2)
                             {
-                                if (dictIndex == 0)
+                                int dictIndex = 0;
+                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
                                 {
-                                    dictIndex++;
-                                    continue;
-                                }
-                                Int64 ecuAdr = -1;
-                                string ecuVin = string.Empty;
-                                // ReSharper disable once InlineOutVariableDeclaration
-                                EdiabasNet.ResultData resultData;
-                                if (resultDict.TryGetValue("ID_SG_ADR", out resultData))
-                                {
-                                    if (resultData.OpData is Int64)
+                                    if (dictIndex == 0)
                                     {
-                                        ecuAdr = (Int64) resultData.OpData;
+                                        dictIndex++;
+                                        continue;
                                     }
-                                }
-                                if (resultDict.TryGetValue("FG_NR", out resultData))
-                                {
-                                    if (resultData.OpData is string)
+                                    Int64 ecuAdr = -1;
+                                    string ecuVin = string.Empty;
+                                    // ReSharper disable once InlineOutVariableDeclaration
+                                    EdiabasNet.ResultData resultData;
+                                    if (resultDict.TryGetValue("ID_SG_ADR", out resultData))
                                     {
-                                        ecuVin = (string) resultData.OpData;
-                                    }
-                                }
-                                if (resultDict.TryGetValue("FG_NR_KURZ", out resultData))
-                                {
-                                    if (resultData.OpData is string)
-                                    {
-                                        ecuVin = (string) resultData.OpData;
-                                    }
-                                }
-                                if (resultDict.TryGetValue("AIF_FG_NR", out resultData))
-                                {
-                                    if (resultData.OpData is string)
-                                    {
-                                        ecuVin = (string) resultData.OpData;
-                                    }
-                                }
-                                if (!string.IsNullOrEmpty(ecuVin) && _vinRegex.IsMatch(ecuVin))
-                                {
-                                    foreach (EcuInfo ecuInfo in _ecuList)
-                                    {
-                                        if (ecuInfo.Address == ecuAdr)
+                                        if (resultData.OpData is Int64)
                                         {
-                                            ecuInfo.Vin = ecuVin;
-                                            break;
+                                            ecuAdr = (Int64)resultData.OpData;
                                         }
                                     }
+                                    if (resultDict.TryGetValue("FG_NR", out resultData))
+                                    {
+                                        if (resultData.OpData is string)
+                                        {
+                                            ecuVin = (string)resultData.OpData;
+                                        }
+                                    }
+                                    if (resultDict.TryGetValue("FG_NR_KURZ", out resultData))
+                                    {
+                                        if (resultData.OpData is string)
+                                        {
+                                            ecuVin = (string)resultData.OpData;
+                                        }
+                                    }
+                                    if (resultDict.TryGetValue("AIF_FG_NR", out resultData))
+                                    {
+                                        if (resultData.OpData is string)
+                                        {
+                                            ecuVin = (string)resultData.OpData;
+                                        }
+                                    }
+                                    if (!string.IsNullOrEmpty(ecuVin) && _vinRegex.IsMatch(ecuVin))
+                                    {
+                                        foreach (EcuInfo ecuInfo in _ecuList)
+                                        {
+                                            if (ecuInfo.Address == ecuAdr)
+                                            {
+                                                ecuInfo.Vin = ecuVin;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    dictIndex++;
                                 }
-                                dictIndex++;
                             }
                         }
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                     }
 
                     // get vin

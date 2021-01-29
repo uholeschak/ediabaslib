@@ -2280,6 +2280,34 @@ namespace BmwDeepObd
             return false;
         }
 
+        public bool IsElmDevice(string deviceAddress)
+        {
+            switch (_selectedInterface)
+            {
+                case InterfaceType.Bluetooth:
+                {
+                    if (string.IsNullOrEmpty(deviceAddress))
+                    {
+                        return false;
+                    }
+                    string[] stringList = deviceAddress.Split('#', ';');
+                    if (stringList.Length > 1)
+                    {
+                        if (string.Compare(stringList[1], EdBluetoothInterface.Elm327Tag, StringComparison.OrdinalIgnoreCase) == 0 ||
+                            string.Compare(stringList[1], EdBluetoothInterface.ElmDeepObdTag, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                case InterfaceType.ElmWifi:
+                    return true;
+            }
+            return false;
+        }
+
         public string GetEnetAdapterIp(out string defaultPassword)
         {
             defaultPassword = null;
