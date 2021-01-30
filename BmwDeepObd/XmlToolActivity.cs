@@ -2152,7 +2152,7 @@ namespace BmwDeepObd
                 int bestInvalidVinCount = 0;
                 List<EcuInfo> ecuListBest = null;
                 string ecuFileNameBest = null;
-                List<string> ecuFileNameList;
+                List<string> ecuFileNameList = null;
 
                 string groupSgbd = DetectVehicleBmwFast(progress, out string detectedVin, out string vehicleType, out string cDate);
                 _instanceData.VehicleType = vehicleType;
@@ -2164,10 +2164,18 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Fallback to statistic approach");
-                    ecuFileNameList = EcuFileNames.ToList();
+                    if (elmDevice)
+                    {
+                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Statistic approach too slow for ELM327 devices");
+                    }
+                    else
+                    {
+                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Fallback to statistic approach");
+                        ecuFileNameList = EcuFileNames.ToList();
+                    }
                 }
-                if (detectedVin != null && !_ediabasJobAbort)
+
+                if (ecuFileNameList != null && detectedVin != null && !_ediabasJobAbort)
                 {
                     for (int retries = 0; retries < 2; retries++)
                     {
@@ -2322,33 +2330,35 @@ namespace BmwDeepObd
                                     }
                                 }
 
-                                _ediabas.ArgString = string.Empty;
-                                _ediabas.ArgBinaryStd = null;
-                                _ediabas.ResultsRequests = string.Empty;
-                                bool readVinOk = false;
-                                foreach (string vinJob in ReadVinJobs)
-                                {
-                                    try
-                                    {
-                                        _ediabas.ExecuteJob(vinJob);
-                                        readVinOk = true;
-                                        break;
-                                    }
-                                    catch (Exception)
-                                    {
-                                        // ignored
-                                    }
-                                }
-
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detect result: count={0}, invalid={1}, vinok={2}", ecuList.Count, invalidEcuCount, readVinOk);
-                                int invalidVinCount = readVinOk ? 0 : 1;
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detect result: count={0}, invalid={1}", ecuList.Count, invalidEcuCount);
+                                int invalidVinCount = 0;
                                 bool acceptEcu = false;
-                                if (ecuListBest == null)
+                                if (ecuListBest == null || elmDevice)
                                 {
                                     acceptEcu = true;
                                 }
                                 else
                                 {
+                                    _ediabas.ArgString = string.Empty;
+                                    _ediabas.ArgBinaryStd = null;
+                                    _ediabas.ResultsRequests = string.Empty;
+                                    bool readVinOk = false;
+                                    foreach (string vinJob in ReadVinJobs)
+                                    {
+                                        try
+                                        {
+                                            _ediabas.ExecuteJob(vinJob);
+                                            readVinOk = true;
+                                            break;
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // ignored
+                                        }
+                                    }
+
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read VIN ok={0}", readVinOk);
+                                    invalidVinCount = readVinOk ? 0 : 1;
                                     if (ecuListBest.Count < ecuList.Count)
                                     {
                                         acceptEcu = true;
@@ -2361,6 +2371,7 @@ namespace BmwDeepObd
                                         }
                                     }
                                 }
+
                                 if (acceptEcu)
                                 {
                                     _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Selected ECU");
@@ -2391,6 +2402,7 @@ namespace BmwDeepObd
                         ecuFileNameList = EcuFileNames.ToList();
                     }
                 }
+
                 if (ecuListBest != null)
                 {
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Selected Ecu file: {0}", ecuFileNameBest);
@@ -2507,7 +2519,7 @@ namespace BmwDeepObd
                 _ediabas.EdInterfaceClass.EnableTransmitCache = false;
 
                 bool pin78ConnRequire = false;
-                if (!_ediabasJobAbort && ecuListBest == null)
+                if (!_ediabasJobAbort && ecuListBest == null && !elmDevice)
                 {
                     ecuListBest = DetectVehicleDs2(progress, out detectedVin, out vehicleType, out cDate, out pin78ConnRequire);
                     _instanceData.VehicleType = vehicleType;
