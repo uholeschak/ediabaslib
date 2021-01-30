@@ -3806,12 +3806,14 @@ namespace CarSimulator
 
         public static bool IsFunctionalAddress(byte address)
         {
-            switch (address)
+            if (address == 0xDF)
             {
-                case 0xED:
-                case 0xEF:
-                case 0xDF:
-                    return true;
+                return true;
+            }
+
+            if (address >= 0xE6 && address <= 0xEF)
+            {
+                return true;
             }
 
             return false;
