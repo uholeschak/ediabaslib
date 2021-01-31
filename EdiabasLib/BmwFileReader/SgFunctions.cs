@@ -519,9 +519,10 @@ namespace BmwFileReader
                             string[] serviceArray = service.Split(";");
                             foreach (string serviceEntry in serviceArray)
                             {
-                                if (Int32.TryParse(serviceEntry, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out Int32 value))
+                                Int64 value = EdiabasNet.StringToValue(serviceEntry, out bool valid);
+                                if (valid)
                                 {
-                                    serviceList.Add(value);
+                                    serviceList.Add((int) value);
                                 }
                             }
 
