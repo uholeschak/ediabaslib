@@ -5270,6 +5270,72 @@ namespace EdiabasLib
             }
         }
 
+        public List<List<string>> GetTableLines(string tableName)
+        {
+            UInt32 tableIdx;
+            if (!_tableInfos.TableNameDict.TryGetValue(tableName.ToUpper(Culture), out tableIdx))
+            {
+                return null;
+            }
+
+            List<List<string>> tableList = new List<List<string>>();
+            TableInfo tableInfo = _tableInfos.TableInfoArray[tableIdx];
+            IndexTable(_sgbdFs, tableInfo);
+            foreach (uint[] entries in tableInfo.TableEntries)
+            {
+                List<string> rowList = new List<string>();
+                for (int j = 0; j < tableInfo.Columns; j++)
+                {
+                    string rowStr = GetTableString(_sgbdFs, entries[j]);
+                    rowList.Add(rowStr);
+                }
+                
+                tableList.Add(rowList);
+            }
+
+            return tableList;
+        }
+
+        public List<string> GetTableColumn(List<List<string>> tableLines, string columnName)
+        {
+            if (tableLines == null || tableLines.Count < 1)
+            {
+                return null;
+            }
+
+            int columnIndex = -1;
+            int index = 0;
+            foreach (string name in tableLines[0])
+            {
+                if (string.Compare(name, columnName, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    columnIndex = index;
+                    break;
+                }
+
+                index++;
+            }
+
+            if (columnIndex < 0)
+            {
+                return null;
+            }
+
+            List<string> columnList = new List<string>();
+            index = 0;
+            foreach (List<string> line in tableLines)
+            {
+                if (index > 0 && line.Count >= columnIndex)
+                {
+                    columnList.Add(line[columnIndex]);
+                }
+
+                index++;
+            }
+
+            return columnList;
+        }
+
         public void LogFormat(EdLogLevel logLevel, string format, params object[] args)
         {
             UpdateLogLevel();
