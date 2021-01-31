@@ -27,6 +27,18 @@ namespace EdiabasLib
             public int Version { get; }
         }
 
+        public class ElmRequQueueEntry
+        {
+            public ElmRequQueueEntry(byte[] data, int timeout = -1)
+            {
+                Data = data;
+                Timeout = timeout;
+            }
+
+            public byte[] Data { get; }
+            public int Timeout { get; }
+        }
+
         public static ElmInitEntry[] Elm327InitCommands =
         {
             new ElmInitEntry("ATD"),
@@ -71,6 +83,7 @@ namespace EdiabasLib
         private const int Elm327CommandTimeout = 1500;
         private const int Elm327DataTimeout = 2000;
         private const int Elm327DataCarlyTimeout = 500;
+        private const int Elm327DataCarlyFuncTimeout = 200;
         private const int Elm327CanBlockSize = 8;
         private const int Elm327CanSepTime = 0;
         private const int Elm327TimeoutBaseMultiplier = 4;
@@ -91,7 +104,7 @@ namespace EdiabasLib
         private readonly AutoResetEvent _elm327RequEvent = new AutoResetEvent(false);
         private readonly AutoResetEvent _elm327RespEvent = new AutoResetEvent(false);
         private volatile byte[] _elm327RequBuffer;
-        private readonly Queue<byte[]> _elm327RequQueue = new Queue<byte[]>();
+        private readonly Queue<ElmRequQueueEntry> _elm327RequQueue = new Queue<ElmRequQueueEntry>();
         private readonly Queue<byte> _elm327RespQueue = new Queue<byte>();
         private volatile List<string> _elm327CarlyRespList;
         private readonly Object _elm327BufferLock = new Object();
@@ -368,7 +381,7 @@ namespace EdiabasLib
 
         private void Elm327CanSenderFull()
         {
-            byte[] reqBuffer = null;
+            ElmRequQueueEntry reqEntry = null;
 
             lock (_elm327BufferLock)
             {
@@ -413,26 +426,26 @@ namespace EdiabasLib
                                     Array.Copy(tempBuffer, queueBuffer, tempBuffer.Length);
                                     queueBuffer[0] = (byte)((queueBuffer[0] & ~0xC0) | 0x80);
                                     queueBuffer[1] = addr;
-                                    _elm327RequQueue.Enqueue(queueBuffer);
+                                    _elm327RequQueue.Enqueue(new ElmRequQueueEntry(queueBuffer, Elm327DataCarlyFuncTimeout));
                                 }
                             }
                         }
                         else
                         {
-                            _elm327RequQueue.Enqueue(tempBuffer);
+                            _elm327RequQueue.Enqueue(new ElmRequQueueEntry(tempBuffer));
                         }
                     }
                 }
 
                 if (_elm327RequQueue.Count > 0)
                 {
-                    reqBuffer = _elm327RequQueue.Dequeue();
+                    reqEntry = _elm327RequQueue.Dequeue();
                 }
             }
 
-            if (reqBuffer != null && reqBuffer.Length >= 4)
+            if (reqEntry != null && reqEntry.Data.Length >= 4)
             {
-                bool funcAddress = (reqBuffer[0] & 0xC0) == 0xC0;     // functional address
+                byte[] reqBuffer = reqEntry.Data;
                 byte targetAddr = reqBuffer[1];
                 byte sourceAddr = reqBuffer[2];
                 int dataOffset = 3;
@@ -490,7 +503,7 @@ namespace EdiabasLib
 
                 byte[] canSendBuffer = new byte[dataLength];
                 Array.Copy(reqBuffer, dataOffset, canSendBuffer, 0, dataLength);
-                Elm327SendCanTelegram(canSendBuffer, true, funcAddress);
+                Elm327SendCanTelegram(canSendBuffer, true, reqEntry.Timeout);
             }
         }
 
@@ -916,16 +929,16 @@ namespace EdiabasLib
             return true;
         }
 
-        private bool Elm327SendCanTelegram(byte[] canTelegram, bool expectResponse = true, bool funcAddress = false)
+        private bool Elm327SendCanTelegram(byte[] canTelegram, bool expectResponse = true, int specialTimeout = -1)
         {
             try
             {
                 int timeout = expectResponse? 0xFF : 0x00;
                 if (_elm327CarlyTransport)
                 {
-                    if (funcAddress)
+                    if (specialTimeout >= 0)
                     {
-                        timeout = 0xFF;
+                        timeout = specialTimeout / Elm327TimeoutBaseMultiplier / _elm327TimeoutMultiplier;
                     }
                     else
                     {
