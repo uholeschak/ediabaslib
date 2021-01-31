@@ -2604,7 +2604,7 @@ namespace CarSimulator
                             {
                                 byte sourceRec = canMsg.DATA[0];
                                 byte frameType = (byte)((canMsg.DATA[1] >> 4) & 0x0F);
-                                bool sourceValid = IsFunctionalAddress(sourceRec) || (sourceRec == sourceAddr);
+                                bool sourceValid = sourceRec == sourceAddr;
                                 if ((canMsg.LEN >= 4) && (canMsg.MSGTYPE == TPCANMessageType.PCAN_MESSAGE_STANDARD) &&
                                     ((canMsg.ID & 0xFF00) == 0x0600) &&
                                     ((canMsg.ID & 0xFF) == targetAddr) && sourceValid)
