@@ -82,8 +82,8 @@ namespace EdiabasLib
         private const int Elm327ReadTimeoutOffset = 1000;
         private const int Elm327CommandTimeout = 1500;
         private const int Elm327DataTimeout = 2000;
-        private const int Elm327DataCarlyTimeout = 500;
-        private const int Elm327DataCarlyFuncTimeout = 200;
+        private const int Elm327DataFullTimeout = 500;
+        private const int Elm327DataFullFuncTimeout = 200;
         private const int Elm327CanBlockSize = 8;
         private const int Elm327CanSepTime = 0;
         private const int Elm327TimeoutBaseMultiplier = 4;
@@ -106,7 +106,7 @@ namespace EdiabasLib
         private volatile byte[] _elm327RequBuffer;
         private readonly Queue<ElmRequQueueEntry> _elm327RequQueue = new Queue<ElmRequQueueEntry>();
         private readonly Queue<byte> _elm327RespQueue = new Queue<byte>();
-        private volatile List<string> _elm327CarlyRespList;
+        private volatile List<string> _elm327FullRespList;
         private readonly Object _elm327BufferLock = new Object();
 
         public bool StreamFailure { get; set; }
@@ -207,7 +207,7 @@ namespace EdiabasLib
                 _elm327RequBuffer = null;
                 _elm327RequQueue.Clear();
                 _elm327RespQueue.Clear();
-                _elm327CarlyRespList = null;
+                _elm327FullRespList = null;
             }
             bool firstCommand = true;
             foreach (ElmInitEntry elmInitEntry in Elm327InitCommands)
@@ -274,8 +274,6 @@ namespace EdiabasLib
             if (!_elm327CarlyTransport && elmManufact.ToUpperInvariant().Contains("WGSOFT"))
             {
                 _elm327FullTransport = true;
-                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "WGSOFT adapter not supported");
-                return false;
             }
             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM full transport: {0}", _elm327FullTransport);
 
@@ -426,7 +424,7 @@ namespace EdiabasLib
                                     Array.Copy(tempBuffer, queueBuffer, tempBuffer.Length);
                                     queueBuffer[0] = (byte)((queueBuffer[0] & ~0xC0) | 0x80);
                                     queueBuffer[1] = addr;
-                                    _elm327RequQueue.Enqueue(new ElmRequQueueEntry(queueBuffer, Elm327DataCarlyFuncTimeout));
+                                    _elm327RequQueue.Enqueue(new ElmRequQueueEntry(queueBuffer, Elm327DataFullFuncTimeout));
                                 }
                             }
                         }
@@ -684,7 +682,7 @@ namespace EdiabasLib
             byte[] recDataBuffer = null;
             for (;;)
             {
-                bool dataAvailable = _elm327CarlyTransport || DataAvailable();
+                bool dataAvailable = _elm327FullTransport || _elm327CarlyTransport || DataAvailable();
                 if (recLen == 0 && !dataAvailable)
                 {
                     return;
@@ -741,7 +739,7 @@ namespace EdiabasLib
                                         bool respListEmpty;
                                         lock (_elm327BufferLock)
                                         {
-                                            respListEmpty = _elm327CarlyRespList == null || _elm327CarlyRespList.Count == 0;
+                                            respListEmpty = _elm327FullRespList == null || _elm327FullRespList.Count == 0;
                                         }
 
                                         if (respListEmpty)
@@ -934,7 +932,7 @@ namespace EdiabasLib
             try
             {
                 int timeout = expectResponse? 0xFF : 0x00;
-                if (_elm327CarlyTransport)
+                if (_elm327FullTransport || _elm327CarlyTransport)
                 {
                     if (specialTimeout >= 0)
                     {
@@ -942,7 +940,7 @@ namespace EdiabasLib
                     }
                     else
                     {
-                        timeout = Elm327DataCarlyTimeout / Elm327TimeoutBaseMultiplier / _elm327TimeoutMultiplier;
+                        timeout = Elm327DataFullTimeout / Elm327TimeoutBaseMultiplier / _elm327TimeoutMultiplier;
                     }
                 }
 
@@ -1057,13 +1055,13 @@ namespace EdiabasLib
 
         private bool Elm327LeaveDataMode(int timeout)
         {
-            if (_elm327CarlyTransport)
+            if (_elm327FullTransport || _elm327CarlyTransport)
             {
                 _elm327DataMode = false;
                 _elm327ReceiverBusy = false;
                 lock (_elm327BufferLock)
                 {
-                    _elm327CarlyRespList = null;
+                    _elm327FullRespList = null;
                 }
                 return true;
             }
@@ -1209,21 +1207,21 @@ namespace EdiabasLib
         {
             lock (_elm327BufferLock)
             {
-                if (_elm327CarlyRespList != null && _elm327CarlyRespList.Count > 0)
+                if (_elm327FullRespList != null && _elm327FullRespList.Count > 0)
                 {
-                    string answer = _elm327CarlyRespList[0];
-                    _elm327CarlyRespList.RemoveAt(0);
-                    if (_elm327CarlyRespList.Count == 0)
+                    string answer = _elm327FullRespList[0];
+                    _elm327FullRespList.RemoveAt(0);
+                    if (_elm327FullRespList.Count == 0)
                     {
                         _elm327DataMode = false;
-                        _elm327CarlyRespList = null;
+                        _elm327FullRespList = null;
                     }
 
                     Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN rec cached: {0}", answer);
                     return answer;
                 }
 
-                _elm327CarlyRespList = null;
+                _elm327FullRespList = null;
             }
 
             try
@@ -1300,7 +1298,7 @@ namespace EdiabasLib
                                     {
                                         lock (_elm327BufferLock)
                                         {
-                                            _elm327CarlyRespList = recList;
+                                            _elm327FullRespList = recList;
                                         }
                                     }
 
@@ -1398,7 +1396,7 @@ namespace EdiabasLib
                                 {
                                     lock (_elm327BufferLock)
                                     {
-                                        _elm327CarlyRespList = recList;
+                                        _elm327FullRespList = recList;
                                     }
                                 }
 
@@ -1459,7 +1457,7 @@ namespace EdiabasLib
 
         bool ReceiverBusy()
         {
-            if (_elm327CarlyTransport)
+            if (_elm327FullTransport || _elm327CarlyTransport)
             {
                 if (_elm327ReceiverBusy)
                 {
@@ -1473,7 +1471,7 @@ namespace EdiabasLib
                         return true;
                     }
 
-                    if (_elm327CarlyRespList != null && _elm327CarlyRespList.Count > 0)
+                    if (_elm327FullRespList != null && _elm327FullRespList.Count > 0)
                     {
                         return true;
                     }
