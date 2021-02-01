@@ -70,15 +70,7 @@ namespace EdiabasLib
 
         public static ElmInitEntry[] Elm327InitFullTransport =
         {
-            new ElmInitEntry("ATSH6F1"),
-            new ElmInitEntry("ATFCSH6F1"),
-            new ElmInitEntry("ATPBC101"),   // set Parameter for CAN B Custom Protocol 11/500 with var. DLC
-            new ElmInitEntry("ATBI"),       // bypass init sequence
-        };
-
-        public static ElmInitEntry[] Elm327InitCarlyTransport =
-        {
-            new ElmInitEntry("ATGB1"),      // switch to binary mode
+            new ElmInitEntry("ATGB1"),      // switch to binary mode, optional
             new ElmInitEntry("ATSH6F1"),
             new ElmInitEntry("ATFCSH6F1"),
             new ElmInitEntry("ATPBC101"),   // set Parameter for CAN B Custom Protocol 11/500 with var. DLC
@@ -284,34 +276,27 @@ namespace EdiabasLib
             }
             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM transport type: {0}", _elm327TransportType);
 
-            switch (_elm327TransportType)
+            if (_elm327TransportType != TransportType.Standard)
             {
-                case TransportType.WgSoft:
-                    foreach (ElmInitEntry elmInitEntry in Elm327InitFullTransport)
+                foreach (ElmInitEntry elmInitEntry in Elm327InitFullTransport)
+                {
+                    bool binaryCmd = string.Compare(elmInitEntry.Command, "ATGB1", StringComparison.OrdinalIgnoreCase) == 0;
+                    if (!Elm327SendCommand(elmInitEntry.Command))
                     {
-                        if (!Elm327SendCommand(elmInitEntry.Command))
+                        Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM carly transport command {0} failed", elmInitEntry.Command);
+                        if (!binaryCmd)
                         {
-                            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM full transport command {0} failed", elmInitEntry.Command);
                             return false;
                         }
                     }
-                    break;
-
-                case TransportType.Carly:
-                    foreach (ElmInitEntry elmInitEntry in Elm327InitCarlyTransport)
+                    else
                     {
-                        if (!Elm327SendCommand(elmInitEntry.Command))
-                        {
-                            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM carly transport command {0} failed", elmInitEntry.Command);
-                            return false;
-                        }
-
-                        if (string.Compare(elmInitEntry.Command, "ATGB1", StringComparison.OrdinalIgnoreCase) == 0)
+                        if (binaryCmd)
                         {
                             _elm327BinaryData = true;
                         }
                     }
-                    break;
+                }
             }
 
             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM binary data: {0}", _elm327BinaryData);
