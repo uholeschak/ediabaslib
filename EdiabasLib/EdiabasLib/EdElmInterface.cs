@@ -1008,9 +1008,9 @@ namespace EdiabasLib
 
                 string answer;
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                if (_elm327TransportType == TransportType.Carly)
+                if (_elm327TransportType != TransportType.Standard)
                 {
-                    answer = Elm327DataCarlyAnswer(timeout);
+                    answer = Elm327DataFullAnswer(timeout);
                 }
                 else
                 {
@@ -1209,7 +1209,7 @@ namespace EdiabasLib
             }
         }
 
-        private string Elm327DataCarlyAnswer(int timeout)
+        private string Elm327DataFullAnswer(int timeout)
         {
             lock (_elm327BufferLock)
             {
