@@ -13,6 +13,13 @@ namespace EdiabasLib
 {
     public class EdElmInterface : IDisposable
     {
+        public enum TransportType
+        {
+            Standard,
+            WgSoft,
+            Carly,
+        }
+
         public class ElmInitEntry
         {
             public ElmInitEntry(string command, int version = -1, bool okResponse = true)
@@ -92,8 +99,7 @@ namespace EdiabasLib
         private readonly Stream _outStream;
         private long _elm327ReceiveStartTime;
         private bool _elm327DataMode;
-        private bool _elm327FullTransport;
-        private bool _elm327CarlyTransport;
+        private TransportType _elm327TransportType;
         private volatile bool _elm327ReceiverBusy;
         private int _elm327TimeoutMultiplier = 1;
         private bool _elm327BinaryData;
@@ -202,6 +208,7 @@ namespace EdiabasLib
             _elm327ReceiverBusy = false;
             _elm327TimeoutMultiplier = 1;
             _elm327BinaryData = false;
+            _elm327TransportType = TransportType.Standard;
             lock (_elm327BufferLock)
             {
                 _elm327RequBuffer = null;
@@ -260,7 +267,7 @@ namespace EdiabasLib
             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM ID: {0}", elmDevDesc);
             if (elmDevDesc.ToUpperInvariant().Contains("CARLY-UNIVERSAL"))
             {
-                _elm327CarlyTransport = true;
+                _elm327TransportType = TransportType.Carly;
             }
 
             if (!Elm327SendCommand("AT#1", false))
@@ -271,41 +278,40 @@ namespace EdiabasLib
             string elmManufact = Elm327ReceiveAnswer(Elm327CommandTimeout);
             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM Manufacturer: {0}", elmManufact);
 
-            if (!_elm327CarlyTransport && elmManufact.ToUpperInvariant().Contains("WGSOFT"))
+            if (_elm327TransportType == TransportType.Standard && elmManufact.ToUpperInvariant().Contains("WGSOFT"))
             {
-                _elm327FullTransport = true;
+                _elm327TransportType = TransportType.WgSoft;
             }
-            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM full transport: {0}", _elm327FullTransport);
+            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM transport type: {0}", _elm327TransportType);
 
-            if (_elm327CarlyTransport)
+            switch (_elm327TransportType)
             {
-                foreach (ElmInitEntry elmInitEntry in Elm327InitCarlyTransport)
-                {
-                    if (!Elm327SendCommand(elmInitEntry.Command))
+                case TransportType.WgSoft:
+                    foreach (ElmInitEntry elmInitEntry in Elm327InitFullTransport)
                     {
-                        Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM carly transport command {0} failed", elmInitEntry.Command);
-                        return false;
+                        if (!Elm327SendCommand(elmInitEntry.Command))
+                        {
+                            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM full transport command {0} failed", elmInitEntry.Command);
+                            return false;
+                        }
                     }
-                    else
+                    break;
+
+                case TransportType.Carly:
+                    foreach (ElmInitEntry elmInitEntry in Elm327InitCarlyTransport)
                     {
+                        if (!Elm327SendCommand(elmInitEntry.Command))
+                        {
+                            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM carly transport command {0} failed", elmInitEntry.Command);
+                            return false;
+                        }
+
                         if (string.Compare(elmInitEntry.Command, "ATGB1", StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             _elm327BinaryData = true;
                         }
                     }
-                }
-            }
-
-            if (_elm327FullTransport)
-            {
-                foreach (ElmInitEntry elmInitEntry in Elm327InitFullTransport)
-                {
-                    if (!Elm327SendCommand(elmInitEntry.Command))
-                    {
-                        Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM full transport command {0} failed", elmInitEntry.Command);
-                        return false;
-                    }
-                }
+                    break;
             }
 
             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM binary data: {0}", _elm327BinaryData);
@@ -363,7 +369,7 @@ namespace EdiabasLib
         {
             while (!_elm327TerminateThread)
             {
-                if (_elm327FullTransport || _elm327CarlyTransport)
+                if (_elm327TransportType != TransportType.Standard)
                 {
                     Elm327CanSenderFull();
                 }
@@ -485,7 +491,7 @@ namespace EdiabasLib
                 }
 
                 int blockSize = 0x00;
-                int sepTime = _elm327CarlyTransport ? 0x02 : 0x00;
+                int sepTime = _elm327TransportType == TransportType.Carly ? 0x02 : 0x00;
                 if (!Elm327SendCommand("ATFCSD" + string.Format("{0:X02}30{1:X02}{2:X02}", targetAddr, blockSize, sepTime)))
                 {
                     return;
@@ -682,7 +688,7 @@ namespace EdiabasLib
             byte[] recDataBuffer = null;
             for (;;)
             {
-                bool dataAvailable = _elm327FullTransport || _elm327CarlyTransport || DataAvailable();
+                bool dataAvailable = _elm327TransportType != TransportType.Standard || DataAvailable();
                 if (recLen == 0 && !dataAvailable)
                 {
                     return;
@@ -734,7 +740,7 @@ namespace EdiabasLib
                                     }
                                     blockCount = 1;
 
-                                    if (_elm327CarlyTransport)
+                                    if (_elm327TransportType == TransportType.Carly)
                                     {
                                         bool respListEmpty;
                                         lock (_elm327BufferLock)
@@ -757,7 +763,7 @@ namespace EdiabasLib
                                         }
                                     }
 
-                                    if (!_elm327FullTransport && !_elm327CarlyTransport)
+                                    if (_elm327TransportType == TransportType.Standard)
                                     {
                                         byte[] canSendBuffer = new byte[8];
                                         canSendBuffer[0] = sourceAddr;
@@ -809,7 +815,7 @@ namespace EdiabasLib
                             }
                             recLen += telLen;
                             blockCount++;
-                            if (!_elm327FullTransport && !_elm327CarlyTransport && fcCount > 0 && recLen < recDataBuffer.Length)
+                            if (_elm327TransportType == TransportType.Standard && fcCount > 0 && recLen < recDataBuffer.Length)
                             {
                                 fcCount--;
                                 if (fcCount == 0)
@@ -932,7 +938,7 @@ namespace EdiabasLib
             try
             {
                 int timeout = expectResponse? 0xFF : 0x00;
-                if (_elm327FullTransport || _elm327CarlyTransport)
+                if (_elm327TransportType != TransportType.Standard)
                 {
                     if (specialTimeout >= 0)
                     {
@@ -1002,7 +1008,7 @@ namespace EdiabasLib
 
                 string answer;
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                if (_elm327CarlyTransport)
+                if (_elm327TransportType == TransportType.Carly)
                 {
                     answer = Elm327DataCarlyAnswer(timeout);
                 }
@@ -1055,7 +1061,7 @@ namespace EdiabasLib
 
         private bool Elm327LeaveDataMode(int timeout)
         {
-            if (_elm327FullTransport || _elm327CarlyTransport)
+            if (_elm327TransportType != TransportType.Standard)
             {
                 _elm327DataMode = false;
                 _elm327ReceiverBusy = false;
@@ -1457,7 +1463,7 @@ namespace EdiabasLib
 
         bool ReceiverBusy()
         {
-            if (_elm327FullTransport || _elm327CarlyTransport)
+            if (_elm327TransportType != TransportType.Standard)
             {
                 if (_elm327ReceiverBusy)
                 {
