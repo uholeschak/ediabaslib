@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading;
 using Android.Bluetooth;
 using Android.Content;
-using Android.Nfc;
 
 namespace EdiabasLib
 {
@@ -17,8 +16,8 @@ namespace EdiabasLib
 #if DEBUG
         private static readonly string Tag = typeof(BtLeGattSpp).FullName;
 #endif
-        private static readonly Java.Util.UUID GattServiceSpp = Java.Util.UUID.FromString("0000ffe0-0000-1000-8000-00805f9b34fb");
-        private static readonly Java.Util.UUID GattCharacteristicSpp = Java.Util.UUID.FromString("0000ffe1-0000-1000-8000-00805f9b34fb");
+        private static readonly Java.Util.UUID GattServiceCarlySpp = Java.Util.UUID.FromString("0000ffe0-0000-1000-8000-00805f9b34fb");
+        private static readonly Java.Util.UUID GattCharacteristicCarlySpp = Java.Util.UUID.FromString("0000ffe1-0000-1000-8000-00805f9b34fb");
         private static readonly Java.Util.UUID GattCharacteristicConfig = Java.Util.UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
 
         private bool _disposed;
@@ -28,7 +27,10 @@ namespace EdiabasLib
         private readonly AutoResetEvent _btGattReceivedEvent = new AutoResetEvent(false);
         private readonly AutoResetEvent _btGattWriteEvent = new AutoResetEvent(false);
         private BluetoothGatt _bluetoothGatt;
-        private BluetoothGattCharacteristic _gattCharacteristicSpp;
+        private BluetoothGattCharacteristic _gattCharacteristicSppRead;
+        private BluetoothGattCharacteristic _gattCharacteristicSppWrite;
+        private Java.Util.UUID _gattCharacteristicUuidSppRead;
+        private Java.Util.UUID _gattCharacteristicUuidSppWrite;
         private volatile State _gattConnectionState = State.Disconnected;
         private volatile bool _gattServicesDiscovered;
         private GattStatus _gattWriteStatus = GattStatus.Failure;
@@ -133,34 +135,41 @@ namespace EdiabasLib
                 }
 #endif
 
-                _gattCharacteristicSpp = null;
-                BluetoothGattService gattServiceSpp = _bluetoothGatt.GetService(GattServiceSpp);
-                BluetoothGattCharacteristic gattCharacteristicSpp = gattServiceSpp?.GetCharacteristic(GattCharacteristicSpp);
+                _gattCharacteristicSppRead = null;
+                _gattCharacteristicSppWrite = null;
+                _gattCharacteristicUuidSppRead = null;
+                _gattCharacteristicUuidSppWrite = null;
+
+                BluetoothGattService gattServiceSpp = _bluetoothGatt.GetService(GattServiceCarlySpp);
+                BluetoothGattCharacteristic gattCharacteristicSpp = gattServiceSpp?.GetCharacteristic(GattCharacteristicCarlySpp);
                 if (gattCharacteristicSpp != null)
                 {
                     if ((gattCharacteristicSpp.Properties & (GattProperty.Read | GattProperty.Write | GattProperty.Notify)) ==
                         (GattProperty.Read | GattProperty.Write | GattProperty.Notify))
                     {
-                        _gattCharacteristicSpp = gattCharacteristicSpp;
+                        _gattCharacteristicSppRead = gattCharacteristicSpp;
+                        _gattCharacteristicSppWrite = gattCharacteristicSpp;
+                        _gattCharacteristicUuidSppRead = GattCharacteristicCarlySpp;
+                        _gattCharacteristicUuidSppWrite = GattCharacteristicCarlySpp;
 #if DEBUG
                         Android.Util.Log.Info(Tag, "SPP characteristic found");
 #endif
                     }
                 }
 
-                if (_gattCharacteristicSpp == null)
+                if (_gattCharacteristicSppRead == null)
                 {
                     LogString("*** No GATT SPP characteristic found");
                     return false;
                 }
 
-                if (!_bluetoothGatt.SetCharacteristicNotification(_gattCharacteristicSpp, true))
+                if (!_bluetoothGatt.SetCharacteristicNotification(_gattCharacteristicSppRead, true))
                 {
                     LogString("*** GATT SPP enable notification failed");
                     return false;
                 }
 
-                BluetoothGattDescriptor descriptor = _gattCharacteristicSpp.GetDescriptor(GattCharacteristicConfig);
+                BluetoothGattDescriptor descriptor = _gattCharacteristicSppRead.GetDescriptor(GattCharacteristicConfig);
                 if (descriptor == null)
                 {
                     LogString("*** GATT SPP config descriptor not found");
@@ -226,11 +235,13 @@ namespace EdiabasLib
             }
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private bool ReadGattSppData(BluetoothGattCharacteristic characteristic)
         {
             try
             {
-                if (characteristic.Uuid != null && characteristic.Uuid.Equals(GattCharacteristicSpp))
+                if (characteristic.Uuid != null && _gattCharacteristicUuidSppRead != null &&
+                    characteristic.Uuid.Equals(_gattCharacteristicUuidSppRead))
                 {
                     byte[] data = characteristic.GetValue();
                     if (data != null)
@@ -257,19 +268,21 @@ namespace EdiabasLib
         {
             try
             {
-                if (_gattCharacteristicSpp != null)
+                if (_gattCharacteristicSppRead != null)
                 {
                     try
                     {
-                        _bluetoothGatt?.SetCharacteristicNotification(_gattCharacteristicSpp, false);
+                        _bluetoothGatt?.SetCharacteristicNotification(_gattCharacteristicSppRead, false);
                     }
                     catch (Exception)
                     {
                         // ignored
                     }
 
-                    _gattCharacteristicSpp = null;
+                    _gattCharacteristicSppRead = null;
                 }
+
+                _gattCharacteristicSppWrite = null;
 
                 _gattConnectionState = State.Disconnected;
                 _gattServicesDiscovered = false;
@@ -394,7 +407,8 @@ namespace EdiabasLib
                 GattStatus resultStatus = GattStatus.Failure;
                 if (status == GattStatus.Success)
                 {
-                    if (characteristic.Uuid != null && characteristic.Uuid.Equals(GattCharacteristicSpp))
+                    if (characteristic.Uuid != null && _btLeGattSpp._gattCharacteristicUuidSppWrite != null &&
+                        characteristic.Uuid.Equals(_btLeGattSpp._gattCharacteristicUuidSppWrite))
                     {
                         resultStatus = status;
                     }
@@ -441,7 +455,7 @@ namespace EdiabasLib
                 base.Write(buffer, offset, count);
 
                 if (_btLeGattSpp._gattConnectionState != State.Connected ||
-                    _btLeGattSpp._gattCharacteristicSpp == null)
+                    _btLeGattSpp._gattCharacteristicSppWrite == null)
                 {
                     throw new IOException("GATT disconnected");
                 }
@@ -463,8 +477,8 @@ namespace EdiabasLib
                         BitConverter.ToString(sendData).Replace("-", ""), Encoding.UTF8.GetString(sendData)));
 #endif
                     _btLeGattSpp._gattWriteStatus = GattStatus.Failure;
-                    _btLeGattSpp._gattCharacteristicSpp.SetValue(sendData);
-                    if (!_btLeGattSpp._bluetoothGatt.WriteCharacteristic(_btLeGattSpp._gattCharacteristicSpp))
+                    _btLeGattSpp._gattCharacteristicSppWrite.SetValue(sendData);
+                    if (!_btLeGattSpp._bluetoothGatt.WriteCharacteristic(_btLeGattSpp._gattCharacteristicSppWrite))
                     {
                         throw new IOException("WriteCharacteristic failed");
                     }
