@@ -18,6 +18,9 @@ namespace EdiabasLib
 #endif
         private static readonly Java.Util.UUID GattServiceCarlySpp = Java.Util.UUID.FromString("0000ffe0-0000-1000-8000-00805f9b34fb");
         private static readonly Java.Util.UUID GattCharacteristicCarlySpp = Java.Util.UUID.FromString("0000ffe1-0000-1000-8000-00805f9b34fb");
+        private static readonly Java.Util.UUID GattServiceWgSoftSpp = Java.Util.UUID.FromString("0000fff0-0000-1000-8000-00805f9b34fb");
+        private static readonly Java.Util.UUID GattCharacteristicWgSoftSppRead = Java.Util.UUID.FromString("0000fff1-0000-1000-8000-00805f9b34fb");
+        private static readonly Java.Util.UUID GattCharacteristicWgSoftSppWrite = Java.Util.UUID.FromString("0000fff2-0000-1000-8000-00805f9b34fb");
         private static readonly Java.Util.UUID GattCharacteristicConfig = Java.Util.UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
 
         private bool _disposed;
@@ -152,12 +155,32 @@ namespace EdiabasLib
                         _gattCharacteristicUuidSppRead = GattCharacteristicCarlySpp;
                         _gattCharacteristicUuidSppWrite = GattCharacteristicCarlySpp;
 #if DEBUG
-                        Android.Util.Log.Info(Tag, "SPP characteristic found");
+                        Android.Util.Log.Info(Tag, "SPP characteristic Carly found");
+#endif
+                    }
+                }
+                else
+                {
+                    gattServiceSpp = _bluetoothGatt.GetService(GattServiceWgSoftSpp);
+                    BluetoothGattCharacteristic gattCharacteristicSppRead = gattServiceSpp?.GetCharacteristic(GattCharacteristicWgSoftSppRead);
+                    BluetoothGattCharacteristic gattCharacteristicSppWrite = gattServiceSpp?.GetCharacteristic(GattCharacteristicWgSoftSppWrite);
+                    if (gattCharacteristicSppRead != null && gattCharacteristicSppWrite != null)
+                    {
+                        if (((gattCharacteristicSppRead.Properties & (GattProperty.Read | GattProperty.Notify)) == (GattProperty.Read | GattProperty.Notify)) &&
+                            ((gattCharacteristicSppWrite.Properties & (GattProperty.Write)) == (GattProperty.Write)))
+                        {
+                            _gattCharacteristicSppRead = gattCharacteristicSppRead;
+                            _gattCharacteristicSppWrite = gattCharacteristicSppWrite;
+                            _gattCharacteristicUuidSppRead = GattCharacteristicWgSoftSppRead;
+                            _gattCharacteristicUuidSppWrite = GattCharacteristicWgSoftSppWrite;
+                        }
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "SPP characteristic WgSoft found");
 #endif
                     }
                 }
 
-                if (_gattCharacteristicSppRead == null)
+                if (_gattCharacteristicSppRead == null || _gattCharacteristicSppWrite == null)
                 {
                     LogString("*** No GATT SPP characteristic found");
                     return false;
