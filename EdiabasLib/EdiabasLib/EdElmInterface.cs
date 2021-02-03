@@ -46,6 +46,9 @@ namespace EdiabasLib
             public int Timeout { get; }
         }
 
+        public const string Elm327CarlyIdentifier = "CARLY-UNIVERSAL";
+        public const string Elm327WgSoftIdentifier = "WGSOFT";
+
         public static ElmInitEntry[] Elm327InitCommands =
         {
             new ElmInitEntry("ATD"),
@@ -257,7 +260,7 @@ namespace EdiabasLib
             }
             string elmDevDesc = Elm327ReceiveAnswer(Elm327CommandTimeout);
             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM ID: {0}", elmDevDesc);
-            if (elmDevDesc.ToUpperInvariant().Contains("CARLY-UNIVERSAL"))
+            if (elmDevDesc.ToUpperInvariant().Contains(Elm327CarlyIdentifier))
             {
                 _elm327TransportType = TransportType.Carly;
             }
@@ -270,7 +273,7 @@ namespace EdiabasLib
             string elmManufact = Elm327ReceiveAnswer(Elm327CommandTimeout);
             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM Manufacturer: {0}", elmManufact);
 
-            if (_elm327TransportType == TransportType.Standard && elmManufact.ToUpperInvariant().Contains("WGSOFT"))
+            if (_elm327TransportType == TransportType.Standard && elmManufact.ToUpperInvariant().Contains(Elm327WgSoftIdentifier))
             {
                 _elm327TransportType = TransportType.WgSoft;
             }
