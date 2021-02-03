@@ -57,6 +57,7 @@ namespace BmwDeepObd
             Elm327Invalid,      // ELM327 invalid type
             Elm327Fake,         // ELM327 fake version
             Elm327FakeOpt,      // ELM327 fake version optional command
+            Elm327Limited,      // ELM327 limited support
             Elm327NoCan,        // ELM327 no CAN support
             Custom,             // custom adapter
             CustomNoEscape,     // custom adapter with no escape support
@@ -1158,9 +1159,11 @@ namespace BmwDeepObd
                         case AdapterType.Elm327Invalid:
                         case AdapterType.Elm327Fake:
                         case AdapterType.Elm327FakeOpt:
+                        case AdapterType.Elm327Limited:
                         case AdapterType.Elm327NoCan:
                         {
                             bool yesSelected = false;
+                            bool sendReport = true;
                             AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
                             string message;
@@ -1170,6 +1173,12 @@ namespace BmwDeepObd
                                 case AdapterType.Elm327FakeOpt:
                                     message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.fake_elm_adapter_type), _elmVerH, _elmVerL);
                                     message += "<br>" + GetString(Resource.String.recommened_adapter_type);
+                                    break;
+
+                                case AdapterType.Elm327Limited:
+                                    message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.limited_elm_adapter_type), _elmVerH, _elmVerL);
+                                    message += "<br>" + GetString(Resource.String.recommened_adapter_type);
+                                    sendReport = false;
                                     break;
 
                                 case AdapterType.Elm327NoCan:
@@ -1209,13 +1218,21 @@ namespace BmwDeepObd
                                 {
                                     return;
                                 }
-                                _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), GetType(), (o, eventArgs) =>
+
+                                if (sendReport)
                                 {
-                                    if (yesSelected)
+                                    _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), GetType(), (o, eventArgs) =>
                                     {
-                                        ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
-                                    }
-                                });
+                                        if (yesSelected)
+                                        {
+                                            ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
+                                        }
+                                    });
+                                }
+                                else
+                                {
+                                    ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
+                                }
                             };
                             TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
                             if (messageView != null)
@@ -1557,12 +1574,25 @@ namespace BmwDeepObd
                                 break;
                             }
 
+                            if (!Elm327CheckCompatibility(bluetoothInStream, bluetoothOutStream, out bool restricted))
+                            {
+                                LogString("*** ELM not compatible");
+                                adapterType = AdapterType.Elm327Fake;
+                                break;
+                            }
+
+                            if (restricted)
+                            {
+                                adapterType = AdapterType.Elm327Limited;
+                            }
+
                             if (!Elm327CheckCan(bluetoothInStream, bluetoothOutStream, out bool canSupport))
                             {
                                 LogString("*** ELM CAN detection failed");
                                 adapterType = AdapterType.Elm327Invalid;
                                 break;
                             }
+
                             if (!canSupport)
                             {
                                 LogString("*** ELM no vehicle CAN support");
@@ -1882,6 +1912,69 @@ namespace BmwDeepObd
             else
             {
                 LogString("No custom ELM firmware");
+            }
+
+            return true;
+        }
+
+        private bool Elm327CheckCompatibility(Stream bluetoothInStream, Stream bluetoothOutStream, out bool restricted)
+        {
+            restricted = false;
+            bluetoothInStream.Flush();
+            while (bluetoothInStream.HasData())
+            {
+                bluetoothInStream.ReadByteAsync();
+            }
+
+            if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"AT@1", false))
+            {
+                LogString("*** ELM read device description failed");
+                return false;
+            }
+
+            string elmDevDesc = GetElm327Reponse(bluetoothInStream);
+            if (elmDevDesc != null)
+            {
+                LogString(string.Format("ELM ID: {0}", elmDevDesc));
+                if (elmDevDesc.ToUpperInvariant().Contains(EdElmInterface.Elm327CarlyIdentifier))
+                {
+                    restricted = true;
+                }
+            }
+
+            if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"AT#1", false))
+            {
+                LogString("*** ELM read manufacturer failed");
+                return false;
+            }
+
+            string elmManufact = GetElm327Reponse(bluetoothInStream);
+            if (elmManufact != null)
+            {
+                LogString(string.Format("ELM Manufacturer: {0}", elmManufact));
+                if (elmManufact.ToUpperInvariant().Contains(EdElmInterface.Elm327WgSoftIdentifier))
+                {
+                    restricted = true;
+                }
+            }
+
+            if (!restricted)
+            {
+                if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"ATPP2COFF"))
+                {
+                    LogString("*** ELM ATPP2COFF failed, fake device");
+                    return false;
+                }
+            }
+
+            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+            if (restricted)
+            {
+                LogString("Restricted ELM firmware");
+            }
+            else
+            {
+                LogString("Standard ELM firmware");
             }
 
             return true;
