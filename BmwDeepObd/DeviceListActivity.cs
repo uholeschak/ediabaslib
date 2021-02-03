@@ -1120,14 +1120,28 @@ namespace BmwDeepObd
                         }
 
                         case AdapterType.Elm327:
+                        case AdapterType.Elm327Limited:
                         {
+                            string message;
+                            switch (adapterType)
+                            {
+                                case AdapterType.Elm327Limited:
+                                    message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.limited_elm_adapter_type), _elmVerH, _elmVerL);
+                                    message += "<br>" + GetString(Resource.String.recommened_adapter_type);
+                                    break;
+
+                                default:
+                                    message = GetString(Resource.String.adapter_elm_replacement);
+                                    break;
+                            }
+
                             AlertDialog alertDialog = new AlertDialog.Builder(this)
                                 .SetNeutralButton(Resource.String.button_ok, (sender, args) =>
                                 {
                                     ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
                                 })
                                 .SetCancelable(true)
-                                .SetMessage(ActivityCommon.FromHtml(GetString(Resource.String.adapter_elm_replacement)))
+                                .SetMessage(ActivityCommon.FromHtml(message))
                                 .SetTitle(Resource.String.alert_title_info)
                                 .Show();
                             TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
@@ -1159,11 +1173,9 @@ namespace BmwDeepObd
                         case AdapterType.Elm327Invalid:
                         case AdapterType.Elm327Fake:
                         case AdapterType.Elm327FakeOpt:
-                        case AdapterType.Elm327Limited:
                         case AdapterType.Elm327NoCan:
                         {
                             bool yesSelected = false;
-                            bool sendReport = true;
                             AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
                             string message;
@@ -1173,12 +1185,6 @@ namespace BmwDeepObd
                                 case AdapterType.Elm327FakeOpt:
                                     message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.fake_elm_adapter_type), _elmVerH, _elmVerL);
                                     message += "<br>" + GetString(Resource.String.recommened_adapter_type);
-                                    break;
-
-                                case AdapterType.Elm327Limited:
-                                    message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.limited_elm_adapter_type), _elmVerH, _elmVerL);
-                                    message += "<br>" + GetString(Resource.String.recommened_adapter_type);
-                                    sendReport = false;
                                     break;
 
                                 case AdapterType.Elm327NoCan:
@@ -1219,20 +1225,13 @@ namespace BmwDeepObd
                                     return;
                                 }
 
-                                if (sendReport)
+                                _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), GetType(), (o, eventArgs) =>
                                 {
-                                    _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), GetType(), (o, eventArgs) =>
+                                    if (yesSelected)
                                     {
-                                        if (yesSelected)
-                                        {
-                                            ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
-                                        }
-                                    });
-                                }
-                                else
-                                {
-                                    ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
-                                }
+                                        ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
+                                    }
+                                });
                             };
                             TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
                             if (messageView != null)
