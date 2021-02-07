@@ -196,14 +196,19 @@ namespace BmwDeepObd.FilePicker
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
                     {   // writing to external disk is only allowed in special directories.
                         Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
-                        foreach (Java.IO.File file in externalFilesDirs)
+                        if (externalFilesDirs != null)
                         {
-                            if (file != null && file.IsDirectory && !string.IsNullOrEmpty(file.AbsolutePath))
+                            foreach (Java.IO.File file in externalFilesDirs)
                             {
-                                string name = ActivityCommon.GetTruncatedPathName(file.AbsolutePath);
-                                if (!string.IsNullOrEmpty(name))
+                                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                                if (file != null && file.IsDirectory && !string.IsNullOrEmpty(file.AbsolutePath))
                                 {
-                                    visibleThings.Add(new FileInfoEx(null, "->" + name, file.AbsolutePath));
+                                    string name = ActivityCommon.GetTruncatedPathName(file.AbsolutePath);
+                                    string extState = Android.OS.Environment.GetExternalStorageState(file);
+                                    if (!string.IsNullOrEmpty(name) && extState != null && extState.Equals(Android.OS.Environment.MediaMounted))
+                                    {
+                                        visibleThings.Add(new FileInfoEx(null, "->" + name, file.AbsolutePath));
+                                    }
                                 }
                             }
                         }
