@@ -410,6 +410,11 @@
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
         <Button
+            android:text="@string/settings_storage_open_tree"
+            android:id="@+id/buttonStorageOpenTree"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <Button
             android:id="@+id/buttonStorageLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

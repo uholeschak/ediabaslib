@@ -26,6 +26,7 @@ namespace BmwDeepObd
         private enum ActivityRequest
         {
             RequestDevelopmentSettings,
+            RequestOpenDocumentTree,
         }
 
         private string _appDataDir;
@@ -82,6 +83,7 @@ namespace BmwDeepObd
         private CheckBox _checkBoxUseBmwDatabase;
         private CheckBox _checkBoxScanAllEcus;
         private Button _buttonStorageLocation;
+        private Button _buttonStorageOpenTree;
         private TextView _textViewCaptionNotifications;
         private Button _buttonManageNotifications;
         private CheckBox _checkBoxCollectDebugInfo;
@@ -207,6 +209,13 @@ namespace BmwDeepObd
             _checkBoxUseBmwDatabase = FindViewById<CheckBox>(Resource.Id.checkBoxUseBmwDatabase);
             _checkBoxScanAllEcus = FindViewById<CheckBox>(Resource.Id.checkBoxScanAllEcus);
 
+            _buttonStorageOpenTree = FindViewById<Button>(Resource.Id.buttonStorageOpenTree);
+            _buttonStorageOpenTree.Visibility = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ? ViewStates.Visible : ViewStates.Gone;
+            _buttonStorageOpenTree.Click += (sender, args) =>
+            {
+                OpenDocumentTree();
+            };
+
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);
             _buttonStorageLocation.Click += (sender, args) =>
             {
@@ -317,6 +326,25 @@ namespace BmwDeepObd
             {
                 case ActivityRequest.RequestDevelopmentSettings:
                     UpdateDisplay();
+                    break;
+
+                case ActivityRequest.RequestOpenDocumentTree:
+                    if (data != null && resultCode == Android.App.Result.Ok)
+                    {
+                        Android.Net.Uri treeUri = data.Data;
+                        if (treeUri != null)
+                        {
+                            try
+                            {
+                                ActivityFlags takeFlags = data.Flags & (ActivityFlags.GrantReadUriPermission | ActivityFlags.GrantWriteUriPermission);
+                                ContentResolver?.TakePersistableUriPermission(treeUri, takeFlags);
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+                    }
                     break;
             }
         }
@@ -758,6 +786,26 @@ namespace BmwDeepObd
             {
                 Intent intent = new Intent(Android.Provider.Settings.ActionApplicationDevelopmentSettings);
                 StartActivityForResult(intent, (int)ActivityRequest.RequestDevelopmentSettings);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool OpenDocumentTree()
+        {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+            {
+                return false;
+            }
+
+            try
+            {
+                Intent intent = new Intent(Intent.ActionOpenDocumentTree);
+                intent.PutExtra(Intent.ExtraAllowMultiple, true);
+                StartActivityForResult(intent, (int)ActivityRequest.RequestOpenDocumentTree);
                 return true;
             }
             catch (Exception)

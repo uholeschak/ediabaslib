@@ -360,7 +360,7 @@ namespace BmwDeepObd
                     // When FilePickerActivity returns with a file
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
-                        string fileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
+                        string fileName = data.Extras?.GetString(FilePickerActivity.ExtraFileName);
                         if (AtmelBootloader.CheckHexFile(fileName))
                         {
                             ActivityCommon.UsbFirmwareFileName = fileName;
