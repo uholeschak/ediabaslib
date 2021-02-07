@@ -8223,15 +8223,32 @@ namespace BmwDeepObd
                 if (externalFilesDirs?.Length > 0)
                 {
                     // index 0 is the internal disk
-                    if (externalFilesDirs.Length > 1 && externalFilesDirs[1] != null &&
-                        IsWritable(externalFilesDirs[1].AbsolutePath))
+                    if (externalFilesDirs.Length > 1)
                     {
-                        _externalWritePath = externalFilesDirs[1].AbsolutePath;
+                        Java.IO.File extDir = externalFilesDirs[1];
+                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                        if (extDir != null)
+                        {
+                            string extState = Android.OS.Environment.GetExternalStorageState(extDir);
+                            if (extState != null && extDir.IsDirectory && extState.Equals(Android.OS.Environment.MediaMounted) && IsWritable(extDir.AbsolutePath))
+                            {
+                                _externalWritePath = extDir.AbsolutePath;
+                            }
+                        }
                     }
-                    else if (externalFilesDirs[0] != null &&
-                        IsWritable(externalFilesDirs[0].AbsolutePath))
+
+                    if (string.IsNullOrEmpty(_externalWritePath))
                     {
-                        _externalWritePath = externalFilesDirs[0].AbsolutePath;
+                        Java.IO.File extDir = externalFilesDirs[0];
+                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                        if (extDir != null)
+                        {
+                            string extState = Android.OS.Environment.GetExternalStorageState(extDir);
+                            if (extState != null && extDir.IsDirectory && extState.Equals(Android.OS.Environment.MediaMounted) && IsWritable(extDir.AbsolutePath))
+                            {
+                                _externalWritePath = extDir.AbsolutePath;
+                            }
+                        }
                     }
                 }
             }
