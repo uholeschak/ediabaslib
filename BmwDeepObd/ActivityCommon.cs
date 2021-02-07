@@ -8208,13 +8208,19 @@ namespace BmwDeepObd
             if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
             {
 #pragma warning disable 618
-                _externalPath = Android.OS.Environment.ExternalStorageDirectory?.AbsolutePath;
+                Java.IO.File extDir = Android.OS.Environment.ExternalStorageDirectory;
 #pragma warning restore 618
+                string extState = Android.OS.Environment.ExternalStorageState;
+                if (extDir != null && extState != null && extDir.IsDirectory && extState.Equals(Android.OS.Environment.MediaMounted))
+                {
+                    _externalPath = extDir.AbsolutePath;
+                }
             }
+
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
             {   // writing to external disk is only allowed in special directories.
                 Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
-                if (externalFilesDirs.Length > 0)
+                if (externalFilesDirs?.Length > 0)
                 {
                     // index 0 is the internal disk
                     if (externalFilesDirs.Length > 1 && externalFilesDirs[1] != null &&

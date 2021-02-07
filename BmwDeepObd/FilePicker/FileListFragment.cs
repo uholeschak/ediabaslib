@@ -177,6 +177,22 @@ namespace BmwDeepObd.FilePicker
             {
                 if (_allowDirChange)
                 {
+                    if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
+                    {
+#pragma warning disable 618
+                        Java.IO.File extDir = Android.OS.Environment.ExternalStorageDirectory;
+#pragma warning restore 618
+                        string extState = Android.OS.Environment.ExternalStorageState;
+                        if (extDir != null && extState != null && extDir.IsDirectory && extState.Equals(Android.OS.Environment.MediaMounted))
+                        {
+                            string name = ActivityCommon.GetTruncatedPathName(extDir.AbsolutePath);
+                            if (!string.IsNullOrEmpty(name))
+                            {
+                                visibleThings.Add(new FileInfoEx(null, "->" + name, extDir.AbsolutePath));
+                            }
+                        }
+                    }
+
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
                     {   // writing to external disk is only allowed in special directories.
                         Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
