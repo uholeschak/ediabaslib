@@ -34,6 +34,7 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using Android.Content.PM;
 using Android.Locations;
+using Android.Provider;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Android.Support.V4.Provider;
@@ -8194,14 +8195,26 @@ namespace BmwDeepObd
                     {
                         if (uriPermission.Uri != null && uriPermission.IsWritePermission)
                         {
-                            DocumentFile documentFile = DocumentFile.FromTreeUri(_context, uriPermission.Uri);
-                            if (documentFile != null && documentFile.IsDirectory && documentFile.CanWrite())
+                            try
                             {
-                                string path = documentFile.Uri?.Path;
-                                if (!string.IsNullOrEmpty(path))
+                                string docId = DocumentsContract.GetTreeDocumentId(uriPermission.Uri);
+                                if (!string.IsNullOrEmpty(docId))
                                 {
-                                    storageList.Add(path);
+                                    string[] parts = docId.Split(':');
+                                    if (parts.Length > 1)
+                                    {
+                                        storageList.Add(parts[1]);
+                                    }
                                 }
+
+                                DocumentFile documentFile = DocumentFile.FromTreeUri(_context, uriPermission.Uri);
+                                if (documentFile != null && documentFile.IsDirectory && documentFile.CanWrite())
+                                {
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
                             }
                         }
                     }
