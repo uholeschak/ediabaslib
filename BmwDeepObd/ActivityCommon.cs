@@ -36,6 +36,7 @@ using Android.Content.PM;
 using Android.Locations;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
+using Android.Support.V4.Provider;
 using Android.Views;
 using BmwFileReader;
 using UdsFileReader;
@@ -8181,11 +8182,31 @@ namespace BmwDeepObd
             return Path.Combine(filesDir.AbsolutePath, SettingsFile);
         }
 
-        public static List<string> GetAllStorageMedia()
+        public List<string> GetAllStorageMedia()
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
             {
                 List<string> storageList = new List<string>();
+                IList<UriPermission> uriPermissions = _context.ContentResolver?.PersistedUriPermissions;
+                if (uriPermissions != null)
+                {
+                    foreach (UriPermission uriPermission in uriPermissions)
+                    {
+                        if (uriPermission.Uri != null && uriPermission.IsWritePermission)
+                        {
+                            DocumentFile documentFile = DocumentFile.FromTreeUri(_context, uriPermission.Uri);
+                            if (documentFile != null && documentFile.IsDirectory && documentFile.CanWrite())
+                            {
+                                string path = documentFile.Uri?.Path;
+                                if (!string.IsNullOrEmpty(path))
+                                {
+                                    storageList.Add(path);
+                                }
+                            }
+                        }
+                    }
+                }
+
                 Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
                 if (externalFilesDirs != null)
                 {
