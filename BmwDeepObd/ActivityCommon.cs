@@ -8187,16 +8187,24 @@ namespace BmwDeepObd
             {
                 List<string> storageList = new List<string>();
                 Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
-                // ReSharper disable once LoopCanBeConvertedToQuery
-                foreach (Java.IO.File file in externalFilesDirs)
+                if (externalFilesDirs != null)
                 {
-                    if (file != null && IsWritable(file.AbsolutePath))
+                    foreach (Java.IO.File file in externalFilesDirs)
                     {
-                        storageList.Add(file.AbsolutePath);
+                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                        if (file != null)
+                        {
+                            string extState = Android.OS.Environment.GetExternalStorageState(file);
+                            if (extState != null && extState.Equals(Android.OS.Environment.MediaMounted) && IsWritable(file.AbsolutePath))
+                            {
+                                storageList.Add(file.AbsolutePath);
+                            }
+                        }
                     }
                 }
                 return storageList;
             }
+
             string procMounts = ReadProcMounts();
             return ParseStorageMedia(procMounts);
         }
