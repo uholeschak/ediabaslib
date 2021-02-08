@@ -514,7 +514,6 @@ namespace BmwDeepObd
         private readonly Android.App.NotificationManager _notificationManager;
         private readonly PowerManager _powerManager;
         private readonly PackageManager _packageManager;
-        private readonly StorageManager _storageManager;
         private readonly Android.App.ActivityManager _activityManager;
         private readonly MtcServiceConnection _mtcServiceConnection;
         private PowerManager.WakeLock _wakeLockScreenBright;
@@ -1015,7 +1014,6 @@ namespace BmwDeepObd
                     };
             }
             _packageManager = context?.PackageManager;
-            _storageManager = context?.GetSystemService(Context.StorageService) as StorageManager;
             _activityManager = context?.GetSystemService(Context.ActivityService) as Android.App.ActivityManager;
             _selectedInterface = InterfaceType.None;
             _yandexTransDict = cacheActivity?._yandexTransDict ?? new Dictionary<string, Dictionary<string, string>>();
@@ -1708,6 +1706,15 @@ namespace BmwDeepObd
                 return false;
             }
             return true;
+        }
+
+        public static bool IsDocumentTreeSupported()
+        {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+            {
+                return true;
+            }
+            return false;
         }
 
         public static bool IsCpuStatisticsSupported()
@@ -8192,7 +8199,7 @@ namespace BmwDeepObd
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
             {
                 List<string> storageList = new List<string>();
-                storageList.AddRange(GetPersistedStorages());
+                storageList.AddRange(GetPersistedStorages(_context));
 
                 Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
                 if (externalFilesDirs != null)
@@ -8217,12 +8224,12 @@ namespace BmwDeepObd
             return ParseStorageMedia(procMounts);
         }
 
-        public List<string> GetPersistedStorages()
+        public static List<string> GetPersistedStorages(Context context)
         {
             List<string> storageList = new List<string>();
-            if (Build.VERSION.SdkInt > BuildVersionCodes.Q)
+            if (IsDocumentTreeSupported())
             {
-                IList<UriPermission> uriPermissions = _context.ContentResolver?.PersistedUriPermissions;
+                IList<UriPermission> uriPermissions = context.ContentResolver?.PersistedUriPermissions;
                 if (uriPermissions != null)
                 {
                     foreach (UriPermission uriPermission in uriPermissions)
@@ -8239,7 +8246,7 @@ namespace BmwDeepObd
                                     {
                                         string volumeId = parts[0];
                                         string docPath = parts[1];
-                                        string volumePath = GetVolumePath(volumeId);
+                                        string volumePath = GetVolumePath(context, volumeId);
                                         if (!string.IsNullOrEmpty(docPath) && !string.IsNullOrEmpty(volumePath))
                                         {
                                             string fullPath = Path.Combine(volumePath, docPath);
@@ -8260,11 +8267,11 @@ namespace BmwDeepObd
             return storageList;
         }
 
-        public string GetVolumePath(string volumeId)
+        public static string GetVolumePath(Context context, string volumeId)
         {
             try
             {
-                if (Build.VERSION.SdkInt <= BuildVersionCodes.Q)
+                if (!IsDocumentTreeSupported())
                 {
                     return null;
                 }
@@ -8274,7 +8281,8 @@ namespace BmwDeepObd
                     return null;
                 }
 
-                IList<StorageVolume> storageVolumes = _storageManager?.StorageVolumes;
+                StorageManager storageManager = context?.GetSystemService(Context.StorageService) as StorageManager;
+                IList<StorageVolume> storageVolumes = storageManager?.StorageVolumes;
                 if (storageVolumes == null)
                 {
                     return null;
