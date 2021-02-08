@@ -195,7 +195,7 @@ namespace BmwDeepObd.FilePicker
 
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
                     {   // writing to external disk is only allowed in special directories.
-                        List<string> storageList = ActivityCommon.GetPersistedStorages(Activity);
+                        List<string> storageList = ActivityCommon.GetPersistedStorages();
                         foreach (string storage in storageList)
                         {
                             string name = ActivityCommon.GetTruncatedPathName(storage);
