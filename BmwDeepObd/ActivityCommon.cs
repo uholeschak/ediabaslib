@@ -8199,7 +8199,7 @@ namespace BmwDeepObd
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
             {
                 List<string> storageList = new List<string>();
-                storageList.AddRange(GetPersistedStorages(_context));
+                storageList.AddRange(GetPersistedStorages());
 
                 Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
                 if (externalFilesDirs != null)
@@ -8224,12 +8224,12 @@ namespace BmwDeepObd
             return ParseStorageMedia(procMounts);
         }
 
-        public static List<string> GetPersistedStorages(Context context)
+        public static List<string> GetPersistedStorages()
         {
             List<string> storageList = new List<string>();
             if (IsDocumentTreeSupported())
             {
-                IList<UriPermission> uriPermissions = context.ContentResolver?.PersistedUriPermissions;
+                IList<UriPermission> uriPermissions = Android.App.Application.Context.ContentResolver?.PersistedUriPermissions;
                 if (uriPermissions != null)
                 {
                     foreach (UriPermission uriPermission in uriPermissions)
@@ -8246,7 +8246,7 @@ namespace BmwDeepObd
                                     {
                                         string volumeId = parts[0];
                                         string docPath = parts[1];
-                                        string volumePath = GetVolumePath(context, volumeId);
+                                        string volumePath = GetVolumePath(volumeId);
                                         if (!string.IsNullOrEmpty(docPath) && !string.IsNullOrEmpty(volumePath))
                                         {
                                             string fullPath = Path.Combine(volumePath, docPath);
@@ -8267,7 +8267,7 @@ namespace BmwDeepObd
             return storageList;
         }
 
-        public static string GetVolumePath(Context context, string volumeId)
+        public static string GetVolumePath(string volumeId)
         {
             try
             {
@@ -8281,7 +8281,7 @@ namespace BmwDeepObd
                     return null;
                 }
 
-                StorageManager storageManager = context?.GetSystemService(Context.StorageService) as StorageManager;
+                StorageManager storageManager = Android.App.Application.Context.GetSystemService(Context.StorageService) as StorageManager;
                 IList<StorageVolume> storageVolumes = storageManager?.StorageVolumes;
                 if (storageVolumes == null)
                 {
