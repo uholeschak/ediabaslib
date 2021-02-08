@@ -210,7 +210,7 @@ namespace BmwDeepObd
             _checkBoxScanAllEcus = FindViewById<CheckBox>(Resource.Id.checkBoxScanAllEcus);
 
             _buttonStorageOpenTree = FindViewById<Button>(Resource.Id.buttonStorageOpenTree);
-            _buttonStorageOpenTree.Visibility = Build.VERSION.SdkInt > BuildVersionCodes.Q ? ViewStates.Visible : ViewStates.Gone;
+            _buttonStorageOpenTree.Visibility = ActivityCommon.IsDocumentTreeSupported() ? ViewStates.Visible : ViewStates.Gone;
             _buttonStorageOpenTree.Click += (sender, args) =>
             {
                 OpenDocumentTree();
@@ -796,7 +796,7 @@ namespace BmwDeepObd
 
         private bool OpenDocumentTree()
         {
-            if (Build.VERSION.SdkInt <= BuildVersionCodes.Q)
+            if (!ActivityCommon.IsDocumentTreeSupported())
             {
                 return false;
             }
