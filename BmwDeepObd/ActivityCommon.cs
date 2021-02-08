@@ -8532,13 +8532,13 @@ namespace BmwDeepObd
                     sb.Append(dirList[i]);
                     if (i + 1 >= maxRootParts)
                     {
-                        if (dirList.Count > maxRootParts + 2)
+                        if (dirList.Count > maxRootParts + 1)
                         {
                             sb.Append(Path.DirectorySeparatorChar.ToString());
                             sb.Append("...");
                         }
 
-                        if (dirList.Count > maxRootParts + 1)
+                        if (dirList.Count > maxRootParts)
                         {
                             sb.Append(Path.DirectorySeparatorChar.ToString());
                             sb.Append(dirList[dirList.Count - 1]);
