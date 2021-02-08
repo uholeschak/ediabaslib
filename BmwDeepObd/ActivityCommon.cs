@@ -34,6 +34,7 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using Android.Content.PM;
 using Android.Locations;
+using Android.OS.Storage;
 using Android.Provider;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
@@ -280,6 +281,7 @@ namespace BmwDeepObd
         public const int FileIoRetries = 10;
         public const int FileIoRetryDelay = 1000;
         public const SslProtocols DefaultSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13;
+        public const string PrimaryVolumeName = "primary";
         public const string MtcBtAppName = @"com.microntek.bluetooth";
         public const string DefaultLang = "en";
         public const string TraceFileName = "ifh.trc.zip";
@@ -512,6 +514,7 @@ namespace BmwDeepObd
         private readonly Android.App.NotificationManager _notificationManager;
         private readonly PowerManager _powerManager;
         private readonly PackageManager _packageManager;
+        private readonly StorageManager _storageManager;
         private readonly Android.App.ActivityManager _activityManager;
         private readonly MtcServiceConnection _mtcServiceConnection;
         private PowerManager.WakeLock _wakeLockScreenBright;
@@ -1012,6 +1015,7 @@ namespace BmwDeepObd
                     };
             }
             _packageManager = context?.PackageManager;
+            _storageManager = context?.GetSystemService(Context.StorageService) as StorageManager;
             _activityManager = context?.GetSystemService(Context.ActivityService) as Android.App.ActivityManager;
             _selectedInterface = InterfaceType.None;
             _yandexTransDict = cacheActivity?._yandexTransDict ?? new Dictionary<string, Dictionary<string, string>>();
@@ -8203,13 +8207,15 @@ namespace BmwDeepObd
                                     string[] parts = docId.Split(':');
                                     if (parts.Length > 1)
                                     {
-                                        storageList.Add(parts[1]);
+                                        string volumeId = parts[0];
+                                        string docPath = parts[1];
+                                        string volumePath = GetVolumePath(volumeId);
+                                        if (!string.IsNullOrEmpty(docPath) && !string.IsNullOrEmpty(volumePath))
+                                        {
+                                            string fullPath = Path.Combine(volumePath, docPath);
+                                            storageList.Add(fullPath);
+                                        }
                                     }
-                                }
-
-                                DocumentFile documentFile = DocumentFile.FromTreeUri(_context, uriPermission.Uri);
-                                if (documentFile != null && documentFile.IsDirectory && documentFile.CanWrite())
-                                {
                                 }
                             }
                             catch (Exception)
@@ -8241,6 +8247,48 @@ namespace BmwDeepObd
 
             string procMounts = ReadProcMounts();
             return ParseStorageMedia(procMounts);
+        }
+
+        public string GetVolumePath(string volumeId)
+        {
+            try
+            {
+                if (Build.VERSION.SdkInt <= BuildVersionCodes.Q)
+                {
+                    return null;
+                }
+
+                if (string.IsNullOrEmpty(volumeId))
+                {
+                    return null;
+                }
+
+                IList<StorageVolume> storageVolumes = _storageManager?.StorageVolumes;
+                if (storageVolumes == null)
+                {
+                    return null;
+                }
+
+                foreach (StorageVolume storageVolume in storageVolumes)
+                {
+                    if (storageVolume.IsPrimary && PrimaryVolumeName.Equals(volumeId))
+                    {
+                        return storageVolume.Directory?.Path;
+                    }
+
+                    string uuid = storageVolume.Uuid;
+                    if (!string.IsNullOrEmpty(uuid) && uuid.Equals(volumeId))
+                    {
+                        return storageVolume.Directory?.Path;
+                    }
+                }
+
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public static void SetStoragePath()
