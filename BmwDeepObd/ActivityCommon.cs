@@ -8192,39 +8192,7 @@ namespace BmwDeepObd
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
             {
                 List<string> storageList = new List<string>();
-                IList<UriPermission> uriPermissions = _context.ContentResolver?.PersistedUriPermissions;
-                if (uriPermissions != null)
-                {
-                    foreach (UriPermission uriPermission in uriPermissions)
-                    {
-                        if (uriPermission.Uri != null && uriPermission.IsWritePermission)
-                        {
-                            try
-                            {
-                                string docId = DocumentsContract.GetTreeDocumentId(uriPermission.Uri);
-                                if (!string.IsNullOrEmpty(docId))
-                                {
-                                    string[] parts = docId.Split(':');
-                                    if (parts.Length > 1)
-                                    {
-                                        string volumeId = parts[0];
-                                        string docPath = parts[1];
-                                        string volumePath = GetVolumePath(volumeId);
-                                        if (!string.IsNullOrEmpty(docPath) && !string.IsNullOrEmpty(volumePath))
-                                        {
-                                            string fullPath = Path.Combine(volumePath, docPath);
-                                            storageList.Add(fullPath);
-                                        }
-                                    }
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
-                        }
-                    }
-                }
+                storageList.AddRange(GetPersistedStorages());
 
                 Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
                 if (externalFilesDirs != null)
@@ -8247,6 +8215,49 @@ namespace BmwDeepObd
 
             string procMounts = ReadProcMounts();
             return ParseStorageMedia(procMounts);
+        }
+
+        public List<string> GetPersistedStorages()
+        {
+            List<string> storageList = new List<string>();
+            if (Build.VERSION.SdkInt > BuildVersionCodes.Q)
+            {
+                IList<UriPermission> uriPermissions = _context.ContentResolver?.PersistedUriPermissions;
+                if (uriPermissions != null)
+                {
+                    foreach (UriPermission uriPermission in uriPermissions)
+                    {
+                        try
+                        {
+                            if (uriPermission.Uri != null && uriPermission.IsWritePermission)
+                            {
+                                string docId = DocumentsContract.GetTreeDocumentId(uriPermission.Uri);
+                                if (!string.IsNullOrEmpty(docId))
+                                {
+                                    string[] parts = docId.Split(':');
+                                    if (parts.Length > 1)
+                                    {
+                                        string volumeId = parts[0];
+                                        string docPath = parts[1];
+                                        string volumePath = GetVolumePath(volumeId);
+                                        if (!string.IsNullOrEmpty(docPath) && !string.IsNullOrEmpty(volumePath))
+                                        {
+                                            string fullPath = Path.Combine(volumePath, docPath);
+                                            storageList.Add(fullPath);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                }
+            }
+
+            return storageList;
         }
 
         public string GetVolumePath(string volumeId)
