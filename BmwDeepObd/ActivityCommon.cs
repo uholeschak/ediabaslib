@@ -8310,6 +8310,89 @@ namespace BmwDeepObd
             }
         }
 
+        public static bool CopyDocumentsRecursive(DocumentFile documentSrc, DocumentFile documentDst)
+        {
+            try
+            {
+                if (documentSrc?.Uri == null || documentDst?.Uri == null)
+                {
+                    return false;
+                }
+
+                if (!documentSrc.Exists())
+                {
+                    return false;
+                }
+
+                if (documentSrc.IsFile)
+                {
+                    if (!documentDst.IsFile)
+                    {
+                        return false;
+                    }
+
+                    ContentResolver contentResolver = Android.App.Application.Context.ContentResolver;
+                    if (contentResolver == null)
+                    {
+                        return false;
+                    }
+
+                    Android.Util.Log.Info("Copy file", string.Format("Name: {0}, URI: {1}", documentSrc.Name, documentSrc.Uri.ToString()));
+                    using (Stream inputStream = contentResolver.OpenInputStream(documentSrc.Uri))
+                    {
+                        if (inputStream == null)
+                        {
+                            return false;
+                        }
+
+                        using (Stream outputStream = contentResolver.OpenOutputStream(documentDst.Uri))
+                        {
+                            if (outputStream == null)
+                            {
+                                return false;
+                            }
+
+                            inputStream.CopyTo(outputStream);
+                        }
+                    }
+
+                    return true;
+                }
+
+                if (!documentSrc.IsDirectory || !documentDst.IsDirectory)
+                {
+                    return false;
+                }
+
+                Android.Util.Log.Info("Copy dir", string.Format("Name: {0}, URI: {1}", documentSrc.Name, documentSrc.Uri.ToString()));
+
+                DocumentFile subDirDst = documentDst.CreateDirectory(documentSrc.Name);
+                DocumentFile[] files = documentSrc.ListFiles();
+                foreach (DocumentFile documentFile in files)
+                {
+                    if (documentFile.IsFile)
+                    {
+                        DocumentFile oldFile = subDirDst.FindFile(documentFile.Name);
+                        oldFile?.Delete();
+                        DocumentFile dstFile = subDirDst.CreateFile(documentFile.Type, documentFile.Name);
+                        CopyDocumentsRecursive(documentFile, dstFile);
+                        continue;
+                    }
+
+                    if (documentFile.IsDirectory)
+                    {
+                        CopyDocumentsRecursive(documentFile, subDirDst);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public static void SetStoragePath()
         {
             _externalPath = string.Empty;
