@@ -163,6 +163,11 @@
   <string name="bmw_ecu_func_init">Загрузка BMW файлов</string>
   <string name="bmw_ecu_func_error">Ошибка при чтении BMW файлов</string>
 
+  <!-- Documents processing -->
+  <!--Translate-->
+  <string name="copy_documents_progress">Копирование файла: {0}</string>
+  <string name="copy_documents_error">Не удалось скопировать</string>
+
   <!-- Send trace file -->
   <string name="send_trace_file_request">Ошибка соединения.\nХотите отправить анонимный и сжатый Trace-файл (размер {0:fs0}) для улучшения качества продукта?</string>
   <string name="send_message_request">Ошибка соединения.\nХотите отправить анонимный файл для улучшения качества продукта?</string>
