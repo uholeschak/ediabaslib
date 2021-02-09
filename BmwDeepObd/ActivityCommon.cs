@@ -266,6 +266,7 @@ namespace BmwDeepObd
 
         public delegate bool ProgressZipDelegate(int percent, bool decrypt = false);
         public delegate bool ProgressVerifyDelegate(int percent);
+        public delegate bool ProgressDocumentCopyDelegate(string name);
         public delegate void BcReceiverUpdateDisplayDelegate();
         public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
         public delegate void TranslateDelegate(List<string> transList);
@@ -8310,7 +8311,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool CopyDocumentsRecursive(DocumentFile documentSrc, DocumentFile documentDst)
+        public static bool CopyDocumentsRecursive(DocumentFile documentSrc, DocumentFile documentDst, ProgressDocumentCopyDelegate progressHandler)
         {
             try
             {
@@ -8329,6 +8330,14 @@ namespace BmwDeepObd
                     if (!documentDst.IsFile)
                     {
                         return false;
+                    }
+
+                    if (progressHandler != null)
+                    {
+                        if (!progressHandler.Invoke(documentSrc.Name))
+                        {
+                            return false;
+                        }
                     }
 
                     ContentResolver contentResolver = Android.App.Application.Context.ContentResolver;
@@ -8392,13 +8401,13 @@ namespace BmwDeepObd
                         }
 
                         DocumentFile dstFile = subDirDst.CreateFile(documentFile.Type, documentFile.Name);
-                        CopyDocumentsRecursive(documentFile, dstFile);
+                        CopyDocumentsRecursive(documentFile, dstFile, progressHandler);
                         continue;
                     }
 
                     if (documentFile.IsDirectory)
                     {
-                        CopyDocumentsRecursive(documentFile, subDirDst);
+                        CopyDocumentsRecursive(documentFile, subDirDst, progressHandler);
                     }
                 }
             }
