@@ -275,6 +275,7 @@ namespace BmwDeepObd
         public delegate void EnetSsidWarnDelegate(bool retry);
         public delegate void WifiConnectedWarnDelegate();
         public delegate void InitThreadFinishDelegate(bool result);
+        public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
         public const int UdsDtcStatusOverride = 0x2C;
         public const BuildVersionCodes MinEthernetSettingsVersion = BuildVersionCodes.M;
         public const long UpdateCheckDelayDefault = TimeSpan.TicksPerDay;
@@ -8309,6 +8310,65 @@ namespace BmwDeepObd
             {
                 return null;
             }
+        }
+
+        public bool CopyDocumentsThread(DocumentFile documentSrc, DocumentFile documentDst, CopyDocumentsThreadFinishDelegate handler)
+        {
+            bool aborted = false;
+            CustomProgressDialog progress = new CustomProgressDialog(_activity);
+            progress.SetMessage(string.Empty);
+            progress.Indeterminate = true;
+            progress.AbortClick = sender =>
+            {
+                aborted = true;
+            };
+            progress.Show();
+            SetLock(LockTypeCommunication);
+            Thread initThread = new Thread(() =>
+            {
+                bool result = CopyDocumentsRecursive(documentSrc, documentDst, name =>
+                {
+                    if (_disposed)
+                    {
+                        return false;
+                    }
+
+                    if (aborted)
+                    {
+                        return false;
+                    }
+
+                    _activity?.RunOnUiThread(() =>
+                    {
+                        progress.Message = string.Format(_activity.GetString(Resource.String.copy_documents_progress), name);
+                    });
+                    return true;
+                });
+
+                _activity?.RunOnUiThread(() =>
+                {
+                    if (_disposed)
+                    {
+                        return;
+                    }
+
+                    progress.Dismiss();
+                    progress.Dispose();
+                    progress = null;
+                    SetLock(LockType.None);
+                    if (!result && !aborted)
+                    {
+                        new AlertDialog.Builder(_context)
+                            .SetMessage(Resource.String.copy_documents_error)
+                            .SetTitle(Resource.String.alert_title_error)
+                            .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
+                            .Show();
+                    }
+                    handler?.Invoke(result, aborted);
+                });
+            });
+            initThread.Start();
+            return true;
         }
 
         public static bool CopyDocumentsRecursive(DocumentFile documentSrc, DocumentFile documentDst, ProgressDocumentCopyDelegate progressHandler)
