@@ -8337,7 +8337,7 @@ namespace BmwDeepObd
                         return false;
                     }
 
-                    Android.Util.Log.Info("Copy file", string.Format("Name: {0}, URI: {1}", documentSrc.Name, documentSrc.Uri.ToString()));
+                    Android.Util.Log.Info(Tag, string.Format("Copy file: Name={0}, URI={1}", documentSrc.Name, documentSrc.Uri.ToString()));
                     using (Stream inputStream = contentResolver.OpenInputStream(documentSrc.Uri))
                     {
                         if (inputStream == null)
@@ -8364,8 +8364,18 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                Android.Util.Log.Info("Copy dir", string.Format("Name: {0}, URI: {1}", documentSrc.Name, documentSrc.Uri.ToString()));
+                DocumentFile oldDir = documentDst.FindFile(documentSrc.Name);
+                if (oldDir != null)
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("Delete dir: Name={0}, URI={1}", documentSrc.Name, documentSrc.Uri.ToString()));
+#endif
+                    oldDir.Delete();
+                }
 
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("Create dir: Name={0}, URI={1}", documentSrc.Name, documentSrc.Uri.ToString()));
+#endif
                 DocumentFile subDirDst = documentDst.CreateDirectory(documentSrc.Name);
                 DocumentFile[] files = documentSrc.ListFiles();
                 foreach (DocumentFile documentFile in files)
@@ -8373,7 +8383,14 @@ namespace BmwDeepObd
                     if (documentFile.IsFile)
                     {
                         DocumentFile oldFile = subDirDst.FindFile(documentFile.Name);
-                        oldFile?.Delete();
+                        if (oldFile != null)
+                        {
+#if DEBUG
+                            Android.Util.Log.Info(Tag, string.Format("Delete file: Name={0}, URI={1}", documentSrc.Name, documentSrc.Uri.ToString()));
+#endif
+                            oldFile.Delete();
+                        }
+
                         DocumentFile dstFile = subDirDst.CreateFile(documentFile.Type, documentFile.Name);
                         CopyDocumentsRecursive(documentFile, dstFile);
                         continue;
