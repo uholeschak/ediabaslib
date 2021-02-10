@@ -165,7 +165,7 @@
   <string name="bmw_ecu_func_error">BMW Dateien lesen fehlgeschlagen</string>
 
   <!-- Documents processing -->
-  <string name="copy_documents_progress">Kopiere Datei: {0}</string>
+  <string name="copy_documents_progress">Kopiere Dateien</string>
   <string name="copy_documents_error">Kopieren fehlgeschlagen</string>
 
   <!-- Send trace file -->
