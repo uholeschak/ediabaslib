@@ -140,7 +140,7 @@
   <string name="bmw_ecu_func_error">Reading BMW files failed</string>
 
   <!-- Documents processing -->
-  <string name="copy_documents_progress">Copying file: {0}</string>
+  <string name="copy_documents_progress">Copying files</string>
   <string name="copy_documents_error">Copying failed</string>
 
   <!-- Send trace file -->

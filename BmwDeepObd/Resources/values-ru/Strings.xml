@@ -165,7 +165,7 @@
 
   <!-- Documents processing -->
   <!--Translate-->
-  <string name="copy_documents_progress">Копирование файла: {0}</string>
+  <string name="copy_documents_progress">Копирование файлов</string>
   <string name="copy_documents_error">Не удалось скопировать</string>
 
   <!-- Send trace file -->

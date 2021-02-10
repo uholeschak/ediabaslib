@@ -8316,8 +8316,10 @@ namespace BmwDeepObd
         {
             bool aborted = false;
             CustomProgressDialog progress = new CustomProgressDialog(_activity);
-            progress.SetMessage(string.Empty);
-            progress.Indeterminate = true;
+            progress.SetMessage(_activity.GetString(Resource.String.copy_documents_progress));
+            progress.Indeterminate = false;
+            progress.Progress = 0;
+            progress.Max = 100;
             progress.AbortClick = sender =>
             {
                 aborted = true;
@@ -8326,7 +8328,8 @@ namespace BmwDeepObd
             SetLock(LockTypeCommunication);
             Thread initThread = new Thread(() =>
             {
-                bool result = CopyDocumentsRecursive(documentSrc, documentDst, name =>
+                bool result = false;
+                int docCount = GetDocumentCount(documentSrc, name =>
                 {
                     if (_disposed)
                     {
@@ -8338,12 +8341,38 @@ namespace BmwDeepObd
                         return false;
                     }
 
-                    _activity?.RunOnUiThread(() =>
-                    {
-                        progress.Message = string.Format(_activity.GetString(Resource.String.copy_documents_progress), name);
-                    });
                     return true;
                 });
+
+                if (docCount >= 0)
+                {
+                    if (docCount == 0)
+                    {
+                        docCount++;
+                    }
+
+                    int fileCount = 0;
+                    result = CopyDocumentsRecursive(documentSrc, documentDst, name =>
+                    {
+                        if (_disposed)
+                        {
+                            return false;
+                        }
+
+                        if (aborted)
+                        {
+                            return false;
+                        }
+
+                        fileCount++;
+
+                        _activity?.RunOnUiThread(() =>
+                        {
+                            progress.Progress = fileCount * 100 / docCount;
+                        });
+                        return true;
+                    });
+                }
 
                 _activity?.RunOnUiThread(() =>
                 {
@@ -8461,13 +8490,19 @@ namespace BmwDeepObd
                         }
 
                         DocumentFile dstFile = subDirDst.CreateFile(documentFile.Type, documentFile.Name);
-                        CopyDocumentsRecursive(documentFile, dstFile, progressHandler);
+                        if (!CopyDocumentsRecursive(documentFile, dstFile, progressHandler))
+                        {
+                            return false;
+                        }
                         continue;
                     }
 
                     if (documentFile.IsDirectory)
                     {
-                        CopyDocumentsRecursive(documentFile, subDirDst, progressHandler);
+                        if (!CopyDocumentsRecursive(documentFile, subDirDst, progressHandler))
+                        {
+                            return false;
+                        }
                     }
                 }
             }
@@ -8477,6 +8512,71 @@ namespace BmwDeepObd
             }
 
             return true;
+        }
+
+        public static int GetDocumentCount(DocumentFile document, ProgressDocumentCopyDelegate progressHandler)
+        {
+            try
+            {
+                if (document == null)
+                {
+                    return -1;
+                }
+
+                if (document.IsFile)
+                {
+                    if (progressHandler != null)
+                    {
+                        if (!progressHandler.Invoke(document.Name))
+                        {
+                            return -1;
+                        }
+                    }
+
+                    if (document.Exists())
+                    {
+                        return 1;
+                    }
+
+                    return 0;
+                }
+
+                if (!document.IsDirectory)
+                {
+                    return -1;
+                }
+
+                int fileCount = 0;
+                DocumentFile[] files = document.ListFiles();
+                foreach (DocumentFile documentFile in files)
+                {
+                    if (documentFile.IsFile)
+                    {
+                        if (document.Exists())
+                        {
+                            fileCount++;
+                        }
+                        continue;
+                    }
+
+                    if (documentFile.IsDirectory)
+                    {
+                        int count = GetDocumentCount(documentFile, progressHandler);
+                        if (count < 0)
+                        {
+                            return -1;
+                        }
+
+                        fileCount += count;
+                    }
+                }
+
+                return fileCount;
+            }
+            catch (Exception)
+            {
+                return -1;
+            }
         }
 
         public static void SetStoragePath()
