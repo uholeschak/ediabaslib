@@ -17,19 +17,20 @@ namespace EdiabasLib
     {
         public class ConnectParameterType
         {
-            public ConnectParameterType(UsbManager usbManager)
+            public ConnectParameterType(UsbManager usbManager, int latencyTime = 50)
             {
                 UsbManager = usbManager;
+                LatencyTime = latencyTime;       // large deafult value required to prevent data loss
             }
 
             public UsbManager UsbManager { get; private set; }
+            public int LatencyTime { get; private set; }
         }
 
         public const string PortId = "FTDI";
         private const int WriteTimeout = 500;
         private const int ReadTimeoutOffset = 1000;
         private const int UsbBlockSize = 0x4000;
-        private const int LatencyTime = 50;     // large value required to prevent data loss
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private static IUsbSerialPort _usbPort;
         private static SerialInputOutputManager _serialIoManager;
@@ -141,8 +142,8 @@ namespace EdiabasLib
                 _usbPort.SetParameters(9600, 8, StopBits.One, Parity.None);
                 if (_usbPort is FtdiSerialDriver.FtdiSerialPort ftdiPort)
                 {
-                    ftdiPort.LatencyTimer = LatencyTime;
-                    if (ftdiPort.LatencyTimer != LatencyTime)
+                    ftdiPort.LatencyTimer = connectParameter.LatencyTime;
+                    if (ftdiPort.LatencyTimer != connectParameter.LatencyTime)
                     {
                         InterfaceDisconnect();
                         return false;
