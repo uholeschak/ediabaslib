@@ -6,6 +6,7 @@ using Android.Support.V4.Provider;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using BmwDeepObd.FilePicker;
 
 namespace BmwDeepObd
 {
@@ -17,8 +18,8 @@ namespace BmwDeepObd
         public class InstanceData
         {
             public string CopyToAppSrcUri { get; set; }
-            public string CopyToAppDstUri { get; set; }
-            public string CopyFromAppSrcUri { get; set; }
+            public string CopyToAppDstPath { get; set; }
+            public string CopyFromAppSrcPath { get; set; }
             public string CopyFromAppDstUri { get; set; }
         }
 
@@ -37,6 +38,8 @@ namespace BmwDeepObd
             RequestDevelopmentSettings,
             RequestOpenDocumentTreeToApp,
             RequestOpenDocumentTreeFromApp,
+            RequestSelDirToApp,
+            RequestSelDirFromApp,
         }
 
         private InstanceData _instanceData = new InstanceData();
@@ -229,14 +232,14 @@ namespace BmwDeepObd
             _buttonStorageCopyTreeToApp.Visibility = ActivityCommon.IsDocumentTreeSupported() ? ViewStates.Visible : ViewStates.Gone;
             _buttonStorageCopyTreeToApp.Click += (sender, args) =>
             {
-                CopyDocumentTree(false);
+                SelectCopyDocumentTree(false);
             };
 
             _buttonStorageCopyTreeFromApp = FindViewById<Button>(Resource.Id.buttonStorageCopyTreeFromApp);
             _buttonStorageCopyTreeFromApp.Visibility = ActivityCommon.IsDocumentTreeSupported() ? ViewStates.Visible : ViewStates.Gone;
             _buttonStorageCopyTreeFromApp.Click += (sender, args) =>
             {
-                CopyDocumentTree(true);
+                SelectCopyDocumentTree(true);
             };
 
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);
@@ -366,12 +369,7 @@ namespace BmwDeepObd
                             try
                             {
                                 _instanceData.CopyToAppSrcUri = treeUri.ToString();
-                                DocumentFile srcDir = DocumentFile.FromTreeUri(this, Android.Net.Uri.Parse(_instanceData.CopyToAppSrcUri));
-
-                                string testDirName = Path.Combine(ActivityCommon.ExternalWritePath, "Test");
-                                Directory.CreateDirectory(testDirName);
-                                DocumentFile dstDir = DocumentFile.FromFile(new Java.IO.File(testDirName));
-                                _activityCommon.CopyDocumentsThread(srcDir, dstDir, (result, aborted) => { });
+                                SelectCopyAppDir(false);
                             }
                             catch (Exception)
                             {
@@ -384,16 +382,13 @@ namespace BmwDeepObd
                 case ActivityRequest.RequestOpenDocumentTreeFromApp:
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
-                        Android.Net.Uri treeUri = data.Data;
-                        if (treeUri != null)
+                        _instanceData.CopyFromAppSrcPath = data.Extras?.GetString(FilePickerActivity.ExtraFileName);
+                        if (!string.IsNullOrEmpty(_instanceData.CopyFromAppSrcPath))
                         {
                             try
                             {
-                                _instanceData.CopyFromAppDstUri = treeUri.ToString();
+                                DocumentFile srcDir = DocumentFile.FromFile(new Java.IO.File(_instanceData.CopyFromAppSrcPath));
                                 DocumentFile dstDir = DocumentFile.FromTreeUri(this, Android.Net.Uri.Parse(_instanceData.CopyFromAppDstUri));
-
-                                string testDirName = Path.Combine(ActivityCommon.ExternalWritePath, "Test");
-                                DocumentFile srcDir = DocumentFile.FromFile(new Java.IO.File(testDirName));
                                 _activityCommon.CopyDocumentsThread(srcDir, dstDir, (result, aborted) => { });
                             }
                             catch (Exception)
@@ -401,6 +396,34 @@ namespace BmwDeepObd
                                 // ignored
                             }
                         }
+                    }
+                    break;
+
+                case ActivityRequest.RequestSelDirToApp:
+                    if (data != null && resultCode == Android.App.Result.Ok)
+                    {
+                        _instanceData.CopyToAppDstPath = data.Extras?.GetString(FilePickerActivity.ExtraFileName);
+                        if (!string.IsNullOrEmpty(_instanceData.CopyToAppDstPath))
+                        {
+                            try
+                            {
+                                DocumentFile srcDir = DocumentFile.FromTreeUri(this, Android.Net.Uri.Parse(_instanceData.CopyToAppSrcUri));
+                                DocumentFile dstDir = DocumentFile.FromFile(new Java.IO.File(_instanceData.CopyToAppDstPath));
+                                _activityCommon.CopyDocumentsThread(srcDir, dstDir, (result, aborted) => { });
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+                    }
+                    break;
+
+                case ActivityRequest.RequestSelDirFromApp:
+                    if (data != null && resultCode == Android.App.Result.Ok)
+                    {
+                        _instanceData.CopyToAppSrcUri = data.Extras?.GetString(FilePickerActivity.ExtraFileName);
+                        SelectCopyDocumentTree(true);
                     }
                     break;
             }
@@ -851,7 +874,7 @@ namespace BmwDeepObd
             }
         }
 
-        private bool CopyDocumentTree(bool fromApp)
+        private bool SelectCopyDocumentTree(bool fromApp)
         {
             if (!ActivityCommon.IsDocumentTreeSupported())
             {
@@ -860,33 +883,62 @@ namespace BmwDeepObd
 
             try
             {
+                ActivityRequest request;
                 Intent intent = new Intent(Intent.ActionOpenDocumentTree);
-                //intent.PutExtra(Intent.ExtraTitle, "Select directory");
+                intent.PutExtra(Intent.ExtraTitle, GetString(Resource.String.settings_storage_sel_public_dir));
                 if (fromApp)
                 {
+                    request = ActivityRequest.RequestOpenDocumentTreeFromApp;
                     if (!string.IsNullOrEmpty(_instanceData.CopyToAppSrcUri))
                     {
-                        intent.PutExtra(Android.Provider.DocumentsContract.ExtraInitialUri, _instanceData.CopyFromAppSrcUri);
+                        intent.PutExtra(Android.Provider.DocumentsContract.ExtraInitialUri, _instanceData.CopyFromAppDstUri);
                     }
-
-                    StartActivityForResult(intent, (int)ActivityRequest.RequestOpenDocumentTreeFromApp);
                 }
                 else
                 {
+                    request = ActivityRequest.RequestOpenDocumentTreeToApp;
                     if (!string.IsNullOrEmpty(_instanceData.CopyToAppSrcUri))
                     {
                         intent.PutExtra(Android.Provider.DocumentsContract.ExtraInitialUri, _instanceData.CopyToAppSrcUri);
                     }
-
-                    StartActivityForResult(intent, (int)ActivityRequest.RequestOpenDocumentTreeToApp);
                 }
 
+                StartActivityForResult(intent, (int)request);
                 return true;
             }
             catch (Exception)
             {
                 return false;
             }
+        }
+
+        private void SelectCopyAppDir(bool fromApp)
+        {
+            // Launch the FilePickerActivity to select a sgbd file
+            ActivityRequest request;
+            Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
+            string initDir = string.Empty;
+            if (fromApp)
+            {
+                request = ActivityRequest.RequestSelDirFromApp;
+                if (!string.IsNullOrEmpty(_instanceData.CopyFromAppSrcPath))
+                {
+                    initDir = _instanceData.CopyFromAppSrcPath;
+                }
+            }
+            else
+            {
+                request = ActivityRequest.RequestSelDirToApp;
+                if (!string.IsNullOrEmpty(_instanceData.CopyToAppDstPath))
+                {
+                    initDir = _instanceData.CopyToAppDstPath;
+                }
+            }
+
+            serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.settings_storage_sel_app_dir));
+            serverIntent.PutExtra(FilePickerActivity.ExtraDirSelect, true);
+            serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
+            StartActivityForResult(serverIntent, (int)request);
         }
 
         private void DefaultSettings()
