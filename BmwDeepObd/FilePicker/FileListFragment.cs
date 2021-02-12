@@ -108,7 +108,7 @@ namespace BmwDeepObd.FilePicker
         {
             base.OnActivityCreated(savedInstanceState);
 
-            ListView.LongClickable = true;
+            ListView.LongClickable = _dirSelect;
             ListView.ItemLongClick += (sender, args) => 
             {
                 if (_dirSelect)
