@@ -154,6 +154,10 @@ namespace BmwDeepObd.FilePicker
                 }
                 else
                 {
+                    if (_dirSelect)
+                    {
+                        Toast.MakeText(Activity, Resource.String.file_picker_dir_select, ToastLength.Short)?.Show();
+                    }
                     // Dig into this directory, and display it's contents
                     _instanceData.DefaultInitialDirectory = fileSystemInfo.FileSysInfo.FullName;
                     RefreshFilesList(fileSystemInfo.FileSysInfo.FullName);
@@ -301,7 +305,7 @@ namespace BmwDeepObd.FilePicker
             }
             catch (Exception)
             {
-                Toast.MakeText(Activity, GetString(Resource.String.access_dir_failed) + " " + directory, ToastLength.Long).Show();
+                Toast.MakeText(Activity, GetString(Resource.String.access_dir_failed) + " " + directory, ToastLength.Long)?.Show();
                 return;
             }
 

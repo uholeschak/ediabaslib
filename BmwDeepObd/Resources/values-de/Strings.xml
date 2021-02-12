@@ -298,6 +298,7 @@
   <!-- FilePicker -->
   <string name="select_file">Datei wählen</string>
   <string name="access_dir_failed">Zugriff verweigert:</string>
+  <string name="file_picker_dir_select">Lang klicken um das Verzeichnis auszuwählen</string>
   <string name="file_picker_search">Suchen</string>
 
   <!-- Storage media selection -->

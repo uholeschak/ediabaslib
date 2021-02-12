@@ -3044,7 +3044,7 @@ namespace BmwDeepObd
                 case InterfaceType.Bluetooth:
                     if (_btAdapter == null)
                     {
-                        Toast.MakeText(_context, Resource.String.bt_not_available, ToastLength.Long).Show();
+                        Toast.MakeText(_context, Resource.String.bt_not_available, ToastLength.Long)?.Show();
                         break;
                     }
                     if (!_btAdapter.IsEnabled)
@@ -3083,7 +3083,7 @@ namespace BmwDeepObd
                 case InterfaceType.DeepObdWifi:
                     if (_maWifi == null)
                     {
-                        Toast.MakeText(_context, Resource.String.wifi_not_available, ToastLength.Long).Show();
+                        Toast.MakeText(_context, Resource.String.wifi_not_available, ToastLength.Long)?.Show();
                         break;
                     }
                     if (!_maWifi.IsWifiEnabled)

@@ -300,6 +300,8 @@
   <!-- FilePicker -->
   <string name="select_file">Выбрать файл</string>
   <string name="access_dir_failed">В доступе отказано:</string>
+  <!--Translate-->
+  <string name="file_picker_dir_select">Нажмите и удерживайте, чтобы выбрать каталогs</string>
   <string name="file_picker_search">Поиск</string>
 
   <!-- Storage media selection -->

@@ -806,7 +806,7 @@ namespace BmwDeepObd
             {
                 _backPressed = true;
                 _lastBackPressedTime = Stopwatch.GetTimestamp();
-                Toast.MakeText(this, GetString(Resource.String.back_button_twice_for_exit), ToastLength.Short).Show();
+                Toast.MakeText(this, GetString(Resource.String.back_button_twice_for_exit), ToastLength.Short)?.Show();
             }
         }
 
@@ -2091,7 +2091,7 @@ namespace BmwDeepObd
                     message += "\r\n" + errorMessage;
                 }
 
-                Toast.MakeText(this, message, ToastLength.Long).Show();
+                Toast.MakeText(this, message, ToastLength.Long)?.Show();
             }
         }
 
@@ -2523,7 +2523,7 @@ namespace BmwDeepObd
                 {
                     if (string.IsNullOrEmpty(ActivityCommon.ExternalPath))
                     {
-                        Toast.MakeText(this, GetString(Resource.String.no_ext_storage), ToastLength.Long).Show();
+                        Toast.MakeText(this, GetString(Resource.String.no_ext_storage), ToastLength.Long)?.Show();
                         Finish();
                     }
                     else
