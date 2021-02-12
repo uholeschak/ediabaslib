@@ -2,7 +2,6 @@
 using System.IO;
 using Android.Content;
 using Android.OS;
-using Android.Provider;
 using Android.Support.V4.Provider;
 using Android.Support.V7.App;
 using Android.Views;
@@ -867,7 +866,7 @@ namespace BmwDeepObd
                 {
                     if (!string.IsNullOrEmpty(_instanceData.CopyToAppSrcUri))
                     {
-                        intent.PutExtra(DocumentsContract.ExtraInitialUri, _instanceData.CopyFromAppSrcUri);
+                        intent.PutExtra(Android.Provider.DocumentsContract.ExtraInitialUri, _instanceData.CopyFromAppSrcUri);
                     }
 
                     StartActivityForResult(intent, (int)ActivityRequest.RequestOpenDocumentTreeFromApp);
@@ -876,7 +875,7 @@ namespace BmwDeepObd
                 {
                     if (!string.IsNullOrEmpty(_instanceData.CopyToAppSrcUri))
                     {
-                        intent.PutExtra(DocumentsContract.ExtraInitialUri, _instanceData.CopyToAppSrcUri);
+                        intent.PutExtra(Android.Provider.DocumentsContract.ExtraInitialUri, _instanceData.CopyToAppSrcUri);
                     }
 
                     StartActivityForResult(intent, (int)ActivityRequest.RequestOpenDocumentTreeToApp);
