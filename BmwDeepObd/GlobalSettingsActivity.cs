@@ -239,7 +239,7 @@ namespace BmwDeepObd
             _buttonStorageCopyTreeFromApp.Visibility = ActivityCommon.IsDocumentTreeSupported() ? ViewStates.Visible : ViewStates.Gone;
             _buttonStorageCopyTreeFromApp.Click += (sender, args) =>
             {
-                SelectCopyDocumentTree(true);
+                SelectCopyAppDir(true);
             };
 
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);
@@ -366,14 +366,10 @@ namespace BmwDeepObd
                         Android.Net.Uri treeUri = data.Data;
                         if (treeUri != null)
                         {
-                            try
+                            _instanceData.CopyToAppSrcUri = treeUri.ToString();
+                            if (!string.IsNullOrEmpty(_instanceData.CopyToAppSrcUri))
                             {
-                                _instanceData.CopyToAppSrcUri = treeUri.ToString();
                                 SelectCopyAppDir(false);
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
                             }
                         }
                     }
@@ -382,18 +378,22 @@ namespace BmwDeepObd
                 case ActivityRequest.RequestOpenDocumentTreeFromApp:
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
-                        _instanceData.CopyFromAppSrcPath = data.Extras?.GetString(FilePickerActivity.ExtraFileName);
-                        if (!string.IsNullOrEmpty(_instanceData.CopyFromAppSrcPath))
+                        Android.Net.Uri treeUri = data.Data;
+                        if (treeUri != null)
                         {
-                            try
+                            _instanceData.CopyFromAppDstUri = treeUri.ToString();
+                            if (!string.IsNullOrEmpty(_instanceData.CopyFromAppSrcPath) && !string.IsNullOrEmpty(_instanceData.CopyFromAppDstUri))
                             {
-                                DocumentFile srcDir = DocumentFile.FromFile(new Java.IO.File(_instanceData.CopyFromAppSrcPath));
-                                DocumentFile dstDir = DocumentFile.FromTreeUri(this, Android.Net.Uri.Parse(_instanceData.CopyFromAppDstUri));
-                                _activityCommon.CopyDocumentsThread(srcDir, dstDir, (result, aborted) => { });
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
+                                try
+                                {
+                                    DocumentFile srcDir = DocumentFile.FromFile(new Java.IO.File(_instanceData.CopyFromAppSrcPath));
+                                    DocumentFile dstDir = DocumentFile.FromTreeUri(this, Android.Net.Uri.Parse(_instanceData.CopyFromAppDstUri));
+                                    _activityCommon.CopyDocumentsThread(srcDir, dstDir, (result, aborted) => { });
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
                             }
                         }
                     }
@@ -403,7 +403,7 @@ namespace BmwDeepObd
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
                         _instanceData.CopyToAppDstPath = data.Extras?.GetString(FilePickerActivity.ExtraFileName);
-                        if (!string.IsNullOrEmpty(_instanceData.CopyToAppDstPath))
+                        if (!string.IsNullOrEmpty(_instanceData.CopyToAppSrcUri) && !string.IsNullOrEmpty(_instanceData.CopyToAppDstPath))
                         {
                             try
                             {
@@ -422,8 +422,11 @@ namespace BmwDeepObd
                 case ActivityRequest.RequestSelDirFromApp:
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
-                        _instanceData.CopyToAppSrcUri = data.Extras?.GetString(FilePickerActivity.ExtraFileName);
-                        SelectCopyDocumentTree(true);
+                        _instanceData.CopyFromAppSrcPath = data.Extras?.GetString(FilePickerActivity.ExtraFileName);
+                        if (!string.IsNullOrEmpty(_instanceData.CopyFromAppSrcPath))
+                        {
+                            SelectCopyDocumentTree(true);
+                        }
                     }
                     break;
             }
