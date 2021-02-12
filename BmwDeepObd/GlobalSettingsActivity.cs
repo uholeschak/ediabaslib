@@ -389,8 +389,8 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                _instanceData.CopyToAppDstUri = treeUri.ToString();
-                                DocumentFile dstDir = DocumentFile.FromTreeUri(this, Android.Net.Uri.Parse(_instanceData.CopyToAppDstUri));
+                                _instanceData.CopyFromAppDstUri = treeUri.ToString();
+                                DocumentFile dstDir = DocumentFile.FromTreeUri(this, Android.Net.Uri.Parse(_instanceData.CopyFromAppDstUri));
 
                                 string testDirName = Path.Combine(ActivityCommon.ExternalWritePath, "Test");
                                 DocumentFile srcDir = DocumentFile.FromFile(new Java.IO.File(testDirName));
