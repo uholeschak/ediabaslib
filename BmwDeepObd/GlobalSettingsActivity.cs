@@ -892,7 +892,7 @@ namespace BmwDeepObd
                 if (fromApp)
                 {
                     request = ActivityRequest.RequestOpenDocumentTreeFromApp;
-                    if (!string.IsNullOrEmpty(_instanceData.CopyToAppSrcUri))
+                    if (!string.IsNullOrEmpty(_instanceData.CopyFromAppDstUri))
                     {
                         intent.PutExtra(Android.Provider.DocumentsContract.ExtraInitialUri, _instanceData.CopyFromAppDstUri);
                     }
