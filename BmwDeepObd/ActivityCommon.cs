@@ -8434,8 +8434,9 @@ namespace BmwDeepObd
                     {
                         return false;
                     }
-
+#if DEBUG
                     Android.Util.Log.Info(Tag, string.Format("Copy file: Name={0}, URI={1}", documentSrc.Name, documentSrc.Uri.ToString()));
+#endif
                     using (Stream inputStream = contentResolver.OpenInputStream(documentSrc.Uri))
                     {
                         if (inputStream == null)
