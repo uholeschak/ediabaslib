@@ -2,6 +2,8 @@
 using System.IO;
 using Android.Content;
 using Android.OS;
+using Android.Provider;
+using Android.Support.V4.Provider;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
@@ -13,6 +15,14 @@ namespace BmwDeepObd
         ConfigurationChanges = ActivityConfigChanges)]
     public class GlobalSettingsActivity : BaseActivity
     {
+        public class InstanceData
+        {
+            public string CopyToAppSrcUri { get; set; }
+            public string CopyToAppDstUri { get; set; }
+            public string CopyFromAppSrcUri { get; set; }
+            public string CopyFromAppDstUri { get; set; }
+        }
+
         // Intent extra
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraSelection = "selection";
@@ -26,9 +36,11 @@ namespace BmwDeepObd
         private enum ActivityRequest
         {
             RequestDevelopmentSettings,
-            RequestOpenDocumentTree,
+            RequestOpenDocumentTreeToApp,
+            RequestOpenDocumentTreeFromApp,
         }
 
+        private InstanceData _instanceData = new InstanceData();
         private string _appDataDir;
         private string _selection;
         private ActivityCommon _activityCommon;
@@ -83,7 +95,8 @@ namespace BmwDeepObd
         private CheckBox _checkBoxUseBmwDatabase;
         private CheckBox _checkBoxScanAllEcus;
         private Button _buttonStorageLocation;
-        private Button _buttonStorageOpenTree;
+        private Button _buttonStorageCopyTreeToApp;
+        private Button _buttonStorageCopyTreeFromApp;
         private TextView _textViewCaptionNotifications;
         private Button _buttonManageNotifications;
         private CheckBox _checkBoxCollectDebugInfo;
@@ -97,6 +110,10 @@ namespace BmwDeepObd
         {
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
+            if (savedInstanceState != null)
+            {
+                _instanceData = GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
+            }
 
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
@@ -209,11 +226,18 @@ namespace BmwDeepObd
             _checkBoxUseBmwDatabase = FindViewById<CheckBox>(Resource.Id.checkBoxUseBmwDatabase);
             _checkBoxScanAllEcus = FindViewById<CheckBox>(Resource.Id.checkBoxScanAllEcus);
 
-            _buttonStorageOpenTree = FindViewById<Button>(Resource.Id.buttonStorageOpenTree);
-            _buttonStorageOpenTree.Visibility = ActivityCommon.IsDocumentTreeSupported() ? ViewStates.Visible : ViewStates.Gone;
-            _buttonStorageOpenTree.Click += (sender, args) =>
+            _buttonStorageCopyTreeToApp = FindViewById<Button>(Resource.Id.buttonStorageCopyTreeToApp);
+            _buttonStorageCopyTreeToApp.Visibility = ActivityCommon.IsDocumentTreeSupported() ? ViewStates.Visible : ViewStates.Gone;
+            _buttonStorageCopyTreeToApp.Click += (sender, args) =>
             {
-                OpenDocumentTree();
+                CopyDocumentTree(false);
+            };
+
+            _buttonStorageCopyTreeFromApp = FindViewById<Button>(Resource.Id.buttonStorageCopyTreeFromApp);
+            _buttonStorageCopyTreeFromApp.Visibility = ActivityCommon.IsDocumentTreeSupported() ? ViewStates.Visible : ViewStates.Gone;
+            _buttonStorageCopyTreeFromApp.Click += (sender, args) =>
+            {
+                CopyDocumentTree(true);
             };
 
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);
@@ -295,6 +319,12 @@ namespace BmwDeepObd
             CheckSelection(_selection);
         }
 
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            StoreInstanceState(outState, _instanceData);
+            base.OnSaveInstanceState(outState);
+        }
+
         protected override void OnDestroy()
         {
             base.OnDestroy();
@@ -328,7 +358,7 @@ namespace BmwDeepObd
                     UpdateDisplay();
                     break;
 
-                case ActivityRequest.RequestOpenDocumentTree:
+                case ActivityRequest.RequestOpenDocumentTreeToApp:
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
                         Android.Net.Uri treeUri = data.Data;
@@ -336,8 +366,36 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                ActivityFlags takeFlags = data.Flags & (ActivityFlags.GrantReadUriPermission | ActivityFlags.GrantWriteUriPermission);
-                                ContentResolver?.TakePersistableUriPermission(treeUri, takeFlags);
+                                _instanceData.CopyToAppSrcUri = treeUri.ToString();
+                                DocumentFile srcDir = DocumentFile.FromTreeUri(this, Android.Net.Uri.Parse(_instanceData.CopyToAppSrcUri));
+
+                                string testDirName = Path.Combine(ActivityCommon.ExternalWritePath, "Test");
+                                Directory.CreateDirectory(testDirName);
+                                DocumentFile dstDir = DocumentFile.FromFile(new Java.IO.File(testDirName));
+                                _activityCommon.CopyDocumentsThread(srcDir, dstDir, (result, aborted) => { });
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+                    }
+                    break;
+
+                case ActivityRequest.RequestOpenDocumentTreeFromApp:
+                    if (data != null && resultCode == Android.App.Result.Ok)
+                    {
+                        Android.Net.Uri treeUri = data.Data;
+                        if (treeUri != null)
+                        {
+                            try
+                            {
+                                _instanceData.CopyToAppDstUri = treeUri.ToString();
+                                DocumentFile dstDir = DocumentFile.FromTreeUri(this, Android.Net.Uri.Parse(_instanceData.CopyToAppDstUri));
+
+                                string testDirName = Path.Combine(ActivityCommon.ExternalWritePath, "Test");
+                                DocumentFile srcDir = DocumentFile.FromFile(new Java.IO.File(testDirName));
+                                _activityCommon.CopyDocumentsThread(srcDir, dstDir, (result, aborted) => { });
                             }
                             catch (Exception)
                             {
@@ -794,7 +852,7 @@ namespace BmwDeepObd
             }
         }
 
-        private bool OpenDocumentTree()
+        private bool CopyDocumentTree(bool fromApp)
         {
             if (!ActivityCommon.IsDocumentTreeSupported())
             {
@@ -804,8 +862,26 @@ namespace BmwDeepObd
             try
             {
                 Intent intent = new Intent(Intent.ActionOpenDocumentTree);
-                intent.PutExtra(Intent.ExtraAllowMultiple, true);
-                StartActivityForResult(intent, (int)ActivityRequest.RequestOpenDocumentTree);
+                //intent.PutExtra(Intent.ExtraTitle, "Select directory");
+                if (fromApp)
+                {
+                    if (!string.IsNullOrEmpty(_instanceData.CopyToAppSrcUri))
+                    {
+                        intent.PutExtra(DocumentsContract.ExtraInitialUri, _instanceData.CopyFromAppSrcUri);
+                    }
+
+                    StartActivityForResult(intent, (int)ActivityRequest.RequestOpenDocumentTreeFromApp);
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(_instanceData.CopyToAppSrcUri))
+                    {
+                        intent.PutExtra(DocumentsContract.ExtraInitialUri, _instanceData.CopyToAppSrcUri);
+                    }
+
+                    StartActivityForResult(intent, (int)ActivityRequest.RequestOpenDocumentTreeToApp);
+                }
+
                 return true;
             }
             catch (Exception)

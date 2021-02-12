@@ -396,7 +396,8 @@
   <string name="settings_caption_scan_all_ecus">ECU detection</string>
   <string name="settings_scan_all_ecus">For BMW vehicles with DS2 protocol always scan all ECUs (slow)</string>
   <string name="settings_caption_storage">Storage media</string>
-  <string name="settings_storage_open_tree">Allow directory access</string>
+  <string name="settings_storage_copy_tree_to_app">Copy directory to app</string>
+  <string name="settings_storage_copy_tree_from_app">Copy directory from app</string>
   <string name="settings_caption_notifications">Notifications</string>
   <string name="settings_notification_settings">Notification settings</string>
   <string name="settings_caption_debug">Debugging</string>
