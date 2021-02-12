@@ -48,6 +48,7 @@ namespace BmwDeepObd.FilePicker
         private IList<FileInfoEx> _visibleFiles;
         private string _fileNameFilter;
         private bool _allowDirChange;
+        private bool _dirSelect;
         private bool _showFileExtensions;
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -96,15 +97,43 @@ namespace BmwDeepObd.FilePicker
             }
 
             _allowDirChange = Activity.Intent.GetBooleanExtra(FilePickerActivity.ExtraDirChange, true);
+            _dirSelect = Activity.Intent.GetBooleanExtra(FilePickerActivity.ExtraDirSelect, false);
             _showFileExtensions = Activity.Intent.GetBooleanExtra(FilePickerActivity.ExtraShowExtension, true);
 
             _adapter = new FileListAdapter(Activity, new FileInfoEx[0]);
             ListAdapter = _adapter;
         }
 
+        public override void OnActivityCreated(Bundle savedInstanceState)
+        {
+            base.OnActivityCreated(savedInstanceState);
+
+            ListView.LongClickable = true;
+            ListView.ItemLongClick += (sender, args) => 
+            {
+                if (_dirSelect)
+                {
+                    FileInfoEx fileSystemInfo = _adapter.GetItem(args.Position);
+                    if (fileSystemInfo != null)
+                    {
+                        Intent intent = new Intent();
+                        intent.PutExtra(FilePickerActivity.ExtraFileName, fileSystemInfo.FileSysInfo.FullName);
+
+                        Activity.SetResult(Android.App.Result.Ok, intent);
+                        Activity.Finish();
+                        args.Handled = true;
+                    }
+                }
+            };
+        }
+
         public override void OnListItemClick(ListView l, View v, int position, long id)
         {
             FileInfoEx fileSystemInfo = _adapter.GetItem(position);
+            if (fileSystemInfo == null)
+            {
+                return;
+            }
 
             if (fileSystemInfo.RootDir != null)
             {
@@ -233,27 +262,34 @@ namespace BmwDeepObd.FilePicker
                     string displayName = item.Name;
                     if (item.IsFile())
                     {
-                        if (!_showFileExtensions)
-                        {
-                            displayName = Path.GetFileNameWithoutExtension(item.Name);
-                        }
-                        if (_extensionList.Count > 0)
+                        if (_dirSelect)
                         {
                             add = false;
-                            foreach (string extension in _extensionList)
-                            {
-                                if (item.HasFileExtension(extension))
-                                {
-                                    add = true;
-                                    break;
-                                }
-                            }
                         }
-                        if (_fileNameRegex != null)
+                        else
                         {
-                            if (!_fileNameRegex.IsMatch(item.Name))
+                            if (!_showFileExtensions)
+                            {
+                                displayName = Path.GetFileNameWithoutExtension(item.Name);
+                            }
+                            if (_extensionList.Count > 0)
                             {
                                 add = false;
+                                foreach (string extension in _extensionList)
+                                {
+                                    if (item.HasFileExtension(extension))
+                                    {
+                                        add = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (_fileNameRegex != null)
+                            {
+                                if (!_fileNameRegex.IsMatch(item.Name))
+                                {
+                                    add = false;
+                                }
                             }
                         }
                     }
