@@ -8255,7 +8255,7 @@ namespace BmwDeepObd
                 // ignored
             }
 
-            return documentFile.Uri.ToString();
+            return documentFile.Uri.Path;
         }
 
         public static List<string> GetPersistedStorages()
