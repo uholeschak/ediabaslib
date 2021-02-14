@@ -388,7 +388,7 @@ namespace BmwDeepObd
                                 {
                                     DocumentFile srcDir = DocumentFile.FromFile(new Java.IO.File(_instanceData.CopyFromAppSrcPath));
                                     DocumentFile dstDir = DocumentFile.FromTreeUri(this, Android.Net.Uri.Parse(_instanceData.CopyFromAppDstUri));
-                                    _activityCommon.CopyDocumentsThread(srcDir, dstDir, (result, aborted) => { });
+                                    _activityCommon.RequestCopyDocumentsThread(srcDir, dstDir, (result, aborted) => { });
                                 }
                                 catch (Exception)
                                 {
@@ -409,7 +409,7 @@ namespace BmwDeepObd
                             {
                                 DocumentFile srcDir = DocumentFile.FromTreeUri(this, Android.Net.Uri.Parse(_instanceData.CopyToAppSrcUri));
                                 DocumentFile dstDir = DocumentFile.FromFile(new Java.IO.File(_instanceData.CopyToAppDstPath));
-                                _activityCommon.CopyDocumentsThread(srcDir, dstDir, (result, aborted) => { });
+                                _activityCommon.RequestCopyDocumentsThread(srcDir, dstDir, (result, aborted) => { });
                             }
                             catch (Exception)
                             {

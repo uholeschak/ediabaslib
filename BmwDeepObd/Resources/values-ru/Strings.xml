@@ -167,6 +167,8 @@
   <!--Translate-->
   <string name="copy_documents_progress">Копирование файлов</string>
   <string name="copy_documents_error">Не удалось скопировать</string>
+  <string name="copy_documents_create">The file or folder:\n{0}\nwill be created.\nDo you want to continue?</string>
+  <string name="copy_documents_exists">The file:\n{0}\nalready exists.\nDo you want to override it?</string>
 
   <!-- Send trace file -->
   <string name="send_trace_file_request">Ошибка соединения.\nХотите отправить анонимный и сжатый Trace-файл (размер {0:fs0}) для улучшения качества продукта?</string>
@@ -426,8 +428,8 @@
   <!--Translate-->
   <string name="settings_storage_sel_public_dir">Select public directory</string>
   <string name="settings_storage_sel_app_dir">Select app directory</string>
-  <string name="settings_storage_copy_tree_to_app">Copy directory to app</string>
-  <string name="settings_storage_copy_tree_from_app">Copy directory from app</string>
+  <string name="settings_storage_copy_tree_to_app">Copy file or directory to app</string>
+  <string name="settings_storage_copy_tree_from_app">Copy file or directory from app</string>
   <string name="settings_caption_storage">Носитель памяти</string>
   <string name="settings_caption_notifications">Уведомления</string>
   <string name="settings_notification_settings">Настройки уведомлений</string>

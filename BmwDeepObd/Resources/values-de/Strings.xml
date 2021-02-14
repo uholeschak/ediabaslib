@@ -167,6 +167,8 @@
   <!-- Documents processing -->
   <string name="copy_documents_progress">Kopiere Dateien</string>
   <string name="copy_documents_error">Kopieren fehlgeschlagen</string>
+  <string name="copy_documents_create">Die Datei oder Ordner:\n{0}\nwird erzeugt.\nWollen Sie fortfahren?</string>
+  <string name="copy_documents_exists">Die Datei:\n{0}\nexistiert bereits.\nWollen Sie diese ersetzen?</string>
 
   <!-- Send trace file -->
   <string name="send_trace_file_request">Es sind Kommunikationsfehler aufgetreten.\nWollen Sie eine komprimierte und anonyme Trace-Datei (Größe {0:fs0}) senden um Produktverbesserungen zu ermöglichen?</string>
@@ -423,8 +425,8 @@
   <string name="settings_caption_storage">Speichermedium</string>
   <string name="settings_storage_sel_public_dir">Öffentliches Verzeichnis auswählen</string>
   <string name="settings_storage_sel_app_dir">App Verzeichnis auswählen</string>
-  <string name="settings_storage_copy_tree_to_app">Verzeichnis zur App kopieren</string>
-  <string name="settings_storage_copy_tree_from_app">Verzeichnis von der App kopieren</string>
+  <string name="settings_storage_copy_tree_to_app">Datei oder Verzeichnis zur App kopieren</string>
+  <string name="settings_storage_copy_tree_from_app">Datei oder Verzeichnis von der App kopieren</string>
   <string name="settings_caption_notifications">Benachrichtigungen</string>
   <string name="settings_notification_settings">Benachrichtigungseinstellungen</string>
   <string name="settings_caption_debug">Debuggen</string>

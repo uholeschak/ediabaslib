@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using Android.Content;
 using Android.OS;
@@ -60,7 +59,7 @@ namespace BmwDeepObd.FilePicker
                 _instanceData = BaseActivity.GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
             }
 
-            string initDir = Activity.Intent.GetStringExtra(FilePickerActivity.ExtraInitDir) ?? string.Empty;
+            string initDir = Activity.Intent?.GetStringExtra(FilePickerActivity.ExtraInitDir) ?? string.Empty;
             if (Directory.Exists(initDir))
             {
                 try
@@ -79,7 +78,7 @@ namespace BmwDeepObd.FilePicker
             }
 
             _extensionList = new List<string>();
-            string fileExtensions = Activity.Intent.GetStringExtra(FilePickerActivity.ExtraFileExtensions);
+            string fileExtensions = Activity.Intent?.GetStringExtra(FilePickerActivity.ExtraFileExtensions);
             if (!string.IsNullOrEmpty(fileExtensions))
             {
                 string[] extensions = fileExtensions.Split(';');
@@ -89,16 +88,16 @@ namespace BmwDeepObd.FilePicker
                 }
             }
 
-            string fileFilter = Activity.Intent.GetStringExtra(FilePickerActivity.ExtraFileRegex);
+            string fileFilter = Activity.Intent?.GetStringExtra(FilePickerActivity.ExtraFileRegex);
             _fileNameRegex = null;
             if (!string.IsNullOrEmpty(fileFilter))
             {
                 _fileNameRegex = new Regex(fileFilter, RegexOptions.IgnoreCase);
             }
 
-            _allowDirChange = Activity.Intent.GetBooleanExtra(FilePickerActivity.ExtraDirChange, true);
-            _dirSelect = Activity.Intent.GetBooleanExtra(FilePickerActivity.ExtraDirSelect, false);
-            _showFileExtensions = Activity.Intent.GetBooleanExtra(FilePickerActivity.ExtraShowExtension, true);
+            _allowDirChange = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraDirChange, true) ?? true;
+            _dirSelect = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraDirSelect, false) ?? false;
+            _showFileExtensions = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraShowExtension, true) ?? true;
 
             _adapter = new FileListAdapter(Activity, new FileInfoEx[0]);
             ListAdapter = _adapter;
@@ -228,13 +227,6 @@ namespace BmwDeepObd.FilePicker
 
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
                     {   // writing to external disk is only allowed in special directories.
-                        List<string> storageList = ActivityCommon.GetPersistedStorages();
-                        foreach (string storage in storageList)
-                        {
-                            string name = ActivityCommon.GetTruncatedPathName(storage);
-                            visibleThings.Add(new FileInfoEx(null, "->" + name, storage));
-                        }
-
                         Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
                         if (externalFilesDirs != null)
                         {
