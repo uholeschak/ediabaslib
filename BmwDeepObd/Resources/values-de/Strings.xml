@@ -168,7 +168,7 @@
   <string name="copy_documents_progress">Kopiere Dateien</string>
   <string name="copy_documents_error">Kopieren fehlgeschlagen</string>
   <string name="copy_documents_create">Die Datei oder Ordner:\n{0}\nwird erzeugt.\nWollen Sie fortfahren?</string>
-  <string name="copy_documents_exists">Die Datei:\n{0}\nexistiert bereits.\nWollen Sie diese ersetzen?</string>
+  <string name="copy_documents_exists">Die Datei oder Ordner:\n{0}\nexistiert bereits.\nWollen Sie diese ersetzen?</string>
 
   <!-- Send trace file -->
   <string name="send_trace_file_request">Es sind Kommunikationsfehler aufgetreten.\nWollen Sie eine komprimierte und anonyme Trace-Datei (Größe {0:fs0}) senden um Produktverbesserungen zu ermöglichen?</string>
