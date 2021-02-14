@@ -8201,8 +8201,6 @@ namespace BmwDeepObd
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
             {
                 List<string> storageList = new List<string>();
-                storageList.AddRange(GetPersistedStorages());
-
                 Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
                 if (externalFilesDirs != null)
                 {
@@ -8224,6 +8222,40 @@ namespace BmwDeepObd
 
             string procMounts = ReadProcMounts();
             return ParseStorageMedia(procMounts);
+        }
+
+        public static string GetDocumentPath(DocumentFile documentFile)
+        {
+            if (documentFile?.Uri == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                string docId = DocumentsContract.GetTreeDocumentId(documentFile.Uri);
+                if (!string.IsNullOrEmpty(docId))
+                {
+                    string[] parts = docId.Split(':');
+                    if (parts.Length > 1)
+                    {
+                        string volumeId = parts[0];
+                        string docPath = parts[1];
+                        string volumePath = GetVolumePath(volumeId);
+                        if (!string.IsNullOrEmpty(docPath) && !string.IsNullOrEmpty(volumePath))
+                        {
+                            string fullPath = Path.Combine(volumePath, docPath);
+                            return fullPath;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return documentFile.Uri.ToString();
         }
 
         public static List<string> GetPersistedStorages()
@@ -8310,6 +8342,40 @@ namespace BmwDeepObd
             {
                 return null;
             }
+        }
+
+        public bool RequestCopyDocumentsThread(DocumentFile documentSrc, DocumentFile documentDst, CopyDocumentsThreadFinishDelegate handler)
+        {
+            try
+            {
+                string documentPath = GetDocumentPath(documentDst);
+                if (string.IsNullOrEmpty(documentPath))
+                {
+                    return false;
+                }
+
+                bool exists = DocumentExists(documentDst);
+                int resIdMsg = exists ? Resource.String.copy_documents_exists : Resource.String.copy_documents_create;
+                int resIdTitle = exists ? Resource.String.alert_title_warning : Resource.String.alert_title_question;
+                string message = string.Format(_context.GetString(resIdMsg), documentPath);
+                AlertDialog alertDialog = new AlertDialog.Builder(_context)
+                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                    {
+                        CopyDocumentsThread(documentSrc, documentDst, handler);
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                    {
+                    })
+                    .SetCancelable(true)
+                    .SetMessage(message)
+                    .SetTitle(resIdTitle)
+                    .Show();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
 
         public bool CopyDocumentsThread(DocumentFile documentSrc, DocumentFile documentDst, CopyDocumentsThreadFinishDelegate handler)
@@ -8578,6 +8644,28 @@ namespace BmwDeepObd
             {
                 return -1;
             }
+        }
+
+        public static bool DocumentExists(DocumentFile document)
+        {
+            try
+            {
+                if (document == null)
+                {
+                    return false;
+                }
+
+                if (document.Exists())
+                {
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return false;
         }
 
         public static void SetStoragePath()
