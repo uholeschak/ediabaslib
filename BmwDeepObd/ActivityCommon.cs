@@ -8348,13 +8348,19 @@ namespace BmwDeepObd
         {
             try
             {
+                if (documentSrc == null || documentDst == null)
+                {
+                    return false;
+                }
+
                 string documentPath = GetDocumentPath(documentDst);
                 if (string.IsNullOrEmpty(documentPath))
                 {
                     return false;
                 }
 
-                bool exists = DocumentExists(documentDst);
+                documentPath = Path.Combine(documentPath, documentSrc.Name);
+                bool exists = documentDst.FindFile(documentSrc.Name) != null;
                 int resIdMsg = exists ? Resource.String.copy_documents_exists : Resource.String.copy_documents_create;
                 int resIdTitle = exists ? Resource.String.alert_title_warning : Resource.String.alert_title_question;
                 string message = string.Format(_context.GetString(resIdMsg), documentPath);
