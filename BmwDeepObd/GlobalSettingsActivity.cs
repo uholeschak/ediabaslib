@@ -40,6 +40,7 @@ namespace BmwDeepObd
             RequestOpenDocumentTreeFromApp,
             RequestSelDirToApp,
             RequestSelDirFromApp,
+            RequestSelDirDelApp,
         }
 
         private InstanceData _instanceData = new InstanceData();
@@ -426,6 +427,25 @@ namespace BmwDeepObd
                         if (!string.IsNullOrEmpty(_instanceData.CopyFromAppSrcPath))
                         {
                             SelectCopyDocumentTree(true);
+                        }
+                    }
+                    break;
+
+                case ActivityRequest.RequestSelDirDelApp:
+                    if (data != null && resultCode == Android.App.Result.Ok)
+                    {
+                        string delPath = data.Extras?.GetString(FilePickerActivity.ExtraFileName);
+                        if (!string.IsNullOrEmpty(delPath))
+                        {
+                            try
+                            {
+                                DocumentFile delDir = DocumentFile.FromFile(new Java.IO.File(delPath));
+                                _activityCommon.RequestDeleteDocumentsThread(delDir, (result, aborted) => { });
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                         }
                     }
                     break;
@@ -917,7 +937,6 @@ namespace BmwDeepObd
 
         private void SelectCopyAppDir(bool fromApp)
         {
-            // Launch the FilePickerActivity to select a sgbd file
             ActivityRequest request;
             Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
             string initDir = string.Empty;
@@ -943,6 +962,15 @@ namespace BmwDeepObd
             serverIntent.PutExtra(FilePickerActivity.ExtraShowFiles, fromApp);
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
             StartActivityForResult(serverIntent, (int)request);
+        }
+
+        private void SelectDeleteAppDir()
+        {
+            Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
+            serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.settings_storage_sel_app_dir));
+            serverIntent.PutExtra(FilePickerActivity.ExtraDirSelect, true);
+            serverIntent.PutExtra(FilePickerActivity.ExtraShowFiles, true);
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelDirDelApp);
         }
 
         private void DefaultSettings()
