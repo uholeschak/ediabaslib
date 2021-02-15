@@ -404,8 +404,8 @@
             android:layout_height="wrap_content"
             android:text="@string/settings_scan_all_ecus" />
         <TextView
-            android:text="@string/settings_caption_storage"
-            android:id="@+id/textViewCaptionStorage"
+            android:text="@string/settings_caption_file_manage"
+            android:id="@+id/textViewCaptionCopyTree"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
@@ -419,6 +419,12 @@
             android:id="@+id/buttonStorageCopyTreeFromApp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <TextView
+            android:text="@string/settings_caption_storage"
+            android:id="@+id/textViewCaptionStorage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextViewInnerCaption" />
         <Button
             android:id="@+id/buttonStorageLocation"
             android:layout_width="match_parent"
