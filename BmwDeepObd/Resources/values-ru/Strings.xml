@@ -428,7 +428,7 @@
   <!--Translate-->
   <string name="settings_storage_sel_public_dir">Select public directory</string>
   <string name="settings_storage_sel_app_dir">Select app directory</string>
-  <string name="settings_storage_copy_tree_to_app">Copy file or directory to app</string>
+  <string name="settings_storage_copy_tree_to_app">Copy directory to app</string>
   <string name="settings_storage_copy_tree_from_app">Copy file or directory from app</string>
   <string name="settings_caption_storage">Носитель памяти</string>
   <string name="settings_caption_notifications">Уведомления</string>

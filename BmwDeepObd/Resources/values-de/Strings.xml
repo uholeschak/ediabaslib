@@ -425,7 +425,7 @@
   <string name="settings_caption_storage">Speichermedium</string>
   <string name="settings_storage_sel_public_dir">Öffentliches Verzeichnis auswählen</string>
   <string name="settings_storage_sel_app_dir">App Verzeichnis auswählen</string>
-  <string name="settings_storage_copy_tree_to_app">Datei oder Verzeichnis zur App kopieren</string>
+  <string name="settings_storage_copy_tree_to_app">Verzeichnis zur App kopieren</string>
   <string name="settings_storage_copy_tree_from_app">Datei oder Verzeichnis von der App kopieren</string>
   <string name="settings_caption_notifications">Benachrichtigungen</string>
   <string name="settings_notification_settings">Benachrichtigungseinstellungen</string>
