@@ -100,6 +100,7 @@ namespace BmwDeepObd
         private Button _buttonStorageLocation;
         private Button _buttonStorageCopyTreeToApp;
         private Button _buttonStorageCopyTreeFromApp;
+        private Button _buttonStorageDelTreeFromApp;
         private TextView _textViewCaptionNotifications;
         private Button _buttonManageNotifications;
         private CheckBox _checkBoxCollectDebugInfo;
@@ -241,6 +242,13 @@ namespace BmwDeepObd
             _buttonStorageCopyTreeFromApp.Click += (sender, args) =>
             {
                 SelectCopyAppDir(true);
+            };
+
+            _buttonStorageDelTreeFromApp = FindViewById<Button>(Resource.Id.buttonStorageDelTreeFromApp);
+            _buttonStorageDelTreeFromApp.Visibility = ActivityCommon.IsDocumentTreeSupported() ? ViewStates.Visible : ViewStates.Gone;
+            _buttonStorageDelTreeFromApp.Click += (sender, args) =>
+            {
+                SelectDeleteAppDir();
             };
 
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);
@@ -957,6 +965,22 @@ namespace BmwDeepObd
                 }
             }
 
+            if (!string.IsNullOrEmpty(initDir))
+            {
+                try
+                {
+                    FileAttributes attr = File.GetAttributes(initDir);
+                    if (!attr.HasFlag(FileAttributes.Directory))
+                    {
+                        initDir = Path.GetDirectoryName(initDir);
+                    }
+                }
+                catch (Exception)
+                {
+                    initDir = string.Empty;
+                }
+            }
+
             serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.settings_storage_sel_app_dir));
             serverIntent.PutExtra(FilePickerActivity.ExtraDirSelect, true);
             serverIntent.PutExtra(FilePickerActivity.ExtraShowFiles, fromApp);
@@ -967,9 +991,32 @@ namespace BmwDeepObd
         private void SelectDeleteAppDir()
         {
             Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
+            string initDir = string.Empty;
+            if (!string.IsNullOrEmpty(_instanceData.CopyFromAppSrcPath) && File.Exists(_instanceData.CopyFromAppSrcPath))
+            {
+                initDir = _instanceData.CopyFromAppSrcPath;
+            }
+
+            if (!string.IsNullOrEmpty(initDir))
+            {
+                try
+                {
+                    FileAttributes attr = File.GetAttributes(initDir);
+                    if (!attr.HasFlag(FileAttributes.Directory))
+                    {
+                        initDir = Path.GetDirectoryName(initDir);
+                    }
+                }
+                catch (Exception)
+                {
+                    initDir = string.Empty;
+                }
+            }
+
             serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.settings_storage_sel_app_dir));
             serverIntent.PutExtra(FilePickerActivity.ExtraDirSelect, true);
             serverIntent.PutExtra(FilePickerActivity.ExtraShowFiles, true);
+            serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelDirDelApp);
         }
 

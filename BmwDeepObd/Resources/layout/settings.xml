@@ -419,6 +419,11 @@
             android:id="@+id/buttonStorageCopyTreeFromApp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <Button
+            android:text="@string/settings_storage_del_tree_from_app"
+            android:id="@+id/buttonStorageDelTreeFromApp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
         <TextView
             android:text="@string/settings_caption_storage"
             android:id="@+id/textViewCaptionStorage"
