@@ -115,7 +115,7 @@ namespace BmwDeepObd.FilePicker
                 if (_dirSelect)
                 {
                     FileInfoEx fileSystemInfo = _adapter.GetItem(args.Position);
-                    if (fileSystemInfo != null)
+                    if (fileSystemInfo?.FileSysInfo != null)
                     {
                         Intent intent = new Intent();
                         intent.PutExtra(FilePickerActivity.ExtraFileName, fileSystemInfo.FileSysInfo.FullName);
@@ -143,25 +143,28 @@ namespace BmwDeepObd.FilePicker
             }
             else
             {
-                if (fileSystemInfo.FileSysInfo.IsFile())
+                if (fileSystemInfo.FileSysInfo != null)
                 {
-                    // Do something with the file.  In this case we just pop some toast.
-                    //Log.Verbose("FileListFragment", "The file {0} was clicked.", fileSystemInfo.FullName);
-                    Intent intent = new Intent();
-                    intent.PutExtra(FilePickerActivity.ExtraFileName, fileSystemInfo.FileSysInfo.FullName);
-
-                    Activity.SetResult(Android.App.Result.Ok, intent);
-                    Activity.Finish();
-                }
-                else
-                {
-                    if (_dirSelect)
+                    if (fileSystemInfo.FileSysInfo.IsFile())
                     {
-                        Toast.MakeText(Activity, Resource.String.file_picker_dir_select, ToastLength.Short)?.Show();
+                        // Do something with the file.  In this case we just pop some toast.
+                        //Log.Verbose("FileListFragment", "The file {0} was clicked.", fileSystemInfo.FullName);
+                        Intent intent = new Intent();
+                        intent.PutExtra(FilePickerActivity.ExtraFileName, fileSystemInfo.FileSysInfo.FullName);
+
+                        Activity.SetResult(Android.App.Result.Ok, intent);
+                        Activity.Finish();
                     }
-                    // Dig into this directory, and display it's contents
-                    _instanceData.DefaultInitialDirectory = fileSystemInfo.FileSysInfo.FullName;
-                    RefreshFilesList(fileSystemInfo.FileSysInfo.FullName);
+                    else
+                    {
+                        if (_dirSelect)
+                        {
+                            Toast.MakeText(Activity, Resource.String.file_picker_dir_select, ToastLength.Short)?.Show();
+                        }
+                        // Dig into this directory, and display it's contents
+                        _instanceData.DefaultInitialDirectory = fileSystemInfo.FileSysInfo.FullName;
+                        RefreshFilesList(fileSystemInfo.FileSysInfo.FullName);
+                    }
                 }
             }
 
