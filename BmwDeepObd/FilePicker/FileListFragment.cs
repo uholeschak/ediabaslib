@@ -48,6 +48,7 @@ namespace BmwDeepObd.FilePicker
         private string _fileNameFilter;
         private bool _allowDirChange;
         private bool _dirSelect;
+        private bool _showFiles;
         private bool _showFileExtensions;
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -97,6 +98,7 @@ namespace BmwDeepObd.FilePicker
 
             _allowDirChange = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraDirChange, true) ?? true;
             _dirSelect = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraDirSelect, false) ?? false;
+            _showFiles = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraShowFiles, true) ?? true;
             _showFileExtensions = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraShowExtension, true) ?? true;
 
             _adapter = new FileListAdapter(Activity, new FileInfoEx[0]);
@@ -258,7 +260,7 @@ namespace BmwDeepObd.FilePicker
                     string displayName = item.Name;
                     if (item.IsFile())
                     {
-                        if (_dirSelect)
+                        if (!_showFiles)
                         {
                             add = false;
                         }

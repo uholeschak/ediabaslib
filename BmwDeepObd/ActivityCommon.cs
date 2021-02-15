@@ -8482,7 +8482,22 @@ namespace BmwDeepObd
 
                 if (documentSrc.IsFile)
                 {
-                    if (!documentDst.IsFile)
+                    DocumentFile fileDst = documentDst;
+                    if (documentDst.IsDirectory)
+                    {
+                        DocumentFile oldFile = documentDst.FindFile(documentSrc.Name);
+                        if (oldFile != null)
+                        {
+#if DEBUG
+                            Android.Util.Log.Info(Tag, string.Format("Delete file: Name={0}, URI={1}", documentSrc.Name, documentSrc.Uri.ToString()));
+#endif
+                            oldFile.Delete();
+                        }
+
+                        fileDst = documentDst.CreateFile(documentSrc.Type, documentSrc.Name);
+                    }
+
+                    if (!fileDst.IsFile)
                     {
                         return false;
                     }
@@ -8510,7 +8525,7 @@ namespace BmwDeepObd
                             return false;
                         }
 
-                        using (Stream outputStream = contentResolver.OpenOutputStream(documentDst.Uri))
+                        using (Stream outputStream = contentResolver.OpenOutputStream(fileDst.Uri))
                         {
                             if (outputStream == null)
                             {
