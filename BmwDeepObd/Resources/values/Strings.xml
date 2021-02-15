@@ -144,6 +144,9 @@
   <string name="copy_documents_error">Copying failed</string>
   <string name="copy_documents_create">The file or folder:\n{0}\nwill be created.\nDo you want to continue?</string>
   <string name="copy_documents_exists">The file:\n{0}\nalready exists.\nDo you want to override it?</string>
+  <string name="del_documents_progress">Deleting files</string>
+  <string name="del_documents_error">Deleting failed</string>
+  <string name="del_document_request">The file or folder:\n{0}\nwill be deleted.\nDo you want to continue?</string>
 
   <!-- Send trace file -->
   <string name="send_trace_file_request">Communication errors have occured.\nDo you want to send a compressed and anonymous trace file (size {0:fs0}) to allow improvement of the product?</string>
