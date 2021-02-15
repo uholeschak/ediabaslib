@@ -8602,6 +8602,88 @@ namespace BmwDeepObd
             return true;
         }
 
+        public bool RequestDeleteDocumentsThread(DocumentFile documentFile, CopyDocumentsThreadFinishDelegate handler)
+        {
+            try
+            {
+                if (documentFile == null)
+                {
+                    return false;
+                }
+
+                string documentPath = GetDocumentPath(documentFile);
+                if (string.IsNullOrEmpty(documentPath))
+                {
+                    return false;
+                }
+
+                string message = string.Format(_context.GetString(Resource.String.del_document_request), documentPath);
+                AlertDialog alertDialog = new AlertDialog.Builder(_context)
+                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                    {
+                        DeleteDocumentsThread(documentFile, handler);
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                    {
+                    })
+                    .SetCancelable(true)
+                    .SetMessage(message)
+                    .SetTitle(Resource.String.alert_title_question)
+                    .Show();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool DeleteDocumentsThread(DocumentFile documentFile, CopyDocumentsThreadFinishDelegate handler)
+        {
+            bool aborted = false;
+            CustomProgressDialog progress = new CustomProgressDialog(_activity);
+            progress.SetMessage(_activity.GetString(Resource.String.del_documents_progress));
+            progress.Indeterminate = true;
+            progress.AbortClick = sender =>
+            {
+                aborted = true;
+            };
+            progress.Show();
+            SetLock(LockTypeCommunication);
+            Thread initThread = new Thread(() =>
+            {
+                bool result = false;
+                if (documentFile.Exists())
+                {
+                    result = documentFile.Delete();
+                }
+
+                _activity?.RunOnUiThread(() =>
+                {
+                    if (_disposed)
+                    {
+                        return;
+                    }
+
+                    progress.Dismiss();
+                    progress.Dispose();
+                    progress = null;
+                    SetLock(LockType.None);
+                    if (!result && !aborted)
+                    {
+                        new AlertDialog.Builder(_context)
+                            .SetMessage(Resource.String.del_documents_error)
+                            .SetTitle(Resource.String.alert_title_error)
+                            .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
+                            .Show();
+                    }
+                    handler?.Invoke(result, aborted);
+                });
+            });
+            initThread.Start();
+            return true;
+        }
+
         public static int GetDocumentCount(DocumentFile document, ProgressDocumentCopyDelegate progressHandler)
         {
             try
