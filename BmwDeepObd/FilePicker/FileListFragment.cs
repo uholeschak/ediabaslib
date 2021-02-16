@@ -48,6 +48,7 @@ namespace BmwDeepObd.FilePicker
         private string _fileNameFilter;
         private bool _allowDirChange;
         private bool _dirSelect;
+        private bool _showCurrentDir;
         private bool _showFiles;
         private bool _showFileExtensions;
 
@@ -98,6 +99,7 @@ namespace BmwDeepObd.FilePicker
 
             _allowDirChange = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraDirChange, true) ?? true;
             _dirSelect = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraDirSelect, false) ?? false;
+            _showCurrentDir = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraShowCurrentDir, false) ?? false;
             _showFiles = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraShowFiles, true) ?? true;
             _showFileExtensions = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraShowExtension, true) ?? true;
 
@@ -114,15 +116,29 @@ namespace BmwDeepObd.FilePicker
             {
                 if (_dirSelect)
                 {
+                    string fileName = null;
                     FileInfoEx fileSystemInfo = _adapter.GetItem(args.Position);
-                    if (fileSystemInfo?.FileSysInfo != null)
+                    if (fileSystemInfo != null)
                     {
-                        Intent intent = new Intent();
-                        intent.PutExtra(FilePickerActivity.ExtraFileName, fileSystemInfo.FileSysInfo.FullName);
+                        if (_showCurrentDir && string.Compare(fileSystemInfo.DisplayName, ".", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            fileName = fileSystemInfo.RootDir;
+                        }
+                        else if (fileSystemInfo.FileSysInfo != null)
+                        {
+                            fileName = fileSystemInfo.FileSysInfo.FullName;
+                        }
 
-                        Activity.SetResult(Android.App.Result.Ok, intent);
-                        Activity.Finish();
-                        args.Handled = true;
+                        if (!string.IsNullOrEmpty(fileName))
+                        {
+                            Intent intent = new Intent();
+                            intent.PutExtra(FilePickerActivity.ExtraFileName, fileName);
+
+                            Activity.SetResult(Android.App.Result.Ok, intent);
+                            Activity.Finish();
+                            args.Handled = true;
+
+                        }
                     }
                 }
             };
@@ -249,6 +265,11 @@ namespace BmwDeepObd.FilePicker
                                 }
                             }
                         }
+                    }
+
+                    if (_showCurrentDir)
+                    {
+                        visibleThings.Add(new FileInfoEx(null, ".", directory));
                     }
 
                     string rootDir = Path.GetDirectoryName(directory);

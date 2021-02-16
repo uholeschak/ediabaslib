@@ -983,6 +983,7 @@ namespace BmwDeepObd
 
             serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.settings_storage_sel_app_dir));
             serverIntent.PutExtra(FilePickerActivity.ExtraDirSelect, true);
+            serverIntent.PutExtra(FilePickerActivity.ExtraShowCurrentDir, !fromApp);
             serverIntent.PutExtra(FilePickerActivity.ExtraShowFiles, fromApp);
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
             StartActivityForResult(serverIntent, (int)request);
