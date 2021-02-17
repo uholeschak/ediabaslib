@@ -120,13 +120,18 @@ namespace BmwDeepObd.FilePicker
                     FileInfoEx fileSystemInfo = _adapter.GetItem(args.Position);
                     if (fileSystemInfo != null)
                     {
-                        if (_showCurrentDir && string.Compare(fileSystemInfo.DisplayName, ".", StringComparison.OrdinalIgnoreCase) == 0)
+                        switch (fileSystemInfo.FileType)
                         {
-                            fileName = fileSystemInfo.RootDir;
-                        }
-                        else if (fileSystemInfo.FileSysInfo != null)
-                        {
-                            fileName = fileSystemInfo.FileSysInfo.FullName;
+                            case FileInfoType.File:
+                                if (fileSystemInfo.FileSysInfo != null && fileSystemInfo.FileSysInfo.IsDirectory())
+                                {
+                                    fileName = fileSystemInfo.FileSysInfo.FullName;
+                                }
+                                break;
+
+                            case FileInfoType.CurrentDir:
+                                fileName = fileSystemInfo.RootDir;
+                                break;
                         }
 
                         if (!string.IsNullOrEmpty(fileName))
@@ -137,7 +142,6 @@ namespace BmwDeepObd.FilePicker
                             Activity.SetResult(Android.App.Result.Ok, intent);
                             Activity.Finish();
                             args.Handled = true;
-
                         }
                     }
                 }
@@ -154,6 +158,19 @@ namespace BmwDeepObd.FilePicker
 
             if (fileSystemInfo.RootDir != null)
             {
+                switch (fileSystemInfo.FileType)
+                {
+                    case FileInfoType.CurrentDir:
+                    {
+                        Intent intent = new Intent();
+                        intent.PutExtra(FilePickerActivity.ExtraFileName, fileSystemInfo.RootDir);
+
+                        Activity.SetResult(Android.App.Result.Ok, intent);
+                        Activity.Finish();
+                        return;
+                    }
+                }
+
                 _instanceData.DefaultInitialDirectory = fileSystemInfo.RootDir;
                 RefreshFilesList(fileSystemInfo.RootDir);
             }
@@ -177,6 +194,7 @@ namespace BmwDeepObd.FilePicker
                         {
                             Toast.MakeText(Activity, Resource.String.file_picker_dir_select, ToastLength.Short)?.Show();
                         }
+
                         // Dig into this directory, and display it's contents
                         _instanceData.DefaultInitialDirectory = fileSystemInfo.FileSysInfo.FullName;
                         RefreshFilesList(fileSystemInfo.FileSysInfo.FullName);
@@ -241,7 +259,7 @@ namespace BmwDeepObd.FilePicker
                             string name = ActivityCommon.GetTruncatedPathName(extDir.AbsolutePath);
                             if (!string.IsNullOrEmpty(name))
                             {
-                                visibleThings.Add(new FileInfoEx(null, "->" + name, extDir.AbsolutePath));
+                                visibleThings.Add(new FileInfoEx(null, FileInfoType.Link, "->" + name, extDir.AbsolutePath));
                             }
                         }
                     }
@@ -260,7 +278,7 @@ namespace BmwDeepObd.FilePicker
                                     string extState = Android.OS.Environment.GetExternalStorageState(file);
                                     if (!string.IsNullOrEmpty(name) && extState != null && extState.Equals(Android.OS.Environment.MediaMounted))
                                     {
-                                        visibleThings.Add(new FileInfoEx(null, "->" + name, file.AbsolutePath));
+                                        visibleThings.Add(new FileInfoEx(null, FileInfoType.Link,"->" + name, file.AbsolutePath));
                                     }
                                 }
                             }
@@ -269,13 +287,13 @@ namespace BmwDeepObd.FilePicker
 
                     if (_showCurrentDir)
                     {
-                        visibleThings.Add(new FileInfoEx(null, ".", directory));
+                        visibleThings.Add(new FileInfoEx(null, FileInfoType.CurrentDir, ".", directory));
                     }
 
                     string rootDir = Path.GetDirectoryName(directory);
                     if (!string.IsNullOrEmpty(rootDir))
                     {
-                        visibleThings.Add(new FileInfoEx(null, "..", rootDir));
+                        visibleThings.Add(new FileInfoEx(null, FileInfoType.ParentDir,"..", rootDir));
                     }
                 }
                 foreach (var item in dir.GetFileSystemInfos().Where(item => item.IsVisible()))
@@ -317,7 +335,7 @@ namespace BmwDeepObd.FilePicker
                     }
                     if (add)
                     {
-                        visibleThings.Add(new FileInfoEx(item, displayName, null));
+                        visibleThings.Add(new FileInfoEx(item, FileInfoType.File, displayName, null));
                     }
                 }
             }

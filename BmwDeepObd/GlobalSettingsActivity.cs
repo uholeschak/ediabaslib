@@ -1016,6 +1016,7 @@ namespace BmwDeepObd
 
             serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.settings_storage_sel_app_dir));
             serverIntent.PutExtra(FilePickerActivity.ExtraDirSelect, true);
+            serverIntent.PutExtra(FilePickerActivity.ExtraShowCurrentDir, true);
             serverIntent.PutExtra(FilePickerActivity.ExtraShowFiles, true);
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelDirDelApp);

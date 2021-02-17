@@ -8,16 +8,27 @@ using Android.Widget;
 
 namespace BmwDeepObd.FilePicker
 {
+    public enum FileInfoType
+    {
+        File,
+        Link,
+        CurrentDir,
+        ParentDir,
+    }
+
     public class FileInfoEx
     {
-        public FileInfoEx(FileSystemInfo fileSystemInfo, string displayName, string rootDir)
+        public FileInfoEx(FileSystemInfo fileSystemInfo, FileInfoType fileType, string displayName, string rootDir)
         {
             FileSysInfo = fileSystemInfo;
+            FileType = fileType;
             DisplayName = displayName;
             RootDir = rootDir;
         }
 
         public FileSystemInfo FileSysInfo { get; }
+
+        public FileInfoType FileType { get; }
 
         public string DisplayName { get; }
 
