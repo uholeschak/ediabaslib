@@ -718,6 +718,14 @@ namespace BmwDeepObd
             set => _customStorageMedia = IsWritable(value) ? value : null;
         }
 
+        public static string CopyToAppSrcUri { get; set; }
+
+        public static string CopyToAppDstPath { get; set; }
+
+        public static string CopyFromAppSrcPath { get; set; }
+
+        public static string CopyFromAppDstUri { get; set; }
+
         public static string UsbFirmwareFileName { get; set; }
 
         public static string AppId

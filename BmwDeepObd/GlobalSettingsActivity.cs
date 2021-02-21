@@ -114,6 +114,11 @@ namespace BmwDeepObd
         {
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
+
+            _instanceData.CopyToAppSrcUri = ActivityCommon.CopyToAppSrcUri;
+            _instanceData.CopyToAppDstPath = ActivityCommon.CopyToAppDstPath;
+            _instanceData.CopyFromAppSrcPath = ActivityCommon.CopyFromAppSrcPath;
+            _instanceData.CopyFromAppDstUri = ActivityCommon.CopyFromAppDstUri;
             if (savedInstanceState != null)
             {
                 _instanceData = GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
@@ -397,7 +402,11 @@ namespace BmwDeepObd
                                 {
                                     DocumentFile srcDir = DocumentFile.FromFile(new Java.IO.File(_instanceData.CopyFromAppSrcPath));
                                     DocumentFile dstDir = DocumentFile.FromTreeUri(this, Android.Net.Uri.Parse(_instanceData.CopyFromAppDstUri));
-                                    _activityCommon.RequestCopyDocumentsThread(srcDir, dstDir, (result, aborted) => { });
+                                    if (_activityCommon.RequestCopyDocumentsThread(srcDir, dstDir, (result, aborted) => { }))
+                                    {
+                                        ActivityCommon.CopyFromAppSrcPath = _instanceData.CopyFromAppSrcPath;
+                                        ActivityCommon.CopyFromAppDstUri = _instanceData.CopyFromAppDstUri;
+                                    }
                                 }
                                 catch (Exception)
                                 {
@@ -418,7 +427,11 @@ namespace BmwDeepObd
                             {
                                 DocumentFile srcDir = DocumentFile.FromTreeUri(this, Android.Net.Uri.Parse(_instanceData.CopyToAppSrcUri));
                                 DocumentFile dstDir = DocumentFile.FromFile(new Java.IO.File(_instanceData.CopyToAppDstPath));
-                                _activityCommon.RequestCopyDocumentsThread(srcDir, dstDir, (result, aborted) => { });
+                                if (_activityCommon.RequestCopyDocumentsThread(srcDir, dstDir, (result, aborted) => { }))
+                                {
+                                    ActivityCommon.CopyToAppDstPath = _instanceData.CopyToAppDstPath;
+                                    ActivityCommon.CopyFromAppDstUri = _instanceData.CopyFromAppDstUri;
+                                }
                             }
                             catch (Exception)
                             {
