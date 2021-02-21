@@ -190,6 +190,10 @@ namespace BmwDeepObd
                 XmlEditorClassName = string.Empty;
 
                 CustomStorageMedia = ActivityCommon.CustomStorageMedia;
+                CopyToAppSrc = ActivityCommon.CopyToAppSrc;
+                CopyToAppDst = ActivityCommon.CopyToAppDst;
+                CopyFromAppSrc = ActivityCommon.CopyFromAppSrc;
+                CopyFromAppDst = ActivityCommon.CopyFromAppDst;
                 UsbFirmwareFileName = ActivityCommon.UsbFirmwareFileName;
                 EnableTranslation = ActivityCommon.EnableTranslation;
                 EnableTranslateLogin = ActivityCommon.EnableTranslateLogin;
@@ -303,6 +307,10 @@ namespace BmwDeepObd
             [XmlElement("DataLogAppend")] public bool DataLogAppend { get; set; }
 
             [XmlElement("StorageMedia")] public string CustomStorageMedia { get; set; }
+            [XmlElement("CopyToAppSrc")] public string CopyToAppSrc { get; set; }
+            [XmlElement("CopyToAppDst")] public string CopyToAppDst { get; set; }
+            [XmlElement("CopyFromAppSrc")] public string CopyFromAppSrc { get; set; }
+            [XmlElement("CopyFromAppDst")] public string CopyFromAppDst { get; set; }
             [XmlElement("UsbFirmwareFile")] public string UsbFirmwareFileName { get; set; }
             [XmlElement("EnableTranslation")] public bool EnableTranslation { get; set; }
             [XmlElement("EnableTranslateLogin")] public bool EnableTranslateLogin { get; set; }
@@ -2325,7 +2333,11 @@ namespace BmwDeepObd
                     ActivityCommon.SelectedLocale = storageData.SelectedLocale;
                     ActivityCommon.SelectedTheme = storageData.SelectedTheme;
 
-                    ActivityCommon.CustomStorageMedia = storageData.CustomStorageMedia;
+                    ActivityCommon.CustomStorageMedia = storageData.CustomStorageMedia; 
+                    ActivityCommon.CopyToAppSrc = storageData.CopyToAppSrc;
+                    ActivityCommon.CopyToAppDst = storageData.CopyToAppDst;
+                    ActivityCommon.CopyFromAppSrc = storageData.CopyFromAppSrc;
+                    ActivityCommon.CopyFromAppDst = storageData.CopyFromAppDst;
                     ActivityCommon.UsbFirmwareFileName = storageData.UsbFirmwareFileName;
                     ActivityCommon.EnableTranslation = storageData.EnableTranslation;
                     ActivityCommon.EnableTranslateLogin = storageData.EnableTranslateLogin;

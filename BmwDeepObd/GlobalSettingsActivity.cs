@@ -115,10 +115,10 @@ namespace BmwDeepObd
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
 
-            _instanceData.CopyToAppSrcUri = ActivityCommon.CopyToAppSrcUri;
-            _instanceData.CopyToAppDstPath = ActivityCommon.CopyToAppDstPath;
-            _instanceData.CopyFromAppSrcPath = ActivityCommon.CopyFromAppSrcPath;
-            _instanceData.CopyFromAppDstUri = ActivityCommon.CopyFromAppDstUri;
+            _instanceData.CopyToAppSrcUri = ActivityCommon.CopyToAppSrc;
+            _instanceData.CopyToAppDstPath = ActivityCommon.CopyToAppDst;
+            _instanceData.CopyFromAppSrcPath = ActivityCommon.CopyFromAppSrc;
+            _instanceData.CopyFromAppDstUri = ActivityCommon.CopyFromAppDst;
             if (savedInstanceState != null)
             {
                 _instanceData = GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
@@ -404,8 +404,8 @@ namespace BmwDeepObd
                                     DocumentFile dstDir = DocumentFile.FromTreeUri(this, Android.Net.Uri.Parse(_instanceData.CopyFromAppDstUri));
                                     if (_activityCommon.RequestCopyDocumentsThread(srcDir, dstDir, (result, aborted) => { }))
                                     {
-                                        ActivityCommon.CopyFromAppSrcPath = _instanceData.CopyFromAppSrcPath;
-                                        ActivityCommon.CopyFromAppDstUri = _instanceData.CopyFromAppDstUri;
+                                        ActivityCommon.CopyFromAppSrc = _instanceData.CopyFromAppSrcPath;
+                                        ActivityCommon.CopyFromAppDst = _instanceData.CopyFromAppDstUri;
                                     }
                                 }
                                 catch (Exception)
@@ -429,8 +429,8 @@ namespace BmwDeepObd
                                 DocumentFile dstDir = DocumentFile.FromFile(new Java.IO.File(_instanceData.CopyToAppDstPath));
                                 if (_activityCommon.RequestCopyDocumentsThread(srcDir, dstDir, (result, aborted) => { }))
                                 {
-                                    ActivityCommon.CopyToAppDstPath = _instanceData.CopyToAppDstPath;
-                                    ActivityCommon.CopyFromAppDstUri = _instanceData.CopyFromAppDstUri;
+                                    ActivityCommon.CopyToAppDst = _instanceData.CopyToAppDstPath;
+                                    ActivityCommon.CopyFromAppDst = _instanceData.CopyFromAppDstUri;
                                 }
                             }
                             catch (Exception)
