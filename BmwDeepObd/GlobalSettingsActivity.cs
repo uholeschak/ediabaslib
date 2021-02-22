@@ -97,10 +97,11 @@ namespace BmwDeepObd
         private CheckBox _checkBoxOldVagMode;
         private CheckBox _checkBoxUseBmwDatabase;
         private CheckBox _checkBoxScanAllEcus;
-        private Button _buttonStorageLocation;
+        private LinearLayout _layoutFileManage;
         private Button _buttonStorageCopyTreeToApp;
         private Button _buttonStorageCopyTreeFromApp;
         private Button _buttonStorageDelTreeFromApp;
+        private Button _buttonStorageLocation;
         private TextView _textViewCaptionNotifications;
         private Button _buttonManageNotifications;
         private CheckBox _checkBoxCollectDebugInfo;
@@ -235,22 +236,22 @@ namespace BmwDeepObd
             _checkBoxUseBmwDatabase = FindViewById<CheckBox>(Resource.Id.checkBoxUseBmwDatabase);
             _checkBoxScanAllEcus = FindViewById<CheckBox>(Resource.Id.checkBoxScanAllEcus);
 
+            _layoutFileManage = FindViewById<LinearLayout>(Resource.Id.layoutFileManage);
+            _layoutFileManage.Visibility = ActivityCommon.IsDocumentTreeSupported() ? ViewStates.Visible : ViewStates.Gone;
+
             _buttonStorageCopyTreeToApp = FindViewById<Button>(Resource.Id.buttonStorageCopyTreeToApp);
-            _buttonStorageCopyTreeToApp.Visibility = ActivityCommon.IsDocumentTreeSupported() ? ViewStates.Visible : ViewStates.Gone;
             _buttonStorageCopyTreeToApp.Click += (sender, args) =>
             {
                 SelectCopyDocumentTree(false);
             };
 
             _buttonStorageCopyTreeFromApp = FindViewById<Button>(Resource.Id.buttonStorageCopyTreeFromApp);
-            _buttonStorageCopyTreeFromApp.Visibility = ActivityCommon.IsDocumentTreeSupported() ? ViewStates.Visible : ViewStates.Gone;
             _buttonStorageCopyTreeFromApp.Click += (sender, args) =>
             {
                 SelectCopyAppDir(true);
             };
 
             _buttonStorageDelTreeFromApp = FindViewById<Button>(Resource.Id.buttonStorageDelTreeFromApp);
-            _buttonStorageDelTreeFromApp.Visibility = ActivityCommon.IsDocumentTreeSupported() ? ViewStates.Visible : ViewStates.Gone;
             _buttonStorageDelTreeFromApp.Click += (sender, args) =>
             {
                 SelectDeleteAppDir();
