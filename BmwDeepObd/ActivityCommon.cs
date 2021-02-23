@@ -507,6 +507,7 @@ namespace BmwDeepObd
         private static TranslatorType _translatorType;
         private static Dictionary<string, UdsReader> _udsReaderDict;
         private static EcuFunctionReader _ecuFunctionReader;
+        private static List<string> _recentConfigList;
         private readonly BluetoothAdapter _btAdapter;
         private readonly Java.Lang.Object _clipboardManager;
         private readonly WifiManager _maWifi;
@@ -981,6 +982,7 @@ namespace BmwDeepObd
         static ActivityCommon()
         {
             JobReader = new JobReader();
+            _recentConfigList = new List<string>();
         }
 
         public ActivityCommon(Context context, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null,
@@ -1735,6 +1737,82 @@ namespace BmwDeepObd
                 return false;
             }
             return true;
+        }
+
+        public static List<string> GetRecentConfigList()
+        {
+            return _recentConfigList;
+        }
+
+        public static void RecentConfigListClear()
+        {
+            _recentConfigList.Clear();
+        }
+
+        public static bool RecentConfigListAdd(string fileName)
+        {
+            try
+            {
+                if (!_recentConfigList.Contains(fileName))
+                {
+                    _recentConfigList.Insert(0, fileName);
+                    while (_recentConfigList.Count > 10)
+                    {
+                        _recentConfigList.RemoveAt(_recentConfigList.Count - 1);
+                    }
+
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return false;
+        }
+
+        public static bool RecentConfigListRemove(string fileName)
+        {
+            try
+            {
+                if (_recentConfigList.Contains(fileName))
+                {
+                    _recentConfigList.Remove(fileName);
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return false;
+        }
+
+        public static bool RecentConfigListCleanup()
+        {
+            try
+            {
+                int index = 0;
+                while (index < _recentConfigList.Count)
+                {
+                    if (!File.Exists(_recentConfigList[index]))
+                    {
+                        _recentConfigList.RemoveAt(index);
+                    }
+                    else
+                    {
+                        index++;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return false;
         }
 
         public static List<int> GetCpuUsageStatistic()
