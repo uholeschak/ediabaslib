@@ -189,6 +189,7 @@ namespace BmwDeepObd
                 XmlEditorPackageName = string.Empty;
                 XmlEditorClassName = string.Empty;
 
+                RecentConfigFiles = new List<string>(ActivityCommon.GetRecentConfigList());
                 CustomStorageMedia = ActivityCommon.CustomStorageMedia;
                 CopyToAppSrc = ActivityCommon.CopyToAppSrc;
                 CopyToAppDst = ActivityCommon.CopyToAppDst;
@@ -306,6 +307,7 @@ namespace BmwDeepObd
             [XmlElement("DataLogActive")] public bool DataLogActive { get; set; }
             [XmlElement("DataLogAppend")] public bool DataLogAppend { get; set; }
 
+            [XmlElement("RecentConfigFiles")] public List<string> RecentConfigFiles { get; set; }
             [XmlElement("StorageMedia")] public string CustomStorageMedia { get; set; }
             [XmlElement("CopyToAppSrc")] public string CopyToAppSrc { get; set; }
             [XmlElement("CopyToAppDst")] public string CopyToAppDst { get; set; }
@@ -2220,6 +2222,7 @@ namespace BmwDeepObd
                 storageClassAttributes.Add(storageType, nameof(storageData.ConfigFileName), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.XmlEditorPackageName), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.XmlEditorClassName), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.RecentConfigFiles), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.CustomStorageMedia), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.UsbFirmwareFileName), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.YandexApiKey), ignoreXmlAttributes);
@@ -2336,7 +2339,8 @@ namespace BmwDeepObd
                     ActivityCommon.SelectedLocale = storageData.SelectedLocale;
                     ActivityCommon.SelectedTheme = storageData.SelectedTheme;
 
-                    ActivityCommon.CustomStorageMedia = storageData.CustomStorageMedia; 
+                    ActivityCommon.SetRecentConfigList(storageData.RecentConfigFiles);
+                    ActivityCommon.CustomStorageMedia = storageData.CustomStorageMedia;
                     ActivityCommon.CopyToAppSrc = storageData.CopyToAppSrc;
                     ActivityCommon.CopyToAppDst = storageData.CopyToAppDst;
                     ActivityCommon.CopyFromAppSrc = storageData.CopyFromAppSrc;
