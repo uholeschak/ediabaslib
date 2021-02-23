@@ -1720,7 +1720,8 @@ namespace BmwDeepObd
 
         public static bool IsDocumentTreeSupported()
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+            // basically support starts with Android N, but makes no sense
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
             {
                 return true;
             }
