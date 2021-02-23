@@ -483,6 +483,7 @@ namespace BmwDeepObd
             }
 
             GetSettings();
+            ActivityCommon.RecentConfigListCleanup();
             _activityCommon.UpdateRegisterInternetCellular();
             _activityCommon.SetPreferredNetworkInterface();
 
@@ -871,6 +872,7 @@ namespace BmwDeepObd
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
                         _instanceData.ConfigFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
+                        ActivityCommon.RecentConfigListAdd(_instanceData.ConfigFileName);
                         StoreSettings();
                         ReadConfigFile();
                         UpdateOptionsMenu();
@@ -892,6 +894,7 @@ namespace BmwDeepObd
                         }
 
                         _instanceData.ConfigFileName = data.Extras.GetString(XmlToolActivity.ExtraFileName);
+                        ActivityCommon.RecentConfigListAdd(_instanceData.ConfigFileName);
                         StoreSettings();
                         ReadConfigFile();
                         UpdateOptionsMenu();
