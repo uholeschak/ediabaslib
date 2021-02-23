@@ -1749,7 +1749,13 @@ namespace BmwDeepObd
             _recentConfigList.Clear();
             if (configList != null)
             {
-                _recentConfigList.AddRange(new List<string>(configList));
+                foreach (string fileName in configList)
+                {
+                    if (!_recentConfigList.Contains(fileName))
+                    {
+                        _recentConfigList.Add(fileName);
+                    }
+                }
             }
         }
 
