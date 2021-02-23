@@ -1744,6 +1744,15 @@ namespace BmwDeepObd
             return _recentConfigList;
         }
 
+        public static void SetRecentConfigList(List<string> configList)
+        {
+            _recentConfigList.Clear();
+            if (configList != null)
+            {
+                _recentConfigList.AddRange(new List<string>(configList));
+            }
+        }
+
         public static void RecentConfigListClear()
         {
             _recentConfigList.Clear();
