@@ -189,7 +189,7 @@ namespace BmwDeepObd
                 XmlEditorPackageName = string.Empty;
                 XmlEditorClassName = string.Empty;
 
-                RecentConfigFiles = new List<string>(ActivityCommon.GetRecentConfigList());
+                RecentConfigFiles = new List<string>();
                 CustomStorageMedia = ActivityCommon.CustomStorageMedia;
                 CopyToAppSrc = ActivityCommon.CopyToAppSrc;
                 CopyToAppDst = ActivityCommon.CopyToAppDst;
@@ -235,12 +235,12 @@ namespace BmwDeepObd
                 InitData(ActivityCommon.ActivityMainSettings);
             }
 
-            public StorageData(ActivityMain activityMain) : this()
+            public StorageData(ActivityMain activityMain, bool storage = false) : this()
             {
-                InitData(activityMain);
+                InitData(activityMain, storage);
             }
 
-            public void InitData(ActivityMain activityMain)
+            public void InitData(ActivityMain activityMain, bool storage = false)
             {
                 if (activityMain == null)
                 {
@@ -269,6 +269,10 @@ namespace BmwDeepObd
                 StorageRequirementsAccepted = instanceData.StorageRequirementsAccepted;
                 XmlEditorPackageName = instanceData.XmlEditorPackageName ?? string.Empty;
                 XmlEditorClassName = instanceData.XmlEditorClassName ?? string.Empty;
+                if (storage)
+                {
+                    RecentConfigFiles = new List<string>(ActivityCommon.GetRecentConfigList());
+                }
             }
 
             public string CalcualeHash()
@@ -2438,7 +2442,7 @@ namespace BmwDeepObd
 
                 lock (ActivityCommon.GlobalSettingLockObject)
                 {
-                    StorageData storageData = new StorageData(this);
+                    StorageData storageData = new StorageData(this, true);
                     string hash = storageData.CalcualeHash();
 
                     if (!export && string.Compare(hash, _instanceData.LastSettingsHash, StringComparison.Ordinal) == 0)
