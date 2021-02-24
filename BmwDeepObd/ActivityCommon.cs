@@ -1768,23 +1768,23 @@ namespace BmwDeepObd
         {
             try
             {
-                if (!_recentConfigList.Contains(fileName))
+                if (_recentConfigList.Contains(fileName))
                 {
-                    _recentConfigList.Insert(0, fileName);
-                    while (_recentConfigList.Count > 10)
-                    {
-                        _recentConfigList.RemoveAt(_recentConfigList.Count - 1);
-                    }
-
-                    return true;
+                    _recentConfigList.Remove(fileName);
                 }
+
+                _recentConfigList.Insert(0, fileName);
+                while (_recentConfigList.Count > 10)
+                {
+                    _recentConfigList.RemoveAt(_recentConfigList.Count - 1);
+                }
+
+                return true;
             }
             catch (Exception)
             {
                 return false;
             }
-
-            return false;
         }
 
         public static bool RecentConfigListRemove(string fileName)
