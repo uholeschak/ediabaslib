@@ -1185,6 +1185,7 @@ namespace BmwDeepObd
                 if (recentConfigList != null && index >= 0 && index < recentConfigList.Count)
                 {
                     _instanceData.ConfigFileName = recentConfigList[index];
+                    ActivityCommon.RecentConfigListAdd(_instanceData.ConfigFileName);
                     StoreSettings();
                     ReadConfigFile();
                     UpdateOptionsMenu();
