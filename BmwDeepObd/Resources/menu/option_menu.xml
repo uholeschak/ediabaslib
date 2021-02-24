@@ -47,6 +47,10 @@
                     android:icon="@android:drawable/ic_menu_manage"
                     android:title="@string/menu_recent_cfg_submenu">
                 <menu>
+                  <item android:id="@+id/menu_recent_cfg_clear"
+                        android:icon="@android:drawable/ic_menu_close_clear_cancel"
+                        android:title="@string/menu_recent_cfg_clear"
+                        android:orderInCategory="2" />
                 </menu>
               </item>
               <item android:id="@+id/menu_cfg_edit"

@@ -1072,14 +1072,14 @@ namespace BmwDeepObd
                 ISubMenu recentCfgSubMenu = recentCfgMenu.SubMenu;
                 if (recentCfgSubMenu != null)
                 {
-                    recentCfgSubMenu.Clear();
+                    recentCfgSubMenu.RemoveGroup(MenuGroupRecentId);
                     int index = 0;
                     foreach (string fileName in recentConfigList)
                     {
                         string baseFileName = Path.GetFileNameWithoutExtension(fileName);
                         if (!string.IsNullOrEmpty(baseFileName))
                         {
-                            recentCfgSubMenu.Add(MenuGroupRecentId, index, 0, baseFileName);
+                            recentCfgSubMenu.Add(MenuGroupRecentId, index, 1, baseFileName);
                         }
                         index++;
                     }
@@ -1213,6 +1213,12 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_enet_ip:
                     EnetIpConfig();
+                    return true;
+
+                case Resource.Id.menu_recent_cfg_clear:
+                    ActivityCommon.RecentConfigListClear();
+                    StoreSettings();
+                    UpdateOptionsMenu();
                     return true;
 
                 case Resource.Id.menu_cfg_sel:
