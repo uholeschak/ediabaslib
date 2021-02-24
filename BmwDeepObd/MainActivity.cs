@@ -361,6 +361,7 @@ namespace BmwDeepObd
         private const long EcuExtractSize = 2500000000;         // extracted ecu files size
         private const string InfoXmlName = "ObbInfo.xml";
         private const string ContentFileName = "Content.xml";
+        private const int MenuGroupRecentId = 1;
         private const int CpuLoadCritical = 70;
         private const int AutoHideTimeout = 3000;
         private const int RequestPermissionExternalStorage = 0;
@@ -489,7 +490,6 @@ namespace BmwDeepObd
             }
 
             GetSettings();
-            ActivityCommon.RecentConfigListCleanup();
             _activityCommon.UpdateRegisterInternetCellular();
             _activityCommon.SetPreferredNetworkInterface();
 
@@ -1079,7 +1079,7 @@ namespace BmwDeepObd
                         string baseFileName = Path.GetFileNameWithoutExtension(fileName);
                         if (!string.IsNullOrEmpty(baseFileName))
                         {
-                            recentCfgSubMenu.Add(0, index, 0, baseFileName);
+                            recentCfgSubMenu.Add(MenuGroupRecentId, index, 0, baseFileName);
                         }
                         index++;
                     }
@@ -1178,6 +1178,20 @@ namespace BmwDeepObd
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
+            if (item.GroupId == MenuGroupRecentId)
+            {
+                int index = item.ItemId;
+                List<string> recentConfigList = ActivityCommon.GetRecentConfigList();
+                if (recentConfigList != null && index >= 0 && index < recentConfigList.Count)
+                {
+                    _instanceData.ConfigFileName = recentConfigList[index];
+                    StoreSettings();
+                    ReadConfigFile();
+                    UpdateOptionsMenu();
+                }
+                return true;
+            }
+
             switch (item.ItemId)
             {
                 case Resource.Id.menu_manufacturer:
@@ -2519,6 +2533,7 @@ namespace BmwDeepObd
         {
             _instanceData.StorageAccessGranted = true;
             ActivityCommon.SetStoragePath();
+            ActivityCommon.RecentConfigListCleanup();
             UpdateDirectories();
             _activityCommon.RequestUsbPermission(null);
             ReadConfigFile();
@@ -4045,6 +4060,7 @@ namespace BmwDeepObd
             {
                 if (!ActivityCommon.JobReader.ReadXml(_instanceData.ConfigFileName, out string errorMessage))
                 {
+                    ActivityCommon.RecentConfigListRemove(_instanceData.ConfigFileName);
                     failed = true;
                     string message = GetString(Resource.String.job_reader_read_xml_failed) + "\r\n";
                     if (!string.IsNullOrEmpty(errorMessage))
