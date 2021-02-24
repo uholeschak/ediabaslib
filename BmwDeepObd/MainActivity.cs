@@ -1064,6 +1064,28 @@ namespace BmwDeepObd
                 cfgSelMenu.SetEnabled(!commActive);
             }
 
+            List<string> recentConfigList = ActivityCommon.GetRecentConfigList();
+            IMenuItem recentCfgMenu = menu.FindItem(Resource.Id.menu_recent_cfg_submenu);
+            if (recentCfgMenu != null && recentConfigList != null)
+            {
+                recentCfgMenu.SetVisible(recentConfigList.Count > 0);
+                ISubMenu recentCfgSubMenu = recentCfgMenu.SubMenu;
+                if (recentCfgSubMenu != null)
+                {
+                    recentCfgSubMenu.Clear();
+                    int index = 0;
+                    foreach (string fileName in recentConfigList)
+                    {
+                        string baseFileName = Path.GetFileNameWithoutExtension(fileName);
+                        if (!string.IsNullOrEmpty(baseFileName))
+                        {
+                            recentCfgSubMenu.Add(0, index, 0, baseFileName);
+                        }
+                        index++;
+                    }
+                }
+            }
+
             IMenuItem cfgEditMenu = menu.FindItem(Resource.Id.menu_cfg_edit);
             cfgEditMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
 
