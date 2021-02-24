@@ -43,6 +43,12 @@
               <item android:id="@+id/menu_cfg_sel"
                     android:icon="@android:drawable/ic_menu_search"
                     android:title="@string/menu_cfg_sel" />
+              <item android:id="@+id/menu_recent_cfg_submenu"
+                    android:icon="@android:drawable/ic_menu_manage"
+                    android:title="@string/menu_recent_cfg_submenu">
+                <menu>
+                </menu>
+              </item>
               <item android:id="@+id/menu_cfg_edit"
                     android:icon="@android:drawable/ic_menu_edit"
                     android:title="@string/menu_cfg_edit"/>
