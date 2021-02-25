@@ -390,6 +390,7 @@ namespace BmwDeepObd
         private ActivityCommon _activityCommon;
         public bool _autoHideStarted;
         public long _autoHideStartTime;
+        private IMenu _optionsMenu;
         private Timer _autoHideTimer;
         private Handler _updateHandler;
         private TabLayout _tabLayout;
@@ -986,6 +987,7 @@ namespace BmwDeepObd
         {
             MenuInflater inflater = MenuInflater;
             inflater.Inflate(Resource.Menu.option_menu, menu);
+            _optionsMenu = menu;
             return base.OnCreateOptionsMenu(menu);
         }
 
@@ -1180,17 +1182,35 @@ namespace BmwDeepObd
         {
             if (item.GroupId == MenuGroupRecentId)
             {
-                int index = item.ItemId;
-                List<string> recentConfigList = ActivityCommon.GetRecentConfigList();
-                if (recentConfigList != null && index >= 0 && index < recentConfigList.Count)
+                bool found = false;
+                IMenuItem recentCfgMenu = _optionsMenu?.FindItem(Resource.Id.menu_recent_cfg_submenu);
+                ISubMenu recentCfgSubMenu = recentCfgMenu?.SubMenu;
+                if (recentCfgSubMenu != null)
                 {
-                    _instanceData.ConfigFileName = recentConfigList[index];
-                    ActivityCommon.RecentConfigListAdd(_instanceData.ConfigFileName);
-                    StoreSettings();
-                    ReadConfigFile();
-                    UpdateOptionsMenu();
+                    for (int i = 0; i < recentCfgSubMenu.Size(); i++)
+                    {
+                        if (recentCfgSubMenu.GetItem(i) == item)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
                 }
-                return true;
+
+                if (found)
+                {
+                    int index = item.ItemId;
+                    List<string> recentConfigList = ActivityCommon.GetRecentConfigList();
+                    if (recentConfigList != null && index >= 0 && index < recentConfigList.Count)
+                    {
+                        _instanceData.ConfigFileName = recentConfigList[index];
+                        ActivityCommon.RecentConfigListAdd(_instanceData.ConfigFileName);
+                        StoreSettings();
+                        ReadConfigFile();
+                        UpdateOptionsMenu();
+                    }
+                    return true;
+                }
             }
 
             switch (item.ItemId)
