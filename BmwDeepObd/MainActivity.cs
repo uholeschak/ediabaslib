@@ -1187,13 +1187,9 @@ namespace BmwDeepObd
                 ISubMenu recentCfgSubMenu = recentCfgMenu?.SubMenu;
                 if (recentCfgSubMenu != null)
                 {
-                    for (int i = 0; i < recentCfgSubMenu.Size(); i++)
+                    if (recentCfgSubMenu.FindItem(item.ItemId) == item)
                     {
-                        if (recentCfgSubMenu.GetItem(i) == item)
-                        {
-                            found = true;
-                            break;
-                        }
+                        found = true;
                     }
                 }
 
