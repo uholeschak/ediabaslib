@@ -1081,7 +1081,8 @@ namespace BmwDeepObd
                         string baseFileName = Path.GetFileNameWithoutExtension(fileName);
                         if (!string.IsNullOrEmpty(baseFileName))
                         {
-                            recentCfgSubMenu.Add(MenuGroupRecentId, index, 1, baseFileName);
+                            IMenuItem newMenu = recentCfgSubMenu.Add(MenuGroupRecentId, index, 1, baseFileName);
+                            newMenu?.SetEnabled(!commActive);
                         }
                         index++;
                     }
