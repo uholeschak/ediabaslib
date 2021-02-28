@@ -1068,7 +1068,6 @@ namespace BmwDeepObd
                     cfgSelMenu.SetTitle(Resource.String.menu_cfg_sel);
                 }
 
-                _activityCommon.SetMenuDocumentTreeTooltip(cfgSelMenu);
                 cfgSelMenu.SetEnabled(!commActive);
             }
 
@@ -1191,6 +1190,15 @@ namespace BmwDeepObd
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            {
+                string tooltipText = item.TooltipText;
+                if (!string.IsNullOrWhiteSpace(tooltipText))
+                {
+                    Toast.MakeText(this, tooltipText, ToastLength.Short)?.Show();
+                }
+            }
+
             if (item.GroupId == MenuGroupRecentId)
             {
                 bool found = false;
