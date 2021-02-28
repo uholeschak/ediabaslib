@@ -282,7 +282,7 @@
   <!-- FilePicker -->
   <string name="select_file">Select file</string>
   <string name="access_dir_failed">Access denied:</string>
-  <string name="file_picker_dir_select">Long click to select directory</string>
+  <string name="file_picker_dir_select">Long click to select the directory or select \'.\' for the current one.</string>
   <string name="file_picker_search">Search</string>
 
   <!-- Storage media selection -->
