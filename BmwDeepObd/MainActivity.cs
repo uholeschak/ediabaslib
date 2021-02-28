@@ -1048,7 +1048,11 @@ namespace BmwDeepObd
             }
 
             IMenuItem cfgSubmenu = menu.FindItem(Resource.Id.menu_cfg_submenu);
-            cfgSubmenu?.SetEnabled(!commActive);
+            if (cfgSubmenu != null)
+            {
+                _activityCommon.SetMenuDocumentTreeTooltip(cfgSubmenu);
+                cfgSubmenu.SetEnabled(!commActive);
+            }
 
             IMenuItem cfgSelMenu = menu.FindItem(Resource.Id.menu_cfg_sel);
             if (cfgSelMenu != null)
@@ -1063,6 +1067,8 @@ namespace BmwDeepObd
                 {
                     cfgSelMenu.SetTitle(Resource.String.menu_cfg_sel);
                 }
+
+                _activityCommon.SetMenuDocumentTreeTooltip(cfgSelMenu);
                 cfgSelMenu.SetEnabled(!commActive);
             }
 
@@ -1125,7 +1131,11 @@ namespace BmwDeepObd
             }
 
             IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
-            logSubMenu?.SetEnabled(interfaceAvailable && !commActive);
+            if (logSubMenu != null)
+            {
+                _activityCommon.SetMenuDocumentTreeTooltip(logSubMenu);
+                logSubMenu.SetEnabled(interfaceAvailable && !commActive);
+            }
 
             IMenuItem sendTraceMenu = menu.FindItem(Resource.Id.menu_send_trace);
             sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && ActivityCommon.IsTraceFilePresent(_instanceData.TraceDir));

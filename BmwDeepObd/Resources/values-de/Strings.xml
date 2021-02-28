@@ -292,6 +292,7 @@
   <string name="menu_submenu_help">Onlinehilfe</string>
   <string name="menu_info">App Info</string>
   <string name="menu_exit">App beenden</string>
+  <string name="menu_hint_copy_folder">Sie können Dateien zu und vom App Verzeichnis in den globalen Einstellungen kopieren.</string>
 
   <!-- Data logging -->
   <string name="datalog_enable_trace">Tracefile erzeugen</string>
