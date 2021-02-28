@@ -295,6 +295,8 @@
   <string name="menu_submenu_help">Онлайн помощь</string>
   <string name="menu_info">Информация о приложении</string>
   <string name="menu_exit">Завершить приложение</string>
+  <!--Translate-->
+  <string name="menu_hint_copy_folder">Вы можете копировать файлы в каталог приложения и из него в глобальных настройках.</string>
 
   <!-- Data logging -->
   <string name="datalog_enable_trace">Создать Trace файл</string>
