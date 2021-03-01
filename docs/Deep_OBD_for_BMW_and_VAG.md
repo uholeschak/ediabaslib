@@ -59,7 +59,15 @@ The application has a configuration menu with the following options:
 	* _Block size_: Size of CAN telegram blocks. The default is 0, only change this value if there are communication problems.
 	* _Firmware update_: If a new firmware is available for the adapter, the update could be initiated with this button.
 * _Configuration generator_: Simple [XML configuration files](Page_specification.md) could be generated automatically using the informations obtained from the vehicle. This menu opens the [configuration generator](Configuration_Generator.md) which allows to create new or modify existing XML files by simply selecting the ECU and job informations.
-* _Configuration_: This menu allows the selection of the [configuration file](Page_specification.md) _(*.cccfg file)_. When using the [configuration generator](Configuration_Generator.md) the configuration is selected automatically. After selection the file will be compiled.
+* _Configuration_: This submenu contains configuration selection and editing functions.
+	* _Select_: This menu allows the selection of the [configuration file](Page_specification.md) _(*.cccfg file)_. When using the [configuration generator](Configuration_Generator.md) the configuration is selected automatically. After selection the file will be compiled.
+	* _Recent configurations_: In this submenu the last 10 recently used configurations are accessible.
+	* _Edit_: Edit the current configuration main _(*.cccfg file)_. A suitable XML editor has to be be installed.
+	* _Edit pages list_: Edit the current pages list _(*.cccpages file)_.
+	* _Edit current page_: Edit the currently active page _(*.cccpage file)_.
+	* _Edit other file_: Allows to select and edit any configuration _(*.cccpage file)_.
+	* _Reset XML editor_: Resets the last selected XML editor. A new editor has be to be selected again when editing files.
+	* _Close_: Close the current configuration.
 * _Ediabas tool_: This is a port of the tool32.exe windows application. Selecting the menu will open the [Ediabas tool](EdiabasTool.md) page.
 * _Extract ECU files_: The EUC files are very large, so they have to be extraced at first app start. With this menu item files could be extracted again. An internet connection is required to check for update information.
 * _Data logging_: Selecting this menu entry will open a sub menu with multiple data logging options:
