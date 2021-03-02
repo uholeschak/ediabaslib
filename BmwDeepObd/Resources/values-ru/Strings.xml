@@ -59,7 +59,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Добавлено меню последних настроек\n- Разрешить копировать файлы в каталог приложения и из него\n- Частичная поддержка универсальных адаптеров WGSoft и Carly\n- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Добавлено меню с последними конфигурациями\n- Возможность копировать файлы в каталог приложения и из него\n- Частичная поддержка адаптеров WGSoft и Carly Universal\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string name="vag_mode_info">VAG режим пока что экспериментальный.\nНеобходимо <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md'>Deep OBD устройство</a> с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -164,14 +164,13 @@
   <string name="bmw_ecu_func_error">Ошибка при чтении BMW файлов</string>
 
   <!-- Documents processing -->
-  <!--Translate-->
-  <string name="copy_documents_progress">Копирование файлов</string>
-  <string name="copy_documents_error">Не удалось скопировать</string>
-  <string name="copy_documents_create">The file or folder:\n{0}\nwill be created.\nDo you want to continue?</string>
-  <string name="copy_documents_exists">The file:\n{0}\nalready exists.\nDo you want to override it?</string>
-  <string name="del_documents_progress">Deleting files</string>
-  <string name="del_documents_error">Deleting failed</string>
-  <string name="del_document_request">The file or folder:\n{0}\nwill be deleted.\nDo you want to continue?</string>
+  <string name="copy_documents_progress">Копировать файлы</string>
+  <string name="copy_documents_error">Ошибка копирования</string>
+  <string name="copy_documents_create">Файл или папка:\n{0}\nбудет создана.\nХотите продолжить?</string>
+  <string name="copy_documents_exists">Файл или папка:\n{0}\nуже существует.\nХотите заменить?</string>
+  <string name="del_documents_progress">Удалить файлы </string>
+  <string name="del_documents_error">Ошибка удаления</string>
+  <string name="del_document_request">Файл или папка:\n{0}\nбудет удалена.\nХотите продолжить?</string>
 
   <!-- Send trace file -->
   <string name="send_trace_file_request">Ошибка соединения.\nХотите отправить анонимный и сжатый Trace-файл (размер {0:fs0}) для улучшения качества продукта?</string>
@@ -232,8 +231,7 @@
   <string name="adapter_raw_warn">Режим прямой связи целесообразен только для адаптеров без прошивки или для перепрошивки адаптера!\nСоединение с автомобилем в большинстве случаев невозможно!\nХотите продолжить?</string>
   <string name="invalid_adapter_type">ELM327 устройство поддерживает не все необходимые команды и несовместимо с этим приложением.</string>
   <string name="fake_elm_adapter_type">ELM327 устройство имеет поддельную версию {0}.{1} и несовместимо с этим приложением.</string>
-  <!--Translate-->
-  <string name="limited_elm_adapter_type">The ELM327 adapter is not original and is not supporting all functions. Not all operations are possible.</string>
+  <string name="limited_elm_adapter_type">Адаптер ELM327 не является оригинальным и не поддерживает все функции. Не все операции могут быть выполнены.</string>
   <string name="elm_no_can">Автомобиль не поддерживает D-CAN, коммуникация с ELM327 адаптером невозможна.</string>
   <string name="fake_elm_try">Вы всё-таки хотите попробовать использовать адаптер?</string>
   <string formatted="false" name="recommened_adapter_type">Рекомендуется ELM327 устройство v1.4b, v1.5 или оригинальной версии v2.1,&lt;br&gt;которое базируется на процессоре PIC18F25K80 (не на MCP2515 чипе).&lt;br&gt;По ссылке &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt; можете найти улучшенную прошивку.</string>
@@ -242,16 +240,14 @@
   <string name="adapter_cfg_required">Устройство, возможно, требуется настроить.\nХотите получить доступ к конфигурации устройства?</string>
   <string name="adapter_fw_update">Доступно обновление для этого устройства.\nХотите получить доступ к конфигурации устройства, чтобы установить обновление?</string>
   <string name="adapter_no_escape_mode">Для этого типа Bluetooth-модуля требуется обновление прошивки OBD адаптера.</string>
-  <!--Translate-->
-  <string name="location_permission_rejected">Без разрешения местоположения поиск устройств Bluetooth невозможен.</string>
-  <string name="location_provider_disabled">Для поиска устройства Bluetooth должны быть включены службы определения местоположения.\nВы хотите включить службу определения местоположения?</string>
+  <string name="location_permission_rejected">Поиск Bluetooth устройств невозможен без авторизации местоположения.</string>
+  <string name="location_provider_disabled">Для поиска Bluetooth устройств необходимо активировать службы определения местоположения.\nХотите активировать службы определения местоположения?</string>
   <string name="bt_device_enter_mac">Введите Bluetooth-адрес уже подключённого адаптера OBD в указанном формате</string>
   <string name="bt_device_mac_invalid">Неправильный формат Bluetooth-адреса</string>
   <string name="bt_device_connected">(Подключено)</string>
   <string name="bt_device_menu_tite">Выберите одну из нижеперечисленных опций для этого устройства</string>
   <string name="bt_device_select">Выбрать OBD адаптер</string>
-  <!--Translate-->
-  <string name="bt_device_select_secure">Выбрать OBD адаптер (безопасное соединение)</string>
+  <string name="bt_device_select_secure">Выберите адаптер OBD (безопасное соединение)</string>
   <string name="bt_device_connect_obd">Подключить как OBD адаптер</string>
   <string name="bt_device_connect_phone">Подключить как телефон</string>
   <string name="bt_device_disconnect_phone">Отсоединить телефон</string>
@@ -275,9 +271,8 @@
   <string name="menu_adapter_config">Настройки устройства</string>
   <string name="menu_enet_ip">ENET IP</string>
   <string name="menu_cfg_submenu">Конфигурация</string>
-  <!--Translate-->
-  <string name="menu_recent_cfg_submenu">Недавние конфигурации</string>
-  <string name="menu_recent_cfg_clear">Чисто</string>
+  <string name="menu_recent_cfg_submenu">Последние конфигурации</string>
+  <string name="menu_recent_cfg_clear">Удалить</string>
   <string name="menu_cfg_sel">Выбрать</string>
   <string name="menu_cfg_edit">Редактировать</string>
   <string name="menu_cfg_pages_edit">Редактировать список страниц</string>
@@ -295,8 +290,7 @@
   <string name="menu_submenu_help">Онлайн помощь</string>
   <string name="menu_info">Информация о приложении</string>
   <string name="menu_exit">Завершить приложение</string>
-  <!--Translate-->
-  <string name="menu_hint_copy_folder">Вы можете копировать файлы в каталог приложения и из него в глобальных настройках.</string>
+  <string name="menu_hint_copy_folder">Копирование файлов в каталог приложения и из него можно произвести через глобальные настройки.</string>
 
   <!-- Data logging -->
   <string name="datalog_enable_trace">Создать Trace файл</string>
@@ -310,8 +304,7 @@
   <!-- FilePicker -->
   <string name="select_file">Выбрать файл</string>
   <string name="access_dir_failed">В доступе отказано:</string>
-  <!--Translate-->
-  <string name="file_picker_dir_select">Нажмите и удерживайте, чтобы выбрать каталог, или выберите \'.\' Для текущего.</string>
+  <string name="file_picker_dir_select">Нажмите и удерживайте, чтобы выбрать каталог, или выберите \'.\' для текущего каталога.</string>
   <string name="file_picker_search">Поиск</string>
 
   <!-- Storage media selection -->
@@ -433,13 +426,12 @@
   <string name="settings_caption_scan_all_ecus">Распознавание ECU</string>
   <string name="settings_scan_all_ecus">Для автомобилей BMW с протоколом DS2 всегда сканировать все ECU (медленно)</string>
   <string name="settings_check_ecu_files">Проверка ECU файлов при запуске</string>
-  <!--Translate-->
-  <string name="settings_caption_file_manage">File management</string>
-  <string name="settings_storage_sel_public_dir">Select public directory</string>
-  <string name="settings_storage_sel_app_dir">Select app directory</string>
-  <string name="settings_storage_copy_tree_to_app">Copy directory to app</string>
-  <string name="settings_storage_copy_tree_from_app">Copy file or directory from app</string>
-  <string name="settings_storage_del_tree_from_app">Delete file or directory from app</string>
+  <string name="settings_caption_file_manage">Управление файлами</string>
+  <string name="settings_storage_sel_public_dir">Выбрать общедоступный каталог</string>
+  <string name="settings_storage_sel_app_dir">Выбрать каталог в приложении</string>
+  <string name="settings_storage_copy_tree_to_app">Копировать каталог в приложение</string>
+  <string name="settings_storage_copy_tree_from_app">Копировать файл или каталог из приложения</string>
+  <string name="settings_storage_del_tree_from_app">Удалить файл или каталог из приложения</string>
   <string name="settings_caption_storage">Носитель памяти</string>
   <string name="settings_caption_notifications">Уведомления</string>
   <string name="settings_notification_settings">Настройки уведомлений</string>
@@ -712,11 +704,9 @@
   <string name="can_adapter_fw_update_conn_failed">Не удалось подключиться к адаптеру</string>
   <string name="can_adapter_fw_update_failed">Не удалось обновление прошивки</string>
   <string name="can_adapter_fw_update_ok">Обновление прошивки успешно завершено</string>
-  <!--Translate-->
   <string name="can_adapter_fw_invalid">Файл прошивки неисправен.</string>
   <string name="can_adapter_fw_update_ok_detect">Обновление программного обеспечения прошло успешно.\nНеобходимо перезагрузить и заново идентифицировать адаптер.</string>
   <string name="can_adapter_bt_not_reliable">Как известно, ваше Android-устройство ненадёжно при работе с Bluetooth.\nПожалуйста, используйте другое устройство.</string>
-  <!--Translate-->
   <string name="can_adapter_select_fw_file">Выбрать прошивку</string>
   <string name="button_can_adapter_read">Считать</string>
   <string name="button_can_adapter_write">Сохранить</string>
@@ -724,7 +714,6 @@
   <string name="button_can_adapter_can_500">D-CAN (после 3/2007)</string>
   <string name="button_can_adapter_can_100">K-CAN (не стандарт)</string>
   <string name="button_can_adapter_can_off">K-LINE (до 3/2007)</string>
-  <!--Translate-->
   <string name="button_can_adapter_fw_sel">Выбрать прошивку</string>
   <string name="button_can_adapter_fw_update">Обновление прошивки</string>
   <string name="button_can_adapter_fw_change_elm">Прошить программное обеспечение ELM327</string>
