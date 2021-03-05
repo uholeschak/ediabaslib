@@ -305,6 +305,7 @@ namespace BmwDeepObd
         public const string EcuDirNameVag = "EcuVag";
         public const string AppNameSpace = "de.holeschak.bmw_deep_obd";
         public const string ContactMail = "ulrich@holeschak.de";
+        public const string VagEndDate = "2017-08";
         public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
         public const string ActionPackageName = AppNameSpace + ".Action.PackageName";
         public const string BroadcastXmlEditorPackageName = "XmlEditorPackageName";
