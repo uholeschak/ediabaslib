@@ -5431,6 +5431,7 @@ namespace BmwDeepObd
         {
             if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !_instanceData.VagInfoShown)
             {
+                string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_mode_info), ActivityCommon.VagEndDate).Replace("\n", "<br>"); ;
                 AlertDialog alertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
                     {
@@ -5438,7 +5439,7 @@ namespace BmwDeepObd
                     })
                     .SetNegativeButton(Resource.String.button_abort, (sender, args) => { })
                     .SetCancelable(true)
-                    .SetMessage(Resource.String.vag_mode_info)
+                    .SetMessage(ActivityCommon.FromHtml(message))
                     .SetTitle(Resource.String.alert_title_info)
                     .Show();
                 TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
