@@ -5,6 +5,8 @@ using System.IO;
 using System.IO.Ports;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using BmwFileReader;
+using EdiabasLib;
 using Peak.Can.Basic;
 // ReSharper disable LocalizableElement
 
@@ -14,10 +16,13 @@ namespace CarSimulator
     {
         private const string StdResponseFile = "g31.txt";
         private string _rootFolder;
+        private string _ecuFolder;
         private string _responseDir;
         private readonly CommThread _commThread;
         private int _lastPortCount;
         private readonly CommThread.ConfigData _configData;
+        private EdiabasNet _ediabas;
+        private SgFunctions _sgFunctions;
         private DeviceTest _deviceTest;
         private bool _closeRequest;
 
@@ -32,6 +37,7 @@ namespace CarSimulator
             InitializeComponent();
 
             _rootFolder = Properties.Settings.Default.RootFolder;
+            _ecuFolder = Properties.Settings.Default.EcuFolder;
             string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             if (!string.IsNullOrEmpty(appDir))
             {
@@ -47,6 +53,8 @@ namespace CarSimulator
             UpdateDirectoryList(_rootFolder);
             UpdateResponseFiles(_responseDir);
             _commThread = new CommThread();
+            _ediabas = new EdiabasNet();
+            _sgFunctions = new SgFunctions(_ediabas);
             _deviceTest = new DeviceTest(this);
             UpdatePorts();
             timerUpdate.Enabled = true;
@@ -56,9 +64,25 @@ namespace CarSimulator
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             _commThread.StopThread();
-            _deviceTest.Dispose();
-            _deviceTest = null;
+            if (_deviceTest != null)
+            {
+                _deviceTest.Dispose();
+                _deviceTest = null;
+            }
+
+            if (_sgFunctions != null)
+            {
+                _sgFunctions.Dispose();
+                _sgFunctions = null;
+            }
+
+            if (_ediabas != null)
+            {
+                _ediabas.Dispose();
+                _ediabas = null;
+            }
             Properties.Settings.Default.RootFolder = _rootFolder;
+            Properties.Settings.Default.EcuFolder = _ecuFolder;
             Properties.Settings.Default.Save();
         }
 
@@ -486,12 +510,15 @@ namespace CarSimulator
             bool connected = _commThread.ThreadRunning();
             bool testing = _deviceTest.TestActive;
             bool testAborted = _deviceTest.AbortTest;
+            textEditEcuFolder.Text = _ecuFolder;
             buttonConnect.Text = connected && !testing ? "Disconnect" : "Connect";
             buttonConnect.Enabled = !testing;
             buttonErrorDefault.Enabled = !testing;
             buttonDeviceTestBt.Enabled = !connected && !testing;
             buttonDeviceTestWifi.Enabled = !connected && !testing;
             buttonAbortTest.Enabled = testing && !testAborted;
+            buttonEcuFolder.Enabled = !connected && !testing;
+            buttonRootFolder.Enabled = !connected && !testing;
             checkBoxMoving.Enabled = !testing;
             checkBoxVariableValues.Enabled = !testing;
             checkBoxIgnitionOk.Enabled = !testing;
@@ -532,6 +559,12 @@ namespace CarSimulator
                 {
                     return;
                 }
+
+                if (!Directory.Exists(_ecuFolder))
+                {
+                    MessageBox.Show("Ecu folder not existing");
+                }
+                _ediabas.SetConfigProperty("EcuPath", _ecuFolder);
 
                 CommThread.ResponseType responseType = CommThread.ResponseType.Standard;
                 if (string.Compare(responseFile, "e61.txt", StringComparison.OrdinalIgnoreCase) == 0)
@@ -637,6 +670,17 @@ namespace CarSimulator
             {
                 _rootFolder = folderBrowserDialog.SelectedPath;
                 UpdateDirectoryList(_rootFolder);
+            }
+        }
+
+        private void buttonEcuFolder_Click(object sender, EventArgs e)
+        {
+            folderBrowserDialog.SelectedPath = _ecuFolder;
+            DialogResult result = folderBrowserDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                _ecuFolder = folderBrowserDialog.SelectedPath;
+                UpdateDisplay();
             }
         }
 
