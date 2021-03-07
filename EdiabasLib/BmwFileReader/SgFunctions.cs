@@ -516,7 +516,7 @@ namespace BmwFileReader
                         if (!string.IsNullOrEmpty(arg) && !string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(service))
                         {
                             List<int> serviceList = new List<int>();
-                            string[] serviceArray = service.Split(";");
+                            string[] serviceArray = service.Split(';');
                             foreach (string serviceEntry in serviceArray)
                             {
                                 Int64 value = EdiabasNet.StringToValue(serviceEntry, out bool valid);
