@@ -14,10 +14,8 @@
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,6 +48,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\EdiabasLib\BmwFileReader\SgFunctions.cs">
+      <Link>SgFunctions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\EdiabasLib\EdiabasLib\EdiabasNet.cs">
+      <Link>EdiabasNet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\EdiabasLib\EdiabasLib\EdInterfaceBase.cs">
+      <Link>EdInterfaceBase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\EdiabasLib\EdiabasLib\EdOperations.cs">
+      <Link>EdOperations.cs</Link>
+    </Compile>
+    <Compile Include="..\..\EdiabasLib\EdiabasLib\IniFile.cs">
+      <Link>IniFile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\EdiabasLib\EdiabasLib\MemoryStreamReader.cs">
+      <Link>MemoryStreamReader.cs</Link>
+    </Compile>
     <Compile Include="..\..\EdiabasLib\UdsFileReader\VehicleInfoVag.cs">
       <Link>VehicleInfoVag.cs</Link>
     </Compile>
