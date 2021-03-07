@@ -58,7 +58,10 @@
             this.buttonDeviceTestWifi = new System.Windows.Forms.Button();
             this.checkBoxBtNameStd = new System.Windows.Forms.CheckBox();
             this.buttonAbortTest = new System.Windows.Forms.Button();
+            this.buttonEcuFolder = new System.Windows.Forms.Button();
+            this.textEditEcuFolder = new DevExpress.XtraEditors.TextEdit();
             this.groupBoxConcepts.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.textEditEcuFolder.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonConnect
@@ -128,7 +131,7 @@
             this.groupBoxConcepts.Controls.Add(this.radioButtonDs2);
             this.groupBoxConcepts.Controls.Add(this.radioButtonKwp2000S);
             this.groupBoxConcepts.Controls.Add(this.radioButtonBmwFast);
-            this.groupBoxConcepts.Location = new System.Drawing.Point(438, 191);
+            this.groupBoxConcepts.Location = new System.Drawing.Point(438, 217);
             this.groupBoxConcepts.Name = "groupBoxConcepts";
             this.groupBoxConcepts.Size = new System.Drawing.Size(207, 232);
             this.groupBoxConcepts.TabIndex = 6;
@@ -226,7 +229,7 @@
             // listBoxResponseFiles
             // 
             this.listBoxResponseFiles.FormattingEnabled = true;
-            this.listBoxResponseFiles.Location = new System.Drawing.Point(225, 120);
+            this.listBoxResponseFiles.Location = new System.Drawing.Point(225, 146);
             this.listBoxResponseFiles.Name = "listBoxResponseFiles";
             this.listBoxResponseFiles.Size = new System.Drawing.Size(207, 303);
             this.listBoxResponseFiles.Sorted = true;
@@ -275,7 +278,7 @@
             // 
             // treeViewDirectories
             // 
-            this.treeViewDirectories.Location = new System.Drawing.Point(13, 120);
+            this.treeViewDirectories.Location = new System.Drawing.Point(13, 146);
             this.treeViewDirectories.Name = "treeViewDirectories";
             this.treeViewDirectories.Size = new System.Drawing.Size(206, 303);
             this.treeViewDirectories.TabIndex = 9;
@@ -288,7 +291,7 @@
             // 
             // buttonRootFolder
             // 
-            this.buttonRootFolder.Location = new System.Drawing.Point(12, 88);
+            this.buttonRootFolder.Location = new System.Drawing.Point(13, 87);
             this.buttonRootFolder.Name = "buttonRootFolder";
             this.buttonRootFolder.Size = new System.Drawing.Size(206, 23);
             this.buttonRootFolder.TabIndex = 8;
@@ -346,11 +349,31 @@
             this.buttonAbortTest.UseVisualStyleBackColor = true;
             this.buttonAbortTest.Click += new System.EventHandler(this.buttonAbortTest_Click);
             // 
+            // buttonEcuFolder
+            // 
+            this.buttonEcuFolder.Location = new System.Drawing.Point(12, 116);
+            this.buttonEcuFolder.Name = "buttonEcuFolder";
+            this.buttonEcuFolder.Size = new System.Drawing.Size(206, 23);
+            this.buttonEcuFolder.TabIndex = 15;
+            this.buttonEcuFolder.Text = "Select Ecu Folder";
+            this.buttonEcuFolder.UseVisualStyleBackColor = true;
+            this.buttonEcuFolder.Click += new System.EventHandler(this.buttonEcuFolder_Click);
+            // 
+            // textEditEcuFolder
+            // 
+            this.textEditEcuFolder.Location = new System.Drawing.Point(224, 119);
+            this.textEditEcuFolder.Name = "textEditEcuFolder";
+            this.textEditEcuFolder.Properties.ReadOnly = true;
+            this.textEditEcuFolder.Size = new System.Drawing.Size(207, 20);
+            this.textEditEcuFolder.TabIndex = 16;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(657, 435);
+            this.ClientSize = new System.Drawing.Size(657, 461);
+            this.Controls.Add(this.textEditEcuFolder);
+            this.Controls.Add(this.buttonEcuFolder);
             this.Controls.Add(this.buttonAbortTest);
             this.Controls.Add(this.checkBoxBtNameStd);
             this.Controls.Add(this.buttonDeviceTestWifi);
@@ -378,6 +401,7 @@
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.groupBoxConcepts.ResumeLayout(false);
             this.groupBoxConcepts.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.textEditEcuFolder.Properties)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -413,6 +437,8 @@
         private System.Windows.Forms.Button buttonDeviceTestWifi;
         private System.Windows.Forms.CheckBox checkBoxBtNameStd;
         private System.Windows.Forms.Button buttonAbortTest;
+        private System.Windows.Forms.Button buttonEcuFolder;
+        private DevExpress.XtraEditors.TextEdit textEditEcuFolder;
     }
 }
 
