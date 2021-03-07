@@ -22,6 +22,7 @@
         android:layout_below="@+id/gauge_value"
         android:layout_centerHorizontal="true"
         android:gravity="center"
+        android:maxLines="3"
         android:ellipsize="end"
         android:text="name"
         android:textSize="20dp" />
