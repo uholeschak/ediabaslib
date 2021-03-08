@@ -19,7 +19,7 @@ namespace BmwFileReader
 
         public class SgFuncInfo
         {
-            public SgFuncInfo(string arg, string id, string result, string info, string unit,
+            public SgFuncInfo(string arg, string id, string result, string info, string dataType, TableDataType tableDataType, int? length, string unit,
                 string name, List<int> serviceList, string argTab, string resTab)
             {
                 Arg = arg;
@@ -27,6 +27,9 @@ namespace BmwFileReader
                 Result = result;
                 Info = info;
                 InfoTrans = null;
+                DataType = dataType;
+                TableDataType = tableDataType;
+                Length = length;
                 Unit = unit;
                 Name = name;
                 NameInfoList = null;
@@ -46,6 +49,12 @@ namespace BmwFileReader
             public string Info { get; }
 
             public string InfoTrans { get; set; }
+
+            public string DataType { get; }
+
+            public TableDataType TableDataType { get; set; }
+
+            public int? Length { get; }
 
             public string Unit { get; }
 
@@ -354,7 +363,7 @@ namespace BmwFileReader
 
                         if (!string.IsNullOrEmpty(arg) && !string.IsNullOrEmpty(id))
                         {
-                            sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, unit, name, null, null, null));
+                            sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, null, TableDataType.Undefined, null, unit, name, null, null, null));
                         }
 
                         dictIndex++;
@@ -395,6 +404,7 @@ namespace BmwFileReader
                     int resultIndex = -1;
                     int infoIndex = -1;
                     int unitIndex = -1;
+                    int dataTypeIndex = -1;
                     int nameIndex = -1;
                     int serviceIndex = -1;
                     int argTabIndex = -1;
@@ -413,6 +423,7 @@ namespace BmwFileReader
                         string result = string.Empty;
                         string info = string.Empty;
                         string unit = string.Empty;
+                        string dataType = string.Empty;
                         string name = string.Empty;
                         string service = string.Empty;
                         string argTab = string.Empty;
@@ -445,6 +456,10 @@ namespace BmwFileReader
                                         else if (string.Compare(entry, "EINHEIT", StringComparison.OrdinalIgnoreCase) == 0)
                                         {
                                             unitIndex = i;
+                                        }
+                                        else if (string.Compare(entry, "DATENTYP", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            dataTypeIndex = i;
                                         }
                                         else if (string.Compare(entry, "NAME", StringComparison.OrdinalIgnoreCase) == 0)
                                         {
@@ -486,6 +501,10 @@ namespace BmwFileReader
                                             else if (i == unitIndex)
                                             {
                                                 unit = entry;
+                                            }
+                                            else if (i == dataTypeIndex)
+                                            {
+                                                dataType = entry.Trim();
                                             }
                                             else if (i == nameIndex)
                                             {
@@ -530,7 +549,8 @@ namespace BmwFileReader
                                 }
                             }
 
-                            sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, unit, name, serviceList, argTab, resTab));
+                            TableDataType tableDataType = ConvertDataType(dataType, null, out double? _, out double? _, out int? dataLength);
+                            sgFuncInfoList.Add(new SgFuncInfo(arg, id, result, info, dataType, tableDataType, dataLength, unit, name, serviceList, argTab, resTab));
                         }
 
                         dictIndex++;

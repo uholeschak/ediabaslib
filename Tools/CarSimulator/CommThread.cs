@@ -7241,7 +7241,10 @@ namespace CarSimulator
                                 {
                                     if (!string.IsNullOrEmpty(funcInfo.Result))
                                     {
-                                        //argFuncInfo
+                                        if (funcInfo.Length.HasValue)
+                                        {
+                                            resLength += funcInfo.Length.Value;
+                                        }
                                     }
                                 }
 
