@@ -29,6 +29,8 @@ namespace CarSimulator
         public string responseDir => _responseDir;
         public CommThread commThread => _commThread;
         public CommThread.ConfigData threadConfigData => _configData;
+        public EdiabasNet ediabas => _ediabas;
+        public SgFunctions sgFunctions => _sgFunctions;
         public DeviceTest deviceTest => _deviceTest;
 
         public MainForm()
@@ -52,7 +54,7 @@ namespace CarSimulator
             _configData = new CommThread.ConfigData();
             UpdateDirectoryList(_rootFolder);
             UpdateResponseFiles(_responseDir);
-            _commThread = new CommThread();
+            _commThread = new CommThread(this);
             _ediabas = new EdiabasNet();
             _sgFunctions = new SgFunctions(_ediabas);
             _deviceTest = new DeviceTest(this);
@@ -560,12 +562,6 @@ namespace CarSimulator
                     return;
                 }
 
-                if (!Directory.Exists(_ecuFolder))
-                {
-                    MessageBox.Show("Ecu folder not existing");
-                }
-                _ediabas.SetConfigProperty("EcuPath", _ecuFolder);
-
                 CommThread.ResponseType responseType = CommThread.ResponseType.Standard;
                 if (string.Compare(responseFile, "e61.txt", StringComparison.OrdinalIgnoreCase) == 0)
                 {
@@ -583,6 +579,14 @@ namespace CarSimulator
                 {
                     responseType = CommThread.ResponseType.SMG2;
                 }
+
+                if (!Directory.Exists(_ecuFolder))
+                {
+                    MessageBox.Show("Ecu folder not existing");
+                }
+                _ediabas.SetConfigProperty("EcuPath", _ecuFolder);
+
+                List<SgFunctions.SgFuncInfo> sgFuncInfoList = _sgFunctions.ReadSgFuncTable();
 
                 if (!ReadResponseFile(Path.Combine(_responseDir, responseFile), conceptType))
                 {
