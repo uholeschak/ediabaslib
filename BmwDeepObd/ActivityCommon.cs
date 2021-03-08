@@ -8312,7 +8312,8 @@ namespace BmwDeepObd
                         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                         if (file != null)
                         {
-                            string extState = Android.OS.Environment.GetExternalStorageState(file);
+                            string extState = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ?
+                                Android.OS.Environment.GetExternalStorageState(file) : Android.OS.Environment.ExternalStorageState;
                             if (extState != null && extState.Equals(Android.OS.Environment.MediaMounted) && IsWritable(file.AbsolutePath))
                             {
                                 storageList.Add(file.AbsolutePath);
@@ -8920,7 +8921,8 @@ namespace BmwDeepObd
                         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                         if (extDir != null)
                         {
-                            string extState = Android.OS.Environment.GetExternalStorageState(extDir);
+                            string extState = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ?
+                                Android.OS.Environment.GetExternalStorageState(extDir) : Android.OS.Environment.ExternalStorageState;
                             if (extState != null && extDir.IsDirectory && extState.Equals(Android.OS.Environment.MediaMounted) && IsWritable(extDir.AbsolutePath))
                             {
                                 _externalWritePath = extDir.AbsolutePath;
@@ -8934,7 +8936,8 @@ namespace BmwDeepObd
                         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                         if (extDir != null)
                         {
-                            string extState = Android.OS.Environment.GetExternalStorageState(extDir);
+                            string extState = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ?
+                                Android.OS.Environment.GetExternalStorageState(extDir) : Android.OS.Environment.ExternalStorageState;
                             if (extState != null && extDir.IsDirectory && extState.Equals(Android.OS.Environment.MediaMounted) && IsWritable(extDir.AbsolutePath))
                             {
                                 _externalWritePath = extDir.AbsolutePath;

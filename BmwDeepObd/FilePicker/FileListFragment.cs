@@ -275,7 +275,8 @@ namespace BmwDeepObd.FilePicker
                                 if (file != null && file.IsDirectory && !string.IsNullOrEmpty(file.AbsolutePath))
                                 {
                                     string name = ActivityCommon.GetTruncatedPathName(file.AbsolutePath);
-                                    string extState = Android.OS.Environment.GetExternalStorageState(file);
+                                    string extState = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ?
+                                        Android.OS.Environment.GetExternalStorageState(file) : Android.OS.Environment.ExternalStorageState;
                                     if (!string.IsNullOrEmpty(name) && extState != null && extState.Equals(Android.OS.Environment.MediaMounted))
                                     {
                                         visibleThings.Add(new FileInfoEx(null, FileInfoType.Link,"->" + name, file.AbsolutePath));
