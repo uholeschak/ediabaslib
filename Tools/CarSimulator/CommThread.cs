@@ -15,6 +15,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using BmwFileReader;
+using EdiabasLib;
 using Peak.Can.Basic;
 // ReSharper disable RedundantAssignment
 // ReSharper disable RedundantCast
@@ -7190,7 +7191,13 @@ namespace CarSimulator
                     {
                         foreach (SgFunctions.SgFuncInfo funcInfo in sgFuncInfoList)
                         {
-                            if (funcInfo.ServiceList != null && funcInfo.ServiceList.Contains(serviceId))
+                            Int64 idValue = EdiabasNet.StringToValue(funcInfo.Id, out bool valid);
+                            if (!valid || idValue != serviceId)
+                            {
+                                continue;
+                            }
+
+                            if (funcInfo.ServiceList != null && funcInfo.ServiceList.Contains((int) SgFunctions.UdsServiceId.ReadDataById))
                             {
                                 int resLength = 0;
                                 if (funcInfo.ResInfoList != null)
@@ -7238,7 +7245,7 @@ namespace CarSimulator
                                     }
                                 }
 
-                                Debug.WriteLine("Response length: {0}", resLength);
+                                Debug.WriteLine("Response length calc: {0}", resLength);
                             }
                         }
                     }
@@ -7249,6 +7256,7 @@ namespace CarSimulator
                         return false;
                     }
 
+                    Debug.WriteLine("Response length dict: {0}", responseLength);
                     _sendData[i++] = (byte) (serviceId >> 8);
                     _sendData[i++] = (byte) (serviceId & 0xFF);
                     for (int j = 0; j < responseLength; j++)
