@@ -80,7 +80,7 @@
             this.listPorts.Location = new System.Drawing.Point(12, 12);
             this.listPorts.Name = "listPorts";
             this.listPorts.Size = new System.Drawing.Size(78, 69);
-            this.listPorts.TabIndex = 1;
+            this.listPorts.TabIndex = 5;
             // 
             // timerUpdate
             // 
@@ -93,7 +93,7 @@
             this.checkBoxMoving.Location = new System.Drawing.Point(97, 42);
             this.checkBoxMoving.Name = "checkBoxMoving";
             this.checkBoxMoving.Size = new System.Drawing.Size(59, 17);
-            this.checkBoxMoving.TabIndex = 2;
+            this.checkBoxMoving.TabIndex = 6;
             this.checkBoxMoving.Text = "Driving";
             this.checkBoxMoving.UseVisualStyleBackColor = true;
             this.checkBoxMoving.CheckedChanged += new System.EventHandler(this.checkBoxMoving_CheckedChanged);
@@ -104,7 +104,7 @@
             this.checkBoxVariableValues.Location = new System.Drawing.Point(97, 65);
             this.checkBoxVariableValues.Name = "checkBoxVariableValues";
             this.checkBoxVariableValues.Size = new System.Drawing.Size(98, 17);
-            this.checkBoxVariableValues.TabIndex = 3;
+            this.checkBoxVariableValues.TabIndex = 7;
             this.checkBoxVariableValues.Text = "Variable values";
             this.checkBoxVariableValues.UseVisualStyleBackColor = true;
             // 
@@ -134,7 +134,7 @@
             this.groupBoxConcepts.Location = new System.Drawing.Point(438, 217);
             this.groupBoxConcepts.Name = "groupBoxConcepts";
             this.groupBoxConcepts.Size = new System.Drawing.Size(207, 232);
-            this.groupBoxConcepts.TabIndex = 6;
+            this.groupBoxConcepts.TabIndex = 17;
             this.groupBoxConcepts.TabStop = false;
             this.groupBoxConcepts.Text = "Concepts";
             // 
@@ -233,7 +233,7 @@
             this.listBoxResponseFiles.Name = "listBoxResponseFiles";
             this.listBoxResponseFiles.Size = new System.Drawing.Size(207, 303);
             this.listBoxResponseFiles.Sorted = true;
-            this.listBoxResponseFiles.TabIndex = 10;
+            this.listBoxResponseFiles.TabIndex = 15;
             // 
             // checkBoxIgnitionOk
             // 
@@ -241,7 +241,7 @@
             this.checkBoxIgnitionOk.Location = new System.Drawing.Point(224, 53);
             this.checkBoxIgnitionOk.Name = "checkBoxIgnitionOk";
             this.checkBoxIgnitionOk.Size = new System.Drawing.Size(78, 17);
-            this.checkBoxIgnitionOk.TabIndex = 4;
+            this.checkBoxIgnitionOk.TabIndex = 8;
             this.checkBoxIgnitionOk.Text = "Ignition OK";
             this.checkBoxIgnitionOk.UseVisualStyleBackColor = true;
             this.checkBoxIgnitionOk.CheckedChanged += new System.EventHandler(this.checkBoxIgnitionOk_CheckedChanged);
@@ -252,7 +252,7 @@
             this.checkBoxAdsAdapter.Location = new System.Drawing.Point(224, 76);
             this.checkBoxAdsAdapter.Name = "checkBoxAdsAdapter";
             this.checkBoxAdsAdapter.Size = new System.Drawing.Size(87, 17);
-            this.checkBoxAdsAdapter.TabIndex = 5;
+            this.checkBoxAdsAdapter.TabIndex = 9;
             this.checkBoxAdsAdapter.Text = "ADS adapter";
             this.checkBoxAdsAdapter.UseVisualStyleBackColor = true;
             // 
@@ -262,7 +262,7 @@
             this.checkBoxKLineResponder.Location = new System.Drawing.Point(225, 99);
             this.checkBoxKLineResponder.Name = "checkBoxKLineResponder";
             this.checkBoxKLineResponder.Size = new System.Drawing.Size(87, 17);
-            this.checkBoxKLineResponder.TabIndex = 6;
+            this.checkBoxKLineResponder.TabIndex = 10;
             this.checkBoxKLineResponder.Text = "K-Line Resp.";
             this.checkBoxKLineResponder.UseVisualStyleBackColor = true;
             // 
@@ -281,7 +281,7 @@
             this.treeViewDirectories.Location = new System.Drawing.Point(13, 146);
             this.treeViewDirectories.Name = "treeViewDirectories";
             this.treeViewDirectories.Size = new System.Drawing.Size(206, 303);
-            this.treeViewDirectories.TabIndex = 9;
+            this.treeViewDirectories.TabIndex = 14;
             this.treeViewDirectories.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewDirectories_AfterSelect);
             // 
             // folderBrowserDialog
@@ -294,7 +294,7 @@
             this.buttonRootFolder.Location = new System.Drawing.Point(13, 87);
             this.buttonRootFolder.Name = "buttonRootFolder";
             this.buttonRootFolder.Size = new System.Drawing.Size(206, 23);
-            this.buttonRootFolder.TabIndex = 8;
+            this.buttonRootFolder.TabIndex = 12;
             this.buttonRootFolder.Text = "Select Root Folder";
             this.buttonRootFolder.UseVisualStyleBackColor = true;
             this.buttonRootFolder.Click += new System.EventHandler(this.buttonRootFolder_Click);
@@ -304,7 +304,7 @@
             this.buttonDeviceTestBt.Location = new System.Drawing.Point(336, 12);
             this.buttonDeviceTestBt.Name = "buttonDeviceTestBt";
             this.buttonDeviceTestBt.Size = new System.Drawing.Size(95, 23);
-            this.buttonDeviceTestBt.TabIndex = 11;
+            this.buttonDeviceTestBt.TabIndex = 2;
             this.buttonDeviceTestBt.Text = "Device Test Bt";
             this.buttonDeviceTestBt.UseVisualStyleBackColor = true;
             this.buttonDeviceTestBt.Click += new System.EventHandler(this.buttonDeviceTest_Click);
@@ -316,15 +316,15 @@
             this.textBoxTestResults.Name = "textBoxTestResults";
             this.textBoxTestResults.ReadOnly = true;
             this.textBoxTestResults.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxTestResults.Size = new System.Drawing.Size(207, 171);
-            this.textBoxTestResults.TabIndex = 13;
+            this.textBoxTestResults.Size = new System.Drawing.Size(207, 197);
+            this.textBoxTestResults.TabIndex = 16;
             // 
             // buttonDeviceTestWifi
             // 
             this.buttonDeviceTestWifi.Location = new System.Drawing.Point(336, 41);
             this.buttonDeviceTestWifi.Name = "buttonDeviceTestWifi";
             this.buttonDeviceTestWifi.Size = new System.Drawing.Size(95, 23);
-            this.buttonDeviceTestWifi.TabIndex = 12;
+            this.buttonDeviceTestWifi.TabIndex = 3;
             this.buttonDeviceTestWifi.Text = "Device Test Wifi";
             this.buttonDeviceTestWifi.UseVisualStyleBackColor = true;
             this.buttonDeviceTestWifi.Click += new System.EventHandler(this.buttonDeviceTest_Click);
@@ -335,7 +335,7 @@
             this.checkBoxBtNameStd.Location = new System.Drawing.Point(336, 99);
             this.checkBoxBtNameStd.Name = "checkBoxBtNameStd";
             this.checkBoxBtNameStd.Size = new System.Drawing.Size(89, 17);
-            this.checkBoxBtNameStd.TabIndex = 13;
+            this.checkBoxBtNameStd.TabIndex = 11;
             this.checkBoxBtNameStd.Text = "Bt Name Std.";
             this.checkBoxBtNameStd.UseVisualStyleBackColor = true;
             // 
@@ -344,7 +344,7 @@
             this.buttonAbortTest.Location = new System.Drawing.Point(336, 70);
             this.buttonAbortTest.Name = "buttonAbortTest";
             this.buttonAbortTest.Size = new System.Drawing.Size(95, 23);
-            this.buttonAbortTest.TabIndex = 14;
+            this.buttonAbortTest.TabIndex = 4;
             this.buttonAbortTest.Text = "Abort Test";
             this.buttonAbortTest.UseVisualStyleBackColor = true;
             this.buttonAbortTest.Click += new System.EventHandler(this.buttonAbortTest_Click);
@@ -354,7 +354,7 @@
             this.buttonEcuFolder.Location = new System.Drawing.Point(12, 116);
             this.buttonEcuFolder.Name = "buttonEcuFolder";
             this.buttonEcuFolder.Size = new System.Drawing.Size(206, 23);
-            this.buttonEcuFolder.TabIndex = 15;
+            this.buttonEcuFolder.TabIndex = 13;
             this.buttonEcuFolder.Text = "Select Ecu Folder";
             this.buttonEcuFolder.UseVisualStyleBackColor = true;
             this.buttonEcuFolder.Click += new System.EventHandler(this.buttonEcuFolder_Click);
@@ -366,6 +366,7 @@
             this.textEditEcuFolder.Properties.ReadOnly = true;
             this.textEditEcuFolder.Size = new System.Drawing.Size(207, 20);
             this.textEditEcuFolder.TabIndex = 16;
+            this.textEditEcuFolder.TabStop = false;
             // 
             // MainForm
             // 
