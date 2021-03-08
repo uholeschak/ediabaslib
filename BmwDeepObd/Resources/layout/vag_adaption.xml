@@ -21,7 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/TextViewInnerCaption" />
-            <Spinner
+            <android.widget.Spinner
                 android:id="@+id/spinnerVagAdaptionChannel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -133,7 +133,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/TextViewInnerCaption" />
-            <Spinner
+            <android.widget.Spinner
                 android:id="@+id/spinnerVagAdaptionValueNew"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

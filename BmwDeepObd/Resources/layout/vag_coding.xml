@@ -21,7 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/TextViewInnerCaption" />
-            <Spinner
+            <android.widget.Spinner
                 android:id="@+id/spinnerVagCodingSubsystem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
