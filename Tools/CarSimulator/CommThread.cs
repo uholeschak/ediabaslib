@@ -590,44 +590,6 @@ namespace CarSimulator
             0x86, 0xF1, 0x78, 0x70, 0x06, 0x01, 0x00, 0x00, 0x00};
         // ReSharper restore InconsistentNaming
 
-        private readonly Dictionary<int, int> G31D83BX7C0Service22Dict = new Dictionary<int, int>()
-        {
-            {0x1750, 1},
-            {0x1751, 3},
-            {0x2540, 3},
-            {0x3010, 9},
-            {0x3020, 32},
-            {0x401F, 22},
-            {0x4038, 6},
-            {0x403C, 44},
-            {0x4048, 49},
-            {0x406A, 2},
-            {0x406B, 2},
-            {0x406C, 2},
-            {0x406D, 2},
-            {0x40A0, 22},
-            {0x40A1, 16},
-            {0x40A2, 10},
-            {0x40A3, 14},
-            {0x40A4, 2},
-            {0x40A5, 6},
-            {0x40A6, 14},
-            {0x40A8, 12},
-            {0x40A9, 9},
-            {0x40AA, 9},
-            {0x40AB, 10},
-            {0x40AC, 12},
-            {0x40AD, 26},
-            {0x40AE, 18},
-            {0x40AF, 10},
-            {0x40C3, 16},
-            {0x4284, 2},
-            {0x4267, 2},
-            {0x44A2, 2},
-            {0x5267, 2},
-            {0x5268, 2},
-        };
-
         public bool Moving
         {
             get;
@@ -7160,12 +7122,8 @@ namespace CarSimulator
                 for (int offset = 0; offset < length; offset += 2)
                 {
                     int serviceId = (_receiveData[4 + offset] << 8) + _receiveData[5 + offset];
-
-                    if (!G31D83BX7C0Service22Dict.TryGetValue(serviceId, out int responseLength))
-                    {
-                        Debug.WriteLine("Unknown service ID: {0:X04}", serviceId);
-                        return false;
-                    }
+                    int responseLength = GetResposeLength("d83bx7c0.prg", serviceId);
+                    Debug.WriteLine("Response length: {0}", responseLength);
 
                     _sendData[i++] = (byte)(serviceId >> 8);
                     _sendData[i++] = (byte)(serviceId & 0xFF);
