@@ -969,7 +969,7 @@ namespace BmwDeepObd
                 case ActivityRequest.RequestEditConfig:
                     if (data != null && resultCode == Android.App.Result.Ok)
                     {
-                        string fileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
+                        string fileName = data.Extras?.GetString(FilePickerActivity.ExtraFileName);
                         if (!string.IsNullOrEmpty(fileName))
                         {
                             StartEditXml(fileName);
