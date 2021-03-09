@@ -628,54 +628,6 @@ namespace CarSimulator
             {0x5268, 2},
         };
 
-        private readonly Dictionary<int, int> G31Vcp11Service22Dict = new Dictionary<int, int>()
-        {
-            {0x1820, 98},
-            {0x2502, 4},
-            {0x2503, 2},
-            {0x2504, 12},
-            {0x2540, 3},
-            {0x4000, 60},
-            {0x400E, 32},
-            {0x400F, 56},
-            {0x4015, 50},
-            {0x401D, 8},
-            {0x401E, 16},
-            {0x4182, 2},
-            {0x4183, 3},
-            {0x4184, 67},
-            {0x4186, 36},
-            {0x4187, 36},
-            {0xD665, 16},
-            {0xD666, 24},
-            {0xD7A3, 16},
-            {0xD7A4, 28},
-            {0xD8EC, 2},
-            {0xD8ED, 255},
-            {0xD9DA, 96},
-            {0xDAD3, 2},
-            {0xDAD8, 2},
-            {0xDB71, 16},
-            {0xDC05, 16},
-            {0xDC06, 8},
-            {0xDC07, 8},
-            {0xDC08, 8},
-            {0xDC0A, 16},
-            {0xDC0B, 64},
-            {0xDC0F, 1},
-            {0xDC31, 4},
-            {0xDC50, 8},
-            {0xDC75, 56},
-            {0xDD19, 2},
-            {0xDD35, 28},
-            {0xDD3A, 21},
-            {0xDD3B, 112},
-            {0xDD3C, 62},
-            {0xDD3D, 183},
-            {0xF152, 2},
-            {0xF186, 1},
-        };
-
         public bool Moving
         {
             get;
@@ -7174,16 +7126,7 @@ namespace CarSimulator
                     int serviceId = (_receiveData[4 + offset] << 8) + _receiveData[5 + offset];
                     int responseLength = GetResposeLength("vdp_g11.prg", serviceId);
                     Debug.WriteLine("Response length: {0}", responseLength);
-#if false
-                    foreach (KeyValuePair<int, int> entry in G31Vcp11Service22Dict)
-                    {
-                        int len = GetResposeLength(null, entry.Key);
-                        if (len != entry.Value)
-                        {
-                            Debug.WriteLine("Length different: ID={0:X04}, L1={1}, L2={2}", entry.Key, len, entry.Value);
-                        }
-                    }
-#endif
+
                     _sendData[i++] = (byte) (serviceId >> 8);
                     _sendData[i++] = (byte) (serviceId & 0xFF);
                     for (int j = 0; j < responseLength; j++)
@@ -8520,6 +8463,8 @@ namespace CarSimulator
                                                     if (nameInfoBitField.Length.HasValue)
                                                     {
                                                         resLength += nameInfoBitField.Length.Value;
+                                                        // add only once, fields overlap
+                                                        break;
                                                     }
                                                 }
                                             }
