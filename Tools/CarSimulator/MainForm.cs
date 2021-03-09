@@ -586,8 +586,6 @@ namespace CarSimulator
                 }
                 _ediabas.SetConfigProperty("EcuPath", _ecuFolder);
 
-                List<SgFunctions.SgFuncInfo> sgFuncInfoList = _sgFunctions.ReadSgFuncTable();
-
                 if (!ReadResponseFile(Path.Combine(_responseDir, responseFile), conceptType))
                 {
                     MessageBox.Show("Reading response file failed!");

@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Net;
@@ -7168,98 +7169,21 @@ namespace CarSimulator
                 _sendData[i++] = 0x01;  // length l
                 _sendData[i++] = (byte)(_receiveData[3] | 0x40);
 
-                SgFunctions sgFunctions = _form.sgFunctions;
-                try
-                {
-                    if (string.Compare(_form.ediabas.SgbdFileName, "vdp_g11.prg", StringComparison.OrdinalIgnoreCase) != 0)
-                    {
-                        _form.ediabas.ResolveSgbdFile("vdp_g11");
-                        sgFunctions.ResetCache();
-                    }
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-
-                List<SgFunctions.SgFuncInfo> sgFuncInfoList = sgFunctions.ReadSgFuncTable();
                 for (int offset = 0; offset < length; offset += 2)
                 {
                     int serviceId = (_receiveData[4 + offset] << 8) + _receiveData[5 + offset];
-
-                    if (sgFuncInfoList != null)
+                    int responseLength = GetResposeLength("vdp_g11.prg", serviceId);
+                    Debug.WriteLine("Response length: {0}", responseLength);
+#if false
+                    foreach (KeyValuePair<int, int> entry in G31Vcp11Service22Dict)
                     {
-                        foreach (SgFunctions.SgFuncInfo funcInfo in sgFuncInfoList)
+                        int len = GetResposeLength(null, entry.Key);
+                        if (len != entry.Value)
                         {
-                            Int64 idValue = EdiabasNet.StringToValue(funcInfo.Id, out bool valid);
-                            if (!valid || idValue != serviceId)
-                            {
-                                continue;
-                            }
-
-                            if (funcInfo.ServiceList != null && funcInfo.ServiceList.Contains((int) SgFunctions.UdsServiceId.ReadDataById))
-                            {
-                                int resLength = 0;
-                                if (funcInfo.ResInfoList != null)
-                                {
-                                    //argFuncInfo.Id
-                                    foreach (SgFunctions.SgFuncNameInfo funcNameInfo in funcInfo.ResInfoList)
-                                    {
-                                        if (funcNameInfo is SgFunctions.SgFuncBitFieldInfo funcBitFieldInfo)
-                                        {
-                                            if (funcBitFieldInfo.TableDataType == SgFunctions.TableDataType.Bit &&
-                                                funcBitFieldInfo.NameInfoList != null)
-                                            {
-                                                foreach (SgFunctions.SgFuncNameInfo nameInfo in funcBitFieldInfo.NameInfoList)
-                                                {
-                                                    if (nameInfo is SgFunctions.SgFuncBitFieldInfo nameInfoBitField)
-                                                    {
-                                                        if (!string.IsNullOrEmpty(nameInfoBitField.ResultName))
-                                                        {
-                                                            if (nameInfoBitField.Length.HasValue)
-                                                            {
-                                                                resLength += nameInfoBitField.Length.Value;
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            else
-                                            {
-                                                if (!string.IsNullOrEmpty(funcBitFieldInfo.ResultName))
-                                                {
-                                                    if (funcBitFieldInfo.Length.HasValue)
-                                                    {
-                                                        resLength += funcBitFieldInfo.Length.Value;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    if (!string.IsNullOrEmpty(funcInfo.Result))
-                                    {
-                                        if (funcInfo.Length.HasValue)
-                                        {
-                                            resLength += funcInfo.Length.Value;
-                                        }
-                                    }
-                                }
-
-                                Debug.WriteLine("Response length calc: {0}", resLength);
-                            }
+                            Debug.WriteLine("Length different: ID={0:X04}, L1={1}, L2={2}", entry.Key, len, entry.Value);
                         }
                     }
-
-                    if (!G31Vcp11Service22Dict.TryGetValue(serviceId, out int responseLength))
-                    {
-                        Debug.WriteLine("Unknown service ID: {0:X04}", serviceId);
-                        return false;
-                    }
-
-                    Debug.WriteLine("Response length dict: {0}", responseLength);
+#endif
                     _sendData[i++] = (byte) (serviceId >> 8);
                     _sendData[i++] = (byte) (serviceId & 0xFF);
                     for (int j = 0; j < responseLength; j++)
@@ -8539,6 +8463,96 @@ namespace CarSimulator
                     }
                 }
             }
+        }
+
+        private int GetResposeLength(string sgdbFile, int serviceId)
+        {
+            SgFunctions sgFunctions = _form.sgFunctions;
+            if (!string.IsNullOrEmpty(sgdbFile))
+            {
+                try
+                {
+                    string newSgdb = Path.GetFileNameWithoutExtension(sgdbFile);
+                    string currentSgdb = Path.GetFileNameWithoutExtension(_form.ediabas.SgbdFileName);
+                    if (string.Compare(currentSgdb, newSgdb, StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        _form.ediabas.ResolveSgbdFile(sgdbFile);
+                        sgFunctions.ResetCache();
+                    }
+                }
+                catch (Exception)
+                {
+                    return 0;
+                }
+            }
+
+            int resLength = 0;
+            List<SgFunctions.SgFuncInfo> sgFuncInfoList = sgFunctions.ReadSgFuncTable();
+            if (sgFuncInfoList != null)
+            {
+                foreach (SgFunctions.SgFuncInfo funcInfo in sgFuncInfoList)
+                {
+                    Int64 idValue = EdiabasNet.StringToValue(funcInfo.Id, out bool valid);
+                    if (!valid || idValue != serviceId)
+                    {
+                        continue;
+                    }
+
+                    if (funcInfo.ServiceList != null &&
+                        funcInfo.ServiceList.Contains((int) SgFunctions.UdsServiceId.ReadDataById))
+                    {
+                        if (funcInfo.ResInfoList != null)
+                        {
+                            //argFuncInfo.Id
+                            foreach (SgFunctions.SgFuncNameInfo funcNameInfo in funcInfo.ResInfoList)
+                            {
+                                if (funcNameInfo is SgFunctions.SgFuncBitFieldInfo funcBitFieldInfo)
+                                {
+                                    if (funcBitFieldInfo.TableDataType == SgFunctions.TableDataType.Bit &&
+                                        funcBitFieldInfo.NameInfoList != null)
+                                    {
+                                        foreach (SgFunctions.SgFuncNameInfo nameInfo in funcBitFieldInfo.NameInfoList)
+                                        {
+                                            if (nameInfo is SgFunctions.SgFuncBitFieldInfo nameInfoBitField)
+                                            {
+                                                if (!string.IsNullOrEmpty(nameInfoBitField.ResultName))
+                                                {
+                                                    if (nameInfoBitField.Length.HasValue)
+                                                    {
+                                                        resLength += nameInfoBitField.Length.Value;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (!string.IsNullOrEmpty(funcBitFieldInfo.ResultName))
+                                        {
+                                            if (funcBitFieldInfo.Length.HasValue)
+                                            {
+                                                resLength += funcBitFieldInfo.Length.Value;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(funcInfo.Result))
+                            {
+                                if (funcInfo.Length.HasValue)
+                                {
+                                    resLength += funcInfo.Length.Value;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return resLength;
         }
 
         private void DebugLogData(string message, byte[] data, int length)
