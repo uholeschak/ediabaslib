@@ -1930,10 +1930,16 @@ namespace BmwDeepObd
 
         public bool RegisterInternetCellular()
         {
+            if (IsEmulator())
+            {
+                return false;
+            }
+
             if (_maConnectivity == null)
             {
                 return false;
             }
+
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
                 if (_networkTimer == null)
@@ -1977,6 +1983,11 @@ namespace BmwDeepObd
 
         public bool UnRegisterInternetCellular()
         {
+            if (IsEmulator())
+            {
+                return false;
+            }
+
             if (_maConnectivity == null)
             {
                 return false;
@@ -2115,6 +2126,11 @@ namespace BmwDeepObd
 
         public bool SetPreferredNetworkInterface(bool hipri = true)
         {
+            if (IsEmulator())
+            {
+                return false;
+            }
+
             bool forceMobile = IsNetworkAdapter();
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
@@ -9223,6 +9239,11 @@ namespace BmwDeepObd
 
         private void NetworkTimerEvent(Object state)
         {
+            if (IsEmulator())
+            {
+                return;
+            }
+
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
                 switch (_selectedInterface)
