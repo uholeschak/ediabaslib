@@ -109,7 +109,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
-        <android.widget.Spinner
+        <Spinner
             android:id="@+id/spinnerJobs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -138,7 +138,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/TextViewInnerCaption" />
-            <android.widget.Spinner
+            <Spinner
                 android:id="@+id/spinnerJobResults"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
