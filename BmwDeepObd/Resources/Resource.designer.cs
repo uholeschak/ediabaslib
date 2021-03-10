@@ -12370,6 +12370,9 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7F120000
 			public const int device_filter = 2131886080;
 			
+			// aapt resource value: 0x7F120001
+			public const int filepaths = 2131886081;
+			
 			static Xml()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();

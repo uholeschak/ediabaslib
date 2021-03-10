@@ -5839,8 +5839,8 @@ namespace BmwDeepObd
                 }
 
                 Intent viewIntent = new Intent(Intent.ActionView);
-                Android.Net.Uri fileUri = Android.Net.Uri.FromFile(new Java.IO.File(fileName));
-                string mimeType = Android.Webkit.MimeTypeMap.Singleton.GetMimeTypeFromExtension("xml");
+                Android.Net.Uri fileUri = FileProvider.GetUriForFile(Android.App.Application.Context, PackageName + ".fileprovider", new Java.IO.File(fileName));
+                string mimeType = Android.Webkit.MimeTypeMap.Singleton?.GetMimeTypeFromExtension("xml");
                 viewIntent.SetDataAndType(fileUri, mimeType);
                 viewIntent.SetFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.GrantWriteUriPermission | ActivityFlags.NewTask);
 
