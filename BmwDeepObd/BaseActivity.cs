@@ -173,7 +173,7 @@ namespace BmwDeepObd
                             }
                         }
                     });
-                }, null, 1000, 10 * 1000);
+                }, null, 2 * 1000, 10 * 1000);
             }
 
             if (ActivityCommon.FullScreenMode && _allowFullScreenMode)
