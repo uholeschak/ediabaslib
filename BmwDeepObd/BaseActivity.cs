@@ -35,6 +35,8 @@ namespace BmwDeepObd
                 }
             }
 
+            public bool LowMemoryShown { get; set; }
+
             private bool _actionBarVisibilitySet;
             private bool _actionBarVisible;
         }
@@ -48,6 +50,7 @@ namespace BmwDeepObd
         protected InstanceDataBase _instanceDataBase = new InstanceDataBase();
         private GestureDetectorCompat _gestureDetector;
         protected Configuration _currentConfiguration;
+        private Android.App.ActivityManager _activityManager;
         protected View _decorView;
         protected bool _allowTitleHiding = true;
         protected bool _allowFullScreenMode = true;
@@ -58,6 +61,7 @@ namespace BmwDeepObd
         protected bool _autoFullScreenStarted;
         protected long _autoFullScreenStartTime;
         protected Timer _autoFullScreenTimer;
+        protected Timer _memoryCheckTimer;
 
         public bool LongPress
         {
@@ -70,7 +74,7 @@ namespace BmwDeepObd
                     {
                         if (_touchShowTitle && !SupportActionBar.IsShowing)
                         {
-                            Toast.MakeText(this, GetString(Resource.String.release_show_title), ToastLength.Short).Show();
+                            Toast.MakeText(this, GetString(Resource.String.release_show_title), ToastLength.Short)?.Show();
                         }
                     }
                 }
@@ -92,6 +96,7 @@ namespace BmwDeepObd
             GestureListener gestureListener = new GestureListener(this);
             _gestureDetector = new GestureDetectorCompat(this, gestureListener);
             _currentConfiguration = Resources?.Configuration;
+            _activityManager = GetSystemService(Context.ActivityService) as Android.App.ActivityManager;
 
             _decorView = Window?.DecorView;
             if (_decorView != null)
@@ -152,6 +157,25 @@ namespace BmwDeepObd
                 _instanceDataBase.ActionBarVisible = true;
             }
 
+            if (_memoryCheckTimer == null)
+            {
+                _memoryCheckTimer = new Timer(state =>
+                {
+                    RunOnUiThread(() =>
+                    {
+                        Android.App.ActivityManager.MemoryInfo memoryInfo = GetMemoryInfo();
+                        if (memoryInfo != null)
+                        {
+                            if (memoryInfo.LowMemory && !_instanceDataBase.LowMemoryShown)
+                            {
+                                _instanceDataBase.LowMemoryShown = true;
+                                Toast.MakeText(this, GetString(Resource.String.low_memory_detected), ToastLength.Short)?.Show();
+                            }
+                        }
+                    });
+                }, null, 1000, 10 * 1000);
+            }
+
             if (ActivityCommon.FullScreenMode && _allowFullScreenMode)
             {
                 if (_autoFullScreenTimer == null)
@@ -199,6 +223,12 @@ namespace BmwDeepObd
         protected override void OnPause()
         {
             base.OnPause();
+
+            if (_memoryCheckTimer != null)
+            {
+                _memoryCheckTimer.Dispose();
+                _memoryCheckTimer = null;
+            }
 
             if (_autoFullScreenTimer != null)
             {
@@ -257,6 +287,25 @@ namespace BmwDeepObd
             base.OnConfigurationChanged(newConfig);
             _currentConfiguration = newConfig;
             SetLocale(this, ActivityMain.GetLocaleSetting());
+        }
+
+        public Android.App.ActivityManager.MemoryInfo GetMemoryInfo()
+        {
+            try
+            {
+                if (_activityManager != null)
+                {
+                    Android.App.ActivityManager.MemoryInfo memoryInfo = new Android.App.ActivityManager.MemoryInfo();
+                    _activityManager.GetMemoryInfo(memoryInfo);
+                    return memoryInfo;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return null;
         }
 
         public void ResetTitle()

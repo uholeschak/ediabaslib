@@ -26,6 +26,7 @@
   <string name="store_settings_failed">Storing settings failed. Please reinstall the application.</string>
   <string name="store_settings_filename">The settings have been stored at:</string>
   <string name="release_show_title">Release to show title</string>
+  <string name="low_memory_detected">System memory is low!</string>
   <string name="bt_enable">Bluetooth is not enabled.\nDo you want to enable it now?</string>
   <string name="wifi_enable">Wi-Fi is not enabled.\nDo you want to enable it now or select the access point?</string>
   <string name="bt_not_available">Bluetooth is not available.</string>
