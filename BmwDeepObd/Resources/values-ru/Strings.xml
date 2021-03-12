@@ -27,6 +27,8 @@
   <string name="store_settings_failed">Не удалось сохранить настройки. Пожалуйста, переустановите приложение.</string>
   <string name="store_settings_filename">Настройки были сохранены в:</string>
   <string name="release_show_title">Отпустить для показа панели заглавия</string>
+  <!--Translate-->
+  <string name="low_memory_detected">Недостаточно системной памяти!</string>
   <string name="bt_enable">Bluetooth не активирован.\nХотите его активировать?</string>
   <string name="wifi_enable">Wi-Fi не активирован.\nАктивировать или выбрать точку доступа?</string>
   <string name="bt_not_available">Bluetooth недоступен.</string>
