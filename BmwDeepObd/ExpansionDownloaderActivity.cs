@@ -331,7 +331,7 @@ namespace BmwDeepObd
         {
             try
             {
-                String installer = context.PackageManager.GetInstallerPackageName(context.PackageName);
+                String installer = context?.PackageManager?.GetInstallerPackageName(context.PackageName ?? string.Empty);
                 if (string.IsNullOrEmpty(installer))
                 {
                     return false;

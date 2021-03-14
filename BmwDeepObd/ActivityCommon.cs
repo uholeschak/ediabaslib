@@ -4430,6 +4430,7 @@ namespace BmwDeepObd
                         formDownload.Add(new StringContent(GetCurrentLanguage()), "lang");
                         formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.SdkInt )), "android_ver");
                         formDownload.Add(new StringContent(Build.Fingerprint), "fingerprint");
+                        formDownload.Add(new StringContent(LastAdapterSerial ?? string.Empty), "adapter_serial");
 
                         if (!string.IsNullOrEmpty(certInfo))
                         {
@@ -4500,7 +4501,7 @@ namespace BmwDeepObd
                     try
                     {
                       obbName = Path.GetFileName(ExpansionDownloaderActivity.GetObbFilename(_activity)) ?? string.Empty;
-                      installer = PackageManager.GetInstallerPackageName(_activity?.PackageName);
+                      installer = PackageManager.GetInstallerPackageName(_activity?.PackageName ?? string.Empty);
                     }
                     catch (Exception)
                     {
@@ -5212,7 +5213,7 @@ namespace BmwDeepObd
                 string installer = string.Empty;
                 try
                 {
-                    installer = PackageManager.GetInstallerPackageName(_activity.PackageName);
+                    installer = PackageManager.GetInstallerPackageName(_activity?.PackageName ?? string.Empty);
                 }
                 catch (Exception)
                 {
@@ -5228,7 +5229,8 @@ namespace BmwDeepObd
                     { new StringContent(GetCurrentLanguage()), "lang" },
                     { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.SdkInt)), "android_ver" },
                     { new StringContent(Build.Fingerprint), "fingerprint" },
-                    { new StringContent(installer ?? string.Empty), "installer" }
+                    { new StringContent(installer ?? string.Empty), "installer" },
+                    { new StringContent(LastAdapterSerial ?? string.Empty), "adapter_serial" }
                 };
 
                 if (!string.IsNullOrEmpty(certInfo))
