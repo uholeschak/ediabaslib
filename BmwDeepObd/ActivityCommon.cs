@@ -28,6 +28,7 @@ using EdiabasLib;
 using Hoho.Android.UsbSerial.Driver;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
+using System.ComponentModel;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
@@ -206,12 +207,12 @@ namespace BmwDeepObd
 
         public enum InterfaceType
         {
-            [XmlEnum(Name = "None")] None,
-            [XmlEnum(Name = "Bluetooth")] Bluetooth,
-            [XmlEnum(Name = "Enet")] Enet,
-            [XmlEnum(Name = "ElmWifi")] ElmWifi,
-            [XmlEnum(Name = "DeepObdWifi")] DeepObdWifi,
-            [XmlEnum(Name = "Ftdi")] Ftdi,
+            [XmlEnum(Name = "None"), Description("None")] None,
+            [XmlEnum(Name = "Bluetooth"), Description("Bluetooth")] Bluetooth,
+            [XmlEnum(Name = "Enet"), Description("Enet")] Enet,
+            [XmlEnum(Name = "ElmWifi"), Description("ElmWifi")] ElmWifi,
+            [XmlEnum(Name = "DeepObdWifi"), Description("DeepObdWifi")] DeepObdWifi,
+            [XmlEnum(Name = "Ftdi"), Description("Ftdi")] Ftdi,
         }
 
         public enum InternetConnectionType
@@ -4431,6 +4432,7 @@ namespace BmwDeepObd
                         formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.SdkInt )), "android_ver");
                         formDownload.Add(new StringContent(Build.Fingerprint), "fingerprint");
                         formDownload.Add(new StringContent(LastAdapterSerial ?? string.Empty), "adapter_serial");
+                        formDownload.Add(new StringContent(SelectedInterface.ToDescriptionString()), "interface_type");
 
                         if (!string.IsNullOrEmpty(certInfo))
                         {
@@ -5230,7 +5232,8 @@ namespace BmwDeepObd
                     { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.SdkInt)), "android_ver" },
                     { new StringContent(Build.Fingerprint), "fingerprint" },
                     { new StringContent(installer ?? string.Empty), "installer" },
-                    { new StringContent(LastAdapterSerial ?? string.Empty), "adapter_serial" }
+                    { new StringContent(LastAdapterSerial ?? string.Empty), "adapter_serial" },
+                    { new StringContent(SelectedInterface.ToDescriptionString()), "interface_type" }
                 };
 
                 if (!string.IsNullOrEmpty(certInfo))
@@ -9440,6 +9443,18 @@ namespace BmwDeepObd
 
                 _activityCommon.NetworkStateChanged(true);
             }
+        }
+    }
+
+    public static class EnumExtensions
+    {
+        public static string ToDescriptionString(this ActivityCommon.InterfaceType val)
+        {
+            DescriptionAttribute[] attributes = (DescriptionAttribute[])val
+                .GetType()
+                .GetField(val.ToString())
+                .GetCustomAttributes(typeof(DescriptionAttribute), false);
+            return attributes.Length > 0 ? attributes[0].Description : string.Empty;
         }
     }
 }
