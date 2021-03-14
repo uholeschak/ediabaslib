@@ -4516,7 +4516,7 @@ namespace BmwDeepObd
                         try
                         {
                             obbName = Path.GetFileName(_obbFileName) ?? string.Empty;
-                            installer = PackageManager.GetInstallerPackageName(PackageName);
+                            installer = PackageManager?.GetInstallerPackageName(PackageName ?? string.Empty);
                         }
                         catch (Exception)
                         {
@@ -4531,7 +4531,8 @@ namespace BmwDeepObd
                             { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.SdkInt)), "android_ver" },
                             { new StringContent(Build.Fingerprint), "fingerprint" },
                             { new StringContent(obbName), "obb_name" },
-                            { new StringContent(installer ?? string.Empty), "installer" }
+                            { new StringContent(installer ?? string.Empty), "installer" },
+                            { new StringContent(ActivityCommon.LastAdapterSerial ?? string.Empty), "adapter_serial" }
                         };
 
                         if (!string.IsNullOrEmpty(certInfo))
@@ -5874,7 +5875,7 @@ namespace BmwDeepObd
                     Intent receiver = new Intent(Android.App.Application.Context, typeof(ChooseReceiver));
                     Android.App.PendingIntent pendingIntent =
                         Android.App.PendingIntent.GetBroadcast(Android.App.Application.Context, 0, receiver, Android.App.PendingIntentFlags.UpdateCurrent);
-                    chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_xml_editor), pendingIntent.IntentSender);
+                    chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_xml_editor), pendingIntent?.IntentSender);
                 }
                 else
                 {
