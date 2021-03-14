@@ -4431,8 +4431,8 @@ namespace BmwDeepObd
                         formDownload.Add(new StringContent(GetCurrentLanguage()), "lang");
                         formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.SdkInt )), "android_ver");
                         formDownload.Add(new StringContent(Build.Fingerprint), "fingerprint");
-                        formDownload.Add(new StringContent(LastAdapterSerial ?? string.Empty), "adapter_serial");
                         formDownload.Add(new StringContent(SelectedInterface.ToDescriptionString()), "interface_type");
+                        formDownload.Add(new StringContent(LastAdapterSerial ?? string.Empty), "adapter_serial");
 
                         if (!string.IsNullOrEmpty(certInfo))
                         {
@@ -5232,8 +5232,8 @@ namespace BmwDeepObd
                     { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", Build.VERSION.SdkInt)), "android_ver" },
                     { new StringContent(Build.Fingerprint), "fingerprint" },
                     { new StringContent(installer ?? string.Empty), "installer" },
+                    { new StringContent(SelectedInterface.ToDescriptionString()), "interface_type" },
                     { new StringContent(LastAdapterSerial ?? string.Empty), "adapter_serial" },
-                    { new StringContent(SelectedInterface.ToDescriptionString()), "interface_type" }
                 };
 
                 if (!string.IsNullOrEmpty(certInfo))

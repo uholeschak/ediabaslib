@@ -4532,8 +4532,8 @@ namespace BmwDeepObd
                             { new StringContent(Build.Fingerprint), "fingerprint" },
                             { new StringContent(obbName), "obb_name" },
                             { new StringContent(installer ?? string.Empty), "installer" },
-                            { new StringContent(ActivityCommon.LastAdapterSerial ?? string.Empty), "adapter_serial" },
-                            { new StringContent(ActivityCommon.SelectedInterface.ToDescriptionString() ?? string.Empty), "interface_type" }
+                            { new StringContent(ActivityCommon.SelectedInterface.ToDescriptionString() ?? string.Empty), "interface_type" },
+                            { new StringContent(ActivityCommon.LastAdapterSerial ?? string.Empty), "adapter_serial" }
                         };
 
                         if (!string.IsNullOrEmpty(certInfo))
