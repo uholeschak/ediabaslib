@@ -84,6 +84,7 @@ namespace ApkUploader
             buttonChangeTrack.Enabled = enable;
             buttonAssignTrack.Enabled = enable;
             buttonSetAppInfo.Enabled = enable;
+            buttonUploadSerials.Enabled = enable;
             buttonClose.Enabled = enable;
             comboBoxTrackAssign.Enabled = enable;
             comboBoxTrackUnassign.Enabled = enable;
@@ -1441,7 +1442,7 @@ namespace ApkUploader
             UploadApk(textBoxApkFile.Text, textBoxObbFile.Text, comboBoxTrackAssign.Text, apkChanges, appVersion);
         }
 
-        private void ButtonSetAppInfo_Click(object sender, EventArgs e)
+        private void buttonSetAppInfo_Click(object sender, EventArgs e)
         {
             List<UpdateInfo> apkChanges = null;
             string appVersion = null;
@@ -1464,6 +1465,12 @@ namespace ApkUploader
             }
 
             SetAppInfo(versionCode.Value, appVersion, comboBoxTrackAssign.Text, apkChanges);
+        }
+
+
+        private void buttonUploadSerials_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void buttonSelectApkFile_Click(object sender, EventArgs e)
