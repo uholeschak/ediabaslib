@@ -36,12 +36,12 @@
             this.buttonUploadApk = new System.Windows.Forms.Button();
             this.openFileDialogApk = new System.Windows.Forms.OpenFileDialog();
             this.buttonListTracks = new System.Windows.Forms.Button();
-            this.buttonSelectApk = new System.Windows.Forms.Button();
+            this.buttonSelectApkFile = new System.Windows.Forms.Button();
             this.labelApkFile = new System.Windows.Forms.Label();
             this.textBoxApkFile = new System.Windows.Forms.TextBox();
             this.labelObbFile = new System.Windows.Forms.Label();
             this.textBoxObbFile = new System.Windows.Forms.TextBox();
-            this.buttonSelectObb = new System.Windows.Forms.Button();
+            this.buttonSelectObbFile = new System.Windows.Forms.Button();
             this.openFileDialogObb = new System.Windows.Forms.OpenFileDialog();
             this.folderBrowserDialogResource = new System.Windows.Forms.FolderBrowserDialog();
             this.labelRescourceFolder = new System.Windows.Forms.Label();
@@ -58,18 +58,22 @@
             this.buttonUpdateChanges = new System.Windows.Forms.Button();
             this.checkBoxUpdateName = new System.Windows.Forms.CheckBox();
             this.buttonSetAppInfo = new System.Windows.Forms.Button();
+            this.labelSerialFileName = new System.Windows.Forms.Label();
+            this.textBoxSerialFileName = new System.Windows.Forms.TextBox();
+            this.buttonSelectSerialFile = new System.Windows.Forms.Button();
+            this.openFileDialogSerial = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // textBoxStatus
             // 
             this.textBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxStatus.Location = new System.Drawing.Point(12, 187);
+            this.textBoxStatus.Location = new System.Drawing.Point(12, 226);
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(888, 341);
+            this.textBoxStatus.Size = new System.Drawing.Size(888, 302);
             this.textBoxStatus.TabIndex = 0;
             this.textBoxStatus.TabStop = false;
             // 
@@ -132,16 +136,16 @@
             this.buttonListTracks.UseVisualStyleBackColor = true;
             this.buttonListTracks.Click += new System.EventHandler(this.buttonListTracks_Click);
             // 
-            // buttonSelectApk
+            // buttonSelectApkFile
             // 
-            this.buttonSelectApk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSelectApk.Location = new System.Drawing.Point(870, 81);
-            this.buttonSelectApk.Name = "buttonSelectApk";
-            this.buttonSelectApk.Size = new System.Drawing.Size(30, 23);
-            this.buttonSelectApk.TabIndex = 21;
-            this.buttonSelectApk.Text = "...";
-            this.buttonSelectApk.UseVisualStyleBackColor = true;
-            this.buttonSelectApk.Click += new System.EventHandler(this.buttonSelectApk_Click);
+            this.buttonSelectApkFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonSelectApkFile.Location = new System.Drawing.Point(870, 81);
+            this.buttonSelectApkFile.Name = "buttonSelectApkFile";
+            this.buttonSelectApkFile.Size = new System.Drawing.Size(30, 23);
+            this.buttonSelectApkFile.TabIndex = 21;
+            this.buttonSelectApkFile.Text = "...";
+            this.buttonSelectApkFile.UseVisualStyleBackColor = true;
+            this.buttonSelectApkFile.Click += new System.EventHandler(this.buttonSelectApkFile_Click);
             // 
             // labelApkFile
             // 
@@ -179,16 +183,16 @@
             this.textBoxObbFile.Size = new System.Drawing.Size(852, 20);
             this.textBoxObbFile.TabIndex = 22;
             // 
-            // buttonSelectObb
+            // buttonSelectObbFile
             // 
-            this.buttonSelectObb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSelectObb.Location = new System.Drawing.Point(870, 120);
-            this.buttonSelectObb.Name = "buttonSelectObb";
-            this.buttonSelectObb.Size = new System.Drawing.Size(30, 23);
-            this.buttonSelectObb.TabIndex = 23;
-            this.buttonSelectObb.Text = "...";
-            this.buttonSelectObb.UseVisualStyleBackColor = true;
-            this.buttonSelectObb.Click += new System.EventHandler(this.buttonSelectObb_Click);
+            this.buttonSelectObbFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonSelectObbFile.Location = new System.Drawing.Point(870, 120);
+            this.buttonSelectObbFile.Name = "buttonSelectObbFile";
+            this.buttonSelectObbFile.Size = new System.Drawing.Size(30, 23);
+            this.buttonSelectObbFile.TabIndex = 23;
+            this.buttonSelectObbFile.Text = "...";
+            this.buttonSelectObbFile.UseVisualStyleBackColor = true;
+            this.buttonSelectObbFile.Click += new System.EventHandler(this.buttonSelectObbFile_Click);
             // 
             // openFileDialogObb
             // 
@@ -335,6 +339,40 @@
             this.buttonSetAppInfo.UseVisualStyleBackColor = true;
             this.buttonSetAppInfo.Click += new System.EventHandler(this.ButtonSetAppInfo_Click);
             // 
+            // labelSerialFileName
+            // 
+            this.labelSerialFileName.AutoSize = true;
+            this.labelSerialFileName.Location = new System.Drawing.Point(12, 184);
+            this.labelSerialFileName.Name = "labelSerialFileName";
+            this.labelSerialFileName.Size = new System.Drawing.Size(81, 13);
+            this.labelSerialFileName.TabIndex = 34;
+            this.labelSerialFileName.Text = "Serial file name:";
+            // 
+            // textBoxSerialFileName
+            // 
+            this.textBoxSerialFileName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxSerialFileName.Location = new System.Drawing.Point(12, 200);
+            this.textBoxSerialFileName.Name = "textBoxSerialFileName";
+            this.textBoxSerialFileName.Size = new System.Drawing.Size(852, 20);
+            this.textBoxSerialFileName.TabIndex = 35;
+            // 
+            // buttonSelectSerialFile
+            // 
+            this.buttonSelectSerialFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonSelectSerialFile.Location = new System.Drawing.Point(870, 197);
+            this.buttonSelectSerialFile.Name = "buttonSelectSerialFile";
+            this.buttonSelectSerialFile.Size = new System.Drawing.Size(30, 23);
+            this.buttonSelectSerialFile.TabIndex = 36;
+            this.buttonSelectSerialFile.Text = "...";
+            this.buttonSelectSerialFile.UseVisualStyleBackColor = true;
+            this.buttonSelectSerialFile.Click += new System.EventHandler(this.buttonSelectSerialFile_Click);
+            // 
+            // openFileDialogSerial
+            // 
+            this.openFileDialogSerial.DefaultExt = "*.num";
+            this.openFileDialogSerial.Filter = "Serial Number Files|*.num";
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -342,6 +380,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(912, 569);
+            this.Controls.Add(this.buttonSelectSerialFile);
+            this.Controls.Add(this.textBoxSerialFileName);
+            this.Controls.Add(this.labelSerialFileName);
             this.Controls.Add(this.buttonSetAppInfo);
             this.Controls.Add(this.checkBoxUpdateName);
             this.Controls.Add(this.buttonUpdateChanges);
@@ -356,12 +397,12 @@
             this.Controls.Add(this.buttonSelectResourceFolder);
             this.Controls.Add(this.textBoxResourceFolder);
             this.Controls.Add(this.labelRescourceFolder);
-            this.Controls.Add(this.buttonSelectObb);
+            this.Controls.Add(this.buttonSelectObbFile);
             this.Controls.Add(this.textBoxObbFile);
             this.Controls.Add(this.labelObbFile);
             this.Controls.Add(this.textBoxApkFile);
             this.Controls.Add(this.labelApkFile);
-            this.Controls.Add(this.buttonSelectApk);
+            this.Controls.Add(this.buttonSelectApkFile);
             this.Controls.Add(this.buttonListTracks);
             this.Controls.Add(this.buttonUploadApk);
             this.Controls.Add(this.buttonAbort);
@@ -390,12 +431,12 @@
         private System.Windows.Forms.Button buttonUploadApk;
         private System.Windows.Forms.OpenFileDialog openFileDialogApk;
         private System.Windows.Forms.Button buttonListTracks;
-        private System.Windows.Forms.Button buttonSelectApk;
+        private System.Windows.Forms.Button buttonSelectApkFile;
         private System.Windows.Forms.Label labelApkFile;
         private System.Windows.Forms.TextBox textBoxApkFile;
         private System.Windows.Forms.Label labelObbFile;
         private System.Windows.Forms.TextBox textBoxObbFile;
-        private System.Windows.Forms.Button buttonSelectObb;
+        private System.Windows.Forms.Button buttonSelectObbFile;
         private System.Windows.Forms.OpenFileDialog openFileDialogObb;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogResource;
         private System.Windows.Forms.Label labelRescourceFolder;
@@ -412,6 +453,10 @@
         private System.Windows.Forms.Button buttonUpdateChanges;
         private System.Windows.Forms.CheckBox checkBoxUpdateName;
         private System.Windows.Forms.Button buttonSetAppInfo;
+        private System.Windows.Forms.Label labelSerialFileName;
+        private System.Windows.Forms.TextBox textBoxSerialFileName;
+        private System.Windows.Forms.Button buttonSelectSerialFile;
+        private System.Windows.Forms.OpenFileDialog openFileDialogSerial;
     }
 }
 

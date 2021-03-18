@@ -92,8 +92,9 @@ namespace ApkUploader
             textBoxApkFile.Enabled = enable;
             textBoxObbFile.Enabled = enable;
             textBoxResourceFolder.Enabled = enable;
-            buttonSelectApk.Enabled = enable;
-            buttonSelectObb.Enabled = enable;
+            textBoxSerialFileName.Enabled = enable;
+            buttonSelectApkFile.Enabled = enable;
+            buttonSelectObbFile.Enabled = enable;
             buttonSelectResourceFolder.Enabled = enable;
 
             buttonAbort.Enabled = !enable;
@@ -1312,6 +1313,7 @@ namespace ApkUploader
             textBoxApkFile.Text = Properties.Settings.Default.ApkFileName;
             textBoxObbFile.Text = Properties.Settings.Default.ObbFileName;
             textBoxResourceFolder.Text = Properties.Settings.Default.ResourceFolder;
+            textBoxSerialFileName.Text = Properties.Settings.Default.SerialFileName;
 
             comboBoxTrackAssign.BeginUpdate();
             comboBoxTrackAssign.Items.Clear();
@@ -1464,7 +1466,7 @@ namespace ApkUploader
             SetAppInfo(versionCode.Value, appVersion, comboBoxTrackAssign.Text, apkChanges);
         }
 
-        private void buttonSelectApk_Click(object sender, EventArgs e)
+        private void buttonSelectApkFile_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(textBoxApkFile.Text))
             {
@@ -1479,7 +1481,7 @@ namespace ApkUploader
             textBoxApkFile.Text = openFileDialogApk.FileName;
         }
 
-        private void buttonSelectObb_Click(object sender, EventArgs e)
+        private void buttonSelectObbFile_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(textBoxObbFile.Text))
             {
@@ -1505,6 +1507,21 @@ namespace ApkUploader
             textBoxResourceFolder.Text = folderBrowserDialogResource.SelectedPath;
         }
 
+        private void buttonSelectSerialFile_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(textBoxSerialFileName.Text))
+            {
+                openFileDialogSerial.FileName = textBoxSerialFileName.Text;
+                openFileDialogSerial.InitialDirectory = Path.GetDirectoryName(textBoxSerialFileName.Text);
+            }
+            if (openFileDialogSerial.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            textBoxSerialFileName.Text = openFileDialogSerial.FileName;
+        }
+
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
             try
@@ -1513,9 +1530,10 @@ namespace ApkUploader
                 Properties.Settings.Default.UpdateName = checkBoxUpdateName.Checked;
                 Properties.Settings.Default.ApkFileName = textBoxApkFile.Text;
                 Properties.Settings.Default.ObbFileName = textBoxObbFile.Text;
+                Properties.Settings.Default.ResourceFolder = textBoxResourceFolder.Text;
+                Properties.Settings.Default.SerialFileName = textBoxSerialFileName.Text;
                 Properties.Settings.Default.TrackAssign = comboBoxTrackAssign.Text;
                 Properties.Settings.Default.TrackUnassign = comboBoxTrackUnassign.Text;
-                Properties.Settings.Default.ResourceFolder = textBoxResourceFolder.Text;
                 Properties.Settings.Default.Save();
             }
             catch (Exception)
