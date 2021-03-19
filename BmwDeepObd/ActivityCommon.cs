@@ -8643,7 +8643,12 @@ namespace BmwDeepObd
                             oldFile.Delete();
                         }
 
-                        fileDst = documentDst.CreateFile(documentSrc.Type, documentSrc.Name);
+                        string ext = Path.GetExtension(documentSrc.Name)?.Remove(0, 1);
+                        string mimeType = "text/" + ext;
+#if DEBUG
+                        Android.Util.Log.Info(Tag, string.Format("Create file: Name={0}, Type={1}, URI={2}", documentSrc.Name, mimeType, documentSrc.Uri.ToString()));
+#endif
+                        fileDst = documentDst.CreateFile(mimeType, documentSrc.Name);
                     }
 
                     if (!fileDst.IsFile)
@@ -8665,7 +8670,7 @@ namespace BmwDeepObd
                         return false;
                     }
 #if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("Copy file: Name={0}, URI={1}", documentSrc.Name, documentSrc.Uri.ToString()));
+                    Android.Util.Log.Info(Tag, string.Format("Copy file: Name={0}, Type={1}, URI={2}", documentSrc.Name, documentSrc.Type, documentSrc.Uri.ToString()));
 #endif
                     using (Stream inputStream = contentResolver.OpenInputStream(documentSrc.Uri))
                     {
@@ -8715,12 +8720,17 @@ namespace BmwDeepObd
                         if (oldFile != null)
                         {
 #if DEBUG
-                            Android.Util.Log.Info(Tag, string.Format("Delete file: Name={0}, URI={1}", documentSrc.Name, documentSrc.Uri.ToString()));
+                            Android.Util.Log.Info(Tag, string.Format("Delete file: Name={0}, URI={1}", documentFile.Name, documentFile.Uri.ToString()));
 #endif
                             oldFile.Delete();
                         }
 
-                        DocumentFile dstFile = subDirDst.CreateFile(documentFile.Type, documentFile.Name);
+                        string ext = Path.GetExtension(documentFile.Name)?.Remove(0, 1);
+                        string mimeType = "text/" + ext;
+#if DEBUG
+                        Android.Util.Log.Info(Tag, string.Format("Create file: Name={0}, Type={1}, URI={2}", documentFile.Name, mimeType, documentFile.Uri.ToString()));
+#endif
+                        DocumentFile dstFile = subDirDst.CreateFile(mimeType, documentFile.Name);
                         if (!CopyDocumentsRecursive(documentFile, dstFile, progressHandler))
                         {
                             return false;
