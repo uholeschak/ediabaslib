@@ -8643,8 +8643,7 @@ namespace BmwDeepObd
                             oldFile.Delete();
                         }
 
-                        string ext = Path.GetExtension(documentSrc.Name)?.Remove(0, 1);
-                        string mimeType = "text/" + ext;
+                        string mimeType = GetMimeType(documentSrc.Name);
 #if DEBUG
                         Android.Util.Log.Info(Tag, string.Format("Create file: Name={0}, Type={1}, URI={2}", documentSrc.Name, mimeType, documentSrc.Uri.ToString()));
 #endif
@@ -8725,8 +8724,7 @@ namespace BmwDeepObd
                             oldFile.Delete();
                         }
 
-                        string ext = Path.GetExtension(documentFile.Name)?.Remove(0, 1);
-                        string mimeType = "text/" + ext;
+                        string mimeType = GetMimeType(documentFile.Name);
 #if DEBUG
                         Android.Util.Log.Info(Tag, string.Format("Create file: Name={0}, Type={1}, URI={2}", documentFile.Name, mimeType, documentFile.Uri.ToString()));
 #endif
@@ -8922,6 +8920,18 @@ namespace BmwDeepObd
             }
 
             return false;
+        }
+
+        public static string GetMimeType(string fileName)
+        {
+            string mimeType = string.Empty;
+            string extension = Path.GetExtension(fileName) ?? string.Empty;
+            if (extension.Length > 0)
+            {
+                mimeType = "application/" + extension.Remove(0, 1);
+            }
+
+            return mimeType;
         }
 
         public static void SetStoragePath()
