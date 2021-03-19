@@ -57,6 +57,22 @@ namespace ApkUploader
             public string Changes { get; }
         }
 
+        private class SerialInfo
+        {
+            public SerialInfo(string serial, string serialType, string oem, bool disabled)
+            {
+                Serial = serial;
+                SerialType = serialType;
+                Oem = oem;
+                Disabled = disabled;
+            }
+
+            public string Serial { get; }
+            public string SerialType { get; }
+            public string Oem { get; }
+            public bool Disabled { get; }
+        }
+
         public FormMain()
         {
             InitializeComponent();
@@ -228,14 +244,14 @@ namespace ApkUploader
             return null;
         }
 
-        private bool ReadAppInfoCredentials(out string url, out string userName, out string password)
+        private bool ReadCredentialsFile(string fileName, out string url, out string userName, out string password)
         {
             url = null;
             userName = null;
             password = null;
             try
             {
-                string xmlFile = Path.Combine(_apkPath, "appinfo_credentials.xml");
+                string xmlFile = Path.Combine(_apkPath, fileName);
                 if (!File.Exists(xmlFile))
                 {
                     return false;
@@ -401,9 +417,10 @@ namespace ApkUploader
                 sb.AppendLine("Updating app info");
                 UpdateStatus(sb.ToString());
 
-                if (!ReadAppInfoCredentials(out string url, out string userName, out string password))
+                if (!ReadCredentialsFile("appinfo_credentials.xml", out string url, out string userName, out string password))
                 {
-                    UpdateStatus("Reading app info credentials failed!");
+                    sb.AppendLine("Reading app info credentials failed!");
+                    UpdateStatus(sb.ToString());
                     return false;
                 }
 
@@ -494,7 +511,7 @@ namespace ApkUploader
                             {
                                 valid = false;
                                 XAttribute messageAttr = errorNode.Attribute("message");
-                                if (string.IsNullOrEmpty(messageAttr?.Value))
+                                if (!string.IsNullOrEmpty(messageAttr?.Value))
                                 {
                                     sb.AppendLine($"Error: {messageAttr?.Value}");
                                 }
@@ -509,6 +526,108 @@ namespace ApkUploader
                         {
                             sb.AppendLine("Response invalid:");
                             sb.AppendLine(responseAppInfoXml);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                sb.AppendLine($"Exception: {e.Message}");
+                return false;
+            }
+
+            return true;
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool UploadSerials(StringBuilder sb, List<SerialInfo> serialInfos)
+        {
+            try
+            {
+                if (sb.Length > 0)
+                {
+                    sb.AppendLine();
+                }
+                sb.AppendLine("Uploading serial numbers");
+                UpdateStatus(sb.ToString());
+
+                if (!ReadCredentialsFile("serial_credentials.xml", out string url, out string userName, out string password))
+                {
+                    sb.AppendLine("Reading serial credentials failed!");
+                    UpdateStatus(sb.ToString());
+                    return false;
+                }
+
+                using (HttpClientHandler httpClientHandler = new HttpClientHandler())
+                {
+                    httpClientHandler.Credentials = new NetworkCredential(userName, password);
+                    using (HttpClient httpClient = new HttpClient(httpClientHandler))
+                    {
+                        foreach (SerialInfo serialInfo in serialInfos)
+                        {
+                            MultipartFormDataContent formSerialInfo = new MultipartFormDataContent();
+
+                            sb.AppendLine($"Serial: {serialInfo.Serial}, Type: {serialInfo.SerialType}");
+
+                            formSerialInfo.Add(new StringContent(serialInfo.Serial), "serial");
+                            formSerialInfo.Add(new StringContent(serialInfo.SerialType), "type");
+                            if (!string.IsNullOrEmpty(serialInfo.Oem))
+                            {
+                                formSerialInfo.Add(new StringContent(serialInfo.Oem), "oem");
+                            }
+                            formSerialInfo.Add(new StringContent(serialInfo.Disabled ? "1" : "0"), "disabled");
+
+                            HttpResponseMessage responseAppInfo = httpClient.PostAsync(url, formSerialInfo, _cts.Token).Result;
+                            responseAppInfo.EnsureSuccessStatusCode();
+                            string responseAppInfoXml = responseAppInfo.Content.ReadAsStringAsync().Result;
+
+                            try
+                            {
+                                XDocument xmlDoc = XDocument.Parse(responseAppInfoXml);
+                                if (xmlDoc.Root == null)
+                                {
+                                    throw new Exception("XML invalid");
+                                }
+
+                                bool valid = false;
+
+                                XElement statusNode = xmlDoc.Root?.Element("status");
+                                if (statusNode != null)
+                                {
+                                    XAttribute okAttr = statusNode.Attribute("ok");
+                                    if (string.Compare(okAttr?.Value ?? string.Empty, "true", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        valid = true;
+                                    }
+                                    else
+                                    {
+                                        sb.AppendLine("Invalid status");
+                                    }
+                                }
+
+                                XElement errorNode = xmlDoc.Root?.Element("error");
+                                if (errorNode != null)
+                                {
+                                    valid = false;
+                                    XAttribute messageAttr = errorNode.Attribute("message");
+                                    if (!string.IsNullOrEmpty(messageAttr?.Value))
+                                    {
+                                        sb.AppendLine($"Error: {messageAttr?.Value}");
+                                    }
+                                }
+
+                                if (valid)
+                                {
+                                    sb.AppendLine("Serial number updated");
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                sb.AppendLine("Response invalid:");
+                                sb.AppendLine(responseAppInfoXml);
+                            }
+
+                            UpdateStatus(sb.ToString());
                         }
                     }
                 }
@@ -1307,6 +1426,35 @@ namespace ApkUploader
             return true;
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool UploadSerials(List<SerialInfo> serialInfos)
+        {
+            if (_serviceThread != null)
+            {
+                return false;
+            }
+            UpdateStatus(string.Empty);
+            _cts = new CancellationTokenSource();
+            _serviceThread = new Thread(() =>
+            {
+                UpdateStatus(string.Empty);
+                StringBuilder sb = new StringBuilder();
+                try
+                {
+                    UploadSerials(sb, serialInfos);
+                }
+                finally
+                {
+                    _serviceThread = null;
+                    _cts.Dispose();
+                    UpdateStatus(sb.ToString());
+                }
+            });
+            _serviceThread.Start();
+
+            return true;
+        }
+
         private void FormMain_Load(object sender, EventArgs e)
         {
             textBoxVersion.Text = Properties.Settings.Default.VersionAssign;
@@ -1470,7 +1618,10 @@ namespace ApkUploader
 
         private void buttonUploadSerials_Click(object sender, EventArgs e)
         {
-
+            List<SerialInfo> serialInfos = new List<SerialInfo>();
+            serialInfos.Add(new SerialInfo("123456", "ELM", "DeepObd", false));
+            serialInfos.Add(new SerialInfo("123457", "ELM", "DeepObd", false));
+            UploadSerials(serialInfos);
         }
 
         private void buttonSelectApkFile_Click(object sender, EventArgs e)
