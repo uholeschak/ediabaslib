@@ -307,6 +307,7 @@ namespace BmwDeepObd
         public const string AppNameSpace = "de.holeschak.bmw_deep_obd";
         public const string ContactMail = "ulrich@holeschak.de";
         public const string VagEndDate = "2017-08";
+        public const string MimeTypeAppAny = @"application/*";
         public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
         public const string ActionPackageName = AppNameSpace + ".Action.PackageName";
         public const string BroadcastXmlEditorPackageName = "XmlEditorPackageName";
@@ -8642,12 +8643,10 @@ namespace BmwDeepObd
 #endif
                             oldFile.Delete();
                         }
-
-                        string mimeType = GetFileMimeType(documentSrc.Name);
 #if DEBUG
-                        Android.Util.Log.Info(Tag, string.Format("Create file: Name={0}, Type={1}, URI={2}", documentSrc.Name, mimeType, documentSrc.Uri.ToString()));
+                        Android.Util.Log.Info(Tag, string.Format("Create file: Name={0}, URI={1}", documentSrc.Name, documentSrc.Uri.ToString()));
 #endif
-                        fileDst = documentDst.CreateFile(mimeType, documentSrc.Name);
+                        fileDst = documentDst.CreateFile(MimeTypeAppAny, documentSrc.Name);
                     }
 
                     if (!fileDst.IsFile)
@@ -8723,12 +8722,10 @@ namespace BmwDeepObd
 #endif
                             oldFile.Delete();
                         }
-
-                        string mimeType = GetFileMimeType(documentFile.Name);
 #if DEBUG
-                        Android.Util.Log.Info(Tag, string.Format("Create file: Name={0}, Type={1}, URI={2}", documentFile.Name, mimeType, documentFile.Uri.ToString()));
+                        Android.Util.Log.Info(Tag, string.Format("Create file: Name={0}, URI={1}", documentFile.Name, documentFile.Uri.ToString()));
 #endif
-                        DocumentFile dstFile = subDirDst.CreateFile(mimeType, documentFile.Name);
+                        DocumentFile dstFile = subDirDst.CreateFile(MimeTypeAppAny, documentFile.Name);
                         if (!CopyDocumentsRecursive(documentFile, dstFile, progressHandler))
                         {
                             return false;
@@ -8920,11 +8917,6 @@ namespace BmwDeepObd
             }
 
             return false;
-        }
-
-        public static string GetFileMimeType(string fileName)
-        {
-            return "application/" + Path.GetExtension(fileName);
         }
 
         public static void SetStoragePath()
