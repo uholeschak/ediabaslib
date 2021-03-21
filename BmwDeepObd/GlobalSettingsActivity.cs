@@ -115,6 +115,7 @@ namespace BmwDeepObd
         {
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
+            _allowTitleHiding = false;
 
             _instanceData.CopyToAppSrcUri = ActivityCommon.CopyToAppSrc;
             _instanceData.CopyToAppDstPath = ActivityCommon.CopyToAppDst;
