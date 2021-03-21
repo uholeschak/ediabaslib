@@ -563,71 +563,89 @@ namespace ApkUploader
                     httpClientHandler.Credentials = new NetworkCredential(userName, password);
                     using (HttpClient httpClient = new HttpClient(httpClientHandler))
                     {
-                        foreach (SerialInfo serialInfo in serialInfos)
+                        for (int stage = 0; stage < 2; stage++)
                         {
-                            MultipartFormDataContent formSerialInfo = new MultipartFormDataContent();
-
-                            sb.AppendLine($"Serial: {serialInfo.Serial}, Type: {serialInfo.SerialType}");
-
-                            formSerialInfo.Add(new StringContent(serialInfo.Serial), "serial");
-                            formSerialInfo.Add(new StringContent(serialInfo.SerialType), "type");
-                            if (!string.IsNullOrEmpty(serialInfo.Oem))
+                            bool valid = true;
+                            foreach (SerialInfo serialInfo in serialInfos)
                             {
-                                formSerialInfo.Add(new StringContent(serialInfo.Oem), "oem");
-                            }
-                            formSerialInfo.Add(new StringContent(serialInfo.Disabled ? "1" : "0"), "disabled");
+                                MultipartFormDataContent formSerialInfo = new MultipartFormDataContent();
 
-                            HttpResponseMessage responseAppInfo = httpClient.PostAsync(url, formSerialInfo, _cts.Token).Result;
-                            responseAppInfo.EnsureSuccessStatusCode();
-                            string responseAppInfoXml = responseAppInfo.Content.ReadAsStringAsync().Result;
-
-                            try
-                            {
-                                XDocument xmlDoc = XDocument.Parse(responseAppInfoXml);
-                                if (xmlDoc.Root == null)
+                                string check = stage == 0 ? "1" : "0";
+                                formSerialInfo.Add(new StringContent(check), "check");
+                                formSerialInfo.Add(new StringContent(serialInfo.Serial), "serial");
+                                formSerialInfo.Add(new StringContent(serialInfo.SerialType), "type");
+                                if (!string.IsNullOrEmpty(serialInfo.Oem))
                                 {
-                                    throw new Exception("XML invalid");
+                                    formSerialInfo.Add(new StringContent(serialInfo.Oem), "oem");
                                 }
+                                formSerialInfo.Add(new StringContent(serialInfo.Disabled ? "1" : "0"), "disabled");
 
-                                bool valid = false;
+                                HttpResponseMessage responseAppInfo = httpClient.PostAsync(url, formSerialInfo, _cts.Token).Result;
+                                responseAppInfo.EnsureSuccessStatusCode();
+                                string responseAppInfoXml = responseAppInfo.Content.ReadAsStringAsync().Result;
 
-                                XElement statusNode = xmlDoc.Root?.Element("status");
-                                if (statusNode != null)
+                                try
                                 {
-                                    XAttribute okAttr = statusNode.Attribute("ok");
-                                    if (string.Compare(okAttr?.Value ?? string.Empty, "true", StringComparison.OrdinalIgnoreCase) == 0)
+                                    XDocument xmlDoc = XDocument.Parse(responseAppInfoXml);
+                                    if (xmlDoc.Root == null)
                                     {
-                                        valid = true;
+                                        throw new Exception("XML invalid");
                                     }
-                                    else
+
+                                    XElement statusNode = xmlDoc.Root?.Element("status");
+                                    if (statusNode != null)
                                     {
-                                        sb.AppendLine("Invalid status");
+                                        XAttribute okAttr = statusNode.Attribute("ok");
+                                        if (string.Compare(okAttr?.Value ?? string.Empty, "true", StringComparison.OrdinalIgnoreCase) != 0)
+                                        {
+                                            valid = false;
+                                            sb.AppendLine("Invalid status");
+                                        }
+                                    }
+
+                                    XElement errorNode = xmlDoc.Root?.Element("error");
+                                    if (errorNode != null)
+                                    {
+                                        valid = false;
+                                        XAttribute messageAttr = errorNode.Attribute("message");
+                                        if (!string.IsNullOrEmpty(messageAttr?.Value))
+                                        {
+                                            sb.AppendLine($"Serial: {serialInfo.Serial}, Type: {serialInfo.SerialType}");
+                                            sb.AppendLine($"Error: {messageAttr.Value}");
+                                        }
                                     }
                                 }
-
-                                XElement errorNode = xmlDoc.Root?.Element("error");
-                                if (errorNode != null)
+                                catch (Exception)
                                 {
                                     valid = false;
-                                    XAttribute messageAttr = errorNode.Attribute("message");
-                                    if (!string.IsNullOrEmpty(messageAttr?.Value))
-                                    {
-                                        sb.AppendLine($"Error: {messageAttr?.Value}");
-                                    }
+                                    sb.AppendLine("Response invalid:");
+                                    sb.AppendLine(responseAppInfoXml);
                                 }
+                            }
 
+                            if (stage == 0)
+                            {
                                 if (valid)
                                 {
-                                    sb.AppendLine("Serial number updated");
+                                    sb.AppendLine("Check ok");
+                                }
+                                else
+                                {
+                                    sb.AppendLine("Check failed");
+                                    break;
                                 }
                             }
-                            catch (Exception)
+                            else
                             {
-                                sb.AppendLine("Response invalid:");
-                                sb.AppendLine(responseAppInfoXml);
+                                if (valid)
+                                {
+                                    sb.AppendLine("Upload ok");
+                                }
+                                else
+                                {
+                                    sb.AppendLine("Upload failed");
+                                }
                             }
-
-                            UpdateStatus(sb.ToString());
                         }
                     }
                 }
