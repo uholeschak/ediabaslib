@@ -491,7 +491,6 @@ namespace ApkUploader
                             }
 
                             bool valid = false;
-
                             XElement statusNode = xmlDoc.Root?.Element("status");
                             if (statusNode != null)
                             {
@@ -513,7 +512,7 @@ namespace ApkUploader
                                 XAttribute messageAttr = errorNode.Attribute("message");
                                 if (!string.IsNullOrEmpty(messageAttr?.Value))
                                 {
-                                    sb.AppendLine($"Error: {messageAttr?.Value}");
+                                    sb.AppendLine($"Error: {messageAttr.Value}");
                                 }
                             }
 
