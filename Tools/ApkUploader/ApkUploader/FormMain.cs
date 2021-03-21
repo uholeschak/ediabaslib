@@ -59,7 +59,7 @@ namespace ApkUploader
 
         private class SerialInfo
         {
-            public SerialInfo(string serial, string serialType, string oem, bool disabled)
+            public SerialInfo(string serial, string serialType, string oem, bool disabled = false)
             {
                 Serial = serial;
                 SerialType = serialType;
@@ -235,6 +235,41 @@ namespace ApkUploader
                 }
 
                 return verNameAttr.Value;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return null;
+        }
+
+        private List<SerialInfo> ReadSerialInfo(string fileName, string oem)
+        {
+            try
+            {
+                if (!File.Exists(fileName))
+                {
+                    return null;
+                }
+
+                Regex regex = new Regex(@"08000000([0-9a-z]{16})[0-9a-z]{2}", RegexOptions.IgnoreCase);
+                List<SerialInfo> serialInfos = new List<SerialInfo>();
+                using (StreamReader sr = new StreamReader(fileName))
+                {
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        MatchCollection matchesSerial = regex.Matches(line);
+                        if ((matchesSerial.Count == 1) && (matchesSerial[0].Groups.Count == 2))
+                        {
+                            string serial = matchesSerial[0].Groups[1].Value;
+                            serialInfos.Add(new SerialInfo(serial, "ELM", oem));
+                        }
+                    }
+                }
+
+                return serialInfos;
             }
             catch (Exception)
             {
@@ -1635,9 +1670,13 @@ namespace ApkUploader
 
         private void buttonUploadSerials_Click(object sender, EventArgs e)
         {
-            List<SerialInfo> serialInfos = new List<SerialInfo>();
-            serialInfos.Add(new SerialInfo("123456", "ELM", "DeepObd", false));
-            serialInfos.Add(new SerialInfo("123457", "ELM", "DeepObd", false));
+            List<SerialInfo> serialInfos = ReadSerialInfo(textBoxSerialFileName.Text, "DeepOBD");
+            if (serialInfos == null)
+            {
+                UpdateStatus("Reading serial numbers failed!");
+                return;
+            }
+
             UploadSerials(serialInfos);
         }
 
