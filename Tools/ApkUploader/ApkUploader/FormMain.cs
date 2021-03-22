@@ -268,7 +268,7 @@ namespace ApkUploader
                             string serial = matchesSerial[0].Groups[1].Value;
                             if (serialInfos.Any(x => string.Compare(x.Serial, serial, StringComparison.OrdinalIgnoreCase) == 0))
                             {
-                                message = $"Serial number ${serial} duplicate";
+                                message = $"Serial number {serial} duplicated";
                                 return null;
                             }
 
