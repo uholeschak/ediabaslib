@@ -244,12 +244,14 @@ namespace ApkUploader
             return null;
         }
 
-        private List<SerialInfo> ReadSerialInfo(string fileName, string oem)
+        private List<SerialInfo> ReadSerialInfo(string fileName, string oem, out string message)
         {
+            message = null;
             try
             {
                 if (!File.Exists(fileName))
                 {
+                    message = "File not found";
                     return null;
                 }
 
@@ -266,6 +268,7 @@ namespace ApkUploader
                             string serial = matchesSerial[0].Groups[1].Value;
                             if (serialInfos.Any(x => string.Compare(x.Serial, serial, StringComparison.OrdinalIgnoreCase) == 0))
                             {
+                                message = $"Serial number ${serial} duplicate";
                                 return null;
                             }
 
@@ -276,9 +279,9 @@ namespace ApkUploader
 
                 return serialInfos;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // ignored
+                message = $"Exception ${ex.Message}";
             }
 
             return null;
@@ -1709,7 +1712,13 @@ namespace ApkUploader
 
         private void buttonUploadSerials_Click(object sender, EventArgs e)
         {
-            List<SerialInfo> serialInfos = ReadSerialInfo(textBoxSerialFileName.Text, "DeepOBD");
+            List<SerialInfo> serialInfos = ReadSerialInfo(textBoxSerialFileName.Text, "DeepOBD", out string message);
+            if (!string.IsNullOrEmpty(message))
+            {
+                UpdateStatus(message);
+                return;
+            }
+
             if (serialInfos == null || serialInfos.Count == 0)
             {
                 UpdateStatus("Reading serial numbers failed!");
