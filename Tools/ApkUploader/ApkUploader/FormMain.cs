@@ -264,6 +264,11 @@ namespace ApkUploader
                         if ((matchesSerial.Count == 1) && (matchesSerial[0].Groups.Count == 2))
                         {
                             string serial = matchesSerial[0].Groups[1].Value;
+                            if (serialInfos.Any(x => string.Compare(x.Serial, serial, StringComparison.OrdinalIgnoreCase) == 0))
+                            {
+                                return null;
+                            }
+
                             serialInfos.Add(new SerialInfo(serial, "ELM", oem));
                         }
                     }
