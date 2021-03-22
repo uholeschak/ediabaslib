@@ -582,8 +582,15 @@ namespace ApkUploader
                 {
                     sb.AppendLine();
                 }
-                sb.AppendLine("Uploading serial numbers");
+                sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "Uploading {0} serial numbers", serialInfos?.Count));
                 UpdateStatus(sb.ToString());
+
+                if (serialInfos == null || serialInfos.Count == 0)
+                {
+                    sb.AppendLine("No serial numbers present");
+                    UpdateStatus(sb.ToString());
+                    return false;
+                }
 
                 if (!ReadCredentialsFile("serial_credentials.xml", out string url, out string userName, out string password))
                 {
@@ -600,11 +607,26 @@ namespace ApkUploader
                         for (int stage = 0; stage < 2; stage++)
                         {
                             bool valid = true;
+                            int index = 0;
                             foreach (SerialInfo serialInfo in serialInfos)
                             {
-                                MultipartFormDataContent formSerialInfo = new MultipartFormDataContent();
+                                int percent = 100 * index / serialInfos.Count;
+                                string message;
+                                string check;
+                                if (stage == 0)
+                                {
+                                    message = string.Format(CultureInfo.InvariantCulture, "Checking: {0}%", percent);
+                                    check = "1";
+                                }
+                                else
+                                {
+                                    message = string.Format(CultureInfo.InvariantCulture, "Uploading: {0}%", percent);
+                                    check = "0";
+                                }
+                                UpdateStatus(sb + message);
 
-                                string check = stage == 0 ? "1" : "0";
+                                // ReSharper disable once UseObjectOrCollectionInitializer
+                                MultipartFormDataContent formSerialInfo = new MultipartFormDataContent();
                                 formSerialInfo.Add(new StringContent(check), "check");
                                 formSerialInfo.Add(new StringContent(serialInfo.Serial), "serial");
                                 formSerialInfo.Add(new StringContent(serialInfo.SerialType), "type");
@@ -655,6 +677,13 @@ namespace ApkUploader
                                     sb.AppendLine("Response invalid:");
                                     sb.AppendLine(responseAppInfoXml);
                                 }
+
+                                if (!valid)
+                                {
+                                    break;
+                                }
+
+                                index++;
                             }
 
                             if (stage == 0)
@@ -1671,7 +1700,7 @@ namespace ApkUploader
         private void buttonUploadSerials_Click(object sender, EventArgs e)
         {
             List<SerialInfo> serialInfos = ReadSerialInfo(textBoxSerialFileName.Text, "DeepOBD");
-            if (serialInfos == null)
+            if (serialInfos == null || serialInfos.Count == 0)
             {
                 UpdateStatus("Reading serial numbers failed!");
                 return;
