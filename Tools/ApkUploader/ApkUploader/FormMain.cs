@@ -566,7 +566,7 @@ namespace ApkUploader
             }
             catch (Exception e)
             {
-                sb.AppendLine($"Exception: {e.Message}");
+                sb.AppendLine(_cts.IsCancellationRequested ? "Cancelled" : $"Exception: {e.Message}");
                 return false;
             }
 
@@ -683,6 +683,11 @@ namespace ApkUploader
                                     break;
                                 }
 
+                                if (_cts.IsCancellationRequested)
+                                {
+                                    break;
+                                }
+
                                 index++;
                             }
 
@@ -715,7 +720,7 @@ namespace ApkUploader
             }
             catch (Exception e)
             {
-                sb.AppendLine($"Exception: {e.Message}");
+                sb.AppendLine(_cts.IsCancellationRequested ? "Cancelled" : $"Exception: {e.Message}");
                 return false;
             }
 
@@ -758,7 +763,7 @@ namespace ApkUploader
                     }
                     catch (Exception e)
                     {
-                        sb.AppendLine($"Exception: {e.Message}");
+                        sb.AppendLine(_cts.IsCancellationRequested ? "Cancelled" : $"Exception: {e.Message}");
                     }
                     finally
                     {
@@ -864,7 +869,7 @@ namespace ApkUploader
                 }
                 catch (Exception e)
                 {
-                    sb.AppendLine($"Exception: {e.Message}");
+                    sb.AppendLine(_cts.IsCancellationRequested ? "Cancelled" : $"Exception: {e.Message}");
                 }
                 finally
                 {
@@ -981,7 +986,7 @@ namespace ApkUploader
                 }
                 catch (Exception e)
                 {
-                    sb.AppendLine($"Exception: {e.Message}");
+                    sb.AppendLine(_cts.IsCancellationRequested ? "Cancelled" : $"Exception: {e.Message}");
                 }
                 finally
                 {
@@ -1117,7 +1122,7 @@ namespace ApkUploader
                 }
                 catch (Exception e)
                 {
-                    sb.AppendLine($"Exception: {e.Message}");
+                    sb.AppendLine(_cts.IsCancellationRequested ? "Cancelled" : $"Exception: {e.Message}");
                 }
                 finally
                 {
@@ -1245,7 +1250,7 @@ namespace ApkUploader
                 }
                 catch (Exception e)
                 {
-                    sb.AppendLine($"Exception: {e.Message}");
+                    sb.AppendLine(_cts.IsCancellationRequested ? "Cancelled" : $"Exception: {e.Message}");
                 }
                 finally
                 {
@@ -1464,7 +1469,7 @@ namespace ApkUploader
                 }
                 catch (Exception e)
                 {
-                    sb.AppendLine($"Exception: {e.Message}");
+                    sb.AppendLine(_cts.IsCancellationRequested ? "Cancelled" : $"Exception: {e.Message}");
                 }
                 finally
                 {
