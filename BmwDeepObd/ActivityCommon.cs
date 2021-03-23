@@ -4485,7 +4485,7 @@ namespace BmwDeepObd
                         }
                     });
 
-                    errorMessage = GetMailErrorMessage(responseDownloadXml);
+                    errorMessage = GetMailErrorMessage(responseDownloadXml, out string adapterBlacklistNew);
                     if (!string.IsNullOrEmpty(errorMessage))
                     {
                         throw new Exception("Error message present");
@@ -4498,6 +4498,9 @@ namespace BmwDeepObd
                     {
                         throw new Exception("Invalid mail line info");
                     }
+
+                    string adapterBlacklistOld = AdapterBlacklist;
+                    AdapterBlacklist = adapterBlacklistNew ?? string.Empty;
 
                     string obbName = string.Empty;
                     string installer = string.Empty;
@@ -4553,9 +4556,13 @@ namespace BmwDeepObd
                             }
                         }
                     }
-                    if (!string.IsNullOrEmpty(AdapterBlacklist))
+                    if (!string.IsNullOrEmpty(adapterBlacklistOld))
                     {
-                        sb.Append(string.Format("\nAdapter blacklist: {0}", AdapterBlacklist));
+                        sb.Append(string.Format("\nAdapter blacklist old: {0}", adapterBlacklistOld));
+                    }
+                    if (!string.IsNullOrEmpty(adapterBlacklistNew))
+                    {
+                        sb.Append(string.Format("\nAdapter blacklist new: {0}", adapterBlacklistNew));
                     }
                     if (!string.IsNullOrEmpty(LastAdapterSerial))
                     {
@@ -4794,7 +4801,7 @@ namespace BmwDeepObd
                             }
                         });
 
-                        errorMessage = GetMailErrorMessage(responseUploadXml);
+                        errorMessage = GetMailErrorMessage(responseUploadXml, out string _);
                         if (!string.IsNullOrEmpty(errorMessage))
                         {
                             throw new Exception("Error message present");
@@ -5017,8 +5024,10 @@ namespace BmwDeepObd
             return true;
         }
 
-        private string GetMailErrorMessage(string mailXml)
+        private string GetMailErrorMessage(string mailXml, out string adapterBlacklist)
         {
+            adapterBlacklist = null;
+
             try
             {
                 if (string.IsNullOrEmpty(mailXml))
@@ -5026,7 +5035,21 @@ namespace BmwDeepObd
                     return null;
                 }
                 XDocument xmlDoc = XDocument.Parse(mailXml);
-                XElement errorNode = xmlDoc.Root?.Element("error");
+                if (xmlDoc.Root == null)
+                {
+                    return null;
+                }
+
+                foreach (XElement blacklistNode in xmlDoc.Root.Elements("blacklists"))
+                {
+                    XAttribute adaptersAttr = blacklistNode.Attribute("adapters");
+                    if (adaptersAttr != null && !string.IsNullOrEmpty(adaptersAttr.Value))
+                    {
+                        adapterBlacklist = adaptersAttr.Value;
+                    }
+                }
+
+                XElement errorNode = xmlDoc.Root.Element("error");
                 // ReSharper disable once UseNullPropagation
                 if (errorNode != null)
                 {
