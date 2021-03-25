@@ -4499,6 +4499,8 @@ namespace BmwDeepObd
                         throw new Exception("Invalid mail line info");
                     }
 
+                    GetMailSerialInfo(responseDownloadXml, out string info_serial, out string info_oem, out string info_disabled);
+
                     string adapterBlacklistOld = AdapterBlacklist;
                     AdapterBlacklist = adapterBlacklistNew ?? string.Empty;
 
@@ -5202,6 +5204,47 @@ namespace BmwDeepObd
                     return false;
                 }
                 regEx = regexAttr.Value;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool GetMailSerialInfo(string mailXml, out string serial, out string oem, out string disabled)
+        {
+            serial = null;
+            oem = null;
+            disabled = null;
+            try
+            {
+                if (string.IsNullOrEmpty(mailXml))
+                {
+                    return false;
+                }
+                XDocument xmlDoc = XDocument.Parse(mailXml);
+                XElement serialInfoNode = xmlDoc.Root?.Element("serial_info");
+                if (serialInfoNode != null)
+                {
+                    XAttribute serialAttr = serialInfoNode.Attribute("serial");
+                    if (serialAttr != null)
+                    {
+                        serial = serialAttr.Value;
+                    }
+
+                    XAttribute oemAttr = serialInfoNode.Attribute("oem");
+                    if (oemAttr != null)
+                    {
+                        oem = oemAttr.Value;
+                    }
+
+                    XAttribute disabledAttr = serialInfoNode.Attribute("disabled");
+                    if (disabledAttr != null)
+                    {
+                        disabled = disabledAttr.Value;
+                    }
+                }
             }
             catch (Exception)
             {
