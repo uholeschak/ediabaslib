@@ -104,6 +104,10 @@ namespace BmwDeepObd
         [XmlType("SerialInfo")]
         public class SerialInfoEntry: IEquatable<SerialInfoEntry>
         {
+            public SerialInfoEntry() : this(string.Empty, string.Empty, false)
+            {
+            }
+
             public SerialInfoEntry(string serial, string oem, bool disabled)
             {
                 Serial = serial;
