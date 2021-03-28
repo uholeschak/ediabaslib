@@ -170,6 +170,7 @@ namespace BmwDeepObd
             public string SelectedEnetIp { get; set; }
         }
 
+        [XmlInclude(typeof(ActivityCommon.SerialInfoEntry))]
         [XmlType("Settings")]
         public class StorageData
         {
@@ -205,6 +206,7 @@ namespace BmwDeepObd
                 ShowBatteryVoltageWarning = ActivityCommon.ShowBatteryVoltageWarning;
                 BatteryWarnings = ActivityCommon.BatteryWarnings;
                 BatteryWarningVoltage = ActivityCommon.BatteryWarningVoltage;
+                SerialInfo = new List<ActivityCommon.SerialInfoEntry>();
                 AdapterBlacklist = ActivityCommon.AdapterBlacklist;
                 LastAdapterSerial = ActivityCommon.LastAdapterSerial;
                 EmailAddress = ActivityCommon.EmailAddress;
@@ -272,6 +274,7 @@ namespace BmwDeepObd
                 if (storage)
                 {
                     RecentConfigFiles = new List<string>(ActivityCommon.GetRecentConfigList());
+                    SerialInfo = ActivityCommon.GetSerialInfoList();
                 }
             }
 
@@ -327,6 +330,7 @@ namespace BmwDeepObd
             [XmlElement("ShowBatteryVoltageWarning")] public bool ShowBatteryVoltageWarning { get; set; }
             [XmlElement("BatteryWarnings")] public long BatteryWarnings { get; set; }
             [XmlElement("BatteryWarningVoltage")] public double BatteryWarningVoltage { get; set; }
+            [XmlElement("SerialInfo")] public List<ActivityCommon.SerialInfoEntry> SerialInfo { get; set; }
             [XmlElement("AdapterBlacklist")] public string AdapterBlacklist { get; set; }
             [XmlElement("LastAdapterSerial")] public string LastAdapterSerial { get; set; }
             [XmlElement("EmailAddress")] public string EmailAddress { get; set; }
@@ -2293,6 +2297,7 @@ namespace BmwDeepObd
             storageClassAttributes.Add(storageType, nameof(storageData.StorageRequirementsAccepted), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.BatteryWarnings), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.BatteryWarningVoltage), ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, nameof(storageData.SerialInfo), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.AdapterBlacklist), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.LastAdapterSerial), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.AppId), ignoreXmlAttributes);
@@ -2437,6 +2442,7 @@ namespace BmwDeepObd
                     ActivityCommon.ShowBatteryVoltageWarning = storageData.ShowBatteryVoltageWarning;
                     ActivityCommon.BatteryWarnings = storageData.BatteryWarnings;
                     ActivityCommon.BatteryWarningVoltage = storageData.BatteryWarningVoltage;
+                    ActivityCommon.SetSerialInfoList(storageData.SerialInfo);
                     ActivityCommon.AdapterBlacklist = storageData.AdapterBlacklist;
                     ActivityCommon.LastAdapterSerial = storageData.LastAdapterSerial;
                     ActivityCommon.EmailAddress = storageData.EmailAddress;
