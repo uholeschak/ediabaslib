@@ -4612,6 +4612,7 @@ namespace BmwDeepObd
                             string key = GetObbKey(responseXml, out errorMessage, out string adapterBlacklist);
                             if (key != null)
                             {
+                                ActivityCommon.UpdateSerialInfo(responseXml);
                                 ActivityCommon.AdapterBlacklist = adapterBlacklist ?? string.Empty;
 #if DEBUG
                                 bool yesSelected = false;
