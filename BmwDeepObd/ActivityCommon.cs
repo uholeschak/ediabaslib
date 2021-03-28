@@ -2001,13 +2001,9 @@ namespace BmwDeepObd
             {
                 lock (SerialInfoLockObject)
                 {
-                    for (int i = 0; i < _serialInfoList.Count; i++)
+                    if (_serialInfoList.Contains(serialInfo))
                     {
-                        if (_serialInfoList[i].Equals(serialInfo))
-                        {
-                            _serialInfoList.RemoveAt(i);
-                            break;
-                        }
+                        _serialInfoList.Remove(serialInfo);
                     }
 
                     _serialInfoList.Insert(0, serialInfo);
@@ -4691,7 +4687,6 @@ namespace BmwDeepObd
                     }
 
                     UpdateSerialInfo(responseDownloadXml);
-
                     string adapterBlacklistOld = AdapterBlacklist;
                     AdapterBlacklist = adapterBlacklistNew ?? string.Empty;
 
@@ -5500,6 +5495,7 @@ namespace BmwDeepObd
 
                         if (success)
                         {
+                            UpdateSerialInfo(responseUpdateXml);
                             AdapterBlacklist = adapterBlacklist ?? string.Empty;
 
                             if (!string.IsNullOrEmpty(errorMessage))
