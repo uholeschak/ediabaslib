@@ -1963,7 +1963,7 @@ namespace BmwDeepObd
         {
             lock (SerialInfoLockObject)
             {
-                return _serialInfoList;
+                return new List<SerialInfoEntry>(_serialInfoList);
             }
         }
 
