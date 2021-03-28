@@ -102,13 +102,15 @@ namespace BmwDeepObd
         }
 
         [XmlType("SerialInfo")]
-        public class SerialInfoEntry
+        public class SerialInfoEntry: IEquatable<SerialInfoEntry>
         {
             public SerialInfoEntry(string serial, string oem, bool disabled)
             {
                 Serial = serial;
                 Oem = oem;
                 Disabled = disabled;
+
+                hashCode = serial.GetHashCode();
             }
 
             [XmlElement("Serial")]
@@ -119,6 +121,48 @@ namespace BmwDeepObd
 
             [XmlElement("Disabled")]
             public bool Disabled { get; set; }
+
+            private readonly int hashCode;
+
+            public override bool Equals(object obj)
+            {
+                return Equals(obj as SerialInfoEntry);
+            }
+
+            public bool Equals(SerialInfoEntry serialInfo)
+            {
+                if (serialInfo == null)
+                {
+                    return false;
+                }
+
+                if (string.Compare(serialInfo.Serial, Serial, StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            public override int GetHashCode()
+            {
+                return hashCode;
+            }
+
+            public static bool operator == (SerialInfoEntry lhs, SerialInfoEntry rhs)
+            {
+                if (lhs == null)
+                {
+                    return false;
+                }
+
+                return lhs.Equals(rhs);
+            }
+
+            public static bool operator !=(SerialInfoEntry lhs, SerialInfoEntry rhs)
+            {
+                return !(lhs == rhs);
+            }
         }
 
         public class VagEcuEntry
@@ -1926,7 +1970,7 @@ namespace BmwDeepObd
             {
                 foreach (SerialInfoEntry serialInfo in serialList)
                 {
-                    if (_serialInfoList.Any(x => string.Compare(x.Serial, serialInfo.Serial, StringComparison.OrdinalIgnoreCase) == 0))
+                    if (_serialInfoList.Contains(serialInfo))
                     {
                         continue;
                     }
@@ -1947,7 +1991,7 @@ namespace BmwDeepObd
             {
                 for (int i = 0; i < _serialInfoList.Count; i++)
                 {
-                    if (string.Compare(_serialInfoList[i].Serial, serialInfo.Serial, StringComparison.OrdinalIgnoreCase) == 0)
+                    if (_serialInfoList[i].Equals(serialInfo))
                     {
                         _serialInfoList.RemoveAt(i);
                         break;
