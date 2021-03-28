@@ -101,6 +101,26 @@ namespace BmwDeepObd
             public string Target { get; }
         }
 
+        [XmlType("SerialInfo")]
+        public class SerialInfoEntry
+        {
+            public SerialInfoEntry(string serial, string oem, bool disabled)
+            {
+                Serial = serial;
+                Oem = oem;
+                Disabled = disabled;
+            }
+
+            [XmlElement("Serial")]
+            public string Serial { get; set; }
+
+            [XmlElement("Oem")]
+            public string Oem { get; set; }
+
+            [XmlElement("Disabled")]
+            public bool Disabled { get; set; }
+        }
+
         public class VagEcuEntry
         {
             public VagEcuEntry(string sysName, int address)
@@ -511,6 +531,7 @@ namespace BmwDeepObd
         private static Dictionary<string, UdsReader> _udsReaderDict;
         private static EcuFunctionReader _ecuFunctionReader;
         private static List<string> _recentConfigList;
+        private static List<SerialInfoEntry> _serialInfoList;
         private readonly BluetoothAdapter _btAdapter;
         private readonly Java.Lang.Object _clipboardManager;
         private readonly WifiManager _maWifi;
@@ -986,6 +1007,7 @@ namespace BmwDeepObd
         {
             JobReader = new JobReader();
             _recentConfigList = new List<string>();
+            _serialInfoList = new List<SerialInfoEntry>();
         }
 
         public ActivityCommon(Context context, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null,
@@ -1831,6 +1853,119 @@ namespace BmwDeepObd
             }
 
             return false;
+        }
+
+        public static bool GetSerialInfo(string responseXml, out string serial, out string oem, out bool disabled)
+        {
+            serial = null;
+            oem = null;
+            disabled = false;
+            try
+            {
+                if (string.IsNullOrEmpty(responseXml))
+                {
+                    return false;
+                }
+                XDocument xmlDoc = XDocument.Parse(responseXml);
+                XElement serialInfoNode = xmlDoc.Root?.Element("serial_info");
+                if (serialInfoNode != null)
+                {
+                    XAttribute serialAttr = serialInfoNode.Attribute("serial");
+                    if (serialAttr != null)
+                    {
+                        serial = serialAttr.Value;
+                    }
+
+                    XAttribute oemAttr = serialInfoNode.Attribute("oem");
+                    if (oemAttr != null)
+                    {
+                        oem = oemAttr.Value;
+                    }
+
+                    XAttribute disabledAttr = serialInfoNode.Attribute("disabled");
+                    if (disabledAttr != null)
+                    {
+                        try
+                        {
+                            disabled = XmlConvert.ToBoolean(disabledAttr.Value);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static bool UpdateSerialInfo(string responseXml)
+        {
+            if (GetSerialInfo(responseXml, out string serial, out string oem, out bool disabled))
+            {
+                SerialInfoEntry serialInfo = new SerialInfoEntry(serial, oem, disabled);
+                return SerialInfoListAdd(serialInfo);
+            }
+
+            return false;
+        }
+
+        public static List<SerialInfoEntry> GetSerialInfoList()
+        {
+            return _serialInfoList;
+        }
+
+        public static void SetSerialInfoList(List<SerialInfoEntry> serialList)
+        {
+            _serialInfoList.Clear();
+            if (serialList != null)
+            {
+                foreach (SerialInfoEntry serialInfo in serialList)
+                {
+                    if (_serialInfoList.Any(x => string.Compare(x.Serial, serialInfo.Serial, StringComparison.OrdinalIgnoreCase) == 0))
+                    {
+                        continue;
+                    }
+
+                    _serialInfoList.Add(serialInfo);
+                }
+            }
+        }
+
+        public static void SerialInfoListClear()
+        {
+            _serialInfoList.Clear();
+        }
+
+        public static bool SerialInfoListAdd(SerialInfoEntry serialInfo)
+        {
+            try
+            {
+                for (int i = 0; i < _serialInfoList.Count; i++)
+                {
+                    if (string.Compare(_serialInfoList[i].Serial, serialInfo.Serial, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        _serialInfoList.RemoveAt(i);
+                        break;
+                    }
+                }
+
+                _serialInfoList.Insert(0, serialInfo);
+                while (_serialInfoList.Count > 10)
+                {
+                    _serialInfoList.RemoveAt(_serialInfoList.Count - 1);
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public static List<int> GetCpuUsageStatistic()
@@ -4499,7 +4634,7 @@ namespace BmwDeepObd
                         throw new Exception("Invalid mail line info");
                     }
 
-                    GetMailSerialInfo(responseDownloadXml, out string info_serial, out string info_oem, out string info_disabled);
+                    UpdateSerialInfo(responseDownloadXml);
 
                     string adapterBlacklistOld = AdapterBlacklist;
                     AdapterBlacklist = adapterBlacklistNew ?? string.Empty;
@@ -5204,47 +5339,6 @@ namespace BmwDeepObd
                     return false;
                 }
                 regEx = regexAttr.Value;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private bool GetMailSerialInfo(string mailXml, out string serial, out string oem, out string disabled)
-        {
-            serial = null;
-            oem = null;
-            disabled = null;
-            try
-            {
-                if (string.IsNullOrEmpty(mailXml))
-                {
-                    return false;
-                }
-                XDocument xmlDoc = XDocument.Parse(mailXml);
-                XElement serialInfoNode = xmlDoc.Root?.Element("serial_info");
-                if (serialInfoNode != null)
-                {
-                    XAttribute serialAttr = serialInfoNode.Attribute("serial");
-                    if (serialAttr != null)
-                    {
-                        serial = serialAttr.Value;
-                    }
-
-                    XAttribute oemAttr = serialInfoNode.Attribute("oem");
-                    if (oemAttr != null)
-                    {
-                        oem = oemAttr.Value;
-                    }
-
-                    XAttribute disabledAttr = serialInfoNode.Attribute("disabled");
-                    if (disabledAttr != null)
-                    {
-                        disabled = disabledAttr.Value;
-                    }
-                }
             }
             catch (Exception)
             {
