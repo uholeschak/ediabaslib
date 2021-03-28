@@ -113,8 +113,7 @@ namespace BmwDeepObd
                 Serial = serial;
                 Oem = oem;
                 Disabled = disabled;
-
-                hashCode = serial.GetHashCode();
+                hashCode = null;
             }
 
             [XmlElement("Serial")]
@@ -126,7 +125,7 @@ namespace BmwDeepObd
             [XmlElement("Disabled")]
             public bool Disabled { get; set; }
 
-            private readonly int hashCode;
+            private int? hashCode;
 
             public override bool Equals(object obj)
             {
@@ -150,7 +149,14 @@ namespace BmwDeepObd
 
             public override int GetHashCode()
             {
-                return hashCode;
+                // ReSharper disable NonReadonlyMemberInGetHashCode
+                if (!hashCode.HasValue)
+                {
+                    hashCode = Serial.GetHashCode();
+                }
+
+                return hashCode.Value;
+                // ReSharper restore NonReadonlyMemberInGetHashCode
             }
 
             public static bool operator == (SerialInfoEntry lhs, SerialInfoEntry rhs)
