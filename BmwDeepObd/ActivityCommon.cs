@@ -562,6 +562,7 @@ namespace BmwDeepObd
         private static string _mtcBtModuleName;
         private static readonly object LockObject = new object();
         private static readonly object SettingsLockObject = new object();
+        private static readonly object SerialInfoLockObject = new object();
         private static int _instanceCount;
         private static string _externalPath;
         private static string _externalWritePath;
@@ -1960,50 +1961,61 @@ namespace BmwDeepObd
 
         public static List<SerialInfoEntry> GetSerialInfoList()
         {
-            return _serialInfoList;
+            lock (SerialInfoLockObject)
+            {
+                return _serialInfoList;
+            }
         }
 
         public static void SetSerialInfoList(List<SerialInfoEntry> serialList)
         {
-            _serialInfoList.Clear();
-            if (serialList != null)
+            lock (SerialInfoLockObject)
             {
-                foreach (SerialInfoEntry serialInfo in serialList)
+                _serialInfoList.Clear();
+                if (serialList != null)
                 {
-                    if (_serialInfoList.Contains(serialInfo))
+                    foreach (SerialInfoEntry serialInfo in serialList)
                     {
-                        continue;
-                    }
+                        if (_serialInfoList.Contains(serialInfo))
+                        {
+                            continue;
+                        }
 
-                    _serialInfoList.Add(serialInfo);
+                        _serialInfoList.Add(serialInfo);
+                    }
                 }
             }
         }
 
         public static void SerialInfoListClear()
         {
-            _serialInfoList.Clear();
+            lock (SerialInfoLockObject)
+            {
+                _serialInfoList.Clear();
+            }
         }
 
         public static bool SerialInfoListAdd(SerialInfoEntry serialInfo)
         {
             try
             {
-                for (int i = 0; i < _serialInfoList.Count; i++)
+                lock (SerialInfoLockObject)
                 {
-                    if (_serialInfoList[i].Equals(serialInfo))
+                    for (int i = 0; i < _serialInfoList.Count; i++)
                     {
-                        _serialInfoList.RemoveAt(i);
-                        break;
+                        if (_serialInfoList[i].Equals(serialInfo))
+                        {
+                            _serialInfoList.RemoveAt(i);
+                            break;
+                        }
+                    }
+
+                    _serialInfoList.Insert(0, serialInfo);
+                    while (_serialInfoList.Count > 10)
+                    {
+                        _serialInfoList.RemoveAt(_serialInfoList.Count - 1);
                     }
                 }
-
-                _serialInfoList.Insert(0, serialInfo);
-                while (_serialInfoList.Count > 10)
-                {
-                    _serialInfoList.RemoveAt(_serialInfoList.Count - 1);
-                }
-
                 return true;
             }
             catch (Exception)
