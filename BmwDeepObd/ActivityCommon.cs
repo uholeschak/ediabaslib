@@ -134,7 +134,7 @@ namespace BmwDeepObd
 
             public bool Equals(SerialInfoEntry serialInfo)
             {
-                if (Serial == null || serialInfo == null || serialInfo.Serial == null)
+                if (Serial == null || (object)serialInfo == null || serialInfo.Serial == null)
                 {
                     return false;
                 }
@@ -162,7 +162,7 @@ namespace BmwDeepObd
 
             public static bool operator == (SerialInfoEntry lhs, SerialInfoEntry rhs)
             {
-                if (lhs == null)
+                if ((object)lhs == null)
                 {
                     return false;
                 }
