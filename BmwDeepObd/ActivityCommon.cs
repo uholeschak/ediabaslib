@@ -573,6 +573,7 @@ namespace BmwDeepObd
         private static string _mtcBtModuleName;
         private static readonly object LockObject = new object();
         private static readonly object SettingsLockObject = new object();
+        private static readonly object RecentConfigLockObject = new object();
         private static readonly object SerialInfoLockObject = new object();
         private static int _instanceCount;
         private static string _externalPath;
@@ -1822,19 +1823,25 @@ namespace BmwDeepObd
 
         public static List<string> GetRecentConfigList()
         {
-            return _recentConfigList;
+            lock (RecentConfigLockObject)
+            {
+                return new List<string>(_recentConfigList);
+            }
         }
 
         public static void SetRecentConfigList(List<string> configList)
         {
-            _recentConfigList.Clear();
-            if (configList != null)
+            lock (RecentConfigLockObject)
             {
-                foreach (string fileName in configList)
+                _recentConfigList.Clear();
+                if (configList != null)
                 {
-                    if (!_recentConfigList.Contains(fileName))
+                    foreach (string fileName in configList)
                     {
-                        _recentConfigList.Add(fileName);
+                        if (!_recentConfigList.Contains(fileName))
+                        {
+                            _recentConfigList.Add(fileName);
+                        }
                     }
                 }
             }
@@ -1842,22 +1849,28 @@ namespace BmwDeepObd
 
         public static void RecentConfigListClear()
         {
-            _recentConfigList.Clear();
+            lock (RecentConfigLockObject)
+            {
+                _recentConfigList.Clear();
+            }
         }
 
         public static bool RecentConfigListAdd(string fileName)
         {
             try
             {
-                if (_recentConfigList.Contains(fileName))
+                lock (RecentConfigLockObject)
                 {
-                    _recentConfigList.Remove(fileName);
-                }
+                    if (_recentConfigList.Contains(fileName))
+                    {
+                        _recentConfigList.Remove(fileName);
+                    }
 
-                _recentConfigList.Insert(0, fileName);
-                while (_recentConfigList.Count > 10)
-                {
-                    _recentConfigList.RemoveAt(_recentConfigList.Count - 1);
+                    _recentConfigList.Insert(0, fileName);
+                    while (_recentConfigList.Count > 10)
+                    {
+                        _recentConfigList.RemoveAt(_recentConfigList.Count - 1);
+                    }
                 }
 
                 return true;
@@ -1872,10 +1885,13 @@ namespace BmwDeepObd
         {
             try
             {
-                if (_recentConfigList.Contains(fileName))
+                lock (RecentConfigLockObject)
                 {
-                    _recentConfigList.Remove(fileName);
-                    return true;
+                    if (_recentConfigList.Contains(fileName))
+                    {
+                        _recentConfigList.Remove(fileName);
+                        return true;
+                    }
                 }
             }
             catch (Exception)
@@ -1890,16 +1906,19 @@ namespace BmwDeepObd
         {
             try
             {
-                int index = 0;
-                while (index < _recentConfigList.Count)
+                lock (RecentConfigLockObject)
                 {
-                    if (!File.Exists(_recentConfigList[index]))
+                    int index = 0;
+                    while (index < _recentConfigList.Count)
                     {
-                        _recentConfigList.RemoveAt(index);
-                    }
-                    else
-                    {
-                        index++;
+                        if (!File.Exists(_recentConfigList[index]))
+                        {
+                            _recentConfigList.RemoveAt(index);
+                        }
+                        else
+                        {
+                            index++;
+                        }
                     }
                 }
             }

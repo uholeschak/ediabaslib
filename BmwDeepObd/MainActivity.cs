@@ -273,7 +273,7 @@ namespace BmwDeepObd
                 XmlEditorClassName = instanceData.XmlEditorClassName ?? string.Empty;
                 if (storage)
                 {
-                    RecentConfigFiles = new List<string>(ActivityCommon.GetRecentConfigList());
+                    RecentConfigFiles = ActivityCommon.GetRecentConfigList();
                     SerialInfo = ActivityCommon.GetSerialInfoList();
                 }
             }
