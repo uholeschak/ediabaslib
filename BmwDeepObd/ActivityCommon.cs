@@ -4716,6 +4716,7 @@ namespace BmwDeepObd
                         throw new Exception("Invalid mail line info");
                     }
 
+                    List<SerialInfoEntry> serialInfoListOld = GetSerialInfoList();
                     UpdateSerialInfo(responseDownloadXml);
                     string adapterBlacklistOld = AdapterBlacklist;
                     AdapterBlacklist = adapterBlacklistNew ?? string.Empty;
@@ -4774,6 +4775,12 @@ namespace BmwDeepObd
                             }
                         }
                     }
+
+                    foreach (SerialInfoEntry serialInfo in serialInfoListOld)
+                    {
+                        sb.Append(string.Format("\nSerial info: Serial={0}, Oem={1}, Disabled={2}", serialInfo.Serial, serialInfo.Oem, serialInfo.Disabled));
+                    }
+
                     if (!string.IsNullOrEmpty(adapterBlacklistOld))
                     {
                         sb.Append(string.Format("\nAdapter blacklist old: {0}", adapterBlacklistOld));
