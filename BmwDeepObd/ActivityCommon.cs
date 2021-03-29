@@ -152,7 +152,8 @@ namespace BmwDeepObd
                 // ReSharper disable NonReadonlyMemberInGetHashCode
                 if (!hashCode.HasValue)
                 {
-                    hashCode = Serial.GetHashCode();
+                    string serial = Serial ?? string.Empty;
+                    hashCode = serial.GetHashCode();
                 }
 
                 return hashCode.Value;
