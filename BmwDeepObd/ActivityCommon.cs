@@ -134,7 +134,7 @@ namespace BmwDeepObd
 
             public bool Equals(SerialInfoEntry serialInfo)
             {
-                if (serialInfo == null)
+                if (Serial == null || serialInfo == null || serialInfo.Serial == null)
                 {
                     return false;
                 }
