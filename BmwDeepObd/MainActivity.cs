@@ -1676,7 +1676,7 @@ namespace BmwDeepObd
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UpdateCheck()
+        private bool UpdateCheck(bool hideMessage = false)
         {
             TranslateLogin();
 
@@ -1712,9 +1712,12 @@ namespace BmwDeepObd
                             _instanceData.UpdateAvailable = updateAvailable;
                             _instanceData.UpdateVersionCode = appVer.Value;
                             _instanceData.UpdateMessage = message;
-                            DisplayUpdateInfo((sender, args) =>
+                            if (!hideMessage)
                             {
-                            });
+                                DisplayUpdateInfo((sender, args) =>
+                                {
+                                });
+                            }
                         }
                     });
                 }
