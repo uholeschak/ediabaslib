@@ -2050,6 +2050,15 @@ namespace BmwDeepObd
             }
         }
 
+        public static bool SerialNumberKnown(string serialNumber)
+        {
+            SerialInfoEntry serialInfo = new SerialInfoEntry(serialNumber, "DeepOBD", false);
+            lock (SerialInfoLockObject)
+            {
+                return _serialInfoList.Contains(serialInfo);
+            }
+        }
+
         public static List<int> GetCpuUsageStatistic()
         {
             if (!IsCpuStatisticsSupported())
