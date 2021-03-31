@@ -972,6 +972,8 @@ namespace BmwDeepObd
 
         public static string LastAdapterSerial { get; set; }
 
+        public static bool SerialNumberCheck { get; set; }
+
         public static string EmailAddress { get; set; }
 
         public static string TraceInfo { get; set; }
@@ -2052,6 +2054,17 @@ namespace BmwDeepObd
 
         public static bool SerialNumberKnown(string serialNumber)
         {
+            if (string.IsNullOrEmpty(serialNumber))
+            {
+                return true;
+            }
+
+            if (!string.IsNullOrEmpty(LastAdapterSerial) &&
+                string.Compare(LastAdapterSerial, serialNumber, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return true;
+            }
+
             SerialInfoEntry serialInfo = new SerialInfoEntry(serialNumber, "DeepOBD", false);
             lock (SerialInfoLockObject)
             {
@@ -3875,7 +3888,12 @@ namespace BmwDeepObd
         {
             if (adapterSerial != null && adapterSerial.Length > 0)
             {
-                LastAdapterSerial = BitConverter.ToString(adapterSerial).Replace("-", "");
+                string serialNumber = BitConverter.ToString(adapterSerial).Replace("-", "");
+                if (!SerialNumberKnown(serialNumber))
+                {
+                    SerialNumberCheck = true;
+                }
+                LastAdapterSerial = serialNumber;
             }
 
             if (!batteryVoltage.HasValue || batteryVoltage.Value < 16.0)
@@ -5482,7 +5500,7 @@ namespace BmwDeepObd
 
                 MultipartFormDataContent formUpdate = new MultipartFormDataContent
                 {
-                    { new StringContent(_activity.PackageName), "package_name" },
+                    { new StringContent(_activity?.PackageName), "package_name" },
                     { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}",
                         packageInfo != null ? Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "app_ver" },
                     { new StringContent(AppId), "app_id" },
@@ -5757,6 +5775,7 @@ namespace BmwDeepObd
                 BatteryWarningVoltage = 0;
                 AdapterBlacklist = string.Empty;
                 LastAdapterSerial = string.Empty;
+                SerialNumberCheck = false;
                 EmailAddress = string.Empty;
                 TraceInfo = string.Empty;
                 AppId = string.Empty;
