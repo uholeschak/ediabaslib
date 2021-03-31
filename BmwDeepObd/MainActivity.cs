@@ -1676,11 +1676,19 @@ namespace BmwDeepObd
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UpdateCheck(bool hideMessage = false)
+        private bool UpdateCheck()
         {
             TranslateLogin();
 
-            if (ActivityCommon.UpdateCheckDelay < 0)
+            bool hideMessage = false;
+            long updateCheckDelay = ActivityCommon.UpdateCheckDelay;
+            if (ActivityCommon.SerialNumberCheck)
+            {
+                hideMessage = true;
+                updateCheckDelay = TimeSpan.TicksPerMinute;
+            }
+
+            if (updateCheckDelay < 0)
             {
                 _instanceData.UpdateCheckTime = DateTime.MinValue.Ticks;
                 _instanceData.UpdateSkipVersion = -1;
@@ -1688,7 +1696,7 @@ namespace BmwDeepObd
             }
 
             TimeSpan timeDiff = new TimeSpan(DateTime.Now.Ticks - _instanceData.UpdateCheckTime);
-            if (timeDiff.Ticks < ActivityCommon.UpdateCheckDelay)
+            if (timeDiff.Ticks < updateCheckDelay)
             {
                 return false;
             }
