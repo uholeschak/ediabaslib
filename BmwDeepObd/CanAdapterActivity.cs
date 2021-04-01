@@ -691,9 +691,16 @@ namespace BmwDeepObd
 
                 _textViewFwVersion.Text = versionText;
 
+                string serialNumber = string.Empty;
+                if (_serNum != null && _serNum.Length > 0)
+                {
+                    serialNumber = BitConverter.ToString(_serNum).Replace("-", "");
+                    ActivityCommon.LastAdapterSerial = serialNumber;
+                }
+
                 if (_textViewSerNum.Enabled)
                 {
-                    _textViewSerNum.Text = (_serNum == null) ? string.Empty : BitConverter.ToString(_serNum).Replace("-", "");
+                    _textViewSerNum.Text = serialNumber;
                 }
             }
 
