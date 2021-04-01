@@ -578,6 +578,7 @@ namespace BmwDeepObd
         private static readonly object LockObject = new object();
         private static readonly object SettingsLockObject = new object();
         private static readonly object RecentConfigLockObject = new object();
+        private static readonly object LastSerialLockObject = new object();
         private static readonly object SerialInfoLockObject = new object();
         private static int _instanceCount;
         private static string _externalPath;
@@ -588,6 +589,7 @@ namespace BmwDeepObd
         private static bool _ecuFunctionActive;
         private static int _btEnableCounter;
         private static string _adapterBlackList;
+        private static string _lastAdapterSerial;
         private static TranslatorType _translatorType;
         private static Dictionary<string, UdsReader> _udsReaderDict;
         private static EcuFunctionReader _ecuFunctionReader;
@@ -974,7 +976,23 @@ namespace BmwDeepObd
             }
         }
 
-        public static string LastAdapterSerial { get; set; }
+        public static string LastAdapterSerial
+        {
+            get
+            {
+                lock (LastSerialLockObject)
+                {
+                    return _lastAdapterSerial;
+                }
+            }
+            set
+            {
+                lock (LastSerialLockObject)
+                {
+                    _lastAdapterSerial = value;
+                }
+            }
+        }
 
         public static string EmailAddress { get; set; }
 
