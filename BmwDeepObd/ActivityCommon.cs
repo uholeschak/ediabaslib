@@ -104,15 +104,16 @@ namespace BmwDeepObd
         [XmlType("SerialInfo")]
         public class SerialInfoEntry: IEquatable<SerialInfoEntry>
         {
-            public SerialInfoEntry() : this(string.Empty, string.Empty, false)
+            public SerialInfoEntry() : this(string.Empty, string.Empty, false, false)
             {
             }
 
-            public SerialInfoEntry(string serial, string oem, bool disabled)
+            public SerialInfoEntry(string serial, string oem, bool disabled, bool valid)
             {
                 Serial = serial;
                 Oem = oem;
                 Disabled = disabled;
+                Valid = valid;
                 hashCode = null;
             }
 
@@ -124,6 +125,9 @@ namespace BmwDeepObd
 
             [XmlElement("Disabled")]
             public bool Disabled { get; set; }
+
+            [XmlElement("Valid")]
+            public bool Valid { get; set; }
 
             private int? hashCode;
 
@@ -971,8 +975,6 @@ namespace BmwDeepObd
         }
 
         public static string LastAdapterSerial { get; set; }
-
-        public static bool SerialNumberCheck { get; set; }
 
         public static string EmailAddress { get; set; }
 
@@ -1982,9 +1984,21 @@ namespace BmwDeepObd
 
         public static bool UpdateSerialInfo(string responseXml)
         {
+            SerialInfoEntry serialInfo = null;
             if (GetSerialInfo(responseXml, out string serial, out string oem, out bool disabled))
             {
-                SerialInfoEntry serialInfo = new SerialInfoEntry(serial, oem, disabled);
+                serialInfo = new SerialInfoEntry(serial, oem, disabled, true);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(LastAdapterSerial))
+                {
+                    serialInfo = new SerialInfoEntry(LastAdapterSerial, string.Empty, false, false);
+                }
+            }
+
+            if (serialInfo != null)
+            {
                 return SerialInfoListAdd(serialInfo);
             }
 
@@ -2052,23 +2066,18 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool SerialNumberKnown(string serialNumber)
+        public static bool IsSerialNumberCheckRequired()
         {
+            string serialNumber = LastAdapterSerial;
             if (string.IsNullOrEmpty(serialNumber))
             {
-                return true;
+                return false;
             }
 
-            if (!string.IsNullOrEmpty(LastAdapterSerial) &&
-                string.Compare(LastAdapterSerial, serialNumber, StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                return true;
-            }
-
-            SerialInfoEntry serialInfo = new SerialInfoEntry(serialNumber, "DeepOBD", false);
+            SerialInfoEntry serialInfo = new SerialInfoEntry(serialNumber, string.Empty, false, true);
             lock (SerialInfoLockObject)
             {
-                return _serialInfoList.Contains(serialInfo);
+                return !_serialInfoList.Contains(serialInfo);
             }
         }
 
@@ -3888,12 +3897,7 @@ namespace BmwDeepObd
         {
             if (adapterSerial != null && adapterSerial.Length > 0)
             {
-                string serialNumber = BitConverter.ToString(adapterSerial).Replace("-", "");
-                if (!SerialNumberKnown(serialNumber))
-                {
-                    SerialNumberCheck = true;
-                }
-                LastAdapterSerial = serialNumber;
+                LastAdapterSerial = BitConverter.ToString(adapterSerial).Replace("-", "");
             }
 
             if (!batteryVoltage.HasValue || batteryVoltage.Value < 16.0)
@@ -5775,7 +5779,6 @@ namespace BmwDeepObd
                 BatteryWarningVoltage = 0;
                 AdapterBlacklist = string.Empty;
                 LastAdapterSerial = string.Empty;
-                SerialNumberCheck = false;
                 EmailAddress = string.Empty;
                 TraceInfo = string.Empty;
                 AppId = string.Empty;
