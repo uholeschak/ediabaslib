@@ -700,6 +700,11 @@ namespace BmwDeepObd
                 HandleStartDialogs(firstStart);
             }
 
+            if (!ActivityCommon.CommActive)
+            {
+                UpdateCheck();
+            }
+
             if (ActivityCommon.AutoHideTitleBar)
             {
                 if (_autoHideTimer == null)
