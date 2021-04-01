@@ -4809,7 +4809,7 @@ namespace BmwDeepObd
 
                     foreach (SerialInfoEntry serialInfo in serialInfoListOld)
                     {
-                        sb.Append(string.Format("\nSerial info: Serial={0}, Oem={1}, Disabled={2}", serialInfo.Serial, serialInfo.Oem, serialInfo.Disabled));
+                        sb.Append(string.Format("\nSerial info: Serial={0}, Oem={1}, Disabled={2}, Valid={3}", serialInfo.Serial, serialInfo.Oem, serialInfo.Disabled, serialInfo.Valid));
                     }
 
                     if (!string.IsNullOrEmpty(adapterBlacklistOld))
