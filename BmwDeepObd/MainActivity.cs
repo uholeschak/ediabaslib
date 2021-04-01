@@ -1680,12 +1680,11 @@ namespace BmwDeepObd
         {
             TranslateLogin();
 
-            bool hideMessage = false;
             long updateCheckDelay = ActivityCommon.UpdateCheckDelay;
-            if (ActivityCommon.SerialNumberCheck)
+            bool serialCheck = ActivityCommon.IsSerialNumberCheckRequired();
+            if (serialCheck)
             {
-                hideMessage = true;
-                updateCheckDelay = TimeSpan.TicksPerMinute;
+                updateCheckDelay = TimeSpan.TicksPerMinute * 10;
             }
 
             if (updateCheckDelay < 0)
@@ -1701,6 +1700,7 @@ namespace BmwDeepObd
                 return false;
             }
 
+            bool hideMessage = serialCheck && timeDiff.Ticks < ActivityCommon.UpdateCheckDelay;
             bool result = _activityCommon.UpdateCheck((success, updateAvailable, appVer, message) =>
             {
                 if (success)
