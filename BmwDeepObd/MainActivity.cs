@@ -1705,7 +1705,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            bool hideMessage = serialCheck && timeDiff.Ticks < ActivityCommon.UpdateCheckDelay;
+            bool hideMessage = (ActivityCommon.UpdateCheckDelay < 0) || (serialCheck && timeDiff.Ticks < ActivityCommon.UpdateCheckDelay);
             bool result = _activityCommon.UpdateCheck((success, updateAvailable, appVer, message) =>
             {
                 if (success)
