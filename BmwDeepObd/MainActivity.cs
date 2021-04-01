@@ -2810,6 +2810,7 @@ namespace BmwDeepObd
             _translationList = null;
             _translatedList = null;
 
+            UpdateCheck();
             if (_instanceData.CommErrorsOccured && _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
             {
                 _activityCommon.RequestSendTraceFile(_instanceData.AppDataPath, _instanceData.TraceDir, GetType());
