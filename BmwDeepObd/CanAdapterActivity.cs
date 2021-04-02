@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Text;
@@ -77,6 +78,8 @@ namespace BmwDeepObd
         private TextView _textViewFwVersion;
         private TextView _textViewSerNumTitle;
         private TextView _textViewSerNum;
+        private TextView _textViewCanAdapterTypeTitle;
+        private TextView _textViewCanAdapterType;
         private Button _buttonSelectFirmware;
         private TextView _textViewFwFileName;
         private Button _buttonFwUpdate;
@@ -237,6 +240,9 @@ namespace BmwDeepObd
 
             _textViewSerNumTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterSerNumTitle);
             _textViewSerNum = FindViewById<TextView>(Resource.Id.textViewCanAdapterSerNum);
+
+            _textViewCanAdapterTypeTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterTypeTitle);
+            _textViewCanAdapterType = FindViewById<TextView>(Resource.Id.textViewCanAdapterType);
 #if DEBUG
             _textViewSerNumTitle.Visibility = visibility;
             _textViewSerNum.Visibility = visibility;
@@ -519,8 +525,6 @@ namespace BmwDeepObd
             int maxTextLength = (_btName != null && _btName.Length > 0) ? _btName.Length : 16;
             _editTextBtName.SetFilters(new Android.Text.IInputFilter[] { new Android.Text.InputFilterLengthFilter(maxTextLength) });
 
-            _textViewSerNum.Enabled = bEnabled;
-
             if (bEnabled)
             {
                 if ((_separationTime < 0) || (_separationTime >= _spinnerCanAdapterSepTimeAdapter.Items.Count))
@@ -691,17 +695,39 @@ namespace BmwDeepObd
 
                 _textViewFwVersion.Text = versionText;
 
+                bool serialPresent = false;
                 string serialNumber = string.Empty;
                 if (_serNum != null && _serNum.Length > 0)
                 {
+                    serialPresent = true;
                     serialNumber = BitConverter.ToString(_serNum).Replace("-", "");
                     ActivityCommon.LastAdapterSerial = serialNumber;
                 }
+                _textViewSerNum.Text = bEnabled ? serialNumber : string.Empty;
 
-                if (_textViewSerNum.Enabled)
+                string serialTypeText = string.Empty;
+                if (serialPresent && bEnabled)
                 {
-                    _textViewSerNum.Text = serialNumber;
+                    List<ActivityCommon.SerialInfoEntry> serialInfoList = ActivityCommon.GetSerialInfoList();
+                    ActivityCommon.SerialInfoEntry serialEntry = new ActivityCommon.SerialInfoEntry(serialNumber, string.Empty, false, true);
+                    ActivityCommon.SerialInfoEntry matchEntry = serialInfoList.FirstOrDefault(x => x.Equals(serialEntry));
+                    if (matchEntry != null && matchEntry.Valid)
+                    {
+                        serialTypeText = matchEntry.Oem;
+                    }
                 }
+
+                if (!string.IsNullOrEmpty(serialTypeText))
+                {
+                    _textViewCanAdapterTypeTitle.Visibility = ViewStates.Visible;
+                    _textViewCanAdapterType.Visibility = ViewStates.Visible;
+                }
+                else
+                {
+                    _textViewCanAdapterTypeTitle.Visibility = ViewStates.Gone;
+                    _textViewCanAdapterType.Visibility = ViewStates.Gone;
+                }
+                _textViewCanAdapterType.Text = serialTypeText;
             }
 
             _buttonFwUpdate.Enabled = fwUpdateEnabled;
