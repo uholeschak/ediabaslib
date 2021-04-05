@@ -89,6 +89,8 @@ namespace BmwDeepObd
         private string _appDataDir = string.Empty;
         private string _deviceAddress = string.Empty;
         private ActivityCommon.InterfaceType _interfaceType;
+        private bool _bCustomAdapter;
+        private bool _bCustomBtAdapter;
         private int _blockSize = -1;
         private int _separationTime = -1;
         private int _canMode = -1;
@@ -129,8 +131,10 @@ namespace BmwDeepObd
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
             _interfaceType = (ActivityCommon.InterfaceType) Intent.GetIntExtra(ExtraInterfaceType, (int) ActivityCommon.InterfaceType.Bluetooth);
-            ViewStates visibility = IsCustomAdapter(_interfaceType, _deviceAddress) ? ViewStates.Visible : ViewStates.Gone;
-            ViewStates visibilityBt = IsCustomBtAdapter(_interfaceType, _deviceAddress) ? ViewStates.Visible : ViewStates.Gone;
+            _bCustomAdapter = IsCustomAdapter(_interfaceType, _deviceAddress);
+            _bCustomBtAdapter = IsCustomBtAdapter(_interfaceType, _deviceAddress);
+            ViewStates visibility = _bCustomAdapter ? ViewStates.Visible : ViewStates.Gone;
+            ViewStates visibilityBt = _bCustomBtAdapter ? ViewStates.Visible : ViewStates.Gone;
             bool customElmAdapter = IsCustomElmAdapter(_interfaceType, _deviceAddress);
             bool rawAdapter = IsRawAdapter(_interfaceType, _deviceAddress);
             bool usbAdapter = IsUsbAdapter(_interfaceType);
@@ -555,7 +559,7 @@ namespace BmwDeepObd
                 }
 
                 // moved down because of expert mode setting
-                if (IsCustomAdapter(_interfaceType, _deviceAddress))
+                if (_bCustomAdapter)
                 {
                     if (_canMode == (int)AdapterMode.Can100)
                     {
@@ -696,18 +700,20 @@ namespace BmwDeepObd
 
                 _textViewFwVersion.Text = versionText;
 
-                bool serialPresent = false;
                 string serialNumber = string.Empty;
                 if (_serNum != null && _serNum.Length > 0)
                 {
-                    serialPresent = true;
                     serialNumber = BitConverter.ToString(_serNum).Replace("-", "");
                     ActivityCommon.LastAdapterSerial = serialNumber;
+                }
+                if (string.IsNullOrEmpty(serialNumber))
+                {
+                    serialNumber = ActivityCommon.LastAdapterSerial;
                 }
                 _textViewSerNum.Text = bEnabled ? serialNumber : string.Empty;
 
                 string serialTypeText = string.Empty;
-                if (serialPresent && bEnabled)
+                if (!string.IsNullOrEmpty(serialNumber) && bEnabled)
                 {
                     List<ActivityCommon.SerialInfoEntry> serialInfoList = ActivityCommon.GetSerialInfoList();
                     ActivityCommon.SerialInfoEntry serialCompareEntry = new ActivityCommon.SerialInfoEntry(serialNumber, string.Empty, false, true);
@@ -760,7 +766,7 @@ namespace BmwDeepObd
 
         private void PerformRead()
         {
-            if (!IsCustomAdapter(_interfaceType, _deviceAddress))
+            if (!_bCustomAdapter)
             {
                 UpdateDisplay();
                 return;
@@ -1038,7 +1044,7 @@ namespace BmwDeepObd
                 try
                 {
                     commFailed = !InterfacePrepare();
-                    if (IsCustomAdapter(_interfaceType, _deviceAddress))
+                    if (_bCustomAdapter)
                     {
                         // block size
                         if (!commFailed)
@@ -1112,7 +1118,7 @@ namespace BmwDeepObd
                     }
                     if (commFailed)
                     {
-                        int resId = IsCustomAdapter(_interfaceType, _deviceAddress) ? Resource.String.can_adapter_comm_error : Resource.String.can_adapter_comm_error_std;
+                        int resId = _bCustomAdapter ? Resource.String.can_adapter_comm_error : Resource.String.can_adapter_comm_error_std;
                         byte[] adapterSerial = _ediabas.EdInterfaceClass.AdapterSerial;
                         bool blackListed = EdCustomAdapterCommon.IsAdapterBlacklisted(adapterSerial);
                         if (blackListed)
