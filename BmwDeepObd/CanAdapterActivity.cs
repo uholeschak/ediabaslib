@@ -706,14 +706,15 @@ namespace BmwDeepObd
                     serialNumber = BitConverter.ToString(_serNum).Replace("-", "");
                     ActivityCommon.LastAdapterSerial = serialNumber;
                 }
+
                 if (string.IsNullOrEmpty(serialNumber))
                 {
                     serialNumber = ActivityCommon.LastAdapterSerial;
                 }
-                _textViewSerNum.Text = bEnabled ? serialNumber : string.Empty;
 
+                _textViewSerNum.Text = bEnabled ? serialNumber : string.Empty;
                 string serialTypeText = string.Empty;
-                if (!string.IsNullOrEmpty(serialNumber) && bEnabled)
+                if (_bCustomAdapter && bEnabled && !string.IsNullOrEmpty(serialNumber))
                 {
                     List<ActivityCommon.SerialInfoEntry> serialInfoList = ActivityCommon.GetSerialInfoList();
                     ActivityCommon.SerialInfoEntry serialCompareEntry = new ActivityCommon.SerialInfoEntry(serialNumber, string.Empty, false, true);
