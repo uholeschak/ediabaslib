@@ -133,7 +133,13 @@ namespace BmwDeepObd
 
             public override bool Equals(object obj)
             {
-                return Equals(obj as SerialInfoEntry);
+                SerialInfoEntry serialInfo = obj as SerialInfoEntry;
+                if ((object)serialInfo == null)
+                {
+                    return false;
+                }
+
+                return Equals(serialInfo);
             }
 
             public bool Equals(SerialInfoEntry serialInfo)
@@ -166,9 +172,9 @@ namespace BmwDeepObd
 
             public static bool operator == (SerialInfoEntry lhs, SerialInfoEntry rhs)
             {
-                if ((object)lhs == null)
+                if ((object)lhs == null || (object)rhs == null)
                 {
-                    return false;
+                    return Object.Equals(lhs, rhs);
                 }
 
                 return lhs.Equals(rhs);
@@ -176,6 +182,11 @@ namespace BmwDeepObd
 
             public static bool operator !=(SerialInfoEntry lhs, SerialInfoEntry rhs)
             {
+                if ((object)lhs == null || (object)rhs == null)
+                {
+                    return !Object.Equals(lhs, rhs);
+                }
+
                 return !(lhs == rhs);
             }
         }

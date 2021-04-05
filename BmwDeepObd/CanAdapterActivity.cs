@@ -243,6 +243,7 @@ namespace BmwDeepObd
 
             _textViewCanAdapterTypeTitle = FindViewById<TextView>(Resource.Id.textViewCanAdapterTypeTitle);
             _textViewCanAdapterType = FindViewById<TextView>(Resource.Id.textViewCanAdapterType);
+            _textViewCanAdapterType.Visibility = visibility;
 #if DEBUG
             _textViewSerNumTitle.Visibility = visibility;
             _textViewSerNum.Visibility = visibility;
@@ -709,8 +710,8 @@ namespace BmwDeepObd
                 if (serialPresent && bEnabled)
                 {
                     List<ActivityCommon.SerialInfoEntry> serialInfoList = ActivityCommon.GetSerialInfoList();
-                    ActivityCommon.SerialInfoEntry serialEntry = new ActivityCommon.SerialInfoEntry(serialNumber, string.Empty, false, true);
-                    ActivityCommon.SerialInfoEntry matchEntry = serialInfoList.FirstOrDefault(x => x.Equals(serialEntry));
+                    ActivityCommon.SerialInfoEntry serialCompareEntry = new ActivityCommon.SerialInfoEntry(serialNumber, string.Empty, false, true);
+                    ActivityCommon.SerialInfoEntry matchEntry = serialInfoList.FirstOrDefault(x => x.Equals(serialCompareEntry));
                     if (matchEntry != null && matchEntry.Valid)
                     {
                         serialTypeText = matchEntry.Oem;
