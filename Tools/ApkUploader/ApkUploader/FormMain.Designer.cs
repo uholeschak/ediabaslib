@@ -125,8 +125,8 @@
             // 
             // openFileDialogApk
             // 
-            this.openFileDialogApk.DefaultExt = "*.apk";
-            this.openFileDialogApk.Filter = "Apk Files|*.apk";
+            this.openFileDialogApk.DefaultExt = "*.aab";
+            this.openFileDialogApk.Filter = "Bundle Files|*.aab|Apk Files|*.apk";
             // 
             // buttonListTracks
             // 
@@ -154,9 +154,9 @@
             this.labelApkFile.AutoSize = true;
             this.labelApkFile.Location = new System.Drawing.Point(12, 67);
             this.labelApkFile.Name = "labelApkFile";
-            this.labelApkFile.Size = new System.Drawing.Size(74, 13);
+            this.labelApkFile.Size = new System.Drawing.Size(112, 13);
             this.labelApkFile.TabIndex = 10;
-            this.labelApkFile.Text = "Apk file name:";
+            this.labelApkFile.Text = "Bundle/Apk file name:";
             // 
             // textBoxApkFile
             // 
