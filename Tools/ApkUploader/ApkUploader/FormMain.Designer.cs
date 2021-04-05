@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.textBoxStatus = new System.Windows.Forms.TextBox();
-            this.buttonListApks = new System.Windows.Forms.Button();
+            this.buttonListBundles = new System.Windows.Forms.Button();
             this.buttonClose = new System.Windows.Forms.Button();
             this.buttonAbort = new System.Windows.Forms.Button();
             this.buttonUploadApk = new System.Windows.Forms.Button();
@@ -79,15 +79,15 @@
             this.textBoxStatus.TabIndex = 22;
             this.textBoxStatus.TabStop = false;
             // 
-            // buttonListApks
+            // buttonListBundles
             // 
-            this.buttonListApks.Location = new System.Drawing.Point(12, 12);
-            this.buttonListApks.Name = "buttonListApks";
-            this.buttonListApks.Size = new System.Drawing.Size(115, 23);
-            this.buttonListApks.TabIndex = 2;
-            this.buttonListApks.Text = "List Apks";
-            this.buttonListApks.UseVisualStyleBackColor = true;
-            this.buttonListApks.Click += new System.EventHandler(this.buttonListApks_Click);
+            this.buttonListBundles.Location = new System.Drawing.Point(12, 12);
+            this.buttonListBundles.Name = "buttonListBundles";
+            this.buttonListBundles.Size = new System.Drawing.Size(115, 23);
+            this.buttonListBundles.TabIndex = 2;
+            this.buttonListBundles.Text = "List Bundles/Apks";
+            this.buttonListBundles.UseVisualStyleBackColor = true;
+            this.buttonListBundles.Click += new System.EventHandler(this.buttonListBundles_Click);
             // 
             // buttonClose
             // 
@@ -422,12 +422,12 @@
             this.Controls.Add(this.buttonUploadApk);
             this.Controls.Add(this.buttonAbort);
             this.Controls.Add(this.buttonClose);
-            this.Controls.Add(this.buttonListApks);
+            this.Controls.Add(this.buttonListBundles);
             this.Controls.Add(this.textBoxStatus);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "FormMain";
-            this.Text = "Apk Uploader";
+            this.Text = "Bundle/Apk Uploader";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
             this.Load += new System.EventHandler(this.FormMain_Load);
@@ -440,7 +440,7 @@
         #endregion
 
         private System.Windows.Forms.TextBox textBoxStatus;
-        private System.Windows.Forms.Button buttonListApks;
+        private System.Windows.Forms.Button buttonListBundles;
         private System.Windows.Forms.Button buttonClose;
         private System.Windows.Forms.Button buttonAbort;
         private System.Windows.Forms.Button buttonUploadApk;

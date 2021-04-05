@@ -93,7 +93,7 @@ namespace ApkUploader
             textBoxStatus.ScrollToCaret();
 
             bool enable = _serviceThread == null;
-            buttonListApks.Enabled = enable;
+            buttonListBundles.Enabled = enable;
             buttonListTracks.Enabled = enable;
             buttonUpdateChanges.Enabled = enable;
             buttonUploadApk.Enabled = enable;
@@ -736,7 +736,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool ListApks()
+        private bool ListBundles()
         {
             if (_serviceThread != null)
             {
@@ -756,24 +756,6 @@ namespace ApkUploader
                             EditsResource edits = service.Edits;
                             EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
                             AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
-                            ApksListResponse apksResponse = await edits.Apks.List(PackageName, appEdit.Id).ExecuteAsync(_cts.Token);
-
-                            if (apksResponse.Apks == null)
-                            {
-                                sb.AppendLine("No apks");
-                            }
-                            else
-                            {
-                                sb.AppendLine("Apks:");
-                                foreach (Apk apk in apksResponse.Apks)
-                                {
-                                    if (apk.VersionCode != null)
-                                    {
-                                        sb.AppendLine($"Version: {apk.VersionCode.Value}, SHA1: {apk.Binary.Sha1}");
-                                        await PrintExpansion(sb, edits, appEdit, apk.VersionCode.Value);
-                                    }
-                                }
-                            }
 
                             BundlesListResponse bundlesResponse = await edits.Bundles.List(PackageName, appEdit.Id).ExecuteAsync(_cts.Token);
                             if (bundlesResponse.Bundles == null)
@@ -789,6 +771,24 @@ namespace ApkUploader
                                     {
                                         sb.AppendLine($"Version: {bundle.VersionCode.Value}, SHA1: {bundle.Sha1}");
                                         await PrintExpansion(sb, edits, appEdit, bundle.VersionCode.Value);
+                                    }
+                                }
+                            }
+
+                            ApksListResponse apksResponse = await edits.Apks.List(PackageName, appEdit.Id).ExecuteAsync(_cts.Token);
+                            if (apksResponse.Apks == null)
+                            {
+                                sb.AppendLine("No apks");
+                            }
+                            else
+                            {
+                                sb.AppendLine("Apks:");
+                                foreach (Apk apk in apksResponse.Apks)
+                                {
+                                    if (apk.VersionCode != null)
+                                    {
+                                        sb.AppendLine($"Version: {apk.VersionCode.Value}, SHA1: {apk.Binary.Sha1}");
+                                        await PrintExpansion(sb, edits, appEdit, apk.VersionCode.Value);
                                     }
                                 }
                             }
@@ -1629,9 +1629,9 @@ namespace ApkUploader
             Close();
         }
 
-        private void buttonListApks_Click(object sender, EventArgs e)
+        private void buttonListBundles_Click(object sender, EventArgs e)
         {
-            ListApks();
+            ListBundles();
         }
 
         private void buttonListTracks_Click(object sender, EventArgs e)
