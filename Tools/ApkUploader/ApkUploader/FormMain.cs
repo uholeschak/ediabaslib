@@ -1369,18 +1369,21 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UploadApk(string apkFileName, string expansionFileName, string track, List<UpdateInfo> apkChanges, string appVersion)
+        private bool UploadApk(string bundleFileName, string expansionFileName, string track, List<UpdateInfo> apkChanges, string appVersion)
         {
             if (_serviceThread != null)
             {
                 return false;
             }
 
-            if (!File.Exists(apkFileName))
+            if (!File.Exists(bundleFileName))
             {
-                UpdateStatus("Apk file not existing");
+                UpdateStatus("Bundle/Apk file not existing");
                 return false;
             }
+
+            string ext = Path.GetExtension(bundleFileName);
+            bool isApk = !string.IsNullOrEmpty(ext) && string.Compare(ext, ".apk", StringComparison.OrdinalIgnoreCase) == 0;
 
             if (!string.IsNullOrEmpty(expansionFileName))
             {
@@ -1456,30 +1459,57 @@ namespace ApkUploader
                             }
                         }
 
-                        Apk apkUploaded = null;
-                        using (FileStream apkStream = new FileStream(apkFileName, FileMode.Open, FileAccess.Read))
+                        int? versionCode = null;
+                        using (FileStream bundleStream = new FileStream(bundleFileName, FileMode.Open, FileAccess.Read))
                         {
-                            long fileLength = (apkStream.Length > 0) ? apkStream.Length : 1;
-                            EditsResource.ApksResource.UploadMediaUpload upload = edits.Apks.Upload(PackageName, appEdit.Id, apkStream, "application/vnd.android.package-archive");
-                            upload.ChunkSize = ResumableUpload.MinimumChunkSize;
-                            upload.ProgressChanged += progress =>
+                            long fileLength = (bundleStream.Length > 0) ? bundleStream.Length : 1;
+
+                            if (isApk)
                             {
-                                UpdateStatus(sb + $"Apk progress: {100 * progress.BytesSent / fileLength}%");
-                            };
-                            upload.ResponseReceived += apk =>
+                                Apk apkUploaded = null;
+                                EditsResource.ApksResource.UploadMediaUpload uploadApk = edits.Apks.Upload(PackageName, appEdit.Id, bundleStream, "application/vnd.android.package-archive");
+                                uploadApk.ChunkSize = ResumableUpload.MinimumChunkSize;
+                                uploadApk.ProgressChanged += progress =>
+                                {
+                                    UpdateStatus(sb + $"Apk progress: {100 * progress.BytesSent / fileLength}%");
+                                };
+                                uploadApk.ResponseReceived += apk =>
+                                {
+                                    apkUploaded = apk;
+                                };
+                                IUploadProgress uploadProgress = await uploadApk.UploadAsync(_cts.Token);
+                                sb.AppendLine($"Upload status: {uploadProgress.Status.ToString()}");
+                                UpdateStatus(sb.ToString());
+                                if (uploadProgress.Exception != null)
+                                {
+                                    throw uploadProgress.Exception;
+                                }
+                                versionCode = apkUploaded?.VersionCode;
+                            }
+                            else
                             {
-                                apkUploaded = apk;
-                            };
-                            IUploadProgress uploadProgress = await upload.UploadAsync(_cts.Token);
-                            sb.AppendLine($"Upload status: {uploadProgress.Status.ToString()}");
-                            UpdateStatus(sb.ToString());
-                            if (uploadProgress.Exception != null)
-                            {
-                                throw uploadProgress.Exception;
+                                Bundle bundleUploaded = null;
+                                EditsResource.BundlesResource.UploadMediaUpload uploadBundle = edits.Bundles.Upload(PackageName, appEdit.Id, bundleStream, "application/vnd.android.package-archive");
+                                uploadBundle.ChunkSize = ResumableUpload.MinimumChunkSize;
+                                uploadBundle.ProgressChanged += progress =>
+                                {
+                                    UpdateStatus(sb + $"Bundle progress: {100 * progress.BytesSent / fileLength}%");
+                                };
+                                uploadBundle.ResponseReceived += bundle =>
+                                {
+                                    bundleUploaded = bundle;
+                                };
+                                IUploadProgress uploadProgress = await uploadBundle.UploadAsync(_cts.Token);
+                                sb.AppendLine($"Upload status: {uploadProgress.Status.ToString()}");
+                                UpdateStatus(sb.ToString());
+                                if (uploadProgress.Exception != null)
+                                {
+                                    throw uploadProgress.Exception;
+                                }
+                                versionCode = bundleUploaded?.VersionCode;
                             }
                         }
 
-                        int? versionCode = apkUploaded?.VersionCode;
                         if (!versionCode.HasValue)
                         {
                             throw new Exception("No apk version code");
