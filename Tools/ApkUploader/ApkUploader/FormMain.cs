@@ -758,13 +758,38 @@ namespace ApkUploader
                             AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
                             ApksListResponse apksResponse = await edits.Apks.List(PackageName, appEdit.Id).ExecuteAsync(_cts.Token);
 
-                            sb.AppendLine("Apks:");
-                            foreach (Apk apk in apksResponse.Apks)
+                            if (apksResponse.Apks == null)
                             {
-                                if (apk.VersionCode != null)
+                                sb.AppendLine("No apks");
+                            }
+                            else
+                            {
+                                sb.AppendLine("Apks:");
+                                foreach (Apk apk in apksResponse.Apks)
                                 {
-                                    sb.AppendLine($"Version: {apk.VersionCode.Value}, SHA1: {apk.Binary.Sha1}");
-                                    await PrintExpansion(sb, edits, appEdit, apk.VersionCode.Value);
+                                    if (apk.VersionCode != null)
+                                    {
+                                        sb.AppendLine($"Version: {apk.VersionCode.Value}, SHA1: {apk.Binary.Sha1}");
+                                        await PrintExpansion(sb, edits, appEdit, apk.VersionCode.Value);
+                                    }
+                                }
+                            }
+
+                            BundlesListResponse bundlesResponse = await edits.Bundles.List(PackageName, appEdit.Id).ExecuteAsync(_cts.Token);
+                            if (bundlesResponse.Bundles == null)
+                            {
+                                sb.AppendLine("No bundles");
+                            }
+                            else
+                            {
+                                sb.AppendLine("Bundles:");
+                                foreach (Bundle bundle in bundlesResponse.Bundles)
+                                {
+                                    if (bundle.VersionCode != null)
+                                    {
+                                        sb.AppendLine($"Version: {bundle.VersionCode.Value}, SHA1: {bundle.Sha1}");
+                                        await PrintExpansion(sb, edits, appEdit, bundle.VersionCode.Value);
+                                    }
                                 }
                             }
                         }
