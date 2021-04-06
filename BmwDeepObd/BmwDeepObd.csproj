@@ -35,7 +35,8 @@
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <BundleAssemblies>false</BundleAssemblies>
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
-    <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
+    <AndroidSupportedAbis>
+    </AndroidSupportedAbis>
     <AndroidStoreUncompressedFileExtensions />
     <Debugger>Xamarin</Debugger>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
@@ -59,7 +60,8 @@
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     <MandroidI18n>West;Other</MandroidI18n>
     <AndroidLinkSkip>Mono.Android</AndroidLinkSkip>
-    <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
+    <AndroidSupportedAbis>
+    </AndroidSupportedAbis>
     <AndroidLinkMode>None</AndroidLinkMode>
     <BundleAssemblies>false</BundleAssemblies>
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
