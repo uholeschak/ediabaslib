@@ -1489,7 +1489,7 @@ namespace ApkUploader
                             else
                             {
                                 Bundle bundleUploaded = null;
-                                EditsResource.BundlesResource.UploadMediaUpload uploadBundle = edits.Bundles.Upload(PackageName, appEdit.Id, bundleStream, "application/vnd.android.package-archive");
+                                EditsResource.BundlesResource.UploadMediaUpload uploadBundle = edits.Bundles.Upload(PackageName, appEdit.Id, bundleStream, "application/octet-stream");
                                 uploadBundle.ChunkSize = ResumableUpload.MinimumChunkSize;
                                 uploadBundle.ProgressChanged += progress =>
                                 {
