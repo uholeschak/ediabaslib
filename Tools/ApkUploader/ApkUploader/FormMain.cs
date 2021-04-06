@@ -520,7 +520,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UpdateAppInfo(StringBuilder sb, long versionCode, string appVersion, string track, List<UpdateInfo> apkChanges = null)
+        private bool UpdateAppInfo(StringBuilder sb, long versionCode, string appVersion, string track, List<UpdateInfo> bundleChanges = null)
         {
             try
             {
@@ -553,10 +553,10 @@ namespace ApkUploader
                     UpdateStatus(sb.ToString());
                 }
 
-                if (apkChanges != null)
+                if (bundleChanges != null)
                 {
                     sb.Append("Changes info for languages present: ");
-                    foreach (UpdateInfo updateInfo in apkChanges)
+                    foreach (UpdateInfo updateInfo in bundleChanges)
                     {
                         sb.Append($"{updateInfo.Language} ");
                     }
@@ -580,9 +580,9 @@ namespace ApkUploader
                         }
                         formAppInfo.Add(new StringContent(track), "track");
 
-                        if (apkChanges != null)
+                        if (bundleChanges != null)
                         {
-                            foreach (UpdateInfo updateInfo in apkChanges)
+                            foreach (UpdateInfo updateInfo in bundleChanges)
                             {
                                 if (updateInfo.Language.Length >= 2)
                                 {
@@ -1241,14 +1241,14 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UpdateChanges(string track, List<UpdateInfo> apkChanges, string appVersion)
+        private bool UpdateChanges(string track, List<UpdateInfo> bundleChanges, string appVersion)
         {
             if (_serviceThread != null)
             {
                 return false;
             }
 
-            if (apkChanges == null)
+            if (bundleChanges == null)
             {
                 UpdateStatus("No language changes info");
                 return false;
@@ -1308,7 +1308,7 @@ namespace ApkUploader
                         UpdateStatus(sb.ToString());
 
                         List<LocalizedText> releaseNotes = new List<LocalizedText>();
-                        foreach (UpdateInfo updateInfo in apkChanges)
+                        foreach (UpdateInfo updateInfo in bundleChanges)
                         {
                             LocalizedText localizedText = new LocalizedText
                             {
@@ -1349,7 +1349,7 @@ namespace ApkUploader
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
 
-                        UpdateAppInfo(sb, currentVersion, appVersion, track, apkChanges);
+                        UpdateAppInfo(sb, currentVersion, appVersion, track, bundleChanges);
                     }
                 }
                 catch (Exception e)
@@ -1369,7 +1369,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UploadBundle(string bundleFileName, string expansionFileName, string track, List<UpdateInfo> apkChanges, string appVersion)
+        private bool UploadBundle(string bundleFileName, string expansionFileName, string track, List<UpdateInfo> bundleChanges, string appVersion)
         {
             if (_serviceThread != null)
             {
@@ -1411,10 +1411,10 @@ namespace ApkUploader
                 StringBuilder sb = new StringBuilder();
                 try
                 {
-                    if (apkChanges != null)
+                    if (bundleChanges != null)
                     {
                         sb.Append("Changes info for languages present: ");
-                        foreach (UpdateInfo updateInfo in apkChanges)
+                        foreach (UpdateInfo updateInfo in bundleChanges)
                         {
                             sb.Append($"{updateInfo.Language} ");
                         }
@@ -1554,9 +1554,9 @@ namespace ApkUploader
                         }
 
                         List<LocalizedText> releaseNotes = new List<LocalizedText>();
-                        if (apkChanges != null)
+                        if (bundleChanges != null)
                         {
-                            foreach (UpdateInfo updateInfo in apkChanges)
+                            foreach (UpdateInfo updateInfo in bundleChanges)
                             {
                                 LocalizedText localizedText = new LocalizedText
                                 {
@@ -1598,7 +1598,7 @@ namespace ApkUploader
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
 
-                        UpdateAppInfo(sb, versionCode.Value, appVersion, track, apkChanges);
+                        UpdateAppInfo(sb, versionCode.Value, appVersion, track, bundleChanges);
                     }
                 }
                 catch (Exception e)
@@ -1618,7 +1618,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool SetAppInfo(int versionCode, string appVersion, string track, List<UpdateInfo> apkChanges)
+        private bool SetAppInfo(int versionCode, string appVersion, string track, List<UpdateInfo> bundleChanges)
         {
             if (_serviceThread != null)
             {
@@ -1632,7 +1632,7 @@ namespace ApkUploader
                 StringBuilder sb = new StringBuilder();
                 try
                 {
-                    UpdateAppInfo(sb, versionCode, appVersion, track, apkChanges);
+                    UpdateAppInfo(sb, versionCode, appVersion, track, bundleChanges);
                 }
                 finally
                 {
@@ -1742,12 +1742,12 @@ namespace ApkUploader
 
         private void buttonUpdateChanges_Click(object sender, EventArgs e)
         {
-            List<UpdateInfo> apkChanges = null;
+            List<UpdateInfo> bundleChanges = null;
             string appVersion = null;
             if (!string.IsNullOrWhiteSpace(textBoxResourceFolder.Text))
             {
-                apkChanges = ReadUpdateInfo(textBoxResourceFolder.Text);
-                if (apkChanges == null)
+                bundleChanges = ReadUpdateInfo(textBoxResourceFolder.Text);
+                if (bundleChanges == null)
                 {
                     UpdateStatus("Reading resources failed!");
                     return;
@@ -1763,7 +1763,7 @@ namespace ApkUploader
                     }
                 }
             }
-            UpdateChanges(comboBoxTrackAssign.Text, apkChanges, appVersion);
+            UpdateChanges(comboBoxTrackAssign.Text, bundleChanges, appVersion);
         }
 
         private void buttonChangeTrack_Click(object sender, EventArgs e)
@@ -1788,18 +1788,37 @@ namespace ApkUploader
 
         private void buttonUploadBundle_Click(object sender, EventArgs e)
         {
+            List<UpdateInfo> bundleChanges = null;
+            string appVersion = null;
+            if (!string.IsNullOrWhiteSpace(textBoxResourceFolder.Text))
+            {
+                bundleChanges = ReadUpdateInfo(textBoxResourceFolder.Text);
+                if (bundleChanges == null)
+                {
+                    UpdateStatus("Reading resources failed!");
+                    return;
+                }
 
+                appVersion = ReadAppVersion(textBoxResourceFolder.Text, out int? versionCode);
+                if (appVersion == null || versionCode == null)
+                {
+                    UpdateStatus("Reading app version failed!");
+                    return;
+                }
+            }
+
+            UploadBundle(textBoxBundleFile.Text, textBoxObbFile.Text, comboBoxTrackAssign.Text, bundleChanges, appVersion);
         }
 
         private void buttonSetAppInfo_Click(object sender, EventArgs e)
         {
-            List<UpdateInfo> apkChanges = null;
+            List<UpdateInfo> bundleChanges = null;
             string appVersion = null;
             int? versionCode = 0;
             if (!string.IsNullOrWhiteSpace(textBoxResourceFolder.Text))
             {
-                apkChanges = ReadUpdateInfo(textBoxResourceFolder.Text);
-                if (apkChanges == null)
+                bundleChanges = ReadUpdateInfo(textBoxResourceFolder.Text);
+                if (bundleChanges == null)
                 {
                     UpdateStatus("Reading resources failed!");
                     return;
@@ -1813,7 +1832,7 @@ namespace ApkUploader
                 }
             }
 
-            SetAppInfo(versionCode.Value, appVersion, comboBoxTrackAssign.Text, apkChanges);
+            SetAppInfo(versionCode.Value, appVersion, comboBoxTrackAssign.Text, bundleChanges);
         }
 
 
