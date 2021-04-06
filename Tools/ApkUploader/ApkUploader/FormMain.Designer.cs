@@ -33,12 +33,12 @@
             this.buttonListBundles = new System.Windows.Forms.Button();
             this.buttonClose = new System.Windows.Forms.Button();
             this.buttonAbort = new System.Windows.Forms.Button();
-            this.buttonUploadApk = new System.Windows.Forms.Button();
+            this.buttonUploadBundle = new System.Windows.Forms.Button();
             this.openFileDialogApk = new System.Windows.Forms.OpenFileDialog();
             this.buttonListTracks = new System.Windows.Forms.Button();
             this.buttonSelectApkFile = new System.Windows.Forms.Button();
             this.labelApkFile = new System.Windows.Forms.Label();
-            this.textBoxApkFile = new System.Windows.Forms.TextBox();
+            this.textBoxBundleFile = new System.Windows.Forms.TextBox();
             this.labelObbFile = new System.Windows.Forms.Label();
             this.textBoxObbFile = new System.Windows.Forms.TextBox();
             this.buttonSelectObbFile = new System.Windows.Forms.Button();
@@ -113,15 +113,15 @@
             this.buttonAbort.UseVisualStyleBackColor = true;
             this.buttonAbort.Click += new System.EventHandler(this.buttonAbort_Click);
             // 
-            // buttonUploadApk
+            // buttonUploadBundle
             // 
-            this.buttonUploadApk.Location = new System.Drawing.Point(254, 41);
-            this.buttonUploadApk.Name = "buttonUploadApk";
-            this.buttonUploadApk.Size = new System.Drawing.Size(115, 23);
-            this.buttonUploadApk.TabIndex = 7;
-            this.buttonUploadApk.Text = "Upload Apk";
-            this.buttonUploadApk.UseVisualStyleBackColor = true;
-            this.buttonUploadApk.Click += new System.EventHandler(this.buttonUploadApk_Click);
+            this.buttonUploadBundle.Location = new System.Drawing.Point(254, 41);
+            this.buttonUploadBundle.Name = "buttonUploadBundle";
+            this.buttonUploadBundle.Size = new System.Drawing.Size(115, 23);
+            this.buttonUploadBundle.TabIndex = 7;
+            this.buttonUploadBundle.Text = "Upload Bundle/Apk";
+            this.buttonUploadBundle.UseVisualStyleBackColor = true;
+            this.buttonUploadBundle.Click += new System.EventHandler(this.buttonUploadBundle_Click);
             // 
             // openFileDialogApk
             // 
@@ -158,14 +158,14 @@
             this.labelApkFile.TabIndex = 10;
             this.labelApkFile.Text = "Bundle/Apk file name:";
             // 
-            // textBoxApkFile
+            // textBoxBundleFile
             // 
-            this.textBoxApkFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBoxBundleFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxApkFile.Location = new System.Drawing.Point(12, 83);
-            this.textBoxApkFile.Name = "textBoxApkFile";
-            this.textBoxApkFile.Size = new System.Drawing.Size(964, 20);
-            this.textBoxApkFile.TabIndex = 11;
+            this.textBoxBundleFile.Location = new System.Drawing.Point(12, 83);
+            this.textBoxBundleFile.Name = "textBoxBundleFile";
+            this.textBoxBundleFile.Size = new System.Drawing.Size(964, 20);
+            this.textBoxBundleFile.TabIndex = 11;
             // 
             // labelObbFile
             // 
@@ -415,11 +415,11 @@
             this.Controls.Add(this.buttonSelectObbFile);
             this.Controls.Add(this.textBoxObbFile);
             this.Controls.Add(this.labelObbFile);
-            this.Controls.Add(this.textBoxApkFile);
+            this.Controls.Add(this.textBoxBundleFile);
             this.Controls.Add(this.labelApkFile);
             this.Controls.Add(this.buttonSelectApkFile);
             this.Controls.Add(this.buttonListTracks);
-            this.Controls.Add(this.buttonUploadApk);
+            this.Controls.Add(this.buttonUploadBundle);
             this.Controls.Add(this.buttonAbort);
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.buttonListBundles);
@@ -443,12 +443,12 @@
         private System.Windows.Forms.Button buttonListBundles;
         private System.Windows.Forms.Button buttonClose;
         private System.Windows.Forms.Button buttonAbort;
-        private System.Windows.Forms.Button buttonUploadApk;
+        private System.Windows.Forms.Button buttonUploadBundle;
         private System.Windows.Forms.OpenFileDialog openFileDialogApk;
         private System.Windows.Forms.Button buttonListTracks;
         private System.Windows.Forms.Button buttonSelectApkFile;
         private System.Windows.Forms.Label labelApkFile;
-        private System.Windows.Forms.TextBox textBoxApkFile;
+        private System.Windows.Forms.TextBox textBoxBundleFile;
         private System.Windows.Forms.Label labelObbFile;
         private System.Windows.Forms.TextBox textBoxObbFile;
         private System.Windows.Forms.Button buttonSelectObbFile;

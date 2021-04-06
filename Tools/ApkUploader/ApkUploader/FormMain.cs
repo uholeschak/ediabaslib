@@ -98,7 +98,7 @@ namespace ApkUploader
             buttonListBundles.Enabled = enable;
             buttonListTracks.Enabled = enable;
             buttonUpdateChanges.Enabled = enable;
-            buttonUploadApk.Enabled = enable;
+            buttonUploadBundle.Enabled = enable;
             buttonChangeTrack.Enabled = enable;
             buttonAssignTrack.Enabled = enable;
             buttonSetAppInfo.Enabled = enable;
@@ -108,7 +108,7 @@ namespace ApkUploader
             comboBoxTrackUnassign.Enabled = enable;
             checkBoxUpdateName.Enabled = enable;
             textBoxVersion.Enabled = enable;
-            textBoxApkFile.Enabled = enable;
+            textBoxBundleFile.Enabled = enable;
             textBoxObbFile.Enabled = enable;
             textBoxResourceFolder.Enabled = enable;
             textBoxSerialFileName.Enabled = enable;
@@ -1369,7 +1369,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UploadApk(string bundleFileName, string expansionFileName, string track, List<UpdateInfo> apkChanges, string appVersion)
+        private bool UploadBundle(string bundleFileName, string expansionFileName, string track, List<UpdateInfo> apkChanges, string appVersion)
         {
             if (_serviceThread != null)
             {
@@ -1679,7 +1679,7 @@ namespace ApkUploader
         {
             textBoxVersion.Text = Properties.Settings.Default.VersionAssign;
             checkBoxUpdateName.Checked = Properties.Settings.Default.UpdateName;
-            textBoxApkFile.Text = Properties.Settings.Default.ApkFileName;
+            textBoxBundleFile.Text = Properties.Settings.Default.ApkFileName;
             textBoxObbFile.Text = Properties.Settings.Default.ObbFileName;
             textBoxResourceFolder.Text = Properties.Settings.Default.ResourceFolder;
             textBoxSerialFileName.Text = Properties.Settings.Default.SerialFileName;
@@ -1786,28 +1786,9 @@ namespace ApkUploader
             AssignTrack(comboBoxTrackAssign.Text, versionAssign);
         }
 
-        private void buttonUploadApk_Click(object sender, EventArgs e)
+        private void buttonUploadBundle_Click(object sender, EventArgs e)
         {
-            List<UpdateInfo> apkChanges = null;
-            string appVersion = null;
-            if (!string.IsNullOrWhiteSpace(textBoxResourceFolder.Text))
-            {
-                apkChanges = ReadUpdateInfo(textBoxResourceFolder.Text);
-                if (apkChanges == null)
-                {
-                    UpdateStatus("Reading resources failed!");
-                    return;
-                }
 
-                appVersion = ReadAppVersion(textBoxResourceFolder.Text, out int? versionCode);
-                if (appVersion == null || versionCode == null)
-                {
-                    UpdateStatus("Reading app version failed!");
-                    return;
-                }
-            }
-
-            UploadApk(textBoxApkFile.Text, textBoxObbFile.Text, comboBoxTrackAssign.Text, apkChanges, appVersion);
         }
 
         private void buttonSetAppInfo_Click(object sender, EventArgs e)
@@ -1856,17 +1837,17 @@ namespace ApkUploader
 
         private void buttonSelectApkFile_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(textBoxApkFile.Text))
+            if (!string.IsNullOrWhiteSpace(textBoxBundleFile.Text))
             {
-                openFileDialogApk.FileName = textBoxApkFile.Text;
-                openFileDialogApk.InitialDirectory = Path.GetDirectoryName(textBoxApkFile.Text);
+                openFileDialogApk.FileName = textBoxBundleFile.Text;
+                openFileDialogApk.InitialDirectory = Path.GetDirectoryName(textBoxBundleFile.Text);
             }
             if (openFileDialogApk.ShowDialog() != DialogResult.OK)
             {
                 return;
             }
 
-            textBoxApkFile.Text = openFileDialogApk.FileName;
+            textBoxBundleFile.Text = openFileDialogApk.FileName;
         }
 
         private void buttonSelectObbFile_Click(object sender, EventArgs e)
@@ -1916,7 +1897,7 @@ namespace ApkUploader
             {
                 Properties.Settings.Default.VersionAssign = textBoxVersion.Text;
                 Properties.Settings.Default.UpdateName = checkBoxUpdateName.Checked;
-                Properties.Settings.Default.ApkFileName = textBoxApkFile.Text;
+                Properties.Settings.Default.ApkFileName = textBoxBundleFile.Text;
                 Properties.Settings.Default.ObbFileName = textBoxObbFile.Text;
                 Properties.Settings.Default.ResourceFolder = textBoxResourceFolder.Text;
                 Properties.Settings.Default.SerialFileName = textBoxSerialFileName.Text;
