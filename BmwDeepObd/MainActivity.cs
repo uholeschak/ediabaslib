@@ -1689,7 +1689,7 @@ namespace BmwDeepObd
             bool serialCheck = ActivityCommon.IsSerialNumberCheckRequired();
             if (serialCheck)
             {
-                updateCheckDelay = TimeSpan.TicksPerMinute * 10;
+                updateCheckDelay = 0;
             }
 
             if (updateCheckDelay < 0)
