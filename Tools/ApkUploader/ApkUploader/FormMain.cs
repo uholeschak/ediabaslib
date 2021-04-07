@@ -112,7 +112,7 @@ namespace ApkUploader
             textBoxObbFile.Enabled = enable;
             textBoxResourceFolder.Enabled = enable;
             textBoxSerialFileName.Enabled = enable;
-            buttonSelectApkFile.Enabled = enable;
+            buttonSelectBundleFile.Enabled = enable;
             buttonSelectObbFile.Enabled = enable;
             buttonSelectResourceFolder.Enabled = enable;
 
@@ -1854,19 +1854,19 @@ namespace ApkUploader
             UploadSerials(serialInfos);
         }
 
-        private void buttonSelectApkFile_Click(object sender, EventArgs e)
+        private void buttonSelectBundleFile_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(textBoxBundleFile.Text))
             {
-                openFileDialogApk.FileName = textBoxBundleFile.Text;
-                openFileDialogApk.InitialDirectory = Path.GetDirectoryName(textBoxBundleFile.Text);
+                openFileDialogBundle.FileName = textBoxBundleFile.Text;
+                openFileDialogBundle.InitialDirectory = Path.GetDirectoryName(textBoxBundleFile.Text);
             }
-            if (openFileDialogApk.ShowDialog() != DialogResult.OK)
+            if (openFileDialogBundle.ShowDialog() != DialogResult.OK)
             {
                 return;
             }
 
-            textBoxBundleFile.Text = openFileDialogApk.FileName;
+            textBoxBundleFile.Text = openFileDialogBundle.FileName;
         }
 
         private void buttonSelectObbFile_Click(object sender, EventArgs e)
