@@ -131,6 +131,26 @@ namespace BmwDeepObd
 
             private int? hashCode;
 
+            public bool IsDefaultSerial()
+            {
+                if (string.IsNullOrEmpty(Serial))
+                {
+                    return true;
+                }
+
+                if (string.Compare(Serial, "0000000000000000", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return true;
+                }
+
+                if (string.Compare(Serial, "FFFFFFFFFFFFFFFF", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
             public override bool Equals(object obj)
             {
                 SerialInfoEntry serialInfo = obj as SerialInfoEntry;
