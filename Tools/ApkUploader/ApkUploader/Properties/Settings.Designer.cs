@@ -26,12 +26,12 @@ namespace ApkUploader.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ApkFileName {
+        public string BundleFileName {
             get {
-                return ((string)(this["ApkFileName"]));
+                return ((string)(this["BundleFileName"]));
             }
             set {
-                this["ApkFileName"] = value;
+                this["BundleFileName"] = value;
             }
         }
         

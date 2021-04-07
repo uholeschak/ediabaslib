@@ -1512,7 +1512,7 @@ namespace ApkUploader
 
                         if (!versionCode.HasValue)
                         {
-                            throw new Exception("No apk version code");
+                            throw new Exception("No version code");
                         }
                         sb.AppendLine($"Version code uploaded: {versionCode.Value}");
                         UpdateStatus(sb.ToString());
@@ -1679,7 +1679,7 @@ namespace ApkUploader
         {
             textBoxVersion.Text = Properties.Settings.Default.VersionAssign;
             checkBoxUpdateName.Checked = Properties.Settings.Default.UpdateName;
-            textBoxBundleFile.Text = Properties.Settings.Default.ApkFileName;
+            textBoxBundleFile.Text = Properties.Settings.Default.BundleFileName;
             textBoxObbFile.Text = Properties.Settings.Default.ObbFileName;
             textBoxResourceFolder.Text = Properties.Settings.Default.ResourceFolder;
             textBoxSerialFileName.Text = Properties.Settings.Default.SerialFileName;
@@ -1916,7 +1916,7 @@ namespace ApkUploader
             {
                 Properties.Settings.Default.VersionAssign = textBoxVersion.Text;
                 Properties.Settings.Default.UpdateName = checkBoxUpdateName.Checked;
-                Properties.Settings.Default.ApkFileName = textBoxBundleFile.Text;
+                Properties.Settings.Default.BundleFileName = textBoxBundleFile.Text;
                 Properties.Settings.Default.ObbFileName = textBoxObbFile.Text;
                 Properties.Settings.Default.ResourceFolder = textBoxResourceFolder.Text;
                 Properties.Settings.Default.SerialFileName = textBoxSerialFileName.Text;
