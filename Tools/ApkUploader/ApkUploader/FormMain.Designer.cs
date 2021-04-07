@@ -126,7 +126,7 @@
             // openFileDialogApk
             // 
             this.openFileDialogApk.DefaultExt = "*.aab";
-            this.openFileDialogApk.Filter = "Bundle Files|*.aab|Apk Files|*.apk";
+            this.openFileDialogApk.Filter = "Bundle/Apk Files|*.aab;*.apk";
             // 
             // buttonListTracks
             // 
