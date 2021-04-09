@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Android.Content;
 using Android.Content.PM;
+using Android.Content.Res;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
@@ -36,6 +37,8 @@ namespace BmwDeepObd
         {
             Android.Manifest.Permission.WriteExternalStorage
         };
+
+        public const string AssetEcuFileName = "Ecu.bin";
 
         private bool _downloadStarted;
         private bool _activityActive;
@@ -244,6 +247,24 @@ namespace BmwDeepObd
             _downloadStarted = false;
         }
 
+        protected override void OnStart()
+        {
+            base.OnStart();
+
+            if (IsAssetPresent(this))
+            {
+                try
+                {
+                    StartActivity(typeof(ActivityMain));
+                    Finish();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+        }
+
         /// <summary>
         /// Re-connect the stub to our service on resume.
         /// </summary>
@@ -341,6 +362,28 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 // ignored
+            }
+
+            return false;
+        }
+
+        public static bool IsAssetPresent(Context context)
+        {
+            AssetManager assets = context.Assets;
+            if (assets != null)
+            {
+                try
+                {
+                    string[] assetFiles = assets.List(string.Empty);
+                    if (assetFiles != null && assetFiles.Contains(AssetEcuFileName))
+                    {
+                        return true;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
 
             return false;
