@@ -384,7 +384,7 @@ namespace ApkUploader
             }
         }
 
-        private async Task<ExpansionInfo> GetNewestExpansionFile(EditsResource edits, AppEdit appEdit)
+        private async Task<ExpansionInfo> GetNewestApkExpansionFile(EditsResource edits, AppEdit appEdit)
         {
             try
             {
@@ -393,112 +393,54 @@ namespace ApkUploader
                 int expansionVersion = -1;
                 long fileSize = 0;
 
+                ApksListResponse apksResponse = await edits.Apks.List(PackageName, appEdit.Id).ExecuteAsync(_cts.Token);
+                if (apksResponse.Apks != null)
                 {
-                    ApksListResponse apksResponse = await edits.Apks.List(PackageName, appEdit.Id).ExecuteAsync(_cts.Token);
-                    if (apksResponse.Apks != null)
+                    foreach (Apk apk in apksResponse.Apks)
                     {
-                        foreach (Apk apk in apksResponse.Apks)
+                        // ReSharper disable once UseNullPropagation
+                        if (apk.VersionCode != null)
                         {
-                            // ReSharper disable once UseNullPropagation
-                            if (apk.VersionCode != null)
+                            if (apk.VersionCode.Value > version)
                             {
-                                if (apk.VersionCode.Value > version)
+                                try
                                 {
-                                    try
+                                    ExpansionFile expansionResponse = await edits.Expansionfiles.Get(PackageName, appEdit.Id, apk.VersionCode.Value,
+                                            EditsResource.ExpansionfilesResource.GetRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
+                                    if (expansionResponse.ReferencesVersion != null)
                                     {
-                                        ExpansionFile expansionResponse = await edits.Expansionfiles.Get(PackageName, appEdit.Id, apk.VersionCode.Value,
-                                                EditsResource.ExpansionfilesResource.GetRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
-                                        if (expansionResponse.ReferencesVersion != null)
+                                        expansionVersion = expansionResponse.ReferencesVersion.Value;
+                                        try
                                         {
-                                            expansionVersion = expansionResponse.ReferencesVersion.Value;
-                                            try
-                                            {
-                                                ExpansionFile expansionRefResponse = await edits.Expansionfiles.Get(PackageName, appEdit.Id, expansionResponse.ReferencesVersion.Value,
-                                                        EditsResource.ExpansionfilesResource.GetRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
-                                                if (expansionRefResponse.FileSize != null && expansionRefResponse.FileSize.Value > 0)
-                                                {
-                                                    version = apk.VersionCode.Value;
-                                                    fromBundle = false;
-                                                    expansionVersion = expansionResponse.ReferencesVersion.Value;
-                                                    fileSize = expansionRefResponse.FileSize.Value;
-                                                }
-                                            }
-                                            catch (Exception)
+                                            ExpansionFile expansionRefResponse = await edits.Expansionfiles.Get(PackageName, appEdit.Id, expansionResponse.ReferencesVersion.Value,
+                                                    EditsResource.ExpansionfilesResource.GetRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
+                                            if (expansionRefResponse.FileSize != null && expansionRefResponse.FileSize.Value > 0)
                                             {
                                                 version = apk.VersionCode.Value;
                                                 fromBundle = false;
                                                 expansionVersion = expansionResponse.ReferencesVersion.Value;
-                                                fileSize = 0;
+                                                fileSize = expansionRefResponse.FileSize.Value;
                                             }
                                         }
-                                        else if (expansionResponse.FileSize != null && expansionResponse.FileSize.Value > 0)
+                                        catch (Exception)
                                         {
                                             version = apk.VersionCode.Value;
                                             fromBundle = false;
-                                            expansionVersion = version;
-                                            fileSize = expansionResponse.FileSize.Value;
+                                            expansionVersion = expansionResponse.ReferencesVersion.Value;
+                                            fileSize = 0;
                                         }
                                     }
-                                    catch (Exception)
+                                    else if (expansionResponse.FileSize != null && expansionResponse.FileSize.Value > 0)
                                     {
-                                        // ignored
+                                        version = apk.VersionCode.Value;
+                                        fromBundle = false;
+                                        expansionVersion = version;
+                                        fileSize = expansionResponse.FileSize.Value;
                                     }
                                 }
-                            }
-                        }
-                    }
-                }
-
-                {
-                    BundlesListResponse bundlesResponse = await edits.Bundles.List(PackageName, appEdit.Id).ExecuteAsync(_cts.Token);
-                    if (bundlesResponse.Bundles != null)
-                    {
-                        foreach (Bundle bundle in bundlesResponse.Bundles)
-                        {
-                            // ReSharper disable once UseNullPropagation
-                            if (bundle.VersionCode != null)
-                            {
-                                if (bundle.VersionCode.Value > version)
+                                catch (Exception)
                                 {
-                                    try
-                                    {
-                                        ExpansionFile expansionResponse = await edits.Expansionfiles.Get(PackageName, appEdit.Id, bundle.VersionCode.Value,
-                                                EditsResource.ExpansionfilesResource.GetRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
-                                        if (expansionResponse.ReferencesVersion != null)
-                                        {
-                                            expansionVersion = expansionResponse.ReferencesVersion.Value;
-                                            try
-                                            {
-                                                ExpansionFile expansionRefResponse = await edits.Expansionfiles.Get(PackageName, appEdit.Id, expansionResponse.ReferencesVersion.Value,
-                                                        EditsResource.ExpansionfilesResource.GetRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
-                                                if (expansionRefResponse.FileSize != null && expansionRefResponse.FileSize.Value > 0)
-                                                {
-                                                    version = bundle.VersionCode.Value;
-                                                    fromBundle = true;
-                                                    expansionVersion = expansionResponse.ReferencesVersion.Value;
-                                                    fileSize = expansionRefResponse.FileSize.Value;
-                                                }
-                                            }
-                                            catch (Exception)
-                                            {
-                                                version = bundle.VersionCode.Value;
-                                                fromBundle = true;
-                                                expansionVersion = expansionResponse.ReferencesVersion.Value;
-                                                fileSize = 0;
-                                            }
-                                        }
-                                        else if (expansionResponse.FileSize != null && expansionResponse.FileSize.Value > 0)
-                                        {
-                                            version = bundle.VersionCode.Value;
-                                            fromBundle = true;
-                                            expansionVersion = version;
-                                            fileSize = expansionResponse.FileSize.Value;
-                                        }
-                                    }
-                                    catch (Exception)
-                                    {
-                                        // ignored
-                                    }
+                                    // ignored
                                 }
                             }
                         }
@@ -1385,7 +1327,7 @@ namespace ApkUploader
             string ext = Path.GetExtension(bundleFileName);
             bool isApk = !string.IsNullOrEmpty(ext) && string.Compare(ext, ".apk", StringComparison.OrdinalIgnoreCase) == 0;
 
-            if (!string.IsNullOrEmpty(expansionFileName))
+            if (isApk && !string.IsNullOrEmpty(expansionFileName))
             {
                 if (expansionFileName != ExpansionKeep)
                 {
@@ -1436,24 +1378,28 @@ namespace ApkUploader
                         AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
 
                         bool reuseExpansion = false;
-                        ExpansionInfo expansionInfo = await GetNewestExpansionFile(edits, appEdit);
-                        if (expansionInfo != null)
+                        ExpansionInfo expansionInfo = null;
+                        if (isApk)
                         {
-                            sb.AppendLine($"Latest expansion: version={expansionInfo.Version}, bundle = {expansionInfo.FromBundle}, expansion version={expansionInfo.ExpansionVersion}, size={expansionInfo.FileSize}");
-                            if (!string.IsNullOrEmpty(expansionFileName))
+                            expansionInfo = await GetNewestApkExpansionFile(edits, appEdit);
+                            if (expansionInfo != null)
                             {
-                                if (expansionFileName == ExpansionKeep)
+                                sb.AppendLine($"Latest expansion: version={expansionInfo.Version}, bundle = {expansionInfo.FromBundle}, expansion version={expansionInfo.ExpansionVersion}, size={expansionInfo.FileSize}");
+                                if (!string.IsNullOrEmpty(expansionFileName))
                                 {
-                                    sb.AppendLine("Reusing old expansion file");
-                                    reuseExpansion = true;
-                                }
-                                else
-                                {
-                                    FileInfo fileInfo = new FileInfo(expansionFileName);
-                                    if (fileInfo.Exists && fileInfo.Length == expansionInfo.FileSize)
+                                    if (expansionFileName == ExpansionKeep)
                                     {
-                                        sb.AppendLine("Size unchanged, reusing old expansion file");
+                                        sb.AppendLine("Reusing old expansion file");
                                         reuseExpansion = true;
+                                    }
+                                    else
+                                    {
+                                        FileInfo fileInfo = new FileInfo(expansionFileName);
+                                        if (fileInfo.Exists && fileInfo.Length == expansionInfo.FileSize)
+                                        {
+                                            sb.AppendLine("Size unchanged, reusing old expansion file");
+                                            reuseExpansion = true;
+                                        }
                                     }
                                 }
                             }
@@ -1478,7 +1424,7 @@ namespace ApkUploader
                                     apkUploaded = apk;
                                 };
                                 IUploadProgress uploadProgress = await uploadApk.UploadAsync(_cts.Token);
-                                sb.AppendLine($"Upload status: {uploadProgress.Status.ToString()}");
+                                sb.AppendLine($"Upload status: {uploadProgress.Status}");
                                 UpdateStatus(sb.ToString());
                                 if (uploadProgress.Exception != null)
                                 {
@@ -1500,7 +1446,7 @@ namespace ApkUploader
                                     bundleUploaded = bundle;
                                 };
                                 IUploadProgress uploadProgress = await uploadBundle.UploadAsync(_cts.Token);
-                                sb.AppendLine($"Upload status: {uploadProgress.Status.ToString()}");
+                                sb.AppendLine($"Upload status: {uploadProgress.Status}");
                                 UpdateStatus(sb.ToString());
                                 if (uploadProgress.Exception != null)
                                 {
@@ -1517,39 +1463,42 @@ namespace ApkUploader
                         sb.AppendLine($"Version code uploaded: {versionCode.Value}");
                         UpdateStatus(sb.ToString());
 
-                        if (!string.IsNullOrEmpty(expansionFileName) && !reuseExpansion)
+                        if (isApk)
                         {
-                            using (FileStream expansionStream = new FileStream(expansionFileName, FileMode.Open, FileAccess.Read))
+                            if (!string.IsNullOrEmpty(expansionFileName) && !reuseExpansion)
                             {
-                                long fileLength = (expansionStream.Length > 0) ? expansionStream.Length : 1;
-                                EditsResource.ExpansionfilesResource.UploadMediaUpload upload = edits.Expansionfiles.Upload(PackageName, appEdit.Id, versionCode.Value,
-                                     EditsResource.ExpansionfilesResource.UploadMediaUpload.ExpansionFileTypeEnum.Main, expansionStream, "application/octet-stream");
-                                upload.ChunkSize = ResumableUpload.MinimumChunkSize;
-                                upload.ProgressChanged += progress =>
+                                using (FileStream expansionStream = new FileStream(expansionFileName, FileMode.Open, FileAccess.Read))
                                 {
-                                    UpdateStatus(sb + $"Expansion progress: {100 * progress.BytesSent / fileLength}%");
-                                };
-                                IUploadProgress uploadProgress = await upload.UploadAsync(_cts.Token);
-                                sb.AppendLine($"Upload status: {uploadProgress.Status.ToString()}");
-                                UpdateStatus(sb.ToString());
-                                if (uploadProgress.Exception != null)
-                                {
-                                    throw uploadProgress.Exception;
+                                    long fileLength = (expansionStream.Length > 0) ? expansionStream.Length : 1;
+                                    EditsResource.ExpansionfilesResource.UploadMediaUpload upload = edits.Expansionfiles.Upload(PackageName, appEdit.Id, versionCode.Value,
+                                         EditsResource.ExpansionfilesResource.UploadMediaUpload.ExpansionFileTypeEnum.Main, expansionStream, "application/octet-stream");
+                                    upload.ChunkSize = ResumableUpload.MinimumChunkSize;
+                                    upload.ProgressChanged += progress =>
+                                    {
+                                        UpdateStatus(sb + $"Expansion progress: {100 * progress.BytesSent / fileLength}%");
+                                    };
+                                    IUploadProgress uploadProgress = await upload.UploadAsync(_cts.Token);
+                                    sb.AppendLine($"Upload status: {uploadProgress.Status}");
+                                    UpdateStatus(sb.ToString());
+                                    if (uploadProgress.Exception != null)
+                                    {
+                                        throw uploadProgress.Exception;
+                                    }
                                 }
-                            }
-                        }
-                        else
-                        {
-                            if (expansionInfo != null)
-                            {
-                                ExpansionFile expansionRef = new ExpansionFile { ReferencesVersion = expansionInfo.ExpansionVersion };
-                                await edits.Expansionfiles.Update(expansionRef, PackageName, appEdit.Id, versionCode.Value,
-                                    EditsResource.ExpansionfilesResource.UpdateRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
-                                sb.AppendLine($"Expansion version {expansionInfo.ExpansionVersion} assigned");
                             }
                             else
                             {
-                                sb.AppendLine("No existing expansion found!");
+                                if (expansionInfo != null)
+                                {
+                                    ExpansionFile expansionRef = new ExpansionFile { ReferencesVersion = expansionInfo.ExpansionVersion };
+                                    await edits.Expansionfiles.Update(expansionRef, PackageName, appEdit.Id, versionCode.Value,
+                                        EditsResource.ExpansionfilesResource.UpdateRequest.ExpansionFileTypeEnum.Main).ExecuteAsync(_cts.Token);
+                                    sb.AppendLine($"Expansion version {expansionInfo.ExpansionVersion} assigned");
+                                }
+                                else
+                                {
+                                    sb.AppendLine("No existing expansion found!");
+                                }
                             }
                         }
 
