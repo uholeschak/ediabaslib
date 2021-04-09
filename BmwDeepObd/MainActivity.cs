@@ -365,7 +365,6 @@ namespace BmwDeepObd
         private const long EcuExtractSize = 2500000000;         // extracted ecu files size
         private const string InfoXmlName = "ObbInfo.xml";
         private const string ContentFileName = "Content.xml";
-        private const string AssetEcuFileName = "Ecu.bin";
         private const int MenuGroupRecentId = 1;
         private const int CpuLoadCritical = 70;
         private const int AutoHideTimeout = 3000;
@@ -408,6 +407,7 @@ namespace BmwDeepObd
         private CustomProgressDialog _compileProgress;
         private bool _extractZipCanceled;
         private string _obbFileName;
+        private AssetManager _assetManager;
         private AlertDialog _startAlertDialog;
         private AlertDialog _configSelectAlertDialog;
         private AlertDialog _downloadEcuAlertDialog;
@@ -2048,6 +2048,11 @@ namespace BmwDeepObd
             PackageInfo packageInfo = PackageManager.GetPackageInfo(PackageName, 0);
             _currentVersionCode = packageInfo != null ? Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
             _obbFileName = ExpansionDownloaderActivity.GetObbFilename(this);
+            if (ExpansionDownloaderActivity.IsAssetPresent(this))
+            {
+                _assetManager = Assets;
+                _obbFileName = ExpansionDownloaderActivity.AssetEcuFileName;
+            }
 
             string settingsFile = ActivityCommon.GetSettingsFileName();
             if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
@@ -4889,27 +4894,7 @@ namespace BmwDeepObd
 
         private void ExtractObbFile(DownloadInfo downloadInfo, string key)
         {
-            AssetManager assets = Assets;
-            AssetManager assetManager = null;
-            string fileName = _obbFileName;
-            if (assets != null)
-            {
-                try
-                {
-                    string[] assetFiles = assets.List(string.Empty);
-                    if (assetFiles != null && assetFiles.Contains(AssetEcuFileName))
-                    {
-                        assetManager = assets;
-                        fileName = AssetEcuFileName;
-                    }
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-            }
-
-            ExtractZipFile(assetManager, fileName, downloadInfo.TargetDir, downloadInfo.InfoXml, key, false,
+            ExtractZipFile(_assetManager, _obbFileName, downloadInfo.TargetDir, downloadInfo.InfoXml, key, false,
                 new List<string> { Path.Combine(_instanceData.AppDataPath, "EcuVag") });
         }
 
