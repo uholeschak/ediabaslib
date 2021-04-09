@@ -34,6 +34,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Android.Content.PM;
+using Android.Content.Res;
 using Android.Locations;
 using Android.OS.Storage;
 using Android.Provider;
@@ -7678,7 +7679,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static void ExtractZipFile(string archiveFilenameIn, string outFolder, string key, List<string> ignoreFolders, ProgressZipDelegate progressHandler)
+        public static void ExtractZipFile(AssetManager assetManager, string archiveFilenameIn, string outFolder, string key, List<string> ignoreFolders, ProgressZipDelegate progressHandler)
         {
 #if DEBUG
             string lastFileName = string.Empty;
@@ -7711,8 +7712,19 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                using (FileStream fsRead = File.OpenRead(archiveFilenameIn))
+                                Stream fsRead = null;
+                                try
                                 {
+                                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                                    if (assetManager != null)
+                                    {
+                                        fsRead = assetManager.Open(archiveFilenameIn);
+                                    }
+                                    else
+                                    {
+                                        fsRead = File.OpenRead(archiveFilenameIn);
+                                    }
+
                                     using (CryptoStream crStream = new CryptoStream(fsRead, crypto.CreateDecryptor(), CryptoStreamMode.Read))
                                     {
                                         byte[] buffer = new byte[4096];     // 4K is optimum
@@ -7736,13 +7748,17 @@ namespace BmwDeepObd
                                                 return;
                                             }
 #if IO_TEST
-                                            if (retry == 0)
-                                            {
-                                                throw new IOException("Exception test");
-                                            }
+                                        if (retry == 0)
+                                        {
+                                            throw new IOException("Exception test");
+                                        }
 #endif
                                         }
                                     }
+                                }
+                                finally
+                                {
+                                    fsRead?.Dispose();
                                 }
 
                                 break;

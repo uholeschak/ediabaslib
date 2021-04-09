@@ -365,6 +365,7 @@ namespace BmwDeepObd
         private const long EcuExtractSize = 2500000000;         // extracted ecu files size
         private const string InfoXmlName = "ObbInfo.xml";
         private const string ContentFileName = "Content.xml";
+        private const string AssetEcuFileName = "Ecu.bin";
         private const int MenuGroupRecentId = 1;
         private const int CpuLoadCritical = 70;
         private const int AutoHideTimeout = 3000;
@@ -4888,11 +4889,31 @@ namespace BmwDeepObd
 
         private void ExtractObbFile(DownloadInfo downloadInfo, string key)
         {
-            ExtractZipFile(_obbFileName, downloadInfo.TargetDir, downloadInfo.InfoXml, key, false,
+            AssetManager assets = Assets;
+            AssetManager assetManager = null;
+            string fileName = _obbFileName;
+            if (assets != null)
+            {
+                try
+                {
+                    string[] assetFiles = assets.List(string.Empty);
+                    if (assetFiles != null && assetFiles.Contains(AssetEcuFileName))
+                    {
+                        assetManager = assets;
+                        fileName = AssetEcuFileName;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            ExtractZipFile(assetManager, fileName, downloadInfo.TargetDir, downloadInfo.InfoXml, key, false,
                 new List<string> { Path.Combine(_instanceData.AppDataPath, "EcuVag") });
         }
 
-        private void ExtractZipFile(string fileName, string targetDirectory, XElement infoXml, string key, bool removeFile = false, List<string> removeDirs = null)
+        private void ExtractZipFile(AssetManager assetManager, string fileName, string targetDirectory, XElement infoXml, string key, bool removeFile = false, List<string> removeDirs = null)
         {
             _extractZipCanceled = false;
             if (_downloadProgress == null)
@@ -5064,7 +5085,7 @@ namespace BmwDeepObd
                         }
                     }
                     int lastZipPercent = -1;
-                    ActivityCommon.ExtractZipFile(fileName, targetDirectory, key, ignoreFolders,
+                    ActivityCommon.ExtractZipFile(assetManager, fileName, targetDirectory, key, ignoreFolders,
                         (percent, decrypt) =>
                         {
                             if (_activityCommon == null)
