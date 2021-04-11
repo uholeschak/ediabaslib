@@ -117,9 +117,7 @@
       <HintPath>packages\System.Text.Encodings.Web.5.0.1\lib\netstandard2.1\System.Text.Encodings.Web.dll</HintPath>
     </Reference>
     <Reference Include="System.Text.Json, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>packages\System.Text.Json.5.0.1\lib\netstandard2.0\System.Text.Json.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
+      <HintPath>packages\System.Text.Json.5.0.2\lib\netstandard2.0\System.Text.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -344,6 +342,7 @@
     </EmbeddedResource>
     <None Include=".editorconfig" />
     <AndroidAsset Include="Assets\Ecu.bin" />
+    <None Include="app.config" />
     <None Include="packages.config" />
     <ProguardConfiguration Include="proguard.cfg" />
     <None Include="Resources\AboutResources.txt" />
