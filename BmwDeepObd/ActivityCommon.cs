@@ -7718,11 +7718,18 @@ namespace BmwDeepObd
                                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                                     if (assetManager != null)
                                     {
-                                        fsRead = assetManager.Open(archiveFilenameIn);
+                                        AssetFileDescriptor assetFile = assetManager.OpenFd(archiveFilenameIn);
+                                        fsRead = assetFile.CreateInputStream();
                                     }
                                     else
                                     {
                                         fsRead = File.OpenRead(archiveFilenameIn);
+                                    }
+
+                                    if (fsRead == null)
+                                    {
+                                        extractAborted = true;
+                                        throw new IOException("Opening archive failed");
                                     }
 
                                     using (CryptoStream crStream = new CryptoStream(fsRead, crypto.CreateDecryptor(), CryptoStreamMode.Read))
