@@ -7712,13 +7712,14 @@ namespace BmwDeepObd
                         {
                             try
                             {
+                                AssetFileDescriptor assetFile = null;
                                 Stream fsRead = null;
                                 try
                                 {
                                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                                     if (assetManager != null)
                                     {
-                                        AssetFileDescriptor assetFile = assetManager.OpenFd(archiveFilenameIn);
+                                        assetFile = assetManager.OpenFd(archiveFilenameIn);
                                         fsRead = assetFile.CreateInputStream();
                                     }
                                     else
@@ -7766,6 +7767,7 @@ namespace BmwDeepObd
                                 finally
                                 {
                                     fsRead?.Dispose();
+                                    assetFile?.Dispose();
                                 }
 
                                 break;

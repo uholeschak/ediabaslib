@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Android.Content;
@@ -406,7 +407,8 @@ namespace BmwDeepObd
         private CustomProgressDialog _downloadProgress;
         private CustomProgressDialog _compileProgress;
         private bool _extractZipCanceled;
-        private string _obbFileName;
+        private string _assetFileName;
+        private long _assetFileSize = -1;
         private AssetManager _assetManager;
         private AlertDialog _startAlertDialog;
         private AlertDialog _configSelectAlertDialog;
@@ -2047,15 +2049,27 @@ namespace BmwDeepObd
         {
             PackageInfo packageInfo = PackageManager.GetPackageInfo(PackageName, 0);
             _currentVersionCode = packageInfo != null ? Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
+            AssetManager assetManager = Assets;
             string assetFileName = ExpansionDownloaderActivity.GetAssetFilename(this);
-            if (!string.IsNullOrEmpty(assetFileName))
+            if (assetManager != null && !string.IsNullOrEmpty(assetFileName))
             {
-                _assetManager = Assets;
-                _obbFileName = assetFileName;
+                try
+                {
+                    AssetFileDescriptor assetFile = assetManager.OpenFd(assetFileName);
+                    _assetManager = assetManager;
+                    _assetFileName = assetFileName;
+                    _assetFileSize = assetFile.Length;
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
-            else
+
+            if (_assetManager == null)
             {
-                _obbFileName = ExpansionDownloaderActivity.GetObbFilename(this);
+                _assetFileName = ExpansionDownloaderActivity.GetObbFilename(this);
+                _assetFileSize = -1;
             }
 
             string settingsFile = ActivityCommon.GetSettingsFileName();
@@ -4476,7 +4490,7 @@ namespace BmwDeepObd
 
         private void DownloadFile(string url, string downloadDir, string unzipTargetDir = null)
         {
-            if (string.IsNullOrEmpty(_obbFileName))
+            if (string.IsNullOrEmpty(_assetFileName))
             {
                 _activityCommon.ShowAlert(GetString(Resource.String.exp_down_obb_missing), Resource.String.alert_title_error);
                 return;
@@ -4535,7 +4549,11 @@ namespace BmwDeepObd
                     {
                         XElement xmlInfo = new XElement("Info");
                         xmlInfo.Add(new XAttribute("Url", url ?? string.Empty));
-                        xmlInfo.Add(new XAttribute("Name", Path.GetFileName(_obbFileName) ?? string.Empty));
+                        xmlInfo.Add(new XAttribute("Name", Path.GetFileName(_assetFileName) ?? string.Empty));
+                        if (_assetFileSize > 0)
+                        {
+                            xmlInfo.Add(new XAttribute("Size", XmlConvert.ToString(_assetFileSize)));
+                        }
                         downloadInfo = new DownloadInfo(downloadDir, unzipTargetDir, xmlInfo);
                     }
                     // ReSharper disable once RedundantNameQualifier
@@ -4548,7 +4566,7 @@ namespace BmwDeepObd
                         string installer = string.Empty;
                         try
                         {
-                            obbName = Path.GetFileName(_obbFileName) ?? string.Empty;
+                            obbName = Path.GetFileName(_assetFileName) ?? string.Empty;
                             installer = PackageManager?.GetInstallerPackageName(PackageName ?? string.Empty);
                         }
                         catch (Exception)
@@ -4836,11 +4854,11 @@ namespace BmwDeepObd
                 {
                     return null;
                 }
-                if (string.IsNullOrEmpty(_obbFileName))
+                if (string.IsNullOrEmpty(_assetFileName))
                 {
                     return null;
                 }
-                string baseName = Path.GetFileName(_obbFileName);
+                string baseName = Path.GetFileName(_assetFileName);
                 if (string.IsNullOrEmpty(baseName))
                 {
                     return null;
@@ -4898,7 +4916,7 @@ namespace BmwDeepObd
 
         private void ExtractObbFile(DownloadInfo downloadInfo, string key)
         {
-            ExtractZipFile(_assetManager, _obbFileName, downloadInfo.TargetDir, downloadInfo.InfoXml, key, false,
+            ExtractZipFile(_assetManager, _assetFileName, downloadInfo.TargetDir, downloadInfo.InfoXml, key, false,
                 new List<string> { Path.Combine(_instanceData.AppDataPath, "EcuVag") });
         }
 
@@ -5450,10 +5468,26 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-                if (string.IsNullOrEmpty(_obbFileName) ||
-                    string.Compare(Path.GetFileNameWithoutExtension(nameAttr.Value), Path.GetFileNameWithoutExtension(_obbFileName), StringComparison.OrdinalIgnoreCase) != 0)
+                if (string.IsNullOrEmpty(_assetFileName) ||
+                    string.Compare(Path.GetFileNameWithoutExtension(nameAttr.Value), Path.GetFileNameWithoutExtension(_assetFileName), StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     return false;
+                }
+                XAttribute sizeAttr = xmlInfo.Root?.Attribute("Size");
+                if (sizeAttr != null)
+                {
+                    try
+                    {
+                        Int64 fileSize = XmlConvert.ToInt64(sizeAttr.Value);
+                        if (fileSize != _assetFileSize)
+                        {
+                            return false;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
                 }
                 return true;
             }
