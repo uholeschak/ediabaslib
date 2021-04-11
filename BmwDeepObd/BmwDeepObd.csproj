@@ -340,7 +340,6 @@
     </EmbeddedResource>
     <None Include=".editorconfig" />
     <AndroidAsset Include="Assets\Ecu.bin" />
-    <None Include="app.config" />
     <None Include="packages.config" />
     <ProguardConfiguration Include="proguard.cfg" />
     <None Include="Resources\AboutResources.txt" />
