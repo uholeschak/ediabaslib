@@ -7718,7 +7718,7 @@ namespace BmwDeepObd
                                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                                     if (assetManager != null)
                                     {
-                                        AssetFileDescriptor assetFile = assetManager.OpenFd(ExpansionDownloaderActivity.AssetEcuFileName);
+                                        AssetFileDescriptor assetFile = assetManager.OpenFd(archiveFilenameIn);
                                         fsRead = assetFile.CreateInputStream();
                                     }
                                     else

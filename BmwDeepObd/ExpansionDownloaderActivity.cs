@@ -38,8 +38,7 @@ namespace BmwDeepObd
             Android.Manifest.Permission.WriteExternalStorage
         };
 
-        public const string AssetEcuFileName = "Ecu.bin";
-
+        private static string _assetFileName;
         private bool _downloadStarted;
         private bool _activityActive;
 
@@ -369,24 +368,7 @@ namespace BmwDeepObd
 
         public static bool IsAssetPresent(Context context)
         {
-            AssetManager assets = context.Assets;
-            if (assets != null)
-            {
-                try
-                {
-                    string[] assetFiles = assets.List(string.Empty);
-                    if (assetFiles != null && assetFiles.Contains(AssetEcuFileName))
-                    {
-                        return true;
-                    }
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-            }
-
-            return false;
+            return !string.IsNullOrEmpty(GetAssetFilename(context));
         }
 
         /// <summary>
@@ -509,6 +491,42 @@ namespace BmwDeepObd
                 }
             }
             return obbFile;
+        }
+
+        public static string GetAssetFilename(Context context)
+        {
+            if (!string.IsNullOrEmpty(_assetFileName))
+            {
+                return _assetFileName;
+            }
+
+            Regex regex = new Regex(@"^Ecu.*\.bin$", RegexOptions.IgnoreCase);
+            AssetManager assets = context.Assets;
+            if (assets != null)
+            {
+                try
+                {
+                    string[] assetFiles = assets.List(string.Empty);
+                    if (assetFiles != null)
+                    {
+                        foreach (string fileName in assetFiles)
+                        {
+                            if (regex.IsMatch(fileName))
+                            {
+                                _assetFileName = fileName;
+                                return fileName;
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            _assetFileName = string.Empty;
+            return null;
         }
 
         /// <summary>

@@ -2047,11 +2047,15 @@ namespace BmwDeepObd
         {
             PackageInfo packageInfo = PackageManager.GetPackageInfo(PackageName, 0);
             _currentVersionCode = packageInfo != null ? Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
-            _obbFileName = ExpansionDownloaderActivity.GetObbFilename(this);
-            if (ExpansionDownloaderActivity.IsAssetPresent(this))
+            string assetFileName = ExpansionDownloaderActivity.GetAssetFilename(this);
+            if (!string.IsNullOrEmpty(assetFileName))
             {
                 _assetManager = Assets;
-                _obbFileName = ExpansionDownloaderActivity.AssetEcuFileName;
+                _obbFileName = assetFileName;
+            }
+            else
+            {
+                _obbFileName = ExpansionDownloaderActivity.GetObbFilename(this);
             }
 
             string settingsFile = ActivityCommon.GetSettingsFileName();
