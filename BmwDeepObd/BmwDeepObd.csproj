@@ -72,7 +72,7 @@
     <DefineConstants>Android</DefineConstants>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
     <AndroidDexTool>d8</AndroidDexTool>
-    <AndroidPackageFormat>aab</AndroidPackageFormat>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidHttpClientHandlerType>System.Net.Http.HttpClientHandler</AndroidHttpClientHandlerType>
     <AndroidLinkTool>r8</AndroidLinkTool>
     <AndroidUseAapt2>true</AndroidUseAapt2>
@@ -339,7 +339,7 @@
       <Link>HexFiles\Type3\ELM327V15.X.production.hex</Link>
     </EmbeddedResource>
     <None Include=".editorconfig" />
-    <AndroidAsset Include="Assets\Ecu.bin" />
+    <None Include="Assets\Ecu.bin" />
     <None Include="packages.config" />
     <ProguardConfiguration Include="proguard.cfg" />
     <None Include="Resources\AboutResources.txt" />
