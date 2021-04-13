@@ -41,7 +41,6 @@ namespace BmwDeepObd
         };
 
         private static string _assetFileName;
-        private static Context _packageContext;
         private bool _downloadStarted;
         private bool _activityActive;
 
