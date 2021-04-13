@@ -601,6 +601,7 @@ namespace BmwDeepObd
         private bool _disposed;
         private readonly Context _context;
         private readonly Android.App.Activity _activity;
+        private static Context _packageContext;
         private readonly BcReceiverUpdateDisplayDelegate _bcReceiverUpdateDisplayHandler;
         private readonly BcReceiverReceivedDelegate _bcReceiverReceivedHandler;
         private bool? _usbSupport;
@@ -1844,6 +1845,24 @@ namespace BmwDeepObd
                 // ignored
             }
             return false;
+        }
+
+        public static Context GetPackageContext()
+        {
+            try
+            {
+                if (_packageContext != null)
+                {
+                    return _packageContext;
+                }
+
+                _packageContext = Android.App.Application.Context.CreatePackageContext(Android.App.Application.Context.PackageName, 0);
+                return _packageContext;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public static bool IsBtReliable()
