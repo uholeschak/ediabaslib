@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -15,6 +16,7 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using Google.Android.Vending.Expansion.Downloader;
+using Xamarin.Google.Android.Play.Core.AssetPacks;
 
 [assembly: Android.App.UsesPermission("com.android.vending.CHECK_LICENSE")]
 
@@ -369,7 +371,13 @@ namespace BmwDeepObd
 
         public static bool IsAssetPresent(Context context)
         {
-            return !string.IsNullOrEmpty(GetAssetFilename(context));
+            List<string> assetList = GetAssetPathList(context);
+            if (assetList?.Count > 0)
+            {
+                return true;
+            }
+
+            return !string.IsNullOrEmpty(GetAssetFilename());
         }
 
         /// <summary>
@@ -443,7 +451,7 @@ namespace BmwDeepObd
         public static string GetObbFilename(Context context)
         {
             Regex regex = new Regex(@"^main\.([0-9]+)\." + context.PackageName + @"\.obb$", RegexOptions.IgnoreCase);
-            PackageInfo packageInfo = context.PackageManager.GetPackageInfo(context.PackageName, 0);
+            PackageInfo packageInfo = context.PackageManager?.GetPackageInfo(context.PackageName ?? string.Empty, 0);
             long packageVersion = -1;
             if (packageInfo != null)
             {
@@ -494,25 +502,33 @@ namespace BmwDeepObd
             return obbFile;
         }
 
-        public static Context GetPackageContext(Context context)
+        public static List<string> GetAssetPathList(Context context)
         {
             try
             {
-                if (_packageContext != null)
+                List<string> assetList = new List<string>();
+                using (IAssetPackManager assetPackManager = AssetPackManagerFactory.GetInstance(context))
                 {
-                    return _packageContext;
+                    IDictionary<string, AssetPackLocation> assetPackLocations = assetPackManager.PackLocations;
+                    if (assetPackLocations != null)
+                    {
+                        foreach (KeyValuePair<string, AssetPackLocation> location in assetPackLocations)
+                        {
+                            assetList.Add(location.Value.AssetsPath());
+                        }
+                    }
                 }
-
-                _packageContext = context.CreatePackageContext(ActivityCommon.AppNameSpace, 0);
-                return _packageContext;
+                return assetList;
             }
             catch (Exception)
             {
-                return null;
+                // ignored
             }
+
+            return null;
         }
 
-        public static string GetAssetFilename(Context context)
+        public static string GetAssetFilename()
         {
             if (!string.IsNullOrEmpty(_assetFileName))
             {
@@ -522,7 +538,7 @@ namespace BmwDeepObd
             try
             {
                 Regex regex = new Regex(@"^Ecu.*\.bin$", RegexOptions.IgnoreCase);
-                AssetManager assets = GetPackageContext(context)?.Assets;
+                AssetManager assets = ActivityCommon.GetPackageContext()?.Assets;
                 if (assets != null)
                 {
                     string[] assetFiles = assets.List(string.Empty);

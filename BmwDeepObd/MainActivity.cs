@@ -2047,18 +2047,21 @@ namespace BmwDeepObd
 
         private void GetSettings()
         {
-            PackageInfo packageInfo = PackageManager.GetPackageInfo(PackageName, 0);
+            PackageInfo packageInfo = PackageManager?.GetPackageInfo(PackageName ?? string.Empty, 0);
             _currentVersionCode = packageInfo != null ? Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
-            AssetManager assetManager = Assets;
-            string assetFileName = ExpansionDownloaderActivity.GetAssetFilename(this);
-            if (assetManager != null && !string.IsNullOrEmpty(assetFileName))
+            string assetFileName = ExpansionDownloaderActivity.GetAssetFilename();
+            if (!string.IsNullOrEmpty(assetFileName))
             {
                 try
                 {
-                    AssetFileDescriptor assetFile = assetManager.OpenFd(assetFileName);
-                    _assetManager = assetManager;
-                    _assetFileName = assetFileName;
-                    _assetFileSize = assetFile.Length;
+                    AssetManager assetManager = ActivityCommon.GetPackageContext()?.Assets;
+                    if (assetManager != null)
+                    {
+                        AssetFileDescriptor assetFile = assetManager.OpenFd(assetFileName);
+                        _assetManager = assetManager;
+                        _assetFileName = assetFileName;
+                        _assetFileSize = assetFile.Length;
+                    }
                 }
                 catch (Exception)
                 {
