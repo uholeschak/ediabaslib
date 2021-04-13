@@ -39,6 +39,7 @@ namespace BmwDeepObd
         };
 
         private static string _assetFileName;
+        private static Context _packageContext;
         private bool _downloadStarted;
         private bool _activityActive;
 
@@ -493,6 +494,24 @@ namespace BmwDeepObd
             return obbFile;
         }
 
+        public static Context GetPackageContext(Context context)
+        {
+            try
+            {
+                if (_packageContext != null)
+                {
+                    return _packageContext;
+                }
+
+                _packageContext = context.CreatePackageContext(ActivityCommon.AppNameSpace, 0);
+                return _packageContext;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public static string GetAssetFilename(Context context)
         {
             if (!string.IsNullOrEmpty(_assetFileName))
@@ -500,11 +519,11 @@ namespace BmwDeepObd
                 return _assetFileName;
             }
 
-            Regex regex = new Regex(@"^Ecu.*\.bin$", RegexOptions.IgnoreCase);
-            AssetManager assets = context.Assets;
-            if (assets != null)
+            try
             {
-                try
+                Regex regex = new Regex(@"^Ecu.*\.bin$", RegexOptions.IgnoreCase);
+                AssetManager assets = GetPackageContext(context)?.Assets;
+                if (assets != null)
                 {
                     string[] assetFiles = assets.List(string.Empty);
                     if (assetFiles != null)
@@ -519,10 +538,10 @@ namespace BmwDeepObd
                         }
                     }
                 }
-                catch (Exception)
-                {
-                    // ignored
-                }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
 
             _assetFileName = string.Empty;
