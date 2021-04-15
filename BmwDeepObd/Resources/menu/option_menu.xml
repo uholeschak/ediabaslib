@@ -53,6 +53,15 @@
                         android:orderInCategory="2" />
                 </menu>
               </item>
+              <item android:id="@+id/menu_cfg_page_functions"
+                    android:icon="@android:drawable/ic_menu_manage"
+                    android:title="@string/menu_cfg_page_functions">
+                <menu>
+                  <item android:id="@+id/menu_cfg_page_ediabas"
+                        android:icon="@android:drawable/ic_menu_manage"
+                        android:title="@string/menu_cfg_page_ediabas"/>
+                </menu>
+              </item>
               <item android:id="@+id/menu_cfg_edit"
                     android:icon="@android:drawable/ic_menu_edit"
                     android:title="@string/menu_cfg_edit"/>

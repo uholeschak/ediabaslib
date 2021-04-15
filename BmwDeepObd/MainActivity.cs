@@ -1106,6 +1106,12 @@ namespace BmwDeepObd
                 }
             }
 
+            IMenuItem cfgPageFuncMenu = menu.FindItem(Resource.Id.menu_cfg_page_functions);
+            cfgPageFuncMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
+
+            IMenuItem cfgPageEdiabasMenu = menu.FindItem(Resource.Id.menu_cfg_page_ediabas);
+            cfgPageEdiabasMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
+
             IMenuItem cfgEditMenu = menu.FindItem(Resource.Id.menu_cfg_edit);
             cfgEditMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
 
