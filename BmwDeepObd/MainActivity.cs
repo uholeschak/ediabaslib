@@ -1017,6 +1017,7 @@ namespace BmwDeepObd
         {
             bool commActive = ActivityCommon.CommActive;
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
+            bool pageSgdb = !string.IsNullOrEmpty(GetSelectedPageSgdb());
 
             IMenuItem actionProviderConnect = menu.FindItem(Resource.Id.menu_action_provider_connect);
             if (actionProviderConnect != null)
@@ -1107,10 +1108,18 @@ namespace BmwDeepObd
             }
 
             IMenuItem cfgPageFuncMenu = menu.FindItem(Resource.Id.menu_cfg_page_functions);
-            cfgPageFuncMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
+            if (cfgPageFuncMenu != null)
+            {
+                cfgPageFuncMenu.SetEnabled(!commActive);
+                cfgPageFuncMenu.SetVisible(pageSgdb && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
+            }
 
             IMenuItem cfgPageEdiabasMenu = menu.FindItem(Resource.Id.menu_cfg_page_ediabas);
-            cfgPageEdiabasMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
+            if (cfgPageEdiabasMenu != null)
+            {
+                cfgPageEdiabasMenu.SetEnabled(!commActive);
+                cfgPageEdiabasMenu.SetVisible(pageSgdb && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
+            }
 
             IMenuItem cfgEditMenu = menu.FindItem(Resource.Id.menu_cfg_edit);
             cfgEditMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
@@ -1272,6 +1281,10 @@ namespace BmwDeepObd
                     ActivityCommon.RecentConfigListClear();
                     StoreSettings();
                     UpdateOptionsMenu();
+                    return true;
+
+                case Resource.Id.menu_cfg_page_ediabas:
+                    StartEdiabasTool(true);
                     return true;
 
                 case Resource.Id.menu_cfg_sel:
@@ -2918,6 +2931,40 @@ namespace BmwDeepObd
                     }
                 }
             }
+        }
+
+        private string GetSelectedPageSgdb()
+        {
+            JobReader.PageInfo newPageInfo = GetSelectedPage();
+            if (newPageInfo?.JobsInfo == null)
+            {
+                return null;
+            }
+
+            if (newPageInfo.ErrorsInfo != null)
+            {
+                return null;
+            }
+
+            string sgdb = newPageInfo.JobsInfo.Sgbd;
+            if (string.IsNullOrEmpty(sgdb))
+            {
+                foreach (JobReader.JobInfo jobInfo in newPageInfo.JobsInfo.JobList)
+                {
+                    sgdb = jobInfo.Sgbd;
+                    if (!string.IsNullOrEmpty(sgdb))
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(sgdb))
+            {
+                return null;
+            }
+
+            return sgdb;
         }
 
         private void UpdateDisplay(bool forceUpdate = false)
@@ -5889,16 +5936,31 @@ namespace BmwDeepObd
             ActivityCommon.ActivityStartedFromMain = true;
         }
 
-        private void StartEdiabasTool()
+        private void StartEdiabasTool(bool currentPage = false)
         {
             if (!CheckForEcuFiles())
             {
                 return;
             }
+
+            string sgdbFile = null;
+            if (currentPage)
+            {
+                sgdbFile = GetSelectedPageSgdb();
+                if (string.IsNullOrEmpty(sgdbFile))
+                {
+                    return;
+                }
+            }
+
             Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
             EdiabasToolActivity.IntentTranslateActivty = _activityCommon;
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _instanceData.EcuPath);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraAppDataDir, _instanceData.AppDataPath);
+            if (!string.IsNullOrEmpty(sgdbFile))
+            {
+                serverIntent.PutExtra(EdiabasToolActivity.ExtraSgbdFile, sgdbFile);
+            }
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _instanceData.DeviceName);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
