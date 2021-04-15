@@ -443,6 +443,7 @@ namespace BmwDeepObd
                 return;
             }
             UpdateSelectedPage();
+            UpdateOptionsMenu();
             UpdateDisplay();
         }
 
