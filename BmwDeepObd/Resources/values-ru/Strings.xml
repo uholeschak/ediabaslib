@@ -275,6 +275,9 @@
   <string name="menu_cfg_submenu">Конфигурация</string>
   <string name="menu_recent_cfg_submenu">Последние конфигурации</string>
   <string name="menu_recent_cfg_clear">Удалить</string>
+  <!--Translate-->
+  <string name="menu_cfg_page_functions">Функции текущей страницы</string>
+  <string name="menu_cfg_page_ediabas">Ediabas утилита</string>
   <string name="menu_cfg_sel">Выбрать</string>
   <string name="menu_cfg_edit">Редактировать</string>
   <string name="menu_cfg_pages_edit">Редактировать список страниц</string>

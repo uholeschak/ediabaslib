@@ -252,6 +252,8 @@
   <string name="menu_cfg_submenu">Configuration</string>
   <string name="menu_recent_cfg_submenu">Recent configurations</string>
   <string name="menu_recent_cfg_clear">Clear</string>
+  <string name="menu_cfg_page_functions">Current page functions</string>
+  <string name="menu_cfg_page_ediabas">Ediabas tool</string>
   <string name="menu_cfg_sel">Select</string>
   <string name="menu_cfg_edit">Edit</string>
   <string name="menu_cfg_pages_edit">Edit pages list</string>
