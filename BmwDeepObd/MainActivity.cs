@@ -5939,35 +5939,44 @@ namespace BmwDeepObd
 
         private void StartEdiabasTool(bool currentPage = false)
         {
-            if (!CheckForEcuFiles())
+            try
             {
-                return;
-            }
-
-            string sgdbFile = null;
-            if (currentPage)
-            {
-                sgdbFile = GetSelectedPageSgdb();
-                if (string.IsNullOrEmpty(sgdbFile))
+                if (!CheckForEcuFiles())
                 {
                     return;
                 }
-            }
 
-            Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
-            EdiabasToolActivity.IntentTranslateActivty = _activityCommon;
-            serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _instanceData.EcuPath);
-            serverIntent.PutExtra(EdiabasToolActivity.ExtraAppDataDir, _instanceData.AppDataPath);
-            if (!string.IsNullOrEmpty(sgdbFile))
-            {
-                serverIntent.PutExtra(EdiabasToolActivity.ExtraSgbdFile, sgdbFile);
+                string sgdbFile = null;
+                if (currentPage)
+                {
+                    string sgdb = GetSelectedPageSgdb();
+                    if (string.IsNullOrEmpty(sgdb))
+                    {
+                        return;
+                    }
+
+                    sgdbFile = Path.Combine(_instanceData.EcuPath, sgdb);
+                }
+
+                Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
+                EdiabasToolActivity.IntentTranslateActivty = _activityCommon;
+                serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _instanceData.EcuPath);
+                serverIntent.PutExtra(EdiabasToolActivity.ExtraAppDataDir, _instanceData.AppDataPath);
+                if (!string.IsNullOrEmpty(sgdbFile))
+                {
+                    serverIntent.PutExtra(EdiabasToolActivity.ExtraSgbdFile, sgdbFile);
+                }
+                serverIntent.PutExtra(EdiabasToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
+                serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _instanceData.DeviceName);
+                serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
+                serverIntent.PutExtra(EdiabasToolActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+                StartActivityForResult(serverIntent, (int)ActivityRequest.RequestEdiabasTool);
+                ActivityCommon.ActivityStartedFromMain = true;
             }
-            serverIntent.PutExtra(EdiabasToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
-            serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _instanceData.DeviceName);
-            serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
-            serverIntent.PutExtra(EdiabasToolActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
-            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestEdiabasTool);
-            ActivityCommon.ActivityStartedFromMain = true;
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
