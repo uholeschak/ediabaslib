@@ -1111,14 +1111,14 @@ namespace BmwDeepObd
             IMenuItem cfgPageFuncMenu = menu.FindItem(Resource.Id.menu_cfg_page_functions);
             if (cfgPageFuncMenu != null)
             {
-                cfgPageFuncMenu.SetEnabled(!commActive);
+                cfgPageFuncMenu.SetEnabled(interfaceAvailable && !commActive);
                 cfgPageFuncMenu.SetVisible(pageSgdb && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
             }
 
             IMenuItem cfgPageEdiabasMenu = menu.FindItem(Resource.Id.menu_cfg_page_ediabas);
             if (cfgPageEdiabasMenu != null)
             {
-                cfgPageEdiabasMenu.SetEnabled(!commActive);
+                cfgPageEdiabasMenu.SetEnabled(interfaceAvailable && !commActive);
                 cfgPageEdiabasMenu.SetVisible(pageSgdb && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
             }
 
