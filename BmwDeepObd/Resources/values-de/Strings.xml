@@ -278,6 +278,7 @@
   <string name="menu_recent_cfg_clear">Löschen</string>
   <string name="menu_cfg_page_functions">Funktionen der Seite</string>
   <string name="menu_cfg_page_ediabas">Ediabas Tool</string>
+  <string name="menu_cfg_page_bmw_actuator">Aktuator Funktionen</string>
   <string name="menu_cfg_sel">Auswählen</string>
   <string name="menu_cfg_edit">Editieren</string>
   <string name="menu_cfg_pages_edit">Seitenliste editieren</string>

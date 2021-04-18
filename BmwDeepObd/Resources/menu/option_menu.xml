@@ -60,6 +60,9 @@
                   <item android:id="@+id/menu_cfg_page_ediabas"
                         android:icon="@android:drawable/ic_menu_manage"
                         android:title="@string/menu_cfg_page_ediabas"/>
+                  <item android:id="@+id/menu_cfg_page_bmw_actuator"
+                        android:icon="@android:drawable/ic_menu_manage"
+                        android:title="@string/menu_cfg_page_bmw_actuator"/>
                 </menu>
               </item>
               <item android:id="@+id/menu_cfg_edit"
