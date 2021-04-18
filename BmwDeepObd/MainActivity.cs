@@ -62,7 +62,6 @@ namespace BmwDeepObd
             RequestSelectConfig,
             RequestXmlTool,
             RequestEdiabasTool,
-            RequestBmwActuator,
             RequestYandexKey,
             RequestGlobalSettings,
             RequestEditConfig,
@@ -923,11 +922,6 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestEdiabasTool:
-                    _activityCommon.SetPreferredNetworkInterface();
-                    UpdateOptionsMenu();
-                    break;
-
-                case ActivityRequest.RequestBmwActuator:
                     _activityCommon.SetPreferredNetworkInterface();
                     UpdateOptionsMenu();
                     break;
