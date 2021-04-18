@@ -62,6 +62,7 @@ namespace BmwDeepObd
             RequestSelectConfig,
             RequestXmlTool,
             RequestEdiabasTool,
+            RequestBmwActuator,
             RequestYandexKey,
             RequestGlobalSettings,
             RequestEditConfig,
@@ -923,6 +924,12 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestEdiabasTool:
                     _activityCommon.SetPreferredNetworkInterface();
+                    UpdateOptionsMenu();
+                    break;
+
+                case ActivityRequest.RequestBmwActuator:
+                    _activityCommon.SetPreferredNetworkInterface();
+                    UpdateOptionsMenu();
                     break;
 
                 case ActivityRequest.RequestYandexKey:
@@ -1297,6 +1304,7 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_cfg_page_bmw_actuator:
+                    StartBmwActuator();
                     return true;
 
                 case Resource.Id.menu_cfg_sel:
@@ -5983,6 +5991,40 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(EdiabasToolActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestEdiabasTool);
                 ActivityCommon.ActivityStartedFromMain = true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        private void StartBmwActuator()
+        {
+            try
+            {
+                if (!CheckForEcuFiles())
+                {
+                    return;
+                }
+
+                string sgdb = GetSelectedPageSgdb();
+                if (string.IsNullOrEmpty(sgdb))
+                {
+                    return;
+                }
+
+                string sgdbFile = Path.Combine(_instanceData.EcuPath, sgdb);
+
+                //BmwActuatorActivity.IntentEcuInfo = _ecuInfo;
+                Intent serverIntent = new Intent(this, typeof(BmwActuatorActivity));
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraEcuName, sgdb);
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraEcuDir, _instanceData.EcuPath);
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraTraceDir, _instanceData.DataLogDir);
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraTraceAppend, _instanceData.TraceAppend);
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+                StartActivityForResult(serverIntent, (int)ActivityRequest.RequestBmwActuator);
             }
             catch (Exception)
             {

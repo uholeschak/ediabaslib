@@ -2287,19 +2287,26 @@ namespace BmwDeepObd
 
         private void StartBmwActuator()
         {
-            StoreResults();
-            EdiabasClose();
+            try
+            {
+                StoreResults();
+                EdiabasClose();
 
-            BmwActuatorActivity.IntentEcuInfo = _ecuInfo;
-            Intent serverIntent = new Intent(this, typeof(BmwActuatorActivity));
-            serverIntent.PutExtra(BmwActuatorActivity.ExtraEcuName, _ecuInfo.Name);
-            serverIntent.PutExtra(BmwActuatorActivity.ExtraEcuDir, _ecuDir);
-            serverIntent.PutExtra(BmwActuatorActivity.ExtraTraceDir, _traceDir);
-            serverIntent.PutExtra(BmwActuatorActivity.ExtraTraceAppend, _traceAppend);
-            serverIntent.PutExtra(BmwActuatorActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
-            serverIntent.PutExtra(BmwActuatorActivity.ExtraDeviceAddress, _deviceAddress);
-            serverIntent.PutExtra(BmwActuatorActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
-            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestBmwActuator);
+                BmwActuatorActivity.IntentEcuInfo = _ecuInfo;
+                Intent serverIntent = new Intent(this, typeof(BmwActuatorActivity));
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraEcuName, _ecuInfo.Name);
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraEcuDir, _ecuDir);
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraTraceDir, _traceDir);
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraTraceAppend, _traceAppend);
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraDeviceAddress, _deviceAddress);
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+                StartActivityForResult(serverIntent, (int)ActivityRequest.RequestBmwActuator);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private void StartVagCoding(VagCodingActivity.CodingMode codingMode)
