@@ -1304,7 +1304,7 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_cfg_page_bmw_actuator:
-                    StartBmwActuator();
+                    StartXmlTool(true);
                     return true;
 
                 case Resource.Id.menu_cfg_sel:
@@ -5920,40 +5920,63 @@ namespace BmwDeepObd
             ActivityCommon.ActivityStartedFromMain = true;
         }
 
-        private void StartXmlTool()
+        private void StartXmlTool(bool startBmwActuator = false)
         {
-            if (!CheckForEcuFiles())
+            try
             {
-                return;
-            }
-
-            if (_activityCommon.InitReaderThread(_instanceData.BmwPath, _instanceData.VagPath, result =>
-            {
-                if (_activityCommon == null)
+                if (!CheckForEcuFiles())
                 {
                     return;
                 }
-                if (result)
-                {
-                    StartXmlTool();
-                }
-            }))
-            {
-                return;
-            }
 
-            Intent serverIntent = new Intent(this, typeof(XmlToolActivity));
-            serverIntent.PutExtra(XmlToolActivity.ExtraInitDir, _instanceData.EcuPath);
-            serverIntent.PutExtra(XmlToolActivity.ExtraVagDir, _instanceData.VagPath);
-            serverIntent.PutExtra(XmlToolActivity.ExtraBmwDir, _instanceData.BmwPath);
-            serverIntent.PutExtra(XmlToolActivity.ExtraAppDataDir, _instanceData.AppDataPath);
-            serverIntent.PutExtra(XmlToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
-            serverIntent.PutExtra(XmlToolActivity.ExtraDeviceName, _instanceData.DeviceName);
-            serverIntent.PutExtra(XmlToolActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
-            serverIntent.PutExtra(XmlToolActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
-            serverIntent.PutExtra(XmlToolActivity.ExtraFileName, _instanceData.ConfigFileName);
-            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestXmlTool);
-            ActivityCommon.ActivityStartedFromMain = true;
+                string sgdbFile = null;
+                if (startBmwActuator)
+                {
+                    string sgdb = GetSelectedPageSgdb();
+                    if (string.IsNullOrEmpty(sgdb))
+                    {
+                        return;
+                    }
+
+                    sgdbFile = Path.Combine(_instanceData.EcuPath, sgdb);
+                }
+
+                if (_activityCommon.InitReaderThread(_instanceData.BmwPath, _instanceData.VagPath, result =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    if (result)
+                    {
+                        StartXmlTool(startBmwActuator);
+                    }
+                }))
+                {
+                    return;
+                }
+
+                Intent serverIntent = new Intent(this, typeof(XmlToolActivity));
+                serverIntent.PutExtra(XmlToolActivity.ExtraInitDir, _instanceData.EcuPath);
+                serverIntent.PutExtra(XmlToolActivity.ExtraVagDir, _instanceData.VagPath);
+                serverIntent.PutExtra(XmlToolActivity.ExtraBmwDir, _instanceData.BmwPath);
+                serverIntent.PutExtra(XmlToolActivity.ExtraAppDataDir, _instanceData.AppDataPath);
+                if (!string.IsNullOrEmpty(sgdbFile))
+                {
+                    serverIntent.PutExtra(XmlToolActivity.ExtraSgbdFile, sgdbFile);
+                }
+                serverIntent.PutExtra(XmlToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
+                serverIntent.PutExtra(XmlToolActivity.ExtraDeviceName, _instanceData.DeviceName);
+                serverIntent.PutExtra(XmlToolActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
+                serverIntent.PutExtra(XmlToolActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+                serverIntent.PutExtra(XmlToolActivity.ExtraFileName, _instanceData.ConfigFileName);
+                StartActivityForResult(serverIntent, (int)ActivityRequest.RequestXmlTool);
+                ActivityCommon.ActivityStartedFromMain = true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private void StartEdiabasTool(bool currentPage = false)
@@ -5991,40 +6014,6 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(EdiabasToolActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestEdiabasTool);
                 ActivityCommon.ActivityStartedFromMain = true;
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-        }
-
-        private void StartBmwActuator()
-        {
-            try
-            {
-                if (!CheckForEcuFiles())
-                {
-                    return;
-                }
-
-                string sgdb = GetSelectedPageSgdb();
-                if (string.IsNullOrEmpty(sgdb))
-                {
-                    return;
-                }
-
-                string sgdbFile = Path.Combine(_instanceData.EcuPath, sgdb);
-
-                //BmwActuatorActivity.IntentEcuInfo = _ecuInfo;
-                Intent serverIntent = new Intent(this, typeof(BmwActuatorActivity));
-                serverIntent.PutExtra(BmwActuatorActivity.ExtraEcuName, sgdb);
-                serverIntent.PutExtra(BmwActuatorActivity.ExtraEcuDir, _instanceData.EcuPath);
-                serverIntent.PutExtra(BmwActuatorActivity.ExtraTraceDir, _instanceData.DataLogDir);
-                serverIntent.PutExtra(BmwActuatorActivity.ExtraTraceAppend, _instanceData.TraceAppend);
-                serverIntent.PutExtra(BmwActuatorActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
-                serverIntent.PutExtra(BmwActuatorActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
-                serverIntent.PutExtra(BmwActuatorActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
-                StartActivityForResult(serverIntent, (int)ActivityRequest.RequestBmwActuator);
             }
             catch (Exception)
             {
