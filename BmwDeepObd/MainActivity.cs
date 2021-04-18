@@ -1122,6 +1122,14 @@ namespace BmwDeepObd
                 cfgPageEdiabasMenu.SetVisible(pageSgdb && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
             }
 
+            IMenuItem cfgPageBmwActuatorMenu = menu.FindItem(Resource.Id.menu_cfg_page_bmw_actuator);
+            if (cfgPageBmwActuatorMenu != null)
+            {
+                cfgPageBmwActuatorMenu.SetEnabled(interfaceAvailable && !commActive);
+                cfgPageBmwActuatorMenu.SetVisible(pageSgdb && !string.IsNullOrEmpty(_instanceData.ConfigFileName) &&
+                    ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw);
+            }
+
             IMenuItem cfgEditMenu = menu.FindItem(Resource.Id.menu_cfg_edit);
             cfgEditMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
 
@@ -1286,6 +1294,9 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_cfg_page_ediabas:
                     StartEdiabasTool(true);
+                    return true;
+
+                case Resource.Id.menu_cfg_page_bmw_actuator:
                     return true;
 
                 case Resource.Id.menu_cfg_sel:
