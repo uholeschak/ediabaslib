@@ -5948,7 +5948,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                string xmlFileName = null;
+                string pageFileName = null;
                 if (startBmwActuator)
                 {
                     JobReader.PageInfo pageInfo = GetSelectedPage();
@@ -5957,8 +5957,8 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    xmlFileName = pageInfo.XmlFileName;
-                    if (string.IsNullOrEmpty(xmlFileName))
+                    pageFileName = pageInfo.XmlFileName;
+                    if (string.IsNullOrEmpty(pageFileName))
                     {
                         return;
                     }
@@ -5989,9 +5989,9 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(XmlToolActivity.ExtraVagDir, _instanceData.VagPath);
                 serverIntent.PutExtra(XmlToolActivity.ExtraBmwDir, _instanceData.BmwPath);
                 serverIntent.PutExtra(XmlToolActivity.ExtraAppDataDir, _instanceData.AppDataPath);
-                if (!string.IsNullOrEmpty(xmlFileName))
+                if (!string.IsNullOrEmpty(pageFileName))
                 {
-                    serverIntent.PutExtra(XmlToolActivity.ExtraXmlFileName, xmlFileName);
+                    serverIntent.PutExtra(XmlToolActivity.ExtraPageFileName, pageFileName);
                 }
                 serverIntent.PutExtra(XmlToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
                 serverIntent.PutExtra(XmlToolActivity.ExtraDeviceName, _instanceData.DeviceName);

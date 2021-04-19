@@ -576,7 +576,7 @@ namespace BmwDeepObd
         public const string ExtraVagDir = "vag_dir";
         public const string ExtraBmwDir = "bmw_dir";
         public const string ExtraAppDataDir = "app_data_dir";
-        public const string ExtraXmlFileName = "xml_file_name";
+        public const string ExtraPageFileName = "page_file_name";
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
@@ -598,6 +598,7 @@ namespace BmwDeepObd
         private string _vagDir;
         private string _bmwDir;
         private string _appDataDir;
+        private string _pageFileName = string.Empty;
         private string _lastFileName = string.Empty;
         private string _datUkdDir = string.Empty;
         private bool _activityActive;
@@ -699,6 +700,7 @@ namespace BmwDeepObd
             _vagDir = Intent.GetStringExtra(ExtraVagDir);
             _bmwDir = Intent.GetStringExtra(ExtraBmwDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
+            _pageFileName = Intent.GetStringExtra(ExtraPageFileName);
             if (!_activityRecreated)
             {
                 _instanceData.DeviceName = Intent.GetStringExtra(ExtraDeviceName);
@@ -728,7 +730,7 @@ namespace BmwDeepObd
             _activityCommon.SetPreferredNetworkInterface();
 
             EdiabasClose(_instanceData.ForceAppend);
-            if (!_activityRecreated && _instanceData.ManualConfigIdx > 0)
+            if (!_activityRecreated && (_instanceData.ManualConfigIdx > 0 || !string.IsNullOrEmpty(_pageFileName)))
             {
                 EdiabasOpen();
                 ReadAllXml();
@@ -1394,7 +1396,7 @@ namespace BmwDeepObd
                 Resource.String.button_xml_tool_edit : Resource.String.button_xml_tool_read);
             _buttonRead.Enabled = _activityCommon.IsInterfaceAvailable();
             int selectedCount = _ecuList.Count(ecuInfo => ecuInfo.Selected);
-            _buttonSafe.Enabled = (_ecuList.Count > 0) && (_instanceData.AddErrorsPage || (selectedCount > 0));
+            _buttonSafe.Enabled = (_ecuList.Count > 0) && (_instanceData.AddErrorsPage || (selectedCount > 0)) && string.IsNullOrEmpty(_pageFileName);
             _ecuListAdapter.NotifyDataSetChanged();
 
             string statusText = string.Empty;
@@ -7816,6 +7818,12 @@ namespace BmwDeepObd
             {
                 return false;
             }
+
+            if (!string.IsNullOrEmpty(_pageFileName))
+            {
+                return false;
+            }
+
             string xmlFileName = SaveAllXml();
             if (xmlFileName == null)
             {
@@ -8007,6 +8015,19 @@ namespace BmwDeepObd
             {
                 return null;
             }
+
+            if (!string.IsNullOrEmpty(_pageFileName) && !string.IsNullOrEmpty(_lastFileName))
+            {
+                try
+                {
+                    return Path.GetDirectoryName(_lastFileName);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
             string configBaseDir = Path.Combine(_appDataDir, "Configurations");
             switch (ActivityCommon.SelectedManufacturer)
             {
