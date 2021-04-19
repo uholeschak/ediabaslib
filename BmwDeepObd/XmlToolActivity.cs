@@ -738,6 +738,11 @@ namespace BmwDeepObd
                 {
                     ExecuteUpdateEcuInfo();
                 }
+
+                if (!string.IsNullOrEmpty(_pageFileName))
+                {
+                    SelectPageFile(_pageFileName);
+                }
             }
             UpdateDisplay();
         }
@@ -6285,6 +6290,44 @@ namespace BmwDeepObd
                 }
             }
             UpdateDisplay();
+        }
+
+        private bool SelectPageFile(string pageFileName)
+        {
+            try
+            {
+                if (IsJobRunning())
+                {
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(pageFileName))
+                {
+                    return false;
+                }
+
+                string xmlFileDir = XmlFileDir();
+                if (string.IsNullOrEmpty(xmlFileDir))
+                {
+                    return false;
+                }
+
+                foreach (EcuInfo ecuInfo in _ecuList)
+                {
+                    string xmlPageFile = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension));
+                    if (string.Compare(xmlPageFile, pageFileName, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        ExecuteJobsRead(ecuInfo);
+                        return true;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
         }
 
         private bool AbortEdiabasJob()
