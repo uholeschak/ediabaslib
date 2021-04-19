@@ -576,7 +576,7 @@ namespace BmwDeepObd
         public const string ExtraVagDir = "vag_dir";
         public const string ExtraBmwDir = "bmw_dir";
         public const string ExtraAppDataDir = "app_data_dir";
-        public const string ExtraSgbdFile = "sgbd";
+        public const string ExtraXmlFileName = "xml_file_name";
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";

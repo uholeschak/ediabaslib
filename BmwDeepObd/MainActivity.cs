@@ -1020,6 +1020,7 @@ namespace BmwDeepObd
             bool commActive = ActivityCommon.CommActive;
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
             bool pageSgdb = !string.IsNullOrEmpty(GetSelectedPageSgdb());
+            bool fixedFuncStruct = SelectedPageHasFixedFuncStruct();
 
             IMenuItem actionProviderConnect = menu.FindItem(Resource.Id.menu_action_provider_connect);
             if (actionProviderConnect != null)
@@ -1127,7 +1128,7 @@ namespace BmwDeepObd
             if (cfgPageBmwActuatorMenu != null)
             {
                 cfgPageBmwActuatorMenu.SetEnabled(interfaceAvailable && !commActive);
-                cfgPageBmwActuatorMenu.SetVisible(pageSgdb && !string.IsNullOrEmpty(_instanceData.ConfigFileName) &&
+                cfgPageBmwActuatorMenu.SetVisible(fixedFuncStruct && !string.IsNullOrEmpty(_instanceData.ConfigFileName) &&
                     ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw);
             }
 
@@ -2937,7 +2938,7 @@ namespace BmwDeepObd
                 if (dynamicFragment?.View != null)
                 {
                     ListView listViewResult = dynamicFragment.View.FindViewById<ListView>(Resource.Id.resultList);
-                    ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult.Adapter;
+                    ResultListAdapter resultListAdapter = (ResultListAdapter)listViewResult?.Adapter;
                     if (resultListAdapter != null)
                     {
                         resultListAdapter.Items.Clear();
@@ -2949,21 +2950,21 @@ namespace BmwDeepObd
 
         private string GetSelectedPageSgdb()
         {
-            JobReader.PageInfo newPageInfo = GetSelectedPage();
-            if (newPageInfo?.JobsInfo == null)
+            JobReader.PageInfo pageInfo = GetSelectedPage();
+            if (pageInfo?.JobsInfo == null)
             {
                 return null;
             }
 
-            if (newPageInfo.ErrorsInfo != null)
+            if (pageInfo.ErrorsInfo != null)
             {
                 return null;
             }
 
-            string sgdb = newPageInfo.JobsInfo.Sgbd;
+            string sgdb = pageInfo.JobsInfo.Sgbd;
             if (string.IsNullOrEmpty(sgdb))
             {
-                foreach (JobReader.JobInfo jobInfo in newPageInfo.JobsInfo.JobList)
+                foreach (JobReader.JobInfo jobInfo in pageInfo.JobsInfo.JobList)
                 {
                     sgdb = jobInfo.Sgbd;
                     if (!string.IsNullOrEmpty(sgdb))
@@ -2979,6 +2980,30 @@ namespace BmwDeepObd
             }
 
             return sgdb;
+        }
+
+        private bool SelectedPageHasFixedFuncStruct()
+        {
+            JobReader.PageInfo pageInfo = GetSelectedPage();
+            if (pageInfo?.JobsInfo == null)
+            {
+                return false;
+            }
+
+            if (pageInfo.ErrorsInfo != null)
+            {
+                return false;
+            }
+
+            foreach (JobReader.JobInfo jobInfo in pageInfo.JobsInfo.JobList)
+            {
+                if (!string.IsNullOrEmpty(jobInfo.FixedFuncStructId))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void UpdateDisplay(bool forceUpdate = false)
@@ -5923,16 +5948,25 @@ namespace BmwDeepObd
                     return;
                 }
 
-                string sgdbFile = null;
+                string xmlFileName = null;
                 if (startBmwActuator)
                 {
-                    string sgdb = GetSelectedPageSgdb();
-                    if (string.IsNullOrEmpty(sgdb))
+                    JobReader.PageInfo pageInfo = GetSelectedPage();
+                    if (pageInfo == null)
                     {
                         return;
                     }
 
-                    sgdbFile = Path.Combine(_instanceData.EcuPath, sgdb);
+                    xmlFileName = pageInfo.XmlFileName;
+                    if (string.IsNullOrEmpty(xmlFileName))
+                    {
+                        return;
+                    }
+
+                    if (!SelectedPageHasFixedFuncStruct())
+                    {
+                        return;
+                    }
                 }
 
                 if (_activityCommon.InitReaderThread(_instanceData.BmwPath, _instanceData.VagPath, result =>
@@ -5955,9 +5989,9 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(XmlToolActivity.ExtraVagDir, _instanceData.VagPath);
                 serverIntent.PutExtra(XmlToolActivity.ExtraBmwDir, _instanceData.BmwPath);
                 serverIntent.PutExtra(XmlToolActivity.ExtraAppDataDir, _instanceData.AppDataPath);
-                if (!string.IsNullOrEmpty(sgdbFile))
+                if (!string.IsNullOrEmpty(xmlFileName))
                 {
-                    serverIntent.PutExtra(XmlToolActivity.ExtraSgbdFile, sgdbFile);
+                    serverIntent.PutExtra(XmlToolActivity.ExtraXmlFileName, xmlFileName);
                 }
                 serverIntent.PutExtra(XmlToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
                 serverIntent.PutExtra(XmlToolActivity.ExtraDeviceName, _instanceData.DeviceName);
