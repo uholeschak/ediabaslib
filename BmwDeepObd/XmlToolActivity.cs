@@ -730,7 +730,7 @@ namespace BmwDeepObd
             _activityCommon.SetPreferredNetworkInterface();
 
             EdiabasClose(_instanceData.ForceAppend);
-            if (!_activityRecreated && (_instanceData.ManualConfigIdx > 0 || !string.IsNullOrEmpty(_pageFileName)))
+            if (!_activityRecreated && (_instanceData.ManualConfigIdx > 0 || IsPageSelectionActive()))
             {
                 EdiabasOpen();
                 ReadAllXml();
@@ -739,7 +739,7 @@ namespace BmwDeepObd
                     ExecuteUpdateEcuInfo();
                 }
 
-                if (!string.IsNullOrEmpty(_pageFileName))
+                if (IsPageSelectionActive())
                 {
                     SelectPageFile(_pageFileName);
                 }
@@ -1336,6 +1336,11 @@ namespace BmwDeepObd
             return false;
         }
 
+        private bool IsPageSelectionActive()
+        {
+            return !string.IsNullOrEmpty(_pageFileName);
+        }
+
         private bool SendTraceFile(EventHandler<EventArgs> handler)
         {
             if (_instanceData.CommErrorsOccured && _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
@@ -1366,6 +1371,13 @@ namespace BmwDeepObd
 
         private void UpdateDisplay()
         {
+            if (IsPageSelectionActive())
+            {
+                _buttonRead.Enabled = false;
+                _buttonSafe.Enabled = false;
+                return;
+            }
+
             if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation && !ActivityCommon.IsTranslationAvailable())
             {
                 EditYandexKey();
@@ -1404,7 +1416,7 @@ namespace BmwDeepObd
                 Resource.String.button_xml_tool_edit : Resource.String.button_xml_tool_read);
             _buttonRead.Enabled = _activityCommon.IsInterfaceAvailable();
             int selectedCount = _ecuList.Count(ecuInfo => ecuInfo.Selected);
-            _buttonSafe.Enabled = (_ecuList.Count > 0) && (_instanceData.AddErrorsPage || (selectedCount > 0)) && string.IsNullOrEmpty(_pageFileName);
+            _buttonSafe.Enabled = (_ecuList.Count > 0) && (_instanceData.AddErrorsPage || (selectedCount > 0));
             _ecuListAdapter.NotifyDataSetChanged();
 
             string statusText = string.Empty;
@@ -7865,7 +7877,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(_pageFileName))
+            if (IsPageSelectionActive())
             {
                 return false;
             }
@@ -8062,7 +8074,7 @@ namespace BmwDeepObd
                 return null;
             }
 
-            if (!string.IsNullOrEmpty(_pageFileName) && !string.IsNullOrEmpty(_lastFileName))
+            if (IsPageSelectionActive() && !string.IsNullOrEmpty(_lastFileName))
             {
                 try
                 {
