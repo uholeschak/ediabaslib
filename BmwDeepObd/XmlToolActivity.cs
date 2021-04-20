@@ -716,6 +716,10 @@ namespace BmwDeepObd
             _buttonSafe.Visibility = visibility;
             _textViewCarInfo.Visibility = visibility;
             _listViewEcu.Visibility = visibility;
+            if (IsPageSelectionActive())
+            {
+                SupportActionBar.SetDisplayShowCustomEnabled(false);
+            }
 
             string configName = Path.GetFileNameWithoutExtension(_lastFileName);
             if (!string.IsNullOrEmpty(configName) && configName.StartsWith(ManualConfigName))
@@ -945,6 +949,11 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestSelectJobs:
+                    if (IsPageSelectionActive())
+                    {
+                        Finish();
+                    }
+
                     if (XmlToolEcuActivity.IntentEcuInfo?.JobList != null)
                     {
                         int selectCount = XmlToolEcuActivity.IntentEcuInfo.JobList.Count(job => job.Selected);
@@ -977,6 +986,11 @@ namespace BmwDeepObd
 
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
+            if (IsPageSelectionActive())
+            {
+                return false;
+            }
+
             var inflater = MenuInflater;
             inflater.Inflate(Resource.Menu.xml_tool_menu, menu);
             return true;
