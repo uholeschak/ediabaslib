@@ -1299,7 +1299,7 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_cfg_page_bmw_actuator:
-                    StartXmlTool(true);
+                    StartXmlTool(XmlToolActivity.EcuFunctionCallType.BmwActuator);
                     return true;
 
                 case Resource.Id.menu_cfg_sel:
@@ -5939,7 +5939,7 @@ namespace BmwDeepObd
             ActivityCommon.ActivityStartedFromMain = true;
         }
 
-        private void StartXmlTool(bool startBmwActuator = false)
+        private void StartXmlTool(XmlToolActivity.EcuFunctionCallType ecuFuncCall = XmlToolActivity.EcuFunctionCallType.None)
         {
             try
             {
@@ -5949,7 +5949,7 @@ namespace BmwDeepObd
                 }
 
                 string pageFileName = null;
-                if (startBmwActuator)
+                if (ecuFuncCall != XmlToolActivity.EcuFunctionCallType.None)
                 {
                     JobReader.PageInfo pageInfo = GetSelectedPage();
                     if (pageInfo == null)
@@ -5963,7 +5963,8 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    if (!SelectedPageHasFixedFuncStruct())
+                    if (ecuFuncCall == XmlToolActivity.EcuFunctionCallType.BmwActuator &&
+                        !SelectedPageHasFixedFuncStruct())
                     {
                         return;
                     }
@@ -5977,7 +5978,7 @@ namespace BmwDeepObd
                     }
                     if (result)
                     {
-                        StartXmlTool(startBmwActuator);
+                        StartXmlTool(ecuFuncCall);
                     }
                 }))
                 {
@@ -5992,6 +5993,7 @@ namespace BmwDeepObd
                 if (!string.IsNullOrEmpty(pageFileName))
                 {
                     serverIntent.PutExtra(XmlToolActivity.ExtraPageFileName, pageFileName);
+                    serverIntent.PutExtra(XmlToolActivity.ExtraEcuFuncCall, (int)ecuFuncCall);
                 }
                 serverIntent.PutExtra(XmlToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
                 serverIntent.PutExtra(XmlToolActivity.ExtraDeviceName, _instanceData.DeviceName);

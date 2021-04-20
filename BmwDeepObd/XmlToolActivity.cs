@@ -73,6 +73,12 @@ namespace BmwDeepObd
         }
         // ReSharper restore UnusedMember.Global
 
+        public enum EcuFunctionCallType
+        {
+            None,
+            BmwActuator,
+        }
+
         public enum DisplayFontSize
         {
             Small,
@@ -577,6 +583,7 @@ namespace BmwDeepObd
         public const string ExtraBmwDir = "bmw_dir";
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraPageFileName = "page_file_name";
+        public const string ExtraEcuFuncCall = "ecu_func_call";
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
@@ -600,6 +607,7 @@ namespace BmwDeepObd
         private string _bmwDir;
         private string _appDataDir;
         private string _pageFileName = string.Empty;
+        private EcuFunctionCallType _ecuFuncCall = EcuFunctionCallType.None;
         private string _lastFileName = string.Empty;
         private string _datUkdDir = string.Empty;
         private bool _activityActive;
@@ -702,6 +710,7 @@ namespace BmwDeepObd
             _bmwDir = Intent.GetStringExtra(ExtraBmwDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _pageFileName = Intent.GetStringExtra(ExtraPageFileName);
+            _ecuFuncCall = (EcuFunctionCallType) Intent.GetIntExtra(ExtraEcuFuncCall, (int)EcuFunctionCallType.None);
             if (!_activityRecreated)
             {
                 _instanceData.DeviceName = Intent.GetStringExtra(ExtraDeviceName);
@@ -1682,24 +1691,35 @@ namespace BmwDeepObd
 
         private void SelectJobs(EcuInfo ecuInfo)
         {
-            if (ecuInfo.JobList == null)
+            try
             {
-                return;
+                if (ecuInfo.JobList == null)
+                {
+                    return;
+                }
+                if (!EdiabasClose(true))
+                {
+                    return;
+                }
+                XmlToolEcuActivity.IntentEcuInfo = ecuInfo;
+                Intent serverIntent = new Intent(this, typeof(XmlToolEcuActivity));
+                serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuInfo.Name);
+                serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuDir, _ecuDir);
+                serverIntent.PutExtra(XmlToolEcuActivity.ExtraTraceDir, _instanceData.TraceDir);
+                serverIntent.PutExtra(XmlToolEcuActivity.ExtraTraceAppend, _instanceData.TraceAppend || _instanceData.ForceAppend);
+                serverIntent.PutExtra(XmlToolEcuActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
+                serverIntent.PutExtra(XmlToolEcuActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
+                serverIntent.PutExtra(XmlToolEcuActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+                if (_ecuFuncCall != EcuFunctionCallType.None)
+                {
+                    serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuFuncCall, (int) _ecuFuncCall);
+                }
+                StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectJobs);
             }
-            if (!EdiabasClose(true))
+            catch (Exception)
             {
-                return;
+                // ignored
             }
-            XmlToolEcuActivity.IntentEcuInfo = ecuInfo;
-            Intent serverIntent = new Intent(this, typeof(XmlToolEcuActivity));
-            serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuInfo.Name);
-            serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuDir, _ecuDir);
-            serverIntent.PutExtra(XmlToolEcuActivity.ExtraTraceDir, _instanceData.TraceDir);
-            serverIntent.PutExtra(XmlToolEcuActivity.ExtraTraceAppend, _instanceData.TraceAppend || _instanceData.ForceAppend);
-            serverIntent.PutExtra(XmlToolEcuActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
-            serverIntent.PutExtra(XmlToolEcuActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
-            serverIntent.PutExtra(XmlToolEcuActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
-            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectJobs);
         }
 
         private void EditYandexKey()

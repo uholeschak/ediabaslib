@@ -223,6 +223,7 @@ namespace BmwDeepObd
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
+        public const string ExtraEcuFuncCall = "ecu_func_call";
         // Intent results
         public const string ExtraCallEdiabasTool = "ediabas_tool";
         private static readonly int[] LengthValues = {0, 1, 2, 3, 4, 5, 6, 8, 10, 15, 20, 25, 30, 35, 40};
@@ -300,6 +301,7 @@ namespace BmwDeepObd
         private string _traceDir;
         private bool _traceAppend;
         private string _deviceAddress;
+        private XmlToolActivity.EcuFunctionCallType _ecuFuncCall = XmlToolActivity.EcuFunctionCallType.None;
         private string _resultFilterText;
         private bool _displayEcuInfo;
 
@@ -343,6 +345,7 @@ namespace BmwDeepObd
                 Intent.GetIntExtra(ExtraInterface, (int) ActivityCommon.InterfaceType.None);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
+            _ecuFuncCall = (XmlToolActivity.EcuFunctionCallType)Intent.GetIntExtra(ExtraEcuFuncCall, (int)XmlToolActivity.EcuFunctionCallType.None);
 
             _ecuInfo = IntentEcuInfo;
 
@@ -1611,6 +1614,12 @@ namespace BmwDeepObd
 
         private void NoSelectionWarn(AcceptDelegate handler)
         {
+            if (_ecuFuncCall != XmlToolActivity.EcuFunctionCallType.None)
+            {
+                handler(true);
+                return;
+            }
+
             if (_ecuInfo.NoUpdate)
             {
                 new AlertDialog.Builder(this)
