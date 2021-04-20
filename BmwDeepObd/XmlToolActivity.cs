@@ -592,6 +592,7 @@ namespace BmwDeepObd
         private View _barView;
         private Button _buttonRead;
         private Button _buttonSafe;
+        private ListView _listViewEcu;
         private EcuListAdapter _ecuListAdapter;
         private TextView _textViewCarInfo;
         private string _ecuDir;
@@ -662,11 +663,11 @@ namespace BmwDeepObd
             };
 
             _textViewCarInfo = FindViewById<TextView>(Resource.Id.textViewCarInfo);
-            ListView listViewEcu = FindViewById<ListView>(Resource.Id.listEcu);
+            _listViewEcu = FindViewById<ListView>(Resource.Id.listEcu);
             _ecuListAdapter = new EcuListAdapter(this);
             _ecuListAdapter.CheckChanged += EcuCheckChanged;
-            listViewEcu.Adapter = _ecuListAdapter;
-            listViewEcu.ItemClick += (sender, args) =>
+            _listViewEcu.Adapter = _ecuListAdapter;
+            _listViewEcu.ItemClick += (sender, args) =>
             {
                 int pos = args.Position;
                 if (pos >= 0)
@@ -674,7 +675,7 @@ namespace BmwDeepObd
                     PerformJobsRead(_ecuList[pos]);
                 }
             };
-            listViewEcu.ItemLongClick += (sender, args) =>
+            _listViewEcu.ItemLongClick += (sender, args) =>
             {
                 ShowContextMenu(args.View, args.Position);
             };
@@ -709,6 +710,13 @@ namespace BmwDeepObd
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
             _lastFileName = Intent.GetStringExtra(ExtraFileName);
             _datUkdDir = ActivityCommon.GetVagDatUkdDir(_ecuDir);
+
+            ViewStates visibility = IsPageSelectionActive() ? ViewStates.Invisible : ViewStates.Visible;
+            _buttonRead.Visibility = visibility;
+            _buttonSafe.Visibility = visibility;
+            _textViewCarInfo.Visibility = visibility;
+            _listViewEcu.Visibility = visibility;
+
             string configName = Path.GetFileNameWithoutExtension(_lastFileName);
             if (!string.IsNullOrEmpty(configName) && configName.StartsWith(ManualConfigName))
             {
