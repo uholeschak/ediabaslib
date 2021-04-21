@@ -739,6 +739,13 @@ namespace BmwDeepObd
             };
 
             _layoutJobConfig.Visibility = ViewStates.Gone;
+
+            if (_ecuFuncCall == XmlToolActivity.EcuFunctionCallType.BmwActuator && bmwActuatorEnabled)
+            {
+                StartBmwActuator();
+                return;
+            }
+
             UpdateDisplay();
             DisplayTypeSelected();
             ResetTestResult();
@@ -823,7 +830,7 @@ namespace BmwDeepObd
                 case ActivityRequest.RequestBmwActuator:
                 case ActivityRequest.RequestVagCoding:
                 case ActivityRequest.RequestVagAdaption:
-                    if (resultCode == Android.App.Result.Ok)
+                    if (resultCode == Android.App.Result.Ok || _ecuFuncCall != XmlToolActivity.EcuFunctionCallType.None)
                     {
                         Finish();
                         break;
@@ -2320,37 +2327,51 @@ namespace BmwDeepObd
 
         private void StartVagCoding(VagCodingActivity.CodingMode codingMode)
         {
-            StoreResults();
-            EdiabasClose();
+            try
+            {
+                StoreResults();
+                EdiabasClose();
 
-            VagCodingActivity.IntentEcuInfo = _ecuInfo;
-            Intent serverIntent = new Intent(this, typeof(VagCodingActivity));
-            serverIntent.PutExtra(VagCodingActivity.ExtraCodingMode, (int)codingMode);
-            serverIntent.PutExtra(VagCodingActivity.ExtraEcuName, _ecuInfo.Name);
-            serverIntent.PutExtra(VagCodingActivity.ExtraEcuDir, _ecuDir);
-            serverIntent.PutExtra(VagCodingActivity.ExtraTraceDir, _traceDir);
-            serverIntent.PutExtra(VagCodingActivity.ExtraTraceAppend, _traceAppend);
-            serverIntent.PutExtra(VagCodingActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
-            serverIntent.PutExtra(VagCodingActivity.ExtraDeviceAddress, _deviceAddress);
-            serverIntent.PutExtra(VagCodingActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
-            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestVagCoding);
+                VagCodingActivity.IntentEcuInfo = _ecuInfo;
+                Intent serverIntent = new Intent(this, typeof(VagCodingActivity));
+                serverIntent.PutExtra(VagCodingActivity.ExtraCodingMode, (int)codingMode);
+                serverIntent.PutExtra(VagCodingActivity.ExtraEcuName, _ecuInfo.Name);
+                serverIntent.PutExtra(VagCodingActivity.ExtraEcuDir, _ecuDir);
+                serverIntent.PutExtra(VagCodingActivity.ExtraTraceDir, _traceDir);
+                serverIntent.PutExtra(VagCodingActivity.ExtraTraceAppend, _traceAppend);
+                serverIntent.PutExtra(VagCodingActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
+                serverIntent.PutExtra(VagCodingActivity.ExtraDeviceAddress, _deviceAddress);
+                serverIntent.PutExtra(VagCodingActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+                StartActivityForResult(serverIntent, (int)ActivityRequest.RequestVagCoding);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private void StartVagAdaption()
         {
-            StoreResults();
-            EdiabasClose();
+            try
+            {
+                StoreResults();
+                EdiabasClose();
 
-            VagAdaptionActivity.IntentEcuInfo = _ecuInfo;
-            Intent serverIntent = new Intent(this, typeof(VagAdaptionActivity));
-            serverIntent.PutExtra(VagAdaptionActivity.ExtraEcuName, _ecuInfo.Name);
-            serverIntent.PutExtra(VagAdaptionActivity.ExtraEcuDir, _ecuDir);
-            serverIntent.PutExtra(VagAdaptionActivity.ExtraTraceDir, _traceDir);
-            serverIntent.PutExtra(VagAdaptionActivity.ExtraTraceAppend, _traceAppend);
-            serverIntent.PutExtra(VagAdaptionActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
-            serverIntent.PutExtra(VagAdaptionActivity.ExtraDeviceAddress, _deviceAddress);
-            serverIntent.PutExtra(VagAdaptionActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
-            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestVagAdaption);
+                VagAdaptionActivity.IntentEcuInfo = _ecuInfo;
+                Intent serverIntent = new Intent(this, typeof(VagAdaptionActivity));
+                serverIntent.PutExtra(VagAdaptionActivity.ExtraEcuName, _ecuInfo.Name);
+                serverIntent.PutExtra(VagAdaptionActivity.ExtraEcuDir, _ecuDir);
+                serverIntent.PutExtra(VagAdaptionActivity.ExtraTraceDir, _traceDir);
+                serverIntent.PutExtra(VagAdaptionActivity.ExtraTraceAppend, _traceAppend);
+                serverIntent.PutExtra(VagAdaptionActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
+                serverIntent.PutExtra(VagAdaptionActivity.ExtraDeviceAddress, _deviceAddress);
+                serverIntent.PutExtra(VagAdaptionActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+                StartActivityForResult(serverIntent, (int)ActivityRequest.RequestVagAdaption);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private class JobListAdapter : BaseAdapter<JobInfo>
