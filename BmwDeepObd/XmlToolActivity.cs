@@ -727,7 +727,8 @@ namespace BmwDeepObd
             _listViewEcu.Visibility = visibility;
             if (IsPageSelectionActive())
             {
-                SupportActionBar.SetDisplayShowCustomEnabled(false);
+                SupportActionBar.SetDisplayShowHomeEnabled(false);
+                SupportActionBar.SetDisplayHomeAsUpEnabled(false);
             }
 
             string configName = Path.GetFileNameWithoutExtension(_lastFileName);
