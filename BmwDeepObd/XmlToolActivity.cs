@@ -727,7 +727,7 @@ namespace BmwDeepObd
             _lastFileName = Intent.GetStringExtra(ExtraFileName);
             _datUkdDir = ActivityCommon.GetVagDatUkdDir(_ecuDir);
 
-            ViewStates visibility = IsPageSelectionActive() ? ViewStates.Invisible : ViewStates.Visible;
+            ViewStates visibility = IsPageSelectionActive() ? ViewStates.Gone : ViewStates.Visible;
             _buttonRead.Visibility = visibility;
             _buttonSafe.Visibility = visibility;
             _textViewCarInfo.Visibility = visibility;
@@ -765,7 +765,20 @@ namespace BmwDeepObd
 
                 if (IsPageSelectionActive())
                 {
-                    SelectPageFile(_pageFileName);
+                    if (!SelectPageFile(_pageFileName))
+                    {
+                        new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                            {
+                                Finish();
+                            })
+                            .SetMessage(Resource.String.xml_tool_msg_page_not_avail)
+                            .SetTitle(Resource.String.alert_title_error)
+                            .Show();
+
+                    }
+
+                    return;
                 }
             }
             UpdateDisplay();
