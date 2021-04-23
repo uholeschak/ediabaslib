@@ -752,14 +752,23 @@ namespace BmwDeepObd
                         break;
                 }
 
-                new AlertDialog.Builder(this)
+                AlertDialog.Builder builder = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
                     {
                         Finish();
                     })
                     .SetMessage(Resource.String.xml_tool_msg_page_not_avail)
-                    .SetTitle(Resource.String.alert_title_error)
-                    .Show();
+                    .SetTitle(Resource.String.alert_title_error);
+                AlertDialog alertDialog = builder.Show();
+                alertDialog.DismissEvent += (sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    Finish();
+                };
                 return;
             }
 
