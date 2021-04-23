@@ -767,15 +767,20 @@ namespace BmwDeepObd
                 {
                     if (!SelectPageFile(_pageFileName))
                     {
-                        new AlertDialog.Builder(this)
-                            .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
-                            {
-                                Finish();
-                            })
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_ok, (sender, args) => { })
                             .SetMessage(Resource.String.xml_tool_msg_page_not_avail)
-                            .SetTitle(Resource.String.alert_title_error)
-                            .Show();
+                            .SetTitle(Resource.String.alert_title_error);
+                        AlertDialog alertDialog = builder.Show();
+                        alertDialog.DismissEvent += (sender, args) =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
 
+                            Finish();
+                        };
                     }
 
                     return;
@@ -4797,7 +4802,23 @@ namespace BmwDeepObd
             }
             if (readFailed || (ecuInfo.JobList?.Count == 0))
             {
-                _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_read_jobs_failed), Resource.String.alert_title_error);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_ok, (sender, args) => { })
+                    .SetMessage(Resource.String.xml_tool_read_jobs_failed)
+                    .SetTitle(Resource.String.alert_title_error);
+                AlertDialog alertDialog = builder.Show();
+                alertDialog.DismissEvent += (sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    if (IsPageSelectionActive())
+                    {
+                        Finish();
+                    }
+                };
             }
             else
             {
