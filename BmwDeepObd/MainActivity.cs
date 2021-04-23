@@ -1020,7 +1020,7 @@ namespace BmwDeepObd
             bool commActive = ActivityCommon.CommActive;
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
             bool pageSgdb = !string.IsNullOrEmpty(GetSelectedPageSgdb());
-            bool fixedFuncStruct = SelectedPageHasFixedFuncStruct();
+            bool selectedPageFuncAvail = SelectedPageFunctionsAvailable();
 
             IMenuItem actionProviderConnect = menu.FindItem(Resource.Id.menu_action_provider_connect);
             if (actionProviderConnect != null)
@@ -1128,8 +1128,8 @@ namespace BmwDeepObd
             if (cfgPageBmwActuatorMenu != null)
             {
                 cfgPageBmwActuatorMenu.SetEnabled(interfaceAvailable && !commActive);
-                cfgPageBmwActuatorMenu.SetVisible(fixedFuncStruct && !string.IsNullOrEmpty(_instanceData.ConfigFileName) &&
-                    ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw);
+                cfgPageBmwActuatorMenu.SetVisible(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw &&
+                                                  selectedPageFuncAvail && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
             }
 
             IMenuItem cfgEditMenu = menu.FindItem(Resource.Id.menu_cfg_edit);
@@ -2982,8 +2982,23 @@ namespace BmwDeepObd
             return sgdb;
         }
 
-        private bool SelectedPageHasFixedFuncStruct()
+        private bool SelectedPageFunctionsAvailable()
         {
+            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+            {
+                if (!ActivityCommon.UseBmwDatabase)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (ActivityCommon.OldVagMode)
+                {
+                    return false;
+                }
+            }
+
             JobReader.PageInfo pageInfo = GetSelectedPage();
             if (pageInfo?.JobsInfo == null)
             {
@@ -2995,15 +3010,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            foreach (JobReader.JobInfo jobInfo in pageInfo.JobsInfo.JobList)
-            {
-                if (!string.IsNullOrEmpty(jobInfo.FixedFuncStructId))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return true;
         }
 
         private void UpdateDisplay(bool forceUpdate = false)
@@ -5963,8 +5970,7 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    if (ecuFuncCall == XmlToolActivity.EcuFunctionCallType.BmwActuator &&
-                        !SelectedPageHasFixedFuncStruct())
+                    if (ecuFuncCall == XmlToolActivity.EcuFunctionCallType.BmwActuator && !SelectedPageFunctionsAvailable())
                     {
                         return;
                     }
