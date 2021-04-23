@@ -637,10 +637,19 @@ namespace BmwDeepObd
                 _ecuList = new List<EcuInfo>();
             }
 
-            SupportActionBar.SetHomeButtonEnabled(true);
-            SupportActionBar.SetDisplayShowHomeEnabled(true);
-            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            SupportActionBar.SetDisplayShowCustomEnabled(true);
+            _pageFileName = Intent.GetStringExtra(ExtraPageFileName);
+            _ecuFuncCall = (EcuFunctionCallType)Intent.GetIntExtra(ExtraEcuFuncCall, (int)EcuFunctionCallType.None);
+            if (IsPageSelectionActive())
+            {
+                SupportActionBar.Hide();
+            }
+            else
+            {
+                SupportActionBar.SetHomeButtonEnabled(true);
+                SupportActionBar.SetDisplayShowHomeEnabled(true);
+                SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+                SupportActionBar.SetDisplayShowCustomEnabled(true);
+            }
             SetContentView(Resource.Layout.xml_tool);
 
             _barView = LayoutInflater.Inflate(Resource.Layout.bar_xml_tool, null);
@@ -709,8 +718,6 @@ namespace BmwDeepObd
             _vagDir = Intent.GetStringExtra(ExtraVagDir);
             _bmwDir = Intent.GetStringExtra(ExtraBmwDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
-            _pageFileName = Intent.GetStringExtra(ExtraPageFileName);
-            _ecuFuncCall = (EcuFunctionCallType) Intent.GetIntExtra(ExtraEcuFuncCall, (int)EcuFunctionCallType.None);
             if (!_activityRecreated)
             {
                 _instanceData.DeviceName = Intent.GetStringExtra(ExtraDeviceName);
@@ -725,11 +732,6 @@ namespace BmwDeepObd
             _buttonSafe.Visibility = visibility;
             _textViewCarInfo.Visibility = visibility;
             _listViewEcu.Visibility = visibility;
-            if (IsPageSelectionActive())
-            {
-                SupportActionBar.SetDisplayShowHomeEnabled(false);
-                SupportActionBar.SetDisplayHomeAsUpEnabled(false);
-            }
 
             string configName = Path.GetFileNameWithoutExtension(_lastFileName);
             if (!string.IsNullOrEmpty(configName) && configName.StartsWith(ManualConfigName))

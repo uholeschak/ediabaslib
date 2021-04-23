@@ -740,9 +740,26 @@ namespace BmwDeepObd
 
             _layoutJobConfig.Visibility = ViewStates.Gone;
 
-            if (_ecuFuncCall == XmlToolActivity.EcuFunctionCallType.BmwActuator && bmwActuatorEnabled)
+            if (_ecuFuncCall != XmlToolActivity.EcuFunctionCallType.None)
             {
-                StartBmwActuator();
+                switch (_ecuFuncCall)
+                {
+                    case XmlToolActivity.EcuFunctionCallType.BmwActuator:
+                        if (bmwActuatorEnabled && StartBmwActuator())
+                        {
+                            return;
+                        }
+                        break;
+                }
+
+                new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                    {
+                        Finish();
+                    })
+                    .SetMessage(Resource.String.xml_tool_ecu_msg_func_not_avail)
+                    .SetTitle(Resource.String.alert_title_error)
+                    .Show();
                 return;
             }
 
@@ -2301,7 +2318,7 @@ namespace BmwDeepObd
             _jobThread.Start();
         }
 
-        private void StartBmwActuator()
+        private bool StartBmwActuator()
         {
             try
             {
@@ -2318,14 +2335,15 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(BmwActuatorActivity.ExtraDeviceAddress, _deviceAddress);
                 serverIntent.PutExtra(BmwActuatorActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestBmwActuator);
+                return true;
             }
             catch (Exception)
             {
-                // ignored
+                return false;
             }
         }
 
-        private void StartVagCoding(VagCodingActivity.CodingMode codingMode)
+        private bool StartVagCoding(VagCodingActivity.CodingMode codingMode)
         {
             try
             {
@@ -2343,14 +2361,15 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(VagCodingActivity.ExtraDeviceAddress, _deviceAddress);
                 serverIntent.PutExtra(VagCodingActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestVagCoding);
+                return true;
             }
             catch (Exception)
             {
-                // ignored
+                return false;
             }
         }
 
-        private void StartVagAdaption()
+        private bool StartVagAdaption()
         {
             try
             {
@@ -2367,10 +2386,11 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(VagAdaptionActivity.ExtraDeviceAddress, _deviceAddress);
                 serverIntent.PutExtra(VagAdaptionActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestVagAdaption);
+                return true;
             }
             catch (Exception)
             {
-                // ignored
+                return false;
             }
         }
 
