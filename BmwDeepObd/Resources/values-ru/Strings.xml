@@ -27,7 +27,6 @@
   <string name="store_settings_failed">Не удалось сохранить настройки. Пожалуйста, переустановите приложение.</string>
   <string name="store_settings_filename">Настройки были сохранены в:</string>
   <string name="release_show_title">Отпустить для показа панели заглавия</string>
-  <!--Translate-->
   <string name="low_memory_detected">Недостаточно системной памяти!</string>
   <string name="bt_enable">Bluetooth не активирован.\nХотите его активировать?</string>
   <string name="wifi_enable">Wi-Fi не активирован.\nАктивировать или выбрать точку доступа?</string>
@@ -275,7 +274,6 @@
   <string name="menu_cfg_submenu">Конфигурация</string>
   <string name="menu_recent_cfg_submenu">Последние конфигурации</string>
   <string name="menu_recent_cfg_clear">Удалить</string>
-  <!--Translate-->
   <string name="menu_cfg_page_functions">Функции страницы</string>
   <string name="menu_cfg_page_ediabas">Ediabas утилита</string>
   <string name="menu_cfg_page_bmw_actuator">Функции актуатора</string>
@@ -525,8 +523,7 @@
   <string name="xml_tool_msg_save_config_empty">Вы не выбрали информации для отображения.\nКликайте по ECU и выбирайте необходимые задания и результаты.\nСохранить конфигурацию в текущем виде?</string>
   <string name="xml_tool_msg_ecu_error">Для некоторых ECU информация не может быть найдена.</string>
   <string name="xml_tool_msg_pin78">Необходимо соединить контакты 7 и 8 в OBD разъеме адаптера, чтобы определилось больше блоков управления.\nВ автомобилях с OBD I разъёмом в моторном отсеке, контакт 8 должен быть дополнительно подключён к OBD II гнезду в салоне.</string>
-  <!--Translate-->
-  <string name="xml_tool_msg_page_not_avail">Выбранная страница ЭБУ не может быть открыта. \ NКонфигурация должна быть создана с помощью генератора конфигурации, и ЭБУ должен быть доступен.</string>
+  <string name="xml_tool_msg_page_not_avail">Выбранная страница ECU не может быть открыта.\nКонфигурация должна быть создана с помощью генератора конфигурации, и ECU должен быть доступен.</string>
   <string name="xml_tool_select_ecu_type">Выбрать ECU-тип</string>
   <string name="xml_tool_ecu_list">Обнаруженные ECU</string>
   <string name="xml_tool_info_sgbd">SGBD</string>
@@ -612,7 +609,6 @@
   <string name="xml_tool_ecu_msg_save_lock">Запись конфигурации была заблокирована в файле конфигурации.\nИзменения не могут быть сохранены.</string>
   <string name="xml_tool_ecu_msg_no_selection">Вы не выбрали данные для отображения.\nВыберите сначала нужные задания и результаты из списка.\nВы все равно хотите отменить?</string>
   <string name="xml_tool_ecu_msg_no_grid_selection">Вы активировали графический дисплей, но не выбрали графическое представление.\nГрафическое представление будет недоступно.\nПродолжить?</string>
-  <!--Translate-->
   <string name="xml_tool_ecu_msg_func_not_avail">Выбранная функция недоступна.</string>
 
   <!-- XML ECU Tool Options Menu -->
@@ -694,7 +690,6 @@
   <string name="can_adapter_bat_voltage">Напряжение аккумулятора</string>
   <string name="can_adapter_fw_version">Версия прошивки (текущая / доступная)</string>
   <string name="can_adapter_ser_num">Серийный номер</string>
-  <!--Translate-->
   <string name="can_adapter_type">Тип адаптера</string>
   <string name="can_adapter_type_unknown">Неизвестный</string>
   <string name="can_adapter_expert">Режим эксперта</string>
