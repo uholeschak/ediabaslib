@@ -233,6 +233,7 @@ namespace BmwDeepObd
         private InstanceData _instanceData = new InstanceData();
         private InputMethodManager _imm;
         private View _contentView;
+        private LinearLayout _layoutXmlToolEcu;
         private TextView _textViewPageNameTitle;
         private EditText _editTextPageName;
         private TextView _textViewEcuNameTitle;
@@ -348,6 +349,10 @@ namespace BmwDeepObd
             _ecuFuncCall = (XmlToolActivity.EcuFunctionCallType)Intent.GetIntExtra(ExtraEcuFuncCall, (int)XmlToolActivity.EcuFunctionCallType.None);
 
             _ecuInfo = IntentEcuInfo;
+
+            _layoutXmlToolEcu = FindViewById<LinearLayout>(Resource.Id.layoutXmlToolEcu);
+            _layoutXmlToolEcu.SetOnTouchListener(this);
+            _layoutXmlToolEcu.Visibility = _ecuFuncCall == XmlToolActivity.EcuFunctionCallType.None ? ViewStates.Visible : ViewStates.Gone;
 
             _textViewPageNameTitle = FindViewById<TextView>(Resource.Id.textViewPageNameTitle);
             _textViewPageNameTitle.SetOnTouchListener(this);
