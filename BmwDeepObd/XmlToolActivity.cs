@@ -4852,14 +4852,26 @@ namespace BmwDeepObd
 
                     if (tableNotFound)
                     {
-                        new AlertDialog.Builder(this)
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this)
                             .SetMessage(Resource.String.xml_tool_no_mwtab)
                             .SetTitle(Resource.String.alert_title_info)
                             .SetNeutralButton(Resource.String.button_ok, (s, e) =>
                             {
                                 TranslateAndSelectJobs(ecuInfo);
-                            })
-                            .Show();
+                            });
+                        AlertDialog alertDialog = builder.Show();
+                        alertDialog.DismissEvent += (sender, args) =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            if (IsPageSelectionActive())
+                            {
+                                Finish();
+                            }
+                        };
                         return;
                     }
                 }
