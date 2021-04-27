@@ -4160,6 +4160,7 @@ namespace CarSimulator
                 return;
             }
 
+            byte errorResetData = (byte) (_conceptType == ConceptType.ConceptDs2 ? 0x00 : 0xFF);
             bool standardResponse = false;
             if (
                 _receiveData[0] == 0x81 &&
@@ -4230,8 +4231,8 @@ namespace CarSimulator
                 (_receiveData[0] == 0x83 || _receiveData[0] == 0x84) &&
                 _receiveData[2] == 0xF1 &&
                 _receiveData[3] == 0x14 &&
-                _receiveData[4] == 0xFF &&
-                _receiveData[5] == 0xFF)
+                _receiveData[4] == errorResetData &&
+                _receiveData[5] == errorResetData)
             {   // error reset
                 _sendData[0] = 0x83;
                 _sendData[1] = 0xF1;
