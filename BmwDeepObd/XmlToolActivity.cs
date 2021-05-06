@@ -763,7 +763,7 @@ namespace BmwDeepObd
             {
                 EdiabasOpen();
                 ReadAllXml();
-                if (_instanceData.ManualConfigIdx > 0)
+                if (!IsPageSelectionActive() && _instanceData.ManualConfigIdx > 0)
                 {
                     ExecuteUpdateEcuInfo();
                 }
