@@ -658,17 +658,18 @@ namespace BmwDeepObd
                 StartBmwActuator();
             };
 
+            bool vagCodingEnabled = _ecuInfo.HasVagCoding();
             ViewStates vagButtonsVisibility = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && ActivityCommon.VagUdsActive ?
                 ViewStates.Visible : ViewStates.Gone;
             _buttonCoding = FindViewById<Button>(Resource.Id.buttonCoding);
             _buttonCoding.Visibility = vagButtonsVisibility;
-            _buttonCoding.Enabled = _ecuInfo.HasVagCoding();
+            _buttonCoding.Enabled = vagCodingEnabled;
             _buttonCoding.Click += (sender, args) =>
             {
                 StartVagCoding(VagCodingActivity.CodingMode.Coding);
             };
 
-            bool coding2Enabled = false;
+            bool vagCoding2Enabled = false;
             if (_ecuInfo.HasVagCoding2())
             {
                 UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(_ecuInfo.VagDataFileName);
@@ -677,15 +678,15 @@ namespace BmwDeepObd
                     List<UdsFileReader.DataReader.DataInfo> dataInfoCodingList = udsReader.DataReader.ExtractDataType(_ecuInfo.VagDataFileName, UdsFileReader.DataReader.DataType.Login);
                     if (dataInfoCodingList?.Count > 0)
                     {
-                        coding2Enabled = true;
+                        vagCoding2Enabled = true;
                     }
                 }
             }
 
-            bool adaptionEnabled = false;
+            bool vagAdaptionEnabled = false;
             if (XmlToolActivity.Is1281Ecu(_ecuInfo))
             {
-                adaptionEnabled = true;
+                vagAdaptionEnabled = true;
             }
             else if (XmlToolActivity.IsUdsEcu(_ecuInfo))
             {
@@ -695,7 +696,7 @@ namespace BmwDeepObd
                     List<UdsFileReader.UdsReader.ParseInfoAdp> parseInfoAdaptionList = udsReader.GetAdpParseInfoList(_ecuInfo.VagUdsFileName);
                     if (parseInfoAdaptionList?.Count > 0)
                     {
-                        adaptionEnabled = true;
+                        vagAdaptionEnabled = true;
                     }
                 }
             }
@@ -703,7 +704,7 @@ namespace BmwDeepObd
             {
                 if (_ecuInfo.VagSupportedFuncHash != null)
                 {
-                    adaptionEnabled =
+                    vagAdaptionEnabled =
                         _ecuInfo.VagSupportedFuncHash.Contains((UInt64)XmlToolActivity.SupportedFuncType.Adaption) ||
                         _ecuInfo.VagSupportedFuncHash.Contains((UInt64)XmlToolActivity.SupportedFuncType.AdaptionLong) ||
                         _ecuInfo.VagSupportedFuncHash.Contains((UInt64)XmlToolActivity.SupportedFuncType.AdaptionLong2);
@@ -712,7 +713,7 @@ namespace BmwDeepObd
 
             _buttonCoding2 = FindViewById<Button>(Resource.Id.buttonCoding2);
             _buttonCoding2.Visibility = vagButtonsVisibility;
-            _buttonCoding2.Enabled = coding2Enabled;
+            _buttonCoding2.Enabled = vagCoding2Enabled;
             _buttonCoding2.Click += (sender, args) =>
             {
                 StartVagCoding(VagCodingActivity.CodingMode.Coding2);
@@ -720,24 +721,25 @@ namespace BmwDeepObd
 
             _buttonAdaption = FindViewById<Button>(Resource.Id.buttonAdaption);
             _buttonAdaption.Visibility = vagButtonsVisibility;
-            _buttonAdaption.Enabled = adaptionEnabled;
+            _buttonAdaption.Enabled = vagAdaptionEnabled;
             _buttonAdaption.Click += (sender, args) =>
             {
                 StartVagAdaption();
             };
 
+            bool vagLoginEnabled = _ecuInfo.HasVagLogin();
             _buttonLogin = FindViewById<Button>(Resource.Id.buttonLogin);
             _buttonLogin.Visibility = vagButtonsVisibility;
-            _buttonLogin.Enabled = _ecuInfo.HasVagLogin();
+            _buttonLogin.Enabled = vagLoginEnabled;
             _buttonLogin.Click += (sender, args) =>
             {
                 StartVagCoding(VagCodingActivity.CodingMode.Login);
             };
 
-            bool authEnabled = !XmlToolActivity.Is1281Ecu(_ecuInfo);
+            bool vagAuthEnabled = !XmlToolActivity.Is1281Ecu(_ecuInfo);
             _buttonSecurityAccess = FindViewById<Button>(Resource.Id.buttonSecurityAccess);
             _buttonSecurityAccess.Visibility = vagButtonsVisibility;
-            _buttonSecurityAccess.Enabled = authEnabled;
+            _buttonSecurityAccess.Enabled = vagAuthEnabled;
             _buttonSecurityAccess.Click += (sender, args) =>
             {
                 StartVagCoding(VagCodingActivity.CodingMode.SecurityAccess);
@@ -751,6 +753,41 @@ namespace BmwDeepObd
                 {
                     case XmlToolActivity.EcuFunctionCallType.BmwActuator:
                         if (bmwActuatorEnabled && StartBmwActuator())
+                        {
+                            return;
+                        }
+                        break;
+
+                    case XmlToolActivity.EcuFunctionCallType.VagCoding:
+                        if (vagCodingEnabled && StartVagCoding(VagCodingActivity.CodingMode.Coding))
+                        {
+                            return;
+                        }
+                        break;
+
+                    case XmlToolActivity.EcuFunctionCallType.VagCoding2:
+                        if (vagCoding2Enabled && StartVagCoding(VagCodingActivity.CodingMode.Coding2))
+                        {
+                            return;
+                        }
+                        break;
+
+                    case XmlToolActivity.EcuFunctionCallType.VagAdaption:
+                        if (vagAdaptionEnabled && StartVagAdaption())
+                        {
+                            return;
+                        }
+                        break;
+
+                    case XmlToolActivity.EcuFunctionCallType.VagLogin:
+                        if (vagLoginEnabled && StartVagCoding(VagCodingActivity.CodingMode.Login))
+                        {
+                            return;
+                        }
+                        break;
+
+                    case XmlToolActivity.EcuFunctionCallType.VagSecAccess:
+                        if (vagAuthEnabled && StartVagCoding(VagCodingActivity.CodingMode.SecurityAccess))
                         {
                             return;
                         }
