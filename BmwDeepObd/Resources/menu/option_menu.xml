@@ -63,6 +63,21 @@
                   <item android:id="@+id/menu_cfg_page_bmw_actuator"
                         android:icon="@android:drawable/ic_menu_manage"
                         android:title="@string/menu_cfg_page_bmw_actuator"/>
+                  <item android:id="@+id/menu_cfg_page_vag_coding"
+                        android:icon="@android:drawable/ic_menu_manage"
+                        android:title="@string/menu_cfg_page_vag_coding"/>
+                  <item android:id="@+id/menu_cfg_page_vag_coding2"
+                        android:icon="@android:drawable/ic_menu_manage"
+                        android:title="@string/menu_cfg_page_vag_coding2"/>
+                  <item android:id="@+id/menu_cfg_page_vag_adaption"
+                        android:icon="@android:drawable/ic_menu_manage"
+                        android:title="@string/menu_cfg_page_vag_adaption"/>
+                  <item android:id="@+id/menu_cfg_page_vag_login"
+                        android:icon="@android:drawable/ic_menu_manage"
+                        android:title="@string/menu_cfg_page_vag_login"/>
+                  <item android:id="@+id/menu_cfg_page_vag_sec_access"
+                        android:icon="@android:drawable/ic_menu_manage"
+                        android:title="@string/menu_cfg_page_vag_sec_access"/>
                 </menu>
               </item>
               <item android:id="@+id/menu_cfg_edit"

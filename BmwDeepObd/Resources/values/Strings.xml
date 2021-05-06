@@ -255,6 +255,11 @@
   <string name="menu_cfg_page_functions">Page functions</string>
   <string name="menu_cfg_page_ediabas">Ediabas tool</string>
   <string name="menu_cfg_page_bmw_actuator">Actuator functions</string>
+  <string name="menu_cfg_page_vag_coding">Coding</string>
+  <string name="menu_cfg_page_vag_coding2">Coding 2</string>
+  <string name="menu_cfg_page_vag_adaption">Adaption</string>
+  <string name="menu_cfg_page_vag_login">Login</string>
+  <string name="menu_cfg_page_vag_sec_access">Security access</string>
   <string name="menu_cfg_sel">Select</string>
   <string name="menu_cfg_edit">Edit</string>
   <string name="menu_cfg_pages_edit">Edit pages list</string>

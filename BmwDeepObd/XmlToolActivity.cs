@@ -77,6 +77,11 @@ namespace BmwDeepObd
         {
             None,
             BmwActuator,
+            VagCoding,
+            VagCoding2,
+            VagAdaption,
+            VagLogin,
+            VagSecAccess,
         }
 
         public enum DisplayFontSize
