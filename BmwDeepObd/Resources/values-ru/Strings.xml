@@ -277,6 +277,11 @@
   <string name="menu_cfg_page_functions">Функции страницы</string>
   <string name="menu_cfg_page_ediabas">Ediabas утилита</string>
   <string name="menu_cfg_page_bmw_actuator">Функции актуатора</string>
+  <string name="menu_cfg_page_vag_coding">Кодировать</string>
+  <string name="menu_cfg_page_vag_coding2">Кодировать 2</string>
+  <string name="menu_cfg_page_vag_adaption">Адаптация</string>
+  <string name="menu_cfg_page_vag_login">Авторизация</string>
+  <string name="menu_cfg_page_vag_sec_access">Права доступа</string>
   <string name="menu_cfg_sel">Выбрать</string>
   <string name="menu_cfg_edit">Редактировать</string>
   <string name="menu_cfg_pages_edit">Редактировать список страниц</string>

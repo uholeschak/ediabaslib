@@ -1124,12 +1124,48 @@ namespace BmwDeepObd
                 cfgPageEdiabasMenu.SetVisible(pageSgdb && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
             }
 
+            bool bmwVisible = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && selectedPageFuncAvail && !string.IsNullOrEmpty(_instanceData.ConfigFileName);
             IMenuItem cfgPageBmwActuatorMenu = menu.FindItem(Resource.Id.menu_cfg_page_bmw_actuator);
             if (cfgPageBmwActuatorMenu != null)
             {
                 cfgPageBmwActuatorMenu.SetEnabled(interfaceAvailable && !commActive);
-                cfgPageBmwActuatorMenu.SetVisible(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw &&
-                                                  selectedPageFuncAvail && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
+                cfgPageBmwActuatorMenu.SetVisible(bmwVisible);
+            }
+
+            bool vagVisible = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && selectedPageFuncAvail && !string.IsNullOrEmpty(_instanceData.ConfigFileName);
+            IMenuItem cfgPageVagCodingMenu = menu.FindItem(Resource.Id.menu_cfg_page_vag_coding);
+            if (cfgPageVagCodingMenu != null)
+            {
+                cfgPageVagCodingMenu.SetEnabled(interfaceAvailable && !commActive);
+                cfgPageVagCodingMenu.SetVisible(vagVisible);
+            }
+
+            IMenuItem cfgPageVagCoding2Menu = menu.FindItem(Resource.Id.menu_cfg_page_vag_coding2);
+            if (cfgPageVagCoding2Menu != null)
+            {
+                cfgPageVagCoding2Menu.SetEnabled(interfaceAvailable && !commActive);
+                cfgPageVagCoding2Menu.SetVisible(vagVisible);
+            }
+
+            IMenuItem cfgPageVagAdaptionMenu = menu.FindItem(Resource.Id.menu_cfg_page_vag_adaption);
+            if (cfgPageVagAdaptionMenu != null)
+            {
+                cfgPageVagAdaptionMenu.SetEnabled(interfaceAvailable && !commActive);
+                cfgPageVagAdaptionMenu.SetVisible(vagVisible);
+            }
+
+            IMenuItem cfgPageVagLoginMenu = menu.FindItem(Resource.Id.menu_cfg_page_vag_login);
+            if (cfgPageVagLoginMenu != null)
+            {
+                cfgPageVagLoginMenu.SetEnabled(interfaceAvailable && !commActive);
+                cfgPageVagLoginMenu.SetVisible(vagVisible);
+            }
+
+            IMenuItem cfgPageVagSecAccessMenu = menu.FindItem(Resource.Id.menu_cfg_page_vag_sec_access);
+            if (cfgPageVagSecAccessMenu != null)
+            {
+                cfgPageVagSecAccessMenu.SetEnabled(interfaceAvailable && !commActive);
+                cfgPageVagSecAccessMenu.SetVisible(vagVisible);
             }
 
             IMenuItem cfgEditMenu = menu.FindItem(Resource.Id.menu_cfg_edit);
@@ -1300,6 +1336,26 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_cfg_page_bmw_actuator:
                     StartXmlTool(XmlToolActivity.EcuFunctionCallType.BmwActuator);
+                    return true;
+
+                case Resource.Id.menu_cfg_page_vag_coding:
+                    StartXmlTool(XmlToolActivity.EcuFunctionCallType.VagCoding);
+                    return true;
+
+                case Resource.Id.menu_cfg_page_vag_coding2:
+                    StartXmlTool(XmlToolActivity.EcuFunctionCallType.VagCoding2);
+                    return true;
+
+                case Resource.Id.menu_cfg_page_vag_adaption:
+                    StartXmlTool(XmlToolActivity.EcuFunctionCallType.VagAdaption);
+                    return true;
+
+                case Resource.Id.menu_cfg_page_vag_login:
+                    StartXmlTool(XmlToolActivity.EcuFunctionCallType.VagLogin);
+                    return true;
+
+                case Resource.Id.menu_cfg_page_vag_sec_access:
+                    StartXmlTool(XmlToolActivity.EcuFunctionCallType.VagSecAccess);
                     return true;
 
                 case Resource.Id.menu_cfg_sel:
