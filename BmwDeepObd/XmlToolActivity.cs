@@ -3633,7 +3633,12 @@ namespace BmwDeepObd
             List<ActivityCommon.VagEcuEntry> ecuVagList = ActivityCommon.ReadVagEcuList(_ecuDir);
             if ((ecuVagList == null) || (ecuVagList.Count == 0))
             {
-                _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_read_ecu_info_failed), Resource.String.alert_title_error);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_ok, (sender, args) => { })
+                    .SetMessage(Resource.String.xml_tool_read_ecu_info_failed)
+                    .SetTitle(Resource.String.alert_title_error);
+                AlertDialog alertDialog = builder.Show();
+                alertDialog.DismissEvent += DialogDismissEvent;
                 return;
             }
 
@@ -3904,7 +3909,12 @@ namespace BmwDeepObd
                     if (!_ediabasJobAbort && ((_ecuList.Count == 0) || (detectCount == 0)))
                     {
                         _instanceData.CommErrorsOccured = true;
-                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_no_response), Resource.String.alert_title_error);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_ok, (sender, args) => { })
+                            .SetMessage(Resource.String.xml_tool_no_response)
+                            .SetTitle(Resource.String.alert_title_error);
+                        AlertDialog alertDialog = builder.Show();
+                        alertDialog.DismissEvent += DialogDismissEvent;
                     }
                 });
             });
@@ -7979,7 +7989,12 @@ namespace BmwDeepObd
             string xmlFileName = SaveAllXml();
             if (xmlFileName == null)
             {
-                _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_save_xml_failed), Resource.String.alert_title_error);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_ok, (sender, args) => { })
+                    .SetMessage(Resource.String.xml_tool_save_xml_failed)
+                    .SetTitle(Resource.String.alert_title_error);
+                AlertDialog alertDialog = builder.Show();
+                alertDialog.DismissEvent += DialogDismissEvent;
                 return false;
             }
             if (!finish)
