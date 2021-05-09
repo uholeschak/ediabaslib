@@ -777,15 +777,7 @@ namespace BmwDeepObd
                             .SetMessage(Resource.String.xml_tool_msg_page_not_avail)
                             .SetTitle(Resource.String.alert_title_error);
                         AlertDialog alertDialog = builder.Show();
-                        alertDialog.DismissEvent += (sender, args) =>
-                        {
-                            if (_activityCommon == null)
-                            {
-                                return;
-                            }
-
-                            Finish();
-                        };
+                        alertDialog.DismissEvent += DialogDismissEvent;
                     }
 
                     return;
@@ -2653,7 +2645,7 @@ namespace BmwDeepObd
                             _instanceData.CommErrorsOccured = true;
                             if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth && _activityCommon.MtcBtService)
                             {
-                                new AlertDialog.Builder(this)
+                                AlertDialog.Builder builder = new AlertDialog.Builder(this)
                                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                     {
                                         _instanceData.AutoStart = false;
@@ -2664,12 +2656,13 @@ namespace BmwDeepObd
                                     })
                                     .SetCancelable(true)
                                     .SetMessage(Resource.String.xml_tool_no_response_adapter)
-                                    .SetTitle(Resource.String.alert_title_warning)
-                                    .Show();
+                                    .SetTitle(Resource.String.alert_title_warning);
+                                AlertDialog alertDialog = builder.Show();
+                                alertDialog.DismissEvent += DialogDismissEvent;
                             }
                             else
                             {
-                                AlertDialog altertDialog = new AlertDialog.Builder(this)
+                                AlertDialog.Builder builder = new AlertDialog.Builder(this)
                                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                     {
                                         SelectConfigTypeRequest();
@@ -2679,9 +2672,10 @@ namespace BmwDeepObd
                                     })
                                     .SetCancelable(true)
                                     .SetMessage(Resource.String.xml_tool_no_response_manual)
-                                    .SetTitle(Resource.String.alert_title_warning)
-                                    .Show();
-                                TextView messageView = altertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                                    .SetTitle(Resource.String.alert_title_warning);
+                                AlertDialog alertDialog = builder.Show();
+                                alertDialog.DismissEvent += DialogDismissEvent;
+                                TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
                                 if (messageView != null)
                                 {
                                     messageView.MovementMethod = new LinkMovementMethod();
@@ -2692,12 +2686,22 @@ namespace BmwDeepObd
                         {
                             if (pin78ConnRequire)
                             {
-                                _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_msg_pin78), Resource.String.alert_title_warning);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                                    .SetPositiveButton(Resource.String.button_ok, (sender, args) => { })
+                                    .SetMessage(Resource.String.xml_tool_msg_pin78)
+                                    .SetTitle(Resource.String.alert_title_warning);
+                                AlertDialog alertDialog = builder.Show();
+                                alertDialog.DismissEvent += DialogDismissEvent;
                             }
                             else if (bestInvalidCount > 0)
                             {
                                 _instanceData.CommErrorsOccured = true;
-                                _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_msg_ecu_error), Resource.String.alert_title_warning);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                                    .SetPositiveButton(Resource.String.button_ok, (sender, args) => { })
+                                    .SetMessage(Resource.String.xml_tool_msg_ecu_error)
+                                    .SetTitle(Resource.String.alert_title_warning);
+                                AlertDialog alertDialog = builder.Show();
+                                alertDialog.DismissEvent += DialogDismissEvent;
                             }
                         }
                     }
@@ -4812,18 +4816,7 @@ namespace BmwDeepObd
                     .SetMessage(Resource.String.xml_tool_read_jobs_failed)
                     .SetTitle(Resource.String.alert_title_error);
                 AlertDialog alertDialog = builder.Show();
-                alertDialog.DismissEvent += (sender, args) =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    if (IsPageSelectionActive())
-                    {
-                        Finish();
-                    }
-                };
+                alertDialog.DismissEvent += DialogDismissEvent;
             }
             else
             {
@@ -4865,18 +4858,7 @@ namespace BmwDeepObd
                                 TranslateAndSelectJobs(ecuInfo);
                             });
                         AlertDialog alertDialog = builder.Show();
-                        alertDialog.DismissEvent += (sender, args) =>
-                        {
-                            if (_activityCommon == null)
-                            {
-                                return;
-                            }
-
-                            if (IsPageSelectionActive())
-                            {
-                                Finish();
-                            }
-                        };
+                        alertDialog.DismissEvent += DialogDismissEvent;
                         return;
                     }
                 }
@@ -6323,7 +6305,23 @@ namespace BmwDeepObd
                     if (readFailed)
                     {
                         _instanceData.CommErrorsOccured = true;
-                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_read_ecu_info_failed), Resource.String.alert_title_error);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_ok, (sender, args) => { })
+                            .SetMessage(Resource.String.xml_tool_read_ecu_info_failed)
+                            .SetTitle(Resource.String.alert_title_error);
+                        AlertDialog alertDialog = builder.Show();
+                        alertDialog.DismissEvent += (sender, args) =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            if (IsPageSelectionActive())
+                            {
+                                Finish();
+                            }
+                        };
                     }
                 });
             });
@@ -8287,6 +8285,19 @@ namespace BmwDeepObd
                 prefix = ActivityCommon.CreateValidFileName(vin);
             }
             return Path.Combine(xmlFileDir, prefix + "_" + interfaceType + ConfigFileExtension);
+        }
+
+        private void DialogDismissEvent(object eventObject, EventArgs eventArgs)
+        {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
+            if (IsPageSelectionActive())
+            {
+                Finish();
+            }
         }
 
         private class EcuListAdapter : BaseAdapter<EcuInfo>
