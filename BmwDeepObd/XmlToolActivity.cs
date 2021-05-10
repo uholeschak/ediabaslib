@@ -597,6 +597,7 @@ namespace BmwDeepObd
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
 
         public delegate void MwTabFileSelected(string fileName);
+        public delegate void UpdateEcuDelegate(bool error);
 
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
@@ -763,19 +764,30 @@ namespace BmwDeepObd
             {
                 EdiabasOpen();
                 ReadAllXml();
-                if (!IsPageSelectionActive() && _instanceData.ManualConfigIdx > 0)
+                if (_instanceData.ManualConfigIdx > 0)
                 {
-                    ExecuteUpdateEcuInfo();
-                }
-
-                if (IsPageSelectionActive())
-                {
-                    if (!SelectPageFile(_pageFileName))
+                    ExecuteUpdateEcuInfo(error =>
                     {
-                        ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_msg_page_not_avail);
-                    }
+                        if (!error && IsPageSelectionActive())
+                        {
+                            if (!SelectPageFile(_pageFileName))
+                            {
+                                ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_msg_page_not_avail);
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    if (IsPageSelectionActive())
+                    {
+                        if (!SelectPageFile(_pageFileName))
+                        {
+                            ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_msg_page_not_avail);
+                        }
 
-                    return;
+                        return;
+                    }
                 }
             }
             UpdateDisplay();
@@ -6135,7 +6147,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void ExecuteUpdateEcuInfo()
+        private void ExecuteUpdateEcuInfo(UpdateEcuDelegate handler = null)
         {
             _translateEnabled = false;
             EdiabasOpen();
@@ -6144,6 +6156,7 @@ namespace BmwDeepObd
             if ((_ecuList.Count == 0) || (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.None))
             {
                 _translateEnabled = true;
+                handler?.Invoke(true);
                 return;
             }
 
@@ -6306,6 +6319,7 @@ namespace BmwDeepObd
                         _instanceData.CommErrorsOccured = true;
                         ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_read_ecu_info_failed);
                     }
+                    handler?.Invoke(readFailed);
                 });
             });
             _jobThread.Start();
