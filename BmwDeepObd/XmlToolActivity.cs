@@ -772,12 +772,7 @@ namespace BmwDeepObd
                 {
                     if (!SelectPageFile(_pageFileName))
                     {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                            .SetPositiveButton(Resource.String.button_ok, (sender, args) => { })
-                            .SetMessage(Resource.String.xml_tool_msg_page_not_avail)
-                            .SetTitle(Resource.String.alert_title_error);
-                        AlertDialog alertDialog = builder.Show();
-                        alertDialog.DismissEvent += DialogDismissEvent;
+                        ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_msg_page_not_avail);
                     }
 
                     return;
@@ -2645,40 +2640,53 @@ namespace BmwDeepObd
                             _instanceData.CommErrorsOccured = true;
                             if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth && _activityCommon.MtcBtService)
                             {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                                    {
-                                        _instanceData.AutoStart = false;
-                                        _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice, _appDataDir);
-                                    })
-                                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                                    {
-                                    })
-                                    .SetCancelable(true)
-                                    .SetMessage(Resource.String.xml_tool_no_response_adapter)
-                                    .SetTitle(Resource.String.alert_title_warning);
-                                AlertDialog alertDialog = builder.Show();
-                                alertDialog.DismissEvent += DialogDismissEvent;
+                                if (IsPageSelectionActive())
+                                {
+                                    ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_no_response);
+                                }
+                                else
+                                {
+                                    new AlertDialog.Builder(this)
+                                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                        {
+                                            _instanceData.AutoStart = false;
+                                            _activityCommon.SelectBluetoothDevice(
+                                                (int) ActivityRequest.RequestSelectDevice, _appDataDir);
+                                        })
+                                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                        {
+                                        })
+                                        .SetCancelable(true)
+                                        .SetMessage(Resource.String.xml_tool_no_response_adapter)
+                                        .SetTitle(Resource.String.alert_title_warning)
+                                        .Show();
+                                }
                             }
                             else
                             {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                                    {
-                                        SelectConfigTypeRequest();
-                                    })
-                                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                                    {
-                                    })
-                                    .SetCancelable(true)
-                                    .SetMessage(Resource.String.xml_tool_no_response_manual)
-                                    .SetTitle(Resource.String.alert_title_warning);
-                                AlertDialog alertDialog = builder.Show();
-                                alertDialog.DismissEvent += DialogDismissEvent;
-                                TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
-                                if (messageView != null)
+                                if (IsPageSelectionActive())
                                 {
-                                    messageView.MovementMethod = new LinkMovementMethod();
+                                    ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_no_response);
+                                }
+                                else
+                                {
+                                    AlertDialog alertDialog = new AlertDialog.Builder(this)
+                                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                        {
+                                            SelectConfigTypeRequest();
+                                        })
+                                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                        {
+                                        })
+                                        .SetCancelable(true)
+                                        .SetMessage(Resource.String.xml_tool_no_response_manual)
+                                        .SetTitle(Resource.String.alert_title_warning)
+                                        .Show();
+                                    TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                                    if (messageView != null)
+                                    {
+                                        messageView.MovementMethod = new LinkMovementMethod();
+                                    }
                                 }
                             }
                         }
@@ -2686,22 +2694,18 @@ namespace BmwDeepObd
                         {
                             if (pin78ConnRequire)
                             {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                                    .SetPositiveButton(Resource.String.button_ok, (sender, args) => { })
-                                    .SetMessage(Resource.String.xml_tool_msg_pin78)
-                                    .SetTitle(Resource.String.alert_title_warning);
-                                AlertDialog alertDialog = builder.Show();
-                                alertDialog.DismissEvent += DialogDismissEvent;
+                                if (!IsPageSelectionActive())
+                                {
+                                    ShowAlert(Resource.String.alert_title_warning, Resource.String.xml_tool_msg_pin78);
+                                }
                             }
                             else if (bestInvalidCount > 0)
                             {
                                 _instanceData.CommErrorsOccured = true;
-                                AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                                    .SetPositiveButton(Resource.String.button_ok, (sender, args) => { })
-                                    .SetMessage(Resource.String.xml_tool_msg_ecu_error)
-                                    .SetTitle(Resource.String.alert_title_warning);
-                                AlertDialog alertDialog = builder.Show();
-                                alertDialog.DismissEvent += DialogDismissEvent;
+                                if (!IsPageSelectionActive())
+                                {
+                                    ShowAlert(Resource.String.alert_title_warning, Resource.String.xml_tool_msg_ecu_error);
+                                }
                             }
                         }
                     }
@@ -3633,7 +3637,7 @@ namespace BmwDeepObd
             List<ActivityCommon.VagEcuEntry> ecuVagList = ActivityCommon.ReadVagEcuList(_ecuDir);
             if ((ecuVagList == null) || (ecuVagList.Count == 0))
             {
-                _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_read_ecu_info_failed), Resource.String.alert_title_error);
+                ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_read_ecu_info_failed);
                 return;
             }
 
@@ -3904,7 +3908,7 @@ namespace BmwDeepObd
                     if (!_ediabasJobAbort && ((_ecuList.Count == 0) || (detectCount == 0)))
                     {
                         _instanceData.CommErrorsOccured = true;
-                        _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_no_response), Resource.String.alert_title_error);
+                        ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_no_response);
                     }
                 });
             });
@@ -4811,12 +4815,7 @@ namespace BmwDeepObd
             }
             if (readFailed || (ecuInfo.JobList?.Count == 0))
             {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                    .SetPositiveButton(Resource.String.button_ok, (sender, args) => { })
-                    .SetMessage(Resource.String.xml_tool_read_jobs_failed)
-                    .SetTitle(Resource.String.alert_title_error);
-                AlertDialog alertDialog = builder.Show();
-                alertDialog.DismissEvent += DialogDismissEvent;
+                ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_read_jobs_failed);
             }
             else
             {
@@ -6305,23 +6304,7 @@ namespace BmwDeepObd
                     if (readFailed)
                     {
                         _instanceData.CommErrorsOccured = true;
-                        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                            .SetPositiveButton(Resource.String.button_ok, (sender, args) => { })
-                            .SetMessage(Resource.String.xml_tool_read_ecu_info_failed)
-                            .SetTitle(Resource.String.alert_title_error);
-                        AlertDialog alertDialog = builder.Show();
-                        alertDialog.DismissEvent += (sender, args) =>
-                        {
-                            if (_activityCommon == null)
-                            {
-                                return;
-                            }
-
-                            if (IsPageSelectionActive())
-                            {
-                                Finish();
-                            }
-                        };
+                        ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_read_ecu_info_failed);
                     }
                 });
             });
@@ -7979,7 +7962,7 @@ namespace BmwDeepObd
             string xmlFileName = SaveAllXml();
             if (xmlFileName == null)
             {
-                _activityCommon.ShowAlert(GetString(Resource.String.xml_tool_save_xml_failed), Resource.String.alert_title_error);
+                ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_save_xml_failed);
                 return false;
             }
             if (!finish)
@@ -8285,6 +8268,16 @@ namespace BmwDeepObd
                 prefix = ActivityCommon.CreateValidFileName(vin);
             }
             return Path.Combine(xmlFileDir, prefix + "_" + interfaceType + ConfigFileExtension);
+        }
+
+        private void ShowAlert(int titleId, int messageId)
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .SetPositiveButton(Resource.String.button_ok, (sender, args) => { })
+                .SetMessage(messageId)
+                .SetTitle(titleId);
+            AlertDialog alertDialog = builder.Show();
+            alertDialog.DismissEvent += DialogDismissEvent;
         }
 
         private void DialogDismissEvent(object eventObject, EventArgs eventArgs)
