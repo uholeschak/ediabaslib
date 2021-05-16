@@ -231,7 +231,8 @@
       <HintPath>packages\Xamarin.Android.Support.ViewPager.28.0.0.3\lib\monoandroid90\Xamarin.Android.Support.ViewPager.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Google.Android.Play.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.Google.Android.Play.Core.1.9.1\lib\monoandroid90\Xamarin.Google.Android.Play.Core.dll</HintPath>
+      <HintPath>packages\Xamarin.Google.Android.Play.Core.1.10.0\lib\monoandroid90\Xamarin.Google.Android.Play.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -777,7 +778,7 @@
     <Error Condition="!Exists('packages\Xamarin.Android.Support.Design.28.0.0.3\build\monoandroid90\Xamarin.Android.Support.Design.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Android.Support.Design.28.0.0.3\build\monoandroid90\Xamarin.Android.Support.Design.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.Build.Download.0.10.0\build\Xamarin.Build.Download.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Build.Download.0.10.0\build\Xamarin.Build.Download.props'))" />
     <Error Condition="!Exists('packages\Xamarin.Build.Download.0.10.0\build\Xamarin.Build.Download.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Build.Download.0.10.0\build\Xamarin.Build.Download.targets'))" />
-    <Error Condition="!Exists('packages\Xamarin.Google.Android.Play.Core.1.9.1\build\MonoAndroid90\Xamarin.Google.Android.Play.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Google.Android.Play.Core.1.9.1\build\MonoAndroid90\Xamarin.Google.Android.Play.Core.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.Google.Android.Play.Core.1.10.0\build\MonoAndroid90\Xamarin.Google.Android.Play.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Google.Android.Play.Core.1.10.0\build\MonoAndroid90\Xamarin.Google.Android.Play.Core.targets'))" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>copy /y "$(ProjectDir)Xml\BmwDeepObd.xsd" "$(ProjectDir)Xml\E61R\"</PostBuildEvent>
@@ -819,5 +820,5 @@
   <Import Project="packages\Xamarin.Android.Support.v7.RecyclerView.28.0.0.3\build\monoandroid90\Xamarin.Android.Support.v7.RecyclerView.targets" Condition="Exists('packages\Xamarin.Android.Support.v7.RecyclerView.28.0.0.3\build\monoandroid90\Xamarin.Android.Support.v7.RecyclerView.targets')" />
   <Import Project="packages\Xamarin.Android.Support.Design.28.0.0.3\build\monoandroid90\Xamarin.Android.Support.Design.targets" Condition="Exists('packages\Xamarin.Android.Support.Design.28.0.0.3\build\monoandroid90\Xamarin.Android.Support.Design.targets')" />
   <Import Project="packages\Xamarin.Build.Download.0.10.0\build\Xamarin.Build.Download.targets" Condition="Exists('packages\Xamarin.Build.Download.0.10.0\build\Xamarin.Build.Download.targets')" />
-  <Import Project="packages\Xamarin.Google.Android.Play.Core.1.9.1\build\MonoAndroid90\Xamarin.Google.Android.Play.Core.targets" Condition="Exists('packages\Xamarin.Google.Android.Play.Core.1.9.1\build\MonoAndroid90\Xamarin.Google.Android.Play.Core.targets')" />
+  <Import Project="packages\Xamarin.Google.Android.Play.Core.1.10.0\build\MonoAndroid90\Xamarin.Google.Android.Play.Core.targets" Condition="Exists('packages\Xamarin.Google.Android.Play.Core.1.10.0\build\MonoAndroid90\Xamarin.Google.Android.Play.Core.targets')" />
 </Project>
