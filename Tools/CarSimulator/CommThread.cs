@@ -1952,6 +1952,7 @@ namespace CarSimulator
                         return false;
                     }
                     // send ack
+#if true
                     if (_tcpNackIndex >= 5)
                     {
                         Debug.WriteLine("Send NAck");
@@ -1962,6 +1963,7 @@ namespace CarSimulator
                         return false;
                     }
                     _tcpNackIndex++;
+#endif
 #if false
                     if (_tcpLastResponse != null)
                     {
@@ -7090,6 +7092,11 @@ namespace CarSimulator
                     int responseLength = GetResposeLength("vdp_g11.prg", serviceId);
                     Debug.WriteLine("Response length: {0}", responseLength);
 
+                    if (responseLength <= 0)
+                    {   // no data, check response list
+                        return false;
+                    }
+
                     _sendData[i++] = (byte) (serviceId >> 8);
                     _sendData[i++] = (byte) (serviceId & 0xFF);
                     for (int j = 0; j < responseLength; j++)
@@ -7125,6 +7132,11 @@ namespace CarSimulator
                     int serviceId = (_receiveData[4 + offset] << 8) + _receiveData[5 + offset];
                     int responseLength = GetResposeLength("d83bx7c0.prg", serviceId);
                     Debug.WriteLine("Response length: {0}", responseLength);
+
+                    if (responseLength <= 0)
+                    {   // no data, check response list
+                        return false;
+                    }
 
                     _sendData[i++] = (byte)(serviceId >> 8);
                     _sendData[i++] = (byte)(serviceId & 0xFF);
