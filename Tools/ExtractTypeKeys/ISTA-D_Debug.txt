@@ -10,6 +10,23 @@ Copy files from "TesterGUI\bin\Release" to "TesterGUI\bin\ReleaseMod"
 de4dot -r "TesterGUI\bin\Release" -ru -ro "TesterGUI\bin\ReleaseMod" --dont-rename
 The files in "TesterGUI\bin\Release" are not modified, "TesterGUI\bin\ReleaseMod" now contains the deobfuscated files.
 
+Disable ISTAGUI.exe hash check:
+===============================
+Modify RheingoldCoreFramework.dll (Edit -> Edit class, remove all references to other ISTA-D version first):
+BMW.Rheingold.CoreFramework.InteropHelper:
+public static bool VerifyStrongName(Type t, bool force)
+At the end of the function add: flag = true;
+-------------------------------------------------------------------------------------
+			flag = true;
+			if (!flag)
+			{
+				throw new Exception(string.Format("Assembly signature of {0} cannot be verified", ""));
+			}
+			return flag;
+-------------------------------------------------------------------------------------
+File -> Save module
+If file is blocked, terminate IstaSericesHost.exe first!
+
 Compile dnSpy-x86:
 ============================
 git clone --recursive https://github.com/0xd4d/dnSpy.git
