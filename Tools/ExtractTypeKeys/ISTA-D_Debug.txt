@@ -42,7 +42,7 @@ in IstaOperationStarter.Start() add at the end of the function:
 -------------------------------------------------------------------------------------
 	if (Debugger.IsAttached)
 	{
-		System.Windows.Forms.MessageBox.Show("IstaOperation started. Attach to IstaOperation.exe now.");
+		MessageBox.Show(new Form { TopMost = true}, "IstaOperation started. Attach to IstaOperation.exe now.", "ISTAGUI", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 	}
 	return istaOperation;
 -------------------------------------------------------------------------------------
