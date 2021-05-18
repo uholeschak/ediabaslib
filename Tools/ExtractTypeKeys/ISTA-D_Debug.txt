@@ -27,6 +27,19 @@ At the end of the function add: flag = true;
 File -> Save module
 If file is blocked, terminate IstaSericesHost.exe first!
 
+Disable ISTAGUI.exe memory check:
+===============================
+Modify ISTAGUI.exe (Edit -> Edit class, remove all references to other ISTA-D version first):
+BMW.Rheingold.ISTAGUI.Controller:
+public Dictionary<InsufficientSystemRequirement, int[]> CheckSystemRequirements(bool isProgammingEnabled)
+add: memoryCapacityInMBytes = num;
+-------------------------------------------------------------------------------------
+memoryCapacityInMBytes = num;
+if (memoryCapacityInMBytes < num)
+-------------------------------------------------------------------------------------
+File -> Save module
+If file is blocked, terminate IstaSericesHost.exe first!
+
 Compile dnSpy-x86:
 ============================
 git clone --recursive https://github.com/0xd4d/dnSpy.git
@@ -47,6 +60,8 @@ in IstaOperationStarter.Start() add at the end of the function:
 	return istaOperation;
 -------------------------------------------------------------------------------------
 File -> Save module
+
+Disable: ISTAGUI.App.CheckFreeDiskSpace()
 
 Debugging:
 Disable debugger detection in dnSpy (uncheck System.Diagnostics.Debugger option)!
