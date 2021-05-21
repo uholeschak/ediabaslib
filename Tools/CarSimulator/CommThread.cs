@@ -4419,6 +4419,20 @@ namespace CarSimulator
 
                 if (!found)
                 {
+                    switch (_responseType)
+                    {
+                        case ResponseType.G31:
+                            if (ResponseG31Generic())
+                            {
+                                Debug.WriteLine("Generic G31 response");
+                                found = true;
+                            }
+                            break;
+                    }
+                }
+
+                if (!found)
+                {
                     if (
                         _receiveData[0] == 0x84 &&
                         _receiveData[2] == 0xF1 &&
@@ -7069,7 +7083,17 @@ namespace CarSimulator
 
                 ObdSend(_sendData);
             }
-            else if (
+            else
+            {
+                // nothing matched, check response list
+                return false;
+            }
+            return true;
+        }
+
+        private bool ResponseG31Generic()
+        {
+            if (
                 (_receiveData[0] & 0xC0) == 0x80 &&
                 _receiveData[1] == 0x76 &&
                 _receiveData[2] == 0xF1 &&
@@ -7097,8 +7121,8 @@ namespace CarSimulator
                         return false;
                     }
 
-                    _sendData[i++] = (byte) (serviceId >> 8);
-                    _sendData[i++] = (byte) (serviceId & 0xFF);
+                    _sendData[i++] = (byte)(serviceId >> 8);
+                    _sendData[i++] = (byte)(serviceId & 0xFF);
                     for (int j = 0; j < responseLength; j++)
                     {
                         _sendData[i++] = 0;
@@ -7153,9 +7177,10 @@ namespace CarSimulator
             }
             else
             {
-                // nothing matched, check response list
+                // nothing matched
                 return false;
             }
+
             return true;
         }
 
