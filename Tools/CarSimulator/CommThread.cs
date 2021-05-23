@@ -1535,7 +1535,7 @@ namespace CarSimulator
 #endif
                 if (bytes != null && bytes.Length == 6 && bytes[5] == 0x11)
                 {
-                    Debug.WriteLine("Ident request from: IP={0}, Port={1}", ip.Address, ip.Port);
+                    Debug.WriteLine("Ident request from: {0}:{1}", ip.Address, ip.Port);
                     byte[] identMessage = new byte[6 + 50];
                     int idx = 0;
                     identMessage[idx++] = 0x00;
