@@ -225,6 +225,7 @@ namespace CarSimulator
         private const byte TcpTesterAddr = 0xF4;
         private const int EnetDiagPort = 6801;
         private const int EnetControlPort = 6811;
+        private const int SrvLocPort = 427;
         private const int Kwp2000Nr2123Retries = 3;
         private const int ResetAdaptionChannel = 0;
         private const int DefaultAdaptionChannelValue = 0x1234;
@@ -263,6 +264,8 @@ namespace CarSimulator
         private Socket _udpSocket;
         private readonly byte[] _udpBuffer;
         private bool _udpError;
+        private UdpClient _srvLocClient;
+        private bool _srvLocError;
         private long _lastTcpDiagRecTick;
         private int _tcpNackIndex;
         // ReSharper disable once NotAccessedField.Local
@@ -638,6 +641,8 @@ namespace CarSimulator
             _udpSocket = null;
             _udpBuffer = new byte[0x100];
             _udpError = false;
+            _srvLocClient = null;
+            _srvLocError = false;
             _lastTcpDiagRecTick = DateTime.MinValue.Ticks;
             _serialPort = new SerialPort();
             _serialPort.DataReceived += SerialDataReceived;
@@ -808,6 +813,7 @@ namespace CarSimulator
                     _tcpServerControl.Start();
 
                     UdpConnect();
+                    SrvLocConnect();
                 }
                 catch (Exception)
                 {
@@ -918,6 +924,7 @@ namespace CarSimulator
         private void Disconnect()
         {
             UdpDisconnect();
+            SrvLocDisconnect();
 
             // diag port
             EnetDiagClose();
@@ -1026,6 +1033,47 @@ namespace CarSimulator
             catch (Exception)
             {
                 _udpError = true;
+            }
+        }
+
+        private void SrvLocConnect()
+        {
+            // a virtual network adapter with an auto ip address
+            // is required tp receive the UPD broadcasts
+            _srvLocError = false;
+            _srvLocClient = new UdpClient(SrvLocPort);
+            StartSrvLocListen();
+        }
+
+        private void SrvLocDisconnect()
+        {
+            try
+            {
+                if (_srvLocClient != null)
+                {
+                    _srvLocClient.Close();
+                    _srvLocClient = null;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        private void SrvLocRecover()
+        {
+            try
+            {
+                if (_udpError)
+                {
+                    SrvLocDisconnect();
+                    SrvLocConnect();
+                }
+            }
+            catch (Exception)
+            {
+                _srvLocError = true;
             }
         }
 
@@ -1393,6 +1441,7 @@ namespace CarSimulator
                     if (_tcpServerDiag != null)
                     {
                         UdpRecover();
+                        SrvLocRecover();
                         ReceiveEnetControl();
                         return ReceiveEnet(receiveData);
                     }
@@ -1747,6 +1796,49 @@ namespace CarSimulator
             }
 
             return result;
+        }
+
+        private void StartSrvLocListen()
+        {
+            _srvLocClient.BeginReceive(SrvLocReceiver, new Object());
+        }
+
+        private void SrvLocReceiver(IAsyncResult ar)
+        {
+            try
+            {
+                UdpClient srvLocClientLocal = _srvLocClient;
+                if (srvLocClientLocal == null)
+                {
+                    return;
+                }
+                IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
+                byte[] bytes = srvLocClientLocal.EndReceive(ar, ref ip);
+#if true
+                if (bytes != null)
+                {
+                    DebugLogData("srvLoc: ", bytes, bytes.Length);
+                }
+#endif
+                if (bytes != null && bytes.Length >= 12 &&
+                    bytes[0] == 0x02 &&     // Version 2
+                    bytes[1] == 0x06)       // Attribute request
+                {
+                    Debug.WriteLine("SrvLoc request from: {0}:{1}", ip.Address, ip.Port);
+                    int packetlength = (bytes[2] << 16) | (bytes[3] << 8) | bytes[4];
+                    int flags = (bytes[5] << 8) | bytes[6];
+                    int nextExtOffset = (bytes[7] << 16) | (bytes[8] << 8) | bytes[9];
+                    int xId = (bytes[10] << 8) | bytes[11];
+
+                    Debug.WriteLine("SrvLoc Len={0}, Flags={1:X04}, Offs={2}, XID={3}", packetlength, flags, nextExtOffset, xId);
+                    //SendUdpPacketTo(identMessage, ip);
+                }
+                StartSrvLocListen();
+            }
+            catch (Exception)
+            {
+                _srvLocError = true;
+            }
         }
 
         private void EnetControlClose()
