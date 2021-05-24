@@ -1660,7 +1660,7 @@ namespace CarSimulator
                     identMessage[idx++] = (byte)'5';
                     identMessage[idx++] = (byte)'6';
 #endif
-                    SendUdpPacketTo(identMessage, ip);
+                    SendUdpPacketTo(identMessage, ip, EnetControlPort);
                 }
                 StartUdpListen();
             }
@@ -1726,7 +1726,7 @@ namespace CarSimulator
                         identMessage[idx++] = (byte)('a' + i);
                     }
 
-                    SendUdpPacketTo(identMessage, tempRemoteEp);
+                    SendUdpPacketTo(identMessage, tempRemoteEp, EnetControlPort);
                 }
                 StartUdpSocketListen();
             }
@@ -1737,7 +1737,7 @@ namespace CarSimulator
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool SendUdpPacketTo(byte[] data, EndPoint endPoint)
+        private bool SendUdpPacketTo(byte[] data, EndPoint endPoint, int port)
         {
             bool result = false;
             if (endPoint is IPEndPoint ipEnd)
@@ -1777,7 +1777,7 @@ namespace CarSimulator
                                         {
                                             using (Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
                                             {
-                                                IPEndPoint ipUdp = new IPEndPoint(ipAddressInfo.Address, EnetControlPort);
+                                                IPEndPoint ipUdp = new IPEndPoint(ipAddressInfo.Address, port);
                                                 sock.Bind(ipUdp);
                                                 sock.SendTo(data, endPoint);
                                                 result = true;
@@ -1831,7 +1831,38 @@ namespace CarSimulator
                     int xId = (bytes[10] << 8) | bytes[11];
 
                     Debug.WriteLine("SrvLoc Len={0}, Flags={1:X04}, Offs={2}, XID={3}", packetlength, flags, nextExtOffset, xId);
-                    //SendUdpPacketTo(identMessage, ip);
+
+                    int resExtOffset = 0;
+                    int resListLen = 0;
+                    List<byte> response = new List<byte>();
+                    response.Add(0x02);     // Version
+                    response.Add(0x07);     // Attribute reply
+                    response.Add(0x00);     // Length (3 byte)
+                    response.Add(0x00);
+                    response.Add(0x00);
+                    response.Add(0x00);     // Flags (2 Byte)
+                    response.Add(0x00);
+                    response.Add((byte)(resExtOffset >> 16));
+                    response.Add((byte)(resExtOffset >> 8));
+                    response.Add((byte)(resExtOffset & 0xFF));  // Extension Offset
+                    response.Add((byte)(xId >> 8));             // XID
+                    response.Add((byte)(xId & 0xFF));
+                    response.Add(0x00);         // Lang len (2 Byte)
+                    response.Add(0x02);
+                    response.Add((byte)'e');    // Lang
+                    response.Add((byte)'n');
+                    response.Add(0x00);         // Error code (2 Byte)
+                    response.Add(0x00);
+                    response.Add((byte)(resListLen >> 8));      // List length
+                    response.Add((byte)(resListLen & 0xFF));
+                    response.Add(0x00);         // Auth
+
+                    int resLength = response.Count;
+                    response[2] = (byte)(resLength >> 16);     // Length
+                    response[3] = (byte)(resLength >> 8);
+                    response[4] = (byte)(resLength & 0xFF);
+
+                    SendUdpPacketTo(response.ToArray(), ip, SrvLocPort);
                 }
                 StartSrvLocListen();
             }
