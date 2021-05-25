@@ -1833,7 +1833,6 @@ namespace CarSimulator
                     Debug.WriteLine("SrvLoc Len={0}, Flags={1:X04}, Offs={2}, XID={3}", packetlength, flags, nextExtOffset, xId);
 
                     int resExtOffset = 0;
-                    int resListLen = 0;
                     List<byte> response = new List<byte>();
                     response.Add(0x02);     // Version
                     response.Add(0x07);     // Attribute reply
@@ -1847,14 +1846,21 @@ namespace CarSimulator
                     response.Add((byte)(resExtOffset & 0xFF));  // Extension Offset
                     response.Add((byte)(xId >> 8));             // XID
                     response.Add((byte)(xId & 0xFF));
-                    response.Add(0x00);         // Lang len (2 Byte)
-                    response.Add(0x02);
-                    response.Add((byte)'e');    // Lang
-                    response.Add((byte)'n');
+
+                    byte[] langBytes = Encoding.ASCII.GetBytes(@"en");
+                    int langLen = langBytes.Length;
+                    response.Add((byte)(langLen >> 8));      // Lang len
+                    response.Add((byte)(langLen & 0xFF));
+                    response.AddRange(langBytes);
+
                     response.Add(0x00);         // Error code (2 Byte)
                     response.Add(0x00);
-                    response.Add((byte)(resListLen >> 8));      // List length
-                    response.Add((byte)(resListLen & 0xFF));
+
+                    byte[] attrBytes = Encoding.ASCII.GetBytes(@"(Attrib1=Value1),(Attrib2=Value2),x-OK");
+                    int attrLen = attrBytes.Length;
+                    response.Add((byte)(attrLen >> 8));      // List length
+                    response.Add((byte)(attrLen & 0xFF));
+                    response.AddRange(attrBytes);
                     response.Add(0x00);         // Auth
 
                     int resLength = response.Count;
