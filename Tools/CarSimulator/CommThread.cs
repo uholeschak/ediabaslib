@@ -1065,7 +1065,7 @@ namespace CarSimulator
         {
             try
             {
-                if (_udpError)
+                if (_srvLocError)
                 {
                     SrvLocDisconnect();
                     SrvLocConnect();
@@ -1592,7 +1592,7 @@ namespace CarSimulator
                     identMessage[idx++] = 0x00;
                     identMessage[idx++] = (byte)(identMessage.Length - 6);
                     identMessage[idx++] = 0x00;
-                    identMessage[idx++] = 0x04;     // Anouncement
+                    identMessage[idx++] = 0x11;     // ENET
                     // TESTER ID
                     identMessage[idx++] = (byte)'D';
                     identMessage[idx++] = (byte)'I';
