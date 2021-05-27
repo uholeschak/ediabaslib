@@ -79,7 +79,8 @@ BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionsReadStatus.DoR
 
 BMW.Rheingold.xVM:
 VCIEnetHsfzService.ZGWBroadcastSendCyclic(), ReceiveCallback(),
-VciDeviceService.CyclicBroadcastDeviceRequest(), VciDeviceService.ReceiveData()
+VciDeviceService.CyclicBroadcastDeviceRequest(), VciDeviceService.ReceiveData(), VciDeviceService.CreateVciDevices()
+Match: "(DevId=),(Service=),(Serial=),(MacAddress=),(DevType=ENET),(ImageVersionBoot=),(ImageVersionApplication=),(ImageVersionPackage=),(Color=#ffffff),(Counter=),(State=4),(Owner=),(Kl15Voltage=),(Kl30Voltage=),(SignalStrength=),(VIN=),(Gateway=),(AccuCapacity=),(PowerSupply=0),(VciChannels=[0?;1?;2?;3+]),(Netmask=),(NetworkType=),(UUID=),(Port=6801),(ControlPort=),(PwfState=)"
 
 Checks for ISTA-D Update:
 =========================
