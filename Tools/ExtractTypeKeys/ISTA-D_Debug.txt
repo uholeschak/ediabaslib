@@ -77,7 +77,9 @@ BMW.Rheingold.Diagnostics.VehicleIdent.SetDTCDetailValues()
 BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionsReadStatus.DoReadStatus()
 BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionsReadStatus.DoReadStatusSingleShot()
 
-BMW.Rheingold.xVM.ZGWBroadcastSendCyclic(), ReceiveCallback()
+BMW.Rheingold.xVM:
+VCIEnetHsfzService.ZGWBroadcastSendCyclic(), ReceiveCallback(),
+VciDeviceService.CyclicBroadcastDeviceRequest(), VciDeviceService.ReceiveData()
 
 Checks for ISTA-D Update:
 =========================
