@@ -1856,7 +1856,7 @@ namespace CarSimulator
                     response.Add(0x00);         // Error code (2 Byte)
                     response.Add(0x00);
 
-                    byte[] attrBytes = Encoding.ASCII.GetBytes(@"(Attrib1=Value1),(Attrib2=Value2),x-OK");
+                    byte[] attrBytes = Encoding.ASCII.GetBytes(@"(DevId=WBA3X11010GV35856),(DevType=ENET),(State=4),(Kl15Voltage=24000),(Kl30Voltage=24000),(VIN=WBA3X11010GV35856)");
                     int attrLen = attrBytes.Length;
                     response.Add((byte)(attrLen >> 8));      // List length
                     response.Add((byte)(attrLen & 0xFF));
