@@ -1592,7 +1592,7 @@ namespace CarSimulator
                     identMessage[idx++] = 0x00;
                     identMessage[idx++] = (byte)(identMessage.Length - 6);
                     identMessage[idx++] = 0x00;
-                    identMessage[idx++] = 0x11;     // ENET
+                    identMessage[idx++] = 0x04; // 0x11; // ENET
                     // TESTER ID
                     identMessage[idx++] = (byte)'D';
                     identMessage[idx++] = (byte)'I';
@@ -1856,7 +1856,7 @@ namespace CarSimulator
                     response.Add(0x00);         // Error code (2 Byte)
                     response.Add(0x00);
 
-                    byte[] attrBytes = Encoding.ASCII.GetBytes(@"(DevId=WBA3X11010GV35856),(DevType=ENET),(State=4),(Kl15Voltage=24000),(Kl30Voltage=24000),(VIN=WBA3X11010GV35856)");
+                    byte[] attrBytes = Encoding.ASCII.GetBytes(@"(DevId=G31),(Serial=WBA3X11010GV35856),(DevType=ENET),(Color=#00ff00),(State=4),(Kl15Voltage=24000),(Kl30Voltage=24000),(VIN=WBA3X11010GV35856),(IPAddress=127.0.0.1)");
                     int attrLen = attrBytes.Length;
                     response.Add((byte)(attrLen >> 8));      // List length
                     response.Add((byte)(attrLen & 0xFF));
