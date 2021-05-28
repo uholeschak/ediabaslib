@@ -1742,52 +1742,68 @@ namespace CarSimulator
             bool result = false;
             if (endPoint is IPEndPoint ipEnd)
             {
-                System.Net.NetworkInformation.NetworkInterface[] adapters = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
-                foreach (System.Net.NetworkInformation.NetworkInterface adapter in adapters)
+                IPAddress localIp = GetLocalIpAddress(ipEnd.Address);
+                if (localIp != null)
                 {
-                    if (adapter.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up)
+                    Debug.WriteLine("Sending to: {0} with: {1}", ipEnd.Address, localIp);
+                    try
                     {
-                        System.Net.NetworkInformation.IPInterfaceProperties properties = adapter.GetIPProperties();
-                        if (properties?.UnicastAddresses != null)
+                        using (Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
                         {
-                            foreach (System.Net.NetworkInformation.UnicastIPAddressInformation ipAddressInfo in properties.UnicastAddresses)
+                            IPEndPoint ipUdp = new IPEndPoint(localIp, port);
+                            sock.Bind(ipUdp);
+                            sock.SendTo(data, endPoint);
+                            result = true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("Send exception: {0}", ex.Message);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private IPAddress GetLocalIpAddress(IPAddress remoteIp)
+        {
+            if (remoteIp == null)
+            {
+                return null;
+            }
+
+            System.Net.NetworkInformation.NetworkInterface[] adapters = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
+            foreach (System.Net.NetworkInformation.NetworkInterface adapter in adapters)
+            {
+                if (adapter.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up)
+                {
+                    System.Net.NetworkInformation.IPInterfaceProperties properties = adapter.GetIPProperties();
+                    if (properties?.UnicastAddresses != null)
+                    {
+                        foreach (System.Net.NetworkInformation.UnicastIPAddressInformation ipAddressInfo in properties.UnicastAddresses)
+                        {
+                            if (ipAddressInfo.Address.AddressFamily == AddressFamily.InterNetwork)
                             {
-                                if (ipAddressInfo.Address.AddressFamily == AddressFamily.InterNetwork)
+                                byte[] ipBytesRemote = remoteIp.GetAddressBytes();
+                                byte[] ipBytesLocal = ipAddressInfo.Address.GetAddressBytes();
+                                byte[] maskBytes = ipAddressInfo.IPv4Mask.GetAddressBytes();
+
+                                for (int i = 0; i < ipBytesRemote.Length; i++)
                                 {
-                                    byte[] ipBytesRemote = ipEnd.Address.GetAddressBytes();
-                                    byte[] ipBytesLocal = ipAddressInfo.Address.GetAddressBytes();
-                                    byte[] maskBytes = ipAddressInfo.IPv4Mask.GetAddressBytes();
+                                    ipBytesRemote[i] &= maskBytes[i];
+                                }
 
-                                    for (int i = 0; i < ipBytesRemote.Length; i++)
-                                    {
-                                        ipBytesRemote[i] &= maskBytes[i];
-                                    }
+                                for (int i = 0; i < ipBytesLocal.Length; i++)
+                                {
+                                    ipBytesLocal[i] &= maskBytes[i];
+                                }
 
-                                    for (int i = 0; i < ipBytesLocal.Length; i++)
-                                    {
-                                        ipBytesLocal[i] &= maskBytes[i];
-                                    }
-
-                                    IPAddress ipRemoteMask = new IPAddress(ipBytesRemote);
-                                    IPAddress ipLocalMask = new IPAddress(ipBytesLocal);
-                                    if (ipRemoteMask.Equals(ipLocalMask))
-                                    {
-                                        Debug.WriteLine("Sending to: {0} with: {1}", ipEnd.Address, ipAddressInfo.Address);
-                                        try
-                                        {
-                                            using (Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
-                                            {
-                                                IPEndPoint ipUdp = new IPEndPoint(ipAddressInfo.Address, port);
-                                                sock.Bind(ipUdp);
-                                                sock.SendTo(data, endPoint);
-                                                result = true;
-                                            }
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Debug.WriteLine("Send exception: {0}", ex.Message);
-                                        }
-                                    }
+                                IPAddress ipRemoteMask = new IPAddress(ipBytesRemote);
+                                IPAddress ipLocalMask = new IPAddress(ipBytesLocal);
+                                if (ipRemoteMask.Equals(ipLocalMask))
+                                {
+                                    return ipAddressInfo.Address;
                                 }
                             }
                         }
@@ -1795,7 +1811,7 @@ namespace CarSimulator
                 }
             }
 
-            return result;
+            return null;
         }
 
         private void StartSrvLocListen()
@@ -1814,6 +1830,7 @@ namespace CarSimulator
                 }
                 IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
                 byte[] bytes = srvLocClientLocal.EndReceive(ar, ref ip);
+                IPAddress localIp = GetLocalIpAddress(ip.Address);
 #if true
                 if (bytes != null)
                 {
@@ -1824,7 +1841,7 @@ namespace CarSimulator
                     bytes[0] == 0x02 &&     // Version 2
                     bytes[1] == 0x06)       // Attribute request
                 {
-                    Debug.WriteLine("SrvLoc request from: {0}:{1}", ip.Address, ip.Port);
+                    Debug.WriteLine("SrvLoc request from: {0}:{1}, at {2}", ip.Address, ip.Port, localIp);
                     int packetlength = (bytes[2] << 16) | (bytes[3] << 8) | bytes[4];
                     int flags = (bytes[5] << 8) | bytes[6];
                     int nextExtOffset = (bytes[7] << 16) | (bytes[8] << 8) | bytes[9];
@@ -1856,7 +1873,10 @@ namespace CarSimulator
                     response.Add(0x00);         // Error code (2 Byte)
                     response.Add(0x00);
 
-                    byte[] attrBytes = Encoding.ASCII.GetBytes(@"(DevId=G31),(Serial=WBA3X11010GV35856),(DevType=ENET),(Color=#00ff00),(State=4),(Kl15Voltage=24000),(Kl30Voltage=24000),(VIN=WBA3X11010GV35856),(IPAddress=127.0.0.1)");
+                    //string attributs =
+                        //string.Format("(DevId=G31),(Serial=WBA3X11010GV35856{0}),(DevType=ENET),(Color=#00ff00),(State=4),(Kl15Voltage=24000),(Kl30Voltage=24000),(VIN=WBA3X11010GV35856),(IPAddress={0})", localIp);
+                    string attributs = "(DevId=G31),(Serial=WBA3X11010GV35856),(DevType=ENET),(Color=#00ff00),(State=4),(Kl15Voltage=24000),(Kl30Voltage=24000),(VIN=WBA3X11010GV35856),(IPAddress=127.0.0.1)";
+                    byte[] attrBytes = Encoding.ASCII.GetBytes(attributs);
                     int attrLen = attrBytes.Length;
                     response.Add((byte)(attrLen >> 8));      // List length
                     response.Add((byte)(attrLen & 0xFF));
