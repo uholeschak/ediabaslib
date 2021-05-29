@@ -1873,9 +1873,9 @@ namespace CarSimulator
                     response.Add(0x00);         // Error code (2 Byte)
                     response.Add(0x00);
 
-                    //string attributs =
-                        //string.Format("(DevId=G31),(Serial=WBA3X11010GV35856{0}),(DevType=ENET),(Color=#00ff00),(State=4),(Kl15Voltage=24000),(Kl30Voltage=24000),(VIN=WBA3X11010GV35856),(IPAddress={0})", localIp);
-                    string attributs = "(DevId=G31),(Serial=WBA3X11010GV35856),(DevType=ENET),(Color=#00ff00),(State=4),(Kl15Voltage=24000),(Kl30Voltage=24000),(VIN=WBA3X11010GV35856),(IPAddress=127.0.0.1)";
+                    string attributs =
+                        string.Format("(DevId=G31),(Serial=WBA3X11010GV35856{0}),(DevType=ENET),(Color=#00ff00),(State=4),(Kl15Voltage=12000),(Kl30Voltage=12000),(VIN=WBA3X11010GV35856),(IPAddress={1})",
+                            BitConverter.ToString(localIp.GetAddressBytes()).Replace("-", ""), localIp);
                     byte[] attrBytes = Encoding.ASCII.GetBytes(attributs);
                     int attrLen = attrBytes.Length;
                     response.Add((byte)(attrLen >> 8));      // List length
