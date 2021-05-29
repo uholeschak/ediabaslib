@@ -102,6 +102,12 @@ namespace EdiabasLib
                     RemoteHostProtected = prop;
                 }
 
+                prop = EdiabasProtected.GetConfigProperty("RemoteHost");
+                if (prop != null)
+                {
+                    RemoteHostProtected = prop;
+                }
+
                 prop = EdiabasProtected.GetConfigProperty("EnetTesterAddress");
                 if (prop != null)
                 {
@@ -114,13 +120,31 @@ namespace EdiabasLib
                     ControlPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
+                prop = EdiabasProtected.GetConfigProperty("ControlPort");
+                if (prop != null)
+                {
+                    ControlPort = (int)EdiabasNet.StringToValue(prop);
+                }
+
                 prop = EdiabasProtected.GetConfigProperty("EnetDiagnosticPort");
                 if (prop != null)
                 {
                     DiagnosticPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
+                prop = EdiabasProtected.GetConfigProperty("DiagnosticPort");
+                if (prop != null)
+                {
+                    ControlPort = (int)EdiabasNet.StringToValue(prop);
+                }
+
                 prop = EdiabasProtected.GetConfigProperty("EnetConnectTimeout");
+                if (prop != null)
+                {
+                    ConnectTimeout = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected.GetConfigProperty("ConnectTimeout");
                 if (prop != null)
                 {
                     ConnectTimeout = (int)EdiabasNet.StringToValue(prop);
