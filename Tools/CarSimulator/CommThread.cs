@@ -1562,7 +1562,7 @@ namespace CarSimulator
 
         private void StartUdpListen()
         {
-            _udpClient.BeginReceive(UdpReceiver, new Object());
+            _udpClient?.BeginReceive(UdpReceiver, new Object());
         }
 
         private void UdpReceiver(IAsyncResult ar)
@@ -1674,7 +1674,7 @@ namespace CarSimulator
         {
             IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
             EndPoint tempRemoteEp = ip;
-            _udpSocket.BeginReceiveFrom(_udpBuffer, 0, _udpBuffer.Length, SocketFlags.None, ref tempRemoteEp, UdpSocketReceiver, _udpSocket);
+            _udpSocket?.BeginReceiveFrom(_udpBuffer, 0, _udpBuffer.Length, SocketFlags.None, ref tempRemoteEp, UdpSocketReceiver, _udpSocket);
         }
 
         private void UdpSocketReceiver(IAsyncResult ar)
@@ -1816,7 +1816,7 @@ namespace CarSimulator
 
         private void StartSrvLocListen()
         {
-            _srvLocClient.BeginReceive(SrvLocReceiver, new Object());
+            _srvLocClient?.BeginReceive(SrvLocReceiver, new Object());
         }
 
         private void SrvLocReceiver(IAsyncResult ar)
