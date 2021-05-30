@@ -1874,7 +1874,7 @@ namespace CarSimulator
                     response.Add(0x00);
 
                     string attributs =
-                        string.Format("(DevId=G31),(Serial=WBA3X11010GV35856{0}),(DevType=ENET),(Color=#00ff00),(State=4),(Kl15Voltage=12000),(Kl30Voltage=12000),(VIN=WBA3X11010GV35856),(IPAddress={1})",
+                        string.Format("(DevId=G31),(Serial=WBA3X11010GV35856{0}),(DevType=ENET),(Color=#00ff00),(State=4),(Kl15Voltage=12000),(Kl30Voltage=12000),(VIN=WBA3X11010GV35856),(PowerSupply=12000),(VciChannels=[0?;1?;2?;3+]),(IPAddress={1})",
                             BitConverter.ToString(localIp.GetAddressBytes()).Replace("-", ""), localIp);
                     byte[] attrBytes = Encoding.ASCII.GetBytes(attributs);
                     int attrLen = attrBytes.Length;
