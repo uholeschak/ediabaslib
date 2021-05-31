@@ -13,7 +13,6 @@ namespace MergeEcuFunctions
         {
             Console.OutputEncoding = Encoding.Unicode;
             TextWriter outTextWriter = args.Length >= 0 ? Console.Out : null;
-            TextWriter logTextWriter = args.Length >= 3 ? Console.Out : null;
 
             if (args.Length < 1)
             {
