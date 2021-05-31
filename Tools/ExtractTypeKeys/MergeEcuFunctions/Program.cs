@@ -102,6 +102,7 @@ namespace MergeEcuFunctions
 
         static bool MergeEcuVariant(TextWriter outTextWriter, string fileName, EcuFunctionStructs.EcuVariant ecuVariantIn, EcuFunctionStructs.EcuVariant ecuVariantMerge)
         {
+            bool matched = false;
             if (ecuVariantMerge.RefEcuVariantList != null)
             {
                 foreach (EcuFunctionStructs.RefEcuVariant refEcuVariant in ecuVariantMerge.RefEcuVariantList)
@@ -119,8 +120,22 @@ namespace MergeEcuFunctions
                                     {
                                         if (jobList.Count > 0)
                                         {
-                                            jobList[0].IgnoreMatch = true;
-                                            MergeEcuJobResult(outTextWriter, fileName, jobList[0], ecuJob);
+                                            matched = true;
+                                            EcuFunctionStructs.EcuJob ecuJobMatched = jobList[0];
+                                            if (jobList.Count > 1)
+                                            {
+                                                foreach (EcuFunctionStructs.EcuJob ecuJobCheck in jobList)
+                                                {
+                                                    if (MergeEcuJobResult(outTextWriter, fileName, ecuJobCheck, ecuJob, true))
+                                                    {
+                                                        ecuJobMatched = ecuJobCheck;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+
+                                            ecuJobMatched.IgnoreMatch = true;
+                                            MergeEcuJobResult(outTextWriter, fileName, ecuJobMatched, ecuJob);
                                         }
                                         else
                                         {
@@ -133,7 +148,7 @@ namespace MergeEcuFunctions
                     }
                 }
             }
-            return true;
+            return matched;
         }
 
         static List<EcuFunctionStructs.EcuJob> GetMatchingEcuJobs(EcuFunctionStructs.EcuVariant ecuVariant, EcuFunctionStructs.EcuJob ecuJobComp)
@@ -176,8 +191,9 @@ namespace MergeEcuFunctions
             return jobList;
         }
 
-        static bool MergeEcuJobResult(TextWriter outTextWriter, string fileName, EcuFunctionStructs.EcuJob ecuJobIn, EcuFunctionStructs.EcuJob ecuJobMerge)
+        static bool MergeEcuJobResult(TextWriter outTextWriter, string fileName, EcuFunctionStructs.EcuJob ecuJobIn, EcuFunctionStructs.EcuJob ecuJobMerge, bool checkOnly = false)
         {
+            bool matched = false;
             if (ecuJobMerge.EcuJobResultList != null)
             {
                 foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJobMerge.EcuJobResultList)
@@ -187,20 +203,30 @@ namespace MergeEcuFunctions
                         List<EcuFunctionStructs.EcuJobResult> jobResultList = GetMatchingEcuJobResults(ecuJobIn, ecuJobResult);
                         if (jobResultList != null)
                         {
-                            if (jobResultList.Count == 0)
+                            if (jobResultList.Count > 0)
                             {
-                                outTextWriter?.WriteLine("File='{0}', Job='{1}', Result='{2}': No Match", fileName, ecuJobMerge.Name, ecuJobResult.Name);
+                                matched = true;
+                                if (jobResultList.Count > 1)
+                                {
+                                    if (!checkOnly)
+                                    {
+                                        outTextWriter?.WriteLine("File='{0}', Job='{1}', Result='{2}': Match count={3}", fileName, ecuJobMerge.Name, ecuJobResult.Name, jobResultList.Count);
+                                    }
+                                }
                             }
-                            else if (jobResultList.Count > 1)
+                            else
                             {
-                                outTextWriter?.WriteLine("File='{0}', Job='{1}', Result='{2}': Match count={3}", fileName, ecuJobMerge.Name, ecuJobResult.Name, jobResultList.Count);
+                                if (!checkOnly)
+                                {
+                                    outTextWriter?.WriteLine("File='{0}', Job='{1}', Result='{2}': No Match", fileName, ecuJobMerge.Name, ecuJobResult.Name);
+                                }
                             }
                         }
                     }
                 }
             }
 
-            return true;
+            return matched;
         }
 
         static List<EcuFunctionStructs.EcuJobResult> GetMatchingEcuJobResults(EcuFunctionStructs.EcuJob ecuJob, EcuFunctionStructs.EcuJobResult ecuJobResultComp)
