@@ -118,9 +118,13 @@ namespace MergeEcuFunctions
                                     List<EcuFunctionStructs.EcuJob> jobList = GetMatchingEcuJobs(ecuVariantIn, ecuJob);
                                     if (jobList != null)
                                     {
-                                        if (jobList.Count > 1)
+                                        if (jobList.Count > 0)
                                         {
-                                            outTextWriter?.WriteLine("File='{0}', Job='{1}': Match count={2}", fileName, ecuJob.Name, jobList.Count);
+                                            jobList[0].IgnoreMatch = true;
+                                        }
+                                        else
+                                        {
+                                            outTextWriter?.WriteLine("File='{0}', Job='{1}': No Match", fileName, ecuJob.Name);
                                         }
                                     }
                                 }
@@ -139,7 +143,7 @@ namespace MergeEcuFunctions
                 return null;
             }
 
-            List<EcuFunctionStructs.EcuJob> jobList = new List<EcuFunctionStructs.EcuJob>();
+            List <EcuFunctionStructs.EcuJob> jobList = new List<EcuFunctionStructs.EcuJob>();
             if (ecuVariant.RefEcuVariantList != null)
             {
                 foreach (EcuFunctionStructs.RefEcuVariant refEcuVariant in ecuVariant.RefEcuVariantList)
@@ -156,7 +160,10 @@ namespace MergeEcuFunctions
                                     {
                                         if (string.Compare(ecuJob.Name, ecuJobComp.Name, StringComparison.OrdinalIgnoreCase) == 0)
                                         {
-                                            jobList.Add(ecuJob);
+                                            if (!ecuJob.IgnoreMatch)
+                                            {
+                                                jobList.Add(ecuJob);
+                                            }
                                         }
                                     }
                                 }
@@ -168,6 +175,5 @@ namespace MergeEcuFunctions
 
             return jobList;
         }
-
     }
 }

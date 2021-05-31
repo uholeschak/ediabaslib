@@ -700,6 +700,7 @@ namespace BmwFileReader
             [XmlElement("Ran"), DefaultValue("")] public string Rank { get; set; }
             [XmlArray("JPL"), DefaultValue(null)] public List<EcuJobParameter> EcuJobParList { get; set; }
             [XmlArray("JRL"), DefaultValue(null)] public List<EcuJobResult> EcuJobResultList { get; set; }
+            [XmlIgnore] public bool IgnoreMatch { get; set; }
         }
 
         [XmlType("JPar")]
