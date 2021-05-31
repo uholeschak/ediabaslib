@@ -121,6 +121,7 @@ namespace MergeEcuFunctions
                                         if (jobList.Count > 0)
                                         {
                                             jobList[0].IgnoreMatch = true;
+                                            MergeEcuJobResult(outTextWriter, fileName, jobList[0], ecuJob);
                                         }
                                         else
                                         {
@@ -174,6 +175,58 @@ namespace MergeEcuFunctions
             }
 
             return jobList;
+        }
+
+        static bool MergeEcuJobResult(TextWriter outTextWriter, string fileName, EcuFunctionStructs.EcuJob ecuJobIn, EcuFunctionStructs.EcuJob ecuJobMerge)
+        {
+            if (ecuJobMerge.EcuJobResultList != null)
+            {
+                foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJobMerge.EcuJobResultList)
+                {
+                    if (!string.IsNullOrEmpty(ecuJobResult.Name))
+                    {
+                        List<EcuFunctionStructs.EcuJobResult> jobResultList = GetMatchingEcuJobResults(ecuJobIn, ecuJobResult);
+                        if (jobResultList != null)
+                        {
+                            if (jobResultList.Count == 0)
+                            {
+                                outTextWriter?.WriteLine("File='{0}', Job='{1}', Result='{2}': No Match", fileName, ecuJobMerge.Name, ecuJobResult.Name);
+                            }
+                            else if (jobResultList.Count > 1)
+                            {
+                                outTextWriter?.WriteLine("File='{0}', Job='{1}', Result='{2}': Match count={3}", fileName, ecuJobMerge.Name, ecuJobResult.Name, jobResultList.Count);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        static List<EcuFunctionStructs.EcuJobResult> GetMatchingEcuJobResults(EcuFunctionStructs.EcuJob ecuJob, EcuFunctionStructs.EcuJobResult ecuJobResultComp)
+        {
+            if (ecuJobResultComp == null || string.IsNullOrEmpty(ecuJobResultComp.Name))
+            {
+                return null;
+            }
+
+            List<EcuFunctionStructs.EcuJobResult> jobResultList = new List<EcuFunctionStructs.EcuJobResult>();
+            if (ecuJob.EcuJobResultList != null)
+            {
+                foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
+                {
+                    if (!string.IsNullOrEmpty(ecuJobResult.Name))
+                    {
+                        if (string.Compare(ecuJobResult.Name, ecuJobResultComp.Name, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            jobResultList.Add(ecuJobResult);
+                        }
+                    }
+                }
+            }
+
+            return jobResultList;
         }
     }
 }
