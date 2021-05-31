@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml.Serialization;
@@ -83,7 +84,7 @@ namespace MergeEcuFunctions
 
                             if (ecuVariantIn != null && ecuVariantMerge != null)
                             {
-
+                                MergeEcuVariant(outTextWriter, fileName, ecuVariantIn, ecuVariantMerge);
                             }
                         }
                     }
@@ -99,5 +100,74 @@ namespace MergeEcuFunctions
             }
             return 0;
         }
+
+        static bool MergeEcuVariant(TextWriter outTextWriter, string fileName, EcuFunctionStructs.EcuVariant ecuVariantIn, EcuFunctionStructs.EcuVariant ecuVariantMerge)
+        {
+            if (ecuVariantMerge.RefEcuVariantList != null)
+            {
+                foreach (EcuFunctionStructs.RefEcuVariant refEcuVariant in ecuVariantMerge.RefEcuVariantList)
+                {
+                    if (refEcuVariant.FixedFuncStructList != null)
+                    {
+                        foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in refEcuVariant.FixedFuncStructList)
+                        {
+                            if (ecuFixedFuncStruct.EcuJobList != null)
+                            {
+                                foreach (EcuFunctionStructs.EcuJob ecuJob in ecuFixedFuncStruct.EcuJobList)
+                                {
+                                    List<EcuFunctionStructs.EcuJob> jobList = GetMatchingEcuJobs(ecuVariantIn, ecuJob);
+                                    if (jobList != null)
+                                    {
+                                        if (jobList.Count > 1)
+                                        {
+                                            outTextWriter?.WriteLine("File='{0}', Job='{1}': Match count={2}", fileName, ecuJob.Name, jobList.Count);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
+        static List<EcuFunctionStructs.EcuJob> GetMatchingEcuJobs(EcuFunctionStructs.EcuVariant ecuVariant, EcuFunctionStructs.EcuJob ecuJobComp)
+        {
+            if (ecuJobComp == null || string.IsNullOrEmpty(ecuJobComp.Name))
+            {
+                return null;
+            }
+
+            List<EcuFunctionStructs.EcuJob> jobList = new List<EcuFunctionStructs.EcuJob>();
+            if (ecuVariant.RefEcuVariantList != null)
+            {
+                foreach (EcuFunctionStructs.RefEcuVariant refEcuVariant in ecuVariant.RefEcuVariantList)
+                {
+                    if (refEcuVariant.FixedFuncStructList != null)
+                    {
+                        foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in refEcuVariant.FixedFuncStructList)
+                        {
+                            if (ecuFixedFuncStruct.EcuJobList != null)
+                            {
+                                foreach (EcuFunctionStructs.EcuJob ecuJob in ecuFixedFuncStruct.EcuJobList)
+                                {
+                                    if (!string.IsNullOrEmpty(ecuJob.Name))
+                                    {
+                                        if (string.Compare(ecuJob.Name, ecuJobComp.Name, StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            jobList.Add(ecuJob);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return jobList;
+        }
+
     }
 }
