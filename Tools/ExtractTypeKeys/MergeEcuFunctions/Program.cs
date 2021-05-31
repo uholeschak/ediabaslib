@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Xml;
 using System.Xml.Serialization;
 using BmwFileReader;
 
@@ -24,6 +26,11 @@ namespace MergeEcuFunctions
                 outTextWriter?.WriteLine("No merge directory specified");
                 return 1;
             }
+            if (args.Length < 3)
+            {
+                outTextWriter?.WriteLine("No output directory specified");
+                return 1;
+            }
 
             string inDir = args[0];
             if (string.IsNullOrEmpty(inDir))
@@ -36,6 +43,13 @@ namespace MergeEcuFunctions
             if (string.IsNullOrEmpty(mergeDir))
             {
                 outTextWriter?.WriteLine("Merge directory empty");
+                return 1;
+            }
+
+            string outDir = args[2];
+            if (string.IsNullOrEmpty(outDir))
+            {
+                outTextWriter?.WriteLine("Output directory empty");
                 return 1;
             }
 
@@ -52,6 +66,22 @@ namespace MergeEcuFunctions
                     outTextWriter?.WriteLine("Output directory not existing");
                     return 1;
                 }
+
+                string outDirSub = Path.Combine(outDir, "EcuFunctionsMerged");
+                try
+                {
+                    if (Directory.Exists(outDirSub))
+                    {
+                        Directory.Delete(outDirSub, true);
+                        Thread.Sleep(1000);
+                    }
+                    Directory.CreateDirectory(outDirSub);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
 
                 string[] files = Directory.GetFiles(inDir, "*.xml");
                 foreach (string inFile in files)
@@ -84,6 +114,17 @@ namespace MergeEcuFunctions
                             if (ecuVariantIn != null && ecuVariantMerge != null)
                             {
                                 MergeEcuVariant(outTextWriter, fileName, ecuVariantIn, ecuVariantMerge);
+
+                                string xmlFile = Path.Combine(outDirSub, fileName);
+                                XmlWriterSettings settings = new XmlWriterSettings
+                                {
+                                    Indent = true,
+                                    IndentChars = "\t"
+                                };
+                                using (XmlWriter writer = XmlWriter.Create(xmlFile, settings))
+                                {
+                                    serializer.Serialize(writer, ecuVariantIn);
+                                }
                             }
                         }
                     }
@@ -135,6 +176,19 @@ namespace MergeEcuFunctions
                                             }
 
                                             ecuJobMatched.IgnoreMatch = true;
+                                            if (string.Compare(ecuJobMatched.Id, ecuJob.Id, StringComparison.OrdinalIgnoreCase) != 0)
+                                            {
+                                                if (ecuJobMatched.CompatIdListList == null)
+                                                {
+                                                    ecuJobMatched.CompatIdListList = new List<string>();
+                                                }
+
+                                                if (!ecuJobMatched.CompatIdListList.Contains(ecuJob.Id))
+                                                {
+                                                    ecuJobMatched.CompatIdListList.Add(ecuJob.Id);
+                                                }
+                                            }
+
                                             MergeEcuJobResult(outTextWriter, fileName, ecuJobMatched, ecuJob);
                                         }
                                         else
@@ -206,9 +260,26 @@ namespace MergeEcuFunctions
                             if (jobResultList.Count > 0)
                             {
                                 matched = true;
-                                if (jobResultList.Count > 1)
+
+                                if (!checkOnly)
                                 {
-                                    if (!checkOnly)
+                                    if (jobResultList.Count == 1)
+                                    {
+                                        EcuFunctionStructs.EcuJobResult ecuJobMatch = jobResultList[0];
+                                        if (string.Compare(ecuJobMatch.Id, ecuJobResult.Id, StringComparison.OrdinalIgnoreCase) != 0)
+                                        {
+                                            if (ecuJobMatch.CompatIdListList == null)
+                                            {
+                                                ecuJobMatch.CompatIdListList = new List<string>();
+                                            }
+
+                                            if (!ecuJobMatch.CompatIdListList.Contains(ecuJobResult.Id))
+                                            {
+                                                ecuJobMatch.CompatIdListList.Add(ecuJobResult.Id);
+                                            }
+                                        }
+                                    }
+                                    else
                                     {
                                         outTextWriter?.WriteLine("File='{0}', Job='{1}', Result='{2}': Match count={3}", fileName, ecuJobMerge.Name, ecuJobResult.Name, jobResultList.Count);
                                     }

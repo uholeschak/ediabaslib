@@ -694,6 +694,7 @@ namespace BmwFileReader
             }
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
+            [XmlArray("CIDL"), DefaultValue(null)] public List<string> CompatIdListList { get; set; }
             [XmlElement("FNJob"), DefaultValue("")] public string FuncNameJob { get; set; }
             [XmlElement("Nam"), DefaultValue("")] public string Name { get; set; }
             [XmlElement("Pha"), DefaultValue("")] public string Phase { get; set; }
@@ -811,6 +812,7 @@ namespace BmwFileReader
             }
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
+            [XmlArray("CIDL"), DefaultValue(null)] public List<string> CompatIdListList { get; set; }
             [XmlElement("Tit"), DefaultValue(null)] public EcuTranslation Title { get; set; }
             [XmlElement("FNRes"), DefaultValue("")] public string FuncNameResult { get; set; }
             [XmlIgnore, XmlElement, DefaultValue("")] public string AdapterPath { get; set; }
