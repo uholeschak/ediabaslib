@@ -173,7 +173,8 @@ namespace MergeEcuFunctions
 
                                     if (ecuJobMatched == null)
                                     {
-                                        outTextWriter?.WriteLine("File='{0}', Job='{1}', Args='{2}': No result match, using first", fileName, ecuJob.Name, JobsArgsToString(ecuJob));
+                                        outTextWriter?.WriteLine("File='{0}', Job='{1}', Args='{2}', Res='{3}': No result match, using first",
+                                            fileName, ecuJob.Name, JobsArgsToString(ecuJob), JobsResultsToString(ecuJob));
                                         ecuJobMatched = jobList[0];
                                     }
                                 }
@@ -200,7 +201,7 @@ namespace MergeEcuFunctions
                             }
                             else
                             {
-                                outTextWriter?.WriteLine("File='{0}', Job='{1}', Args='{2}: No match", fileName, ecuJob.Name, JobsArgsToString(ecuJob));
+                                outTextWriter?.WriteLine("File='{0}', Job='{1}', Args='{2}, Res='{3}': No match", fileName, ecuJob.Name, JobsArgsToString(ecuJob), JobsResultsToString(ecuJob));
                             }
                         }
                     }
@@ -312,6 +313,26 @@ namespace MergeEcuFunctions
             return sb.ToString();
         }
 
+        static string JobsResultsToString(EcuFunctionStructs.EcuJob ecuJob)
+        {
+            if (ecuJob.EcuJobResultList == null)
+            {
+                return string.Empty;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append(ecuJobResult.Name);
+            }
+
+            return sb.ToString();
+        }
+
         static bool MergeEcuJobResult(TextWriter outTextWriter, string fileName, EcuFunctionStructs.EcuJob ecuJobIn, EcuFunctionStructs.EcuJob ecuJobMerge, bool checkOnly = false)
         {
             bool matched = false;
@@ -374,6 +395,7 @@ namespace MergeEcuFunctions
                 return null;
             }
 
+            int resultCount = 0;
             List<EcuFunctionStructs.EcuJobResult> jobResultList = new List<EcuFunctionStructs.EcuJobResult>();
             if (ecuJob.EcuJobResultList != null)
             {
@@ -381,12 +403,18 @@ namespace MergeEcuFunctions
                 {
                     if (!string.IsNullOrEmpty(ecuJobResult.Name))
                     {
+                        resultCount++;
                         if (string.Compare(ecuJobResult.Name, ecuJobResultComp.Name, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             jobResultList.Add(ecuJobResult);
                         }
                     }
                 }
+            }
+
+            if (resultCount == 0)
+            {
+                return null;
             }
 
             return jobResultList;
