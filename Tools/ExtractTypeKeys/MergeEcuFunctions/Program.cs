@@ -246,7 +246,7 @@ namespace MergeEcuFunctions
                         {
                             if (string.Compare(ecuJob.Name, ecuJobComp.Name, StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                if (!ecuJob.IgnoreMatch)
+                                if (EcuJobsArgsIdentical(ecuJob, ecuJobComp) && !ecuJob.IgnoreMatch)
                                 {
                                     jobList.Add(ecuJob);
                                 }
@@ -258,6 +258,30 @@ namespace MergeEcuFunctions
 
             return jobList;
         }
+
+        static bool EcuJobsArgsIdentical(EcuFunctionStructs.EcuJob ecuJob1, EcuFunctionStructs.EcuJob ecuJob2)
+        {
+            int count1 = ecuJob1.EcuJobParList?.Count ?? 0;
+            int count2 = ecuJob2.EcuJobParList?.Count ?? 0;
+            if (count1 != count2)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < count1; i++)
+            {
+                if (ecuJob1.EcuJobParList != null && ecuJob2.EcuJobParList != null)
+                {
+                    if (string.Compare(ecuJob1.EcuJobParList[i].Name, ecuJob2.EcuJobParList[i].Name, StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
 
         static bool MergeEcuJobResult(TextWriter outTextWriter, string fileName, EcuFunctionStructs.EcuJob ecuJobIn, EcuFunctionStructs.EcuJob ecuJobMerge, bool checkOnly = false)
         {
