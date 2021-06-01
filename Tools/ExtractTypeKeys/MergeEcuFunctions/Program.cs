@@ -159,7 +159,7 @@ namespace MergeEcuFunctions
                             if (jobList.Count > 0)
                             {
                                 matched = true;
-                                EcuFunctionStructs.EcuJob ecuJobMatched = jobList[0];
+                                EcuFunctionStructs.EcuJob ecuJobMatched = null;
                                 if (jobList.Count > 1)
                                 {
                                     foreach (EcuFunctionStructs.EcuJob ecuJobCheck in jobList)
@@ -170,6 +170,16 @@ namespace MergeEcuFunctions
                                             break;
                                         }
                                     }
+
+                                    if (ecuJobMatched == null)
+                                    {
+                                        outTextWriter?.WriteLine("File='{0}', Job='{1}', Args='{2}': No result match, using first", fileName, ecuJob.Name, JobsArgsToString(ecuJob));
+                                        ecuJobMatched = jobList[0];
+                                    }
+                                }
+                                else
+                                {
+                                    ecuJobMatched = jobList[0];
                                 }
 
                                 ecuJobMatched.IgnoreMatch = true;
@@ -190,7 +200,7 @@ namespace MergeEcuFunctions
                             }
                             else
                             {
-                                outTextWriter?.WriteLine("File='{0}', Job='{1}': No Match", fileName, ecuJob.Name);
+                                outTextWriter?.WriteLine("File='{0}', Job='{1}', Args='{2}: No match", fileName, ecuJob.Name, JobsArgsToString(ecuJob));
                             }
                         }
                     }
@@ -272,7 +282,7 @@ namespace MergeEcuFunctions
             {
                 if (ecuJob1.EcuJobParList != null && ecuJob2.EcuJobParList != null)
                 {
-                    if (string.Compare(ecuJob1.EcuJobParList[i].Name, ecuJob2.EcuJobParList[i].Name, StringComparison.OrdinalIgnoreCase) != 0)
+                    if (string.Compare(ecuJob1.EcuJobParList[i].Value, ecuJob2.EcuJobParList[i].Value, StringComparison.OrdinalIgnoreCase) != 0)
                     {
                         return false;
                     }
@@ -282,6 +292,25 @@ namespace MergeEcuFunctions
             return true;
         }
 
+        static string JobsArgsToString(EcuFunctionStructs.EcuJob ecuJob)
+        {
+            if (ecuJob.EcuJobParList == null)
+            {
+                return string.Empty;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            foreach (EcuFunctionStructs.EcuJobParameter ecuJobPar in ecuJob.EcuJobParList)
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append(ecuJobPar.Value);
+            }
+
+            return sb.ToString();
+        }
 
         static bool MergeEcuJobResult(TextWriter outTextWriter, string fileName, EcuFunctionStructs.EcuJob ecuJobIn, EcuFunctionStructs.EcuJob ecuJobMerge, bool checkOnly = false)
         {
