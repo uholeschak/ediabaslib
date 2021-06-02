@@ -695,8 +695,7 @@ namespace BmwFileReader
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
 
-            [XmlArray("CIDL"), DefaultValue(null)]
-            public List<string> CompatIdListList { get; set; }
+            [XmlArray("CIDL"), DefaultValue(null)] public List<string> CompatIdListList { get; set; }
             [XmlIgnore] public bool CompatIdListListSpecified
             {
                 get
@@ -706,9 +705,6 @@ namespace BmwFileReader
                         return true;
                     }
                     return false;
-                }
-                set
-                {
                 }
             }
 
@@ -830,10 +826,8 @@ namespace BmwFileReader
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
 
-            [XmlArray("CIDL"), DefaultValue(null)]
-            public List<string> CompatIdListList { get; set; }
-            [XmlIgnore]
-            public bool CompatIdListListSpecified
+            [XmlArray("CIDL"), DefaultValue(null)] public List<string> CompatIdListList { get; set; }
+            [XmlIgnore] public bool CompatIdListListSpecified
             {
                 get
                 {
@@ -842,9 +836,6 @@ namespace BmwFileReader
                         return true;
                     }
                     return false;
-                }
-                set
-                {
                 }
             }
 
