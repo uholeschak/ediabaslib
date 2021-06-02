@@ -186,12 +186,7 @@ namespace MergeEcuFunctions
                                 ecuJobMatched.IgnoreMatch = true;
                                 if (string.Compare(ecuJobMatched.Id, ecuJob.Id, StringComparison.OrdinalIgnoreCase) != 0)
                                 {
-                                    List<string> compatIdListList = ecuJobMatched.CompatIdListList;
-                                    if (compatIdListList == null)
-                                    {
-                                        compatIdListList = new List<string>();
-                                    }
-
+                                    List<string> compatIdListList = ecuJobMatched.CompatIdListList ?? new List<string>();
                                     if (!compatIdListList.Contains(ecuJob.Id))
                                     {
                                         compatIdListList.Add(ecuJob.Id);
@@ -361,12 +356,7 @@ namespace MergeEcuFunctions
                                         EcuFunctionStructs.EcuJobResult ecuJobMatch = jobResultList[0];
                                         if (string.Compare(ecuJobMatch.Id, ecuJobResult.Id, StringComparison.OrdinalIgnoreCase) != 0)
                                         {
-                                            List<string> compatIdListList = ecuJobMatch.CompatIdListList;
-                                            if (compatIdListList == null)
-                                            {
-                                                compatIdListList = new List<string>();
-                                            }
-
+                                            List<string> compatIdListList = ecuJobMatch.CompatIdListList ?? new List<string>();
                                             if (!compatIdListList.Contains(ecuJobResult.Id))
                                             {
                                                 compatIdListList.Add(ecuJobResult.Id);
