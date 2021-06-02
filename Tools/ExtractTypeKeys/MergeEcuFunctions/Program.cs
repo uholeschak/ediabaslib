@@ -173,9 +173,9 @@ namespace MergeEcuFunctions
 
                                     if (ecuJobMatched == null)
                                     {
-                                        outTextWriter?.WriteLine("File='{0}', Job='{1}', Args='{2}', Res='{3}': No result match, using first",
-                                            fileName, ecuJob.Name, JobsArgsToString(ecuJob), JobsResultsToString(ecuJob));
                                         ecuJobMatched = jobList[0];
+                                        outTextWriter?.WriteLine("File='{0}', Job='{1}', Args='{2}', Res='{3}', ArgsM='{4}', ResM='{5}': No result match, using first",
+                                            fileName, ecuJob.Name, JobsArgsToString(ecuJob), JobsResultsToString(ecuJob), JobsArgsToString(ecuJobMatched), JobsResultsToString(ecuJobMatched));
                                     }
                                 }
                                 else
@@ -201,7 +201,7 @@ namespace MergeEcuFunctions
                             }
                             else
                             {
-                                outTextWriter?.WriteLine("File='{0}', Job='{1}', Args='{2}, Res='{3}': No match", fileName, ecuJob.Name, JobsArgsToString(ecuJob), JobsResultsToString(ecuJob));
+                                outTextWriter?.WriteLine("File='{0}', Job='{1}', Args='{2}', Res='{3}': No match", fileName, ecuJob.Name, JobsArgsToString(ecuJob), JobsResultsToString(ecuJob));
                             }
                         }
                     }
@@ -335,6 +335,7 @@ namespace MergeEcuFunctions
 
         static bool MergeEcuJobResult(TextWriter outTextWriter, string fileName, EcuFunctionStructs.EcuJob ecuJobIn, EcuFunctionStructs.EcuJob ecuJobMerge, bool checkOnly = false)
         {
+            int resultCount = 0;
             bool matched = false;
             if (ecuJobMerge.EcuJobResultList != null)
             {
@@ -345,6 +346,7 @@ namespace MergeEcuFunctions
                         List<EcuFunctionStructs.EcuJobResult> jobResultList = GetMatchingEcuJobResults(ecuJobIn, ecuJobResult);
                         if (jobResultList != null)
                         {
+                            resultCount++;
                             if (jobResultList.Count > 0)
                             {
                                 matched = true;
@@ -382,6 +384,14 @@ namespace MergeEcuFunctions
                             }
                         }
                     }
+                }
+            }
+
+            if (resultCount == 0)
+            {
+                if (checkOnly)
+                {
+                    matched = true;
                 }
             }
 
