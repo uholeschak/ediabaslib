@@ -186,15 +186,18 @@ namespace MergeEcuFunctions
                                 ecuJobMatched.IgnoreMatch = true;
                                 if (string.Compare(ecuJobMatched.Id, ecuJob.Id, StringComparison.OrdinalIgnoreCase) != 0)
                                 {
-                                    if (ecuJobMatched.CompatIdListList == null)
+                                    List<string> compatIdListList = ecuJobMatched.CompatIdListList;
+                                    if (compatIdListList == null)
                                     {
-                                        ecuJobMatched.CompatIdListList = new List<string>();
+                                        compatIdListList = new List<string>();
                                     }
 
-                                    if (!ecuJobMatched.CompatIdListList.Contains(ecuJob.Id))
+                                    if (!compatIdListList.Contains(ecuJob.Id))
                                     {
-                                        ecuJobMatched.CompatIdListList.Add(ecuJob.Id);
+                                        compatIdListList.Add(ecuJob.Id);
                                     }
+
+                                    ecuJobMatched.CompatIdListList = compatIdListList;
                                 }
 
                                 MergeEcuJobResult(outTextWriter, fileName, ecuJobMatched, ecuJob);
@@ -358,15 +361,18 @@ namespace MergeEcuFunctions
                                         EcuFunctionStructs.EcuJobResult ecuJobMatch = jobResultList[0];
                                         if (string.Compare(ecuJobMatch.Id, ecuJobResult.Id, StringComparison.OrdinalIgnoreCase) != 0)
                                         {
-                                            if (ecuJobMatch.CompatIdListList == null)
+                                            List<string> compatIdListList = ecuJobMatch.CompatIdListList;
+                                            if (compatIdListList == null)
                                             {
-                                                ecuJobMatch.CompatIdListList = new List<string>();
+                                                compatIdListList = new List<string>();
                                             }
 
-                                            if (!ecuJobMatch.CompatIdListList.Contains(ecuJobResult.Id))
+                                            if (!compatIdListList.Contains(ecuJobResult.Id))
                                             {
-                                                ecuJobMatch.CompatIdListList.Add(ecuJobResult.Id);
+                                                compatIdListList.Add(ecuJobResult.Id);
                                             }
+
+                                            ecuJobMatch.CompatIdListList = compatIdListList;
                                         }
                                     }
                                     else
