@@ -366,6 +366,17 @@ namespace BmwFileReader
             [XmlElement("IStr"), DefaultValue("")] public string IdentStr { get; set; }
             [XmlElement("Uni"), DefaultValue("")] public string Unit { get; set; }
             [XmlArray("RSVL"), DefaultValue(null)] public List<EcuResultStateValue> EcuResultStateValueList { get; set; }
+            [XmlIgnore] public bool EcuResultStateValueListSpecified
+            {
+                get
+                {
+                    if (EcuResultStateValueList != null && EcuResultStateValueList.Count > 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
         }
 
         [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuJob))]
@@ -712,8 +723,32 @@ namespace BmwFileReader
             [XmlElement("Nam"), DefaultValue("")] public string Name { get; set; }
             [XmlElement("Pha"), DefaultValue("")] public string Phase { get; set; }
             [XmlElement("Ran"), DefaultValue("")] public string Rank { get; set; }
+
             [XmlArray("JPL"), DefaultValue(null)] public List<EcuJobParameter> EcuJobParList { get; set; }
+            [XmlIgnore] public bool EcuJobParListSpecified
+            {
+                get
+                {
+                    if (EcuJobParList != null && EcuJobParList.Count > 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+
             [XmlArray("JRL"), DefaultValue(null)] public List<EcuJobResult> EcuJobResultList { get; set; }
+            [XmlIgnore] public bool EcuJobResultListSpecified
+            {
+                get
+                {
+                    if (EcuJobResultList != null && EcuJobResultList.Count > 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
             [XmlIgnore] public bool IgnoreMatch { get; set; }
         }
 
@@ -853,6 +888,17 @@ namespace BmwFileReader
             [XmlElement("Rnd"), DefaultValue("")] public string Round { get; set; }
             [XmlElement("FNum"), DefaultValue("")] public string NumberFormat { get; set; }
             [XmlArray("RSVL"), DefaultValue(null)] public List<EcuResultStateValue> EcuResultStateValueList { get; set; }
+            [XmlIgnore] public bool EcuResultStateValueListSpecified
+            {
+                get
+                {
+                    if (EcuResultStateValueList != null && EcuResultStateValueList.Count > 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
         }
 
         [XmlInclude(typeof(EcuTranslation))]
