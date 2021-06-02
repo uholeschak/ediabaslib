@@ -695,21 +695,21 @@ namespace BmwFileReader
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
 
-            private List<string> compatIdListList;
             [XmlArray("CIDL"), DefaultValue(null)]
-            public List<string> CompatIdListList
+            public List<string> CompatIdListList { get; set; }
+            [XmlIgnore] public bool CompatIdListListSpecified
             {
                 get
                 {
-                    if (compatIdListList != null && compatIdListList.Count == 0)
+                    if (CompatIdListList != null && CompatIdListList.Count > 0)
                     {
-                        return null;
+                        return true;
                     }
-
-                    return compatIdListList;
+                    return false;
                 }
-
-                set => compatIdListList = value;
+                set
+                {
+                }
             }
 
             [XmlElement("FNJob"), DefaultValue("")] public string FuncNameJob { get; set; }
@@ -830,20 +830,22 @@ namespace BmwFileReader
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
 
-            private List<string> compatIdListList;
-            [XmlArray("CIDL"), DefaultValue(null)] public List<string> CompatIdListList
+            [XmlArray("CIDL"), DefaultValue(null)]
+            public List<string> CompatIdListList { get; set; }
+            [XmlIgnore]
+            public bool CompatIdListListSpecified
             {
                 get
                 {
-                    if (compatIdListList != null && compatIdListList.Count == 0)
+                    if (CompatIdListList != null && CompatIdListList.Count > 0)
                     {
-                        return null;
+                        return true;
                     }
-
-                    return compatIdListList;
+                    return false;
                 }
-
-                set => compatIdListList = value;
+                set
+                {
+                }
             }
 
             [XmlElement("Tit"), DefaultValue(null)] public EcuTranslation Title { get; set; }
