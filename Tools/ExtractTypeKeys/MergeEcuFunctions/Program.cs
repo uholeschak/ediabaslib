@@ -143,8 +143,8 @@ namespace MergeEcuFunctions
 
         static bool MergeEcuVariant(TextWriter outTextWriter, string fileName, EcuFunctionStructs.EcuVariant ecuVariantIn, EcuFunctionStructs.EcuVariant ecuVariantMerge)
         {
-            List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructListIn = GetFixedFuncStructList(ecuVariantIn);
-            List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructListMerge = GetFixedFuncStructList(ecuVariantMerge);
+            List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructListIn = GetFixedFuncStructListRead(ecuVariantIn);
+            List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructListMerge = GetFixedFuncStructListRead(ecuVariantMerge);
 
             bool matched = false;
             foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in fixedFuncStructListMerge)
@@ -206,6 +206,21 @@ namespace MergeEcuFunctions
                 }
             }
             return matched;
+        }
+
+        static List<EcuFunctionStructs.EcuFixedFuncStruct> GetFixedFuncStructListRead(EcuFunctionStructs.EcuVariant ecuVariant)
+        {
+            List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructList = GetFixedFuncStructList(ecuVariant);
+            List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructListRead = new List<EcuFunctionStructs.EcuFixedFuncStruct>();
+            foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFunc in fixedFuncStructList)
+            {
+                if (ecuFixedFunc.GetNodeClassType() != EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
+                {
+                    fixedFuncStructListRead.Add(ecuFixedFunc);
+                }
+            }
+
+            return fixedFuncStructListRead;
         }
 
         static List<EcuFunctionStructs.EcuFixedFuncStruct> GetFixedFuncStructList(EcuFunctionStructs.EcuVariant ecuVariant)
