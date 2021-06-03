@@ -244,24 +244,35 @@ namespace MergeEcuFunctions
                 return null;
             }
 
-            List <EcuFunctionStructs.EcuJob> jobList = new List<EcuFunctionStructs.EcuJob>();
-            foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in fixedFuncStructList)
+            List<EcuFunctionStructs.EcuJob> jobList = new List<EcuFunctionStructs.EcuJob>();
+            for (int step = 0; step < 2; step++)
             {
-                if (ecuFixedFuncStruct.EcuJobList != null)
+                jobList.Clear();
+                int matchCount = 0;
+                foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in fixedFuncStructList)
                 {
-                    foreach (EcuFunctionStructs.EcuJob ecuJob in ecuFixedFuncStruct.EcuJobList)
+                    if (ecuFixedFuncStruct.EcuJobList != null)
                     {
-                        if (!string.IsNullOrEmpty(ecuJob.Name))
+                        foreach (EcuFunctionStructs.EcuJob ecuJob in ecuFixedFuncStruct.EcuJobList)
                         {
-                            if (string.Compare(ecuJob.Name, ecuJobComp.Name, StringComparison.OrdinalIgnoreCase) == 0)
+                            if (!string.IsNullOrEmpty(ecuJob.Name))
                             {
-                                if (EcuJobsArgsIdentical(ecuJob, ecuJobComp) && !ecuJob.IgnoreMatch)
+                                if (string.Compare(ecuJob.Name, ecuJobComp.Name, StringComparison.OrdinalIgnoreCase) == 0)
                                 {
-                                    jobList.Add(ecuJob);
+                                    matchCount++;
+                                    if (!ecuJob.IgnoreMatch && (step > 0 || EcuJobsArgsIdentical(ecuJob, ecuJobComp)))
+                                    {
+                                        jobList.Add(ecuJob);
+                                    }
                                 }
                             }
                         }
                     }
+                }
+
+                if (jobList.Count == 1 || matchCount != 1)
+                {
+                    break;
                 }
             }
 
