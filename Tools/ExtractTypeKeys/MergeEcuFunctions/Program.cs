@@ -175,7 +175,7 @@ namespace MergeEcuFunctions
                                     if (ecuJobMatched == null)
                                     {
                                         ecuJobMatched = jobList[0];
-                                        outTextWriter?.WriteLine("File='{0}', Job='{1}', Args='{2}', Res='{3}', ArgsM='{4}', ResM='{5}': No result match, using first",
+                                        outTextWriter?.WriteLine("Merge Ecu: File='{0}', Job='{1}', Args='{2}', Res='{3}', ArgsM='{4}', ResM='{5}': No result match, using first",
                                             fileName, ecuJob.Name, JobsArgsToString(ecuJob), JobsResultsToString(ecuJob), JobsArgsToString(ecuJobMatched), JobsResultsToString(ecuJobMatched));
                                     }
                                 }
@@ -200,7 +200,7 @@ namespace MergeEcuFunctions
                             }
                             else
                             {
-                                outTextWriter?.WriteLine("File='{0}', Job='{1}', Args='{2}', Res='{3}': No match", fileName, ecuJob.Name, JobsArgsToString(ecuJob), JobsResultsToString(ecuJob));
+                                outTextWriter?.WriteLine("Merge Ecu: File='{0}', Job='{1}', Args='{2}', Res='{3}': No match", fileName, ecuJob.Name, JobsArgsToString(ecuJob), JobsResultsToString(ecuJob));
                             }
                         }
                     }
@@ -401,7 +401,8 @@ namespace MergeEcuFunctions
                                     }
                                     else
                                     {
-                                        outTextWriter?.WriteLine("File='{0}', Job='{1}', Result='{2}': Match count={3}", fileName, ecuJobMerge.Name, ecuJobResult.Name, jobResultList.Count);
+                                        outTextWriter?.WriteLine("Match Job: File='{0}', Job='{1}', Args='{2}', Result='{3}': Match count={4}",
+                                            fileName, ecuJobMerge.Name, JobsArgsToString(ecuJobMerge), ecuJobResult.Name, jobResultList.Count);
                                     }
                                 }
                             }
@@ -409,7 +410,8 @@ namespace MergeEcuFunctions
                             {
                                 if (!checkOnly)
                                 {
-                                    outTextWriter?.WriteLine("File='{0}', Job='{1}', Result='{2}': No Match", fileName, ecuJobMerge.Name, ecuJobResult.Name);
+                                    outTextWriter?.WriteLine("Match Job: File='{0}', Job='{1}', Args='{2}', Result='{3}': No match",
+                                        fileName, ecuJobMerge.Name, JobsArgsToString(ecuJobMerge), ecuJobResult.Name);
                                 }
                             }
                         }
