@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Xml;
@@ -296,21 +297,28 @@ namespace MergeEcuFunctions
 
         static bool EcuJobsArgsIdentical(EcuFunctionStructs.EcuJob ecuJob1, EcuFunctionStructs.EcuJob ecuJob2)
         {
-            int count1 = ecuJob1.EcuJobParList?.Count ?? 0;
-            int count2 = ecuJob2.EcuJobParList?.Count ?? 0;
-            if (count1 != count2)
+            List<EcuFunctionStructs.EcuJobParameter> parList1 = new List<EcuFunctionStructs.EcuJobParameter>();
+            if (ecuJob1.EcuJobParList != null)
+            {
+                parList1 = ecuJob1.EcuJobParList.OrderBy(x => x.Name).ToList();
+            }
+
+            List<EcuFunctionStructs.EcuJobParameter> parList2 = new List<EcuFunctionStructs.EcuJobParameter>();
+            if (ecuJob2.EcuJobParList != null)
+            {
+                parList2 = ecuJob2.EcuJobParList.OrderBy(x => x.Name).ToList();
+            }
+
+            if (parList1.Count != parList2.Count)
             {
                 return false;
             }
 
-            for (int i = 0; i < count1; i++)
+            for (int i = 0; i < parList1.Count; i++)
             {
-                if (ecuJob1.EcuJobParList != null && ecuJob2.EcuJobParList != null)
+                if (string.Compare(parList1[i].Value, parList2[i].Value, StringComparison.OrdinalIgnoreCase) != 0)
                 {
-                    if (string.Compare(ecuJob1.EcuJobParList[i].Value, ecuJob2.EcuJobParList[i].Value, StringComparison.OrdinalIgnoreCase) != 0)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
 
