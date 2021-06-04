@@ -499,6 +499,7 @@ namespace Ediabas
                 {
                     setLocalError(EDIABAS_IFH_0018);
                     _ediabas.Dispose();
+                    logFormat(ApiLogLevel.Normal, "Unit invalid: {0}", unit);
                     logFormat(ApiLogLevel.Normal, "={0} ()", false);
                     return false;
                 }
@@ -543,6 +544,7 @@ namespace Ediabas
                 {
                     setLocalError(EDIABAS_IFH_0027);
                     _ediabas.Dispose();
+                    logFormat(ApiLogLevel.Normal, "Ifh invalid: {0}", ifh);
                     logFormat(ApiLogLevel.Normal, "={0} ()", false);
                     return false;
                 }
@@ -557,6 +559,7 @@ namespace Ediabas
                 setLocalError(EDIABAS_API_0006);
                 edInterface.Dispose();
                 _ediabas.Dispose();
+                logFormat(ApiLogLevel.Normal, "Interface lock failed");
                 logFormat(ApiLogLevel.Normal, "={0} ()", false);
                 return false;
             }
