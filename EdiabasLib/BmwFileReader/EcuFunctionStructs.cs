@@ -749,7 +749,6 @@ namespace BmwFileReader
                     return false;
                 }
             }
-            [XmlIgnore] public bool IgnoreMatch { get; set; }
         }
 
         [XmlType("JPar")]
