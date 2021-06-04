@@ -45,6 +45,7 @@ namespace EdiabasLib
         protected EdiabasNet EdiabasProtected;
         protected object ConnectParameterProtected;
         protected static Mutex InterfaceMutex;
+        protected static bool MutexReleaseFailed;
         protected bool MutexAquired;
         protected UInt32 CommRepeatsProtected;
         protected UInt32[] CommParameterProtected;
@@ -67,6 +68,10 @@ namespace EdiabasLib
             {
                 if (!InterfaceMutex.WaitOne(0, false))
                 {
+                    if (MutexReleaseFailed)
+                    {
+                        return true;
+                    }
                     return false;
                 }
                 MutexAquired = true;
@@ -92,8 +97,16 @@ namespace EdiabasLib
             }
             if (MutexAquired)
             {
-                MutexAquired = false;
-                InterfaceMutex.ReleaseMutex();
+                try
+                {
+                    InterfaceMutex.ReleaseMutex();
+                    MutexAquired = false;
+                    MutexReleaseFailed = false;
+                }
+                catch (Exception)
+                {
+                    MutexReleaseFailed = true;
+                }
             }
             return true;
         }
