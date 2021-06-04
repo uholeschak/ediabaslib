@@ -210,7 +210,7 @@ namespace MergeEcuFunctions
 
         static int MergeEcuJob(TextWriter outTextWriter, string fileName, List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructList, EcuFunctionStructs.EcuJob ecuJobMerge)
         {
-            if (ecuJobMerge == null || string.IsNullOrEmpty(ecuJobMerge.Name))
+            if (ecuJobMerge == null || string.IsNullOrEmpty(ecuJobMerge.Name) || ecuJobMerge.EcuJobResultList?.Count == 0)
             {
                 return 0;
             }
