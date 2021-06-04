@@ -224,7 +224,8 @@ namespace MergeEcuFunctions
                     {
                         if (!string.IsNullOrEmpty(ecuJob.Name))
                         {
-                            if (string.Compare(ecuJob.Name, ecuJobMerge.Name, StringComparison.OrdinalIgnoreCase) == 0)
+                            if ((string.Compare(ecuJob.Name, ecuJobMerge.Name, StringComparison.OrdinalIgnoreCase) == 0) &&
+                                string.Compare(ecuJob.FuncNameJob, ecuJobMerge.FuncNameJob, StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 if (EcuJobsArgsIdentical(ecuJob, ecuJobMerge))
                                 {
@@ -242,8 +243,8 @@ namespace MergeEcuFunctions
                                             ecuJob.CompatIdListList = compatIdListList;
                                             if (compatIdListList.Count > 1)
                                             {
-                                                outTextWriter?.WriteLine("Merge Jobs multi IDs: File='{0}', Job='{1}', Args='{2}', Res='{3}', Count={4}",
-                                                    fileName, ecuJob.Name, JobsArgsToString(ecuJob), JobsResultsToString(ecuJob), compatIdListList.Count);
+                                                outTextWriter?.WriteLine("Merge Jobs multi IDs: File='{0}', Job='{1}({2})', Args='{3}', Res='{4}', Count={5}",
+                                                    fileName, ecuJob.Name, ecuJob.FuncNameJob, JobsArgsToString(ecuJob), JobsResultsToString(ecuJob), compatIdListList.Count);
                                             }
                                         }
                                         matches += results;
@@ -389,7 +390,8 @@ namespace MergeEcuFunctions
                     if (!string.IsNullOrEmpty(ecuJobResult.Name))
                     {
                         resultCount++;
-                        if (string.Compare(ecuJobResult.Name, ecuJobResultComp.Name, StringComparison.OrdinalIgnoreCase) == 0)
+                        if ((string.Compare(ecuJobResult.Name, ecuJobResultComp.Name, StringComparison.OrdinalIgnoreCase) == 0) &&
+                            (string.Compare(ecuJobResult.FuncNameResult, ecuJobResultComp.FuncNameResult, StringComparison.OrdinalIgnoreCase) == 0))
                         {
                             jobResultList.Add(ecuJobResult);
                         }
