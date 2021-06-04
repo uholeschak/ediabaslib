@@ -300,6 +300,9 @@ namespace CarSimulator
         private readonly Stopwatch _timeIdleSpeedControlWrite;
         private readonly Stopwatch _receiveStopWatch;
 
+        private const string TestMac = "D8182B890A8B";
+        private const string TestVin = "WBAJM71000B055940";
+
         private const double FilterConst = 0.95;
         private const int IsoTimeout = 2000;
         private const int IsoAckTimeout = 100;
@@ -1592,7 +1595,7 @@ namespace CarSimulator
                     identMessage[idx++] = 0x00;
                     identMessage[idx++] = (byte)(identMessage.Length - 6);
                     identMessage[idx++] = 0x00;
-                    identMessage[idx++] = 0x04; // 0x11; // ENET
+                    identMessage[idx++] = 0x11; // ENET
                     // TESTER ID
                     identMessage[idx++] = (byte)'D';
                     identMessage[idx++] = (byte)'I';
@@ -1610,25 +1613,11 @@ namespace CarSimulator
                     identMessage[idx++] = (byte)'M';
                     identMessage[idx++] = (byte)'A';
                     identMessage[idx++] = (byte)'C';
-#if false
-                    for (int i = 0; i < 12; i++)
-                    {
-                        identMessage[idx++] = (byte)('0'+ (i % 10));
-                    }
-#else
-                    identMessage[idx++] = (byte)'0';
-                    identMessage[idx++] = (byte)'0';
-                    identMessage[idx++] = (byte)'1';
-                    identMessage[idx++] = (byte)'A';
-                    identMessage[idx++] = (byte)'3';
-                    identMessage[idx++] = (byte)'7';
-                    identMessage[idx++] = (byte)'5';
-                    identMessage[idx++] = (byte)'3';
-                    identMessage[idx++] = (byte)'5';
-                    identMessage[idx++] = (byte)'5';
-                    identMessage[idx++] = (byte)'E';
-                    identMessage[idx++] = (byte)'5';
-#endif
+
+                    byte[] macBytes = Encoding.ASCII.GetBytes(TestMac);
+                    int macLen = macBytes.Length;
+                    Array.Copy(macBytes, 0, identMessage, idx, macLen);
+                    idx += macLen;
                     // VIN
                     identMessage[idx++] = (byte)'B';
                     identMessage[idx++] = (byte)'M';
@@ -1636,30 +1625,12 @@ namespace CarSimulator
                     identMessage[idx++] = (byte)'V';
                     identMessage[idx++] = (byte)'I';
                     identMessage[idx++] = (byte)'N';
-#if false
-                    for (int i = 0; i < 17; i++)
-                    {
-                        identMessage[idx++] = (byte)('a' + i);
-                    }
-#else
-                    identMessage[idx++] = (byte)'W';
-                    identMessage[idx++] = (byte)'B';
-                    identMessage[idx++] = (byte)'A';
-                    identMessage[idx++] = (byte)'3';
-                    identMessage[idx++] = (byte)'X';
-                    identMessage[idx++] = (byte)'1';
-                    identMessage[idx++] = (byte)'1';
-                    identMessage[idx++] = (byte)'0';
-                    identMessage[idx++] = (byte)'1';
-                    identMessage[idx++] = (byte)'0';
-                    identMessage[idx++] = (byte)'G';
-                    identMessage[idx++] = (byte)'V';
-                    identMessage[idx++] = (byte)'3';
-                    identMessage[idx++] = (byte)'5';
-                    identMessage[idx++] = (byte)'8';
-                    identMessage[idx++] = (byte)'5';
-                    identMessage[idx++] = (byte)'6';
-#endif
+
+                    byte[] vinBytes = Encoding.ASCII.GetBytes(TestVin);
+                    int vinLen = vinBytes.Length;
+                    Array.Copy(vinBytes, 0, identMessage, idx, vinLen);
+                    idx += vinLen;
+
                     SendUdpPacketTo(identMessage, ip, EnetControlPort);
                 }
                 StartUdpListen();
@@ -1874,8 +1845,8 @@ namespace CarSimulator
                     response.Add(0x00);
 
                     string attributs =
-                        string.Format("(DevId=G31),(Serial=WBA3X11010GV35856{0}),(DevType=ENET),(Color=#00ff00),(State=4),(Kl15Voltage=12000),(Kl30Voltage=12000),(VIN=WBA3X11010GV35856),(PowerSupply=12000),(VciChannels=[0?;1?;2?;3+]),(IPAddress={1})",
-                            BitConverter.ToString(localIp.GetAddressBytes()).Replace("-", ""), localIp);
+                        string.Format("(DevId=G31),(Serial={2}{0}),(MacAddress={1}),(DevType=ENET),(Color=#00ff00),(State=4),(Kl15Voltage=12000),(Kl30Voltage=12000),(VIN={2}),(PowerSupply=12000),(VciChannels=[0?;1?;2?;3+]),(IPAddress={3})",
+                            BitConverter.ToString(localIp.GetAddressBytes()).Replace("-", ""), TestMac, TestVin, localIp);
                     byte[] attrBytes = Encoding.ASCII.GetBytes(attributs);
                     int attrLen = attrBytes.Length;
                     response.Add((byte)(attrLen >> 8));      // List length
