@@ -229,7 +229,7 @@ namespace MergeEcuFunctions
                             {
                                 if (EcuJobsArgsIdentical(ecuJob, ecuJobMerge))
                                 {
-                                    int results = MergeEcuJobResults(outTextWriter, fileName, ecuJob, ecuJobMerge);
+                                    int results = MergeEcuJobResults(null, fileName, ecuJob, ecuJobMerge);
                                     if (results > 0)
                                     {
                                         if (string.Compare(ecuJob.Id, ecuJobMerge.Id, StringComparison.OrdinalIgnoreCase) != 0)
@@ -254,6 +254,12 @@ namespace MergeEcuFunctions
                         }
                     }
                 }
+            }
+
+            if (matches == 0)
+            {
+                outTextWriter?.WriteLine("Merge Jobs no match: File='{0}', Job='{1}({2})', Args='{3}', Res='{4}'",
+                    fileName, ecuJobMerge.Name, ecuJobMerge.FuncNameJob, JobsArgsToString(ecuJobMerge), JobsResultsToString(ecuJobMerge));
             }
 
             return matches;
