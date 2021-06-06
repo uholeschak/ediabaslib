@@ -1,5 +1,4 @@
-﻿//#define USE_UDP_SOCKET
-//#define MAP_ISOTP_ECU
+﻿//#define MAP_ISOTP_ECU
 #if DEBUG
 #define CAN_DEBUG
 #endif
@@ -261,7 +260,6 @@ namespace CarSimulator
         private TcpClient _tcpClientControl;
         private NetworkStream _tcpClientControlStream;
         private UdpClient _udpClient;
-        private Socket _udpSocket;
         private readonly byte[] _udpBuffer;
         private bool _udpError;
         private UdpClient _srvLocClient;
@@ -641,7 +639,6 @@ namespace CarSimulator
             _tcpClientControl = null;
             _tcpClientControlStream = null;
             _udpClient = null;
-            _udpSocket = null;
             _udpBuffer = new byte[0x100];
             _udpError = false;
             _srvLocClient = null;
@@ -983,32 +980,12 @@ namespace CarSimulator
             // a virtual network adapter with an auto ip address
             // is required tp receive the UPD broadcasts
             _udpError = false;
-#if USE_UDP_SOCKET
-            _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            IPEndPoint ipUdp = new IPEndPoint(IPAddress.Any, EnetControlPort);
-            _udpSocket.Bind(ipUdp);
-            StartUdpSocketListen();
-#else
             _udpClient = new UdpClient(EnetControlPort);
             StartUdpListen();
-#endif
         }
 
         private void UdpDisconnect()
         {
-            try
-            {
-                if (_udpSocket != null)
-                {
-                    _udpSocket.Close();
-                    _udpSocket = null;
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
             try
             {
                 if (_udpClient != null)
@@ -1634,72 +1611,6 @@ namespace CarSimulator
                     SendUdpPacketTo(identMessage, ip, EnetControlPort);
                 }
                 StartUdpListen();
-            }
-            catch (Exception)
-            {
-                _udpError = true;
-            }
-        }
-
-        private void StartUdpSocketListen()
-        {
-            IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
-            EndPoint tempRemoteEp = ip;
-            _udpSocket?.BeginReceiveFrom(_udpBuffer, 0, _udpBuffer.Length, SocketFlags.None, ref tempRemoteEp, UdpSocketReceiver, _udpSocket);
-        }
-
-        private void UdpSocketReceiver(IAsyncResult ar)
-        {
-            try
-            {
-                Socket udpSocketLocal = _udpSocket;
-                if (udpSocketLocal == null)
-                {
-                    return;
-                }
-                IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
-                EndPoint tempRemoteEp = ip;
-                int recLen = udpSocketLocal.EndReceiveFrom(ar, ref tempRemoteEp);
-#if false
-                if (recLen > 0)
-                {
-                    DebugLogData("Udp: ", _udpBuffer, recLen);
-                }
-#endif
-                if (recLen == 6 && _udpBuffer[5] == 0x11)
-                {
-                    byte[] identMessage = new byte[6 + 50];
-                    int idx = 0;
-                    identMessage[idx++] = 0x00;
-                    identMessage[idx++] = 0x00;
-                    identMessage[idx++] = 0x00;
-                    identMessage[idx++] = (byte)(identMessage.Length - 6);
-                    identMessage[idx++] = 0x00;
-                    identMessage[idx++] = 0x04;     // Anouncement
-                    // TESTER ID
-                    identMessage[idx++] = (byte)'D';
-                    identMessage[idx++] = (byte)'I';
-                    identMessage[idx++] = (byte)'A';
-                    identMessage[idx++] = (byte)'G';
-                    identMessage[idx++] = (byte)'A';
-                    identMessage[idx++] = (byte)'D';
-                    identMessage[idx++] = (byte)'R';
-                    identMessage[idx++] = (byte)'1';
-                    identMessage[idx++] = (byte)'0';
-                    // MAC
-                    for (int i = 0; i < 18; i++)
-                    {
-                        identMessage[idx++] = (byte)('0' + (i % 10));
-                    }
-                    // VIN
-                    for (int i = 0; i < 23; i++)
-                    {
-                        identMessage[idx++] = (byte)('a' + i);
-                    }
-
-                    SendUdpPacketTo(identMessage, tempRemoteEp, EnetControlPort);
-                }
-                StartUdpSocketListen();
             }
             catch (Exception)
             {
