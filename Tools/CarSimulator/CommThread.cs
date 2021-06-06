@@ -113,6 +113,29 @@ namespace CarSimulator
             public ResponseEntry ResponseEntry { get; }
         }
 
+        private class BmwTcpChannel
+        {
+            public BmwTcpChannel(int diagPort, int controPort)
+            {
+                DiagPort = diagPort;
+                ControlPort = controPort;
+                LastTcpDiagRecTick = DateTime.MinValue.Ticks;
+            }
+
+            public int DiagPort;
+            public int ControlPort;
+            public TcpListener TcpServerDiag;
+            public TcpClient TcpClientDiag;
+            public NetworkStream TcpClientDiagStream;
+            public TcpListener TcpServerControl;
+            public TcpClient TcpClientControl;
+            public NetworkStream TcpClientControlStream;
+
+            public long LastTcpDiagRecTick;
+            public int TcpNackIndex;
+            public byte[] TcpLastResponse;
+        }
+
         private class Tp20Channel
         {
             public Tp20Channel()
@@ -224,11 +247,13 @@ namespace CarSimulator
         private const byte TcpTesterAddr = 0xF4;
         private const int EnetDiagPort = 6801;
         private const int EnetControlPort = 6811;
+        private const int EnetDiagPrgPort = 51560;
+        private const int EnetControlPrgPort = 51561;
         private const int SrvLocPort = 427;
         private const int Kwp2000Nr2123Retries = 3;
         private const int ResetAdaptionChannel = 0;
         private const int DefaultAdaptionChannelValue = 0x1234;
-        private MainForm _form;
+        private readonly MainForm _form;
         private volatile bool _stopThread;
         private bool _threadRunning;
         private Thread _workerThread;
@@ -253,21 +278,11 @@ namespace CarSimulator
 #endif
         private readonly List<Tp20Channel> _tp20Channels;
         private readonly List<DynamicUdsEntry> _dynamicUdsEntries;
-        private TcpListener _tcpServerDiag;
-        private TcpClient _tcpClientDiag;
-        private NetworkStream _tcpClientDiagStream;
-        private TcpListener _tcpServerControl;
-        private TcpClient _tcpClientControl;
-        private NetworkStream _tcpClientControlStream;
+        private readonly List<BmwTcpChannel> _bmwTcpChannels;
         private UdpClient _udpClient;
-        private readonly byte[] _udpBuffer;
         private bool _udpError;
         private UdpClient _srvLocClient;
         private bool _srvLocError;
-        private long _lastTcpDiagRecTick;
-        private int _tcpNackIndex;
-        // ReSharper disable once NotAccessedField.Local
-        private byte[] _tcpLastResponse;
         private readonly SerialPort _serialPort;
         private readonly AutoResetEvent _serialReceiveEvent;
         private readonly AutoResetEvent _pcanReceiveEvent;
@@ -632,18 +647,11 @@ namespace CarSimulator
             _lastCanStatusTick = 0;
             _tp20Channels = new List<Tp20Channel>();
             _dynamicUdsEntries = new List<DynamicUdsEntry>();
-            _tcpServerDiag = null;
-            _tcpClientDiag = null;
-            _tcpClientDiagStream = null;
-            _tcpServerControl = null;
-            _tcpClientControl = null;
-            _tcpClientControlStream = null;
+            _bmwTcpChannels = new List<BmwTcpChannel>();
             _udpClient = null;
-            _udpBuffer = new byte[0x100];
             _udpError = false;
             _srvLocClient = null;
             _srvLocError = false;
-            _lastTcpDiagRecTick = DateTime.MinValue.Ticks;
             _serialPort = new SerialPort();
             _serialPort.DataReceived += SerialDataReceived;
             _serialReceiveEvent = new AutoResetEvent(false);
@@ -806,11 +814,19 @@ namespace CarSimulator
                         default:
                             return false;
                     }
-                    _tcpServerDiag = new TcpListener(IPAddress.Any, EnetDiagPort);
-                    _tcpServerDiag.Start();
 
-                    _tcpServerControl = new TcpListener(IPAddress.Any, EnetControlPort);
-                    _tcpServerControl.Start();
+                    _bmwTcpChannels.Clear();
+                    _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPort, EnetControlPort));
+                    _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPrgPort, EnetControlPrgPort));
+
+                    foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
+                    {
+                        bmwTcpChannel.TcpServerDiag = new TcpListener(IPAddress.Any, bmwTcpChannel.DiagPort);
+                        bmwTcpChannel.TcpServerDiag.Start();
+
+                        bmwTcpChannel.TcpServerControl = new TcpListener(IPAddress.Any, bmwTcpChannel.ControlPort);
+                        bmwTcpChannel.TcpServerControl.Start();
+                    }
 
                     UdpConnect();
                     SrvLocConnect();
@@ -926,37 +942,43 @@ namespace CarSimulator
             UdpDisconnect();
             SrvLocDisconnect();
 
-            // diag port
-            EnetDiagClose();
-
-            try
+            foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
             {
-                if (_tcpServerDiag != null)
+                // diag port
+                EnetDiagClose(bmwTcpChannel);
+
+                try
                 {
-                    _tcpServerDiag.Stop();
-                    _tcpServerDiag = null;
+                    if (bmwTcpChannel.TcpServerDiag != null)
+                    {
+                        bmwTcpChannel.TcpServerDiag.Stop();
+                        bmwTcpChannel.TcpServerDiag = null;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
+                // control port
+                EnetControlClose(bmwTcpChannel);
+
+                try
+                {
+                    if (bmwTcpChannel.TcpServerControl != null)
+                    {
+                        bmwTcpChannel.TcpServerControl.Stop();
+                        bmwTcpChannel.TcpServerControl = null;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
             }
-            catch (Exception)
-            {
-                // ignored
-            }
 
-            // control port
-            EnetControlClose();
+            _bmwTcpChannels.Clear();
 
-            try
-            {
-                if (_tcpServerControl != null)
-                {
-                    _tcpServerControl.Stop();
-                    _tcpServerControl = null;
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
             if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
             {
                 PCANBasic.Uninitialize(_pcanHandle);
@@ -1324,7 +1346,7 @@ namespace CarSimulator
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool ObdSend(byte[] sendData)
+        private bool ObdSend(byte[] sendData, BmwTcpChannel bmwTcpChannel = null)
         {
 #if false
             DebugLogData("Response: ", sendData, sendData.Length);
@@ -1336,9 +1358,9 @@ namespace CarSimulator
 #if true
                     DebugLogData("Response: ", sendData, TelLengthBmwFast(sendData));
 #endif
-                    if (_tcpServerDiag != null)
+                    if (bmwTcpChannel != null)
                     {
-                        return SendEnet(sendData);
+                        return SendEnet(sendData, bmwTcpChannel);
                     }
                     if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
                     {
@@ -1410,7 +1432,7 @@ namespace CarSimulator
             return false;
         }
 
-        private bool ObdReceive(byte[] receiveData)
+        private bool ObdReceive(byte[] receiveData, BmwTcpChannel bmwTcpChannel = null)
         {
             _responseConcept = _conceptType;
             _isoTpMode = false;
@@ -1418,13 +1440,16 @@ namespace CarSimulator
             {
                 case ConceptType.ConceptBwmFast:
                 case ConceptType.ConceptKwp2000Bmw:
-                    if (_tcpServerDiag != null)
+                    if (bmwTcpChannel != null)
                     {
                         UdpRecover();
                         SrvLocRecover();
-                        ReceiveEnetControl();
-                        return ReceiveEnet(receiveData);
+
+                        ReceiveEnetControl(bmwTcpChannel);
+
+                        return ReceiveEnet(receiveData, bmwTcpChannel);
                     }
+
                     if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
                     {
                         return ReceiveCan(receiveData);
@@ -1780,14 +1805,14 @@ namespace CarSimulator
             }
         }
 
-        private void EnetControlClose()
+        private void EnetControlClose(BmwTcpChannel bmwTcpChannel)
         {
             try
             {
-                if (_tcpClientControlStream != null)
+                if (bmwTcpChannel.TcpClientControlStream != null)
                 {
-                    _tcpClientControlStream.Close();
-                    _tcpClientControlStream = null;
+                    bmwTcpChannel.TcpClientControlStream.Close();
+                    bmwTcpChannel.TcpClientControlStream = null;
                 }
             }
             catch (Exception)
@@ -1797,11 +1822,11 @@ namespace CarSimulator
 
             try
             {
-                if (_tcpClientControl != null)
+                if (bmwTcpChannel.TcpClientControl != null)
                 {
-                    Debug.WriteLine("Control Closed");
-                    _tcpClientControl.Close();
-                    _tcpClientControl = null;
+                    Debug.WriteLine("Control Closed: {0}", bmwTcpChannel.ControlPort);
+                    bmwTcpChannel.TcpClientControl.Close();
+                    bmwTcpChannel.TcpClientControl = null;
                 }
             }
             catch (Exception)
@@ -1811,46 +1836,40 @@ namespace CarSimulator
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool ReceiveEnetControl()
+        private bool ReceiveEnetControl(BmwTcpChannel bmwTcpChannel)
         {
             try
             {
-                if (!IsTcpClientConnected(_tcpClientControl))
+                if (!IsTcpClientConnected(bmwTcpChannel.TcpClientControl))
                 {
-                    EnetControlClose();
-                    if (!_tcpServerControl.Pending())
+                    EnetControlClose(bmwTcpChannel);
+                    if (!bmwTcpChannel.TcpServerControl.Pending())
                     {
                         Thread.Sleep(10);
                         return false;
                     }
-                    _tcpClientControl = _tcpServerControl.AcceptTcpClient();
-                    _tcpClientControlStream = _tcpClientControl.GetStream();
+                    bmwTcpChannel.TcpClientControl = bmwTcpChannel.TcpServerControl.AcceptTcpClient();
+                    bmwTcpChannel.TcpClientControlStream = bmwTcpChannel.TcpClientControl.GetStream();
                 }
             }
             catch (Exception)
             {
-                EnetControlClose();
+                EnetControlClose(bmwTcpChannel);
             }
 
             try
             {
-                if (_tcpClientControlStream != null && _tcpClientControlStream.DataAvailable)
+                if (bmwTcpChannel.TcpClientControlStream != null && bmwTcpChannel.TcpClientControlStream.DataAvailable)
                 {
                     byte[] dataBuffer = new byte[0x200];
-                    int recLen = _tcpClientControlStream.Read(dataBuffer, 0, dataBuffer.Length);
-#if false
+                    int recLen = bmwTcpChannel.TcpClientControlStream.Read(dataBuffer, 0, dataBuffer.Length);
+#if true
                     DebugLogData("Ctrl Rec: ", dataBuffer, recLen);
 #endif
-                    if (recLen >= 6 && dataBuffer[5] == 0x10)
-                    {   // ignition state
-                        // send response
-                        byte[] responseBuffer = new byte[6 + 1];
-                        responseBuffer[2] = (byte)((responseBuffer.Length - 6) >> 8);
-                        responseBuffer[3] = (byte)(responseBuffer.Length - 6);
-                        responseBuffer[4] = 0x00;
-                        responseBuffer[5] = 0x10;   // ignition state
-                        responseBuffer[6] = (byte)(IgnitionOk ? 0x05 : 0x00);   // Clamp state, Bit3,4 = 1 -> ignition on
-                        _tcpClientControlStream.Write(responseBuffer, 0, responseBuffer.Length);
+                    byte[] responseBuffer = GetControlResponse(dataBuffer, recLen);
+                    if (responseBuffer != null)
+                    {
+                        bmwTcpChannel.TcpClientControlStream.Write(responseBuffer, 0, responseBuffer.Length);
                     }
 
                     return true;
@@ -1863,14 +1882,31 @@ namespace CarSimulator
             return false;
         }
 
-        private void EnetDiagClose()
+        private byte[] GetControlResponse(byte[] recData, int recLen)
+        {
+            if (recLen >= 6 && recData[5] == 0x10)
+            {   // ignition state
+                // send response
+                byte[] responseBuffer = new byte[6 + 1];
+                responseBuffer[2] = (byte)((responseBuffer.Length - 6) >> 8);
+                responseBuffer[3] = (byte)(responseBuffer.Length - 6);
+                responseBuffer[4] = 0x00;
+                responseBuffer[5] = 0x10;   // ignition state
+                responseBuffer[6] = (byte)(IgnitionOk ? 0x05 : 0x00);   // Clamp state, Bit3,4 = 1 -> ignition on
+                return responseBuffer;
+            }
+
+            return null;
+        }
+
+        private void EnetDiagClose(BmwTcpChannel bmwTcpChannel)
         {
             try
             {
-                if (_tcpClientDiagStream != null)
+                if (bmwTcpChannel.TcpClientDiagStream != null)
                 {
-                    _tcpClientDiagStream.Close();
-                    _tcpClientDiagStream = null;
+                    bmwTcpChannel.TcpClientDiagStream.Close();
+                    bmwTcpChannel.TcpClientDiagStream = null;
                 }
             }
             catch (Exception)
@@ -1880,11 +1916,11 @@ namespace CarSimulator
 
             try
             {
-                if (_tcpClientDiag != null)
+                if (bmwTcpChannel.TcpClientDiag != null)
                 {
-                    Debug.WriteLine("Diag Closed");
-                    _tcpClientDiag.Close();
-                    _tcpClientDiag = null;
+                    Debug.WriteLine("Diag Closed: {0}", bmwTcpChannel.DiagPort);
+                    bmwTcpChannel.TcpClientDiag.Close();
+                    bmwTcpChannel.TcpClientDiag = null;
                 }
             }
             catch (Exception)
@@ -1893,36 +1929,41 @@ namespace CarSimulator
             }
         }
 
-        private bool ReceiveEnet(byte[] receiveData)
+        private bool ReceiveEnet(byte[] receiveData, BmwTcpChannel bmwTcpChannel)
         {
-            try
+            if (bmwTcpChannel == null)
             {
-                if (!IsTcpClientConnected(_tcpClientDiag))
-                {
-                    EnetDiagClose();
-                    if (!_tcpServerDiag.Pending())
-                    {
-                        Thread.Sleep(10);
-                        return false;
-                    }
-                    _tcpClientDiag = _tcpServerDiag.AcceptTcpClient();
-                    _tcpClientDiagStream = _tcpClientDiag.GetStream();
-                    _lastTcpDiagRecTick = Stopwatch.GetTimestamp();
-                    _tcpNackIndex = 0;
-                }
-            }
-            catch (Exception)
-            {
-                EnetDiagClose();
+                return false;
             }
 
             try
             {
-                if (_tcpClientDiagStream != null)
+                if (!IsTcpClientConnected(bmwTcpChannel.TcpClientDiag))
                 {
-                    if ((Stopwatch.GetTimestamp() - _lastTcpDiagRecTick) > 2000 * TickResolMs)
+                    EnetDiagClose(bmwTcpChannel);
+                    if (!bmwTcpChannel.TcpServerDiag.Pending())
                     {
-                        _lastTcpDiagRecTick = Stopwatch.GetTimestamp();
+                        Thread.Sleep(10);
+                        return false;
+                    }
+                    bmwTcpChannel.TcpClientDiag = bmwTcpChannel.TcpServerDiag.AcceptTcpClient();
+                    bmwTcpChannel.TcpClientDiagStream = bmwTcpChannel.TcpClientDiag.GetStream();
+                    bmwTcpChannel.LastTcpDiagRecTick = Stopwatch.GetTimestamp();
+                    bmwTcpChannel.TcpNackIndex = 0;
+                }
+            }
+            catch (Exception)
+            {
+                EnetDiagClose(bmwTcpChannel);
+            }
+
+            try
+            {
+                if (bmwTcpChannel.TcpClientDiagStream != null)
+                {
+                    if ((Stopwatch.GetTimestamp() - bmwTcpChannel.LastTcpDiagRecTick) > 2000 * TickResolMs)
+                    {
+                        bmwTcpChannel.LastTcpDiagRecTick = Stopwatch.GetTimestamp();
                         byte[] dataBuffer = new byte[6 + 2];
                         dataBuffer[0] = 0x00;
                         dataBuffer[1] = 0x00;
@@ -1932,7 +1973,7 @@ namespace CarSimulator
                         dataBuffer[5] = 0x12;   // Payoad type: alive check
                         dataBuffer[6] = 0xF4;
                         dataBuffer[7] = 0x00;
-                        _tcpClientDiagStream.Write(dataBuffer, 0, dataBuffer.Length);
+                        bmwTcpChannel.TcpClientDiagStream.Write(dataBuffer, 0, dataBuffer.Length);
                         Debug.WriteLine("Alive Check");
                     }
                 }
@@ -1944,11 +1985,11 @@ namespace CarSimulator
 
             try
             {
-                if (_tcpClientDiagStream != null && _tcpClientDiagStream.DataAvailable)
+                if (bmwTcpChannel.TcpClientDiagStream != null && bmwTcpChannel.TcpClientDiagStream.DataAvailable)
                 {
-                    _lastTcpDiagRecTick = Stopwatch.GetTimestamp();
+                    bmwTcpChannel.LastTcpDiagRecTick = Stopwatch.GetTimestamp();
                     byte[] dataBuffer = new byte[0x200];
-                    int recLen = _tcpClientDiagStream.Read(dataBuffer, 0, 6);
+                    int recLen = bmwTcpChannel.TcpClientDiagStream.Read(dataBuffer, 0, 6);
                     if (recLen < 6)
                     {
                         return false;
@@ -1956,15 +1997,15 @@ namespace CarSimulator
                     int payloadLength = (((int)dataBuffer[0] << 24) | ((int)dataBuffer[1] << 16) | ((int)dataBuffer[2] << 8) | dataBuffer[3]);
                     if (payloadLength > dataBuffer.Length - 6)
                     {
-                        while (_tcpClientDiagStream.DataAvailable)
+                        while (bmwTcpChannel.TcpClientDiagStream.DataAvailable)
                         {
-                            _tcpClientDiagStream.ReadByte();
+                            bmwTcpChannel.TcpClientDiagStream.ReadByte();
                         }
                         return false;
                     }
                     if (payloadLength > 0)
                     {
-                        recLen += _tcpClientDiagStream.Read(dataBuffer, 6, payloadLength);
+                        recLen += bmwTcpChannel.TcpClientDiagStream.Read(dataBuffer, 6, payloadLength);
                     }
                     if (recLen < payloadLength + 6)
                     {
@@ -1985,22 +2026,22 @@ namespace CarSimulator
                     }
                     // send ack
 #if true
-                    if (_tcpNackIndex >= 5)
+                    if (bmwTcpChannel.TcpNackIndex >= 5)
                     {
                         Debug.WriteLine("Send NAck");
-                        _tcpNackIndex = 0;
+                        bmwTcpChannel.TcpNackIndex = 0;
                         byte[] nack = new byte[6];
                         nack[5] = 0xFF;     // nack
-                        _tcpClientDiagStream.Write(nack, 0, nack.Length);
+                        bmwTcpChannel.TcpClientDiagStream.Write(nack, 0, nack.Length);
                         return false;
                     }
-                    _tcpNackIndex++;
+                    bmwTcpChannel.TcpNackIndex++;
 #endif
 #if false
-                    if (_tcpLastResponse != null)
+                    if (bmwTcpChannel.TcpLastResponse != null)
                     {
                         Debug.WriteLine("Inject old response");
-                        _tcpClientDiagStream.Write(_tcpLastResponse, 0, _tcpLastResponse.Length);
+                        bmwTcpChannel.TcpClientDiagStream.Write(bmwTcpChannel.TcpLastResponse, 0, bmwTcpChannel.TcpLastResponse.Length);
                     }
 #endif
 
@@ -2016,11 +2057,11 @@ namespace CarSimulator
                         ack[1] = (byte)((ackLength >> 16) & 0xFF);
                         ack[2] = (byte)((ackLength >> 8) & 0xFF);
                         ack[3] = (byte)(ackLength & 0xFF);
-                        _tcpClientDiagStream.Write(ack, 0, ackLength + 8 - 2);
+                        bmwTcpChannel.TcpClientDiagStream.Write(ack, 0, ackLength + 8 - 2);
                     }
                     else
                     {
-                        _tcpClientDiagStream.Write(ack, 0, ack.Length);
+                        bmwTcpChannel.TcpClientDiagStream.Write(ack, 0, ack.Length);
                     }
 
                     // create BMW-FAST telegram
@@ -2066,9 +2107,9 @@ namespace CarSimulator
             return false;
         }
 
-        private bool SendEnet(byte[] sendData)
+        private bool SendEnet(byte[] sendData, BmwTcpChannel bmwTcpChannel)
         {
-            if (_tcpClientDiagStream == null)
+            if (bmwTcpChannel?.TcpClientDiagStream == null)
             {
                 return false;
             }
@@ -2106,8 +2147,8 @@ namespace CarSimulator
 #if false
                 DebugLogData("Send: ", dataBuffer, dataBuffer.Length);
 #endif
-                _tcpClientDiagStream.Write(dataBuffer, 0, dataBuffer.Length);
-                _tcpLastResponse = dataBuffer;
+                bmwTcpChannel.TcpClientDiagStream.Write(dataBuffer, 0, dataBuffer.Length);
+                bmwTcpChannel.TcpLastResponse = dataBuffer;
             }
             catch (Exception)
             {
@@ -4089,6 +4130,21 @@ namespace CarSimulator
 
         private void SerialTransmission()
         {
+            if (_bmwTcpChannels.Count > 0)
+            {
+                foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
+                {
+                    SerialTransmission(bmwTcpChannel);
+                }
+            }
+            else
+            {
+                SerialTransmission(null);
+            }
+        }
+
+        private void SerialTransmission(BmwTcpChannel bmwTcpChannel)
+        {
             bool manualMode = false;
             for (int i = 0; i < _timeValveWrite.Length; i++)
             {
@@ -4172,7 +4228,7 @@ namespace CarSimulator
                 _compressorRunningTime = 0;
             }
 
-            if (!ObdReceive(_receiveData))
+            if (!ObdReceive(_receiveData, bmwTcpChannel))
             {
                 return;
             }
@@ -4183,10 +4239,10 @@ namespace CarSimulator
             Debug.WriteLine(string.Format("Time: {0}", DateTime.Now.ToString("hh:mm:ss.fff")));
             DebugLogData("Request: ", _receiveData, recLength);
 #endif
-            if (!_adsAdapter && !_klineResponder && (_tcpServerDiag == null) && (_pcanHandle == PCANBasic.PCAN_NONEBUS))
+            if (!_adsAdapter && !_klineResponder && (bmwTcpChannel == null) && (_pcanHandle == PCANBasic.PCAN_NONEBUS))
             {
                 // send echo
-                ObdSend(_receiveData);
+                ObdSend(_receiveData, bmwTcpChannel);
             }
             if (_noResponseCount > 0)
             {   // no response requested
@@ -4209,7 +4265,7 @@ namespace CarSimulator
                 _sendData[i++] = 0xDF;  // key low
                 _sendData[i++] = 0x8F;  // key high
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
                 Debug.WriteLine("Start communication");
                 standardResponse = true;
             }
@@ -4224,7 +4280,7 @@ namespace CarSimulator
                 _sendData[i++] = _receiveData[1];
                 _sendData[i++] = 0x7E;
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
                 Debug.WriteLine("Tester present");
                 standardResponse = true;
             }
@@ -4239,7 +4295,7 @@ namespace CarSimulator
                 _sendData[i++] = _receiveData[1];
                 _sendData[i++] = 0x60;
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
                 Debug.WriteLine("Stop diag");
                 standardResponse = true;
             }
@@ -4255,7 +4311,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x51;
                 _sendData[i++] = _receiveData[4];
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
 
                 Debug.WriteLine("ECU reset");
                 _noResponseCount = 1;
@@ -4280,7 +4336,7 @@ namespace CarSimulator
                 {
                     _ecuErrorResetList.Add(_receiveData[1]);
                 }
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
                 standardResponse = true;
             }
             else if (
@@ -4324,7 +4380,7 @@ namespace CarSimulator
                     {
                         _ecuErrorResetList.Add(addr);
                     }
-                    ObdSend(_sendData);
+                    ObdSend(_sendData, bmwTcpChannel);
                 }
 
                 standardResponse = true;
@@ -4345,7 +4401,7 @@ namespace CarSimulator
                     _sendData[3] = 0x58;
                     _sendData[4] = 0x00;
 
-                    ObdSend(_sendData);
+                    ObdSend(_sendData, bmwTcpChannel);
                     standardResponse = true;
                 }
             }
@@ -4360,7 +4416,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x00;
                 _sendData[i++] = (byte)(~_receiveData[3]);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
                 Debug.WriteLine("Program CAN adapter");
                 standardResponse = true;
             }
@@ -4375,35 +4431,35 @@ namespace CarSimulator
                 switch (_responseType)
                 {
                    case ResponseType.E61:
-                        if (!ResponseE61())
+                        if (!ResponseE61(bmwTcpChannel))
                         {
                             useResponseList = true;
                         }
                         break;
 
                     case ResponseType.E90:
-                        if (!ResponseE90())
+                        if (!ResponseE90(bmwTcpChannel))
                         {
                             useResponseList = true;
                         }
                         break;
 
                    case ResponseType.G31:
-                       if (!ResponseG31())
+                       if (!ResponseG31(bmwTcpChannel))
                        {
                            useResponseList = true;
                        }
                        break;
 
                    case ResponseType.SMG2:
-                       if (!ResponseSmg2())
+                       if (!ResponseSmg2(bmwTcpChannel))
                        {
                            useResponseList = true;
                        }
                        break;
 
                     default:
-                        if (!HandleDynamicUdsIds())
+                        if (!HandleDynamicUdsIds(bmwTcpChannel))
                         {
                             useResponseList = true;
                         }
@@ -4437,12 +4493,12 @@ namespace CarSimulator
                         {
                             foreach (byte[] responseTel in responseEntry.ResponseMultiList)
                             {
-                                ObdSend(responseTel);
+                                ObdSend(responseTel, bmwTcpChannel);
                             }
                         }
                         else
                         {
-                            ObdSend(responseEntry.ResponseDyn);
+                            ObdSend(responseEntry.ResponseDyn, bmwTcpChannel);
                         }
 #endif
                         break;
@@ -4454,7 +4510,7 @@ namespace CarSimulator
                     switch (_responseType)
                     {
                         case ResponseType.G31:
-                            if (ResponseG31Generic())
+                            if (ResponseG31Generic(bmwTcpChannel))
                             {
                                 Debug.WriteLine("Generic G31 response");
                                 found = true;
@@ -4481,7 +4537,7 @@ namespace CarSimulator
                         _sendData[3] = 0x58;
                         _sendData[4] = 0x00;
 
-                        ObdSend(_sendData);
+                        ObdSend(_sendData, bmwTcpChannel);
                         found = true;
                     }
                 }
@@ -4503,7 +4559,7 @@ namespace CarSimulator
                         _sendData[4] = 0x02;
                         _sendData[5] = 0xFF;
 
-                        ObdSend(_sendData);
+                        ObdSend(_sendData, bmwTcpChannel);
                         found = true;
                     }
                 }
@@ -4524,7 +4580,7 @@ namespace CarSimulator
                         _sendData[4] = _receiveData[3];
                         _sendData[5] = 0x31;
 
-                        ObdSend(_sendData);
+                        ObdSend(_sendData, bmwTcpChannel);
                         found = true;
                     }
                 }
@@ -4546,7 +4602,7 @@ namespace CarSimulator
                         _sendData[4] = _receiveData[4];
                         _sendData[5] = _receiveData[5];
 
-                        ObdSend(_sendData);
+                        ObdSend(_sendData, bmwTcpChannel);
                         found = true;
                     }
                 }
@@ -4568,7 +4624,7 @@ namespace CarSimulator
                         _sendData[4] = _receiveData[4];
                         _sendData[5] = _receiveData[5];
 
-                        ObdSend(_sendData);
+                        ObdSend(_sendData, bmwTcpChannel);
                         found = true;
                     }
                 }
@@ -4589,7 +4645,7 @@ namespace CarSimulator
                         _sendData[3] = 0x7B;
                         _sendData[4] = _receiveData[4];
 
-                        ObdSend(_sendData);
+                        ObdSend(_sendData, bmwTcpChannel);
                         found = true;
                     }
                 }
@@ -4612,7 +4668,7 @@ namespace CarSimulator
                         _sendData[5] = _receiveData[5];
                         _sendData[6] = _receiveData[6];
 
-                        ObdSend(_sendData);
+                        ObdSend(_sendData, bmwTcpChannel);
                         found = true;
                     }
                 }
@@ -4624,7 +4680,7 @@ namespace CarSimulator
             }
         }
 
-        private bool HandleDynamicUdsIds()
+        private bool HandleDynamicUdsIds(BmwTcpChannel bmwTcpChannel)
         {
             int ecuAddr = _receiveData[1];
             int dataId = -1;
@@ -4717,7 +4773,7 @@ namespace CarSimulator
                         }
                         _sendData[0] = (byte)(0x80 | (i - 3));
 
-                        ObdSend(_sendData);
+                        ObdSend(_sendData, bmwTcpChannel);
                         return true;
                     }
                 }
@@ -4762,14 +4818,14 @@ namespace CarSimulator
                 _sendData[i++] = _receiveData[5];   // ID
                 _sendData[i++] = _receiveData[6];
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
                 return true;
             }
 
             return false;
         }
 
-        private bool ResponseE61()
+        private bool ResponseE61(BmwTcpChannel bmwTcpChannel)
         {
             // axis unit
             if (
@@ -4795,7 +4851,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x00;
                 _sendData[i++] = 0x00;
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -4826,7 +4882,7 @@ namespace CarSimulator
 
                 _sendData[i++] = 0x4E;
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -4840,7 +4896,7 @@ namespace CarSimulator
                 // speed km/h
                 _sendData[12] = (byte)_speed;
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -4860,7 +4916,7 @@ namespace CarSimulator
                 _sendData[i++] = (byte)(_compressorRunningTime >> 8);
                 _sendData[i++] = 0x00;
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x86 &&
@@ -4880,7 +4936,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x00;
                 _sendData[i++] = _mode;
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] >= 0x83 &&
@@ -4901,7 +4957,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x00;
                 _sendData[i++] = (byte)(((_outputs & (1 << channel)) != 0x00) ? 0x01 : 0x00);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x86 &&
@@ -4923,7 +4979,7 @@ namespace CarSimulator
                 _sendData[i++] = _receiveData[7];
                 _sendData[i++] = _receiveData[8];
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
 
                 if (channel < _timeValveWrite.Length)
                 {
@@ -4954,7 +5010,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x0C;
                 _sendData[i++] = _receiveData[5];
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
                 switch (_receiveData[5])
                 {
                     case 0x00:  // normal
@@ -5001,7 +5057,7 @@ namespace CarSimulator
             {   // read error memory for DIS
                 Array.Copy(_response381802FFFF, _sendData, _response381802FFFF.Length);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -5038,7 +5094,7 @@ namespace CarSimulator
                 _sendData[16] = (byte)(intValue >> 8);
                 _sendData[17] = (byte)(intValue);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -5055,7 +5111,7 @@ namespace CarSimulator
                 _sendData[19] = 0x05;
                 _sendData[20] = 0x11;
 #endif
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -5066,7 +5122,7 @@ namespace CarSimulator
             {   // standard response 2230 for INPA
                 Array.Copy(_response382230, _sendData, _response382230.Length);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             // motor unit DDE6.0 for M47 TÜ2
             else if (
@@ -5088,7 +5144,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x85;
                 _sendData[i++] = (byte)_idleSpeedControl;
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 (_receiveData[0] & 0xC0) == 0x80 &&
@@ -5419,7 +5475,7 @@ namespace CarSimulator
                 _sendData[0] = (byte)(0x80 | (i - 3));
 
                 //Thread.Sleep(2000);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x84 &&
@@ -5438,7 +5494,7 @@ namespace CarSimulator
                 _sendData[9] = 0x22;
                 _sendData[10] = 0x24;
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -5452,7 +5508,7 @@ namespace CarSimulator
                 // digit 4 = error type (2=disrupted)
                 Array.Copy(_response12174232, _sendData, _response12174232.Length);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -5576,7 +5632,7 @@ namespace CarSimulator
                 _sendData[25] = (byte)(intValue >> 8);
                 _sendData[26] = (byte)(intValue);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -5587,7 +5643,7 @@ namespace CarSimulator
             {   // standard response 1A80 for INPA
                 Array.Copy(_response121A80, _sendData, _response121A80.Length);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -5598,7 +5654,7 @@ namespace CarSimulator
             {   // standard response 1A94 for DIS
                 Array.Copy(_response121A94, _sendData, _response121A94.Length);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -5609,7 +5665,7 @@ namespace CarSimulator
             {   // standard response 2120 for DIS
                 Array.Copy(_response122120, _sendData, _response122120.Length);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x86 &&
@@ -5624,7 +5680,7 @@ namespace CarSimulator
             {   // standard response 230000000740 for DIS
                 Array.Copy(_response12230000000740, _sendData, _response12230000000740.Length);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x86 &&
@@ -5639,7 +5695,7 @@ namespace CarSimulator
             {   // standard response 230000000740 for DIS
                 Array.Copy(_response12230000400740, _sendData, _response12230000400740.Length);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -5651,7 +5707,7 @@ namespace CarSimulator
             {   // PM ident
                 Array.Copy(_response12224021, _sendData, _response12224021.Length);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -5827,7 +5883,7 @@ namespace CarSimulator
                 _sendData[79] = (byte)(intValue >> 8);
                 _sendData[80] = (byte)(intValue);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -5920,7 +5976,7 @@ namespace CarSimulator
                 // IBS error Bus Coll
                 _sendData[34] = 2;
 #endif
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x84 &&
@@ -5932,7 +5988,7 @@ namespace CarSimulator
                 _receiveData[6] == 0xFF)
             {   // read error memory
                 Array.Copy(_responseA01802FFFF, _sendData, _responseA01802FFFF.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -5942,10 +5998,10 @@ namespace CarSimulator
                 _receiveData[4] == 0x80)
             {   // CCC nav
                 Array.Copy(_responseA01A80p1, _sendData, _responseA01A80p1.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
 
                 Array.Copy(_responseA01A80p2, _sendData, _responseA01A80p2.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -5957,7 +6013,7 @@ namespace CarSimulator
             {   // CCC nav
                 Array.Copy(_responseA0222000, _sendData, _responseA0222000.Length);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -5985,7 +6041,7 @@ namespace CarSimulator
                 _sendData[10] = (byte)(intValue >> 8);
                 _sendData[11] = (byte)(intValue);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -5996,7 +6052,7 @@ namespace CarSimulator
                 _receiveData[5] == 0x20)
             {   // CCC nav GPS status
                 Array.Copy(_responseA022F120p1, _sendData, _responseA022F120p1.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
 
                 Array.Copy(_responseA022F120p2, _sendData, _responseA022F120p2.Length);
 
@@ -6022,7 +6078,7 @@ namespace CarSimulator
                 // test for CarControl
                 //Thread.Sleep(750);
                 Thread.Sleep(300);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -6033,7 +6089,7 @@ namespace CarSimulator
                 _receiveData[5] == 0x22)
             {   // CCC nav, Self test GPS
                 Array.Copy(_responseA022F122p1, _sendData, _responseA022F122p1.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
 
                 Array.Copy(_responseA022F122p2, _sendData, _responseA022F122p2.Length);
 
@@ -6045,7 +6101,7 @@ namespace CarSimulator
                 _sendData[6] = (byte)(intValue >> 8);
                 _sendData[7] = (byte)(intValue);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -6090,7 +6146,7 @@ namespace CarSimulator
                 _sendData[17] = (byte)(intValue >> 8);
                 _sendData[18] = (byte)(intValue);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -6155,7 +6211,7 @@ namespace CarSimulator
                 // Status Richtung 1 = OK
                 _sendData[25] = 1;
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -6182,7 +6238,7 @@ namespace CarSimulator
                 _sendData[11] = (byte)(intValue >> 8);
                 _sendData[12] = (byte)(intValue);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -6209,7 +6265,7 @@ namespace CarSimulator
                     _sendData[13] = IntToBcd(dateTime.Second);  // sec
                 }
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -6224,7 +6280,7 @@ namespace CarSimulator
                 _sendData[8] = 20;   // verfolgbare satelliten
                 _sendData[9] = 22;   // empfangbare satelliten
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             // device 0x040
             else if (
@@ -6235,7 +6291,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x90)
             {
                 Array.Copy(_response401A90, _sendData, _response401A90.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x84 &&
@@ -6251,7 +6307,7 @@ namespace CarSimulator
                 _sendData[0] = 0x82;
                 _sendData[4] = 0x00;
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             // device 0x60
             else if (
@@ -6262,7 +6318,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x80)
             {
                 Array.Copy(_response601A80, _sendData, _response601A80.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -6272,7 +6328,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x0B)
             {
                 Array.Copy(_response60210B, _sendData, _response60210B.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -6282,7 +6338,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x17)
             {
                 Array.Copy(_response602117, _sendData, _response602117.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             // device 0x70
             else if (
@@ -6294,7 +6350,7 @@ namespace CarSimulator
                 _receiveData[5] == 0x00)
             {
                 Array.Copy(_response70221000, _sendData, _response70221000.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -6304,7 +6360,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x80)
             {
                 Array.Copy(_response701A80, _sendData, _response701A80.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x82 &&
@@ -6314,7 +6370,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x90)
             {
                 Array.Copy(_response701A90, _sendData, _response701A90.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x86 &&
@@ -6328,7 +6384,7 @@ namespace CarSimulator
                 _receiveData[8] == 0x12)
             {
                 Array.Copy(_response70230000000712, _sendData, _response70230000000712.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x86 &&
@@ -6342,7 +6398,7 @@ namespace CarSimulator
                 _receiveData[8] == 0x12)
             {
                 Array.Copy(_response70230000120712, _sendData, _response70230000120712.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             // device 0x73 CID
             else if (
@@ -6353,7 +6409,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x80)
             {
                 Array.Copy(_response731A80, _sendData, _response731A80.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x84 &&
@@ -6365,7 +6421,7 @@ namespace CarSimulator
                 _receiveData[6] == 0xFF)
             {
                 Array.Copy(_response731802FFFF, _sendData, _response731802FFFF.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             // device 0x78 IHK2
             else if (
@@ -6376,7 +6432,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x80)
             {
                 Array.Copy(_response781A80, _sendData, _response781A80.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x84 &&
@@ -6388,7 +6444,7 @@ namespace CarSimulator
                 _receiveData[6] == 0xFF)
             {
                 Array.Copy(_response781802FFFF, _sendData, _response781802FFFF.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             // device 0x64 PDC
             else if (
@@ -6399,7 +6455,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x80)
             {
                 Array.Copy(_response641A80, _sendData, _response641A80.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x84 &&
@@ -6411,7 +6467,7 @@ namespace CarSimulator
                 _receiveData[6] == 0xFF)
             {
                 Array.Copy(_response641802FFFF, _sendData, _response641802FFFF.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -6456,7 +6512,7 @@ namespace CarSimulator
                 intValue = (int)((80.0 + 40.00) * 0xFF / 127.5);
                 _sendData[14] = (byte)intValue;
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             // device 0x65 SZM
             else if (
@@ -6467,7 +6523,7 @@ namespace CarSimulator
                 _receiveData[4] == 0x80)
             {
                 Array.Copy(_response651A80, _sendData, _response651A80.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x84 &&
@@ -6479,7 +6535,7 @@ namespace CarSimulator
                 _receiveData[6] == 0xFF)
             {
                 Array.Copy(_response651802FFFF, _sendData, _response651802FFFF.Length);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -6523,7 +6579,7 @@ namespace CarSimulator
                 _sendData[10] = (byte)(intValue >> 8);
                 _sendData[11] = (byte)(intValue);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -6547,7 +6603,7 @@ namespace CarSimulator
                 // Bit 6: Aktivsitz rechts
                 _sendData[7] = 0x00;
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             // device 0x78 IHK
             else if (
@@ -6655,7 +6711,7 @@ namespace CarSimulator
                 intValue = (int)((1000.0) * 0xFF / 12750);
                 _sendData[33] = (byte)(intValue);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x83 &&
@@ -6667,7 +6723,7 @@ namespace CarSimulator
             {   // Status Digital
                 Array.Copy(_response78300601, _sendData, _response78300601.Length);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else
             {   // nothing matched, check response list
@@ -6676,7 +6732,7 @@ namespace CarSimulator
             return true;
         }
 
-        private bool ResponseE90()
+        private bool ResponseE90(BmwTcpChannel bmwTcpChannel)
         {
             if (
                 (_receiveData[0] & 0xC0) == 0x80 &&
@@ -6871,7 +6927,7 @@ namespace CarSimulator
                 }
                 _sendData[0] = (byte)(0x80 | (i - 3));
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else
             {   // nothing matched, check response list
@@ -6880,10 +6936,10 @@ namespace CarSimulator
             return true;
         }
 
-        private bool ResponseG31()
+        private bool ResponseG31(BmwTcpChannel bmwTcpChannel)
         {
             // Axis
-            if (HandleDynamicUdsIds())
+            if (HandleDynamicUdsIds(bmwTcpChannel))
             {
                 return true;
             }
@@ -6930,7 +6986,7 @@ namespace CarSimulator
                 _sendData[i++] = dataArray4[1];
                 _sendData[i++] = dataArray4[0];
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x85 &&
@@ -6951,7 +7007,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x0F;
                 _sendData[i++] = 0x0C;
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
 
                 byte mode = _receiveData[7];
                 switch (mode)
@@ -6987,7 +7043,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x0A;
                 _sendData[i++] = _mode;
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] >= 0x86 &&
@@ -7011,7 +7067,7 @@ namespace CarSimulator
                 _sendData[i++] = 0x00;
                 _sendData[i++] = (byte)(((_outputs & (1 << channel)) != 0x00) ? 0x01 : 0x00);
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 _receiveData[0] == 0x89 &&
@@ -7031,7 +7087,7 @@ namespace CarSimulator
                 _sendData[i++] = 0xDB;
                 _sendData[i++] = 0x77;
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
 
                 if (channel == 0xB2)
                 {
@@ -7113,7 +7169,7 @@ namespace CarSimulator
                     }
                 }
 
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else
             {
@@ -7123,7 +7179,7 @@ namespace CarSimulator
             return true;
         }
 
-        private bool ResponseG31Generic()
+        private bool ResponseG31Generic(BmwTcpChannel bmwTcpChannel)
         {
             if (
                 (_receiveData[0] & 0xC0) == 0x80 &&
@@ -7164,7 +7220,7 @@ namespace CarSimulator
                 int sendLength = i - 6;
                 _sendData[4] = (byte)(sendLength >> 8);
                 _sendData[5] = (byte)(sendLength & 0xFF);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else if (
                 (_receiveData[0] & 0xC0) == 0x80 &&
@@ -7205,7 +7261,7 @@ namespace CarSimulator
                 int sendLength = i - 6;
                 _sendData[4] = (byte)(sendLength >> 8);
                 _sendData[5] = (byte)(sendLength & 0xFF);
-                ObdSend(_sendData);
+                ObdSend(_sendData, bmwTcpChannel);
             }
             else
             {
@@ -7215,8 +7271,7 @@ namespace CarSimulator
 
             return true;
         }
-
-        private bool ResponseSmg2()
+        private bool ResponseSmg2(BmwTcpChannel bmwTcpChannel)
         {
             if (
                 _receiveData[0] == 0x85 &&
@@ -7243,7 +7298,7 @@ namespace CarSimulator
 
                     Debug.WriteLine("Seed Key request");
                     Array.Copy(response, _sendData, response.Length);
-                    ObdSend(_sendData);
+                    ObdSend(_sendData, bmwTcpChannel);
                 }
                 else
                 {
@@ -7256,7 +7311,7 @@ namespace CarSimulator
 
                     Debug.WriteLine("Seed Key response");
                     Array.Copy(response, _sendData, response.Length);
-                    ObdSend(_sendData);
+                    ObdSend(_sendData, bmwTcpChannel);
                 }
             }
             else
