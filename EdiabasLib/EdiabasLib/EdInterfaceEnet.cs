@@ -137,7 +137,7 @@ namespace EdiabasLib
                 prop = EdiabasProtected.GetConfigProperty("DiagnosticPort");
                 if (prop != null)
                 {
-                    ControlPort = (int)EdiabasNet.StringToValue(prop);
+                    DiagnosticPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected.GetConfigProperty("EnetConnectTimeout");
