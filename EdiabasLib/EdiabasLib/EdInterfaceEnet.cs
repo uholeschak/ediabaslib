@@ -71,6 +71,7 @@ namespace EdiabasLib
 
         protected string RemoteHostProtected = AutoIp;
         protected int TesterAddress = 0xF4;
+        protected int UdpBroadcastPort = 6811;
         protected int ControlPort = 6811;
         protected int DiagnosticPort = 6801;
         protected int ConnectTimeout = 5000;
@@ -549,9 +550,10 @@ namespace EdiabasLib
             receiveData = null;
             if (CommParameterProtected == null)
             {
-                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
-                return false;
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Info, "TransmitData with default CommParameter");
+                SetDefaultCommParameter();
             }
+
             byte[] cachedResponse;
             EdiabasNet.ErrorCodes cachedErrorCode;
             if (ReadCachedTransmission(sendData, out cachedResponse, out cachedErrorCode))
@@ -600,12 +602,6 @@ namespace EdiabasLib
 
         public override bool ReceiveFrequent(out byte[] receiveData)
         {
-            receiveData = null;
-            if (CommParameterProtected == null)
-            {
-                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
-                return false;
-            }
             receiveData = ByteArray0;
             return true;
         }
@@ -698,9 +694,9 @@ namespace EdiabasLib
                                             try
                                             {
                                                 IPAddress broadcastAddress = IPAddress.Parse(broadcastAddressName);
-                                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': Broadcast={1}",
-                                                    netInterface.Name, broadcastAddress));
-                                                IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, ControlPort);
+                                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': Broadcast={1} Port={2}",
+                                                    netInterface.Name, broadcastAddress, UdpBroadcastPort));
+                                                IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, UdpBroadcastPort);
 
                                                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                                                 {
@@ -742,9 +738,9 @@ namespace EdiabasLib
                                                     ipBytes[i] |= (byte)(~maskBytes[i]);
                                                 }
                                                 IPAddress broadcastAddress = new IPAddress(ipBytes);
-                                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': Ip={1} Mask={2} Broadcast={3}",
-                                                    adapter.Name, ipAddressInfo.Address, ipAddressInfo.IPv4Mask, broadcastAddress));
-                                                IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, ControlPort);
+                                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': Ip={1} Mask={2} Broadcast={3} Port={4}",
+                                                    adapter.Name, ipAddressInfo.Address, ipAddressInfo.IPv4Mask, broadcastAddress, UdpBroadcastPort));
+                                                IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, UdpBroadcastPort);
                                                 UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
                                                 broadcastSend = true;
                                             }
@@ -766,13 +762,13 @@ namespace EdiabasLib
                     try
                     {
 #if WindowsCE
-                        IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Broadcast, ControlPort);
+                        IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Broadcast, UdpBroadcastPort);
 #else
-                        IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse("169.254.255.255"), ControlPort);
+                        IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse("169.254.255.255"), UdpBroadcastPort);
 #endif
                         if (EdiabasProtected != null)
                         {
-                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending to: {0}", ipUdpIdent.Address));
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending to: {0}:{1}", ipUdpIdent.Address, UdpBroadcastPort));
                         }
                         TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                         {
@@ -928,6 +924,7 @@ namespace EdiabasLib
             }
             try
             {
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TcpControlConnect: {0}:{1}", TcpHostIp.ToString(), ControlPort);
                 lock (TcpControlTimerLock)
                 {
                     TcpControlTimerStop();
@@ -938,8 +935,9 @@ namespace EdiabasLib
                 }, TcpHostIp, NetworkData);
                 TcpControlStream = TcpControlClient.GetStream();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "TcpControlConnect exception: " + EdiabasNet.GetExceptionText(ex));
                 TcpControlDisconnect();
                 return false;
             }
@@ -1487,6 +1485,17 @@ namespace EdiabasLib
                 sum += data[i];
             }
             return sum;
+        }
+
+        private void SetDefaultCommParameter()
+        {
+            ParTransmitFunc = TransBmwFast;
+            ParTimeoutStd = 1200;
+            ParTimeoutTelEnd = 10;
+            ParInterbyteTime = 0;
+            ParRegenTime = 0;
+            ParTimeoutNr78 = 5000;
+            ParRetryNr78 = 2;
         }
 
         protected override void Dispose(bool disposing)
