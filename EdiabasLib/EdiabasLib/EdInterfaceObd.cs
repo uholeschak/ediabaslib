@@ -99,6 +99,8 @@ namespace EdiabasLib
         protected delegate EdiabasNet.ErrorCodes FinishDelegate();
 
         private bool _disposed;
+        private static Mutex _interfaceMutex;
+        protected const string MutexName = "EdiabasLib_InterfaceObd";
         protected const int TransBufferSize = 0x800; // transmit buffer size
         protected static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         protected static readonly byte[] ByteArray0 = new byte[0];
@@ -1132,12 +1134,22 @@ namespace EdiabasLib
             }
         }
 
+        protected override Mutex InterfaceMutex
+        {
+            get { return _interfaceMutex; }
+            set { _interfaceMutex = value; }
+        }
+
+        protected override string InterfaceMutexName
+        {
+            get { return MutexName; }
+        }
         static EdInterfaceObd()
         {
 #if WindowsCE || Android
-            InterfaceMutex = new Mutex(false);
+            _interfaceMutex = new Mutex(false);
 #else
-            InterfaceMutex = new Mutex(false, "EdiabasLib_InterfaceObd");
+            _interfaceMutex = new Mutex(false, MutexName);
 #endif
 #if USE_SERIAL_PORT
             SerialPort = new System.IO.Ports.SerialPort();
