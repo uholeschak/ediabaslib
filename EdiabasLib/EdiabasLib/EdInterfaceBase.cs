@@ -44,8 +44,7 @@ namespace EdiabasLib
         private bool _disposed;
         protected EdiabasNet EdiabasProtected;
         protected object ConnectParameterProtected;
-        protected static Mutex InterfaceMutex;
-        protected static bool MutexReleaseFailed;
+        protected object MutexLock = new object();
         protected bool MutexAquired;
         protected UInt32 CommRepeatsProtected;
         protected UInt32[] CommParameterProtected;
@@ -56,59 +55,82 @@ namespace EdiabasLib
         protected int ReadTransactionPos;
         protected Dictionary<string, TransmitStorage> TransmitCacheDict = new Dictionary<string, TransmitStorage>();
 
+        protected virtual Mutex InterfaceMutex
+        {
+            get { return null; }
+            // ReSharper disable once ValueParameterNotUsed
+            set { }
+        }
+
+        protected virtual string InterfaceMutexName
+        {
+            get { return string.Empty; }
+        }
+
+
         public abstract bool IsValidInterfaceName(string name);
 
         public virtual bool InterfaceLock()
         {
-            if (InterfaceMutex == null)
+            lock (MutexLock)
             {
-                return false;
-            }
-            try
-            {
-                if (!InterfaceMutex.WaitOne(0, false))
+                if (InterfaceMutex == null)
                 {
-                    if (MutexReleaseFailed)
-                    {
-                        return true;
-                    }
                     return false;
                 }
-                MutexAquired = true;
-            }
+                try
+                {
+                    if (!InterfaceMutex.WaitOne(0, false))
+                    {
+                        return false;
+                    }
+                    MutexAquired = true;
+                }
 #if !WindowsCE
-            catch (AbandonedMutexException)
-            {
-                MutexAquired = true;
-            }
+                catch (AbandonedMutexException)
+                {
+                    MutexAquired = true;
+                }
 #endif
-            catch (Exception)
-            {
-                return false;
+                catch (Exception)
+                {
+                    return false;
+                }
+
+                return true;
             }
-            return true;
         }
 
         public virtual bool InterfaceUnlock()
         {
-            if (InterfaceMutex == null)
+            lock (MutexLock)
             {
+                if (InterfaceMutex == null)
+                {
+                    return true;
+                }
+                if (MutexAquired)
+                {
+                    try
+                    {
+                        InterfaceMutex.ReleaseMutex();
+                    }
+                    catch (Exception)
+                    {
+                        InterfaceMutex.Close();
+                        InterfaceMutex.Dispose();
+#if WindowsCE || Android
+                        InterfaceMutex = new Mutex(false);
+#else
+                        InterfaceMutex = new Mutex(false, InterfaceMutexName);
+#endif
+                    }
+
+                    MutexAquired = false;
+                }
+
                 return true;
             }
-            if (MutexAquired)
-            {
-                try
-                {
-                    InterfaceMutex.ReleaseMutex();
-                    MutexAquired = false;
-                    MutexReleaseFailed = false;
-                }
-                catch (Exception)
-                {
-                    MutexReleaseFailed = true;
-                }
-            }
-            return true;
         }
 
         public virtual bool InterfaceConnect()

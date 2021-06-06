@@ -31,6 +31,8 @@ namespace EdiabasLib
         protected delegate void ExecuteNetworkDelegate();
 
         private bool _disposed;
+        private static Mutex _interfaceMutex;
+        protected const string MutexName = "EdiabasLib_InterfaceEnet";
         protected const int TransBufferSize = 0x10010; // transmit buffer size
         protected const int TcpReadTimeoutOffset = 1000;
         protected const int TcpAckTimeout = 5000;
@@ -376,12 +378,23 @@ namespace EdiabasLib
             }
         }
 
+        protected override Mutex InterfaceMutex
+        {
+            get { return _interfaceMutex; }
+            set { _interfaceMutex = value; }
+        }
+
+        protected override string InterfaceMutexName
+        {
+            get { return MutexName; }
+        }
+
         static EdInterfaceEnet()
         {
 #if WindowsCE || Android
-            InterfaceMutex = new Mutex(false);
+            _interfaceMutex = new Mutex(false);
 #else
-            InterfaceMutex = new Mutex(false, "EdiabasLib_InterfaceEnet");
+            _interfaceMutex = new Mutex(false, MutexName);
 #endif
             TcpDiagStreamRecEvent = new AutoResetEvent(false);
             TcpDiagStreamSendLock = new object();
@@ -421,7 +434,7 @@ namespace EdiabasLib
             }
             try
             {
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Connect");
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connect to: {0}:{1}", RemoteHostProtected, DiagnosticPort);
                 NetworkData = null;
 #if Android
                 if (ConnectParameter is ConnectParameterType connectParameter)
@@ -457,7 +470,7 @@ namespace EdiabasLib
                     TcpDiagRecQueue.Clear();
                 }
                 StartReadTcpDiag(6);
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Connected");
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connected to: {0}:{1}", TcpHostIp.ToString(), DiagnosticPort);
                 ReconnectRequired = false;
             }
             catch (Exception ex)
