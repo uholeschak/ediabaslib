@@ -550,9 +550,10 @@ namespace EdiabasLib
             receiveData = null;
             if (CommParameterProtected == null)
             {
-                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
-                return false;
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Info, "TransmitData with default CommParameter");
+                SetDefaultCommParameter();
             }
+
             byte[] cachedResponse;
             EdiabasNet.ErrorCodes cachedErrorCode;
             if (ReadCachedTransmission(sendData, out cachedResponse, out cachedErrorCode))
@@ -601,12 +602,6 @@ namespace EdiabasLib
 
         public override bool ReceiveFrequent(out byte[] receiveData)
         {
-            receiveData = null;
-            if (CommParameterProtected == null)
-            {
-                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
-                return false;
-            }
             receiveData = ByteArray0;
             return true;
         }
@@ -1490,6 +1485,17 @@ namespace EdiabasLib
                 sum += data[i];
             }
             return sum;
+        }
+
+        private void SetDefaultCommParameter()
+        {
+            ParTransmitFunc = TransBmwFast;
+            ParTimeoutStd = 1200;
+            ParTimeoutTelEnd = 10;
+            ParInterbyteTime = 0;
+            ParRegenTime = 0;
+            ParTimeoutNr78 = 5000;
+            ParRetryNr78 = 2;
         }
 
         protected override void Dispose(bool disposing)
