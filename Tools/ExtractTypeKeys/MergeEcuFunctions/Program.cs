@@ -326,6 +326,21 @@ namespace MergeEcuFunctions
 
             if (parList1.Count != parList2.Count)
             {
+                if ((string.Compare(ecuJob1.Name, "SVK_LESEN", StringComparison.OrdinalIgnoreCase) == 0) &&
+                    (string.Compare(ecuJob2.Name, "SVK_LESEN", StringComparison.OrdinalIgnoreCase) == 0))
+                {
+                    if (parList1.Count == 1 && parList2.Count == 0 &&
+                        string.Compare(parList1[0].Value, "SVK_AKTUELL", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return true;
+                    }
+
+                    if (parList1.Count == 0 && parList2.Count == 1 &&
+                        string.Compare(parList2[0].Value, "SVK_AKTUELL", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return true;
+                    }
+                }
                 return false;
             }
 
