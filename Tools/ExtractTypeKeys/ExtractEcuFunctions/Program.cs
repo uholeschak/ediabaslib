@@ -354,7 +354,7 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        ecuNameList.Add(reader["NAME"].ToString());
+                        ecuNameList.Add(reader["NAME"].ToString().Trim());
                     }
                 }
             }
@@ -396,8 +396,8 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        string groupId = reader["ECUGROUPID"].ToString();
-                        ecuVariant = new EcuFunctionStructs.EcuVariant(reader["ID"].ToString(),
+                        string groupId = reader["ECUGROUPID"].ToString().Trim();
+                        ecuVariant = new EcuFunctionStructs.EcuVariant(reader["ID"].ToString().Trim(),
                             groupId,
                             GetTranslation(reader),
                             GetEcuGroupFunctionIds(mDbConnection, groupId));
@@ -420,7 +420,7 @@ namespace ExtractEcuFunctions
                     while (reader.Read())
                     {
                         EcuFunctionStructs.EcuFaultCode ecuFaultCode = new EcuFunctionStructs.EcuFaultCode(
-                            reader["ID"].ToString(),
+                            reader["ID"].ToString().Trim(),
                             reader["CODE"].ToString());
                         ecuFaultCodeList.Add(ecuFaultCode);
                         EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel = GetFaultCodeLabel(mDbConnection, ecuFaultCode);
@@ -488,7 +488,7 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        string labelId = reader["LABELID"].ToString();
+                        string labelId = reader["LABELID"].ToString().Trim();
                         bool addItem;
                         lock (FaultCodeLabelIdHashSet)
                         {
@@ -524,7 +524,7 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        ecuFaultCodeLabel = new EcuFunctionStructs.EcuFaultCodeLabel(reader["LABELID"].ToString(),
+                        ecuFaultCodeLabel = new EcuFunctionStructs.EcuFaultCodeLabel(reader["LABELID"].ToString().Trim(),
                             reader["CODE"].ToString(),
                             reader["SAECODE"].ToString(),
                             GetTranslation(reader),
@@ -550,7 +550,7 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        string labelId = reader["LABELID"].ToString();
+                        string labelId = reader["LABELID"].ToString().Trim();
                         bool addItem;
                         lock (FaultModeLabelIdHashSet)
                         {
@@ -585,7 +585,7 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        ecuFaultModeLabelList.Add(new EcuFunctionStructs.EcuFaultModeLabel(reader["LABELID"].ToString(),
+                        ecuFaultModeLabelList.Add(new EcuFunctionStructs.EcuFaultModeLabel(reader["LABELID"].ToString().Trim(),
                             reader["CODE"].ToString(),
                             GetTranslation(reader),
                             reader["RELEVANCE"].ToString(),
@@ -609,7 +609,7 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        string labelId = reader["ID"].ToString();
+                        string labelId = reader["ID"].ToString().Trim();
                         bool addItem;
                         lock (EnvCondLabelIdHashSet)
                         {
@@ -657,7 +657,7 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        ecuEnvCondLabelList.Add(new EcuFunctionStructs.EcuEnvCondLabel(reader["ID"].ToString(),
+                        ecuEnvCondLabelList.Add(new EcuFunctionStructs.EcuEnvCondLabel(reader["ID"].ToString().Trim(),
                             reader["NODECLASS"].ToString(),
                             GetTranslation(reader),
                             reader["RELEVANCE"].ToString(),
@@ -691,7 +691,7 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        ecuGroupFunctionIds.Add(reader["ID"].ToString());
+                        ecuGroupFunctionIds.Add(reader["ID"].ToString().Trim());
                     }
                 }
             }
@@ -710,7 +710,7 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        result = reader["NAME"].ToString();
+                        result = reader["NAME"].ToString().Trim();
                     }
                 }
             }
@@ -730,9 +730,9 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        ecuJobList.Add(new EcuFunctionStructs.EcuJob(reader["JOBID"].ToString(),
-                            reader["FUNCTIONNAMEJOB"].ToString(),
-                            reader["NAME"].ToString(),
+                        ecuJobList.Add(new EcuFunctionStructs.EcuJob(reader["JOBID"].ToString().Trim(),
+                            reader["FUNCTIONNAMEJOB"].ToString().Trim(),
+                            reader["NAME"].ToString().Trim(),
                             reader["PHASE"].ToString(),
                             reader["RANK"].ToString()));
                     }
@@ -753,10 +753,10 @@ namespace ExtractEcuFunctions
                     {
                         while (reader.Read())
                         {
-                            ecuJobParList.Add(new EcuFunctionStructs.EcuJobParameter(reader["PARAMID"].ToString(),
-                                reader["PARAMVALUE"].ToString(),
+                            ecuJobParList.Add(new EcuFunctionStructs.EcuJobParameter(reader["PARAMID"].ToString().Trim(),
+                                reader["PARAMVALUE"].ToString().Trim(),
                                 reader["ADAPTERPATH"].ToString(),
-                                reader["NAME"].ToString()));
+                                reader["NAME"].ToString().Trim()));
                         }
                     }
                 }
@@ -776,11 +776,11 @@ namespace ExtractEcuFunctions
                         while (reader.Read())
                         {
                             EcuFunctionStructs.EcuJobResult ecuJobResult = new EcuFunctionStructs.EcuJobResult(
-                                reader["RESULTID"].ToString(),
+                                reader["RESULTID"].ToString().Trim(),
                                 GetTranslation(reader),
-                                reader["FUNCTIONNAMERESULT"].ToString(),
+                                reader["FUNCTIONNAMERESULT"].ToString().Trim(),
                                 reader["ADAPTERPATH"].ToString(),
-                                reader["NAME"].ToString(),
+                                reader["NAME"].ToString().Trim(),
                                 reader["STEUERGERAETEFUNKTIONENRELEVAN"].ToString(),
                                 reader["LOCATION"].ToString(),
                                 reader["UNIT"].ToString(),
@@ -822,12 +822,12 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        ecuResultStateValueList.Add(new EcuFunctionStructs.EcuResultStateValue(reader["ID"].ToString(),
+                        ecuResultStateValueList.Add(new EcuFunctionStructs.EcuResultStateValue(reader["ID"].ToString().Trim(),
                             GetTranslation(reader, "TITLE", language),
                             reader["STATEVALUE"].ToString(),
                             reader["VALIDFROM"].ToString(),
                             reader["VALIDTO"].ToString(),
-                            reader["PARENTID"].ToString()));
+                            reader["PARENTID"].ToString().Trim()));
                     }
                 }
             }
@@ -850,7 +850,7 @@ namespace ExtractEcuFunctions
                     while (reader.Read())
                     {
                         string nodeClass = reader["NODECLASS"].ToString();
-                        EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct = new EcuFunctionStructs.EcuFixedFuncStruct(reader["ID"].ToString(),
+                        EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct = new EcuFunctionStructs.EcuFixedFuncStruct(reader["ID"].ToString().Trim(),
                             nodeClass,
                             GetNodeClassName(mDbConnection, nodeClass),
                             GetTranslation(reader),
@@ -897,7 +897,7 @@ namespace ExtractEcuFunctions
                         while (reader.Read())
                         {
                             refEcuVariantList.Add(new EcuFunctionStructs.RefEcuVariant(reader["ID"].ToString(),
-                                reader["ECUVARIANTID"].ToString()));
+                                reader["ECUVARIANTID"].ToString().Trim()));
                         }
                     }
                 }
@@ -924,7 +924,7 @@ namespace ExtractEcuFunctions
                     {
                         while (reader.Read())
                         {
-                            ecuVarFunctionsList.Add(new EcuFunctionStructs.EcuVarFunc(reader["ID"].ToString(), ecuGroupFunctionId));
+                            ecuVarFunctionsList.Add(new EcuFunctionStructs.EcuVarFunc(reader["ID"].ToString().Trim(), ecuGroupFunctionId));
                         }
                     }
                 }
@@ -947,7 +947,7 @@ namespace ExtractEcuFunctions
                     {
                         while (reader.Read())
                         {
-                            ecuFuncStructList.Add(new EcuFunctionStructs.EcuFuncStruct(reader["FUNCSTRUCTID"].ToString(),
+                            ecuFuncStructList.Add(new EcuFunctionStructs.EcuFuncStruct(reader["FUNCSTRUCTID"].ToString().Trim(),
                                 GetTranslation(reader),
                                 reader["MULTISELECTION"].ToString()));
                         }
