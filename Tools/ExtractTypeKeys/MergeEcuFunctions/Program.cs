@@ -224,20 +224,20 @@ namespace MergeEcuFunctions
                     {
                         if (!string.IsNullOrEmpty(ecuJob.Name))
                         {
-                            if ((string.Compare(ecuJob.Name, ecuJobMerge.Name, StringComparison.OrdinalIgnoreCase) == 0) &&
-                                string.Compare(ecuJob.FuncNameJob, ecuJobMerge.FuncNameJob, StringComparison.OrdinalIgnoreCase) == 0)
+                            if ((string.Compare(ecuJob.Name.Trim(), ecuJobMerge.Name.Trim(), StringComparison.OrdinalIgnoreCase) == 0) &&
+                                string.Compare(ecuJob.FuncNameJob.Trim(), ecuJobMerge.FuncNameJob.Trim(), StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 if (EcuJobsArgsIdentical(ecuJob, ecuJobMerge))
                                 {
                                     int results = MergeEcuJobResults(null, fileName, ecuJob, ecuJobMerge);
                                     if (results > 0)
                                     {
-                                        if (string.Compare(ecuJob.Id, ecuJobMerge.Id, StringComparison.OrdinalIgnoreCase) != 0)
+                                        if (string.Compare(ecuJob.Id.Trim(), ecuJobMerge.Id.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
                                         {
                                             List<string> compatIdListList = ecuJob.CompatIdListList ?? new List<string>();
-                                            if (!compatIdListList.Contains(ecuJob.Id))
+                                            if (compatIdListList.All(x => string.Compare(x.Trim(), ecuJob.Id.Trim(), StringComparison.OrdinalIgnoreCase) != 0))
                                             {
-                                                compatIdListList.Add(ecuJob.Id);
+                                                compatIdListList.Add(ecuJob.Id.Trim());
                                             }
 
                                             ecuJob.CompatIdListList = compatIdListList;
@@ -280,10 +280,10 @@ namespace MergeEcuFunctions
                             foreach (EcuFunctionStructs.EcuJobResult ecuJobResultMatch in jobResultList)
                             {
                                 resultCount++;
-                                if (string.Compare(ecuJobResultMatch.Id, ecuJobResult.Id, StringComparison.OrdinalIgnoreCase) != 0)
+                                if (string.Compare(ecuJobResultMatch.Id.Trim(), ecuJobResult.Id.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
                                 {
                                     List<string> compatIdListList = ecuJobResultMatch.CompatIdListList ?? new List<string>();
-                                    if (!compatIdListList.Contains(ecuJobResult.Id))
+                                    if (compatIdListList.All(x => string.Compare(x.Trim(), ecuJobResult.Id.Trim(), StringComparison.OrdinalIgnoreCase) != 0))
                                     {
                                         compatIdListList.Add(ecuJobResult.Id);
                                     }
@@ -326,17 +326,17 @@ namespace MergeEcuFunctions
 
             if (parList1.Count != parList2.Count)
             {
-                if ((string.Compare(ecuJob1.Name, "SVK_LESEN", StringComparison.OrdinalIgnoreCase) == 0) &&
-                    (string.Compare(ecuJob2.Name, "SVK_LESEN", StringComparison.OrdinalIgnoreCase) == 0))
+                if ((string.Compare(ecuJob1.Name.Trim(), "SVK_LESEN", StringComparison.OrdinalIgnoreCase) == 0) &&
+                    (string.Compare(ecuJob2.Name.Trim(), "SVK_LESEN", StringComparison.OrdinalIgnoreCase) == 0))
                 {
                     if (parList1.Count == 1 && parList2.Count == 0 &&
-                        string.Compare(parList1[0].Value, "SVK_AKTUELL", StringComparison.OrdinalIgnoreCase) == 0)
+                        string.Compare(parList1[0].Value.Trim(), "SVK_AKTUELL", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         return true;
                     }
 
                     if (parList1.Count == 0 && parList2.Count == 1 &&
-                        string.Compare(parList2[0].Value, "SVK_AKTUELL", StringComparison.OrdinalIgnoreCase) == 0)
+                        string.Compare(parList2[0].Value.Trim(), "SVK_AKTUELL", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         return true;
                     }
@@ -346,7 +346,7 @@ namespace MergeEcuFunctions
 
             for (int i = 0; i < parList1.Count; i++)
             {
-                if (string.Compare(parList1[i].Value, parList2[i].Value, StringComparison.OrdinalIgnoreCase) != 0)
+                if (string.Compare(parList1[i].Value.Trim(), parList2[i].Value.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     return false;
                 }
@@ -411,8 +411,8 @@ namespace MergeEcuFunctions
                     if (!string.IsNullOrEmpty(ecuJobResult.Name))
                     {
                         resultCount++;
-                        if ((string.Compare(ecuJobResult.Name, ecuJobResultComp.Name, StringComparison.OrdinalIgnoreCase) == 0) &&
-                            (string.Compare(ecuJobResult.FuncNameResult, ecuJobResultComp.FuncNameResult, StringComparison.OrdinalIgnoreCase) == 0))
+                        if ((string.Compare(ecuJobResult.Name.Trim(), ecuJobResultComp.Name.Trim(), StringComparison.OrdinalIgnoreCase) == 0) &&
+                            (string.Compare(ecuJobResult.FuncNameResult.Trim(), ecuJobResultComp.FuncNameResult.Trim(), StringComparison.OrdinalIgnoreCase) == 0))
                         {
                             jobResultList.Add(ecuJobResult);
                         }
