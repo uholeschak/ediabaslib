@@ -7,6 +7,7 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 using BmwFileReader;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace MergeEcuFunctions
 {
@@ -33,17 +34,17 @@ namespace MergeEcuFunctions
                 return 1;
             }
 
-            string inDir = args[0];
-            if (string.IsNullOrEmpty(inDir))
+            string inFileName = args[0];
+            if (string.IsNullOrEmpty(inFileName))
             {
-                outTextWriter?.WriteLine("Input directory empty");
+                outTextWriter?.WriteLine("Input file empty");
                 return 1;
             }
 
-            string mergeDir = args[1];
-            if (string.IsNullOrEmpty(mergeDir))
+            string mergeFileName = args[1];
+            if (string.IsNullOrEmpty(mergeFileName))
             {
-                outTextWriter?.WriteLine("Merge directory empty");
+                outTextWriter?.WriteLine("Merge file empty");
                 return 1;
             }
 
@@ -56,15 +57,15 @@ namespace MergeEcuFunctions
 
             try
             {
-                if (!Directory.Exists(inDir))
+                if (!File.Exists(inFileName))
                 {
-                    outTextWriter?.WriteLine("Input directory not existing");
+                    outTextWriter?.WriteLine("Input file not existing");
                     return 1;
                 }
 
-                if (!Directory.Exists(mergeDir))
+                if (!File.Exists(mergeFileName))
                 {
-                    outTextWriter?.WriteLine("Output directory not existing");
+                    outTextWriter?.WriteLine("Merge file not existing");
                     return 1;
                 }
 
@@ -83,55 +84,43 @@ namespace MergeEcuFunctions
                     // ignored
                 }
 
+                List<string> entryList = GetZipEntryList(inFileName);
+                if (entryList == null || entryList.Count == 0)
+                {
+                    outTextWriter?.WriteLine("No entries in zip found");
+                    return 1;
+                }
 
-                string[] files = Directory.GetFiles(inDir, "*.xml");
-                foreach (string inFile in files)
+                foreach (string entryName in entryList)
                 {
                     try
                     {
-                        string fileName = Path.GetFileName(inFile);
-                        string mergeFile = Path.Combine(mergeDir, fileName);
-                        if (!fileName.StartsWith("faultdata_", StringComparison.OrdinalIgnoreCase) && File.Exists(mergeFile))
+                        if (!entryName.StartsWith("faultdata_", StringComparison.OrdinalIgnoreCase))
                         {
-                            XmlSerializer serializer = new XmlSerializer(typeof(EcuFunctionStructs.EcuVariant));
-                            EcuFunctionStructs.EcuVariant ecuVariantIn = null;
-                            EcuFunctionStructs.EcuVariant ecuVariantMerge = null;
-                            using (FileStream fs = new FileStream(inFile, FileMode.Open))
+                            if (GetEcuDataObject(inFileName, entryName, typeof(EcuFunctionStructs.EcuVariant)) is EcuFunctionStructs.EcuVariant ecuVariantIn)
                             {
-                                if (serializer.Deserialize(fs) is EcuFunctionStructs.EcuVariant ecuVariant)
+                                if (GetEcuDataObject(mergeFileName, entryName, typeof(EcuFunctionStructs.EcuVariant)) is EcuFunctionStructs.EcuVariant ecuVariantMerge)
                                 {
-                                    ecuVariantIn = ecuVariant;
-                                }
-                            }
+                                    MergeEcuVariant(outTextWriter, entryName, ecuVariantIn, ecuVariantMerge);
 
-                            using (FileStream fs = new FileStream(mergeFile, FileMode.Open))
-                            {
-                                if (serializer.Deserialize(fs) is EcuFunctionStructs.EcuVariant ecuVariant)
-                                {
-                                    ecuVariantMerge = ecuVariant;
-                                }
-                            }
-
-                            if (ecuVariantIn != null && ecuVariantMerge != null)
-                            {
-                                MergeEcuVariant(outTextWriter, fileName, ecuVariantIn, ecuVariantMerge);
-
-                                string xmlFile = Path.Combine(outDirSub, fileName);
-                                XmlWriterSettings settings = new XmlWriterSettings
-                                {
-                                    Indent = true,
-                                    IndentChars = "\t"
-                                };
-                                using (XmlWriter writer = XmlWriter.Create(xmlFile, settings))
-                                {
-                                    serializer.Serialize(writer, ecuVariantIn);
+                                    string xmlFile = Path.Combine(outDirSub, entryName);
+                                    XmlWriterSettings settings = new XmlWriterSettings
+                                    {
+                                        Indent = true,
+                                        IndentChars = "\t"
+                                    };
+                                    XmlSerializer serializer = new XmlSerializer(typeof(EcuFunctionStructs.EcuVariant));
+                                    using (XmlWriter writer = XmlWriter.Create(xmlFile, settings))
+                                    {
+                                        serializer.Serialize(writer, ecuVariantIn);
+                                    }
                                 }
                             }
                         }
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
-                        // ignored
+                        outTextWriter?.WriteLine(e);
                     }
                 }
             }
@@ -140,6 +129,97 @@ namespace MergeEcuFunctions
                 outTextWriter?.WriteLine(e);
             }
             return 0;
+        }
+
+        static List<string> GetZipEntryList(string fileName)
+        {
+            try
+            {
+                ZipFile zf = null;
+                try
+                {
+                    List<string> entryList = new List<string>();
+                    using (FileStream fs = File.OpenRead(fileName))
+                    {
+                        zf = new ZipFile(fs);
+                        foreach (ZipEntry zipEntry in zf)
+                        {
+                            if (!zipEntry.IsFile)
+                            {
+                                continue; // Ignore directories
+                            }
+
+                            entryList.Add(zipEntry.Name);
+                        }
+                    }
+
+                    return entryList;
+                }
+                finally
+                {
+                    if (zf != null)
+                    {
+                        zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                        zf.Close(); // Ensure we release resources
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        static object GetEcuDataObject(string fileName, string entryName, Type type)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(entryName))
+                {
+                    return null;
+                }
+
+                object ecuObject = null;
+                ZipFile zf = null;
+                try
+                {
+                    using (FileStream fs = File.OpenRead(fileName))
+                    {
+                        zf = new ZipFile(fs);
+                        foreach (ZipEntry zipEntry in zf)
+                        {
+                            if (!zipEntry.IsFile)
+                            {
+                                continue; // Ignore directories
+                            }
+                            if (string.Compare(zipEntry.Name, entryName, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                Stream zipStream = zf.GetInputStream(zipEntry);
+                                using (TextReader reader = new StreamReader(zipStream))
+                                {
+                                    XmlSerializer serializer = new XmlSerializer(type);
+                                    ecuObject = serializer.Deserialize(reader);
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    return ecuObject;
+                }
+                finally
+                {
+                    if (zf != null)
+                    {
+                        zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                        zf.Close(); // Ensure we release resources
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         static bool MergeEcuVariant(TextWriter outTextWriter, string fileName, EcuFunctionStructs.EcuVariant ecuVariantIn, EcuFunctionStructs.EcuVariant ecuVariantMerge)
