@@ -90,6 +90,7 @@ namespace MergeEcuFunctions
                     {
                         try
                         {
+                            bool stored = false;
                             if (!entryName.StartsWith("faultdata_", StringComparison.OrdinalIgnoreCase))
                             {
                                 if (GetEcuDataObject(inFileName, entryName, typeof(EcuFunctionStructs.EcuVariant)) is EcuFunctionStructs.EcuVariant ecuVariantIn)
@@ -113,6 +114,23 @@ namespace MergeEcuFunctions
 
                                             AddZipEntry(zipStream, entryName, memStream);
                                         }
+
+                                        stored = true;
+                                    }
+                                }
+                            }
+
+                            if (!stored)
+                            {
+                                using (MemoryStream memStream = new MemoryStream())
+                                {
+                                    if (GetZipDataStream(inFileName, entryName, memStream))
+                                    {
+                                        AddZipEntry(zipStream, entryName, memStream);
+                                    }
+                                    else
+                                    {
+                                        throw new Exception(string.Format("Copy zip entry {0} failed", entryName));
                                     }
                                 }
                             }
@@ -203,6 +221,56 @@ namespace MergeEcuFunctions
             catch (Exception)
             {
                 return null;
+            }
+        }
+
+        static bool GetZipDataStream(string fileName, string entryName, Stream outStream)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(entryName))
+                {
+                    return false;
+                }
+
+                ZipFile zf = null;
+                try
+                {
+                    using (FileStream fs = File.OpenRead(fileName))
+                    {
+                        zf = new ZipFile(fs);
+                        foreach (ZipEntry zipEntry in zf)
+                        {
+                            if (!zipEntry.IsFile)
+                            {
+                                continue; // Ignore directories
+                            }
+                            if (string.Compare(zipEntry.Name, entryName, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                using (Stream zipStream = zf.GetInputStream(zipEntry))
+                                {
+                                    byte[] buffer = new byte[4096];
+                                    StreamUtils.Copy(zipStream, outStream, buffer);
+                                }
+                                return true;
+                            }
+                        }
+                    }
+
+                    return false;
+                }
+                finally
+                {
+                    if (zf != null)
+                    {
+                        zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                        zf.Close(); // Ensure we release resources
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
