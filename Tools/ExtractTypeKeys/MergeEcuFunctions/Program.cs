@@ -7,6 +7,7 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 using BmwFileReader;
+using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 
 namespace MergeEcuFunctions
@@ -48,10 +49,10 @@ namespace MergeEcuFunctions
                 return 1;
             }
 
-            string outDir = args[2];
-            if (string.IsNullOrEmpty(outDir))
+            string outFile = args[2];
+            if (string.IsNullOrEmpty(outFile))
             {
-                outTextWriter?.WriteLine("Output directory empty");
+                outTextWriter?.WriteLine("Output file empty");
                 return 1;
             }
 
@@ -69,21 +70,6 @@ namespace MergeEcuFunctions
                     return 1;
                 }
 
-                string outDirSub = Path.Combine(outDir, "EcuFunctionsMerged");
-                try
-                {
-                    if (Directory.Exists(outDirSub))
-                    {
-                        Directory.Delete(outDirSub, true);
-                        Thread.Sleep(1000);
-                    }
-                    Directory.CreateDirectory(outDirSub);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-
                 List<string> entryList = GetZipEntryList(inFileName);
                 if (entryList == null || entryList.Count == 0)
                 {
@@ -91,37 +77,61 @@ namespace MergeEcuFunctions
                     return 1;
                 }
 
-                foreach (string entryName in entryList)
+                FileStream fsOut = null;
+                ZipOutputStream zipStream = null;
+                try
                 {
-                    try
-                    {
-                        if (!entryName.StartsWith("faultdata_", StringComparison.OrdinalIgnoreCase))
-                        {
-                            if (GetEcuDataObject(inFileName, entryName, typeof(EcuFunctionStructs.EcuVariant)) is EcuFunctionStructs.EcuVariant ecuVariantIn)
-                            {
-                                if (GetEcuDataObject(mergeFileName, entryName, typeof(EcuFunctionStructs.EcuVariant)) is EcuFunctionStructs.EcuVariant ecuVariantMerge)
-                                {
-                                    MergeEcuVariant(outTextWriter, entryName, ecuVariantIn, ecuVariantMerge);
+                    fsOut = File.Create(outFile);
+                    zipStream = new ZipOutputStream(fsOut);
 
-                                    string xmlFile = Path.Combine(outDirSub, entryName);
-                                    XmlWriterSettings settings = new XmlWriterSettings
+                    zipStream.SetLevel(9); //0-9, 9 being the highest level of compression
+
+                    foreach (string entryName in entryList)
+                    {
+                        try
+                        {
+                            if (!entryName.StartsWith("faultdata_", StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (GetEcuDataObject(inFileName, entryName, typeof(EcuFunctionStructs.EcuVariant)) is EcuFunctionStructs.EcuVariant ecuVariantIn)
+                                {
+                                    if (GetEcuDataObject(mergeFileName, entryName, typeof(EcuFunctionStructs.EcuVariant)) is EcuFunctionStructs.EcuVariant ecuVariantMerge)
                                     {
-                                        Indent = true,
-                                        IndentChars = "\t"
-                                    };
-                                    XmlSerializer serializer = new XmlSerializer(typeof(EcuFunctionStructs.EcuVariant));
-                                    using (XmlWriter writer = XmlWriter.Create(xmlFile, settings))
-                                    {
-                                        serializer.Serialize(writer, ecuVariantIn);
+                                        MergeEcuVariant(outTextWriter, entryName, ecuVariantIn, ecuVariantMerge);
+
+                                        XmlWriterSettings settings = new XmlWriterSettings
+                                        {
+                                            Indent = true,
+                                            IndentChars = "\t"
+                                        };
+                                        XmlSerializer serializer = new XmlSerializer(typeof(EcuFunctionStructs.EcuVariant));
+                                        using (MemoryStream memStream = new MemoryStream())
+                                        {
+                                            using (XmlWriter writer = XmlWriter.Create(memStream, settings))
+                                            {
+                                                serializer.Serialize(writer, ecuVariantIn);
+                                            }
+
+                                            AddZipEntry(zipStream, entryName, memStream);
+                                        }
                                     }
                                 }
                             }
                         }
+                        catch (Exception e)
+                        {
+                            outTextWriter?.WriteLine(e);
+                        }
                     }
-                    catch (Exception e)
+
+                }
+                finally
+                {
+                    if (zipStream != null)
                     {
-                        outTextWriter?.WriteLine(e);
+                        zipStream.IsStreamOwner = true; // Makes the Close also Close the underlying stream
+                        zipStream.Close();
                     }
+                    fsOut?.Close();
                 }
             }
             catch (Exception e)
@@ -129,6 +139,32 @@ namespace MergeEcuFunctions
                 outTextWriter?.WriteLine(e);
             }
             return 0;
+        }
+
+        private static void AddZipEntry(ZipOutputStream zipStream, string entryName, Stream entryStream)
+        {
+            entryName = ZipEntry.CleanName(entryName); // Removes drive from name and fixes slash direction
+            ZipEntry newEntry = new ZipEntry(entryName);
+            newEntry.DateTime = DateTime.Now;           // Note the zip format stores 2 second granularity
+
+            // Specifying the AESKeySize triggers AES encryption. Allowable values are 0 (off), 128 or 256.
+            // A password on the ZipOutputStream is required if using AES.
+            //   newEntry.AESKeySize = 256;
+
+            // To permit the zip to be unpacked by built-in extractor in WinXP and Server2003, WinZip 8, Java, and other older code,
+            // you need to do one of the following: Specify UseZip64.Off, or set the Size.
+            // If the file may be bigger than 4GB, or you do not need WinXP built-in compatibility, you do not need either,
+            // but the zip will be in Zip64 format which not all utilities can understand.
+            //   zipStream.UseZip64 = UseZip64.Off;
+            entryStream.Seek(0, SeekOrigin.Begin);
+            newEntry.Size = entryStream.Length;
+
+            zipStream.PutNextEntry(newEntry);
+
+            // Zip the file in buffered chunks
+            byte[] buffer = new byte[4096];
+            StreamUtils.Copy(entryStream, zipStream, buffer);
+            zipStream.CloseEntry();
         }
 
         static List<string> GetZipEntryList(string fileName)
