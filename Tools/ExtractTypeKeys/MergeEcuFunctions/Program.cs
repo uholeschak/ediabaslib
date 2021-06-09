@@ -416,6 +416,19 @@ namespace MergeEcuFunctions
                                     int results = MergeEcuJobResults(null, fileName, ecuJob, ecuJobMerge);
                                     if (results > 0)
                                     {
+                                        if (ecuJobMerge.CompatIdListList != null)
+                                        {
+                                            List<string> compatIdListList = ecuJob.CompatIdListList ?? new List<string>();
+                                            foreach (string compatId in ecuJobMerge.CompatIdListList)
+                                            {
+                                                if (compatIdListList.All(x => string.Compare(x.Trim(), compatId.Trim(), StringComparison.OrdinalIgnoreCase) != 0))
+                                                {
+                                                    compatIdListList.Add(compatId);
+                                                }
+                                            }
+                                            ecuJob.CompatIdListList = compatIdListList;
+                                        }
+
                                         if (string.Compare(ecuJob.Id.Trim(), ecuJobMerge.Id.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
                                         {
                                             List<string> compatIdListList = ecuJob.CompatIdListList ?? new List<string>();
@@ -464,6 +477,19 @@ namespace MergeEcuFunctions
                             foreach (EcuFunctionStructs.EcuJobResult ecuJobResultMatch in jobResultList)
                             {
                                 resultCount++;
+                                if (ecuJobResult.CompatIdListList != null)
+                                {
+                                    List<string> compatIdListList = ecuJobResultMatch.CompatIdListList ?? new List<string>();
+                                    foreach (string compatId in ecuJobResult.CompatIdListList)
+                                    {
+                                        if (compatIdListList.All(x => string.Compare(x.Trim(), compatId.Trim(), StringComparison.OrdinalIgnoreCase) != 0))
+                                        {
+                                            compatIdListList.Add(compatId);
+                                        }
+                                    }
+                                    ecuJobResultMatch.CompatIdListList = compatIdListList;
+                                }
+
                                 if (string.Compare(ecuJobResultMatch.Id.Trim(), ecuJobResult.Id.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
                                 {
                                     List<string> compatIdListList = ecuJobResultMatch.CompatIdListList ?? new List<string>();
