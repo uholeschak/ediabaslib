@@ -8084,8 +8084,8 @@ namespace BmwDeepObd
                     where jobIdAttrib != null
                     where jobIdResultAttrib != null
                     where string.Compare(resultAttrib.Value, resultName, StringComparison.OrdinalIgnoreCase) == 0
-                    where string.Compare(jobIdAttrib.Value, result.EcuJob.Id, StringComparison.OrdinalIgnoreCase) == 0
-                    where string.Compare(jobIdResultAttrib.Value, result.EcuJobResult.Id, StringComparison.OrdinalIgnoreCase) == 0
+                    where result.EcuJob.IdPresent(jobIdAttrib.Value)
+                    where result.EcuJobResult.IdPresent(jobIdResultAttrib.Value)
                     select node).FirstOrDefault();
             }
 
