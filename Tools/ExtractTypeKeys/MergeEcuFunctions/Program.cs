@@ -338,7 +338,7 @@ namespace MergeEcuFunctions
                 {
                     foreach (EcuFunctionStructs.EcuJob ecuJob in ecuFixedFuncStruct.EcuJobList)
                     {
-                        if (MergeEcuJob(outTextWriter, fileName, fixedFuncStructListIn, ecuJob) > 0)
+                        if (MergeEcuJob(outTextWriter, fileName, fixedFuncStructListIn, ecuJob, ecuFixedFuncStruct) > 0)
                         {
                             matched = true;
                         }
@@ -392,7 +392,8 @@ namespace MergeEcuFunctions
             return fixedFuncStructList;
         }
 
-        static int MergeEcuJob(TextWriter outTextWriter, string fileName, List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructList, EcuFunctionStructs.EcuJob ecuJobMerge)
+        static int MergeEcuJob(TextWriter outTextWriter, string fileName, List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructList,
+            EcuFunctionStructs.EcuJob ecuJobMerge, EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStructMerge)
         {
             if (ecuJobMerge == null || string.IsNullOrEmpty(ecuJobMerge.Name) || ecuJobMerge.EcuJobResultList?.Count == 0)
             {
@@ -416,6 +417,27 @@ namespace MergeEcuFunctions
                                     int results = MergeEcuJobResults(null, fileName, ecuJob, ecuJobMerge);
                                     if (results > 0)
                                     {
+                                        if (ecuFixedFuncStructMerge.CompatIdListList != null)
+                                        {
+                                            List<string> compatIdListList = ecuFixedFuncStruct.CompatIdListList ?? new List<string>();
+                                            foreach (string compatId in ecuFixedFuncStructMerge.CompatIdListList)
+                                            {
+                                                if (!ecuFixedFuncStruct.IdPresent(compatId))
+                                                {
+                                                    compatIdListList.Add(compatId);
+                                                }
+                                            }
+
+                                            ecuFixedFuncStruct.CompatIdListList = compatIdListList;
+                                        }
+
+                                        if (!ecuFixedFuncStruct.IdPresent(ecuFixedFuncStructMerge.Id))
+                                        {
+                                            List<string> compatIdListList = ecuFixedFuncStruct.CompatIdListList ?? new List<string>();
+                                            compatIdListList.Add(ecuFixedFuncStructMerge.Id);
+                                            ecuFixedFuncStruct.CompatIdListList = compatIdListList;
+                                        }
+
                                         if (ecuJobMerge.CompatIdListList != null)
                                         {
                                             List<string> compatIdListList = ecuJob.CompatIdListList ?? new List<string>();
