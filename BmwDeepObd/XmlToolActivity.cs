@@ -8006,7 +8006,7 @@ namespace BmwDeepObd
                     where nameAttrib != null
                     where structIdAttrib != null
                     where string.Compare(nameAttrib.Value, job.Name, StringComparison.OrdinalIgnoreCase) == 0
-                    where string.Compare(structIdAttrib.Value, job.EcuFixedFuncStruct.Id, StringComparison.OrdinalIgnoreCase) == 0
+                    where job.EcuFixedFuncStruct.IdPresent(structIdAttrib.Value)
                     select node).FirstOrDefault();
             }
 

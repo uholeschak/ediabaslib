@@ -487,7 +487,39 @@ namespace BmwFileReader
                 return NodeClassType.Unknown;
             }
 
+            public bool IdPresent(string idCompare)
+            {
+                string idTrimmed = idCompare.Trim();
+                if (string.Compare(Id.Trim(), idTrimmed, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return true;
+                }
+
+                if (CompatIdListList != null)
+                {
+                    if (CompatIdListList.Any(x => string.Compare(x.Trim(), idTrimmed, StringComparison.OrdinalIgnoreCase) == 0))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
             [XmlElement, DefaultValue("")] public string Id { get; set; }
+
+            [XmlArray("CIDL"), DefaultValue(null)] public List<string> CompatIdListList { get; set; }
+            [XmlIgnore] public bool CompatIdListListSpecified
+            {
+                get
+                {
+                    if (CompatIdListList != null && CompatIdListList.Count > 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
             [XmlElement("NC"), DefaultValue("")] public string NodeClass { get; set; }
             [XmlElement("NCNam"), DefaultValue("")] public string NodeClassName { get; set; }
             [XmlElement("Tit"), DefaultValue(null)] public EcuTranslation Title { get; set; }

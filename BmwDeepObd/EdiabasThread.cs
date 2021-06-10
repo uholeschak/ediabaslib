@@ -1473,7 +1473,7 @@ namespace BmwDeepObd
             List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructList = ActivityCommon.EcuFunctionReader.GetFixedFuncStructList(ecuVariant);
             foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in fixedFuncStructList)
             {
-                if (string.Compare(ecuFixedFuncStruct.Id, jobInfo.FixedFuncStructId, StringComparison.OrdinalIgnoreCase) == 0)
+                if (ecuFixedFuncStruct.IdPresent(jobInfo.FixedFuncStructId))
                 {
                     return ecuFixedFuncStruct;
                 }
