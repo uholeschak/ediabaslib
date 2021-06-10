@@ -421,22 +421,19 @@ namespace MergeEcuFunctions
                                             List<string> compatIdListList = ecuJob.CompatIdListList ?? new List<string>();
                                             foreach (string compatId in ecuJobMerge.CompatIdListList)
                                             {
-                                                if (compatIdListList.All(x => string.Compare(x.Trim(), compatId.Trim(), StringComparison.OrdinalIgnoreCase) != 0))
+                                                if (!ecuJob.IdPresent(compatId))
                                                 {
                                                     compatIdListList.Add(compatId);
                                                 }
                                             }
+
                                             ecuJob.CompatIdListList = compatIdListList;
                                         }
 
-                                        if (string.Compare(ecuJob.Id.Trim(), ecuJobMerge.Id.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
+                                        if (!ecuJob.IdPresent(ecuJobMerge.Id))
                                         {
                                             List<string> compatIdListList = ecuJob.CompatIdListList ?? new List<string>();
-                                            if (compatIdListList.All(x => string.Compare(x.Trim(), ecuJob.Id.Trim(), StringComparison.OrdinalIgnoreCase) != 0))
-                                            {
-                                                compatIdListList.Add(ecuJob.Id.Trim());
-                                            }
-
+                                            compatIdListList.Add(ecuJobMerge.Id.Trim());
                                             ecuJob.CompatIdListList = compatIdListList;
                                             if (compatIdListList.Count > 1)
                                             {
@@ -444,6 +441,7 @@ namespace MergeEcuFunctions
                                                     fileName, ecuJob.Name, ecuJob.FuncNameJob, JobsArgsToString(ecuJob), JobsResultsToString(ecuJob), compatIdListList.Count);
                                             }
                                         }
+
                                         matches += results;
                                     }
                                 }
@@ -482,7 +480,7 @@ namespace MergeEcuFunctions
                                     List<string> compatIdListList = ecuJobResultMatch.CompatIdListList ?? new List<string>();
                                     foreach (string compatId in ecuJobResult.CompatIdListList)
                                     {
-                                        if (compatIdListList.All(x => string.Compare(x.Trim(), compatId.Trim(), StringComparison.OrdinalIgnoreCase) != 0))
+                                        if (!ecuJobResult.IdPresent(compatId))
                                         {
                                             compatIdListList.Add(compatId);
                                         }
@@ -490,14 +488,10 @@ namespace MergeEcuFunctions
                                     ecuJobResultMatch.CompatIdListList = compatIdListList;
                                 }
 
-                                if (string.Compare(ecuJobResultMatch.Id.Trim(), ecuJobResult.Id.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
+                                if (!ecuJobResultMatch.IdPresent(ecuJobResult.Id))
                                 {
                                     List<string> compatIdListList = ecuJobResultMatch.CompatIdListList ?? new List<string>();
-                                    if (compatIdListList.All(x => string.Compare(x.Trim(), ecuJobResult.Id.Trim(), StringComparison.OrdinalIgnoreCase) != 0))
-                                    {
-                                        compatIdListList.Add(ecuJobResult.Id);
-                                    }
-
+                                    compatIdListList.Add(ecuJobResult.Id);
                                     ecuJobResultMatch.CompatIdListList = compatIdListList;
                                     if (compatIdListList.Count > 1)
                                     {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml.Serialization;
@@ -704,6 +705,25 @@ namespace BmwFileReader
                 return PhaseType.Unknown;
             }
 
+            public bool IdPresent(string idCompare)
+            {
+                string idTrimmed = idCompare.Trim();
+                if (string.Compare(Id.Trim(), idTrimmed, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return true;
+                }
+
+                if (CompatIdListList != null)
+                {
+                    if (CompatIdListList.Any(x => string.Compare(x.Trim(), idTrimmed, StringComparison.OrdinalIgnoreCase) == 0))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
             [XmlElement, DefaultValue("")] public string Id { get; set; }
 
             [XmlArray("CIDL"), DefaultValue(null)] public List<string> CompatIdListList { get; set; }
@@ -856,6 +876,25 @@ namespace BmwFileReader
             public override string ToString()
             {
                 return ToString("");
+            }
+
+            public bool IdPresent(string idCompare)
+            {
+                string idTrimmed = idCompare.Trim();
+                if (string.Compare(Id.Trim(), idTrimmed, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return true;
+                }
+
+                if (CompatIdListList != null)
+                {
+                    if (CompatIdListList.Any(x => string.Compare(x.Trim(), idTrimmed, StringComparison.OrdinalIgnoreCase) == 0))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
             }
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
