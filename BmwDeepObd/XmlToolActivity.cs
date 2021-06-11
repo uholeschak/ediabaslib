@@ -8003,9 +8003,7 @@ namespace BmwDeepObd
                 return (from node in jobsNode.Elements(ns + "job")
                     let nameAttrib = node.Attribute("name")
                     let structIdAttrib = node.Attribute("fixed_func_struct_id")
-                    where nameAttrib != null
                     where structIdAttrib != null
-                    where string.Compare(nameAttrib.Value, job.Name, StringComparison.OrdinalIgnoreCase) == 0
                     where job.EcuFixedFuncStruct.IdPresent(structIdAttrib.Value)
                     select node).FirstOrDefault();
             }
