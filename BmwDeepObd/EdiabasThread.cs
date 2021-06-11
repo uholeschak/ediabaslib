@@ -1155,13 +1155,34 @@ namespace BmwDeepObd
                                             if (ecuFunctionResultList != null)
                                             {
                                                 Dictionary<string, EdiabasNet.ResultData> resultDictLocal = new Dictionary<string, EdiabasNet.ResultData>();
+                                                Dictionary<string, EdiabasNet.ResultData> resultDictLocalCompat = new Dictionary<string, EdiabasNet.ResultData>();
                                                 foreach (EcuFunctionResult ecuFunctionResult in ecuFunctionResultList)
                                                 {
-                                                    string key = (ecuFunctionResult.EcuJob.Id + "#" + ecuFunctionResult.EcuJobResult.Id).ToUpperInvariant();
+                                                    string key = (ecuFunctionResult.EcuJob.Id.Trim() + "#" + ecuFunctionResult.EcuJobResult.Id.Trim()).ToUpperInvariant();
                                                     resultDictLocal.Add(key, ecuFunctionResult);
+
+                                                    if (ecuFunctionResult.EcuJob.CompatIdListList != null && ecuFunctionResult.EcuJobResult.CompatIdListList != null)
+                                                    {
+                                                        foreach (string jobId in ecuFunctionResult.EcuJob.CompatIdListList)
+                                                        {
+                                                            foreach (string resultId in ecuFunctionResult.EcuJobResult.CompatIdListList)
+                                                            {
+                                                                key = (jobId.Trim() + "#" + resultId.Trim()).ToUpperInvariant();
+                                                                resultDictLocalCompat.Add(key, ecuFunctionResult);
+                                                            }
+                                                        }
+                                                    }
                                                 }
 
-                                                MergeResultDictionarys(ref resultDict, resultDictLocal, ecuFixedFuncStruct.Id + "#");
+                                                MergeResultDictionarys(ref resultDict, resultDictLocal, ecuFixedFuncStruct.Id.Trim() + "#");
+
+                                                if (ecuFixedFuncStruct.CompatIdListList != null)
+                                                {
+                                                    foreach (string structId in ecuFixedFuncStruct.CompatIdListList)
+                                                    {
+                                                        MergeResultDictionarys(ref resultDict, resultDictLocalCompat, structId.Trim() + "#");
+                                                    }
+                                                }
                                             }
                                         }
                                     }
