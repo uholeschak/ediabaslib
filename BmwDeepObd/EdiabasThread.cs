@@ -1492,8 +1492,7 @@ namespace BmwDeepObd
             {
                 foreach (EcuFunctionStructs.EcuJob ecuJob in ecuFixedFuncStruct.EcuJobList)
                 {
-                    if (string.IsNullOrEmpty(ecuJobId) ||
-                        string.Compare(ecuJob.Id, ecuJobId, StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.IsNullOrEmpty(ecuJobId) || ecuJob.IdPresent(ecuJobId))
                     {
                         bool addJob = false;
                         if (nodeClassType == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator &&
