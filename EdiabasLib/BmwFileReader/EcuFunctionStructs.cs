@@ -506,7 +506,7 @@ namespace BmwFileReader
                 return NodeClassType.Unknown;
             }
 
-            public bool IdPresent(string idCompare)
+            public bool IdPresent(string idCompare, bool includeCompatId = true)
             {
                 string idTrimmed = idCompare.Trim();
                 if (string.Compare(Id.Trim(), idTrimmed, StringComparison.OrdinalIgnoreCase) == 0)
@@ -514,7 +514,7 @@ namespace BmwFileReader
                     return true;
                 }
 
-                if (CompatIdListList != null)
+                if (includeCompatId && CompatIdListList != null)
                 {
                     if (CompatIdListList.Any(x => string.Compare(x.Trim(), idTrimmed, StringComparison.OrdinalIgnoreCase) == 0))
                     {
@@ -798,7 +798,7 @@ namespace BmwFileReader
                 return PhaseType.Unknown;
             }
 
-            public bool IdPresent(string idCompare)
+            public bool IdPresent(string idCompare, bool includeCompatId = true)
             {
                 string idTrimmed = idCompare.Trim();
                 if (string.Compare(Id.Trim(), idTrimmed, StringComparison.OrdinalIgnoreCase) == 0)
@@ -806,7 +806,7 @@ namespace BmwFileReader
                     return true;
                 }
 
-                if (CompatIdListList != null)
+                if (includeCompatId && CompatIdListList != null)
                 {
                     if (CompatIdListList.Any(x => string.Compare(x.Trim(), idTrimmed, StringComparison.OrdinalIgnoreCase) == 0))
                     {
@@ -988,7 +988,7 @@ namespace BmwFileReader
                 return ToString("");
             }
 
-            public bool IdPresent(string idCompare)
+            public bool IdPresent(string idCompare, bool includeCompatId = true)
             {
                 string idTrimmed = idCompare.Trim();
                 if (string.Compare(Id.Trim(), idTrimmed, StringComparison.OrdinalIgnoreCase) == 0)
@@ -996,7 +996,7 @@ namespace BmwFileReader
                     return true;
                 }
 
-                if (CompatIdListList != null)
+                if (includeCompatId && CompatIdListList != null)
                 {
                     if (CompatIdListList.Any(x => string.Compare(x.Trim(), idTrimmed, StringComparison.OrdinalIgnoreCase) == 0))
                     {

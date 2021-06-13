@@ -85,6 +85,7 @@ namespace BmwDeepObd
                 Args = args;
                 Results = results;
                 ArgLimit = argLimit;
+                UseCompatIds = false;
             }
 
             public string Id { get; }
@@ -102,6 +103,8 @@ namespace BmwDeepObd
             public string Results { get; }
 
             public int ArgLimit { get; }
+
+            public bool UseCompatIds { get; set; }
         }
 
         public class JobsInfo
@@ -181,6 +184,14 @@ namespace BmwDeepObd
 
                 string assetFileName = Path.GetFileName(ActivityCommon.AssetFileName) ?? string.Empty;
                 UseCompatIds = string.Compare(dbName, assetFileName, StringComparison.OrdinalIgnoreCase) != 0;
+
+                if (JobsInfo != null)
+                {
+                    foreach (JobInfo jobInfo in JobsInfo.JobList)
+                    {
+                        jobInfo.UseCompatIds = UseCompatIds;
+                    }
+                }
 
                 InfoObject = null;
                 ClassObject = null;
