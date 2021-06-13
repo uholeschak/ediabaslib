@@ -178,6 +178,10 @@ namespace BmwDeepObd
                 ErrorsInfo = errorsInfo;
                 DisplayList = displayList;
                 StringList = stringList;
+
+                string assetFileName = Path.GetFileName(ActivityCommon.AssetFileName) ?? string.Empty;
+                UseCompatIds = string.Compare(dbName, assetFileName, StringComparison.OrdinalIgnoreCase) != 0;
+
                 InfoObject = null;
                 ClassObject = null;
             }
@@ -219,6 +223,8 @@ namespace BmwDeepObd
             public List<DisplayInfo> DisplayList { get; }
 
             public List<StringInfo> StringList { get; }
+
+            public bool UseCompatIds { get; }
 
             public object InfoObject { get; set; }
 
@@ -730,10 +736,26 @@ namespace BmwDeepObd
                                 }
                             }
                         }
-                        if (!logEnabled) logFile = string.Empty;
-                        if (logEnabled) _logTagsPresent = true;
-                        if (string.IsNullOrEmpty(pageName)) continue;
-                        if (string.IsNullOrWhiteSpace(classCode)) classCode = null;
+
+                        if (!logEnabled)
+                        {
+                            logFile = string.Empty;
+                        }
+
+                        if (logEnabled)
+                        {
+                            _logTagsPresent = true;
+                        }
+
+                        if (string.IsNullOrEmpty(pageName))
+                        {
+                            continue;
+                        }
+
+                        if (string.IsNullOrWhiteSpace(classCode))
+                        {
+                            classCode = null;
+                        }
 
                         _pageList.Add(new PageInfo(xmlFileName, pageName, pageWeight, displayMode, textResId, gaugesPortrait, gaugesLandscape, logFile, dbName, jobActivate, classCode, codeShowWarnings, jobsInfo, errorsInfo, displayList, stringList));
                     }
