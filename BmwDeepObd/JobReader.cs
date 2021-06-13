@@ -160,7 +160,7 @@ namespace BmwDeepObd
 
         public class PageInfo
         {
-            public PageInfo(string xmlFileName, string name, float weight, DisplayModeType displayMode, int textResId, int gaugesPortrait, int gaugesLandscape, string logFile, bool jobActivate, string classCode, bool codeShowWarnings, JobsInfo jobsInfo, ErrorsInfo errorsInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
+            public PageInfo(string xmlFileName, string name, float weight, DisplayModeType displayMode, int textResId, int gaugesPortrait, int gaugesLandscape, string logFile, string dbName, bool jobActivate, string classCode, bool codeShowWarnings, JobsInfo jobsInfo, ErrorsInfo errorsInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
             {
                 XmlFileName = xmlFileName;
                 Name = name;
@@ -170,6 +170,7 @@ namespace BmwDeepObd
                 GaugesPortrait = gaugesPortrait;
                 GaugesLandscape = gaugesLandscape;
                 LogFile = logFile;
+                DbName = dbName;
                 JobActivate = jobActivate;
                 ClassCode = classCode;
                 CodeShowWarnings = codeShowWarnings;
@@ -202,6 +203,8 @@ namespace BmwDeepObd
             public int GaugesLandscape { get; }
 
             public string LogFile { get; }
+
+            public string DbName { get; }
 
             public bool JobActivate { get; }
 
@@ -444,13 +447,16 @@ namespace BmwDeepObd
                         int gaugesLandscape = GaugesLandscapeDefault;
                         PageInfo.DisplayModeType displayMode = PageInfo.DisplayModeType.List;
                         string logFile = string.Empty;
+                        string dbName = string.Empty;
                         bool jobActivate = false;
                         if (xnodePage.Attributes != null)
                         {
                             attrib = xnodePage.Attributes["include_filename"];
                             if (attrib != null) xmlFileName = attrib.Value;
+
                             attrib = xnodePage.Attributes["name"];
                             if (attrib != null) pageName = attrib.Value;
+
                             attrib = xnodePage.Attributes["weight"];
                             if (attrib != null)
                             {
@@ -463,6 +469,7 @@ namespace BmwDeepObd
                                     // ignored
                                 }
                             }
+
                             attrib = xnodePage.Attributes["display-mode"];
                             if (attrib != null)
                             {
@@ -471,6 +478,7 @@ namespace BmwDeepObd
                                     displayMode = PageInfo.DisplayModeType.List;
                                 }
                             }
+
                             attrib = xnodePage.Attributes["fontsize"];
                             if (attrib != null)
                             {
@@ -490,6 +498,7 @@ namespace BmwDeepObd
                                         break;
                                 }
                             }
+
                             attrib = xnodePage.Attributes["gauges-portrait"];
                             if (attrib != null)
                             {
@@ -506,6 +515,7 @@ namespace BmwDeepObd
                                     // ignored
                                 }
                             }
+
                             attrib = xnodePage.Attributes["gauges-landscape"];
                             if (attrib != null)
                             {
@@ -522,8 +532,13 @@ namespace BmwDeepObd
                                     // ignored
                                 }
                             }
+
                             attrib = xnodePage.Attributes["logfile"];
                             if (attrib != null) logFile = attrib.Value;
+
+                            attrib = xnodePage.Attributes["db_name"];
+                            if (attrib != null) dbName = attrib.Value;
+
                             attrib = xnodePage.Attributes["activate"];
                             if (attrib != null)
                             {
@@ -720,7 +735,7 @@ namespace BmwDeepObd
                         if (string.IsNullOrEmpty(pageName)) continue;
                         if (string.IsNullOrWhiteSpace(classCode)) classCode = null;
 
-                        _pageList.Add(new PageInfo(xmlFileName, pageName, pageWeight, displayMode, textResId, gaugesPortrait, gaugesLandscape, logFile, jobActivate, classCode, codeShowWarnings, jobsInfo, errorsInfo, displayList, stringList));
+                        _pageList.Add(new PageInfo(xmlFileName, pageName, pageWeight, displayMode, textResId, gaugesPortrait, gaugesLandscape, logFile, dbName, jobActivate, classCode, codeShowWarnings, jobsInfo, errorsInfo, displayList, stringList));
                     }
                 }
                 return true;
