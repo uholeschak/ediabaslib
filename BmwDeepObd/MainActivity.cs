@@ -2165,6 +2165,9 @@ namespace BmwDeepObd
                 _assetFileSize = -1;
             }
 
+            ActivityCommon.AssetFileName = _assetFileName;
+            ActivityCommon.AssetFileSize = _assetFileSize;
+
             string settingsFile = ActivityCommon.GetSettingsFileName();
             if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
             {

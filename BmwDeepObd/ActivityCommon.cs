@@ -849,6 +849,10 @@ namespace BmwDeepObd
 
         public static string UsbFirmwareFileName { get; set; }
 
+        public static string AssetFileName { get; set; }
+
+        public static long AssetFileSize { get; set; }
+
         public static string AppId
         {
             get
@@ -1120,6 +1124,8 @@ namespace BmwDeepObd
             JobReader = new JobReader();
             _recentConfigList = new List<string>();
             _serialInfoList = new List<SerialInfoEntry>();
+            AssetFileName = string.Empty;
+            AssetFileSize = -1;
         }
 
         public ActivityCommon(Context context, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null,

@@ -655,6 +655,14 @@
       </xs:annotation>
     </xs:attribute>
 
+    <xs:attribute name="db_name" type="string1-type" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Name of the data base file that has been used to generate the configuration.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
     <xs:attribute name="activate" type="xs:boolean" default="false" use="optional">
       <xs:annotation>
         <xs:documentation>

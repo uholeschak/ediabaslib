@@ -6908,6 +6908,20 @@ namespace BmwDeepObd
                     pageNode.Add(new XAttribute("logfile", ActivityCommon.CreateValidFileName(ecuInfo.Name + ".log")));
                 }
 
+                string dbName = Path.GetFileName(ActivityCommon.AssetFileName) ?? string.Empty;
+                if (!string.IsNullOrWhiteSpace(dbName))
+                {
+                    XAttribute dbNameAttr = pageNode.Attribute("db_name");
+                    if (dbNameAttr == null)
+                    {
+                        pageNode.Add(new XAttribute("db_name", dbName));
+                    }
+                    else
+                    {
+                        dbNameAttr.Value = dbName;
+                    }
+                }
+
                 XElement stringsNode = GetDefaultStringsNode(ns, pageNode);
                 if (stringsNode == null)
                 {
