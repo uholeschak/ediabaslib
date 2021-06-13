@@ -136,6 +136,25 @@ namespace BmwFileReader
                 return ToString("");
             }
 
+            public void ClearCompatIds()
+            {
+                if (RefEcuVariantList != null)
+                {
+                    foreach (RefEcuVariant refEcuVariant in RefEcuVariantList)
+                    {
+                        refEcuVariant.ClearCompatIds();
+                    }
+                }
+
+                if (EcuFuncStructList != null)
+                {
+                    foreach (EcuFuncStruct ecuFuncStruct in EcuFuncStructList)
+                    {
+                        ecuFuncStruct.ClearCompatIds();
+                    }
+                }
+            }
+
             [XmlElement, DefaultValue("")] public string Id { get; set; }
             [XmlElement("GId"), DefaultValue("")] public string GroupId { get; set; }
             [XmlElement("Tit"), DefaultValue(null)] public EcuTranslation Title { get; set; }
@@ -506,6 +525,26 @@ namespace BmwFileReader
                 return false;
             }
 
+            public void ClearCompatIds()
+            {
+                if (CompatIdListList != null)
+                {
+                    CompatIdListList.Clear();
+                    CompatIdListList = null;
+                }
+
+                if (EcuJobList != null)
+                {
+                    if (EcuJobList != null)
+                    {
+                        foreach (EcuJob ecuJob in EcuJobList)
+                        {
+                            ecuJob.ClearCompatIds();
+                        }
+                    }
+                }
+            }
+
             [XmlElement, DefaultValue("")] public string Id { get; set; }
 
             [XmlArray("CIDL"), DefaultValue(null)] public List<string> CompatIdListList { get; set; }
@@ -568,6 +607,17 @@ namespace BmwFileReader
             public override string ToString()
             {
                 return ToString("");
+            }
+
+            public void ClearCompatIds()
+            {
+                if (FixedFuncStructList != null)
+                {
+                    foreach (EcuFixedFuncStruct ecuFixedFuncStruct in FixedFuncStructList)
+                    {
+                        ecuFixedFuncStruct.ClearCompatIds();
+                    }
+                }
             }
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
@@ -650,6 +700,17 @@ namespace BmwFileReader
             public override string ToString()
             {
                 return ToString("");
+            }
+
+            public void ClearCompatIds()
+            {
+                if (FixedFuncStructList != null)
+                {
+                    foreach (EcuFixedFuncStruct ecuFixedFuncStruct in FixedFuncStructList)
+                    {
+                        ecuFixedFuncStruct.ClearCompatIds();
+                    }
+                }
             }
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
@@ -754,6 +815,23 @@ namespace BmwFileReader
                 }
 
                 return false;
+            }
+
+            public void ClearCompatIds()
+            {
+                if (CompatIdListList != null)
+                {
+                    CompatIdListList.Clear();
+                    CompatIdListList = null;
+                }
+
+                if (EcuJobResultList != null)
+                {
+                    foreach (EcuJobResult ecuJobResult in EcuJobResultList)
+                    {
+                        ecuJobResult.ClearCompatIds();
+                    }
+                }
             }
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
@@ -927,6 +1005,15 @@ namespace BmwFileReader
                 }
 
                 return false;
+            }
+
+            public void ClearCompatIds()
+            {
+                if (CompatIdListList != null)
+                {
+                    CompatIdListList.Clear();
+                    CompatIdListList = null;
+                }
             }
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
