@@ -683,7 +683,7 @@ namespace BmwDeepObd
                             });
                         }
 
-                        List<EdiabasThread.EcuFunctionResult> resultList = EdiabasThread.ExecuteEcuJobs(_ediabas, selectedJob.EcuFixedFuncStruct, null, currentPhase);
+                        List<EdiabasThread.EcuFunctionResult> resultList = EdiabasThread.ExecuteEcuJobs(_ediabas, selectedJob.EcuFixedFuncStruct, null, false, currentPhase);
                         if (resultList == null)
                         {
                             executeFailed = true;
@@ -771,7 +771,7 @@ namespace BmwDeepObd
                             UpdateActuatorStatus(true);
                         });
 
-                        List<EdiabasThread.EcuFunctionResult> resultList = EdiabasThread.ExecuteEcuJobs(_ediabas, selectedJob.EcuFixedFuncStruct, null, currentPhase);
+                        List<EdiabasThread.EcuFunctionResult> resultList = EdiabasThread.ExecuteEcuJobs(_ediabas, selectedJob.EcuFixedFuncStruct, null,false, currentPhase);
                         if (resultList == null)
                         {
                             executeFailed = true;

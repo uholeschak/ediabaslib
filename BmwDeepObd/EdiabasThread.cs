@@ -1151,7 +1151,7 @@ namespace BmwDeepObd
                                     {
                                         if (!string.IsNullOrWhiteSpace(displayInfo.EcuJobId))
                                         {
-                                            List<EcuFunctionResult> ecuFunctionResultList = ExecuteEcuJobs(Ediabas, ecuFixedFuncStruct, displayInfo.EcuJobId);
+                                            List<EcuFunctionResult> ecuFunctionResultList = ExecuteEcuJobs(Ediabas, ecuFixedFuncStruct, displayInfo.EcuJobId, pageInfo.UseCompatIds);
                                             if (ecuFunctionResultList != null)
                                             {
                                                 Dictionary<string, EdiabasNet.ResultData> resultDictLocal = new Dictionary<string, EdiabasNet.ResultData>();
@@ -1504,7 +1504,7 @@ namespace BmwDeepObd
         }
 
         public static List<EcuFunctionResult> ExecuteEcuJobs(EdiabasNet ediabas, EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct,
-            string ecuJobId = null, EcuFunctionStructs.EcuJob.PhaseType phaseType = EcuFunctionStructs.EcuJob.PhaseType.Unknown)
+            string ecuJobId = null, bool useCompatIds = false, EcuFunctionStructs.EcuJob.PhaseType phaseType = EcuFunctionStructs.EcuJob.PhaseType.Unknown)
         {
             List<EcuFunctionResult> ecuFunctionResultList = new List<EcuFunctionResult>();
             EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = ecuFixedFuncStruct.GetNodeClassType();
@@ -1513,7 +1513,7 @@ namespace BmwDeepObd
             {
                 foreach (EcuFunctionStructs.EcuJob ecuJob in ecuFixedFuncStruct.EcuJobList)
                 {
-                    if (string.IsNullOrEmpty(ecuJobId) || ecuJob.IdPresent(ecuJobId))
+                    if (string.IsNullOrEmpty(ecuJobId) || ecuJob.IdPresent(ecuJobId, useCompatIds))
                     {
                         bool addJob = false;
                         if (nodeClassType == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator &&
