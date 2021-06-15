@@ -776,24 +776,28 @@ namespace BmwDeepObd
                     }
                 }
 
-                foreach (PageInfo pageInfo in _pageList)
+                if (_manufacturerType == ActivityCommon.ManufacturerType.Bmw)
                 {
-                    if (pageInfo.UseCompatIds && pageInfo.JobsInfo != null)
+                    foreach (PageInfo pageInfo in _pageList)
                     {
-                        foreach (JobInfo jobInfo in pageInfo.JobsInfo.JobList)
+                        if (pageInfo.UseCompatIds && pageInfo.JobsInfo != null)
                         {
-                            if (!string.IsNullOrWhiteSpace(jobInfo.FixedFuncStructId))
+                            foreach (JobInfo jobInfo in pageInfo.JobsInfo.JobList)
                             {
-                                _compatIdsUsed = true;
-                                break;
+                                if (!string.IsNullOrWhiteSpace(jobInfo.FixedFuncStructId))
+                                {
+                                    _compatIdsUsed = true;
+                                    break;
+                                }
                             }
+                        }
+
+                        if (_compatIdsUsed)
+                        {
+                            break;
                         }
                     }
 
-                    if (_compatIdsUsed)
-                    {
-                        break;
-                    }
                 }
 
                 return true;
