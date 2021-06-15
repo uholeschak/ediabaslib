@@ -282,7 +282,7 @@ namespace BmwDeepObd
         private string _logPath = string.Empty;
         private bool _appendLog;
         private bool _logTagsPresent;
-        private bool _useCompatIds;
+        private bool _compatIdsUsed;
         private string _interfaceName = string.Empty;
         private string _manufacturerName = string.Empty;
         private string _xmlFileNamePages = string.Empty;
@@ -299,7 +299,7 @@ namespace BmwDeepObd
 
         public bool LogTagsPresent => _logTagsPresent;
 
-        public bool UseCompatIds => _useCompatIds;
+        public bool CompatIdsUsed => _compatIdsUsed;
 
         public string ManufacturerName => _manufacturerName;
 
@@ -326,7 +326,7 @@ namespace BmwDeepObd
             _ecuPath = string.Empty;
             _logPath = string.Empty;
             _logTagsPresent = false;
-            _useCompatIds = false;
+            _compatIdsUsed = false;
             _manufacturerName = string.Empty;
             _interfaceName = string.Empty;
             _xmlFileNamePages = string.Empty;
@@ -778,9 +778,20 @@ namespace BmwDeepObd
 
                 foreach (PageInfo pageInfo in _pageList)
                 {
-                    if (pageInfo.UseCompatIds)
+                    if (pageInfo.UseCompatIds && pageInfo.JobsInfo != null)
                     {
-                        _useCompatIds = true;
+                        foreach (JobInfo jobInfo in pageInfo.JobsInfo.JobList)
+                        {
+                            if (!string.IsNullOrWhiteSpace(jobInfo.FixedFuncStructId))
+                            {
+                                _compatIdsUsed = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (_compatIdsUsed)
+                    {
                         break;
                     }
                 }
