@@ -282,6 +282,7 @@ namespace BmwDeepObd
         private string _logPath = string.Empty;
         private bool _appendLog;
         private bool _logTagsPresent;
+        private bool _useCompatIds;
         private string _interfaceName = string.Empty;
         private string _manufacturerName = string.Empty;
         private string _xmlFileNamePages = string.Empty;
@@ -297,6 +298,8 @@ namespace BmwDeepObd
         public bool AppendLog => _appendLog;
 
         public bool LogTagsPresent => _logTagsPresent;
+
+        public bool UseCompatIds => _useCompatIds;
 
         public string ManufacturerName => _manufacturerName;
 
@@ -323,6 +326,7 @@ namespace BmwDeepObd
             _ecuPath = string.Empty;
             _logPath = string.Empty;
             _logTagsPresent = false;
+            _useCompatIds = false;
             _manufacturerName = string.Empty;
             _interfaceName = string.Empty;
             _xmlFileNamePages = string.Empty;
@@ -771,6 +775,16 @@ namespace BmwDeepObd
                         _pageList.Add(new PageInfo(xmlFileName, pageName, pageWeight, displayMode, textResId, gaugesPortrait, gaugesLandscape, logFile, dbName, jobActivate, classCode, codeShowWarnings, jobsInfo, errorsInfo, displayList, stringList));
                     }
                 }
+
+                foreach (PageInfo pageInfo in _pageList)
+                {
+                    if (pageInfo.UseCompatIds)
+                    {
+                        _useCompatIds = true;
+                        break;
+                    }
+                }
+
                 return true;
             }
             catch (Exception ex)
