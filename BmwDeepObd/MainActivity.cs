@@ -4639,6 +4639,13 @@ namespace BmwDeepObd
                     {
                         _activityCommon.ShowAlert(string.Format(GetString(Resource.String.compile_cpu_usage_high), cpuUsage), Resource.String.alert_title_warning);
                     }
+                    else
+                    {
+                        if (ActivityCommon.JobReader.CompatIdsUsed)
+                        {
+                            _activityCommon.ShowAlert(GetString(Resource.String.compile_compat_id_warn), Resource.String.alert_title_warning);
+                        }
+                    }
                 });
             });
             compileThreadWrapper.Start();

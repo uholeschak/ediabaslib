@@ -185,11 +185,17 @@ namespace BmwDeepObd
                 string assetFileName = Path.GetFileName(ActivityCommon.AssetFileName) ?? string.Empty;
                 UseCompatIds = string.Compare(dbName, assetFileName, StringComparison.OrdinalIgnoreCase) != 0;
 
+                CompatIdsUsed = false;
                 if (JobsInfo != null)
                 {
                     foreach (JobInfo jobInfo in JobsInfo.JobList)
                     {
                         jobInfo.UseCompatIds = UseCompatIds;
+                        if (!string.IsNullOrWhiteSpace(jobInfo.FixedFuncStructId))
+                        {
+                            CompatIdsUsed = true;
+                            break;
+                        }
                     }
                 }
 
@@ -236,6 +242,8 @@ namespace BmwDeepObd
             public List<StringInfo> StringList { get; }
 
             public bool UseCompatIds { get; }
+
+            public bool CompatIdsUsed { get; }
 
             public object InfoObject { get; set; }
 
@@ -776,23 +784,15 @@ namespace BmwDeepObd
                     }
                 }
 
-                foreach (PageInfo pageInfo in _pageList)
+                if (_manufacturerType == ActivityCommon.ManufacturerType.Bmw)
                 {
-                    if (pageInfo.UseCompatIds && pageInfo.JobsInfo != null)
+                    foreach (PageInfo pageInfo in _pageList)
                     {
-                        foreach (JobInfo jobInfo in pageInfo.JobsInfo.JobList)
+                        if (pageInfo.CompatIdsUsed)
                         {
-                            if (!string.IsNullOrWhiteSpace(jobInfo.FixedFuncStructId))
-                            {
-                                _compatIdsUsed = true;
-                                break;
-                            }
+                            _compatIdsUsed = true;
+                            break;
                         }
-                    }
-
-                    if (_compatIdsUsed)
-                    {
-                        break;
                     }
                 }
 
