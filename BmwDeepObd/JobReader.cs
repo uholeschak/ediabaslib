@@ -185,11 +185,17 @@ namespace BmwDeepObd
                 string assetFileName = Path.GetFileName(ActivityCommon.AssetFileName) ?? string.Empty;
                 UseCompatIds = string.Compare(dbName, assetFileName, StringComparison.OrdinalIgnoreCase) != 0;
 
+                CompatIdsUsed = false;
                 if (JobsInfo != null)
                 {
                     foreach (JobInfo jobInfo in JobsInfo.JobList)
                     {
                         jobInfo.UseCompatIds = UseCompatIds;
+                        if (!string.IsNullOrWhiteSpace(jobInfo.FixedFuncStructId))
+                        {
+                            CompatIdsUsed = true;
+                            break;
+                        }
                     }
                 }
 
@@ -236,6 +242,8 @@ namespace BmwDeepObd
             public List<StringInfo> StringList { get; }
 
             public bool UseCompatIds { get; }
+
+            public bool CompatIdsUsed { get; }
 
             public object InfoObject { get; set; }
 
@@ -780,24 +788,12 @@ namespace BmwDeepObd
                 {
                     foreach (PageInfo pageInfo in _pageList)
                     {
-                        if (pageInfo.UseCompatIds && pageInfo.JobsInfo != null)
+                        if (pageInfo.CompatIdsUsed)
                         {
-                            foreach (JobInfo jobInfo in pageInfo.JobsInfo.JobList)
-                            {
-                                if (!string.IsNullOrWhiteSpace(jobInfo.FixedFuncStructId))
-                                {
-                                    _compatIdsUsed = true;
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (_compatIdsUsed)
-                        {
+                            _compatIdsUsed = true;
                             break;
                         }
                     }
-
                 }
 
                 return true;
