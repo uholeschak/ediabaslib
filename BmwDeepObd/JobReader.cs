@@ -191,7 +191,7 @@ namespace BmwDeepObd
                     foreach (JobInfo jobInfo in JobsInfo.JobList)
                     {
                         jobInfo.UseCompatIds = UseCompatIds;
-                        if (!string.IsNullOrWhiteSpace(jobInfo.FixedFuncStructId))
+                        if (UseCompatIds && !string.IsNullOrWhiteSpace(jobInfo.FixedFuncStructId))
                         {
                             CompatIdsUsed = true;
                             break;
