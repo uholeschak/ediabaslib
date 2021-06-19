@@ -4256,7 +4256,7 @@ namespace BmwDeepObd
 
             if (pageInfo.CompatIdsUsed)
             {
-                result = result += " *";
+                result += " *";
             }
             return result;
         }
