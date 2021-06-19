@@ -342,7 +342,7 @@ namespace ApkUploader
             using (var stream = new FileStream(Path.Combine(_apkPath, "client_secrets.json"), FileMode.Open, FileAccess.Read))
             {
                 credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.Load(stream).Secrets,
+                    GoogleClientSecrets.FromStream(stream).Secrets,
                     new[] { AndroidPublisherService.Scope.Androidpublisher },
                     "ApkUploader", _cts.Token, new FileDataStore("ApkUploader"));
             }
