@@ -600,19 +600,6 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    for (int i = 0; i < ActivityCommon.JobReader.PageList.Count; i++)
-                    {
-                        JobReader.PageInfo pageInfo = ActivityCommon.JobReader.PageList[i];
-                        if (pageInfo.CompatIdsUsed && i < _tabLayout.TabCount)
-                        {
-                            TabLayout.Tab tab = _tabLayout.GetTabAt(i);
-                            if (tab != null)
-                            {
-                                tab.View.SetBackgroundColor(Android.Graphics.Color.Red);
-                            }
-                        }
-                    }
-
                     _tabLayout.GetTabAt(pageIndex)?.Select();
                 });
             }
@@ -4257,13 +4244,19 @@ namespace BmwDeepObd
                 }
             }
             if (stringInfoSel == null) stringInfoSel = stringInfoDefault;
-            string result = String.Empty;
+
+            string result = string.Empty;
             if (stringInfoSel != null)
             {
                 if (!stringInfoSel.StringDict.TryGetValue(name, out result))
                 {
-                    result = String.Empty;
+                    result = string.Empty;
                 }
+            }
+
+            if (pageInfo.CompatIdsUsed)
+            {
+                result = result += " *";
             }
             return result;
         }
