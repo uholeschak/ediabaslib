@@ -1946,14 +1946,18 @@ namespace CarSimulator
                         Thread.Sleep(10);
                         return false;
                     }
+
+                    Debug.WriteLine("Diag connect request, Port={0}", bmwTcpChannel.DiagPort);
                     bmwTcpChannel.TcpClientDiag = bmwTcpChannel.TcpServerDiag.AcceptTcpClient();
                     bmwTcpChannel.TcpClientDiagStream = bmwTcpChannel.TcpClientDiag.GetStream();
                     bmwTcpChannel.LastTcpDiagRecTick = Stopwatch.GetTimestamp();
                     bmwTcpChannel.TcpNackIndex = 0;
+                    Debug.WriteLine("Diag connected, Port={0}", bmwTcpChannel.DiagPort);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine("Diag exception, Port={0}: {1}", bmwTcpChannel.DiagPort, ex.Message);
                 EnetDiagClose(bmwTcpChannel);
             }
 
@@ -1974,12 +1978,13 @@ namespace CarSimulator
                         dataBuffer[6] = 0xF4;
                         dataBuffer[7] = 0x00;
                         bmwTcpChannel.TcpClientDiagStream.Write(dataBuffer, 0, dataBuffer.Length);
-                        Debug.WriteLine("Alive Check");
+                        Debug.WriteLine("Alive Check, Port={0}", bmwTcpChannel.DiagPort);
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine("Keep alive exception, Port={0}: {1}", bmwTcpChannel.DiagPort, ex.Message);
                 // ignored
             }
 
@@ -2012,7 +2017,7 @@ namespace CarSimulator
                         return false;
                     }
 #if false
-                    DebugLogData("Rec: ", dataBuffer, recLen);
+                    DebugLogData("Diag Rec: ", dataBuffer, recLen);
 #endif
                     int dataLen = payloadLength - 2;
                     if ((dataLen < 1) || ((dataLen + 8) > recLen))
