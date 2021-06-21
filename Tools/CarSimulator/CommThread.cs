@@ -141,7 +141,7 @@ namespace CarSimulator
                 ControlPort = controPort;
                 TcpClientDiagList = new List<BmwTcpClientData>();
                 TcpClientControlList = new List<BmwTcpClientData>();
-                for (int i = 0; i < 1; i++)
+                for (int i = 0; i < 10; i++)
                 {
                     TcpClientDiagList.Add(new BmwTcpClientData(this, i));
                     TcpClientControlList.Add(new BmwTcpClientData(this, i));
@@ -1473,7 +1473,11 @@ namespace CarSimulator
 
                         foreach (BmwTcpClientData bmwTcpClientDataControl in bmwTcpClientData.BmpBmwTcpChannel.TcpClientControlList)
                         {
-                            ReceiveEnetControl(bmwTcpClientDataControl);
+                            if (bmwTcpClientDataControl.BmpBmwTcpChannel != null ||
+                                bmwTcpClientData.BmpBmwTcpChannel.TcpServerControl.Pending())
+                            {
+                                ReceiveEnetControl(bmwTcpClientDataControl);
+                            }
                         }
 
                         return ReceiveEnet(receiveData, bmwTcpClientData);
@@ -1874,7 +1878,6 @@ namespace CarSimulator
                     EnetControlClose(bmwTcpClientData);
                     if (!bmwTcpClientData.BmpBmwTcpChannel.TcpServerControl.Pending())
                     {
-                        Thread.Sleep(10);
                         return false;
                     }
                     bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmpBmwTcpChannel.TcpServerControl.AcceptTcpClient();
@@ -1972,7 +1975,6 @@ namespace CarSimulator
                     EnetDiagClose(bmwTcpClientData);
                     if (!bmwTcpClientData.BmpBmwTcpChannel.TcpServerDiag.Pending())
                     {
-                        Thread.Sleep(10);
                         return false;
                     }
 
@@ -4166,12 +4168,23 @@ namespace CarSimulator
         {
             if (_bmwTcpChannels.Count > 0)
             {
+                bool transmitted = false;
                 foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
                 {
                     foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDiagList)
                     {
-                        SerialTransmission(bmwTcpClientData);
+                        if (bmwTcpClientData.TcpClientConnection != null ||
+                            bmwTcpChannel.TcpServerDiag.Pending())
+                        {
+                            SerialTransmission(bmwTcpClientData);
+                            transmitted = true;
+                        }
                     }
+                }
+
+                if (!transmitted)
+                {
+                    Thread.Sleep(10);
                 }
             }
             else
