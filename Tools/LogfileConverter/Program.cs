@@ -865,6 +865,11 @@ namespace LogfileConverter
                         continue;
                     }
 
+                    if (telegram[5] == 0x12)
+                    {   // alive
+                        continue;
+                    }
+
                     if (telegram[5] == 0x02)
                     {   // ack
                         if (reqTel != null && respTels.Count > 0)
