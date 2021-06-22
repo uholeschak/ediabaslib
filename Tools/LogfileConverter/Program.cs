@@ -111,13 +111,15 @@ namespace LogfileConverter
                             continue;
                         }
 
-                        if (string.Compare(Path.GetExtension(inputFile), ".trc", StringComparison.OrdinalIgnoreCase) == 0)
+                        string fileExt = Path.GetExtension(inputFile);
+                        if (string.Compare(fileExt, ".trc", StringComparison.OrdinalIgnoreCase) == 0)
                         {   // trace file
                             ConvertTraceFile(inputFile, streamWriter);
                         }
                         else
                         {
                             bool ifhLog = false;
+                            bool wireShark = false;
                             using (StreamReader streamReader = new StreamReader(inputFile))
                             {
                                 string line = streamReader.ReadLine();
@@ -127,11 +129,19 @@ namespace LogfileConverter
                                     {
                                         ifhLog = true;
                                     }
+                                    else if (Regex.IsMatch(line, @"^([0-9a-f]{2}){10,}$", RegexOptions.IgnoreCase))
+                                    {
+                                        wireShark = true;
+                                    }
                                 }
                             }
                             if (ifhLog)
                             {
                                 ConvertIfhlogFile(inputFile, streamWriter);
+                            }
+                            else if (wireShark)
+                            {
+                                ConvertWireSharkFile(inputFile, streamWriter);
                             }
                             else
                             {
@@ -825,6 +835,77 @@ namespace LogfileConverter
             }
         }
 
+        private static void ConvertWireSharkFile(string inputFile, StreamWriter streamWriter)
+        {
+            List<byte> lastTel = null;
+            List<byte> reqTel = null;
+            List<List<byte>> respTels = new List<List<byte>>();
+            using (StreamReader streamReader = new StreamReader(inputFile))
+            {
+                for (;;)
+                {
+                    List<byte> telegram = ReadHexStreamTel(streamReader);
+                    if (telegram == null)
+                    {
+                        return;
+                    }
+
+                    if (telegram.Count == 0)
+                    {
+                        break;
+                    }
+
+                    if (telegram.Count < 8)
+                    {
+                        return;
+                    }
+
+                    if (telegram[5] == 0xFF)
+                    {   //nack
+                        continue;
+                    }
+
+                    if (telegram[5] == 0x02)
+                    {   // ack
+                        if (reqTel != null && respTels.Count > 0)
+                        {
+                            string line = List2NumberString(reqTel);
+                            line += ": ";
+
+                            foreach (List<byte> respTel in respTels)
+                            {
+                                line += List2NumberString(respTel) + "  ";
+                            }
+                            streamWriter.WriteLine(line);
+
+                            reqTel = null;
+                            respTels.Clear();
+                        }
+
+                        if (lastTel != null)
+                        {
+                            reqTel = lastTel;
+                            respTels.Clear();
+                        }
+
+                        lastTel = null;
+                        continue;
+                    }
+
+                    if (telegram[5] != 0x01)
+                    {   // no data
+                        return;
+                    }
+
+                    if (reqTel != null && lastTel != null)
+                    {
+                        respTels.Add(lastTel);
+                    }
+                    lastTel = telegram;
+                }
+            }
+        }
+
         private static int LineComparer(string x, string y)
         {
             string lineX = x.Substring(3);
@@ -933,6 +1014,82 @@ namespace LogfileConverter
                 sr.Append($"{data:X02} ");
             }
             return sr.ToString();
+        }
+
+        private static List<byte> HexString2List(string hexString)
+        {
+            string trimmed = hexString.Trim();
+            if (trimmed.Length % 2 != 0)
+            {
+                return null;
+            }
+
+            List<byte> values = new List<byte>();
+            for (int i = 0; i < trimmed.Length / 2; i++)
+            {
+                string number = trimmed.Substring(i * 2, 2);
+                if (number.Length > 0)
+                {
+                    try
+                    {
+                        int value = Convert.ToInt32(number, 16);
+                        values.Add((byte)value);
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+                }
+            }
+            return values;
+        }
+
+        private static string List2HexString(List<byte> dataList)
+        {
+            return BitConverter.ToString(dataList.ToArray()).Replace("-", string.Empty);
+        }
+
+        private static List<byte> ReadHexStreamTel(StreamReader streamReader)
+        {
+            List<byte> telegram = new List<byte>(); 
+            string line;
+            while ((line = streamReader.ReadLine()) != null)
+            {
+                if (line.Length > 0)
+                {
+                    List<byte> lineList = HexString2List(line);
+                    if (lineList == null || lineList.Count == 0)
+                    {
+                        return null;
+                    }
+
+                    telegram.AddRange(lineList);
+
+                    int telLength = 0;
+                    if (telegram.Count >= 4)
+                    {
+                        int payloadLength = (((int)telegram[0] << 24) | ((int)telegram[1] << 16) | ((int)telegram[2] << 8) | telegram[3]);
+                        telLength = payloadLength + 6;
+
+                        if (telegram.Count == telLength)
+                        {
+                            return telegram;
+                        }
+
+                        if (telegram.Count > telLength)
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+
+            if (telegram.Count == 0)
+            {
+                return telegram;
+            }
+
+            return null;
         }
 
         private static byte CalcChecksumBmwFast(List<byte> data, int offset, int length)
