@@ -874,12 +874,14 @@ namespace LogfileConverter
                     {   // ack
                         if (reqTel != null && respTels.Count > 0)
                         {
-                            string line = List2NumberString(reqTel);
+                            List<byte> bmwTelReq = CreateBmwFastTel(reqTel.GetRange(8, reqTel.Count - 8), reqTel[7],reqTel[6]);
+                            string line = List2NumberString(bmwTelReq);
                             line += ": ";
 
                             foreach (List<byte> respTel in respTels)
                             {
-                                line += List2NumberString(respTel) + "  ";
+                                List<byte> bmwTelResp = CreateBmwFastTel(respTel.GetRange(8, respTel.Count - 8), respTel[7],respTel[6]);
+                                line += List2NumberString(bmwTelResp) + " ";
                             }
                             streamWriter.WriteLine(line);
 
