@@ -923,6 +923,11 @@ namespace LogfileConverter
 
             if (reqTel != null && respTels.Count > 0)
             {
+                if (lastTel != null)
+                {
+                    respTels.Add(lastTel);
+                }
+
                 List<byte> bmwTelReq = CreateEnetBmwFastTel(reqTel);
                 if (bmwTelReq != null)
                 {
