@@ -872,24 +872,39 @@ namespace LogfileConverter
 
                     if (telegram[5] == 0x02)
                     {   // ack
-                        if (reqTel != null && respTels.Count > 0)
+                        if (reqTel != null)
                         {
                             if (_responseFile)
+                            {
+                                if (respTels.Count > 0)
+                                {
+                                    List<byte> bmwTelReq = CreateEnetBmwFastTel(reqTel);
+                                    if (bmwTelReq != null)
+                                    {
+                                        string line = List2NumberString(bmwTelReq);
+                                        line += ": ";
+                                        foreach (List<byte> respTel in respTels)
+                                        {
+                                            List<byte> bmwTelResp = CreateEnetBmwFastTel(respTel);
+                                            if (bmwTelResp != null)
+                                            {
+                                                line += List2NumberString(bmwTelResp) + " ";
+                                            }
+                                        }
+                                        streamWriter.WriteLine(line);
+                                    }
+                                }
+                            }
+                            else
                             {
                                 List<byte> bmwTelReq = CreateEnetBmwFastTel(reqTel);
                                 if (bmwTelReq != null)
                                 {
-                                    string line = List2NumberString(bmwTelReq);
-                                    line += ": ";
-                                    foreach (List<byte> respTel in respTels)
-                                    {
-                                        List<byte> bmwTelResp = CreateEnetBmwFastTel(respTel);
-                                        if (bmwTelResp != null)
-                                        {
-                                            line += List2NumberString(bmwTelResp) + " ";
-                                        }
-                                    }
-                                    streamWriter.WriteLine(line);
+                                    streamWriter.WriteLine("w: " + List2NumberString(bmwTelReq));
+                                }
+                                else
+                                {
+                                    streamWriter.WriteLine("w (Invalid): " + List2NumberString(reqTel));
                                 }
                             }
 
@@ -918,36 +933,62 @@ namespace LogfileConverter
 
                     if (reqTel != null && lastTel != null)
                     {
+                        List<byte> bmwTelResp = CreateEnetBmwFastTel(lastTel);
+                        if (bmwTelResp != null)
+                        {
+                            streamWriter.WriteLine("r: " + List2NumberString(bmwTelResp));
+                        }
+                        else
+                        {
+                            streamWriter.WriteLine("r (Invalid): " + List2NumberString(lastTel));
+                        }
+
                         respTels.Add(lastTel);
                     }
                     lastTel = telegram;
                 }
             }
 
-            if (reqTel != null && respTels.Count > 0)
+            if (reqTel != null)
             {
                 if (lastTel != null)
                 {
+                    if (!_responseFile)
+                    {
+                        List<byte> bmwTelResp = CreateEnetBmwFastTel(lastTel);
+                        if (bmwTelResp != null)
+                        {
+                            streamWriter.WriteLine("r: " + List2NumberString(bmwTelResp));
+                        }
+                        else
+                        {
+                            streamWriter.WriteLine("r (Invalid): " + List2NumberString(lastTel));
+                        }
+                    }
+
                     respTels.Add(lastTel);
                 }
 
                 if (_responseFile)
                 {
-                    List<byte> bmwTelReq = CreateEnetBmwFastTel(reqTel);
-                    if (bmwTelReq != null)
+                    if (respTels.Count > 0)
                     {
-                        string line = List2NumberString(bmwTelReq);
-                        line += ": ";
-                        foreach (List<byte> respTel in respTels)
+                        List<byte> bmwTelReq = CreateEnetBmwFastTel(reqTel);
+                        if (bmwTelReq != null)
                         {
-                            List<byte> bmwTelResp = CreateEnetBmwFastTel(respTel);
-                            if (bmwTelResp != null)
+                            string line = List2NumberString(bmwTelReq);
+                            line += ": ";
+                            foreach (List<byte> respTel in respTels)
                             {
-                                line += List2NumberString(bmwTelResp) + " ";
+                                List<byte> bmwTelResp = CreateEnetBmwFastTel(respTel);
+                                if (bmwTelResp != null)
+                                {
+                                    line += List2NumberString(bmwTelResp) + " ";
+                                }
                             }
-                        }
 
-                        streamWriter.WriteLine(line);
+                            streamWriter.WriteLine(line);
+                        }
                     }
                 }
             }
