@@ -874,16 +874,21 @@ namespace LogfileConverter
                     {   // ack
                         if (reqTel != null && respTels.Count > 0)
                         {
-                            List<byte> bmwTelReq = CreateBmwFastTel(reqTel.GetRange(8, reqTel.Count - 8), reqTel[7],reqTel[6]);
-                            string line = List2NumberString(bmwTelReq);
-                            line += ": ";
-
-                            foreach (List<byte> respTel in respTels)
+                            List<byte> bmwTelReq = CreateEnetBmwFastTel(reqTel);
+                            if (bmwTelReq != null)
                             {
-                                List<byte> bmwTelResp = CreateBmwFastTel(respTel.GetRange(8, respTel.Count - 8), respTel[7],respTel[6]);
-                                line += List2NumberString(bmwTelResp) + " ";
+                                string line = List2NumberString(bmwTelReq);
+                                line += ": ";
+                                foreach (List<byte> respTel in respTels)
+                                {
+                                    List<byte> bmwTelResp = CreateEnetBmwFastTel(respTel);
+                                    if (bmwTelResp != null)
+                                    {
+                                        line += List2NumberString(bmwTelResp) + " ";
+                                    }
+                                }
+                                streamWriter.WriteLine(line);
                             }
-                            streamWriter.WriteLine(line);
 
                             reqTel = null;
                             respTels.Clear();
@@ -1327,6 +1332,28 @@ namespace LogfileConverter
             result.AddRange(data);
             result.Add(CalcChecksumBmwFast(result, 0, result.Count));
             return result;
+        }
+
+        private static List<byte> CreateEnetBmwFastTel(List<byte> data)
+        {
+            if (data.Count < 8)
+            {
+                return null;
+            }
+
+            byte dest = data[7];
+            byte source = data[6];
+            if (dest == 0xF4)
+            {
+                dest = 0xF1;
+            }
+
+            if (source == 0xF4)
+            {
+                source = 0xF1;
+            }
+
+            return CreateBmwFastTel(data.GetRange(8, data.Count - 8), dest, source);
         }
 
         private static bool ChecksumValid(List<byte> telegram)
