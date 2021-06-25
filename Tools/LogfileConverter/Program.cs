@@ -844,7 +844,7 @@ namespace LogfileConverter
             {
                 for (;;)
                 {
-                    List<byte> telegram = ReadHexStreamTel(streamReader);
+                    List<byte> telegram = ReadHexStreamTel(streamReader, streamWriter);
                     if (telegram == null)
                     {
                         return;
@@ -1061,7 +1061,7 @@ namespace LogfileConverter
             return BitConverter.ToString(dataList.ToArray()).Replace("-", string.Empty);
         }
 
-        private static List<byte> ReadHexStreamTel(StreamReader streamReader)
+        private static List<byte> ReadHexStreamTel(StreamReader streamReader, StreamWriter streamWriter)
         {
             List<byte> telegram = new List<byte>(); 
             string line;
@@ -1072,16 +1072,19 @@ namespace LogfileConverter
                     List<byte> lineList = HexString2List(line);
                     if (lineList == null || lineList.Count == 0)
                     {
+                        if (!_responseFile)
+                        {
+                            streamWriter.WriteLine("Line invalid: {0}", line);
+                        }
                         return null;
                     }
 
                     telegram.AddRange(lineList);
 
-                    int telLength = 0;
                     if (telegram.Count >= 4)
                     {
                         int payloadLength = (((int)telegram[0] << 24) | ((int)telegram[1] << 16) | ((int)telegram[2] << 8) | telegram[3]);
-                        telLength = payloadLength + 6;
+                        int telLength = payloadLength + 6;
 
                         if (telegram.Count == telLength)
                         {
@@ -1090,6 +1093,10 @@ namespace LogfileConverter
 
                         if (telegram.Count > telLength)
                         {
+                            if (!_responseFile)
+                            {
+                                streamWriter.WriteLine("Telegram length overflow: {0}", List2NumberString(telegram));
+                            }
                             return null;
                         }
                     }
@@ -1101,6 +1108,10 @@ namespace LogfileConverter
                 return telegram;
             }
 
+            if (!_responseFile)
+            {
+                streamWriter.WriteLine("EOF reached");
+            }
             return null;
         }
 
