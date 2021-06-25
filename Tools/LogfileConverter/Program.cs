@@ -840,125 +840,9 @@ namespace LogfileConverter
             List<byte> lastTel = null;
             List<byte> reqTel = null;
             List<List<byte>> respTels = new List<List<byte>>();
-            using (StreamReader streamReader = new StreamReader(inputFile))
+
+            void WriteOutput()
             {
-                for (;;)
-                {
-                    List<byte> telegram = ReadHexStreamTel(streamReader, streamWriter);
-                    if (telegram == null)
-                    {
-                        return;
-                    }
-
-                    if (telegram.Count == 0)
-                    {
-                        break;
-                    }
-
-                    if (telegram.Count < 8)
-                    {
-                        return;
-                    }
-
-                    if (telegram[5] == 0xFF)
-                    {   //nack
-                        continue;
-                    }
-
-                    if (telegram[5] == 0x12)
-                    {   // alive
-                        continue;
-                    }
-
-                    if (telegram[5] == 0x02)
-                    {   // ack
-                        if (reqTel != null)
-                        {
-                            if (_responseFile)
-                            {
-                                if (respTels.Count > 0)
-                                {
-                                    List<byte> bmwTelReq = CreateEnetBmwFastTel(reqTel);
-                                    if (bmwTelReq != null)
-                                    {
-                                        string line = List2NumberString(bmwTelReq);
-                                        line += ": ";
-                                        foreach (List<byte> respTel in respTels)
-                                        {
-                                            List<byte> bmwTelResp = CreateEnetBmwFastTel(respTel);
-                                            if (bmwTelResp != null)
-                                            {
-                                                line += List2NumberString(bmwTelResp) + " ";
-                                            }
-                                        }
-                                        streamWriter.WriteLine(line);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                List<byte> bmwTelReq = CreateEnetBmwFastTel(reqTel);
-                                if (bmwTelReq != null)
-                                {
-                                    streamWriter.WriteLine("w: " + List2NumberString(bmwTelReq));
-                                }
-                                else
-                                {
-                                    streamWriter.WriteLine("w (Invalid): " + List2NumberString(reqTel));
-                                }
-
-                                foreach (List<byte> respTel in respTels)
-                                {
-                                    List<byte> bmwTelResp = CreateEnetBmwFastTel(respTel);
-                                    if (bmwTelResp != null)
-                                    {
-                                        streamWriter.WriteLine("r: " + List2NumberString(bmwTelResp));
-                                    }
-                                    else
-                                    {
-                                        streamWriter.WriteLine("r (Invalid): " + List2NumberString(respTel));
-                                    }
-                                }
-                            }
-
-                            reqTel = null;
-                            respTels.Clear();
-                        }
-
-                        if (lastTel != null)
-                        {
-                            reqTel = lastTel;
-                            respTels.Clear();
-                        }
-
-                        lastTel = null;
-                        continue;
-                    }
-
-                    if (telegram[5] != 0x01)
-                    {   // no data
-                        if (!_responseFile)
-                        {
-                            streamWriter.WriteLine("Invalid tel type: {0:X02}", telegram[5]);
-                        }
-                        return;
-                    }
-
-                    if (reqTel != null && lastTel != null)
-                    {
-                        respTels.Add(lastTel);
-                    }
-                    lastTel = telegram;
-                }
-            }
-
-            if (reqTel != null)
-            {
-                if (lastTel != null)
-                {
-                    respTels.Add(lastTel);
-                }
-
                 if (_responseFile)
                 {
                     if (respTels.Count > 0)
@@ -1006,6 +890,84 @@ namespace LogfileConverter
                         }
                     }
                 }
+            }
+
+
+            using (StreamReader streamReader = new StreamReader(inputFile))
+            {
+                for (;;)
+                {
+                    List<byte> telegram = ReadHexStreamTel(streamReader, streamWriter);
+                    if (telegram == null)
+                    {
+                        return;
+                    }
+
+                    if (telegram.Count == 0)
+                    {
+                        break;
+                    }
+
+                    if (telegram.Count < 8)
+                    {
+                        return;
+                    }
+
+                    if (telegram[5] == 0xFF)
+                    {   //nack
+                        continue;
+                    }
+
+                    if (telegram[5] == 0x12)
+                    {   // alive
+                        continue;
+                    }
+
+                    if (telegram[5] == 0x02)
+                    {   // ack
+                        if (reqTel != null)
+                        {
+                            WriteOutput();
+
+                            reqTel = null;
+                            respTels.Clear();
+                        }
+
+                        if (lastTel != null)
+                        {
+                            reqTel = lastTel;
+                            respTels.Clear();
+                        }
+
+                        lastTel = null;
+                        continue;
+                    }
+
+                    if (telegram[5] != 0x01)
+                    {   // no data
+                        if (!_responseFile)
+                        {
+                            streamWriter.WriteLine("Invalid tel type: {0:X02}", telegram[5]);
+                        }
+                        return;
+                    }
+
+                    if (reqTel != null && lastTel != null)
+                    {
+                        respTels.Add(lastTel);
+                    }
+                    lastTel = telegram;
+                }
+            }
+
+            if (reqTel != null)
+            {
+                if (lastTel != null)
+                {
+                    respTels.Add(lastTel);
+                }
+
+                WriteOutput();
             }
         }
 
