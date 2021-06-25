@@ -874,20 +874,23 @@ namespace LogfileConverter
                     {   // ack
                         if (reqTel != null && respTels.Count > 0)
                         {
-                            List<byte> bmwTelReq = CreateEnetBmwFastTel(reqTel);
-                            if (bmwTelReq != null)
+                            if (_responseFile)
                             {
-                                string line = List2NumberString(bmwTelReq);
-                                line += ": ";
-                                foreach (List<byte> respTel in respTels)
+                                List<byte> bmwTelReq = CreateEnetBmwFastTel(reqTel);
+                                if (bmwTelReq != null)
                                 {
-                                    List<byte> bmwTelResp = CreateEnetBmwFastTel(respTel);
-                                    if (bmwTelResp != null)
+                                    string line = List2NumberString(bmwTelReq);
+                                    line += ": ";
+                                    foreach (List<byte> respTel in respTels)
                                     {
-                                        line += List2NumberString(bmwTelResp) + " ";
+                                        List<byte> bmwTelResp = CreateEnetBmwFastTel(respTel);
+                                        if (bmwTelResp != null)
+                                        {
+                                            line += List2NumberString(bmwTelResp) + " ";
+                                        }
                                     }
+                                    streamWriter.WriteLine(line);
                                 }
-                                streamWriter.WriteLine(line);
                             }
 
                             reqTel = null;
@@ -928,20 +931,24 @@ namespace LogfileConverter
                     respTels.Add(lastTel);
                 }
 
-                List<byte> bmwTelReq = CreateEnetBmwFastTel(reqTel);
-                if (bmwTelReq != null)
+                if (_responseFile)
                 {
-                    string line = List2NumberString(bmwTelReq);
-                    line += ": ";
-                    foreach (List<byte> respTel in respTels)
+                    List<byte> bmwTelReq = CreateEnetBmwFastTel(reqTel);
+                    if (bmwTelReq != null)
                     {
-                        List<byte> bmwTelResp = CreateEnetBmwFastTel(respTel);
-                        if (bmwTelResp != null)
+                        string line = List2NumberString(bmwTelReq);
+                        line += ": ";
+                        foreach (List<byte> respTel in respTels)
                         {
-                            line += List2NumberString(bmwTelResp) + " ";
+                            List<byte> bmwTelResp = CreateEnetBmwFastTel(respTel);
+                            if (bmwTelResp != null)
+                            {
+                                line += List2NumberString(bmwTelResp) + " ";
+                            }
                         }
+
+                        streamWriter.WriteLine(line);
                     }
-                    streamWriter.WriteLine(line);
                 }
             }
         }
