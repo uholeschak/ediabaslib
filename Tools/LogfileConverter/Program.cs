@@ -906,6 +906,10 @@ namespace LogfileConverter
 
                     if (telegram[5] != 0x01)
                     {   // no data
+                        if (!_responseFile)
+                        {
+                            streamWriter.WriteLine("Invalid tel type: {0:X02}", telegram[5]);
+                        }
                         return;
                     }
 
@@ -914,6 +918,25 @@ namespace LogfileConverter
                         respTels.Add(lastTel);
                     }
                     lastTel = telegram;
+                }
+            }
+
+            if (reqTel != null && respTels.Count > 0)
+            {
+                List<byte> bmwTelReq = CreateEnetBmwFastTel(reqTel);
+                if (bmwTelReq != null)
+                {
+                    string line = List2NumberString(bmwTelReq);
+                    line += ": ";
+                    foreach (List<byte> respTel in respTels)
+                    {
+                        List<byte> bmwTelResp = CreateEnetBmwFastTel(respTel);
+                        if (bmwTelResp != null)
+                        {
+                            line += List2NumberString(bmwTelResp) + " ";
+                        }
+                    }
+                    streamWriter.WriteLine(line);
                 }
             }
         }
