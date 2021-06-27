@@ -1117,10 +1117,32 @@ namespace LogfileConverter
         private static List<byte> ReadHexStreamTel(StreamReader streamReader, StreamWriter streamWriter)
         {
             List<byte> telegram = new List<byte>(); 
-            string line;
-            while ((line = streamReader.ReadLine()) != null)
+            string line = string.Empty;
+            int dataByte;
+            while ((dataByte = streamReader.Read()) >= 0)
             {
-                if (line.Length > 0)
+                switch (dataByte)
+                {
+                    case '\r':
+                    case '\n':
+                    case '\t':
+                    case ' ':
+                        if (line.Length != 0)
+                        {
+                            if (!_responseFile)
+                            {
+                                streamWriter.WriteLine("Line extra char invalid: {0}", line);
+                            }
+                            return null;
+                        }
+                        continue;
+
+                    default:
+                        line += (char) dataByte;
+                        break;
+                }
+
+                if (line.Length >= 2)
                 {
                     List<byte> lineList = HexString2List(line);
                     if (lineList == null || lineList.Count == 0)
@@ -1153,6 +1175,8 @@ namespace LogfileConverter
                             return null;
                         }
                     }
+
+                    line = string.Empty;
                 }
             }
 
