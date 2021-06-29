@@ -2748,7 +2748,7 @@ namespace EdiabasLib
             }
         }
 
-        // BEST2: ifreset
+        // TMODE: setze_interface_zurueck
         private static void OpXboot(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
