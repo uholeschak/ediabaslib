@@ -1802,7 +1802,7 @@ namespace EdiabasLib
             new OpCode(0x2D, "xstopf", OpXstopf),
             new OpCode(0x2E, "xkeyb", OpXkeyb),
             new OpCode(0x2F, "xstate", OpXstate),
-            new OpCode(0x30, "xboot", null),
+            new OpCode(0x30, "xboot", OpXboot),
             new OpCode(0x31, "xreset", OpXreset),
             new OpCode(0x32, "xtype", OpXtype),
             new OpCode(0x33, "xvers", OpXvers),

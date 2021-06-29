@@ -2748,6 +2748,21 @@ namespace EdiabasLib
             }
         }
 
+        // BEST2: ifreset
+        private static void OpXboot(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if (interfaceClass == null)
+            {
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
+            }
+            else
+            {
+                interfaceClass.InterfaceDisconnect();
+                interfaceClass.CommParameter = null;
+            }
+        }
+
         // BEST2: open_communication
         private static void OpXconnect(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
