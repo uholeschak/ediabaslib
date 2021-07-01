@@ -117,19 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="columnHeaderAddress.Text" xml:space="preserve">
-    <value>Address</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="columnHeaderAddress.Width" type="System.Int32, mscorlib">
-    <value>193</value>
-  </data>
-  <data name="columnHeaderName.Text" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="columnHeaderName.Width" type="System.Int32, mscorlib">
-    <value>322</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="listViewDevices.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 39</value>
@@ -137,6 +124,7 @@
   <data name="listViewDevices.Size" type="System.Drawing.Size, System.Drawing">
     <value>525, 254</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="listViewDevices.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
@@ -151,6 +139,18 @@
   </data>
   <data name="&gt;&gt;listViewDevices.ZOrder" xml:space="preserve">
     <value>15</value>
+  </data>
+  <data name="columnHeaderAddress.Text" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="columnHeaderAddress.Width" type="System.Int32, mscorlib">
+    <value>193</value>
+  </data>
+  <data name="columnHeaderName.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="columnHeaderName.Width" type="System.Int32, mscorlib">
+    <value>322</value>
   </data>
   <data name="buttonSearch.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 438</value>
@@ -495,6 +495,54 @@
   <data name="&gt;&gt;groupBoxEdiabas.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Name" xml:space="preserve">
+    <value>buttonPatchVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Parent" xml:space="preserve">
+    <value>groupBoxVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Name" xml:space="preserve">
+    <value>buttonRestoreVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Parent" xml:space="preserve">
+    <value>groupBoxVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="groupBoxVasPc.Location" type="System.Drawing.Point, System.Drawing">
+    <value>236, 469</value>
+  </data>
+  <data name="groupBoxVasPc.Size" type="System.Drawing.Size, System.Drawing">
+    <value>218, 48</value>
+  </data>
+  <data name="groupBoxVasPc.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="groupBoxVasPc.Text" xml:space="preserve">
+    <value>VAS-PC</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.Name" xml:space="preserve">
+    <value>groupBoxVasPc</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
   <data name="buttonPatchVasPc.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
@@ -549,29 +597,65 @@
   <data name="&gt;&gt;buttonRestoreVasPc.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="groupBoxVasPc.Location" type="System.Drawing.Point, System.Drawing">
-    <value>236, 469</value>
+  <data name="&gt;&gt;buttonDirIstad.Name" xml:space="preserve">
+    <value>buttonDirIstad</value>
   </data>
-  <data name="groupBoxVasPc.Size" type="System.Drawing.Size, System.Drawing">
-    <value>218, 48</value>
+  <data name="&gt;&gt;buttonDirIstad.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="groupBoxVasPc.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
+  <data name="&gt;&gt;buttonDirIstad.Parent" xml:space="preserve">
+    <value>groupBoxIstad</value>
   </data>
-  <data name="groupBoxVasPc.Text" xml:space="preserve">
-    <value>VAS-PC</value>
+  <data name="&gt;&gt;buttonDirIstad.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
-  <data name="&gt;&gt;groupBoxVasPc.Name" xml:space="preserve">
-    <value>groupBoxVasPc</value>
+  <data name="&gt;&gt;buttonPatchIstad.Name" xml:space="preserve">
+    <value>buttonPatchIstad</value>
   </data>
-  <data name="&gt;&gt;groupBoxVasPc.Type" xml:space="preserve">
+  <data name="&gt;&gt;buttonPatchIstad.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchIstad.Parent" xml:space="preserve">
+    <value>groupBoxIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchIstad.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreIstad.Name" xml:space="preserve">
+    <value>buttonRestoreIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreIstad.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreIstad.Parent" xml:space="preserve">
+    <value>groupBoxIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreIstad.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="groupBoxIstad.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 523</value>
+  </data>
+  <data name="groupBoxIstad.Size" type="System.Drawing.Size, System.Drawing">
+    <value>442, 48</value>
+  </data>
+  <data name="groupBoxIstad.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="groupBoxIstad.Text" xml:space="preserve">
+    <value>ISTA-D</value>
+  </data>
+  <data name="&gt;&gt;groupBoxIstad.Name" xml:space="preserve">
+    <value>groupBoxIstad</value>
+  </data>
+  <data name="&gt;&gt;groupBoxIstad.Type" xml:space="preserve">
     <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;groupBoxVasPc.Parent" xml:space="preserve">
+  <data name="&gt;&gt;groupBoxIstad.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;groupBoxVasPc.ZOrder" xml:space="preserve">
-    <value>3</value>
+  <data name="&gt;&gt;groupBoxIstad.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="buttonDirIstad.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -652,30 +736,6 @@
     <value>groupBoxIstad</value>
   </data>
   <data name="&gt;&gt;buttonRestoreIstad.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="groupBoxIstad.Location" type="System.Drawing.Point, System.Drawing">
-    <value>14, 523</value>
-  </data>
-  <data name="groupBoxIstad.Size" type="System.Drawing.Size, System.Drawing">
-    <value>442, 48</value>
-  </data>
-  <data name="groupBoxIstad.TabIndex" type="System.Int32, mscorlib">
-    <value>10</value>
-  </data>
-  <data name="groupBoxIstad.Text" xml:space="preserve">
-    <value>ISTA-D</value>
-  </data>
-  <data name="&gt;&gt;groupBoxIstad.Name" xml:space="preserve">
-    <value>groupBoxIstad</value>
-  </data>
-  <data name="&gt;&gt;groupBoxIstad.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;groupBoxIstad.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;groupBoxIstad.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
   <data name="comboBoxLanguage.Location" type="System.Drawing.Point, System.Drawing">
