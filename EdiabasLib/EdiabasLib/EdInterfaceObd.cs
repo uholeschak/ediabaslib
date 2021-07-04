@@ -3584,7 +3584,7 @@ namespace EdiabasLib
                 {
                     if (enableLogging)
                     {
-                        EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, 4, "Resp");
+                        EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, 4, "*** Rec");
                         EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** No tail received: Length={0}", recLength);
                     }
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
@@ -3963,7 +3963,7 @@ namespace EdiabasLib
                 {
                     if (enableLogging)
                     {
-                        EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, 4, "Resp");
+                        EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, 4, "*** Rec");
                         EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** No tail received: Length={0}", dataLength);
                     }
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
@@ -4216,7 +4216,7 @@ namespace EdiabasLib
                 int recLength = TelLengthKwp2000S(receiveData);
                 if (!ReceiveData(receiveData, 4, recLength - 3, ParTimeoutTelEnd, ParTimeoutTelEnd))
                 {
-                    EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, 4, "Resp");
+                    EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, 4, "*** Rec");
                     EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** No tail received: Length={0}", recLength);
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
@@ -4331,7 +4331,7 @@ namespace EdiabasLib
             }
             if (!ReceiveData(receiveData, headerLen, recLength - headerLen, ParTimeoutTelEnd, ParTimeoutTelEnd))
             {
-                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, 4, "Resp");
+                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, 4, "*** Rec");
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** No tail received: Length={0}", recLength);
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
             }
