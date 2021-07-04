@@ -112,7 +112,8 @@ namespace LogfileConverter
                         }
 
                         string fileExt = Path.GetExtension(inputFile);
-                        if (string.Compare(fileExt, ".trc", StringComparison.OrdinalIgnoreCase) == 0)
+                        if ((string.Compare(fileExt, ".trc", StringComparison.OrdinalIgnoreCase) == 0) ||
+                            (string.Compare(fileExt, ".log", StringComparison.OrdinalIgnoreCase) == 0))
                         {   // trace file
                             ConvertTraceFile(inputFile, streamWriter);
                         }
