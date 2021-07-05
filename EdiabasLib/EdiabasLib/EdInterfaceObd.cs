@@ -591,7 +591,6 @@ namespace EdiabasLib
                         ParSendSetDtr = true;
                         ParAllowBitBang = EnableFtdiBitBang;
                         ParHasKeyBytes = true;
-                        ParSupportFrequent = true;
                         break;
 
                     case 0x0005:    // DS1
@@ -615,6 +614,7 @@ namespace EdiabasLib
                         baudRate = (int)CommParameterProtected[1];
                         parity = SerialParity.Even;
                         ParTransmitFunc = TransDs2;
+                        ParFrequentFunc = FrequentDs2;
                         ParTimeoutStd = (int)CommParameterProtected[5];
                         ParRegenTime = (int)CommParameterProtected[6];
                         ParTimeoutTelEnd = (int)CommParameterProtected[7];
@@ -628,6 +628,8 @@ namespace EdiabasLib
                             ParSendSetDtr = !HasAdapterEcho;
                         }
                         ParAllowBitBang = EnableFtdiBitBang && ParSendSetDtr;
+                        EcuConnected = true;
+                        ParSupportFrequent = true;
                         break;
 
                     case 0x010C:    // KWP2000 BMW
@@ -648,6 +650,7 @@ namespace EdiabasLib
                         parity = SerialParity.None;
                         ParTransmitFunc = TransKwp2000Bmw;
                         ParIdleFunc = IdleKwp2000Bmw;
+                        ParFrequentFunc = FrequentKwp2000Bmw;
                         ParTimeoutStd = (int)CommParameterProtected[2];
                         ParRegenTime = (int)CommParameterProtected[3];
                         ParTimeoutTelEnd = (int)CommParameterProtected[4];
@@ -683,6 +686,8 @@ namespace EdiabasLib
                         }
                         ParSendSetDtr = !HasAdapterEcho;
                         ParAllowBitBang = EnableFtdiBitBang && ParSendSetDtr;
+                        EcuConnected = true;
+                        ParSupportFrequent = true;
                         break;
 
                     case 0x010D:    // KWP2000*
@@ -1658,11 +1663,6 @@ namespace EdiabasLib
         public override bool TransmitFrequent(byte[] sendData)
         {
             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send Frequent");
-            if (!EdicSimulation)
-            {
-                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
-                return false;
-            }
             if (CommParameterProtected == null)
             {
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
@@ -1680,7 +1680,7 @@ namespace EdiabasLib
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                 return false;
             }
-            if (SendBufferFrequentLength != 0)
+            if (EdicSimulation && SendBufferFrequentLength != 0)
             {
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Frequent mode active");
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
@@ -4155,6 +4155,16 @@ namespace EdiabasLib
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
+        private EdiabasNet.ErrorCodes FrequentKwp2000Bmw()
+        {
+            if (SendBufferFrequentLength == 0)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+
+            return TransKwp2000Bmw(SendBufferFrequent, SendBufferFrequentLength, ref RecBufferFrequent, out RecBufferFrequentLength);
+        }
+
         private EdiabasNet.ErrorCodes TransKwp2000S(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
             receiveLength = 0;
@@ -4349,6 +4359,16 @@ namespace EdiabasLib
             LastResponseTick = Stopwatch.GetTimestamp();
             receiveLength = recLength;
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+        }
+
+        private EdiabasNet.ErrorCodes FrequentDs2()
+        {
+            if (SendBufferFrequentLength == 0)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+
+            return TransDs2(SendBufferFrequent, SendBufferFrequentLength, ref RecBufferFrequent, out RecBufferFrequentLength);
         }
 
         // telegram length with checksum
