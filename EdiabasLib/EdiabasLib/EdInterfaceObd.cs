@@ -1594,6 +1594,14 @@ namespace EdiabasLib
                     }
                 }
             }
+            else
+            {
+                if (SendBufferFrequentLength != 0)
+                {
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Frequent mode active, stopping before transmission");
+                    StopFrequent();
+                }
+            }
             if (CommParameterProtected == null)
             {
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
@@ -2492,6 +2500,17 @@ namespace EdiabasLib
                 CommThreadReqEvent.Set();
                 CommThread.Join();
                 CommThread = null;
+            }
+
+            if (SendBufferFrequentLength != 0)
+            {
+                if (EdiabasProtected != null)
+                {
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Stopping frequent mode");
+                }
+
+                SendBufferFrequentLength = 0;
+                RecBufferFrequentLength = 0;
             }
         }
 
