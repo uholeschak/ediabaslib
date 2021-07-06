@@ -583,6 +583,7 @@ namespace EdiabasLib
                         parity = SerialParity.None;
                         ParTransmitFunc = TransConcept3;
                         ParIdleFunc = IdleConcept3;
+                        ParFrequentFunc = FrequentConcept3;
                         ParFinishFunc = FinishConcept3;
                         ParWakeAddress = (byte)CommParameterProtected[2];
                         ParTimeoutStd = (int)CommParameterProtected[5];
@@ -591,6 +592,7 @@ namespace EdiabasLib
                         ParSendSetDtr = true;
                         ParAllowBitBang = EnableFtdiBitBang;
                         ParHasKeyBytes = true;
+                        ParSupportFrequent = true;
                         break;
 
                     case 0x0005:    // DS1
@@ -5278,6 +5280,20 @@ namespace EdiabasLib
             }
             LastCommTick = Stopwatch.GetTimestamp();
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+        }
+
+        private EdiabasNet.ErrorCodes FrequentConcept3()
+        {
+            if (!EcuConnected)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+            if (SendBufferFrequentLength == 0)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+            }
+
+            return TransConcept3(SendBufferFrequent, SendBufferFrequentLength, ref RecBufferFrequent, out RecBufferFrequentLength);
         }
 
         private EdiabasNet.ErrorCodes FinishConcept3()
