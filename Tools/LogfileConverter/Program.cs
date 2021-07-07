@@ -25,12 +25,15 @@ namespace LogfileConverter
             bool sortFile = false;
             bool showHelp = false;
             List<string> inputFiles = new List<string>();
+            List<string> mergeFiles = new List<string>();
             string outputFile = null;
 
             var p = new OptionSet()
             {
                 { "i|input=", "input file.",
                   v => inputFiles.Add(v) },
+                { "m|merge=", "response merge file.",
+                    v => mergeFiles.Add(v) },
                 { "o|output=", "output file (if omitted '.conv' is appended to input file).",
                   v => outputFile = v },
                 { "c|cformat", "c format for hex values", 
@@ -81,11 +84,27 @@ namespace LogfileConverter
                 }
             }
 
+            foreach (string mergeFile in mergeFiles)
+            {
+                if (!File.Exists(mergeFile))
+                {
+                    Console.WriteLine("Merge file '{0}' not found", mergeFile);
+                    return 1;
+                }
+            }
+
             if (!ConvertLog(inputFiles, outputFile))
             {
                 Console.WriteLine("Conversion failed");
                 return 1;
             }
+
+            if (!AddMergeFiles(mergeFiles, outputFile))
+            {
+                Console.WriteLine("Adding merge files failed");
+                return 1;
+            }
+
             if (sortFile && _responseFile)
             {
                 if (!SortLines(outputFile))
@@ -96,6 +115,39 @@ namespace LogfileConverter
             }
 
             return 0;
+        }
+
+        private static bool AddMergeFiles(List<string> mergeFiles, string outputFile)
+        {
+            if (mergeFiles.Count == 0)
+            {
+                return true;
+            }
+
+            try
+            {
+                using (Stream outputStream = new FileStream(outputFile, FileMode.Append, FileAccess.Write, FileShare.None))
+                {
+                    foreach (string mergeFile in mergeFiles)
+                    {
+                        if (string.IsNullOrEmpty(mergeFile))
+                        {
+                            continue;
+                        }
+
+                        using (Stream inputStream = File.OpenRead(mergeFile))
+                        {
+                            inputStream.CopyTo(outputStream);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private static bool ConvertLog(List<string> inputFiles, string outputFile)
