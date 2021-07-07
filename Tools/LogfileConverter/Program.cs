@@ -1470,6 +1470,12 @@ namespace LogfileConverter
                 result.Add(dest);
                 result.Add(source);
             }
+
+            if (IsFunctionalAddress(dest))
+            {
+                result[0] |= 0x40;
+            }
+
             result.AddRange(data);
             result.Add(CalcChecksumBmwFast(result, 0, result.Count));
             return result;
@@ -1495,6 +1501,21 @@ namespace LogfileConverter
             }
 
             return CreateBmwFastTel(data.GetRange(8, data.Count - 8), dest, source);
+        }
+
+        public static bool IsFunctionalAddress(byte address)
+        {
+            if (address == 0xDF)
+            {
+                return true;
+            }
+
+            if (address >= 0xE6 && address <= 0xEF)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private static bool ChecksumValid(List<byte> telegram)
