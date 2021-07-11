@@ -514,11 +514,13 @@ namespace EdiabasLib
                         baudRate = (int)CommParameterProtected[1];
                         parity = SerialParity.Even;
                         ParTransmitFunc = TransDs2;
+                        ParFrequentFunc = FrequentDs2;
                         ParTimeoutStd = (int)CommParameterProtected[5];
                         ParRegenTime = (int)CommParameterProtected[6];
                         ParTimeoutTelEnd = (int)CommParameterProtected[7];
                         ParSendSetDtr = false;
                         ParAllowBitBang = false;
+                        ParSupportFrequent = true;
                         break;
 
                     case 0x0002:    // Concept 2 ISO 9141 (KWP1281)
