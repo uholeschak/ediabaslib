@@ -341,6 +341,12 @@ namespace EdiabasLib
             }
             set
             {
+                if (CommParameterProtected == null && SendBufferFrequentLength != 0)
+                {
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Ignoring comm parameter reset in frequent mode");
+                    return;
+                }
+
                 StopCommThread();
 
                 CommParameterProtected = value;
