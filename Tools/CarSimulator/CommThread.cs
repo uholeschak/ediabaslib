@@ -7387,6 +7387,11 @@ namespace CarSimulator
             {
                 return;
             }
+
+#if true
+            Debug.WriteLine(string.Format("Time: {0}", DateTime.Now.ToString("hh:mm:ss.fff")));
+            DebugLogData("Request: ", _receiveData, recLength);
+#endif
             if (!_adsAdapter && !_klineResponder)
             {
                 // send echo
