@@ -2758,7 +2758,7 @@ namespace EdiabasLib
             }
             else
             {
-                interfaceClass.CommParameter = null;
+                interfaceClass.InterfaceBoot();
             }
         }
 

@@ -341,12 +341,6 @@ namespace EdiabasLib
             }
             set
             {
-                if (!EdicSimulation && CommParameterProtected == null && SendBufferFrequentLength != 0)
-                {
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Ignoring comm parameter reset in frequent mode");
-                    return;
-                }
-
                 StopCommThread();
 
                 CommParameterProtected = value;
@@ -1429,6 +1423,18 @@ namespace EdiabasLib
             {
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
             }
+            CommParameter = null;
+            return true;
+        }
+
+        public override bool InterfaceBoot()
+        {
+            if (!EdicSimulation && SendBufferFrequentLength != 0)
+            {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Ignoring interface boot in frequent mode");
+                return false;
+            }
+
             CommParameter = null;
             return true;
         }

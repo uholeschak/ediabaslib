@@ -149,6 +149,8 @@ namespace EdiabasLib
 
         public abstract bool InterfaceReset();
 
+        public abstract bool InterfaceBoot();
+
         public abstract bool TransmitData(byte[] sendData, out byte[] receiveData);
 
         public abstract bool TransmitFrequent(byte[] sendData);
