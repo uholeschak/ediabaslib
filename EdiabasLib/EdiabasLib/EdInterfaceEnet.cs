@@ -545,6 +545,12 @@ namespace EdiabasLib
             return true;
         }
 
+        public override bool InterfaceBoot()
+        {
+            CommParameter = null;
+            return true;
+        }
+
         public override bool TransmitData(byte[] sendData, out byte[] receiveData)
         {
             receiveData = null;
