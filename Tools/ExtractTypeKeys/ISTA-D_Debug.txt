@@ -126,5 +126,5 @@ EcuFunctionService.RetrieveFunctionDefinition()
 
 Log files:
 ==========
-ISTA creates a log file xxxIcomLogs*.tgz, this file is portected with the password: 3DkDxnKQZ1
+ISTA creates a log file xxxIcomLogs*.tgz, this file is protected with the password: 3DkDxnKQZ1
 obd.log contains the api and ifh log.
