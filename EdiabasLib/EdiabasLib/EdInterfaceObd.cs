@@ -520,6 +520,7 @@ namespace EdiabasLib
                         ParTimeoutTelEnd = (int)CommParameterProtected[7];
                         ParSendSetDtr = false;
                         ParAllowBitBang = false;
+                        EcuConnected = true;
                         ParSupportFrequent = true;
                         break;
 
@@ -2665,7 +2666,7 @@ namespace EdiabasLib
                 }
                 lock (CommThreadLock)
                 {
-                    if (recLength > 0)
+                    if (recLength >= 0)
                     {
                         Array.Copy(RecBufferThread, RecBuffer, recLength);
                         RecBufferLength = recLength;
