@@ -123,3 +123,8 @@ EcuFunctionService.RetrieveFunctionDefinition()
  - SQL XEP_NODECLASSES: name="ECUFixedFunctionReadingIdentification" -> id=7164418
  - SQL GetFixedFunctionEcuJobsByNodeClass(), match nodeClass (e.g. nodeClass=7164418)
  - SQL XEP_ECUJOBS or XEP_REFECUJOBS: GetEcuJobsWithParameters(), match nodeClass and ecuFixedFunctionId (e.g. 2000001222439 -> id=2000001356499 name="LESEN_ANALOGWERTE")
+
+Log files:
+==========
+ISTA creates a log file xxxIcomLogs*.tgz, this file is portected with the password: 3DkDxnKQZ1
+obd.log contains the api and ifh log.
