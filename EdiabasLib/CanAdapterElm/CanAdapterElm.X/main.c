@@ -1702,13 +1702,22 @@ bool send_bt_config(uint8_t *buffer, uint16_t count, uint8_t retries)
 #if defined(REQUIRES_BT_FACTORY)
 bool set_bt_default()
 {
-    static const char bt_default[] = "AT+DEFAULT\r\n";
+    static const char bt_default[] = "AT+DEFAULT";
+#if defined(REQUIRES_BT_CRLF)
+        "\r\n"
+#endif
+    ;
+
     return send_bt_config((uint8_t *) bt_default, sizeof(bt_default) - 1, BT_CONFIG_RETRIES_DEF);
 }
 
 bool set_bt_baud()
 {
-    static const char bt_baud[] = "AT+BAUD8\r\n";   // 115200
+    static const char bt_baud[] = "AT+BAUD8"    // 115200
+#if defined(REQUIRES_BT_CRLF)
+        "\r\n"
+#endif
+    ;
 
     uint8_t old_baudl = SPBRG1;
     uint8_t old_baudh = SPBRGH1;
