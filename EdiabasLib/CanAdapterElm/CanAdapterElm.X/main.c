@@ -99,6 +99,7 @@
 #define ALLOW_BT_CONFIG
 #define ALLOW_FACTORY_RESET
 #define REQUIRES_BT_FACTORY
+//#define REQUIRES_BT_BAUD
 #define REQUIRES_BT_CRLF
 //#define REQUIRES_BT_ASSIGN
 #define REQUIRES_BT_NAME_0
@@ -112,6 +113,7 @@
 #define ALLOW_BT_CONFIG
 #define ALLOW_FACTORY_RESET
 //#define REQUIRES_BT_FACTORY
+#define REQUIRES_BT_BAUD
 //#define REQUIRES_BT_CRLF
 //#define REQUIRES_BT_ASSIGN
 //#define REQUIRES_BT_NAME_0
@@ -124,6 +126,7 @@
 #define ALLOW_BT_CONFIG
 #define ALLOW_FACTORY_RESET
 //#define REQUIRES_BT_FACTORY
+//#define REQUIRES_BT_BAUD
 #define REQUIRES_INIT_BT
 #define REQUIRES_BT_CRLF
 #define REQUIRES_BT_ASSIGN
@@ -1711,6 +1714,27 @@ bool set_bt_default()
     return send_bt_config((uint8_t *) bt_default, sizeof(bt_default) - 1, BT_CONFIG_RETRIES_DEF);
 }
 
+bool set_bt_init()
+{
+    static const char * const bt_init[] =
+    {
+        "AT+ENABLEIND0\r\n",
+        "AT+ROLE0\r\n",
+    };
+    bool result = true;
+    for (uint8_t i = 0; i < sizeof(bt_init)/sizeof(bt_init[0]); i++)
+    {
+        const char *pinit = bt_init[i];
+        if (!send_bt_config((uint8_t *) pinit, strlen(pinit), BT_CONFIG_RETRIES_DEF))
+        {
+            result = false;
+        }
+    }
+    return result;
+}
+#endif
+
+#if defined(REQUIRES_BT_FACTORY) || defined(REQUIRES_BT_BAUD)
 bool set_bt_baud()
 {
     static const char bt_baud[] = "AT+BAUD8"    // 115200
@@ -1735,25 +1759,6 @@ bool set_bt_baud()
     RCSTAbits.SPEN = 1;
 
     return send_bt_config((uint8_t *) bt_baud, sizeof(bt_baud) - 1, BT_CONFIG_RETRIES_BAUD);
-}
-
-bool set_bt_init()
-{
-    static const char * const bt_init[] =
-    {
-        "AT+ENABLEIND0\r\n",
-        "AT+ROLE0\r\n",
-    };
-    bool result = true;
-    for (uint8_t i = 0; i < sizeof(bt_init)/sizeof(bt_init[0]); i++)
-    {
-        const char *pinit = bt_init[i];
-        if (!send_bt_config((uint8_t *) pinit, strlen(pinit), BT_CONFIG_RETRIES_DEF))
-        {
-            result = false;
-        }
-    }
-    return result;
 }
 #endif
 
@@ -1881,6 +1886,12 @@ bool init_bt()
 #else
     if (init_bt_required)
     {
+#if defined(REQUIRES_BT_BAUD)
+        if (!set_bt_baud())
+        {
+            result = false;
+        }
+#endif
         if (!set_bt_pin())
         {
             result = false;
