@@ -942,14 +942,59 @@ namespace EdiabasLib
                         int langLen = (UdpBuffer[12] << 8) | UdpBuffer[13];
                         if (packetlength == recLen && flags == 0 && nextExtOffset == 0 && xId == 0xABCD)
                         {
-                            int attrOffset = 14 + langLen + 2;  // lang + error code
-                            int attrLen = (UdpBuffer[attrOffset] << 8) | UdpBuffer[attrOffset + 1];
-                            if (attrOffset + 2 + attrLen < recLen)
+                            try
                             {
-                                byte[] attrBytes = new byte[attrLen];
-                                Array.Copy(UdpBuffer, attrOffset + 2, attrBytes, 0, attrLen);
-                                string attrText = Encoding.ASCII.GetString(attrBytes);
-                                string[] attrList = attrText.Split(',');
+                                int attrOffset = 14 + langLen + 2;  // lang + error code
+                                int attrLen = (UdpBuffer[attrOffset] << 8) | UdpBuffer[attrOffset + 1];
+                                if (attrOffset + 2 + attrLen < recLen)
+                                {
+                                    byte[] attrBytes = new byte[attrLen];
+                                    Array.Copy(UdpBuffer, attrOffset + 2, attrBytes, 0, attrLen);
+                                    string attrText = Encoding.ASCII.GetString(attrBytes);
+                                    string[] attrList = attrText.Split(',');
+                                    Dictionary<string, string> attrDict = new Dictionary<string, string>();
+                                    foreach (string attrib in attrList)
+                                    {
+                                        string trimmed = attrib.Trim();
+                                        if (trimmed.StartsWith("(") && trimmed.EndsWith(")"))
+                                        {
+                                            string attrRaw = trimmed.Substring(1, trimmed.Length - 2);
+                                            string[] attrPair = attrRaw.Split('=');
+                                            if (attrPair.Length == 2)
+                                            {
+                                                attrDict.TryAdd(attrPair[0], attrPair[1]);
+                                            }
+                                        }
+                                    }
+
+                                    if (attrDict.TryGetValue("IPAddress", out string ipString))
+                                    {
+                                        if (IPAddress.TryParse(ipString, out IPAddress vehicleIp))
+                                        {
+                                            int listCount = 0;
+                                            lock (UdpRecListLock)
+                                            {
+                                                if (UdpRecIpListList != null)
+                                                {
+                                                    if (!UdpRecIpListList.Any(x => x.GetAddressBytes().SequenceEqual(vehicleIp.GetAddressBytes())))
+                                                    {
+                                                        UdpRecIpListList.Add(recIp);
+                                                    }
+                                                    listCount = UdpRecIpListList.Count;
+                                                }
+                                            }
+                                            if ((UdpMaxResponses >= 1) && (listCount >= UdpMaxResponses))
+                                            {
+                                                UdpEvent.Set();
+                                                continueRec = false;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
                             }
                         }
                     }
