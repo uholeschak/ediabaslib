@@ -892,40 +892,48 @@ namespace EdiabasLib
                 IPEndPoint ipUdp = new IPEndPoint(IPAddress.Any, 0);
                 EndPoint tempRemoteEp = ipUdp;
                 int recLen = udpSocketLocal.EndReceiveFrom(ar, ref tempRemoteEp);
-                if ((recLen >= (6 + 38)) &&
-                    (UdpBuffer[6] == 'D') &&
-                    (UdpBuffer[7] == 'I') &&
-                    (UdpBuffer[8] == 'A') &&
-                    (UdpBuffer[9] == 'G') &&
-                    (UdpBuffer[10] == 'A') &&
-                    (UdpBuffer[11] == 'D') &&
-                    (UdpBuffer[12] == 'R') &&
-                    (UdpBuffer[13] == '1') &&
-                    (UdpBuffer[14] == '0'))
+                int recPort = ((IPEndPoint) tempRemoteEp).Port;
+                IPAddress recIp = ((IPEndPoint)tempRemoteEp).Address;
+                bool continueRec = true;
+
+                if (recPort == UdpIdentPort)
                 {
-                    int listCount = 0;
-                    lock (UdpRecListLock)
+                    if ((recLen >= (6 + 38)) &&
+                        (UdpBuffer[6] == 'D') &&
+                        (UdpBuffer[7] == 'I') &&
+                        (UdpBuffer[8] == 'A') &&
+                        (UdpBuffer[9] == 'G') &&
+                        (UdpBuffer[10] == 'A') &&
+                        (UdpBuffer[11] == 'D') &&
+                        (UdpBuffer[12] == 'R') &&
+                        (UdpBuffer[13] == '1') &&
+                        (UdpBuffer[14] == '0'))
                     {
-                        if (UdpRecIpListList != null)
+                        int listCount = 0;
+                        lock (UdpRecListLock)
                         {
-                            IPAddress ipAddress = ((IPEndPoint) tempRemoteEp).Address;
-                            if (!UdpRecIpListList.Any(x => x.GetAddressBytes().SequenceEqual(ipAddress.GetAddressBytes())))
+                            if (UdpRecIpListList != null)
                             {
-                                UdpRecIpListList.Add(ipAddress);
+                                if (!UdpRecIpListList.Any(x => x.GetAddressBytes().SequenceEqual(recIp.GetAddressBytes())))
+                                {
+                                    UdpRecIpListList.Add(recIp);
+                                }
+                                listCount = UdpRecIpListList.Count;
                             }
-                            listCount = UdpRecIpListList.Count;
+                        }
+                        if ((UdpMaxResponses >= 1) && (listCount >= UdpMaxResponses))
+                        {
+                            UdpEvent.Set();
+                            continueRec = false;
                         }
                     }
-                    if ((UdpMaxResponses >= 1) && (listCount >= UdpMaxResponses))
-                    {
-                        UdpEvent.Set();
-                    }
-                    else
-                    {
-                        StartUdpListen();
-                    }
                 }
-                else
+                else if (recPort == UdpSrvLocPort)
+                {
+                    
+                }
+
+                if (continueRec)
                 {
                     StartUdpListen();
                 }
