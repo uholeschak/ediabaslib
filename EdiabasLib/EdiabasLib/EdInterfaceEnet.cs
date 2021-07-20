@@ -47,7 +47,7 @@ namespace EdiabasLib
         protected static readonly byte[] UdpSvrLocReq =
         {
             0x02, 0x06, 0x00, 0x00, 0x21, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0xE2, 0xCF, 0x00, 0x02, 0x65, 0x6E,
+            0x00, 0x00, 0xAB, 0xCD, 0x00, 0x02, 0x65, 0x6E,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x07, 0x64, 0x65,
             0x66, 0x61, 0x75, 0x6C, 0x74, 0x00, 0x00, 0x00,
             0x00
@@ -74,7 +74,7 @@ namespace EdiabasLib
         protected static bool ReconnectRequired;
 
         protected Socket UdpSocket;
-        protected byte[] UdpBuffer = new byte[0x100];
+        protected byte[] UdpBuffer = new byte[1500];
         protected volatile List<IPAddress> UdpRecIpListList = new List<IPAddress>();
         protected object UdpRecListLock = new object();
         protected int UdpMaxResponses;
@@ -930,7 +930,19 @@ namespace EdiabasLib
                 }
                 else if (recPort == UdpSrvLocPort)
                 {
-                    
+                    if ((recLen >= 12) &&
+                        (UdpBuffer[0] == 0x02) &&   // Version 2
+                        (UdpBuffer[1] == 0x07))     // Attribute reply
+                    {
+                        int packetlength = (UdpBuffer[2] << 16) | (UdpBuffer[3] << 8) | UdpBuffer[4];
+                        int flags = (UdpBuffer[5] << 8) | UdpBuffer[6];
+                        int nextExtOffset = (UdpBuffer[7] << 16) | (UdpBuffer[8] << 8) | UdpBuffer[9];
+                        int xId = (UdpBuffer[10] << 8) | UdpBuffer[11];
+                        if (packetlength == recLen && flags == 0 && nextExtOffset == 0 && xId == 0xABCD)
+                        {
+                            continueRec = true;
+                        }
+                    }
                 }
 
                 if (continueRec)
