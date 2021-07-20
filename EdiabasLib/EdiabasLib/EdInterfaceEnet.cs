@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -930,7 +931,7 @@ namespace EdiabasLib
                 }
                 else if (recPort == UdpSrvLocPort)
                 {
-                    if ((recLen >= 12) &&
+                    if ((recLen >= 14) &&
                         (UdpBuffer[0] == 0x02) &&   // Version 2
                         (UdpBuffer[1] == 0x07))     // Attribute reply
                     {
@@ -938,9 +939,18 @@ namespace EdiabasLib
                         int flags = (UdpBuffer[5] << 8) | UdpBuffer[6];
                         int nextExtOffset = (UdpBuffer[7] << 16) | (UdpBuffer[8] << 8) | UdpBuffer[9];
                         int xId = (UdpBuffer[10] << 8) | UdpBuffer[11];
+                        int langLen = (UdpBuffer[12] << 8) | UdpBuffer[13];
                         if (packetlength == recLen && flags == 0 && nextExtOffset == 0 && xId == 0xABCD)
                         {
-                            continueRec = true;
+                            int attrOffset = 14 + langLen + 2;  // lang + error code
+                            int attrLen = (UdpBuffer[attrOffset] << 8) | UdpBuffer[attrOffset + 1];
+                            if (attrOffset + 2 + attrLen < recLen)
+                            {
+                                byte[] attrBytes = new byte[attrLen];
+                                Array.Copy(UdpBuffer, attrOffset + 2, attrBytes, 0, attrLen);
+                                string attrText = Encoding.ASCII.GetString(attrBytes);
+                                string[] attrList = attrText.Split(',');
+                            }
                         }
                     }
                 }
