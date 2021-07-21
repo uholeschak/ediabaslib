@@ -1006,7 +1006,10 @@ namespace EdiabasLib
                                     if (attrPair.Length == 2)
                                     {
                                         string key = attrPair[0].ToUpperInvariant();
-                                        attrDict.TryAdd(key, attrPair[1]);
+                                        if (!attrDict.ContainsKey(key))
+                                        {
+                                            attrDict.Add(key, attrPair[1]);
+                                        }
                                     }
                                 }
                             }
