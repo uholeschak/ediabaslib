@@ -972,7 +972,7 @@ namespace EdiabasLib
             }
         }
 
-        protected Dictionary<string, string> ExtractSvrLocItems(byte[] dataBuffer, int dataLength, int expectedId)
+        static public Dictionary<string, string> ExtractSvrLocItems(byte[] dataBuffer, int dataLength, int expectedId)
         {
             if ((dataLength >= 14) &&
                 (dataBuffer[0] == 0x02) &&   // Version 2
