@@ -896,6 +896,7 @@ namespace EdiabasLib
                 int recPort = ((IPEndPoint) tempRemoteEp).Port;
                 IPAddress recIp = ((IPEndPoint)tempRemoteEp).Address;
                 bool continueRec = true;
+                IPAddress addListIp = null;
 
                 if (recPort == UdpIdentPort)
                 {
@@ -910,93 +911,44 @@ namespace EdiabasLib
                         (UdpBuffer[13] == '1') &&
                         (UdpBuffer[14] == '0'))
                     {
-                        int listCount = 0;
-                        lock (UdpRecListLock)
-                        {
-                            if (UdpRecIpListList != null)
-                            {
-                                if (!UdpRecIpListList.Any(x => x.GetAddressBytes().SequenceEqual(recIp.GetAddressBytes())))
-                                {
-                                    UdpRecIpListList.Add(recIp);
-                                }
-                                listCount = UdpRecIpListList.Count;
-                            }
-                        }
-                        if ((UdpMaxResponses >= 1) && (listCount >= UdpMaxResponses))
-                        {
-                            UdpEvent.Set();
-                            continueRec = false;
-                        }
+                        addListIp = recIp;
                     }
                 }
                 else if (recPort == UdpSrvLocPort)
                 {
-                    if ((recLen >= 14) &&
-                        (UdpBuffer[0] == 0x02) &&   // Version 2
-                        (UdpBuffer[1] == 0x07))     // Attribute reply
+                    Dictionary<string, string> attrDict = ExtractSvrLocItems(UdpBuffer, recLen, 0xABCD);
+                    if (attrDict != null)
                     {
-                        int packetlength = (UdpBuffer[2] << 16) | (UdpBuffer[3] << 8) | UdpBuffer[4];
-                        int flags = (UdpBuffer[5] << 8) | UdpBuffer[6];
-                        int nextExtOffset = (UdpBuffer[7] << 16) | (UdpBuffer[8] << 8) | UdpBuffer[9];
-                        int xId = (UdpBuffer[10] << 8) | UdpBuffer[11];
-                        int langLen = (UdpBuffer[12] << 8) | UdpBuffer[13];
-                        if (packetlength == recLen && flags == 0 && nextExtOffset == 0 && xId == 0xABCD)
+                        if (attrDict.TryGetValue("IPADDRESS", out string ipString))
                         {
-                            try
+                            if (IPAddress.TryParse(ipString, out IPAddress vehicleIp))
                             {
-                                int attrOffset = 14 + langLen + 2;  // lang + error code
-                                int attrLen = (UdpBuffer[attrOffset] << 8) | UdpBuffer[attrOffset + 1];
-                                if (attrOffset + 2 + attrLen < recLen)
-                                {
-                                    byte[] attrBytes = new byte[attrLen];
-                                    Array.Copy(UdpBuffer, attrOffset + 2, attrBytes, 0, attrLen);
-                                    string attrText = Encoding.ASCII.GetString(attrBytes);
-                                    string[] attrList = attrText.Split(',');
-                                    Dictionary<string, string> attrDict = new Dictionary<string, string>();
-                                    foreach (string attrib in attrList)
-                                    {
-                                        string trimmed = attrib.Trim();
-                                        if (trimmed.StartsWith("(") && trimmed.EndsWith(")"))
-                                        {
-                                            string attrRaw = trimmed.Substring(1, trimmed.Length - 2);
-                                            string[] attrPair = attrRaw.Split('=');
-                                            if (attrPair.Length == 2)
-                                            {
-                                                attrDict.TryAdd(attrPair[0], attrPair[1]);
-                                            }
-                                        }
-                                    }
-
-                                    if (attrDict.TryGetValue("IPAddress", out string ipString))
-                                    {
-                                        if (IPAddress.TryParse(ipString, out IPAddress vehicleIp))
-                                        {
-                                            int listCount = 0;
-                                            lock (UdpRecListLock)
-                                            {
-                                                if (UdpRecIpListList != null)
-                                                {
-                                                    if (!UdpRecIpListList.Any(x => x.GetAddressBytes().SequenceEqual(vehicleIp.GetAddressBytes())))
-                                                    {
-                                                        UdpRecIpListList.Add(recIp);
-                                                    }
-                                                    listCount = UdpRecIpListList.Count;
-                                                }
-                                            }
-                                            if ((UdpMaxResponses >= 1) && (listCount >= UdpMaxResponses))
-                                            {
-                                                UdpEvent.Set();
-                                                continueRec = false;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
+                                addListIp = vehicleIp;
                             }
                         }
+                    }
+                }
+
+                if (addListIp != null)
+                {
+                    int listCount = 0;
+                    lock (UdpRecListLock)
+                    {
+                        if (UdpRecIpListList != null)
+                        {
+                            if (!UdpRecIpListList.Any(x => x.GetAddressBytes().SequenceEqual(addListIp.GetAddressBytes())))
+                            {
+                                UdpRecIpListList.Add(recIp);
+                            }
+
+                            listCount = UdpRecIpListList.Count;
+                        }
+                    }
+
+                    if ((UdpMaxResponses >= 1) && (listCount >= UdpMaxResponses))
+                    {
+                        UdpEvent.Set();
+                        continueRec = false;
                     }
                 }
 
@@ -1009,6 +961,58 @@ namespace EdiabasLib
             {
                 // ignored
             }
+        }
+
+        protected Dictionary<string, string> ExtractSvrLocItems(byte[] dataBuffer, int dataLength, int expectedId)
+        {
+            if ((dataLength >= 14) &&
+                (dataBuffer[0] == 0x02) &&   // Version 2
+                (dataBuffer[1] == 0x07))     // Attribute reply
+            {
+                int packetlength = (dataBuffer[2] << 16) | (dataBuffer[3] << 8) | dataBuffer[4];
+                int flags = (dataBuffer[5] << 8) | dataBuffer[6];
+                int nextExtOffset = (dataBuffer[7] << 16) | (dataBuffer[8] << 8) | dataBuffer[9];
+                int xId = (dataBuffer[10] << 8) | dataBuffer[11];
+                int langLen = (dataBuffer[12] << 8) | dataBuffer[13];
+                if (packetlength == dataLength && flags == 0 && nextExtOffset == 0 && xId == expectedId)
+                {
+                    try
+                    {
+                        int attrOffset = 14 + langLen + 2;  // lang + error code
+                        int attrLen = (dataBuffer[attrOffset] << 8) | dataBuffer[attrOffset + 1];
+                        if (attrOffset + 2 + attrLen < dataLength)
+                        {
+                            byte[] attrBytes = new byte[attrLen];
+                            Array.Copy(dataBuffer, attrOffset + 2, attrBytes, 0, attrLen);
+                            string attrText = Encoding.ASCII.GetString(attrBytes);
+                            string[] attrList = attrText.Split(',');
+                            Dictionary<string, string> attrDict = new Dictionary<string, string>();
+                            foreach (string attrib in attrList)
+                            {
+                                string trimmed = attrib.Trim();
+                                if (trimmed.StartsWith("(") && trimmed.EndsWith(")"))
+                                {
+                                    string attrRaw = trimmed.Substring(1, trimmed.Length - 2);
+                                    string[] attrPair = attrRaw.Split('=');
+                                    if (attrPair.Length == 2)
+                                    {
+                                        string key = attrPair[0].ToUpperInvariant();
+                                        attrDict.TryAdd(key, attrPair[1]);
+                                    }
+                                }
+                            }
+
+                            return attrDict;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+            }
+
+            return null;
         }
 
         protected static void TcpControlTimerStop()
