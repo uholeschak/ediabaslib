@@ -919,7 +919,16 @@ namespace EdiabasLib
                     Dictionary<string, string> attrDict = ExtractSvrLocItems(UdpBuffer, recLen, 0xABCD);
                     if (attrDict != null)
                     {
-                        if (attrDict.TryGetValue("IPADDRESS", out string ipString))
+                        bool isEnet = false;
+                        if (attrDict.TryGetValue("DEVTYPE", out string devType))
+                        {
+                            if (string.Compare(devType, "ENET", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                isEnet = true;
+                            }
+                        }
+
+                        if (isEnet && attrDict.TryGetValue("IPADDRESS", out string ipString))
                         {
                             if (IPAddress.TryParse(ipString, out IPAddress vehicleIp))
                             {
