@@ -128,3 +128,10 @@ Log files:
 ==========
 ISTA creates a log file xxxIcomLogs*.tgz, this file is protected with the password: 3DkDxnKQZ1
 obd.log contains the api and ifh log.
+
+BMW ICOM:
+=========
+Get IP from ISTA+ search dialog
+X.X.X.X:60080
+name: root
+pw: NZY11502
