@@ -1777,7 +1777,8 @@ namespace CarSimulator
                     DebugLogData("srvLoc: ", bytes, bytes.Length);
                 }
 #endif
-                if (bytes != null && bytes.Length >= 12 &&
+                if (localIp != null &&
+                    bytes != null && bytes.Length >= 12 &&
                     bytes[0] == 0x02 &&     // Version 2
                     bytes[1] == 0x06)       // Attribute request
                 {
