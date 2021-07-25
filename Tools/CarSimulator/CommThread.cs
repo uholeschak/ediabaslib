@@ -1691,7 +1691,7 @@ namespace CarSimulator
             bool result = false;
             if (endPoint is IPEndPoint ipEnd)
             {
-                IPAddress localIp = GetLocalIpAddress(ipEnd.Address);
+                IPAddress localIp = GetLocalIpAddress(ipEnd.Address, out System.Net.NetworkInformation.NetworkInterface _);
                 if (localIp != null)
                 {
                     Debug.WriteLine("Sending to: {0} with: {1}", ipEnd.Address, localIp);
@@ -1715,8 +1715,9 @@ namespace CarSimulator
             return result;
         }
 
-        private IPAddress GetLocalIpAddress(IPAddress remoteIp)
+        private IPAddress GetLocalIpAddress(IPAddress remoteIp, out System.Net.NetworkInformation.NetworkInterface networkAdapter)
         {
+            networkAdapter = null;
             if (remoteIp == null)
             {
                 return null;
@@ -1752,6 +1753,7 @@ namespace CarSimulator
                                 IPAddress ipLocalMask = new IPAddress(ipBytesLocal);
                                 if (ipRemoteMask.Equals(ipLocalMask))
                                 {
+                                    networkAdapter = adapter;
                                     return ipAddressInfo.Address;
                                 }
                             }
@@ -1768,7 +1770,7 @@ namespace CarSimulator
             lock(_networkChangeLock)
             {
                 IPAddress ipIcom = IPAddress.Parse(IcomAddress);
-                IPAddress ipIcomLocal = GetLocalIpAddress(ipIcom);
+                IPAddress ipIcomLocal = GetLocalIpAddress(ipIcom, out System.Net.NetworkInformation.NetworkInterface networkAdapter);
                 bool isUp = false;
                 if (ipIcomLocal != null)
                 {
@@ -1785,7 +1787,7 @@ namespace CarSimulator
                     if (!_icomUp && isUp)
                     {
                         Debug.WriteLine("ICOM changed to up");
-                        SendIcomDhcpRequest(ipIcomLocal, ipIcom);
+                        SendIcomDhcpRequest(ipIcomLocal, ipIcom, networkAdapter);
                     }
                 }
 
@@ -1793,11 +1795,11 @@ namespace CarSimulator
             }
         }
 
-        private void SendIcomDhcpRequest(IPAddress ipIcomLocal, IPAddress ipIcom)
+        private void SendIcomDhcpRequest(IPAddress ipIcomLocal, IPAddress ipIcom, System.Net.NetworkInformation.NetworkInterface networkAdapter)
         {
             try
             {
-                byte[] macId = new byte[] { 0xD8, 0x18, 0x2B, 0x89, 0x0A, 0x8B };
+                byte[] macId = networkAdapter.GetPhysicalAddress().GetAddressBytes();
                 byte[] localIpBytes = ipIcomLocal.GetAddressBytes();
 
                 List<byte> response = new List<byte>();
@@ -1891,7 +1893,7 @@ namespace CarSimulator
                 }
                 IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
                 byte[] bytes = srvLocClientLocal.EndReceive(ar, ref ip);
-                IPAddress localIp = GetLocalIpAddress(ip.Address);
+                IPAddress localIp = GetLocalIpAddress(ip.Address, out System.Net.NetworkInformation.NetworkInterface _);
 #if true
                 if (bytes != null)
                 {
