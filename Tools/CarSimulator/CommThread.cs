@@ -1853,24 +1853,13 @@ namespace CarSimulator
                 response.Add((byte) localIpBytes.Length);    // Length
                 response.AddRange(localIpBytes);     // Local ip
 
-                byte[] hostNameBytes = Encoding.ASCII.GetBytes(Dns.GetHostName());
+                string hostName = "DIAGADR10BWMMAC" + BitConverter.ToString(macId).Replace("-", "");
+                byte[] hostNameBytes = Encoding.ASCII.GetBytes(hostName);
                 response.Add(12);   // Option Host name
                 response.Add((byte)hostNameBytes.Length);   // Length
                 response.AddRange(hostNameBytes);     // Host Name
 
-                response.Add(81);   // Option Full domain name
-                response.Add((byte)(hostNameBytes.Length + 3));   // Length
-                response.Add(0x00);     // Flags
-                response.Add(0x00);     // A-RR
-                response.Add(0x00);     // PTR-RR
-                response.AddRange(hostNameBytes);     // Host Name
-
-                byte[] vendorClassBytes = Encoding.ASCII.GetBytes("MSFT 5.0");
-                response.Add(60);   // Option Vendor class ID
-                response.Add((byte)vendorClassBytes.Length);    // Length
-                response.AddRange(vendorClassBytes);            // Vendor class ID
-
-                byte[] parameterList = new byte[] { 1, 3, 6, 15, 31, 33, 43, 44, 46, 47, 119, 121, 249, 252 };
+                byte[] parameterList = new byte[] { 3 };
                 response.Add(55);   // Option Parameter request list
                 response.Add((byte)parameterList.Length);    // Length
                 response.AddRange(parameterList);            // Parameter list
