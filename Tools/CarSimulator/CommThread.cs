@@ -306,6 +306,7 @@ namespace CarSimulator
         private readonly SerialPort _serialPort;
         private readonly AutoResetEvent _serialReceiveEvent;
         private readonly AutoResetEvent _pcanReceiveEvent;
+        private readonly Object _networkChangeLock = new Object();
         private readonly byte[] _sendData;
         private readonly byte[] _receiveData;
         private readonly byte[] _receiveDataMotorBackup;
@@ -335,6 +336,7 @@ namespace CarSimulator
 
         private const string TestMac = "D8182B890A8B";
         private const string TestVin = "WBAJM71000B055940";
+        private const string IcomAddress = "192.168.11.1";
 
         private const double FilterConst = 0.95;
         private const int IsoTimeout = 2000;
@@ -708,6 +710,11 @@ namespace CarSimulator
             Moving = false;
             VariableValues = false;
             IgnitionOk = false;
+
+            System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged += (sender, args) =>
+            {
+                UpdateIcomStatus();
+            };
         }
 
         public bool StartThread(string comPort, ConceptType conceptType, bool adsAdapter, bool klineResponder, ResponseType responseType, ConfigData configData, bool testMode = false)
@@ -822,6 +829,7 @@ namespace CarSimulator
         private bool Connect()
         {
             Disconnect();
+            UpdateIcomStatus();
             if (_comPort.StartsWith("ENET", StringComparison.OrdinalIgnoreCase))
             {
                 try
@@ -1752,6 +1760,22 @@ namespace CarSimulator
             }
 
             return null;
+        }
+
+        private void UpdateIcomStatus()
+        {
+            lock(_networkChangeLock)
+            {
+                IPAddress ipIcomLocal = GetLocalIpAddress(IPAddress.Parse(IcomAddress));
+                if (ipIcomLocal != null)
+                {
+                    Debug.WriteLine("ICOM is up at: {0}", ipIcomLocal);
+                }
+                else
+                {
+                    Debug.WriteLine("ICOM is down");
+                }
+            }
         }
 
         private void StartSrvLocListen()
