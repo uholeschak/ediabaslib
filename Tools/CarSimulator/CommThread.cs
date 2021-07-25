@@ -1827,7 +1827,7 @@ namespace CarSimulator
                 response.AddRange(new byte[10]);        // padding
                 response.AddRange(new byte[0x40]);      // server host name
                 response.AddRange(new byte[0x80]);      // boot file name
-                byte[] cookieBytes = Encoding.ASCII.GetBytes(@"DHCP");
+                byte[] cookieBytes = new byte[] { 0x63, 0x82, 0x53, 0x63 };
                 response.AddRange(cookieBytes);
 
                 response.Add(53);   // Option DHCP message type
