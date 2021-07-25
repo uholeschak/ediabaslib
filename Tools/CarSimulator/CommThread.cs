@@ -1767,7 +1767,8 @@ namespace CarSimulator
         {
             lock(_networkChangeLock)
             {
-                IPAddress ipIcomLocal = GetLocalIpAddress(IPAddress.Parse(IcomAddress));
+                IPAddress ipIcom = IPAddress.Parse(IcomAddress);
+                IPAddress ipIcomLocal = GetLocalIpAddress(ipIcom);
                 bool isUp = false;
                 if (ipIcomLocal != null)
                 {
@@ -1784,10 +1785,93 @@ namespace CarSimulator
                     if (!_icomUp && isUp)
                     {
                         Debug.WriteLine("ICOM changed to up");
+                        SendIcomDhcpRequest(ipIcomLocal, ipIcom);
                     }
                 }
 
                 _icomUp = isUp;
+            }
+        }
+
+        private void SendIcomDhcpRequest(IPAddress ipIcomLocal, IPAddress ipIcom)
+        {
+            try
+            {
+                byte[] macId = new byte[] { 0xD8, 0x18, 0x2B, 0x89, 0x0A, 0x8B };
+                byte[] localIpBytes = ipIcomLocal.GetAddressBytes();
+
+                List<byte> response = new List<byte>();
+                response.Add(0x01);     // Message Type Boot
+                response.Add(0x01);     // Ethernet
+                response.Add(0x06);     // Address length
+                response.Add(0x00);     // Hops
+                response.Add(0x12);     // Transaction ID
+                response.Add(0x34);
+                response.Add(0x56);
+                response.Add(0x78);
+                response.Add(0x00);     // Seconds
+                response.Add(0x00);
+                response.Add(0x00);     // Bootp flags
+                response.Add(0x00);
+                response.AddRange(localIpBytes);     // Client IP
+                response.AddRange(localIpBytes);     // Own IP
+                response.Add(0x00);     // Next server IP
+                response.Add(0x00);
+                response.Add(0x00);
+                response.Add(0x00);
+                response.Add(0x00);     // Relay agent IP
+                response.Add(0x00);
+                response.Add(0x00);
+                response.Add(0x00);
+                response.AddRange(macId);   // Client MAC
+                response.AddRange(new byte[10]);        // padding
+                response.AddRange(new byte[0x40]);      // server host name
+                response.AddRange(new byte[0x80]);      // boot file name
+                byte[] cookieBytes = Encoding.ASCII.GetBytes(@"DHCP");
+                response.AddRange(cookieBytes);
+
+                response.Add(53);   // Option DHCP message type
+                response.Add(1);    // Length
+                response.Add(3);    // DHCP request
+
+                response.Add(61);   // Option Client id
+                response.Add(7);    // Length
+                response.Add(1);    // Ethernet
+                response.AddRange(macId);   // Client MAC
+
+                response.Add(50);   // Option Requested IP
+                response.Add((byte) localIpBytes.Length);    // Length
+                response.AddRange(localIpBytes);     // Local ip
+
+                byte[] hostNameBytes = Encoding.ASCII.GetBytes(Dns.GetHostName());
+                response.Add(12);   // Option Host name
+                response.Add((byte)hostNameBytes.Length);   // Length
+                response.AddRange(hostNameBytes);     // Host Name
+
+                response.Add(81);   // Option Full domain name
+                response.Add((byte)(hostNameBytes.Length + 3));   // Length
+                response.Add(0x00);     // Flags
+                response.Add(0x00);     // A-RR
+                response.Add(0x00);     // PTR-RR
+                response.AddRange(hostNameBytes);     // Host Name
+
+                byte[] vendorClassBytes = Encoding.ASCII.GetBytes("MSFT 5.0");
+                response.Add(60);   // Option Vendor class ID
+                response.Add((byte)vendorClassBytes.Length);    // Length
+                response.AddRange(vendorClassBytes);            // Vendor class ID
+
+                byte[] parameterList = new byte[] { 1, 3, 6, 15, 31, 33, 43, 44, 46, 47, 119, 121, 249, 252 };
+                response.Add(55);   // Option Parameter request list
+                response.Add((byte)parameterList.Length);    // Length
+                response.AddRange(parameterList);            // Parameter list
+
+                response.Add(255);   // Option End
+
+                SendUdpPacketTo(response.ToArray(), new IPEndPoint(ipIcom, 67), 68);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Sending ICOM Dhcp request failed: {0}", ex.Message);
             }
         }
 
