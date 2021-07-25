@@ -303,6 +303,7 @@ namespace CarSimulator
         private bool _udpError;
         private UdpClient _srvLocClient;
         private bool _srvLocError;
+        private bool _icomUp;
         private readonly SerialPort _serialPort;
         private readonly AutoResetEvent _serialReceiveEvent;
         private readonly AutoResetEvent _pcanReceiveEvent;
@@ -829,7 +830,7 @@ namespace CarSimulator
         private bool Connect()
         {
             Disconnect();
-            UpdateIcomStatus();
+            UpdateIcomStatus(true);
             if (_comPort.StartsWith("ENET", StringComparison.OrdinalIgnoreCase))
             {
                 try
@@ -1762,19 +1763,31 @@ namespace CarSimulator
             return null;
         }
 
-        private void UpdateIcomStatus()
+        private void UpdateIcomStatus(bool init = false)
         {
             lock(_networkChangeLock)
             {
                 IPAddress ipIcomLocal = GetLocalIpAddress(IPAddress.Parse(IcomAddress));
+                bool isUp = false;
                 if (ipIcomLocal != null)
                 {
+                    isUp = true;
                     Debug.WriteLine("ICOM is up at: {0}", ipIcomLocal);
                 }
                 else
                 {
                     Debug.WriteLine("ICOM is down");
                 }
+
+                if (!init)
+                {
+                    if (!_icomUp && isUp)
+                    {
+                        Debug.WriteLine("ICOM changed to up");
+                    }
+                }
+
+                _icomUp = isUp;
             }
         }
 
