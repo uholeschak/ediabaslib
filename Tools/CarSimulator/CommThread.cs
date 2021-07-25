@@ -12,6 +12,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using BmwFileReader;
@@ -307,6 +308,7 @@ namespace CarSimulator
         private readonly SerialPort _serialPort;
         private readonly AutoResetEvent _serialReceiveEvent;
         private readonly AutoResetEvent _pcanReceiveEvent;
+        private Random random = new Random();
         private readonly Object _networkChangeLock = new Object();
         private readonly byte[] _sendData;
         private readonly byte[] _receiveData;
@@ -1799,6 +1801,11 @@ namespace CarSimulator
         {
             try
             {
+                if (ipIcomLocal == null || ipIcom == null || networkAdapter == null)
+                {
+                    Debug.WriteLine("Sending ICOM Dhcp request failed");
+                }
+
                 byte[] macId = networkAdapter.GetPhysicalAddress().GetAddressBytes();
                 byte[] localIpBytes = ipIcomLocal.GetAddressBytes();
 
@@ -1807,10 +1814,11 @@ namespace CarSimulator
                 response.Add(0x01);     // Ethernet
                 response.Add(0x06);     // Address length
                 response.Add(0x00);     // Hops
-                response.Add(0x12);     // Transaction ID
-                response.Add(0x34);
-                response.Add(0x56);
-                response.Add(0x78);
+
+                byte[] transId = new byte[4];
+                random.NextBytes(transId);
+                response.AddRange(transId); // Transaction ID
+
                 response.Add(0x00);     // Seconds
                 response.Add(0x00);
                 response.Add(0x00);     // Bootp flags
