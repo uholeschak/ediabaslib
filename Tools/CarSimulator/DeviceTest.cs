@@ -606,7 +606,7 @@ namespace CarSimulator
                 _form.UpdateTestStatusText(sr.ToString());
                 return false;
             }
-            Thread.Sleep(100);
+            Thread.Sleep(200);
 
             try
             {
@@ -649,7 +649,7 @@ namespace CarSimulator
                 _form.UpdateTestStatusText(sr.ToString());
                 return false;
             }
-            Thread.Sleep(100);
+            Thread.Sleep(200);
 
             try
             {
