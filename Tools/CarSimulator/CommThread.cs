@@ -1693,7 +1693,7 @@ namespace CarSimulator
             bool result = false;
             if (endPoint is IPEndPoint ipEnd)
             {
-                IPAddress localIp = GetLocalIpAddress(ipEnd.Address, out System.Net.NetworkInformation.NetworkInterface _);
+                IPAddress localIp = GetLocalIpAddress(ipEnd.Address, false, out System.Net.NetworkInformation.NetworkInterface _);
                 if (localIp != null)
                 {
                     Debug.WriteLine("Sending to: {0} with: {1}", ipEnd.Address, localIp);
@@ -1717,7 +1717,7 @@ namespace CarSimulator
             return result;
         }
 
-        private IPAddress GetLocalIpAddress(IPAddress remoteIp, out System.Net.NetworkInformation.NetworkInterface networkAdapter)
+        private IPAddress GetLocalIpAddress(IPAddress remoteIp, bool broadcast, out System.Net.NetworkInformation.NetworkInterface networkAdapter)
         {
             networkAdapter = null;
             if (remoteIp == null)
@@ -1756,6 +1756,19 @@ namespace CarSimulator
                                 if (ipRemoteMask.Equals(ipLocalMask))
                                 {
                                     networkAdapter = adapter;
+
+                                    if (broadcast)
+                                    {
+                                        byte[] ipBytes = ipAddressInfo.Address.GetAddressBytes();
+                                        for (int i = 0; i < ipBytes.Length; i++)
+                                        {
+                                            ipBytes[i] |= (byte)(~maskBytes[i]);
+                                        }
+
+                                        IPAddress broadcastAddress = new IPAddress(ipBytes);
+                                        return broadcastAddress;
+                                    }
+
                                     return ipAddressInfo.Address;
                                 }
                             }
@@ -1772,12 +1785,13 @@ namespace CarSimulator
             lock(_networkChangeLock)
             {
                 IPAddress ipIcom = IPAddress.Parse(IcomAddress);
-                IPAddress ipIcomLocal = GetLocalIpAddress(ipIcom, out System.Net.NetworkInformation.NetworkInterface networkAdapter);
+                IPAddress ipIcomLocal = GetLocalIpAddress(ipIcom, false, out System.Net.NetworkInformation.NetworkInterface networkAdapter);
+                IPAddress ipIcomBroadcast = GetLocalIpAddress(ipIcom, true, out _);
                 bool isUp = false;
-                if (ipIcomLocal != null)
+                if (ipIcomLocal != null && ipIcomBroadcast != null)
                 {
                     isUp = true;
-                    Debug.WriteLine("ICOM is up at: {0}", ipIcomLocal);
+                    Debug.WriteLine("ICOM is up at: {0}, broadcast={1}", ipIcomLocal, ipIcomBroadcast);
                 }
                 else
                 {
@@ -1789,7 +1803,7 @@ namespace CarSimulator
                     if (!_icomUp && isUp)
                     {
                         Debug.WriteLine("ICOM changed to up");
-                        SendIcomDhcpRequest(ipIcomLocal, ipIcom, networkAdapter);
+                        SendIcomDhcpRequest(ipIcomLocal, ipIcomBroadcast, networkAdapter);
                     }
                 }
 
@@ -1797,11 +1811,11 @@ namespace CarSimulator
             }
         }
 
-        private void SendIcomDhcpRequest(IPAddress ipIcomLocal, IPAddress ipIcom, System.Net.NetworkInformation.NetworkInterface networkAdapter)
+        private void SendIcomDhcpRequest(IPAddress ipIcomLocal, IPAddress ipIcomBroadcast, System.Net.NetworkInformation.NetworkInterface networkAdapter)
         {
             try
             {
-                if (ipIcomLocal == null || ipIcom == null || networkAdapter == null)
+                if (ipIcomLocal == null || ipIcomBroadcast == null || networkAdapter == null)
                 {
                     Debug.WriteLine("Sending ICOM Dhcp request failed");
                 }
@@ -1866,7 +1880,7 @@ namespace CarSimulator
 
                 response.Add(255);   // Option End
 
-                SendUdpPacketTo(response.ToArray(), new IPEndPoint(ipIcom, 67), 68);
+                SendUdpPacketTo(response.ToArray(), new IPEndPoint(ipIcomBroadcast, 67), 68);
             }
             catch (Exception ex)
             {
@@ -1890,7 +1904,7 @@ namespace CarSimulator
                 }
                 IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
                 byte[] bytes = srvLocClientLocal.EndReceive(ar, ref ip);
-                IPAddress localIp = GetLocalIpAddress(ip.Address, out System.Net.NetworkInformation.NetworkInterface _);
+                IPAddress localIp = GetLocalIpAddress(ip.Address, false, out System.Net.NetworkInformation.NetworkInterface _);
 #if true
                 if (bytes != null)
                 {
