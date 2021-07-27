@@ -1859,7 +1859,7 @@ namespace CarSimulator
                 response.Add((byte)hostNameBytes.Length);   // Length
                 response.AddRange(hostNameBytes);     // Host Name
 
-                byte[] parameterList = new byte[] { 3 };
+                byte[] parameterList = new byte[] { 1, 6, 12, 15, 3, 28 };
                 response.Add(55);   // Option Parameter request list
                 response.Add((byte)parameterList.Length);    // Length
                 response.AddRange(parameterList);            // Parameter list
