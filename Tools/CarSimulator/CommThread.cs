@@ -1874,7 +1874,7 @@ namespace CarSimulator
                     response.AddRange(localIpBytes);     // Local ip
                 }
 
-                string hostName = "DIAGADR10BWMMAC" + BitConverter.ToString(macId).Replace("-", "");
+                string hostName = "DIAGADR10BMWMAC" + BitConverter.ToString(macId).Replace("-", "");
                 byte[] hostNameBytes = Encoding.ASCII.GetBytes(hostName);
                 response.Add(12);   // Option Host name
                 response.Add((byte)hostNameBytes.Length);   // Length
