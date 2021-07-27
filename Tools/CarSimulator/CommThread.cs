@@ -1803,7 +1803,8 @@ namespace CarSimulator
                     if (!_icomUp && isUp)
                     {
                         Debug.WriteLine("ICOM changed to up");
-                        SendIcomDhcpRequest(ipIcomLocal, ipIcomBroadcast, networkAdapter);
+                        SendIcomDhcpRequest(ipIcomLocal, ipIcomBroadcast, true, networkAdapter);
+                        SendIcomDhcpRequest(ipIcomLocal, ipIcomBroadcast, false, networkAdapter);
                     }
                 }
 
@@ -1811,7 +1812,7 @@ namespace CarSimulator
             }
         }
 
-        private void SendIcomDhcpRequest(IPAddress ipIcomLocal, IPAddress ipIcomBroadcast, System.Net.NetworkInformation.NetworkInterface networkAdapter)
+        private void SendIcomDhcpRequest(IPAddress ipIcomLocal, IPAddress ipIcomBroadcast, bool discover, System.Net.NetworkInformation.NetworkInterface networkAdapter)
         {
             try
             {
@@ -1835,8 +1836,10 @@ namespace CarSimulator
 
                 response.Add(0x00);     // Seconds
                 response.Add(0x00);
-                response.Add(0x00);     // Bootp flags
-                response.Add(0x00);
+                                        // Bootp flags
+                uint bootpFlags = (uint) (discover ? 0x8000 : 0x0000);     // broadcast / unicast
+                response.Add((byte) ((bootpFlags >> 8) & 0xFF));
+                response.Add((byte) (bootpFlags & 0xFF));
                 response.AddRange(localIpBytes);     // Client IP
                 response.AddRange(localIpBytes);     // Own IP
                 response.Add(0x00);     // Next server IP
@@ -1856,16 +1859,20 @@ namespace CarSimulator
 
                 response.Add(53);   // Option DHCP message type
                 response.Add(1);    // Length
-                response.Add(3);    // DHCP request
+                byte messageType = (byte) (discover ? 1 : 3);    // DHCP discover / request
+                response.Add(messageType);    // DHCP discover
 
                 response.Add(61);   // Option Client id
                 response.Add(7);    // Length
                 response.Add(1);    // Ethernet
                 response.AddRange(macId);   // Client MAC
 
-                response.Add(50);   // Option Requested IP
-                response.Add((byte) localIpBytes.Length);    // Length
-                response.AddRange(localIpBytes);     // Local ip
+                if (!discover)
+                {
+                    response.Add(50);   // Option Requested IP
+                    response.Add((byte)localIpBytes.Length);    // Length
+                    response.AddRange(localIpBytes);     // Local ip
+                }
 
                 string hostName = "DIAGADR10BWMMAC" + BitConverter.ToString(macId).Replace("-", "");
                 byte[] hostNameBytes = Encoding.ASCII.GetBytes(hostName);
