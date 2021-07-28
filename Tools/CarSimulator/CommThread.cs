@@ -1803,8 +1803,12 @@ namespace CarSimulator
                     if (!_icomUp && isUp)
                     {
                         Debug.WriteLine("ICOM changed to up");
-                        SendIcomDhcpRequest(ipIcomLocal, ipIcomBroadcast, true, networkAdapter);
-                        SendIcomDhcpRequest(ipIcomLocal, ipIcomBroadcast, false, networkAdapter);
+                        for (int i = 0; i < 3; i++)
+                        {
+                            SendIcomDhcpRequest(ipIcomLocal, ipIcomBroadcast, true, networkAdapter);
+                            SendIcomDhcpRequest(ipIcomLocal, ipIcomBroadcast, false, networkAdapter);
+                            Thread.Sleep(100);
+                        }
                     }
                 }
 
@@ -1819,8 +1823,10 @@ namespace CarSimulator
                 if (ipIcomLocal == null || ipIcomBroadcast == null || networkAdapter == null)
                 {
                     Debug.WriteLine("Sending ICOM Dhcp request failed");
+                    return;
                 }
 
+                Debug.WriteLine("Sending ICOM Dhcp request, discover={0}", discover);
                 byte[] macId = networkAdapter.GetPhysicalAddress().GetAddressBytes();
                 byte[] localIpBytes = ipIcomLocal.GetAddressBytes();
 
