@@ -2937,7 +2937,7 @@ namespace CarSimulator
                 if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                 {
 #if CAN_DEBUG
-                    Debug.WriteLine("Send CF failed");
+                    Debug.WriteLine("Send CC failed");
 #endif
                     return false;
                 }
