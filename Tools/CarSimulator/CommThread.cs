@@ -2423,7 +2423,7 @@ namespace CarSimulator
                             if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                             {
 #if CAN_DEBUG
-                                Debug.WriteLine("Send Status failed");
+                                Debug.WriteLine("Send Status failed: {0}", stsResult);
 #endif
                             }
                         }
@@ -2497,7 +2497,7 @@ namespace CarSimulator
                                     if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                                     {
 #if CAN_DEBUG
-                                        Debug.WriteLine("Send FC failed");
+                                        Debug.WriteLine("Send FC failed: {0}", stsResult);
 #endif
                                         _receiveStopWatch.Stop();
                                         return false;
@@ -2583,7 +2583,7 @@ namespace CarSimulator
                                     if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                                     {
 #if CAN_DEBUG
-                                        Debug.WriteLine("Send FC failed");
+                                        Debug.WriteLine("Send FC failed: {0}", stsResult);
 #endif
                                         _receiveStopWatch.Stop();
                                         return false;
@@ -2611,7 +2611,7 @@ namespace CarSimulator
                                 if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                                 {
 #if CAN_DEBUG
-                                    Debug.WriteLine("Send FC failed");
+                                    Debug.WriteLine("Send FC failed: {0}", stsResult);
 #endif
                                     _receiveStopWatch.Stop();
                                     return false;
@@ -2754,7 +2754,7 @@ namespace CarSimulator
                 if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                 {
 #if CAN_DEBUG
-                    Debug.WriteLine("Send SF failed");
+                    Debug.WriteLine("Send SF failed: {0}", stsResult);
 #endif
                     return false;
                 }
@@ -2779,6 +2779,9 @@ namespace CarSimulator
             stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
             if (stsResult != TPCANStatus.PCAN_ERROR_OK)
             {
+#if CAN_DEBUG
+                Debug.WriteLine("Send FF failed: {0}", stsResult);
+#endif
                 return false;
             }
             bool waitForFc = true;
@@ -2870,7 +2873,7 @@ namespace CarSimulator
                     if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                     {
 #if CAN_DEBUG
-                        Debug.WriteLine("Send SF failed");
+                        Debug.WriteLine("Send SF failed: {0}", stsResult);
 #endif
                         return false;
                     }
@@ -2937,7 +2940,7 @@ namespace CarSimulator
                 if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                 {
 #if CAN_DEBUG
-                    Debug.WriteLine("Send CC failed");
+                    Debug.WriteLine("Send CC failed: {0}", stsResult);
 #endif
                     return false;
                 }
