@@ -900,6 +900,14 @@ namespace CarSimulator
                     Disconnect();
                     return false;
                 }
+
+                UInt32 autoReset = 1;
+                stsResult = PCANBasic.SetValue(_pcanHandle, TPCANParameter.PCAN_BUSOFF_AUTORESET, ref autoReset, sizeof(UInt32));
+                if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                {
+                    Disconnect();
+                    return false;
+                }
                 return true;
             }
             try
