@@ -77,8 +77,9 @@ static HANDLE hMutex = NULL;
 static HMODULE hIfhDll = NULL;
 static FILE *hLogFile = NULL;
 static int compatNo = IFH_COMPATIBILITY_NO;
-static int iAppendLog = 0;
+static int iDisableLog = 0;
 static int iStatusLog = 0;
+static int iAppendLog = 0;
 static int iFlushLog = 0;
 static int iRawMode = 0;
 
@@ -276,8 +277,9 @@ static BOOL OpenLogFile()
     logFileName += TEXT(".log");
     iniFileName += TEXT("Log.ini");
 
-    iAppendLog = GetPrivateProfileInt(TEXT("IfhLog"), TEXT("AppendLog"), 0, iniFileName.c_str());
+    iDisableLog = GetPrivateProfileInt(TEXT("IfhLog"), TEXT("DisableLog"), 0, iniFileName.c_str());
     iStatusLog = GetPrivateProfileInt(TEXT("IfhLog"), TEXT("StatusLog"), 0, iniFileName.c_str());
+    iAppendLog = GetPrivateProfileInt(TEXT("IfhLog"), TEXT("AppendLog"), 0, iniFileName.c_str());
     iFlushLog = GetPrivateProfileInt(TEXT("IfhLog"), TEXT("FlushLog"), 0, iniFileName.c_str());
     iRawMode = GetPrivateProfileInt(TEXT("IfhLog"), TEXT("RawMode"), 0, iniFileName.c_str());
 
@@ -691,6 +693,11 @@ typedef short(WINAPI *PdllCallIFH)(MESSAGE *msgIn, MESSAGE *msgOut);
 extern "C" short WINAPI dllCallIFH(MESSAGE *msgIn, MESSAGE *msgOut)
 {
     BOOL writeLog = TRUE;
+
+    if (iDisableLog)
+    {
+        writeLog = FALSE;
+    }
 
     if (!iStatusLog && msgIn->fktNo == 3)
     {   // hide status message
