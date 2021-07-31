@@ -1642,50 +1642,7 @@ namespace CarSimulator
                 if (bytes != null && bytes.Length == 6 && bytes[5] == 0x11)
                 {
                     Debug.WriteLine("Ident request from: {0}:{1}", ip.Address, ip.Port);
-                    byte[] identMessage = new byte[6 + 50];
-                    int idx = 0;
-                    identMessage[idx++] = 0x00;
-                    identMessage[idx++] = 0x00;
-                    identMessage[idx++] = 0x00;
-                    identMessage[idx++] = (byte)(identMessage.Length - 6);
-                    identMessage[idx++] = 0x00;
-                    identMessage[idx++] = 0x11; // ENET
-                    // TESTER ID
-                    identMessage[idx++] = (byte)'D';
-                    identMessage[idx++] = (byte)'I';
-                    identMessage[idx++] = (byte)'A';
-                    identMessage[idx++] = (byte)'G';
-                    identMessage[idx++] = (byte)'A';
-                    identMessage[idx++] = (byte)'D';
-                    identMessage[idx++] = (byte)'R';
-                    identMessage[idx++] = (byte)'1';
-                    identMessage[idx++] = (byte)'0';
-                    // MAC
-                    identMessage[idx++] = (byte)'B';
-                    identMessage[idx++] = (byte)'M';
-                    identMessage[idx++] = (byte)'W';
-                    identMessage[idx++] = (byte)'M';
-                    identMessage[idx++] = (byte)'A';
-                    identMessage[idx++] = (byte)'C';
-
-                    byte[] macBytes = Encoding.ASCII.GetBytes(TestMac);
-                    int macLen = macBytes.Length;
-                    Array.Copy(macBytes, 0, identMessage, idx, macLen);
-                    idx += macLen;
-                    // VIN
-                    identMessage[idx++] = (byte)'B';
-                    identMessage[idx++] = (byte)'M';
-                    identMessage[idx++] = (byte)'W';
-                    identMessage[idx++] = (byte)'V';
-                    identMessage[idx++] = (byte)'I';
-                    identMessage[idx++] = (byte)'N';
-
-                    byte[] vinBytes = Encoding.ASCII.GetBytes(TestVin);
-                    int vinLen = vinBytes.Length;
-                    Array.Copy(vinBytes, 0, identMessage, idx, vinLen);
-                    idx += vinLen;
-
-                    SendUdpPacketTo(identMessage, ip, EnetControlPort);
+                    SendIdentMessage(ip, EnetControlPort);
                 }
                 StartUdpListen();
             }
@@ -1693,6 +1650,56 @@ namespace CarSimulator
             {
                 _udpError = true;
             }
+        }
+
+        private void SendIdentMessage(IPEndPoint ipEnd, int localPort)
+        {
+            Debug.WriteLine("Sending ident message to: {0}:{1}", ipEnd.Address, ipEnd.Port);
+
+            byte[] identMessage = new byte[6 + 50];
+            int idx = 0;
+            identMessage[idx++] = 0x00;
+            identMessage[idx++] = 0x00;
+            identMessage[idx++] = 0x00;
+            identMessage[idx++] = (byte)(identMessage.Length - 6);
+            identMessage[idx++] = 0x00;
+            identMessage[idx++] = 0x11; // ENET
+            // TESTER ID
+            identMessage[idx++] = (byte)'D';
+            identMessage[idx++] = (byte)'I';
+            identMessage[idx++] = (byte)'A';
+            identMessage[idx++] = (byte)'G';
+            identMessage[idx++] = (byte)'A';
+            identMessage[idx++] = (byte)'D';
+            identMessage[idx++] = (byte)'R';
+            identMessage[idx++] = (byte)'1';
+            identMessage[idx++] = (byte)'0';
+            // MAC
+            identMessage[idx++] = (byte)'B';
+            identMessage[idx++] = (byte)'M';
+            identMessage[idx++] = (byte)'W';
+            identMessage[idx++] = (byte)'M';
+            identMessage[idx++] = (byte)'A';
+            identMessage[idx++] = (byte)'C';
+
+            byte[] macBytes = Encoding.ASCII.GetBytes(TestMac);
+            int macLen = macBytes.Length;
+            Array.Copy(macBytes, 0, identMessage, idx, macLen);
+            idx += macLen;
+            // VIN
+            identMessage[idx++] = (byte)'B';
+            identMessage[idx++] = (byte)'M';
+            identMessage[idx++] = (byte)'W';
+            identMessage[idx++] = (byte)'V';
+            identMessage[idx++] = (byte)'I';
+            identMessage[idx++] = (byte)'N';
+
+            byte[] vinBytes = Encoding.ASCII.GetBytes(TestVin);
+            int vinLen = vinBytes.Length;
+            Array.Copy(vinBytes, 0, identMessage, idx, vinLen);
+            idx += vinLen;
+
+            SendUdpPacketTo(identMessage, ipEnd, localPort);
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
@@ -1813,8 +1820,9 @@ namespace CarSimulator
                         Debug.WriteLine("ICOM changed to up");
                         for (int i = 0; i < 3; i++)
                         {
-                            SendIcomDhcpRequest(ipIcomLocal, ipIcomBroadcast, true, networkAdapter);
-                            SendIcomDhcpRequest(ipIcomLocal, ipIcomBroadcast, false, networkAdapter);
+                            SendIdentMessage(new IPEndPoint(ipIcomBroadcast, 7811), EnetControlPort);
+                            //SendIcomDhcpRequest(ipIcomLocal, ipIcomBroadcast, true, networkAdapter);
+                            //SendIcomDhcpRequest(ipIcomLocal, ipIcomBroadcast, false, networkAdapter);
                             Thread.Sleep(100);
                         }
                     }
