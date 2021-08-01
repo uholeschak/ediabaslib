@@ -658,6 +658,12 @@ namespace CarSimulator
             set;
         }
 
+        public bool Connected
+        {
+            get;
+            private set;
+        }
+
         public CommThread(MainForm form)
         {
             _form = form;
@@ -868,8 +874,10 @@ namespace CarSimulator
                     return false;
                 }
 
+                Connected = true;
                 return true;
             }
+
             if (_comPort.StartsWith("CAN", StringComparison.OrdinalIgnoreCase))
             {
                 TPCANBaudrate baudRate;
@@ -908,6 +916,8 @@ namespace CarSimulator
                     Disconnect();
                     return false;
                 }
+
+                Connected = true;
                 return true;
             }
             try
@@ -973,11 +983,15 @@ namespace CarSimulator
             {
                 return false;
             }
+
+            Connected = true;
             return true;
         }
 
         private void Disconnect()
         {
+            Connected = false;
+
             UdpDisconnect();
             SrvLocDisconnect();
 
