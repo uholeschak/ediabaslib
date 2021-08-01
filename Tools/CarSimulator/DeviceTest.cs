@@ -37,6 +37,7 @@ namespace CarSimulator
         public const string AdapterSsidEspLink = @"DeepOBD";
         private const string EspLinkIp = @"192.168.4.1";
         private const int EspLinkPort = 23;
+        private const int ThreadStartDelay = 400;
 
         // ReSharper disable InconsistentNaming
         // ReSharper disable UnusedMember.Global
@@ -606,7 +607,7 @@ namespace CarSimulator
                 _form.UpdateTestStatusText(sr.ToString());
                 return false;
             }
-            Thread.Sleep(200);
+            Thread.Sleep(ThreadStartDelay);
 
             try
             {
@@ -649,7 +650,7 @@ namespace CarSimulator
                 _form.UpdateTestStatusText(sr.ToString());
                 return false;
             }
-            Thread.Sleep(200);
+            Thread.Sleep(ThreadStartDelay);
 
             try
             {
@@ -691,7 +692,7 @@ namespace CarSimulator
                 _form.UpdateTestStatusText(sr.ToString());
                 return false;
             }
-            Thread.Sleep(400);
+            Thread.Sleep(ThreadStartDelay);
 
             try
             {
