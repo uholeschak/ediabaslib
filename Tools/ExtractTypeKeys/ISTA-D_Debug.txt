@@ -139,3 +139,6 @@ Firmware update:
 X.X.X.X:60080
 name: root
 pw: NZY11502
+
+At startup ICOM requires an ident broadcast to port 7811 from the ZGW.
+Afterwarts it requests the ECU port configuration with: C3 DF F1 22 17 2A F6
