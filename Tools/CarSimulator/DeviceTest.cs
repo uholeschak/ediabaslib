@@ -691,7 +691,7 @@ namespace CarSimulator
                 _form.UpdateTestStatusText(sr.ToString());
                 return false;
             }
-            Thread.Sleep(200);
+            Thread.Sleep(400);
 
             try
             {
