@@ -1729,7 +1729,7 @@ namespace CarSimulator
             bool result = false;
             if (endPoint is IPEndPoint ipEnd)
             {
-                IPAddress localIp = GetLocalIpAddress(ipEnd.Address, false, out System.Net.NetworkInformation.NetworkInterface _);
+                IPAddress localIp = GetLocalIpAddress(ipEnd.Address, false, out _, out _);
                 if (localIp != null)
                 {
                     Debug.WriteLine("Sending to: {0} with: {1}", ipEnd.Address, localIp);
@@ -1753,9 +1753,11 @@ namespace CarSimulator
             return result;
         }
 
-        private IPAddress GetLocalIpAddress(IPAddress remoteIp, bool broadcast, out System.Net.NetworkInformation.NetworkInterface networkAdapter)
+        private IPAddress GetLocalIpAddress(IPAddress remoteIp, bool broadcast,
+            out System.Net.NetworkInformation.NetworkInterface networkAdapter, out byte[] networkMask)
         {
             networkAdapter = null;
+            networkMask = null;
             if (remoteIp == null)
             {
                 return null;
@@ -1792,6 +1794,7 @@ namespace CarSimulator
                                 if (ipRemoteMask.Equals(ipLocalMask))
                                 {
                                     networkAdapter = adapter;
+                                    networkMask = maskBytes;
 
                                     if (broadcast)
                                     {
@@ -1824,7 +1827,7 @@ namespace CarSimulator
                 {
                     if (_timeIcomIdentBroadcast.ElapsedMilliseconds > 500)
                     {
-                        IPAddress ipIcomBroadcast = GetLocalIpAddress(IPAddress.Parse(IcomAddress), true, out _);
+                        IPAddress ipIcomBroadcast = GetLocalIpAddress(IPAddress.Parse(IcomAddress), true, out _, out _);
                         if (!SendIdentMessage(new IPEndPoint(ipIcomBroadcast, 7811), EnetControlPort))
                         {
                             _icomIdentBroadcastCount = 0;
@@ -1845,8 +1848,8 @@ namespace CarSimulator
             lock(_networkChangeLock)
             {
                 IPAddress ipIcom = IPAddress.Parse(IcomAddress);
-                IPAddress ipIcomLocal = GetLocalIpAddress(ipIcom, false, out System.Net.NetworkInformation.NetworkInterface networkAdapter);
-                IPAddress ipIcomBroadcast = GetLocalIpAddress(ipIcom, true, out _);
+                IPAddress ipIcomLocal = GetLocalIpAddress(ipIcom, false, out _, out _);
+                IPAddress ipIcomBroadcast = GetLocalIpAddress(ipIcom, true, out _, out _);
                 bool isUp = false;
                 if (ipIcomLocal != null && ipIcomBroadcast != null)
                 {
@@ -1974,7 +1977,7 @@ namespace CarSimulator
                 }
                 IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
                 byte[] bytes = srvLocClientLocal.EndReceive(ar, ref ip);
-                IPAddress localIp = GetLocalIpAddress(ip.Address, false, out System.Net.NetworkInformation.NetworkInterface _);
+                IPAddress localIp = GetLocalIpAddress(ip.Address, false, out _, out _);
 #if true
                 if (bytes != null)
                 {
@@ -4690,6 +4693,61 @@ namespace CarSimulator
                     _sendData[4] = 0x00;
 
                     ObdSend(_sendData, bmwTcpClientData);
+                    standardResponse = true;
+                }
+            }
+            else if (bmwTcpClientData != null &&
+                _receiveData[0] == 0xC3 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x22 &&
+                _receiveData[4] == 0x17 &&
+                _receiveData[5] == 0x2A)
+            {   // get IP configuration
+                Debug.WriteLine("Get IP configuration");
+
+                IPAddress ipIcom = IPAddress.Parse(IcomAddress);
+                IPAddress ipIcomLocal = GetLocalIpAddress(ipIcom, false, out _, out byte[] networkMask);
+                byte[] ipLocalBytes = ipIcomLocal?.GetAddressBytes();
+
+                if (ipLocalBytes != null && ipLocalBytes.Length == 4 && networkMask != null && networkMask.Length == 4)
+                {
+                    byte[] ecuList = new byte[] { 0x10
+                        , 0x21, 0x5D, 0x60, 0x61, 0x63
+                        };
+
+                    int index = 0;
+                    foreach (byte ecuAddr in ecuList)
+                    {
+                        int i = 0;
+                        _sendData[i++] = 0x90;
+                        _sendData[i++] = 0xF1;
+                        _sendData[i++] = ecuAddr;
+                        _sendData[i++] = 0x62;
+                        _sendData[i++] = 0x17;
+                        _sendData[i++] = 0x2A;
+                        _sendData[i++] = 0x00;
+
+                        // IP
+                        _sendData[i++] = ipLocalBytes[0];
+                        _sendData[i++] = ipLocalBytes[1];
+                        _sendData[i++] = ipLocalBytes[2];
+                        _sendData[i++] = (byte)(ipLocalBytes[3] + index);
+
+                        // mask
+                        _sendData[i++] = networkMask[0];
+                        _sendData[i++] = networkMask[1];
+                        _sendData[i++] = networkMask[2];
+                        _sendData[i++] = networkMask[3];
+
+                        // gateway
+                        _sendData[i++] = 0;
+                        _sendData[i++] = 0;
+                        _sendData[i++] = 0;
+                        _sendData[i++] = 0;
+
+                        ObdSend(_sendData, bmwTcpClientData);
+                        index++;
+                    }
                     standardResponse = true;
                 }
             }
