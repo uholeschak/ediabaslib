@@ -305,6 +305,8 @@ namespace CarSimulator
         private UdpClient _srvLocClient;
         private bool _srvLocError;
         private bool _icomUp;
+        private int _icomIdentBroadcastCount;
+        private readonly Stopwatch _timeIcomIdentBroadcast;
         private readonly SerialPort _serialPort;
         private readonly AutoResetEvent _serialReceiveEvent;
         private readonly AutoResetEvent _pcanReceiveEvent;
@@ -683,6 +685,9 @@ namespace CarSimulator
             _udpError = false;
             _srvLocClient = null;
             _srvLocError = false;
+            _icomUp = false;
+            _icomIdentBroadcastCount = 0;
+            _timeIcomIdentBroadcast = new Stopwatch();
             _serialPort = new SerialPort();
             _serialPort.DataReceived += SerialDataReceived;
             _serialReceiveEvent = new AutoResetEvent(false);
@@ -794,6 +799,8 @@ namespace CarSimulator
                 ErrorDefault = false;
                 while (!_stopThread)
                 {
+                    SendIcomMessages();
+
                     if (ErrorDefault)
                     {
                         ErrorDefault = false;
@@ -1666,7 +1673,7 @@ namespace CarSimulator
             }
         }
 
-        private void SendIdentMessage(IPEndPoint ipEnd, int localPort)
+        private bool SendIdentMessage(IPEndPoint ipEnd, int localPort)
         {
             Debug.WriteLine("Sending ident message to: {0}:{1}", ipEnd.Address, ipEnd.Port);
 
@@ -1713,7 +1720,7 @@ namespace CarSimulator
             Array.Copy(vinBytes, 0, identMessage, idx, vinLen);
             idx += vinLen;
 
-            SendUdpPacketTo(identMessage, ipEnd, localPort);
+            return SendUdpPacketTo(identMessage, ipEnd, localPort);
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
@@ -1809,6 +1816,30 @@ namespace CarSimulator
             return null;
         }
 
+        private void SendIcomMessages()
+        {
+            lock (_networkChangeLock)
+            {
+                if (_icomIdentBroadcastCount > 0)
+                {
+                    if (_timeIcomIdentBroadcast.ElapsedMilliseconds > 500)
+                    {
+                        IPAddress ipIcomBroadcast = GetLocalIpAddress(IPAddress.Parse(IcomAddress), true, out _);
+                        if (!SendIdentMessage(new IPEndPoint(ipIcomBroadcast, 7811), EnetControlPort))
+                        {
+                            _icomIdentBroadcastCount = 0;
+                        }
+                        else
+                        {
+                            _timeIcomIdentBroadcast.Reset();
+                            _timeIcomIdentBroadcast.Start();
+                            _icomIdentBroadcastCount--;
+                        }
+                    }
+                }
+            }
+        }
+
         private void UpdateIcomStatus(bool init = false)
         {
             lock(_networkChangeLock)
@@ -1832,13 +1863,9 @@ namespace CarSimulator
                     if (!_icomUp && isUp)
                     {
                         Debug.WriteLine("ICOM changed to up");
-                        for (int i = 0; i < 3; i++)
-                        {
-                            SendIdentMessage(new IPEndPoint(ipIcomBroadcast, 7811), EnetControlPort);
-                            //SendIcomDhcpRequest(ipIcomLocal, ipIcomBroadcast, true, networkAdapter);
-                            //SendIcomDhcpRequest(ipIcomLocal, ipIcomBroadcast, false, networkAdapter);
-                            Thread.Sleep(100);
-                        }
+                        _timeIcomIdentBroadcast.Reset();
+                        _timeIcomIdentBroadcast.Start();
+                        _icomIdentBroadcastCount = 3;
                     }
                 }
 
