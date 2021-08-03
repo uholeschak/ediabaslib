@@ -2095,6 +2095,10 @@ namespace CarSimulator
                     }
                     bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmpBmwTcpChannel.TcpServerControl.AcceptTcpClient();
                     bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
+                    Debug.WriteLine("Control connected [{0}], Port={1}, Local={2}, Remote={3}",
+                        bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.ControlPort,
+                        bmwTcpClientData.TcpClientConnection.Client.LocalEndPoint.ToString(),
+                        bmwTcpClientData.TcpClientConnection.Client.RemoteEndPoint.ToString());
                 }
             }
             catch (Exception)
@@ -2196,7 +2200,10 @@ namespace CarSimulator
                     bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                     bmwTcpClientData.TcpNackIndex = 0;
-                    Debug.WriteLine("Diag connected [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort);
+                    Debug.WriteLine("Diag connected [{0}], Port={1}, Local={2}, Remote={3}",
+                        bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort,
+                        bmwTcpClientData.TcpClientConnection.Client.LocalEndPoint.ToString(),
+                        bmwTcpClientData.TcpClientConnection.Client.RemoteEndPoint.ToString());
                 }
             }
             catch (Exception ex)
