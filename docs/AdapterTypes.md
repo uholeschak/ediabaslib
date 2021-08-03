@@ -2,7 +2,7 @@
 
 The following table shows which adapter and vehicle combination is supported:
 
-| Adapter | BMW-DS2 | BMW-FAST | BMW-FAST-F |VAG |
+| Adapter | BMW-DS2 | BMW-FAST | BMW-FAST-ENET |VAG |
 | ------- | ------- | -------- | ----------- | --- |
 | _FTDI USB_ | Yes | Yes | D-CAN | No |
 | _ELM327_ | No | D-CAN only | D-CAN | No |
@@ -14,7 +14,7 @@ The following table shows which adapter and vehicle combination is supported:
 * _BMW-DS2_: BMW models (with DS2 protocol): E36, E38, E39, E46, E52, E53, E83, E85 and E86.  
 An OBD II Pin 7+8 connection in the adapter is required!
 * _BMW-FAST_: BMW E-models newer than _BMW-DS2_ (with BMW-FAST protocol).
-* _BMW-FAST-F_: BMW F-models.
+* _BMW-FAST-ENET_: BMW models with ENET (F or higher).
 * _VAG_: All VAG models. This mode is still experimental!
 
 ## Adapter legend:
