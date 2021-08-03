@@ -4717,7 +4717,7 @@ namespace CarSimulator
                 if (ipLocalBytes != null && ipLocalBytes.Length == 4 && networkMask != null && networkMask.Length == 4)
                 {
                     byte[] ecuList = new byte[] { 0x10
-                        , 0x21, 0x5D, 0x60, 0x61, 0x63
+                        //, 0x21, 0x5D, 0x60, 0x61, 0x63
                         };
 
                     int index = 0;
