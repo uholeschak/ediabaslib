@@ -910,7 +910,7 @@ namespace LogfileConverter
                                 List<byte> bmwTelResp = CreateEnetBmwFastTel(respTel);
                                 if (bmwTelResp != null)
                                 {
-                                    line += List2NumberString(bmwTelResp) + " ";
+                                    line += List2NumberString(bmwTelResp);
                                 }
                             }
 
