@@ -28,6 +28,20 @@ namespace EdiabasLib
         }
 #endif
 
+        public class EnetConnection
+        {
+            public EnetConnection(IPAddress ipAddress, int diagPort = -1, int controlPort = -1)
+            {
+                IpAddress = ipAddress;
+                DiagPort = diagPort;
+                ControlPort = controlPort;
+            }
+
+            public IPAddress IpAddress { get;}
+            public int DiagPort { get; }
+            public int ControlPort { get; }
+        }
+
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
         protected delegate void ExecuteNetworkDelegate();
 
@@ -57,7 +71,7 @@ namespace EdiabasLib
         protected static readonly long TickResolMs = Stopwatch.Frequency / 1000;
 
         protected static object NetworkData;
-        protected static IPAddress TcpHostIp;
+        protected static EnetConnection EnetHostConn;
         protected static TcpClient TcpDiagClient;
         protected static NetworkStream TcpDiagStream;
         protected static AutoResetEvent TcpDiagStreamRecEvent;
@@ -76,7 +90,7 @@ namespace EdiabasLib
 
         protected Socket UdpSocket;
         protected byte[] UdpBuffer = new byte[1500];
-        protected volatile List<IPAddress> UdpRecIpListList = new List<IPAddress>();
+        protected volatile List<EnetConnection> UdpRecIpListList = new List<EnetConnection>();
         protected object UdpRecListLock = new object();
         protected int UdpMaxResponses;
         protected AutoResetEvent UdpEvent = new AutoResetEvent(false);
@@ -457,26 +471,34 @@ namespace EdiabasLib
                     NetworkData = connectParameter.NetworkData;
                 }
 #endif
-                TcpHostIp = null;
+                EnetHostConn = null;
                 if (RemoteHostProtected.StartsWith(AutoIp, StringComparison.OrdinalIgnoreCase))
                 {
-                    List<IPAddress> detectedVehicles = DetectedVehicles(RemoteHostProtected, 1, UdpDetectRetries);
+                    List<EnetConnection> detectedVehicles = DetectedVehicles(RemoteHostProtected, 1, UdpDetectRetries);
                     if ((detectedVehicles == null) || (detectedVehicles.Count < 1))
                     {
                         return false;
                     }
-                    TcpHostIp = detectedVehicles[0];
+                    EnetHostConn = detectedVehicles[0];
                     UdpSocket.Close();
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Received: IP={0}", TcpHostIp));
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Received: IP={0}:{1}", EnetHostConn.IpAddress, EnetHostConn.DiagPort));
                 }
                 else
                 {
-                    TcpHostIp = IPAddress.Parse(RemoteHostProtected);
+                    EnetHostConn = new EnetConnection(IPAddress.Parse(RemoteHostProtected));
                 }
+
+                int diagPort = DiagnosticPort;
+                if (EnetHostConn.DiagPort >= 0)
+                {
+                    diagPort = EnetHostConn.DiagPort;
+                }
+
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    TcpDiagClient = new TcpClientWithTimeout(TcpHostIp, DiagnosticPort, ConnectTimeout, true).Connect();
-                }, TcpHostIp, NetworkData);
+                    TcpDiagClient = new TcpClientWithTimeout(EnetHostConn.IpAddress, diagPort, ConnectTimeout, true).Connect();
+                }, EnetHostConn.IpAddress, NetworkData);
+
                 TcpDiagStream = TcpDiagClient.GetStream();
                 TcpDiagRecLen = 0;
                 LastTcpDiagRecTime = DateTime.MinValue.Ticks;
@@ -485,7 +507,7 @@ namespace EdiabasLib
                     TcpDiagRecQueue.Clear();
                 }
                 StartReadTcpDiag(6);
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connected to: {0}:{1}", TcpHostIp.ToString(), DiagnosticPort);
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connected to: {0}:{1}", EnetHostConn.IpAddress.ToString(), diagPort);
                 ReconnectRequired = false;
             }
             catch (Exception ex)
@@ -548,7 +570,7 @@ namespace EdiabasLib
             {
                 result = false;
             }
-            TcpHostIp = null;
+            EnetHostConn = null;
             ReconnectRequired = false;
             return result;
         }
@@ -649,12 +671,12 @@ namespace EdiabasLib
             }
         }
 
-        public List<IPAddress> DetectedVehicles(string remoteHostConfig)
+        public List<EnetConnection> DetectedVehicles(string remoteHostConfig)
         {
             return DetectedVehicles(remoteHostConfig, -1, UdpDetectRetries);
         }
 
-        public List<IPAddress> DetectedVehicles(string remoteHostConfig, int maxVehicles, int maxRetries)
+        public List<EnetConnection> DetectedVehicles(string remoteHostConfig, int maxVehicles, int maxRetries)
         {
             if (!remoteHostConfig.StartsWith(AutoIp, StringComparison.OrdinalIgnoreCase))
             {
@@ -669,7 +691,7 @@ namespace EdiabasLib
             UdpSocket.Bind(ipUdp);
             lock (UdpRecListLock)
             {
-                UdpRecIpListList = new List<IPAddress>();
+                UdpRecIpListList = new List<EnetConnection>();
             }
             UdpMaxResponses = maxVehicles;
             StartUdpListen();
@@ -860,7 +882,7 @@ namespace EdiabasLib
                 break;
             }
             UdpSocket.Close();
-            List<IPAddress> ipList;
+            List<EnetConnection> ipList;
             lock (UdpRecListLock)
             {
                 ipList = UdpRecIpListList;
@@ -896,7 +918,7 @@ namespace EdiabasLib
                 int recPort = ((IPEndPoint) tempRemoteEp).Port;
                 IPAddress recIp = ((IPEndPoint)tempRemoteEp).Address;
                 bool continueRec = true;
-                IPAddress addListIp = null;
+                EnetConnection addListConn = null;
 
                 if (recPort == UdpIdentPort)
                 {
@@ -911,7 +933,7 @@ namespace EdiabasLib
                         (UdpBuffer[13] == '1') &&
                         (UdpBuffer[14] == '0'))
                     {
-                        addListIp = recIp;
+                        addListConn = new EnetConnection(recIp);
                     }
                 }
                 else if (recPort == UdpSrvLocPort)
@@ -939,7 +961,7 @@ namespace EdiabasLib
                             {
                                 if (IPAddress.TryParse(ipString, out IPAddress vehicleIp))
                                 {
-                                    addListIp = vehicleIp;
+                                    addListConn = new EnetConnection(vehicleIp);
                                 }
                             }
                         }
@@ -969,22 +991,22 @@ namespace EdiabasLib
 
                             if (gatewayValid && enetChannel)
                             {
-                                addListIp = recIp;
+                                addListConn = new EnetConnection(recIp, 50160, 50161);
                             }
                         }
                     }
                 }
 
-                if (addListIp != null)
+                if (addListConn != null)
                 {
                     int listCount = 0;
                     lock (UdpRecListLock)
                     {
                         if (UdpRecIpListList != null)
                         {
-                            if (!UdpRecIpListList.Any(x => x.GetAddressBytes().SequenceEqual(addListIp.GetAddressBytes())))
+                            if (!UdpRecIpListList.Any(x => x.IpAddress.GetAddressBytes().SequenceEqual(addListConn.IpAddress.GetAddressBytes())))
                             {
-                                UdpRecIpListList.Add(addListIp);
+                                UdpRecIpListList.Add(addListConn);
                             }
 
                             listCount = UdpRecIpListList.Count;
@@ -1093,21 +1115,28 @@ namespace EdiabasLib
             {
                 return true;
             }
-            if (TcpHostIp == null)
+            if (EnetHostConn == null)
             {
                 return false;
             }
             try
             {
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TcpControlConnect: {0}:{1}", TcpHostIp.ToString(), ControlPort);
+                int controlPort = ControlPort;
+                if (EnetHostConn.ControlPort >= 0)
+                {
+                    controlPort = EnetHostConn.ControlPort;
+                }
+
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TcpControlConnect: {0}:{1}", EnetHostConn.IpAddress.ToString(), controlPort);
                 lock (TcpControlTimerLock)
                 {
                     TcpControlTimerStop();
                 }
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    TcpControlClient = TcpDiagClient = new TcpClientWithTimeout(TcpHostIp, ControlPort, ConnectTimeout, true).Connect();
-                }, TcpHostIp, NetworkData);
+                    TcpControlClient = TcpDiagClient = new TcpClientWithTimeout(EnetHostConn.IpAddress, controlPort, ConnectTimeout, true).Connect();
+                }, EnetHostConn.IpAddress, NetworkData);
+
                 TcpControlStream = TcpControlClient.GetStream();
             }
             catch (Exception ex)
