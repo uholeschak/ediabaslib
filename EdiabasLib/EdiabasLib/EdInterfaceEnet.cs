@@ -920,19 +920,56 @@ namespace EdiabasLib
                     if (attrDict != null)
                     {
                         bool isEnet = false;
+                        bool isIcom = false;
                         if (attrDict.TryGetValue("DEVTYPE", out string devType))
                         {
                             if (string.Compare(devType, "ENET", StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 isEnet = true;
                             }
+                            else if (string.Compare(devType, "ICOM", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                isIcom = true;
+                            }
                         }
 
-                        if (isEnet && attrDict.TryGetValue("IPADDRESS", out string ipString))
+                        if (isEnet)
                         {
-                            if (IPAddress.TryParse(ipString, out IPAddress vehicleIp))
+                            if (attrDict.TryGetValue("IPADDRESS", out string ipString))
                             {
-                                addListIp = vehicleIp;
+                                if (IPAddress.TryParse(ipString, out IPAddress vehicleIp))
+                                {
+                                    addListIp = vehicleIp;
+                                }
+                            }
+                        }
+
+                        if (isIcom)
+                        {
+                            bool gatewayValid = false;
+                            if (attrDict.TryGetValue("GATEWAY", out string gatewayString))
+                            {
+                                if (string.Compare(gatewayString.Trim(), "0x10", StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    gatewayValid = true;
+                                }
+                            }
+
+                            bool enetChannel = false;
+                            if (attrDict.TryGetValue("VCICHANNELS", out string vciChannels))
+                            {
+                                vciChannels = vciChannels.TrimStart('[');
+                                vciChannels = vciChannels.TrimEnd(']');
+                                string[] channelList = vciChannels.Split(';');
+                                if (channelList.Contains("3+"))
+                                {
+                                    enetChannel = true;
+                                }
+                            }
+
+                            if (gatewayValid && enetChannel)
+                            {
+                                addListIp = recIp;
                             }
                         }
                     }
@@ -947,7 +984,7 @@ namespace EdiabasLib
                         {
                             if (!UdpRecIpListList.Any(x => x.GetAddressBytes().SequenceEqual(addListIp.GetAddressBytes())))
                             {
-                                UdpRecIpListList.Add(recIp);
+                                UdpRecIpListList.Add(addListIp);
                             }
 
                             listCount = UdpRecIpListList.Count;
