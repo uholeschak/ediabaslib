@@ -1106,6 +1106,7 @@ namespace CarSimulator
 
         private void SrvLocConnect()
         {
+            return;
             // a virtual network adapter with an auto ip address
             // is required tp receive the UPD broadcasts
             _srvLocError = false;

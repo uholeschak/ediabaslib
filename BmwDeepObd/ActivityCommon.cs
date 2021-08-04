@@ -3789,7 +3789,7 @@ namespace BmwDeepObd
                 {
                     ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData)
                 };
-                List<IPAddress> detectedVehicles = edInterface.DetectedVehicles("auto:all");
+                List<EdInterfaceEnet.EnetConnection> detectedVehicles = edInterface.DetectedVehicles("auto:all");
                 edInterface.Dispose();
                 _activity?.RunOnUiThread(() =>
                 {
@@ -3816,14 +3816,14 @@ namespace BmwDeepObd
                     int index = 0;
                     if (detectedVehicles != null)
                     {
-                        foreach (IPAddress ipAddress in detectedVehicles)
+                        foreach (EdInterfaceEnet.EnetConnection enetConnection in detectedVehicles)
                         {
                             if (!string.IsNullOrEmpty(_selectedEnetIp) &&
-                                string.Compare(_selectedEnetIp, ipAddress.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
+                                string.Compare(_selectedEnetIp, enetConnection.IpAddress.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 selIndex = index + 1;
                             }
-                            interfaceNames.Add(ipAddress.ToString());
+                            interfaceNames.Add(enetConnection.IpAddress.ToString());
                             index++;
                         }
                     }
@@ -3852,7 +3852,12 @@ namespace BmwDeepObd
                                 if (detectedVehicles != null && listView.CheckedItemPosition >= 1 &&
                                     listView.CheckedItemPosition - 1 < detectedVehicles.Count)
                                 {
-                                    _selectedEnetIp = detectedVehicles[listView.CheckedItemPosition - 1].ToString();
+                                    EdInterfaceEnet.EnetConnection enetConnection = detectedVehicles[listView.CheckedItemPosition - 1];
+                                    _selectedEnetIp = enetConnection.IpAddress.ToString();
+                                    if (enetConnection.DiagPort >= 0 && enetConnection.ControlPort >= 0)
+                                    {
+                                        _selectedEnetIp += string.Format(CultureInfo.InvariantCulture, ":{0},{1}", enetConnection.DiagPort, enetConnection.ControlPort);
+                                    }
                                     handler(sender, args);
                                 }
                                 break;
