@@ -28,7 +28,7 @@ namespace EdiabasLib
         }
 #endif
 
-        public class EnetConnection
+        public class EnetConnection : IEquatable<EnetConnection>
         {
             public EnetConnection(IPAddress ipAddress, int diagPort = -1, int controlPort = -1)
             {
@@ -37,8 +37,18 @@ namespace EdiabasLib
                 ControlPort = controlPort;
             }
 
+            public IPAddress IpAddress { get;}
+            public int DiagPort { get; }
+            public int ControlPort { get; }
+            private int? hashCode;
+
             public override string ToString()
             {
+                if (IpAddress == null)
+                {
+                    return string.Empty;
+                }
+
                 StringBuilder sb = new StringBuilder();
                 sb.Append(IpAddress);
                 int skipped = 0;
@@ -65,9 +75,71 @@ namespace EdiabasLib
                 return sb.ToString();
             }
 
-            public IPAddress IpAddress { get;}
-            public int DiagPort { get; }
-            public int ControlPort { get; }
+            public override bool Equals(object obj)
+            {
+                EnetConnection enetConnection = obj as EnetConnection;
+                if ((object)enetConnection == null)
+                {
+                    return false;
+                }
+
+                return Equals(enetConnection);
+            }
+
+            public bool Equals(EnetConnection enetConnection)
+            {
+                if ((object)enetConnection == null)
+                {
+                    return false;
+                }
+
+                string thisString = ToString();
+                string otherString = enetConnection.ToString();
+                if (string.IsNullOrEmpty(thisString) || string.IsNullOrEmpty(otherString))
+                {
+                    return false;
+                }
+
+                if (string.Compare(otherString, thisString, StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            public override int GetHashCode()
+            {
+                // ReSharper disable NonReadonlyMemberInGetHashCode
+                if (!hashCode.HasValue)
+                {
+                    hashCode = ToString().GetHashCode();
+                }
+
+                return hashCode.Value;
+                // ReSharper restore NonReadonlyMemberInGetHashCode
+            }
+
+            public static bool operator == (EnetConnection lhs, EnetConnection rhs)
+            {
+                if ((object)lhs == null || (object)rhs == null)
+                {
+                    return Object.Equals(lhs, rhs);
+                }
+
+                return lhs.Equals(rhs);
+            }
+
+            public static bool operator != (EnetConnection lhs, EnetConnection rhs)
+            {
+                if ((object)lhs == null || (object)rhs == null)
+                {
+                    return !Object.Equals(lhs, rhs);
+                }
+
+                return !(lhs == rhs);
+            }
+
         }
 
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
@@ -1064,7 +1136,7 @@ namespace EdiabasLib
                     {
                         if (UdpRecIpListList != null)
                         {
-                            if (!UdpRecIpListList.Any(x => x.IpAddress.GetAddressBytes().SequenceEqual(addListConn.IpAddress.GetAddressBytes())))
+                            if (UdpRecIpListList.All(x => x != addListConn))
                             {
                                 UdpRecIpListList.Add(addListConn);
                             }
