@@ -463,7 +463,7 @@ namespace EdiabasLib
             }
             try
             {
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connect to: {0}:{1}", RemoteHostProtected, DiagnosticPort);
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connect to: {0}", RemoteHostProtected);
                 NetworkData = null;
 #if Android
                 if (ConnectParameter is ConnectParameterType connectParameter)
@@ -485,7 +485,39 @@ namespace EdiabasLib
                 }
                 else
                 {
-                    EnetHostConn = new EnetConnection(IPAddress.Parse(RemoteHostProtected));
+                    string[] hostParts = RemoteHostProtected.Split(':');
+                    if (hostParts.Length < 1)
+                    {
+                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Host name invalid: {0}", RemoteHostProtected);
+                        return false;
+                    }
+
+                    string hostIp = hostParts[0];
+                    int hostDiagPort = -1;
+                    int hostControlPort = -1;
+                    if (hostParts.Length >= 2)
+                    {
+                        string[] portsList = hostParts[1].Split(',');
+                        if (portsList.Length >= 1)
+                        {
+                            Int64 portValue = EdiabasNet.StringToValue(portsList[0], out bool valid);
+                            if (valid)
+                            {
+                                hostDiagPort = (int)portValue;
+                            }
+                        }
+
+                        if (portsList.Length >= 2)
+                        {
+                            Int64 portValue = EdiabasNet.StringToValue(portsList[1], out bool valid);
+                            if (valid)
+                            {
+                                hostControlPort = (int)portValue;
+                            }
+                        }
+                    }
+
+                    EnetHostConn = new EnetConnection(IPAddress.Parse(hostIp), hostDiagPort, hostControlPort);
                 }
 
                 int diagPort = DiagnosticPort;
@@ -494,6 +526,7 @@ namespace EdiabasLib
                     diagPort = EnetHostConn.DiagPort;
                 }
 
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", EnetHostConn.IpAddress, diagPort);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     TcpDiagClient = new TcpClientWithTimeout(EnetHostConn.IpAddress, diagPort, ConnectTimeout, true).Connect();
