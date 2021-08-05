@@ -976,6 +976,7 @@ namespace EdiabasLib
                     {
                         bool isEnet = false;
                         bool isIcom = false;
+                        IPAddress ipAddressHost = recIp;
                         if (attrDict.TryGetValue("DEVTYPE", out string devType))
                         {
                             if (string.Compare(devType, "ENET", StringComparison.OrdinalIgnoreCase) == 0)
@@ -988,25 +989,27 @@ namespace EdiabasLib
                             }
                         }
 
-                        if (isEnet)
+                        if (attrDict.TryGetValue("IPADDRESS", out string ipString))
                         {
-                            if (attrDict.TryGetValue("IPADDRESS", out string ipString))
+                            if (IPAddress.TryParse(ipString, out IPAddress vehicleIp))
                             {
-                                if (IPAddress.TryParse(ipString, out IPAddress vehicleIp))
-                                {
-                                    addListConn = new EnetConnection(vehicleIp);
-                                }
+                                ipAddressHost = vehicleIp;
                             }
                         }
 
-                        if (isIcom)
+                        if (isEnet)
                         {
-                            bool gatewayValid = false;
+                            addListConn = new EnetConnection(ipAddressHost);
+                        }
+                        else if (isIcom)
+                        {
+                            int gatewayAddr = -1;
                             if (attrDict.TryGetValue("GATEWAY", out string gatewayString))
                             {
-                                if (string.Compare(gatewayString.Trim(), "0x10", StringComparison.OrdinalIgnoreCase) == 0)
+                                Int64 gatewayValue = EdiabasNet.StringToValue(gatewayString, out bool valid);
+                                if (valid)
                                 {
-                                    gatewayValid = true;
+                                    gatewayAddr = (int) gatewayValue;
                                 }
                             }
 
@@ -1022,9 +1025,9 @@ namespace EdiabasLib
                                 }
                             }
 
-                            if (gatewayValid && enetChannel)
+                            if (gatewayAddr >= 0 && enetChannel)
                             {
-                                addListConn = new EnetConnection(recIp, 50160, 50161);
+                                addListConn = new EnetConnection(ipAddressHost, 50000 + gatewayAddr * 10, 50001 + gatewayAddr * 10);
                             }
                         }
                     }
