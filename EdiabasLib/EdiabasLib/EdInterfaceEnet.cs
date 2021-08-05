@@ -37,6 +37,34 @@ namespace EdiabasLib
                 ControlPort = controlPort;
             }
 
+            public override string ToString()
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(IpAddress);
+                int skipped = 0;
+                if (DiagPort >= 0)
+                {
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", DiagPort));
+                }
+                else
+                {
+                    skipped++;
+                }
+
+                if (ControlPort >= 0)
+                {
+                    while (skipped > 0)
+                    {
+                        sb.Append(":");
+                        skipped--;
+                    }
+
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", ControlPort));
+                }
+
+                return sb.ToString();
+            }
+
             public IPAddress IpAddress { get;}
             public int DiagPort { get; }
             public int ControlPort { get; }
@@ -497,23 +525,19 @@ namespace EdiabasLib
                     int hostControlPort = -1;
                     if (hostParts.Length >= 2)
                     {
-                        string[] portsList = hostParts[1].Split(',');
-                        if (portsList.Length >= 1)
+                        Int64 portValue = EdiabasNet.StringToValue(hostParts[1], out bool valid);
+                        if (valid)
                         {
-                            Int64 portValue = EdiabasNet.StringToValue(portsList[0], out bool valid);
-                            if (valid)
-                            {
-                                hostDiagPort = (int)portValue;
-                            }
+                            hostDiagPort = (int)portValue;
                         }
+                    }
 
-                        if (portsList.Length >= 2)
+                    if (hostParts.Length >= 3)
+                    {
+                        Int64 portValue = EdiabasNet.StringToValue(hostParts[2], out bool valid);
+                        if (valid)
                         {
-                            Int64 portValue = EdiabasNet.StringToValue(portsList[1], out bool valid);
-                            if (valid)
-                            {
-                                hostControlPort = (int)portValue;
-                            }
+                            hostControlPort = (int)portValue;
                         }
                     }
 

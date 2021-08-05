@@ -3824,13 +3824,7 @@ namespace BmwDeepObd
                                 selIndex = index + 1;
                             }
 
-                            string interfaceName = enetConnection.IpAddress.ToString();
-                            if (enetConnection.DiagPort >= 0)
-                            {
-                                interfaceName += string.Format(CultureInfo.InvariantCulture, ":{0}", enetConnection.DiagPort);
-                            }
-
-                            interfaceNames.Add(interfaceName);
+                            interfaceNames.Add(enetConnection.ToString());
                             index++;
                         }
                     }
@@ -3860,15 +3854,7 @@ namespace BmwDeepObd
                                     listView.CheckedItemPosition - 1 < detectedVehicles.Count)
                                 {
                                     EdInterfaceEnet.EnetConnection enetConnection = detectedVehicles[listView.CheckedItemPosition - 1];
-                                    _selectedEnetIp = enetConnection.IpAddress.ToString();
-                                    if (enetConnection.DiagPort >= 0)
-                                    {
-                                        _selectedEnetIp += string.Format(CultureInfo.InvariantCulture, ":{0}", enetConnection.DiagPort);
-                                        if (enetConnection.ControlPort >= 0)
-                                        {
-                                            _selectedEnetIp += string.Format(CultureInfo.InvariantCulture, ",{0}", enetConnection.ControlPort);
-                                        }
-                                    }
+                                    _selectedEnetIp = enetConnection.ToString();
                                     handler(sender, args);
                                 }
                                 break;
