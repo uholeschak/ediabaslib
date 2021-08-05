@@ -3823,7 +3823,14 @@ namespace BmwDeepObd
                             {
                                 selIndex = index + 1;
                             }
-                            interfaceNames.Add(enetConnection.IpAddress.ToString());
+
+                            string interfaceName = enetConnection.IpAddress.ToString();
+                            if (enetConnection.DiagPort >= 0 && enetConnection.ControlPort >= 0)
+                            {
+                                interfaceName += string.Format(CultureInfo.InvariantCulture, ":{0},{1}", enetConnection.DiagPort, enetConnection.ControlPort);
+                            }
+
+                            interfaceNames.Add(interfaceName);
                             index++;
                         }
                     }
