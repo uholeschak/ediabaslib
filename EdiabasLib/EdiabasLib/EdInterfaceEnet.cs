@@ -28,7 +28,7 @@ namespace EdiabasLib
         }
 #endif
 
-        public class EnetConnection : IEquatable<EnetConnection>
+        public class EnetConnection : IComparable<EnetConnection>, IEquatable<EnetConnection>
         {
             public EnetConnection(IPAddress ipAddress, int diagPort = -1, int controlPort = -1)
             {
@@ -73,6 +73,40 @@ namespace EdiabasLib
                 }
 
                 return sb.ToString();
+            }
+
+            public int CompareTo(EnetConnection enetConnection)
+            {
+                if (IpAddress == null)
+                {
+                    return 0;
+                }
+
+                byte[] bytesLocal = IpAddress.GetAddressBytes().Reverse().ToArray();
+                UInt32 localValue = BitConverter.ToUInt32(bytesLocal);
+                byte[] bytesOther = enetConnection.IpAddress.GetAddressBytes().Reverse().ToArray();
+                UInt32 otherValue = BitConverter.ToUInt32(bytesOther);
+                if (localValue < otherValue)
+                {
+                    return -1;
+                }
+
+                if (localValue > otherValue)
+                {
+                    return 1;
+                }
+
+                if (DiagPort < enetConnection.DiagPort)
+                {
+                    return -1;
+                }
+
+                if (DiagPort > enetConnection.DiagPort)
+                {
+                    return 1;
+                }
+
+                return 0;
             }
 
             public override bool Equals(object obj)
@@ -1014,7 +1048,7 @@ namespace EdiabasLib
             List<EnetConnection> ipList;
             lock (UdpRecListLock)
             {
-                ipList = UdpRecIpListList;
+                ipList = UdpRecIpListList.OrderBy(x => x).ToList();
                 UdpRecIpListList = null;
             }
             return ipList;
