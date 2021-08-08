@@ -72,6 +72,7 @@ ISTAGUI.exe.config:
 <add key="BMW.Rheingold.ISTAGUI.enableENETprogramming" value="true" />
 <add key="BMW.Rheingold.VehicleCommunication.ECUKom.ModifyEdiabasIni" value="true" />
 Remove Environment variable: COMPLUS_MDA
+If the dealer numer is 0 execute RCleanerV4.4.exe once. Export [HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\BMWGroup] before if required.
 
 Debugging:
 Disable debugger detection in dnSpy (uncheck System.Diagnostics.Debugger option)!
