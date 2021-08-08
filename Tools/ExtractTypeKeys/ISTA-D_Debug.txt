@@ -85,6 +85,7 @@ BMW.Rheingold.Diagnostics.VehicleIdent.doECUReadFSDetails()
 BMW.Rheingold.Diagnostics.VehicleIdent.SetDTCDetailValues()
 BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionsReadStatus.DoReadStatus()
 BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionsReadStatus.DoReadStatusSingleShot()
+BMW.Rheingold.Programming.StartHostIfNotRunning()
 
 BMW.Rheingold.xVM:
 VCIEnetHsfzService.ZGWBroadcastSendCyclic(), ReceiveCallback(),
