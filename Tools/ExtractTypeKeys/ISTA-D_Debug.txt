@@ -29,6 +29,8 @@ If file is blocked, terminate IstaSericesHost.exe first!
 
 Disable ISTAGUI.exe memory check:
 ===============================
+or use:
+<add key="BMW.Rheingold.ISTAGUI.disableCheckSystemRequirements" value="true" />
 Modify ISTAGUI.exe (Edit -> Edit class, remove all references to other ISTA-D version first):
 BMW.Rheingold.ISTAGUI.Controller:
 public Dictionary<InsufficientSystemRequirement, int[]> CheckSystemRequirements(bool isProgammingEnabled)
@@ -62,6 +64,13 @@ in IstaOperationStarter.Start() add at the end of the function:
 File -> Save module
 
 Disable: ISTAGUI.App.CheckFreeDiskSpace()
+
+ISTA+ config settings:
+======================
+ISTAGUI.exe.config:
+<add key="BMW.Rheingold.ISTAGUI.disableCheckSystemRequirements" value="true" />
+<add key="BMW.Rheingold.ISTAGUI.enableENETprogramming" value="true" />
+<add key="BMW.Rheingold.VehicleCommunication.ECUKom.ModifyEdiabasIni" value="true" />
 
 Debugging:
 Disable debugger detection in dnSpy (uncheck System.Diagnostics.Debugger option)!
