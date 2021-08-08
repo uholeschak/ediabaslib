@@ -71,6 +71,7 @@ ISTAGUI.exe.config:
 <add key="BMW.Rheingold.ISTAGUI.disableCheckSystemRequirements" value="true" />
 <add key="BMW.Rheingold.ISTAGUI.enableENETprogramming" value="true" />
 <add key="BMW.Rheingold.VehicleCommunication.ECUKom.ModifyEdiabasIni" value="true" />
+Remove Environment variable: COMPLUS_MDA
 
 Debugging:
 Disable debugger detection in dnSpy (uncheck System.Diagnostics.Debugger option)!
