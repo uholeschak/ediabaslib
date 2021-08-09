@@ -83,9 +83,9 @@ namespace EdiabasLib
                 }
 
                 byte[] bytesLocal = IpAddress.GetAddressBytes().Reverse().ToArray();
-                UInt32 localValue = BitConverter.ToUInt32(bytesLocal);
+                UInt32 localValue = BitConverter.ToUInt32(bytesLocal, 0);
                 byte[] bytesOther = enetConnection.IpAddress.GetAddressBytes().Reverse().ToArray();
-                UInt32 otherValue = BitConverter.ToUInt32(bytesOther);
+                UInt32 otherValue = BitConverter.ToUInt32(bytesOther, 0);
                 if (localValue < otherValue)
                 {
                     return -1;
