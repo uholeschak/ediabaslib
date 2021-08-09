@@ -2250,7 +2250,7 @@ namespace EdiabasLib
         private string _sgbdFileName = string.Empty;
         private string _sgbdFileResolveLast = string.Empty;
         private string _ecuPath = string.Empty;
-        private string _iniFileName = string.Empty;
+        private readonly string _iniFileName = string.Empty;
         private readonly string _ecuPathDefault;
         private EdInterfaceBase _edInterfaceClass;
         private static long _timeMeas;
@@ -2832,7 +2832,6 @@ namespace EdiabasLib
                 configFile = config.Substring(1);
             }
 
-            _iniFileName = string.Empty;
             if (File.Exists(iniFile))
             {
                 _iniFileName = iniFile;

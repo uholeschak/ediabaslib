@@ -265,6 +265,14 @@ namespace EdiabasLib
                 if (string.IsNullOrEmpty(iniFile))
                 {
                     IniFile ediabasIni = new IniFile(iniFile);
+                    string remoteHost = ediabasIni.GetValue("XEthernet", "RemoteHost", string.Empty);
+                    if (!string.IsNullOrEmpty(remoteHost))
+                    {
+                        if (IPAddress.TryParse(remoteHost, out IPAddress _))
+                        {
+                            RemoteHostProtected = remoteHost;
+                        }
+                    }
                 }
 
                 string prop = EdiabasProtected.GetConfigProperty("EnetRemoteHost");
