@@ -17,6 +17,7 @@ The following properties could be specified in this file:
 * `EnetTesterAddress`: Tester address for ENET protocol, standard is 0xF4
 * `EnetControlPort`: Control port for ENET protocol, standard is 6811
 * `EnetDiagnosticPort`: Diagnostic port for ENET protocol, standard is 6801
+* `EnetTimeoutConnect`: Connect timeout for ENET protocol, default is 5000
 
 ## Non standard properties
 * `ObdComPort`: COM port name for OBD interface.
