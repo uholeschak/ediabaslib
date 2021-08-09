@@ -507,7 +507,8 @@ namespace Ediabas
 
             if (!string.IsNullOrEmpty(ifh))
             {
-                if (ifh.StartsWith("REMOTE:", StringComparison.InvariantCultureIgnoreCase))
+                string[] ifhParts = ifh.Split(':');
+                if (ifhParts.Length > 0 && string.Compare(ifhParts[0], "REMOTE", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     logFormat(ApiLogLevel.Normal, "Ignoring REMOTE");
                     ifh = null;

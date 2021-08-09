@@ -582,7 +582,8 @@ namespace EdiabasLib
 
         public static bool IsValidInterfaceNameStatic(string name)
         {
-            if (string.Compare(name, "ENET", StringComparison.OrdinalIgnoreCase) == 0)
+            string[] nameParts = name.Split(':');
+            if (nameParts.Length > 0 && string.Compare(nameParts[0], "ENET", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return true;
             }
