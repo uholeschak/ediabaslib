@@ -187,6 +187,7 @@ namespace EdiabasLib
         protected const int TcpAckTimeout = 5000;
         protected const int UdpDetectRetries = 3;
         protected const string AutoIp = "auto";
+        protected const string IniFileSection = "XEthernet";
         protected static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         protected static readonly byte[] ByteArray0 = new byte[0];
         protected static readonly byte[] UdpIdentReq =
@@ -265,12 +266,29 @@ namespace EdiabasLib
                 if (string.IsNullOrEmpty(iniFile))
                 {
                     IniFile ediabasIni = new IniFile(iniFile);
-                    string remoteHost = ediabasIni.GetValue("XEthernet", "RemoteHost", string.Empty);
-                    if (!string.IsNullOrEmpty(remoteHost))
+                    string iniRemoteHost = ediabasIni.GetValue(IniFileSection, "RemoteHost", string.Empty);
+                    bool hostValid = false;
+                    if (!string.IsNullOrEmpty(iniRemoteHost))
                     {
-                        if (IPAddress.TryParse(remoteHost, out IPAddress _))
+                        if (IPAddress.TryParse(iniRemoteHost, out IPAddress _))
                         {
-                            RemoteHostProtected = remoteHost;
+                            hostValid = true;
+                            RemoteHostProtected = iniRemoteHost;
+                        }
+                    }
+
+                    if (hostValid)
+                    {
+                        string iniControlPort = ediabasIni.GetValue(IniFileSection, "ControlPort", string.Empty);
+                        if (!string.IsNullOrEmpty(iniControlPort))
+                        {
+                            ControlPort = (int)EdiabasNet.StringToValue(iniControlPort);
+                        }
+
+                        string iniDiagnosticPort = ediabasIni.GetValue(IniFileSection, "DiagnosticPort", string.Empty);
+                        if (!string.IsNullOrEmpty(iniDiagnosticPort))
+                        {
+                            DiagnosticPort = (int)EdiabasNet.StringToValue(iniDiagnosticPort);
                         }
                     }
                 }
@@ -317,13 +335,13 @@ namespace EdiabasLib
                     DiagnosticPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
-                prop = EdiabasProtected.GetConfigProperty("EnetConnectTimeout");
+                prop = EdiabasProtected.GetConfigProperty("EnetTimeoutConnect");
                 if (prop != null)
                 {
                     ConnectTimeout = (int)EdiabasNet.StringToValue(prop);
                 }
 
-                prop = EdiabasProtected.GetConfigProperty("ConnectTimeout");
+                prop = EdiabasProtected.GetConfigProperty("TimeoutConnect");
                 if (prop != null)
                 {
                     ConnectTimeout = (int)EdiabasNet.StringToValue(prop);
