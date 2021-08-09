@@ -261,6 +261,12 @@ namespace EdiabasLib
             {
                 base.Ediabas = value;
 
+                string iniFile = EdiabasProtected.IniFileName;
+                if (string.IsNullOrEmpty(iniFile))
+                {
+                    IniFile ediabasIni = new IniFile(iniFile);
+                }
+
                 string prop = EdiabasProtected.GetConfigProperty("EnetRemoteHost");
                 if (prop != null)
                 {
