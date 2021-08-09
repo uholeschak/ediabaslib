@@ -1192,13 +1192,20 @@ namespace EdiabasLib
 
         public static bool IsValidInterfaceNameStatic(string name)
         {
-            if (string.Compare(name, "STD:OBD", StringComparison.OrdinalIgnoreCase) == 0)
+            string[] nameParts = name.Split(':');
+            if (nameParts.Length > 1)
             {
-                return true;
-            }
-            if (string.Compare(name, "STD:OMITEC", StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                return true;
+                if (string.Compare(nameParts[0], "STD", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    if (string.Compare(nameParts[1], "OBD", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return true;
+                    }
+                    if (string.Compare(nameParts[1], "OMITEC", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return true;
+                    }
+                }
             }
             return false;
         }
