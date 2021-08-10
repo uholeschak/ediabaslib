@@ -262,41 +262,6 @@ namespace EdiabasLib
             {
                 base.Ediabas = value;
 
-                string iniFile = EdiabasProtected.IniFileName;
-                if (!string.IsNullOrEmpty(iniFile))
-                {
-                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ENET ini file at: {0}", iniFile);
-                    IniFile ediabasIni = new IniFile(iniFile);
-                    string iniRemoteHost = ediabasIni.GetValue(IniFileSection, "RemoteHost", string.Empty);
-                    bool hostValid = false;
-                    if (!string.IsNullOrEmpty(iniRemoteHost))
-                    {
-                        if (IPAddress.TryParse(iniRemoteHost, out IPAddress _))
-                        {
-                            hostValid = true;
-                            RemoteHostProtected = iniRemoteHost;
-                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using remote host from ini file: {0}", RemoteHostProtected);
-                        }
-                    }
-
-                    if (hostValid)
-                    {
-                        string iniControlPort = ediabasIni.GetValue(IniFileSection, "ControlPort", string.Empty);
-                        if (!string.IsNullOrEmpty(iniControlPort))
-                        {
-                            ControlPort = (int)EdiabasNet.StringToValue(iniControlPort);
-                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using control port from ini file: {0}", ControlPort);
-                        }
-
-                        string iniDiagnosticPort = ediabasIni.GetValue(IniFileSection, "DiagnosticPort", string.Empty);
-                        if (!string.IsNullOrEmpty(iniDiagnosticPort))
-                        {
-                            DiagnosticPort = (int)EdiabasNet.StringToValue(iniDiagnosticPort);
-                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using diagnostic port from ini file: {0}", DiagnosticPort);
-                        }
-                    }
-                }
-
                 string prop = EdiabasProtected.GetConfigProperty("EnetRemoteHost");
                 if (prop != null)
                 {
@@ -349,6 +314,41 @@ namespace EdiabasLib
                 if (prop != null)
                 {
                     ConnectTimeout = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                string iniFile = EdiabasProtected.IniFileName;
+                if (!string.IsNullOrEmpty(iniFile))
+                {
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ENET ini file at: {0}", iniFile);
+                    IniFile ediabasIni = new IniFile(iniFile);
+                    string iniRemoteHost = ediabasIni.GetValue(IniFileSection, "RemoteHost", string.Empty);
+                    bool hostValid = false;
+                    if (!string.IsNullOrEmpty(iniRemoteHost))
+                    {
+                        if (IPAddress.TryParse(iniRemoteHost, out IPAddress _))
+                        {
+                            hostValid = true;
+                            RemoteHostProtected = iniRemoteHost;
+                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using remote host from ini file: {0}", RemoteHostProtected);
+                        }
+                    }
+
+                    if (hostValid)
+                    {
+                        string iniControlPort = ediabasIni.GetValue(IniFileSection, "ControlPort", string.Empty);
+                        if (!string.IsNullOrEmpty(iniControlPort))
+                        {
+                            ControlPort = (int)EdiabasNet.StringToValue(iniControlPort);
+                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using control port from ini file: {0}", ControlPort);
+                        }
+
+                        string iniDiagnosticPort = ediabasIni.GetValue(IniFileSection, "DiagnosticPort", string.Empty);
+                        if (!string.IsNullOrEmpty(iniDiagnosticPort))
+                        {
+                            DiagnosticPort = (int)EdiabasNet.StringToValue(iniDiagnosticPort);
+                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using diagnostic port from ini file: {0}", DiagnosticPort);
+                        }
+                    }
                 }
             }
         }
