@@ -2834,6 +2834,7 @@ namespace EdiabasLib
 
             if (File.Exists(iniFile))
             {
+                LogFormat(EdLogLevel.Ifh, "EDIABAS is using ini file at: '{0}'", iniFile);
                 _iniFileName = iniFile;
                 ReadIniSettings(iniFile);
             }
