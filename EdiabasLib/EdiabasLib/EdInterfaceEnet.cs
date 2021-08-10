@@ -274,6 +274,7 @@ namespace EdiabasLib
                         {
                             hostValid = true;
                             RemoteHostProtected = iniRemoteHost;
+                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using remote host from ini file: {0}", RemoteHostProtected);
                         }
                     }
 
@@ -283,12 +284,14 @@ namespace EdiabasLib
                         if (!string.IsNullOrEmpty(iniControlPort))
                         {
                             ControlPort = (int)EdiabasNet.StringToValue(iniControlPort);
+                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using control port from ini file: {0}", ControlPort);
                         }
 
                         string iniDiagnosticPort = ediabasIni.GetValue(IniFileSection, "DiagnosticPort", string.Empty);
                         if (!string.IsNullOrEmpty(iniDiagnosticPort))
                         {
                             DiagnosticPort = (int)EdiabasNet.StringToValue(iniDiagnosticPort);
+                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using diagnostic port from ini file: {0}", DiagnosticPort);
                         }
                     }
                 }
