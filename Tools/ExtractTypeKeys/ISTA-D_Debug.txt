@@ -82,7 +82,15 @@ ISTAGUI.exe.config:
 <add key="BMW.Rheingold.ISTAGUI.disableCheckSystemRequirements" value="true" />
 <add key="BMW.Rheingold.ISTAGUI.enableENETprogramming" value="true" />
 <add key="BMW.Rheingold.VehicleCommunication.ECUKom.ModifyEdiabasIni" value="true" />
+
 ModifyEdiabasIni is not required after the "Fix ICOM apiInitExt" patch!
+Make sure the EDIABAS.INI settings has default values in this case:
+[XEthernet]
+RemoteHost       = Autodetect
+TesterAddress    = F4,F5
+ControlPort      = 6811
+DiagnosticPort   = 6801
+TimeoutConnect   = 2000
 
 Remove Environment variable: COMPLUS_MDA
 If the dealer numer is 0 execute RCleanerV4.4.exe once. Export [HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\BMWGroup] before if required.
