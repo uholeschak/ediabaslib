@@ -28,7 +28,7 @@ File -> Save module
 If file is blocked, terminate IstaSericesHost.exe first!
 
 Disable ISTAGUI.exe memory check:
-===============================
+================================
 or use:
 <add key="BMW.Rheingold.ISTAGUI.disableCheckSystemRequirements" value="true" />
 Modify ISTAGUI.exe (Edit -> Edit class, remove all references to other ISTA-D version first):
@@ -40,6 +40,17 @@ memoryCapacityInMBytes = num;
 if (memoryCapacityInMBytes < num)
 -------------------------------------------------------------------------------------
 File -> Save module
+If file is blocked, terminate IstaSericesHost.exe first!
+
+Fix ICOM apiInitExt:
+====================
+Modify RheingoldVehicleCommunication.dll (Edit -> Edit class, remove all references to other ISTA-D version first):
+Function: public bool InitVCI(IVciDevice device, bool logging)
+case VCIDeviceType.ICOM:
+Change init function to:
+-------------------------------------------------------------------------------------
+flag = this.api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=51560;ControlPort=51561", logging);
+-------------------------------------------------------------------------------------
 If file is blocked, terminate IstaSericesHost.exe first!
 
 Compile dnSpy-x86:
@@ -71,6 +82,8 @@ ISTAGUI.exe.config:
 <add key="BMW.Rheingold.ISTAGUI.disableCheckSystemRequirements" value="true" />
 <add key="BMW.Rheingold.ISTAGUI.enableENETprogramming" value="true" />
 <add key="BMW.Rheingold.VehicleCommunication.ECUKom.ModifyEdiabasIni" value="true" />
+ModifyEdiabasIni is not required after the "Fix ICOM apiInitExt" patch!
+
 Remove Environment variable: COMPLUS_MDA
 If the dealer numer is 0 execute RCleanerV4.4.exe once. Export [HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\BMWGroup] before if required.
 
