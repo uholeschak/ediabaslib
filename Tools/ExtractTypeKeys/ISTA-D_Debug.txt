@@ -49,7 +49,7 @@ Function: public bool InitVCI(IVciDevice device, bool logging)
 case VCIDeviceType.ICOM:
 Change init function to:
 -------------------------------------------------------------------------------------
-flag = this.api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=51560;ControlPort=51561", logging);
+flag = this.api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=50160;ControlPort=50161", logging);
 -------------------------------------------------------------------------------------
 If file is blocked, terminate IstaSericesHost.exe first!
 
