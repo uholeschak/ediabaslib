@@ -325,7 +325,8 @@ namespace EdiabasLib
                     bool hostValid = false;
                     if (!string.IsNullOrEmpty(iniRemoteHost))
                     {
-                        if (IPAddress.TryParse(iniRemoteHost, out IPAddress _))
+                        string[] hostIpParts = iniRemoteHost.Split('.');
+                        if (hostIpParts.Length == 4)
                         {
                             hostValid = true;
                             RemoteHostProtected = iniRemoteHost;
