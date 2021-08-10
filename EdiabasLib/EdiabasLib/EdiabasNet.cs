@@ -2834,7 +2834,6 @@ namespace EdiabasLib
 
             if (File.Exists(iniFile))
             {
-                LogFormat(EdLogLevel.Ifh, "EDIABAS is using ini file at: '{0}'", iniFile);
                 _iniFileName = iniFile;
                 ReadIniSettings(iniFile);
             }
@@ -2877,6 +2876,12 @@ namespace EdiabasLib
                         SetConfigProperty(key, value);
                     }
                 }
+            }
+
+            LogFormat(EdLogLevel.Ifh, "EDIABAS assembly path: {0}", assemblyPath);
+            if (!string.IsNullOrEmpty(_iniFileName))
+            {
+                LogFormat(EdLogLevel.Ifh, "EDIABAS ini file: {0}", _iniFileName);
             }
         }
 

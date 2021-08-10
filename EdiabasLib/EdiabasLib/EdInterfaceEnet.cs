@@ -263,9 +263,9 @@ namespace EdiabasLib
                 base.Ediabas = value;
 
                 string iniFile = EdiabasProtected.IniFileName;
-                if (string.IsNullOrEmpty(iniFile))
+                if (!string.IsNullOrEmpty(iniFile))
                 {
-                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ENET is using ini file at: '{0}'", iniFile);
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ENET ini file at: {0}", iniFile);
                     IniFile ediabasIni = new IniFile(iniFile);
                     string iniRemoteHost = ediabasIni.GetValue(IniFileSection, "RemoteHost", string.Empty);
                     bool hostValid = false;
