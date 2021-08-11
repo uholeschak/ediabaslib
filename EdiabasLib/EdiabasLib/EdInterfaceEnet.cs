@@ -1462,6 +1462,10 @@ namespace EdiabasLib
                                     networkStream.Write(TcpDiagBuffer, 0, 8);
                                 }
                                 break;
+
+                            default:
+                                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, TcpDiagBuffer, 0, TcpDiagRecLen, "*** Ignoring unknown telegram type");
+                                break;
                         }
                         TcpDiagRecLen = 0;
                     }
@@ -1548,7 +1552,7 @@ namespace EdiabasLib
                 }
                 if ((recLen == 6) && (AckBuffer[5] == 0xFF))
                 {
-                    if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "nack received: resending");
+                    if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Nack received: resending");
                     lock (TcpDiagStreamSendLock)
                     {
                         TcpDiagStream.Write(DataBuffer, 0, sendLength);
@@ -1556,7 +1560,7 @@ namespace EdiabasLib
                     recLen = ReceiveAck(AckBuffer, TcpAckTimeout, enableLogging);
                     if (recLen < 0)
                     {
-                        if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
+                        if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
                         return false;
                     }
                 }
@@ -1571,7 +1575,7 @@ namespace EdiabasLib
                 {
                     if (AckBuffer[i] != DataBuffer[i])
                     {
-                        if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack data invalid");
+                        if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack data not matching");
                         return false;
                     }
                 }
@@ -1718,7 +1722,7 @@ namespace EdiabasLib
                 {   // ACK or NACK received
                     return recLen;
                 }
-                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Ignore Non ack");
+                if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, recLen, "*** Ack or nack expected");
                 if ((Stopwatch.GetTimestamp() - startTick) > timeout * TickResolMs)
                 {
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Ack timeout");
