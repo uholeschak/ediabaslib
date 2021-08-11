@@ -1548,8 +1548,27 @@ namespace EdiabasLib
                 if (recLen < 0)
                 {
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
-                    return false;
+                    InterfaceDisconnect();
+                    if (!InterfaceConnect())
+                    {
+                        if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
+                        ReconnectRequired = true;
+                        return false;
+                    }
+
+                    if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnected: resending");
+                    lock (TcpDiagStreamSendLock)
+                    {
+                        TcpDiagStream.Write(DataBuffer, 0, sendLength);
+                    }
+                    recLen = ReceiveAck(AckBuffer, TcpAckTimeout, enableLogging);
+                    if (recLen < 0)
+                    {
+                        if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
+                        return false;
+                    }
                 }
+
                 if ((recLen == 6) && (AckBuffer[5] == 0xFF))
                 {
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Nack received: resending");
@@ -1564,6 +1583,7 @@ namespace EdiabasLib
                         return false;
                     }
                 }
+
                 if ((recLen < 6) || (recLen > sendLength) || (AckBuffer[5] != 0x02))
                 {
                     if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack frame invalid");
