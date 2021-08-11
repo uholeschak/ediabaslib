@@ -700,6 +700,7 @@ namespace EdiabasLib
                     TcpDiagClient = new TcpClientWithTimeout(EnetHostConn.IpAddress, diagPort, ConnectTimeout, true).Connect();
                 }, EnetHostConn.IpAddress, NetworkData);
 
+                TcpDiagClient.NoDelay = true;
                 TcpDiagStream = TcpDiagClient.GetStream();
                 TcpDiagRecLen = 0;
                 LastTcpDiagRecTime = DateTime.MinValue.Ticks;
@@ -1341,6 +1342,7 @@ namespace EdiabasLib
                     TcpControlClient = TcpDiagClient = new TcpClientWithTimeout(EnetHostConn.IpAddress, controlPort, ConnectTimeout, true).Connect();
                 }, EnetHostConn.IpAddress, NetworkData);
 
+                TcpControlClient.NoDelay = true;
                 TcpControlStream = TcpControlClient.GetStream();
             }
             catch (Exception ex)
