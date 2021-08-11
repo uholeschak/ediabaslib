@@ -1106,6 +1106,7 @@ namespace CarSimulator
 
         private void SrvLocConnect()
         {
+            return;
             // a virtual network adapter with an auto ip address
             // is required tp receive the UPD broadcasts
             _srvLocError = false;
@@ -2094,6 +2095,7 @@ namespace CarSimulator
                         return false;
                     }
                     bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmpBmwTcpChannel.TcpServerControl.AcceptTcpClient();
+                    bmwTcpClientData.TcpClientConnection.NoDelay = true;
                     bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
                     Debug.WriteLine("Control connected [{0}], Port={1}, Local={2}, Remote={3}",
                         bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.ControlPort,
@@ -2197,6 +2199,7 @@ namespace CarSimulator
 
                     Debug.WriteLine("Diag connect request [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort);
                     bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmpBmwTcpChannel.TcpServerDiag.AcceptTcpClient();
+                    bmwTcpClientData.TcpClientConnection.NoDelay = true;
                     bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                     bmwTcpClientData.TcpNackIndex = 0;
@@ -2281,7 +2284,7 @@ namespace CarSimulator
                         return false;
                     }
                     // send ack
-#if true
+#if false
                     if (bmwTcpClientData.TcpNackIndex >= 5)
                     {
                         Debug.WriteLine("Send NAck");
