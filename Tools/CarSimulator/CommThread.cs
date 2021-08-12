@@ -1639,6 +1639,27 @@ namespace CarSimulator
             return false;
         }
 
+        private void WriteNetworkStream(NetworkStream networkStream, byte[] buffer, int offset, int size, int packetSize = -1)
+        {
+            int pos = 0;
+            while (pos < size)
+            {
+                int length = size;
+                if (packetSize > 0)
+                {
+                    length = packetSize;
+                }
+
+                if (length > size - pos)
+                {
+                    length = size - pos;
+                }
+
+                networkStream.Write(buffer, offset + pos, length);
+                pos += length;
+            }
+        }
+
         private void StartUdpListen()
         {
             _udpClient?.BeginReceive(UdpReceiver, new Object());
@@ -2095,6 +2116,7 @@ namespace CarSimulator
                         return false;
                     }
                     bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmpBmwTcpChannel.TcpServerControl.AcceptTcpClient();
+                    bmwTcpClientData.TcpClientConnection.SendBufferSize = 0x10000;
                     bmwTcpClientData.TcpClientConnection.NoDelay = true;
                     bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
                     Debug.WriteLine("Control connected [{0}], Port={1}, Local={2}, Remote={3}",
@@ -2120,7 +2142,7 @@ namespace CarSimulator
                     byte[] responseBuffer = GetControlResponse(dataBuffer, recLen);
                     if (responseBuffer != null)
                     {
-                        bmwTcpClientData.TcpClientStream.Write(responseBuffer, 0, responseBuffer.Length);
+                        WriteNetworkStream(bmwTcpClientData.TcpClientStream, responseBuffer, 0, responseBuffer.Length);
                     }
 
                     return true;
@@ -2199,6 +2221,7 @@ namespace CarSimulator
 
                     Debug.WriteLine("Diag connect request [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort);
                     bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmpBmwTcpChannel.TcpServerDiag.AcceptTcpClient();
+                    bmwTcpClientData.TcpClientConnection.SendBufferSize = 0x10000;
                     bmwTcpClientData.TcpClientConnection.NoDelay = true;
                     bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
@@ -2231,7 +2254,7 @@ namespace CarSimulator
                         dataBuffer[5] = 0x12;   // Payoad type: alive check
                         dataBuffer[6] = 0xF4;
                         dataBuffer[7] = 0x00;
-                        bmwTcpClientData.TcpClientStream.Write(dataBuffer, 0, dataBuffer.Length);
+                        WriteNetworkStream(bmwTcpClientData.TcpClientStream, dataBuffer, 0, dataBuffer.Length);
                         Debug.WriteLine("Alive Check [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort);
                     }
                 }
@@ -2291,7 +2314,7 @@ namespace CarSimulator
                         bmwTcpClientData.TcpNackIndex = 0;
                         byte[] nack = new byte[6];
                         nack[5] = 0xFF;     // nack
-                        bmwTcpClientData.TcpClientStream.Write(nack, 0, nack.Length);
+                        WriteNetworkStream(bmwTcpClientData.TcpClientStream, nack, 0, nack.Length);
                         return false;
                     }
                     bmwTcpClientData.TcpNackIndex++;
@@ -2300,7 +2323,7 @@ namespace CarSimulator
                     if (bmwTcpClientData.TcpLastResponse != null)
                     {
                         Debug.WriteLine("Inject old response");
-                        bmwTcpClientData.TcpClientStream.Write(bmwTcpClientData.TcpLastResponse, 0, bmwTcpClientData.TcpLastResponse.Length);
+                        WriteNetworkStream(bmwTcpClientData.TcpClientStream, bmwTcpClientData.TcpLastResponse, 0, bmwTcpClientData.TcpLastResponse.Length);
                     }
 #endif
 
@@ -2316,11 +2339,11 @@ namespace CarSimulator
                         ack[1] = (byte)((ackLength >> 16) & 0xFF);
                         ack[2] = (byte)((ackLength >> 8) & 0xFF);
                         ack[3] = (byte)(ackLength & 0xFF);
-                        bmwTcpClientData.TcpClientStream.Write(ack, 0, ackLength + 8 - 2);
+                        WriteNetworkStream(bmwTcpClientData.TcpClientStream, ack, 0, ackLength + 8 - 2);
                     }
                     else
                     {
-                        bmwTcpClientData.TcpClientStream.Write(ack, 0, ack.Length);
+                        WriteNetworkStream(bmwTcpClientData.TcpClientStream, ack, 0, ack.Length);
                     }
 
                     // create BMW-FAST telegram
@@ -2406,7 +2429,7 @@ namespace CarSimulator
 #if false
                 DebugLogData("Send: ", dataBuffer, dataBuffer.Length);
 #endif
-                bmwTcpClientData.TcpClientStream.Write(dataBuffer, 0, dataBuffer.Length);
+                WriteNetworkStream(bmwTcpClientData.TcpClientStream, dataBuffer, 0, dataBuffer.Length);
                 bmwTcpClientData.TcpLastResponse = dataBuffer;
             }
             catch (Exception)
