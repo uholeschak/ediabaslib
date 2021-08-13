@@ -271,6 +271,7 @@ namespace CarSimulator
         private const int EnetDiagPrgPort = 51560;
         private const int EnetControlPrgPort = 51561;
         private const int SrvLocPort = 427;
+        private const int TcpSendBufferSize = 100;
         private const int Kwp2000Nr2123Retries = 3;
         private const int ResetAdaptionChannel = 0;
         private const int DefaultAdaptionChannelValue = 0x1234;
@@ -1639,8 +1640,9 @@ namespace CarSimulator
             return false;
         }
 
-        private void WriteNetworkStream(NetworkStream networkStream, byte[] buffer, int offset, int size, int packetSize = -1)
+        private void WriteNetworkStream(BmwTcpClientData bmwTcpClientData, byte[] buffer, int offset, int size)
         {
+            int packetSize = bmwTcpClientData.TcpClientConnection.SendBufferSize;
             int pos = 0;
             while (pos < size)
             {
@@ -1655,8 +1657,16 @@ namespace CarSimulator
                     length = size - pos;
                 }
 
-                networkStream.Write(buffer, offset + pos, length);
-                pos += length;
+                try
+                {
+                    bmwTcpClientData.TcpClientStream.Write(buffer, offset + pos, length);
+                    pos += length;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("WriteNetworkStream exception: {0}", ex.Message);
+                    throw;
+                }
             }
         }
 
@@ -2116,7 +2126,7 @@ namespace CarSimulator
                         return false;
                     }
                     bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmpBmwTcpChannel.TcpServerControl.AcceptTcpClient();
-                    bmwTcpClientData.TcpClientConnection.SendBufferSize = 0x10000;
+                    bmwTcpClientData.TcpClientConnection.SendBufferSize = TcpSendBufferSize;
                     bmwTcpClientData.TcpClientConnection.NoDelay = true;
                     bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
                     Debug.WriteLine("Control connected [{0}], Port={1}, Local={2}, Remote={3}",
@@ -2142,7 +2152,7 @@ namespace CarSimulator
                     byte[] responseBuffer = GetControlResponse(dataBuffer, recLen);
                     if (responseBuffer != null)
                     {
-                        WriteNetworkStream(bmwTcpClientData.TcpClientStream, responseBuffer, 0, responseBuffer.Length);
+                        WriteNetworkStream(bmwTcpClientData, responseBuffer, 0, responseBuffer.Length);
                     }
 
                     return true;
@@ -2221,7 +2231,7 @@ namespace CarSimulator
 
                     Debug.WriteLine("Diag connect request [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort);
                     bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmpBmwTcpChannel.TcpServerDiag.AcceptTcpClient();
-                    bmwTcpClientData.TcpClientConnection.SendBufferSize = 0x10000;
+                    bmwTcpClientData.TcpClientConnection.SendBufferSize = TcpSendBufferSize;
                     bmwTcpClientData.TcpClientConnection.NoDelay = true;
                     bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
@@ -2254,7 +2264,7 @@ namespace CarSimulator
                         dataBuffer[5] = 0x12;   // Payoad type: alive check
                         dataBuffer[6] = 0xF4;
                         dataBuffer[7] = 0x00;
-                        WriteNetworkStream(bmwTcpClientData.TcpClientStream, dataBuffer, 0, dataBuffer.Length);
+                        WriteNetworkStream(bmwTcpClientData, dataBuffer, 0, dataBuffer.Length);
                         Debug.WriteLine("Alive Check [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort);
                     }
                 }
@@ -2314,7 +2324,7 @@ namespace CarSimulator
                         bmwTcpClientData.TcpNackIndex = 0;
                         byte[] nack = new byte[6];
                         nack[5] = 0xFF;     // nack
-                        WriteNetworkStream(bmwTcpClientData.TcpClientStream, nack, 0, nack.Length);
+                        WriteNetworkStream(bmwTcpClientData, nack, 0, nack.Length);
                         return false;
                     }
                     bmwTcpClientData.TcpNackIndex++;
@@ -2323,7 +2333,7 @@ namespace CarSimulator
                     if (bmwTcpClientData.TcpLastResponse != null)
                     {
                         Debug.WriteLine("Inject old response");
-                        WriteNetworkStream(bmwTcpClientData.TcpClientStream, bmwTcpClientData.TcpLastResponse, 0, bmwTcpClientData.TcpLastResponse.Length);
+                        WriteNetworkStream(bmwTcpClientData, bmwTcpClientData.TcpLastResponse, 0, bmwTcpClientData.TcpLastResponse.Length);
                     }
 #endif
 
@@ -2339,11 +2349,11 @@ namespace CarSimulator
                         ack[1] = (byte)((ackLength >> 16) & 0xFF);
                         ack[2] = (byte)((ackLength >> 8) & 0xFF);
                         ack[3] = (byte)(ackLength & 0xFF);
-                        WriteNetworkStream(bmwTcpClientData.TcpClientStream, ack, 0, ackLength + 8 - 2);
+                        WriteNetworkStream(bmwTcpClientData, ack, 0, ackLength + 8 - 2);
                     }
                     else
                     {
-                        WriteNetworkStream(bmwTcpClientData.TcpClientStream, ack, 0, ack.Length);
+                        WriteNetworkStream(bmwTcpClientData, ack, 0, ack.Length);
                     }
 
                     // create BMW-FAST telegram
@@ -2429,7 +2439,7 @@ namespace CarSimulator
 #if false
                 DebugLogData("Send: ", dataBuffer, dataBuffer.Length);
 #endif
-                WriteNetworkStream(bmwTcpClientData.TcpClientStream, dataBuffer, 0, dataBuffer.Length);
+                WriteNetworkStream(bmwTcpClientData, dataBuffer, 0, dataBuffer.Length);
                 bmwTcpClientData.TcpLastResponse = dataBuffer;
             }
             catch (Exception)
