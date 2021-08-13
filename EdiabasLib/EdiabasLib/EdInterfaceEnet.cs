@@ -185,6 +185,7 @@ namespace EdiabasLib
         protected const int TransBufferSize = 0x10010; // transmit buffer size
         protected const int TcpReadTimeoutOffset = 3000;
         protected const int TcpAckTimeout = 5000;
+        protected const int TcpSendBufferSize = 0x100;
         protected const int UdpDetectRetries = 3;
         protected const string AutoIp = "auto";
         protected const string IniFileSection = "XEthernet";
@@ -510,7 +511,7 @@ namespace EdiabasLib
                         EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
                         return Int64.MinValue;
                     }
-                    TcpControlStream.Write(TcpControlIgnitReq, 0, TcpControlIgnitReq.Length);
+                    WriteNetworkStream(TcpControlStream, TcpControlIgnitReq, 0, TcpControlIgnitReq.Length);
                     TcpControlStream.ReadTimeout = 1000;
                     int recLen = TcpControlStream.Read(RecBuffer, 0, 7);
                     if (recLen < 7)
@@ -700,6 +701,7 @@ namespace EdiabasLib
                     TcpDiagClient = new TcpClientWithTimeout(EnetHostConn.IpAddress, diagPort, ConnectTimeout, true).Connect();
                 }, EnetHostConn.IpAddress, NetworkData);
 
+                TcpDiagClient.SendBufferSize = TcpSendBufferSize;
                 TcpDiagClient.NoDelay = true;
                 TcpDiagStream = TcpDiagClient.GetStream();
                 TcpDiagRecLen = 0;
@@ -1342,6 +1344,7 @@ namespace EdiabasLib
                     TcpControlClient = TcpDiagClient = new TcpClientWithTimeout(EnetHostConn.IpAddress, controlPort, ConnectTimeout, true).Connect();
                 }, EnetHostConn.IpAddress, NetworkData);
 
+                TcpControlClient.SendBufferSize = TcpSendBufferSize;
                 TcpControlClient.NoDelay = true;
                 TcpControlStream = TcpControlClient.GetStream();
             }
@@ -1542,7 +1545,7 @@ namespace EdiabasLib
                 int sendLength = dataLength + 8;
                 lock (TcpDiagStreamSendLock)
                 {
-                    TcpDiagStream.Write(DataBuffer, 0, sendLength);
+                    WriteNetworkStream(TcpDiagStream, DataBuffer, 0, sendLength);
                 }
 
                 // wait for ack
@@ -1561,7 +1564,7 @@ namespace EdiabasLib
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnected: resending");
                     lock (TcpDiagStreamSendLock)
                     {
-                        TcpDiagStream.Write(DataBuffer, 0, sendLength);
+                        WriteNetworkStream(TcpDiagStream, DataBuffer, 0, sendLength);
                     }
                     recLen = ReceiveAck(AckBuffer, TcpAckTimeout, enableLogging);
                     if (recLen < 0)
@@ -1576,7 +1579,7 @@ namespace EdiabasLib
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Nack received: resending");
                     lock (TcpDiagStreamSendLock)
                     {
-                        TcpDiagStream.Write(DataBuffer, 0, sendLength);
+                        WriteNetworkStream(TcpDiagStream, DataBuffer, 0, sendLength);
                     }
                     recLen = ReceiveAck(AckBuffer, TcpAckTimeout, enableLogging);
                     if (recLen < 0)
@@ -1930,6 +1933,35 @@ namespace EdiabasLib
             ParRegenTime = 0;
             ParTimeoutNr78 = 5000;
             ParRetryNr78 = 2;
+        }
+
+        private void WriteNetworkStream(NetworkStream networkStream, byte[] buffer, int offset, int size, int packetSize = TcpSendBufferSize)
+        {
+            int pos = 0;
+            while (pos < size)
+            {
+                int length = size;
+                if (packetSize > 0)
+                {
+                    length = packetSize;
+                }
+
+                if (length > size - pos)
+                {
+                    length = size - pos;
+                }
+
+                try
+                {
+                    networkStream.Write(buffer, offset + pos, length);
+                    pos += length;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("WriteNetworkStream exception: {0}", ex.Message);
+                    throw;
+                }
+            }
         }
 
         protected override void Dispose(bool disposing)
