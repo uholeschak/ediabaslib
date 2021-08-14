@@ -183,8 +183,8 @@ namespace EdiabasLib
         private static Mutex _interfaceMutex;
         protected const string MutexName = "EdiabasLib_InterfaceEnet";
         protected const int TransBufferSize = 0x10010; // transmit buffer size
-        protected const int TcpReadTimeoutOffset = 3000;
-        protected const int TcpAckTimeout = 5000;
+        protected const int TcpReadTimeoutOffset = 5000;
+        protected const int TcpAckTimeout = 10000;
         protected const int TcpSendBufferSize = 0x100;
         protected const int UdpDetectRetries = 3;
         protected const string AutoIp = "auto";
