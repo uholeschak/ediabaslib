@@ -183,9 +183,9 @@ namespace EdiabasLib
         private static Mutex _interfaceMutex;
         protected const string MutexName = "EdiabasLib_InterfaceEnet";
         protected const int TransBufferSize = 0x10010; // transmit buffer size
-        protected const int TcpReadTimeoutOffset = 5000;
-        protected const int TcpAckTimeout = 10000;
-        protected const int TcpSendBufferSize = 0x100;
+        protected const int TcpConnectTimeoutMin = 1000;
+        protected const int TcpAckTimeout = 5000;
+        protected const int TcpSendBufferSize = 0x20;
         protected const int UdpDetectRetries = 3;
         protected const string AutoIp = "auto";
         protected const string IniFileSection = "XEthernet";
@@ -351,6 +351,11 @@ namespace EdiabasLib
                             EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using diagnostic port from ini file: {0}", DiagnosticPort);
                         }
                     }
+                }
+
+                if (ConnectTimeout < TcpConnectTimeoutMin)
+                {
+                    ConnectTimeout = TcpConnectTimeoutMin;
                 }
             }
         }
@@ -1549,7 +1554,7 @@ namespace EdiabasLib
                 }
 
                 // wait for ack
-                int recLen = ReceiveAck(AckBuffer, TcpAckTimeout, enableLogging);
+                int recLen = ReceiveAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
                 if (recLen < 0)
                 {
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
@@ -1566,7 +1571,7 @@ namespace EdiabasLib
                     {
                         WriteNetworkStream(TcpDiagStream, DataBuffer, 0, sendLength);
                     }
-                    recLen = ReceiveAck(AckBuffer, TcpAckTimeout, enableLogging);
+                    recLen = ReceiveAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
                     if (recLen < 0)
                     {
                         if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
@@ -1581,7 +1586,7 @@ namespace EdiabasLib
                     {
                         WriteNetworkStream(TcpDiagStream, DataBuffer, 0, sendLength);
                     }
-                    recLen = ReceiveAck(AckBuffer, TcpAckTimeout, enableLogging);
+                    recLen = ReceiveAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
                     if (recLen < 0)
                     {
                         if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
@@ -1848,7 +1853,7 @@ namespace EdiabasLib
             {
                 int timeout = (Nr78Dict.Count > 0) ? ParTimeoutNr78 : ParTimeoutStd;
                 //if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout: {0}", timeout);
-                timeout += TcpReadTimeoutOffset;
+                timeout += ConnectTimeout;
                 if (!ReceiveData(receiveData, timeout))
                 {
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
