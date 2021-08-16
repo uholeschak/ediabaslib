@@ -123,6 +123,7 @@ namespace CarSimulator
                 TcpClientConnection = null;
                 TcpClientStream = null;
                 LastTcpRecTick = DateTime.MinValue.Ticks;
+                LastTcpSendTick = DateTime.MinValue.Ticks;
             }
 
             public readonly BmwTcpChannel BmpBmwTcpChannel;
@@ -130,6 +131,7 @@ namespace CarSimulator
             public TcpClient TcpClientConnection;
             public NetworkStream TcpClientStream;
             public long LastTcpRecTick;
+            public long LastTcpSendTick;
             public int TcpNackIndex;
             public byte[] TcpLastResponse;
         }
@@ -1642,6 +1644,16 @@ namespace CarSimulator
 
         private void WriteNetworkStream(BmwTcpClientData bmwTcpClientData, byte[] buffer, int offset, int size)
         {
+            if (size == 0)
+            {
+                return;
+            }
+#if false
+            while ((Stopwatch.GetTimestamp() - bmwTcpClientData.LastTcpSendTick) < 10 * TickResolMs)
+            {
+                Thread.Sleep(10);
+            }
+#endif
             int packetSize = bmwTcpClientData.TcpClientConnection.SendBufferSize;
             int pos = 0;
             while (pos < size)
@@ -1668,6 +1680,8 @@ namespace CarSimulator
                     throw;
                 }
             }
+
+            bmwTcpClientData.LastTcpSendTick = Stopwatch.GetTimestamp();
         }
 
         private void StartUdpListen()
@@ -2127,8 +2141,11 @@ namespace CarSimulator
                     }
                     bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmpBmwTcpChannel.TcpServerControl.AcceptTcpClient();
                     bmwTcpClientData.TcpClientConnection.SendBufferSize = TcpSendBufferSize;
+                    bmwTcpClientData.TcpClientConnection.SendTimeout = 1000;
                     bmwTcpClientData.TcpClientConnection.NoDelay = true;
                     bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
+                    bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+                    bmwTcpClientData.LastTcpSendTick = DateTime.MinValue.Ticks;
                     Debug.WriteLine("Control connected [{0}], Port={1}, Local={2}, Remote={3}",
                         bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.ControlPort,
                         bmwTcpClientData.TcpClientConnection.Client.LocalEndPoint.ToString(),
@@ -2232,9 +2249,11 @@ namespace CarSimulator
                     Debug.WriteLine("Diag connect request [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort);
                     bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmpBmwTcpChannel.TcpServerDiag.AcceptTcpClient();
                     bmwTcpClientData.TcpClientConnection.SendBufferSize = TcpSendBufferSize;
+                    bmwTcpClientData.TcpClientConnection.SendTimeout = 1000;
                     bmwTcpClientData.TcpClientConnection.NoDelay = true;
                     bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+                    bmwTcpClientData.LastTcpSendTick = DateTime.MinValue.Ticks;
                     bmwTcpClientData.TcpNackIndex = 0;
                     Debug.WriteLine("Diag connected [{0}], Port={1}, Local={2}, Remote={3}",
                         bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort,
@@ -2317,7 +2336,7 @@ namespace CarSimulator
                         return false;
                     }
                     // send ack
-#if true
+#if false
                     if (bmwTcpClientData.TcpNackIndex >= 5)
                     {
                         Debug.WriteLine("Send NAck");
