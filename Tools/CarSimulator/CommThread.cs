@@ -273,7 +273,9 @@ namespace CarSimulator
         private const int EnetDiagPrgPort = 51560;
         private const int EnetControlPrgPort = 51561;
         private const int SrvLocPort = 427;
-        private const int TcpSendBufferSize = 0x20;
+        // Make sure that on the OBD interface side of the ICOM only the IP4 protocol ist enabled in the interface!
+        // Otherwise ther is packet loss in the ICOM internally!
+        private const int TcpSendBufferSize = 0x80;
         private const int Kwp2000Nr2123Retries = 3;
         private const int ResetAdaptionChannel = 0;
         private const int DefaultAdaptionChannelValue = 0x1234;
