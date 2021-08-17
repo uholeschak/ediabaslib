@@ -177,3 +177,60 @@ pw: NZY11502
 
 At startup ICOM requires an ident broadcast to port 7811 from the ZGW.
 Afterwarts it requests the ECU port configuration with: C3 DF F1 22 17 2A F6
+
+Soap Reserve (Port 5302):
+=========================
+POST /ivm/services/ConnectorService HTTP/1.1
+Content-Type: text/xml; charset=utf-8
+SOAPAction: "http://www.bmw.com/services/ivm/Connector/v1/IVMConnector/reserveDevice"
+Host: 192.168.10.221:5302
+Content-Length: 260
+Expect: 100-continue
+Accept-Encoding: gzip, deflate
+Connection: Keep-Alive
+
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><reserveDevice xmlns="http://www.bmw.com/services/ivm/Connector/v1"><deviceId>ICOM1120134</deviceId><owner>PCULRICHHOME3</owner><hostLock>0</hostLock></reserveDevice></s:Body></s:Envelope>HTTP/1.0 200 OK
+Content-Type: text/xml;charset="utf-8"
+Content-Length: 429
+content-length: 429
+Connection: Keep-Alive
+Keep-Alive: timeout=5, max=5
+
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+	<S:Body>
+	<ns2:reserveDeviceResponse xmlns="http://connector.auriga.nubix.com" xmlns:ns2="http://www.bmw.com/services/ivm/Connector/v1" xmlns:ns3="http://manager.auriga.nubix.com" xmlns:ns4="http://www.bmw.com/ibase/beans">
+		<ns2:out>
+			<error>0</error>
+			<handle>132288249274725464</handle>
+		</ns2:out>
+	</ns2:reserveDeviceResponse>
+	</S:Body>
+</S:Envelope>
+
+Soap Release (Port 5302):
+=========================
+Request:
+POST /ivm/services/ConnectorService HTTP/1.1
+Content-Type: text/xml; charset=utf-8
+SOAPAction: "http://www.bmw.com/services/ivm/Connector/v1/IVMConnector/releaseDevice"
+Host: 192.168.10.221:5302
+Content-Length: 245
+Expect: 100-continue
+Accept-Encoding: gzip, deflate
+Connection: Keep-Alive
+
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><releaseDevice xmlns="http://www.bmw.com/services/ivm/Connector/v1"><deviceId>ICOM1120134</deviceId><handle>132288249274725464</handle></releaseDevice></s:Body></s:Envelope>HTTP/1.0 200 OK
+Content-Type: text/xml;charset="utf-8"
+Content-Length: 389
+content-length: 389
+Connection: Keep-Alive
+Keep-Alive: timeout=5, max=5
+
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+	<S:Body>
+	<ns2:releaseDeviceResponse xmlns="http://connector.auriga.nubix.com" xmlns:ns2="http://www.bmw.com/services/ivm/Connector/v1" xmlns:ns3="http://manager.auriga.nubix.com" xmlns:ns4="http://www.bmw.com/ibase/beans">		<ns2:out>
+			<error>0</error>
+		</ns2:out>
+	</ns2:releaseDeviceResponse>
+	</S:Body>
+</S:Envelope>
