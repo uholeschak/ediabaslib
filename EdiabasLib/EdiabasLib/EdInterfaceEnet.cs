@@ -317,38 +317,37 @@ namespace EdiabasLib
                     ConnectTimeout = (int)EdiabasNet.StringToValue(prop);
                 }
 
-                string iniFile = EdiabasProtected.IniFileName;
-                if (!string.IsNullOrEmpty(iniFile))
+                if (!IsIpv4Address(RemoteHostProtected))
                 {
-                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ENET ini file at: {0}", iniFile);
-                    IniFile ediabasIni = new IniFile(iniFile);
-                    string iniRemoteHost = ediabasIni.GetValue(IniFileSection, "RemoteHost", string.Empty);
-                    bool hostValid = false;
-                    if (!string.IsNullOrEmpty(iniRemoteHost))
+                    string iniFile = EdiabasProtected.IniFileName;
+                    if (!string.IsNullOrEmpty(iniFile))
                     {
-                        string[] hostIpParts = iniRemoteHost.Split('.');
-                        if (hostIpParts.Length == 4)
+                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using ENET ini file at: {0}", iniFile);
+                        IniFile ediabasIni = new IniFile(iniFile);
+                        string iniRemoteHost = ediabasIni.GetValue(IniFileSection, "RemoteHost", string.Empty);
+                        bool hostValid = false;
+                        if (IsIpv4Address(iniRemoteHost))
                         {
                             hostValid = true;
                             RemoteHostProtected = iniRemoteHost;
                             EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using remote host from ini file: {0}", RemoteHostProtected);
                         }
-                    }
 
-                    if (hostValid)
-                    {
-                        string iniControlPort = ediabasIni.GetValue(IniFileSection, "ControlPort", string.Empty);
-                        if (!string.IsNullOrEmpty(iniControlPort))
+                        if (hostValid)
                         {
-                            ControlPort = (int)EdiabasNet.StringToValue(iniControlPort);
-                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using control port from ini file: {0}", ControlPort);
-                        }
+                            string iniControlPort = ediabasIni.GetValue(IniFileSection, "ControlPort", string.Empty);
+                            if (!string.IsNullOrEmpty(iniControlPort))
+                            {
+                                ControlPort = (int)EdiabasNet.StringToValue(iniControlPort);
+                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using control port from ini file: {0}", ControlPort);
+                            }
 
-                        string iniDiagnosticPort = ediabasIni.GetValue(IniFileSection, "DiagnosticPort", string.Empty);
-                        if (!string.IsNullOrEmpty(iniDiagnosticPort))
-                        {
-                            DiagnosticPort = (int)EdiabasNet.StringToValue(iniDiagnosticPort);
-                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using diagnostic port from ini file: {0}", DiagnosticPort);
+                            string iniDiagnosticPort = ediabasIni.GetValue(IniFileSection, "DiagnosticPort", string.Empty);
+                            if (!string.IsNullOrEmpty(iniDiagnosticPort))
+                            {
+                                DiagnosticPort = (int)EdiabasNet.StringToValue(iniDiagnosticPort);
+                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using diagnostic port from ini file: {0}", DiagnosticPort);
+                            }
                         }
                     }
                 }
@@ -1243,7 +1242,7 @@ namespace EdiabasLib
             }
         }
 
-        static public Dictionary<string, string> ExtractSvrLocItems(byte[] dataBuffer, int dataLength, int expectedId)
+        public static Dictionary<string, string> ExtractSvrLocItems(byte[] dataBuffer, int dataLength, int expectedId)
         {
             if ((dataLength >= 14) &&
                 (dataBuffer[0] == 0x02) &&   // Version 2
@@ -1967,6 +1966,20 @@ namespace EdiabasLib
                     throw;
                 }
             }
+        }
+
+        private bool IsIpv4Address(string address)
+        {
+            if (!string.IsNullOrEmpty(address))
+            {
+                string[] ipParts = address.Split('.');
+                if (ipParts.Length == 4)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         protected override void Dispose(bool disposing)
